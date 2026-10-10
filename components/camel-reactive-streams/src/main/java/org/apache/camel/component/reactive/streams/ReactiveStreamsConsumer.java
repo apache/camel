@@ -90,7 +90,9 @@ public class ReactiveStreamsConsumer extends DefaultConsumer implements Suspenda
     @Override
     protected void doResume() throws Exception {
         if (executor == null) {
-            // suspended while it was not started (before its start or after a stop)
+            // suspended while it was not started (before its start or after a stop). Call doStart() directly, not
+            // start(): resume() has already set the status to STARTING, so start() would return without starting
+            // the consumer. resume() sets the status to STARTED once this returns.
             doStart();
             return;
         }
