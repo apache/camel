@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.List;
 
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -93,5 +94,31 @@ class ReloadOutcomeTest {
         JsonObject out = ReloadOutcome.classify(records(BEFORE, FAILED, RELOADED), since);
         assertEquals("reloaded", out.getString("status"));
         assertEquals("Routes reloaded summary (total:1 started:1)", out.getString("message"));
+    }
+
+    /** CAMEL-25513: what the routes logged after the reload, the result of the write. */
+    @Test
+    void theOutputIsWhatTheRoutesLoggedAfterTheReload() {
+        List<String> xslt = List.of(
+                "2026-10-10 04:44:26.089  INFO 22543 --- [rReloadStrategy] e.camel.component.file.FileEndpoint : Endpoint is configured with noop=true so forcing endpoint to be idempotent as well",
+                "2026-10-10 04:44:26.097  INFO 22543 --- [rReloadStrategy] org.apache.camel.support.RouteWatcherReloadStrategy : Routes reloaded summary (total:1 started:1)",
+                "2026-10-10 04:44:26.097  INFO 22543 --- [rReloadStrategy] org.apache.camel.support.RouteWatcherReloadStrategy :     Started xslt (file://inbox) (source: xslt.camel.yaml:4)",
+                "2026-10-10 04:44:27.167  INFO 22543 --- [ - file://inbox] xslt.camel.yaml:12                  : Packing slip: <?xml version=\"1.0\" encoding=\"UTF-8\"?><packingSlip orderId=\"\" customer=\"C-482\" country=\"\"/>",
+                "2026-10-10 04:44:28.001  WARN 22543 --- [ - file://inbox] org.apache.camel.component.file.GenericFileOnCompletion : Rollback file strategy: x");
+
+        JsonArray output = ReloadOutcome.output(records(BEFORE, xslt));
+
+        assertEquals(2, output.size(), output.toJson());
+        assertEquals("Packing slip: <?xml version=\"1.0\" encoding=\"UTF-8\"?><packingSlip orderId=\"\" customer=\"C-482\""
+                     + " country=\"\"/>",
+                output.get(0));
+        assertTrue(output.get(1).toString().startsWith("WARN Rollback file strategy"), output.toJson());
+    }
+
+    @Test
+    void whatWasLoggedBeforeTheNewestReloadIsNotOutput() {
+        assertEquals(List.of("Hello Camel"), List.copyOf(ReloadOutcome.output(records(BEFORE))));
+        // after the next reload "Hello Camel" is the result of the write before
+        assertEquals(List.of("Hello again"), List.copyOf(ReloadOutcome.output(records(BEFORE, RELOADED))));
     }
 }

@@ -347,6 +347,9 @@ project `directory` as an argument, the runtime tools take the integration `name
   plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
+  When an integration runs in dev mode from the directory (as `camel_run` starts it), the answer says how it
+  reloaded the file and what its routes logged right after, so the agent sees the result of the change, such as
+  an empty value its route now produces, without a call to `camel_get_log`.
 
 | `camel_edit_file`
 | Changes a file by replacing one snippet: the lines to find (they must name one place; other indentation is fine)

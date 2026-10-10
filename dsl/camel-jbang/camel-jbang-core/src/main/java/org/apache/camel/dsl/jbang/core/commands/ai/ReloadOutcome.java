@@ -16,9 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -132,6 +137,64 @@ public final class ReloadOutcome {
         out.put("status", "unknown");
         out.put("message", "no reload seen in the log within " + timeoutMillis / 1000 + "s: the integration may not run"
                            + " in dev mode, or the file is not one it watches; camel_get_log shows what it did");
+        return out;
+    }
+
+    /**
+     * A record a route logged: the log EIP's logger is the route's source location (xslt.camel.yaml:12), or its route
+     * id when source locations are off, which has no dots, unlike the class names of Camel's own loggers.
+     */
+    private static final Pattern ROUTE_LOGGER = Pattern.compile("(^|\\.)(yaml|yml|xml|java|groovy):\\d+$");
+    private static final int OUTPUT_LINES = 5;
+    private static final int OUTPUT_CHARS = 400;
+
+    /**
+     * What the routes logged after the newest reload, waiting up to the timeout for the first of it: the records of the
+     * routes' log steps, and any WARN or ERROR, newest last, at most five, each cut to 400 characters. A write answered
+     * with the result of the change shows the agent at once what its route now does (CAMEL-25513): an agent left to
+     * call camel_get_log reads it before the reload ran, or not at all.
+     */
+    public static JsonArray awaitOutput(long pid, String name, long timeoutMillis) {
+        StopWatch watch = new StopWatch();
+        JsonArray out = output(records(pid, name));
+        while (out.isEmpty() && watch.taken() < timeoutMillis) {
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            out = output(records(pid, name));
+        }
+        return out;
+    }
+
+    static JsonArray output(List<JsonObject> newestFirst) {
+        List<String> lines = new ArrayList<>();
+        for (JsonObject r : newestFirst) {
+            if (isReload(r)) {
+                break; // the newest reload: what came before it is not the result of this write
+            }
+            String level = r.getStringOrDefault("level", "");
+            String logger = r.getStringOrDefault("logger", "");
+            boolean routeLog = ROUTE_LOGGER.matcher(logger).find()
+                    || !logger.isEmpty() && Character.isLowerCase(logger.charAt(0));
+            if (!routeLog && !"WARN".equalsIgnoreCase(level) && !"ERROR".equalsIgnoreCase(level)) {
+                continue;
+            }
+            String m = r.getStringOrDefault("message", "");
+            String detail = r.getStringOrDefault("detail", "");
+            if (routeLog && !detail.isEmpty()) {
+                // a multi-line body (an XML or JSON document) is part of what the route logged
+                m = m + "\n" + detail;
+            }
+            lines.add((routeLog ? "" : level.toUpperCase(Locale.ROOT) + " ")
+                      + (m.length() > OUTPUT_CHARS ? m.substring(0, OUTPUT_CHARS) + "..." : m));
+        }
+        // newest first in the log: the first lines the routes logged after the reload are at the end
+        Collections.reverse(lines);
+        JsonArray out = new JsonArray();
+        out.addAll(lines.subList(0, Math.min(OUTPUT_LINES, lines.size())));
         return out;
     }
 
