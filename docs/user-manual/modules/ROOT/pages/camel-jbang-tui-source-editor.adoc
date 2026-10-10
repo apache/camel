@@ -119,6 +119,12 @@ what the AI wants to change, *d* shows the diff, *Enter* applies it and *Esc* re
 
 image::jbang/camel-tui-source-ai-edit-confirm.png[The change of the AI waits for your confirmation]
 
+The whole loop with a local model, from orders that fail at runtime to the fix: *Shift+F8* on the error, the
+question with the source around the line, the change and its diff, and dev mode reloading the route (the time the
+model thinks is sped up):
+
+image::jbang/camel-tui-fix-with-ai.gif[Shift+F8 on a failing route: a local model finds the mismatched endpoint, the change is confirmed with its diff, and dev mode reloads the route]
+
 A file the AI writes is checked like one you save, and a write that brings new problems is refused, so the AI gets the
 problems back and can try again. The view shows the file as the AI wrote it as soon as you apply the change. With `/write live` in the AI panel, you can also watch the AI type its change in the
 editor; see xref:camel-jbang-tui-ai-agents.adoc#_watching_the_ai_edit_live_mode[Watching the AI edit].
