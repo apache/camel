@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -37,6 +38,8 @@ import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.Model;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
@@ -105,7 +108,29 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
             extractor.accept(route);
         }
 
+        // context scoped onExceptions (a top-level onException in the YAML DSL, an onException in the configure method
+        // of a RouteBuilder, or one of a route configuration) are added to the outputs of each route when the routes
+        // are prepared, but the YAML DSL does not allow them in the steps of a route
+        List<OnExceptionDefinition> contextScoped = new ArrayList<>();
+        if (definition instanceof RoutesDefinition routes) {
+            routes.getRoutes().forEach(route -> collectContextScopedOnExceptions(route, contextScoped));
+        } else if (definition instanceof RouteDefinition route) {
+            collectContextScopedOnExceptions(route, contextScoped);
+        }
+        // the onExceptions of a route configuration are dumped with the route configuration, the others are dumped
+        // once, as top-level onExceptions before the routes
+        List<OnExceptionDefinition> topLevel = new ArrayList<>(contextScoped);
+        topLevel.removeIf(oe -> isInRouteConfiguration(context, oe));
+
         YamlModelWriter writer = new YamlModelWriter() {
+            @Override
+            protected <T> void doWriteOutputs(JsonObject jo, List<T> list, Function<T, JsonObject> writer) {
+                if (list != null && !contextScoped.isEmpty()) {
+                    list = list.stream().filter(o -> !containsInstance(contextScoped, o)).toList();
+                }
+                super.doWriteOutputs(jo, list, writer);
+            }
+
             @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(
                     JsonObject jo, OptionalIdentifiedDefinition<?> def) {
@@ -176,6 +201,9 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
 
         List<JsonObject> roots = new ArrayList<>();
         try {
+            for (OnExceptionDefinition oe : topLevel) {
+                roots.add(writer.writeOnExceptionDefinition(oe));
+            }
             if (definition instanceof RoutesDefinition rd) {
                 for (RouteDefinition route : rd.getRoutes()) {
                     roots.add(writer.writeRouteDefinition(route));
@@ -263,6 +291,41 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         }
 
         return buffer.toString();
+    }
+
+    /**
+     * Collects the context scoped onExceptions that were added to the outputs of the route when it was prepared
+     */
+    private static void collectContextScopedOnExceptions(RouteDefinition route, List<OnExceptionDefinition> answer) {
+        for (var output : route.getOutputs()) {
+            if (output instanceof OnExceptionDefinition oe && !oe.isRouteScoped() && !containsInstance(answer, oe)) {
+                answer.add(oe);
+            }
+        }
+    }
+
+    private static boolean isInRouteConfiguration(CamelContext context, OnExceptionDefinition oe) {
+        Model model = context != null ? context.getCamelContextExtension().getContextPlugin(Model.class) : null;
+        if (model != null) {
+            for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+                if (containsInstance(config.getOnExceptions(), oe)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsInstance(List<?> list, Object instance) {
+        if (list == null) {
+            return false;
+        }
+        for (Object o : list) {
+            if (o == instance) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

@@ -516,7 +516,9 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                         continue;
                     }
                     Resource res = route.getResource();
-                    if (res == null) {
+                    if (res == null || outputFileName != null) {
+                        // the routes of all the resources dumped into the same file are dumped together, so the
+                        // top-level elements of the resources (such as onException) come before the first route
                         res = dummy;
                     }
                     RoutesDefinition routes = groups.computeIfAbsent(res, resource -> new RoutesDefinition());
