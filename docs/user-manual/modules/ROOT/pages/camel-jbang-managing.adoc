@@ -299,8 +299,9 @@ camel semantic get my-app --expert=guard
 `camel semantic` defaults to `camel semantic get`. The text output uses tables listing
 definition names, experts, operations, state selectors, result types and resolution
 errors, followed by the known experts and default expert. Listing does not require a
-default expert: the text output shows `Default expert: none` when no default can be
-resolved. `--json` retains the detailed default-selection diagnostics. `--expert`
+default expert: the text output shows `Default expert: none` when automatic selection has
+no eligible expert or is ambiguous. Configuration and contract-resolution errors still appear
+as `Default expert error`. `--json` retains all default-selection diagnostics. `--expert`
 shows one expert's operations, input and result semantics, and parameter contract.
 Inspection does not perform inference. Use `--json` for machine-readable output.
 
@@ -367,7 +368,8 @@ remain in the semantic DSL; querying does not enable auditing or change its conf
 Stored input appears in event details and linked evaluation evidence when the expert's
 semantic audit configuration explicitly enables `input.enabled`. Capture is disabled by
 default, bounded by `maxChars`, and can use a redactor. Human-readable output preserves
-multiline text; `--json` returns the stored structure and any omission reason.
+multiline text; with `--event-id`, `--json` returns the stored structure and any omission
+reason. List queries omit input, including when `--json` is selected.
 
 [source,bash]
 ----

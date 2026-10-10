@@ -186,7 +186,7 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
         for (Element child : children(element)) {
             if ("expert".equals(child.getLocalName())) {
                 attributes(child, Set.of("name", "enabled", "inputEnabled", "inputMaxChars", "inputRedactor"));
-                String name = getCamelContext().resolvePropertyPlaceholders(child.getAttribute("name"));
+                String name = child.getAttribute("name");
                 if (!child.hasAttribute("enabled")) {
                     throw new IllegalArgumentException("Audit expert '" + name + "' requires enabled");
                 }

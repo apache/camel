@@ -97,6 +97,10 @@ public class CamelSemantic extends SemanticActionCommand {
                 new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "error")))));
         String defaultExpert = text(response, "defaultExpert");
         printer().println("Default expert: " + (defaultExpert.isEmpty() ? "none" : defaultExpert));
+        String defaultError = text(response, "defaultError");
+        if (!defaultError.isEmpty() && !defaultError.startsWith("Semantic language requires exactly one eligible expert")) {
+            printer().println("Default expert error: " + defaultError);
+        }
     }
 
     private static List<JsonObject> rows(JsonArray values) {

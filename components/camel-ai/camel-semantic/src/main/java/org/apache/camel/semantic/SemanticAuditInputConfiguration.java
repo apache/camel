@@ -42,7 +42,11 @@ public final class SemanticAuditInputConfiguration {
         return enabled;
     }
 
-    /** Total code points in strings, map keys and scalar representations; oversized input is omitted, not truncated. */
+    /**
+     * Total code points per record in strings, map keys and scalar representations; oversized input is omitted, not
+     * truncated. Retained and queued input can each reach this limit multiplied by their respective record capacities.
+     * This is not an aggregate heap or serialized-byte budget.
+     */
     public int getMaxChars() {
         return maxChars;
     }

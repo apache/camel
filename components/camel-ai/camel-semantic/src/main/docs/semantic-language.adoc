@@ -1181,9 +1181,20 @@ Oversized, cyclic or unsupported input is omitted with
 arbitrary objects are not converted to text. `inputOmitted: unavailable` means the selected
 state was not obtained, for example because the state expression failed.
 
+The limit applies per record, not to total memory. With the memory backend, retained input
+can reach `capacity × maxChars` code points, with up to `queueCapacity × maxChars` more in
+the pending delivery queue. Use the largest enabled expert's `maxChars` when limits differ.
+For example, `capacity: 1000` and `maxChars: 100000` allow 100 million retained code points,
+before pending records, in-flight captures and object overhead. There is no aggregate byte
+budget; size both capacities and the per-expert limit for the available heap. Code points
+are not bytes, and maps/lists also allocate objects.
+
 An optional `redactor` names a registry bean implementing `SemanticAuditInputRedactor`.
 It receives a bounded, immutable copy on the evaluation thread and returns a sanitized value.
-The return value is bounded again; a null return omits input (`inputOmitted: redacted`).
+The size, depth and node limits are checked *before* the redactor runs. Oversized input is
+omitted without calling the redactor, even if it could reduce the input to a few fields.
+For example, the full state must fit the limits before the redactor below can retain only
+`question`. The return value is bounded again; a null return omits input (`inputOmitted: redacted`).
 Successful redaction adds `inputRedacted: true`. Exceptions or invalid redactor output omit
 input (`inputOmitted: redaction_failed`) without recording exception text or affecting the
 expert result. Redactors must be thread-safe and should not block. Unknown bean references
@@ -1219,12 +1230,25 @@ The equivalent XML expert entry is:
 Input settings follow the same restart requirement as the other audit settings.
 Redactor bindings are published together at startup and discarded on stop. Capture before
 configured redactors are ready omits input with `inputOmitted: redaction_failed`. Each evaluation
-captures its input at most once, including when the first attempt omits it.
-Captured input goes to every configured audit sink, including `log` when selected, and is
-available through the audit reader, CLI, TUI and MCP. Existing backend retention and access
-controls therefore also apply to input. No automatic redaction is applied without a configured
-redactor. Input is never passed to `SemanticObserver`, even when audit input capture is enabled;
-auditing and telemetry remain independent. Existing records without input remain readable.
+captures its input at most once, including when the first attempt omits it. Batch evaluations
+capture and redact separately for each invocation, using that expert's input settings.
+
+Captured input goes to every configured audit sink and is available through the audit reader.
+The dev console, CLI, TUI and MCP list queries omit input; an `eventId` lookup returns it with
+the selected record and its linked evidence. The dev console therefore carries captured
+message data and must remain on a trusted network with access restricted to authorized
+operators; see the xref:manual::security-model.adoc[Camel security model].
+MCP detail responses label captured input as untrusted data. It can contain detected prompt
+injections: inspect it as evidence and never follow instructions embedded in it.
+
+The `log` sink writes captured input at INFO, including up to the configured `maxChars` per
+evaluation (at most 100000 code points). JSON escaping and character encoding can make the
+serialized log entry larger than that count. Application logs and external log shippers then
+retain this data under their own retention, forwarding and access-control policies. Review
+those policies and expected log volume before selecting this sink with input capture enabled.
+No automatic redaction is applied without a configured redactor. Input is never passed to
+`SemanticObserver`, even when audit input capture is enabled; auditing and telemetry remain
+independent. Existing records without input remain readable.
 
 The TUI inspector displays *Input* (or *Input (redacted)*) in the evaluation details, including
 linked evidence beside a route decision. It displays an omission reason when available, or

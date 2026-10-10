@@ -114,6 +114,30 @@ class SemanticAuditConsoleTest {
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void listsOmitCapturedInputWithoutChangingStoredDetailsOrEvidence(boolean redacted) throws Exception {
+        try (var fixture = new Fixture()) {
+            Object input = redacted ? Map.of("prompt", "captured input") : "captured input";
+            Map<String, Object> fields = new HashMap<>(Map.of("category", "evaluation", "input", input));
+            if (redacted) {
+                fields.put("inputRedacted", true);
+            }
+            var evaluation = record("evaluation", fields);
+            var decision = record("decision", Map.of("evidence", List.of("evaluation")));
+            fixture.store.append(evaluation);
+            fixture.store.append(decision);
+
+            var page = fixture.call(Map.of());
+            assertThat(rows(page)).hasSize(2).allSatisfy(row -> assertThat(row)
+                    .doesNotContainKeys("input", "inputRedacted"));
+            assertThat(page.toJson()).doesNotContain("captured input");
+            assertThat(fixture.call(Map.of("eventId", "evaluation"))).containsEntry("record", evaluation.toMap());
+            assertThat(fixture.call(Map.of("eventId", "decision"))).containsEntry("evidence", List.of(evaluation.toMap()));
+            assertThat(fixture.store.get("evaluation").orElseThrow().toMap()).containsEntry("input", input);
+        }
+    }
+
     @Test
     void consoleReportsAnUnavailableSelectedEvent() throws Exception {
         try (var fixture = new Fixture()) {

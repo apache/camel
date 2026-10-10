@@ -113,9 +113,24 @@ class SemanticCommandTest {
         assertEquals("", errors.toString());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Unknown expert or bean does not implement SemanticAdapter: missing",
+            "Semantic expert must declare operations",
+            "Cannot read the semantic adapter descriptor" })
+    void listsExpertsWithoutHidingDefaultConfigurationOrContractErrors(String defaultError) throws Exception {
+        JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
+        response.put("defaultError", defaultError);
+        assertEquals(0, respond(new CamelSemantic(main()), r -> response));
+        assertTrue(printer.getOutput().contains("Experts:"));
+        assertTrue(printer.getOutput().contains("Default expert error: " + defaultError), printer.getOutput());
+        assertEquals("", errors.toString());
+    }
+
     @Test
     void emitsMetadataAsOneJsonDocumentIncludingEmptyLists() throws Exception {
         JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
+        response.put("defaultError", "Unknown expert or bean does not implement SemanticAdapter: missing");
         assertEquals(0, respond(new CamelSemantic(main()), r -> response, "--json"));
         assertEquals(response, json(printer.getOutput()));
         assertEquals("", errors.toString());
