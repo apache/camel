@@ -55,7 +55,7 @@ public class TuiCommand extends CamelCommand {
     long refreshInterval = 100;
 
     @CommandLine.Option(names = { "--record" },
-                        description = "Replay a .tape file inside the TUI and record to an Asciinema .cast file",
+                        description = "Play a .tape file in the TUI and record it to an Asciinema .cast file",
                         arity = "0..1")
     String record;
 

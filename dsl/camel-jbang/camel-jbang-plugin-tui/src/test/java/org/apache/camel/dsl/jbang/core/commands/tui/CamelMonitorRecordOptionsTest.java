@@ -16,8 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.ClearSystemProperty;
 import picocli.CommandLine;
 
@@ -42,6 +47,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class CamelMonitorRecordOptionsTest {
 
     private final CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), getClass().getClassLoader());
+
+    @TempDir
+    Path tempDir;
 
     @Test
     void parsesColumnsAndRows() {
@@ -93,10 +101,10 @@ class CamelMonitorRecordOptionsTest {
     }
 
     @Test
-    void configuringRecordingSetsEveryPropertyThatIsClearedAgainAfterwards() {
+    void configuringRecordingSetsEveryPropertyThatIsClearedAgainAfterwards() throws IOException {
         // The set and the clear list have to stay in sync: a property added to configureRecording() but missing
         // from RECORD_PROPERTIES would keep recording enabled for the rest of the JVM's life.
-        monitor.record = "demo.tape";
+        monitor.record = tape().toString();
         monitor.recordSize = "160x44";
 
         monitor.configureRecording();
@@ -118,5 +126,31 @@ class CamelMonitorRecordOptionsTest {
 
         assertThat(CamelMonitor.RECORD_PROPERTIES)
                 .allSatisfy(key -> assertThat(System.getProperty(key)).as(key).isNull());
+    }
+
+    @Test
+    void doesNotHandTheTapeToTamboui() throws IOException {
+        // TamboUI only records; TapePlayer plays the tape (TamboUI's own player has no function keys)
+        monitor.record = tape().toString();
+
+        monitor.configureRecording();
+
+        assertThat(System.getProperty("tamboui.record")).endsWith("demo.cast");
+        assertThat(System.getProperty("tamboui.record.config")).isNull();
+    }
+
+    @Test
+    void rejectsAMissingTapeFile() {
+        monitor.record = tempDir.resolve("missing.tape").toString();
+
+        assertThatThrownBy(monitor::configureRecording)
+                .isInstanceOf(CommandLine.ParameterException.class)
+                .hasMessageContaining("Tape file not found");
+    }
+
+    private Path tape() throws IOException {
+        Path tape = tempDir.resolve("demo.tape");
+        Files.writeString(tape, "Sleep 100ms\n");
+        return tape;
     }
 }
