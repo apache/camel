@@ -352,7 +352,6 @@ public final class IntegrationLauncher {
                 : " It is not in dev mode: camel_control restart picks up a changed or added file.");
     }
 
-    /** The integration that runs with this directory as its working directory, or null. */
     /**
      * The integration that runs in dev mode from the directory (its working directory, started with --dev), or null:
      * the one whose reload a write to the directory is answered with when no integration is selected (CAMEL-25513).
@@ -367,6 +366,7 @@ public final class IntegrationLauncher {
         return args != null && args.contains("--dev") ? running : null;
     }
 
+    /** The integration that runs with this directory as its working directory, or null. */
     private static RuntimeHelper.ProcessInfo runningFrom(Path directory) {
         Path wanted = directory.toAbsolutePath().normalize();
         for (RuntimeHelper.ProcessInfo p : RuntimeHelper.discoverProcesses()) {
