@@ -148,10 +148,12 @@ class AuthoringToolsTest {
     @Test
     void writeValidatesFirstAndRefusesInvalidContent(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
+        // a misspelling no repair reads (a write repairs logLevel to loggingLevel, CAMEL-25532)
         JsonObject invalid = call("camel_write_file", new ToolContext(),
-                Map.of("directory", dir.toString(), "file", "demo.camel.yaml", "content", INVALID_ROUTE));
+                Map.of("directory", dir.toString(), "file", "demo.camel.yaml", "content",
+                        VALID_ROUTE.replace("loggingLevel", "loggingLevl")));
         assertEquals("invalid", invalid.getString("status"));
-        assertTrue(invalid.getCollection("errors").stream().anyMatch(m -> m.toString().contains("logLevel")),
+        assertTrue(invalid.getCollection("errors").stream().anyMatch(m -> m.toString().contains("loggingLevl")),
                 invalid.toJson());
         assertEquals("- route: {}\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
 

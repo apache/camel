@@ -986,7 +986,8 @@ public final class AuthoringTools {
     /**
      * The window of the content that best matches the lines of find (their longest common subsequence), as {start
      * offset, end offset, first line, last line}; null unless it holds a line of find that has a value and is unique in
-     * the content, matches at least 60%, and no window apart from it matches nearly as well (CAMEL-25532).
+     * the content, has at least two lines of find, matches at least 60%, and no window apart from it matches nearly as
+     * well (CAMEL-25532).
      */
     static int[] fuzzyWindow(String content, String find) {
         String[] lines = content.split("\n", -1);
@@ -1011,6 +1012,7 @@ public final class AuthoringTools {
         double best = -1;
         int bestAt = -1;
         int bestSize = 0;
+        int bestCommon = 0;
         List<double[]> scored = new ArrayList<>();
         for (int size = Math.max(1, n - 2); size <= n + 2; size++) {
             for (int i = 0; i + size <= lines.length; i++) {
@@ -1018,16 +1020,19 @@ public final class AuthoringTools {
                 if (window.isEmpty() || window.stream().noneMatch(distinct::contains)) {
                     continue;
                 }
-                double ratio = 2.0 * commonLines(want, window) / (want.size() + window.size());
+                int common = commonLines(want, window);
+                double ratio = 2.0 * common / (want.size() + window.size());
                 scored.add(new double[] { ratio, i, size });
                 if (ratio > best || (ratio == best && Math.abs(size - n) < Math.abs(bestSize - n))) {
                     best = ratio;
                     bestAt = i;
                     bestSize = size;
+                    bestCommon = common;
                 }
             }
         }
-        if (best < 0.6) {
+        if (best < 0.6 || bestCommon < 2) {
+            // one line in common says where the snippet was aimed, not where the rest of it goes
             return null;
         }
         for (double[] other : scored) {

@@ -207,7 +207,8 @@ class AuthoringToolsEditTest {
     void aMissShowsTheLinesTheFileHasThere(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), ROUTE);
 
-        JsonObject result = edit(dir, "- log:\n    message: \"one\"\n    id: nope", "x");
+        // one line in common (CAMEL-25532 matches a snippet from memory on two or more)
+        JsonObject result = edit(dir, "message: \"one\"\n    id: nope", "x");
 
         assertThat(result.getString("status")).isEqualTo("not-found");
         assertThat(result.getString("nearest")).contains("message: \"one\"");
