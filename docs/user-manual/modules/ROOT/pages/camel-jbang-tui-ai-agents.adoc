@@ -6,6 +6,9 @@ your confirmation.
 
 See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages.
 
+TIP: Not sure whether you want the AI panel, a coding agent or an MCP server? See
+xref:camel-jbang-tui-ai-ways.adoc[Camel TUI Ways to Use AI] for the options side by side.
+
 == Key Features
 
 * <<_why_this_matters,*Same view as you*>> -- routes, statistics, traces, errors, logs and sources

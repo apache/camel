@@ -30,6 +30,7 @@
 **** xref:camel-jbang-tui-source-editor.adoc[Camel TUI Source Editor]
 **** xref:camel-jbang-tui-diagram.adoc[Camel TUI Diagram]
 **** xref:camel-jbang-tui-observe.adoc[Camel TUI Observing Integrations]
+**** xref:camel-jbang-tui-ai-ways.adoc[Camel TUI Ways to Use AI]
 **** xref:camel-jbang-tui-ai.adoc[Camel TUI AI Panel]
 **** xref:camel-jbang-tui-local-models.adoc[Camel TUI Local Models]
 **** xref:camel-jbang-tui-ai-agents.adoc[Camel TUI and AI Agents]
