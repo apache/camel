@@ -19,6 +19,7 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.health.HealthCheck;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.util.URISupport;
 
@@ -33,9 +34,12 @@ public class DebeziumConsumerHealthCheck implements HealthCheck {
     private final DebeziumConsumer consumer;
     private final String id;
     private final String sanitizedUri;
+    private final State initialState;
     private boolean enabled = true;
 
     public DebeziumConsumerHealthCheck(DebeziumConsumer consumer, String id) {
+        HealthCheckRegistry registry = HealthCheckRegistry.get(consumer.getEndpoint().getCamelContext());
+        this.initialState = registry != null ? registry.getInitialState() : State.DOWN;
         this.consumer = consumer;
         this.id = id;
         this.sanitizedUri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointUri());
@@ -76,8 +80,8 @@ public class DebeziumConsumerHealthCheck implements HealthCheck {
 
         final Throwable failure = consumer.getEngineFailure();
         if (failure == null) {
-            // the engine is either starting, running, or was stopped on request, none of which is a failure
-            return builder.up().build();
+            // Keep the configured initial state until the engine has started its polling tasks.
+            return builder.state(consumer.isEngineReady() ? State.UP : initialState).build();
         }
 
         builder.down();

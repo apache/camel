@@ -4682,6 +4682,14 @@ healthy while no longer receiving any change event. Deployments that use readine
 now see a Debezium route whose engine has died reported as `DOWN`, where it was previously reported as `UP`.
 The engine is still not restarted automatically.
 
+=== camel-debezium - consumer readiness during startup
+
+Debezium consumer health checks now retain the configured initial state (`DOWN` by default) until the embedded
+engine has started its connector tasks and enters its polling phase. Previously, they reported `UP` during startup
+as long as no engine failure had been reported. Readiness does not wait for a change event or for an initial snapshot
+to complete. To keep the previous optimistic startup behavior, configure `camel.health.initial-state=up`.
+Engine failures continue to report `DOWN` regardless of the initial state.
+
 === camel-core - event notifier exchange sent and redelivery events
 
 An event notifier now receives the `ExchangeSentEvent` also when it does not want the `ExchangeSendingEvent`

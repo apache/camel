@@ -42,6 +42,7 @@ public class DebeziumConsumer extends DefaultConsumer {
     private DebeziumEngine<ChangeEvent<SourceRecord, SourceRecord>> dbzEngine;
     private volatile Throwable engineFailure;
     private volatile boolean engineStopped;
+    private volatile boolean engineReady;
 
     public DebeziumConsumer(DebeziumEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -59,10 +60,11 @@ public class DebeziumConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
+        engineReady = false;
         engineFailure = null;
         engineStopped = false;
+
+        super.doStart();
 
         // start a single threaded pool to monitor events
         executorService = endpoint.createExecutor(this);
@@ -115,10 +117,27 @@ public class DebeziumConsumer extends DefaultConsumer {
         return engineFailure;
     }
 
+    boolean isEngineReady() {
+        return engineReady;
+    }
+
     private DebeziumEngine<ChangeEvent<SourceRecord, SourceRecord>> createDbzEngine() {
         return DebeziumEngine.create(Connect.class)
                 .using(configuration.createDebeziumConfiguration().asProperties())
                 .using(this::onEngineCompleted)
+                .using(new DebeziumEngine.ConnectorCallback() {
+                    @Override
+                    public void pollingStarted() {
+                        engineReady = true;
+                    }
+
+                    @Override
+                    public void pollingStopped() {
+                        // the engine is no longer polling, so it consumes no further change event, even when it
+                        // completed on its own without reporting a failure
+                        engineReady = false;
+                    }
+                })
                 .notifying(this::onEventListener)
                 .build();
     }
