@@ -327,6 +327,12 @@ final class SchemaHints {
             append("type", ".*/beans", m -> m.message().contains("array expected"),
                     m -> "beans is a list: - name: myBean followed by type: \"#class:com.example.MyBean\" (indented"
                          + " under the -)"),
+            // beans:\n  name: myBean\n  type: ...: the "- " of the list form was forgotten; the map form's first
+            // key happens to be "name", read as a bean property rather than the map key (CAMEL-24704 F1)
+            append("type", ".*/beans/name", m -> m.message().contains("object expected"),
+                    m -> "beans is a list: each bean starts with \"- \": - name: myBean followed by type:"
+                         + " \"#class:com.example.MyBean\" (indented under the -); or a map keyed by the bean name:"
+                         + " myBean: {type: ...}"),
             append("type", ".*/(steps|when|get|post|exception|doCatch)", m -> m.message().contains("array expected"),
                     m -> m.name() + " is a list: each item starts with \"- \""),
             append("type", null, m -> m.message().contains("array expected"),
@@ -355,8 +361,9 @@ final class SchemaHints {
             append("required", ".*/route/from", m -> m.message().contains("required property 'steps' not found"),
                     m -> "steps: is a property of from:, next to uri:; a steps: written at the route level must be"
                          + " indented under from:"),
-            // - id: myBean / class: ... : the bean properties are name and type
-            unknownProperty("/\\d+/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
+            // - id: myBean / class: ... , or myBean: {class: ...} in the map form: the bean properties are name
+            // and type (CAMEL-24704 F3: the map form's item is keyed by name, not by an index)
+            unknownProperty("/\\d+/beans/[^/]+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
                     m -> "a bean is - name: myBean followed by type: \"#class:com.example.MyBean\" (name instead of "
                          + m.unknown() + (m.unknown().equals("class") ? ", type instead of class" : "") + ")"),
             // - myBean: {type: ...} instead of - name: myBean / type: ...

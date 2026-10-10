@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,25 +56,85 @@ final class BeanRefChecks {
 
     static final Pattern BEAN_TYPE_PATTERN = Pattern.compile("^\\s*type:\\s*[\"']?#class:([\\w.$]+)");
 
-    /** The beans declared under {@code beans:} with a {@code #class:} type, name to fully qualified class name. */
+    /** A bean written as a map: the name alone as the key, its properties indented below (CAMEL-24704). */
+    static final Pattern MAP_KEY_PATTERN = Pattern.compile("^(\"[^\"]+\"|'[^']+'|[^\\s:#\"'][^:#]*?):\\s*$");
+
+    /**
+     * The beans declared under {@code beans:} with a {@code #class:} type, name to fully qualified class name: the
+     * canonical list ({@code - name: x}) and, since CAMEL-24704, a map keyed by bean name.
+     */
     static Map<String, String> declaredBeanTypes(String content) {
         Map<String, String> types = new LinkedHashMap<>();
-        if (content == null) {
-            return types;
-        }
-        String last = null;
-        for (String line : content.split("\n", -1)) {
-            Matcher nm = BEAN_NAME_PATTERN.matcher(line);
-            if (nm.find()) {
-                last = unquote(nm.group(1));
-                continue;
+        String[] last = new String[1];
+        scanBeansBlocks(content, (line, name) -> {
+            if (name != null) {
+                last[0] = name;
+                return;
             }
             Matcher tm = BEAN_TYPE_PATTERN.matcher(line);
-            if (tm.find() && last != null) {
-                types.put(last, tm.group(1));
+            if (tm.find() && last[0] != null) {
+                types.put(last[0], tm.group(1));
             }
-        }
+        }, () -> last[0] = null);
         return types;
+    }
+
+    /**
+     * Walks the lines of every {@code beans:} block (the canonical list, {@code - name: x}, and, since CAMEL-24704, a
+     * map keyed by bean name), calling {@code onLine} with the raw line and the bean name it starts (null when the line
+     * does not start one), and {@code onBlockEnd} whenever a block closes (including once at the end of the content, if
+     * a block is still open when it ends) so a caller tracking "the last bean seen" can reset it there: a type: line
+     * outside any bean, or in a later, unrelated block, must never be attributed to a name from a previous block.
+     */
+    private static void scanBeansBlocks(String content, BiConsumer<String, String> onLine, Runnable onBlockEnd) {
+        if (content == null) {
+            return;
+        }
+        String[] lines = content.split("\n", -1);
+        int blockIndent = -1;
+        int childIndent = -1;
+        for (String line : lines) {
+            if (line.isBlank()) {
+                continue;
+            }
+            String trimmed = line.trim();
+            int indent = countLeadingSpaces(line);
+            if (blockIndent >= 0 && indent <= blockIndent) {
+                blockIndent = -1;
+                childIndent = -1;
+                onBlockEnd.run();
+            }
+            if (blockIndent < 0) {
+                if (trimmed.equals("- beans:") || trimmed.equals("beans:")) {
+                    blockIndent = indent;
+                    childIndent = -1;
+                }
+                continue;
+            }
+            if (trimmed.startsWith("#")) {
+                continue;
+            }
+            if (childIndent < 0) {
+                childIndent = indent;
+            }
+            String name = null;
+            if (indent == childIndent && !trimmed.startsWith("-")) {
+                Matcher km = MAP_KEY_PATTERN.matcher(trimmed);
+                if (km.find()) {
+                    name = unquote(km.group(1));
+                }
+            }
+            if (name == null) {
+                Matcher m = BEAN_NAME_PATTERN.matcher(line);
+                if (m.find()) {
+                    name = unquote(m.group(1));
+                }
+            }
+            onLine.accept(line, name);
+        }
+        if (blockIndent >= 0) {
+            onBlockEnd.run();
+        }
     }
 
     private static final Map<CamelCatalog, Map<String, String>> REQUIRED_TYPES_BY_CATALOG
@@ -127,34 +188,18 @@ final class BeanRefChecks {
         });
     }
 
-    /** The bean names declared under {@code beans:} in the YAML content. */
+    /**
+     * The bean names declared under {@code beans:} in the YAML content: the canonical list ({@code - name: x}) and,
+     * since CAMEL-24704, a map keyed by bean name.
+     */
     public static Set<String> declaredBeans(String content) {
         Set<String> names = new HashSet<>();
-        if (content == null) {
-            return names;
-        }
-        String[] lines = content.split("\n", -1);
-        int blockIndent = -1;
-        for (String line : lines) {
-            if (line.isBlank()) {
-                continue;
+        scanBeansBlocks(content, (line, name) -> {
+            if (name != null) {
+                names.add(name);
             }
-            String trimmed = line.trim();
-            int indent = countLeadingSpaces(line);
-            if (blockIndent >= 0 && indent <= blockIndent) {
-                blockIndent = -1;
-            }
-            if (blockIndent < 0) {
-                if (trimmed.equals("- beans:") || trimmed.equals("beans:")) {
-                    blockIndent = indent;
-                }
-                continue;
-            }
-            Matcher m = BEAN_NAME_PATTERN.matcher(line);
-            if (m.find()) {
-                names.add(unquote(m.group(1)));
-            }
-        }
+        }, () -> {
+        });
         return names;
     }
 

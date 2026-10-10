@@ -2430,6 +2430,14 @@ becomes:
             uri: log:result
 ----
 
+=== camel-yaml-dsl - the schema accepts beans written as a map
+
+The JSON schema `camelYamlDsl.json` now describes `beans` (at the top level, in `routeTemplate` and in
+`templatedRoute`) as `oneOf` a list or a map keyed by the bean name, with the new definition
+`org.apache.camel.model.BeanFactoryDefinitionByName` for the map values. Tools that read the schema
+(such as editors) and expect `beans` to be `type: array` need to handle both. The canonical schema
+`camelYamlDsl-canonical.json` is unchanged.
+
 === camel-mail
 
 `MimeMultipartDataFormat` now uses `MailHeaderFilterStrategy` instead of a plain
