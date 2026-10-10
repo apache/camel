@@ -200,6 +200,8 @@ final class XmlChecks {
     static List<String> literalBraceNotes(String content) {
         List<String> notes = new ArrayList<>();
         if (content == null || content.isBlank() || content.contains("expand-text")) {
+            // coarse on purpose: a stylesheet that mentions expand-text uses XSLT 3.0 text value templates somewhere,
+            // and telling per element would need the inherited xsl:expand-text of every ancestor
             return notes;
         }
         org.w3c.dom.Document doc;
