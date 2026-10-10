@@ -6,6 +6,9 @@ models through Ollama, so nothing has to leave your machine (see xref:camel-jban
 
 See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages.
 
+TIP: Not sure whether you want the AI panel, a coding agent or an MCP server? See
+xref:camel-jbang-tui-ai-ways.adoc[Camel TUI Ways to Use AI] for the options side by side.
+
 == Key Features
 
 * <<_choosing_an_ai_provider,*Any provider*>> -- a hosted model or a local one through Ollama or an OpenAI-compatible server

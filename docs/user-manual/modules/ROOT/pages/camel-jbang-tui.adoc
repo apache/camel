@@ -95,7 +95,8 @@ and Routes shows the route count.
 
 Two panels can be opened on top of any tab: *F6* opens an xref:camel-jbang-tui-settings.adoc#_embedded_shell_f6[embedded shell]
 for running `camel` commands, and *F8* opens the xref:camel-jbang-tui-ai.adoc[AI panel] for asking
-questions about the running integrations.
+questions about the running integrations. The panel is one of several ways to use AI with the TUI; see
+xref:camel-jbang-tui-ai-ways.adoc[Ways to Use AI] for how they compare.
 
 == More about the TUI
 
@@ -110,6 +111,8 @@ fix with AI, completion, quick documentation, navigation, live run data
 | xref:camel-jbang-tui-diagram.adoc[Diagram] | The architecture, topology and route views, external endpoints, metrics
 | xref:camel-jbang-tui-observe.adoc[Observing Integrations] | Activity, message history, errors, spans, process, HTTP
 probe, CVE audit, Kafka, SQL, memory leaks, JFR, catalog
+| xref:camel-jbang-tui-ai-ways.adoc[Ways to Use AI] | The AI panel, a coding agent over ACP, your agent over MCP, and
+`camel mcp`, side by side with a diagram
 | xref:camel-jbang-tui-ai.adoc[AI Panel] | AI providers, slash commands, project overview, AI log
 | xref:camel-jbang-tui-local-models.adoc[Local Models] | Ollama and OpenAI-compatible servers, the tool set for local
 models, what a question costs, the Ollama tab

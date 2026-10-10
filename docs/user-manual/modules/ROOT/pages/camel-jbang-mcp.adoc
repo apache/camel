@@ -13,6 +13,9 @@ Camel applications — without you having to copy-paste anything.
 Built on https://quarkus.io/[Quarkus] with the
 https://docs.quarkiverse.io/quarkus-mcp-server/dev/index.html[quarkus-mcp-server] extension.
 
+The Camel TUI has an MCP server of its own, `camel tui --mcp`, that also lets an agent see and drive the TUI screen;
+see xref:camel-jbang-tui-ai-ways.adoc[Camel TUI Ways to Use AI] for how the two compare.
+
 == Getting Started
 
 The quickest way to get started:
