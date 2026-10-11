@@ -17,12 +17,15 @@
 package org.apache.camel.component.file.remote.mina.sftp;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,6 +52,45 @@ public class SftpProducerWithCharsetIT extends SftpServerTestSupport {
 
         String storedPayload = FileUtils.readFileToString(file, SAMPLE_FILE_CHARSET);
         assertEquals(SAMPLE_FILE_PAYLOAD, storedPayload);
+    }
+
+    @Test
+    public void testProducerWithCharsetInRoute() throws Exception {
+        // the exchange comes from another endpoint, so it does not carry the charset of the sftp endpoint
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").to(getSftpUri());
+            }
+        });
+
+        template.sendBodyAndHeader("direct:start", SAMPLE_FILE_PAYLOAD, Exchange.FILE_NAME, SAMPLE_FILE_NAME);
+
+        File file = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME);
+        assertTrue(file.exists(), "The uploaded file should exist");
+
+        String storedPayload = FileUtils.readFileToString(file, SAMPLE_FILE_CHARSET);
+        assertEquals(SAMPLE_FILE_PAYLOAD, storedPayload, "The file must be written in the charset of the endpoint");
+    }
+
+    @Test
+    public void testProducerWithCharsetReencodesBytesBody() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:bytes").to(getSftpUri());
+            }
+        });
+
+        // a body that is not a String is read in the charset of the exchange (UTF-8 here) and written in the charset
+        // of the endpoint, as camel-sftp does: the stored bytes differ from the bytes of the body
+        byte[] utf8 = SAMPLE_FILE_PAYLOAD.getBytes(StandardCharsets.UTF_8);
+        template.sendBodyAndHeader("direct:bytes", utf8, Exchange.FILE_NAME, SAMPLE_FILE_NAME);
+
+        File file = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME);
+        assertTrue(file.exists(), "The uploaded file should exist");
+
+        assertArrayEquals(SAMPLE_FILE_PAYLOAD.getBytes(SAMPLE_FILE_CHARSET), FileUtils.readFileToByteArray(file));
     }
 
     private String getSftpUri() {
