@@ -19,15 +19,17 @@
     customId: true
     id: myConfig
     onException:
-      - exception:
-          - java.lang.Exception
-        handled:
-          constant:
-            expression: "true"
-        steps:
-          - to:
-              uri: mock:error
+      - onException:
+          exception:
+            - java.lang.Exception
+          handled:
+            constant:
+              expression: "true"
+          steps:
+            - to:
+                uri: mock:error
     intercept:
-      - steps:
-          - log:
-              message: intercepted
+      - intercept:
+          steps:
+            - log:
+                message: intercepted
