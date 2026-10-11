@@ -171,6 +171,8 @@ IMPORTANT: The delete operation is only performed if the Exchange is successfull
 
 NOTE: When `deleteAfterRead` is set to `false` (the default), the same blobs will be retrieved repeatedly in subsequent polls. In this case, you should use the Idempotent Consumer EIP to filter out duplicates based on the `CamelAzureStorageBlobBlobName` header.
 
+NOTE: A blob is not retrieved again while the exchange of a previous poll is still processing it, for example when the route continues asynchronously (such as `to("seda:...")`). It is retrieved again by a later poll once that exchange is done, unless it was deleted or moved. A blob that was deleted (for example by another consumer) between the listing and its download is skipped.
+
 === Move After Read
 
 The consumer can move blobs to a different container after successful processing. This is useful for archiving processed blobs or implementing a processing pipeline across containers.

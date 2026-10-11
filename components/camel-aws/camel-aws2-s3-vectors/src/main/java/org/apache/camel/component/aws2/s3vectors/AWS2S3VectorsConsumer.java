@@ -17,11 +17,11 @@
 package org.apache.camel.component.aws2.s3vectors;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -47,7 +47,10 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3VectorsConsumer.class);
 
-    private final Set<String> processedVectorIds = new HashSet<>();
+    // vectors already consumed (without deleteAfterRead) or whose exchanges are being processed (with
+    // deleteAfterRead), which a later poll must not consume again. It is updated from the threads that complete the
+    // exchanges, so it must be thread-safe.
+    private final Set<String> processedVectorIds = ConcurrentHashMap.newKeySet();
 
     public AWS2S3VectorsConsumer(AWS2S3VectorsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -103,8 +106,8 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
                 for (QueryOutputVector vector : vectors) {
                     String vectorId = vector.key();
 
-                    // Skip if already processed (to avoid duplicates in subsequent polls)
-                    if (processedVectorIds.contains(vectorId)) {
+                    // Skip if already processed or still in flight (to avoid duplicates in subsequent polls)
+                    if (vectorId != null && !processedVectorIds.add(vectorId)) {
                         LOG.trace("Skipping already processed vector [{}]", vectorId);
                         continue;
                     }
@@ -123,15 +126,16 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
 
                     // Add delete callback if deleteAfterRead is enabled
                     if (getConfiguration().isDeleteAfterRead()) {
+                        // the vector is tracked only while its exchange is in flight, as a deleted vector cannot be
+                        // returned again, and one that failed must be retried on a subsequent poll
                         exchange.getExchangeExtension().addOnCompletion(
                                 new VectorDeleteSynchronization(
                                         getS3VectorsClient(), vectorBucketName, vectorIndexName,
                                         vectorId));
                     } else {
-                        // Track for de-duplication only when we are not deleting (a deleted vector cannot be
-                        // returned again). Mark it now to avoid re-delivering it on overlapping polls, but drop it
-                        // again if the exchange fails so it can be retried on a subsequent poll.
-                        processedVectorIds.add(vectorId);
+                        // Track for de-duplication when we are not deleting, to avoid re-delivering the vector on
+                        // later polls, but drop it again if the exchange fails so it can be retried on a subsequent
+                        // poll.
                         exchange.getExchangeExtension().addOnCompletion(new VectorDedupSynchronization(vectorId));
                     }
 
@@ -168,6 +172,13 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, cb);
         }
+        // the remaining exchanges are not processed as the consumer is stopping, so a later poll must consume their
+        // vectors again
+        for (Object exchange : exchanges) {
+            releaseVector(((Exchange) exchange).getIn().getHeader(AWS2S3VectorsConstants.VECTOR_ID, String.class));
+            releaseExchange((Exchange) exchange, false);
+        }
+        exchanges.clear();
 
         return total;
     }
@@ -238,10 +249,17 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
         return result;
     }
 
+    private void releaseVector(String vectorId) {
+        if (vectorId != null) {
+            processedVectorIds.remove(vectorId);
+        }
+    }
+
     /**
-     * Synchronization callback to delete a vector after successful processing
+     * Synchronization callback to delete a vector after successful processing. The vector is no longer in flight once
+     * its exchange is done, whether it was deleted or failed.
      */
-    private static class VectorDeleteSynchronization extends SynchronizationAdapter {
+    private class VectorDeleteSynchronization extends SynchronizationAdapter {
 
         private final S3VectorsClient client;
         private final String vectorBucketName;
@@ -275,12 +293,15 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
                 LOG.debug("Deleted vector [{}] after successful processing", vectorId);
             } catch (Exception e) {
                 LOG.warn("Error deleting vector [{}] after processing: {}", vectorId, e.getMessage(), e);
+            } finally {
+                releaseVector(vectorId);
             }
         }
 
         @Override
         public void onFailure(Exchange exchange) {
             LOG.trace("Exchange failed, not deleting vector [{}]", vectorId);
+            releaseVector(vectorId);
         }
     }
 
@@ -298,7 +319,7 @@ public class AWS2S3VectorsConsumer extends ScheduledBatchPollingConsumer {
 
         @Override
         public void onFailure(Exchange exchange) {
-            processedVectorIds.remove(vectorId);
+            releaseVector(vectorId);
         }
     }
 }
