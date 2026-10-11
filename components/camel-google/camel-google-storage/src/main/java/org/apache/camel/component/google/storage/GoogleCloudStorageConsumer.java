@@ -57,6 +57,9 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
     private final Language language;
     // objects whose exchanges are being processed, which a later poll must not consume again
     private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
+    // the objects that were in progress when the current poll started, before it listed or got the objects. Only the
+    // thread that polls reads and writes it.
+    private Set<String> inProgressAtPollStart = Set.of();
 
     public GoogleCloudStorageConsumer(GoogleCloudStorageEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -93,6 +96,11 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         String bucketName = getConfiguration().getBucketName();
         Queue<Exchange> exchanges;
         String filter = getConfiguration().getFilter();
+
+        // taken before the objects are listed (or got): an object that is in flight now can complete, and be deleted
+        // and released, after it was listed and before createExchanges looks at it, and must then not be consumed
+        // again from the stale listing
+        inProgressAtPollStart = Set.copyOf(inProgress);
 
         if (fileName != null) {
             LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
@@ -182,8 +190,8 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private void addExchange(Blob blob, String key, Queue<Exchange> answer) {
-        // skip the object if an exchange of a previous poll is still processing it
-        if (!inProgress.add(key)) {
+        // skip the object if an exchange of a previous poll is still processing it, or was when this poll started
+        if (inProgressAtPollStart.contains(key) || !inProgress.add(key)) {
             LOG.trace("Skipping object {} as it is already in progress", key);
             return;
         }
@@ -206,8 +214,11 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private void releaseInProgress(Queue<?> notProcessed) {
-        for (Object exchange : notProcessed) {
-            inProgress.remove(((Exchange) exchange).getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class));
+        for (Object notRouted : notProcessed) {
+            Exchange exchange = (Exchange) notRouted;
+            inProgress.remove(exchange.getIn().getHeader(GoogleCloudStorageConstants.OBJECT_NAME, String.class));
+            // the exchange is never routed, so nothing else releases it to the exchange factory
+            releaseExchange(exchange, false);
         }
     }
 
@@ -355,6 +366,18 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         }
 
         Exchange exchange = createExchange(true);
+        try {
+            populateExchange(exchange, pattern, blob, key);
+        } catch (RuntimeException e) {
+            // the object is not consumed (its name is rejected as a local path, or its download failed, for example
+            // as it no longer exists), so the exchange created for it is not routed either
+            releaseExchange(exchange, false);
+            throw e;
+        }
+        return exchange;
+    }
+
+    private void populateExchange(Exchange exchange, ExchangePattern pattern, Blob blob, String key) {
         exchange.setPattern(pattern);
         Message message = exchange.getIn();
 
@@ -362,14 +385,8 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
             // download as file
             if (getConfiguration().getDownloadFileName() != null) {
                 // create a dummy exchange as Exchange is needed for expression evaluation
-                String result;
-                try {
-                    result = evaluateFileExpression(exchange, getConfiguration().getDownloadFileName(), blob.getName());
-                } catch (IllegalArgumentException e) {
-                    // the object is not consumed, so the exchange created for it is not routed either
-                    releaseExchange(exchange, false);
-                    throw e;
-                }
+                String result
+                        = evaluateFileExpression(exchange, getConfiguration().getDownloadFileName(), blob.getName());
                 if (result != null) {
                     File file = new File(result);
                     blob.downloadTo(file.toPath());
@@ -414,8 +431,6 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         message.setHeader(GoogleCloudStorageConstants.METADATA_STORAGE_CLASS, blob.getStorageClass());
         message.setHeader(GoogleCloudStorageConstants.METADATA_CREATE_TIME, blob.getCreateTime());
         message.setHeader(GoogleCloudStorageConstants.METADATA_LAST_UPDATE, new Date(blob.getUpdateTime()));
-
-        return exchange;
     }
 
     protected String evaluateFileExpression(Exchange exchange, String downloadFileName, String blogName) {
