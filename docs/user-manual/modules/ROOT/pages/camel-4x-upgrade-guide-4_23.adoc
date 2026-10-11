@@ -1163,6 +1163,15 @@ the message body as if the route had succeeded, which usually echoed the request
 body now replies with an empty (`null`) body instead of not replying, so the
 sender no longer waits until its reply timeout (30 seconds by default).
 
+=== camel-slack - the consumer reads every new message
+
+When more messages than `maxResults` (default 10) were posted to the channel since the previous poll, the consumer
+routed only the most recent `maxResults` of them and skipped the older ones. It now reads the following pages of the
+conversation history in the same poll, so a poll can route more than `maxResults` messages, with one request per
+`maxResults` messages. For a busy channel, raise `maxResults` to keep the number of requests within the Slack rate
+limits. If the request for a following page fails (for example rate limited), the consumer routes the most recent
+messages it has already read, as before, and logs a WARN that the older messages of that poll were skipped.
+
 === camel-rocketmq - a message whose route failed is consumed again
 
 The consumer acknowledged a message (`CONSUME_SUCCESS`) whenever the processor returned, also when the route failed:
