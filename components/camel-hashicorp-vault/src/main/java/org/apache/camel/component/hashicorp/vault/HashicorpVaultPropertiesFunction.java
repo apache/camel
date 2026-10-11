@@ -62,7 +62,8 @@ import org.springframework.vault.support.VaultResponse;
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
  * Properties Function are all prefixed with <tt>hashicorp:</tt>. For example asking for
  * <tt>hashicorp:engine:token</tt>, will return the secret value associated to the secret named token on Hashicorp Vault
- * instance on the engine 'engine'.
+ * instance on the engine 'engine'. When no engine is given, such as <tt>hashicorp:token</tt>, the 'secret' engine is
+ * used.
  *
  * Another way of retrieving a secret value is using the following notation <tt>hashicorp:engine:database/username</tt>:
  * in this case the field username of the secret database will be returned. As a fallback, the user could provide a
@@ -87,12 +88,12 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
             = "CAMEL_HASHICORP_VAULT_CLOUD";
     private static final String CAMEL_HASHICORP_VAULT_NAMESPACE_ENV
             = "CAMEL_HASHICORP_VAULT_NAMESPACE";
+    private static final String DEFAULT_ENGINE = "secret";
     private CamelContext camelContext;
     private VaultTemplate client;
     private final Set<String> secrets = ConcurrentHashMap.newKeySet();
     private final Map<String, Integer> secretVersions = new ConcurrentHashMap<>();
 
-    private String engine;
     private String namespace;
     private boolean cloud;
 
@@ -159,6 +160,8 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
 
     @Override
     public String apply(String remainder) {
+        // the function is shared by all lookups (also concurrent ones), so the parsed parts must be local
+        String engine = DEFAULT_ENGINE;
         String key = remainder;
         String subkey = null;
         String returnValue = null;
@@ -166,8 +169,12 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         String version = null;
         if (remainder.contains("#")) {
             String keyRemainder = StringHelper.before(remainder, "#");
-            engine = StringHelper.before(keyRemainder, ":");
-            key = StringHelper.after(keyRemainder, ":");
+            if (keyRemainder.contains(":")) {
+                engine = StringHelper.before(keyRemainder, ":");
+                key = StringHelper.after(keyRemainder, ":");
+            } else {
+                key = keyRemainder;
+            }
             subkey = StringHelper.after(remainder, "#");
             defaultValue = StringHelper.after(subkey, ":");
             if (ObjectHelper.isNotEmpty(defaultValue)) {
@@ -207,11 +214,14 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                     key = StringHelper.before(key, "@");
                 }
             }
+        } else if (remainder.contains("@")) {
+            version = StringHelper.after(remainder, "@");
+            key = StringHelper.before(remainder, "@");
         }
 
         if (key != null) {
             try {
-                returnValue = getSecretFromSource(key, subkey, defaultValue, version);
+                returnValue = getSecretFromSource(engine, key, subkey, defaultValue, version);
             } catch (Exception e) {
                 throw new RuntimeCamelException(
                         "Error getting secret from vault using key: " + key + " due to: " + e.getMessage(), e);
@@ -221,7 +231,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         return returnValue;
     }
 
-    private String getSecretFromSource(String key, String subkey, String defaultValue, String version) {
+    private String getSecretFromSource(String engine, String key, String subkey, String defaultValue, String version) {
         // capture name of secret in the form the refresh task reads the metadata of
         String secretName = trackedSecretName(engine, key);
         secrets.add(secretName);
@@ -247,11 +257,14 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                 }
             }
             if (ObjectHelper.isNotEmpty(subkey)) {
-                Object field = ((Map) rawSecret.getData().get("data")).get(subkey);
-                if (ObjectHelper.isNotEmpty(field)) {
-                    returnValue = field.toString();
-                } else {
-                    returnValue = null;
+                returnValue = null;
+                // the secret may not exist, then there is no field either
+                if (rawSecret != null && rawSecret.getData() != null
+                        && rawSecret.getData().get("data") instanceof Map<?, ?> data) {
+                    Object field = data.get(subkey);
+                    if (ObjectHelper.isNotEmpty(field)) {
+                        returnValue = field.toString();
+                    }
                 }
             }
             if (ObjectHelper.isEmpty(returnValue)) {

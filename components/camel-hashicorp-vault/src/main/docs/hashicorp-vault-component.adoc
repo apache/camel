@@ -363,6 +363,10 @@ YAML::
 
 Where route will be the name of the secret stored in the HashiCorp Vault instance, in the 'secret' engine.
 
+NOTE: The engine is the part before the first `:`. When the property has no engine, such as `{{hashicorp:route}}`
+or `{{hashicorp:database#username}}`, the secret is read from the 'secret' engine. A default value always needs the
+engine, as in `{{hashicorp:secret:route:default}}`: in `{{hashicorp:route:default}}` the engine would be `route`.
+
 You could specify a default value in case the secret is not present on HashiCorp Vault instance:
 
 [tabs]
@@ -540,7 +544,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .to("{{hashicorp:route:default@2}}");
+    .to("{{hashicorp:secret:route:default@2}}");
 ----
 
 XML::
@@ -550,7 +554,7 @@ XML::
 <camelContext>
     <route>
         <from uri="direct:start"/>
-        <to uri="{{hashicorp:route:default@2}}"/>
+        <to uri="{{hashicorp:secret:route:default@2}}"/>
     </route>
 </camelContext>
 ----
@@ -564,7 +568,7 @@ YAML::
       uri: direct:start
       steps:
         - to:
-            uri: "{{hashicorp:route:default@2}}"
+            uri: "{{hashicorp:secret:route:default@2}}"
 ----
 ====
 
