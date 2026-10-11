@@ -564,6 +564,16 @@ An existing route that was created from the same template is still replaced, as 
 Kamelet endpoint with a route id is created again when its parent route is updated (for example by a route reload),
 and how a route from a template is updated with other parameters.
 
+=== camel-atom - sortEntries routes the oldest entry first (Breaking change)
+
+With `sortEntries=true` the `atom` consumer routed the entries of a feed from the newest to the oldest one. With the
+default idempotent strategy (which skips an entry that is older than the one routed before it) only the newest entry
+of a feed was routed, and the other entries were skipped. The entries are now routed from the oldest to the newest
+one, as camel-rss does and as Camel 3.x did, so entries are no longer skipped because of the routing order.
+
+Routes using `sortEntries=true` with `idempotent=false` now get the entries in the reverse order: the oldest entry
+first, where the newest entry was routed first before.
+
 === camel-aws2-ddb
 
 The `aws2-ddb:application-json` data type transformer no longer overwrites a `CamelAwsDdbReturnValues` header that

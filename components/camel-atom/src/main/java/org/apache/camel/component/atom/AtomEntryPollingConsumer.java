@@ -17,6 +17,8 @@
 package org.apache.camel.component.atom;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.apptasticsoftware.rssreader.Item;
@@ -67,6 +69,12 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer<Item> {
         if (items == null) {
             items = AtomUtils.readItems(getEndpoint().getCamelContext(), getEndpoint().getFeedUri(), rssReader,
                     getEndpoint().isSortEntries());
+            if (getEndpoint().isSortEntries()) {
+                // sorted entries have the oldest entry first, but the entries are routed from the end of the list
+                // (without sortEntries the newest entry is first): reverse them, so the oldest entry is routed first
+                items = new ArrayList<>(items);
+                Collections.reverse(items);
+            }
             list = items;
             entryIndex = list.size() - 1;
         }
