@@ -180,6 +180,23 @@ class HashicorpVaultReloadTriggerTaskTest extends CamelTestSupport {
     }
 
     @Test
+    void secretWithoutEngineIsTrackedAsDefaultEngine() {
+        // a fresh function has no engine yet, so a plain hashicorp:api lookup runs with a null engine
+        HashicorpVaultPropertiesFunction function = new HashicorpVaultPropertiesFunction();
+        function.setCamelContext(context);
+        function.start();
+        try {
+            function.apply("api");
+
+            // tracked like a secret of the default secret engine, which is how the refresh task reads a name
+            // without engine, and not as "null:api"
+            assertEquals(Set.of("api"), function.getSecrets());
+        } finally {
+            function.stop();
+        }
+    }
+
+    @Test
     void unchangedSecretDoesNotTriggerReload() {
         VERSIONS.put("kv/db", 1);
         VERSIONS.put("secret/api", 3);

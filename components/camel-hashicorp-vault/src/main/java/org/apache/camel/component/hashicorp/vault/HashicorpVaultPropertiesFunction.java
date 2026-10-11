@@ -28,6 +28,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.HashicorpVaultConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.vault.authentication.TokenAuthentication;
 import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
@@ -71,6 +73,8 @@ import org.springframework.vault.support.VaultResponse;
 
 @org.apache.camel.spi.annotations.PropertiesFunction("hashicorp")
 public class HashicorpVaultPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultPropertiesFunction.class);
 
     private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN";
     private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST";
@@ -264,10 +268,11 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
 
     /**
      * The name of a secret as the refresh task tracks it: engine:secret, or only the secret for the default secret
-     * engine
+     * engine. A lookup without engine is tracked as a secret of the default secret engine, which is also how the
+     * refresh task reads a name without engine.
      */
     private static String trackedSecretName(String secretEngine, String key) {
-        return "secret".equals(secretEngine) ? key : secretEngine + ":" + key;
+        return secretEngine == null || "secret".equals(secretEngine) ? key : secretEngine + ":" + key;
     }
 
     private void captureVersion(String secretName, VaultResponse rawSecret) {
@@ -275,7 +280,8 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
             try {
                 secretVersions.put(secretName, Integer.valueOf(metadata.get("version").toString()));
             } catch (NumberFormatException e) {
-                // ignore, the refresh task then uses the version it reads first
+                LOG.debug("Could not parse secret version for {}: {}", secretName, metadata.get("version"), e);
+                // the refresh task then uses the version it reads first
             }
         }
     }
@@ -300,6 +306,9 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     /**
      * The version of the secret (named as in {@link #getSecrets()}) that was last resolved, or null if not known (such
      * as when a specific version was requested).
+     *
+     * @param  secretName the name of the secret, as engine:secret, or only the secret for the default secret engine
+     * @return            the version of the secret that was last resolved, or null if not known
      */
     public Integer getSecretVersion(String secretName) {
         return secretVersions.get(secretName);
