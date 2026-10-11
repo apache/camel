@@ -91,6 +91,26 @@ public class MainHttpServerFactoryTest {
     }
 
     @Test
+    void shouldOverrideServerPropertiesWithJvmSystemProperties() {
+        Properties prop = new Properties();
+        prop.put("camel.server.host", "localhost");
+        prop.put("camel.server.path", "/api");
+        context.getPropertiesComponent().setInitialProperties(prop);
+
+        System.setProperty("camel.server.host", "127.0.0.1");
+        try {
+            MainHttpServerFactory.setupHttpServer(context, false);
+        } finally {
+            System.clearProperty("camel.server.host");
+        }
+
+        MainHttpServer server = context.hasService(MainHttpServer.class);
+        assertNotNull(server);
+        assertEquals("127.0.0.1", server.getHost());
+        assertEquals("/api", server.getPath());
+    }
+
+    @Test
     void shouldNotStartServerWhenSilent() {
         Properties prop = new Properties();
         prop.put("camel.server.port", "9090");
