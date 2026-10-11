@@ -71,27 +71,31 @@ public class MainHttpServerFactory {
     }
 
     /**
-     * Binds the camel.server.* properties (application.properties, --properties, initial and override properties and
-     * JVM system properties) on the configuration of the HTTP server that is started implicitly for platform-http, as
-     * camel-main only applies them to the server it starts itself when camel.server.enabled=true.
+     * Binds the camel.server.* properties (application.properties, --properties, initial and override properties, OS
+     * environment variables and JVM system properties) on the configuration of the HTTP server that is started
+     * implicitly for platform-http, as camel-main only applies them to the server it starts itself when
+     * camel.server.enabled=true.
      */
     static void configureHttpServer(CamelContext camelContext, HttpServerConfigurationProperties config) {
         OrderedLocationProperties prop = (OrderedLocationProperties) camelContext.getPropertiesComponent()
                 .loadProperties(name -> startsWithIgnoreCase(name, PREFIX_SERVER), MainHelper::optionKey);
+        // OS environment variables and then JVM system properties override, as in camel-main
+        Properties propENV = MainHelper.loadEnvironmentVariablesAsProperties(new String[] { PREFIX_SERVER });
+        for (String key : propENV.stringPropertyNames()) {
+            prop.put("ENV", MainHelper.optionKey(key), propENV.getProperty(key));
+        }
         Properties propJVM = MainHelper.loadJvmSystemPropertiesAsProperties(new String[] { PREFIX_SERVER });
         for (String key : propJVM.stringPropertyNames()) {
             prop.put("SYS", MainHelper.optionKey(key), propJVM.getProperty(key));
         }
 
+        // all the keys start with camel.server. as every source is filtered on it
         OrderedLocationProperties options = new OrderedLocationProperties();
         for (Object k : prop.keySet()) {
-            String key = k.toString();
-            if (startsWithIgnoreCase(key, PREFIX_SERVER)) {
-                String option = key.substring(PREFIX_SERVER.length());
-                // enabled has no meaning here, as the server is started because platform-http is in use
-                if (!"enabled".equalsIgnoreCase(option)) {
-                    options.put(prop.getLocation(k), option, prop.get(k));
-                }
+            String option = k.toString().substring(PREFIX_SERVER.length());
+            // enabled has no meaning here, as the server is started because platform-http is in use
+            if (!"enabled".equalsIgnoreCase(option)) {
+                options.put(prop.getLocation(k), option, prop.get(k));
             }
         }
         if (!options.isEmpty()) {
