@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.hashicorp.vault;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -28,6 +29,8 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.HashicorpVaultConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.vault.authentication.TokenAuthentication;
 import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
@@ -72,6 +75,8 @@ import org.springframework.vault.support.VaultResponse;
 @org.apache.camel.spi.annotations.PropertiesFunction("hashicorp")
 public class HashicorpVaultPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultPropertiesFunction.class);
+
     private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN";
     private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST";
     private static final String CAMEL_HASHICORP_VAULT_PORT_ENV
@@ -84,7 +89,8 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
             = "CAMEL_HASHICORP_VAULT_NAMESPACE";
     private CamelContext camelContext;
     private VaultTemplate client;
-    private final Set<String> secrets = new HashSet<>();
+    private final Set<String> secrets = ConcurrentHashMap.newKeySet();
+    private final Map<String, Integer> secretVersions = new ConcurrentHashMap<>();
 
     private String engine;
     private String namespace;
@@ -216,8 +222,9 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     }
 
     private String getSecretFromSource(String key, String subkey, String defaultValue, String version) {
-        // capture name of secret
-        secrets.add(key);
+        // capture name of secret in the form the refresh task reads the metadata of
+        String secretName = trackedSecretName(engine, key);
+        secrets.add(secretName);
 
         String returnValue = null;
         try {
@@ -235,6 +242,9 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
             VaultResponse rawSecret = client.read(completePath);
             if (ObjectHelper.isNotEmpty(rawSecret)) {
                 returnValue = rawSecret.getData().get("data").toString();
+                if (ObjectHelper.isEmpty(version)) {
+                    captureVersion(secretName, rawSecret);
+                }
             }
             if (ObjectHelper.isNotEmpty(subkey)) {
                 Object field = ((Map) rawSecret.getData().get("data")).get(subkey);
@@ -257,6 +267,28 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         return returnValue;
     }
 
+    /**
+     * The name of a secret as the refresh task tracks it: engine:secret, or only the secret for the default secret
+     * engine. A lookup without engine is tracked as a secret of the default secret engine, which is also how the
+     * refresh task reads a name without engine.
+     */
+    private static String trackedSecretName(String secretEngine, String key) {
+        return secretEngine == null || "secret".equals(secretEngine) ? key : secretEngine + ":" + key;
+    }
+
+    private void captureVersion(String secretName, VaultResponse rawSecret) {
+        if (rawSecret.getData().get("metadata") instanceof Map<?, ?> metadata && metadata.get("version") != null) {
+            try {
+                // keep the oldest version resolved: a value resolved earlier may still be in use, so the refresh
+                // task must compare with that one (at worst one extra reload)
+                secretVersions.merge(secretName, Integer.valueOf(metadata.get("version").toString()), Math::min);
+            } catch (NumberFormatException e) {
+                LOG.debug("Could not parse secret version for {}: {}", secretName, metadata.get("version"), e);
+                // the refresh task then uses the version it reads first
+            }
+        }
+    }
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -268,9 +300,20 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     }
 
     /**
-     * Ids of the secrets in use
+     * Ids of the secrets in use, as engine:secret, or only the secret for the default secret engine
      */
     public Set<String> getSecrets() {
-        return secrets;
+        return Collections.unmodifiableSet(secrets);
+    }
+
+    /**
+     * The oldest version of the secret (named as in {@link #getSecrets()}) that was resolved, or null if not known
+     * (such as when a specific version was requested).
+     *
+     * @param  secretName the name of the secret, as engine:secret, or only the secret for the default secret engine
+     * @return            the oldest version of the secret that was resolved, or null if not known
+     */
+    public Integer getSecretVersion(String secretName) {
+        return secretVersions.get(secretName);
     }
 }
