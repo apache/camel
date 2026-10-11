@@ -18,6 +18,7 @@ package org.apache.camel.component.knative.http;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -48,6 +49,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -331,14 +333,22 @@ public class KnativeHttpConsumer extends DefaultConsumer {
             for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
                 final String key = entry.getKey();
                 final Object value = entry.getValue();
-
-                for (Object it : org.apache.camel.support.ObjectHelper.createIterable(value, null)) {
-                    String headerValue = tc.convertTo(String.class, it);
-                    if (headerValue == null) {
-                        continue;
-                    }
-                    if (!headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
-                        response.putHeader(key, headerValue);
+                if (value instanceof Iterable || value instanceof Object[]) {
+                    // a collection or an object array has one value per element (must not use a delimiter, and allow
+                    // empty values); any other value, also a byte[] or another primitive array, is a single value
+                    final Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(value, null, true);
+                    HttpUtil.applyHeader(headerFilterStrategy, message.getExchange(), it, tc, key, (multiValues, prev) -> {
+                        if (multiValues != null) {
+                            // putHeader replaces the header, so all the values must be given at once
+                            response.putHeader(key, multiValues);
+                        } else if (prev != null) {
+                            response.putHeader(key, prev);
+                        }
+                    });
+                } else if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, message.getExchange())) {
+                    final String str = tc.convertTo(String.class, value);
+                    if (str != null) {
+                        response.putHeader(key, str);
                     }
                 }
             }

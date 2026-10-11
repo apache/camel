@@ -2787,6 +2787,15 @@ Such a consumer answered `204 No Content` to every request, also when the route 
 delivered and did not send it again. A failed exchange now keeps its status (500, or the `CamelHttpResponseCode`
 header the route set) with an empty body, as with `reply=true`. Successful exchanges still get `204 No Content`.
 
+A message header with several values is now sent as one HTTP header per value.
+
+The Knative HTTP producer sent a header whose value is a collection or an object array (as the consumer maps a
+request header that occurs more than once) as one HTTP header with the `toString()` of the value, for example
+`[a, b]`. It now sends one HTTP header per value, as camel-http does. The reply of the consumer sent only the last
+value of such a header and now sends all of them. Every other value is one header: a String is sent as before, also
+when it contains commas, and a `byte[]` is now converted to a String with the type converter (the producer sent its
+`toString()`, such as `[B@1dc9f5ad`, and the reply only its last byte as a number).
+
 === camel-paho
 
 When `automaticReconnect=true` and the MQTT broker reconnects, the consumer now restarts the route

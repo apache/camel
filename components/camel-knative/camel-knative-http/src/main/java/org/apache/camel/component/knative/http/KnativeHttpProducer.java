@@ -17,6 +17,7 @@
 package org.apache.camel.component.knative.http;
 
 import java.net.URI;
+import java.util.Iterator;
 import java.util.Map;
 
 import io.vertx.core.MultiMap;
@@ -34,12 +35,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -102,9 +105,26 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
             headers.add(HttpHeaders.CONTENT_TYPE, contentType);
         }
 
+        final TypeConverter tc = exchange.getContext().getTypeConverter();
         for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                headers.add(entry.getKey(), entry.getValue().toString());
+            final String key = entry.getKey();
+            final Object value = entry.getValue();
+            if (value instanceof Iterable || value instanceof Object[]) {
+                // a collection or an object array has one value per element (must not use a delimiter, and allow
+                // empty values); any other value, also a byte[] or another primitive array, is a single value
+                final Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(value, null, true);
+                HttpUtil.applyHeader(headerFilterStrategy, exchange, it, tc, key, (multiValues, prev) -> {
+                    if (multiValues != null) {
+                        headers.add(key, multiValues);
+                    } else if (prev != null) {
+                        headers.add(key, prev);
+                    }
+                });
+            } else if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                final String str = tc.convertTo(String.class, value);
+                if (str != null) {
+                    headers.add(key, str);
+                }
             }
         }
 
