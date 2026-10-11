@@ -615,6 +615,13 @@ A header that carries a literal `${...}` string is now used as the object key ve
 A configured `keyName` or `bucketName` whose Simple expression resolves to `null` now fails with an
 `IllegalArgumentException` at the producer, instead of passing a `null` key/bucket on to the AWS SDK.
 
+=== camel-aws2-s3 - objects in progress in the consumer
+
+With `fileName` set, the consumer now skips the object while an exchange of an earlier poll is still processing it, as
+it already did when listing the bucket (with `deleteAfterRead=false` it is consumed again once its exchange is done).
+The objects of a poll that a stopping consumer does not process are no longer kept in the `inProgressRepository`, so
+they are consumed when the route is started again.
+
 === camel-aws2-sqs
 
 The `batchSeparator` option (default `,`), which splits a `String` body into the messages of the `sendBatchMessage`
