@@ -19,6 +19,7 @@ package org.apache.camel.component.vertx.http;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -38,6 +39,7 @@ import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -138,7 +140,18 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                     continue;
                 }
 
-                if (!strategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
+                if (headerValue instanceof Iterable || headerValue instanceof Object[]) {
+                    // a collection or an object array has one value per element (must not use a delimiter, and allow
+                    // empty values); any other value, also a byte[] or another primitive array, is a single value
+                    final Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(headerValue, null, true);
+                    HttpUtil.applyHeader(strategy, exchange, it, tc, key, (multiValues, prev) -> {
+                        if (multiValues != null) {
+                            headers.set(key, multiValues);
+                        } else if (prev != null) {
+                            headers.set(key, prev);
+                        }
+                    });
+                } else if (!strategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
                     String str = tc.convertTo(String.class, headerValue);
                     headers.set(key, str);
                 }
