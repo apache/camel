@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -638,6 +639,10 @@ public final class AuthoringTools {
                 result.put("edits", edit.get("edits"));
                 result.put("editedAtLines", edit.get("editedAtLines"));
             }
+        } else if (result.get("repeated") != null) {
+            result.put("message", "The file was not changed: the edit gives the same content as your last attempt,"
+                                  + " refused " + result.getInteger("repeated") + " times now for the same problems."
+                                  + " Change what the errors say; where an error shows the lines to write, copy them.");
         } else {
             result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
                                   + " camel_edit_file again.");
@@ -1093,6 +1098,16 @@ public final class AuthoringTools {
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
                                       + " call camel_write_file again.");
+                int times = refusedAgain(path, content);
+                if (times > 1) {
+                    // the same content again: a model that does not see the problem in its own lines writes them
+                    // again and again, sixteen times in a row in the benchmark; say so, and what to do instead
+                    // (CAMEL-25556)
+                    result.put("repeated", times);
+                    result.put("message", "The file was not written: the content is the same as your last write of"
+                                          + " it, refused " + times + " times now for the same problems. Change what"
+                                          + " the errors say; where an error shows the lines to write, copy them.");
+                }
                 putKameletGuide(result, file, errors);
                 return result;
             }
@@ -1127,6 +1142,7 @@ public final class AuthoringTools {
         } catch (IOException e) {
             throw new ToolExecutionException("Failed to write " + path + ": " + e.getMessage());
         }
+        LAST_REFUSED.remove(path.toAbsolutePath().normalize());
         JsonObject result = new JsonObject();
         result.put("status", exists ? "overwritten" : "created");
         result.put("file", file);
@@ -1178,6 +1194,19 @@ public final class AuthoringTools {
             result.put("message", result.getString("message") + " Note: " + waiting.summary() + " (see notes).");
         }
         return result;
+    }
+
+    /** The content of the last refused write of each file, and how many times in a row it was refused. */
+    private record Refused(String content, int times) {
+    }
+
+    private static final Map<Path, Refused> LAST_REFUSED = new ConcurrentHashMap<>();
+
+    /** How many times in a row this content of the file has been refused, this time included. */
+    static int refusedAgain(Path path, String content) {
+        return LAST_REFUSED.merge(path.toAbsolutePath().normalize(), new Refused(content, 1),
+                (last, now) -> last.content().equals(content) ? new Refused(content, last.times() + 1) : now)
+                .times();
     }
 
     private static final Pattern UNCONSUMED_DIRECT = Pattern.compile("sends to (direct:[^,\\s]+), and no route consumes it");
