@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kamelet;
 
 import org.apache.camel.CamelContext;
@@ -23,6 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -124,6 +125,122 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
                 "Expected retain-first=1 on the first sink endpoint");
         assertEquals(1, secondSink.getRetainFirst(),
                 "Expected retain-first=1 on the second sink endpoint");
+    }
+
+    @Test
+    void testSinkOptionsWithDynamicOutputOnly() throws Exception {
+        try (CamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("dynamic-sink")
+                            .from("kamelet:source")
+                            .toD("log:${header.destination}");
+
+                    from("direct:trigger")
+                            .kamelet("dynamic-sink?sink.block=true");
+                }
+            });
+
+            Exception exception = assertThrows(Exception.class, testContext::start);
+
+            assertTrue(hasIllegalArgumentException(exception),
+                    () -> "Expected an IllegalArgumentException, but got: " + exception);
+
+            assertTrue(
+                    exceptionChainContains(exception,
+                            "sink.* advanced options cannot be applied to dynamic toD endpoints"),
+                    () -> "Expected a clear explanation for dynamic endpoints, but got: " + exception);
+        }
+    }
+
+    @Test
+    void testSinkOptionsWithFixedAndDynamicOutputs() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("mixed-sink")
+                            .from("kamelet:source")
+                            .to("mock:fixed-sink?retain-first=0")
+                            .toD("mock:${header.destination}");
+
+                    from("direct:trigger")
+                            .kamelet("mixed-sink?sink.retain-first=1");
+                }
+            });
+
+            testContext.start();
+
+            RouteDefinition expandedRoute = testContext.getRouteDefinitions().stream()
+                    .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
+                    .filter(route -> route.getOutputs() != null)
+                    .filter(route -> route.getOutputs().stream()
+                            .anyMatch(ToDynamicDefinition.class::isInstance))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Expanded Kamelet route not found"));
+
+            ToDefinition fixedOutput = expandedRoute.getOutputs().stream()
+                    .filter(ToDefinition.class::isInstance)
+                    .map(ToDefinition.class::cast)
+                    .filter(output -> output.getEndpointUri() != null
+                            && output.getEndpointUri().startsWith("mock://fixed-sink"))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Fixed sink output not found"));
+
+            ToDynamicDefinition dynamicOutput = expandedRoute.getOutputs().stream()
+                    .filter(ToDynamicDefinition.class::isInstance)
+                    .map(ToDynamicDefinition.class::cast)
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Dynamic sink output not found"));
+
+            assertTrue(fixedOutput.getEndpointUri().contains("retain-first=1"),
+                    () -> "Expected sink.retain-first=1 on fixed endpoint, but was: "
+                          + fixedOutput.getEndpointUri());
+            assertEquals("mock:${header.destination}", dynamicOutput.getUri(),
+                    "Dynamic endpoint expression should remain unchanged");
+        }
+    }
+
+    @Test
+    void testDynamicOutputWithoutSinkOptions() throws Exception {
+        try (CamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("dynamic-sink")
+                            .from("kamelet:source")
+                            .toD("mock:${header.destination}");
+
+                    from("direct:trigger")
+                            .kamelet("dynamic-sink");
+                }
+            });
+
+            testContext.start();
+
+            MockEndpoint dynamicSink = testContext.getEndpoint("mock:dynamic-sink", MockEndpoint.class);
+            dynamicSink.expectedBodiesReceived("hello");
+
+            testContext.createProducerTemplate().sendBodyAndHeader(
+                    "direct:trigger", "hello", "destination", "dynamic-sink");
+
+            dynamicSink.assertIsSatisfied();
+        }
+    }
+
+    private boolean exceptionChainContains(Throwable exception, String text) {
+        Throwable current = exception;
+        while (current != null) {
+            if (current.getMessage() != null && current.getMessage().contains(text)) {
+                return true;
+            }
+            if (current.getCause() == current) {
+                break;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 
     private boolean hasIllegalArgumentException(Throwable exception) {

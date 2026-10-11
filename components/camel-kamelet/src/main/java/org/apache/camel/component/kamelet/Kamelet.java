@@ -30,6 +30,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
@@ -62,6 +63,17 @@ public final class Kamelet {
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
     private Kamelet() {
+    }
+
+    private static boolean isKameletEndpoint(String uri, String endpoint) {
+        if (uri == null) {
+            return false;
+        }
+
+        return uri.equals("kamelet:" + endpoint)
+                || uri.startsWith("kamelet:" + endpoint + "?")
+                || uri.equals("kamelet://" + endpoint)
+                || uri.startsWith("kamelet://" + endpoint + "?");
     }
 
     public static Predicate<String> startsWith(String prefix) {
@@ -238,8 +250,7 @@ public final class Kamelet {
 
         // Determine Kamelet type: source Kamelets have real component as input,
         // sink/action Kamelets have kamelet:source as input and real component in outputs
-        boolean isSourceKamelet = !def.getInput().getEndpointUri().startsWith("kamelet:source")
-                && !def.getInput().getEndpointUri().startsWith("kamelet://source");
+        boolean isSourceKamelet = !isKameletEndpoint(def.getInput().getEndpointUri(), SOURCE_ID);
 
         if (isSourceKamelet) {
             // Source Kamelet: real component endpoint is the input
@@ -282,6 +293,13 @@ public final class Kamelet {
                     }
                 }
                 if (!hasRealEndpoint) {
+                    Collection<ToDynamicDefinition> dynamicOutputs
+                            = filterTypeInOutputs(def.getOutputs(), ToDynamicDefinition.class);
+                    if (!dynamicOutputs.isEmpty()) {
+                        throw new IllegalArgumentException(
+                                "sink.* advanced options cannot be applied to dynamic toD endpoints. "
+                                                           + "Configure the options in the dynamic endpoint URI instead.");
+                    }
                     throw new IllegalArgumentException(
                             "sink.* advanced options were provided but no real component endpoint found in Kamelet outputs. "
                                                        + "All outputs are kamelet virtual endpoints.");
@@ -290,8 +308,7 @@ public final class Kamelet {
         }
 
         // must make the source and sink endpoints are unique by appending the route id before we create the route from the template
-        if (def.getInput().getEndpointUri().startsWith("kamelet:source")
-                || def.getInput().getEndpointUri().startsWith("kamelet://source")) {
+        if (isKameletEndpoint(def.getInput().getEndpointUri(), SOURCE_ID)) {
             def.getInput().setUri("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid);
         }
 
@@ -312,7 +329,7 @@ public final class Kamelet {
         boolean sink = false;
         Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
         for (ToDefinition to : col) {
-            if (to.getEndpointUri().startsWith("kamelet:sink") || to.getEndpointUri().startsWith("kamelet://sink")) {
+            if (isKameletEndpoint(to.getEndpointUri(), SINK_ID)) {
                 to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
                 sink = true;
             }

@@ -179,6 +179,8 @@ from("direct:start")
     .to("kamelet:my-source/source?source.block=true");
 ----
 
+The `/source` path segment is the route ID within the Kamelet template. Replace `source` with the actual route ID defined in your Kamelet template.
+
 In this example, `source.block=true` passes `block=true` to the source component endpoint. If the endpoint URI already contains the same option, the advanced option overrides its existing value.
 
 ==== Sink and action Kamelets
