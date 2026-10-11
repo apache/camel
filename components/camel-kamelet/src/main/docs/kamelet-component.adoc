@@ -163,6 +163,44 @@ The usage of this Kamelet into a Camel route is going to be the same as any othe
 
 WARNING: beware of any potential circular reference you may introduce when using chain of Kamelets, in which case, the runtime will likely be idle consuming a high amount of resources.
 
+=== Advanced component endpoint options
+
+Kamelets expose a defined set of parameters, but the underlying Camel component may support additional endpoint options. You can pass these options when using a Kamelet by prefixing them with `source.` or `sink.`, depending on the type of Kamelet.
+
+==== Source Kamelets
+
+For source Kamelets, use the `source.` prefix to pass additional options to the underlying source component endpoint. The prefix is removed when the options are applied to the endpoint URI.
+
+For example:
+
+[source,java]
+----
+from("direct:start")
+    .to("kamelet:my-source/source?source.block=true");
+----
+
+In this example, `source.block=true` passes `block=true` to the source component endpoint. If the endpoint URI already contains the same option, the advanced option overrides its existing value.
+
+==== Sink and action Kamelets
+
+For sink and action Kamelets, use the `sink.` prefix to pass additional options to the component endpoints in the Kamelet output route. The prefix is removed when the options are applied to the endpoint URIs.
+
+For example:
+
+[source,java]
+----
+from("direct:start")
+    .to("kamelet:my-sink/sink?sink.retain-first=1");
+----
+
+In this example, `sink.retain-first=1` passes `retain-first=1` to the applicable output component endpoint. The options are applied to all non-Kamelet output endpoints in the Kamelet route, so make sure the supplied options are supported by each affected component.
+
+If the same option already exists on an output endpoint, the advanced option overrides its existing value.
+
+Use `source.` options with source Kamelets and `sink.` options with sink or action Kamelets. Supplying options with the wrong prefix results in an error. Supplying `sink.` options when no non-Kamelet output endpoint is available also results in an error.
+
+When no advanced options are supplied, the Kamelet retains its existing configuration behavior.
+
 == Examples
 
 _Kamelets_ can be used as if they were standard Camel components.

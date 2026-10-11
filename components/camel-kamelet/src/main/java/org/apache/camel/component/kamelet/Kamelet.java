@@ -36,7 +36,9 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -228,6 +230,63 @@ public final class Kamelet {
 
         if (def.getInput() == null) {
             throw new IllegalArgumentException("Camel route " + rid + " input does not exist.");
+        }
+
+        // Extract advanced options for source/sink component endpoints
+        Map<String, Object> sourceOptions = PropertiesHelper.extractProperties(parameters, "source.");
+        Map<String, Object> sinkOptions = PropertiesHelper.extractProperties(parameters, "sink.");
+
+        // Determine Kamelet type: source Kamelets have real component as input,
+        // sink/action Kamelets have kamelet:source as input and real component in outputs
+        boolean isSourceKamelet = !def.getInput().getEndpointUri().startsWith("kamelet:source")
+                && !def.getInput().getEndpointUri().startsWith("kamelet://source");
+
+        if (isSourceKamelet) {
+            // Source Kamelet: real component endpoint is the input
+            if (!sourceOptions.isEmpty()) {
+                try {
+                    String newUri = URISupport.appendParametersToURI(def.getInput().getUri(), sourceOptions);
+                    def.getInput().setUri(newUri);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(
+                            "Failed to apply advanced source options to endpoint URI: " + def.getInput().getUri(), e);
+                }
+            }
+            if (!sinkOptions.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "sink.* advanced options are not valid for source Kamelets (input is '"
+                                                   + def.getInput().getEndpointUri() + "'). Use source.* options instead.");
+            }
+        } else {
+            // Sink/Action Kamelet: real component endpoint(s) are in outputs
+            if (!sourceOptions.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "source.* advanced options are not valid for sink/action Kamelets (input is '"
+                                                   + def.getInput().getEndpointUri() + "'). Use sink.* options instead.");
+            }
+            if (!sinkOptions.isEmpty()) {
+                Collection<ToDefinition> outputs = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
+                boolean hasRealEndpoint = false;
+                for (ToDefinition to : outputs) {
+                    String uri = to.getEndpointUri();
+                    // Apply to all non-kamelet endpoints (real component endpoints)
+                    if (!uri.startsWith("kamelet:")) {
+                        try {
+                            String newUri = URISupport.appendParametersToURI(uri, sinkOptions);
+                            to.setUri(newUri);
+                            hasRealEndpoint = true;
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException(
+                                    "Failed to apply advanced sink options to endpoint URI: " + uri, e);
+                        }
+                    }
+                }
+                if (!hasRealEndpoint) {
+                    throw new IllegalArgumentException(
+                            "sink.* advanced options were provided but no real component endpoint found in Kamelet outputs. "
+                                                       + "All outputs are kamelet virtual endpoints.");
+                }
+            }
         }
 
         // must make the source and sink endpoints are unique by appending the route id before we create the route from the template
