@@ -2642,7 +2642,9 @@ server that reports names navigating above the polled directory, and a `fileName
 The producer wrote a String body in the charset of the exchange (UTF-8 unless the exchange sets another one) and
 ignored the `charset` option of the endpoint, unless the exchange had been created by that endpoint (for example by a
 `ProducerTemplate` sending to it directly). It now writes the file in the configured `charset`, as camel-sftp does. A
-null body with `allowNullBody=true` now writes an empty file instead of failing.
+null body with `allowNullBody=true` now writes an empty file instead of failing. When `charset` is set, non-String
+bodies (such as `byte[]`, `InputStream` or a file) are also read in the charset of the exchange and re-encoded to that
+charset, where their bytes were written as they are before; do not set `charset` for binary payloads.
 
 === camel-salesforce
 
