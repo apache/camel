@@ -28,23 +28,6 @@
           steps:
             - to:
                 uri: mock:error
-    onCompletion:
-      - onCompletion:
-          steps:
-            - log:
-                message: completed
-    interceptSendToEndpoint:
-      - interceptSendToEndpoint:
-          uri: mock*
-          steps:
-            - log:
-                message: intercepted send
-    interceptFrom:
-      - interceptFrom:
-          uri: direct*
-          steps:
-            - log:
-                message: intercepted from
     intercept:
       - intercept:
           steps:
