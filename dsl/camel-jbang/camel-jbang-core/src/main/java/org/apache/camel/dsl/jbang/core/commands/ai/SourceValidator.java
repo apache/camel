@@ -150,6 +150,9 @@ public final class SourceValidator {
                 // a header read where the route keeps the name in an exchange property, or the reverse (CAMEL-25516)
                 msgs = new ArrayList<>(HeaderPropertyMixups.validate(content));
             }
+            // an option at the column of its EIP: the lines to write, which a model copies (the words it does not,
+            // CAMEL-25556)
+            msgs = IndentLines.withLines(msgs, content);
             return KameletChecks.withTemplateHints(name, content, msgs);
         }
         if (name.endsWith(".properties")) {
