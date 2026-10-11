@@ -45,7 +45,8 @@ public class PgEventConsumer extends DefaultConsumer {
     private final PgEventEndpoint endpoint;
     private PGConnection dbConnection;
     private ScheduledExecutorService reconnectPool;
-    private BackgroundTask reconnectTask;
+    // the task of the current (or last) reconnect, set from the thread that reports the lost connection
+    private volatile BackgroundTask reconnectTask;
     private ExecutorService workerPool;
     private boolean shutdownWorkerPool;
 
@@ -69,7 +70,11 @@ public class PgEventConsumer extends DefaultConsumer {
         // used for re-connecting to the database
         reconnectPool = getEndpoint().getCamelContext().getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, "PgEventReconnect");
-        reconnectTask = Tasks.backgroundTask()
+        reconnectTask = null;
+    }
+
+    private BackgroundTask createReconnectTask() {
+        return Tasks.backgroundTask()
                 .withScheduledExecutor(reconnectPool)
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
@@ -102,15 +107,20 @@ public class PgEventConsumer extends DefaultConsumer {
 
         public void reconnect() {
             // only submit the task if not already running
-            if (!reconnectTask.isRunning()) {
-                reconnectTask.run(endpoint.getCamelContext(), () -> {
+            BackgroundTask current = reconnectTask;
+            if (current == null || !current.isRunning()) {
+                // a background task completes only once (running it again does nothing), so every reconnect needs
+                // its own task
+                final BackgroundTask task = createReconnectTask();
+                reconnectTask = task;
+                task.run(endpoint.getCamelContext(), () -> {
                     if (isRunAllowed()) {
-                        LOG.debug("Connecting attempt #{}", reconnectTask.iteration());
+                        LOG.debug("Connecting attempt #{}", task.iteration());
                         try {
                             initConnection();
                         } catch (Exception e) {
                             String message
-                                    = "Failed to connect attempt #" + reconnectTask.iteration() + " due to: " + e.getMessage();
+                                    = "Failed to connect attempt #" + task.iteration() + " due to: " + e.getMessage();
                             getExceptionHandler().handleException(message, e);
                             // make the task runner aware of the exception (will retry)
                             throw new TaskRunFailureException(message, e);
