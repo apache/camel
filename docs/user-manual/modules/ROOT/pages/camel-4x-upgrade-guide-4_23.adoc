@@ -3737,6 +3737,12 @@ When `downloadFileName` is fully dynamic and has no static directory prefix (for
 `downloadFileName=${file:name}`), a relative destination must stay within the working directory. An absolute
 destination that comes from the route's own expression is not confined.
 
+The consumer no longer consumes an object again while an exchange of an earlier poll is still processing it, which
+happened with an asynchronous route (for example `to("seda:...")`), so the next polls now skip such an object (with
+`deleteAfterRead=false` it is consumed again once its exchange is done). An object that no longer exists when its
+content is downloaded (for example deleted by another consumer after the listing) is now skipped instead of failing the
+poll.
+
 === camel-jt400
 
 The endpoint syntax in the component metadata is now `jt400:userID:password@systemName/objectPath`, which is what the
