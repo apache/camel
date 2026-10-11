@@ -108,13 +108,16 @@ class KeycloakConsumerLatestEventsTest extends CamelTestSupport {
         assertEquals(2, poll("admin-events"));
         assertEquals(0, poll("admin-events"), "the admin events of the first poll must not be routed again");
 
+        // a new admin event, and a second one at the same time as the previous latest admin event
         adminEvents.add(0, adminEvent(3000, "DELETE", "users/1"));
-        assertEquals(1, poll("admin-events"));
+        adminEvents.add(1, adminEvent(2000, "CREATE", "users/3"));
+        assertEquals(2, poll("admin-events"));
         assertEquals(0, poll("admin-events"), "the admin events of the second poll must not be routed again");
 
         MockEndpoint mock = getMockEndpoint("mock:admin-events");
-        mock.expectedMessageCount(3);
+        mock.expectedMessageCount(4);
         mock.assertIsSatisfied();
+        assertEquals(List.of("users/2", "users/1", "users/1", "users/3"), resourcePaths(mock));
     }
 
     private int poll(String routeId) throws Exception {
@@ -125,6 +128,14 @@ class KeycloakConsumerLatestEventsTest extends CamelTestSupport {
         List<String> answer = new ArrayList<>();
         for (Exchange exchange : mock.getReceivedExchanges()) {
             answer.add(exchange.getIn().getBody(EventRepresentation.class).getUserId());
+        }
+        return answer;
+    }
+
+    private static List<String> resourcePaths(MockEndpoint mock) {
+        List<String> answer = new ArrayList<>();
+        for (Exchange exchange : mock.getReceivedExchanges()) {
+            answer.add(exchange.getIn().getBody(AdminEventRepresentation.class).getResourcePath());
         }
         return answer;
     }
