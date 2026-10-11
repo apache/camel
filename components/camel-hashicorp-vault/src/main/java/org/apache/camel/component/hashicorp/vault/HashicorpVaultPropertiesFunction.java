@@ -250,17 +250,18 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
                 completePath = completePath + "?version=" + version;
             }
             VaultResponse rawSecret = client.read(completePath);
-            if (ObjectHelper.isNotEmpty(rawSecret)) {
-                returnValue = rawSecret.getData().get("data").toString();
+            // the secret may not exist, or the response may have no data: then there is no value (nor field)
+            Map<String, Object> responseData = rawSecret != null ? rawSecret.getData() : null;
+            Object secretData = responseData != null ? responseData.get("data") : null;
+            if (secretData != null) {
+                returnValue = secretData.toString();
                 if (ObjectHelper.isEmpty(version)) {
-                    captureVersion(secretName, rawSecret);
+                    captureVersion(secretName, responseData);
                 }
             }
             if (ObjectHelper.isNotEmpty(subkey)) {
                 returnValue = null;
-                // the secret may not exist, then there is no field either
-                if (rawSecret != null && rawSecret.getData() != null
-                        && rawSecret.getData().get("data") instanceof Map<?, ?> data) {
+                if (secretData instanceof Map<?, ?> data) {
                     Object field = data.get(subkey);
                     if (ObjectHelper.isNotEmpty(field)) {
                         returnValue = field.toString();
@@ -289,8 +290,8 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         return secretEngine == null || "secret".equals(secretEngine) ? key : secretEngine + ":" + key;
     }
 
-    private void captureVersion(String secretName, VaultResponse rawSecret) {
-        if (rawSecret.getData().get("metadata") instanceof Map<?, ?> metadata && metadata.get("version") != null) {
+    private void captureVersion(String secretName, Map<String, Object> responseData) {
+        if (responseData.get("metadata") instanceof Map<?, ?> metadata && metadata.get("version") != null) {
             try {
                 // keep the oldest version resolved: a value resolved earlier may still be in use, so the refresh
                 // task must compare with that one (at worst one extra reload)

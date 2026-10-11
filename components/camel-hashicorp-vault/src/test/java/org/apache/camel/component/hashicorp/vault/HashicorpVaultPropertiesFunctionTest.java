@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -134,10 +135,30 @@ class HashicorpVaultPropertiesFunctionTest {
         assertEquals("admin", function.apply("secret:database#username:admin"));
     }
 
+    @Test
+    void responseWithoutDataReturnsNullOrDefaultValue() {
+        FakeVaultTemplate vault = new FakeVaultTemplate(Map.of());
+        // a response without any data, and a response whose data has no secret data
+        vault.responses.put("secret/data/nodata", new VaultResponse());
+        VaultResponse onlyMetadata = new VaultResponse();
+        onlyMetadata.setData(Map.of("metadata", Map.of("version", 1)));
+        vault.responses.put("secret/data/onlymetadata", onlyMetadata);
+        HashicorpVaultPropertiesFunction function = new HashicorpVaultPropertiesFunction(vault);
+
+        assertNull(function.apply("secret:nodata"));
+        assertNull(function.apply("secret:nodata#password"));
+        assertEquals("admin", function.apply("secret:nodata#password:admin"));
+        assertNull(function.apply("secret:onlymetadata"));
+        assertNull(function.apply("secret:onlymetadata#password"));
+        assertEquals("admin", function.apply("secret:onlymetadata#password:admin"));
+    }
+
     private static final class FakeVaultTemplate extends VaultTemplate {
 
         private final Map<String, Map<String, Object>> secrets;
         private final List<String> reads = new CopyOnWriteArrayList<>();
+        // raw responses by path, for responses that are not a regular secret
+        private final Map<String, VaultResponse> responses = new ConcurrentHashMap<>();
 
         FakeVaultTemplate(Map<String, Map<String, Object>> secrets) {
             super(VaultEndpoint.create("localhost", 8200), new TokenAuthentication("token"));
@@ -147,6 +168,9 @@ class HashicorpVaultPropertiesFunctionTest {
         @Override
         public VaultResponse read(String path) {
             reads.add(path);
+            if (responses.containsKey(path)) {
+                return responses.get(path);
+            }
             Map<String, Object> data = secrets.get(path);
             if (data == null) {
                 // as Vault answers 404 for a secret that does not exist
