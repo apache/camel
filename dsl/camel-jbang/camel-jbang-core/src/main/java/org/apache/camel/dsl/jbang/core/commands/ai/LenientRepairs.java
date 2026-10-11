@@ -82,6 +82,18 @@ final class LenientRepairs {
             "^line (\\d+): (\\S+) starts in column (\\d+), but the keys of the mapping that starts at line \\d+ are in"
                                                               + " column (\\d+)");
 
+    /** How many columns a list item or key may be off to be moved: a slip, not another structure. */
+    private static final int MAX_SHIFT = 2;
+
+    /** body, header.foo, exchangeProperty.x, body.size(): a name the Simple language reads, written without ${ }. */
+    private static final Pattern BARE_NAME = Pattern.compile("^[A-Za-z_]\\w*(\\.[\\w\\[\\]()]+)*$");
+
+    private static boolean isBareName(String value) {
+        String v = value.strip();
+        return BARE_NAME.matcher(v).matches() && !"true".equalsIgnoreCase(v) && !"false".equalsIgnoreCase(v)
+                && !"null".equals(v);
+    }
+
     /** The names models write for an option, by EIP, and the option's name (seen in the benchmark traces). */
     private static final Map<String, String> ALIASES = Map.ofEntries(
             Map.entry("setHeader.headerName", "name"), Map.entry("setHeader.header", "name"),
@@ -137,6 +149,10 @@ final class LenientRepairs {
             int line = Integer.parseInt(m.group(1));
             String language = m.group(3);
             String text = m.group(4).replace("\\\"", "\"");
+            if (!"simple".equals(language) && m.group(2).equals(text) && isBareName(text)) {
+                // expression: body - the text "body" or ${body}: not one reading (r9L-2 split the text "body")
+                return answer;
+            }
             answer.add(new Repair(
                     line, false, "line " + line + ": expression: written as " + language + ":",
                     ls -> wrapExpression(ls, line - 1, "expression", language, text)));
@@ -144,6 +160,9 @@ final class LenientRepairs {
             int line = Integer.parseInt(m.group(1));
             String key = m.group(2);
             String value = m.group(3);
+            if (isBareName(value)) {
+                return answer;
+            }
             String language = value.contains("${") ? "simple" : "constant";
             answer.add(new Repair(
                     line, false, "line " + line + ": " + key + ": written as " + language + ":",
@@ -212,12 +231,18 @@ final class LenientRepairs {
         } else if ((m = ITEM_COLUMN.matcher(error)).find()) {
             int line = Integer.parseInt(m.group(1));
             int delta = Integer.parseInt(m.group(3)) - Integer.parseInt(m.group(2));
+            if (Math.abs(delta) > MAX_SHIFT) {
+                return answer; // further off is another structure, not a slip
+            }
             answer.add(new Repair(
                     line, false, "line " + line + ": the list item moved to the column of the list",
                     ls -> shiftBlock(ls, line - 1, delta)));
         } else if ((m = KEY_COLUMN.matcher(error)).find()) {
             int line = Integer.parseInt(m.group(1));
             int delta = Integer.parseInt(m.group(4)) - Integer.parseInt(m.group(3));
+            if (Math.abs(delta) > MAX_SHIFT) {
+                return answer;
+            }
             answer.add(new Repair(
                     line, false, "line " + line + ": " + m.group(2)
                                  + " moved to the column of the keys of its mapping",

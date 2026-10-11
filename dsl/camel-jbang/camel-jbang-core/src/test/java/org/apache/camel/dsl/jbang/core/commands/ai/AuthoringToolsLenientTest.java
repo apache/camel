@@ -202,6 +202,61 @@ class AuthoringToolsLenientTest {
     }
 
     @Test
+    void aBareSimpleNameIsNotTakenForAConstant(@TempDir Path dir) {
+        // r9L-2: split: {expression: body} written as constant "body" split the text "body"
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: timer:x
+                      steps:
+                        - split:
+                            expression: body
+                            steps:
+                              - log:
+                                  message: "x"
+                """);
+        assertThat(result.getString("status")).isEqualTo("invalid");
+        assertThat(result.get("repaired")).isNull();
+    }
+
+    @Test
+    void aConstantThatIsNotANameIsStillRepaired(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("stock.json"), "[]");
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: timer:x
+                      steps:
+                        - setBody:
+                            expression: resource:file:stock.json
+                        - setHeader:
+                            name: CamelHttpResponseCode
+                            expression: "404"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isIn("created", "overwritten");
+        assertThat(Files.readString(dir.resolve(FILE)))
+                .contains("constant:\n                expression: \"resource:file:stock.json\"")
+                .contains("constant:\n                expression: \"404\"");
+    }
+
+    @Test
+    void aListItemFarOffIsNotMoved(@TempDir Path dir) {
+        // six columns off is another structure, not a slip
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: timer:x
+                      steps:
+                        - log:
+                            message: "a"
+                              - log:
+                            message: "b"
+                """);
+        assertThat(result.getString("status")).isEqualTo("invalid");
+        assertThat(result.get("repaired")).isNull();
+    }
+
+    @Test
     void whatHasNoSingleReadingIsStillRefused(@TempDir Path dir) {
         // a name the alias table does not have: the write is refused as before, nothing guessed
         JsonObject result = write(dir, """
