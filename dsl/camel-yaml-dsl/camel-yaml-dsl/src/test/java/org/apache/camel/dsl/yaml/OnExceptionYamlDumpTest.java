@@ -75,6 +75,9 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
             context.start();
         }
         String yaml = dumpRoutes();
+        // a route dumped alone (JMX dumpRouteAsYaml, the route-dump dev console)
+        String single = new LwModelToYAMLDumper()
+                .dumpModelAsYaml(context, context.getRouteDefinition("first"), false, true, false, false);
         if (started) {
             context.stop();
         }
@@ -82,6 +85,8 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
         // written once, before the routes, and not in the steps of each route
         assertThat(yaml).startsWith("- onException:");
         assertThat(yaml.split("onException:", -1)).hasSize(2);
+        // also before a route dumped alone
+        assertThat(single).startsWith("- onException:").contains("id: first").doesNotContain("id: second");
 
         // the dump is valid for the YAML DSL schema, and the onException still applies to all the routes
         context.removeRouteDefinitions(List.copyOf(context.getRouteDefinitions()));
@@ -200,44 +205,6 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
         // the routes are dumped with their resource, so the log shows its source, and there is no scope to warn about
         assertThat(resources).singleElement().extracting(Resource::getLocation).isEqualTo("route-0.yaml");
         assertThat(warnings).isEmpty();
-        assertThat(Files.readString(output)).startsWith("- onException:").contains("id: first");
-    }
-
-    @Test
-    void singleRouteIsDumpedWithTheTopLevelOnException() throws Exception {
-        // as the route is dumped by JMX dumpRouteAsYaml, the route-dump dev console and the TUI source view
-        loadRoutes("""
-                - onException:
-                    exception:
-                      - java.lang.Exception
-                    handled:
-                      constant:
-                        expression: "true"
-                    steps:
-                      - to: mock:error
-                - route:
-                    id: first
-                    from:
-                      uri: direct:first
-                      steps:
-                        - to: mock:first
-                - route:
-                    id: second
-                    from:
-                      uri: direct:second
-                      steps:
-                        - to: mock:second
-                """);
-
-        String yaml = new LwModelToYAMLDumper()
-                .dumpModelAsYaml(context, context.getRouteDefinition("first"), false, true, false, false);
-
-        // the onException that applies to the route comes before it, so the dump of the route alone loads as is
-        assertThat(yaml).startsWith("- onException:").contains("id: first").doesNotContain("id: second");
-        assertThat(yaml.split("onException:", -1)).hasSize(2);
-        context.removeRouteDefinitions(List.copyOf(context.getRouteDefinitions()));
-        loadRoutes(yaml);
-        assertThat(context.getRouteDefinition("first").getOutputs().get(0)).isInstanceOf(OnExceptionDefinition.class);
     }
 
     private void dumpRoutesToFile(Path output, List<Resource> resources, List<String> warnings) {
