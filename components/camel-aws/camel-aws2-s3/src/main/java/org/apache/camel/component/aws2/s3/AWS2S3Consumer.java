@@ -305,6 +305,8 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 if (key != null) {
                     getEndpoint().getInProgressRepository().remove(key);
                 }
+                // the exchange is never routed, so nothing else releases it to the exchange factory
+                releaseExchange(exchange, true);
             }
             throw e;
         }
@@ -378,14 +380,18 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
         }
         // the remaining exchanges are not processed as the consumer is stopping: a later poll must consume their
         // objects again, and with includeBody=false their bodies are the object streams, which nothing else closes
-        for (Object exchange : exchanges) {
-            String key = ((Exchange) exchange).getProperty(AWS2S3Constants.KEY, String.class);
+        for (Object notRouted : exchanges) {
+            Exchange exchange = (Exchange) notRouted;
+            String key = exchange.getProperty(AWS2S3Constants.KEY, String.class);
             if (key != null) {
                 getEndpoint().getInProgressRepository().remove(key);
             }
-            if (((Exchange) exchange).getIn().getBody() instanceof Closeable body) {
+            if (exchange.getIn().getBody() instanceof Closeable body) {
                 IOHelper.close(body);
             }
+            // nothing else releases an exchange that is never routed to the exchange factory (which resets a pooled
+            // exchange, so this comes last)
+            releaseExchange(exchange, true);
         }
 
         return total;
@@ -519,11 +525,12 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
         /*
          * If includeBody == true, it is safe to close the object here because the S3Object
-         * was consumed already. If includeBody != true, the caller is responsible for
+         * was consumed already. The same goes for ignoreBody == true, as the stream is then not
+         * the body, so nothing else can read or close it. Otherwise the caller is responsible for
          * closing the stream once the body has been fully consumed or use the autoCloseBody
          * configuration to automatically schedule the body closing at the end of exchange.
          */
-        if (getConfiguration().isIncludeBody()) {
+        if (getConfiguration().isIncludeBody() || getConfiguration().isIgnoreBody()) {
             IOHelper.close(s3Object);
         } else {
             if (getConfiguration().isAutocloseBody()) {

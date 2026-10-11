@@ -17,8 +17,11 @@
 package org.apache.camel.component.aws2.s3;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -37,6 +40,8 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +52,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The consumer keeps the objects whose exchanges are being processed in its in-progress repository: with fileName, an
  * object still in flight is not consumed again by the next poll, a failed get does not leave the object in progress,
  * and the objects of a batch that a stopping consumer does not process are consumed when the route is started again,
- * and their object streams are closed.
+ * and their object streams are closed and their exchanges released. With ignoreBody=true the object stream is closed
+ * when the exchange is created.
  */
 class AWS2S3ConsumerInProgressTest extends CamelTestSupport {
 
@@ -197,11 +203,18 @@ class AWS2S3ConsumerInProgressTest extends CamelTestSupport {
     @Test
     void notProcessedExchangesReleaseTheirObjects() throws Exception {
         AWS2S3Endpoint endpoint = context.getEndpoint(s3Uri("&includeBody=false"), AWS2S3Endpoint.class);
-        // never started, so the consumer does not process any exchange of the batch
-        AWS2S3Consumer consumer = (AWS2S3Consumer) endpoint.createConsumer(exchange -> {
-        });
-        endpoint.getInProgressRepository().add("b.txt");
+        List<Boolean> closedWhenReleased = new ArrayList<>();
         AtomicBoolean closed = new AtomicBoolean();
+        // never started, so the consumer does not process any exchange of the batch
+        AWS2S3Consumer consumer = new AWS2S3Consumer(endpoint, exchange -> {
+        }) {
+            @Override
+            public void releaseExchange(Exchange exchange, boolean autoRelease) {
+                closedWhenReleased.add(closed.get());
+                super.releaseExchange(exchange, autoRelease);
+            }
+        };
+        endpoint.getInProgressRepository().add("b.txt");
         Exchange exchange = endpoint.createExchange();
         exchange.setProperty(AWS2S3Constants.KEY, "b.txt");
         exchange.getIn().setBody(new ByteArrayInputStream("b".getBytes(StandardCharsets.UTF_8)) {
@@ -217,5 +230,30 @@ class AWS2S3ConsumerInProgressTest extends CamelTestSupport {
 
         assertFalse(endpoint.getInProgressRepository().contains("b.txt"), "b.txt is still in progress");
         assertTrue(closed.get(), "the object stream of b.txt was not closed");
+        // released to the exchange factory, after the stream was closed as a pooled exchange is reset when released
+        assertEquals(List.of(true), closedWhenReleased, "the exchange of b.txt was not released after closing its stream");
+    }
+
+    @Test
+    void ignoredBodyStreamIsClosed() throws Exception {
+        AWS2S3Endpoint endpoint = context.getEndpoint(s3Uri("&includeBody=false&ignoreBody=true"), AWS2S3Endpoint.class);
+        AWS2S3Consumer consumer = (AWS2S3Consumer) endpoint.createConsumer(exchange -> {
+        });
+        AtomicBoolean closed = new AtomicBoolean();
+        InputStream content = new ByteArrayInputStream("b".getBytes(StandardCharsets.UTF_8)) {
+            @Override
+            public void close() {
+                closed.set(true);
+            }
+        };
+
+        Exchange exchange = consumer.createExchange(
+                new ResponseInputStream<>(GetObjectResponse.builder().eTag("tag").build(), content), "b.txt");
+
+        // the stream is not the body, so nothing else can close it (an exchange that is never routed does not even
+        // run the on completion of autocloseBody)
+        assertTrue(closed.get(), "the object stream of b.txt was not closed");
+        assertEquals("tag", exchange.getIn().getHeader(AWS2S3Constants.E_TAG));
+        assertEquals("b.txt", exchange.getIn().getHeader(AWS2S3Constants.KEY));
     }
 }
