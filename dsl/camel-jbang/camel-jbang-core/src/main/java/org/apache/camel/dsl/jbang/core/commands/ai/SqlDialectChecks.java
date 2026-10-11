@@ -136,7 +136,7 @@ final class SqlDialectChecks {
     static String primaryKey(String content, String table) {
         Matcher m = Pattern.compile("(?i)CREATE\\s+TABLE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?" + Pattern.quote(table)
                                     + "\\s*\\((.*?)\\)\\s*[\"']?\\s*$",
-                Pattern.MULTILINE).matcher(content);
+                Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
         if (!m.find()) {
             return null;
         }

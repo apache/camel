@@ -511,11 +511,24 @@ final class EndpointChecks {
         // ON CONFLICT (id) DO UPDATE SET country = :#excluded.country: EXCLUDED is PostgreSQL's row being inserted, as
         // a named parameter it is a key looked up in the body and the headers, which is not there (CAMEL-25557)
         Matcher excluded = EXCLUDED_PARAMETER.matcher(query);
-        if (excluded.find()) {
-            errors.add(linePrefix(line) + "sql: :#" + excluded.group(1) + "." + excluded.group(2) + " is a named"
-                       + " parameter, a key " + excluded.group(1) + "." + excluded.group(2) + " looked up in the body and"
-                       + " the headers, which is not there: EXCLUDED is the row being inserted in ON CONFLICT ... DO"
-                       + " UPDATE, write EXCLUDED." + excluded.group(2) + " without :#");
+        List<String> columns = new ArrayList<>();
+        String written = null;
+        while (excluded.find()) {
+            written = written == null ? excluded.group(1) : written;
+            if (!columns.contains(excluded.group(2))) {
+                columns.add(excluded.group(2));
+            }
+        }
+        if (!columns.isEmpty()) {
+            String first = columns.get(0);
+            List<String> others = new ArrayList<>();
+            for (String c : columns.subList(1, columns.size())) {
+                others.add(":#" + written + "." + c);
+            }
+            errors.add(linePrefix(line) + "sql: :#" + written + "." + first + " is a named parameter, a key " + written
+                       + "." + first + " looked up in the body and the headers, which is not there: EXCLUDED is the row"
+                       + " being inserted in ON CONFLICT ... DO UPDATE, write EXCLUDED." + first + " without :#"
+                       + (others.isEmpty() ? "" : " (also " + String.join(", ", others) + ")"));
         }
         Matcher m = BARE_NAMED_PARAMETER.matcher(query);
         List<String> bare = new ArrayList<>();

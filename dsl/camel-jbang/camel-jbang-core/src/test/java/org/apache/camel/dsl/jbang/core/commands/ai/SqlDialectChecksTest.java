@@ -116,11 +116,53 @@ class SqlDialectChecksTest {
                               uri: timer:orders?repeatCount=1
                               steps:
                                 - to:
-                                    uri: "sql:INSERT INTO customers (id, country) VALUES (:#customer, :#country) ON CONFLICT (id) DO UPDATE SET country = :#excluded.country"
+                                    uri: "sql:INSERT INTO customers (id, country, orders) VALUES (:#customer, :#country, 1) ON CONFLICT (id) DO UPDATE SET country = :#excluded.country, orders = :#excluded.orders"
                         """,
                 new DefaultCamelCatalog(), null);
         assertThat(msgs).anySatisfy(m -> assertThat(m)
                 .contains("sql: :#excluded.country is a named parameter")
-                .contains("write EXCLUDED.country without :#"));
+                .contains("write EXCLUDED.country without :# (also :#excluded.orders)"));
+    }
+
+    @Test
+    void twoDatasourcesSayNothing(@TempDir Path dir) throws IOException {
+        // which one the route uses is not known: no check rather than a wrong one
+        Files.writeString(dir.resolve("application.properties"), """
+                spring.datasource.url=jdbc:postgresql://localhost:5432/test
+                orders.datasource.url=jdbc:mysql://localhost:3306/orders
+                """);
+        assertThat(validate(dir,
+                """
+                        - route:
+                            from:
+                              uri: timer:orders?repeatCount=1
+                              steps:
+                                - to:
+                                    uri: "sql:INSERT INTO customers (id, orders) VALUES (:#customer, 1) ON DUPLICATE KEY UPDATE orders = orders + 1"
+                        """))
+                .isEmpty();
+    }
+
+    @Test
+    void theKeyOfACreateTableOverSeveralLines(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve("application.properties"), "spring.datasource.url=jdbc:postgresql://db/test\n");
+        List<String> msgs = validate(dir,
+                """
+                        - route:
+                            from:
+                              uri: timer:setup?repeatCount=1
+                              steps:
+                                - to:
+                                    uri: sql
+                                    parameters:
+                                      query: |
+                                        CREATE TABLE IF NOT EXISTS customers (
+                                          id varchar(10) PRIMARY KEY,
+                                          orders integer)
+                                - to:
+                                    uri: "sql:INSERT INTO customers (id, orders) VALUES (:#customer, 1) ON DUPLICATE KEY UPDATE orders = orders + 1"
+                        """);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("ON CONFLICT (id) DO UPDATE SET orders = customers.orders + 1"));
     }
 }
