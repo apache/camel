@@ -18,7 +18,9 @@ package org.apache.camel.component.ibm.cos;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -207,13 +209,22 @@ class IBMCOSConsumerInProgressTest extends CamelTestSupport {
     @Test
     void notProcessedExchangesCloseTheirContent() throws Exception {
         IBMCOSEndpoint endpoint = context.getEndpoint("ibm-cos://bkt?cosClient=#cos", IBMCOSEndpoint.class);
-        // never started, so the consumer does not process any exchange of the batch
-        IBMCOSConsumer consumer = (IBMCOSConsumer) endpoint.createConsumer(exchange -> {
-        });
-        endpoint.getInProgressRepository().add("b.txt");
+        List<Boolean> closedWhenReleased = new ArrayList<>();
         AtomicBoolean closed = new AtomicBoolean();
+        // never started, so the consumer does not process any exchange of the batch
+        IBMCOSConsumer consumer = new IBMCOSConsumer(endpoint, exchange -> {
+        }) {
+            @Override
+            public void releaseExchange(Exchange exchange, boolean autoRelease) {
+                closedWhenReleased.add(closed.get());
+                super.releaseExchange(exchange, autoRelease);
+            }
+        };
+        endpoint.getInProgressRepository().add("b.txt");
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setHeader(IBMCOSConstants.KEY, "b.txt");
+        // the consumer stores the key as exchange property, which is what it releases, whatever the header says
+        exchange.setProperty(IBMCOSConstants.KEY, "b.txt");
+        exchange.getIn().setHeader(IBMCOSConstants.KEY, "other.txt");
         exchange.getIn().setBody(new ByteArrayInputStream("b".getBytes(StandardCharsets.UTF_8)) {
             @Override
             public void close() {
@@ -227,5 +238,7 @@ class IBMCOSConsumerInProgressTest extends CamelTestSupport {
 
         assertFalse(endpoint.getInProgressRepository().contains("b.txt"), "b.txt is still in progress");
         assertTrue(closed.get(), "the content stream of b.txt was not closed");
+        // released to the exchange factory, after the stream was closed as a pooled exchange is reset when released
+        assertEquals(List.of(true), closedWhenReleased, "the exchange of b.txt was not released after closing its stream");
     }
 }

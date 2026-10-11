@@ -151,12 +151,19 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
         }
         // the remaining exchanges are not processed as the consumer is stopping: a later poll must consume their
         // objects again, and their on completions, which close the content stream, never run
-        for (Object exchange : exchanges) {
-            Message message = ((Exchange) exchange).getIn();
-            removeInProgress(message.getHeader(IBMCOSConstants.KEY, String.class));
-            if (message.getBody() instanceof Closeable body) {
+        for (Object notRouted : exchanges) {
+            Exchange exchange = (Exchange) notRouted;
+            // the key the consumer stored when it created the exchange
+            String key = exchange.getProperty(IBMCOSConstants.KEY, String.class);
+            if (key != null) {
+                removeInProgress(key);
+            }
+            if (exchange.getIn().getBody() instanceof Closeable body) {
                 IOHelper.close(body);
             }
+            // nothing else releases an exchange that is never routed to the exchange factory (which resets a pooled
+            // exchange, so this comes last)
+            releaseExchange(exchange, true);
         }
 
         return total;
