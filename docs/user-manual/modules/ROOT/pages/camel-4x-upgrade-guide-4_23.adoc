@@ -2687,6 +2687,13 @@ breaking change for routes that reference the header by its literal string name:
 `CamelIBMCOSCacheControl`, although the change is trivial to adapt. Routes using the
 `IBMCOSConstants.CACHE_CONTROL` constant are unaffected.
 
+=== camel-ibm-secrets-manager - a lookup without a secret group uses the default group
+
+The `ibm:` properties function now uses the `default` secret group when the lookup does not specify one, such as
+`{{ibm:route}}`. Previously such a lookup failed when it was the first one, and otherwise reused the secret group of
+whichever lookup ran before it (possibly from another thread). Specify the group, such as `{{ibm:mygroup:route}}`,
+to read a secret from another group.
+
 === camel-knative
 
 The Knative HTTP consumer no longer returns the stack trace of a failed exchange to the caller.
