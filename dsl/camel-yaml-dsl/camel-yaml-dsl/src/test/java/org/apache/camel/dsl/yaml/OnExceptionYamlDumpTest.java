@@ -18,14 +18,25 @@ package org.apache.camel.dsl.yaml;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.impl.DefaultDumpRoutesStrategy;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spi.ModelToYAMLDumper;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.yaml.LwModelToYAMLDumper;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,7 +54,8 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
                     exception:
                       - java.lang.Exception
                     handled:
-                      constant: "true"
+                      constant:
+                        expression: "true"
                     steps:
                       - to: mock:error
                 - route:
@@ -90,7 +102,8 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
                           exception:
                             - java.lang.Exception
                           handled:
-                            constant: "true"
+                            constant:
+                              expression: "true"
                           steps:
                             - to: mock:error
                 """);
@@ -127,7 +140,8 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
                     exception:
                       - java.lang.Exception
                     handled:
-                      constant: "true"
+                      constant:
+                        expression: "true"
                     steps:
                       - to: mock:error
                 - route:
@@ -139,23 +153,125 @@ class OnExceptionYamlDumpTest extends YamlTestSupport {
                 """);
 
         Path output = dir.resolve("normalized.yaml");
-        DefaultDumpRoutesStrategy dump = new DefaultDumpRoutesStrategy();
-        dump.setCamelContext(context);
-        dump.setInclude("routes");
-        dump.setLog(false);
-        dump.setUriAsParameters(true);
-        dump.setOutput(output.toString());
-        dump.dumpRoutes("yaml");
+        List<String> warnings = new ArrayList<>();
+        dumpRoutesToFile(output, new ArrayList<>(), warnings);
         String yaml = Files.readString(output);
 
         assertThat(yaml).startsWith("- onException:");
         assertThat(yaml.split("onException:", -1)).hasSize(2);
         assertThat(yaml).contains("id: first", "id: second");
 
+        // the user is told that the onException of the second file applies to the route of the first file as well
+        assertThat(warnings).singleElement().asString().contains("route-1.yaml").doesNotContain("route-0.yaml");
+
         // the combined dump is valid for the YAML DSL schema and loads
+        assertThat(context.getRouteDefinition("first").getOutputs()).noneMatch(OnExceptionDefinition.class::isInstance);
         context.removeRouteDefinitions(List.copyOf(context.getRouteDefinitions()));
         loadRoutes(yaml);
         assertThat(context.getRouteDefinitions()).hasSize(2);
+        // the top-level onException of the second file now applies to the route of the first file as well
+        assertThat(context.getRouteDefinition("first").getOutputs().get(0)).isInstanceOf(OnExceptionDefinition.class);
+    }
+
+    @Test
+    void routesOfOneFileDumpedIntoOneFileKeepTheirSource(@TempDir Path dir) throws Exception {
+        loadRoutes("""
+                - onException:
+                    exception:
+                      - java.lang.Exception
+                    handled:
+                      constant:
+                        expression: "true"
+                    steps:
+                      - to: mock:error
+                - route:
+                    id: first
+                    from:
+                      uri: direct:first
+                      steps:
+                        - to: mock:first
+                """);
+
+        Path output = dir.resolve("normalized.yaml");
+        List<Resource> resources = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
+        dumpRoutesToFile(output, resources, warnings);
+
+        // the routes are dumped with their resource, so the log shows its source, and there is no scope to warn about
+        assertThat(resources).singleElement().extracting(Resource::getLocation).isEqualTo("route-0.yaml");
+        assertThat(warnings).isEmpty();
+        assertThat(Files.readString(output)).startsWith("- onException:").contains("id: first");
+    }
+
+    @Test
+    void singleRouteIsDumpedWithTheTopLevelOnException() throws Exception {
+        // as the route is dumped by JMX dumpRouteAsYaml, the route-dump dev console and the TUI source view
+        loadRoutes("""
+                - onException:
+                    exception:
+                      - java.lang.Exception
+                    handled:
+                      constant:
+                        expression: "true"
+                    steps:
+                      - to: mock:error
+                - route:
+                    id: first
+                    from:
+                      uri: direct:first
+                      steps:
+                        - to: mock:first
+                - route:
+                    id: second
+                    from:
+                      uri: direct:second
+                      steps:
+                        - to: mock:second
+                """);
+
+        String yaml = new LwModelToYAMLDumper()
+                .dumpModelAsYaml(context, context.getRouteDefinition("first"), false, true, false, false);
+
+        // the onException that applies to the route comes before it, so the dump of the route alone loads as is
+        assertThat(yaml).startsWith("- onException:").contains("id: first").doesNotContain("id: second");
+        assertThat(yaml.split("onException:", -1)).hasSize(2);
+        context.removeRouteDefinitions(List.copyOf(context.getRouteDefinitions()));
+        loadRoutes(yaml);
+        assertThat(context.getRouteDefinition("first").getOutputs().get(0)).isInstanceOf(OnExceptionDefinition.class);
+    }
+
+    private void dumpRoutesToFile(Path output, List<Resource> resources, List<String> warnings) {
+        AbstractAppender appender = new AbstractAppender("dump-routes", null, null, false, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                if (event.getLevel() == Level.WARN) {
+                    warnings.add(event.getMessage().getFormattedMessage());
+                }
+            }
+        };
+        appender.start();
+        Logger logger = (Logger) LogManager.getLogger(DefaultDumpRoutesStrategy.class);
+        logger.addAppender(appender);
+        try {
+            DefaultDumpRoutesStrategy dump = new DefaultDumpRoutesStrategy() {
+                @Override
+                protected void doDumpYaml(
+                        CamelContext camelContext, NamedNode def, Resource resource, ModelToYAMLDumper dumper,
+                        String kind, StringBuilder sbLocal, StringBuilder sbLog) {
+                    resources.add(resource);
+                    super.doDumpYaml(camelContext, def, resource, dumper, kind, sbLocal, sbLog);
+                }
+            };
+            dump.setCamelContext(context);
+            dump.setInclude("routes");
+            dump.setLog(false);
+            dump.setUriAsParameters(true);
+            dump.setOutput(output.toString());
+            dump.dumpRoutes("yaml");
+        } finally {
+            logger.removeAppender(appender);
+            appender.stop();
+        }
     }
 
     private String dumpRoutes() throws Exception {
