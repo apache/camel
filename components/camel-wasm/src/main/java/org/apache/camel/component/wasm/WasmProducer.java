@@ -58,6 +58,7 @@ import run.endive.wasm.WasmModule;
 public class WasmProducer extends DefaultProducer {
 
     private static final int MAX_STDERR_IN_MESSAGE = 256;
+    private static final String DEFAULT_PROGRAM_NAME = "module.wasm";
 
     private WasiCommand command;
     private Map<String, String> environment = Collections.emptyMap();
@@ -98,7 +99,7 @@ public class WasmProducer extends DefaultProducer {
                 headers.add(name);
             }
         }
-        List<String> arguments = arguments(endpoint.getModule(), conf.getArgs());
+        List<String> arguments = arguments(programName(endpoint.getModule()), conf.getArgs());
         for (String argument : arguments) {
             checkNoNul("argument " + argument, argument);
         }
@@ -146,8 +147,10 @@ public class WasmProducer extends DefaultProducer {
         message.removeHeader(Wasm.Headers.STDERR);
 
         Map<String, String> env = environment(message);
-        InputStream body = message.getBody(InputStream.class);
-        InputStream stdin = body != null ? body : InputStream.nullInputStream();
+        // no body is empty standard input; a body that cannot be read as a stream fails the exchange instead of
+        // silently running the module with empty input
+        InputStream stdin = message.getBody() != null
+                ? message.getMandatoryBody(InputStream.class) : InputStream.nullInputStream();
         LimitedOutputStream stdout = new LimitedOutputStream("standard output", conf.getMaxOutputSize());
         LimitedOutputStream stderr = new LimitedOutputStream("standard error", conf.getMaxOutputSize());
 
@@ -262,8 +265,37 @@ public class WasmProducer extends DefaultProducer {
     }
 
     /**
-     * Splits the args option into the argument list of the module, with the module location first. Arguments are
-     * separated by whitespace; double quotes group an argument that contains whitespace.
+     * The program name the module receives as argument zero: the file name of the module location, without scheme,
+     * directories, user info or query. The location itself is not passed on: it can carry credentials (an http location
+     * with user info or a token in the query) and shows host paths to a module that has no file access.
+     */
+    static String programName(String location) {
+        String name = location;
+        int query = name.indexOf('?');
+        if (query >= 0) {
+            name = name.substring(0, query);
+        }
+        int scheme = name.indexOf(':');
+        if (scheme > 0) {
+            String prefix = name.substring(0, scheme);
+            if ("base64".equals(prefix) || "gzip".equals(prefix)) {
+                // the rest is the module itself, not a name
+                return DEFAULT_PROGRAM_NAME;
+            }
+            name = name.substring(scheme + 1);
+        }
+        if (name.startsWith("//")) {
+            // host, port and user info are not part of the name
+            int path = name.indexOf('/', 2);
+            name = path < 0 ? "" : name.substring(path);
+        }
+        name = name.substring(Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\')) + 1);
+        return name.isEmpty() ? DEFAULT_PROGRAM_NAME : name;
+    }
+
+    /**
+     * Splits the args option into the argument list of the module, with the program name first. Arguments are separated
+     * by whitespace; double quotes group an argument that contains whitespace.
      */
     static List<String> arguments(String program, String args) {
         List<String> answer = new ArrayList<>();

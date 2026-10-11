@@ -33,6 +33,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -40,6 +41,7 @@ import org.apache.camel.wasm.Wasm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import run.endive.runtime.TrapException;
 import run.endive.wabt.Wat2Wasm;
@@ -187,6 +189,19 @@ class WasmComponentTest {
               (global.set $count (i32.add (global.get $count) (i32.const 1)))
               (i32.store8 (i32.const 1024) (i32.add (i32.const 48) (global.get $count)))
               (call $write (i32.const 1) (i32.const 1024) (i32.const 1)))
+            """;
+
+    /** Writes 32 bytes of WASI random_get to standard output. */
+    private static final String RANDOM = """
+            (module
+              (import "wasi_snapshot_preview1" "random_get" (func $random_get (param i32 i32) (result i32)))
+              (import "wasi_snapshot_preview1" "fd_write" (func $fd_write (param i32 i32 i32 i32) (result i32)))
+              (memory (export "memory") 1)
+              (func (export "_start")
+                (drop (call $random_get (i32.const 1024) (i32.const 32)))
+                (i32.store (i32.const 0) (i32.const 1024))
+                (i32.store (i32.const 4) (i32.const 32))
+                (drop (call $fd_write (i32.const 1) (i32.const 0) (i32.const 1) (i32.const 8)))))
             """;
 
     @TempDir
@@ -401,7 +416,49 @@ class WasmComponentTest {
         try (CamelContext cc = start("wasm:" + module + "?args=--level 2 \"two words\"")) {
             Exchange out = send(cc, "");
 
-            assertThat(text(out)).isEqualTo(module + "\0--level\0" + "2\0two words\0");
+            // argument zero is the file name of the module, not its location
+            assertThat(module).startsWith("file:").endsWith("/args.wasm");
+            assertThat(text(out)).isEqualTo("args.wasm\0--level\0" + "2\0two words\0");
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "file:/opt/modules/upper.wasm, upper.wasm",
+            "file:C:\\modules\\upper.wasm, upper.wasm",
+            "classpath:upper.wasm, upper.wasm",
+            "classpath:org/acme/upper.wasm, upper.wasm",
+            "upper.wasm, upper.wasm",
+            "ref:upperModule, upperModule",
+            "https://user:secret@example.com/mods/upper.wasm?token=abc123, upper.wasm",
+            "http://user:secret@example.com, module.wasm",
+            "http://example.com:8080/, module.wasm",
+            "base64:AGFzbQEAAAA=, module.wasm",
+            "gzip:H4sIAAAA/abc, module.wasm" })
+    void argumentZeroIsTheFileNameOfTheModule(String location, String expected) {
+        assertThat(WasmProducer.programName(location)).isEqualTo(expected);
+        assertThat(WasmProducer.arguments(WasmProducer.programName(location), "-v")).containsExactly(expected, "-v");
+    }
+
+    @Test
+    void bodyThatIsNotAStreamFailsTheExchange() throws Exception {
+        try (CamelContext cc = start("wasm:" + module("upper", UPPER))) {
+            // a body without a converter to InputStream must not become empty standard input
+            Exchange out = send(cc, new Object());
+
+            assertThat(out.getException()).isInstanceOf(InvalidPayloadException.class);
+            assertThat(out.getMessage().getHeaders()).doesNotContainKey(Wasm.Headers.EXIT_CODE);
+        }
+    }
+
+    @Test
+    void randomGetReturnsBytesOfTheHost() throws Exception {
+        try (CamelContext cc = start("wasm:" + wat("random", RANDOM))) {
+            byte[] first = send(cc, "").getMessage().getBody(byte[].class);
+            byte[] second = send(cc, "").getMessage().getBody(byte[].class);
+
+            assertThat(first).hasSize(32).isNotEqualTo(new byte[32]);
+            assertThat(second).hasSize(32).isNotEqualTo(first);
         }
     }
 

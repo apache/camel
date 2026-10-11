@@ -48,9 +48,10 @@ public interface WasmEndpointBuilderFactory {
         /**
          * The command line arguments passed to the module, separated by
          * whitespace. Use double quotes around an argument that contains
-         * whitespace. The module receives the module location as argument zero,
-         * followed by these arguments. The arguments are fixed by the route:
-         * they cannot be set from message headers.
+         * whitespace. The module receives the file name of the module (for
+         * example upper.wasm, without scheme, directories or query) as argument
+         * zero, followed by these arguments. The arguments are fixed by the
+         * route: they cannot be set from message headers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

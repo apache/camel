@@ -18,6 +18,7 @@ package org.apache.camel.wasm;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,13 +44,20 @@ import run.endive.wasm.types.MemorySection;
  * <p/>
  * The module is parsed once by the caller and every {@link #run} creates a new instance of it, so runs never share
  * guest memory or globals and need no lock. A run gets exactly the standard streams, arguments and environment
- * variables it is given: no preopened directories (so no files) and no sockets. Clock and random numbers are the
- * host's.
+ * variables it is given: no preopened directories (so no files) and no sockets. The clock is the host's, and
+ * {@code random_get} is served by a {@link SecureRandom} of the host.
  */
 public final class WasiCommand {
 
     private static final String START = "_start";
     private static final String WASI_MODULE = "wasi_snapshot_preview1";
+
+    /**
+     * The source of WASI {@code random_get}, which guests use for keys, nonces, UUIDs and hash seeds (Go
+     * {@code crypto/rand}, Rust {@code getrandom}). Endive's default is {@code ThreadLocalRandom}, which is
+     * predictable. A SecureRandom is thread-safe, so one is shared by all runs.
+     */
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final WasmModule module;
     private final List<String> arguments;
@@ -85,19 +93,10 @@ public final class WasiCommand {
      * @throws run.endive.runtime.WasmInterruptedException if the calling thread was interrupted
      */
     public int run(InputStream stdin, OutputStream stdout, OutputStream stderr, Map<String, String> environment) {
-        // built on the thread that runs the program: the default random number generator is the thread's own.
-        // Endive reports the standard streams as terminals unless told otherwise; they are not, and a program that
-        // sees a terminal may add terminal output, such as colours, to the message body
-        WasiOptions.Builder options = WasiOptions.builder()
-                .withStdin(stdin, false)
-                .withStdout(stdout, false)
-                .withStderr(stderr, false)
-                .withArguments(arguments)
-                .withThrowOnExit0(true);
-        environment.forEach(options::withEnvironment);
+        WasiOptions options = options(stdin, stdout, stderr, environment);
 
         Instance instance = null;
-        try (WasiPreview1 wasi = WasiPreview1.builder().withOptions(options.build()).build()) {
+        try (WasiPreview1 wasi = WasiPreview1.builder().withOptions(options).build()) {
             instance = newInstance(ImportValues.builder().addFunction(wasi.toHostFunctions()).build());
             instance.export(START).apply();
             return 0;
@@ -112,6 +111,23 @@ public final class WasiCommand {
             trap.initCause(e);
             throw trap;
         }
+    }
+
+    /**
+     * The WASI context of one run. Package-private for tests only.
+     */
+    WasiOptions options(InputStream stdin, OutputStream stdout, OutputStream stderr, Map<String, String> environment) {
+        // Endive reports the standard streams as terminals unless told otherwise; they are not, and a program that
+        // sees a terminal may add terminal output, such as colours, to the message body
+        WasiOptions.Builder options = WasiOptions.builder()
+                .withRandom(RANDOM)
+                .withStdin(stdin, false)
+                .withStdout(stdout, false)
+                .withStderr(stderr, false)
+                .withArguments(arguments)
+                .withThrowOnExit0(true);
+        environment.forEach(options::withEnvironment);
+        return options.build();
     }
 
     private Instance newInstance(ImportValues imports) {

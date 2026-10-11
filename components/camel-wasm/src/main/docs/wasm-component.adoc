@@ -117,14 +117,17 @@ message is removed before the module runs.
 
 * *Standard input, output and error*: the message body, the new body and the `CamelWasmStderr` header. They are
 not terminals.
-* *Arguments*: the module location as argument zero, followed by the `args` option, for example
-`args=--level 2`. Use double quotes around an argument that contains spaces. Arguments are fixed by the route.
+* *Arguments*: the file name of the module as argument zero (`upper.wasm` for `wasm:file:/opt/modules/upper.wasm`;
+the directories, the host, user info and query of the location are not passed on), followed by the `args` option, for
+example `args=--level 2`. Use double quotes around an argument that contains spaces. Arguments are fixed by the route.
 * *Environment variables*: only the ones configured with `environment.NAME=value`, and the message headers listed in
 `environmentHeaders`, passed under the name they are listed with (header names are matched the way Camel matches
 them, ignoring case). A listed header that is not on the message is not set. Headers usually come from whoever sent
 the message, so no header reaches the module unless it is listed. The environment of the JVM is never passed on.
 * *Files and network*: none. The module gets no preopened directories, so it cannot open files, and no sockets.
-* *Clock and random numbers*: the ones of the host.
+* *Clock*: the one of the host.
+* *Random numbers*: WASI `random_get` (used by Go `crypto/rand` and Rust `getrandom`) returns bytes from a
+`java.security.SecureRandom` of the host.
 
 === Limits
 
