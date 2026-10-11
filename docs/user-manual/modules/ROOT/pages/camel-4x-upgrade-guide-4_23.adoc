@@ -5211,6 +5211,17 @@ as Java, the error handler of an XML or YAML route is now `.errorHandler(...)` o
 The `timeout(long)` of the Resequencer EIP in Java keeps the millis as given (`2000`), instead of a duration
 (`2s0ms`).
 
+A top-level `onException` (of a YAML file, or in the `configure` method of a `RouteBuilder`) is now dumped once as a
+top-level `onException` before the routes, instead of as a step of every route, and the `onException` of a route
+configuration is only dumped with the route configuration, no longer in the routes. This also applies to the dump of a
+single route (JMX `dumpRouteAsYaml`, the `route-dump` developer console). Before, such a dump did not load in the YAML
+DSL.
+
+When `camel.main.dumpRoutesOutput` is a file and the routes come from several files, they are now dumped together, so a
+top-level `onException` comes before the first route. When the dump is loaded, such an `onException` applies to the
+routes of all the files, not only to those of its own file, and a WARN is logged when the routes are dumped. Dump into
+a directory to keep one file per source file.
+
 === camel-jbang-mcp - camel_transform_route
 
 The `camel_transform_route` tool now converts with the same route DSL converter as `camel transform route
