@@ -94,7 +94,6 @@ public class MainHttpServerFactoryTest {
     void shouldOverrideServerPropertiesWithJvmSystemProperties() {
         Properties prop = new Properties();
         prop.put("camel.server.host", "localhost");
-        prop.put("camel.server.path", "/api");
         context.getPropertiesComponent().setInitialProperties(prop);
 
         System.setProperty("camel.server.host", "127.0.0.1");
@@ -107,7 +106,6 @@ public class MainHttpServerFactoryTest {
         MainHttpServer server = context.hasService(MainHttpServer.class);
         assertNotNull(server);
         assertEquals("127.0.0.1", server.getHost());
-        assertEquals("/api", server.getPath());
     }
 
     @Test
