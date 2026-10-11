@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The onConsume statements must only run for a row whose exchange was processed successfully: a failed or rollback only
@@ -69,8 +70,11 @@ class MyBatisOnConsumeFailedTest extends MyBatisTestSupport {
         insertAccounts(account(1, "ok"), account(2, "rollback"), account(3, "ok"));
 
         MyBatisConsumer consumer = (MyBatisConsumer) context.getRoute("transacted").getConsumer();
-        assertThrows(RollbackExchangeException.class, consumer::poll,
+        RollbackExchangeException e = assertThrows(RollbackExchangeException.class, consumer::poll,
                 "a rollback only exchange must break out of a transacted batch, as a failed exchange does");
+        // there was no error, and the message (logged by the consumer at every such poll) must not say so
+        assertTrue(e.getMessage().startsWith("Rollback transaction as the exchange was marked as rollback only"),
+                e.getMessage());
 
         assertEquals(List.of(2, 3), unprocessedAccountIds(),
                 "neither the rollback only account nor the accounts after it must be consumed");

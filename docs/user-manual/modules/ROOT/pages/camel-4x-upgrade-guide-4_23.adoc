@@ -863,7 +863,7 @@ comma and the statement ran once for each part (once for each byte of a `byte[]`
 Collections, iterators and other arrays (including `int[]`, `long[]` and other primitive arrays) still run the statement
 once per element; send a `List` to run it once per value.
 
-=== camel-mybatis, camel-sql - onConsume does not run for a failed or rollback only exchange
+=== camel-mybatis, camel-sql - onConsume does not run for a failed or rollback only exchange (Breaking change)
 
 The camel-mybatis consumer no longer runs the `onConsume` statements for a row whose exchange failed or was marked
 rollback only: the row is consumed again by the next poll, so a row that always fails is now processed at every poll.

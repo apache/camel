@@ -31,6 +31,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A row whose exchange was marked rollback only (without an exception) did not complete successfully: it must get
@@ -88,6 +89,9 @@ class SqlConsumerRollbackOnlyTest extends CamelTestSupport {
         RuntimeCamelException e = assertThrows(RuntimeCamelException.class, consumer::poll,
                 "a rollback only exchange must break out of a transacted batch, as a failed exchange does");
         assertInstanceOf(RollbackExchangeException.class, e.getCause());
+        // there was no error, and the message (logged by the consumer at every such poll) must not say so
+        assertTrue(e.getCause().getMessage().startsWith("Rollback transaction as the exchange was marked as rollback only"),
+                e.getCause().getMessage());
 
         assertEquals(List.of("DONE", "ASF", "XXX"), licenses(),
                 "neither the rollback only row nor the rows after it must be consumed");

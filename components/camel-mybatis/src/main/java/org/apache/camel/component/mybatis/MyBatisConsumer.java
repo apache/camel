@@ -149,8 +149,9 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
                 // break out as we are transacted and should rollback
                 cause = exchange.getException();
                 if (cause == null) {
-                    // rollback only (the exception must be created before the exchange is released)
-                    cause = new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
+                    // rollback only, there was no error (the exception must be created before the exchange is released)
+                    cause = new RollbackExchangeException(
+                            "Rollback transaction as the exchange was marked as rollback only", exchange);
                 }
             }
             releaseExchange(exchange, false);
