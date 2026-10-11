@@ -863,6 +863,15 @@ comma and the statement ran once for each part (once for each byte of a `byte[]`
 Collections, iterators and other arrays (including `int[]`, `long[]` and other primitive arrays) still run the statement
 once per element; send a `List` to run it once per value.
 
+=== camel-mybatis, camel-sql - onConsume does not run for a failed or rollback only exchange (Breaking change)
+
+The camel-mybatis consumer no longer runs the `onConsume` statements for a row whose exchange failed or was marked
+rollback only: the row is consumed again by the next poll, so a row that always fails is now processed at every poll.
+Handle the exception in the route (for example with `onException(...).handled(true)`) to consume the row anyway. The
+camel-sql consumer now runs `onConsumeFailed` instead of `onConsume` for a rollback only exchange (no statement when
+`onConsumeFailed` is not set, so the row is consumed again by the next poll). With `transacted=true` both consumers now
+break out of the batch at a rollback only exchange, as they do at a failed one.
+
 === camel-groovy
 
 A `GroovyShellFactory` is now looked up in the registry once per `CamelContext`, when the first groovy expression is

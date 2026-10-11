@@ -607,6 +607,11 @@ And the statements in the sqlmap file:
 </update>
 ----
 
+The statements only run when the exchange completed successfully. If the exchange failed (or was marked rollback
+only), they are not run and the row is consumed again by the next poll, so a row that always fails is consumed again at
+every poll. Handle the exception in the route (for example with `onException(...).handled(true)`) to run the statements
+for a failed exchange anyway.
+
 === Participating in transactions
 
 Setting up a transaction manager under camel-mybatis can be a little bit
