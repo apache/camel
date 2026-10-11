@@ -195,7 +195,7 @@ from("direct:start")
     .to("kamelet:my-sink/sink?sink.retain-first=1");
 ----
 
-In this example, `sink.retain-first=1` passes `retain-first=1` to the applicable output component endpoint. The options are applied to all non-Kamelet output endpoints in the Kamelet route, so make sure the supplied options are supported by each affected component.
+In this example, `sink.retain-first=1` passes `retain-first=1` to the applicable output component endpoint. The options are applied to all statically-defined non-Kamelet `to()` output endpoints in the Kamelet route. Dynamic `toD()` endpoints are not modified by this feature. Make sure the supplied options are supported by each affected component.
 
 If the same option already exists on an output endpoint, the advanced option overrides its existing value.
 

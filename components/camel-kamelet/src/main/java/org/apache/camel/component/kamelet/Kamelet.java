@@ -40,6 +40,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -59,6 +61,8 @@ public final class Kamelet {
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
     public static final String BRIDGE_ERROR_HANDLER = "bridgeErrorHandler";
 
+    private static final Logger LOG = LoggerFactory.getLogger(Kamelet.class);
+
     // use a running counter as uuid
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
@@ -72,8 +76,10 @@ public final class Kamelet {
 
         return uri.equals("kamelet:" + endpoint)
                 || uri.startsWith("kamelet:" + endpoint + "?")
+                || uri.startsWith("kamelet:" + endpoint + "/")
                 || uri.equals("kamelet://" + endpoint)
-                || uri.startsWith("kamelet://" + endpoint + "?");
+                || uri.startsWith("kamelet://" + endpoint + "?")
+                || uri.startsWith("kamelet://" + endpoint + "/");
     }
 
     public static Predicate<String> startsWith(String prefix) {
@@ -292,9 +298,16 @@ public final class Kamelet {
                         }
                     }
                 }
+
+                Collection<ToDynamicDefinition> dynamicOutputs
+                        = filterTypeInOutputs(def.getOutputs(), ToDynamicDefinition.class);
+
+                if (!dynamicOutputs.isEmpty()) {
+                    LOG.warn("sink.* advanced options are applied only to statically-defined "
+                             + "to() endpoints; dynamic toD() endpoints are left unchanged.");
+                }
+
                 if (!hasRealEndpoint) {
-                    Collection<ToDynamicDefinition> dynamicOutputs
-                            = filterTypeInOutputs(def.getOutputs(), ToDynamicDefinition.class);
                     if (!dynamicOutputs.isEmpty()) {
                         throw new IllegalArgumentException(
                                 "sink.* advanced options cannot be applied to dynamic toD endpoints. "
