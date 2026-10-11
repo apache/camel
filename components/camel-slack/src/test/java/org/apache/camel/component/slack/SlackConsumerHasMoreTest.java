@@ -28,15 +28,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.slack.api.model.Message;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -56,6 +62,10 @@ class SlackConsumerHasMoreTest extends CamelTestSupport {
     private final AtomicInteger rateLimitedRequests = new AtomicInteger();
     private boolean naturalOrder;
     private volatile boolean rateLimitFollowingPages;
+    private final List<String> cursors = new CopyOnWriteArrayList<>();
+    private final AtomicReference<Runnable> beforeNextFollowingPage = new AtomicReference<>();
+    private final CountDownLatch suspendedPollDone = new CountDownLatch(1);
+    private volatile boolean suspendedWhilePaging;
 
     @Override
     protected void doPreSetup() throws Exception {
@@ -124,14 +134,60 @@ class SlackConsumerHasMoreTest extends CamelTestSupport {
         assertTrue(rateLimitedRequests.get() > 0, "the following page must have been requested");
     }
 
+    @Test
+    void stopsPagingWhenSuspendedAndReadsTheMessagesAgainAfterResume() throws Exception {
+        MockEndpoint mock = startRouteAndReceiveFirstMessage();
+        SlackConsumer consumer = (SlackConsumer) context.getRoute("slack").getConsumer();
+        // the consumer is suspended while it waits for the second of the three pages
+        beforeNextFollowingPage.set(() -> {
+            consumer.suspend();
+            suspendedWhilePaging = true;
+        });
+
+        postBurst();
+
+        assertTrue(suspendedPollDone.await(20, TimeUnit.SECONDS), "the poll that was reading the pages did not end");
+        assertEquals(List.of("2"), cursors, "the third page must not be requested once the consumer is suspended");
+        assertEquals(0, mock.getReceivedCounter(), "a part of the burst was routed, so its older messages are skipped");
+
+        mock.expectedMessageCount(5);
+        mock.setAssertPeriod(500);
+        consumer.resume();
+
+        mock.assertIsSatisfied();
+        assertEquals(List.of("m6", "m5", "m4", "m3", "m2"), texts(mock),
+                "every message of the burst must be routed once after the resume");
+        assertEquals(List.of("2", "2", "4"), cursors);
+    }
+
     private MockEndpoint startRouteAndReceiveFirstMessage() throws Exception {
         channel.add("m1");
+        // tells when the poll during which the route was suspended has ended
+        context.getRegistry().bind("pollEnded", new PollingConsumerPollStrategy() {
+            @Override
+            public boolean begin(Consumer consumer, Endpoint endpoint) {
+                return true;
+            }
+
+            @Override
+            public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
+                if (suspendedWhilePaging) {
+                    suspendedPollDone.countDown();
+                }
+            }
+
+            @Override
+            public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) {
+                return false;
+            }
+        });
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 fromF("slack://general?token=RAW(xoxp-test)&serverUrl=http://localhost:%d&maxResults=2&delay=100"
-                      + "&naturalOrder=%s",
+                      + "&naturalOrder=%s&pollStrategy=#pollEnded",
                         server.getAddress().getPort(), naturalOrder)
+                        .routeId("slack")
                         .to("mock:result");
             }
         });
@@ -177,6 +233,13 @@ class SlackConsumerHasMoreTest extends CamelTestSupport {
             http.getResponseHeaders().add("Retry-After", "60");
             respond(http, 429, "{\"ok\":false,\"error\":\"ratelimited\"}");
             return;
+        }
+        if (params.get("cursor") != null) {
+            cursors.add(params.get("cursor"));
+            Runnable task = beforeNextFollowingPage.getAndSet(null);
+            if (task != null) {
+                task.run();
+            }
         }
         int offset = params.get("cursor") != null ? Integer.parseInt(params.get("cursor")) : 0;
 

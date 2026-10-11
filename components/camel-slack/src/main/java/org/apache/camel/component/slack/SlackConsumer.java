@@ -94,6 +94,15 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             messages = messages != null ? new ArrayList<>(messages) : new ArrayList<>();
             String cursor = nextCursor(response);
             while (cursor != null) {
+                if (!isPollAllowed()) {
+                    // stopping or suspended: do not keep calling Slack. The timestamp is not moved and nothing of this
+                    // poll is routed, so the first poll after a restart or resume reads these messages again; routing
+                    // the pages read so far would move the timestamp past the older messages that were not read
+                    LOG.debug("Stopped reading the conversation history of channel {} as the consumer is stopping or"
+                              + " suspended",
+                            slackEndpoint.getChannel());
+                    return 0;
+                }
                 try {
                     response = conversationsHistory(cursor);
                 } catch (IOException | SlackApiException | RuntimeCamelException e) {
