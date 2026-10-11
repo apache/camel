@@ -58339,45 +58339,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-core",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "329df0d554949ac3dea522983672aafd"
+          "content" : "54148cc6893f0896874113757af75c6f"
         },
         {
           "alg" : "SHA-1",
-          "content" : "264d809837e56f4adfca0909ea1fe4e94bc41244"
+          "content" : "1bf4fdc087e3c617b4b429af935834d43400b665"
         },
         {
           "alg" : "SHA-256",
-          "content" : "750ec27491f9eea3df24e3a85670a0b1998827bb729ec95b2d9d3dbbfdf8792c"
+          "content" : "1a274ba3739dc72506d5e801a8337ab734e07fbfd48ece7e77a518fbf40cea9a"
         },
         {
           "alg" : "SHA-512",
-          "content" : "e5db66ec5edf6811eb5c95cb08869bdaf0a04163b2364a8a1a503d84c0fd070d4cf97e6658821426a9a290d74691d0e2cc8be608fc92d327003f60fbb23af23e"
+          "content" : "a1807b3efbcd131176be30c0d566724b198449580a4cba681ba1957a4623042a9c7763a0bbe59280d3ced83bdcbab877cbacfb2f3a47c66c91340992e5480f06"
         },
         {
           "alg" : "SHA-384",
-          "content" : "29c2535d9e43e954a3efa9b5add55ca686c674aac809c9baa2f441906498515562c490d1fed700c81eec44bc221ee6b6"
+          "content" : "64bb6ee9df70eaa7d905b505790993eadaf3be095a4cfe2099b532dedc825407d0fdf5b693c1b6385d07c7e506a8ae3a"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "78a5e923a78796c666f4db33f79a0ff6a053a95c9bd3019f1a2d9434223cc63c106f29f4dbed5318f8554c04a62789e1"
+          "content" : "7ada30fd5a2230abdbb28165c8adddefdc90b695bbf96f6ea504964ecce2aa9effbccc1c59e39b10cb9eafe3fb660a1d"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "375626bbae49612b508aa5a207bd664bf65140da0fa25ba395d5dae3bef085d4"
+          "content" : "706d99481b95d70d0af11687a2cc2ad2ef2b2f2f3ac445ab19294785b6934934"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "2be3b0996ca9610894c6bdfa3be62c6b1a6d5ab152e794797487fd612c61dc88421cc5c49281dc65a9411ebc8926ad2a2f2acdf20475e4772fa3727691e190f8"
+          "content" : "51de66256048922852653c1beebe8ad62b68b2e1addb8e06a40b3c3cc768033747837bd7267d8ca6ecb650927898b947b54336114186ae3e7e360bfa496108a8"
         }
       ],
       "licenses" : [
@@ -58392,7 +58392,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -58442,45 +58442,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-web-client@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-web-client",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "09022e2f9104ba77c81b05e650bafe88"
+          "content" : "6224df074a985a3c78279604ba7d98bd"
         },
         {
           "alg" : "SHA-1",
-          "content" : "7fc978859273699c7fd3b652c04ad49393634253"
+          "content" : "ed984446e2ce0c751488c65d3ca5c85fc51ca9c7"
         },
         {
           "alg" : "SHA-256",
-          "content" : "1cc978b8a2f5f0b6dcb5e717f1174750eca10aa844fe17f579183c5f69cfdfa7"
+          "content" : "57ef54f7f385d5e43b7b8cb2847c42ebcf259f2a6972a37aa3dc80ff4f2799ec"
         },
         {
           "alg" : "SHA-512",
-          "content" : "ebbf963f47f5e22af914cc71461e007df53255ae4407bb9ae3a464a418383106d4b7f0596ddcff60aba6a00eaae39c2488977e2e913fe7e27c04a5d9e5fbd3d4"
+          "content" : "9d87b893acf00b7623174437b295a9b08e51744ce683f7440882ce052be910daae0c72443f50a7caeb8036984b60ea1b88f867eb413af167cf2e13e7064d3388"
         },
         {
           "alg" : "SHA-384",
-          "content" : "dfe5f50ca09059c47b391e413a8b47c25f0f1551897c22ba293e951d10a4ba1ca3ff8bf35e87d40b9c15b5b477605595"
+          "content" : "d3c188977a62d41ba6c949e6d13eda76b321968819b8fc97cbd0af9832e388ad037f9bad4d1e9c5dbec20e88ff93a1cf"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "dfeed783e2009052d236c5a8e949f588805de725a8a4f4d4a291be8ef166285b6ec4836e1be09dc5c60906159dc20810"
+          "content" : "eb1feceb1d4caff4257b6b21975166510435564ece0746f6b29e1772248aa09f6e7300901f136be00250a57b838ebf18"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "de117739e92ea103058bc0c82424f114fd81cf4d8ba8e9fc7a7294d7100f8588"
+          "content" : "dcff337494818dc071256a2e3e9dcff20a000ee722e557f245ab8dac1a4361cc"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "d63feee4a41e2462071efb8eed67e4628468c0df25e0524f8c419e53727383f0f0adbf767dc63cc33f790e15d960e06ab0f95a294dd43dc90ab8d9aa93e9dae3"
+          "content" : "d268baf2e6cff206bc7b5fa236b822ba4ed849857051cf385260ba6861ed3604d35243a689de17c45891bce07b265c040329704fad2d6c47442ee76fc22ef17f"
         }
       ],
       "licenses" : [
@@ -58495,7 +58495,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-web-client@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -58505,45 +58505,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-uri-template@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-uri-template@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-uri-template",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "a374a68b3f42ca822e0f1403de3867b5"
+          "content" : "0d5ce51e0836e18d27f15700d50675b5"
         },
         {
           "alg" : "SHA-1",
-          "content" : "aed27ad2f0731ca0b55dd79eeae8142ba8a7c420"
+          "content" : "47e380178351aca6f2a162e9facc031fdfdfd9b5"
         },
         {
           "alg" : "SHA-256",
-          "content" : "d303e9f044347bc350241dfb2150f05d3b93d6c7f56c74757861ca582e8f62df"
+          "content" : "4813ea6faa74899e5f317ad223608fef905c2b83cee9eca76393e9e2853f3b4d"
         },
         {
           "alg" : "SHA-512",
-          "content" : "27f78a83262ffd94bee344d643dd00522c9e5dc085415d9c8cfddcd90f3a655e1641e28068582e7ea26e26aa76787e42af4ab8463521bbfe0e730e0002ca2ec4"
+          "content" : "46b351b1fe4cb5903267a57752a5fcbd47e6ae2d1db13344b33d8e5e3725a2ca618981825ed36328a08be99d356c7e5892eee701fb02f9b2b239e9a0ac0a27c6"
         },
         {
           "alg" : "SHA-384",
-          "content" : "78ac92f798f4a1620efaa9e85af135670594812ff0292df80e0ad3e283ba08be7fc23f9fc0515226d21672f92e3ffb01"
+          "content" : "837af8ccb57dd1b37a03293c8af2608a9804d35a77ae42584185e8f177209bc25665e761f2f4eb401fca435e678b3721"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "6e7782369bc2916218eac38a4a1a85247e8c578563559548ce2e4f8f1fb6899993ff36a26f19b12cd1600f6bc3480183"
+          "content" : "6e5812307634ea6494c23dd66ea267c44bc9f6a34438fe9c3da54fa489213ef084a9bd56a5cdade2bbf7031c7abad7d0"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "52657687843b13fd34697fc48af6431da633524efc02a898fa6ded16e63df676"
+          "content" : "275543f08aa59393a6ddc0f9bc091942036dcaa1cd3361c5fbe52f971ded9148"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "bf1672ab70b5f3bb9f5ec1fe3d13c978a73ac479c75da2fcf302d84d9a97342980394f9ab505429eeab6f0ffa8a6c687152f7ca02055aca41d1916ecd541c87e"
+          "content" : "904ac8c04ca09c012eea9d9c20cf24227d41f93fecf7b8fa860ccbfffb4c1aaa3a8dd2c78d4ea5f42d12aefdb9ac5b043e5978dacf18e5672105b9a0a6e395b3"
         }
       ],
       "licenses" : [
@@ -58558,7 +58558,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-uri-template@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-uri-template@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -58568,45 +58568,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-web-common@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-web-common",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "7df76fee719b1fbe99cdb74a08860f6c"
+          "content" : "e990f7d95d4dc56d51b73b56ffc1747c"
         },
         {
           "alg" : "SHA-1",
-          "content" : "309352534ebb1e349468a7a72f2e7c9803795b26"
+          "content" : "63e398a0a9de83952f6d7a24498ee31b5ee98f82"
         },
         {
           "alg" : "SHA-256",
-          "content" : "378371867305e73cddcea7027217d9a9fddbd18e57de74021824cb2bf1962019"
+          "content" : "e6938a7c555ae87ccde10af71cfb264483ea7f952e7d7724e4196bef21cec64d"
         },
         {
           "alg" : "SHA-512",
-          "content" : "69e43a48df1201e4c85b0c0f060fc5a157be01eff151e75864cb7608b41206e1cdbbbb6d05b81404b293047828260c401d73101f47bb06bc591e9c61dad16258"
+          "content" : "2d1c1afaa8b03d11041dd903c5d2a1e6ddaa4d499052da07d9eed6f8b2eacddac38846b419f1fa458c99628f633a0193cd197515234929c401c337825d83a0fb"
         },
         {
           "alg" : "SHA-384",
-          "content" : "1969626c70c53faee6d3b340b7e862efd798fd31a005492c42365a78b77d1c99a60da5d4d85c030d170d6fcda55d1129"
+          "content" : "7f4147684dffda6ee5f205d39a4dbfeb87e484a33523c2e4e32215bb56fec6dbb20ae2e5ac8da6aa1a6d32165dc02e94"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "b94edcab032cd1d0b349bc367b5f43c9a158e8ec5a2dd535036e762dd852fa48382d834c4d801edb0db521cde08f8b53"
+          "content" : "b1b6fb79b84f1adce6430c152fad667ac954053039c8850596de6247831e754fa97741c5eee29551250c645f67587b70"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "60e2c1791f577a80c9a9a01cd56808434f415c0af7d033c76b0a34efb5e5f4aa"
+          "content" : "8fb4c38ff680e4776ee0f133b4a7a9ebc4fa83634ef31ade679f15e022c49e41"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "76435a0ea8e1f9fde8899bc1bc95dc53227322b4b6e94ac5fb81f245b45e84d74192d7cfb97faca365485132ac0344d932eb87017bc5bae3cd5f55e032c52d23"
+          "content" : "3432e09b72501f0cec472cc297f71843d9adce330994b6a51459b81f7117a88828a1f3db8658dc7721ee1f59ca743939d920d1b0ce4ea3906e2fce6a673f8a75"
         }
       ],
       "licenses" : [
@@ -58621,7 +58621,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-web-common@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -58631,45 +58631,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-common@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-auth-common",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "e82b185127b72dff2f31aaf60f25bf21"
+          "content" : "bb8d73a1cf72cc8bcc9946aab2de3eb0"
         },
         {
           "alg" : "SHA-1",
-          "content" : "bfa9942528f642ccb3ffd527b44e2096853e0fb6"
+          "content" : "d0c234db26f16b65e2f7e952276d7ec5915eba37"
         },
         {
           "alg" : "SHA-256",
-          "content" : "2fc9f280b2193718db2bde020e8ca9107eff2a78d27389b7c4db63f72980c4de"
+          "content" : "5103b6ce5121aa783707278b4ec08a19a0405d87b91dced1d9f6054d7ffb5dc1"
         },
         {
           "alg" : "SHA-512",
-          "content" : "e1218ad75a0a5012dab7108798186085c6a5fa31c37a8481f52a96d2dbd6eb84fe9dc0e518f4a506309c934867146ef4b311cebbef22ebeaf5a894b8dc6993e7"
+          "content" : "0c1f70b1cd906d16e9c80461ebfe28b794b42e5f5c0eade27573c55dde170b6587eb9358294ca97fb0f486c28f5deaccd0f3881a1e7658c05aaeab5cef6e8649"
         },
         {
           "alg" : "SHA-384",
-          "content" : "65dc0274a0488a54106271d6fef9a399ebe9192d8066313a55aa527f989a36ac2e55f6bfd602fd113b956eb7cff5f1ed"
+          "content" : "a7fc06358b29dd65d3b00043990ff0d5d3eb649511a44b447cd1b1f898dd1f676d0cf3d0fe29c675d5f6a7ad98e5af5d"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "42e9dd4d08b96f54c03989768dd1db06f3ba004b7d1d348df6fcef7bbf4416983a8e46326852515f5c192a1a164e7318"
+          "content" : "b09a1bffdadb0f759b76565d7b25f4d65c4746192cdb4d0fc90e2ce245ec7cc53c2bf9df158a92a3ba99d3b6e91ef6d2"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "3b23de13c37435863261f68c50dc9bb5b9ece346e3497ce077d80c1831ce792b"
+          "content" : "e8402743330da18585039c4421a70d34ed6084d7a7bfd06ec324cc0f6169f871"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "faa87102085c479fad62a2e21e8b1ac1b17a448bb9c33337bf0e429e17033bd867b2c1dd1ec2df67e7451ed251cc96b6054e8b5f4b5965a00f03818eada5e8ea"
+          "content" : "9579f13f63831c70ba51ef336cff7ab1582b251ce85a6fd10df65e2f3f7d668c2322c0add5698b6833d5d5f45df5992ead63a9029812ad94ad8b5e8039d1125e"
         }
       ],
       "licenses" : [
@@ -58684,7 +58684,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-auth-common@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -58982,45 +58982,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-web@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-web",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "444ecfcf07e682ba6f35e1b3f0989a59"
+          "content" : "3d8c1b26f15823145186539934e2ffaf"
         },
         {
           "alg" : "SHA-1",
-          "content" : "c806b6284a1df4f1315fa3cb17b84a07f875d502"
+          "content" : "367b56676c239eab432dd2611ed5351888c95574"
         },
         {
           "alg" : "SHA-256",
-          "content" : "14ae3cadbac1d0794cbf5e66fdb3cc61611235ac05f57bfdb65d9c21a6b97add"
+          "content" : "a8d9d06554e23286edb542d9adf15d057bda0399455a8f04ceb27e39bea1a0ac"
         },
         {
           "alg" : "SHA-512",
-          "content" : "9df7021a0d75b0399bb658cdf540884b81abfbe434054abc6864e1c997840b206c5fd4a019261204d1c8bbc9ee446894a0beaaab59700dc0cd0a819ae6e7485c"
+          "content" : "5d636df3cd433af7c97de5093044055946dd635418b2b25c41e6f66195eeac1889fe71bd18e62a174c7dacdbda4dc42ef3c0f800bd2655fb6d1937824be498b6"
         },
         {
           "alg" : "SHA-384",
-          "content" : "4c63f019c36db00fff3a5c771e1726e47b4f936f960ef7c27148aec5921048f35f2157185f28bfa011615104ea652bc2"
+          "content" : "c076fd6aa59bf8150979f2b332899c5ae0137944536fbb96e2eeec6426a296af0eecde5f5e7f9b8583ece730fa054fd6"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "9a39b8150bece171a1d21312f754c9211efaade1a867afd23af739b5022d9a481195e8d8110e586fbec64eaa4b76c52b"
+          "content" : "34545e6034e48a9c3b0e348784a3c70a26c0c0ff13177d2cf8d0d93f1350f050fe7189db602d20931305631353d69873"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "e75493652b9c49743f36e30760600e7cc5113c5e27e268e01e70cd749ed281bb"
+          "content" : "6c096eaa5e97527a9a345821e313dca38c2e018d1453f2be71d04501ba3726a5"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "78648e78c956c2284f3c80d1c0e811c88112efaf9776ca68530426e0c2441646ed2914421ec756b558ea7f9a4f326f0f41779da85c6d70151c0dd0b8d378a378"
+          "content" : "8571cf3c48fca3c1a70f341890366a67607201eebac59cdc449abdf6be87139d483ee05969d4b8e926df5667f78013051b69e4d980eca205b4a133ec0f007b38"
         }
       ],
       "licenses" : [
@@ -59035,7 +59035,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-web@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -59045,45 +59045,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-bridge-common",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x 3 eventbus bridge common configuration",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "8b975f46abdd22ba8900e0ce9fd9eee0"
+          "content" : "87cfa0e8e2bc4047c1349027a20202ae"
         },
         {
           "alg" : "SHA-1",
-          "content" : "85e55015c0eba314b48273a36dc6c6261b6d432b"
+          "content" : "b9bb282c457c95d5de4bc3c7b92fdd57cbf2ac82"
         },
         {
           "alg" : "SHA-256",
-          "content" : "b57384bda3c9ebb78cc734ddf0d83bd6b55335ceb259e41d315854f9b737318a"
+          "content" : "a004fef3622ce6db8ba11c502f2c752dd0975eaf7c8e940e71c4c4ca0ccbf4cd"
         },
         {
           "alg" : "SHA-512",
-          "content" : "e84a9757ca19a9804d34dfebebd8bb02226098534fef8adb207bf1e90c36622bb976acac43e30f5ea9f9c322beff1939abdbf38dec5126883944e6527bd6f6f2"
+          "content" : "792ba6fe6bd56a500586f8c4e5b6eb25e642fa5c440cb2d4e2c745f2f33071025d894031ab7a790ed8acd4763f03acdcbe799f09a7cc4ca8a119ddc2a6e97e17"
         },
         {
           "alg" : "SHA-384",
-          "content" : "2ab1f6935ff0a460ea634e127a5cc6dd75a12b6e0e998d49bc7c29b875788d3e756a27e2027bc67f75493d0601c935d4"
+          "content" : "1bc9f290693b41a88dccc056f147136b67dcf92fe1decd221fabf228700f15629f9d7f62da4d4cff97ec8728ee6e032f"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "ca4908beeafe3357c893bfb53cbad4c18bd5faba2289e33d55fb960c26d3867cb388fe1e4d7e4c483dd17e74add205ba"
+          "content" : "5c1874df1dd31fc41147fed402589dd9ad11fb8b832d6df5aed32c8be02c600015f9b38ee29bfe994bd1f82e13be4513"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "bb89eabc995d50569f115e85251efe8ff5975c6d62d0a0a43aa7bb6ee629d0b3"
+          "content" : "daca0952e0ed33b29c9b59148ef8dc8ce4ab2928fb5abe20d83589bf88b065b7"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "7ea4421183d163a28e2b108ea1b0fa5852c7e61f3d9f0e2f1b841238fd9a97973cd9cfe459b6cb4a530f4f10c91ede88b2c68bf324303075bd432fa78ffb3ad9"
+          "content" : "966c669a76b78a2a389ec7ba691135c620e9b7b142ed7df03023c570480651a2fe1d843f873d002d4c72f1c9fef8d2ee79adacbffbc4e81c3ab8b642401eeb72"
         }
       ],
       "licenses" : [
@@ -59098,7 +59098,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -59108,45 +59108,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-auth-properties",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "dfbc84fff087d43904051ac52e6cf870"
+          "content" : "56afa09c680395b0df2d2608f79dfefe"
         },
         {
           "alg" : "SHA-1",
-          "content" : "3d85c76d3f6c91a9579259dd8744b03a084fd970"
+          "content" : "a6159c4f01bc97a90ca4542f1b0bf05690cf9f23"
         },
         {
           "alg" : "SHA-256",
-          "content" : "481db7450a32c6d9c02944a65bf33be018912e8ad3c8466bac66cc9f3e480b11"
+          "content" : "04eaadce90654d79057988432014822b9543dac2b59350b756260e2179748e4b"
         },
         {
           "alg" : "SHA-512",
-          "content" : "2076264a4a91ca4d56d5f0a99e72acb255ac80f41a5c00ba7e3dd483c102b91b5fbb4979921c2283526935a0e7bf627f897964291e8d3423ccdf53d39890a7a2"
+          "content" : "759ed9b7fb624522dcd861e8b3af1a3e78bce5d1f4cea94d37ff27fc4058f11629c9e38eab2956e8e96dae99fa9ed7a41babef5ee6f67fc0310aecdecf82ebfa"
         },
         {
           "alg" : "SHA-384",
-          "content" : "dd8c8c8ab544d2449ddc0f1c40e3b08c9c9570e443b238d814ce09f9e3d12d0ffbb73a737a0dfe5794726e616e9257a2"
+          "content" : "662d736fc15eaa986239f307fe9faabb953c833f7823b8a0837f99c0fbea9ab8cf781bed74abc8d165e53b0cae72e820"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "c263f1c35cb1cb5a59a76893a5d8b2b80ca619b55d9eaeec3fa505280c8053500b2b5bc625296e0d4205934550e308f3"
+          "content" : "88e3353ce2edbcb562ebec6adbd1e3c60c60b54f3d1196f03d49fd4746acd72e66e2fcc5bdcda70e0fa7a06f24735d58"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "855209e8f35db0b698edf42d751a1b44e8a201abee2aa4445eb7e69152def306"
+          "content" : "96b48d9c0116e9e65aa5705e8ad6256d5a1684c8075e54abef9135f153f653fa"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "a45f917d32aefc19c9a6fd770ebb1507d7481bde00049ffa03abdb346793780e7253ca774f83185c26a06e23dd429aff751742b6cf27c7fe0b04e2f6129f37bc"
+          "content" : "99767191ea563c8bfb7c251e546a3d6629e224cf69b9689c5930be0b820f0a9b82ad650bcb24516ea3491508f2e5b7fc588b7d819c3e533de274dfb1c2bae958"
         }
       ],
       "licenses" : [
@@ -59161,7 +59161,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -59171,45 +59171,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-auth-jwt",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "33e1333ad78a0c891066008366190fe0"
+          "content" : "ef717e13b04ac3f9e9dfeaefe4a2111f"
         },
         {
           "alg" : "SHA-1",
-          "content" : "7d23ce9ddc7f4c8c8376b7e768b5b7eb3977b277"
+          "content" : "dc71d684e1f00364386defcf4493ca36b176f991"
         },
         {
           "alg" : "SHA-256",
-          "content" : "306d7bb49a73df769987437caef3f06b6f4db3a3a86ec88b8416fcb59a7b6631"
+          "content" : "2329b1cb728fe533ae77f711b00cde7649f616a7a6231cf7588c15e21315373e"
         },
         {
           "alg" : "SHA-512",
-          "content" : "04315ea07580c9deb65ea657c02ef25e2fd173cdec156732ea602c20592e6c3e409605cd0749a361a023cda5ca008d55af4375bdb2e169791a2b9fe6074dc9f8"
+          "content" : "22f3685135c99184bcddfad12217c9b778f758429ea88f5f7fc1bb051e1f0edad14dc3aaae177ccfefe82c1d0d3db90a3a94858041f0bd541f89aac3f7595304"
         },
         {
           "alg" : "SHA-384",
-          "content" : "3bddfcdc33704988d182e8ac90732ae99a762811622bf9bb9700390dc13dc733869af7f3a97df195aa2e092392edae48"
+          "content" : "5649fcd5a17c7707ca8fa34889444657af3be1986fefbda9e4d105ee21e9814784c5deab94b843fbff2a7d676989c049"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "e449a1c84e98a4c969eed9f17e84c1f25b48fe204797e5e42e7c2495e525b1d0fe6bcd940ed81b3e43b1f7aadec9d78f"
+          "content" : "102d287a76984c9a5b437332f1c4321c7f951bd866d465a2db0f11a0d6d3a6df00c12e6b46bad763be068a1087a82c9c"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "1d9233218f8ff71e2ad180d91cf1fe4dae5ff9886aa1d514c80df5c45e074182"
+          "content" : "dc697af028799722ec91836c83d79deee824c9fc07e6809b81a6f779b8808885"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "ed31f001e54d08e8b6da4117178b0f37748cb72cd67011df3af31f8424d8b0076c928606ae04770048f3d2add92c0d65bf17393f38ee6b5ba881dc03b6927442"
+          "content" : "7a058b4c496c3ee57783db10754f63b1739c0216c3ed68b2ca09e779b3f7ea29e732b58ec402a38c6884586631748106e8aeb88e581fc5d372500bc6a6fe1601"
         }
       ],
       "licenses" : [
@@ -59224,7 +59224,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -72574,44 +72574,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.86?type=jar",
       "group" : "org.bouncycastle",
       "name" : "bcpkix-jdk18on",
-      "version" : "1.85",
+      "version" : "1.86",
       "description" : "The Bouncy Castle Java APIs for CMS, PKCS, EAC, TSP, CMP, CRMF, OCSP, and certificate generation. This jar contains APIs for Java 1.8 and later. The APIs are designed primarily to be used in conjunction with the BC Java provider but may also be used with other providers providing cryptographic services.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "8247f481c8eeef03925277ca33f72255"
+          "content" : "f99f3ee0907b890a9c87411fd5a696db"
         },
         {
           "alg" : "SHA-1",
-          "content" : "b33d047adc6801a1cfc8ffe1634b23b306a670c1"
+          "content" : "fb5ea65959db10fe5d61148bb2b77f6e231455b1"
         },
         {
           "alg" : "SHA-256",
-          "content" : "c9f82b2d4e99c4bbdfccf684e52cc06ea06a0b567bfd0d08f9c5a3f417055996"
+          "content" : "8d8b41a4b149bdae8d331f059a578870954d1e3ff29f8269a9eb3ee19a7e4ef7"
         },
         {
           "alg" : "SHA-512",
-          "content" : "142ce817145f7348dc97f62872eac931280c578bc61ff4cfcff927d4247ab2bf15e858edf74f2549074c4685ebe8de1d815c42637eacdb65b344b741c2bf1415"
+          "content" : "2923c0da3848b47d1953bdba3ae50441f3a3416f3646a26244c080414f31fbde875e4e50619a0ef34670c877367a45438a346260fc8b047e753b553debd40b37"
         },
         {
           "alg" : "SHA-384",
-          "content" : "1bb7f6d3c0e83cbefcd27828575a9554a087c19b5230817291fe979cf54890fbe7ccbd8134563011b4d409d7729c1ea5"
+          "content" : "a176fbe121a322d83017263c5e9e0d53383ad58a0c46dbd9e52c4862f2114f1f85db2b8b5f093ef6b0c00d8dea4578da"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "fba8a68f6b52298e7634fc8f6363134ccd32f4c549bfbe9c3696aa74e6a41289ee6f09095f7c66f9df8736f83ec88cc7"
+          "content" : "7525c6ff2f539fecc61f380113bb1480d2bdf6de70786001f0641057b3328312f75246bc8faccd96fe5c048fb6943de2"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "b1d11ec6466b1789e093bb21a59eb51c83c7f7e1edc5e1aaaf407c36efb90e04"
+          "content" : "2784ec8965c90cb2c8da5669017f006be339972bda47c20921740159ce1eed16"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "93b46f93a07037b8c774f337dc83f0652191fedfe1d66342360174c29c0030b7dbfc7b3d9b23de54f482697b274f2c36c8ce6139eb82df62eb7d7d7d96ea642e"
+          "content" : "7ac8aa04c956d7066b8161f177378c71cf3be58d35624d6567ffc7efb80a61365f0c02f1480861b7e25b818d823d184c9dfa23c0f3b94a5b81e0b087f69de7bd"
         }
       ],
       "licenses" : [
@@ -72622,7 +72622,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "purl" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.86?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -72640,44 +72640,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar",
       "group" : "org.bouncycastle",
       "name" : "bcprov-jdk18on",
-      "version" : "1.85",
-      "description" : "The Bouncy Castle Crypto package is a Java implementation of cryptographic algorithms. This jar contains the JCA/JCE provider and low-level API for the BC Java version 1.85 for Java 1.8 and later.",
+      "version" : "1.86",
+      "description" : "The Bouncy Castle Crypto package is a Java implementation of cryptographic algorithms. This jar contains the JCA/JCE provider and low-level API for the BC Java version 1.86 for Java 1.8 and later.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "e564b4f846cd76cca8253c7c9febb44e"
+          "content" : "be1401108af4f440b82b47194c72506b"
         },
         {
           "alg" : "SHA-1",
-          "content" : "2320b854dffe134687f7266bb22021b779e576d3"
+          "content" : "830c8467bed8e4c1148262386b09fc42aedcf262"
         },
         {
           "alg" : "SHA-256",
-          "content" : "20af26bf6060bb8005cc2389916812c1e0e998dc48d2ced7131b89461b54cff7"
+          "content" : "2af190b300cbb0b35e248ccf5f4a06b6072030aeb3da7a98ec73abe5b4cb371f"
         },
         {
           "alg" : "SHA-512",
-          "content" : "33bbcbc3ad823898bda1fec8cea270fffa4688886b1c351afd93e713f41d29afd71aae9982cbe896d510aa98fece8b9a66c132536625801fe2c1af283a76e2b5"
+          "content" : "4502851281929ef645316ae96ad7d6db6a54d11ce024a66bec654c2eef62b80f174b67a2a15de86b2698f33b696459e21ecfec4a846350f4297394e9a331c43b"
         },
         {
           "alg" : "SHA-384",
-          "content" : "50a64acda277531b4aa2faa476eae6842c8505224b560c05f8a8fe4f5e4a9a245aed4622a4a1ad57da197b93fa2eafd6"
+          "content" : "57247c80abb35a29f4f4e0b6d21fd842635a37be2275bb2759e5a10095a9864ee30310fe4b630e22ff786f325fb9d8d6"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "d753d24ac69ee4f167d4d11c6094b2671e7990fa73471b6c34a7eb89c04f3c3f7b96756505e776a22c55acbdd32d2637"
+          "content" : "202f0933e870819363c1f189f5afe122ea5308994d2b8b5ce737fd5fd80880339eec4bb99579145b505728fda75a353e"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "bcc230dbf643d7d4f758c31ba0762b2eb2f6bc0f565f4336eeb013e75b05a1ff"
+          "content" : "0719f22928c6193425cb53e335dae9bf103c49425276aad6833f8e7131b615e1"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "ebd7c353f357fbca7a7e596c79c9023dc37cbc48a0eacf6fd1644932214131eb02f164969f5b429e3bbc7f5bdff519833a5ed0ca934a2c172d9b49af2e7df7d7"
+          "content" : "a77e4e6333032744f390c63a0a48c366bc1e0bcd4b5755f4ba18549be761af8ebe37e6fd2c7bec0f0c85fd235150fb7d4c57f3518b500dbd079749646ed3654f"
         }
       ],
       "licenses" : [
@@ -72688,7 +72688,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "purl" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -72706,44 +72706,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.86?type=jar",
       "group" : "org.bouncycastle",
       "name" : "bcutil-jdk18on",
-      "version" : "1.85",
+      "version" : "1.86",
       "description" : "The Bouncy Castle Java APIs for ASN.1 extension and utility APIs used to support bcpkix and bctls. This jar contains APIs for Java 1.8 and later.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "7c90e18e7e709e7ceb14b2682e5ddcca"
+          "content" : "c409099f16278109e7545aad128cc029"
         },
         {
           "alg" : "SHA-1",
-          "content" : "c41082d6f61628919b675970563f5615e4427c9f"
+          "content" : "2c8e77f5601c2b84c8773af4caf403a34daca357"
         },
         {
           "alg" : "SHA-256",
-          "content" : "590f55ed5d68529239898a4a5c4f730b6e37f45d1cfa3fbe51f8485abe32c42d"
+          "content" : "1c268e15f785aafb1e4670d8d6e5f856f69475e96c162dadcd1ff9b350e9139f"
         },
         {
           "alg" : "SHA-512",
-          "content" : "1cf5011448dfaed7daea587807b9513961bdfd7b41ee5ce42444254dfa3677fdba78fe5191bca4ecf2a51eb3883be59f0374affc1efae3fd1728a64fa094027d"
+          "content" : "aeb9138f96d5c48491974974534bb3b07931a18d36ccbed828940ae0361f5ef8f5b0ad6c776a1aebb4d2c0416edf8b7d143d821bfe7136d7948c4e5807b1c426"
         },
         {
           "alg" : "SHA-384",
-          "content" : "fdab70a9a0fc9011214c1d484f315077bb68ef586669a2922e261df7e8ac8eae290fa90d411fbad04cc8642a9b7596d0"
+          "content" : "2f4ceb52be9fd05b578257258042aa6ba00e61f4e1e665e1823db85b19adb34d7e20fbee9941aec7ab861cb512c8295b"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "811f67ad491483f79e93827556db2cbe5c66eea384638259429617ed3ea06a42b0cf5e6bbb2d7ca13dd6a2c094164b93"
+          "content" : "8feb7bc4f93aa8c2f1f4fd0c869720c97f146d272830cbe20472ca4f6daaccc03b5ae5ab20ee7ee24b8a0dfa8e48bb4c"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "990e116a1143574594f0ae6d134d4541d22e9551d48a3347f73c7bcef278b6cc"
+          "content" : "5409b4b49308f8cc6b45e368d2dde5486c92d76706a0428d2987e30e7e86e20e"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "a969f3ae17dd9a6141572ae2da2eb3b6414abea4d6dc6e1139959475ba3e9ed3b5a4696832e7382bc1e256b839fe0bf30ba54fb2e8490dae36c046b374e78c89"
+          "content" : "d4443dba282b4d01c04e10df23c9d7be8b896d20cf70adbbffdf065307b40a30ab4e21617f890f7d4a64e261617fa0a2091fa3a1461e73921411c42133df6134"
         }
       ],
       "licenses" : [
@@ -72754,7 +72754,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "purl" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.86?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -83562,44 +83562,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.86?type=jar",
       "group" : "org.bouncycastle",
       "name" : "bcpg-jdk18on",
-      "version" : "1.85",
+      "version" : "1.86",
       "description" : "The Bouncy Castle Java APIs for the OpenPGP Protocol. The APIs are designed primarily to be used in conjunction with the BC Java provider but may also be used with other providers providing cryptographic services. This jar is designed to work best with Java 1.8 and later.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "ff4ffb39ea2a5731f0e7c7d3c24f4053"
+          "content" : "a223f2669bce4f29840877701d3dba99"
         },
         {
           "alg" : "SHA-1",
-          "content" : "0eb8822a019c29a5d205811367480ebe8c747714"
+          "content" : "49dfe201a89eb19d2ae4f213f481765f4e4c0d51"
         },
         {
           "alg" : "SHA-256",
-          "content" : "39426367dc247dfaae9b1253457a39298b6b9a6c28a39b908bca829e315323dd"
+          "content" : "8a52ea45b2063f6d41b8ca94409f255a1f4604922f7451c18a7cfd3a3c5b85ab"
         },
         {
           "alg" : "SHA-512",
-          "content" : "97de8b72ad0518342569475e6853555669e70cd9be0d46af465256fd8499b83586890cf8ba679ab89b5831e2e383e25a56c91a221e903e4beec75c496c0ecb1b"
+          "content" : "2a1e19f6a7f3aa8561003e1e7b0c022c268690ad7365391698905b95021ec5291b03487de18849fcb78d39ce15c95ac347add5ab83d01e89f0c37e5aa60e5c89"
         },
         {
           "alg" : "SHA-384",
-          "content" : "915ab5424f0b1465331b67d5ec5633378e5a6344b77d9b991c30a733dd57dc1c57469a58a00e5b228335f1069ccf853d"
+          "content" : "c26f1695223ae77ccd6b6faae41e7254003b0c067c29fb2bd1cadd9a8d604b7603bdd22b664f620dda2a74abbcc571cc"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "1cd7f25673999adc0d771196206c04ec4737df6508c1984d3d7595127f0fabd9f22ad68a8ca81edbef5aef631ee19920"
+          "content" : "17e95e7c353aab529f4e3563e71c9a92553f2261bc219f8757919b15618167eef215efd1f25af374c39dd574009dd2d1"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "554acd41d543f2b7ca1f6aa736ce89e7f9028b602f6def6fd6683a413a987c55"
+          "content" : "b123879c47e07caea4eff2e1ccbd6b1ccbfa4a453cf22e2a1607b7f6ca7a0da2"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "f7faee1215162a68d83e9af5a373003e99fae48366ec6ea16133f642adc85a9c45c132fb2086a8c6879d8a5c597fa9ce3e563cef06b85b553c012c3e5e8ac223"
+          "content" : "4b63353dceeec588bc2935c5c1d73436f0d8201a34f28f99bce5c16652aa99fc212b91abb8233d9d6464c4605938fc7cd0b3ead3385ba3727385dc00c54bd633"
         }
       ],
       "licenses" : [
@@ -83615,7 +83615,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
+      "purl" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.86?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -133412,44 +133412,44 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.85?type=jar",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.86?type=jar",
       "group" : "org.bouncycastle",
       "name" : "bcmail-jdk18on",
-      "version" : "1.85",
+      "version" : "1.86",
       "description" : "The Bouncy Castle Java APIs for doing S/MIME with JavaMail. The APIs are designed primarily to be used in conjunction with the BC Java provider for Java 1.8 and later.",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "e66891af9c4aa987ac14ae8d965d4f1e"
+          "content" : "1bb9fcecd37c3f945da74e1c13b47498"
         },
         {
           "alg" : "SHA-1",
-          "content" : "ccbba27802c33339afba3d34657ec5730cfc3178"
+          "content" : "705f2f8650b5da420bc0a3dc8578f5b3a8d63f3e"
         },
         {
           "alg" : "SHA-256",
-          "content" : "ab87de929f8fb8d515143921580b60b7dcc6507f07939ca345b8ffa07d213837"
+          "content" : "1f944bb66aad1f98f2b231231b4cc346136ad07edb5d786c1eeda385cc139772"
         },
         {
           "alg" : "SHA-512",
-          "content" : "0b56a1b04bdf967c3c872dc491fe2264910ce6f5255ac936cd19e0208f2cb465af85552403ca36ca9f82db0a53554f449d0e6956a2c6431d2b6fffd97edfc654"
+          "content" : "d427467515c1a7c5ef0d4feb88e8b34b0fe5fc21f2ef7e23bee74260f166ba45846e56dfb05d921cb57fbc6c1fb7216f86d9735c64e5b1dfd4054d14373f1194"
         },
         {
           "alg" : "SHA-384",
-          "content" : "630ecd37b47d13d153349c0f646f5df3b71948ac7a8548ecce178fcd0e385998cfeaf52ddaa67941337c13aa7bc90e1a"
+          "content" : "4c94767487caf4b2b86963bede9744fc620739d769e42c77a15b0ce1c5e51f281b1c6d0d6cc998c8462e0ec318f92ff3"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "a010daa0e2e6e91bf7e4f97bddf3e72a0f33530ca7f535c78f5ad1dcf74ec8058b9c3ce16665ff4fac3a4ee943182b2a"
+          "content" : "901674745a20fe980fadb546f7dfce75d6f01f0c7ec01df877d2d22d5622542f7a84de7fc39fe5dbb73a4bcb253a3a2a"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "975a91f65f5de653c8c94224a64616517f774ecab1be7126e19ec173e1127de2"
+          "content" : "1708070091a1c03e189147c2ce9b1a7579f07dd7bde49d29fa8d19b78eb45924"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "574da2f86c28510c76e4d7917d1dae0613be06a36f4e499abe502e89eb9caef4eabe82a6949d4267c49163d8636af7ac6f04b5c540783a30c7a785e3b35f5df1"
+          "content" : "d19d19b5e8c895acba79927eaae77834c8808535b4f61a53d4b7df4c0c7de4c7b3b6795a82f3246a445b0276b6e7f4431dace23035a0f1a1c506cf333b42b376"
         }
       ],
       "licenses" : [
@@ -133460,7 +133460,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.85?type=jar",
+      "purl" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.86?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -158333,45 +158333,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-codegen@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-codegen@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-codegen",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "be71b8e1a3518a7029e8b14a91820fbe"
+          "content" : "fcc418d2e8dc1b11a0c61bd7f07e5c5c"
         },
         {
           "alg" : "SHA-1",
-          "content" : "1bebc14fe50ff128d1ecce6f6a70efcadddb62b6"
+          "content" : "8be935f1595facf22b057c7066d8cc3952371d75"
         },
         {
           "alg" : "SHA-256",
-          "content" : "64f815df240092bf7bbdd2dfbc922bce7f1e41375f17a93622567a36e40702ea"
+          "content" : "b82fe8fe7324af7a37fd41940c228af99ea9c400e96ac55d0cfe8016b85b5337"
         },
         {
           "alg" : "SHA-512",
-          "content" : "2fd5a43e4711211864ee2ae944ceecfdb92b7118c0c9f36bc30d7d30f8faaca92088fa5febe99a0dcf19b147fe5b7d024359dd3669a3e01794218e641320c4b4"
+          "content" : "3aadc60fd78da5240feb27115e4f5e40b047ce2a0cdfc7ce2257f1173dcbe307822542fae4c563fb261f7965965a25fc6f50398e3994eb714886f3adfe6e8ea8"
         },
         {
           "alg" : "SHA-384",
-          "content" : "cbf54d4826c9acd0e417113d4d36a8c67e4a56b9aaa00324845329b94b85d1b6b5b9dbc1bc68aa9f3048a759a2f0c0ee"
+          "content" : "77ccdb812ca434bb28cd8b279eeaa2a8cf413d331557d7f8606962ddc0bae65a7ae621938a7cc5fe0076691adb18bc95"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "ca7d775c152188704b09b450c26230916ca305cb7873907d0b3aa4ef0834b7ff13c5a624fabf77b07562c0a3058e6d9b"
+          "content" : "ba71d5c99920b8b475b6b561c479a6dd38152b340890c286b7f909252a4423cea0e8956baf0003f16429056ff45953ff"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "c91162c4d0d4585f4f282e8501dcae3239176b2ed861676f11ad29a714a19166"
+          "content" : "bbd7a50458f36e03e12c40b0284174c677946d6bd4f989983c15b5496b41086d"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "6b77eaf597679c6c94827f4bb6cf3db78fdd720b8799bf022e96918792777da44682b1e35adb82351ac353971fe378ed1a830d57bf17a68c6c2284e483540ecd"
+          "content" : "ead0ac5f91cdd7bbd1f72d53c509e6731dfe7c068c13c503ef5ed583c199efd7bdf39dd51879099c6c949c74d0c99861f3f5c497461fe88a0084789abd8cb2fb"
         }
       ],
       "licenses" : [
@@ -158386,7 +158386,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-codegen@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-codegen@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -167163,6 +167163,204 @@
     },
     {
       "type" : "library",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "group" : "org.bouncycastle",
+      "name" : "bcprov-jdk18on",
+      "version" : "1.85",
+      "description" : "The Bouncy Castle Crypto package is a Java implementation of cryptographic algorithms. This jar contains the JCA/JCE provider and low-level API for the BC Java version 1.85 for Java 1.8 and later.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "e564b4f846cd76cca8253c7c9febb44e"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "2320b854dffe134687f7266bb22021b779e576d3"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "20af26bf6060bb8005cc2389916812c1e0e998dc48d2ced7131b89461b54cff7"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "33bbcbc3ad823898bda1fec8cea270fffa4688886b1c351afd93e713f41d29afd71aae9982cbe896d510aa98fece8b9a66c132536625801fe2c1af283a76e2b5"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "50a64acda277531b4aa2faa476eae6842c8505224b560c05f8a8fe4f5e4a9a245aed4622a4a1ad57da197b93fa2eafd6"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "d753d24ac69ee4f167d4d11c6094b2671e7990fa73471b6c34a7eb89c04f3c3f7b96756505e776a22c55acbdd32d2637"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "bcc230dbf643d7d4f758c31ba0762b2eb2f6bc0f565f4336eeb013e75b05a1ff"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "ebd7c353f357fbca7a7e596c79c9023dc37cbc48a0eacf6fd1644932214131eb02f164969f5b429e3bbc7f5bdff519833a5ed0ca934a2c172d9b49af2e7df7d7"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Bouncy Castle Licence",
+            "url" : "https://www.bouncycastle.org/licence.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://www.bouncycastle.org/download/bouncy-castle-java/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://github.com/bcgit/bc-java/issues"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/bcgit/bc-java"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "group" : "org.bouncycastle",
+      "name" : "bcpkix-jdk18on",
+      "version" : "1.85",
+      "description" : "The Bouncy Castle Java APIs for CMS, PKCS, EAC, TSP, CMP, CRMF, OCSP, and certificate generation. This jar contains APIs for Java 1.8 and later. The APIs are designed primarily to be used in conjunction with the BC Java provider but may also be used with other providers providing cryptographic services.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "8247f481c8eeef03925277ca33f72255"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "b33d047adc6801a1cfc8ffe1634b23b306a670c1"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "c9f82b2d4e99c4bbdfccf684e52cc06ea06a0b567bfd0d08f9c5a3f417055996"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "142ce817145f7348dc97f62872eac931280c578bc61ff4cfcff927d4247ab2bf15e858edf74f2549074c4685ebe8de1d815c42637eacdb65b344b741c2bf1415"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "1bb7f6d3c0e83cbefcd27828575a9554a087c19b5230817291fe979cf54890fbe7ccbd8134563011b4d409d7729c1ea5"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "fba8a68f6b52298e7634fc8f6363134ccd32f4c549bfbe9c3696aa74e6a41289ee6f09095f7c66f9df8736f83ec88cc7"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "b1d11ec6466b1789e093bb21a59eb51c83c7f7e1edc5e1aaaf407c36efb90e04"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "93b46f93a07037b8c774f337dc83f0652191fedfe1d66342360174c29c0030b7dbfc7b3d9b23de54f482697b274f2c36c8ce6139eb82df62eb7d7d7d96ea642e"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Bouncy Castle Licence",
+            "url" : "https://www.bouncycastle.org/licence.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://www.bouncycastle.org/download/bouncy-castle-java/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://github.com/bcgit/bc-java/issues"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/bcgit/bc-java"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "group" : "org.bouncycastle",
+      "name" : "bcutil-jdk18on",
+      "version" : "1.85",
+      "description" : "The Bouncy Castle Java APIs for ASN.1 extension and utility APIs used to support bcpkix and bctls. This jar contains APIs for Java 1.8 and later.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "7c90e18e7e709e7ceb14b2682e5ddcca"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "c41082d6f61628919b675970563f5615e4427c9f"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "590f55ed5d68529239898a4a5c4f730b6e37f45d1cfa3fbe51f8485abe32c42d"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "1cf5011448dfaed7daea587807b9513961bdfd7b41ee5ce42444254dfa3677fdba78fe5191bca4ecf2a51eb3883be59f0374affc1efae3fd1728a64fa094027d"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "fdab70a9a0fc9011214c1d484f315077bb68ef586669a2922e261df7e8ac8eae290fa90d411fbad04cc8642a9b7596d0"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "811f67ad491483f79e93827556db2cbe5c66eea384638259429617ed3ea06a42b0cf5e6bbb2d7ca13dd6a2c094164b93"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "990e116a1143574594f0ae6d134d4541d22e9551d48a3347f73c7bcef278b6cc"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "a969f3ae17dd9a6141572ae2da2eb3b6414abea4d6dc6e1139959475ba3e9ed3b5a4696832e7382bc1e256b839fe0bf30ba54fb2e8490dae36c046b374e78c89"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Bouncy Castle Licence",
+            "url" : "https://www.bouncycastle.org/licence.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://www.bouncycastle.org/download/bouncy-castle-java/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://github.com/bcgit/bc-java/issues"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/bcgit/bc-java"
+        }
+      ]
+    },
+    {
+      "type" : "library",
       "bom-ref" : "pkg:maven/org.eclipse.milo/milo-dtd-manager@1.1.6?type=jar",
       "group" : "org.eclipse.milo",
       "name" : "milo-dtd-manager",
@@ -168359,45 +168557,45 @@
     },
     {
       "type" : "library",
-      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.34?type=jar",
+      "bom-ref" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.35?type=jar",
       "publisher" : "Eclipse",
       "group" : "io.vertx",
       "name" : "vertx-auth-oauth2",
-      "version" : "4.5.34",
+      "version" : "4.5.35",
       "description" : "Vert.x Parent pom",
       "scope" : "required",
       "hashes" : [
         {
           "alg" : "MD5",
-          "content" : "5f7db7ea62176f08d33de2b80168c0ec"
+          "content" : "8b5389d6d84ab1b49a651edcf96fa9c8"
         },
         {
           "alg" : "SHA-1",
-          "content" : "fc7f7deb1d0dbbbbed8685b7a3f9284423b9d34d"
+          "content" : "dd05872080424eb98a5a8be2218723d9521eb420"
         },
         {
           "alg" : "SHA-256",
-          "content" : "043100cd4bb194ed31e2c2cdd07c41b4d9497f26ac086424e77317ff6883c212"
+          "content" : "73200e1855708e6a0142b419403944af4da58094cafae670ba622151e24781df"
         },
         {
           "alg" : "SHA-512",
-          "content" : "401ee800059349a8f6807c224d874390439663bad2159418df06bb1cd6269530959a53809906d87896ffa6c1e04f4dd658d78261412fc6791f3c6b1cfb388413"
+          "content" : "7646851b2f6e0bdd30dc3417a33a0566ea33ed07956bef3f0694d3384a1b261da07e24c30abe8cb848384864393a30871dbc0b2963b71b5d91ef44551aa0d55a"
         },
         {
           "alg" : "SHA-384",
-          "content" : "6db8a9983970bdaf908d57cfbaf9353ca3e004e8973bc2c7a153595c0a81581bfcd0b5f3afd482b88e45f5ddde3d6550"
+          "content" : "bd8a9345f79ddfa3c99cc0dacbf2fd0144b1e0684a9ab369ca5d88b4badf9bfd46bd14d942398a6cdb4271f7c029f53a"
         },
         {
           "alg" : "SHA3-384",
-          "content" : "3f40cc4a108627c9d49c24185f98e7a84a55f6216562c055d356779f132654c8338d404b705a430cbce24ad41cb86b80"
+          "content" : "77ffa4e8d84e989e9f6fb86e511062b79a4df1123b7712d266f4dfa8affc85de6f3adb1543d6ed55d1c6b357425f3183"
         },
         {
           "alg" : "SHA3-256",
-          "content" : "886ab5c20a0588b01ebea908735005f7a6ea575bf8aaff47bd63873dfa5037ad"
+          "content" : "1d735fd45884e9e3e9e6c15e1404fee77be2f60b6a975cc0293281ef531eca89"
         },
         {
           "alg" : "SHA3-512",
-          "content" : "cd9a64eb01a0dcee273026f2f2a93645bb8c11a4c5c60e931ae6a226fcf78243bee0cbd3f4237f9142c615d698f7631101326fb95b9ec0b4a07c25f5a95afe5a"
+          "content" : "32e9f857d36c4c03c4b716afa26c396878a817deabc6071ec43045d778da43cdbce6779b4d7e81b6e71e4e032471b32ea3dacc87ddbad462843c32dd22e95e73"
         }
       ],
       "licenses" : [
@@ -168412,7 +168610,7 @@
           }
         }
       ],
-      "purl" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.34?type=jar",
+      "purl" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.35?type=jar",
       "externalReferences" : [
         {
           "type" : "website",
@@ -229582,11 +229780,11 @@
       "ref" : "pkg:maven/org.apache.camel/camel-vertx-common@4.22.2-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar",
       "dependsOn" : [
         "pkg:maven/io.netty/netty-common@4.2.18.Final?type=jar",
         "pkg:maven/io.netty/netty-buffer@4.2.18.Final?type=jar",
@@ -229606,34 +229804,34 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-http-base@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web-client@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-web-client@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-uri-template@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-web-common@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-uri-template@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-uri-template@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-uri-template@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-web-common@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-auth-common@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -229657,22 +229855,22 @@
         "pkg:maven/org.apache.camel/camel-http-base@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-attachments@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-web@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-web-common@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-bridge-common@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-web-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-bridge-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-bridge-common@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -231275,23 +231473,23 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-main@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-platform-http-vertx@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-properties@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-jwt@4.5.34?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-properties@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-jwt@4.5.35?type=jar",
         "pkg:maven/org.webjars/swagger-ui@5.32.11?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-auth-properties@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-auth-jwt@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -231504,28 +231702,28 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-api@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/commons-codec/commons-codec@1.22.1?type=jar",
-        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
-        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.86?type=jar",
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar",
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.86?type=jar",
         "pkg:maven/org.apache.httpcomponents.client5/httpclient5@5.6.3?type=jar",
         "pkg:maven/org.apache.velocity/velocity-engine-core@2.4.1?type=jar",
         "pkg:maven/org.apache.camel/camel-util@4.22.2-SNAPSHOT?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "ref" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.86?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar"
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.86?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "ref" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.86?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar"
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "ref" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar",
       "dependsOn" : [ ]
     },
     {
@@ -231539,7 +231737,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-asn1@4.22.2-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar",
         "pkg:maven/com.beanit/asn1bean@1.14.0?type=jar",
         "pkg:maven/com.beanit/asn1bean-compiler@1.14.0?type=jar",
         "pkg:maven/jakarta.xml.bind/jakarta.xml.bind-api@4.0.5?type=jar"
@@ -233591,15 +233789,15 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.sshd/sshd-core@2.20.0?type=jar",
-        "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
-        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar"
+        "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.86?type=jar",
+        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.86?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
+      "ref" : "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.86?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
-        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar"
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar",
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.86?type=jar"
       ]
     },
     {
@@ -234524,8 +234722,8 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/commons-codec/commons-codec@1.22.1?type=jar",
-        "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.85?type=jar",
-        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar"
+        "pkg:maven/org.bouncycastle/bcpg-jdk18on@1.86?type=jar",
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.86?type=jar"
       ]
     },
     {
@@ -241485,7 +241683,7 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar"
       ]
     },
     {
@@ -242704,13 +242902,13 @@
       "ref" : "pkg:maven/org.apache.camel/camel-knative-http@4.22.2-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-knative@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web-client@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-web@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-codegen@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-web-client@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-codegen@4.5.35?type=jar"
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-codegen@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-codegen@4.5.35?type=jar",
       "dependsOn" : [
         "pkg:maven/com.fasterxml.jackson.core/jackson-core@2.22.1?type=jar"
       ]
@@ -243763,6 +243961,22 @@
       ]
     },
     {
+      "ref" : "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar"
+      ]
+    },
+    {
       "ref" : "pkg:maven/org.eclipse.milo/milo-transport@1.1.6?type=jar",
       "dependsOn" : [
         "pkg:maven/org.eclipse.milo/milo-stack-core@1.1.6?type=jar",
@@ -243962,7 +244176,7 @@
       "dependsOn" : [
         "pkg:maven/com.google.code.gson/gson@2.14.0?type=jar",
         "pkg:maven/com.nimbusds/nimbus-jose-jwt@10.9.1?type=jar",
-        "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.34?type=jar",
+        "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.35?type=jar",
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.httpcomponents.client5/httpclient5-fluent@5.6.3?type=jar",
         "pkg:maven/org.apache.camel/camel-platform-http-main@4.22.2-SNAPSHOT?type=jar",
@@ -243970,10 +244184,10 @@
       ]
     },
     {
-      "ref" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.34?type=jar",
+      "ref" : "pkg:maven/io.vertx/vertx-auth-oauth2@4.5.35?type=jar",
       "dependsOn" : [
-        "pkg:maven/io.vertx/vertx-auth-common@4.5.34?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-auth-common@4.5.35?type=jar",
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -245037,8 +245251,8 @@
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.commons/commons-lang3@3.20.0?type=jar",
         "pkg:maven/org.apache.pdfbox/pdfbox@3.0.8?type=jar",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
-        "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.85?type=jar"
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar",
+        "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.86?type=jar"
       ]
     },
     {
@@ -245050,9 +245264,9 @@
       ]
     },
     {
-      "ref" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.85?type=jar",
+      "ref" : "pkg:maven/org.bouncycastle/bcmail-jdk18on@1.86?type=jar",
       "dependsOn" : [
-        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?type=jar"
+        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.86?type=jar"
       ]
     },
     {
@@ -245092,7 +245306,7 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-platform-http@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-web@4.5.34?type=jar",
+        "pkg:maven/io.vertx/vertx-web@4.5.35?type=jar",
         "pkg:maven/org.jolokia/jolokia-server-core@2.6.0?type=jar",
         "pkg:maven/org.jolokia/jolokia-service-serializer@2.6.0?type=jar",
         "pkg:maven/org.jolokia/jolokia-service-jmx@2.6.0?type=jar",
@@ -245721,7 +245935,7 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-health@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?type=jar",
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.86?type=jar",
         "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.22.1?type=jar",
         "pkg:maven/io.micrometer/micrometer-core@1.17.1?type=jar",
         "pkg:maven/org.springframework.vault/spring-vault-core@4.1.0?type=jar",
@@ -245786,7 +246000,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-reactive-executor-vertx@4.22.2-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -247655,7 +247869,7 @@
       "ref" : "pkg:maven/org.apache.camel/camel-threadpoolfactory-vertx@4.22.2-SNAPSHOT?type=jar",
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
@@ -247876,7 +248090,7 @@
       "dependsOn" : [
         "pkg:maven/org.apache.camel/camel-support@4.22.2-SNAPSHOT?type=jar",
         "pkg:maven/org.apache.camel/camel-vertx-common@4.22.2-SNAPSHOT?type=jar",
-        "pkg:maven/io.vertx/vertx-core@4.5.34?type=jar"
+        "pkg:maven/io.vertx/vertx-core@4.5.35?type=jar"
       ]
     },
     {
