@@ -154,6 +154,26 @@ class HashicorpVaultReloadTriggerTaskTest extends CamelTestSupport {
     }
 
     @Test
+    void rotationBetweenTwoLookupsBeforeFirstCheckIsDetected() {
+        VERSIONS.put("secret/api", 1);
+        assertEquals("pw-1", context.resolvePropertyPlaceholders("{{hashicorp:secret:api#password}}"));
+        // the secret is rotated, and resolved again (as a dynamic endpoint does) before the first check
+        VERSIONS.put("secret/api", 2);
+        assertEquals("pw-2", context.resolvePropertyPlaceholders("{{hashicorp:secret:api#password}}"));
+
+        HashicorpVaultPropertiesFunction function
+                = (HashicorpVaultPropertiesFunction) context.getPropertiesComponent().getPropertiesFunction("hashicorp");
+        assertEquals(1, function.getSecretVersion("api"), "the oldest resolved version is the one to compare with");
+
+        startTask();
+        task.run();
+
+        assertFalse(task.getUpdates().isEmpty(),
+                "version 1 is still in use by what was resolved first, but version 2 was not detected, updates: "
+                                                 + task.getUpdates());
+    }
+
+    @Test
     void secretResolvedAtASpecificVersionIsNotComparedWithThatVersion() {
         VERSIONS.put("secret/api", 2);
         // the application asks for version 1, so the version it resolved says nothing about updates of the secret

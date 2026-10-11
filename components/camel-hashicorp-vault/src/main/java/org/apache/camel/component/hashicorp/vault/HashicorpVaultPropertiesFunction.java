@@ -279,7 +279,9 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     private void captureVersion(String secretName, VaultResponse rawSecret) {
         if (rawSecret.getData().get("metadata") instanceof Map<?, ?> metadata && metadata.get("version") != null) {
             try {
-                secretVersions.put(secretName, Integer.valueOf(metadata.get("version").toString()));
+                // keep the oldest version resolved: a value resolved earlier may still be in use, so the refresh
+                // task must compare with that one (at worst one extra reload)
+                secretVersions.merge(secretName, Integer.valueOf(metadata.get("version").toString()), Math::min);
             } catch (NumberFormatException e) {
                 LOG.debug("Could not parse secret version for {}: {}", secretName, metadata.get("version"), e);
                 // the refresh task then uses the version it reads first
@@ -305,11 +307,11 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     }
 
     /**
-     * The version of the secret (named as in {@link #getSecrets()}) that was last resolved, or null if not known (such
-     * as when a specific version was requested).
+     * The oldest version of the secret (named as in {@link #getSecrets()}) that was resolved, or null if not known
+     * (such as when a specific version was requested).
      *
      * @param  secretName the name of the secret, as engine:secret, or only the secret for the default secret engine
-     * @return            the version of the secret that was last resolved, or null if not known
+     * @return            the oldest version of the secret that was resolved, or null if not known
      */
     public Integer getSecretVersion(String secretName) {
         return secretVersions.get(secretName);
