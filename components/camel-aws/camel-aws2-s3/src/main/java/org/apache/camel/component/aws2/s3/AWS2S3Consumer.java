@@ -130,9 +130,13 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Skipping as s3 object is already in progress: {}", fileName);
                 exchanges = new LinkedList<>();
             } else {
+                ResponseInputStream<GetObjectResponse> s3Object = null;
                 try {
-                    exchanges = createExchanges(getObject(bucketName, fileName), fileName);
+                    s3Object = getObject(bucketName, fileName);
+                    exchanges = createExchanges(s3Object, fileName);
                 } catch (Exception e) {
+                    // close the stream to release the underlying HTTP connection
+                    IOHelper.close(s3Object);
                     // remove in progress as we failed
                     getEndpoint().getInProgressRepository().remove(fileName);
                     throw e;

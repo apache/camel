@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.s3;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -41,11 +42,15 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -53,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * object still in flight is not consumed again by the next poll, a failed get does not leave the object in progress,
  * and the objects of a batch that a stopping consumer does not process are consumed when the route is started again,
  * and their object streams are closed and their exchanges released. With ignoreBody=true the object stream is closed
- * when the exchange is created.
+ * when the exchange is created, and with fileName it is closed when the exchange cannot be created.
  */
 class AWS2S3ConsumerInProgressTest extends CamelTestSupport {
 
@@ -255,5 +260,54 @@ class AWS2S3ConsumerInProgressTest extends CamelTestSupport {
         assertTrue(closed.get(), "the object stream of b.txt was not closed");
         assertEquals("tag", exchange.getIn().getHeader(AWS2S3Constants.E_TAG));
         assertEquals("b.txt", exchange.getIn().getHeader(AWS2S3Constants.KEY));
+    }
+
+    @Test
+    void objectStreamIsClosedWhenTheExchangeOfAFileNamePollCannotBeCreated() throws Exception {
+        AWS2S3Endpoint endpoint = context.getEndpoint(s3Uri("&fileName=a.txt"), AWS2S3Endpoint.class);
+        AtomicBoolean closed = new AtomicBoolean();
+        // the download of the object fails while its content is read into the body (includeBody=true)
+        InputStream content = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("connection reset");
+            }
+
+            @Override
+            public void close() {
+                closed.set(true);
+            }
+        };
+        S3Client client = new S3Client() {
+            @Override
+            public ResponseInputStream<GetObjectResponse> getObject(GetObjectRequest request) {
+                return new ResponseInputStream<>(GetObjectResponse.builder().eTag("tag").build(), content);
+            }
+
+            @Override
+            public String serviceName() {
+                return SERVICE_NAME;
+            }
+
+            @Override
+            public void close() {
+                // noop
+            }
+        };
+        AWS2S3Consumer consumer = new AWS2S3Consumer(endpoint, exchange -> {
+        }) {
+            @Override
+            protected S3Client getAmazonS3Client() {
+                return client;
+            }
+        };
+
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, consumer::poll);
+
+        assertInstanceOf(IOException.class, e.getCause());
+        assertEquals("connection reset", e.getCause().getMessage());
+        assertFalse(endpoint.getInProgressRepository().contains("a.txt"), "a.txt is still in progress");
+        // nothing else has a reference to the stream, so its connection would never be released
+        assertTrue(closed.get(), "the object stream of a.txt was not closed");
     }
 }
