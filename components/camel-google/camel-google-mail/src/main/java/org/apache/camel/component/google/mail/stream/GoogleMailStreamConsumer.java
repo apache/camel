@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
@@ -48,6 +50,8 @@ import org.slf4j.LoggerFactory;
 public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleMailStreamConsumer.class);
+    // messages whose exchanges are being processed, which a later poll must not consume again
+    private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
     private String unreadLabelId;
     private List<String> labelsIds;
 
@@ -85,21 +89,53 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
         Queue<Exchange> answer = new LinkedList<>();
 
+        // taken before the messages are listed: a message that is in flight now can complete, and be marked as read
+        // and released, after it was listed and before the loop below looks at it, and must then not be consumed again
+        // from the stale listing
+        Set<String> inProgressAtPollStart = Set.copyOf(inProgress);
+
         ListMessagesResponse c = request.execute();
 
         // okay we have some response from Google so lets mark the consumer as ready
         forceConsumerAsReady();
 
         if (c.getMessages() != null) {
-            for (Message message : c.getMessages()) {
-                Message mess
-                        = getClient().users().messages().get("me", message.getId()).setFormat(messageFormat()).execute();
-                Exchange exchange = createExchange(getEndpoint().getExchangePattern(), mess);
-                answer.add(exchange);
+            try {
+                for (Message message : c.getMessages()) {
+                    addExchange(message.getId(), answer, inProgressAtPollStart);
+                }
+            } catch (Exception e) {
+                // none of the messages of this poll is processed
+                releaseInProgress(answer);
+                throw e;
             }
         }
 
         return processBatch(CastUtils.cast(answer));
+    }
+
+    private void addExchange(String id, Queue<Exchange> answer, Set<String> inProgressAtPollStart) throws Exception {
+        // skip the message if an exchange of a previous poll is still processing it, or was when this poll started
+        if (inProgressAtPollStart.contains(id) || !inProgress.add(id)) {
+            LOG.trace("Skipping message {} as it is already in progress", id);
+            return;
+        }
+        try {
+            Message mess = getClient().users().messages().get("me", id).setFormat(messageFormat()).execute();
+            answer.add(createExchange(getEndpoint().getExchangePattern(), mess));
+        } catch (Exception e) {
+            inProgress.remove(id);
+            throw e;
+        }
+    }
+
+    private void releaseInProgress(Queue<?> notProcessed) {
+        for (Object notRouted : notProcessed) {
+            Exchange exchange = (Exchange) notRouted;
+            inProgress.remove(exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class));
+            // the exchange is never routed, so nothing else releases it to the exchange factory
+            releaseExchange(exchange, false);
+        }
     }
 
     @Override
@@ -117,14 +153,23 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            final String id = exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class);
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange, unreadLabelId);
+                    try {
+                        processCommit(exchange, unreadLabelId);
+                    } finally {
+                        inProgress.remove(id);
+                    }
                 }
 
                 public void onFailure(Exchange exchange) {
-                    processRollback(exchange, unreadLabelId);
+                    try {
+                        processRollback(exchange, unreadLabelId);
+                    } finally {
+                        inProgress.remove(id);
+                    }
                 }
 
                 @Override
@@ -135,6 +180,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
             getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
         }
+        // the remaining exchanges are not processed as the consumer is stopping
+        releaseInProgress(exchanges);
 
         return total;
     }
