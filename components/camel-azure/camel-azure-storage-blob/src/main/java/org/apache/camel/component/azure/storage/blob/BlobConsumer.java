@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.azure.storage.blob;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -38,6 +41,7 @@ import org.apache.camel.component.azure.storage.blob.operations.BlobOperations;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +49,9 @@ import org.slf4j.LoggerFactory;
 public class BlobConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlobConsumer.class);
+
+    // blobs whose exchanges are being processed, which a later poll must not consume again
+    private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
 
     public BlobConsumer(final BlobEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -75,9 +82,8 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         try {
             if (ObjectHelper.isNotEmpty(blobName)) {
                 // here we have a blob which means we just download a single blob
-                final Exchange exchange = createExchangeFromBlob(blobName, blobContainerClient);
                 exchanges = new LinkedList<>();
-                exchanges.add(exchange);
+                addExchange(blobName, blobContainerClient, exchanges, false);
             } else {
                 // download multiple blobs since we only have no blobName set
                 exchanges = createBatchExchangesFromContainer(blobContainerClient);
@@ -127,10 +133,57 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         forceConsumerAsReady();
 
         final Queue<Exchange> exchanges = new LinkedList<>();
-        for (BlobItem blobItem : blobs) {
-            exchanges.add(createExchangeFromBlob(blobItem.getName(), blobContainerClient));
+        try {
+            for (BlobItem blobItem : blobs) {
+                addExchange(blobItem.getName(), blobContainerClient, exchanges, true);
+            }
+        } catch (Exception e) {
+            // none of the blobs of this poll is processed
+            releaseNotProcessed(exchanges);
+            throw e;
         }
         return exchanges;
+    }
+
+    private void addExchange(
+            final String blobName, final BlobContainerClient blobContainerClient, final Queue<Exchange> exchanges,
+            final boolean listed)
+            throws IOException {
+        // skip the blob if an exchange of a previous poll is still processing it
+        if (!inProgress.add(blobName)) {
+            LOG.trace("Skipping blob {} as it is already in progress", blobName);
+            return;
+        }
+        try {
+            exchanges.add(createExchangeFromBlob(blobName, blobContainerClient));
+        } catch (Exception e) {
+            inProgress.remove(blobName);
+            if (listed && e instanceof BlobStorageException bse && bse.getStatusCode() == 404) {
+                // deleted (for example by another consumer) after it was listed
+                LOG.debug("Skipping blob {} as it no longer exists", blobName);
+                return;
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Releases the exchanges that are not routed: their blobs are no longer in progress, so a later poll consumes them
+     * again, and their blob input streams are closed, as no on completion does it.
+     */
+    private void releaseNotProcessed(final Queue<?> exchanges) {
+        for (Object o : exchanges) {
+            final Exchange exchange = (Exchange) o;
+            final String name = exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
+            if (name != null) {
+                inProgress.remove(name);
+            }
+            if (exchange.getIn().getBody() instanceof Closeable body) {
+                IOHelper.close(body);
+            }
+            releaseExchange(exchange, true);
+        }
+        exchanges.clear();
     }
 
     @Override
@@ -154,16 +207,25 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            final String blobName = exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processCommit(exchange);
+                    try {
+                        processCommit(exchange);
+                    } finally {
+                        releaseInProgress(blobName);
+                    }
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    processRollback(exchange);
+                    try {
+                        processRollback(exchange);
+                    } finally {
+                        releaseInProgress(blobName);
+                    }
                 }
             });
 
@@ -171,7 +233,15 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, cb);
         }
+        // the remaining exchanges are not processed as the consumer is stopping
+        releaseNotProcessed(exchanges);
         return total;
+    }
+
+    private void releaseInProgress(final String blobName) {
+        if (blobName != null) {
+            inProgress.remove(blobName);
+        }
     }
 
     /**
