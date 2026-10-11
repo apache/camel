@@ -28,6 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.api.client.googleapis.testing.auth.oauth2.MockGoogleCredential;
 import com.google.api.client.http.LowLevelHttpRequest;
@@ -44,8 +45,8 @@ import org.apache.camel.component.google.mail.GoogleMailClientFactory;
 /**
  * A Gmail client whose transport answers the calls of the stream consumer from an in-memory mailbox: listing the
  * labels, listing the messages with the UNREAD label (the default query {@code is:unread}), getting a message, and
- * removing or adding the UNREAD label. A get can be made to fail once. Any other request fails with status 500 and is
- * recorded.
+ * removing or adding the UNREAD label. A get can be made to fail once, and a task can be run between a listing and its
+ * response. Any other request fails with status 500 and is recorded.
  */
 class FakeGmailClientFactory implements GoogleMailClientFactory {
 
@@ -57,6 +58,7 @@ class FakeGmailClientFactory implements GoogleMailClientFactory {
     private final List<String> unexpected = new CopyOnWriteArrayList<>();
     private final Set<String> failNextGet = ConcurrentHashMap.newKeySet();
     private final CountDownLatch markedAsRead = new CountDownLatch(1);
+    private final AtomicReference<Runnable> afterNextList = new AtomicReference<>();
 
     void addUnread(String id, String body) {
         bodies.put(id, body);
@@ -68,6 +70,13 @@ class FakeGmailClientFactory implements GoogleMailClientFactory {
      */
     void failNextGet(String id) {
         failNextGet.add(id);
+    }
+
+    /**
+     * Runs the task once, after the next listing has read the unread messages and before its response is returned.
+     */
+    void afterNextList(Runnable task) {
+        afterNextList.set(task);
     }
 
     boolean isUnread(String id) {
@@ -131,6 +140,10 @@ class FakeGmailClientFactory implements GoogleMailClientFactory {
             StringBuilder messages = new StringBuilder();
             for (String id : unread) {
                 messages.append(messages.isEmpty() ? "" : ", ").append("{\"id\": \"").append(id).append("\"}");
+            }
+            Runnable task = afterNextList.getAndSet(null);
+            if (task != null) {
+                task.run();
             }
             return json("{\"messages\": [" + messages + "]}");
         }

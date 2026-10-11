@@ -89,6 +89,11 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
         Queue<Exchange> answer = new LinkedList<>();
 
+        // taken before the messages are listed: a message that is in flight now can complete, and be marked as read
+        // and released, after it was listed and before the loop below looks at it, and must then not be consumed again
+        // from the stale listing
+        Set<String> inProgressAtPollStart = Set.copyOf(inProgress);
+
         ListMessagesResponse c = request.execute();
 
         // okay we have some response from Google so lets mark the consumer as ready
@@ -97,7 +102,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         if (c.getMessages() != null) {
             try {
                 for (Message message : c.getMessages()) {
-                    addExchange(message.getId(), answer);
+                    addExchange(message.getId(), answer, inProgressAtPollStart);
                 }
             } catch (Exception e) {
                 // none of the messages of this poll is processed
@@ -109,9 +114,9 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
         return processBatch(CastUtils.cast(answer));
     }
 
-    private void addExchange(String id, Queue<Exchange> answer) throws Exception {
-        // skip the message if an exchange of a previous poll is still processing it
-        if (!inProgress.add(id)) {
+    private void addExchange(String id, Queue<Exchange> answer, Set<String> inProgressAtPollStart) throws Exception {
+        // skip the message if an exchange of a previous poll is still processing it, or was when this poll started
+        if (inProgressAtPollStart.contains(id) || !inProgress.add(id)) {
             LOG.trace("Skipping message {} as it is already in progress", id);
             return;
         }
@@ -125,8 +130,11 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private void releaseInProgress(Queue<?> notProcessed) {
-        for (Object exchange : notProcessed) {
-            inProgress.remove(((Exchange) exchange).getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class));
+        for (Object notRouted : notProcessed) {
+            Exchange exchange = (Exchange) notRouted;
+            inProgress.remove(exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class));
+            // the exchange is never routed, so nothing else releases it to the exchange factory
+            releaseExchange(exchange, false);
         }
     }
 
