@@ -141,6 +141,8 @@ public final class SourceValidator {
                 msgs.addAll(GroovyImportChecks.validateYamlGroovyImports(content, null, declarations.javaClasses()));
                 // a rest-openapi call with no header for a path parameter of its operation (CAMEL-24992)
                 msgs.addAll(OpenApiPathParams.validate(content, directory));
+                // an insert-or-update in the dialect of another database than the datasource (CAMEL-25557)
+                msgs.addAll(SqlDialectChecks.validate(content, directory));
                 if (checkConsumers) {
                     // a direct: or seda: endpoint no route of the application consumes (CAMEL-24955)
                     msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName, catalog));

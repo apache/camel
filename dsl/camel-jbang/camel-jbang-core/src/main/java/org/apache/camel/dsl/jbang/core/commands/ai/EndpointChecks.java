@@ -470,6 +470,9 @@ final class EndpointChecks {
      */
     private static final Pattern BARE_NAMED_PARAMETER = Pattern.compile("(?<![\\w:#?$'\"]):([A-Za-z_][\\w.\\[\\]]*)");
 
+    /** :#excluded.country, :#EXCLUDED.country: the row being inserted written as a named parameter. */
+    private static final Pattern EXCLUDED_PARAMETER = Pattern.compile("(?i):#(excluded)\\.(\\w+)");
+
     static void checkSqlNamedParameters(
             List<String> errors, String fullUri, String rawLine, int uriLineIdx, Map<String, Integer> optionLineMap) {
         int colon = fullUri.indexOf(':');
@@ -504,6 +507,15 @@ final class EndpointChecks {
         }
         if (query == null || query.isBlank()) {
             return;
+        }
+        // ON CONFLICT (id) DO UPDATE SET country = :#excluded.country: EXCLUDED is PostgreSQL's row being inserted, as
+        // a named parameter it is a key looked up in the body and the headers, which is not there (CAMEL-25557)
+        Matcher excluded = EXCLUDED_PARAMETER.matcher(query);
+        if (excluded.find()) {
+            errors.add(linePrefix(line) + "sql: :#" + excluded.group(1) + "." + excluded.group(2) + " is a named"
+                       + " parameter, a key " + excluded.group(1) + "." + excluded.group(2) + " looked up in the body and"
+                       + " the headers, which is not there: EXCLUDED is the row being inserted in ON CONFLICT ... DO"
+                       + " UPDATE, write EXCLUDED." + excluded.group(2) + " without :#");
         }
         Matcher m = BARE_NAMED_PARAMETER.matcher(query);
         List<String> bare = new ArrayList<>();
