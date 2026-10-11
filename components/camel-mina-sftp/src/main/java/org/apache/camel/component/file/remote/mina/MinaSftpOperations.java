@@ -1349,7 +1349,7 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
             // Do an explicit test for a null body and decide what to do
             if (endpoint.isAllowNullBody()) {
                 LOG.trace("Writing empty file.");
-                is = new ByteArrayInputStream(new byte[] {});
+                is = new ByteArrayInputStream(new byte[0]);
             } else {
                 throw new GenericFileOperationFailedException("Cannot write null body to file: " + name);
             }

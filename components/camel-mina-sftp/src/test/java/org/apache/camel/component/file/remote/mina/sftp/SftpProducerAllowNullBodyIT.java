@@ -53,7 +53,9 @@ class SftpProducerAllowNullBodyIT extends SftpServerTestSupport {
 
         GenericFileOperationFailedException cause
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
-        assertTrue(cause.getMessage().endsWith("allowNullBodyFalse.txt"));
+        assertTrue(cause.getMessage().startsWith("Cannot write null body to file:"),
+                "expected the explicit null body error, but was: " + cause.getMessage());
+        assertTrue(cause.getMessage().endsWith("allowNullBodyFalse.txt"), cause.getMessage());
 
         assertFalse(ftpFile("allownull/allowNullBodyFalse.txt").toFile().exists(),
                 "allowNullBody set to false with null body should not create a new file");
