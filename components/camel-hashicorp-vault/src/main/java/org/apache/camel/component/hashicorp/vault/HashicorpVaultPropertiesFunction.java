@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hashicorp.vault;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -300,7 +301,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
      * Ids of the secrets in use, as engine:secret, or only the secret for the default secret engine
      */
     public Set<String> getSecrets() {
-        return secrets;
+        return Collections.unmodifiableSet(secrets);
     }
 
     /**
