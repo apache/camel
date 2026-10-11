@@ -57,7 +57,7 @@ public class AddWorkLogProducer extends DefaultProducer {
 
         WorklogInput worklogInput = WorklogInput.create(issue.getSelf(), comment, new DateTime(), minutesSpent);
 
-        issueClient.addWorklog(issue.getWorklogUri(), worklogInput);
-
+        // wait for the result, so that a request that Jira rejects fails the exchange
+        issueClient.addWorklog(issue.getWorklogUri(), worklogInput).claim();
     }
 }
