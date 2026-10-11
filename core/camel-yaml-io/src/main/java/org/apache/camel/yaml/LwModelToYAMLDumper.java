@@ -38,6 +38,8 @@ import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.InterceptFromDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
@@ -158,6 +160,26 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                     return;
                 }
                 super.doWriteAttribute(jo, key, value, defaultValue);
+            }
+
+            @Override
+            protected JsonObject doWriteInterceptFromDefinition(InterceptFromDefinition def) {
+                return keepUriPattern(super.doWriteInterceptFromDefinition(def), def.getUri());
+            }
+
+            @Override
+            protected JsonObject doWriteInterceptSendToEndpointDefinition(InterceptSendToEndpointDefinition def) {
+                return keepUriPattern(super.doWriteInterceptSendToEndpointDefinition(def), def.getUri());
+            }
+
+            // the uri of an interceptor is a pattern (such as mock:*), not an endpoint uri, and the YAML DSL has no
+            // parameters for it, so it is written as it is even when the uris are written as parameters
+            private JsonObject keepUriPattern(JsonObject jo, String uri) {
+                if (uriAsParameters && uri != null) {
+                    jo.remove("parameters");
+                    jo.put("uri", resolvePlaceholders ? resolve(uri, properties) : uri);
+                }
+                return jo;
             }
 
             @Override
