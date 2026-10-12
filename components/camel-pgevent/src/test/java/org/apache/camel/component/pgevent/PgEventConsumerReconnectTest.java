@@ -17,8 +17,11 @@
 package org.apache.camel.component.pgevent;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -27,15 +30,17 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
  * The consumer must connect again and listen to the channel again every time the connection to the database is lost,
- * not only the first time.
+ * not only the first time. It gives back the connections it no longer uses, and a stop releases the thread that waits
+ * for a reconnect.
  */
 class PgEventConsumerReconnectTest extends CamelTestSupport {
 
@@ -45,29 +50,35 @@ class PgEventConsumerReconnectTest extends CamelTestSupport {
     @BindToRegistry("pgDataSource")
     private final DataSource dataSource = mock(DataSource.class);
 
-    @Test
-    void reconnectsAfterEveryConnectionLoss() throws Exception {
-        when(dataSource.getConnection()).thenAnswer(invocation -> {
-            PGConnection connection = mock(PGConnection.class);
-            when(connection.prepareStatement(anyString())).thenReturn(mock(PreparedStatement.class));
-            connections.add(connection);
-            return connection;
-        });
-
+    private PgEventConsumer createConsumer() throws Exception {
         PgEventEndpoint endpoint = context.getEndpoint(
                 "pgevent:///testdb/testchannel?datasource=#pgDataSource&reconnectDelay=100", PgEventEndpoint.class);
-        PgEventConsumer consumer = (PgEventConsumer) endpoint.createConsumer(exchange -> {
+        return (PgEventConsumer) endpoint.createConsumer(exchange -> {
         });
+    }
+
+    private PGConnection newConnection() throws SQLException {
+        PGConnection connection = mock(PGConnection.class);
+        when(connection.prepareStatement(anyString())).thenReturn(mock(PreparedStatement.class));
+        connections.add(connection);
+        return connection;
+    }
+
+    @Test
+    void reconnectsAfterEveryConnectionLoss() throws Exception {
+        when(dataSource.getConnection()).thenAnswer(invocation -> newConnection());
+
+        PgEventConsumer consumer = createConsumer();
         consumer.start();
         try {
-            assertEquals(1, connections.size());
+            assertThat(connections).hasSize(1);
 
             // the driver reports a lost connection; the call returns when the consumer has connected again
             consumer.getPgEventListener().closed();
-            assertEquals(2, connections.size(), "The consumer must reconnect after the first connection loss");
+            assertThat(connections).as("connections after the first connection loss").hasSize(2);
 
             consumer.getPgEventListener().closed();
-            assertEquals(3, connections.size(), "The consumer must reconnect after the second connection loss");
+            assertThat(connections).as("connections after the second connection loss").hasSize(3);
 
             // and it listens to the channel on the new connection
             PGConnection last = connections.get(2);
@@ -76,5 +87,80 @@ class PgEventConsumerReconnectTest extends CamelTestSupport {
         } finally {
             consumer.stop();
         }
+    }
+
+    @Test
+    void closesTheLostConnectionWhenItReconnects() throws Exception {
+        when(dataSource.getConnection()).thenAnswer(invocation -> newConnection());
+
+        PgEventConsumer consumer = createConsumer();
+        consumer.start();
+        try {
+            consumer.getPgEventListener().closed();
+            assertThat(connections).hasSize(2);
+
+            // the lost connection is given back (to the pool, with a pooled data source), the new one is in use
+            verify(connections.get(0)).close();
+            verify(connections.get(1), never()).close();
+        } finally {
+            consumer.stop();
+        }
+        verify(connections.get(1)).close();
+    }
+
+    @Test
+    void closesAConnectionWhoseListenFails() throws Exception {
+        when(dataSource.getConnection()).thenAnswer(invocation -> {
+            PGConnection connection = newConnection();
+            if (connections.size() == 2) {
+                // the first attempt to reconnect gets a connection, and LISTEN fails on it
+                when(connection.prepareStatement(anyString())).thenThrow(new SQLException("LISTEN failed"));
+            }
+            return connection;
+        });
+
+        PgEventConsumer consumer = createConsumer();
+        consumer.start();
+        try {
+            // returns when the second attempt has connected
+            consumer.getPgEventListener().closed();
+            assertThat(connections).hasSize(3);
+
+            PGConnection failed = connections.get(1);
+            verify(failed).close();
+            verify(failed, never()).addNotificationListener("testchannel", "testchannel", consumer.getPgEventListener());
+            verify(connections.get(2), never()).close();
+        } finally {
+            consumer.stop();
+        }
+    }
+
+    @Test
+    void stopReleasesTheThreadThatWaitsForAReconnect() throws Exception {
+        CountDownLatch attempted = new CountDownLatch(1);
+        when(dataSource.getConnection()).thenAnswer(invocation -> {
+            if (connections.isEmpty()) {
+                return newConnection();
+            }
+            // the database stays away, so the reconnect stays pending
+            attempted.countDown();
+            throw new SQLException("Connection refused");
+        });
+
+        PgEventConsumer consumer = createConsumer();
+        consumer.start();
+        // as the thread of the driver that reports the lost connection: it waits until the consumer has reconnected
+        Thread driver = new Thread(() -> consumer.getPgEventListener().closed(), "driver-io");
+        driver.setDaemon(true);
+        try {
+            driver.start();
+            assertThat(attempted.await(20, TimeUnit.SECONDS)).as("a reconnect was attempted").isTrue();
+            assertThat(driver.isAlive()).as("the reconnect is pending").isTrue();
+        } finally {
+            consumer.stop();
+        }
+
+        driver.join(TimeUnit.SECONDS.toMillis(20));
+        assertThat(driver.isAlive()).as("the thread that reported the lost connection still waits").isFalse();
     }
 }
