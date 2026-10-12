@@ -27,13 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Custom JUnit 5 parallel execution strategy. Configures parallelism and max pool size via
- * junit-platform.properties (keys {@code custom.parallelism} and {@code custom.maxPoolSize}).
+ * Custom JUnit parallel execution strategy. Configures parallelism and max pool size via junit-platform.properties
+ * (keys {@code custom.parallelism} and {@code custom.maxPoolSize}).
  * <p>
  * Used together with {@code junit.jupiter.execution.parallel.config.executor-service=FORK_JOIN_POOL} so that
- * {@link CamelParallelExecutionConfiguration#getSaturatePredicate()} is active and logs a warning when the
- * ForkJoinPool saturates. The saturation predicate is only invoked by the {@code FORK_JOIN_POOL} executor;
- * it is silently ignored by {@code WORKER_THREAD_POOL}.
+ * {@link CamelParallelExecutionConfiguration#getSaturatePredicate()} is active and logs a warning when the ForkJoinPool
+ * saturates. The saturation predicate is only invoked by the {@code FORK_JOIN_POOL} executor; it is silently ignored by
+ * {@code WORKER_THREAD_POOL}.
  * </p>
  */
 public class CamelParallelExecutionStrategy implements ParallelExecutionConfigurationStrategy {
