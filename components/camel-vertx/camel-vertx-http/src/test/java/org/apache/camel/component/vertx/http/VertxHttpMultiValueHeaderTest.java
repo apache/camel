@@ -45,6 +45,12 @@ class VertxHttpMultiValueHeaderTest extends VertxHttpTestSupport {
     }
 
     @Test
+    void sendsASingleValueListHeaderAsSingleHeader() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", List.of("a"), String.class);
+        assertEquals("a", result);
+    }
+
+    @Test
     void sendsEachValueOfAnArrayHeader() {
         String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", new String[] { "a", "b" },
                 String.class);
