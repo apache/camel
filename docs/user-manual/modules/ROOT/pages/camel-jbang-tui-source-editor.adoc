@@ -375,6 +375,7 @@ The template of a Kamelet is a route of the project: *g* lists it under the name
 | *Alt+Up/Down* | Move YAML block up/down
 | *Ctrl+D* | Duplicate block
 | *Ctrl+K* | Delete current line
+| *Ctrl+/* | Comment out the current block, or bring it back (`#` in YAML and properties, `//` in Java)
 | *Ctrl+Left/Right* | Word navigation
 | *Home* | Smart home (content indent / column 0)
 | *Ctrl+R* | Refactoring menu: replace URI, extract to property, extract a step to a new file (YAML, XML)

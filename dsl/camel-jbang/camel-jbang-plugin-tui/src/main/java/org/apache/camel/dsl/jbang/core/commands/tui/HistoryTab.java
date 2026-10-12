@@ -36,7 +36,6 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
-import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -2433,39 +2432,9 @@ class HistoryTab extends AbstractTab {
     private static List<Line> applyHSkip(List<Line> lines, int hSkip) {
         List<Line> result = new ArrayList<>(lines.size());
         for (Line line : lines) {
-            result.add(hSkipLine(line, hSkip));
+            result.add(TuiHelper.skipColumns(line, hSkip));
         }
         return result;
-    }
-
-    private static Line hSkipLine(Line line, int hSkip) {
-        List<Span> result = new ArrayList<>();
-        int skip = hSkip;
-        for (Span span : line.spans()) {
-            if (skip <= 0) {
-                result.add(span);
-                continue;
-            }
-            String text = span.content();
-            int spanWidth = CharWidth.of(text);
-            if (spanWidth <= skip) {
-                skip -= spanWidth;
-            } else {
-                int i = 0;
-                int consumed = 0;
-                while (i < text.length() && consumed < skip) {
-                    int cp = text.codePointAt(i);
-                    consumed += CharWidth.of(cp);
-                    i += Character.charCount(cp);
-                }
-                skip = 0;
-                String remaining = text.substring(i);
-                if (!remaining.isEmpty()) {
-                    result.add(Span.styled(remaining, span.style()));
-                }
-            }
-        }
-        return Line.from(result);
     }
 
     @Override

@@ -71,15 +71,15 @@ final class RouteGroups {
         }
         Path key = dir.toAbsolutePath().normalize();
         Entry e = CACHE.get(key);
-        if ((e == null || System.currentTimeMillis() - e.checkedAt() > RECHECK_MS) && LOADING.add(key)) {
+        if ((e == null || MonotonicClock.millis() - e.checkedAt() > RECHECK_MS) && LOADING.add(key)) {
             Thread t = new Thread(() -> {
                 try {
                     ProjectOverview.Overview overview = ProjectOverview.analyze(key, ProjectOverviewAssist.catalog());
                     CACHE.put(key, new Entry(
-                            System.currentTimeMillis(), tags(overview, IntegrationSummary.read(key)),
+                            MonotonicClock.millis(), tags(overview, IntegrationSummary.read(key)),
                             tags(overview, null)));
                 } catch (RuntimeException ex) {
-                    CACHE.put(key, new Entry(System.currentTimeMillis(), Map.of(), Map.of()));
+                    CACHE.put(key, new Entry(MonotonicClock.millis(), Map.of(), Map.of()));
                 } finally {
                     LOADING.remove(key);
                 }

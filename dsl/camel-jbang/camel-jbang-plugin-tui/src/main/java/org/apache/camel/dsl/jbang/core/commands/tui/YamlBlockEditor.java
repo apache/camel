@@ -132,6 +132,29 @@ final class YamlBlockEditor {
     }
 
     static List<String> toggleComment(List<String> lines, BlockRange block) {
+        return toggleComment(lines, block, "#");
+    }
+
+    /**
+     * The lines a comment toggle at the row applies to: the block at the row, found as if no line were commented out.
+     * So a block that was commented out is found again as the block it was, without the commented-out sibling next to a
+     * block being taken in.
+     */
+    static BlockRange findCommentBlock(List<String> lines, int row, boolean yamlListBlocks, String marker) {
+        List<String> uncommented = new ArrayList<>(lines.size());
+        for (String line : lines) {
+            uncommented.add(uncommentLine(line, marker));
+        }
+        return findBlock(uncommented, row, yamlListBlocks);
+    }
+
+    /**
+     * Comments out the lines of the block with the given line comment marker ({@code #} in YAML and properties,
+     * {@code //} in Java), or removes one marker from each line when every non-blank line of the block already starts
+     * with it. A line that is a comment already gets a second marker, so it is still a comment when the block is
+     * brought back.
+     */
+    static List<String> toggleComment(List<String> lines, BlockRange block, String marker) {
         List<String> answer = new ArrayList<>(lines);
         boolean uncomment = true;
         for (int i = block.startRow(); i <= block.endRow() && i < answer.size(); i++) {
@@ -139,13 +162,14 @@ final class YamlBlockEditor {
             if (line.isBlank()) {
                 continue;
             }
-            if (!isCommented(line)) {
+            if (!isCommented(line, marker)) {
                 uncomment = false;
                 break;
             }
         }
         for (int i = block.startRow(); i <= block.endRow() && i < answer.size(); i++) {
-            answer.set(i, uncomment ? uncommentLine(answer.get(i)) : commentLine(answer.get(i)));
+            answer.set(i,
+                    uncomment ? uncommentLine(answer.get(i), marker) : commentLine(answer.get(i), marker));
         }
         return answer;
     }
@@ -256,30 +280,30 @@ final class YamlBlockEditor {
         return count;
     }
 
-    private static boolean isCommented(String line) {
+    private static boolean isCommented(String line, String marker) {
         String trimmed = line.stripLeading();
-        return trimmed.startsWith("#");
+        return trimmed.startsWith(marker);
     }
 
-    private static String commentLine(String line) {
-        if (line.isBlank() || isCommented(line)) {
+    private static String commentLine(String line, String marker) {
+        if (line.isBlank()) {
             return line;
         }
         int indent = leadingSpaces(line);
-        return line.substring(0, indent) + "# " + line.substring(indent);
+        return line.substring(0, indent) + marker + " " + line.substring(indent);
     }
 
-    private static String uncommentLine(String line) {
+    private static String uncommentLine(String line, String marker) {
         if (line.isBlank()) {
             return line;
         }
         int indent = leadingSpaces(line);
         String rest = line.substring(indent);
-        if (rest.startsWith("# ")) {
-            return line.substring(0, indent) + rest.substring(2);
+        if (rest.startsWith(marker + " ")) {
+            return line.substring(0, indent) + rest.substring(marker.length() + 1);
         }
-        if (rest.startsWith("#")) {
-            return line.substring(0, indent) + rest.substring(1);
+        if (rest.startsWith(marker)) {
+            return line.substring(0, indent) + rest.substring(marker.length());
         }
         return line;
     }

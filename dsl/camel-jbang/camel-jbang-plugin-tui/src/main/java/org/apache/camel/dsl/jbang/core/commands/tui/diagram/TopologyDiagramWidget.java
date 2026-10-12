@@ -26,6 +26,7 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.widget.Widget;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
@@ -142,7 +143,7 @@ public class TopologyDiagramWidget implements Widget {
         }
         String second = wrapped.get(1);
         int max = Math.max(1, boxWidth - 4 - 3);
-        return List.of(wrapped.get(0), (second.length() > max ? second.substring(0, max) : second) + "...");
+        return List.of(wrapped.get(0), CharWidth.substringByWidth(second, max) + "...");
     }
 
     /** A box's lines and which of them are the AI label, the route id and the group tag (-1 when none). */
@@ -179,7 +180,7 @@ public class TopologyDiagramWidget implements Widget {
             if (tag != null && label.size() > 1) {
                 int max = Math.max(1, boxWidth - 4 - 3);
                 String first = label.get(0);
-                label = List.of((first.length() > max ? first.substring(0, max) : first) + "...");
+                label = List.of(CharWidth.substringByWidth(first, max) + "...");
             }
             lines = new ArrayList<>(label);
             aiLines = ai != null ? lines.size() : 0;
@@ -376,7 +377,7 @@ public class TopologyDiagramWidget implements Widget {
         int right = 0;
         for (Map.Entry<TopologyLayoutNode, List<String>> e : errorLabels().entrySet()) {
             for (String line : e.getValue()) {
-                right = Math.max(right, toCol(e.getKey().x) + line.length() + 2);
+                right = Math.max(right, toCol(e.getKey().x) + CharWidth.of(line) + 2);
             }
         }
         return right;
@@ -459,10 +460,10 @@ public class TopologyDiagramWidget implements Widget {
             }
 
             String lineText = lines.get(i);
-            if (lineText.length() > innerWidth) {
-                lineText = lineText.substring(0, Math.max(1, innerWidth - 3)) + "...";
+            if (CharWidth.of(lineText) > innerWidth) {
+                lineText = CharWidth.substringByWidth(lineText, Math.max(1, innerWidth - 3)) + "...";
             }
-            int textCol = col + 2 + Math.max(0, (innerWidth - lineText.length()) / 2);
+            int textCol = col + 2 + Math.max(0, (innerWidth - CharWidth.of(lineText)) / 2);
 
             // Choose style based on content type
             if (own != null) {
@@ -602,20 +603,7 @@ public class TopologyDiagramWidget implements Widget {
     }
 
     private void writeText(Buffer buffer, Rect area, int gridRow, int gridCol, String text, Style style) {
-        int x = area.x() + gridCol - scrollX;
-        int y = area.y() + gridRow - scrollY;
-        if (y >= area.top() && y < area.bottom() && x < area.right()) {
-            int startIdx = 0;
-            if (x < area.left()) {
-                startIdx = area.left() - x;
-                x = area.left();
-            }
-            if (startIdx < text.length()) {
-                int maxLen = area.right() - x;
-                String visible = text.substring(startIdx, Math.min(text.length(), startIdx + maxLen));
-                buffer.setString(x, y, visible, style);
-            }
-        }
+        DiagramText.write(buffer, area, area.x() + gridCol - scrollX, area.y() + gridRow - scrollY, text, style);
     }
 
     private Style style(Style base, boolean selected) {
@@ -639,42 +627,6 @@ public class TopologyDiagramWidget implements Widget {
     }
 
     public static List<String> wrapText(String text, int maxWidth) {
-        if (maxWidth <= 0 || text.length() <= maxWidth) {
-            return new ArrayList<>(List.of(text));
-        }
-
-        List<String> lines = new ArrayList<>();
-        String remaining = text;
-
-        while (!remaining.isEmpty() && lines.size() < MAX_WRAP_LINES) {
-            if (remaining.length() <= maxWidth) {
-                lines.add(remaining);
-                remaining = "";
-                break;
-            }
-
-            int breakAt = -1;
-            for (int i = 0; i < maxWidth && i < remaining.length(); i++) {
-                char c = remaining.charAt(i);
-                if (c == ' ' || c == ':' || c == '/' || c == '.' || c == ',' || c == '&' || c == '?') {
-                    breakAt = i + 1;
-                }
-            }
-            if (breakAt <= 0) {
-                breakAt = maxWidth;
-            }
-
-            lines.add(remaining.substring(0, breakAt).stripTrailing());
-            remaining = remaining.substring(breakAt).stripLeading();
-        }
-
-        if (!remaining.isEmpty()) {
-            int lastIdx = lines.size() - 1;
-            String lastLine = lines.get(lastIdx);
-            String combined = lastLine + " " + remaining;
-            lines.set(lastIdx, combined.substring(0, Math.max(1, maxWidth - 3)) + "...");
-        }
-
-        return lines;
+        return DiagramText.wrap(text, maxWidth, MAX_WRAP_LINES);
     }
 }

@@ -188,7 +188,7 @@ class LaunchManager {
     }
 
     void addPendingLaunch(String name, Process process, Path outputFile) {
-        pendingLaunches.add(new PendingLaunch(name, process, outputFile, System.currentTimeMillis()));
+        pendingLaunches.add(new PendingLaunch(name, process, outputFile, MonotonicClock.millis()));
         pendingAutoSelect = name;
         launched.add(process);
     }
@@ -208,6 +208,7 @@ class LaunchManager {
         launched.clear();
     }
 
+    /** Watches the launches; now is a {@link MonotonicClock} time, as their start times. */
     void tick(long now) {
         monitorPendingLaunches(now);
         checkDeferredLaunch(now);
@@ -276,7 +277,7 @@ class LaunchManager {
         pb.redirectErrorStream(true);
         pb.redirectOutput(outputFile.toFile());
         Process process = pb.start();
-        PendingLaunch pl = new PendingLaunch(alias, process, outputFile, System.currentTimeMillis());
+        PendingLaunch pl = new PendingLaunch(alias, process, outputFile, MonotonicClock.millis());
         pl.infraAlias = serviceOf(alias);
         pendingLaunches.add(pl);
     }
@@ -292,7 +293,7 @@ class LaunchManager {
 
     /** Runs the launch once the given infra services are up, or drops it when they fail to start. */
     void deferUntilInfra(List<String> infra, String displayName, Runnable launchAction) {
-        deferredLaunch = new DeferredLaunch(displayName, infra, System.currentTimeMillis(), launchAction);
+        deferredLaunch = new DeferredLaunch(displayName, infra, MonotonicClock.millis(), launchAction);
     }
 
     void startMissingInfraAndDefer(List<String> missingInfra, String displayName, Runnable launchAction) {
@@ -620,6 +621,7 @@ class LaunchManager {
         final String name;
         final Process process;
         final Path outputFile;
+        // a MonotonicClock time
         final long startTime;
         // the service of an infra launch: it has started once the service is up; null for an integration
         String infraAlias;

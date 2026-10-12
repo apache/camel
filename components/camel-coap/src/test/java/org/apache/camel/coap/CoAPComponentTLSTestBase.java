@@ -52,21 +52,21 @@ import org.junit.jupiter.params.provider.ValueSource;
 abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
     @RegisterExtension
-    static AvailablePortFinder.Port PORT = CoAPTestPorts.findUdpPort();
+    AvailablePortFinder.Port PORT = CoAPTestPorts.findUdpPort();
     @RegisterExtension
-    static AvailablePortFinder.Port PORT2 = CoAPTestPorts.findUdpPort();
+    AvailablePortFinder.Port PORT2 = CoAPTestPorts.findUdpPort();
     @RegisterExtension
-    static AvailablePortFinder.Port PORT3 = CoAPTestPorts.findUdpPort();
+    AvailablePortFinder.Port PORT3 = CoAPTestPorts.findUdpPort();
     @RegisterExtension
-    static AvailablePortFinder.Port PORT4 = CoAPTestPorts.findUdpPort();
+    AvailablePortFinder.Port PORT4 = CoAPTestPorts.findUdpPort();
     @RegisterExtension
-    static AvailablePortFinder.Port PORT5 = CoAPTestPorts.findUdpPort();
+    AvailablePortFinder.Port PORT5 = CoAPTestPorts.findUdpPort();
     @RegisterExtension
-    static AvailablePortFinder.Port PORT6 = CoAPTestPorts.findUdpPort();
+    AvailablePortFinder.Port PORT6 = CoAPTestPorts.findUdpPort();
     @RegisterExtension
-    static AvailablePortFinder.Port PORT7 = CoAPTestPorts.findUdpPort();
+    AvailablePortFinder.Port PORT7 = CoAPTestPorts.findUdpPort();
     @RegisterExtension
-    static AvailablePortFinder.Port PORT8 = CoAPTestPorts.findUdpPort();
+    AvailablePortFinder.Port PORT8 = CoAPTestPorts.findUdpPort();
 
     @ParameterizedTest
     @ValueSource(strings = { "direct:start", "direct:selfsigned", /*"direct:clientauth",*/ "direct:ciphersuites" })

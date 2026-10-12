@@ -398,14 +398,15 @@ class LogTab extends AbstractTab {
                     line = compactLine(entry);
                     if (!wordWrap) {
                         maxW = Math.max(maxW, line.width());
-                        line = hSkip > 0 ? TuiHelper.ansiToLine(lineText(line), hSkip) : line;
+                        line = TuiHelper.skipColumns(line, hSkip);
                     }
                 } else {
                     if (!wordWrap) {
                         maxW = Math.max(maxW, CharWidth.of(TuiHelper.stripAnsi(raw)));
                     }
                     line = raw.indexOf('\u001B') >= 0
-                            ? TuiHelper.ansiToLine(raw, hSkip) : colorizePlainLog(raw, entry);
+                            ? TuiHelper.ansiToLine(raw, hSkip)
+                            : TuiHelper.skipColumns(colorizePlainLog(raw, entry), hSkip);
                 }
                 if (entry.repeat > 1) {
                     line = line.append(Span.styled("  (x" + entry.repeat + ")", Theme.warning().bold()));
@@ -587,7 +588,7 @@ class LogTab extends AbstractTab {
                 .items(items.toArray(new ListItem[0]))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Fix with AI: which ERROR? ")
@@ -615,7 +616,7 @@ class LogTab extends AbstractTab {
                         ListItem.from("  TRACE  ").style(Style.EMPTY.dim()))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Set Log Level ")

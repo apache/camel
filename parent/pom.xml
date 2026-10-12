@@ -165,7 +165,7 @@
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
         <elasticsearch-java-client-version>9.5.5</elasticsearch-java-client-version>
-        <elasticsearch-java-client-sniffer-version>9.5.4</elasticsearch-java-client-sniffer-version>
+        <elasticsearch-java-client-sniffer-version>9.5.5</elasticsearch-java-client-sniffer-version>
         <endive-version>1.1.0</endive-version>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
@@ -230,7 +230,7 @@
         <hapi-version>2.6.0</hapi-version>
         <hapi-base-version>2.6.0</hapi-base-version>
         <hapi-fhir-version>8.12.1</hapi-fhir-version>
-        <hapi-fhir-core-version>6.10.4</hapi-fhir-core-version>
+        <hapi-fhir-core-version>7.0.1</hapi-fhir-core-version>
         <hawtio-version>5.3.0</hawtio-version>
         <!-- https://issues.apache.org/jira/browse/CAMEL-22041
             hazelcast needs to stay at 5.4.0 for 4.19.0 due to changes where the CP subsystem is only available in
@@ -267,7 +267,6 @@
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.5</jackson-jq-version>
         <jackson2-version>2.22.3</jackson2-version>
-        <jackson2-annotations-version>2.20</jackson2-annotations-version>
         <jackson3-version>3.2.3</jackson3-version>
         <jackrabbit-version>2.22.4</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
@@ -353,9 +352,9 @@
         <keycloak-version>26.8.0</keycloak-version>
         <kubernetes-client-version>7.9.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
-        <langchain4j-version>1.21.0</langchain4j-version>
+        <langchain4j-version>1.22.0</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
-        <langchain4j-beta-version>1.21.0-beta31</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
+        <langchain4j-beta-version>1.22.0-beta32</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
         <langchain4j-community-version>1.21.0-beta31</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>

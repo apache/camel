@@ -231,4 +231,15 @@ class FuzzyFilterTest {
         assertTrue(FuzzyFilter.camelCaseMatch("brokers", "b"));
         assertFalse(FuzzyFilter.camelCaseMatch("brokers", "x"));
     }
+
+    @Test
+    void appendAndDeleteAWholeEmoji() {
+        FuzzyFilter filter = new FuzzyFilter();
+        filter.append("A");
+        filter.append("\uD83D\uDE00");
+        assertEquals("a\uD83D\uDE00", filter.filter());
+
+        filter.deleteChar();
+        assertEquals("a", filter.filter());
+    }
 }
