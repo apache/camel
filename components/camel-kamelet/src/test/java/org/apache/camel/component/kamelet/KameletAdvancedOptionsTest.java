@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -568,6 +567,21 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
             assertTrue(uri.contains("retain-first=0"),
                     () -> "Original value should remain: " + uri);
         }
+    }
+
+    @Test
+    void removeQueryParameterPreservesRawAmpersands() throws Exception {
+        String uri = "kamelet:my-source?param=RAW(value&with&ampersands)&other=123";
+
+        var method = Kamelet.class.getDeclaredMethod(
+                "removeQueryParameter", String.class, String.class);
+        method.setAccessible(true);
+
+        String result = (String) method.invoke(null, uri, "other");
+
+        assertEquals(
+                "kamelet:my-source?param=RAW(value&with&ampersands)",
+                result);
     }
 
     @Test

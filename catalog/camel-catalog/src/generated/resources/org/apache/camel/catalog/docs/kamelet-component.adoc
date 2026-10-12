@@ -167,39 +167,45 @@ WARNING: beware of any potential circular reference you may introduce when using
 
 Kamelets expose a defined set of parameters, but the underlying Camel component may support additional endpoint options. You can pass these options when using a Kamelet by prefixing them with `source.` or `sink.`, depending on the type of Kamelet.
 
+The prefix is removed when the options are applied to the underlying endpoint URI. The options must be supported by the component used by that endpoint.
+
 ==== Source Kamelets
 
-For source Kamelets, use the `source.` prefix to pass additional options to the underlying source component endpoint. The prefix is removed when the options are applied to the endpoint URI.
+For source Kamelets, use the `source.` prefix to pass additional options to the underlying source component endpoint.
 
 For example:
 
 [source,java]
 ----
-from("direct:start")
-    .to("kamelet:my-source/source?source.block=true");
+from("kamelet:my-source?source.block=true")
+    .to("log:info");
 ----
-
-The `/source` path segment is the route ID within the Kamelet template. Replace `source` with the actual route ID defined in your Kamelet template.
 
 In this example, `source.block=true` passes `block=true` to the source component endpoint. If the endpoint URI already contains the same option, the advanced option overrides its existing value.
 
+Property placeholders and RAW expressions in endpoint URIs are preserved when advanced options are applied. For example, `kafka:{{topic}}` or `aws2-s3:{{bucket}}?secretKey=RAW({{secret}})` remain intact.
+
 ==== Sink and action Kamelets
 
-For sink and action Kamelets, use the `sink.` prefix to pass additional options to the component endpoints in the Kamelet output route. The prefix is removed when the options are applied to the endpoint URIs.
+For sink and action Kamelets, use the `sink.` prefix to pass additional options to the component endpoint used by the Kamelet's main output.
 
 For example:
 
 [source,java]
 ----
 from("direct:start")
-    .to("kamelet:my-sink/sink?sink.retain-first=1");
+    .to("kamelet:my-sink?sink.retain-first=1");
 ----
 
-In this example, `sink.retain-first=1` passes `retain-first=1` to the applicable output component endpoint. The options are applied to all statically-defined non-Kamelet `to()` output endpoints in the Kamelet route. Dynamic `toD()` endpoints are not modified by this feature. Make sure the supplied options are supported by each affected component.
+In this example, `sink.retain-first=1` passes `retain-first=1` to the main sink endpoint.
 
-If the same option already exists on an output endpoint, the advanced option overrides its existing value.
+The options are applied only when the Kamelet has exactly one eligible top-level, statically-defined `to()` destination. Kamelet endpoints and auxiliary destinations such as `wireTap()` are excluded. Nested branch destinations, such as those inside `choice()` or `doTry()`, are not considered eligible main destinations.
 
-Use `source.` options with source Kamelets and `sink.` options with sink or action Kamelets. Supplying options with the wrong prefix results in an error. Supplying `sink.` options when no non-Kamelet output endpoint is available also results in an error.
+If the Kamelet contains multiple eligible top-level destinations, uses a dynamic destination such as `toD()`, `enrich()`, or `pollEnrich()`, or has no eligible top-level static destination, startup fails with an explanatory exception. In these cases, configure the options directly on the intended endpoint URI.
+
+If the same option already exists on the selected output endpoint, the advanced option overrides its existing value.
+
+Use `source.` options with source Kamelets and `sink.` options with sink or action Kamelets. Supplying options with the wrong prefix results in an error.
 
 When no advanced options are supplied, the Kamelet retains its existing configuration behavior.
 
@@ -258,7 +264,6 @@ YAML::
               bodyValue: myKamelet
 ----
 ====
-
 
 Behind the scenes, the *Kamelet* component does the following things:
 

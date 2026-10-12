@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kamelet;
 
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -42,6 +43,7 @@ import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -281,21 +283,19 @@ public final class Kamelet {
 
         String base = uri.substring(0, queryIndex);
         String query = uri.substring(queryIndex + 1);
-        StringBuilder remaining = new StringBuilder();
 
-        for (String parameter : query.split("&", -1)) {
-            int equalsIndex = parameter.indexOf('=');
-            String name = equalsIndex >= 0 ? parameter.substring(0, equalsIndex) : parameter;
-
-            if (!StringHelper.camelCaseToDash(name).equals(StringHelper.camelCaseToDash(parameterName))) {
-                if (!remaining.isEmpty()) {
-                    remaining.append('&');
-                }
-                remaining.append(parameter);
-            }
+        Map<String, Object> params;
+        try {
+            params = URISupport.parseQuery(query);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid URI query: " + query, e);
         }
 
-        return remaining.isEmpty() ? base : base + "?" + remaining;
+        String normalizedName = StringHelper.camelCaseToDash(parameterName);
+        params.keySet().removeIf(
+                name -> StringHelper.camelCaseToDash(name).equals(normalizedName));
+
+        return params.isEmpty() ? base : base + "?" + URISupport.createQueryString(params, false);
     }
 
     /**
