@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.http;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.RoutesBuilder;
@@ -30,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * sent as one HTTP header per value, as camel-http, camel-netty-http and camel-undertow do.
  */
 class VertxHttpMultiValueHeaderTest extends VertxHttpTestSupport {
+
+    private static final String NOT_SENT = "X-Test was not sent";
 
     @Test
     void sendsEachValueOfAListHeader() {
@@ -58,6 +61,26 @@ class VertxHttpMultiValueHeaderTest extends VertxHttpTestSupport {
         assertEquals("abc", result);
     }
 
+    @Test
+    void doesNotSendAHeaderForAnEmptyList() {
+        // a collection without values has no header to send (it was sent as the value "[]")
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", List.of(), String.class);
+        assertEquals(NOT_SENT, result);
+    }
+
+    @Test
+    void doesNotSendAHeaderForAnEmptyArray() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", new Object[0], String.class);
+        assertEquals(NOT_SENT, result);
+    }
+
+    @Test
+    void doesNotSendAHeaderForAListWithOnlyNullValues() {
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", Arrays.asList(null, null),
+                String.class);
+        assertEquals(NOT_SENT, result);
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -67,9 +90,14 @@ class VertxHttpMultiValueHeaderTest extends VertxHttpTestSupport {
                 from(getTestServerUri())
                         .process(exchange -> {
                             Object value = exchange.getMessage().getHeader("X-Test");
-                            String body = value instanceof List<?> list
-                                    ? String.join("|", list.stream().map(String::valueOf).toList())
-                                    : String.valueOf(value);
+                            String body;
+                            if (value == null) {
+                                body = NOT_SENT;
+                            } else if (value instanceof List<?> list) {
+                                body = String.join("|", list.stream().map(String::valueOf).toList());
+                            } else {
+                                body = String.valueOf(value);
+                            }
                             exchange.getMessage().setBody(body);
                         });
             }
