@@ -91,6 +91,9 @@ class RouteReloadTemplatedRouteTest extends YamlTestSupport {
             assertThat(context.getRouteController().getRouteStatus("plain")).isEqualTo(ServiceStatus.Started);
             assertThat(context.createFluentProducerTemplate().to("direct:plain").request(String.class))
                     .isEqualTo("plain Hi");
+            // the templated route is created again with the changed parameter (CAMEL-25554)
+            assertThat(context.createFluentProducerTemplate().to("direct:greet").request(String.class))
+                    .isEqualTo("Hi");
         } finally {
             strategy.doStop();
         }
