@@ -85,7 +85,11 @@ public class MetadataHelper {
 
     public static final String STUB_PATTERN = "*";
 
-    /** The steps that send to a fixed endpoint, which the routes create when they start. */
+    /**
+     * The steps that send to a fixed endpoint, which the routes create when they start. enrich, pollEnrich, poll and
+     * toD resolve their endpoint for each exchange, so a started route has not created it, and they are left out as the
+     * stubbed CamelContext did.
+     */
     private static final Set<String> PRODUCERS = Set.of("to", "wireTap");
 
     /** The Quarkus platform version of the stubbed context, looked up once. */
