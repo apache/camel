@@ -135,7 +135,8 @@ public interface EventNotifier {
 
     /**
      * Whether to ignore AI events (see {@link org.apache.camel.ai.AiEvent}). AI events are their own category and are
-     * not affected by {@link #isIgnoreExchangeEvents()} even though an {@code AiEvent} is an exchange event.
+     * not affected by {@link #isIgnoreExchangeEvents()}, even for the exchange-backed
+     * {@link org.apache.camel.ai.AiEvent.ExchangeAiEvent} subtype.
      *
      * @since 4.24
      */
