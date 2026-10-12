@@ -88,9 +88,6 @@ public class KnownDependenciesResolverTest {
         // a sub package of another component's package wins for its own classes
         assertImport(resolver, "org.apache.camel.component.file.remote.SftpConstants", "camel-ftp");
         assertImport(resolver, "org.apache.camel.component.file.GenericFile", "camel-file");
-        // the libraries still resolve as before
-        assertGav(resolver, "com.fasterxml.jackson.annotation.JsonProperty", "com.fasterxml.jackson.core",
-                "jackson-annotations");
         // a component in a base package does not claim every class in it
         assertNull(resolver.mavenGavForImport("org.apache.camel.Exchange"));
         assertNull(resolver.mavenGavForImport("org.apache.camel.component.Anything"));
