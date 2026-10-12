@@ -34,12 +34,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -102,10 +104,18 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
             headers.add(HttpHeaders.CONTENT_TYPE, contentType);
         }
 
+        final TypeConverter tc = exchange.getContext().getTypeConverter();
         for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                headers.add(entry.getKey(), entry.getValue().toString());
-            }
+            final String key = entry.getKey();
+            final Object value = entry.getValue();
+            // a collection or an object array is sent as one header per value; any other value is a single header
+            HttpUtil.applyHeaderValue(headerFilterStrategy, exchange, value, tc, key, (multiValues, prev) -> {
+                if (multiValues != null) {
+                    headers.add(key, multiValues);
+                } else if (prev != null) {
+                    headers.add(key, prev);
+                }
+            });
         }
 
         client.postAbs(this.uri)
