@@ -164,6 +164,16 @@ public class ManagedEventNotifier extends NotificationBroadcasterSupport impleme
     }
 
     @Override
+    public boolean isIgnoreAiEvents() {
+        return getEventNotifier().isIgnoreAiEvents();
+    }
+
+    @Override
+    public void setIgnoreAiEvents(boolean ignoreAiEvents) {
+        getEventNotifier().setIgnoreAiEvents(ignoreAiEvents);
+    }
+
+    @Override
     public MBeanNotificationInfo[] getNotificationInfo() {
         // JmxNotificationEventNotifier uses the simple class name of the event as the notification type
         List<MBeanNotificationInfo> infos = new ArrayList<>();
