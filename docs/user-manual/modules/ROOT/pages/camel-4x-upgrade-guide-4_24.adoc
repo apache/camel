@@ -202,3 +202,12 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
+
+=== camel-netty-http - the request body read as an InputStream
+
+The body of a request received by the consumer is a `NettyChannelBufferStreamCache`. Its `read()` method now returns
+a byte as a value from 0 to 255, and -1 at the end of the body, as `java.io.InputStream` requires. Before, a byte
+from 0x80 was returned as a negative value (0xFF as -1, which a reader takes for the end of the body), and the method
+threw an `IndexOutOfBoundsException` at the end. `markSupported()` now returns `false` (`mark(int)` never did
+anything): a reader that needs mark support has to wrap the stream, for example in a `BufferedInputStream`.
+`reset()` goes back to the start of the body, as before.
