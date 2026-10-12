@@ -27,3 +27,17 @@ A `hashicorp:` property with a field of a secret that does not exist, such as `{
 now resolves to no value, as it already did without a field, so its default value or an optional placeholder
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
+
+=== camel-jira - the producers wait for the answer of Jira
+
+The `addComment`, `addIssueLink`, `addWorkLog`, `attach`, `deleteIssue`, `transitionIssue` and `watchers` producers
+(and `addIssue` for its watchers) sent their request without waiting for the answer, so the exchange continued before
+Jira had done the work, and a request that Jira rejected (for example no permission, or a transition that is not
+allowed) was not noticed. They now wait for the answer, as `addIssue` and `updateIssue` already did, and a rejected
+request fails the exchange with the `RestClientException` of the Jira client. Routes that relied on such failures
+being ignored must handle the exception, for example with `onException(RestClientException.class).handled(true)`.
+
+A producer that sends several requests can fail after some of them were done: `transitionIssue` can fail on its
+comment after the transition was made, `watchers` and `addIssue` can fail after some of the watchers were changed
+(`addIssue` sets the created issue as the message body before it adds the watchers), and a retry or redelivery
+repeats the earlier requests.

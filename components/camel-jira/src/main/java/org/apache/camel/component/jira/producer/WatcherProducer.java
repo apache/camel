@@ -64,6 +64,7 @@ public class WatcherProducer extends DefaultProducer {
                 for (String s : watArr) {
                     String watcher = s.trim();
                     if (!watcher.isEmpty()) {
+                        // wait for the result, so that a request that Jira rejects fails the exchange
                         issueClient.removeWatcher(issue.getWatchers().getSelf(), watcher).claim();
                     }
                 }

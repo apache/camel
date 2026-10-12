@@ -49,6 +49,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -72,7 +73,10 @@ import static org.apache.camel.component.jira.Utils.createIssue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 /**
  * The Jira client is asynchronous: a request that Jira rejects (no permission, an invalid transition, a missing field)
@@ -162,6 +166,19 @@ class JiraProducerRejectedRequestTest extends CamelTestSupport {
     @Test
     void transitionIssueFails() {
         assertRejected("transitionIssue", null, Map.of(ISSUE_KEY, ISSUE, ISSUE_TRANSITION_ID, 3));
+    }
+
+    @Test
+    void transitionIssueFailsWhenItsCommentIsRejected() {
+        // partial failure: Jira makes the transition and then rejects the comment (the message body)
+        when(issueRestClient.transition(any(Issue.class), any(TransitionInput.class))).thenReturn(Promises.promise(null));
+
+        assertRejected("transitionIssue", "A comment", Map.of(ISSUE_KEY, ISSUE, ISSUE_TRANSITION_ID, 3));
+
+        // the transition was requested before the comment
+        InOrder inOrder = inOrder(issueRestClient);
+        inOrder.verify(issueRestClient).transition(same(issue), any(TransitionInput.class));
+        inOrder.verify(issueRestClient).addComment(any(), any(Comment.class));
     }
 
     @Test
