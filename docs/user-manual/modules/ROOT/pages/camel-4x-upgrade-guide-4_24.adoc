@@ -202,3 +202,14 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
+
+=== camel-dropbox
+
+The `search` operation (producer and consumer) now returns every match that the service gives. Previously it returned
+only the first page of the matches (the Dropbox SDK asks for 100 matches per page), and the rest was dropped without
+any sign. A search with many matches now sends one request per page, for the consumer at each poll. When one of these
+requests fails, the operation fails and no match is returned, as before.
+
+The `get` operation on a folder (producer and consumer) now downloads every file of the folder. Previously it
+downloaded only the files of the first page of the folder listing. As before, the content of all the files is in the
+message body, so a large folder needs more memory than it did when only the first page was read.
