@@ -63,6 +63,8 @@ public final class Kamelet {
     public static final String PARENT_PROCESSOR_ID = "parentProcessorId";
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
     public static final String BRIDGE_ERROR_HANDLER = "bridgeErrorHandler";
+    static final String ADVANCED_SOURCE_OPTIONS = "internal.advanced.source";
+    static final String ADVANCED_SINK_OPTIONS = "internal.advanced.sink";
 
     // use a running counter as uuid
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
@@ -206,18 +208,20 @@ public final class Kamelet {
     }
 
     /**
-     * Extracts advanced options without discarding camelCase and kebab-case aliases before normalization.
+     * Reads the original advanced options map stored under a single internal key.
      */
-    private static Map<String, Object> extractAdvancedOptions(Map<String, Object> parameters, String prefix) {
+    private static Map<String, Object> extractAdvancedOptions(Map<String, Object> parameters, String key) {
         Map<String, Object> options = new LinkedHashMap<>();
         if (parameters == null) {
             return options;
         }
 
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            String key = entry.getKey();
-            if (key != null && key.startsWith(prefix)) {
-                options.put(key.substring(prefix.length()), entry.getValue());
+        Object value = parameters.get(key);
+        if (value instanceof Map<?, ?> map) {
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                if (entry.getKey() != null) {
+                    options.put(entry.getKey().toString(), entry.getValue());
+                }
             }
         }
 
@@ -225,12 +229,13 @@ public final class Kamelet {
     }
 
     /**
-     * Normalizes option names so that camelCase and kebab-case aliases do not cause the same option to be appended more
-     * than once. When both forms are present, the kebab-case form takes precedence.
+     * Preserves the user-supplied option name. When both camelCase and kebab-case forms are present, the kebab-case
+     * form is kept so the same option is not appended twice.
      */
     private static Map<String, Object> normalizeParameterNames(Map<String, Object> parameters) {
         Map<String, Object> normalized = new LinkedHashMap<>();
-        Map<String, Boolean> canonicalKeys = new HashMap<>();
+        Map<String, String> seenOriginal = new HashMap<>();
+        Map<String, Boolean> seenIsCanonical = new HashMap<>();
 
         if (parameters == null) {
             return normalized;
@@ -241,9 +246,19 @@ public final class Kamelet {
             String name = StringHelper.camelCaseToDash(originalName);
             boolean isCanonical = originalName.equals(name);
 
-            if (!normalized.containsKey(name) || (isCanonical && !canonicalKeys.getOrDefault(name, false))) {
-                normalized.put(name, entry.getValue());
-                canonicalKeys.put(name, isCanonical);
+            String existingOriginal = seenOriginal.get(name);
+            if (existingOriginal == null) {
+                seenOriginal.put(name, originalName);
+                seenIsCanonical.put(name, isCanonical);
+                normalized.put(originalName, entry.getValue());
+            } else {
+                boolean existingIsCanonical = seenIsCanonical.get(name);
+                if (isCanonical && !existingIsCanonical) {
+                    normalized.remove(existingOriginal);
+                    seenOriginal.put(name, originalName);
+                    seenIsCanonical.put(name, isCanonical);
+                    normalized.put(originalName, entry.getValue());
+                }
             }
         }
 
@@ -266,10 +281,29 @@ public final class Kamelet {
 
             result = removeQueryParameter(result, name);
             result += result.contains("?") ? "&" : "?";
-            result += name + "=" + value;
+            result += name + "=" + wrapRawIfNeeded(value);
         }
 
         return result;
+    }
+
+    /**
+     * Re-wraps values that contain URI-sensitive characters. RAW wrappers may already have been stripped by
+     * {@link URISupport#resolveRawParameterValues(Map)} before options reach this method.
+     */
+    private static String wrapRawIfNeeded(String value) {
+        if (isRawToken(value)) {
+            return value;
+        }
+        if (value.contains("&") || value.contains("=") || value.contains("?")) {
+            return "RAW(" + value + ")";
+        }
+        return value;
+    }
+
+    private static boolean isRawToken(String value) {
+        return value.startsWith("RAW(") && value.endsWith(")")
+                || value.startsWith("RAW{") && value.endsWith("}");
     }
 
     /**
@@ -322,8 +356,8 @@ public final class Kamelet {
             }
 
             if (output instanceof ToDefinition to
-                    && !isKameletEndpoint(to.getEndpointUri(), SINK_ID)
-                    && !isKameletEndpoint(to.getEndpointUri(), SOURCE_ID)) {
+                    && to.getEndpointUri() != null
+                    && !to.getEndpointUri().startsWith("kamelet:")) {
                 if (mainSink != null) {
                     throw new IllegalArgumentException(
                             "sink.* advanced options cannot be applied because the Kamelet has multiple "
@@ -412,11 +446,11 @@ public final class Kamelet {
         }
 
         // Extract advanced options for source/sink component endpoints.
-        // The internal.advanced.source. and internal.advanced.sink. prefixes are reserved for these options.
+        // The internal.advanced.source and internal.advanced.sink keys are reserved for these option maps.
         Map<String, Object> sourceOptions = normalizeParameterNames(
-                extractAdvancedOptions(parameters, "internal.advanced.source."));
+                extractAdvancedOptions(parameters, ADVANCED_SOURCE_OPTIONS));
         Map<String, Object> sinkOptions = normalizeParameterNames(
-                extractAdvancedOptions(parameters, "internal.advanced.sink."));
+                extractAdvancedOptions(parameters, ADVANCED_SINK_OPTIONS));
 
         // Determine Kamelet type: source Kamelets have a real component as input;
         // sink/action Kamelets have kamelet:source as input and the real component in outputs.
@@ -456,12 +490,7 @@ public final class Kamelet {
                                                        + "in the destination endpoint URI.");
                 }
 
-                ToDefinition mainSink;
-                try {
-                    mainSink = findMainSink(def.getOutputs());
-                } catch (IllegalArgumentException e) {
-                    throw e;
-                }
+                ToDefinition mainSink = findMainSink(def.getOutputs());
 
                 if (mainSink == null) {
                     throw new IllegalArgumentException(

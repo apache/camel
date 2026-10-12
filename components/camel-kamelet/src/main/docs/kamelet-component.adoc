@@ -177,11 +177,11 @@ For example:
 
 [source,java]
 ----
-from("kamelet:my-source?source.block=true")
+from("kamelet:my-source?source.bridgeErrorHandler=true")
     .to("log:info");
 ----
 
-In this example, `source.block=true` passes `block=true` to the source component endpoint. If the endpoint URI already contains the same option, the advanced option overrides its existing value.
+In this example, `source.bridgeErrorHandler=true` passes `bridgeErrorHandler=true` to the source component endpoint. If the endpoint URI already contains the same option, the advanced option overrides its existing value.
 
 Property placeholders and RAW expressions in endpoint URIs are preserved when advanced options are applied. For example, `kafka:{{topic}}` or `aws2-s3:{{bucket}}?secretKey=RAW({{secret}})` remain intact.
 

@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.kamelet;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
@@ -29,6 +33,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.URISupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -608,6 +613,179 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
             assertTrue(exceptionChainContains(exception, "multiple top-level static to() destinations"),
                     () -> "Expected a clear ambiguity error, but got: " + exception);
         }
+    }
+
+    @Test
+    void sinkOptionsPreserveOriginalCamelCaseSpelling() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("spelling-sink")
+                            .from("kamelet:source")
+                            .to("http://localhost/unused-page-size");
+
+                    from("direct:trigger")
+                            .kamelet("spelling-sink?sink.pageSize=10");
+                }
+            });
+
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(testContext, "http://localhost/unused-page-size");
+            ToDefinition sink = findToDefinition(expandedRoute, "http://localhost/unused-page-size");
+
+            assertNotNull(sink, "Expected sink endpoint");
+            String uri = sink.getEndpointUri();
+            assertTrue(uri.contains("pageSize=10"),
+                    () -> "Expected original camelCase spelling to be preserved: " + uri);
+            assertFalse(uri.contains("page-size="),
+                    () -> "Parameter name must not be rewritten to kebab-case: " + uri);
+
+            Map<String, Object> query = parseUriQuery(uri);
+            assertEquals("10", String.valueOf(query.get("pageSize")));
+            assertFalse(query.containsKey("page-size"),
+                    () -> "Kebab-case alias must not be forwarded: " + query);
+        }
+    }
+
+    @Test
+    void sinkOptionsPreserveRawValuesWithUriSensitiveCharacters() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("password-sink")
+                            .from("kamelet:source")
+                            .to("http://localhost/unused-password");
+
+                    from("direct:trigger")
+                            .kamelet("password-sink?sink.password=RAW(p@ss&word)");
+                }
+            });
+
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(testContext, "http://localhost/unused-password");
+            ToDefinition sink = findToDefinition(expandedRoute, "http://localhost/unused-password");
+
+            assertNotNull(sink, "Expected sink endpoint");
+            String uri = sink.getEndpointUri();
+            Map<String, Object> query = parseUriQuery(uri);
+
+            assertEquals("p@ss&word", rawOrPlain(query.get("password")),
+                    () -> "Expected the password value to remain intact: " + uri);
+            assertFalse(query.containsKey("word"),
+                    () -> "Ampersand in the password must not create a spurious parameter: " + uri);
+
+            HttpEndpoint http = findHttpEndpoint(testContext, "/unused-password");
+            assertNotNull(http, "Expected the HTTP sink endpoint to be created");
+            String rawQuery = http.getHttpUri().getRawQuery();
+            assertNotNull(rawQuery, "Expected HTTP URI query parameters");
+            assertFalse(rawQuery.contains("&word"),
+                    () -> "The HTTP endpoint must not receive a spurious word parameter: " + http.getHttpUri());
+            Map<String, Object> httpQuery = URISupport.parseQuery(rawQuery);
+            assertEquals("p@ss&word", urlDecode(rawOrPlain(httpQuery.get("password"))),
+                    () -> "Expected the HTTP endpoint to receive the password as one value: " + http.getHttpUri());
+            assertFalse(httpQuery.containsKey("word"),
+                    () -> "The HTTP endpoint must not receive a spurious word parameter: " + http.getHttpUri());
+        }
+    }
+
+    @Test
+    void advancedSinkOptionsSkipNestedKameletWhenSelectingMainSink() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("inner-sink")
+                            .from("kamelet:source")
+                            .to("mock:inner-sink");
+
+                    routeTemplate("nested-and-main")
+                            .from("kamelet:source")
+                            .to("kamelet:inner-sink")
+                            .to("mock:main-sink?retain-first=0");
+
+                    from("direct:trigger")
+                            .kamelet("nested-and-main?sink.retain-first=1");
+                }
+            });
+
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(testContext, "mock:main-sink");
+            ToDefinition mainSink = findToDefinition(expandedRoute, "mock:main-sink");
+            ToDefinition nested = findToDefinition(expandedRoute, "kamelet:inner-sink");
+
+            assertNotNull(mainSink, "Expected main sink endpoint");
+            assertTrue(mainSink.getEndpointUri().contains("retain-first=1"),
+                    () -> "Expected advanced option on the non-Kamelet sink: " + mainSink.getEndpointUri());
+
+            assertNotNull(nested, "Expected nested Kamelet destination");
+            assertFalse(nested.getEndpointUri().contains("retain-first="),
+                    () -> "Nested kamelet: destination must not receive sink options: " + nested.getEndpointUri());
+        }
+    }
+
+    @Test
+    void advancedSinkOptionsRejectNestedKameletOnlyDestinations() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("inner-sink")
+                            .from("kamelet:source")
+                            .to("mock:inner-sink");
+
+                    routeTemplate("nested-kamelet-sink")
+                            .from("kamelet:source")
+                            .to("kamelet:inner-sink");
+
+                    from("direct:trigger")
+                            .kamelet("nested-kamelet-sink?sink.retain-first=1");
+                }
+            });
+
+            Exception exception = assertThrows(Exception.class, testContext::start);
+            assertTrue(hasIllegalArgumentException(exception),
+                    () -> "Expected an IllegalArgumentException, but got: " + exception);
+            assertTrue(exceptionChainContains(exception, "no top-level static to() destination"),
+                    () -> "Expected no-static-sink error, but got: " + exception);
+        }
+    }
+
+    private Map<String, Object> parseUriQuery(String uri) throws Exception {
+        String query = URISupport.extractQuery(uri);
+        assertNotNull(query, () -> "Expected a query string on URI: " + uri);
+        return URISupport.parseQuery(query);
+    }
+
+    private String urlDecode(String value) {
+        return URLDecoder.decode(value, StandardCharsets.UTF_8);
+    }
+
+    private String rawOrPlain(Object value) {
+        assertNotNull(value, "Expected a query parameter value");
+        String text = String.valueOf(value);
+        if (text.startsWith("RAW(") && text.endsWith(")")) {
+            return text.substring(4, text.length() - 1);
+        }
+        if (text.startsWith("RAW{") && text.endsWith("}")) {
+            return text.substring(4, text.length() - 1);
+        }
+        return text;
+    }
+
+    private HttpEndpoint findHttpEndpoint(CamelContext testContext, String path) {
+        return testContext.getEndpoints().stream()
+                .filter(HttpEndpoint.class::isInstance)
+                .map(HttpEndpoint.class::cast)
+                .filter(endpoint -> endpoint.getHttpUri() != null
+                        && endpoint.getHttpUri().getPath() != null
+                        && endpoint.getHttpUri().getPath().contains(path))
+                .findFirst()
+                .orElse(null);
     }
 
     private void assertDynamicSinkOptionsRejected(String processor, String description) throws Exception {

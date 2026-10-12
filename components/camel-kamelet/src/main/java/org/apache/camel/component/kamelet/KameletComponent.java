@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -51,6 +52,8 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kamelet.Kamelet.ADVANCED_SINK_OPTIONS;
+import static org.apache.camel.component.kamelet.Kamelet.ADVANCED_SOURCE_OPTIONS;
 import static org.apache.camel.component.kamelet.Kamelet.BRIDGE_ERROR_HANDLER;
 import static org.apache.camel.component.kamelet.Kamelet.NO_ERROR_HANDLER;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
@@ -253,11 +256,11 @@ public class KameletComponent extends DefaultComponent {
             //
             // Extract advanced options from URI parameters only (not from route-scoped properties)
             // to avoid clashes with route-scoped properties that happen to use source./sink. prefixes.
-            // We remove them from parameters before merging with route-scoped properties, then add them back
-            // with a special prefix so they can be distinguished in templateToRoute.
+            // We remove them from parameters before merging with route-scoped properties, then store the
+            // original maps so DefaultModel.addProperty cannot alias the inner option names.
             //
-            Map<String, Object> sourceOptions = new HashMap<>();
-            Map<String, Object> sinkOptions = new HashMap<>();
+            Map<String, Object> sourceOptions = new LinkedHashMap<>();
+            Map<String, Object> sinkOptions = new LinkedHashMap<>();
             Map<String, Object> parametersWithoutAdvancedOptions = new HashMap<>(parameters);
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
                 String key = entry.getKey();
@@ -290,12 +293,12 @@ public class KameletComponent extends DefaultComponent {
             // to prevent users from bypassing the intended separation
             kameletProperties.keySet().removeIf(key -> key.startsWith("internal.advanced."));
 
-            // Add advanced options with a special prefix to distinguish them from route-scoped properties
-            for (Map.Entry<String, Object> entry : sourceOptions.entrySet()) {
-                kameletProperties.put("internal.advanced.source." + entry.getKey(), entry.getValue());
+            // Pass the original option maps as single values so inner keys keep the user-supplied spelling
+            if (!sourceOptions.isEmpty()) {
+                kameletProperties.put(ADVANCED_SOURCE_OPTIONS, sourceOptions);
             }
-            for (Map.Entry<String, Object> entry : sinkOptions.entrySet()) {
-                kameletProperties.put("internal.advanced.sink." + entry.getKey(), entry.getValue());
+            if (!sinkOptions.isEmpty()) {
+                kameletProperties.put(ADVANCED_SINK_OPTIONS, sinkOptions);
             }
 
             // set kamelet specific properties
