@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -618,9 +619,12 @@ class SemanticTab extends AbstractTableTab {
             focus = Focus.PLAYGROUND;
             return true;
         }
-        if (view == View.EXPERTS && lastTableArea != null && contains(lastTableArea, event.x(), event.y())) {
-            int index = tableState.offset() + (event.y() - lastTableArea.y() - 1) / 2;
-            if (event.y() >= lastTableArea.y() + 1 && index < rows().size()) {
+        if (view == View.EXPERTS && lastTableArea != null && lastTableArea.contains(event.x(), event.y())) {
+            // below the header; each expert takes two lines, and the offset counts lines
+            int[] heights = new int[rows().size()];
+            Arrays.fill(heights, 2);
+            int index = TuiHelper.tableRowAtLine(event.y() - lastTableArea.y() - 1, tableState.offset(), heights);
+            if (index >= 0) {
                 tableState.select(index);
                 focus = Focus.LIST;
                 selectionChanged();
@@ -645,7 +649,7 @@ class SemanticTab extends AbstractTableTab {
             selectionChanged();
             return true;
         }
-        if (detailArea != null && contains(detailArea, event.x(), event.y())) {
+        if (detailArea != null && detailArea.contains(event.x(), event.y())) {
             focus = Focus.DETAIL;
             return true;
         }
@@ -885,7 +889,9 @@ class SemanticTab extends AbstractTableTab {
         } else if (focus == Focus.PLAYGROUND && playground != null) {
             playground.renderFooter(spans);
         } else if (filterInput != null) {
-            spans.add(Span.raw(" /" + filterInput.text() + "█  "));
+            spans.add(Span.raw(" /"));
+            FormHelper.addCaretField(spans, filterInput);
+            spans.add(Span.raw("  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
         } else {

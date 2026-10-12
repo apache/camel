@@ -240,7 +240,7 @@ final class SemanticPlayground {
         if (!event.isClick()) {
             return false;
         }
-        if (runArea != null && contains(runArea, event.x(), event.y())) {
+        if (runArea != null && runArea.contains(event.x(), event.y())) {
             run();
             return true;
         }
@@ -254,7 +254,7 @@ final class SemanticPlayground {
         }
         for (int i = 0; i < 3; i++) {
             Rect area = i == 0 ? inputArea : i == 1 ? parameterArea : outputArea;
-            if (area != null && contains(area, event.x(), event.y())) {
+            if (area != null && area.contains(event.x(), event.y())) {
                 field = i;
                 return true;
             }

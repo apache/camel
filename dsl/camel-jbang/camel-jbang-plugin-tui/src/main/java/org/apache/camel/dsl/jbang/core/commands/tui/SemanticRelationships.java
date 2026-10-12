@@ -48,7 +48,7 @@ final class SemanticRelationships {
     }
 
     int clicked(int x, int y) {
-        return hits.stream().filter(hit -> TuiHelper.contains(hit.area(), x, y)).mapToInt(Hit::index).findFirst().orElse(-1);
+        return hits.stream().filter(hit -> hit.area().contains(x, y)).mapToInt(Hit::index).findFirst().orElse(-1);
     }
 
     void render(

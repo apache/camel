@@ -113,4 +113,26 @@ class CatalogTabKameletsTest {
         assertThat(CatalogTab.kameletMarkdown(CATALOG.get("log-sink"))).contains("- to:\n    uri: kamelet:log-sink")
                 .contains("None.");
     }
+
+    @Test
+    void theKameletsOfJavaRoutesAreReadWithTheParser() throws Exception {
+        Files.writeString(dir.resolve("Orders.java"), """
+                import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
+
+                public class Orders extends EndpointRouteBuilder {
+                    private static final String SINK = "kamelet:log-sink";
+
+                    @Override
+                    public void configure() {
+                        // to("kamelet:old-action") is commented out
+                        from(kamelet("timer-source"))
+                            .to(SINK);
+                    }
+                }
+                """);
+
+        // the endpoint DSL and the constant count, the endpoint in the comment does not
+        assertThat(CatalogTab.usedKamelets(dir)).containsOnly("timer-source", "log-sink");
+    }
+
 }

@@ -99,7 +99,8 @@ a project directory, read from the route sources (no running integration needed)
   over a broker (Kafka, JMS, ...), or *shares data* over the same folder or table;
 * the *external systems* grouped by category (AI, databases, messaging, files, email, HTTP, cloud), taken
   from the component labels of the Camel catalog;
-* *findings*: a `direct` or `seda` endpoint that no route consumes, routes that call each other in a cycle,
+* *findings*: a `direct`, `seda` or `disruptor` endpoint that no route consumes (by the same rules as
+  `camel validate`), routes that call each other in a cycle,
   duplicate route ids, routes without a description;
 * the *architecture*: the routes grouped by what they do. Routes that set `group` in the source keep
   it. Routes that routes of two or more groups call are *shared services*. Routes reached only while

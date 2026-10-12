@@ -332,7 +332,8 @@ class BeansTab extends AbstractTableTab {
     public void renderFooter(List<Span> spans) {
         if (filterInputActive) {
             spans.add(Span.styled(" /", Theme.label().bold()));
-            spans.add(Span.raw(filterInputState.text() + "█  "));
+            FormHelper.addCaretField(spans, filterInputState);
+            spans.add(Span.raw("  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
             return;

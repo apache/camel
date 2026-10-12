@@ -13,6 +13,38 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-jbang - camel validate and camel overview report the same endpoints no route consumes
+
+`camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint
+that a route sends to and no route consumes, so they report the same endpoints on the same project:
+
+* `disruptor:` endpoints are checked too, and `camel overview` no longer treats `disruptor:q` as `seda:q` (they are
+  different endpoints at runtime); `vm:` and `direct-vm:`, which do not exist in Camel 4, are no longer joined with
+  `seda:` and `direct:`.
+* `camel validate` counts a `poll` or `pollEnrich` as consuming its endpoint, and a `toD` without an expression, an
+  `enrich` with a constant endpoint, a rest verb, and the dead letter channel of an error handler as sending to it.
+  It reads the flows of an `Integration` resource, and stays quiet for a `Pipe`.
+* `camel overview` stays quiet, as `camel validate` does, when a route consumes an endpoint only known at runtime
+  (`+from: direct:{{name}}+`), and no longer reports a `to` whose uri holds an expression.
+
+So `camel validate` can report an endpoint it did not report before.
+
+=== camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
+
+When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
+there is no exception on the exchange, and these consumers treated it as a success. The JPA consumer deleted the entity
+(or called its `@Consumed` method) and committed the poll, and the transacted (`transacted=true`) Hazelcast SEDA
+consumer committed its transaction, so the message was removed from the queue. Now a rollback only exchange is not
+consumed: the JPA consumer leaves the entity in the table, so the next poll consumes it again, as long as it still
+matches the query. With `transacted=false` the other entities of the poll are still consumed (without logging a WARN),
+and so is what a `@PreConsumed` method changed before routing; with `transacted=true` the whole poll is rolled back,
+as for a failed exchange. The Hazelcast SEDA consumer rolls back its transaction, so the message stays in the queue.
+
+A message that the route marks rollback only every time was removed before, and is now consumed again at every poll
+(JPA), or taken from the queue again at once, without a delay (transacted Hazelcast SEDA, as for a failed exchange).
+Handle such a message in the route instead, for example by moving it aside, rather than marking it rollback only
+every time.
+
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
 A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now
@@ -27,6 +59,14 @@ A `hashicorp:` property with a field of a secret that does not exist, such as `{
 now resolves to no value, as it already did without a field, so its default value or an optional placeholder
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
+
+=== camel-report-maven-plugin - Java routes are read with the Java DSL parser
+
+The `validate` and `route-coverage` goals read Java routes with the Java DSL parser of camel-java-io instead of
+camel-route-parser (Roaster). XML routes are read as before. The parser reads every `configure()` method of a source
+file, including those of a route builder created inside a test, so `validate` can find and validate endpoints it did
+not see before. An endpoint uri that is only a method call, such as `from(inboxQueue())`, is not validated (it was
+validated as a property placeholder without a component before); with `logUnparseable=true` it is logged.
 
 === camel-jira - the producers wait for the answer of Jira
 

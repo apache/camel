@@ -215,7 +215,7 @@ final class ArchitectureView {
      * summary /overview has just written, without a reload key.
      */
     void checkForChanges() {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (!isActive() || loading || checking || dir == null || now - lastCheck < RECHECK_MS) {
             return;
         }

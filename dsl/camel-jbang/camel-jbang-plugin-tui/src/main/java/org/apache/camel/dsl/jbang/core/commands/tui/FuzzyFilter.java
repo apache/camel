@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
@@ -48,9 +49,15 @@ class FuzzyFilter {
         filter += Character.toLowerCase(c);
     }
 
+    /** Adds the typed text, a whole character also when it is outside the basic plane, such as an emoji. */
+    void append(String typed) {
+        filter += typed.toLowerCase(Locale.ROOT);
+    }
+
+    /** Removes the last character typed, both chars of one outside the basic plane. */
     void deleteChar() {
         if (!filter.isEmpty()) {
-            filter = filter.substring(0, filter.length() - 1);
+            filter = filter.substring(0, filter.offsetByCodePoints(filter.length(), -1));
         }
     }
 

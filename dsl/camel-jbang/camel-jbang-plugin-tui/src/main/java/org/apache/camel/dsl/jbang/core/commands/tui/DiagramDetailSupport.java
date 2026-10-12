@@ -19,9 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
@@ -146,42 +144,6 @@ final class DiagramDetailSupport {
         return null;
     }
 
-    Map<Integer, List<SourceViewer.DocEntry>> provideAllQuickDocs(List<JsonObject> cd) {
-        if (cachedRouteDetail == null || cd.isEmpty()) {
-            return Map.of();
-        }
-
-        List<JsonObject> processors = getAllProcessors(cachedRouteDetail);
-        if (processors.isEmpty()) {
-            return Map.of();
-        }
-
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        CamelCatalog catalog = info != null ? getCatalog(info) : null;
-
-        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
-        for (JsonObject proc : processors) {
-            Integer line = proc.getInteger("line");
-            if (line == null || line <= 0) {
-                continue;
-            }
-
-            int eipIdx = findCodeDataIndex(cd, line, -1);
-            if (eipIdx < 0 || result.containsKey(eipIdx)) {
-                continue;
-            }
-            String endpointUri = proc.getString("endpointUri");
-            String type = proc.getString("type");
-
-            if (endpointUri != null && catalog != null) {
-                buildEndpointInlineDoc(result, cd, catalog, endpointUri, eipIdx);
-            } else if (type != null) {
-                buildEipInlineDoc(result, cd, catalog, type, proc.getMap("options"), eipIdx);
-            }
-        }
-        return result;
-    }
-
     static Line buildBreadcrumbTitle(Deque<String> routeNavigationStack, String drillDownRouteId) {
         Style nameStyle = Theme.label().bold();
         List<Span> spans = new ArrayList<>();
@@ -291,11 +253,15 @@ final class DiagramDetailSupport {
     static List<String> wrapWords(String text, int width) {
         List<String> out = new ArrayList<>();
         StringBuilder line = new StringBuilder();
+        int lineWidth = 0;
         for (String word : text.split("\\s+")) {
-            if (!line.isEmpty() && line.length() + 1 + word.length() > width) {
+            int wordWidth = CharWidth.of(word);
+            if (!line.isEmpty() && lineWidth + 1 + wordWidth > width) {
                 out.add(line.toString());
                 line.setLength(0);
+                lineWidth = 0;
             }
+            lineWidth += (line.isEmpty() ? 0 : 1) + wordWidth;
             line.append(line.isEmpty() ? "" : " ").append(word);
         }
         if (!line.isEmpty()) {
