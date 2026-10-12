@@ -38,6 +38,7 @@ import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.http.HttpUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -138,10 +139,14 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                     continue;
                 }
 
-                if (!strategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
-                    String str = tc.convertTo(String.class, headerValue);
-                    headers.set(key, str);
-                }
+                // a collection or an object array is sent as one header per value; any other value is a single header
+                HttpUtil.applyHeaderValue(strategy, exchange, headerValue, tc, key, (multiValues, prev) -> {
+                    if (multiValues != null) {
+                        headers.set(key, multiValues);
+                    } else if (prev != null) {
+                        headers.set(key, prev);
+                    }
+                });
             }
         }
     }

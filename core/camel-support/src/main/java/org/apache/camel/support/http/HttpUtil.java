@@ -17,6 +17,8 @@
 package org.apache.camel.support.http;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -231,6 +233,42 @@ public final class HttpUtil {
         }
 
         consumer.accept(values, firstValue);
+    }
+
+    /**
+     * Passes the value or values of a message header to the consumer after applying the filter strategy. This is mostly
+     * used to simplify setting the headers of HTTP requests and responses.
+     * <p/>
+     * A {@link Collection} or an object array has one value per element: the elements are converted and filtered one by
+     * one as {@link #applyHeader(HeaderFilterStrategy, Exchange, Iterator, TypeConverter, String, BiConsumer)} does,
+     * and null elements are skipped. Every other value is a single value, which is filtered as it is and then converted
+     * to a String: a String (it is not split on a delimiter), a <tt>byte[]</tt> or another primitive array, a
+     * {@link Map}, and an {@link Iterable} that is not a collection (such as a JSON object or JSON array type that
+     * iterates over its content).
+     *
+     * @param headerFilterStrategy the filter strategy to apply
+     * @param exchange             an exchange to apply the header strategy
+     * @param value                the header value
+     * @param tc                   a type converter instance so that the values can be converted to string
+     * @param key                  the header name
+     * @param consumer             a consumer method to receive the converted values. It can receive either a list of
+     *                             values (two or more) or a single value, and null for both when there is no value to
+     *                             send.
+     */
+    public static void applyHeaderValue(
+            HeaderFilterStrategy headerFilterStrategy, Exchange exchange, Object value,
+            TypeConverter tc, String key, BiConsumer<List<String>, String> consumer) {
+        if (value instanceof Collection<?> collection) {
+            applyHeader(headerFilterStrategy, exchange, collection.iterator(), tc, key, consumer);
+        } else if (value instanceof Object[] array) {
+            applyHeader(headerFilterStrategy, exchange, Arrays.asList(array).iterator(), tc, key, consumer);
+        } else {
+            String headerValue = null;
+            if (value != null && !headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                headerValue = tc.convertTo(String.class, value);
+            }
+            consumer.accept(null, headerValue);
+        }
     }
 
     /*
