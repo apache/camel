@@ -1216,17 +1216,6 @@ graceful shutdown starts in the middle of a batch, the remaining entities are no
 and is consumed again by the next poll, so an entity that always fails is now processed at every poll. Handle
 the exception in the route (for example with `onException(...).handled(true)`) to delete the entity anyway.
 
-=== camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
-
-When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
-there is no exception on the exchange, and these consumers treated it as a success. The JPA consumer deleted the entity
-(or called its `@Consumed` method) and committed the poll, and the transacted (`transacted=true`) Hazelcast SEDA
-consumer committed its transaction, so the message was removed from the queue. Now a rollback only exchange is not
-consumed: the JPA consumer leaves the entity in the table, so the next poll consumes it again. With `transacted=false`
-the other entities of the poll are still consumed (without logging a WARN), and with `transacted=true` the whole poll
-is rolled back, as for a failed exchange. The Hazelcast SEDA consumer rolls back its transaction, so the message stays
-in the queue.
-
 === Components and Language removal
 
 ==== camel-csimple, camel-csimple-joor and csimple-maven-plugin

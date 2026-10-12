@@ -218,7 +218,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                             // throw to roll back the whole batch
                             // (the exception must be created before the exchange is released)
                             throw new RollbackExchangeException(
-                                    "Rollback transaction due exchange was marked for rollback only", exchange);
+                                    "Rollback transaction due to exchange being marked for rollback only", exchange);
                         }
                         // not transacted: a deliberate rollback is not an error, so skip this entity and continue
                         // with the next one in the batch
