@@ -120,7 +120,7 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
         int connectionsBefore = countingFactory.getCreateCount();
-        triggerConnectionFailure(context, ROUTE_ID_AUTO_ACK_NO_TX);
+        triggerConnectionFailure(context, ROUTE_ID_SESSION_TX);
         await().atMost(30, TimeUnit.SECONDS)
                 .until(() -> countingFactory.getCreateCount() > connectionsBefore);
 
@@ -133,7 +133,7 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
         sendMessagesWithText(template, endpointUri, 7, "After!");
 
         mock.assertIsSatisfied();
-        // fist batch
+        // first batch
         assertEquals(5, getBatchExchanges(mock.getExchanges().get(0)).size());
         assertEquals(List.of("Before!", "Before!", "After!", "After!", "After!"),
                 getBatchBodiesAsString(mock.getExchanges().get(0)));

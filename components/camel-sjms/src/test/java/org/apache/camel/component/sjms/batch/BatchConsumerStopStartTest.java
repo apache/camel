@@ -28,6 +28,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSize;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessages;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -118,13 +119,20 @@ public class BatchConsumerStopStartTest extends JmsTestSupport {
         addRoute(id, queue, "batchSize=5&batchInterval=60000&transacted=true", "mock:" + id);
 
         MockEndpoint mock = getMockEndpoint("mock:" + id);
-        mock.expectedMessageCount(0);
-        mock.setAssertPeriod(1000);
+        mock.expectedMessageCount(1);
 
-        // let the worker spin for a while, then stop with nothing buffered
-        await().pollDelay(Duration.ofMillis(1200)).until(() -> true);
+        sendMessagesWithText(template, "sjms:queue:" + queue, 5, "Message: %d");
+
+        // Wait until the complete batch has been dispatched.
+        mock.assertIsSatisfied();
+
+        // No additional batch should be dispatched upon stopping the route.
         context.getRouteController().stopRoute(id);
+        await().atMost(Duration.ofSeconds(5))
+                .until(() -> context.getRouteController().getRouteStatus(id).isStopped());
 
+        mock.setExpectedMessageCount(1);
+        mock.setAssertPeriod(2000);
         mock.assertIsSatisfied();
     }
 

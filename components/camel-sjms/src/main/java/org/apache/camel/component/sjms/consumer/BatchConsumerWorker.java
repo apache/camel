@@ -148,7 +148,7 @@ public class BatchConsumerWorker implements Runnable {
                 }
             } else {
                 batchListener.handleException(
-                        "Execution of JMS message listener failed. This exception is ignored.",
+                        "Execution of batch JMS message listener failed.",
                         e);
             }
         }
