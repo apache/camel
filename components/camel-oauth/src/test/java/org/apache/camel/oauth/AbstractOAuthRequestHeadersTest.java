@@ -36,6 +36,7 @@ import org.junit.jupiter.api.TestInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * The OAuth processors behind a real HTTP consumer: the bearer token and the session cookie must come from the
@@ -62,6 +63,14 @@ abstract class AbstractOAuthRequestHeadersTest {
      * The consumer endpoint uri for the given path.
      */
     abstract String endpointUri(String path);
+
+    /**
+     * Whether the processors can read the HTTP request of this consumer. When they cannot, they read the message
+     * headers, without the values that also appear in the query string.
+     */
+    boolean readsTheRequestHeaders() {
+        return true;
+    }
 
     @BeforeAll
     void start() throws Exception {
@@ -114,6 +123,9 @@ abstract class AbstractOAuthRequestHeadersTest {
 
     @Test
     void bearerTokenIsNotReadFromAFormParameter() throws Exception {
+        assumeTrue(readsTheRequestHeaders(),
+                "the request of this consumer cannot be read from the route, so its form parameters are message headers");
+
         var request = request("/api")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString("Authorization=Bearer%20" + StubOAuth.ALICE_TOKEN))
@@ -122,6 +134,17 @@ abstract class AbstractOAuthRequestHeadersTest {
 
         assertEquals(401, response.statusCode());
         assertNull(setCookie(response));
+    }
+
+    @Test
+    void authorizationHeaderIsReadWhateverTheQueryStringHolds() throws Exception {
+        assumeTrue(readsTheRequestHeaders(),
+                "the request of this consumer cannot be read from the route, so a value in the query string is left out");
+
+        var response = get("/api?note=Bearer%20" + StubOAuth.ALICE_TOKEN, null, "Bearer " + StubOAuth.ALICE_TOKEN);
+
+        assertEquals(200, response.statusCode());
+        assertEquals("api:alice", response.body());
     }
 
     @Test
@@ -193,7 +216,7 @@ abstract class AbstractOAuthRequestHeadersTest {
         return cookie;
     }
 
-    private HttpResponse<String> get(String pathAndQuery, String cookie, String authorization) throws Exception {
+    HttpResponse<String> get(String pathAndQuery, String cookie, String authorization) throws Exception {
         var builder = request(pathAndQuery).GET();
         if (cookie != null) {
             builder.header("Cookie", cookie);

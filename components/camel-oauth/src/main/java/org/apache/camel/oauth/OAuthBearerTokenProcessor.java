@@ -16,10 +16,7 @@
  */
 package org.apache.camel.oauth;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,14 +41,20 @@ public class OAuthBearerTokenProcessor extends AbstractOAuthProcessor {
 
         // Validate Authorization header
         //
-        var authHeaders = authorizationHeaders(msg);
+        var authHeaders = HttpRequestHeaders.values(msg, "Authorization");
         if (authHeaders.isEmpty()) {
             log.error("No Authorization header in request");
             rejectUnauthorized(exchange, "Authorization header");
             return;
         }
 
-        var toks = authHeaders.size() == 1 ? authHeaders.get(0).split(" ") : new String[0];
+        if (authHeaders.size() > 1) {
+            log.error("Invalid Authorization header: expected exactly one, got {}", authHeaders.size());
+            rejectUnauthorized(exchange, "Invalid Authorization header");
+            return;
+        }
+
+        var toks = authHeaders.get(0).split(" ");
         if (toks.length != 2 || !"Bearer".equals(toks[0])) {
             log.error("Invalid Authorization header");
             rejectUnauthorized(exchange, "Invalid Authorization header");
@@ -76,17 +79,5 @@ public class OAuthBearerTokenProcessor extends AbstractOAuthProcessor {
 
         log.info("Authenticated {}", userProfile.subject());
         userProfile.logDetails();
-    }
-
-    /**
-     * The Authorization header values of the request. They are taken from the HTTP request when the message carries it,
-     * because the message headers also hold the query and form parameters of the request, and from the message headers
-     * otherwise.
-     */
-    private static List<String> authorizationHeaders(Message msg) {
-        return HttpRequestHeaders.values(msg, "Authorization").orElseGet(() -> {
-            var value = msg.getHeader("Authorization", String.class);
-            return value != null ? List.of(value) : List.of();
-        });
     }
 }

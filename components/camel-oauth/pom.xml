@@ -68,7 +68,7 @@
             <artifactId>camel-platform-http-main</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- to read the request headers of the servlet based http consumers -->
+        <!-- to read the request headers of the servlet based and the netty http consumers -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http-common</artifactId>
@@ -78,6 +78,11 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <version>${jakarta-servlet-api-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-netty-http</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -101,6 +106,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-servlet</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-undertow</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

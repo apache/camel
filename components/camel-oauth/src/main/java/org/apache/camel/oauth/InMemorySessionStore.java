@@ -98,16 +98,13 @@ public class InMemorySessionStore implements OAuthSessionStore {
     }
 
     /**
-     * The Cookie header of the request. It is taken from the HTTP request when the message carries it, because the
-     * message headers also hold the query and form parameters of the request, and from the message headers otherwise.
+     * The Cookie header of the request, read with {@link HttpRequestHeaders} because the message headers also hold the
+     * query and form parameters of the request.
      */
     private static Optional<String> getCookieHeader(Message msg) {
-        var requestValues = HttpRequestHeaders.values(msg, "Cookie");
-        if (requestValues.isPresent()) {
-            // HTTP/2 may send the cookies in several Cookie headers (RFC 9113 section 8.2.3)
-            return requestValues.filter(values -> !values.isEmpty()).map(values -> String.join("; ", values));
-        }
-        return Optional.ofNullable(msg.getHeader("Cookie")).map(Object::toString);
+        var values = HttpRequestHeaders.values(msg, "Cookie");
+        // HTTP/2 may send the cookies in several Cookie headers (RFC 9113 section 8.2.3)
+        return values.isEmpty() ? Optional.empty() : Optional.of(String.join("; ", values));
     }
 
     private void setSessionCookie(Message msg, OAuthSession session) {

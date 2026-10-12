@@ -113,9 +113,11 @@ authenticated `UserProfile` is available in the `CamelOAuthUserProfile` exchange
 (`OAuth.CAMEL_OAUTH_USER_PROFILE`). A route that read the profile from the OAuth session after
 `OAuthBearerTokenProcessor` must read it from that exchange property instead.
 
-When the message comes from platform-http on Vert.x or from a servlet based HTTP consumer, the bearer token and the
-session cookie are now read from the `Authorization` and `Cookie` request headers only. A query or form parameter of
-the same name, which these consumers also map into the message headers, is no longer used for them.
+When the message comes from platform-http on Vert.x, from a servlet based HTTP consumer or from camel-netty-http, the
+bearer token and the session cookie are now read from the `Authorization` and `Cookie` request headers only. A query or
+form parameter of the same name, which these consumers also map into the message headers, is no longer used for them.
+For any other message the processors keep reading the message headers, but leave out a value that also appears in the
+query string of the request.
 
 === camel-report-maven-plugin - Java routes are read with the Java DSL parser
 
