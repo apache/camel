@@ -111,7 +111,7 @@ the program passed to `proc_exit`,
 When the program exits with a non-zero code, the exchange fails with a `WasmExitCodeException` (which holds the exit
 code and the standard error) and the standard output is not set as the body, unless `failOnNonZeroExit` is `false`:
 then the standard output replaces the body as for any other exit code. The other headers of the message are kept.
-See <<the-message-body-after-a-failure>> for what the body holds when the exchange fails.
+See <<_the_message_body_after_a_failure>> for what the body holds when the exchange fails.
 
 Every exchange runs on its own instance, so exchanges never share the memory or the globals of the module and can
 run in parallel without a lock. A module cannot keep state from one message to the next.
@@ -190,7 +190,6 @@ wrote to its standard error, `CamelWasmExitCode` is not.
 
 In every case, the instance the program ran on is discarded.
 
-[[the-message-body-after-a-failure]]
 === The message body after a failure
 
 When the exchange fails (a non-zero exit code, a trap, the output limit or the timeout), the component does not set

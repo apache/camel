@@ -34,6 +34,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.xml.transform.Source;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
@@ -41,6 +43,7 @@ import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.wasm.WasiCommand;
@@ -60,6 +63,10 @@ import run.endive.wasm.WasmModule;
  * Without a timeout the module runs on the calling thread and reads the body as a stream. With a timeout the module
  * runs on a thread of the producer, and the body is first read into memory on the calling thread: the module then reads
  * a private copy, so a module that is abandoned after a timeout never reads a stream that the route is still using.
+ * <p/>
+ * A body that is not a stream is converted to one. A stream that the type converter opens for that (a file stream for a
+ * File, Path or GenericFile body) is closed by the producer when the module has ended, or when the body has been read
+ * into memory. A stream that is the body is never closed by the producer.
  * <p/>
  * When the exchange fails, the producer does not set a new body, but the module may have read the old one: a body that
  * is a stream has been read, partly or to its end. With stream caching (the default) the body can be read again: Camel
@@ -162,12 +169,21 @@ public class WasmProducer extends DefaultProducer {
         // silently running the module with empty input
         Object body = message.getBody();
         InputStream in = body != null ? message.getMandatoryBody(InputStream.class) : InputStream.nullInputStream();
+        // a stream that the type converter opened for this run (for a File, Path or GenericFile body it is a new file
+        // stream) is closed here: nobody else has a reference to it
+        InputStream opened = isOpenedByConverter(body, in) ? in : null;
         byte[] restore = null;
         if (conf.getTimeout() > 0 && body != null) {
             // with a timeout the module runs on another thread, which goes on for a moment after the timeout and is
             // not stopped by an interrupt while it is blocked in a read of the body. So the body is read here, on the
             // calling thread, and the module gets a copy that no other thread uses and that never blocks.
-            byte[] input = in.readAllBytes();
+            byte[] input;
+            try {
+                input = in.readAllBytes();
+            } finally {
+                IOHelper.close(opened);
+                opened = null;
+            }
             in = new ByteArrayInputStream(input);
             if (body instanceof InputStream && !(body instanceof StreamCache)) {
                 // the stream of the body is used up: if the exchange fails, the body becomes what was read from it
@@ -204,10 +220,21 @@ public class WasmProducer extends DefaultProducer {
             message.setBody(stdout.toByteArray());
             done = true;
         } finally {
+            // without a timeout the module ran on this thread and has ended, so no other thread reads the stream
+            IOHelper.close(opened);
             if (!done && restore != null) {
                 message.setBody(restore);
             }
         }
+    }
+
+    /**
+     * Whether the type converter created the stream for this run, so that the producer has to close it. A stream that
+     * is the body is left to its owner, and so is the stream of a {@link StreamCache} or of an XML {@link Source}: for
+     * these the converter may return the stream that the body holds.
+     */
+    private static boolean isOpenedByConverter(Object body, InputStream in) {
+        return body != null && in != body && !(body instanceof StreamCache) && !(body instanceof Source);
     }
 
     /**

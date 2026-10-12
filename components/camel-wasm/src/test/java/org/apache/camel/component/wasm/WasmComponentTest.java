@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,6 +35,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -44,6 +47,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.wasm.Wasm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -669,6 +673,73 @@ class WasmComponentTest {
         }
     }
 
+    @ParameterizedTest
+    @CsvSource({ "upper,''", "upper,?timeout=30000", "readexit,''", "readexit,?timeout=30000" })
+    void streamOpenedByTheTypeConverterIsClosed(String name, String options) throws Exception {
+        boolean fails = "readexit".equals(name);
+        try (CamelContext cc = context("wasm:" + module(name, fails ? READ_EXIT : UPPER) + options)) {
+            cc.getTypeConverterRegistry().addTypeConverter(InputStream.class, Content.class, new ContentConverter());
+            cc.start();
+            Content body = new Content("hello wasi");
+
+            Exchange out = send(cc, body);
+
+            if (fails) {
+                assertThat(out.getException()).isInstanceOf(WasmExitCodeException.class);
+                assertThat(out.getMessage().getBody()).isSameAs(body);
+            } else {
+                assertThat(out.getException()).isNull();
+                assertThat(text(out)).isEqualTo("HELLO WASI");
+            }
+            // like the converters for File, Path and GenericFile, the converter opened a stream for this run: nobody but
+            // the producer can close it
+            assertThat(body.opened).singleElement().satisfies(stream -> assertThat(stream.closed).isTrue());
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "?timeout=30000" })
+    void fileBodyIsStandardInputAndCanBeDeletedAfterwards(String options) throws Exception {
+        try (CamelContext cc = start("wasm:" + module("upper", UPPER) + options)) {
+            Path file = Files.writeString(dir.resolve("input.txt"), "hello wasi");
+
+            Exchange out = send(cc, file.toFile());
+
+            assertThat(out.getException()).isNull();
+            assertThat(text(out)).isEqualTo("HELLO WASI");
+            // an open handle would keep the file in place on Windows
+            Files.delete(file);
+            assertThat(file).doesNotExist();
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "upper,''", "upper,?timeout=30000", "readexit,''", "readexit,?timeout=30000" })
+    void streamOfTheCallerIsNotClosed(String name, String options) throws Exception {
+        boolean fails = "readexit".equals(name);
+        String uri = "wasm:" + module(name, fails ? READ_EXIT : UPPER) + options;
+        try (CamelContext cc = startWithoutStreamCaching(uri)) {
+            // the body is the stream
+            TrackedStream body = new TrackedStream("hello wasi");
+
+            Exchange out = send(cc, body);
+
+            assertThat(out.getException() != null).isEqualTo(fails);
+            assertThat(body.available()).isZero();
+            assertThat(body.closed).isFalse();
+        }
+        try (CamelContext cc = startWithoutStreamCaching(uri)) {
+            // the body holds the stream, and the type converter returns that stream
+            TrackedStream stream = new TrackedStream("hello wasi");
+
+            Exchange out = send(cc, new StreamSource(stream));
+
+            assertThat(out.getException() != null).isEqualTo(fails);
+            assertThat(stream.available()).isZero();
+            assertThat(stream.closed).isFalse();
+        }
+    }
+
     @Test
     void timeoutAcrossARouteRestart() throws Exception {
         try (CamelContext cc = start("wasm:" + module("upper", UPPER) + "?timeout=30000")) {
@@ -778,6 +849,40 @@ class WasmComponentTest {
         String uri = "wasm:" + wat("other", "(module (import \"env\" \"f\" (func)) (func (export \"_start\")))");
 
         assertStartFails(uri, "cannot be provided: env.f");
+    }
+
+    /** A body that is not a stream. Every conversion to a stream opens a new one, as for a file. */
+    private static final class Content {
+        final List<TrackedStream> opened = new CopyOnWriteArrayList<>();
+        private final String content;
+
+        Content(String content) {
+            this.content = content;
+        }
+    }
+
+    private static final class ContentConverter extends TypeConverterSupport {
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+            Content content = (Content) value;
+            TrackedStream answer = new TrackedStream(content.content);
+            content.opened.add(answer);
+            return type.cast(answer);
+        }
+    }
+
+    /** A stream that records that it was closed. */
+    private static final class TrackedStream extends ByteArrayInputStream {
+        volatile boolean closed;
+
+        TrackedStream(String content) {
+            super(content.getBytes(StandardCharsets.UTF_8));
+        }
+
+        @Override
+        public void close() {
+            closed = true;
+        }
     }
 
     /**
