@@ -23,9 +23,19 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WasmEndpoint target = (WasmEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "args": target.getConfiguration().setArgs(property(camelContext, java.lang.String.class, value)); return true;
+        case "environment": target.getConfiguration().setEnvironment(property(camelContext, java.util.Map.class, value)); return true;
+        case "environmentheaders":
+        case "environmentHeaders": target.getConfiguration().setEnvironmentHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "failonnonzeroexit":
+        case "failOnNonZeroExit": target.getConfiguration().setFailOnNonZeroExit(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "module": target.getConfiguration().setModule(property(camelContext, java.lang.String.class, value)); return true;
+        case "maxmemorypages":
+        case "maxMemoryPages": target.getConfiguration().setMaxMemoryPages(property(camelContext, int.class, value)); return true;
+        case "maxoutputsize":
+        case "maxOutputSize": target.getConfiguration().setMaxOutputSize(property(camelContext, int.class, value)); return true;
+        case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         default: return false;
         }
     }
@@ -33,9 +43,19 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "args": return java.lang.String.class;
+        case "environment": return java.util.Map.class;
+        case "environmentheaders":
+        case "environmentHeaders": return java.lang.String.class;
+        case "failonnonzeroexit":
+        case "failOnNonZeroExit": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "module": return java.lang.String.class;
+        case "maxmemorypages":
+        case "maxMemoryPages": return int.class;
+        case "maxoutputsize":
+        case "maxOutputSize": return int.class;
+        case "timeout": return long.class;
         default: return null;
         }
     }
@@ -44,9 +64,27 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WasmEndpoint target = (WasmEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "args": return target.getConfiguration().getArgs();
+        case "environment": return target.getConfiguration().getEnvironment();
+        case "environmentheaders":
+        case "environmentHeaders": return target.getConfiguration().getEnvironmentHeaders();
+        case "failonnonzeroexit":
+        case "failOnNonZeroExit": return target.getConfiguration().isFailOnNonZeroExit();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "module": return target.getConfiguration().getModule();
+        case "maxmemorypages":
+        case "maxMemoryPages": return target.getConfiguration().getMaxMemoryPages();
+        case "maxoutputsize":
+        case "maxOutputSize": return target.getConfiguration().getMaxOutputSize();
+        case "timeout": return target.getConfiguration().getTimeout();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "environment": return java.lang.Object.class;
         default: return null;
         }
     }

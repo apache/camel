@@ -8,7 +8,7 @@
 
 [Apache Camel](https://camel.apache.org/) is an open source integration framework with 350+ connectors for databases, APIs, message brokers, and cloud services. Write routes in Java, YAML, or XML. Run on [Spring Boot](https://camel.apache.org/camel-spring-boot/latest/), [Quarkus](https://camel.apache.org/camel-quarkus/latest/), or standalone with the [Camel CLI](https://camel.apache.org/manual/camel-jbang.html). In production since 2007 — used by thousands of companies worldwide. Apache License 2.0.
 
-[What is Apache Camel?](https://camel.apache.org/what-is-apache-camel/) | [Getting Started](https://camel.apache.org/manual/getting-started.html) | [Components](https://camel.apache.org/components/latest/) | [Tooling](https://camel.apache.org/tooling/)
+[What is Apache Camel?](https://camel.apache.org/what-is-apache-camel/) | [Getting Started](https://camel.apache.org/manual/getting-started.html) | [Components](https://camel.apache.org/components/latest/) | [Tooling](https://camel.apache.org/tooling/) | [Docs for AI agents (llms.txt)](https://camel.apache.org/llms.txt)
 
 ## Get started in seconds
 
@@ -71,6 +71,8 @@ Other runtimes: [Camel K](https://camel.apache.org/camel-k/latest/) (Kubernetes)
 ## AI integration
 
 Apache Camel provides an [MCP server](https://camel.apache.org/manual/camel-jbang-mcp.html) (Model Context Protocol) for AI coding assistants — Claude Code, GitHub Copilot, Cursor, and Gemini CLI get full Camel catalog context. Camel also includes components for [LangChain4j](https://camel.apache.org/components/latest/langchain4j-chat-component.html) and [OpenAI](https://camel.apache.org/components/latest/openai-component.html), and supports the [A2A](https://google.github.io/A2A/) agent-to-agent protocol for connecting AI agents to enterprise systems.
+
+AI coding assistants can read the documentation as Markdown: [llms.txt](https://camel.apache.org/llms.txt) indexes it, and documentation pages are also available as Markdown by replacing `.html` with `.md` in the URL. Projects made by `camel export` and the Camel Maven archetypes include an `AGENTS.md` that points there.
 
 ## Visual designers
 

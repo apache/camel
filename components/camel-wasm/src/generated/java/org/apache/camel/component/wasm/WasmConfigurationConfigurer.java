@@ -23,7 +23,17 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.wasm.WasmConfiguration target = (org.apache.camel.component.wasm.WasmConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "module": target.setModule(property(camelContext, java.lang.String.class, value)); return true;
+        case "args": target.setArgs(property(camelContext, java.lang.String.class, value)); return true;
+        case "environment": target.setEnvironment(property(camelContext, java.util.Map.class, value)); return true;
+        case "environmentheaders":
+        case "environmentHeaders": target.setEnvironmentHeaders(property(camelContext, java.lang.String.class, value)); return true;
+        case "failonnonzeroexit":
+        case "failOnNonZeroExit": target.setFailOnNonZeroExit(property(camelContext, boolean.class, value)); return true;
+        case "maxmemorypages":
+        case "maxMemoryPages": target.setMaxMemoryPages(property(camelContext, int.class, value)); return true;
+        case "maxoutputsize":
+        case "maxOutputSize": target.setMaxOutputSize(property(camelContext, int.class, value)); return true;
+        case "timeout": target.setTimeout(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }
@@ -31,7 +41,17 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "module": return java.lang.String.class;
+        case "args": return java.lang.String.class;
+        case "environment": return java.util.Map.class;
+        case "environmentheaders":
+        case "environmentHeaders": return java.lang.String.class;
+        case "failonnonzeroexit":
+        case "failOnNonZeroExit": return boolean.class;
+        case "maxmemorypages":
+        case "maxMemoryPages": return int.class;
+        case "maxoutputsize":
+        case "maxOutputSize": return int.class;
+        case "timeout": return long.class;
         default: return null;
         }
     }
@@ -40,7 +60,25 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.wasm.WasmConfiguration target = (org.apache.camel.component.wasm.WasmConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "module": return target.getModule();
+        case "args": return target.getArgs();
+        case "environment": return target.getEnvironment();
+        case "environmentheaders":
+        case "environmentHeaders": return target.getEnvironmentHeaders();
+        case "failonnonzeroexit":
+        case "failOnNonZeroExit": return target.isFailOnNonZeroExit();
+        case "maxmemorypages":
+        case "maxMemoryPages": return target.getMaxMemoryPages();
+        case "maxoutputsize":
+        case "maxOutputSize": return target.getMaxOutputSize();
+        case "timeout": return target.getTimeout();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "environment": return java.lang.Object.class;
         default: return null;
         }
     }
