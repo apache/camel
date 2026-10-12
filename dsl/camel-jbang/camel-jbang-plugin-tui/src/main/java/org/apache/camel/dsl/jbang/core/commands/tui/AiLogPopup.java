@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
+import dev.tamboui.markdown.MarkdownView;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
@@ -88,6 +89,7 @@ class AiLogPopup {
         } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             detailScroll = Math.max(0, detailScroll - 5);
         } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            // kept within the detail when it is drawn
             detailScroll += 5;
         }
         return true;
@@ -169,13 +171,14 @@ class AiLogPopup {
                 && entry.level() != AiPanel.LogLevel.TOOL && entry.level() != AiPanel.LogLevel.RESULT) {
             // an answer or a prompt is Markdown: shown as the AI panel shows it (bold, code, lists), wrapped
             Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Detail ").build();
-            frame.renderWidget(dev.tamboui.markdown.MarkdownView.builder()
+            MarkdownView.Builder view = MarkdownView.builder()
                     .source(content)
-                    .scroll(detailScroll)
-                    .block(block)
                     .styles(Theme.chatMarkdownStyles())
-                    .syntaxTheme(Theme.syntaxTheme())
-                    .build(), area);
+                    .syntaxTheme(Theme.syntaxTheme());
+            Rect inner = block.inner(area);
+            detailScroll = Math.min(detailScroll,
+                    Math.max(0, view.build().computeHeight(inner.width()) - inner.height()));
+            frame.renderWidget(view.scroll(detailScroll).block(block).build(), area);
             return;
         }
         List<Line> lines = new ArrayList<>();
@@ -202,10 +205,11 @@ class AiLogPopup {
 
         int visibleLines = inner.height();
         int totalLines = lines.size();
-        int clampedScroll = Math.min(detailScroll, Math.max(0, totalLines - visibleLines));
-        int end = Math.min(clampedScroll + visibleLines, totalLines);
-        if (clampedScroll < end) {
-            List<Line> visible = lines.subList(clampedScroll, end);
+        // the scroll stays within the detail, so PgUp moves at once after PgDn went past its end
+        detailScroll = Math.min(detailScroll, Math.max(0, totalLines - visibleLines));
+        int end = Math.min(detailScroll + visibleLines, totalLines);
+        if (detailScroll < end) {
+            List<Line> visible = lines.subList(detailScroll, end);
             frame.renderWidget(
                     Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
                     inner);

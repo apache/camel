@@ -60,7 +60,7 @@ class SourceValidatorEndpointConsumersTest {
         List<String> msgs = SourceValidator.validate("r.camel.yaml", ROUTE, CATALOG, null, dir);
         assertThat(msgs).singleElement().asString()
                 .startsWith("route tick: sends to direct:lookup, and no route consumes it")
-                .contains("the route fails to start");
+                .contains("the exchange fails with No consumers available on endpoint");
     }
 
     @Test

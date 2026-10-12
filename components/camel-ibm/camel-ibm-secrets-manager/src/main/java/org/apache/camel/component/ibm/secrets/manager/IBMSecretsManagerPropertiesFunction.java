@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.ibm.secrets.manager;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.sdk.core.security.IamAuthenticator;
@@ -58,6 +59,7 @@ import org.apache.camel.vault.IBMSecretsManagerVaultConfiguration;
  * This implementation is to return the secret value associated with a key. The properties related to this kind of
  * Properties Function are all prefixed with <tt>ibm:</tt>. For example asking for <tt>ibm:default:token</tt>, will
  * return the secret value associated to the secret named token on IBM Secrets Manager, in the Secret group "default".
+ * When the secret group is omitted, such as <tt>ibm:token</tt>, then the secret group "default" is used.
  *
  * Another way of retrieving a secret value is using the following notation <tt>ibm:default:database/username</tt>: in
  * this case the field username of the secret database, in the secret group "default", will be returned. As a fallback,
@@ -72,11 +74,16 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
     private static final String CAMEL_VAULT_IBM_TOKEN_ENV = "CAMEL_VAULT_IBM_TOKEN";
     private static final String CAMEL_VAULT_IBM_SERVICE_URL_ENV = "CAMEL_VAULT_IBM_SERVICE_URL";
 
+    /**
+     * The secret group used when the lookup does not specify one (such as <tt>ibm:token</tt>).
+     */
+    static final String DEFAULT_SECRET_GROUP = "default";
+
     private CamelContext camelContext;
     private SecretsManager client;
-    private String secretGroup;
 
-    private final Set<String> secrets = new HashSet<>();
+    // this function is shared and invoked concurrently
+    private final Set<String> secrets = ConcurrentHashMap.newKeySet();
 
     public IBMSecretsManagerPropertiesFunction() {
         super();
@@ -140,6 +147,8 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
         String returnValue = null;
         String defaultValue = null;
         String version = null;
+        // the secret group is per lookup (this function is shared by all threads)
+        String secretGroup = DEFAULT_SECRET_GROUP;
         if (remainder.contains("#")) {
             String keyRemainder = StringHelper.before(remainder, "#");
             secretGroup = StringHelper.before(keyRemainder, ":");
@@ -187,7 +196,7 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
 
         if (key != null) {
             try {
-                returnValue = getSecretFromSource(key, subkey, defaultValue, version);
+                returnValue = getSecretFromSource(secretGroup, key, subkey, defaultValue, version);
             } catch (Exception e) {
                 throw new RuntimeCamelException(
                         "Error getting secret from vault using key: " + key + " due to: " + e.getMessage(), e);
@@ -198,7 +207,7 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
     }
 
     private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version) {
+            String secretGroup, String key, String subkey, String defaultValue, String version) {
         // capture name of secret
         secrets.add(key);
         String returnValue = "";
@@ -273,6 +282,6 @@ public class IBMSecretsManagerPropertiesFunction extends ServiceSupport implemen
      * Ids of the secrets in use
      */
     public Set<String> getSecrets() {
-        return secrets;
+        return Collections.unmodifiableSet(secrets);
     }
 }

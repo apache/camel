@@ -156,4 +156,27 @@ class IntegrationLauncherTest {
         Files.writeString(output, "Cannot find dependency org.example:missing:1.0\n");
         assertThat(IntegrationLauncher.failureOutput(output)).isEqualTo("Cannot find dependency org.example:missing:1.0");
     }
+
+    /**
+     * CAMEL-25561: a failed restart leaves the integration stopped; camel_run without a name starts it again under the
+     * name it had, not the default one from the first file, so what finds it by its name still does.
+     */
+    @Test
+    void camelRunKeepsTheNameOfAnIntegrationWhoseRestartFailed(@TempDir Path dir) throws Exception {
+        Path other = Files.createDirectory(dir.resolve("other"));
+        Path app = Files.createDirectory(dir.resolve("app"));
+        assertThat(IntegrationLauncher.runName(app, null)).isNull();
+        assertThat(IntegrationLauncher.stoppedByRestart(app, "run-order-generator")).isTrue();
+        assertThat(IntegrationLauncher.runName(app, null)).isEqualTo("run-order-generator");
+        assertThat(IntegrationLauncher.runName(app, " ")).isEqualTo("run-order-generator");
+        // the same directory written another way
+        assertThat(IntegrationLauncher.runName(other.resolve("../app"), null)).isEqualTo("run-order-generator");
+        // a name given is the name
+        assertThat(IntegrationLauncher.runName(app, "order-generator")).isEqualTo("order-generator");
+        assertThat(IntegrationLauncher.runName(other, null)).isNull();
+        // without the directory or the name there is nothing to keep
+        assertThat(IntegrationLauncher.stoppedByRestart(null, "run-order-generator")).isFalse();
+        assertThat(IntegrationLauncher.stoppedByRestart(other, null)).isFalse();
+        assertThat(IntegrationLauncher.runName(other, null)).isNull();
+    }
 }

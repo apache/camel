@@ -321,7 +321,7 @@ final class SemanticParameterForm {
 
     boolean click(int x, int y) {
         for (Hit hit : hits) {
-            if (TuiHelper.contains(hit.area(), x, y)) {
+            if (hit.area().contains(x, y)) {
                 selected = hit.control();
                 if (selected.row() == ADD) {
                     handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));

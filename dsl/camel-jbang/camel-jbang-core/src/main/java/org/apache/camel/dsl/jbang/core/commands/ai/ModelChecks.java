@@ -17,16 +17,21 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteNodes.Kind;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteNodes.Node;
-import org.apache.camel.dsl.yaml.validator.EndpointConsumers;
+import org.apache.camel.dsl.yaml.validator.EndpointRules;
+import org.apache.camel.model.RouteConfigurationDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 
@@ -39,9 +44,7 @@ import org.apache.camel.tooling.model.ComponentModel;
 final class ModelChecks {
 
     /** The EIPs that consume from their endpoint; the others send to it. */
-    private static final Set<String> CONSUMERS = Set.of("from", "poll", "pollEnrich");
-    /** The EIPs that send to a direct: or seda: endpoint some route must consume. */
-    private static final Set<String> SENDING = Set.of("to", "wireTap", "enrich");
+    private static final Set<String> CONSUMERS = EndpointRules.CONSUMERS;
     /** The one component whose path is a script, so what is in it is not the catalog's to say. */
     private static final Set<String> SCRIPT_PATH = Set.of("language");
 
@@ -132,31 +135,33 @@ final class ModelChecks {
     /**
      * The direct: and seda: endpoints the routes send to and no route consumes: not the routes of this source, nor
      * those of the other route files. A direct: without a consumer fails the exchange, a seda: one fills a queue no one
-     * reads.
+     * reads. The endpoints and EIPs that count are the {@link EndpointRules} that {@code camel overview} uses too.
      */
     private void consumers(Set<String> consumedElsewhere) {
-        if (consumedElsewhere == null || model.hasTemplates()) {
+        if (consumedElsewhere == null) {
+            return;
+        }
+        Set<String> own = EndpointConsumerChecks.consumed(model, nodes);
+        if (own == null) {
+            // a route that consumes an endpoint only known at runtime could consume any of them
             return;
         }
         Set<String> consumed = new HashSet<>(consumedElsewhere);
+        consumed.addAll(own);
+        List<Node> sends = new ArrayList<>();
         for (Node n : nodes) {
-            if (n.kind() == Kind.ENDPOINT && "from".equals(n.eip())) {
-                if (n.uri() == null || EndpointConsumers.isDynamic(n.uri()) || RouteModel.hasUnknownValue(n.uri())) {
-                    // a route that consumes an endpoint only known at runtime could consume any of them
-                    return;
-                }
-                String endpoint = EndpointConsumers.endpoint(n.uri());
-                if (endpoint != null) {
-                    consumed.add(endpoint);
-                }
+            if (n.kind() == Kind.ENDPOINT && EndpointRules.SENDERS.contains(n.eip())) {
+                sends.add(n);
             }
         }
+        sends.addAll(deadLetterEndpoints());
+        sends.sort(Comparator.comparingInt(Node::line));
         Set<String> reported = new HashSet<>();
-        for (Node n : nodes) {
-            if (n.kind() != Kind.ENDPOINT || !SENDING.contains(n.eip()) || RouteModel.hasUnknownValue(n.uri())) {
+        for (Node n : sends) {
+            if (RouteModel.hasUnknownValue(n.uri())) {
                 continue;
             }
-            String endpoint = EndpointConsumers.endpoint(n.uri());
+            String endpoint = EndpointRules.endpoint(n.uri());
             if (endpoint == null || consumed.contains(endpoint) || !reported.add(endpoint)) {
                 continue;
             }
@@ -164,10 +169,34 @@ final class ModelChecks {
                     ? "<from uri=\"" + endpoint + "\"/>" : "from(\"" + endpoint + "\")";
             errors.add(EndpointChecks.linePrefix(Math.max(0, n.line() - 1)) + "sends to " + endpoint
                        + ", and no route consumes it - not in this file, nor in the other route files of the directory: "
-                       + (endpoint.startsWith("direct:")
-                               ? "the exchange fails with No consumers available on endpoint"
-                               : "nothing fails, the messages are queued and never read")
-                       + "; add a route with " + from + ", or correct the name");
+                       + EndpointRules.withoutConsumer(endpoint) + "; add a route with " + from + ", or correct the name");
+        }
+    }
+
+    /**
+     * The dead letter endpoints of the error handlers of the routes and route configurations, as endpoint nodes at the
+     * line of their route: the error handler sends a failed message there.
+     */
+    private List<Node> deadLetterEndpoints() {
+        List<Node> answer = new ArrayList<>();
+        for (RouteDefinition r : model.routes()) {
+            if (r.isErrorHandlerFactorySet()) {
+                addDeadLetter(answer, r.getErrorHandlerFactory(), r.getLineNumber());
+            }
+        }
+        for (RouteConfigurationDefinition rc : model.routeConfigurations()) {
+            if (rc.getErrorHandler() != null) {
+                addDeadLetter(answer, rc.getErrorHandler().getErrorHandlerType(), rc.getLineNumber());
+            }
+        }
+        return answer;
+    }
+
+    private static void addDeadLetter(List<Node> answer, ErrorHandlerFactory factory, int line) {
+        if (factory instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
+            answer.add(new Node(
+                    Kind.ENDPOINT, Math.max(1, line), "deadLetterUri", dlc.getDeadLetterUri(), null, null,
+                    null, false, List.of()));
         }
     }
 

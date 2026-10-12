@@ -174,13 +174,22 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
 
         // Update lastEventTime if we processed events with newer timestamps
         if (highestEventTime > (lastEventTime != null ? lastEventTime : 0)) {
-            // Clear fingerprints when moving to a new timestamp to free memory
-            processedEventFingerprints.clear();
+            forgetOlderFingerprints(highestEventTime);
             lastEventTime = highestEventTime;
             LOG.debug("Updated last event time to: {}", lastEventTime);
         }
 
         return queue;
+    }
+
+    /**
+     * Forgets the fingerprints of the events older than the given time, to free memory. The fingerprints of the events
+     * at that time are kept: the next poll returns those events again (the query has no lower time bound, dateFrom is a
+     * date), and they must not be routed a second time.
+     */
+    private void forgetOlderFingerprints(long eventTime) {
+        String prefix = eventTime + "|";
+        processedEventFingerprints.removeIf(fingerprint -> !fingerprint.startsWith(prefix));
     }
 
     private String getEventFingerprint(EventRepresentation event) {
@@ -264,8 +273,7 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
 
         // Update lastEventTime if we processed events with newer timestamps
         if (highestEventTime > (lastEventTime != null ? lastEventTime : 0)) {
-            // Clear fingerprints when moving to a new timestamp to free memory
-            processedEventFingerprints.clear();
+            forgetOlderFingerprints(highestEventTime);
             lastEventTime = highestEventTime;
             LOG.debug("Updated last admin event time to: {}", lastEventTime);
         }

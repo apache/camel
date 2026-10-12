@@ -20,6 +20,18 @@ counted each exchange once per member route instead of once per entry into the g
 unintended side effect of CAMEL-24590. The counters now count each exchange once per entry into the
 group again, as in 4.22.0: calls nested inside another route of the same group are not counted again.
 
+=== Route dumps as YAML - top-level onException
+
+A top-level `onException` (of a YAML file, or in the `configure` method of a `RouteBuilder`) is now dumped as YAML
+(`camel.main.dumpRoutes=yaml`, `camel validate normalize`) once as a top-level `onException` before the routes, instead
+of as a step of every route, and the `onException` of a route configuration is only dumped with the route
+configuration, no longer in the routes. Before, such a dump did not load in the YAML DSL.
+
+When `camel.main.dumpRoutesOutput` is a file and the routes come from several files, they are now dumped together, so a
+top-level `onException` comes before the first route. When the dump is loaded, such an `onException` applies to the
+routes of all the files, not only to those of its own file, and a WARN is logged when the routes are dumped. Dump into
+a directory to keep one file per source file.
+
 === camel-pqc - Bouncy Castle 1.86 (Breaking change)
 
 Camel 4.22.2 uses Bouncy Castle 1.86, which removes the legacy implementations of several post-quantum

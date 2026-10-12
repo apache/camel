@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote.mina;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1343,8 +1344,28 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
             }
         }
 
+        InputStream is = null;
+        if (exchange.getIn().getBody() == null) {
+            // Do an explicit test for a null body and decide what to do
+            if (endpoint.isAllowNullBody()) {
+                LOG.trace("Writing empty file.");
+                is = new ByteArrayInputStream(new byte[0]);
+            } else {
+                throw new GenericFileOperationFailedException("Cannot write null body to file: " + name);
+            }
+        }
+
         try {
-            InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (is == null) {
+                String charset = endpoint.getCharset();
+                if (charset != null) {
+                    // charset configured so we must convert to the desired charset so we can write with encoding
+                    is = GenericFileHelper.toInputStream(exchange, charset);
+                    LOG.trace("Using InputStream {} with charset {}.", is, charset);
+                } else {
+                    is = exchange.getIn().getMandatoryBody(InputStream.class);
+                }
+            }
 
             boolean append = endpoint.getFileExist() == GenericFileExist.Append;
 

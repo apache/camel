@@ -37,6 +37,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
@@ -97,7 +98,17 @@ final class LumberjackUtil {
             // send 5 frame windows, without pausing
             windows.stream().forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s.bin", window))));
             if (waitForResult) {
-                Awaitility.await().atMost(30, TimeUnit.SECONDS).until(() -> windows.size() == responses.size());
+                Awaitility.await().atMost(30, TimeUnit.SECONDS).untilAsserted(
+                        () -> {
+                            List<Integer> received;
+                            synchronized (responses) {
+                                received = new ArrayList<>(responses);
+                            }
+                            Assertions.assertThat(received)
+                                    .as("Expected one ACK per window frame sent (%d), but received: %s", windows.size(),
+                                            received)
+                                    .hasSize(windows.size());
+                        });
             }
 
             channel.close().sync();
@@ -110,7 +121,7 @@ final class LumberjackUtil {
         }
     }
 
-    private static ByteBuf readSample(String resource) {
+    static ByteBuf readSample(String resource) {
         try (InputStream stream = LumberjackUtil.class.getResourceAsStream(resource)) {
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             int input;

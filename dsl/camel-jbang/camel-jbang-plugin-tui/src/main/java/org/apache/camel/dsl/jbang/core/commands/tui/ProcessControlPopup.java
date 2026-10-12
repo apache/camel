@@ -179,7 +179,7 @@ class ProcessControlPopup {
                 .items(items)
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED)
                         .borders(Borders.ALL)

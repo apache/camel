@@ -17,8 +17,9 @@
 package org.apache.camel.component.google.secret.manager;
 
 import java.io.InputStream;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -86,7 +87,8 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private CamelContext camelContext;
     private SecretManagerServiceClient client;
     private String projectId;
-    private final Set<String> secrets = new HashSet<>();
+    // this function is shared and invoked concurrently
+    private final Set<String> secrets = ConcurrentHashMap.newKeySet();
 
     public GoogleSecretManagerPropertiesFunction() {
         super();
@@ -250,7 +252,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
      * Ids of the secrets in use
      */
     public Set<String> getSecrets() {
-        return secrets;
+        return Collections.unmodifiableSet(secrets);
     }
 
     /**

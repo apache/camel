@@ -196,6 +196,25 @@ public abstract class YamlModelWriterSupport {
         }
     }
 
+    /**
+     * A list whose items the YAML DSL reads as one-key maps named after the list, such as the onException of a route
+     * configuration: <code>onException: [ { onException: { ... } } ]</code>
+     */
+    protected <T> void doWriteWrappedChildList(JsonObject jo, String key, List<T> list, Function<T, JsonObject> writer) {
+        if (list != null && !list.isEmpty()) {
+            JsonArray arr = new JsonArray();
+            for (T item : list) {
+                JsonObject child = writer.apply(item);
+                if (child != null) {
+                    arr.add(wrapNode(key, child));
+                }
+            }
+            if (!arr.isEmpty()) {
+                jo.put(key, arr);
+            }
+        }
+    }
+
     protected JsonObject wrapNode(String key, JsonObject value) {
         JsonObject wrapper = new JsonObject();
         if (value != null) {

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.huaweicloud.obs;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
@@ -44,6 +45,8 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(OBSConsumer.class.getName());
 
     private final OBSEndpoint endpoint;
+    // objects whose exchanges are being processed, which a later poll must not consume again
+    private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
     private ObsClient obsClient;
     private String marker;
     private boolean destinationBucketCreated;
@@ -117,10 +120,20 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
             exchanges = new LinkedList<>();
         } else if (ObjectHelper.isNotEmpty(fileName)) {
             // when file name is given, just download that object
-            ObsObject object = obsClient.getObject(bucketName, fileName);
-            List<ObsObject> list = new ArrayList<>();
-            list.add(object);
-            exchanges = createExchanges(list);
+            exchanges = new LinkedList<>();
+            // skip the object if an exchange of a previous poll is still processing it
+            if (inProgress.add(fileName)) {
+                ObsObject object;
+                try {
+                    object = obsClient.getObject(bucketName, fileName);
+                } catch (RuntimeException e) {
+                    inProgress.remove(fileName);
+                    throw e;
+                }
+                addExchange(fileName, object, exchanges);
+            } else {
+                LOG.trace("Skipping object {} as it is already in progress", fileName);
+            }
         } else {
             // if file name is not given, get a list of all objects
             ListObjectsRequest request = new ListObjectsRequest(bucketName);
@@ -169,21 +182,32 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
             // update number of pending exchanges
             pendingExchanges = total - index - 1;
 
+            final String objectKey = exchange.getIn().getHeader(OBSHeaders.OBJECT_KEY, String.class);
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processComplete(exchange);
+                    try {
+                        processComplete(exchange);
+                    } finally {
+                        inProgress.remove(objectKey);
+                    }
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    processFailure(exchange);
+                    try {
+                        processFailure(exchange);
+                    } finally {
+                        inProgress.remove(objectKey);
+                    }
                 }
             });
 
             AsyncCallback callback = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, callback);
         }
+        // the remaining exchanges are not processed as the consumer is stopping
+        releaseNotProcessed(exchanges);
 
         return total;
     }
@@ -193,12 +217,44 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
      */
     private Queue<Exchange> createExchanges(List<ObsObject> obsObjects) {
         Queue<Exchange> answer = new LinkedList<>();
-        for (ObsObject objectSummary : obsObjects) {
+        try {
+            for (ObsObject objectSummary : obsObjects) {
+                String objectKey = objectSummary.getObjectKey();
+                // skip the object if an exchange of a previous poll is still processing it
+                if (!inProgress.add(objectKey)) {
+                    LOG.trace("Skipping object {} as it is already in progress", objectKey);
+                    continue;
+                }
+                try {
+                    addExchange(objectKey, objectSummary, answer);
+                } catch (ObsException e) {
+                    if (e.getResponseCode() == 404) {
+                        // deleted (for example by another consumer) after it was listed
+                        LOG.debug("Skipping object {} as it no longer exists", objectKey);
+                        continue;
+                    }
+                    throw e;
+                }
+            }
+        } catch (RuntimeException e) {
+            // none of the objects of this poll is processed
+            releaseNotProcessed(answer);
+            throw e;
+        }
+        return answer;
+    }
+
+    /**
+     * Adds an exchange for the object, which is in progress, to the answer. The object is no longer in progress if no
+     * exchange is added.
+     */
+    private void addExchange(String objectKey, ObsObject objectSummary, Queue<Exchange> answer) {
+        try {
             ObsObject obsObject;
 
             if (objectSummary.getMetadata().getContentType() == null) {
                 // object was from list objects. Since not all object data is included when listing objects, we must retrieve all the data by calling getObject
-                obsObject = obsClient.getObject(endpoint.getBucketName(), objectSummary.getObjectKey());
+                obsObject = obsClient.getObject(endpoint.getBucketName(), objectKey);
             } else {
                 // object was already retrieved using getObjects
                 obsObject = objectSummary;
@@ -208,9 +264,25 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
             if (includeObsObject(obsObject)) {
                 Exchange exchange = createExchange(obsObject);
                 answer.add(exchange);
+            } else {
+                inProgress.remove(objectKey);
             }
+        } catch (RuntimeException e) {
+            inProgress.remove(objectKey);
+            throw e;
         }
-        return answer;
+    }
+
+    private void releaseNotProcessed(Queue<?> exchanges) {
+        for (Object o : exchanges) {
+            Exchange exchange = (Exchange) o;
+            String objectKey = exchange.getIn().getHeader(OBSHeaders.OBJECT_KEY, String.class);
+            if (objectKey != null) {
+                inProgress.remove(objectKey);
+            }
+            releaseExchange(exchange, true);
+        }
+        exchanges.clear();
     }
 
     /**

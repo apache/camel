@@ -278,20 +278,24 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 exchange.setException(e);
             }
 
-            if (getEndpoint().isTransacted() && exchange.isFailed()) {
+            // a rollback only exchange (without an exception) did not complete successfully either
+            boolean failed = exchange.isFailed() || exchange.isRollbackOnly();
+
+            if (getEndpoint().isTransacted() && failed) {
                 // break out as we are transacted and should rollback
                 Exception cause = exchange.getException();
+                if (cause == null) {
+                    // rollback only, there was no error (the exception must be created before the exchange is released)
+                    cause = new RollbackExchangeException(
+                            "Rollback transaction as the exchange was marked as rollback only", exchange);
+                }
                 // must release exchange
                 releaseExchange(exchange, false);
-                if (cause != null) {
-                    throw cause;
-                } else {
-                    throw new RollbackExchangeException("Rollback transaction due error processing exchange", null);
-                }
+                throw cause;
             }
 
             // pick the on consume to use
-            String sql = exchange.isFailed() ? onConsumeFailed : onConsume;
+            String sql = failed ? onConsumeFailed : onConsume;
             try {
                 // we can only run on consume if there was data
                 if (data != null && sql != null) {
@@ -360,7 +364,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Sets a SQL to execute when the row failed being processed.
+     * Sets a SQL to execute when the row failed being processed (the exchange failed or was marked rollback only).
      */
     public void setOnConsumeFailed(String onConsumeFailed) {
         this.onConsumeFailed = onConsumeFailed;

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -516,14 +519,24 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
         if (include.contains("*") || include.contains("all") || include.contains("routes")) {
             int size = model.getRouteDefinitions().size();
             if (size > 0) {
-                Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
+                List<RouteDefinition> eligible = new ArrayList<>();
                 for (RouteDefinition route : model.getRouteDefinitions()) {
                     if ((route.isRest() != null && route.isRest()) || (route.isTemplate() != null && route.isTemplate())) {
                         // skip routes that are rest/templates
                         continue;
                     }
+                    eligible.add(route);
+                }
+                // the routes of several resources dumped into the same file are dumped together, so the top-level
+                // elements of the resources (such as onException) come before the first route
+                boolean merge = outputFileName != null && countResources(eligible) > 1;
+                if (merge) {
+                    warnIfOnExceptionScopeWidens(model, eligible);
+                }
+                Map<Resource, RoutesDefinition> groups = new LinkedHashMap<>();
+                for (RouteDefinition route : eligible) {
                     Resource res = route.getResource();
-                    if (res == null) {
+                    if (res == null || merge) {
                         res = dummy;
                     }
                     RoutesDefinition routes = groups.computeIfAbsent(res, resource -> new RoutesDefinition());
@@ -546,6 +559,49 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             }
         }
 
+    }
+
+    private static int countResources(List<RouteDefinition> routes) {
+        Set<Resource> resources = new HashSet<>();
+        for (RouteDefinition route : routes) {
+            resources.add(route.getResource());
+        }
+        return resources.size();
+    }
+
+    /**
+     * A top-level onException applies only to the routes of its own resource, but once the routes of several resources
+     * are dumped into the same file, it applies to all the routes of the file when the file is loaded.
+     */
+    private void warnIfOnExceptionScopeWidens(Model model, List<RouteDefinition> routes) {
+        Set<String> locations = new LinkedHashSet<>();
+        for (RouteDefinition route : routes) {
+            for (ProcessorDefinition<?> output : route.getOutputs()) {
+                if (output instanceof OnExceptionDefinition oe && !oe.isRouteScoped()
+                        && !isInRouteConfiguration(model, oe)) {
+                    Resource res = route.getResource();
+                    locations.add(res != null && res.getLocation() != null ? res.getLocation() : "routes without a source");
+                }
+            }
+        }
+        if (!locations.isEmpty()) {
+            LOG.warn("The routes of several resources are dumped together into {}: the top-level onException of {}"
+                     + " applies to all the routes of the dump when it is loaded",
+                    outputFileName, String.join(", ", locations));
+        }
+    }
+
+    private static boolean isInRouteConfiguration(Model model, OnExceptionDefinition oe) {
+        for (RouteConfigurationDefinition config : model.getRouteConfigurationDefinitions()) {
+            if (config.getOnExceptions() != null) {
+                for (OnExceptionDefinition o : config.getOnExceptions()) {
+                    if (o == oe) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     protected void doDumpRoutesAsJava(CamelContext camelContext) {

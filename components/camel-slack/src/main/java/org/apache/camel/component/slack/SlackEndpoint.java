@@ -182,7 +182,8 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * The Max Result for the poll
+     * The maximum number of messages that the consumer requests from the conversation history at a time. When more new
+     * messages are available, the consumer reads the following pages in the same poll.
      */
     public void setMaxResults(String maxResult) {
         this.maxResults = maxResult;

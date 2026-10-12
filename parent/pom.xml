@@ -165,7 +165,7 @@
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
         <elasticsearch-java-client-version>9.5.5</elasticsearch-java-client-version>
-        <elasticsearch-java-client-sniffer-version>9.5.4</elasticsearch-java-client-sniffer-version>
+        <elasticsearch-java-client-sniffer-version>9.5.5</elasticsearch-java-client-sniffer-version>
         <endive-version>1.1.0</endive-version>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
@@ -230,7 +230,7 @@
         <hapi-version>2.6.0</hapi-version>
         <hapi-base-version>2.6.0</hapi-base-version>
         <hapi-fhir-version>8.12.1</hapi-fhir-version>
-        <hapi-fhir-core-version>6.10.4</hapi-fhir-core-version>
+        <hapi-fhir-core-version>7.0.1</hapi-fhir-core-version>
         <hawtio-version>5.3.0</hawtio-version>
         <!-- https://issues.apache.org/jira/browse/CAMEL-22041
             hazelcast needs to stay at 5.4.0 for 4.19.0 due to changes where the CP subsystem is only available in

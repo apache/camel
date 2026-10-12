@@ -22,6 +22,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.Event;
+import dev.tamboui.tui.event.EventParser;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -84,6 +87,15 @@ class SourceViewerEditorOpsTest {
     }
 
     @Test
+    void typingAnEmojiInsertsIt() {
+        moveCursorToLineContaining("log:info");
+
+        viewer.handleKeyEvent(KeyEvent.ofChar(0x1F600, KeyModifiers.NONE));
+
+        assertThat(viewer.editText()).contains("- to: \uD83D\uDE00log:info");
+    }
+
+    @Test
     void ctrlDDuplicatesYamlBlock() {
         moveCursorToLineContaining("log:info");
         int before = countOccurrences(viewer.editText(), "log:info");
@@ -101,6 +113,66 @@ class SourceViewerEditorOpsTest {
 
         assertThat(viewer.editText()).doesNotContain("log:warn");
         assertThat(viewer.editText()).contains("log:info");
+    }
+
+    @Test
+    void ctrlSlashCommentsOutYamlBlockAndBringsItBack() {
+        String original = viewer.editText();
+        moveCursorToLineContaining("log:warn");
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('/', CTRL));
+        assertThat(viewer.editText()).contains("        # - to: log:warn").contains("        - to: log:info");
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('/', CTRL));
+        assertThat(viewer.editText()).isEqualTo(original);
+    }
+
+    @Test
+    void ctrlSlashTogglesOnlyTheBlockNextToACommentedOutSibling() {
+        moveCursorToLineContaining("log:warn");
+        viewer.handleKeyEvent(KeyEvent.ofChar('/', CTRL));
+        moveCursorToLineContaining("log:info");
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('/', CTRL));
+        assertThat(viewer.editText()).contains("        # - to: log:info\n        # - to: log:warn");
+
+        // the commented-out sibling below is not part of the block
+        viewer.handleKeyEvent(KeyEvent.ofChar('/', CTRL));
+        assertThat(viewer.editText()).contains("        - to: log:info\n        # - to: log:warn");
+    }
+
+    @Test
+    void ctrlSlashFromTheTerminalArrivesAsCommentToggle() throws Exception {
+        moveCursorToLineContaining("log:warn");
+
+        // terminals send Ctrl+/ as the control character 0x1F (US)
+        Event event = EventParser.readEvent(new NoopBackend(0x1F), 10);
+        assertThat(event).isInstanceOf(KeyEvent.class);
+        viewer.handleKeyEvent((KeyEvent) event);
+
+        assertThat(viewer.editText()).contains("# - to: log:warn");
+    }
+
+    @Test
+    void ctrlSlashUsesLineCommentsInJava() throws Exception {
+        Path java = tempDir.resolve("MyRoute.java");
+        Files.writeString(java, """
+                public class MyRoute extends RouteBuilder {
+                    public void configure() {
+                        from("timer:tick").to("log:info");
+                    }
+                }
+                """, StandardCharsets.UTF_8);
+        viewer.loadFile(java);
+        viewer.enterEditMode();
+        moveCursorToLineContaining("from(");
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('/', CTRL));
+
+        assertThat(viewer.editText()).contains("        // from(\"timer:tick\")").doesNotContain("#");
+        List<Span> spans = new ArrayList<>();
+        viewer.renderFooter(spans);
+        assertThat(spansToString(spans)).contains("Ctrl+/");
     }
 
     @Test
@@ -140,7 +212,7 @@ class SourceViewerEditorOpsTest {
 
     @Test
     void footerShowsNewEditorHints() {
-        List<dev.tamboui.text.Span> spans = new ArrayList<>();
+        List<Span> spans = new ArrayList<>();
         viewer.renderFooter(spans);
         String footer = spansToString(spans);
 
@@ -149,6 +221,7 @@ class SourceViewerEditorOpsTest {
         assertThat(footer).contains("Alt+↑/↓");
         assertThat(footer).contains("Ctrl+D");
         assertThat(footer).contains("Ctrl+K");
+        assertThat(footer).contains("Ctrl+/");
     }
 
     @Test
@@ -264,9 +337,9 @@ class SourceViewerEditorOpsTest {
         return count;
     }
 
-    private static String spansToString(List<dev.tamboui.text.Span> spans) {
+    private static String spansToString(List<Span> spans) {
         StringBuilder sb = new StringBuilder();
-        for (dev.tamboui.text.Span span : spans) {
+        for (Span span : spans) {
             sb.append(span.content());
         }
         return sb.toString();

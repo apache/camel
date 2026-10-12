@@ -59,10 +59,10 @@ final class HttpHelper {
                 }
             }
 
-            long start = System.currentTimeMillis();
+            long start = MonotonicClock.millis();
             HttpResponse<String> response = client.send(reqBuilder.build(),
                     HttpResponse.BodyHandlers.ofString());
-            long elapsed = System.currentTimeMillis() - start;
+            long elapsed = MonotonicClock.millis() - start;
 
             int statusCode = response.statusCode();
 

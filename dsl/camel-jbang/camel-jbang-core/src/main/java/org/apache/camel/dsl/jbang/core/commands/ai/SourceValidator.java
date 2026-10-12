@@ -141,6 +141,8 @@ public final class SourceValidator {
                 msgs.addAll(GroovyImportChecks.validateYamlGroovyImports(content, null, declarations.javaClasses()));
                 // a rest-openapi call with no header for a path parameter of its operation (CAMEL-24992)
                 msgs.addAll(OpenApiPathParams.validate(content, directory));
+                // an insert-or-update in the dialect of another database than the datasource (CAMEL-25557)
+                msgs.addAll(SqlDialectChecks.validate(content, directory));
                 if (checkConsumers) {
                     // a direct: or seda: endpoint no route of the application consumes (CAMEL-24955)
                     msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName, catalog));
@@ -150,6 +152,9 @@ public final class SourceValidator {
                 // a header read where the route keeps the name in an exchange property, or the reverse (CAMEL-25516)
                 msgs = new ArrayList<>(HeaderPropertyMixups.validate(content));
             }
+            // an option at the column of its EIP: the lines to write, which a model copies (the words it does not,
+            // CAMEL-25556)
+            msgs = IndentLines.withLines(msgs, content);
             return KameletChecks.withTemplateHints(name, content, msgs);
         }
         if (name.endsWith(".properties")) {

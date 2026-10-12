@@ -1042,7 +1042,6 @@ class DiagramTab extends AbstractTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
-        sourceViewer.setQuickDocProvider(detail::provideAllQuickDocs);
         detail.ensureProcessorDetailLoaded(routeId);
         var rl = diagram.getRouteLayout(routeId);
         sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
@@ -1066,7 +1065,6 @@ class DiagramTab extends AbstractTab {
                 sourceViewer.hide();
             }
         });
-        sourceViewer.setQuickDocProvider(detail::provideAllQuickDocs);
         detail.ensureProcessorDetailLoaded(drillDownRouteId);
         var rl2 = diagram.getRouteLayout(drillDownRouteId);
         sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl2 != null ? rl2.source : null);

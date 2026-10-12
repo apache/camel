@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ibm.cos;
 
+import java.io.Closeable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -66,10 +67,22 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> exchanges;
 
         if (fileName != null) {
-            LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
+            if (getEndpoint().getInProgressRepository() != null
+                    && !getEndpoint().getInProgressRepository().add(fileName)) {
+                LOG.trace("Object {} is already in progress", fileName);
+                exchanges = new LinkedList<>();
+            } else {
+                try {
+                    LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
-            S3Object s3Object = getCosClient().getObject(new GetObjectRequest(bucketName, fileName));
-            exchanges = createExchanges(s3Object, fileName);
+                    S3Object s3Object = getCosClient().getObject(new GetObjectRequest(bucketName, fileName));
+                    exchanges = createExchanges(s3Object, fileName);
+                } catch (Exception e) {
+                    // the object is not consumed by this poll
+                    removeInProgress(fileName);
+                    throw e;
+                }
+            }
         } else {
             LOG.trace("Queueing objects in bucket [{}]...", bucketName);
 
@@ -135,6 +148,22 @@ public class IBMCOSConsumer extends ScheduledBatchPollingConsumer {
             // use default consumer callback
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, cb);
+        }
+        // the remaining exchanges are not processed as the consumer is stopping: a later poll must consume their
+        // objects again, and their on completions, which close the content stream, never run
+        for (Object notRouted : exchanges) {
+            Exchange exchange = (Exchange) notRouted;
+            // the key the consumer stored when it created the exchange
+            String key = exchange.getProperty(IBMCOSConstants.KEY, String.class);
+            if (key != null) {
+                removeInProgress(key);
+            }
+            if (exchange.getIn().getBody() instanceof Closeable body) {
+                IOHelper.close(body);
+            }
+            // nothing else releases an exchange that is never routed to the exchange factory (which resets a pooled
+            // exchange, so this comes last)
+            releaseExchange(exchange, true);
         }
 
         return total;

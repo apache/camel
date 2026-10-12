@@ -274,8 +274,9 @@ class SendMessagePopup {
                 bodyState.deleteForward();
                 return true;
             }
-            if (ke.code() == KeyCode.CHAR) {
-                bodyState.insert(ke.character());
+            String typed = FormHelper.typedText(ke);
+            if (typed != null) {
+                bodyState.insert(typed);
                 return true;
             }
             return true;
@@ -441,8 +442,9 @@ class SendMessagePopup {
             activeInput.moveCursorToEnd();
             return true;
         }
-        if (ke.code() == KeyCode.CHAR) {
-            activeInput.insert(ke.string().charAt(0));
+        String typed = FormHelper.typedText(ke);
+        if (typed != null) {
+            activeInput.insert(typed);
             return true;
         }
         return true;

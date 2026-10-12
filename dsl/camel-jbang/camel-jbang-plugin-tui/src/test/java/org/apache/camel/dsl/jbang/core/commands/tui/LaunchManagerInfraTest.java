@@ -18,12 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * The infra services an example needs may name the implementation too ({@code aws sqs}): it is started with both, and
@@ -60,12 +62,12 @@ class LaunchManagerInfraTest {
         lm.launchInfra("kafka", List.of("sleep", "30"));
         lm.deferUntilInfra(List.of("kafka"), "kafka-orders", () -> launched.set(true));
 
-        lm.tick(System.currentTimeMillis());
+        lm.tick(MonotonicClock.millis());
         assertThat(launched).isFalse();
         assertThat(notices).isEmpty();
 
         running.add(infra("kafka"));
-        lm.tick(System.currentTimeMillis());
+        lm.tick(MonotonicClock.millis());
         assertThat(launched).isTrue();
         assertThat(notices).contains("Started: kafka");
         ProcessHandle.current().children()
@@ -80,11 +82,11 @@ class LaunchManagerInfraTest {
         lm.launchInfra("aws sqs", List.of("sleep", "30"));
         lm.deferUntilInfra(List.of("aws sqs"), "aws-sqs", () -> launched.set(true));
 
-        lm.tick(System.currentTimeMillis());
+        lm.tick(MonotonicClock.millis());
         assertThat(launched).isFalse();
 
         running.add(infra("aws"));
-        lm.tick(System.currentTimeMillis());
+        lm.tick(MonotonicClock.millis());
         assertThat(launched).isTrue();
         ProcessHandle.current().children()
                 .filter(p -> p.info().command().map(c -> c.endsWith("sleep")).orElse(false))
@@ -101,11 +103,10 @@ class LaunchManagerInfraTest {
         // the container cannot bind its port: camel infra run ends with an error
         lm.launchInfra("mosquitto", List.of("sh", "-c", "echo port is already allocated; exit 1"));
         lm.deferUntilInfra(List.of("mosquitto"), "mqtt", () -> launched.set(true));
-        long deadline = System.currentTimeMillis() + 10_000;
-        while (failures.isEmpty() && System.currentTimeMillis() < deadline) {
-            lm.tick(System.currentTimeMillis());
-            Thread.sleep(50);
-        }
+        await().atMost(10, TimeUnit.SECONDS).pollInterval(50, TimeUnit.MILLISECONDS).pollInSameThread().until(() -> {
+            lm.tick(MonotonicClock.millis());
+            return !failures.isEmpty();
+        });
 
         assertThat(launched).isFalse();
         assertThat(failures).containsExactly("mosquitto");
@@ -138,15 +139,14 @@ class LaunchManagerInfraTest {
         lm.setNotificationCallback((msg, error) -> notices.add(msg));
         lm.launchInfra("ollama", List.of("sh", "-c",
                 "echo 'Pulling image layers:  3 pending,  2 downloaded,  0 extracted, (1.2 GB/3.4 GB)'; sleep 30"));
-        long deadline = System.currentTimeMillis() + 10_000;
-        while (notices.isEmpty() && System.currentTimeMillis() < deadline) {
-            lm.tick(System.currentTimeMillis());
-            Thread.sleep(50);
-        }
+        await().atMost(10, TimeUnit.SECONDS).pollInterval(50, TimeUnit.MILLISECONDS).pollInSameThread().until(() -> {
+            lm.tick(MonotonicClock.millis());
+            return !notices.isEmpty();
+        });
 
         assertThat(notices).containsExactly("Pulling image of ollama: 2 of 5 layers, 1.2 GB of 3.4 GB (35%)");
         // the same progress is not shown again
-        lm.tick(System.currentTimeMillis());
+        lm.tick(MonotonicClock.millis());
         assertThat(notices).hasSize(1);
         ProcessHandle.current().children()
                 .filter(p -> p.info().command().map(c -> c.endsWith("sh")).orElse(false))

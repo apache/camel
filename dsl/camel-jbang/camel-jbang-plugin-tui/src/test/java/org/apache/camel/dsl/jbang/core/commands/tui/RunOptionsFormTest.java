@@ -116,7 +116,7 @@ class RunOptionsFormTest {
         List<String> inner = renderPopupRows(form);
 
         // Name .. JFR: one row each, nothing left empty below the last checkbox
-        assertThat(inner).hasSize(14 + (form.portWarning(System.currentTimeMillis()) != null ? 1 : 0));
+        assertThat(inner).hasSize(14 + (form.portWarning(MonotonicClock.millis()) != null ? 1 : 0));
         assertThat(inner).noneMatch(String::isBlank);
     }
 

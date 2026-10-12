@@ -19,8 +19,11 @@ package org.apache.camel.component.alibaba.oss;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.aliyun.sdk.service.oss2.OSSClient;
+import com.aliyun.sdk.service.oss2.exceptions.ServiceException;
 import com.aliyun.sdk.service.oss2.models.DeleteObjectRequest;
 import com.aliyun.sdk.service.oss2.models.GetObjectRequest;
 import com.aliyun.sdk.service.oss2.models.GetObjectResult;
@@ -44,6 +47,8 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(OSSConsumer.class);
 
     private final OSSEndpoint endpoint;
+    // objects whose exchanges are being processed, which a later poll must not consume again
+    private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
     private OSSClient ossClient;
     private String continuationToken;
 
@@ -114,21 +119,32 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
 
             pendingExchanges = total - index - 1;
 
+            final String objectKey = exchange.getIn().getHeader(OSSHeaders.OBJECT_KEY, String.class);
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    processComplete(exchange);
+                    try {
+                        processComplete(exchange);
+                    } finally {
+                        inProgress.remove(objectKey);
+                    }
                 }
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    processFailure(exchange);
+                    try {
+                        processFailure(exchange);
+                    } finally {
+                        inProgress.remove(objectKey);
+                    }
                 }
             });
 
             AsyncCallback callback = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, callback);
         }
+        // the remaining exchanges are not processed as the consumer is stopping
+        releaseNotProcessed(exchanges);
 
         return total;
     }
@@ -139,14 +155,31 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
             return answer;
         }
 
-        for (ObjectSummary summary : summaries) {
-            if (summary.key() == null || summary.key().endsWith("/")) {
-                continue;
+        try {
+            for (ObjectSummary summary : summaries) {
+                if (summary.key() == null || summary.key().endsWith("/")) {
+                    continue;
+                }
+                addExchange(bucketName, summary.key(), answer);
             }
+        } catch (Exception e) {
+            // none of the objects of this poll is processed
+            releaseNotProcessed(answer);
+            throw e;
+        }
+        return answer;
+    }
 
+    private void addExchange(String bucketName, String key, Queue<Exchange> answer) throws Exception {
+        // skip the object if an exchange of a previous poll is still processing it
+        if (!inProgress.add(key)) {
+            LOG.trace("Skipping object {} as it is already in progress", key);
+            return;
+        }
+        try {
             GetObjectResult result = ossClient.getObject(GetObjectRequest.newBuilder()
                     .bucket(bucketName)
-                    .key(summary.key())
+                    .key(key)
                     .build());
 
             byte[] body;
@@ -156,10 +189,34 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
 
             Exchange exchange = createExchange(true);
             exchange.setPattern(endpoint.getExchangePattern());
-            OSSUtils.mapOssObject(exchange, bucketName, summary.key(), result, body);
+            OSSUtils.mapOssObject(exchange, bucketName, key, result, body);
             answer.add(exchange);
+        } catch (Exception e) {
+            inProgress.remove(key);
+            if (isNotFound(e)) {
+                // deleted (for example by another consumer) after it was listed
+                LOG.debug("Skipping object {} as it no longer exists", key);
+                return;
+            }
+            throw e;
         }
-        return answer;
+    }
+
+    private static boolean isNotFound(Exception e) {
+        ServiceException se = ObjectHelper.getException(ServiceException.class, e);
+        return se != null && se.statusCode() == 404;
+    }
+
+    private void releaseNotProcessed(Queue<?> exchanges) {
+        for (Object o : exchanges) {
+            Exchange exchange = (Exchange) o;
+            String key = exchange.getIn().getHeader(OSSHeaders.OBJECT_KEY, String.class);
+            if (key != null) {
+                inProgress.remove(key);
+            }
+            releaseExchange(exchange, true);
+        }
+        exchanges.clear();
     }
 
     private void processComplete(Exchange exchange) {

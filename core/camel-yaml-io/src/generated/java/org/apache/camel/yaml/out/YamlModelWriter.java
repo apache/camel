@@ -1614,11 +1614,11 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "precondition", def.getPrecondition(), null);
-        doWriteChildList(jo, null, "onException", def.getOnExceptions(), this::doWriteOnExceptionDefinition);
-        doWriteChildList(jo, null, "onCompletion", def.getOnCompletions(), this::doWriteOnCompletionDefinition);
-        doWriteChildList(jo, null, "interceptSendToEndpoint", def.getInterceptSendTos(), this::doWriteInterceptSendToEndpointDefinition);
-        doWriteChildList(jo, null, "interceptFrom", def.getInterceptFroms(), this::doWriteInterceptFromDefinition);
-        doWriteChildList(jo, null, "intercept", def.getIntercepts(), this::doWriteInterceptDefinition);
+        doWriteWrappedChildList(jo, "onException", def.getOnExceptions(), this::doWriteOnExceptionDefinition);
+        doWriteWrappedChildList(jo, "onCompletion", def.getOnCompletions(), this::doWriteOnCompletionDefinition);
+        doWriteWrappedChildList(jo, "interceptSendToEndpoint", def.getInterceptSendTos(), this::doWriteInterceptSendToEndpointDefinition);
+        doWriteWrappedChildList(jo, "interceptFrom", def.getInterceptFroms(), this::doWriteInterceptFromDefinition);
+        doWriteWrappedChildList(jo, "intercept", def.getIntercepts(), this::doWriteInterceptDefinition);
         doWriteChildElement(jo, "errorHandler", def.getErrorHandler(), this::doWriteErrorHandlerDefinition);
         return jo;
     }

@@ -405,7 +405,7 @@ class OverviewTab extends AbstractTab {
             Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
 
             if (info.vanishing) {
-                long elapsed = System.currentTimeMillis() - info.vanishStart;
+                long elapsed = MonotonicClock.millis() - info.vanishStart;
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
                 int gray = (int) (100 * fade);
                 Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
@@ -555,7 +555,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled(TuiHelper.truncate(nameText, nameWidth), Theme.info())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
-                        Cell.from(projectStatus(info, System.currentTimeMillis())),
+                        Cell.from(projectStatus(info, MonotonicClock.millis())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
@@ -563,7 +563,7 @@ class OverviewTab extends AbstractTab {
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted()))).style(rowBg));
             } else if (info.vanishing) {
-                long elapsed = System.currentTimeMillis() - info.vanishStart;
+                long elapsed = MonotonicClock.millis() - info.vanishStart;
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
                 int gray = (int) (100 * fade);
                 Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));
@@ -915,7 +915,10 @@ class OverviewTab extends AbstractTab {
     /** How long an opened project shows as Starting when its app does not show up. */
     static final long PROJECT_START_MS = 5 * 60_000;
 
-    /** The status of an opened project: Starting while it was asked to run and its app is not up yet, else Stopped. */
+    /**
+     * The status of an opened project: Starting while it was asked to run and its app is not up yet, else Stopped. Now
+     * is a {@link MonotonicClock} time, as the time it was asked to run.
+     */
     static Span projectStatus(IntegrationInfo project, long now) {
         if (project.startingSince > 0 && now - project.startingSince < PROJECT_START_MS) {
             return Span.styled(TuiIcons.GEAR + " Starting", Theme.warning());
@@ -942,7 +945,7 @@ class OverviewTab extends AbstractTab {
                     Span.raw(TuiHelper.truncateStart(project.sourceDir, Math.max(1, width - 9)))));
         }
         lines.add(Line.from(Span.raw("")));
-        lines.add(Line.from(projectStatus(project, System.currentTimeMillis())));
+        lines.add(Line.from(projectStatus(project, MonotonicClock.millis())));
         lines.add(Line.from(Span.raw("")));
         if (project.startingSince == 0) {
             lines.add(Line.from(Span.styled(" F10 ", Theme.hintKey()), Span.styled(" runs it", dim)));
@@ -1151,7 +1154,7 @@ class OverviewTab extends AbstractTab {
             Style statusStyle = info.alive ? Theme.success() : Theme.error();
 
             if (info.vanishing) {
-                long elapsed = System.currentTimeMillis() - info.vanishStart;
+                long elapsed = MonotonicClock.millis() - info.vanishStart;
                 float fade = 1.0f - Math.min(1.0f, (float) elapsed / VANISH_DURATION_MS);
                 int gray = (int) (100 * fade);
                 Style dimStyle = Style.EMPTY.fg(Color.indexed(232 + Math.min(gray / 4, 23)));

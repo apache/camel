@@ -209,6 +209,14 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
                                 Integer currentVersion = Integer.valueOf(currentVersionObj.toString());
                                 Integer lastKnownVersion = versionsMap.get(secretName);
 
+                                if (lastKnownVersion == null && propertiesFunction != null) {
+                                    // First time seeing this secret: start from the version the properties
+                                    // function resolved, as the secret may have been updated since then
+                                    lastKnownVersion = propertiesFunction.getSecretVersion(secretName);
+                                    if (lastKnownVersion != null) {
+                                        versionsMap.put(secretName, lastKnownVersion);
+                                    }
+                                }
                                 if (lastKnownVersion == null) {
                                     // First time seeing this secret, just record the version
                                     versionsMap.put(secretName, currentVersion);

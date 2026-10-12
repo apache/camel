@@ -40,7 +40,6 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -174,7 +173,7 @@ class ClasspathTab extends AbstractTab {
             listState.selectNext(filteredEntries.size());
             return true;
         }
-        if (me.isClick() && contains(lastArea, me.x(), me.y())) {
+        if (me.isClick() && lastArea != null && lastArea.contains(me.x(), me.y())) {
             int itemIndex = listState.offset() + (me.y() - lastArea.y() - 1);
             if (itemIndex >= 0 && itemIndex < filteredEntries.size()) {
                 listState.select(itemIndex);
@@ -274,22 +273,15 @@ class ClasspathTab extends AbstractTab {
         frame.renderStatefulWidget(list, area, listState);
         lastArea = area;
 
-        // Render vertical scrollbar on the right border when content overflows
-        int visibleRows = area.height() - 2; // top border + bottom border
-        if (visibleRows > 0 && filteredEntries.size() > visibleRows) {
-            Rect scrollRect = new Rect(area.x() + area.width() - 1, area.y() + 1, 1, visibleRows);
-            listScrollState.contentLength(filteredEntries.size());
-            listScrollState.viewportContentLength(visibleRows);
-            listScrollState.position(listState.offset());
-            frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, listScrollState);
-        }
+        renderListScrollbar(frame, area, filteredEntries.size(), listState.offset(), listScrollState);
     }
 
     @Override
     public void renderFooter(List<Span> spans) {
         if (filterInputActive) {
             spans.add(Span.styled(" /", Theme.label().bold()));
-            spans.add(Span.raw(filterInputState.text() + "█  "));
+            FormHelper.addCaretField(spans, filterInputState);
+            spans.add(Span.raw("  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
             return;
