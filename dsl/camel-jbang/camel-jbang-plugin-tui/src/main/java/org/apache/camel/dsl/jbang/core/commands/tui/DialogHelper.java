@@ -22,6 +22,7 @@ import java.util.List;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -106,7 +107,7 @@ final class DialogHelper {
         Style accent = danger ? Theme.error() : Theme.warning();
         String titleText = " " + title + " ";
         String msg = message.trim();
-        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(msg.length() + 6, titleText.length() + 4));
+        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(CharWidth.of(msg) + 6, CharWidth.of(titleText) + 4));
         Rect popup = centered(area, popupW, CONFIRM_HEIGHT);
 
         frame.renderWidget(Clear.INSTANCE, popup);
@@ -149,8 +150,8 @@ final class DialogHelper {
         Line hints = extraKey != null
                 ? TuiHelper.hintLine(acceptKey, acceptLabel, extraKey, extraLabel, "Esc", "cancel")
                 : TuiHelper.hintLine(acceptKey, acceptLabel, "Esc", "cancel");
-        int contentW = Math.max(msg.length(), Math.max(detail != null ? detail.length() : 0, hints.width()));
-        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(contentW + 6, titleText.length() + 4));
+        int contentW = Math.max(CharWidth.of(msg), Math.max(detail != null ? CharWidth.of(detail) : 0, hints.width()));
+        int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(contentW + 6, CharWidth.of(titleText) + 4));
         Rect popup = centered(area, popupW, CONFIRM_HEIGHT + (detail != null ? 1 : 0));
 
         frame.renderWidget(Clear.INSTANCE, popup);

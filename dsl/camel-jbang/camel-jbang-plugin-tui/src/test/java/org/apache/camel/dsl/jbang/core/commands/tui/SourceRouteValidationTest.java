@@ -19,15 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
-import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -117,18 +114,11 @@ class SourceRouteValidationTest {
         assertThat(filter).extracting(SourceViewer.DocEntry::text)
                 .containsExactly(filter.get(0).text(), "Simple predicate: ${header.foo} == 'bar'");
         assertThat(filter.get(0).text()).startsWith("Filter — ");
+        // the endpoint of a later step has its quick doc too
+        assertThat(assist.provideRouteEditQuickDoc(Path.of("MyRoute.java"), lines, 7)).extracting(SourceViewer.DocEntry::text)
+                .satisfies(t -> assertThat(t.get(0)).startsWith("SEDA — "));
         // a line of plain Java has none
         assertThat(assist.provideRouteEditQuickDoc(Path.of("MyRoute.java"), lines, 2)).isEmpty();
-
-        List<JsonObject> codeData = new ArrayList<>();
-        for (String l : lines) {
-            JsonObject jo = new JsonObject();
-            jo.put("code", l);
-            codeData.add(jo);
-        }
-        Map<Integer, List<SourceViewer.DocEntry>> all = assist.provideRouteQuickDocs(Path.of("MyRoute.java"), codeData);
-        assertThat(all).containsKeys(5, 6, 7);
-        assertThat(all.get(7).get(0).text()).startsWith("SEDA — ");
     }
 
     @Test

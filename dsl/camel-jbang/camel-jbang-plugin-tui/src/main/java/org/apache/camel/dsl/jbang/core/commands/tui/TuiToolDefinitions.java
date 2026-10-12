@@ -211,8 +211,8 @@ final class TuiToolDefinitions {
                         "length", propDef("integer", "Length of arrows"),
                         "text", propDef("string", "Text content to draw (for text shape)"),
                         "color", propDef("string",
-                                "red, green, blue, yellow, cyan, magenta, white, gray or black (default red, "
-                                                   + "yellow for highlight)"),
+                                "red, green, blue, yellow, cyan, magenta, white, gray or black, light_red and so on, "
+                                                   + "or #rrggbb (default red, yellow for highlight)"),
                         "duration", propDef("integer", "Auto-dismiss after this many seconds; otherwise stays until cleared"),
                         "append", propDef("boolean", "Add to the existing drawing instead of replacing it (default false)")),
                 List.of("shape", "x", "y"))));

@@ -73,7 +73,7 @@ class OpenedProjectLifecycleTest {
         IntegrationInfo project = new IntegrationInfo();
         project.name = "custom-kamelet";
         project.sourceDir = "/work/custom-kamelet";
-        project.startingSince = System.currentTimeMillis();
+        project.startingSince = MonotonicClock.millis();
         project.launchedProcess = ProcessHandle.current();
         ctx.addPhantom(project);
         ctx.selectedPid = project.pid;
@@ -97,7 +97,7 @@ class OpenedProjectLifecycleTest {
         IntegrationInfo project = new IntegrationInfo();
         project.name = "orders";
         project.sourceDir = "/work/orders";
-        project.startingSince = System.currentTimeMillis();
+        project.startingSince = MonotonicClock.millis();
         // camel run pom.xml ended (its Maven build failed) before the app showed up
         Process run = new ProcessBuilder("true").start();
         run.waitFor();
@@ -115,7 +115,7 @@ class OpenedProjectLifecycleTest {
         project.name = "metrics";
         project.sourceDir = "/work/metrics";
         ctx.addPhantom(project);
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         assertEquals("✖ Stopped", OverviewTab.projectStatus(project, now).content());
 
         project.startingSince = now;

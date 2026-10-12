@@ -53,6 +53,8 @@ a heat map of the route: where messages go, where they fail.
 - **Alt+Up / Alt+Down** — move YAML list block up/down
 - **Ctrl+D** — duplicate current block
 - **Ctrl+K** — delete current line
+- **Ctrl+/** — comment out the current block, or bring it back (`#` in YAML and
+  properties, `//` in Java)
 - **Ctrl+Left / Ctrl+Right** — word navigation
 - **Home** — smart home (content indent, then column 0)
 - Quick documentation panel is shown at the bottom (shows doc for current line;

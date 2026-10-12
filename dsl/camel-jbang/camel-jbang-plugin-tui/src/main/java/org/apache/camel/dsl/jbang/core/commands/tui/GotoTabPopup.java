@@ -36,7 +36,6 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
 class GotoTabPopup {
@@ -49,6 +48,8 @@ class GotoTabPopup {
     private List<TabRegistry.TabEntry> activeEntries;
     private List<TabRegistry.TabEntry> filteredEntries;
     private Rect popupRect;
+    // the rows the list was scrolled by in the last render, for a click
+    private int listOffset;
     private Runnable callback;
     private TabRegistry.TabEntry pendingEntry;
     private java.util.function.Supplier<IntegrationInfo> integrationSupplier;
@@ -136,7 +137,7 @@ class GotoTabPopup {
             return true;
         }
         if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
-            filter.appendChar(ke.string().charAt(0));
+            filter.append(ke.string());
             rebuildList();
             return true;
         }
@@ -155,7 +156,7 @@ class GotoTabPopup {
         }
         if (me.isClick()) {
             if (popupRect != null && popupRect.contains(me.x(), me.y())) {
-                int idx = TuiHelper.listItemAt(popupRect, 0,
+                int idx = TuiHelper.listItemAt(popupRect, listOffset,
                         (filteredEntries != null ? filteredEntries.size() : 0) + 2,
                         me.x(), me.y());
                 if (idx >= 2 && filteredEntries != null && idx - 2 < filteredEntries.size()) {
@@ -274,15 +275,8 @@ class GotoTabPopup {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, renderState);
-
-        int visibleRows = Math.max(1, popup.height() - 2);
-        if (shown + 2 > visibleRows) {
-            scrollbarState
-                    .contentLength(shown)
-                    .viewportContentLength(visibleRows)
-                    .position(sel != null ? sel : 0);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), popup, scrollbarState);
-        }
+        listOffset = renderState.offset();
+        TuiHelper.renderListScrollbar(frame, popup, shown + 2, listOffset, scrollbarState);
     }
 
     SelectionContext getSelectionContext() {

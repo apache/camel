@@ -373,12 +373,13 @@ final class OllamaMonitor {
     /**
      * The AI panel question being answered right now, so the tab can list it from the moment it was asked: before the
      * first request returns there is no {@link RequestEntry} for it, and while tools run its last step says
-     * {@code tool_calls} like a finished question's would.
+     * {@code tool_calls} like a finished question's would. It was asked at startedAt, the time of day shown, and at
+     * monotonicStart, the {@link MonotonicClock} time it is timed from.
      */
-    record ActiveQuestion(int question, String text, Instant startedAt) {
+    record ActiveQuestion(int question, String text, Instant startedAt, long monotonicStart) {
 
         long elapsedMs() {
-            return Math.max(0, System.currentTimeMillis() - startedAt.toEpochMilli());
+            return Math.max(0, MonotonicClock.millis() - monotonicStart);
         }
 
         boolean matches(QuestionGroup g) {
@@ -498,6 +499,7 @@ final class OllamaMonitor {
     private int panelBudget;
     private ActiveQuestion activeQuestion;
 
+    // MonotonicClock times of the last look at each source; the rate windows and CPU samples are on this clock too
     private long lastProbe;
     private long lastVersion;
     private long lastPs;
@@ -529,7 +531,7 @@ final class OllamaMonitor {
             return;
         }
         try {
-            long now = System.currentTimeMillis();
+            long now = MonotonicClock.millis();
             if (now - lastProbe >= DETECT_INTERVAL_MS) {
                 lastProbe = now;
                 lastVersion = now;
@@ -677,7 +679,7 @@ final class OllamaMonitor {
 
     /** True once every few seconds: the GenAI spans of a route are worth re-reading. */
     boolean wantsSpans() {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - lastSpanIngest >= SPAN_INTERVAL_MS) {
             lastSpanIngest = now;
             return true;
@@ -696,7 +698,7 @@ final class OllamaMonitor {
     /** The AI panel started working on a question; it is listed as in progress until {@link #questionFinished()}. */
     void questionStarted(int question, String text) {
         synchronized (lock) {
-            activeQuestion = new ActiveQuestion(question, text, Instant.now());
+            activeQuestion = new ActiveQuestion(question, text, Instant.now(), MonotonicClock.millis());
         }
     }
 
@@ -784,12 +786,16 @@ final class OllamaMonitor {
 
     /** Applies a runner slot sample; the decode and prefill rate windows advance from its counters. */
     void updateSlot(SlotState state) {
+        updateSlot(state, MonotonicClock.millis());
+    }
+
+    /** Applies a runner slot sample read at the given {@link MonotonicClock} time. */
+    void updateSlot(SlotState state, long readAt) {
         synchronized (lock) {
             slot = state;
             if (state != null) {
-                long now = state.sampledAt() != null ? state.sampledAt().toEpochMilli() : System.currentTimeMillis();
-                decodeWindow.sample(now, state.decoded());
-                prefillWindow.sample(now, state.promptProcessed());
+                decodeWindow.sample(readAt, state.decoded());
+                prefillWindow.sample(readAt, state.promptProcessed());
             }
         }
     }
@@ -800,19 +806,22 @@ final class OllamaMonitor {
         }
     }
 
-    /** Ends one poll: appends the current live decode rate to the history and stamps the poll time. */
+    /**
+     * Ends one poll: appends the current live decode rate to the history and stamps the poll time (of day). Now is a
+     * {@link MonotonicClock} time.
+     */
     void tick(long nowMillis) {
         synchronized (lock) {
             long rate = Math.round(decodeWindow.ratePerSecond(nowMillis));
             System.arraycopy(decodeHistory, 1, decodeHistory, 0, decodeHistory.length - 1);
             decodeHistory[decodeHistory.length - 1] = rate;
-            lastPoll = Instant.ofEpochMilli(nowMillis);
+            lastPoll = Instant.now();
         }
     }
 
     Snapshot snapshot() {
         synchronized (lock) {
-            long now = System.currentTimeMillis();
+            long now = MonotonicClock.millis();
             return new Snapshot(
                     server, models, installed, slot, runner, host, List.copyOf(requests),
                     decodeWindow.ratePerSecond(now), prefillWindow.ratePerSecond(now),
@@ -844,7 +853,7 @@ final class OllamaMonitor {
             return;
         }
         try {
-            doPoll(System.currentTimeMillis());
+            doPoll(MonotonicClock.millis());
         } catch (Exception e) {
             LOG.debug("Ollama poll failed", e);
         } finally {
@@ -945,7 +954,7 @@ final class OllamaMonitor {
                 lastSlotPoll = now;
                 JsonArray slots = getJsonArray("http://127.0.0.1:" + current.port() + "/slots");
                 if (slots != null) {
-                    updateSlot(OllamaParsers.parseSlots(slots, Instant.ofEpochMilli(now)));
+                    updateSlot(OllamaParsers.parseSlots(slots, Instant.now()));
                 } else {
                     updateRunner(null);
                     current = null;
@@ -1064,7 +1073,7 @@ final class OllamaMonitor {
         if (gpu == null && serverStats == null && runnerStats == null) {
             return null;
         }
-        return new HostStats(gpu, serverStats, runnerStats, Instant.ofEpochMilli(now));
+        return new HostStats(gpu, serverStats, runnerStats, Instant.now());
     }
 
     private GpuStats probeGpu() {
