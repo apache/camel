@@ -19,13 +19,15 @@ package org.apache.camel.component.openai;
 import java.io.Serial;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ai.AiEvent;
 
 /**
  * Fired when an OpenAI MCP agentic loop completes on an exchange.
  *
  * @since 4.23
  */
-public final class OpenAIAgenticLoopCompletedEvent extends AbstractOpenAIExchangeEvent {
+public final class OpenAIAgenticLoopCompletedEvent extends AbstractOpenAIExchangeEvent
+        implements AiEvent.AgentLoopCompletedEvent {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -42,14 +44,17 @@ public final class OpenAIAgenticLoopCompletedEvent extends AbstractOpenAIExchang
         this.stopReason = stopReason;
     }
 
+    @Override
     public int getIterationCount() {
         return iterationCount;
     }
 
+    @Override
     public long getTotalTokens() {
         return totalTokens;
     }
 
+    @Override
     public String getStopReason() {
         return stopReason;
     }

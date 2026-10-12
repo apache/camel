@@ -140,7 +140,7 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
         // ...and the denial is now observable as a single event
         assertThat(events).hasSize(1);
         AiToolAuthorizationDeniedEvent event = events.get(0);
-        assertThat(event.getType()).isEqualTo(CamelEvent.Type.Custom);
+        assertThat(event.getType()).isEqualTo(CamelEvent.Type.Ai);
         assertThat(event.getToolName()).isEqualTo("guarded");
         assertThat(event.getExchange()).isSameAs(exchange);
         assertThat(event.getCause()).isInstanceOf(CamelAuthorizationException.class);

@@ -19,13 +19,15 @@ package org.apache.camel.component.openai;
 import java.io.Serial;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ai.AiEvent;
 
 /**
  * Fired when an OpenAI MCP agentic loop starts on an exchange.
  *
  * @since 4.23
  */
-public final class OpenAIAgenticLoopStartedEvent extends AbstractOpenAIExchangeEvent {
+public final class OpenAIAgenticLoopStartedEvent extends AbstractOpenAIExchangeEvent
+        implements AiEvent.AgentLoopStartedEvent {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -39,10 +41,12 @@ public final class OpenAIAgenticLoopStartedEvent extends AbstractOpenAIExchangeE
         this.maxIterations = maxIterations;
     }
 
+    @Override
     public int getToolCount() {
         return toolCount;
     }
 
+    @Override
     public int getMaxIterations() {
         return maxIterations;
     }
