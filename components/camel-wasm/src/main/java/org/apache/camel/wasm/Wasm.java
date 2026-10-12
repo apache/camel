@@ -16,6 +16,8 @@
  */
 package org.apache.camel.wasm;
 
+import org.apache.camel.spi.Metadata;
+
 public final class Wasm {
     public static final String SCHEME = "wasm";
     public static final String FN_ALLOC = "alloc";
@@ -26,6 +28,16 @@ public final class Wasm {
 
     public static class Headers {
 
+        @Metadata(description = "The exit code of the module: 0 when it returned from its `_start` function, otherwise the"
+                                + " value it passed to `proc_exit`. Not set when the module trapped, timed out or exceeded"
+                                + " maxOutputSize.",
+                  javaType = "Integer")
+        public static final String EXIT_CODE = "CamelWasmExitCode";
+
+        @Metadata(description = "What the module wrote to its standard error, decoded as UTF-8. Not set when the module"
+                                + " wrote nothing or timed out.",
+                  javaType = "String")
+        public static final String STDERR = "CamelWasmStderr";
     }
 
 }
