@@ -202,3 +202,14 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
+
+=== camel-aws2-kinesis
+
+When a cached shard iterator has expired (an iterator is valid for 5 minutes, so after a route was suspended for
+longer, or with a `delay` or back-off above 5 minutes), the consumer now continues after the last record it routed
+from that shard. Previously it requested a new iterator of the configured `iteratorType`: with `TRIM_HORIZON` (the
+default) it routed all the records of the shard again, with `LATEST` it skipped the records stored meanwhile.
+
+A shard created by a split or a merge while the consumer is running is now read from its first record, whatever the
+`iteratorType`. Previously, with `LATEST`, the records stored in the new shard before the consumer listed it were
+skipped. The shards that exist when the consumer starts are read from the configured `iteratorType`, as before.
