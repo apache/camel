@@ -109,6 +109,27 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
     }
 
     @Test
+    void sinkKameletRejectsSourceOptions() throws Exception {
+        try (CamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("sink-with-invalid-options")
+                            .from("kamelet:source")
+                            .to("mock:result");
+
+                    from("direct:trigger")
+                            .kamelet("sink-with-invalid-options?source.block=true");
+                }
+            });
+
+            Exception ex = assertThrows(Exception.class, testContext::start);
+            assertTrue(hasIllegalArgumentException(ex),
+                    "Expected IllegalArgumentException for source.* on a sink Kamelet");
+        }
+    }
+
+    @Test
     void advancedSinkOptionsAreAppliedToAllRealEndpoints() throws Exception {
         MockEndpoint firstSink = getMockEndpoint("mock:first-advanced-sink");
         MockEndpoint secondSink = getMockEndpoint("mock:second-advanced-sink");
