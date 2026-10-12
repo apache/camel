@@ -4057,6 +4057,20 @@ public class EndpointHeaderBuilders {
         return VertxWebsocketEndpointBuilderFactory.VertxWebsocketHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Wasm (camel-wasm)
+     * Run Wasm programs (WASI Preview 1 command modules) with the message body
+     * as standard input.
+     * 
+     * Category: core,script
+     * Since: 4.4
+     * Maven coordinates: org.apache.camel:camel-wasm
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static WasmEndpointBuilderFactory.WasmHeaderNameBuilder wasm() {
+        return WasmEndpointBuilderFactory.WasmHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
      * 
