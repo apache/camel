@@ -99,11 +99,6 @@ class SourceViewer {
     }
 
     @FunctionalInterface
-    interface QuickDocProvider {
-        Map<Integer, List<DocEntry>> provideAll(List<JsonObject> codeData);
-    }
-
-    @FunctionalInterface
     interface EditQuickDocProvider {
         List<DocEntry> provideForLine(List<String> lines, int cursorRow);
     }
@@ -188,9 +183,6 @@ class SourceViewer {
     private int markdownScroll;
     // the furthest the markdown view scrolls, from the last render (unknown before it)
     private int markdownMaxScroll = Integer.MAX_VALUE;
-    private QuickDocProvider quickDocProvider;
-    private boolean quickDocEnabled;
-    private Map<Integer, List<DocEntry>> quickDocEntries = Collections.emptyMap();
     private EditQuickDocProvider editQuickDocProvider;
     private boolean editQuickDocEnabled = true;
     private DeprecatedLineScanner deprecatedLineScanner;
@@ -592,8 +584,6 @@ class SourceViewer {
         exitEditMode();
         visible = false;
         onLineSelected = null;
-        quickDocEnabled = false;
-        quickDocEntries = Collections.emptyMap();
         deprecatedLines = Collections.emptySet();
         editableFile = null;
         propertiesValidator = null;
@@ -636,9 +626,6 @@ class SourceViewer {
         rawMarkdownContent = null;
         markdownScroll = 0;
         markdownMaxScroll = Integer.MAX_VALUE;
-        quickDocProvider = null;
-        quickDocEnabled = false;
-        quickDocEntries = Collections.emptyMap();
         deprecatedLineScanner = null;
         deprecatedLines = Collections.emptySet();
         jumpLinks = Collections.emptyMap();
@@ -804,19 +791,6 @@ class SourceViewer {
         return loadedFilePath;
     }
 
-    private void refreshQuickDoc() {
-        if (quickDocEnabled && quickDocProvider != null && !codeData.isEmpty()) {
-            quickDocEntries = quickDocProvider.provideAll(codeData);
-            if (quickDocEntries == null) {
-                quickDocEntries = Collections.emptyMap();
-            }
-        }
-    }
-
-    void setQuickDocProvider(QuickDocProvider provider) {
-        this.quickDocProvider = provider;
-    }
-
     void setEditQuickDocProvider(EditQuickDocProvider provider) {
         this.editQuickDocProvider = provider;
     }
@@ -898,7 +872,6 @@ class SourceViewer {
                 }
             }
             idx = (idx + 1) % formats.length;
-            quickDocEntries = Collections.emptyMap();
             switchFormat(formats[idx]);
             return true;
         }
@@ -1318,7 +1291,6 @@ class SourceViewer {
         editStartTop = markdownMode ? -1 : scrollY;
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
-        quickDocEnabled = false;
         search.closeInputOnly();
         dirty = false;
         validationErrors = null;
@@ -3974,7 +3946,6 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             search.reset();
-            refreshQuickDoc();
             return;
         }
 
@@ -4064,7 +4035,6 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             search.reset();
-            refreshQuickDoc();
         });
     }
 
@@ -4225,12 +4195,6 @@ class SourceViewer {
         int count = 0;
         for (int i = fromLine; i < toLine && i < lines.size(); i++) {
             count += wrapRowCount(lines.get(i), contentWidth);
-            if (quickDocEnabled) {
-                List<DocEntry> docs = quickDocEntries.get(i);
-                if (docs != null) {
-                    count += docs.size();
-                }
-            }
         }
         return count;
     }

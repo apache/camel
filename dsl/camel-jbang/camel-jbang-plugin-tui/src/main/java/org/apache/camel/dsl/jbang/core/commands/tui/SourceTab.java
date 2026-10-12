@@ -921,7 +921,6 @@ class SourceTab extends AbstractTab {
         sourceViewer.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
         sourceViewer.setSemanticCompletion(SourceEditAssist.isYamlFile(filePath) ? assist::provideSemanticCompletions : null);
         if (isCamelSourceFile(filePath)) {
-            sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
             if (SourceEditAssist.isYamlFile(filePath)) {
                 // the options of a kamelet: endpoint start with the properties of its Kamelet (CAMEL-25411)
@@ -939,7 +938,6 @@ class SourceTab extends AbstractTab {
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {
                 // XML: the quick doc of the routes read into the model, Tab in the uri attributes (CAMEL-25208)
-                sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
                 sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
                 sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEditQuickDocProvider(
@@ -947,7 +945,6 @@ class SourceTab extends AbstractTab {
             }
         } else if (routeFile) {
             // Java: the quick doc of the routes read into the model by the Java DSL parser (CAMEL-25208)
-            sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
             sourceViewer.setDeprecatedLineScanner(null);
             // Tab in the endpoint uri of from, to, toD...: component names, options and values, as YAML uris have
             sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
@@ -955,14 +952,12 @@ class SourceTab extends AbstractTab {
             sourceViewer.setEditQuickDocProvider(
                     withProjectDocs((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row)));
         } else if (SourceEditAssist.isPropertiesFile(filePath)) {
-            sourceViewer.setQuickDocProvider(assist::providePropertiesQuickDocs);
             sourceViewer.setDeprecatedLineScanner(assist::scanDeprecatedProperties);
             sourceViewer.setAutocompleteProvider(assist::providePropertyCompletions);
             sourceViewer.setAutocompleteValueProvider(assist::providePropertyValueCompletions);
             sourceViewer.setPropertiesValidator(assist::validatePropertyLine);
             sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditPropertyQuickDoc));
         } else {
-            sourceViewer.setQuickDocProvider(null);
             sourceViewer.setDeprecatedLineScanner(null);
             sourceViewer.setAutocompleteProvider(null);
             sourceViewer.setEditQuickDocProvider(null);

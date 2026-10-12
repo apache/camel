@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -158,40 +157,6 @@ final class SourceEditAssist {
             catalog = fallback;
         }
         return catalog;
-    }
-
-    Map<Integer, List<SourceViewer.DocEntry>> provideCamelQuickDocs(List<JsonObject> codeData) {
-        CamelCatalog catalog = validationCatalog();
-        if (catalog == null || codeData.isEmpty()) {
-            return Map.of();
-        }
-
-        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
-        for (int i = 0; i < codeData.size(); i++) {
-            String code = codeData.get(i).getString("code");
-            if (code == null) {
-                continue;
-            }
-
-            Matcher uriMatcher = YAML_URI_PATTERN.matcher(code);
-            if (uriMatcher.find()) {
-                String uri = uriMatcher.group(1);
-                if (uri.endsWith("\"")) {
-                    uri = uri.substring(0, uri.length() - 1);
-                }
-                EipDocSupport.buildEndpointInlineDoc(result, codeData, catalog, uri, i);
-                continue;
-            }
-
-            Matcher keyMatcher = YAML_KEY_PATTERN.matcher(code);
-            if (keyMatcher.find()) {
-                String key = keyMatcher.group(1);
-                if (catalog.eipModel(key) != null) {
-                    EipDocSupport.buildEipInlineDoc(result, codeData, catalog, key, null, i);
-                }
-            }
-        }
-        return result;
     }
 
     List<SourceViewer.DocEntry> provideEditQuickDoc(List<String> lines, int cursorRow) {
@@ -1632,56 +1597,6 @@ final class SourceEditAssist {
         return answer;
     }
 
-    Map<Integer, List<SourceViewer.DocEntry>> providePropertiesQuickDocs(List<JsonObject> codeData) {
-        CamelCatalog catalog = getCatalog();
-        if (catalog == null || codeData.isEmpty()) {
-            return Map.of();
-        }
-        ensureMainOptionsCache(catalog);
-
-        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
-        for (int i = 0; i < codeData.size(); i++) {
-            String code = codeData.get(i).getString("code");
-            if (code == null) {
-                continue;
-            }
-            String trimmed = code.trim();
-            if (trimmed.isEmpty() || trimmed.startsWith("#") || trimmed.startsWith("!")) {
-                continue;
-            }
-            int eq = trimmed.indexOf('=');
-            if (eq <= 0) {
-                continue;
-            }
-            String key = trimmed.substring(0, eq).trim();
-            BaseOptionModel opt = lookupPropertyOption(catalog, key);
-            if (opt != null) {
-                String doc = EipDocSupport.formatOptionDoc(opt);
-                if (doc != null) {
-                    result.put(i, List.of(opt.isDeprecated()
-                            ? SourceViewer.DocEntry.deprecated(doc)
-                            : SourceViewer.DocEntry.of(doc)));
-                }
-                continue;
-            }
-            // fallback to Spring Boot configuration metadata for non-camel properties
-            ensureSpringBootMetadataCache();
-            if (springBootMetadataCache != null) {
-                JsonObject sbProp = springBootMetadataCache.get(key);
-                if (sbProp != null) {
-                    String doc = SpringBootMetadataHelper.formatDoc(sbProp);
-                    if (doc != null) {
-                        boolean deprecated = Boolean.TRUE.equals(sbProp.get("deprecated"));
-                        result.put(i, List.of(deprecated
-                                ? SourceViewer.DocEntry.deprecated(doc)
-                                : SourceViewer.DocEntry.of(doc)));
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
     Set<Integer> scanDeprecatedProperties(List<JsonObject> codeData) {
         CamelCatalog catalog = getCatalog();
         if (catalog == null || codeData.isEmpty()) {
@@ -1837,35 +1752,6 @@ final class SourceEditAssist {
     }
 
     /**
-     * The quick doc of each line of a Java or XML DSL route file (CAMEL-25208), read from its model: the component of
-     * an endpoint and the options it is given, the EIP of a step.
-     */
-    Map<Integer, List<SourceViewer.DocEntry>> provideRouteQuickDocs(Path file, List<JsonObject> codeData) {
-        CamelCatalog catalog = validationCatalog();
-        if (catalog == null || codeData.isEmpty()) {
-            return Map.of();
-        }
-        List<String> lines = new ArrayList<>(codeData.size());
-        for (JsonObject jo : codeData) {
-            lines.add(jo.getString("code") != null ? jo.getString("code") : "");
-        }
-        Map<Integer, List<SourceViewer.DocEntry>> result = new LinkedHashMap<>();
-        for (RouteNodes.Node n : routeNodes(file, lines)) {
-            int idx = n.line() - 1;
-            if (idx < 0 || idx >= codeData.size() || result.containsKey(idx)) {
-                continue;
-            }
-            if (n.kind() == RouteNodes.Kind.ENDPOINT) {
-                EipDocSupport.buildEndpointInlineDoc(result, codeData, catalog, n.uri(), idx);
-            } else if (n.kind() == RouteNodes.Kind.STEP && !hasEndpoint(file, lines, n.line())
-                    && catalog.eipModel(n.eip()) != null) {
-                EipDocSupport.buildEipInlineDoc(result, codeData, catalog, n.eip(), null, idx);
-            }
-        }
-        return result;
-    }
-
-    /**
      * The quick doc of the line the cursor is on in a Java or XML DSL route file (CAMEL-25208): the component of an
      * endpoint with the options it is given, else the EIP of the step and the language of its expression.
      */
@@ -1926,15 +1812,6 @@ final class SourceEditAssist {
                 answer.add(SourceViewer.DocEntry.of(opt.getName() + "=" + value + (doc != null ? " — " + doc : "")));
             }
         }
-    }
-
-    private boolean hasEndpoint(Path file, List<String> lines, int line) {
-        for (RouteNodes.Node n : RouteNodes.at(routeNodes(file, lines), line)) {
-            if (n.kind() == RouteNodes.Kind.ENDPOINT) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /** The nodes of a route file's content, read again only when the content changed. */
