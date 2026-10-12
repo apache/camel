@@ -63,7 +63,8 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         }
 
         if (endpoint.getProperties().isFilterOld()) {
-            query.sinceId(getLastId());
+            // a Query is immutable: every method returns a new Query
+            query = query.sinceId(getLastId());
         }
 
         return search(query);
@@ -72,7 +73,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
     @Override
     public List<Exchange> directConsume() throws TwitterException {
         String keywords = this.keywords;
-        if (keywords == null || !keywords.isBlank()) {
+        if (keywords == null || keywords.isBlank()) {
             return Collections.emptyList();
         }
         Query query = Query.of(keywords);
@@ -85,11 +86,11 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         Integer numberOfPages = 1;
 
         if (ObjectHelper.isNotEmpty(endpoint.getProperties().getLang())) {
-            query.lang(endpoint.getProperties().getLang());
+            query = query.lang(endpoint.getProperties().getLang());
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getProperties().getCount())) {
-            query.count(endpoint.getProperties().getCount());
+            query = query.count(endpoint.getProperties().getCount());
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getProperties().getNumberOfPages())) {
@@ -101,7 +102,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
                 && ObjectHelper.isNotEmpty(endpoint.getProperties().getRadius())) {
             GeoLocation location
                     = GeoLocation.of(endpoint.getProperties().getLatitude(), endpoint.getProperties().getLongitude());
-            query.geoCode(location, endpoint.getProperties().getRadius(),
+            query = query.geoCode(location, endpoint.getProperties().getRadius(),
                     Unit.valueOf(endpoint.getProperties().getDistanceMetric()));
 
             LOG.debug("Searching with additional geolocation parameters.");
