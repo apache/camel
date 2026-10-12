@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -47,9 +49,10 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.maven.htmlxlsx.process.CoverageResultsProcessor;
 import org.apache.camel.maven.model.RouteCoverageNode;
-import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.helper.RouteCoverageHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
@@ -60,9 +63,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaType;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 import static org.apache.camel.catalog.common.CatalogHelper.asRelativeFile;
 import static org.apache.camel.catalog.common.CatalogHelper.findJavaRouteBuilderClasses;
@@ -115,6 +115,8 @@ public class RouteCoverageMojo extends AbstractMojo {
     /**
      * Whether to include test source code
      */
+    private CamelCatalog catalog;
+
     @Parameter(property = "camel.includeTest", defaultValue = "false")
     private boolean includeTest;
 
@@ -469,17 +471,21 @@ public class RouteCoverageMojo extends AbstractMojo {
         }
     }
 
+    private CamelCatalog catalog() {
+        if (catalog == null) {
+            catalog = new DefaultCamelCatalog();
+        }
+        return catalog;
+    }
+
     private void addJavaFiles(File file, List<CamelNodeDetails> routeTrees) {
         if (matchFile(file)) {
             try {
-                // parse the java source code and find Camel RouteBuilder classes
-                String fqn = file.getPath();
-                JavaType<?> out = Roaster.parse(file);
-                // we should only parse java classes (not interfaces and enums etc)
-                if (out instanceof JavaClassSource clazz) {
-                    List<CamelNodeDetails> result = RouteBuilderParser.parseRouteBuilderTree(clazz, fqn, true);
-                    routeTrees.addAll(result);
-                }
+                // read the java source into the Camel model with the Java DSL parser, without compiling it, and build
+                // the node tree of its routes (CAMEL-25591)
+                JavaRouteModelReader reader = JavaRouteModelReader.read(
+                        catalog(), file.getPath(), Files.readString(file.toPath(), StandardCharsets.UTF_8));
+                routeTrees.addAll(reader.routeTrees());
             } catch (Exception e) {
                 getLog().warn("Error parsing java file " + file + " code due " + e.getMessage(), e);
             }
