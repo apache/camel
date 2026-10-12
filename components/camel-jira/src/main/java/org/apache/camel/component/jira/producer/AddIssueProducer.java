@@ -117,18 +117,19 @@ public class AddIssueProducer extends DefaultProducer {
         IssueRestClient issueClient = client.getIssueClient();
         BasicIssue issueCreated = issueClient.createIssue(builder.build()).claim();
         Issue issue = issueClient.getIssue(issueCreated.getKey()).claim();
+        // support InOut. The created issue is set before the watchers are added, so that it is on the exchange when
+        // adding a watcher fails
+        ExchangeHelper.setInOutBodyPatternAware(exchange, issue);
         if (ObjectHelper.isNotEmpty(watchers)) {
             String[] watArr = watchers.split(",");
             for (String s : watArr) {
                 String watcher = s.trim();
                 if (!watcher.isEmpty()) {
-                    issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
+                    // wait for the result, so that a request that Jira rejects fails the exchange
+                    issueClient.addWatcher(issue.getWatchers().getSelf(), watcher).claim();
                 }
             }
         }
-
-        // support InOut
-        ExchangeHelper.setInOutBodyPatternAware(exchange, issue);
     }
 
 }

@@ -39,6 +39,7 @@ public class DeleteIssueProducer extends DefaultProducer {
         }
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
         IssueRestClient issueClient = client.getIssueClient();
-        issueClient.deleteIssue(issueKey, true);
+        // wait for the result, so that a request that Jira rejects fails the exchange
+        issueClient.deleteIssue(issueKey, true).claim();
     }
 }
