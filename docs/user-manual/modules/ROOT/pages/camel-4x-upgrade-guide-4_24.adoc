@@ -68,6 +68,13 @@ file, including those of a route builder created inside a test, so `validate` ca
 not see before. An endpoint uri that is only a method call, such as `from(inboxQueue())`, is not validated (it was
 validated as a property placeholder without a component before); with `logUnparseable=true` it is logged.
 
+=== camel-jbang - the route-parser plugin is removed
+
+The `route-parser` plugin (`camel route-parser`) and its `camel-jbang-plugin-route-parser` artifact are removed. Use
+`camel cmd route-structure MyRoute.java` instead: it prints the structure of the routes of a Java source, read
+without compiling it, and of YAML and XML sources too. If you installed the plugin, remove it with
+`camel plugin delete route-parser`.
+
 === camel-knative-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the consumer maps a request header
