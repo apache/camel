@@ -43,6 +43,13 @@ public abstract class OAuth {
     //
     public static final String CAMEL_OAUTH_COOKIE = "camel.oauth.session";
 
+    // Camel OAuth Exchange Properties
+    //
+    /**
+     * The {@link UserProfile} that {@link OAuthBearerTokenProcessor} authenticated for the current request.
+     */
+    public static final String CAMEL_OAUTH_USER_PROFILE = "CamelOAuthUserProfile";
+
     protected OAuthConfig config;
     protected OAuthSessionStore sessionStore;
 
