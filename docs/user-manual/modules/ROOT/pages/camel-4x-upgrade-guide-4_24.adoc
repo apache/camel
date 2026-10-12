@@ -202,3 +202,10 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
+
+=== camel-box
+
+The `getEnterpriseEvents` operation of the `event-logs` API now returns all the events between `after` and `before`.
+Previously it returned only the first chunk of the event log (at most 500 events), and the rest was dropped without
+any sign. A wide `after`/`before` window now returns every event in one list: that is one request per 500 events plus
+one that finds the end of the log, and more memory. Narrow the window when the event log is large.

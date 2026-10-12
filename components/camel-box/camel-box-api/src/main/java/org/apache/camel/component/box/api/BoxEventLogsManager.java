@@ -19,7 +19,9 @@ package org.apache.camel.component.box.api;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
@@ -63,7 +65,9 @@ public class BoxEventLogsManager {
      * @param  before   - the upper bound on the timestamp of the events returned.
      * @param  types    - an optional list of event types to filter by.
      *
-     * @return          A list of all the events that met the given criteria.
+     * @return          A list of all the events that met the given criteria. The event log is read chunk by chunk (at
+     *                  most 500 events per request) until its end, and all the events are kept in memory, so use a
+     *                  narrow time window for a large event log.
      */
     public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.EventType... types) {
         try {
@@ -80,15 +84,26 @@ public class BoxEventLogsManager {
             }
 
             EnterpriseEventsRequest request = new EnterpriseEventsRequest();
-            request.position(position).after(after).before(before).types(types);
-            EventLog eventLog = EventLog.getEnterpriseEvents(boxConnection, request);
+            request.after(after).before(before).types(types);
 
-            List<BoxEvent> results = new ArrayList<>();
-            for (BoxEvent event : eventLog) {
-                results.add(event);
+            // The service returns the events in chunks (of at most 500 events) with the position of the next
+            // chunk. Read on from that position until a chunk is empty, which is the end of the events within
+            // bounds. An event that the service returns in two chunks is kept once.
+            Set<BoxEvent> results = new LinkedHashSet<>();
+            String streamPosition = position;
+            while (true) {
+                EventLog eventLog = EventLog.getEnterpriseEvents(boxConnection, request.position(streamPosition));
+                for (BoxEvent event : eventLog) {
+                    results.add(event);
+                }
+                String nextStreamPosition = eventLog.getNextStreamPosition();
+                if (eventLog.getSize() == 0 || nextStreamPosition == null || nextStreamPosition.equals(streamPosition)) {
+                    break;
+                }
+                streamPosition = nextStreamPosition;
             }
 
-            return results;
+            return new ArrayList<>(results);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
                     buildBoxApiErrorMessage(e), e);
