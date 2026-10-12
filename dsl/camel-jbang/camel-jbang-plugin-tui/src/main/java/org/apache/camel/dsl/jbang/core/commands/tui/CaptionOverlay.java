@@ -22,10 +22,10 @@ import java.util.List;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.paragraph.Paragraph;
@@ -59,6 +59,11 @@ class CaptionOverlay {
 
     boolean isVisible() {
         return inlineMode || captionText != null;
+    }
+
+    /** The caption shown or being typed (tests). */
+    String captionTextForTesting() {
+        return captionText;
     }
 
     void openInline() {
@@ -101,11 +106,12 @@ class CaptionOverlay {
                 finishInline();
             } else if (ke.isDeleteBackward()) {
                 if (!inlineBuffer.isEmpty()) {
-                    inlineBuffer.deleteCharAt(inlineBuffer.length() - 1);
+                    // the last character, both chars of an emoji
+                    inlineBuffer.setLength(inlineBuffer.offsetByCodePoints(inlineBuffer.length(), -1));
                     captionText = inlineBuffer.toString();
                     inlineLastKeystroke = System.currentTimeMillis();
                 }
-            } else if (ke.code() == KeyCode.CHAR) {
+            } else if (FormHelper.typedText(ke) != null) {
                 inlineBuffer.append(ke.string());
                 captionText = inlineBuffer.toString();
                 inlineLastKeystroke = System.currentTimeMillis();
@@ -140,7 +146,7 @@ class CaptionOverlay {
             return;
         }
 
-        int totalChars = captionText.length();
+        int totalChars = captionText.codePointCount(0, captionText.length());
         long elapsed = now - captionStartTime;
         int charsToShow = (int) (elapsed / CHAR_DELAY_MS);
 
@@ -196,7 +202,7 @@ class CaptionOverlay {
         int maxWidth = 0;
         for (String part : parts) {
             lines.add(Line.from(Span.styled("  " + part + "  ", style)));
-            maxWidth = Math.max(maxWidth, part.length() + 4);
+            maxWidth = Math.max(maxWidth, CharWidth.of(part) + 4);
         }
 
         int captionW = Math.min(Math.max(maxWidth, 6), area.width() - 2);
@@ -216,8 +222,9 @@ class CaptionOverlay {
     private void renderCaption(Frame frame, Rect area) {
         long now = System.currentTimeMillis();
         long elapsed = now - captionStartTime;
-        int charsToShow = Math.min((int) (elapsed / CHAR_DELAY_MS), captionText.length());
-        String visible = captionText.substring(0, charsToShow);
+        // typed a character at a time, an emoji (two chars) at once
+        int charsToShow = Math.min((int) (elapsed / CHAR_DELAY_MS), captionText.codePointCount(0, captionText.length()));
+        String visible = captionText.substring(0, captionText.offsetByCodePoints(0, charsToShow));
 
         Style style;
         if (captionFullyTypedTime == 0 || now - captionFullyTypedTime < HOLD_DURATION_MS) {
@@ -231,7 +238,7 @@ class CaptionOverlay {
         int maxWidth = 0;
         for (String part : parts) {
             lines.add(Line.from(Span.styled("  " + part + "  ", style)));
-            maxWidth = Math.max(maxWidth, part.length() + 4);
+            maxWidth = Math.max(maxWidth, CharWidth.of(part) + 4);
         }
 
         int captionW = Math.min(maxWidth, area.width() - 2);

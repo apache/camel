@@ -26,7 +26,6 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
@@ -801,7 +800,7 @@ class RunOptionsForm {
             active.moveCursorToStart();
         } else if (ke.isEnd()) {
             active.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
+        } else if (FormHelper.typedText(ke) != null) {
             char c = ke.string().charAt(0);
             String text = active.text();
             if (Character.isDigit(c)) {
@@ -877,13 +876,10 @@ class RunOptionsForm {
             active.moveCursorToStart();
         } else if (ke.isEnd()) {
             active.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            if (digitsOnly) {
-                if (Character.isDigit(ke.string().charAt(0))) {
-                    active.insert(ke.string().charAt(0));
-                }
-            } else {
-                active.insert(ke.string().charAt(0));
+        } else {
+            String typed = FormHelper.typedText(ke);
+            if (typed != null && (!digitsOnly || Character.isDigit(typed.codePointAt(0)))) {
+                active.insert(typed);
             }
         }
     }

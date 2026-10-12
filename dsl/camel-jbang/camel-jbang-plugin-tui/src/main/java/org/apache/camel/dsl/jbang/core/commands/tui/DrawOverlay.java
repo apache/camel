@@ -18,14 +18,21 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import dev.tamboui.buffer.Buffer;
+import dev.tamboui.buffer.Cell;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
+import dev.tamboui.style.ColorConverter;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 
 class DrawOverlay {
+
+    private static final Pattern SEPARATOR_LESS = Pattern.compile("^(light|dark|bright)(?=[a-z])");
 
     record DrawCell(int x, int y, String symbol, Style style) {
     }
@@ -77,7 +84,7 @@ class DrawOverlay {
                 if (cell.symbol == null) {
                     // highlight mode: keep existing symbol, apply style as background
                     var existing = buffer.get(cell.x, cell.y);
-                    if (existing != null && existing != dev.tamboui.buffer.Cell.CONTINUATION) {
+                    if (existing != null && existing != Cell.CONTINUATION) {
                         Style merged = existing.style().bg(cell.style.bg().orElse(Color.YELLOW));
                         buffer.setString(cell.x, cell.y, existing.symbol(), merged);
                     }
@@ -175,34 +182,23 @@ class DrawOverlay {
             }
             String ch = new String(Character.toChars(cp));
             cells.add(new DrawCell(col, row, ch, s));
-            col += Math.max(1, dev.tamboui.text.CharWidth.of(cp));
+            col += Math.max(1, CharWidth.of(cp));
             i += Character.charCount(cp);
         }
         return cells;
     }
 
+    /**
+     * A color by name (red, light_blue, lightblue, bright-cyan, ...), as #rrggbb or #rgb, rgb(r, g, b) or indexed(n),
+     * or null when the name is not a color.
+     */
     static Color parseColor(String name) {
         if (name == null || name.isBlank()) {
             return null;
         }
-        return switch (name.toLowerCase().trim()) {
-            case "red" -> Color.RED;
-            case "green" -> Color.GREEN;
-            case "blue" -> Color.BLUE;
-            case "yellow" -> Color.YELLOW;
-            case "cyan" -> Color.CYAN;
-            case "magenta" -> Color.MAGENTA;
-            case "white" -> Color.WHITE;
-            case "gray", "grey" -> Color.GRAY;
-            case "dark_gray", "dark_grey", "darkgray", "darkgrey" -> Color.DARK_GRAY;
-            case "light_red", "lightred" -> Color.LIGHT_RED;
-            case "light_green", "lightgreen" -> Color.LIGHT_GREEN;
-            case "light_blue", "lightblue" -> Color.LIGHT_BLUE;
-            case "light_yellow", "lightyellow" -> Color.LIGHT_YELLOW;
-            case "light_cyan", "lightcyan" -> Color.LIGHT_CYAN;
-            case "light_magenta", "lightmagenta" -> Color.LIGHT_MAGENTA;
-            case "black" -> Color.BLACK;
-            default -> null;
-        };
+        // TamboUI names them light-red and dark-gray; light_red and lightred are taken too
+        String normalized = SEPARATOR_LESS.matcher(name.trim().toLowerCase(Locale.ROOT).replace('_', '-'))
+                .replaceFirst("$1-");
+        return ColorConverter.INSTANCE.convert(normalized).orElse(null);
     }
 }

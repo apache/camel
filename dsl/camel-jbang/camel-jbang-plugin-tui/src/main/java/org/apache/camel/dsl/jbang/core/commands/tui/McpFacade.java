@@ -903,23 +903,14 @@ class McpFacade {
         }
         String screen = ExportRequest.export(buf).text().toString();
         String[] lines = screen.split("\n", -1);
-        int searchWidth = 0;
-        for (int i = 0; i < search.length();) {
-            int cp = search.codePointAt(i);
-            searchWidth += Math.max(1, CharWidth.of(cp));
-            i += Character.charCount(cp);
-        }
+        // the width TamboUI gives the text: a combining mark or a variation selector takes no column of its own
+        int searchWidth = CharWidth.of(search);
         JsonArray matches = new JsonArray();
         for (int y = 0; y < lines.length; y++) {
             String line = lines[y];
             int idx = line.indexOf(search);
             while (idx >= 0) {
-                int visualCol = 0;
-                for (int i = 0; i < idx;) {
-                    int cp = line.codePointAt(i);
-                    visualCol += Math.max(1, CharWidth.of(cp));
-                    i += Character.charCount(cp);
-                }
+                int visualCol = CharWidth.of(line.substring(0, idx));
                 JsonObject match = new JsonObject();
                 match.put("x", visualCol);
                 match.put("y", y);

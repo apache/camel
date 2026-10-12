@@ -291,11 +291,15 @@ final class DiagramDetailSupport {
     static List<String> wrapWords(String text, int width) {
         List<String> out = new ArrayList<>();
         StringBuilder line = new StringBuilder();
+        int lineWidth = 0;
         for (String word : text.split("\\s+")) {
-            if (!line.isEmpty() && line.length() + 1 + word.length() > width) {
+            int wordWidth = CharWidth.of(word);
+            if (!line.isEmpty() && lineWidth + 1 + wordWidth > width) {
                 out.add(line.toString());
                 line.setLength(0);
+                lineWidth = 0;
             }
+            lineWidth += (line.isEmpty() ? 0 : 1) + wordWidth;
             line.append(line.isEmpty() ? "" : " ").append(word);
         }
         if (!line.isEmpty()) {

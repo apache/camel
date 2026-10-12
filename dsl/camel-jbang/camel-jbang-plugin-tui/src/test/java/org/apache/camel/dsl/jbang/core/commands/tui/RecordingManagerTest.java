@@ -16,6 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.List;
+
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Style;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
@@ -39,6 +44,19 @@ class RecordingManagerTest {
     void setUp() {
         manager = new RecordingManager(new CaptionOverlay());
         manager.init(false);
+    }
+
+    @Test
+    void lastBufferIsNotClearedWithTheFrameBuffer() {
+        Buffer frame = Buffer.empty(new Rect(0, 0, 10, 2));
+        frame.setString(0, 0, "Routes", Style.EMPTY);
+
+        manager.updateBuffer(frame);
+        // TamboUI clears the frame buffer before it draws the next frame into it
+        frame.clear();
+
+        assertEquals("R", manager.getLastBuffer().get(0, 0).symbol());
+        assertEquals(1, manager.getRenderGeneration());
     }
 
     @Test
@@ -165,6 +183,61 @@ class RecordingManagerTest {
     void keyLabelForFunctionKey() {
         KeyEvent ke = KeyEvent.ofKey(KeyCode.F5, KeyModifiers.NONE);
         assertEquals("F5", RecordingManager.keyLabel(ke));
+    }
+
+    @Test
+    void keyLabelKeepsModifiers() {
+        KeyModifiers ctrl = KeyModifiers.of(true, false, false);
+        KeyModifiers alt = KeyModifiers.of(false, true, false);
+        KeyModifiers shift = KeyModifiers.of(false, false, true);
+        assertEquals("Shift+F2", RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.F2, shift)));
+        assertEquals("Ctrl+f", RecordingManager.keyLabel(KeyEvent.ofChar('f', ctrl)));
+        assertEquals("Shift+Tab", RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.TAB, shift)));
+        assertEquals("Alt+" + TuiIcons.ARROW_UP, RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.UP, alt)));
+        assertEquals("Ctrl+Shift+Z", RecordingManager.keyLabel(KeyEvent.ofChar('Z', KeyModifiers.of(true, false, true))));
+        // a character shows Shift itself
+        assertEquals("A", RecordingManager.keyLabel(KeyEvent.ofChar('A', shift)));
+        assertEquals("Ctrl+Space", RecordingManager.keyLabel(KeyEvent.ofChar(' ', ctrl)));
+    }
+
+    @Test
+    void aRecordedKeyReplaysAsTheSameKey() {
+        List<KeyEvent> keys = List.of(
+                KeyEvent.ofKey(KeyCode.F8, KeyModifiers.of(false, false, true)),
+                KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.of(false, false, true)),
+                KeyEvent.ofKey(KeyCode.UP, KeyModifiers.of(false, true, false)),
+                KeyEvent.ofKey(KeyCode.RIGHT, KeyModifiers.of(true, false, false)),
+                KeyEvent.ofKey(KeyCode.PAGE_DOWN, KeyModifiers.NONE),
+                KeyEvent.ofKey(KeyCode.BACKSPACE, KeyModifiers.NONE),
+                KeyEvent.ofKey(KeyCode.DELETE, KeyModifiers.NONE),
+                KeyEvent.ofChar('f', KeyModifiers.of(true, false, false)),
+                KeyEvent.ofChar('x', KeyModifiers.of(false, true, false)),
+                KeyEvent.ofChar('Z', KeyModifiers.of(true, false, true)),
+                KeyEvent.ofChar('/', KeyModifiers.of(true, false, false)),
+                KeyEvent.ofChar('+', KeyModifiers.of(true, false, false)));
+        for (KeyEvent key : keys) {
+            String command = TapeRecorder.toTapeCommand(RecordingManager.keyLabel(key));
+            KeyEvent replayed = TapePlayer.parseKey(command);
+            assertNotNull(replayed, command);
+            assertEquals(key.code(), replayed.code(), command);
+            assertEquals(key.modifiers(), replayed.modifiers(), command);
+            assertEquals(key.codePoint(), replayed.codePoint(), command);
+        }
+    }
+
+    @Test
+    void aTapeTypesCharactersAndPressesModifiedKeys() {
+        TapeRecorder recorder = new TapeRecorder();
+        recorder.start(null);
+        recorder.recordKey(RecordingManager.keyLabel(KeyEvent.ofChar('a', KeyModifiers.NONE)));
+        recorder.recordKey(RecordingManager.keyLabel(KeyEvent.ofChar(0x1F600, KeyModifiers.NONE)));
+        recorder.recordKey(RecordingManager.keyLabel(KeyEvent.ofChar('s', KeyModifiers.of(true, false, false))));
+        recorder.recordKey(RecordingManager.keyLabel(KeyEvent.ofKey(KeyCode.F2, KeyModifiers.of(false, false, true))));
+        recorder.recordKeys(List.of("Alt+x", "b"), 0);
+
+        String tape = recorder.stop();
+
+        assertTrue(tape.contains("Type \"a\"\nType \"\uD83D\uDE00\"\nCtrl+s\nShift+F2\nAlt+x\nType \"b\""), tape);
     }
 
     @Test

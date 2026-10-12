@@ -192,6 +192,8 @@ class AiPanel {
     // CLI-command-completion callback while the render thread iterates the list concurrently.
     private final List<ConversationEntry> conversation = new CopyOnWriteArrayList<>();
     private int scrollOffset;
+    // the rendered lines of the conversation in the last frame, to keep a scrolled-up view where it is
+    private int lastTotalLines;
 
     // LLM state
     private volatile LlmClient client;
@@ -846,7 +848,7 @@ class AiPanel {
             }
             return handled;
         }
-        if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
+        if (!lastArea.contains(me.x(), me.y())) {
             return false;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -928,7 +930,8 @@ class AiPanel {
         }
         if (ke.isKey(KeyCode.PAGE_UP)) {
             if (statsView) {
-                statsScrollOffset += 5;
+                // the usage view scrolls its model table from the top
+                statsScrollOffset = Math.max(0, statsScrollOffset - 5);
             } else {
                 scrollOffset += 5;
             }
@@ -936,7 +939,7 @@ class AiPanel {
         }
         if (ke.isKey(KeyCode.PAGE_DOWN)) {
             if (statsView) {
-                statsScrollOffset = Math.max(0, statsScrollOffset - 5);
+                statsScrollOffset += 5;
             } else {
                 scrollOffset = Math.max(0, scrollOffset - 5);
             }
@@ -980,13 +983,15 @@ class AiPanel {
             }
             return true;
         }
+        // the cursor moves and deletes a code point at a time, so an emoji (two chars) is not cut in half
         if (ke.isKey(KeyCode.BACKSPACE)) {
             if (cursorPos > 0) {
                 if (promptHistory != null) {
                     promptHistory.resetNavigation();
                 }
-                inputBuffer.deleteCharAt(cursorPos - 1);
-                cursorPos--;
+                int previous = inputBuffer.offsetByCodePoints(cursorPos, -1);
+                inputBuffer.delete(previous, cursorPos);
+                cursorPos = previous;
             }
             return true;
         }
@@ -995,19 +1000,19 @@ class AiPanel {
                 if (promptHistory != null) {
                     promptHistory.resetNavigation();
                 }
-                inputBuffer.deleteCharAt(cursorPos);
+                inputBuffer.delete(cursorPos, inputBuffer.offsetByCodePoints(cursorPos, 1));
             }
             return true;
         }
         if (ke.isKey(KeyCode.LEFT)) {
             if (cursorPos > 0) {
-                cursorPos--;
+                cursorPos = inputBuffer.offsetByCodePoints(cursorPos, -1);
             }
             return true;
         }
         if (ke.isKey(KeyCode.RIGHT)) {
             if (cursorPos < inputBuffer.length()) {
-                cursorPos++;
+                cursorPos = inputBuffer.offsetByCodePoints(cursorPos, 1);
             }
             return true;
         }
@@ -1023,12 +1028,13 @@ class AiPanel {
             handleTabCompletion(ke.hasShift());
             return true;
         }
-        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+        String typed = FormHelper.typedText(ke);
+        if (typed != null) {
             if (promptHistory != null) {
                 promptHistory.resetNavigation();
             }
-            inputBuffer.insert(cursorPos, ke.character());
-            cursorPos++;
+            inputBuffer.insert(cursorPos, typed);
+            cursorPos += typed.length();
             return true;
         }
         if (isGlobalShortcut(ke)) {
@@ -1094,13 +1100,14 @@ class AiPanel {
             if (searchTerm.isEmpty()) {
                 exitHistorySearch(false);
             } else {
-                searchTerm.deleteCharAt(searchTerm.length() - 1);
+                searchTerm.setLength(searchTerm.offsetByCodePoints(searchTerm.length(), -1));
                 performSearch(promptHistory.size() - 1);
             }
             return true;
         }
-        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
-            searchTerm.append(ke.character());
+        String typed = FormHelper.typedText(ke);
+        if (typed != null) {
+            searchTerm.append(typed);
             int from = searchIndex >= 0 ? searchIndex : promptHistory.size() - 1;
             performSearch(from);
             return true;
@@ -1157,7 +1164,8 @@ class AiPanel {
     /** Moves the cursor to the previous (-1) or next (1) line of the input; false when there is no such line. */
     private boolean moveCursorLine(int direction) {
         int start = lineStart(cursorPos);
-        int column = cursorPos - start;
+        // the column in code points, so the cursor does not land inside an emoji on the other line
+        int column = inputBuffer.codePointCount(start, cursorPos);
         int targetStart;
         if (direction < 0) {
             if (start == 0) {
@@ -1172,7 +1180,8 @@ class AiPanel {
             targetStart = end + 1;
         }
         int targetEnd = lineEnd(targetStart);
-        cursorPos = Math.min(targetStart + column, targetEnd);
+        cursorPos = inputBuffer.offsetByCodePoints(targetStart,
+                Math.min(column, inputBuffer.codePointCount(targetStart, targetEnd)));
         return true;
     }
 
@@ -1474,7 +1483,6 @@ class AiPanel {
             String displayText = cliResult != null ? cliResult.displayText() : "command";
             conversation.add(new ConversationEntry(
                     AiRole.ERROR, "Failed to run " + displayText + ": " + error.getMessage()));
-            scrollOffset = 0;
             return;
         }
 
@@ -1487,7 +1495,6 @@ class AiPanel {
                     AiRole.ERROR,
                     cliResult.displayText() + " exit code " + cliResult.exitCode() + "\n\n" + cliResult.output()));
         }
-        scrollOffset = 0;
     }
 
     private void interruptBusyOperation() {
@@ -1806,7 +1813,6 @@ class AiPanel {
             conversation.add(new ConversationEntry(AiRole.ERROR, err));
             log(LogLevel.ERROR, "Error", err);
         }
-        scrollOffset = 0;
         messages.add(LlmClient.Message.assistantWithToolCalls(text, List.of()));
         compactHistoryAfterTurn();
     }
@@ -2059,7 +2065,6 @@ class AiPanel {
             acpPreambleSent = true;
         }
         listener.finish(stopReason);
-        scrollOffset = 0;
     }
 
     /**
@@ -2226,7 +2231,6 @@ class AiPanel {
         public synchronized void onTextChunk(String chunk) {
             text.append(chunk);
             liveIndex = replaceOrAppend(liveIndex, new ConversationEntry(AiRole.ASSISTANT, text.toString()));
-            scrollOffset = 0;
         }
 
         @Override
@@ -2646,6 +2650,12 @@ class AiPanel {
 
         // scrollOffset=0 means auto-scroll to bottom (most recent content visible)
         // scrollOffset>0 means user scrolled up by that many lines
+        // A user who scrolled up keeps reading the same lines while an answer streams in below them: the offset from
+        // the bottom grows by the lines added since the last frame. At the bottom the view follows the new lines.
+        if (scrollOffset > 0 && lastTotalLines > 0 && totalLines > lastTotalLines) {
+            scrollOffset += totalLines - lastTotalLines;
+        }
+        lastTotalLines = totalLines;
         // Clamp so PgDn always has immediate effect after scrolling past the top
         int maxScrollOffset = Math.max(0, totalLines - contentArea.height());
         scrollOffset = Math.min(scrollOffset, maxScrollOffset);
@@ -2731,12 +2741,24 @@ class AiPanel {
             } else {
                 // ensure the cursor is visible by adjusting the text window of its line
                 int windowStart = cursorColumn > maxWidth - 1 ? cursorColumn - maxWidth + 1 : 0;
-                String visible = text.substring(windowStart, Math.min(text.length(), windowStart + maxWidth));
+                int windowEnd = Math.min(text.length(), windowStart + maxWidth);
+                // the window does not cut an emoji (two chars) in half
+                if (windowStart > 0 && windowStart < text.length() && Character.isLowSurrogate(text.charAt(windowStart))) {
+                    windowStart++;
+                }
+                if (windowEnd < text.length() && windowEnd > windowStart
+                        && Character.isHighSurrogate(text.charAt(windowEnd - 1))) {
+                    windowEnd--;
+                }
+                String visible = text.substring(windowStart, Math.max(windowStart, windowEnd));
                 int cursorInWindow = cursorColumn - windowStart;
                 if (cursorInWindow >= 0 && cursorInWindow < visible.length()) {
+                    // the whole character under the cursor, both chars of an emoji
+                    int cursorEnd = Math.min(visible.length(),
+                            cursorInWindow + Character.charCount(visible.codePointAt(cursorInWindow)));
                     spans.add(Span.raw(visible.substring(0, cursorInWindow)));
-                    spans.add(Span.styled(String.valueOf(visible.charAt(cursorInWindow)), Style.EMPTY.reversed()));
-                    spans.add(Span.raw(visible.substring(cursorInWindow + 1)));
+                    spans.add(Span.styled(visible.substring(cursorInWindow, cursorEnd), Style.EMPTY.reversed()));
+                    spans.add(Span.raw(visible.substring(cursorEnd)));
                 } else {
                     spans.add(Span.raw(visible));
                     if (cursorInWindow == visible.length()) {
@@ -3046,6 +3068,10 @@ class AiPanel {
                         Constraint.length(8),
                         Constraint.length(8))
                 .build();
+        // PgUp/PgDn scroll the models that do not fit below the header
+        int visibleModels = Math.max(0, tableArea.height() - 1);
+        statsScrollOffset = Math.max(0, Math.min(statsScrollOffset, rows.size() - visibleModels));
+        statsTableState.setOffset(statsScrollOffset);
         frame.renderStatefulWidget(table, tableArea, statsTableState);
 
         // --- Charts per question: tokens on the left, AI vs tool time on the right ---

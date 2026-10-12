@@ -38,7 +38,6 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
 /**
@@ -76,6 +75,7 @@ class PopupManager {
     private boolean showMorePopup;
     private final ListState morePopupState = new ListState();
     private final ScrollbarState moreScrollbarState = new ScrollbarState();
+    private final ScrollbarState switchScrollbarState = new ScrollbarState();
     private int lastMoreSelection;
     private char lastShortcutLetter;
     private int lastShortcutIndex = -1;
@@ -506,7 +506,7 @@ class PopupManager {
         if (lastMorePopupRect == null) {
             return false;
         }
-        boolean inside = TuiHelper.contains(lastMorePopupRect, me.x(), me.y());
+        boolean inside = lastMorePopupRect.contains(me.x(), me.y());
 
         if (me.isClick() && !inside) {
             showMorePopup = false;
@@ -516,8 +516,10 @@ class PopupManager {
             return true;
         }
         int total = moreVisualCount();
-        int itemIndex = me.y() - lastMorePopupRect.y() - 1;
-        if (itemIndex < 0 || itemIndex >= total) {
+        // below the top border, from the first item the scrolled list shows
+        int row = me.y() - lastMorePopupRect.y() - 1;
+        int itemIndex = morePopupState.offset() + row;
+        if (row < 0 || row >= lastMorePopupRect.height() - 2 || itemIndex >= total) {
             return true;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -551,7 +553,7 @@ class PopupManager {
             return false;
         }
         List<IntegrationInfo> switchList = nonVanishingIntegrationsSupplier.get();
-        boolean inside = TuiHelper.contains(lastSwitchPopupRect, me.x(), me.y());
+        boolean inside = lastSwitchPopupRect.contains(me.x(), me.y());
 
         if (me.isClick() && !inside) {
             showSwitchPopup = false;
@@ -560,8 +562,10 @@ class PopupManager {
         if (!inside) {
             return true;
         }
-        int itemIndex = me.y() - lastSwitchPopupRect.y() - 1; // -1 for top border
-        if (itemIndex < 0 || itemIndex >= switchList.size()) {
+        // below the top border, from the first integration the scrolled list shows
+        int row = me.y() - lastSwitchPopupRect.y() - 1;
+        int itemIndex = switchPopupState.offset() + row;
+        if (row < 0 || row >= lastSwitchPopupRect.height() - 2 || itemIndex >= switchList.size()) {
             return true;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {
@@ -629,16 +633,7 @@ class PopupManager {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, morePopupState);
-
-        int visibleRows = Math.max(1, popup.height() - 2);
-        if (itemCount > visibleRows) {
-            Integer sel = morePopupState.selected();
-            moreScrollbarState
-                    .contentLength(itemCount)
-                    .viewportContentLength(visibleRows)
-                    .position(sel != null ? sel : 0);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), popup, moreScrollbarState);
-        }
+        TuiHelper.renderListScrollbar(frame, popup, itemCount, morePopupState.offset(), moreScrollbarState);
     }
 
     private ListItem[] morePopupItems(Style keyStyle) {
@@ -740,13 +735,15 @@ class PopupManager {
                 .items(items)
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                // scrolls to the selection when not every integration fits
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Switch Integration ")
                         .build())
                 .build();
         frame.renderStatefulWidget(listWidget, popup, switchPopupState);
+        TuiHelper.renderListScrollbar(frame, popup, items.length, switchPopupState.offset(), switchScrollbarState);
     }
 
     void renderKillConfirm(Frame frame, Rect area) {

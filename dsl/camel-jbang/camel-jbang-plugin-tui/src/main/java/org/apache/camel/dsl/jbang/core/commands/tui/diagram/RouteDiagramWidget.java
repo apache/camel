@@ -26,6 +26,7 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.widget.Widget;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
@@ -201,8 +202,8 @@ public class RouteDiagramWidget implements Widget {
      */
     private String borderText(String name, boolean in) {
         String arrow = "──▶";
-        int room = boxWidth - 6 - arrow.length() - 3;
-        String n = name.length() > room ? name.substring(0, Math.max(1, room - 1)) + "…" : name;
+        int room = boxWidth - 6 - CharWidth.of(arrow) - 3;
+        String n = DiagramText.fit(name, room);
         return in ? " " + n + " " + arrow + " " : " " + arrow + " " + n + " ";
     }
 
@@ -226,19 +227,30 @@ public class RouteDiagramWidget implements Widget {
         if (y < area.top() || y >= area.bottom()) {
             return;
         }
-        for (int i = 0; i < m.text().length(); i++) {
-            int x = area.x() + m.col() - scrollX + i;
-            if (x >= area.right()) {
+        // a character at a time, by the columns it takes: an emoji or a CJK character two
+        String text = m.text();
+        int offset = 0;
+        for (int i = 0; i < text.length();) {
+            int cp = text.codePointAt(i);
+            int end = i + Character.charCount(cp);
+            // a combining mark goes with the character before it
+            while (end < text.length() && CharWidth.of(text.codePointAt(end)) == 0) {
+                end += Character.charCount(text.codePointAt(end));
+            }
+            int width = Math.max(1, CharWidth.of(cp));
+            int x = area.x() + m.col() - scrollX + offset;
+            if (x + width > area.right()) {
                 return;
             }
-            if (x < area.left()) {
-                continue;
+            if (x >= area.left()) {
+                if (inBox(m.row(), m.col() + offset) || width > 1 && inBox(m.row(), m.col() + offset + 1)) {
+                    // lines may be crossed, another box not
+                    return;
+                }
+                buffer.setString(x, y, text.substring(i, end), m.style());
             }
-            if (inBox(m.row(), m.col() + i)) {
-                // lines may be crossed, another box not
-                return;
-            }
-            buffer.setString(x, y, String.valueOf(m.text().charAt(i)), m.style());
+            offset += width;
+            i = end;
         }
     }
 
@@ -304,7 +316,7 @@ public class RouteDiagramWidget implements Widget {
         int cols = toCol(layoutRoute.maxX + PADDING) + boxWidth + 4;
         if (errorFrame != null) {
             for (String line : errorFrame.lines()) {
-                cols = Math.max(cols, line.length() + 6);
+                cols = Math.max(cols, CharWidth.of(line) + 6);
             }
         }
         return cols;
@@ -364,10 +376,10 @@ public class RouteDiagramWidget implements Widget {
             }
 
             String text = lines.get(i);
-            if (text.length() > innerWidth) {
-                text = text.substring(0, Math.max(1, innerWidth - 3)) + "...";
+            if (CharWidth.of(text) > innerWidth) {
+                text = CharWidth.substringByWidth(text, Math.max(1, innerWidth - 3)) + "...";
             }
-            int textCol = col + 2 + Math.max(0, (innerWidth - text.length()) / 2);
+            int textCol = col + 2 + Math.max(0, (innerWidth - CharWidth.of(text)) / 2);
 
             // First line: [type] tag with EIP color, rest: label text
             if (i == 0) {
@@ -406,7 +418,7 @@ public class RouteDiagramWidget implements Widget {
             } else if (system != null && linkedRouteId == null) {
                 // no route of the integration on the other side: the message leaves to a system
                 String out = borderText(system, false);
-                writeText(buffer, area, bottom, col + boxWidth - 1 - out.length(), out, edgeStyle);
+                writeText(buffer, area, bottom, col + boxWidth - 1 - CharWidth.of(out), out, edgeStyle);
             }
         }
 
@@ -619,8 +631,8 @@ public class RouteDiagramWidget implements Widget {
             }
         }
         String header = " " + tableHeader(table) + " ";
-        if (header.length() > width - 4) {
-            header = header.substring(0, Math.max(1, width - 5)) + "… ";
+        if (CharWidth.of(header) > width - 4) {
+            header = DiagramText.fit(header, Math.max(1, width - 5)) + " ";
         }
         writeText(buffer, area, row, col + 2, header, style(Style.EMPTY.fg(eipColor).bold(), selected));
         // the table itself: its top border, so a click on a row selects the row
@@ -629,7 +641,7 @@ public class RouteDiagramWidget implements Widget {
         int inner = width - 4;
         int valueWidth = 4;
         for (TreeNode r : rows) {
-            valueWidth = Math.max(valueWidth, caseValue(r).length());
+            valueWidth = Math.max(valueWidth, CharWidth.of(caseValue(r)));
         }
         valueWidth = Math.min(valueWidth, Math.max(4, inner / 3));
         for (int i = 0; i < rows.size(); i++) {
@@ -652,14 +664,10 @@ public class RouteDiagramWidget implements Widget {
             String link = findLinkedRouteId(rowNode) != null ? "↵ " : "";
             String target = withoutOptions(caseTarget(rows.get(i)));
             String value = caseValue(rows.get(i));
-            if (value.length() > valueWidth) {
-                value = value.substring(0, Math.max(1, valueWidth - 1)) + "…";
-            }
+            value = DiagramText.fit(value, valueWidth);
             String tail = link + count;
-            int targetRoom = Math.max(1, inner - valueWidth - 3 - tail.length() - 1);
-            if (target.length() > targetRoom) {
-                target = target.substring(0, Math.max(1, targetRoom - 1)) + "…";
-            }
+            int targetRoom = Math.max(1, inner - valueWidth - 3 - CharWidth.of(tail) - 1);
+            target = DiagramText.fit(target, targetRoom);
 
             Style base = rowSelected ? selectionStyle() : Style.EMPTY;
             for (int c = col + 1; c < right; c++) {
@@ -671,12 +679,12 @@ public class RouteDiagramWidget implements Widget {
             // idle when its counter says so; a row without one (no statistics) is not dimmed
             boolean idle = stat != null && total == 0 && !highlighted;
             Style targetStyle = idle ? Theme.muted() : fromLabelStyle();
-            writeText(buffer, area, r, col + 2, String.format("%-" + valueWidth + "s", value),
+            writeText(buffer, area, r, col + 2, value + " ".repeat(Math.max(0, valueWidth - CharWidth.of(value))),
                     style(valueStyle, rowSelected));
             writeText(buffer, area, r, col + 2 + valueWidth, " → ", style(Theme.muted(), rowSelected));
             writeText(buffer, area, r, col + 5 + valueWidth, target, style(targetStyle, rowSelected));
             if (!tail.isEmpty()) {
-                writeText(buffer, area, r, right - 1 - tail.length(), tail,
+                writeText(buffer, area, r, right - 1 - CharWidth.of(tail), tail,
                         style(link.isEmpty() ? metricsOkStyle() : Theme.label().bold(), rowSelected));
             }
             nodeBoxes.add(new EipNodeBox(rowNode.id, rowNode.type, r, r, col, right, rowNode));
@@ -757,43 +765,7 @@ public class RouteDiagramWidget implements Widget {
     }
 
     static List<String> wrapText(String text, int maxWidth) {
-        if (maxWidth <= 0 || text.length() <= maxWidth) {
-            return new ArrayList<>(List.of(text));
-        }
-
-        List<String> lines = new ArrayList<>();
-        String remaining = text;
-
-        while (!remaining.isEmpty() && lines.size() < MAX_WRAP_LINES) {
-            if (remaining.length() <= maxWidth) {
-                lines.add(remaining);
-                remaining = "";
-                break;
-            }
-
-            int breakAt = -1;
-            for (int i = 0; i < maxWidth && i < remaining.length(); i++) {
-                char c = remaining.charAt(i);
-                if (c == ' ' || c == ':' || c == '/' || c == '.' || c == ',' || c == '&' || c == '?') {
-                    breakAt = i + 1;
-                }
-            }
-            if (breakAt <= 0) {
-                breakAt = maxWidth;
-            }
-
-            lines.add(remaining.substring(0, breakAt).stripTrailing());
-            remaining = remaining.substring(breakAt).stripLeading();
-        }
-
-        if (!remaining.isEmpty()) {
-            int lastIdx = lines.size() - 1;
-            String lastLine = lines.get(lastIdx);
-            String combined = lastLine + remaining;
-            lines.set(lastIdx, combined.substring(0, Math.max(1, maxWidth - 3)) + "...");
-        }
-
-        return lines;
+        return DiagramText.wrap(text, maxWidth, MAX_WRAP_LINES);
     }
 
     private void setChar(Buffer buffer, Rect area, int gridRow, int gridCol, char ch, Style style) {
@@ -805,20 +777,7 @@ public class RouteDiagramWidget implements Widget {
     }
 
     private void writeText(Buffer buffer, Rect area, int gridRow, int gridCol, String text, Style style) {
-        int x = area.x() + gridCol - scrollX;
-        int y = area.y() + gridRow - scrollY;
-        if (y >= area.top() && y < area.bottom() && x < area.right()) {
-            int startIdx = 0;
-            if (x < area.left()) {
-                startIdx = area.left() - x;
-                x = area.left();
-            }
-            if (startIdx < text.length()) {
-                int maxLen = area.right() - x;
-                String visible = text.substring(startIdx, Math.min(text.length(), startIdx + maxLen));
-                buffer.setString(x, y, visible, style);
-            }
-        }
+        DiagramText.write(buffer, area, area.x() + gridCol - scrollX, area.y() + gridRow - scrollY, text, style);
     }
 
     private Style style(Style base, boolean selected) {

@@ -261,14 +261,16 @@ class SearchHighlighter {
     void renderFooterHints(List<Span> spans) {
         if (findInputActive) {
             spans.add(Span.styled(" /", Theme.hintKey()));
-            spans.add(Span.raw(searchInputState.text() + "█  "));
+            FormHelper.addCaretField(spans, searchInputState);
+            spans.add(Span.raw("  "));
             hint(spans, "Enter", "search");
             hintLast(spans, "Esc", "cancel");
             return;
         }
         if (highlightInputActive) {
             spans.add(Span.styled(" h:", Theme.hintKey()));
-            spans.add(Span.raw(searchInputState.text() + "█  "));
+            FormHelper.addCaretField(spans, searchInputState);
+            spans.add(Span.raw("  "));
             hint(spans, "Enter", "set");
             hintLast(spans, "Esc", "cancel");
             return;

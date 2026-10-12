@@ -246,10 +246,10 @@ class FileActionsPopup {
             inputState.moveCursorToStart();
         } else if (ke.isEnd()) {
             inputState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            char ch = ke.string().charAt(0);
-            if (ch >= 0x20 && ch != 0x7F) {
-                inputState.insert(ch);
+        } else {
+            String typed = FormHelper.typedText(ke);
+            if (typed != null) {
+                inputState.insert(typed);
             }
         }
         return true;

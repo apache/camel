@@ -30,10 +30,14 @@ import java.util.function.Function;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
+import dev.tamboui.style.Modifier;
 import dev.tamboui.style.Style;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.widgets.scrollbar.Scrollbar;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.support.PatternHelper;
@@ -253,8 +257,8 @@ final class TuiHelper {
     }
 
     /**
-     * Strip ANSI escape sequences and carriage returns from a log line. Handles CSI sequences (\e[...finalChar where
-     * finalChar is any char in @-~), 2-char Fe/Fp escape sequences, and \r.
+     * Strip ANSI escape sequences and carriage returns from a log line, and expand tabs. All of an escape sequence is
+     * dropped (see {@link #escapeEnd}), so the text of a window title or a hyperlink target does not show.
      */
     static String stripAnsi(String line) {
         if (line == null || line.isEmpty()) {
@@ -267,21 +271,8 @@ final class TuiHelper {
         int i = 0;
         while (i < line.length()) {
             char ch = line.charAt(i);
-            if (ch == '\u001B' && i + 1 < line.length()) {
-                char next = line.charAt(i + 1);
-                if (next == '[') {
-                    // CSI sequence: \e[ + params/intermediates + final byte (any char @-~)
-                    i += 2;
-                    while (i < line.length() && (line.charAt(i) < '@' || line.charAt(i) > '~')) {
-                        i++;
-                    }
-                    i++; // skip the final byte
-                } else if (next >= '@' && next <= '_') {
-                    // 2-char Fe/Fp escape sequence (e.g. \eM, \e7, \e8)
-                    i += 2;
-                } else {
-                    i++; // unrecognised, skip just the ESC
-                }
+            if (ch == '\u001B') {
+                i = escapeEnd(line, i);
             } else if (ch == '\r') {
                 i++;
             } else if (ch == '\t') {
@@ -296,9 +287,68 @@ final class TuiHelper {
     }
 
     /**
+     * The index just past the escape sequence that starts with the ESC at {@code start}:
+     * <ul>
+     * <li>a CSI sequence, ESC [ up to its final byte (colors are ESC [ ... m);</li>
+     * <li>an OSC string such as a window title or a hyperlink, ESC ] up to BEL or ESC \;</li>
+     * <li>a DCS, SOS, PM or APC string, ESC P, X, ^ or _ up to ESC \;</li>
+     * <li>an escape with intermediate bytes, such as ESC ( B, up to its final byte;</li>
+     * <li>any other escape, ESC and one character.</li>
+     * </ul>
+     * A string that is not terminated runs to the end of the text, a sequence cut off by the next ESC ends there, and
+     * an ESC that starts no sequence is dropped on its own.
+     */
+    static int escapeEnd(String s, int start) {
+        int n = s.length();
+        if (start + 1 >= n) {
+            return n;
+        }
+        char next = s.charAt(start + 1);
+        int i = start + 2;
+        switch (next) {
+            case '[' -> {
+                while (i < n) {
+                    char c = s.charAt(i);
+                    if (c >= '@' && c <= '~') {
+                        return i + 1;
+                    }
+                    if (c == '\u001B') {
+                        return i;
+                    }
+                    i++;
+                }
+                return n;
+            }
+            case ']', 'P', 'X', '^', '_' -> {
+                while (i < n) {
+                    char c = s.charAt(i);
+                    if (c == '\u0007' && next == ']') {
+                        return i + 1;
+                    }
+                    if (c == '\u001B' && i + 1 < n && s.charAt(i + 1) == '\\') {
+                        return i + 2;
+                    }
+                    i++;
+                }
+                return n;
+            }
+            default -> {
+                if (next >= ' ' && next <= '/') {
+                    while (i < n && s.charAt(i) >= ' ' && s.charAt(i) <= '/') {
+                        i++;
+                    }
+                    return Math.min(n, i + 1);
+                }
+                return next >= '0' && next <= '~' ? start + 2 : start + 1;
+            }
+        }
+    }
+
+    /**
      * Parse a raw log line (which may contain ANSI SGR color codes) into a TamboUI {@link Line} of styled
      * {@link Span}s, skipping the first {@code hSkip} display-width columns (for horizontal scrolling). Color state is
-     * tracked through the skipped region so colors that start before the visible area still apply correctly.
+     * tracked through the skipped region so colors that start before the visible area still apply correctly. Other
+     * escape sequences are dropped (see {@link #escapeEnd}).
      */
     static Line ansiToLine(String raw, int hSkip) {
         if (raw == null || raw.isEmpty()) {
@@ -311,28 +361,16 @@ final class TuiHelper {
         int i = 0;
         while (i < raw.length()) {
             char ch = raw.charAt(i);
-            if (ch == '\u001B' && i + 1 < raw.length()) {
-                char next = raw.charAt(i + 1);
-                if (next == '[') {
-                    i += 2;
-                    int seqStart = i;
-                    while (i < raw.length() && (raw.charAt(i) < '@' || raw.charAt(i) > '~')) {
-                        i++;
+            if (ch == '\u001B') {
+                int end = escapeEnd(raw, i);
+                if (isSgr(raw, i, end)) {
+                    if (text.length() > 0) {
+                        spans.add(Span.styled(text.toString(), style));
+                        text.setLength(0);
                     }
-                    char finalByte = i < raw.length() ? raw.charAt(i) : 0;
-                    i++;
-                    if (finalByte == 'm') {
-                        if (text.length() > 0) {
-                            spans.add(Span.styled(text.toString(), style));
-                            text.setLength(0);
-                        }
-                        style = applySgr(style, raw.substring(seqStart, i - 1));
-                    }
-                } else if (next >= '@' && next <= '_') {
-                    i += 2;
-                } else {
-                    i++;
+                    style = applySgr(style, raw.substring(i + 2, end - 1));
                 }
+                i = end;
             } else if (ch == '\r') {
                 i++;
             } else {
@@ -359,6 +397,49 @@ final class TuiHelper {
         return Line.from(spans);
     }
 
+    /**
+     * The line without its first {@code columns} display columns, for horizontal scrolling, keeping the style of each
+     * span. A wide character cut by the edge is left out.
+     */
+    static Line skipColumns(Line line, int columns) {
+        if (columns <= 0) {
+            return line;
+        }
+        List<Span> result = new ArrayList<>();
+        int skip = columns;
+        for (Span span : line.spans()) {
+            if (skip <= 0) {
+                result.add(span);
+                continue;
+            }
+            String text = span.content();
+            int spanWidth = CharWidth.of(text);
+            if (spanWidth <= skip) {
+                skip -= spanWidth;
+            } else {
+                int i = 0;
+                int consumed = 0;
+                while (i < text.length() && consumed < skip) {
+                    int cp = text.codePointAt(i);
+                    consumed += CharWidth.of(cp);
+                    i += Character.charCount(cp);
+                }
+                skip = 0;
+                String remaining = text.substring(i);
+                if (!remaining.isEmpty()) {
+                    result.add(Span.styled(remaining, span.style()));
+                }
+            }
+        }
+        return Line.from(result);
+    }
+
+    /** Whether the escape sequence from start to end is an SGR one, ESC [ params m, and not a private CSI ... m. */
+    private static boolean isSgr(String s, int start, int end) {
+        return end - start >= 3 && s.charAt(start + 1) == '[' && s.charAt(end - 1) == 'm'
+                && (end - start == 3 || "<=>?".indexOf(s.charAt(start + 2)) < 0);
+    }
+
     private static Style applySgr(Style style, String params) {
         if (params.isEmpty()) {
             return Style.EMPTY;
@@ -366,6 +447,12 @@ final class TuiHelper {
         String[] parts = params.split(";", -1);
         int j = 0;
         while (j < parts.length) {
+            if (parts[j].indexOf(':') >= 0) {
+                // the ITU T.416 form, with the color in sub-parameters: 38:2::r:g:b, 38:5:n, 4:3 (curly underline)
+                style = applySgrSubParameters(style, parts[j].split(":", -1));
+                j++;
+                continue;
+            }
             int code;
             try {
                 code = parts[j].isEmpty() ? 0 : Integer.parseInt(parts[j]);
@@ -379,9 +466,18 @@ final class TuiHelper {
                 case 2 -> style = style.dim();
                 case 3 -> style = style.italic();
                 case 4 -> style = style.underlined();
+                case 5 -> style = style.slowBlink();
+                case 6 -> style = style.rapidBlink();
+                case 7 -> style = style.reversed();
+                case 8 -> style = style.hidden();
+                case 9 -> style = style.crossedOut();
                 case 22 -> style = style.notBold().notDim();
                 case 23 -> style = style.notItalic();
                 case 24 -> style = style.notUnderlined();
+                case 25 -> style = style.removeModifier(Modifier.SLOW_BLINK).removeModifier(Modifier.RAPID_BLINK);
+                case 27 -> style = style.notReversed();
+                case 28 -> style = style.notHidden();
+                case 29 -> style = style.notCrossedOut();
                 case 30 -> style = style.fg(Color.ansi(AnsiColor.BLACK));
                 case 31 -> style = style.fg(Color.ansi(AnsiColor.RED));
                 case 32 -> style = style.fg(Color.ansi(AnsiColor.GREEN));
@@ -390,22 +486,17 @@ final class TuiHelper {
                 case 35 -> style = style.fg(Color.ansi(AnsiColor.MAGENTA));
                 case 36 -> style = style.fg(Color.ansi(AnsiColor.CYAN));
                 case 37 -> style = style.fg(Color.ansi(AnsiColor.WHITE));
-                case 38 -> {
+                case 38, 48 -> {
+                    Color color = null;
                     if (j + 2 < parts.length && "5".equals(parts[j + 1])) {
-                        try {
-                            style = style.fg(Color.indexed(Integer.parseInt(parts[j + 2])));
-                            j += 2;
-                        } catch (NumberFormatException e) {
-                            /* skip */ }
+                        color = indexedColor(parts[j + 2]);
+                        j += 2;
                     } else if (j + 4 < parts.length && "2".equals(parts[j + 1])) {
-                        try {
-                            style = style.fg(Color.rgb(
-                                    Integer.parseInt(parts[j + 2]),
-                                    Integer.parseInt(parts[j + 3]),
-                                    Integer.parseInt(parts[j + 4])));
-                            j += 4;
-                        } catch (NumberFormatException e) {
-                            /* skip */ }
+                        color = rgbColor(parts[j + 2], parts[j + 3], parts[j + 4]);
+                        j += 4;
+                    }
+                    if (color != null) {
+                        style = code == 38 ? style.fg(color) : style.bg(color);
                     }
                 }
                 case 39 -> style = style.fg(Color.RESET);
@@ -417,24 +508,6 @@ final class TuiHelper {
                 case 45 -> style = style.bg(Color.ansi(AnsiColor.MAGENTA));
                 case 46 -> style = style.bg(Color.ansi(AnsiColor.CYAN));
                 case 47 -> style = style.bg(Color.ansi(AnsiColor.WHITE));
-                case 48 -> {
-                    if (j + 2 < parts.length && "5".equals(parts[j + 1])) {
-                        try {
-                            style = style.bg(Color.indexed(Integer.parseInt(parts[j + 2])));
-                            j += 2;
-                        } catch (NumberFormatException e) {
-                            /* skip */ }
-                    } else if (j + 4 < parts.length && "2".equals(parts[j + 1])) {
-                        try {
-                            style = style.bg(Color.rgb(
-                                    Integer.parseInt(parts[j + 2]),
-                                    Integer.parseInt(parts[j + 3]),
-                                    Integer.parseInt(parts[j + 4])));
-                            j += 4;
-                        } catch (NumberFormatException e) {
-                            /* skip */ }
-                    }
-                }
                 case 49 -> style = style.bg(Color.RESET);
                 case 90 -> style = style.fg(Color.ansi(AnsiColor.BRIGHT_BLACK));
                 case 91 -> style = style.fg(Color.ansi(AnsiColor.BRIGHT_RED));
@@ -458,6 +531,50 @@ final class TuiHelper {
             j++;
         }
         return style;
+    }
+
+    private static Style applySgrSubParameters(Style style, String[] sub) {
+        switch (sub[0]) {
+            case "38", "48" -> {
+                Color color = null;
+                if (sub.length >= 3 && "5".equals(sub[1])) {
+                    color = indexedColor(sub[2]);
+                } else if (sub.length >= 6 && "2".equals(sub[1])) {
+                    // 38:2:<color space id>:r:g:b
+                    color = rgbColor(sub[3], sub[4], sub[5]);
+                } else if (sub.length == 5 && "2".equals(sub[1])) {
+                    // 38:2:r:g:b, as some terminals write it
+                    color = rgbColor(sub[2], sub[3], sub[4]);
+                }
+                if (color != null) {
+                    style = "38".equals(sub[0]) ? style.fg(color) : style.bg(color);
+                }
+            }
+            case "4" -> style = "0".equals(sub[1]) ? style.notUnderlined() : style.underlined();
+            default -> {
+                if (!sub[0].isEmpty()) {
+                    style = applySgr(style, sub[0]);
+                }
+            }
+        }
+        return style;
+    }
+
+    private static Color indexedColor(String index) {
+        try {
+            int n = Integer.parseInt(index);
+            return n >= 0 && n <= 255 ? Color.indexed(n) : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private static Color rgbColor(String r, String g, String b) {
+        try {
+            return Color.rgb(Integer.parseInt(r), Integer.parseInt(g), Integer.parseInt(b));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     static final Style[] DURATION_BAND_STYLES = {
@@ -513,12 +630,6 @@ final class TuiHelper {
             }
         }
         return Line.from(spans);
-    }
-
-    static boolean contains(Rect rect, int x, int y) {
-        return rect != null
-                && x >= rect.x() && x < rect.x() + rect.width()
-                && y >= rect.y() && y < rect.y() + rect.height();
     }
 
     static int compareStr(String a, String b) {
@@ -1007,6 +1118,76 @@ final class TuiHelper {
         return false;
     }
 
+    /**
+     * Draws the scrollbar of a bordered list on its right border, between the corners, when its rows do not fit: at the
+     * list's scroll position, its offset after the render, and not at its selection.
+     *
+     * @param area   the list with its border
+     * @param rows   the rows of all items
+     * @param offset the rows the list is scrolled by
+     */
+    static void renderListScrollbar(Frame frame, Rect area, int rows, int offset, ScrollbarState state) {
+        int visibleRows = area.height() - 2;
+        if (visibleRows <= 0 || rows <= visibleRows) {
+            return;
+        }
+        Rect track = new Rect(area.x() + area.width() - 1, area.y() + 1, 1, visibleRows);
+        state.contentLength(rows).viewportContentLength(visibleRows).position(offset);
+        frame.renderStatefulWidget(Scrollbar.builder().build(), track, state);
+    }
+
+    /**
+     * The item of a TamboUI list at a row of its area, or -1. The offset of a {@code ListState} counts rows, not items,
+     * and an item that starts above the area shows its lower rows at the top, so the items are walked by their heights.
+     *
+     * @param row     the row in the list area, 0 for its first row
+     * @param offset  the list's offset after the last render
+     * @param heights the rows each item takes
+     */
+    static int listItemAtRow(int row, int offset, int[] heights) {
+        if (row < 0) {
+            return -1;
+        }
+        int target = offset + row;
+        int top = 0;
+        for (int i = 0; i < heights.length; i++) {
+            top += heights[i];
+            if (target < top) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * The row of a TamboUI table at a line of its data area (below the header), or -1. The offset of a
+     * {@code TableState} counts lines, not rows, and the table draws the first row that ends below the offset in full
+     * at the top of the area.
+     *
+     * @param line    the line in the data area, 0 for its first line
+     * @param offset  the table's offset after the last render
+     * @param heights the lines each row takes
+     */
+    static int tableRowAtLine(int line, int offset, int[] heights) {
+        if (line < 0) {
+            return -1;
+        }
+        int first = 0;
+        int end = 0;
+        while (first < heights.length && end + heights[first] <= offset) {
+            end += heights[first];
+            first++;
+        }
+        int top = 0;
+        for (int i = first; i < heights.length; i++) {
+            top += heights[i];
+            if (line < top) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     static int listItemAt(Rect popup, int offset, int itemCount, int mouseX, int mouseY) {
         if (popup == null) {
             return -1;
@@ -1025,18 +1206,24 @@ final class TuiHelper {
         return idx >= 0 && idx < itemCount ? idx : -1;
     }
 
+    /** Words onto lines of at most the display width; a longer word gets a line of its own. */
     static List<String> wrapWords(String text, int maxWidth) {
         List<String> lines = new ArrayList<>();
         StringBuilder line = new StringBuilder();
+        int lineWidth = 0;
         for (String word : text.split(" ")) {
+            int wordWidth = CharWidth.of(word);
             if (line.isEmpty()) {
                 line.append(word);
-            } else if (line.length() + 1 + word.length() <= maxWidth) {
+                lineWidth = wordWidth;
+            } else if (lineWidth + 1 + wordWidth <= maxWidth) {
                 line.append(' ').append(word);
+                lineWidth += 1 + wordWidth;
             } else {
                 lines.add(line.toString());
                 line.setLength(0);
                 line.append(word);
+                lineWidth = wordWidth;
             }
         }
         if (!line.isEmpty()) {

@@ -92,4 +92,47 @@ class SourceEditorNavigationTest {
         SourceEditorNavigation.smartHome(state, true);
         assertThat(state.cursorCol()).isZero();
     }
+
+    @Test
+    void positionCursorCountsAnEmojiAsTheCharsItTakes() {
+        // the emoji is two chars, and TamboUI moves over it in one step
+        TextAreaState emoji = new TextAreaState("a\uD83D\uDE00bc\nnext");
+
+        SourceEditorNavigation.positionCursor(emoji, 0, 4);
+        assertThat(emoji.cursorRow()).isZero();
+        assertThat(emoji.cursorCol()).isEqualTo(4);
+
+        // the end of the line, not the start of the next one
+        SourceEditorNavigation.positionCursor(emoji, 0, 5);
+        assertThat(emoji.cursorRow()).isZero();
+        assertThat(emoji.cursorCol()).isEqualTo(5);
+
+        // inside the emoji: at its start
+        SourceEditorNavigation.positionCursor(emoji, 0, 2);
+        assertThat(emoji.cursorCol()).isEqualTo(1);
+    }
+
+    @Test
+    void clearLineLeavesTheNextLine() {
+        TextAreaState emoji = new TextAreaState("say \uD83D\uDE00 e\u0301\nnext");
+        SourceEditorNavigation.positionCursor(emoji, 0, 3);
+
+        SourceEditorNavigation.clearLine(emoji);
+
+        assertThat(emoji.text()).isEqualTo("\nnext");
+        assertThat(emoji.cursorRow()).isZero();
+    }
+
+    @Test
+    void deleteBackAndForwardStopAtTheColumn() {
+        TextAreaState emoji = new TextAreaState("ab\uD83D\uDE00cd\uD83D\uDE00ef\nnext");
+        SourceEditorNavigation.positionCursor(emoji, 0, 6);
+
+        SourceEditorNavigation.deleteBackTo(emoji, 2);
+        assertThat(emoji.getLine(0)).isEqualTo("ab\uD83D\uDE00ef");
+        assertThat(emoji.cursorCol()).isEqualTo(2);
+
+        SourceEditorNavigation.deleteForwardTo(emoji, 20);
+        assertThat(emoji.text()).isEqualTo("ab\nnext");
+    }
 }

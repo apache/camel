@@ -312,6 +312,36 @@ class SourceViewerEditTest {
     }
 
     @Test
+    void markdownScrollStaysWithinTheDocument() throws Exception {
+        StringBuilder text = new StringBuilder("# Notes\n\n");
+        for (int i = 1; i <= 60; i++) {
+            text.append("Paragraph ").append(i).append("\n\n");
+        }
+        Path md = tempDir.resolve("long.md");
+        Files.writeString(md, text, StandardCharsets.UTF_8);
+        viewer.loadFile(md);
+        Rect area = new Rect(0, 0, 80, 20);
+
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.END, KeyModifiers.NONE));
+        assertThat(renderViewer(area)).contains("Paragraph 60");
+
+        // Down at the end stays at the end, it does not wrap to the top
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        String atEnd = renderViewer(area);
+        assertThat(atEnd).contains("Paragraph 60").doesNotContain("# Notes");
+
+        // PgUp after End moves up at once
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.PAGE_UP, KeyModifiers.NONE));
+        assertThat(renderViewer(area)).doesNotContain("Paragraph 60");
+    }
+
+    private String renderViewer(Rect area) {
+        Buffer buffer = Buffer.empty(area);
+        viewer.render(Frame.forTesting(buffer), area);
+        return TuiTestHelper.bufferToString(buffer);
+    }
+
+    @Test
     void cancelEditViaPublicApi() {
         viewer.loadFile(sourceFile);
         viewer.enterEditMode();

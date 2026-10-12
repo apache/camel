@@ -57,7 +57,6 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.RouteDslConverter;
 import org.apache.camel.dsl.jbang.core.commands.ai.KameletChecks;
@@ -313,7 +312,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
-        if (leftArea != null && TuiHelper.contains(leftArea, me.x(), me.y())) {
+        if (leftArea != null && leftArea.contains(me.x(), me.y())) {
             focusOnViewer = false;
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 listState.selectPrevious();
@@ -335,7 +334,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
-        if (rightArea != null && TuiHelper.contains(rightArea, me.x(), me.y())) {
+        if (rightArea != null && rightArea.contains(me.x(), me.y())) {
             if (sourceViewer.isVisible()) {
                 focusOnViewer = true;
                 return sourceViewer.handleMouseEvent(me);
@@ -1054,19 +1053,7 @@ class SourceTab extends AbstractTab {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, area, listState);
-
-        int visibleRows = area.height() - 2;
-        if (entries.size() > visibleRows) {
-            Rect scrollRect = new Rect(
-                    area.x() + area.width() - 1,
-                    area.y() + 1,
-                    1,
-                    visibleRows);
-            listScrollState.contentLength(entries.size());
-            listScrollState.viewportContentLength(visibleRows);
-            listScrollState.position(listState.offset());
-            frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, listScrollState);
-        }
+        TuiHelper.renderListScrollbar(frame, area, entries.size(), listState.offset(), listScrollState);
     }
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

@@ -41,6 +41,7 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
+import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.util.json.JsonObject;
 
@@ -112,6 +113,8 @@ class ActionsPopup {
     private int savedMainSelection;
     // Absolute bounds of the single-line list popups captured during render, used to hit-test clicks.
     private Rect actionsMenuRect;
+    // the menus scroll to the selection when a short terminal cannot show every item
+    private final ScrollbarState menuScrollbarState = new ScrollbarState();
 
     private final GotoTabPopup gotoTabPopup = new GotoTabPopup();
     private final ThemePopup themePopup = new ThemePopup();
@@ -1041,13 +1044,14 @@ class ActionsPopup {
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Actions ")
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, actionsMenuState);
+        TuiHelper.renderListScrollbar(frame, popup, items.size(), actionsMenuState.offset(), menuScrollbarState);
     }
 
     private void renderScreenSubmenu(Frame frame, Rect area) {
@@ -1084,13 +1088,14 @@ class ActionsPopup {
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Screen ")
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, actionsMenuState);
+        TuiHelper.renderListScrollbar(frame, popup, items.size(), actionsMenuState.offset(), menuScrollbarState);
     }
 
     private void renderMcpSubmenu(Frame frame, Rect area) {
@@ -1121,13 +1126,14 @@ class ActionsPopup {
                 .items(items.toArray(ListItem[]::new))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSymbol("")
-                .scrollMode(ScrollMode.NONE)
+                .scrollMode(ScrollMode.AUTO_SCROLL)
                 .block(Block.builder()
                         .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(title)
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, actionsMenuState);
+        TuiHelper.renderListScrollbar(frame, popup, items.size(), actionsMenuState.offset(), menuScrollbarState);
     }
 
     private boolean hasMultipleIntegrations() {
