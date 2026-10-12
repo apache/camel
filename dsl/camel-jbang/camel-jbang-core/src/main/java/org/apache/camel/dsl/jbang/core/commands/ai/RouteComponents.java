@@ -74,6 +74,12 @@ public final class RouteComponents {
 
     /**
      * The given components the route uses (as {@link #of(String, String, CamelCatalog)}), in the order they are given.
+     *
+     * @param  content    the route source: YAML, XML or Java DSL
+     * @param  format     yaml, xml or java; null or blank to tell from the content
+     * @param  catalog    the catalog the components are looked up in
+     * @param  components the names of the components to look for, not null
+     * @return            the names of the given components the route uses
      */
     public static List<String> of(String content, String format, CamelCatalog catalog, List<String> components) {
         List<String> used = of(content, format, catalog);
