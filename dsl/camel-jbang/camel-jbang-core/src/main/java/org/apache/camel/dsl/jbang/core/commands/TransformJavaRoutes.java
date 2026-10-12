@@ -182,7 +182,7 @@ public final class TransformJavaRoutes {
         if (node.getLocation() == null) {
             node.setLocation(location);
         }
-        if (node instanceof RouteDefinition route && route.getInput() != null) {
+        if (node instanceof RouteDefinition route && route.getInput() != null && route.getInput().getLocation() == null) {
             route.getInput().setLocation(location);
         }
         List<? extends NamedNode> children = node.getChildren();
