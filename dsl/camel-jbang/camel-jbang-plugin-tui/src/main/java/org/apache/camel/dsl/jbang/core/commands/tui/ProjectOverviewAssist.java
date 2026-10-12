@@ -181,9 +181,9 @@ final class ProjectOverviewAssist {
 
     /** Waits until {@code idle} holds, checking a few times a second; false when it never did in time. */
     static boolean awaitIdle(BooleanSupplier idle, long maxWaitMs) {
-        long until = System.currentTimeMillis() + maxWaitMs;
+        long until = MonotonicClock.millis() + maxWaitMs;
         while (!idle.getAsBoolean()) {
-            if (System.currentTimeMillis() >= until) {
+            if (MonotonicClock.millis() >= until) {
                 return false;
             }
             try {

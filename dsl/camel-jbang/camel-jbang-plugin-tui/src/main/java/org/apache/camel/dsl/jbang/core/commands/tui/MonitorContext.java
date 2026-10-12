@@ -202,7 +202,7 @@ class MonitorContext {
         Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
         synchronized (lock) {
             CachedAnswer cached = jvmInfo.get(pid);
-            long now = System.currentTimeMillis();
+            long now = MonotonicClock.millis();
             if (cached != null && now - cached.time() < JVM_INFO_TTL_MS) {
                 return cached.answer();
             }

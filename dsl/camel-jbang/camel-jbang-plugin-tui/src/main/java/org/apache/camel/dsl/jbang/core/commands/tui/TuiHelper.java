@@ -546,8 +546,8 @@ final class TuiHelper {
     };
 
     static JsonObject pollJsonResponse(Path outputFile, long timeout) {
-        long start = System.currentTimeMillis();
-        while (System.currentTimeMillis() - start < timeout) {
+        long start = MonotonicClock.millis();
+        while (MonotonicClock.millis() - start < timeout) {
             try {
                 Thread.sleep(100);
                 if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {

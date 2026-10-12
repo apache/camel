@@ -1542,7 +1542,7 @@ final class SourceEditAssist {
             return List.of();
         }
 
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (placeholderCache != null && rootDir.equals(placeholderCacheDir) && (now - placeholderCacheTime) < 5000) {
             return placeholderCache;
         }
@@ -1950,7 +1950,7 @@ final class SourceEditAssist {
 
     /** The Java sources of the project, for the constants a route refers to in another class; kept for a while. */
     private Map<String, Supplier<String>> javaSources() {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (javaSourcesCache == null || now - javaSourcesCacheTime > JAVA_SOURCES_TTL_MS
                 || !Objects.equals(javaSourcesCacheDir, rootDir)) {
             javaSourcesCache = RouteAssist.javaSources(rootDir);

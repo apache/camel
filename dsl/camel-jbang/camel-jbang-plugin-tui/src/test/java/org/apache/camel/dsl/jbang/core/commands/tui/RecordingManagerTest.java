@@ -193,7 +193,7 @@ class RecordingManagerTest {
         assertFalse(manager.getRecentKeys().isEmpty());
 
         // Tick with a time far in the future to expire all entries
-        manager.tickRecentKeys(System.currentTimeMillis() + 10_000);
+        manager.tickRecentKeys(MonotonicClock.millis() + 10_000);
         assertTrue(manager.getRecentKeys().isEmpty(),
                 "Old key records should be removed after tick");
     }

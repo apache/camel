@@ -158,6 +158,7 @@ class DataRefreshService {
         return stoppingPids;
     }
 
+    /** When the last refresh started, a {@link MonotonicClock} time. */
     long lastRefresh() {
         return lastRefresh;
     }
@@ -165,11 +166,11 @@ class DataRefreshService {
     // ---- Burst mode ----
 
     void enableBurstMode() {
-        burstModeUntil = System.currentTimeMillis() + 20_000;
+        burstModeUntil = MonotonicClock.millis() + 20_000;
     }
 
     void forceFullScan() {
-        forceFullScanUntil = System.currentTimeMillis() + 20_000;
+        forceFullScanUntil = MonotonicClock.millis() + 20_000;
     }
 
     /** How many scans of every integration have published their data. */
@@ -178,7 +179,7 @@ class DataRefreshService {
     }
 
     boolean isBurstMode() {
-        return System.currentTimeMillis() < burstModeUntil;
+        return MonotonicClock.millis() < burstModeUntil;
     }
 
     // ---- Refresh orchestration ----
@@ -199,7 +200,7 @@ class DataRefreshService {
         if (!refreshInProgress.compareAndSet(false, true)) {
             return;
         }
-        lastRefresh = System.currentTimeMillis();
+        lastRefresh = MonotonicClock.millis();
         ctx.backgroundExecutor.execute(() -> {
             try {
                 refreshSync(logRefresher, conditionalRefresher);
@@ -213,7 +214,7 @@ class DataRefreshService {
      * Perform a synchronous data refresh cycle: log data, integration scan, auto-select, and conditional tab data.
      */
     void refreshSync(Runnable logRefresher, Runnable conditionalRefresher) {
-        lastRefresh = System.currentTimeMillis();
+        lastRefresh = MonotonicClock.millis();
         try {
             logRefresher.run();
             boolean fullScan = scanIntegrations();
@@ -282,7 +283,7 @@ class DataRefreshService {
 
     private boolean scanIntegrations() {
         List<IntegrationInfo> infos = new ArrayList<>();
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         boolean wantFullScan = refreshCtx.selectedTab() == TabRegistry.TAB_OVERVIEW || refreshCtx.isSwitchPopupVisible()
                 || cachedPids.isEmpty()
                 || forceFullScanUntil > now;
@@ -387,7 +388,7 @@ class DataRefreshService {
                 if (wasExplicitStop) {
                     metrics.removeVanished(prev.pid);
                 } else {
-                    vanishing.put(prev.pid, new VanishingInfo(prev, System.currentTimeMillis()));
+                    vanishing.put(prev.pid, new VanishingInfo(prev, MonotonicClock.millis()));
                 }
             }
         }
@@ -588,10 +589,10 @@ class DataRefreshService {
         List<InfraInfo> previousInfra = infraData.get();
         for (InfraInfo prev : previousInfra) {
             if (!prev.vanishing && !liveInfraPids.contains(prev.pid) && !vanishingInfra.containsKey(prev.pid)) {
-                vanishingInfra.put(prev.pid, new VanishingInfraInfo(prev, System.currentTimeMillis()));
+                vanishingInfra.put(prev.pid, new VanishingInfraInfo(prev, MonotonicClock.millis()));
             }
         }
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         Iterator<Map.Entry<String, VanishingInfraInfo>> infraIt = vanishingInfra.entrySet().iterator();
         while (infraIt.hasNext()) {
             Map.Entry<String, VanishingInfraInfo> entry = infraIt.next();

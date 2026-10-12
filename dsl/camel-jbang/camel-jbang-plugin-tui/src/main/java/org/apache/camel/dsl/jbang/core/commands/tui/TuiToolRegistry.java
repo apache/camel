@@ -503,8 +503,8 @@ class TuiToolRegistry {
         }
 
         long beforeGen = facade.getRenderGeneration();
-        long deadline = System.currentTimeMillis() + 2000;
-        while (System.currentTimeMillis() < deadline) {
+        long deadline = MonotonicClock.millis() + 2000;
+        while (MonotonicClock.millis() < deadline) {
             if (facade.getRenderGeneration() >= beforeGen + 2) {
                 break;
             }
@@ -569,12 +569,12 @@ class TuiToolRegistry {
             return "Queued " + sent + " key(s) with " + delay + "ms delay";
         }
 
-        long lastKeyFireAt = System.currentTimeMillis() + (long) (sent - 1) * delay;
+        long lastKeyFireAt = MonotonicClock.millis() + (long) (sent - 1) * delay;
         long waitDeadline = lastKeyFireAt + 5000;
-        long start = System.currentTimeMillis();
+        long start = MonotonicClock.millis();
 
-        while (System.currentTimeMillis() < waitDeadline) {
-            long now = System.currentTimeMillis();
+        while (MonotonicClock.millis() < waitDeadline) {
+            long now = MonotonicClock.millis();
             if (now >= lastKeyFireAt) {
                 long gen = facade.getRenderGeneration();
                 if (gen >= beforeGen + sent + 2) {
@@ -593,7 +593,7 @@ class TuiToolRegistry {
         JsonObject result = new JsonObject();
         result.put("sent", sent);
         result.put("delay", delay);
-        result.put("waitedMs", System.currentTimeMillis() - start);
+        result.put("waitedMs", MonotonicClock.millis() - start);
         if (buf != null) {
             result.put("screen", ExportRequest.export(buf).text().toString());
         }
@@ -655,16 +655,16 @@ class TuiToolRegistry {
         }
 
         long startGeneration = facade.getRenderGeneration();
-        long start = System.currentTimeMillis();
+        long start = MonotonicClock.millis();
         long deadline = start + timeout;
 
-        while (System.currentTimeMillis() < deadline) {
+        while (MonotonicClock.millis() < deadline) {
             long current = facade.getRenderGeneration();
             if (current >= startGeneration + requiredFrames) {
                 Buffer buf = facade.getLastBuffer();
                 JsonObject result = new JsonObject();
                 result.put("settled", true);
-                result.put("waitedMs", System.currentTimeMillis() - start);
+                result.put("waitedMs", MonotonicClock.millis() - start);
                 result.put("frames", current - startGeneration);
                 if (buf != null) {
                     result.put("screen", ExportRequest.export(buf).text().toString());
@@ -682,7 +682,7 @@ class TuiToolRegistry {
 
         JsonObject result = new JsonObject();
         result.put("settled", false);
-        result.put("waitedMs", System.currentTimeMillis() - start);
+        result.put("waitedMs", MonotonicClock.millis() - start);
         result.put("reason", "timeout");
         return Jsoner.serialize(result);
     }
@@ -1111,9 +1111,9 @@ class TuiToolRegistry {
 
     /** Calls the lookup until it finds something or the time is up; the last answer (null when not found). */
     static String retryUntilFound(Supplier<String> lookup, BooleanSupplier settled, long maxWaitMs) {
-        long until = System.currentTimeMillis() + maxWaitMs;
+        long until = MonotonicClock.millis() + maxWaitMs;
         String found = lookup.get();
-        while (found == null && !settled.getAsBoolean() && System.currentTimeMillis() < until) {
+        while (found == null && !settled.getAsBoolean() && MonotonicClock.millis() < until) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -1973,8 +1973,8 @@ class TuiToolRegistry {
         // an example can fail a few seconds after it is launched (a missing API key, a bad route): wait for Camel to
         // say it started, or for the failure, so the agent learns how it went
         LaunchManager.LaunchOutcome outcome = null;
-        long deadline = System.currentTimeMillis() + RUN_EXAMPLE_WAIT_MS;
-        while ((outcome = lm.outcome(name)) == null && System.currentTimeMillis() < deadline) {
+        long deadline = MonotonicClock.millis() + RUN_EXAMPLE_WAIT_MS;
+        while ((outcome = lm.outcome(name)) == null && MonotonicClock.millis() < deadline) {
             Thread.sleep(250);
         }
         JsonObject result = new JsonObject();

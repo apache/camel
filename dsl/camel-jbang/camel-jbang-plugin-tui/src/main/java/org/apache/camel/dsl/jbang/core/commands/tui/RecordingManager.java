@@ -36,7 +36,8 @@ import dev.tamboui.tui.event.KeyEvent;
  */
 class RecordingManager {
 
-    record KeyRecord(String label, long timestamp) {
+    /** A key shown while recording; pressedAt is a {@link MonotonicClock} time. */
+    record KeyRecord(String label, long pressedAt) {
     }
 
     private final CaptionOverlay captionOverlay;
@@ -70,7 +71,7 @@ class RecordingManager {
                 eventLog.record(label, label);
             }
             if (recording) {
-                recentKeys.add(new KeyRecord(label, System.currentTimeMillis()));
+                recentKeys.add(new KeyRecord(label, MonotonicClock.millis()));
             }
             TapeRecorder tr = tapeRecorderRef.get();
             if (tr != null && tr.isActive() && !mcpInjected) {
@@ -119,10 +120,10 @@ class RecordingManager {
             ExportRequest.export(buf).text().toFile(txtPath);
             ExportRequest.export(buf).text().options(o -> o.styles(true)).toFile(ansPath);
             screenshotMessage = "Screenshot saved to " + svgPath.toAbsolutePath() + " (and .txt, .ans)";
-            screenshotMessageTime = System.currentTimeMillis();
+            screenshotMessageTime = MonotonicClock.millis();
         } catch (IOException e) {
             screenshotMessage = "Screenshot failed: " + e.getMessage();
-            screenshotMessageTime = System.currentTimeMillis();
+            screenshotMessageTime = MonotonicClock.millis();
         }
     }
 
@@ -145,7 +146,7 @@ class RecordingManager {
 
     String screenshotFlashMessage() {
         String msg = screenshotMessage;
-        if (msg != null && System.currentTimeMillis() - screenshotMessageTime < 5000) {
+        if (msg != null && MonotonicClock.millis() - screenshotMessageTime < 5000) {
             return msg;
         }
         screenshotMessage = null;
@@ -229,10 +230,11 @@ class RecordingManager {
         return recentKeys;
     }
 
+    /** Drops the keys shown for two seconds; now is a {@link MonotonicClock} time. */
     void tickRecentKeys(long now) {
         if (recording && !recentKeys.isEmpty()) {
             long cutoff = now - 2000;
-            recentKeys.removeIf(k -> k.timestamp() < cutoff);
+            recentKeys.removeIf(k -> k.pressedAt() < cutoff);
         }
     }
 

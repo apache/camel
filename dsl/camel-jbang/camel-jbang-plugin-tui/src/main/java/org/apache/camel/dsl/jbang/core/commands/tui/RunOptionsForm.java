@@ -548,7 +548,7 @@ class RunOptionsForm {
     private void renderOptionsPage(Frame frame, Rect area) {
         // wide enough for the runtime cycler to show all runtimes (Camel Main, Spring Boot, Quarkus, JBang)
         int popupW = Math.min(80, area.width() - 4);
-        String warning = portWarning(System.currentTimeMillis());
+        String warning = portWarning(MonotonicClock.millis());
         int popupH = PAGE1_HEIGHT + (errorMessage != null ? 1 : 0) + (warning != null ? 1 : 0);
         Rect popup = DialogHelper.centered(area, popupW, popupH);
 

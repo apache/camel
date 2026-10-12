@@ -29,6 +29,7 @@ class TapeRecorder {
             "pgup", "pgdn");
 
     private final List<String> lines = new ArrayList<>();
+    // MonotonicClock times: the sleeps between the recorded events
     private long startTime;
     private long lastEventTime;
     private int keyCount;
@@ -47,7 +48,7 @@ class TapeRecorder {
         lines.add("Set CursorBlink false");
         lines.add("Set Theme \"Aardvark Blue\"");
         lines.add("");
-        startTime = System.currentTimeMillis();
+        startTime = MonotonicClock.millis();
         lastEventTime = startTime;
         keyCount = 0;
         active = true;
@@ -58,7 +59,7 @@ class TapeRecorder {
             return;
         }
         preKeyPosition = lines.size();
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         long elapsed = now - lastEventTime;
         if (elapsed > 200) {
             lines.add("Sleep " + formatSleep(elapsed));
@@ -80,7 +81,7 @@ class TapeRecorder {
     void trimTo(int position) {
         if (position >= 0 && position < lines.size()) {
             lines.subList(position, lines.size()).clear();
-            lastEventTime = System.currentTimeMillis();
+            lastEventTime = MonotonicClock.millis();
         }
     }
 
@@ -88,7 +89,7 @@ class TapeRecorder {
         if (!active) {
             return;
         }
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         long elapsed = now - lastEventTime;
         if (elapsed > 200) {
             lines.add("Sleep " + formatSleep(elapsed));
@@ -120,7 +121,7 @@ class TapeRecorder {
             return;
         }
         lines.add("Sleep " + formatSleep(ms));
-        lastEventTime = System.currentTimeMillis();
+        lastEventTime = MonotonicClock.millis();
     }
 
     void recordCaption(String text, int durationSeconds) {
@@ -138,14 +139,14 @@ class TapeRecorder {
         if (durationSeconds > 0) {
             lines.add("Sleep " + durationSeconds + "s");
         }
-        lastEventTime = System.currentTimeMillis();
+        lastEventTime = MonotonicClock.millis();
     }
 
     void resetClock() {
         if (!active) {
             return;
         }
-        lastEventTime = System.currentTimeMillis();
+        lastEventTime = MonotonicClock.millis();
     }
 
     String stop() {

@@ -441,7 +441,7 @@ class SourceViewer {
         if (liveRunData == null || loadedFilePath == null) {
             return Collections.emptyMap();
         }
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - liveLinesTime > 1000) {
             refreshLiveLines(now);
         }
@@ -450,7 +450,7 @@ class SourceViewer {
 
     /** Package-private for tests: reads the live run data again now, as the render does once a second. */
     void refreshLiveLinesForTesting() {
-        refreshLiveLines(System.currentTimeMillis());
+        refreshLiveLines(MonotonicClock.millis());
     }
 
     /** Package-private for tests: the text of the live column of a line. */
@@ -2387,7 +2387,7 @@ class SourceViewer {
         if (!dirty || validationErrors != null) {
             return;
         }
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - lastBackgroundValidationTime < BACKGROUND_VALIDATION_INTERVAL_MS) {
             return;
         }
