@@ -121,3 +121,84 @@ holds only null values, now sends no header (an empty List was sent as the heade
 Every other value is converted to one String and sent as one header as before: a String (also when it contains
 commas), a `byte[]` and the other primitive arrays, a `Map`, and a Vert.x `JsonObject` or `JsonArray` (sent as JSON).
 A route that needs the old single header can set the header to a String, for example with `String.valueOf(list)`.
+
+=== camel-knative-http - a header with several values is sent as several headers
+
+A message header whose value is a `java.util.Collection` or an object array (as the consumer maps a request header
+that occurs more than once) is now sent as one HTTP header per value. The Knative HTTP producer sent it as one HTTP
+header with the `toString()` of the value, for example `[a, b]`, and the reply of the consumer sent only its last
+value. A collection or an object array that is empty, or that holds only null values, sends no header (the producer
+sent an empty List as the header value `[]`).
+
+Every other value is one header. A String is sent as before, also when it contains commas, and the reply still sends
+no header for a blank String. A `byte[]` is now converted to a String with the type converter (the producer sent its
+`toString()`, such as `[B@1dc9f5ad`, and the reply only its last byte as a number). The producer sends a `Map` and a
+Vert.x `JsonObject` or `JsonArray` as before, as their `toString()` (JSON for the Vert.x types). The reply now does
+the same: it sent only the last entry of a `Map` or `JsonObject` in the form `key=value`, and only the last element
+of a `JsonArray`.
+
+A route that needs the old single header of the producer can set the header to a String, for example with
+`String.valueOf(list)`.
+
+=== camel-dapr - the saveBulk and executeTransaction state operations are sent
+
+The `saveBulk` and `executeTransaction` operations of `dapr:state` built their request but never sent it to Dapr, so
+nothing was stored and the exchange completed without an error. The requests are now sent, and the producer waits for
+the answer like the other state operations: the states are stored, and a request that Dapr rejects (or a sidecar that
+cannot be reached) fails the exchange.
+
+=== camel-jira - the producers wait for the answer of Jira
+
+The `addComment`, `addIssueLink`, `addWorkLog`, `attach`, `deleteIssue`, `transitionIssue` and `watchers` producers
+(and `addIssue` for its watchers) sent their request without waiting for the answer, so the exchange continued before
+Jira had done the work, and a request that Jira rejected (for example no permission, or a transition that is not
+allowed) was not noticed. They now wait for the answer, as `addIssue` and `updateIssue` already did, and a rejected
+request fails the exchange with the `RestClientException` of the Jira client. Routes that relied on such failures
+being ignored must handle the exception, for example with `onException(RestClientException.class).handled(true)`.
+
+A producer that sends several requests can fail after some of them were done: `transitionIssue` can fail on its
+comment after the transition was made, `watchers` and `addIssue` can fail after some of the watchers were changed
+(`addIssue` sets the created issue as the message body before it adds the watchers), and a retry or redelivery
+repeats the earlier requests.
+
+=== camel-twitter - twitter-search applies its query options again
+
+Since Camel 4.0 (the upgrade to Twitter4J 4.1, whose `Query` is immutable) the `twitter-search` endpoint sent only the
+keywords. The consumer ignored `filterOld` (default `true`), `lang`, `count` and the geolocation options, so it routed
+the same tweets again at every poll. The producer ignored `sinceId`, `lang`, `count` and the `CamelTwitterSinceId`,
+`CamelTwitterMaxId`, `CamelTwitterSearchLanguage` and `CamelTwitterCount` headers. The options are applied again: a
+poll returns only the tweets newer than the last one consumed, and a page has `count` tweets (default 5; Twitter's own
+default of 15 applied before). Raise `count` and `numberOfPages` if a search can match more tweets than that between
+two polls. A consumer with `type=direct` returned nothing when keywords were given, and now runs the search at startup.
+
+=== camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
+
+With `sortEntries=true` the `atom` consumer sorted the entries of a feed by their published date and routed them from
+the newest to the oldest one. With the default idempotent strategy (which skips an entry that is not newer than the
+one routed before it) only some entries of a feed were routed, and the others were skipped.
+
+This is fixed. The entries are now sorted by their updated date (by the published date for an entry without an
+updated date), which is the date the idempotent strategy compares, and they are routed from the oldest to the newest
+one, as camel-rss does and as Camel 3.x did. Entries are no longer skipped because of the routing order, also when an
+older entry was updated after newer ones were published.
+
+Routes using `sortEntries=true` with `idempotent=false` get the entries in this order too: the entry that was updated
+first is routed first, where the entry that was published last was routed first before.
+
+=== camel-aws2-s3 - a listed object that cannot be fetched is skipped
+
+When the consumer lists the bucket, a failure to get one of the listed objects (or to download its content) no longer
+fails the poll, as long as another object of that listing could be got: the object is skipped, the other listed
+objects are consumed in that poll, and the skipped object is tried again by a later poll. An object that no longer
+exists (for example deleted by another consumer after the listing) is skipped with a log line at `DEBUG`. Any other
+failure is given to the exception handler of the consumer, with the key in the message: by default that is a `WARN`
+with the stack trace, and with `bridgeErrorHandler=true` the route's error handler gets it. This happens at every poll
+that lists an object that can never be read (for example archived, or access denied), until it can be read or is
+removed from the bucket. Such a poll is a successful poll, so it does not count for `backoffErrorThreshold`.
+
+The poll still fails, as before, when none of the listed objects could be got and at least one get failed with an
+error other than that the object no longer exists (for example expired credentials, no permission to get objects,
+throttling): the failure of the first object is then the failure of the poll, and `backoffErrorThreshold` applies.
+In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
+the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
+get still fails the poll.
