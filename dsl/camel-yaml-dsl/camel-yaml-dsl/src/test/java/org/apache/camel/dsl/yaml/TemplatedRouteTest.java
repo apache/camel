@@ -91,6 +91,72 @@ class TemplatedRouteTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    /** CAMEL-24704: beans written as a map keyed by the bean name. */
+    @Test
+    void createTemplatedRouteWithGroupBeansAsMap() throws Exception {
+        loadRoutes("""
+                    - routeTemplate:
+                        id: "myTemplate"
+                        from:
+                          uri: "direct:{{directName}}"
+                          steps:
+                            - process:
+                                ref: "{{myProcessor}}"
+                            - to: "mock:result"
+                    - templatedRoute:
+                        routeId: "myRoute"
+                        routeTemplateRef: "myTemplate"
+                        group: "myGroup"
+                        parameters:
+                          - name: "directName"
+                            value: "foo"
+                        beans:
+                          myProcessor:
+                            type: "%s"
+                            scriptLanguage: "groovy"
+                            script: |
+                                new %s()
+                    - templatedRoute:
+                        routeId: "myRoute2"
+                        routeTemplateRef: "myTemplate"
+                        group: "myGroup"
+                        parameters:
+                          - name: "directName"
+                            value: "foo2"
+                        beans:
+                          myProcessor:
+                            type: "org.apache.camel.Processor"
+                            scriptLanguage: "groovy"
+                            script: "new %s()"
+                """.formatted(MyUppercaseProcessor.class.getName(), MyUppercaseProcessor.class.getName(),
+                MyUppercaseProcessor.class.getName()));
+
+        withMock("mock:result", mock -> {
+            mock.expectedMessageCount(2);
+            mock.expectedBodiesReceived("HELLO", "WORLD");
+        });
+
+        context.start();
+
+        withTemplate(t -> {
+            t.to("direct:foo").withBody("hello").send();
+            t.to("direct:foo2").withBody("world").send();
+        });
+
+        assertThat(context.getRouteTemplateDefinitions().size()).isEqualTo(1);
+        assertThat(context.getRouteDefinitions().size()).isEqualTo(2);
+
+        RouteDefinition route1 = context.getRouteDefinitions().get(0);
+        assertThat(route1.getRouteId()).isEqualTo("myRoute");
+        assertThat(route1.getGroup()).isEqualTo("myGroup");
+
+        RouteDefinition route2 = context.getRouteDefinitions().get(1);
+        assertThat(route2.getRouteId()).isEqualTo("myRoute2");
+        assertThat(route2.getGroup()).isEqualTo("myGroup");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Test
     void createTemplatedRoute() throws Exception {
         loadRoutes("""

@@ -47,7 +47,8 @@ import org.snakeyaml.engine.v2.nodes.Node;
                   @YamlProperty(name = "parameters",
                                 type = "array:org.apache.camel.model.TemplatedRouteParameterDefinition"),
                   @YamlProperty(name = "beans",
-                                type = "array:org.apache.camel.model.BeanFactoryDefinition")
+                                type = "array:org.apache.camel.model.BeanFactoryDefinition",
+                                mapKey = "name")
           })
 public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<TemplatedRouteDefinition> {
 
@@ -89,7 +90,7 @@ public class TemplatedRouteDefinitionDeserializer extends YamlDeserializerBase<T
             }
             case "beans": {
                 List<BeanFactoryDefinition<TemplatedRouteDefinition>> items
-                        = (List) asFlatList(node, BeanFactoryDefinition.class);
+                        = (List) BeansDeserializer.asBeanDefinitions(node);
                 target.setBeans(items);
                 break;
             }

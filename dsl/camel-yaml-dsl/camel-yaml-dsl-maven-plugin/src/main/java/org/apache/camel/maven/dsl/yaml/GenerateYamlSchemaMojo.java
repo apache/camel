@@ -83,6 +83,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
     private ObjectNode definitions;
     private ObjectNode step;
 
+    /** The item types of lists that may be written as a map, to the property the map is keyed by. */
+    private final Map<String, String> keyedDefinitions = new TreeMap<>();
+
     @Override
     protected void generate() throws MojoFailureException {
         final ObjectMapper mapper = JsonMapper.builder()
@@ -172,6 +175,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             postProcessInheritance(inheritedDefinitions, inlineDefinitions);
         }
 
+        generateKeyedDefinitions();
+
         try {
             ToolingSupport.mkparents(outputFile);
 
@@ -183,7 +188,8 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
         }
     }
 
-    private void generate(String type, ClassInfo info, Set<String> inheritedDefinitions, Set<String> inlineDefinitions) {
+    private void generate(String type, ClassInfo info, Set<String> inheritedDefinitions, Set<String> inlineDefinitions)
+            throws MojoFailureException {
         final ObjectNode definition = definitions.withObject("/" + type);
         final List<AnnotationInstance> properties = new ArrayList<>();
 
@@ -251,6 +257,9 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             final boolean propertyWrapItem = annotationValue(property, "wrapItem")
                     .map(AnnotationValue::asBoolean)
                     .orElse(false);
+            final String propertyMapKey = annotationValue(property, "mapKey")
+                    .map(AnnotationValue::asString)
+                    .orElse("");
 
             boolean isInOneOf = (!canonical || propertyName.equals("__oneOf")) && !StringUtils.isEmpty(propertyOneOf);
             if (isInOneOf) {
@@ -294,6 +303,12 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                         .put("type", "array")
                         .withObject("/items")
                         .put("$ref", "#/items/definitions/" + objectRef);
+
+                if (!canonical && !propertyMapKey.isEmpty()) {
+                    // the root beans definition is the array itself: it gets no additionalProperties of its own
+                    objectDefinition.remove("additionalProperties");
+                    allowMapForm(objectDefinition, objectRef, propertyMapKey);
+                }
 
                 continue;
             }
@@ -343,6 +358,11 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     propertyDeprecated,
                     propertyWrapItem,
                     additionalProperties);
+
+            if (!canonical && !propertyMapKey.isEmpty() && propertyType.startsWith("array:")) {
+                allowMapForm(finalObjectDefinition.withObject("/properties/" + propertyName),
+                        StringHelper.after(propertyType, ":"), propertyMapKey);
+            }
 
             // A property that belongs to a oneOf group (e.g. the data formats of marshal/unmarshal, or the
             // languages of an expression) is only required as part of choosing one of the alternatives, not
@@ -538,6 +558,56 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             for (String enumValue : enumValues.split(",")) {
                 current.withArray("enum").add(enumValue);
             }
+        }
+    }
+
+    /**
+     * A list whose items are identified by a property (a bean by its name) may also be written as a map from that
+     * property to the rest of the item: beans: {myBean: {type: ...}} (CAMEL-24704).
+     */
+    private void allowMapForm(ObjectNode schema, String itemType, String mapKey) throws MojoFailureException {
+        schema.remove("type");
+        JsonNode items = schema.remove("items");
+        ArrayNode oneOf = schema.withArray("oneOf");
+        oneOf.addObject().put("type", "array").set("items", items);
+        oneOf.addObject().put("type", "object")
+                .withObject("/additionalProperties")
+                .put("$ref", "#/items/definitions/" + keyedName(itemType, mapKey));
+        String existingMapKey = keyedDefinitions.put(itemType, mapKey);
+        if (existingMapKey != null && !existingMapKey.equals(mapKey)) {
+            throw new MojoFailureException(
+                    itemType + " is already keyed by " + existingMapKey + ", it cannot also be keyed by " + mapKey);
+        }
+    }
+
+    private static String keyedName(String itemType, String mapKey) {
+        return itemType + "By" + StringHelper.capitalize(mapKey);
+    }
+
+    /** The item definition of the map form: the item's own definition without the key property. */
+    private void generateKeyedDefinitions() throws MojoFailureException {
+        for (Map.Entry<String, String> entry : keyedDefinitions.entrySet()) {
+            String itemType = entry.getKey();
+            String mapKey = entry.getValue();
+            JsonNode existing = definitions.get(itemType);
+            if (existing == null) {
+                throw new MojoFailureException(
+                        "No definition found for " + itemType + ", the item type of the map keyed by " + mapKey);
+            }
+            ObjectNode keyed = ((ObjectNode) existing).deepCopy();
+            keyed.withObject("/properties").remove(mapKey);
+            if (keyed.has("required")) {
+                ArrayNode required = keyed.withArray("required");
+                for (int i = required.size() - 1; i >= 0; i--) {
+                    if (mapKey.equals(required.get(i).asText())) {
+                        required.remove(i);
+                    }
+                }
+                if (required.isEmpty()) {
+                    keyed.remove("required");
+                }
+            }
+            definitions.set(keyedName(itemType, mapKey), keyed);
         }
     }
 

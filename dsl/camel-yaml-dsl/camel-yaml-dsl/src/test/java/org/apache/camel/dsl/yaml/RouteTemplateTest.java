@@ -201,6 +201,47 @@ class RouteTemplateTest extends YamlTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    /** CAMEL-24704: beans written as a map keyed by the bean name. */
+    @Test
+    void createTemplateWithBeanAndPropertiesBeansAsMap() throws Exception {
+        loadRoutes("""
+                    - routeTemplate:
+                        id: "myTemplate"
+                        beans:
+                          myProcessor:
+                            type: "#class:%s"
+                            properties:
+                              payload: "test-payload"
+                        from:
+                          uri: "direct:{{directName}}"
+                          steps:
+                            - process:
+                                ref: "{{myProcessor}}"
+                    - from:
+                        uri: "direct:start"
+                        steps:
+                          - to: "direct:myId"
+                          - to: "mock:result"
+                """.formatted(MySetBody.class.getName()));
+
+        withMock("mock:result", mock -> {
+            mock.expectedMessageCount(1);
+            mock.expectedBodiesReceived("test-payload");
+        });
+
+        context.addRouteFromTemplate("myId", "myTemplate", Map.of("directName", "myId"));
+        context.start();
+
+        withTemplate(t -> t.to("direct:start").withBody("hello").send());
+
+        assertThat(context.getRouteTemplateDefinitions().size()).isEqualTo(1);
+        RouteTemplateDefinition template = context.getRouteTemplateDefinitions().get(0);
+        assertThat(template.getId()).isEqualTo("myTemplate");
+        assertThat(template.getTemplateBeans().size()).isEqualTo(1);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Test
     void createTemplateWithBuilderBeanWithoutType() throws Exception {
         loadRoutes("""

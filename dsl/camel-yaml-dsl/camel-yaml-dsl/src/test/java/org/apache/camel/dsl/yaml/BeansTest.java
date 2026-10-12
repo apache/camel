@@ -26,6 +26,8 @@ import org.apache.camel.dsl.yaml.support.model.MyCtrBean;
 import org.apache.camel.dsl.yaml.support.model.MyDestroyBean;
 import org.apache.camel.dsl.yaml.support.model.MyFacBean;
 import org.apache.camel.dsl.yaml.support.model.MyFacHelper;
+import org.apache.camel.model.BeanFactoryDefinition;
+import org.apache.camel.model.Model;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -404,6 +406,79 @@ class BeansTest extends YamlTestSupport {
                 "class com.foo.MyBean was not found (check the package name; a class from another library needs its dependency added)"))
                 .isTrue();
         assertThat(msg.contains("did you mean")).isFalse();
+    }
+
+    /** CAMEL-24704: beans written as a map keyed by the bean name. */
+    @Test
+    void beansAsMap() throws Exception {
+        loadRoutes("""
+                    - beans:
+                        myNested:
+                          type: %s
+                          properties:
+                            field1: 'f1'
+                        "my.dotted":
+                          type: %s
+                """.formatted(MyBean.class.getName(), MyBean.class.getName()));
+
+        assertThat(context.getRegistry().lookupByName("myNested")).isInstanceOf(MyBean.class);
+        assertThat(((MyBean) context.getRegistry().lookupByName("myNested")).getField1()).isEqualTo("f1");
+        assertThat(context.getRegistry().lookupByName("my.dotted")).isInstanceOf(MyBean.class);
+        // pre-parse and parse must not declare the bean twice
+        assertThat(context.getCamelContextExtension().getContextPlugin(Model.class).getCustomBeans())
+                .extracting(BeanFactoryDefinition::getName)
+                .containsExactly("myNested", "my.dotted");
+    }
+
+    @Test
+    void beansAsEmptyMap() throws Exception {
+        loadRoutes("""
+                    - beans: {}
+                """);
+        assertThat(context.getCamelContextExtension().getContextPlugin(Model.class).getCustomBeans()).isEmpty();
+    }
+
+    @Test
+    void beansAsMapWithNameFails() {
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                        myBean:
+                          name: other
+                          type: %s
+                """.formatted(MyBean.class.getName())));
+        assertThat(messages(e)).contains("myBean").contains("remove name:");
+    }
+
+    @Test
+    void beansAsMapWithoutPropertiesFails() {
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                        myBean: %s
+                """.formatted(MyBean.class.getName())));
+        assertThat(messages(e)).contains("myBean").contains("indented under the name");
+    }
+
+    @Test
+    void beansAsMapMissingDashOnListFormFails() {
+        // CAMEL-24704 F1: the list form with the "- " forgotten reads as a map whose first key is "name"
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                        name: myBean
+                        type: %s
+                """.formatted(MyBean.class.getName())));
+        assertThat(messages(e)).contains("beans is a list").contains("- name: myBean");
+    }
+
+    @Test
+    void beansAsMapWithDuplicateNameFails() {
+        Exception e = assertThrows(Exception.class, () -> loadRoutesNoValidate("""
+                    - beans:
+                        myBean:
+                          type: %s
+                        myBean:
+                          type: %s
+                """.formatted(MyBean.class.getName(), MyBean.class.getName())));
+        assertThat(messages(e)).contains("myBean").contains("twice");
     }
 
     private static String messages(Throwable e) {
