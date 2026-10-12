@@ -111,6 +111,28 @@ class KnativeHttpMultiValueHeaderTest {
     }
 
     @Test
+    void producerDoesNotSendAHeaderForAnEmptyList() throws Exception {
+        // a collection without values has no header to send (it was sent as the value "[]")
+        HttpServerRequest request = sendWithHeader(List.of());
+
+        assertThat(request.headers().contains("X-Test")).isFalse();
+    }
+
+    @Test
+    void producerDoesNotSendAHeaderForAnEmptyArray() throws Exception {
+        HttpServerRequest request = sendWithHeader(new Object[0]);
+
+        assertThat(request.headers().contains("X-Test")).isFalse();
+    }
+
+    @Test
+    void producerDoesNotSendAHeaderForAListWithOnlyNullValues() throws Exception {
+        HttpServerRequest request = sendWithHeader(Arrays.asList(null, null));
+
+        assertThat(request.headers().contains("X-Test")).isFalse();
+    }
+
+    @Test
     void producerSendsAByteArrayHeaderAsOneValue() throws Exception {
         // a byte[] (such as a Kafka record header) is one value and not one header per byte
         HttpServerRequest request = sendWithHeader("abc".getBytes(StandardCharsets.UTF_8));
@@ -127,6 +149,13 @@ class KnativeHttpMultiValueHeaderTest {
 
         assertThat(response.headers().getValues("X-Test")).containsExactly("a", "b");
         assertThat(response.headers().getValues("X-Single")).containsExactly("c");
+    }
+
+    @Test
+    void consumerRepliesWithoutAHeaderForAnEmptyList() throws Exception {
+        Response response = replyWithHeaders(Map.of("X-Test", List.of()));
+
+        assertThat(response.headers().hasHeaderWithName("X-Test")).isFalse();
     }
 
     @Test
