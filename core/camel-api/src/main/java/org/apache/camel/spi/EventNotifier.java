@@ -133,6 +133,24 @@ public interface EventNotifier {
     /** Set whether to ignore step events. */
     void setIgnoreStepEvents(boolean ignoreStepEvents);
 
+    /**
+     * Whether to ignore AI events (see {@link org.apache.camel.ai.AiEvent}). AI events are their own category and are
+     * not affected by {@link #isIgnoreExchangeEvents()} even though an {@code AiEvent} is an exchange event.
+     *
+     * @since 4.24
+     */
+    default boolean isIgnoreAiEvents() {
+        return false;
+    }
+
+    /**
+     * Set whether to ignore AI events (see {@link org.apache.camel.ai.AiEvent}).
+     *
+     * @since 4.24
+     */
+    default void setIgnoreAiEvents(boolean ignoreAiEvents) {
+    }
+
     /** @deprecated Set whether to ignore exchange async processing started events. */
     @Deprecated(since = "4.19.0")
     void setIgnoreExchangeAsyncProcessingStartedEvents(boolean ignoreExchangeAsyncProcessingStartedEvents);

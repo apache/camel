@@ -55,6 +55,9 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
 
     public MicrometerExchangeEventNotifier() {
         super(ExchangeEvent.class);
+        // AI events are ExchangeEvents but a specialized category; skip them so each one does not trigger a route
+        // lookup here (they are not metered as exchange lifecycle events anyway)
+        setIgnoreAiEvents(true);
     }
 
     public void setBaseEndpointURI(boolean baseEndpointURI) {

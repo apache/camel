@@ -189,6 +189,12 @@ public class EventConsole extends AbstractDevConsole {
 
     private class ConsoleEventNotifier extends EventNotifierSupport implements NonManagedService {
 
+        private ConsoleEventNotifier() {
+            // AI events are ExchangeEvents but a specialized category; keep them out of the exchange-event ring so
+            // they do not push out real exchange events
+            setIgnoreAiEvents(true);
+        }
+
         @Override
         public void notify(CamelEvent event) throws Exception {
             if (event instanceof CamelEvent.ExchangeEvent) {

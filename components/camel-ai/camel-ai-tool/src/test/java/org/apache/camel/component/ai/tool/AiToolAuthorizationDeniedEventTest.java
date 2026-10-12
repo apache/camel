@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.ai.AiEvent;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.CamelEvent;
@@ -144,6 +145,36 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
         assertThat(event.getToolName()).isEqualTo("guarded");
         assertThat(event.getExchange()).isSameAs(exchange);
         assertThat(event.getCause()).isInstanceOf(CamelAuthorizationException.class);
+        // recognisable through the shared contract, without a dependency on this component
+        assertThat(event).isInstanceOf(AiEvent.ToolCallDeniedEvent.class);
+        assertThat(event.getProvider()).isEqualTo("ai-tool");
+    }
+
+    @Test
+    void aNotifierThatIgnoresAiEventsIsSkipped() {
+        // EventHelper.notifyAiEvent skips notifiers with ignoreAiEvents set, while the default notifier from
+        // @BeforeEach (ignoreAiEvents=false) still receives the event
+        List<AiEvent> ignored = new CopyOnWriteArrayList<>();
+        EventNotifierSupport ignoring = new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiEvent ai) {
+                    ignored.add(ai);
+                }
+            }
+        };
+        ignoring.setIgnoreAiEvents(true);
+        context.getManagementStrategy().addEventNotifier(ignoring);
+
+        AiToolSpec spec = findSpec("guarded");
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty("subject", "mallory");
+
+        AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.AuthorizationDenied.class);
+        assertThat(events).hasSize(1);
+        assertThat(ignored).isEmpty();
     }
 
     @Test

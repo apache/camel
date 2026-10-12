@@ -45,6 +45,8 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     boolean ignoreExchangeSendingEvents;
     boolean ignoreExchangeSentEvents;
     boolean ignoreStepEvents;
+    // AI events are their own category (not part of setupIgnore), so ignoreExchangeEvents does not drop them
+    boolean ignoreAiEvents;
 
     protected SimpleEventNotifierSupport() {
         setupIgnore(true);
@@ -189,6 +191,16 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     @Override
     public void setIgnoreStepEvents(boolean ignoreStepEvents) {
         this.ignoreStepEvents = ignoreStepEvents;
+    }
+
+    @Override
+    public boolean isIgnoreAiEvents() {
+        return ignoreAiEvents;
+    }
+
+    @Override
+    public void setIgnoreAiEvents(boolean ignoreAiEvents) {
+        this.ignoreAiEvents = ignoreAiEvents;
     }
 
     @Override

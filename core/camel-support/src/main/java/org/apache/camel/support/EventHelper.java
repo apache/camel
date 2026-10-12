@@ -18,12 +18,14 @@ package org.apache.camel.support;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.ai.AiEvent;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -1566,6 +1568,49 @@ public final class EventHelper {
                 event = factory.createCamelExchangeAsyncProcessingStartedEvent(exchange);
                 if (event == null) {
                     // factory could not create event so exit
+                    return false;
+                }
+            }
+            answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
+    /**
+     * Notifies an {@link AiEvent} to the started event notifiers, following the same path as every other event
+     * category: it loops the started notifiers, skips those that are disabled or have {@code ignoreAiEvents} set,
+     * creates the event lazily (via {@code eventSupplier}) only when some notifier wants it, and delivers through
+     * {@code doNotifyEvent} so one failing notifier does not stop delivery to the others.
+     * <p>
+     * AI events are their own category: {@code ignoreExchangeEvents} does <em>not</em> suppress them even though an
+     * {@code AiEvent} is an exchange event. A notifier opts out with {@code setIgnoreAiEvents(true)}.
+     *
+     * @since 4.24
+     */
+    public static boolean notifyAiEvent(CamelContext context, Supplier<AiEvent> eventSupplier) {
+        ManagementStrategy management = context != null ? context.getManagementStrategy() : null;
+        if (management == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
+            if (notifier.isDisabled() || notifier.isIgnoreAiEvents()) {
+                continue;
+            }
+
+            if (event == null) {
+                // only create event once, and only when a notifier wants it
+                event = eventSupplier.get();
+                if (event == null) {
                     return false;
                 }
             }

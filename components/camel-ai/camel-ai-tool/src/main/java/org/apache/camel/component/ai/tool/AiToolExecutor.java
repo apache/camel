@@ -24,8 +24,8 @@ import java.util.Set;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.EventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,20 +199,11 @@ public final class AiToolExecutor {
      * and a failure to notify is swallowed so it never affects the refusal returned to the model.
      */
     private static void fireAuthorizationDeniedEvent(Exchange exchange, String toolName, CamelAuthorizationException denial) {
-        ManagementStrategy management = exchange.getContext().getManagementStrategy();
-        if (management.getEventNotifiers().isEmpty()) {
-            return;
-        }
-        try {
-            management.notify(new AiToolAuthorizationDeniedEvent(exchange, toolName, denial));
-        } catch (Throwable e) {
-            // ManagementStrategy.notify() does not isolate a failing notifier (unlike EventHelper.doNotifyEvent), so a
-            // notifier throwing anything - including an Error such as AssertionError - would otherwise escape and turn
-            // the denial into a propagating failure. Swallow it here (as EventHelper does) so a broken notifier never
-            // changes the AuthorizationDenied refusal returned to the model.
-            LOG.warn("Notifying {} for tool '{}' failed and was ignored; the authorization denial is unaffected",
-                    AiToolAuthorizationDeniedEvent.class.getSimpleName(), toolName, e);
-        }
+        // Route through EventHelper like every other event category: it skips notifiers with ignoreAiEvents set,
+        // creates the event lazily, and isolates a failing notifier (its doNotifyEvent swallows a Throwable) - so a
+        // broken notifier never turns the denial into a propagating failure or changes the refusal to the model.
+        EventHelper.notifyAiEvent(exchange.getContext(),
+                () -> new AiToolAuthorizationDeniedEvent(exchange, toolName, denial));
     }
 
     private static CamelAuthorizationException findAuthorizationException(Throwable error) {
