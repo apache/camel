@@ -19,6 +19,7 @@ package org.apache.camel.component.telegram.service;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,18 +64,26 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
         builder.setHeader("Accept", "application/json");
 
         builder.POST(bodyPublisher.newPublisher());
-        try {
-            final TelegramAsyncHandler telegramAsyncHandler
-                    = new TelegramAsyncHandler(uri, resultClass, mapper, exchange, callback);
+        final TelegramAsyncHandler telegramAsyncHandler = new TelegramAsyncHandler(uri, resultClass, mapper, exchange);
+        final CompletableFuture<Object> response
+                = apiClient.client().sendAsync(builder.build(), HttpResponse.BodyHandlers.ofInputStream())
+                        .thenApply(telegramAsyncHandler::handleCompressedResponse);
 
-            apiClient.client().sendAsync(builder.build(), HttpResponse.BodyHandlers.ofInputStream())
-                    .thenApply(telegramAsyncHandler::handleCompressedResponse).get();
+        try {
+            // the calling thread waits for the answer, so a caller sends one message after the other
+            response.get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            // nobody waits for the answer any more: keep the stage from writing to the completed exchange later
+            response.cancel(true);
+            exchange.setException(new RuntimeException(e));
         } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+            // an error status, a body that could not be read, or a request that failed without an answer
+            exchange.setException(new RuntimeException(e));
         }
+
+        // the only place that completes the exchange. The producer returns false from process(), hence done(false)
+        callback.done(false);
     }
 
     protected abstract void addBody(T message);

@@ -202,3 +202,15 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
+
+=== camel-telegram
+
+When Telegram answers a message with an error status (for example `400` for an unknown chat), or with a body that
+cannot be read, the producer now fails the exchange once and the route stops there. Previously the route first
+continued after the producer as if the message had been sent, and then the exchange failed as well.
+
+The exception of the exchange is the one that `process()` of the producer threw before: a `RuntimeException` that
+wraps an `ExecutionException`, with the `RuntimeCamelException` (status and body of the answer) as its cause, or the
+`IOException` when the request got no answer. The producer still waits for the answer before it returns, so the
+order of the messages is the same. The steps after the producer now run on the calling thread, and no longer on a
+thread of the HTTP client.
