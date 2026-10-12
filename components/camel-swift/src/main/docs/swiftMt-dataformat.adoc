@@ -204,6 +204,17 @@ YAML::
 ----
 ====
 
+== Translating between MT and MX
+
+The SWIFT MT and xref:swiftMx-dataformat.adoc[SWIFT MX] data formats read and write messages, but they do not translate
+one format into the other. They also do not validate messages against SWIFT network rules or usage guidelines such as CBPR+ or SEPA.
+
+To convert a message, such as an MT103 into a pacs.008, unmarshal it with SWIFT MT, map the fields to an ISO 20022 model class
+such as `MxPacs00800108` in your own bean or processor, and marshal the result with SWIFT MX.
+The other direction works the same way, starting with SWIFT MX.
+
+Translation that follows the official SWIFT mapping rules is outside the scope of Camel. Use a dedicated translation product or service for that.
+
 == Dependencies
 
 To use SWIFT MT in your Camel routes, you need to add a dependency on
