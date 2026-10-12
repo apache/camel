@@ -202,3 +202,11 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
+
+=== camel-aws2-ddb - aws2-ddbstream consumer and a suspended route
+
+When a route is suspended (`RouteController.suspendRoute`, also when a route policy calls it, or
+`CamelContext.suspend()`) while the `aws2-ddbstream` consumer routes the records of a poll, the consumer stops after
+the record that is being routed. The other records of that poll (up to `maxResultsPerRequest`, default 100) were
+skipped when the route was resumed. They are now routed after the resume. A consumer that is suspended directly
+(`consumer.suspend()`) routes all the records of its poll and was not affected.

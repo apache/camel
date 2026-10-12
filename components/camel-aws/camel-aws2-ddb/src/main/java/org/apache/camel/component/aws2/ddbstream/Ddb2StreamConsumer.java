@@ -18,14 +18,17 @@ package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -43,6 +46,9 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
     private final ShardIteratorHandler shardIteratorHandler;
     private final Map<String, String> lastSeenSequenceNumbers = new HashMap<>();
+    // Shards of which only the first records of a response were routed, as the consumer was being suspended or
+    // stopped: the next poll continues after the last routed record instead of after the response
+    private final Set<String> shardsOfUnfinishedBatch = new HashSet<>();
 
     public Ddb2StreamConsumer(Ddb2StreamEndpoint endpoint, Processor processor) {
         this(endpoint, processor, new ShardIteratorHandler(endpoint));
@@ -67,6 +73,11 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
                     getEndpoint().getConfiguration().getMaxResultsPerRequest() / shardIterators.size());
             String shardId = shardIteratorEntry.getKey();
             String shardIterator = shardIteratorEntry.getValue();
+            if (shardsOfUnfinishedBatch.contains(shardId)) {
+                // not requested when the batch was cut short: that thread may have been interrupted by the stop
+                shardIterator = shardIteratorHandler.requestFreshShardIterator(shardId, lastSeenSequenceNumbers.get(shardId));
+                shardsOfUnfinishedBatch.remove(shardId);
+            }
             GetRecordsResponse result;
             try {
                 GetRecordsRequest req = GetRecordsRequest.builder()
@@ -88,7 +99,24 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
             for (Record polledRecord : records) {
                 exchanges.add(createExchange(polledRecord));
             }
-            processedExchangeCount += processBatch(CastUtils.cast(exchanges));
+            int routed = processBatch(CastUtils.cast(exchanges));
+            processedExchangeCount += routed;
+
+            if (routed < records.size()) {
+                // the route is being suspended or stopped, and processBatch did not route the rest of the records:
+                // do not move past them, so that they are routed when the consumer runs again. When nothing was
+                // routed, the shard iterator of this request is kept and used again.
+                if (routed > 0) {
+                    lastSeenSequenceNumbers.put(shardId, records.get(routed - 1).dynamodb().sequenceNumber());
+                    shardsOfUnfinishedBatch.add(shardId);
+                }
+                // processBatch removes the exchanges it routes: those left are never routed, and nothing else gives
+                // them back to the exchange factory
+                for (Exchange notRouted : exchanges) {
+                    releaseNotRoutedExchange(notRouted);
+                }
+                break;
+            }
 
             shardIteratorHandler.updateShardIterator(shardId, result.nextShardIterator());
             if (!records.isEmpty()) {
@@ -123,6 +151,16 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return answer;
+    }
+
+    private void releaseNotRoutedExchange(Exchange exchange) {
+        if (exchange instanceof PooledExchange pooled) {
+            // created with autoRelease, so done() also gives it back to the pool, once: releaseExchange would then
+            // add it to the pool a second time, and two later records would share the exchange
+            pooled.done();
+        } else {
+            releaseExchange(exchange, true);
+        }
     }
 
     protected Exchange createExchange(Record record) {
