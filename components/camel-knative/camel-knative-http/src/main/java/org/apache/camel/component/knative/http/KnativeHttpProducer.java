@@ -17,7 +17,6 @@
 package org.apache.camel.component.knative.http;
 
 import java.net.URI;
-import java.util.Iterator;
 import java.util.Map;
 
 import io.vertx.core.MultiMap;
@@ -109,23 +108,14 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
         for (Map.Entry<String, Object> entry : exchange.getMessage().getHeaders().entrySet()) {
             final String key = entry.getKey();
             final Object value = entry.getValue();
-            if (value instanceof Iterable || value instanceof Object[]) {
-                // a collection or an object array has one value per element (must not use a delimiter, and allow
-                // empty values); any other value, also a byte[] or another primitive array, is a single value
-                final Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(value, null, true);
-                HttpUtil.applyHeader(headerFilterStrategy, exchange, it, tc, key, (multiValues, prev) -> {
-                    if (multiValues != null) {
-                        headers.add(key, multiValues);
-                    } else if (prev != null) {
-                        headers.add(key, prev);
-                    }
-                });
-            } else if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                final String str = tc.convertTo(String.class, value);
-                if (str != null) {
-                    headers.add(key, str);
+            // a collection or an object array is sent as one header per value; any other value is a single header
+            HttpUtil.applyHeaderValue(headerFilterStrategy, exchange, value, tc, key, (multiValues, prev) -> {
+                if (multiValues != null) {
+                    headers.add(key, multiValues);
+                } else if (prev != null) {
+                    headers.add(key, prev);
                 }
-            }
+            });
         }
 
         client.postAbs(this.uri)

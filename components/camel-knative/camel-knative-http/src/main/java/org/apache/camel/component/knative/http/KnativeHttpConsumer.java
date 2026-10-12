@@ -18,7 +18,6 @@ package org.apache.camel.component.knative.http;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -333,24 +332,20 @@ public class KnativeHttpConsumer extends DefaultConsumer {
             for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
                 final String key = entry.getKey();
                 final Object value = entry.getValue();
-                if (value instanceof Iterable || value instanceof Object[]) {
-                    // a collection or an object array has one value per element (must not use a delimiter, and allow
-                    // empty values); any other value, also a byte[] or another primitive array, is a single value
-                    final Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(value, null, true);
-                    HttpUtil.applyHeader(headerFilterStrategy, message.getExchange(), it, tc, key, (multiValues, prev) -> {
-                        if (multiValues != null) {
-                            // putHeader replaces the header, so all the values must be given at once
-                            response.putHeader(key, multiValues);
-                        } else if (prev != null) {
-                            response.putHeader(key, prev);
-                        }
-                    });
-                } else if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, message.getExchange())) {
-                    final String str = tc.convertTo(String.class, value);
-                    if (str != null) {
-                        response.putHeader(key, str);
-                    }
+                if (value instanceof String str && str.isBlank()) {
+                    // a blank value is not sent
+                    continue;
                 }
+                // a collection or an object array is sent as one header per value; any other value is a single header
+                HttpUtil.applyHeaderValue(headerFilterStrategy, message.getExchange(), value, tc, key,
+                        (multiValues, prev) -> {
+                            if (multiValues != null) {
+                                // putHeader replaces the header, so all the values must be given at once
+                                response.putHeader(key, multiValues);
+                            } else if (prev != null) {
+                                response.putHeader(key, prev);
+                            }
+                        });
             }
 
             KnativeHttpSupport.remapCloudEventHeaders(configuration.getCloudEvent(), message);

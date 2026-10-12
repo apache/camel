@@ -27,3 +27,21 @@ A `hashicorp:` property with a field of a secret that does not exist, such as `{
 now resolves to no value, as it already did without a field, so its default value or an optional placeholder
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
+
+=== camel-knative-http - a header with several values is sent as several headers
+
+A message header whose value is a `java.util.Collection` or an object array (as the consumer maps a request header
+that occurs more than once) is now sent as one HTTP header per value. The Knative HTTP producer sent it as one HTTP
+header with the `toString()` of the value, for example `[a, b]`, and the reply of the consumer sent only its last
+value. A collection or an object array that is empty, or that holds only null values, sends no header (the producer
+sent an empty List as the header value `[]`).
+
+Every other value is one header. A String is sent as before, also when it contains commas, and the reply still sends
+no header for a blank String. A `byte[]` is now converted to a String with the type converter (the producer sent its
+`toString()`, such as `[B@1dc9f5ad`, and the reply only its last byte as a number). The producer sends a `Map` and a
+Vert.x `JsonObject` or `JsonArray` as before, as their `toString()` (JSON for the Vert.x types). The reply now does
+the same: it sent only the last entry of a `Map` or `JsonObject` in the form `key=value`, and only the last element
+of a `JsonArray`.
+
+A route that needs the old single header of the producer can set the header to a String, for example with
+`String.valueOf(list)`.

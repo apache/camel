@@ -26,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -50,10 +52,9 @@ import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.htt
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A header with several values (a collection or an array, as the consumer maps a request header that occurs more than
- * once) must be sent as one HTTP header per value, in the request of the producer and in the reply of the consumer.
- * This is aligned with camel-netty-http and camel-undertow, which send one header per value. The HTTP producers are not
- * uniform: camel-http sends two or more values as a single header in the form [a, b].
+ * A header whose value is a collection or an object array (as the consumer maps a request header that occurs more than
+ * once) must be sent as one HTTP header per value, in the request of the producer and in the reply of the consumer. Any
+ * other value is one header.
  */
 class KnativeHttpMultiValueHeaderTest {
 
@@ -143,6 +144,29 @@ class KnativeHttpMultiValueHeaderTest {
     }
 
     @Test
+    void producerSendsAJsonObjectHeaderAsItsJson() throws Exception {
+        // a Vert.x JsonObject is an Iterable of its entries, but it is one value
+        HttpServerRequest request = sendWithHeader(new JsonObject().put("a", "b").put("c", "d"));
+
+        assertThat(request.headers().getAll("X-Test")).containsExactly("{\"a\":\"b\",\"c\":\"d\"}");
+    }
+
+    @Test
+    void producerSendsAJsonArrayHeaderAsItsJson() throws Exception {
+        // a Vert.x JsonArray is an Iterable of its elements, but it is one value (a List has one header per value)
+        HttpServerRequest request = sendWithHeader(new JsonArray().add("a").add("b"));
+
+        assertThat(request.headers().getAll("X-Test")).containsExactly("[\"a\",\"b\"]");
+    }
+
+    @Test
+    void producerSendsAMapHeaderAsOneValue() throws Exception {
+        HttpServerRequest request = sendWithHeader(mapOfTwo());
+
+        assertThat(request.headers().getAll("X-Test")).containsExactly("{a=b, c=d}");
+    }
+
+    @Test
     void consumerRepliesWithEachValueOfAListHeader() throws Exception {
         Map<String, Object> headers = new LinkedHashMap<>();
         headers.put("X-Test", List.of("a", "b"));
@@ -165,6 +189,48 @@ class KnativeHttpMultiValueHeaderTest {
         Response response = replyWithHeaders(Map.of("X-Test", "abc".getBytes(StandardCharsets.UTF_8)));
 
         assertThat(response.headers().getValues("X-Test")).containsExactly("abc");
+    }
+
+    @Test
+    void consumerRepliesWithAJsonObjectHeaderAsItsJson() throws Exception {
+        Response response = replyWithHeaders(Map.of("X-Test", new JsonObject().put("a", "b").put("c", "d")));
+
+        assertThat(response.headers().getValues("X-Test")).containsExactly("{\"a\":\"b\",\"c\":\"d\"}");
+    }
+
+    @Test
+    void consumerRepliesWithAJsonArrayHeaderAsItsJson() throws Exception {
+        Response response = replyWithHeaders(Map.of("X-Test", new JsonArray().add("a").add("b")));
+
+        assertThat(response.headers().getValues("X-Test")).containsExactly("[\"a\",\"b\"]");
+    }
+
+    @Test
+    void consumerRepliesWithAMapHeaderAsOneValue() throws Exception {
+        // as the producer sends it (the reply sent only the last entry of the map, as c=d)
+        Response response = replyWithHeaders(Map.of("X-Test", mapOfTwo()));
+
+        assertThat(response.headers().getValues("X-Test")).containsExactly("{a=b, c=d}");
+    }
+
+    @Test
+    void consumerRepliesWithoutAHeaderForABlankValue() throws Exception {
+        Map<String, Object> headers = new LinkedHashMap<>();
+        headers.put("X-Test", "");
+        headers.put("X-Blank", "  ");
+        headers.put("X-Single", "c");
+        Response response = replyWithHeaders(headers);
+
+        assertThat(response.headers().hasHeaderWithName("X-Test")).isFalse();
+        assertThat(response.headers().hasHeaderWithName("X-Blank")).isFalse();
+        assertThat(response.headers().getValues("X-Single")).containsExactly("c");
+    }
+
+    private static Map<String, Object> mapOfTwo() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("a", "b");
+        map.put("c", "d");
+        return map;
     }
 
     /**
