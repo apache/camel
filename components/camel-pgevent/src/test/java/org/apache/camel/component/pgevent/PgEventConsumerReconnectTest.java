@@ -31,6 +31,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -162,5 +163,45 @@ class PgEventConsumerReconnectTest extends CamelTestSupport {
 
         driver.join(TimeUnit.SECONDS.toMillis(20));
         assertThat(driver.isAlive()).as("the thread that reported the lost connection still waits").isFalse();
+    }
+
+    @Test
+    void connectionLostWhileStoppingDoesNotStartAReconnect() throws Exception {
+        PgEventConsumer[] consumer = new PgEventConsumer[1];
+        // as the thread of the driver that reports the lost connection
+        Thread driver = new Thread(() -> consumer[0].getPgEventListener().closed(), "driver-io");
+        driver.setDaemon(true);
+        CountDownLatch reported = new CountDownLatch(1);
+        PreparedStatement unlisten = mock(PreparedStatement.class);
+        when(unlisten.execute()).thenAnswer(invocation -> {
+            // the connection is lost while the consumer stops: the stop goes on when the driver thread has returned,
+            // or waits for a reconnect
+            driver.start();
+            await().atMost(20, TimeUnit.SECONDS).until(() -> driver.getState() == Thread.State.TERMINATED
+                    || driver.getState() == Thread.State.WAITING || driver.getState() == Thread.State.TIMED_WAITING);
+            reported.countDown();
+            throw new SQLException("Connection lost");
+        });
+        when(dataSource.getConnection()).thenAnswer(invocation -> {
+            PGConnection connection = newConnection();
+            when(connection.prepareStatement("UNLISTEN testchannel")).thenReturn(unlisten);
+            return connection;
+        });
+
+        consumer[0] = createConsumer();
+        consumer[0].start();
+        try {
+            consumer[0].stop();
+            assertThat(reported.getCount()).as("the lost connection was reported during the stop").isZero();
+
+            // the pool that would run a reconnect is shut down, so a thread that waits for one waits forever
+            driver.join(TimeUnit.SECONDS.toMillis(20));
+            assertThat(driver.isAlive()).as("the thread that reported the lost connection still waits").isFalse();
+            assertThat(connections).as("no reconnect was attempted").hasSize(1);
+            verify(connections.get(0)).close();
+        } finally {
+            // never leave the thread behind
+            driver.interrupt();
+        }
     }
 }

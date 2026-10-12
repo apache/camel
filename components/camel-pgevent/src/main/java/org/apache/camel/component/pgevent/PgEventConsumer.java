@@ -113,6 +113,10 @@ public class PgEventConsumer extends DefaultConsumer {
     public class PgEventListener implements PGNotificationListener {
 
         public void reconnect() {
+            if (!isRunAllowed()) {
+                // stopping: the reconnect pool is about to be shut down and would never run the task
+                return;
+            }
             // only submit the task if not already running
             BackgroundTask current = reconnectTask;
             if (current == null || !current.isRunning()) {
@@ -120,6 +124,11 @@ public class PgEventConsumer extends DefaultConsumer {
                 // its own task
                 final BackgroundTask task = createReconnectTask();
                 reconnectTask = task;
+                if (!isRunAllowed()) {
+                    // the stop began after the check above: it may have looked for a task to cancel before this one
+                    // was set
+                    return;
+                }
                 task.run(endpoint.getCamelContext(), () -> {
                     if (isRunAllowed()) {
                         LOG.debug("Connecting attempt #{}", task.iteration());
