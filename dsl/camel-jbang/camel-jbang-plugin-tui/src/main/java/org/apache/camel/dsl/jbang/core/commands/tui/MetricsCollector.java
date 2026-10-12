@@ -201,7 +201,7 @@ class MetricsCollector {
 
     void updateThroughputHistory(IntegrationInfo info) {
         long currentFailed = info.failed;
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
 
         String pid = info.pid;
         LinkedList<long[]> samples = throughputSamples.computeIfAbsent(pid, k -> new LinkedList<>());
@@ -260,7 +260,7 @@ class MetricsCollector {
                 .filter(ep -> "out".equals(ep.direction) && (ep.remote || ep.stub))
                 .mapToLong(ep -> ep.hits).sum();
 
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         String pid = info.pid;
 
         recordEndpointSample(pid, now, inTotal, outTotal,
@@ -332,7 +332,7 @@ class MetricsCollector {
                 .filter(s -> "out".equals(s.direction))
                 .mapToLong(s -> s.hits).sum();
 
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         recordEndpointSample(info.pid, now, inTotal, outTotal,
                 serviceSamples, previousServiceTime, serviceInHistory, serviceOutHistory);
 
@@ -406,7 +406,7 @@ class MetricsCollector {
     }
 
     void updateCbHistory(IntegrationInfo info) {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         for (CircuitBreakerInfo cb : info.circuitBreakers) {
             if (cb.id == null) {
                 continue;
@@ -423,7 +423,7 @@ class MetricsCollector {
 
     void updateHeapHistory(IntegrationInfo info) {
         if (info.heapMemUsed > 0) {
-            long now = System.currentTimeMillis();
+            long now = MonotonicClock.millis();
             Long lastTime = previousHeapTime.get(info.pid);
             if (lastTime == null || now - lastTime >= HEAP_SAMPLE_INTERVAL_MS) {
                 previousHeapTime.put(info.pid, now);
@@ -438,17 +438,17 @@ class MetricsCollector {
         Optional<Duration> durOpt = ph.info().totalCpuDuration();
         if (durOpt.isPresent()) {
             long cpuNanos = durOpt.get().toNanos();
-            long wallMs = System.currentTimeMillis();
+            long nowMs = MonotonicClock.millis();
             long[] prev = prevCpuSample.get(pid);
             if (prev != null) {
                 long deltaCpuNanos = cpuNanos - prev[0];
-                long deltaWallNanos = (wallMs - prev[1]) * 1_000_000L;
+                long deltaWallNanos = (nowMs - prev[1]) * 1_000_000L;
                 if (deltaWallNanos > 0) {
                     double cpuPct = (double) deltaCpuNanos / deltaWallNanos * 100.0;
                     cpuLoadAvg.computeIfAbsent(pid, k -> new LoadAvg()).update(Math.max(0, cpuPct));
                 }
             }
-            prevCpuSample.put(pid, new long[] { cpuNanos, wallMs });
+            prevCpuSample.put(pid, new long[] { cpuNanos, nowMs });
         }
     }
 

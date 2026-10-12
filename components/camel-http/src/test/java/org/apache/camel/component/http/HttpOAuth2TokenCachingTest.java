@@ -25,12 +25,14 @@ import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.component.http.handler.OAuth2TokenRequestHandler;
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NoHttpResponseException;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
@@ -313,7 +315,13 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
         assertNotNull(exchange);
         assertNotNull(exchange.getException());
         Exception exception = exchange.getException();
-        assertEquals(HttpHostConnectException.class, exception.getClass());
+        // When the token endpoint server is closed, the HTTP client may report either
+        // HttpHostConnectException (connection refused, port already released) or
+        // NoHttpResponseException (server closed the connection mid-flight during shutdown).
+        // Both indicate that the token endpoint is unreachable, so accept either.
+        assertTrue(
+                exception instanceof HttpHostConnectException || exception instanceof NoHttpResponseException,
+                "Expected a connection-failure exception but got: " + exception.getClass().getName());
     }
 
     protected void assertHeaders(Map<String, Object> headers) {

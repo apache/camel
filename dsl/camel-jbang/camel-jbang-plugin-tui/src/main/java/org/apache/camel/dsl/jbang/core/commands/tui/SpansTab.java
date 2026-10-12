@@ -649,7 +649,8 @@ class SpansTab extends AbstractTab {
             hintLast(spans, "PgUp/Dn", "page");
         } else if (filterInputActive) {
             spans.add(Span.styled(" /", Theme.label().bold()));
-            spans.add(Span.raw(filterInputState.text() + "█  "));
+            FormHelper.addCaretField(spans, filterInputState);
+            spans.add(Span.raw("  "));
             hint(spans, "Enter", "filter");
             hintLast(spans, "Esc", "cancel");
         } else {

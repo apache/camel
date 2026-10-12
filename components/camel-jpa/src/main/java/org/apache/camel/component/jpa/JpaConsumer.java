@@ -36,6 +36,7 @@ import jakarta.persistence.Query;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.AnnotationHelper;
@@ -210,6 +211,18 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     if (exchange.getException() != null) {
                         // if we failed then throw exception
                         throw exchange.getException();
+                    } else if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
+                        // the route marked the exchange rollback only (there is no exception): the entity is not
+                        // consumed, so the next poll consumes it again
+                        if (isTransacted()) {
+                            // throw to roll back the whole batch
+                            // (the exception must be created before the exchange is released)
+                            throw new RollbackExchangeException(
+                                    "Rollback transaction due to exchange being marked for rollback only", exchange);
+                        }
+                        // not transacted: a deliberate rollback is not an error, so skip this entity and continue
+                        // with the next one in the batch
+                        LOG.debug("Exchange marked for rollback only so the entity is not consumed: {}", exchange);
                     } else {
                         // Run the @Consumed callback
                         getDeleteHandler().deleteObject(batchEntityManager, result, exchange);
@@ -325,6 +338,10 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
      * This option is default <tt>false</tt>. When <tt>false</tt> then all the good messages will commit, and the first
      * failed message will rollback. However when <tt>true</tt>, then all messages will rollback, if just one message
      * failed.
+     * <p/>
+     * A message whose exchange was marked rollback only (for example with <tt>markRollbackOnly()</tt>) is not consumed:
+     * when <tt>false</tt> the other messages of the batch are still committed, when <tt>true</tt> all messages will
+     * rollback.
      */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;

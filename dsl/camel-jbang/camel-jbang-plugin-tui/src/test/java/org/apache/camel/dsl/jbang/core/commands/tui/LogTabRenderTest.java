@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -134,6 +137,50 @@ class LogTabRenderTest {
         String rendered = TuiTestHelper.renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("The newest line"), rendered);
+    }
+
+    @Test
+    void scrollingSidewaysShiftsPlainLines() {
+        LogTab tab = new LogTab(ctx);
+        tab.setEntriesForTesting(List.of(LogTab.parseLogLine("0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdef")));
+        tab.handleKeyEvent(KeyEvent.ofChar('w'));
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT));
+
+        Buffer buffer = render(tab, 30, 6);
+
+        assertTrue(rowText(buffer, 1).startsWith("456789abcdef"), rowText(buffer, 1));
+    }
+
+    @Test
+    void scrollingSidewaysKeepsTheColorsOfCompactLines() {
+        LogTab tab = new LogTab(ctx);
+        tab.setEntriesForTesting(List.of(LogTab.parseLogLine("2026-10-01 17:24:30.257 ERROR 85013 --- [main]"
+                                                             + " org.foo.MyLogger : Something failed with a message long enough to scroll")));
+        tab.handleKeyEvent(KeyEvent.ofChar('w'));
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT));
+
+        Buffer buffer = render(tab, 40, 6);
+
+        // "17:24:30.257 ERROR MyLogger ..." without its first 4 columns
+        String row = rowText(buffer, 1);
+        assertTrue(row.startsWith("4:30.257 ERROR"), row);
+        assertEquals(Theme.error().fg(), buffer.get(1 + row.indexOf("ERROR"), 1).style().fg());
+    }
+
+    private static Buffer render(LogTab tab, int width, int height) {
+        Rect area = new Rect(0, 0, width, height);
+        Buffer buffer = Buffer.empty(area);
+        tab.render(Frame.forTesting(buffer), area);
+        return buffer;
+    }
+
+    /** The text inside the border of the given row. */
+    private static String rowText(Buffer buffer, int y) {
+        StringBuilder sb = new StringBuilder();
+        for (int x = 1; x < buffer.width() - 1; x++) {
+            sb.append(buffer.get(x, y).symbol());
+        }
+        return sb.toString();
     }
 
     @Test

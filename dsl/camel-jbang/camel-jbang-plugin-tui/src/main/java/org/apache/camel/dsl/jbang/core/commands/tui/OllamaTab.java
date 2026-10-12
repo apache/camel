@@ -642,7 +642,7 @@ class OllamaTab extends AbstractTab {
     private static final String[] SPINNER = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" };
 
     private static Span workingSpan() {
-        String frame = SPINNER[(int) ((System.currentTimeMillis() / 100) % SPINNER.length)];
+        String frame = SPINNER[(int) ((MonotonicClock.millis() / 100) % SPINNER.length)];
         return Span.styled(" " + frame + " working", Theme.info());
     }
 

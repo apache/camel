@@ -17,37 +17,19 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes.support;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+/**
+ * What the traits need to know of a route source: the endpoints its routes consume from and send to.
+ */
 @JsonPropertyOrder(alphabetic = true)
 public class SourceMetadata {
-
-    @JsonProperty
-    public final Reources resources = new Reources();
     @JsonProperty
     public final Endpoints endpoints = new Endpoints();
-    @JsonProperty
-    public final List<Capability> capabilities = new ArrayList<>();
-    @JsonProperty
-    public final Set<String> dependencies = new TreeSet<>();
-
-    @JsonPropertyOrder(alphabetic = true)
-    public static class Reources {
-        @JsonProperty
-        public final Set<String> components = new TreeSet<>();
-        @JsonProperty
-        public final Set<String> languages = new TreeSet<>();
-        @JsonProperty
-        public final Set<String> dataformats = new TreeSet<>();
-        @JsonProperty
-        public final Set<String> kamelets = new TreeSet<>();
-    }
 
     @JsonPropertyOrder(alphabetic = true)
     public static class Endpoints {
