@@ -85,6 +85,26 @@ public class DuplicateKeyTest {
     }
 
     @Test
+    public void aKeyGivenThreeTimesNamesBothLostOnes() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - log:
+                            message: "one"
+                            message: "two"
+                            message: "three"
+                """;
+        List<String> lines = lines(yaml);
+        assertThat(lines).hasSize(2);
+        assertThat(lines.get(0)).contains("line 7: message: is given twice in this log: (lines 6 and 7)")
+                .contains("the message: at line 6 is lost");
+        assertThat(lines.get(1)).contains("line 8: message: is given twice in this log: (lines 7 and 8)")
+                .contains("the message: at line 7 is lost");
+    }
+
+    @Test
     public void theSameKeyInTwoStepsIsNotTwice() {
         String yaml = """
                 - route:
