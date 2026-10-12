@@ -94,7 +94,7 @@ jobs:
         run: find . -name "target" -type d | tar -czf target.tar.gz -T -
 
       - name: Upload compiled classes artifact
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         id: target-upload
         with:
           name: sonar-target
@@ -118,7 +118,7 @@ jobs:
           echo "$TARGET_ARTIFACT_ID" >> pr-event.txt
 
       - name: Upload pull request metadata
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: sonar-pr-event
           path: pr-event.txt
