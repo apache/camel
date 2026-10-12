@@ -27,3 +27,17 @@ A `hashicorp:` property with a field of a secret that does not exist, such as `{
 now resolves to no value, as it already did without a field, so its default value or an optional placeholder
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
+
+=== camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
+
+With `sortEntries=true` the `atom` consumer sorted the entries of a feed by their published date and routed them from
+the newest to the oldest one. With the default idempotent strategy (which skips an entry that is not newer than the
+one routed before it) only some entries of a feed were routed, and the others were skipped.
+
+This is fixed. The entries are now sorted by their updated date (by the published date for an entry without an
+updated date), which is the date the idempotent strategy compares, and they are routed from the oldest to the newest
+one, as camel-rss does and as Camel 3.x did. Entries are no longer skipped because of the routing order, also when an
+older entry was updated after newer ones were published.
+
+Routes using `sortEntries=true` with `idempotent=false` get the entries in this order too: the entry that was updated
+first is routed first, where the entry that was published last was routed first before.

@@ -30,9 +30,9 @@ import org.junit.jupiter.api.condition.OS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * With sortEntries the entries of a feed must be routed from the oldest to the newest one, as camel-rss does. The
- * default idempotent strategy skips an entry that is older than the one routed before it, so any other order loses
- * entries.
+ * With sortEntries the entries of a feed must be routed from the oldest to the newest one, by their updated date (and
+ * by their published date when they have no updated date). The default idempotent strategy compares the same date and
+ * skips an entry that is older than the one routed before it, so any other order loses entries.
  */
 @DisabledOnOs(OS.AIX)
 class AtomEntrySortTest extends CamelTestSupport {
@@ -40,6 +40,10 @@ class AtomEntrySortTest extends CamelTestSupport {
     // the feed has 10 entries, which are not in the order of their dates
     private static final String FEED
             = "atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&throttleEntries=false&startScheduler=false";
+
+    // the published dates are in the order first to fourth, but the first entry was updated after all the others
+    private static final String EDITED_FEED
+            = "atom:file:src/test/data/edited-feed.atom?splitEntries=true&throttleEntries=false&startScheduler=false";
 
     @Test
     void sortedEntriesAreAllRoutedOldestFirst() throws Exception {
@@ -65,14 +69,39 @@ class AtomEntrySortTest extends CamelTestSupport {
         assertEquals(sorted(routed), routed);
     }
 
+    @Test
+    void sortedEntriesAreRoutedByUpdatedDateWhenAnOlderEntryWasEdited() throws Exception {
+        List<String> routed = pollTitlesOnce(EDITED_FEED + "&sortEntries=true");
+
+        // the entry published first was updated last, and the third entry has only a published date
+        assertEquals(List.of("second", "third, no updated date", "fourth", "first, edited last"), routed);
+    }
+
+    @Test
+    void sortedEntriesAreRoutedByUpdatedDateWithoutIdempotency() throws Exception {
+        List<String> routed = pollTitlesOnce(EDITED_FEED + "&sortEntries=true&idempotent=false");
+
+        assertEquals(List.of("second", "third, no updated date", "fourth", "first, edited last"), routed);
+    }
+
+    private List<String> pollTitlesOnce(String uri) throws Exception {
+        return pollItemsOnce(uri).stream().map(item -> item.getTitle().orElseThrow()).toList();
+    }
+
     /**
-     * Runs one poll of a consumer of the given endpoint (its scheduler is not started) and returns the dates of the
-     * routed entries.
+     * Returns the updated dates of the entries that one poll of the given endpoint routes.
      */
     private List<ZonedDateTime> pollOnce(String uri) throws Exception {
-        List<ZonedDateTime> routed = new ArrayList<>();
-        Consumer consumer = context.getEndpoint(uri).createConsumer(
-                exchange -> routed.add(exchange.getIn().getBody(Item.class).getUpdatedZonedDateTime().orElseThrow()));
+        return pollItemsOnce(uri).stream().map(item -> item.getUpdatedAsZonedDateTime().orElseThrow()).toList();
+    }
+
+    /**
+     * Runs one poll of a consumer of the given endpoint (its scheduler is not started) and returns the routed entries.
+     */
+    private List<Item> pollItemsOnce(String uri) throws Exception {
+        List<Item> routed = new ArrayList<>();
+        Consumer consumer = context.getEndpoint(uri)
+                .createConsumer(exchange -> routed.add(exchange.getIn().getBody(Item.class)));
         consumer.start();
         try {
             ((Runnable) consumer).run();
