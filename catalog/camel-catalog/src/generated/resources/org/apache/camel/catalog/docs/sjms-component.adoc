@@ -325,7 +325,7 @@ batched consumption — a batch of N unrelated messages has no well-defined sing
 routes are not supported when `batching=true`.
 
 A batch completes when either `batchSize` messages have been received, or the `batchInterval` —
-measured from the first message in the batch - has elapsed.
+measured from the first message in the batch — has elapsed.
 
 Commit/acknowledgement happens once per batch rather than once per message. With
 `acknowledgementMode=AUTO_ACKNOWLEDGE`, messages are acknowledged as they're received into the batch,
