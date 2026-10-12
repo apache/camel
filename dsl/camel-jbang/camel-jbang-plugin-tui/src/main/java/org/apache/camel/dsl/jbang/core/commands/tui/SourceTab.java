@@ -57,7 +57,6 @@ import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 import dev.tamboui.widgets.paragraph.Paragraph;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.RouteDslConverter;
 import org.apache.camel.dsl.jbang.core.commands.ai.KameletChecks;
@@ -313,7 +312,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
-        if (leftArea != null && TuiHelper.contains(leftArea, me.x(), me.y())) {
+        if (leftArea != null && leftArea.contains(me.x(), me.y())) {
             focusOnViewer = false;
             if (me.kind() == MouseEventKind.SCROLL_UP) {
                 listState.selectPrevious();
@@ -335,7 +334,7 @@ class SourceTab extends AbstractTab {
             return true;
         }
 
-        if (rightArea != null && TuiHelper.contains(rightArea, me.x(), me.y())) {
+        if (rightArea != null && rightArea.contains(me.x(), me.y())) {
             if (sourceViewer.isVisible()) {
                 focusOnViewer = true;
                 return sourceViewer.handleMouseEvent(me);
@@ -922,7 +921,6 @@ class SourceTab extends AbstractTab {
         sourceViewer.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
         sourceViewer.setSemanticCompletion(SourceEditAssist.isYamlFile(filePath) ? assist::provideSemanticCompletions : null);
         if (isCamelSourceFile(filePath)) {
-            sourceViewer.setQuickDocProvider(assist::provideCamelQuickDocs);
             sourceViewer.setDeprecatedLineScanner(null);
             if (SourceEditAssist.isYamlFile(filePath)) {
                 // the options of a kamelet: endpoint start with the properties of its Kamelet (CAMEL-25411)
@@ -940,7 +938,6 @@ class SourceTab extends AbstractTab {
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {
                 // XML: the quick doc of the routes read into the model, Tab in the uri attributes (CAMEL-25208)
-                sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
                 sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
                 sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEditQuickDocProvider(
@@ -948,7 +945,6 @@ class SourceTab extends AbstractTab {
             }
         } else if (routeFile) {
             // Java: the quick doc of the routes read into the model by the Java DSL parser (CAMEL-25208)
-            sourceViewer.setQuickDocProvider(cd -> assist.provideRouteQuickDocs(filePath, cd));
             sourceViewer.setDeprecatedLineScanner(null);
             // Tab in the endpoint uri of from, to, toD...: component names, options and values, as YAML uris have
             sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
@@ -956,14 +952,12 @@ class SourceTab extends AbstractTab {
             sourceViewer.setEditQuickDocProvider(
                     withProjectDocs((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row)));
         } else if (SourceEditAssist.isPropertiesFile(filePath)) {
-            sourceViewer.setQuickDocProvider(assist::providePropertiesQuickDocs);
             sourceViewer.setDeprecatedLineScanner(assist::scanDeprecatedProperties);
             sourceViewer.setAutocompleteProvider(assist::providePropertyCompletions);
             sourceViewer.setAutocompleteValueProvider(assist::providePropertyValueCompletions);
             sourceViewer.setPropertiesValidator(assist::validatePropertyLine);
             sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditPropertyQuickDoc));
         } else {
-            sourceViewer.setQuickDocProvider(null);
             sourceViewer.setDeprecatedLineScanner(null);
             sourceViewer.setAutocompleteProvider(null);
             sourceViewer.setEditQuickDocProvider(null);
@@ -1054,19 +1048,7 @@ class SourceTab extends AbstractTab {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, area, listState);
-
-        int visibleRows = area.height() - 2;
-        if (entries.size() > visibleRows) {
-            Rect scrollRect = new Rect(
-                    area.x() + area.width() - 1,
-                    area.y() + 1,
-                    1,
-                    visibleRows);
-            listScrollState.contentLength(entries.size());
-            listScrollState.viewportContentLength(visibleRows);
-            listScrollState.position(listState.offset());
-            frame.renderStatefulWidget(Scrollbar.builder().build(), scrollRect, listScrollState);
-        }
+        TuiHelper.renderListScrollbar(frame, area, entries.size(), listState.offset(), listScrollState);
     }
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -1595,7 +1577,7 @@ class SourceTab extends AbstractTab {
 
     /** The beans and classes the project declares, read again when a file of the project changed. */
     ProjectBeans projectBeans() {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - projectBeansChecked < 2000) {
             // the quick doc asks on every frame: look at the files at most every 2 seconds
             return projectBeans;

@@ -223,7 +223,7 @@ class ShellPanel {
         if (!visible || lastArea == null) {
             return false;
         }
-        if (!TuiHelper.contains(lastArea, me.x(), me.y())) {
+        if (!lastArea.contains(me.x(), me.y())) {
             return false;
         }
         if (me.kind() == MouseEventKind.SCROLL_UP) {

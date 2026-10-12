@@ -29,6 +29,16 @@ import dev.tamboui.terminal.Backend;
  */
 final class NoopBackend implements Backend {
 
+    private final int[] input;
+    private int inputPos;
+
+    /**
+     * @param input the bytes the terminal sends, read through TamboUI's event parser by tests of key handling
+     */
+    NoopBackend(int... input) {
+        this.input = input;
+    }
+
     @Override
     public void draw(DiffResult diff) throws IOException {
     }
@@ -85,12 +95,12 @@ final class NoopBackend implements Backend {
 
     @Override
     public int read(int timeoutMs) throws IOException {
-        return -2;
+        return inputPos < input.length ? input[inputPos++] : -2;
     }
 
     @Override
     public int peek(int timeoutMs) throws IOException {
-        return -2;
+        return inputPos < input.length ? input[inputPos] : -2;
     }
 
     @Override

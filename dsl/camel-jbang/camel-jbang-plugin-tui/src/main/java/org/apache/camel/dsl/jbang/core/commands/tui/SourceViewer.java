@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -95,11 +96,6 @@ class SourceViewer {
         static DocEntry withTitle(String title, String text) {
             return new DocEntry(text, false, title);
         }
-    }
-
-    @FunctionalInterface
-    interface QuickDocProvider {
-        Map<Integer, List<DocEntry>> provideAll(List<JsonObject> codeData);
     }
 
     @FunctionalInterface
@@ -185,9 +181,8 @@ class SourceViewer {
     private boolean markdownMode;
     private String rawMarkdownContent;
     private int markdownScroll;
-    private QuickDocProvider quickDocProvider;
-    private boolean quickDocEnabled;
-    private Map<Integer, List<DocEntry>> quickDocEntries = Collections.emptyMap();
+    // the furthest the markdown view scrolls, from the last render (unknown before it)
+    private int markdownMaxScroll = Integer.MAX_VALUE;
     private EditQuickDocProvider editQuickDocProvider;
     private boolean editQuickDocEnabled = true;
     private DeprecatedLineScanner deprecatedLineScanner;
@@ -441,7 +436,7 @@ class SourceViewer {
         if (liveRunData == null || loadedFilePath == null) {
             return Collections.emptyMap();
         }
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - liveLinesTime > 1000) {
             refreshLiveLines(now);
         }
@@ -450,7 +445,7 @@ class SourceViewer {
 
     /** Package-private for tests: reads the live run data again now, as the render does once a second. */
     void refreshLiveLinesForTesting() {
-        refreshLiveLines(System.currentTimeMillis());
+        refreshLiveLines(MonotonicClock.millis());
     }
 
     /** Package-private for tests: the text of the live column of a line. */
@@ -589,8 +584,6 @@ class SourceViewer {
         exitEditMode();
         visible = false;
         onLineSelected = null;
-        quickDocEnabled = false;
-        quickDocEntries = Collections.emptyMap();
         deprecatedLines = Collections.emptySet();
         editableFile = null;
         propertiesValidator = null;
@@ -632,9 +625,7 @@ class SourceViewer {
         markdownMode = false;
         rawMarkdownContent = null;
         markdownScroll = 0;
-        quickDocProvider = null;
-        quickDocEnabled = false;
-        quickDocEntries = Collections.emptyMap();
+        markdownMaxScroll = Integer.MAX_VALUE;
         deprecatedLineScanner = null;
         deprecatedLines = Collections.emptySet();
         jumpLinks = Collections.emptyMap();
@@ -800,33 +791,6 @@ class SourceViewer {
         return loadedFilePath;
     }
 
-    void toggleQuickDoc() {
-        if (quickDocProvider != null) {
-            quickDocEnabled = !quickDocEnabled;
-            if (quickDocEnabled) {
-                quickDocEntries = quickDocProvider.provideAll(codeData);
-                if (quickDocEntries == null) {
-                    quickDocEntries = Collections.emptyMap();
-                }
-            } else {
-                quickDocEntries = Collections.emptyMap();
-            }
-        }
-    }
-
-    private void refreshQuickDoc() {
-        if (quickDocEnabled && quickDocProvider != null && !codeData.isEmpty()) {
-            quickDocEntries = quickDocProvider.provideAll(codeData);
-            if (quickDocEntries == null) {
-                quickDocEntries = Collections.emptyMap();
-            }
-        }
-    }
-
-    void setQuickDocProvider(QuickDocProvider provider) {
-        this.quickDocProvider = provider;
-    }
-
     void setEditQuickDocProvider(EditQuickDocProvider provider) {
         this.editQuickDocProvider = provider;
     }
@@ -884,17 +848,17 @@ class SourceViewer {
         }
         if (markdownMode) {
             if (ke.isUp() || ke.isChar('k')) {
-                markdownScroll = Math.max(0, markdownScroll - 1);
+                scrollMarkdown(-1);
             } else if (ke.isDown() || ke.isChar('j')) {
-                markdownScroll++;
+                scrollMarkdown(1);
             } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                markdownScroll = Math.max(0, markdownScroll - 10);
+                scrollMarkdown(-10);
             } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                markdownScroll += 10;
+                scrollMarkdown(10);
             } else if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
                 markdownScroll = 0;
             } else if (ke.isEnd() || ke.isKey(KeyCode.END)) {
-                markdownScroll = Integer.MAX_VALUE;
+                markdownScroll = markdownMaxScroll;
             }
             return true;
         }
@@ -908,7 +872,6 @@ class SourceViewer {
                 }
             }
             idx = (idx + 1) % formats.length;
-            quickDocEntries = Collections.emptyMap();
             switchFormat(formats[idx]);
             return true;
         }
@@ -1000,6 +963,43 @@ class SourceViewer {
         // rendering will adjust if the cursor ended up off-screen.
         int maxScroll = Math.max(0, editState.lineCount() - Math.max(1, lastVisibleLines));
         editState.scrollDown(Math.min(prevScroll, maxScroll), lastVisibleLines);
+    }
+
+    /** Scrolls the markdown view by lines, within the document as far as the last render measured it. */
+    private void scrollMarkdown(int delta) {
+        long next = (long) Math.min(markdownScroll, markdownMaxScroll) + delta;
+        markdownScroll = (int) Math.max(0, Math.min(markdownMaxScroll, next));
+    }
+
+    /** Ctrl+/: comments out the block at the cursor, or brings it back when it is commented out. */
+    private void toggleComment(boolean yamlListBlocks) {
+        String marker = lineCommentMarker();
+        if (marker == null) {
+            return;
+        }
+        List<String> lines = editLines();
+        int row = editState.cursorRow();
+        YamlBlockEditor.BlockRange block = YamlBlockEditor.findCommentBlock(lines, row, yamlListBlocks, marker);
+        if (block.isEmpty()) {
+            return;
+        }
+        List<String> toggled = YamlBlockEditor.toggleComment(lines, block, marker);
+        applyBlockEdit(new YamlBlockEditor.EditResult(toggled, row, YamlBlockEditor.leadingSpaces(toggled.get(row))));
+    }
+
+    /** The line comment marker of the file in the editor, or null when it has none the editor can toggle (XML). */
+    private String lineCommentMarker() {
+        if (editableFile == null) {
+            return null;
+        }
+        String name = editableFile.getFileName().toString().toLowerCase(Locale.ROOT);
+        if (name.endsWith(".yaml") || name.endsWith(".yml") || name.endsWith(".properties")) {
+            return "#";
+        }
+        if (name.endsWith(".java") || name.endsWith(".groovy") || name.endsWith(".kt") || name.endsWith(".js")) {
+            return "//";
+        }
+        return null;
     }
 
     private void refreshEditFindMatches() {
@@ -1136,6 +1136,11 @@ class SourceViewer {
             applyBlockEdit(YamlBlockEditor.deleteLine(editLines(), editState.cursorRow()));
             return true;
         }
+        if (ke.hasCtrl() && ke.isChar('/')) {
+            // terminals send Ctrl+/ as 0x1F, which TamboUI reads as Ctrl+/ since 0.5.0
+            toggleComment(yamlListBlocks);
+            return true;
+        }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('r') && (isCamelYamlFile() || uriCompletion != null)) {
             openRefactorPopup();
             return true;
@@ -1261,9 +1266,10 @@ class SourceViewer {
             openAutocomplete();
             return true;
         }
-        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
+        String typed = FormHelper.typedText(ke);
+        if (typed != null) {
             recordEditChange();
-            editState.insert(ke.character());
+            editState.insert(typed);
             return true;
         }
         return true;
@@ -1285,7 +1291,6 @@ class SourceViewer {
         editStartTop = markdownMode ? -1 : scrollY;
         markdownModeBeforeEdit = markdownMode;
         markdownMode = false;
-        quickDocEnabled = false;
         search.closeInputOnly();
         dirty = false;
         validationErrors = null;
@@ -1333,12 +1338,8 @@ class SourceViewer {
             @Override
             public void deleteCurrentLine() {
                 recordEditChange();
-                editState.moveCursorToLineStart();
                 int current = editState.cursorRow();
-                String line = editState.getLine(current);
-                for (int i = 0; i < line.length(); i++) {
-                    editState.deleteForward();
-                }
+                SourceEditorNavigation.clearLine(editState);
                 if (current < editState.lineCount() - 1) {
                     editState.deleteForward();
                 } else if (current > 0) {
@@ -1554,16 +1555,8 @@ class SourceViewer {
             return;
         }
         SimpleCompletionContext c = sc.context();
-        int col = editState.cursorCol();
-        for (; col < sc.endCol(); col++) {
-            editState.moveCursorRight();
-        }
-        for (; col > sc.endCol(); col--) {
-            editState.moveCursorLeft();
-        }
-        for (int i = 0; i < c.prefix().length(); i++) {
-            editState.deleteBackward();
-        }
+        SourceEditorNavigation.moveToColumn(editState, sc.endCol());
+        SourceEditorNavigation.deleteBackTo(editState, editState.cursorCol() - c.prefix().length());
         // Tab in the middle of a word replaces all of it
         String line = editState.getLine(sc.row());
         int from = editState.cursorCol();
@@ -1571,9 +1564,7 @@ class SourceViewer {
         while (end < line.length() && isSimpleWordChar(line.charAt(end), c.kind())) {
             end++;
         }
-        for (int i = from; i < end; i++) {
-            editState.deleteForward();
-        }
+        SourceEditorNavigation.deleteForwardTo(editState, end);
         String text = item.insertText();
         String closing = c.closing();
         if (c.kind() == SimpleCompletionContext.Kind.FUNCTION && text.endsWith("}")) {
@@ -1647,16 +1638,8 @@ class SourceViewer {
             return;
         }
         XmlCompletionContext c = xc.context();
-        int col = editState.cursorCol();
-        for (; col < xc.endCol(); col++) {
-            editState.moveCursorRight();
-        }
-        for (; col > xc.endCol(); col--) {
-            editState.moveCursorLeft();
-        }
-        for (int i = 0; i < c.prefix().length(); i++) {
-            editState.deleteBackward();
-        }
+        SourceEditorNavigation.moveToColumn(editState, xc.endCol());
+        SourceEditorNavigation.deleteBackTo(editState, editState.cursorCol() - c.prefix().length());
         // Tab in the middle of a name replaces all of it
         String line = editState.getLine(xc.row());
         int from = editState.cursorCol();
@@ -1667,17 +1650,15 @@ class SourceViewer {
                 : Character.isLetterOrDigit(line.charAt(end)) || line.charAt(end) == '-')) {
             end++;
         }
-        for (int i = from; i < end; i++) {
-            editState.deleteForward();
-        }
+        SourceEditorNavigation.deleteForwardTo(editState, end);
         String text = item.insertText();
         int caret = text.indexOf(XmlCompletions.CARET);
         if (caret >= 0) {
             text = text.substring(0, caret) + text.substring(caret + 1);
         }
         editState.insert(text);
-        for (int i = caret >= 0 ? text.length() - caret : 0; i > 0; i--) {
-            editState.moveCursorLeft();
+        if (caret >= 0) {
+            SourceEditorNavigation.moveToColumn(editState, editState.cursorCol() - (text.length() - caret));
         }
         if (c.kind() == XmlCompletionContext.Kind.ATTRIBUTE) {
             openAutocomplete();
@@ -1718,25 +1699,15 @@ class SourceViewer {
         if (editState.cursorRow() != jc.row()) {
             return;
         }
-        int col = editState.cursorCol();
-        for (; col < jc.endCol(); col++) {
-            editState.moveCursorRight();
-        }
-        for (; col > jc.endCol(); col--) {
-            editState.moveCursorLeft();
-        }
-        for (int i = 0; i < jc.context().prefix().length(); i++) {
-            editState.deleteBackward();
-        }
+        SourceEditorNavigation.moveToColumn(editState, jc.endCol());
+        SourceEditorNavigation.deleteBackTo(editState, editState.cursorCol() - jc.context().prefix().length());
         String line = editState.getLine(jc.row());
         int from = editState.cursorCol();
         int end = from;
         while (end < line.length() && Character.isJavaIdentifierPart(line.charAt(end))) {
             end++;
         }
-        for (int i = from; i < end; i++) {
-            editState.deleteForward();
-        }
+        SourceEditorNavigation.deleteForwardTo(editState, end);
         String text = item.insertText();
         int caret = text.indexOf(XmlCompletions.CARET);
         if (caret >= 0) {
@@ -1748,8 +1719,8 @@ class SourceViewer {
             caret = -1;
         }
         editState.insert(text);
-        for (int i = caret >= 0 ? text.length() - caret : 0; i > 0; i--) {
-            editState.moveCursorLeft();
+        if (caret >= 0) {
+            SourceEditorNavigation.moveToColumn(editState, editState.cursorCol() - (text.length() - caret));
         }
     }
 
@@ -1761,16 +1732,8 @@ class SourceViewer {
             return;
         }
         // the arrows move the cursor within the prefix while the popup is open: back to its end
-        int col = editState.cursorCol();
-        for (; col < jc.endCol(); col++) {
-            editState.moveCursorRight();
-        }
-        for (; col > jc.endCol(); col--) {
-            editState.moveCursorLeft();
-        }
-        for (int i = 0; i < jc.prefix().length(); i++) {
-            editState.deleteBackward();
-        }
+        SourceEditorNavigation.moveToColumn(editState, jc.endCol());
+        SourceEditorNavigation.deleteBackTo(editState, editState.cursorCol() - jc.prefix().length());
         // Tab in the middle of a word replaces all of it: the rest of the name after the cursor goes too
         String line = editState.getLine(jc.row());
         int from = editState.cursorCol();
@@ -1778,9 +1741,7 @@ class SourceViewer {
         while (end < line.length() && isUriWordChar(line.charAt(end), jc.suffix())) {
             end++;
         }
-        for (int i = from; i < end; i++) {
-            editState.deleteForward();
-        }
+        SourceEditorNavigation.deleteForwardTo(editState, end);
         // the : or = the name is followed by is not doubled when it is there already
         boolean hasSuffix = !jc.suffix().isEmpty() && line.startsWith(jc.suffix(), end);
         editState.insert(item.key() + (hasSuffix ? "" : jc.suffix()));
@@ -1997,17 +1958,11 @@ class SourceViewer {
             int eq = currentLine.indexOf('=');
             if (eq >= 0) {
                 String keyPart = currentLine.substring(0, eq + 1);
-                editState.moveCursorToLineStart();
-                for (int i = 0; i < currentLine.length(); i++) {
-                    editState.deleteForward();
-                }
+                SourceEditorNavigation.clearLine(editState);
                 editState.insert(keyPart + item.key());
             }
         } else {
-            editState.moveCursorToLineStart();
-            for (int i = 0; i < currentLine.length(); i++) {
-                editState.deleteForward();
-            }
+            SourceEditorNavigation.clearLine(editState);
             boolean isGroup = item.key().endsWith(".");
             String insertText = isGroup ? item.key() : item.key() + "=";
             editState.insert(insertText);
@@ -2046,10 +2001,7 @@ class SourceViewer {
         }
         String indentStr = " ".repeat(indent);
 
-        editState.moveCursorToLineStart();
-        for (int i = 0; i < currentLine.length(); i++) {
-            editState.deleteForward();
-        }
+        SourceEditorNavigation.clearLine(editState);
 
         if (valueMode) {
             String trimmed = currentLine.trim();
@@ -2346,15 +2298,10 @@ class SourceViewer {
             return;
         }
         recordEditChange();
-        editState.moveCursorToLineStart();
-        for (int i = 0; i < line.length(); i++) {
-            editState.deleteForward();
-        }
+        SourceEditorNavigation.clearLine(editState);
         editState.insert(fixed);
         editState.moveCursorToLineStart();
-        for (int i = 0; i < Math.min(col, fixed.length()); i++) {
-            editState.moveCursorRight();
-        }
+        SourceEditorNavigation.moveToColumn(editState, col);
         dirty = true;
         lineStatuses = null;
         // the problem is gone: check again now, not at the next interval
@@ -2387,7 +2334,7 @@ class SourceViewer {
         if (!dirty || validationErrors != null) {
             return;
         }
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - lastBackgroundValidationTime < BACKGROUND_VALIDATION_INTERVAL_MS) {
             return;
         }
@@ -2597,11 +2544,11 @@ class SourceViewer {
         }
         if (markdownMode) {
             if (me.kind() == MouseEventKind.SCROLL_UP) {
-                markdownScroll = Math.max(0, markdownScroll - 3);
+                scrollMarkdown(-3);
                 return true;
             }
             if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-                markdownScroll += 3;
+                scrollMarkdown(3);
                 return true;
             }
             return true;
@@ -2645,11 +2592,7 @@ class SourceViewer {
                 if (current != null && current.isBlank() && !current.isEmpty()) {
                     // strip the blank line's leading whitespace (e.g. from ENTER auto-indent) so the
                     // reindented block's own indent is not stacked on top of it
-                    editState.moveCursorToLineStart();
-                    int n = current.length();
-                    for (int i = 0; i < n; i++) {
-                        editState.deleteForward();
-                    }
+                    SourceEditorNavigation.clearLine(editState);
                 }
                 editState.insert(adjusted);
             }
@@ -2689,14 +2632,15 @@ class SourceViewer {
                 bb.borderStyle(borderStyle);
             }
             Block block = bb.build();
-            MarkdownView view = MarkdownView.builder()
+            MarkdownView.Builder viewBuilder = MarkdownView.builder()
                     .source(rawMarkdownContent)
-                    .scroll(markdownScroll)
-                    .block(block)
                     .styles(Theme.markdownStyles())
-                    .syntaxTheme(Theme.syntaxTheme())
-                    .build();
-            frame.renderWidget(view, area);
+                    .syntaxTheme(Theme.syntaxTheme());
+            // the scroll stays within the document, so End, then Up or PgUp, move from the end at once
+            Rect inner = block.inner(area);
+            markdownMaxScroll = Math.max(0, viewBuilder.build().computeHeight(inner.width()) - inner.height());
+            markdownScroll = Math.max(0, Math.min(markdownScroll, markdownMaxScroll));
+            frame.renderWidget(viewBuilder.scroll(markdownScroll).block(block).build(), area);
             return;
         }
 
@@ -3317,6 +3261,9 @@ class SourceViewer {
             TuiHelper.hint(spans, "Alt+↑/↓", "move block");
             TuiHelper.hint(spans, "Ctrl+D", "duplicate");
             TuiHelper.hint(spans, "Ctrl+K", "delete line");
+            if (lineCommentMarker() != null) {
+                TuiHelper.hint(spans, "Ctrl+/", "comment");
+            }
             if (autocompleteProvider != null) {
                 TuiHelper.hint(spans, "Tab", "complete");
             }
@@ -3695,6 +3642,7 @@ class SourceViewer {
                 rawMarkdownContent = String.join("\n", rawLines);
                 markdownMode = true;
                 markdownScroll = 0;
+                markdownMaxScroll = Integer.MAX_VALUE;
             } else {
                 rawMarkdownContent = null;
                 markdownMode = false;
@@ -3998,7 +3946,6 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             search.reset();
-            refreshQuickDoc();
             return;
         }
 
@@ -4088,7 +4035,6 @@ class SourceViewer {
             scrollX = 0;
             pendingScroll = true;
             search.reset();
-            refreshQuickDoc();
         });
     }
 
@@ -4245,102 +4191,10 @@ class SourceViewer {
         return lastCommentLine >= 0 ? lastCommentLine + 1 : 0;
     }
 
-    private static Line applyHorizontalSkip(Line line, int hSkip) {
-        List<Span> scrolled = new ArrayList<>();
-        int skipped = 0;
-        for (Span span : line.spans()) {
-            String content = span.content();
-            if (skipped >= hSkip) {
-                scrolled.add(span);
-            } else if (skipped + content.length() > hSkip) {
-                int offset = hSkip - skipped;
-                scrolled.add(Span.styled(content.substring(offset), span.style()));
-                skipped = hSkip;
-            } else {
-                skipped += content.length();
-            }
-        }
-        return scrolled.isEmpty() ? Line.from(List.of(Span.raw(""))) : Line.from(scrolled);
-    }
-
-    private int computeGutterWidth() {
-        for (String line : lines) {
-            int w = 0;
-            for (int i = 0; i < line.length(); i++) {
-                char c = line.charAt(i);
-                if (c != ' ' && !Character.isDigit(c)) {
-                    break;
-                }
-                w++;
-            }
-            if (w > 0) {
-                return w;
-            }
-        }
-        return 0;
-    }
-
-    private List<Line> renderQuickDocLines(DocEntry entry, int sourceIndent, int gutterWidth, int viewportWidth) {
-        String text = entry.text();
-        String prefix = " ".repeat(gutterWidth + 5 + sourceIndent);
-        String marker = "ℹ ";
-        Style docStyle = Style.EMPTY.dim().italic();
-        int prefixWidth = prefix.length() + marker.length();
-
-        if (!wordWrap || viewportWidth <= 0 || prefixWidth + text.length() <= viewportWidth) {
-            return List.of(Line.from(List.of(
-                    Span.raw(prefix),
-                    Span.styled(marker, docStyle),
-                    Span.styled(text, docStyle))));
-        }
-
-        int textWidth = viewportWidth - prefixWidth;
-        if (textWidth <= 10) {
-            return List.of(Line.from(List.of(
-                    Span.raw(prefix),
-                    Span.styled(marker, docStyle),
-                    Span.styled(text, docStyle))));
-        }
-
-        String contPrefix = " ".repeat(prefixWidth);
-        List<Line> result = new ArrayList<>();
-        int pos = 0;
-        boolean first = true;
-        while (pos < text.length()) {
-            int end = Math.min(pos + textWidth, text.length());
-            if (end < text.length()) {
-                int space = text.lastIndexOf(' ', end);
-                if (space > pos) {
-                    end = space + 1;
-                }
-            }
-            String chunk = text.substring(pos, end).stripTrailing();
-            if (first) {
-                result.add(Line.from(List.of(
-                        Span.raw(prefix),
-                        Span.styled(marker, docStyle),
-                        Span.styled(chunk, docStyle))));
-                first = false;
-            } else {
-                result.add(Line.from(List.of(
-                        Span.raw(contPrefix),
-                        Span.styled(chunk, docStyle))));
-            }
-            pos = end;
-        }
-        return result;
-    }
-
     private int countVisualRows(int fromLine, int toLine, int contentWidth) {
         int count = 0;
         for (int i = fromLine; i < toLine && i < lines.size(); i++) {
             count += wrapRowCount(lines.get(i), contentWidth);
-            if (quickDocEnabled) {
-                List<DocEntry> docs = quickDocEntries.get(i);
-                if (docs != null) {
-                    count += docs.size();
-                }
-            }
         }
         return count;
     }

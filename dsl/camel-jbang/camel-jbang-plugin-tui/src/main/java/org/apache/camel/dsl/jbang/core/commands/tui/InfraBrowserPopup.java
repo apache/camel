@@ -163,20 +163,12 @@ class InfraBrowserPopup {
         if (popupRect == null || itemHeights == null) {
             return -1;
         }
-        int firstRow = popupRect.top() + 1;
-        int relY = mouseY - firstRow;
-        if (relY < 0) {
+        // the rows inside the border; the list's offset counts rows, not items
+        int relY = mouseY - (popupRect.top() + 1);
+        if (relY >= popupRect.height() - 2) {
             return -1;
         }
-        int offset = browserState.offset();
-        int rowAcc = 0;
-        for (int i = offset; i < itemHeights.length; i++) {
-            rowAcc += itemHeights[i];
-            if (relY < rowAcc) {
-                return i;
-            }
-        }
-        return -1;
+        return TuiHelper.listItemAtRow(relY, browserState.offset(), itemHeights);
     }
 
     void render(Frame frame, Rect area) {
@@ -472,8 +464,8 @@ class InfraBrowserPopup {
             portState.moveCursorToStart();
         } else if (ke.isEnd()) {
             portState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR && Character.isDigit(ke.string().charAt(0))) {
-            portState.insert(ke.string().charAt(0));
+        } else if (FormHelper.typedText(ke) != null && Character.isDigit(ke.codePoint())) {
+            portState.insert(ke.string());
         }
     }
 

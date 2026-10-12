@@ -65,9 +65,14 @@ import org.yaml.snakeyaml.nodes.SequenceNode;
  */
 public final class ProjectRoutes {
 
-    /** Keys whose value is an endpoint the route sends to. */
+    /**
+     * Keys whose value is an endpoint the route sends to: the senders of the {@code EndpointRules} camel validate uses
+     * too (deadLetterUri, an option of the error handler, is read on its own).
+     */
     private static final Set<String> PRODUCER_KEYS = Set.of("to", "toD", "wireTap", "enrich");
-    /** Keys whose value is an endpoint the route polls from: the route consumes it, too. */
+    /**
+     * Keys whose value is an endpoint the route polls from: the route consumes it, too, as camel validate counts it.
+     */
     private static final Set<String> POLL_KEYS = Set.of("poll", "pollEnrich");
     /** EIPs whose destinations are only known at runtime. */
     private static final Set<String> DYNAMIC_KEYS = Set.of("recipientList", "routingSlip", "dynamicRouter");
@@ -288,12 +293,13 @@ public final class ProjectRoutes {
         return new Endpoint("(" + eip + ")", eip, "dynamic:" + eip, true, null);
     }
 
-    /** The brokers several components talk to under one name. */
+    /**
+     * The brokers several components talk to under one name. The in-memory components are not joined: seda:q and
+     * disruptor:q are different endpoints at runtime.
+     */
     static String family(String scheme) {
         return switch (scheme) {
             case "activemq", "activemq6", "sjms", "sjms2", "amqp", "jms" -> "jms";
-            case "direct-vm" -> "direct";
-            case "vm", "disruptor", "disruptor-vm" -> "seda";
             default -> scheme;
         };
     }
@@ -739,6 +745,11 @@ public final class ProjectRoutes {
                     } else if (PRODUCER_KEYS.contains(key) || POLL_KEYS.contains(key)) {
                         Endpoint e = stepEndpoint(value, "toD".equals(key) || "enrich".equals(key)
                                 || "pollEnrich".equals(key));
+                        if (e == null && ("enrich".equals(key) || "pollEnrich".equals(key))
+                                && value instanceof MappingNode m) {
+                            // enrich: {constant: direct:x}, as camel validate reads it
+                            e = constantEndpoint(m);
+                        }
                         if (e == null && !(value instanceof ScalarNode)) {
                             // enrich with an expression: known only at runtime
                             e = dynamicEndpoint(key);
@@ -778,6 +789,19 @@ public final class ProjectRoutes {
             if (child(sw, "otherwise") instanceof MappingNode o && value(o, "uri") instanceof String uri) {
                 add(sent, endpoint(uri, null, false, catalog));
             }
+        }
+
+        /** The endpoint an enrich or pollEnrich names with a constant expression, or null. */
+        private Endpoint constantEndpoint(MappingNode m) {
+            org.yaml.snakeyaml.nodes.Node constant = child(m, "constant");
+            if (constant == null && child(m, "expression") instanceof MappingNode expression) {
+                constant = child(expression, "constant");
+            }
+            if (constant instanceof MappingNode c) {
+                constant = child(c, "expression");
+            }
+            String uri = constant instanceof ScalarNode s ? s.getValue() : null;
+            return uri != null ? endpoint(uri, null, false, catalog) : null;
         }
 
         private Endpoint stepEndpoint(org.yaml.snakeyaml.nodes.Node value, boolean dynamic) {
@@ -929,11 +953,11 @@ public final class ProjectRoutes {
                     steps++;
                 }
                 if (PRODUCER_KEYS.contains(name)) {
-                    String uri = attr(s, "uri");
+                    String uri = uriOrConstant(s);
                     Endpoint ep = uri != null ? endpoint(uri, null, !"to".equals(name), catalog) : dynamicEndpoint(name);
                     add(produces, handlesFailure(s, e) ? onErrorOf(ep) : ep);
                 } else if (POLL_KEYS.contains(name)) {
-                    String uri = attr(s, "uri");
+                    String uri = uriOrConstant(s);
                     add(consumes, uri != null ? endpoint(uri, null, true, catalog) : dynamicEndpoint(name));
                 } else if ("kamelet".equals(name) && attr(s, "name") != null) {
                     add(produces, endpoint("kamelet:" + attr(s, "name"), null, false, catalog));
@@ -1146,6 +1170,22 @@ public final class ProjectRoutes {
 
     private static String attr(Element e, String name) {
         return e.hasAttribute(name) ? str(e.getAttribute(name)) : null;
+    }
+
+    /**
+     * The uri of a step, or for an enrich and a pollEnrich the constant their expression is
+     * ({@code <pollEnrich><constant>seda:orders</constant></pollEnrich>}), as camel validate reads them.
+     */
+    private static String uriOrConstant(Element e) {
+        String uri = attr(e, "uri");
+        String name = localName(e);
+        if (uri == null && ("enrich".equals(name) || "pollEnrich".equals(name))) {
+            Element constant = firstChild(e, "constant");
+            if (constant != null) {
+                uri = str(constant.getTextContent().strip());
+            }
+        }
+        return uri;
     }
 
     private static Element firstChild(Element e, String name) {

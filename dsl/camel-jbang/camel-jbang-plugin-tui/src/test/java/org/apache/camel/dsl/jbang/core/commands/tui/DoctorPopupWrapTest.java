@@ -54,4 +54,10 @@ class DoctorPopupWrapTest {
         assertThat(DoctorPopup.wrapWords("  ", 41)).isEmpty();
         assertThat(DoctorPopup.wrapWords(null, 41)).isEmpty();
     }
+
+    @Test
+    void wrapsByDisplayWidth() {
+        // each CJK character takes two columns
+        assertThat(DoctorPopup.wrapWords("日本語 日本語 abc", 8)).containsExactly("日本語", "日本語", "abc");
+    }
 }

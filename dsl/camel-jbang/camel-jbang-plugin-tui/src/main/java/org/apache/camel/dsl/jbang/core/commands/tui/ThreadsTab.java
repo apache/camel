@@ -149,7 +149,7 @@ class ThreadsTab extends AbstractTableTab {
 
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (!allThreads.isEmpty() && now - lastRefreshTime >= AUTO_REFRESH_INTERVAL_MS) {
             loadThreads();
         }
@@ -426,7 +426,7 @@ class ThreadsTab extends AbstractTableTab {
                 threadCount = tc;
                 peakThreadCount = peak;
                 lastPid = pid;
-                lastRefreshTime = System.currentTimeMillis();
+                lastRefreshTime = MonotonicClock.millis();
             });
         }
     }

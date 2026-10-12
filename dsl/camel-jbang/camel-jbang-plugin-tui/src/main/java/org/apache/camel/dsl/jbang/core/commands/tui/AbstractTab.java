@@ -188,7 +188,7 @@ abstract class AbstractTab implements MonitorTab {
         if (!me.isClick()) {
             return false;
         }
-        if (!TuiHelper.contains(tableArea, me.x(), me.y())) {
+        if (!tableArea.contains(me.x(), me.y())) {
             return false;
         }
         int rowIndex = tableState.offset() + (me.y() - tableArea.y() - 2);

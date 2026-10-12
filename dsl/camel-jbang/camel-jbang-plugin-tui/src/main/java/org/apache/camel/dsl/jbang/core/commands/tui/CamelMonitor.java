@@ -312,7 +312,7 @@ public class CamelMonitor extends CamelCommand {
         TapePlayer.Driver driver = new TapePlayer.Driver() {
             @Override
             public void key(KeyEvent event) {
-                pendingKeys.add(new McpFacade.PendingKey(event, System.currentTimeMillis()));
+                pendingKeys.add(new McpFacade.PendingKey(event, MonotonicClock.millis()));
             }
 
             @Override
@@ -1784,7 +1784,7 @@ public class CamelMonitor extends CamelCommand {
         // Tab bar clicks: detect which tab was clicked and switch to it
         if (me.isClick() && lastTabsArea != null && lastTabLabels != null) {
             int tabsY = lastTabsArea.height() >= 2 ? lastTabsArea.y() + 1 : lastTabsArea.y();
-            if (me.y() == tabsY && TuiHelper.contains(lastTabsArea, me.x(), me.y())) {
+            if (me.y() == tabsY && lastTabsArea.contains(me.x(), me.y())) {
                 int clickedTab = findClickedTab(me.x() - lastTabsArea.x());
                 if (clickedTab >= 0) {
                     if (isInfraSelected()) {
@@ -1807,7 +1807,8 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // The view bar of the tab: a click on a view goes there, a click on a view setting presses its key
-        if (subViewBar.isOnRow(me.y()) && TuiHelper.contains(lastContentArea, me.x(), me.y())
+        if (subViewBar.isOnRow(me.y()) && lastContentArea != null
+                && lastContentArea.contains(me.x(), me.y())
                 && !popupManager.isMorePopupVisible() && !popupManager.isSwitchPopupVisible()) {
             if (me.isClick()) {
                 SubViewBar.View view = subViewBar.viewAt(me.x(), me.y());
@@ -1824,7 +1825,7 @@ public class CamelMonitor extends CamelCommand {
         }
 
         // Mouse events in the content area: delegate to the active tab
-        if (TuiHelper.contains(lastContentArea, me.x(), me.y())) {
+        if (lastContentArea != null && lastContentArea.contains(me.x(), me.y())) {
             if (popupManager.isMorePopupVisible() || popupManager.isSwitchPopupVisible()) {
                 return popupManager.handleMouseEvent(me, tabRegistry.selectedTabIndex(), TAB_LOG);
             }
@@ -2029,10 +2030,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private boolean handleTickEvent(TuiRunner runner) {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         boolean keyProcessed = false;
         McpFacade.PendingKey pk;
-        while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
+        while ((pk = pendingKeys.peek()) != null && pk.isDue(now)) {
             pendingKeys.poll();
             mcpInjectedKey = true;
             handleEvent(pk.event(), runner);
@@ -2248,7 +2249,7 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         if (monitorNotification != null) {
-            if (System.currentTimeMillis() > monitorNotificationExpiry) {
+            if (MonotonicClock.millis() > monitorNotificationExpiry) {
                 monitorNotification = null;
             }
         }
@@ -2270,7 +2271,7 @@ public class CamelMonitor extends CamelCommand {
             }
             int titleWidth = titleSpans.stream().mapToInt(s -> s.width()).sum();
             int rightWidth = headerRight.stream().mapToInt(Span::width).sum();
-            int waveWidth = activeNotification.length() + 2;
+            int waveWidth = CharWidth.of(activeNotification) + 2;
             int leftWidth = Math.min(titleWidth + 2, area.width() - waveWidth - rightWidth);
             if (leftWidth > 0 && waveWidth > 0 && leftWidth + waveWidth + rightWidth <= area.width()) {
                 Rect leftArea = new Rect(area.x(), area.y(), leftWidth, 1);
@@ -2457,10 +2458,6 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private void renderContent(Frame frame, Rect area) {
-        // Clear the content area before rendering the active tab. Without this, styled cells
-        // from the previous tab (e.g. RED error text in the log detail) can bleed through when
-        // switching tabs if TamboUI's buffer diff does not reset every cell in the region.
-        frame.buffer().clear(area);
         MonitorTab tab = tabRegistry.activeTab();
         if (tab != null) {
             SubViewBar.Spec spec = tab.subViewBar();
@@ -2801,7 +2798,7 @@ public class CamelMonitor extends CamelCommand {
     private void setNotification(String message, boolean error) {
         monitorNotification = message;
         monitorNotificationError = error;
-        monitorNotificationExpiry = System.currentTimeMillis() + (error ? 20000 : 10000);
+        monitorNotificationExpiry = MonotonicClock.millis() + (error ? 20000 : 10000);
         notificationWaveState.reset();
     }
 
@@ -2984,12 +2981,12 @@ public class CamelMonitor extends CamelCommand {
         List<Span> rightSpans = new ArrayList<>();
 
         if (recordingManager.isRecording() && !recordingManager.getRecentKeys().isEmpty()) {
-            long now = System.currentTimeMillis();
+            long now = MonotonicClock.millis();
             List<RecordingManager.KeyRecord> recentKeys = recordingManager.getRecentKeys();
             int maxKeys = Math.min(recentKeys.size(), 8);
             List<RecordingManager.KeyRecord> visible = recentKeys.subList(recentKeys.size() - maxKeys, recentKeys.size());
             for (RecordingManager.KeyRecord kr : visible) {
-                long age = now - kr.timestamp();
+                long age = now - kr.pressedAt();
                 Style style = age < 1000
                         ? Theme.selectionBg()
                         : Theme.muted();

@@ -910,7 +910,9 @@ final class SemanticAuditView {
             hint(spans, "Enter", "apply");
             hint(spans, "Esc", "cancel");
         } else if (input != null) {
-            spans.add(Span.raw(" /" + input.text() + "█  "));
+            spans.add(Span.raw(" /"));
+            FormHelper.addCaretField(spans, input);
+            spans.add(Span.raw("  "));
             hint(spans, "Enter", "apply");
             hint(spans, "Esc", "cancel");
         } else {

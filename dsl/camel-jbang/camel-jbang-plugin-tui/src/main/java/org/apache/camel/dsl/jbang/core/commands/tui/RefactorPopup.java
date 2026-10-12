@@ -24,7 +24,6 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
@@ -184,10 +183,10 @@ class RefactorPopup {
             inputState.moveCursorToStart();
         } else if (ke.isEnd()) {
             inputState.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            char ch = ke.string().charAt(0);
-            if (ch >= 0x20 && ch != 0x7F) {
-                inputState.insert(ch);
+        } else {
+            String typed = FormHelper.typedText(ke);
+            if (typed != null) {
+                inputState.insert(typed);
             }
         }
         return true;

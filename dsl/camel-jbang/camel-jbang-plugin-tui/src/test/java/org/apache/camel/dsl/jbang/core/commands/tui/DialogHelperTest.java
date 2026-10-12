@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.widgets.input.TextInputState;
@@ -131,5 +132,17 @@ class DialogHelperTest {
     void hintLineRejectsOddArguments() {
         assertThatThrownBy(() -> TuiHelper.hintLine("Enter"))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void confirmIsWideEnoughForAWideMessage() {
+        // 30 CJK characters take 60 columns
+        String message = "日本語のメッセージ".repeat(3) + "確認しますか";
+        Buffer buffer = Buffer.empty(AREA);
+
+        Rect popup = DialogHelper.renderConfirm(Frame.forTesting(buffer), AREA, "Confirm", message, false);
+
+        assertThat(popup.width()).isGreaterThanOrEqualTo(CharWidth.of(message) + 6);
+        assertThat(TuiTestHelper.bufferToString(buffer).replace(" ", "")).contains(message);
     }
 }

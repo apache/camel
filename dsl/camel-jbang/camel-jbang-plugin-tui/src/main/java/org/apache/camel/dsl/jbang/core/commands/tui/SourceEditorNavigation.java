@@ -125,10 +125,52 @@ final class SourceEditorNavigation {
             state.moveCursorDown();
         }
         state.moveCursorToLineStart();
-        String line = state.getLine(state.cursorRow());
-        int target = Math.min(col, line.length());
-        for (int i = 0; i < target; i++) {
+        moveToColumn(state, col);
+    }
+
+    /**
+     * Moves the cursor along its line to the column, a char index into the line as {@code cursorCol()} is. TamboUI
+     * moves the cursor a grapheme cluster at a time, and an emoji is two chars or more, so the moves are counted by the
+     * column reached and not by the chars. A column inside a cluster ends at the start of the cluster.
+     */
+    static void moveToColumn(TextAreaState state, int col) {
+        int row = state.cursorRow();
+        int target = Math.max(0, Math.min(col, state.getLine(row).length()));
+        while (state.cursorCol() < target && state.cursorRow() == row) {
             state.moveCursorRight();
+        }
+        while (state.cursorCol() > target && state.cursorRow() == row) {
+            state.moveCursorLeft();
+        }
+    }
+
+    /** Deletes the text of the cursor's line, a grapheme cluster at a time, so the line below stays as it is. */
+    static void clearLine(TextAreaState state) {
+        int row = state.cursorRow();
+        state.moveCursorToLineStart();
+        while (!state.getLine(row).isEmpty()) {
+            state.deleteForward();
+        }
+    }
+
+    /** Deletes the text before the cursor back to the column of its line, a grapheme cluster at a time. */
+    static void deleteBackTo(TextAreaState state, int col) {
+        int row = state.cursorRow();
+        while (state.cursorCol() > Math.max(0, col) && state.cursorRow() == row) {
+            state.deleteBackward();
+        }
+    }
+
+    /**
+     * Deletes the text after the cursor up to the column of its line as it is now, a grapheme cluster at a time, and
+     * never past the end of the line.
+     */
+    static void deleteForwardTo(TextAreaState state, int col) {
+        int row = state.cursorRow();
+        int length = state.getLine(row).length();
+        int keep = length - Math.max(0, Math.min(col, length) - state.cursorCol());
+        while (state.getLine(row).length() > keep && state.cursorCol() < state.getLine(row).length()) {
+            state.deleteForward();
         }
     }
 
