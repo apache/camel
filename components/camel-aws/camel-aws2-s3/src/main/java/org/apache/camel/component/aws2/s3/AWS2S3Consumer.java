@@ -351,7 +351,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
             for (Map.Entry<String, RuntimeException> failure : failures.entrySet()) {
                 String message = "Error getting S3Object " + failure.getKey() + " from bucket "
                                  + getConfiguration().getBucketName()
-                                 + ". The object is skipped for this poll. This exception is ignored.";
+                                 + ". The object is skipped for this poll.";
                 getExceptionHandler().handleException(message, failure.getValue());
             }
         }
