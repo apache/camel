@@ -17,6 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -402,6 +405,23 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Assertions.assertEquals("http", ports.get(0).getName());
         Assertions.assertEquals(80, ports.get(0).getPort());
         Assertions.assertEquals("http", ports.get(0).getTargetPort().getStrVal());
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldAddServiceForJavaRoute(RuntimeType rt) throws Exception {
+        // the route consumes from platform-http: read from the Java source without compiling it (CAMEL-25592)
+        Path source = Files.createTempDirectory("camel-k8s-java").resolve("PlatformHttpServer.java");
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("PlatformHttpServer.java")) {
+            Files.copy(is, source);
+        }
+        KubernetesExport command = createCommand(new String[] { source.toString() },
+                "--runtime=" + rt.runtime());
+        var exit = command.doCall();
+        Assertions.assertEquals(0, exit);
+
+        Assertions.assertTrue(hasService(rt));
+        Assertions.assertFalse(hasKnativeService(rt));
     }
 
     @ParameterizedTest
