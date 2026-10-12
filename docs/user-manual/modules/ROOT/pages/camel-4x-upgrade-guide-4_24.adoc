@@ -1,0 +1,29 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.23 to 4.24
+
+=== camel-hashicorp-vault - properties without engine use the `secret` engine
+
+A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now
+reads the secret from the `secret` engine. Before, it read from the engine of the `hashicorp:` property resolved
+before it (or from a `null` engine), and `{{hashicorp:mysecret#field}}` always resolved to no value. Properties with
+an engine, such as `{{hashicorp:secret:mysecret#field}}`, are not affected.
+
+A `hashicorp:` property without an engine and with a version, such as `{{hashicorp:mysecret@2}}`, now reads version 2
+of the secret `mysecret` in the `secret` engine. Before, the `@2` was kept as part of the secret name.
+
+A `hashicorp:` property with a field of a secret that does not exist, such as `{{hashicorp:secret:missing#field}}`,
+now resolves to no value, as it already did without a field, so its default value or an optional placeholder
+(`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
+`NullPointerException`.

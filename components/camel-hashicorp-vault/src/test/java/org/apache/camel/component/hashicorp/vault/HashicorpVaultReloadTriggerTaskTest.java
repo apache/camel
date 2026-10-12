@@ -201,7 +201,7 @@ class HashicorpVaultReloadTriggerTaskTest extends CamelTestSupport {
 
     @Test
     void secretWithoutEngineIsTrackedAsDefaultEngine() {
-        // a fresh function has no engine yet, so a plain hashicorp:api lookup runs with a null engine
+        // a plain hashicorp:api lookup has no engine, so it reads from the default secret engine
         HashicorpVaultPropertiesFunction function = new HashicorpVaultPropertiesFunction();
         function.setCamelContext(context);
         function.start();
