@@ -73,6 +73,7 @@ class MemoryLeakTab extends AbstractTab {
     private State state = State.IDLE;
     private RecordingMode recordingMode = RecordingMode.DUAL;
     private int duration = 60;
+    // the wall clock (epoch millis): the start of a recording may come from the integration's status
     private long recordingStartTime;
     private int currentRecordingDuration;
 
@@ -1521,8 +1522,8 @@ class MemoryLeakTab extends AbstractTab {
             return;
         }
         startDaemonThread("jfr-poll-" + pid, () -> {
-            long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
-            while (System.currentTimeMillis() < deadline) {
+            long deadline = MonotonicClock.millis() + (dur + 30) * 1000L;
+            while (MonotonicClock.millis() < deadline) {
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {

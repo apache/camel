@@ -1456,7 +1456,6 @@ class RoutesTab extends AbstractTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
-        sourceViewer.setQuickDocProvider(detail::provideAllQuickDocs);
         detail.ensureProcessorDetailLoaded(routeId);
         var rl = diagram.getRouteLayout(routeId);
         sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
@@ -1490,7 +1489,6 @@ class RoutesTab extends AbstractTab {
                 diagram.scrollToSelectedEipNode();
             }
         });
-        sourceViewer.setQuickDocProvider(detail::provideAllQuickDocs);
         detail.ensureProcessorDetailLoaded(routeId);
         var rl2 = diagram.getRouteLayout(routeId);
         sourceViewer.loadSource(ctx, routeId, 0, rl2 != null ? rl2.source : null);
@@ -1514,7 +1512,6 @@ class RoutesTab extends AbstractTab {
                 sourceViewer.hide();
             }
         });
-        sourceViewer.setQuickDocProvider(detail::provideAllQuickDocs);
         detail.ensureProcessorDetailLoaded(drillDownRouteId);
         var rl3 = diagram.getRouteLayout(drillDownRouteId);
         sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl3 != null ? rl3.source : null);

@@ -34,7 +34,6 @@ import dev.tamboui.widgets.list.ListItem;
 import dev.tamboui.widgets.list.ListState;
 import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 
@@ -136,7 +135,7 @@ class GotoNodePopup {
             return true;
         }
         if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
-            filter.appendChar(ke.string().charAt(0));
+            filter.append(ke.string());
             rebuildList();
             return true;
         }
@@ -228,15 +227,7 @@ class GotoNodePopup {
                         .build())
                 .build();
         frame.renderStatefulWidget(list, popup, renderState);
-
-        int visibleRows = Math.max(1, popup.height() - 2);
-        if (shown + 2 > visibleRows) {
-            scrollbarState
-                    .contentLength(shown)
-                    .viewportContentLength(visibleRows)
-                    .position(sel != null ? sel : 0);
-            frame.renderStatefulWidget(Scrollbar.builder().build(), popup, scrollbarState);
-        }
+        TuiHelper.renderListScrollbar(frame, popup, shown + 2, renderState.offset(), scrollbarState);
     }
 
     private void rebuildList() {

@@ -31,9 +31,6 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 final class RouteGraph {
 
-    /** The components whose endpoints link one route of the application to another. */
-    static final Set<String> INTERNAL = Set.of("direct", "seda", "direct-vm", "vm", "disruptor", "disruptor-vm");
-
     /** The steps that send a message to an endpoint. */
     static final Set<String> SENDS = Set.of("to", "toD", "enrich", "pollEnrich", "wireTap");
 

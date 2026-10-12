@@ -24,7 +24,6 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
@@ -649,10 +648,10 @@ class SettingsPopup {
             active.moveCursorToStart();
         } else if (ke.isEnd()) {
             active.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            char ch = ke.string().charAt(0);
-            if (ch >= 0x20 && ch != 0x7F) {
-                active.insert(ch);
+        } else {
+            String typed = FormHelper.typedText(ke);
+            if (typed != null) {
+                active.insert(typed);
             }
         }
     }
@@ -671,9 +670,13 @@ class SettingsPopup {
         return sb.toString();
     }
 
-    /** The content line a row is drawn on, counting the dividers that follow rows 2, 6, 9 and 12. */
+    /**
+     * The content line a row is drawn on, counting the dividers that render draws after the Select Tab, Panel Space,
+     * Default Folder and Shell History rows.
+     */
     static int lineOf(int row) {
-        return row + (row > 2 ? 1 : 0) + (row > 6 ? 1 : 0) + (row > 9 ? 1 : 0) + (row > 12 ? 1 : 0);
+        return row + (row > ROW_SELECT_TAB ? 1 : 0) + (row > ROW_PANEL_SPACE ? 1 : 0) + (row > ROW_FOLDER ? 1 : 0)
+               + (row > ROW_SHELL_HISTORY ? 1 : 0);
     }
 
     /** True when a scrolled line falls outside the popup's inner area and must not be drawn. */

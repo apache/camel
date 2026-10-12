@@ -74,13 +74,17 @@ A part of a Java route the parser cannot work out (a value computed at runtime) 
 === Endpoints no route consumes
 
 As the routes of an application are spread over the files of its directory, `camel validate source` also reports
-a `direct:` or `seda:` endpoint that a route sends to, but that no YAML, Java or XML route in the directory
-(and its subdirectories) consumes. With `direct:` sending a message to it fails; with `seda:` the messages
-would be queued and never read.
+a `direct:`, `seda:` or `disruptor:` endpoint that a route sends to, but that no YAML, Java or XML route in the
+directory (and its subdirectories) consumes. With `direct:` sending a message to it fails; with `seda:` and
+`disruptor:` the messages would be queued and never read.
 
-The check stays quiet when it cannot be certain: an endpoint only known at runtime (a property placeholder,
-an expression), route templates and Kamelets, and a directory that is only a part of a Maven or Gradle project,
-such as `src/main/resources/camel`.
+A route sends to an endpoint with `to`, a `toD` without an expression, `wireTap`, `enrich`, a rest verb, or the
+dead letter channel of an error handler. A route consumes an endpoint with its `from`, or with a `poll` or
+`pollEnrich`. `camel overview` reports the same endpoints, by the same rules.
+
+The check stays quiet when it cannot be certain: a route that consumes an endpoint only known at runtime (a
+property placeholder, an expression), route templates, Kamelets and Pipes, and a directory that is only a part of a
+Maven or Gradle project, such as `src/main/resources/camel`.
 
 == Validating configuration properties
 

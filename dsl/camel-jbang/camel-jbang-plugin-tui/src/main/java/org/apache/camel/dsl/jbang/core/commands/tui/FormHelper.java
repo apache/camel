@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.List;
+
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
@@ -37,6 +39,19 @@ final class FormHelper {
     record HeaderEntry(TextInputState keyInput, TextInputState valueInput) {
     }
 
+    /**
+     * The text a key types into a field: the whole character, also one outside the basic plane such as an emoji (where
+     * {@code KeyEvent.character()} gives U+FFFD and {@code string().charAt(0)} half of it). Null when the key types
+     * nothing: it is no character, a control character, or a character pressed with Ctrl or Alt (Ctrl+A is no "a").
+     */
+    static String typedText(KeyEvent ke) {
+        if (ke.code() != KeyCode.CHAR || ke.hasCtrl() || ke.hasAlt()) {
+            return null;
+        }
+        int cp = ke.codePoint();
+        return cp < 0x20 || cp == 0x7F ? null : ke.string();
+    }
+
     static void handleTextInput(KeyEvent ke, TextInputState state) {
         if (ke.isDeleteBackward()) {
             state.deleteBackward();
@@ -50,8 +65,11 @@ final class FormHelper {
             state.moveCursorToStart();
         } else if (ke.isEnd()) {
             state.moveCursorToEnd();
-        } else if (ke.code() == KeyCode.CHAR) {
-            state.insert(ke.string().charAt(0));
+        } else {
+            String typed = typedText(ke);
+            if (typed != null) {
+                state.insert(typed);
+            }
         }
     }
 
@@ -74,9 +92,29 @@ final class FormHelper {
             editor.deleteBackward();
         } else if (key.isDeleteForward()) {
             editor.deleteForward();
-        } else if (key.code() == KeyCode.CHAR && !key.hasCtrl()) {
-            editor.insert(key.string());
+        } else {
+            String typed = typedText(key);
+            if (typed != null) {
+                editor.insert(typed);
+            }
         }
+    }
+
+    /**
+     * Adds a text field to a status line: its text with a block caret at the cursor, so Left and Right show where the
+     * next character goes (a caret drawn after the text always looks as if it were at the end).
+     */
+    static void addCaretField(List<Span> spans, TextInputState state) {
+        String text = state.text();
+        int pos = Math.max(0, Math.min(state.cursorPosition(), text.length()));
+        if (pos == text.length()) {
+            spans.add(Span.raw(text + "█"));
+            return;
+        }
+        int end = pos + Character.charCount(text.codePointAt(pos));
+        spans.add(Span.raw(text.substring(0, pos)));
+        spans.add(Span.styled(text.substring(pos, end), Style.EMPTY.reversed()));
+        spans.add(Span.raw(text.substring(end)));
     }
 
     static void renderLabel(Frame frame, int x, int y, int w, String label, boolean selected) {

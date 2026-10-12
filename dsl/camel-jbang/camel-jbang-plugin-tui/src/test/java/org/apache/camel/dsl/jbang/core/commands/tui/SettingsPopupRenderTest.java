@@ -99,6 +99,50 @@ class SettingsPopupRenderTest {
     }
 
     @Test
+    void lineOfIsTheLineEachRowIsDrawnOn(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(List.of(new TabRegistry.TabEntry("🐪", "Overview", "overview", "1", 0, -1)));
+        popup.open();
+        Rect area = new Rect(0, 0, 80, 40);
+        Buffer buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+        String[] lines = TuiTestHelper.bufferToString(buffer).split("\n");
+
+        // the popup starts two rows down, and its rows below its top border
+        int first = 3;
+        assertTrue(lines[first + SettingsPopup.lineOf(0)].contains("Theme:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(9)].contains("Route Tree:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(10)].contains("Default Folder:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(13)].contains("Shell History:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(14)].contains("AI Provider:"));
+        assertTrue(lines[first + SettingsPopup.lineOf(SettingsPopup.ROW_COUNT - 1)].contains("ACP Command:"));
+    }
+
+    @Test
+    void scrollingUpShowsTheDefaultFolderRow(@TempDir Path tempDir) {
+        useHome(tempDir);
+        SettingsPopup popup = new SettingsPopup();
+        popup.setTabEntries(List.of(new TabRegistry.TabEntry("🐪", "Overview", "overview", "1", 0, -1)));
+        popup.open();
+        Rect area = new Rect(0, 0, 80, 16);
+        for (int i = 0; i < 20; i++) {
+            popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        }
+        popup.render(Frame.forTesting(Buffer.empty(area)), area);
+        // from ACP Command back up to Default Folder, the row the view scrolls up to
+        for (int i = 0; i < 10; i++) {
+            popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.UP, KeyModifiers.NONE));
+            popup.render(Frame.forTesting(Buffer.empty(area)), area);
+        }
+        Buffer buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+
+        assertTrue(TuiTestHelper.bufferToString(buffer).contains("Default Folder:"),
+                TuiTestHelper.bufferToString(buffer));
+    }
+
+    @Test
     void scrollsTheSelectedRowIntoViewOnAShortTerminal(@TempDir Path tempDir) {
         useHome(tempDir);
         SettingsPopup popup = new SettingsPopup();

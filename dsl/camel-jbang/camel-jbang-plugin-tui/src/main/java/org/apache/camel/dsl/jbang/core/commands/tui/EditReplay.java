@@ -98,7 +98,7 @@ final class EditReplay {
     private Phase askedFrom = Phase.PAUSED;
 
     EditReplay() {
-        this(System::currentTimeMillis);
+        this(MonotonicClock::millis);
     }
 
     /**
@@ -214,7 +214,7 @@ final class EditReplay {
         phase = Phase.FINISHED;
     }
 
-    /** Advances the replay; call on every UI tick. */
+    /** Advances the replay; call on every UI tick, with a time of the replay's clock (the {@link MonotonicClock}). */
     void tick(long now) {
         if (phase != Phase.TYPING) {
             return;

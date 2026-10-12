@@ -20,9 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -128,6 +133,54 @@ class PopupManagerTest {
         popupManager.openSwitchPopup("1234", List.of(info1, info2));
         assertTrue(popupManager.isSwitchPopupVisible(), "Switch popup should be visible");
         assertTrue(popupManager.isAnyPopupVisible(), "Any popup should be visible");
+    }
+
+    @Test
+    void aClickInTheScrolledSwitchPopupPicksTheIntegrationUnderTheMouse() {
+        List<IntegrationInfo> many = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            IntegrationInfo info = new IntegrationInfo();
+            info.pid = String.valueOf(1000 + i);
+            info.name = "app-" + i;
+            many.add(info);
+        }
+        PopupManager manager = new PopupManager(ctx, () -> many, List::of, new FilesBrowser(), new NoCallbacks());
+        // the last integration is selected, so the list is scrolled to the end
+        manager.openSwitchPopup("1029", many);
+        Rect area = new Rect(0, 0, 80, 16);
+        Buffer buffer = Buffer.empty(area);
+        manager.renderSwitchPopup(Frame.forTesting(buffer), area);
+
+        String[] rows = TuiTestHelper.bufferToString(buffer).split("\n");
+        int y = 0;
+        while (!rows[y].contains("app-25 ")) {
+            y++;
+        }
+        manager.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, rows[y].indexOf("app-25"), y), 0, 2);
+
+        assertEquals("1025", ctx.selectedPid);
+    }
+
+    private static final class NoCallbacks implements PopupManager.PopupCallbacks {
+        @Override
+        public void selectMoreTab(int index) {
+        }
+
+        @Override
+        public void resetIntegrationTabState() {
+        }
+
+        @Override
+        public void refreshLogData() {
+        }
+
+        @Override
+        public void stopSelectedProcess(boolean forceKill) {
+        }
+
+        @Override
+        public void fallbackToOverviewIfTabInactive() {
+        }
     }
 
     @Test

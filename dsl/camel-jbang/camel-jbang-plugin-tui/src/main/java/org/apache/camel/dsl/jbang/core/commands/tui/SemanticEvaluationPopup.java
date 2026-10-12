@@ -132,9 +132,9 @@ final class SemanticEvaluationPopup {
 
     void handleMouseEvent(MouseEvent event) {
         if (event.isClick()) {
-            if (inputArea != null && contains(inputArea, event.x(), event.y())) {
+            if (inputArea != null && inputArea.contains(event.x(), event.y())) {
                 resultFocused = false;
-            } else if (resultArea != null && contains(resultArea, event.x(), event.y())) {
+            } else if (resultArea != null && resultArea.contains(event.x(), event.y())) {
                 resultFocused = true;
             }
         }

@@ -170,7 +170,7 @@ class OllamaMonitorTest {
         assertEquals(12, first.contextPercent());
 
         // the runner's slot wins over the model list when present
-        monitor.updateSlot(slot(false, 0, System.currentTimeMillis()));
+        monitor.updateSlot(slot(false, 0));
         monitor.recordRequest("m", new LlmClient.TokenUsage(20_000, 60, 20_060, 0, 900, 800, 0, 1800), 0, "stop");
         assertEquals(262144, monitor.snapshot().lastRequest().contextSize());
         assertEquals(7, monitor.snapshot().lastRequest().contextPercent());
@@ -188,10 +188,11 @@ class OllamaMonitorTest {
     @Test
     void slotSamplesDriveTheLiveDecodeRateAndHistory() {
         OllamaMonitor monitor = new OllamaMonitor();
-        long t0 = System.currentTimeMillis();
-        monitor.updateSlot(slot(true, 0, t0));
-        monitor.updateSlot(slot(true, 25, t0 + 500));
-        monitor.updateSlot(slot(true, 50, t0 + 1000));
+        // read half a second apart, by the monotonic clock the rates are measured with
+        long t0 = MonotonicClock.millis();
+        monitor.updateSlot(slot(true, 0), t0);
+        monitor.updateSlot(slot(true, 25), t0 + 500);
+        monitor.updateSlot(slot(true, 50), t0 + 1000);
         monitor.tick(t0 + 1000);
 
         Snapshot s = monitor.snapshot();
@@ -422,7 +423,7 @@ class OllamaMonitorTest {
                         List.of("completion", "tools")))));
         monitor.updateInstalled(List.of("qwen3.6:35b-a3b", "llama3.2:latest"));
         monitor.updateRunner(new OllamaMonitor.RunnerInfo(23629, 58237, 262144, 1, "/blob", "llama-server"));
-        monitor.updateSlot(slot(false, 6, System.currentTimeMillis()));
+        monitor.updateSlot(slot(false, 6));
         monitor.updateHost(new OllamaMonitor.HostStats(
                 new OllamaMonitor.GpuStats("Apple GPU", 25, 31463079936L, 34170552320L, 1),
                 new OllamaMonitor.ProcessStats(70566, "ollama serve", 0.1, 82176L * 1024),
@@ -476,8 +477,8 @@ class OllamaMonitorTest {
         assertEquals(0, ((JsonArray) json.get("requests")).size());
     }
 
-    private static SlotState slot(boolean processing, long decoded, long atMillis) {
-        return new SlotState(processing, 25, 25, 9, decoded, 262144, "draft-mtp", 1, Instant.ofEpochMilli(atMillis));
+    private static SlotState slot(boolean processing, long decoded) {
+        return new SlotState(processing, 25, 25, 9, decoded, 262144, "draft-mtp", 1, Instant.now());
     }
 
     private static SpanEntry genAiSpan(

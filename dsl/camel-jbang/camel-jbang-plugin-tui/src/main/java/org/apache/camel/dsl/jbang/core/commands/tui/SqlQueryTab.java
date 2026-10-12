@@ -242,8 +242,9 @@ class SqlQueryTab extends AbstractTab {
             }
 
             // typed character
-            if (ke.code() == KeyCode.CHAR) {
-                sqlInput.insert(ke.character());
+            String typed = FormHelper.typedText(ke);
+            if (typed != null) {
+                sqlInput.insert(typed);
                 return true;
             }
 
@@ -744,7 +745,7 @@ class SqlQueryTab extends AbstractTab {
         }
 
         Block block = Block.builder()
-                .borderType(BorderType.ROUNDED)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
                 .title(title)
                 .build();
         Rect inner = block.inner(popup);

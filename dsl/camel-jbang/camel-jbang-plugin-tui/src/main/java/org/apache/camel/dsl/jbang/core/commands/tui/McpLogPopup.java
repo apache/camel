@@ -94,6 +94,7 @@ class McpLogPopup {
         } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
             detailScroll = Math.max(0, detailScroll - 5);
         } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
+            // kept within the detail when it is drawn
             detailScroll += 5;
         }
         return true;
@@ -202,10 +203,11 @@ class McpLogPopup {
 
         int visibleLines = inner.height();
         int totalLines = lines.size();
-        int clampedScroll = Math.min(detailScroll, Math.max(0, totalLines - visibleLines));
-        int end = Math.min(clampedScroll + visibleLines, totalLines);
-        if (clampedScroll < end) {
-            List<Line> visible = lines.subList(clampedScroll, end);
+        // the scroll stays within the detail, so PgUp moves at once after PgDn went past its end
+        detailScroll = Math.min(detailScroll, Math.max(0, totalLines - visibleLines));
+        int end = Math.min(detailScroll + visibleLines, totalLines);
+        if (detailScroll < end) {
+            List<Line> visible = lines.subList(detailScroll, end);
             frame.renderWidget(
                     Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
                     inner);

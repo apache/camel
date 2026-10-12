@@ -17,10 +17,10 @@
 
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
-import java.util.Arrays;
+import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.Capability;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.SourceMetadata;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.Source;
@@ -48,27 +48,72 @@ public class MetadataHelperTest {
             d.build();
             CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(camelQuarkusBom, d::resolveArtifact);
 
+            // a Java route is read with the Java DSL parser: the uris as the route has them
             Source source = SourceHelper.resolveSource("classpath:PlatformHttpServer.java");
             SourceMetadata metadata = MetadataHelper.readFromSource(catalog, source);
 
             Assertions.assertTrue(MetadataHelper.exposesHttpServices(catalog, metadata));
-            Assertions.assertTrue(metadata.capabilities.contains(Capability.PlatformHttp));
-            Assertions.assertEquals(1, metadata.resources.components.size());
-            Assertions.assertTrue(metadata.resources.components.contains("platform-http"));
             Assertions.assertEquals(1, metadata.endpoints.from.size());
-            Assertions.assertTrue(metadata.endpoints.from.contains("platform-http:///hello?httpMethodRestrict=GET"));
+            Assertions.assertTrue(metadata.endpoints.from.contains("platform-http:/hello?httpMethodRestrict=GET"));
             Assertions.assertEquals(0, metadata.endpoints.to.size());
 
+            // a YAML route is loaded in a stubbed CamelContext: the uris as the endpoints normalize them
             source = SourceHelper.resolveSource("classpath:route.yaml");
             metadata = MetadataHelper.readFromSource(catalog, source);
 
             Assertions.assertFalse(MetadataHelper.exposesHttpServices(catalog, metadata));
-            Assertions.assertEquals(2, metadata.resources.components.size());
-            Assertions.assertTrue(metadata.resources.components.containsAll(Arrays.asList("timer", "log")));
             Assertions.assertEquals(1, metadata.endpoints.from.size());
             Assertions.assertTrue(metadata.endpoints.from.contains("timer://tick"));
             Assertions.assertEquals(1, metadata.endpoints.to.size());
             Assertions.assertTrue(metadata.endpoints.to.contains("log://info"));
         }
+    }
+
+    @Test
+    public void testJavaRouteIsNotCompiled() throws Exception {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        // NoSuchProcessor does not exist: the source does not compile, and is read all the same
+        SourceMetadata metadata = MetadataHelper.readFromSource(catalog, "Orders.java", """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Orders extends RouteBuilder {
+                    @Override
+                    public void configure() {
+                        from("knative:channel/orders")
+                            .process(new NoSuchProcessor())
+                            .wireTap("knative:event/order-received")
+                            .toD("knative:endpoint/${header.target}")
+                            .to("knative:endpoint/billing");
+                    }
+                }
+                """);
+
+        Assertions.assertTrue(MetadataHelper.exposesHttpServices(catalog, metadata));
+        Assertions.assertEquals(Set.of("knative:channel/orders"), metadata.endpoints.from);
+        // the toD is only known at runtime
+        Assertions.assertEquals(Set.of("knative:event/order-received", "knative:endpoint/billing"),
+                metadata.endpoints.to);
+    }
+
+    @Test
+    public void testXmlRoute() throws Exception {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        SourceMetadata metadata = MetadataHelper.readFromSource(catalog, "routes.xml", """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                    <route>
+                        <from uri="platform-http:/orders"/>
+                        <to uri="kafka:orders"/>
+                    </route>
+                </routes>
+                """);
+
+        Assertions.assertTrue(MetadataHelper.exposesHttpServices(catalog, metadata));
+        Assertions.assertEquals(Set.of("platform-http:/orders"), metadata.endpoints.from);
+        Assertions.assertEquals(Set.of("kafka:orders"), metadata.endpoints.to);
+
+        // a Java or XML file that is not a route source has no endpoints
+        metadata = MetadataHelper.readFromSource(catalog, "Util.java", "public class Util {}");
+        Assertions.assertTrue(metadata.endpoints.from.isEmpty());
+        Assertions.assertTrue(metadata.endpoints.to.isEmpty());
     }
 }

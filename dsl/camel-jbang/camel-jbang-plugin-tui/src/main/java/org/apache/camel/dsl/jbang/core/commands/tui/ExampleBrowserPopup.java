@@ -199,20 +199,12 @@ class ExampleBrowserPopup {
         if (popupRect == null || itemHeights == null) {
             return -1;
         }
-        int firstRow = popupRect.top() + 1;
-        int relY = mouseY - firstRow;
-        if (relY < 0) {
+        // the rows inside the border; the list's offset counts rows, not items
+        int relY = mouseY - (popupRect.top() + 1);
+        if (relY >= popupRect.height() - 2) {
             return -1;
         }
-        int offset = listState.offset();
-        int rowAcc = 0;
-        for (int i = offset; i < itemHeights.length; i++) {
-            rowAcc += itemHeights[i];
-            if (relY < rowAcc) {
-                return i;
-            }
-        }
-        return -1;
+        return TuiHelper.listItemAtRow(relY, listState.offset(), itemHeights);
     }
 
     void render(Frame frame, Rect area) {

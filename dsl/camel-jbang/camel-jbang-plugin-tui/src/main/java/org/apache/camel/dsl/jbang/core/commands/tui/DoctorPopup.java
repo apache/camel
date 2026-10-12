@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -75,15 +76,20 @@ class DoctorPopup {
             return out;
         }
         StringBuilder line = new StringBuilder();
+        int lineWidth = 0;
         for (String word : text.trim().split("\\s+")) {
-            if (line.length() > 0 && line.length() + 1 + word.length() > width) {
+            int wordWidth = CharWidth.of(word);
+            if (line.length() > 0 && lineWidth + 1 + wordWidth > width) {
                 out.add(line.toString());
                 line.setLength(0);
+                lineWidth = 0;
             }
             if (line.length() > 0) {
                 line.append(' ');
+                lineWidth++;
             }
             line.append(word);
+            lineWidth += wordWidth;
         }
         if (line.length() > 0) {
             out.add(line.toString());
