@@ -17,9 +17,11 @@
 package org.apache.camel.service.lra;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +40,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A Camel saga service based on Microprofile LRA (https://github.com/eclipse/microprofile-lra).
@@ -65,6 +68,8 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     private String localParticipantUrl;
     @Metadata
     private String localParticipantContextPath = LRAConstants.DEFAULT_LOCAL_PARTICIPANT_CONTEXT_PATH;
+    @Metadata(label = "security")
+    private String allowedCoordinatorUrls;
 
     public LRASagaService() {
     }
@@ -84,15 +89,84 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
         return true;
     }
 
+    /**
+     * Returns the coordinator of an LRA, which is joined, completed or compensated by calling its URL. Only an LRA
+     * hosted by the configured coordinator, or by one of the allowed coordinator URLs, is accepted.
+     */
     @Override
     public CompletableFuture<CamelSagaCoordinator> getSaga(String id) {
         CompletableFuture<CamelSagaCoordinator> coordinator;
         try {
-            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, URI.create(id).toURL()));
+            URI lra = URI.create(id);
+            if (!isHostedByAllowedCoordinator(lra)) {
+                throw new IllegalArgumentException(
+                        "The Long-Running-Action " + id + " is not hosted by the LRA coordinator configured on the LRA"
+                                                   + " saga service. If it is a trusted coordinator, add its URL to"
+                                                   + " allowedCoordinatorUrls.");
+            }
+            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, lra.toURL()));
         } catch (Exception ex) {
             coordinator = CompletableFuture.failedFuture(ex);
         }
         return coordinator;
+    }
+
+    private boolean isHostedByAllowedCoordinator(URI lra) {
+        for (URI coordinator : allowedCoordinators()) {
+            if (isHostedBy(lra, coordinator)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * The URLs of the coordinators whose LRAs are accepted: the configured coordinator, and the allowed coordinator
+     * URLs.
+     */
+    private List<URI> allowedCoordinators() {
+        List<URI> coordinators = new ArrayList<>();
+        coordinators.add(URI.create(new LRAUrlBuilder().host(coordinatorUrl).path(coordinatorContextPath).build()));
+        coordinators.addAll(additionalCoordinators());
+        return coordinators;
+    }
+
+    private List<URI> additionalCoordinators() {
+        List<URI> coordinators = new ArrayList<>();
+        if (ObjectHelper.isNotEmpty(allowedCoordinatorUrls)) {
+            for (String url : allowedCoordinatorUrls.split(",")) {
+                if (!url.isBlank()) {
+                    coordinators.add(URI.create(url.trim()));
+                }
+            }
+        }
+        return coordinators;
+    }
+
+    /**
+     * Whether the LRA URL is under the coordinator URL: same scheme, host and port, no user info, and a path under the
+     * path of the coordinator.
+     */
+    private static boolean isHostedBy(URI lra, URI coordinator) {
+        if (lra.getScheme() == null || lra.getHost() == null || lra.getRawUserInfo() != null) {
+            return false;
+        }
+        String lraPath = lra.normalize().getRawPath();
+        String coordinatorPath = Objects.toString(coordinator.normalize().getRawPath(), "");
+        if (!coordinatorPath.endsWith("/")) {
+            coordinatorPath += "/";
+        }
+        return lra.getScheme().equalsIgnoreCase(coordinator.getScheme())
+                && lra.getHost().equalsIgnoreCase(coordinator.getHost())
+                && port(lra) == port(coordinator)
+                && lraPath != null && lraPath.startsWith(coordinatorPath);
+    }
+
+    private static int port(URI uri) {
+        if (uri.getPort() != -1) {
+            return uri.getPort();
+        }
+        return "https".equalsIgnoreCase(uri.getScheme()) ? 443 : 80;
     }
 
     @Override
@@ -138,6 +212,12 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
         }
         if (localParticipantUrl == null) {
             throw new IllegalStateException("localParticipantUrl must be configured on the LRA saga service");
+        }
+        for (URI coordinator : additionalCoordinators()) {
+            if (!coordinator.isAbsolute() || coordinator.getHost() == null) {
+                throw new IllegalArgumentException(
+                        "allowedCoordinatorUrls must hold absolute coordinator URLs, but got: " + coordinator);
+            }
         }
 
         if (this.executorService == null) {
@@ -251,6 +331,20 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
 
     public void setLocalParticipantContextPath(String localParticipantContextPath) {
         this.localParticipantContextPath = localParticipantContextPath;
+    }
+
+    @ManagedAttribute(description = "Allowed coordinator URLs")
+    public String getAllowedCoordinatorUrls() {
+        return allowedCoordinatorUrls;
+    }
+
+    /**
+     * Comma-separated URLs, including the context path, of further LRA coordinators whose LRAs may be joined, completed
+     * or compensated. By default, only an LRA hosted by the configured coordinator is accepted. Use it when
+     * participants reach the same coordinator under different URLs, for example with different host names.
+     */
+    public void setAllowedCoordinatorUrls(String allowedCoordinatorUrls) {
+        this.allowedCoordinatorUrls = allowedCoordinatorUrls;
     }
 
     public Set<String> getRegisteredCompensationURIs() {

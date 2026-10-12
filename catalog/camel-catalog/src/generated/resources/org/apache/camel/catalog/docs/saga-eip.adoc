@@ -93,6 +93,10 @@ Users can follow instructions present on the Narayana website to *start up a rem
 
 The URL of the LRA coordinator is a required parameter of the Camel LRA service. The Camel application and the LRA service communicate using the HTTP protocol.
 
+A saga started by another participant is joined when the message carries its LRA in the `Long-Running-Action` header.
+The LRA Saga Service only joins, completes or compensates an LRA hosted by the configured coordinator: a `Long-Running-Action` with any other URL fails the exchange.
+When the participants reach the coordinator under different URLs, for example with different host names, list the other coordinator URLs, including the context path, in the `allowedCoordinatorUrls` option (`camel.lra.allowedCoordinatorUrls` with Camel Main).
+
 To use the LRA Saga service, maven users will need to add the following dependency to their `pom.xml`:
 
 [source,xml]
