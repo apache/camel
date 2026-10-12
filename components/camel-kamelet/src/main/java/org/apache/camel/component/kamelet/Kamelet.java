@@ -18,34 +18,35 @@ package org.apache.camel.component.kamelet;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
+import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
+import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 public final class Kamelet {
+
     public static final String PROPERTIES_PREFIX = "camel.kamelet.";
     public static final String ENV_VAR_PREFIX = "CAMEL_KAMELET_";
     public static final String SCHEME = "kamelet";
@@ -61,8 +62,6 @@ public final class Kamelet {
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
     public static final String BRIDGE_ERROR_HANDLER = "bridgeErrorHandler";
 
-    private static final Logger LOG = LoggerFactory.getLogger(Kamelet.class);
-
     // use a running counter as uuid
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
@@ -73,7 +72,6 @@ public final class Kamelet {
         if (uri == null) {
             return false;
         }
-
         return uri.equals("kamelet:" + endpoint)
                 || uri.startsWith("kamelet:" + endpoint + "?")
                 || uri.startsWith("kamelet:" + endpoint + "/")
@@ -86,7 +84,8 @@ public final class Kamelet {
         return item -> item.startsWith(prefix);
     }
 
-    public static String extractTemplateId(CamelContext context, String remaining, Map<String, Object> parameters) {
+    public static String extractTemplateId(
+            CamelContext context, String remaining, Map<String, Object> parameters) {
         Object param = parameters.get(PARAM_TEMPLATE_ID);
         if (param != null) {
             return CamelContextHelper.mandatoryConvertTo(context, String.class, param);
@@ -111,7 +110,8 @@ public final class Kamelet {
         return UUID.generateUuid();
     }
 
-    public static String extractRouteId(CamelContext context, String remaining, Map<String, Object> parameters, String uuid) {
+    public static String extractRouteId(
+            CamelContext context, String remaining, Map<String, Object> parameters, String uuid) {
         Object param = parameters.get(PARAM_ROUTE_ID);
         if (param != null) {
             return CamelContextHelper.mandatoryConvertTo(context, String.class, param);
@@ -140,7 +140,8 @@ public final class Kamelet {
         return null;
     }
 
-    public static void extractKameletProperties(CamelContext context, Map<String, Object> properties, String... elements) {
+    public static void extractKameletProperties(
+            CamelContext context, Map<String, Object> properties, String... elements) {
         PropertiesComponent pc = context.getPropertiesComponent();
         StringBuilder prefixBuffer = new StringBuilder(Kamelet.PROPERTIES_PREFIX);
 
@@ -149,7 +150,6 @@ public final class Kamelet {
                 continue;
             }
             prefixBuffer.append(element).append('.');
-
             Properties prefixed = pc.loadProperties(Kamelet.startsWith(prefixBuffer.toString()));
             for (String name : prefixed.stringPropertyNames()) {
                 properties.put(name.substring(prefixBuffer.toString().length()), prefixed.getProperty(name));
@@ -162,7 +162,7 @@ public final class Kamelet {
      * made without considering camelCase keys in the elements. The second lookup is converting camelCase to
      * underscores.
      *
-     * For example given an ENV variable in either format: - CAMEL_KAMELET_AWSS3SOURCE_BUCKETNAMEORARN=myArn -
+     * For example given an ENV variable in either format: CAMEL_KAMELET_AWSS3SOURCE_BUCKETNAMEORARN=myArn
      * CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN=myArn
      */
     public static void extractKameletEnvironmentVariables(Map<String, Object> properties, String... elements) {
@@ -175,7 +175,6 @@ public final class Kamelet {
                 continue;
             }
             prefixBuffer.append(IOHelper.normalizeEnvironmentVariable(element)).append('_');
-
             String prefix = prefixBuffer.toString();
             System.getenv().keySet().stream()
                     .filter(Kamelet.startsWith(prefix))
@@ -183,12 +182,12 @@ public final class Kamelet {
         }
 
         prefixBuffer = new StringBuilder(Kamelet.ENV_VAR_PREFIX);
-
         for (String element : elements) {
             if (element == null) {
                 continue;
             }
-            prefixBuffer.append(IOHelper.normalizeEnvironmentVariable(StringHelper.camelCaseToDash(element))).append('_');
+            prefixBuffer.append(IOHelper.normalizeEnvironmentVariable(StringHelper.camelCaseToDash(element)))
+                    .append('_');
 
             String prefix = prefixBuffer.toString();
             System.getenv().keySet().stream()
@@ -204,6 +203,166 @@ public final class Kamelet {
         }
     }
 
+    /**
+     * Extracts advanced options without discarding camelCase and kebab-case aliases before normalization.
+     */
+    private static Map<String, Object> extractAdvancedOptions(Map<String, Object> parameters, String prefix) {
+        Map<String, Object> options = new LinkedHashMap<>();
+        if (parameters == null) {
+            return options;
+        }
+
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String key = entry.getKey();
+            if (key != null && key.startsWith(prefix)) {
+                options.put(key.substring(prefix.length()), entry.getValue());
+            }
+        }
+
+        return options;
+    }
+
+    /**
+     * Normalizes option names so that camelCase and kebab-case aliases do not cause the same option to be appended more
+     * than once. When both forms are present, the kebab-case form takes precedence.
+     */
+    private static Map<String, Object> normalizeParameterNames(Map<String, Object> parameters) {
+        Map<String, Object> normalized = new LinkedHashMap<>();
+        Map<String, Boolean> canonicalKeys = new HashMap<>();
+
+        if (parameters == null) {
+            return normalized;
+        }
+
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String originalName = entry.getKey();
+            String name = StringHelper.camelCaseToDash(originalName);
+            boolean isCanonical = originalName.equals(name);
+
+            if (!normalized.containsKey(name) || (isCanonical && !canonicalKeys.getOrDefault(name, false))) {
+                normalized.put(name, entry.getValue());
+                canonicalKeys.put(name, isCanonical);
+            }
+        }
+
+        return normalized;
+    }
+
+    /**
+     * Appends query parameters without parsing or re-encoding the endpoint URI. This preserves property placeholders
+     * and RAW expressions that may appear in the URI.
+     */
+    private static String appendParametersToURI(String uri, Map<String, Object> parameters) {
+        if (parameters == null || parameters.isEmpty()) {
+            return uri;
+        }
+
+        String result = uri;
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String name = entry.getKey();
+            String value = String.valueOf(entry.getValue());
+
+            result = removeQueryParameter(result, name);
+            result += result.contains("?") ? "&" : "?";
+            result += name + "=" + value;
+        }
+
+        return result;
+    }
+
+    /**
+     * Removes a query parameter by name, treating camelCase and kebab-case names as aliases.
+     */
+    private static String removeQueryParameter(String uri, String parameterName) {
+        int queryIndex = uri.indexOf('?');
+        if (queryIndex < 0) {
+            return uri;
+        }
+
+        String base = uri.substring(0, queryIndex);
+        String query = uri.substring(queryIndex + 1);
+        StringBuilder remaining = new StringBuilder();
+
+        for (String parameter : query.split("&", -1)) {
+            int equalsIndex = parameter.indexOf('=');
+            String name = equalsIndex >= 0 ? parameter.substring(0, equalsIndex) : parameter;
+
+            if (!StringHelper.camelCaseToDash(name).equals(StringHelper.camelCaseToDash(parameterName))) {
+                if (!remaining.isEmpty()) {
+                    remaining.append('&');
+                }
+                remaining.append(parameter);
+            }
+        }
+
+        return remaining.isEmpty() ? base : base + "?" + remaining;
+    }
+
+    /**
+     * Finds a single statically defined main sink among top-level outputs.
+     *
+     * <p>
+     * Endpoint schemes are deliberately not used to guess whether a destination is auxiliary. A log or direct endpoint
+     * can be a legitimate destination, and scheme-based exclusions can select the wrong endpoint. Only top-level static
+     * to() destinations are considered; destinations inside branches and WireTap are not.
+     *
+     * @throws IllegalArgumentException if more than one candidate exists, because the intended sink cannot be
+     *                                  determined unambiguously
+     */
+    private static ToDefinition findMainSink(Collection<ProcessorDefinition<?>> outputs) {
+        if (outputs == null) {
+            return null;
+        }
+
+        ToDefinition mainSink = null;
+
+        for (ProcessorDefinition<?> output : outputs) {
+            if (output instanceof WireTapDefinition) {
+                continue;
+            }
+
+            if (output instanceof ToDefinition to
+                    && !isKameletEndpoint(to.getEndpointUri(), SINK_ID)
+                    && !isKameletEndpoint(to.getEndpointUri(), SOURCE_ID)) {
+                if (mainSink != null) {
+                    throw new IllegalArgumentException(
+                            "sink.* advanced options cannot be applied because the Kamelet has multiple "
+                                                       + "top-level static to() destinations. Configure the options directly on the "
+                                                       + "intended destination endpoint URI.");
+                }
+                mainSink = to;
+            }
+        }
+
+        return mainSink;
+    }
+
+    /**
+     * Returns whether the processor tree contains a dynamic destination that cannot be configured by appending options
+     * to a static to() endpoint. WireTap is excluded because it is an auxiliary destination.
+     */
+    private static boolean hasUnsupportedDynamicSinkTarget(Collection<ProcessorDefinition<?>> outputs) {
+        if (outputs == null) {
+            return false;
+        }
+
+        for (ProcessorDefinition<?> output : outputs) {
+            if (output instanceof WireTapDefinition) {
+                continue;
+            }
+            if (output instanceof ToDynamicDefinition
+                    || output instanceof EnrichDefinition
+                    || output instanceof PollEnrichDefinition) {
+                return true;
+            }
+            if (hasUnsupportedDynamicSinkTarget(output.getOutputs())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static RouteDefinition templateToRoute(RouteTemplateDefinition in, Map<String, Object> parameters) {
         final String rid = (String) parameters.get(PARAM_ROUTE_ID);
         final boolean noErrorHandler = (boolean) parameters.get(NO_ERROR_HANDLER);
@@ -216,12 +375,14 @@ public final class Kamelet {
         ObjectHelper.notNull(uuid, PARAM_UUID);
 
         RouteDefinition def = in.asRouteDefinition();
+
         // mark this as created from a kamelet
         def.setKamelet(true);
         def.setLocation(in.getLocation());
         def.setLineNumber(in.getLineNumber());
         def.setId(rid);
         def.setNodePrefixId(uuid);
+
         if (noErrorHandler) {
             def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
         } else if (prid != null) {
@@ -229,16 +390,16 @@ public final class Kamelet {
             RouteDefinition parent = mcc.getRouteDefinition(prid);
             boolean wrap = true;
 
-            // the kamelet are used from a processor, and we need to check if this processor
-            // has any error handler or not (if not then we should also not use error handler in the kamelet)
-            // (if ppid is null then it is a source kamelet)
+            // The Kamelet is used from a processor, and we need to check if this processor has any error handler.
+            // If not, the Kamelet should not use an error handler either. If ppid is null, this is a source Kamelet.
             if (ppid != null) {
                 ProcessorDefinition<?> pro = mcc.getProcessorDefinition(ppid);
-                wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(mcc, pro, null,
-                        CamelContextHelper.parseBoolean(mcc, pro.getInheritErrorHandler()));
+                wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(
+                        mcc, pro, null, CamelContextHelper.parseBoolean(mcc, pro.getInheritErrorHandler()));
             }
+
             if (wrap && parent != null && parent.isKamelet() == null) {
-                // do not wrap if the parent is also a kamelet
+                // do not wrap if the parent is also a Kamelet
                 def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
                 def.setRouteConfigurationId(parent.getRouteConfigurationId());
             } else {
@@ -250,77 +411,76 @@ public final class Kamelet {
             throw new IllegalArgumentException("Camel route " + rid + " input does not exist.");
         }
 
-        // Extract advanced options for source/sink component endpoints
-        Map<String, Object> sourceOptions = PropertiesHelper.extractProperties(parameters, "source.");
-        Map<String, Object> sinkOptions = PropertiesHelper.extractProperties(parameters, "sink.");
+        // Extract advanced options for source/sink component endpoints.
+        // The internal.advanced.source. and internal.advanced.sink. prefixes are reserved for these options.
+        Map<String, Object> sourceOptions = normalizeParameterNames(
+                extractAdvancedOptions(parameters, "internal.advanced.source."));
+        Map<String, Object> sinkOptions = normalizeParameterNames(
+                extractAdvancedOptions(parameters, "internal.advanced.sink."));
 
-        // Determine Kamelet type: source Kamelets have real component as input,
-        // sink/action Kamelets have kamelet:source as input and real component in outputs
+        // Determine Kamelet type: source Kamelets have a real component as input;
+        // sink/action Kamelets have kamelet:source as input and the real component in outputs.
         boolean isSourceKamelet = !isKameletEndpoint(def.getInput().getEndpointUri(), SOURCE_ID);
 
         if (isSourceKamelet) {
-            // Source Kamelet: real component endpoint is the input
+            // Source Kamelet: the real component endpoint is the input.
             if (!sourceOptions.isEmpty()) {
+                String uri = def.getInput().getEndpointUri();
                 try {
-                    String newUri = URISupport.appendParametersToURI(def.getInput().getUri(), sourceOptions);
-                    def.getInput().setUri(newUri);
+                    def.getInput().setUri(appendParametersToURI(uri, sourceOptions));
                 } catch (Exception e) {
                     throw new IllegalArgumentException(
-                            "Failed to apply advanced source options to endpoint URI: " + def.getInput().getUri(), e);
+                            "Failed to apply advanced source options to endpoint URI: " + uri, e);
                 }
             }
+
             if (!sinkOptions.isEmpty()) {
                 throw new IllegalArgumentException(
                         "sink.* advanced options are not valid for source Kamelets (input is '"
                                                    + def.getInput().getEndpointUri() + "'). Use source.* options instead.");
             }
         } else {
-            // Sink/Action Kamelet: real component endpoint(s) are in outputs
+            // Sink/action Kamelet: the real component endpoint is in the outputs.
             if (!sourceOptions.isEmpty()) {
                 throw new IllegalArgumentException(
                         "source.* advanced options are not valid for sink/action Kamelets (input is '"
                                                    + def.getInput().getEndpointUri() + "'). Use sink.* options instead.");
             }
+
             if (!sinkOptions.isEmpty()) {
-                Collection<ToDefinition> outputs = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
-                boolean hasRealEndpoint = false;
-                for (ToDefinition to : outputs) {
-                    String uri = to.getEndpointUri();
-                    // Apply to all non-kamelet endpoints (real component endpoints)
-                    if (!uri.startsWith("kamelet:")) {
-                        try {
-                            String newUri = URISupport.appendParametersToURI(uri, sinkOptions);
-                            to.setUri(newUri);
-                            hasRealEndpoint = true;
-                        } catch (Exception e) {
-                            throw new IllegalArgumentException(
-                                    "Failed to apply advanced sink options to endpoint URI: " + uri, e);
-                        }
-                    }
-                }
-
-                Collection<ToDynamicDefinition> dynamicOutputs
-                        = filterTypeInOutputs(def.getOutputs(), ToDynamicDefinition.class);
-
-                if (!dynamicOutputs.isEmpty()) {
-                    LOG.warn("sink.* advanced options are applied only to statically-defined "
-                             + "to() endpoints; dynamic toD() endpoints are left unchanged.");
-                }
-
-                if (!hasRealEndpoint) {
-                    if (!dynamicOutputs.isEmpty()) {
-                        throw new IllegalArgumentException(
-                                "sink.* advanced options cannot be applied to dynamic toD endpoints. "
-                                                           + "Configure the options in the dynamic endpoint URI instead.");
-                    }
+                // If a dynamic destination exists, the intended static destination cannot be determined reliably.
+                if (hasUnsupportedDynamicSinkTarget(def.getOutputs())) {
                     throw new IllegalArgumentException(
-                            "sink.* advanced options were provided but no real component endpoint found in Kamelet outputs. "
-                                                       + "All outputs are kamelet virtual endpoints.");
+                            "sink.* advanced options cannot be applied because this Kamelet contains a dynamic "
+                                                       + "destination (toD, enrich, or pollEnrich). Configure the options directly "
+                                                       + "in the destination endpoint URI.");
+                }
+
+                ToDefinition mainSink;
+                try {
+                    mainSink = findMainSink(def.getOutputs());
+                } catch (IllegalArgumentException e) {
+                    throw e;
+                }
+
+                if (mainSink == null) {
+                    throw new IllegalArgumentException(
+                            "sink.* advanced options cannot be applied because the Kamelet has no top-level "
+                                                       + "static to() destination. Configure the options directly on the destination "
+                                                       + "endpoint URI.");
+                }
+
+                String uri = mainSink.getEndpointUri();
+                try {
+                    mainSink.setUri(appendParametersToURI(uri, sinkOptions));
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(
+                            "Failed to apply advanced sink options to endpoint URI: " + uri, e);
                 }
             }
         }
 
-        // must make the source and sink endpoints are unique by appending the route id before we create the route from the template
+        // Make source and sink endpoints unique by appending the route ID before creating the route from the template.
         if (isKameletEndpoint(def.getInput().getEndpointUri(), SOURCE_ID)) {
             def.getInput().setUri("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid);
         }
@@ -337,10 +497,11 @@ public final class Kamelet {
             }
         }
 
-        // there must be at least one sink
+        // There must be at least one sink.
         int line = -1;
         boolean sink = false;
         Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
+
         for (ToDefinition to : col) {
             if (isKameletEndpoint(to.getEndpointUri(), SINK_ID)) {
                 to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
@@ -348,8 +509,9 @@ public final class Kamelet {
             }
             line = to.getLineNumber();
         }
+
         if (!sink) {
-            // this is appended and is used to go back to the kamelet that called me
+            // This is appended and is used to go back to the Kamelet that called me.
             ToDefinition to = new ToDefinition("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
             to.setLocation(def.getInput().getLocation());
             if (line != -1) {

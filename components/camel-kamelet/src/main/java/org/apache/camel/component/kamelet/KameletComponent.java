@@ -251,9 +251,31 @@ public class KameletComponent extends DefaultComponent {
             Kamelet.extractKameletEnvironmentVariables(kameletProperties, templateId, routeId);
 
             //
+            // Extract advanced options from URI parameters only (not from route-scoped properties)
+            // to avoid clashes with route-scoped properties that happen to use source./sink. prefixes.
+            // We remove them from parameters before merging with route-scoped properties, then add them back
+            // with a special prefix so they can be distinguished in templateToRoute.
+            //
+            Map<String, Object> sourceOptions = new HashMap<>();
+            Map<String, Object> sinkOptions = new HashMap<>();
+            Map<String, Object> parametersWithoutAdvancedOptions = new HashMap<>(parameters);
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                String key = entry.getKey();
+                if (key != null) {
+                    if (key.startsWith("source.")) {
+                        sourceOptions.put(key.substring("source.".length()), entry.getValue());
+                        parametersWithoutAdvancedOptions.remove(key);
+                    } else if (key.startsWith("sink.")) {
+                        sinkOptions.put(key.substring("sink.".length()), entry.getValue());
+                        parametersWithoutAdvancedOptions.remove(key);
+                    }
+                }
+            }
+
+            //
             // Uri params have the highest precedence
             //
-            kameletProperties.putAll(parameters);
+            kameletProperties.putAll(parametersWithoutAdvancedOptions);
 
             //
             // And finally we have some specific properties that cannot be changed by the user.
@@ -263,6 +285,18 @@ public class KameletComponent extends DefaultComponent {
             kameletProperties.put(PARAM_UUID, uuid);
             kameletProperties.put(NO_ERROR_HANDLER, endpoint.isNoErrorHandler());
             kameletProperties.put(BRIDGE_ERROR_HANDLER, endpoint.isBridgeErrorHandler());
+
+            // Remove any route-scoped properties that might have used the internal prefix
+            // to prevent users from bypassing the intended separation
+            kameletProperties.keySet().removeIf(key -> key.startsWith("internal.advanced."));
+
+            // Add advanced options with a special prefix to distinguish them from route-scoped properties
+            for (Map.Entry<String, Object> entry : sourceOptions.entrySet()) {
+                kameletProperties.put("internal.advanced.source." + entry.getKey(), entry.getValue());
+            }
+            for (Map.Entry<String, Object> entry : sinkOptions.entrySet()) {
+                kameletProperties.put("internal.advanced.sink." + entry.getKey(), entry.getValue());
+            }
 
             // set kamelet specific properties
             endpoint.setKameletProperties(kameletProperties);

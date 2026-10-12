@@ -1,3 +1,4 @@
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,14 +17,18 @@
  */
 package org.apache.camel.component.kamelet;
 
+import java.util.Properties;
+import java.util.regex.Pattern;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +45,7 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
         RouteDefinition route = getRoute("sourceTrigger");
         assertNotNull(route, "Expected the source caller route to be created");
 
-        String inputUri = findExpandedInputUri("direct://source?");
+        String inputUri = findExpandedInputUri("direct:source?");
         assertTrue(inputUri.contains("block=true"),
                 () -> "Expected block=true on the expanded source endpoint, but was: " + inputUri);
     }
@@ -50,11 +55,168 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
         RouteDefinition route = getRoute("sourceOverrideTrigger");
         assertNotNull(route, "Expected the source override caller route to be created");
 
-        String inputUri = findExpandedInputUri("direct://source-with-options?");
+        String inputUri = findExpandedInputUri("direct:source-with-options?");
         assertTrue(inputUri.contains("block=true"),
                 () -> "Expected block=true to override block=false: " + inputUri);
         assertFalse(inputUri.contains("block=false"),
                 () -> "The old block=false value must not remain: " + inputUri);
+    }
+
+    @Test
+    void advancedSourceOptionsPreservePropertyPlaceholders() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("source-with-placeholder")
+                            .from("direct:source?block=false&timeout={{timeout}}")
+                            .to("kamelet:sink");
+
+                    from("direct:trigger")
+                            .to("kamelet:source-with-placeholder/test?source.block=true");
+                }
+            });
+
+            Properties properties = new Properties();
+            properties.put("timeout", "1000");
+            testContext.getPropertiesComponent().setInitialProperties(properties);
+            testContext.start();
+
+            RouteDefinition expandedRoute = testContext.getRouteDefinitions().stream()
+                    .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
+                    .filter(route -> route.getInput() != null)
+                    .filter(route -> route.getInput().getEndpointUri() != null
+                            && route.getInput().getEndpointUri().startsWith("direct:source?"))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Expanded source route not found"));
+
+            String uri = expandedRoute.getInput().getEndpointUri();
+            assertTrue(uri.contains("block=true"),
+                    () -> "Expected advanced option, but was: " + uri);
+            assertTrue(uri.contains("timeout={{timeout}}"),
+                    () -> "Expected the property placeholder to remain intact: " + uri);
+        }
+    }
+
+    @Test
+    void advancedSourceOptionsPreserveRawExpressions() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("source-with-raw")
+                            .from("direct:source?timeout=RAW({{secret}})")
+                            .to("kamelet:sink");
+
+                    from("direct:trigger")
+                            .to("kamelet:source-with-raw/test?source.block=true");
+                }
+            });
+
+            Properties properties = new Properties();
+            properties.put("secret", "1000");
+            testContext.getPropertiesComponent().setInitialProperties(properties);
+            testContext.start();
+
+            RouteDefinition expandedRoute = testContext.getRouteDefinitions().stream()
+                    .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
+                    .filter(route -> route.getInput() != null)
+                    .filter(route -> route.getInput().getEndpointUri() != null
+                            && route.getInput().getEndpointUri().startsWith("direct:source?"))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Expanded source route not found"));
+
+            String uri = expandedRoute.getInput().getEndpointUri();
+            assertTrue(uri.contains("block=true"),
+                    () -> "Expected advanced option, but was: " + uri);
+            assertTrue(uri.contains("timeout=RAW({{secret}})"),
+                    () -> "Expected the RAW expression to remain intact: " + uri);
+        }
+    }
+
+    @Test
+    void advancedSinkOptionsPreservePropertyPlaceholders() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("sink-with-placeholder")
+                            .from("kamelet:source")
+                            .to("mock:{{topic}}?retain-first=0");
+
+                    from("direct:trigger")
+                            .kamelet("sink-with-placeholder?sink.retain-first=1");
+                }
+            });
+
+            Properties properties = new Properties();
+            properties.put("topic", "placeholder-sink");
+            testContext.getPropertiesComponent().setInitialProperties(properties);
+            testContext.start();
+
+            RouteDefinition expandedRoute = testContext.getRouteDefinitions().stream()
+                    .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
+                    .filter(route -> findToDefinition(route, "mock:{{topic}}") != null)
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Expanded sink route not found"));
+
+            ToDefinition sink = findToDefinition(expandedRoute, "mock:{{topic}}");
+            assertNotNull(sink, "Expected the placeholder sink endpoint");
+
+            String uri = sink.getEndpointUri();
+            assertTrue(uri.contains("{{topic}}"),
+                    () -> "Expected the property placeholder to remain intact: " + uri);
+            assertTrue(uri.contains("retain-first=1"),
+                    () -> "Expected the advanced option on the sink endpoint: " + uri);
+            assertFalse(uri.contains("%7B%7Btopic%7D%7D"),
+                    () -> "The placeholder must not be URL-encoded: " + uri);
+        }
+    }
+
+    @Test
+    void advancedSinkOptionsPreserveRawExpressions() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("sink-with-raw")
+                            .from("kamelet:source")
+                            .to("mock:{{bucket}}?secretKey=RAW({{secret}})");
+
+                    from("direct:trigger")
+                            .kamelet("sink-with-raw?sink.retain-first=1");
+                }
+            });
+
+            Properties properties = new Properties();
+            properties.put("bucket", "placeholder-bucket");
+            properties.put("secret", "secret-value");
+            testContext.getPropertiesComponent().setInitialProperties(properties);
+            testContext.start();
+
+            RouteDefinition expandedRoute = testContext.getRouteDefinitions().stream()
+                    .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
+                    .filter(route -> route.getOutputs() != null)
+                    .filter(route -> route.getOutputs().stream()
+                            .anyMatch(output -> output instanceof ToDefinition
+                                    && ((ToDefinition) output).getEndpointUri() != null
+                                    && ((ToDefinition) output).getEndpointUri().startsWith("mock:{{bucket}}")))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Expanded RAW sink route not found"));
+
+            ToDefinition sink = findToDefinition(expandedRoute, "mock:{{bucket}}");
+            assertNotNull(sink, "Expected the RAW sink endpoint");
+
+            String uri = sink.getEndpointUri();
+            assertTrue(uri.contains("{{bucket}}"),
+                    () -> "Expected the bucket placeholder to remain intact: " + uri);
+            assertTrue(uri.contains("secretKey=RAW({{secret}})"),
+                    () -> "Expected the RAW expression to remain intact: " + uri);
+            assertTrue(uri.contains("retain-first=1"),
+                    () -> "Expected the advanced option on the sink endpoint: " + uri);
+            assertFalse(uri.contains("%7B%7B"),
+                    () -> "Property placeholders must not be URL-encoded: " + uri);
+        }
     }
 
     @Test
@@ -130,22 +292,91 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
     }
 
     @Test
-    void advancedSinkOptionsAreAppliedToAllRealEndpoints() throws Exception {
-        MockEndpoint firstSink = getMockEndpoint("mock:first-advanced-sink");
-        MockEndpoint secondSink = getMockEndpoint("mock:second-advanced-sink");
+    void advancedSinkOptionsRejectMultipleTopLevelStaticDestinations() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("mock-multi-sink")
+                            .from("kamelet:source")
+                            .to("mock:first-advanced-sink?retain-first=0")
+                            .to("mock:second-advanced-sink?retain-first=0");
 
-        firstSink.expectedBodiesReceived("hello");
-        secondSink.expectedBodiesReceived("hello");
+                    from("direct:multi-sink-trigger")
+                            .kamelet("mock-multi-sink?sink.retain-first=1");
+                }
+            });
 
-        template.sendBody("direct:multi-sink-trigger", "hello");
+            Exception exception = assertThrows(Exception.class, testContext::start);
 
-        firstSink.assertIsSatisfied();
-        secondSink.assertIsSatisfied();
+            assertTrue(hasIllegalArgumentException(exception),
+                    () -> "Expected an IllegalArgumentException for multiple destinations, but got: " + exception);
+            assertTrue(exceptionChainContains(exception, "multiple top-level static to() destinations"),
+                    () -> "Expected a clear ambiguity error, but got: " + exception);
+        }
+    }
 
-        assertEquals(1, firstSink.getRetainFirst(),
-                "Expected retain-first=1 on the first sink endpoint");
-        assertEquals(1, secondSink.getRetainFirst(),
-                "Expected retain-first=1 on the second sink endpoint");
+    @Test
+    void advancedSinkOptionsRejectNestedChoiceDestinations() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("choice-sink")
+                            .from("kamelet:source")
+                            .choice()
+                            .when(header("selected").isEqualTo(true))
+                            .to("mock:choice-selected?retain-first=0")
+                            .otherwise()
+                            .to("mock:choice-default?retain-first=0")
+                            .end();
+
+                    from("direct:trigger")
+                            .kamelet("choice-sink?sink.retain-first=1");
+                }
+            });
+
+            Exception exception = assertThrows(Exception.class, testContext::start);
+
+            assertTrue(hasIllegalArgumentException(exception),
+                    () -> "Expected an IllegalArgumentException for nested destinations, but got: " + exception);
+            assertTrue(exceptionChainContains(exception, "no top-level static to() destination"),
+                    () -> "Expected a clear no-static-sink error, but got: " + exception);
+        }
+    }
+
+    @Test
+    void sinkOptionsNormalizeDuplicateCamelCaseAndKebabCaseNames() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("sink-with-duplicate-options")
+                            .from("kamelet:source")
+                            .to("mock:duplicate-options?retain-first=0");
+
+                    from("direct:trigger")
+                            .kamelet(
+                                    "sink-with-duplicate-options?sink.retainFirst=1&sink.retain-first=2");
+                }
+            });
+
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(
+                    testContext, "mock:duplicate-options");
+            ToDefinition sink = findToDefinition(expandedRoute, "mock:duplicate-options");
+
+            assertNotNull(sink, "Expected duplicate-options sink endpoint");
+
+            String uri = sink.getEndpointUri();
+            assertEquals(1, countOccurrences(uri, "retain-first="),
+                    () -> "Expected only one retain-first option: " + uri);
+            assertTrue(uri.matches(".*retain-first=[^&]+.*"),
+                    () -> "Expected a canonical retain-first option: " + uri);
+            assertFalse(uri.contains("retainFirst="),
+                    () -> "The camelCase alias should not remain in the URI: " + uri);
+        }
     }
 
     @Test
@@ -170,14 +401,14 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
 
             assertTrue(
                     exceptionChainContains(exception,
-                            "sink.* advanced options cannot be applied to dynamic toD endpoints"),
+                            "sink.* advanced options cannot be applied"),
                     () -> "Expected a clear explanation for dynamic endpoints, but got: " + exception);
         }
     }
 
     @Test
     void testSinkOptionsWithFixedAndDynamicOutputs() throws Exception {
-        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+        try (CamelContext testContext = new DefaultCamelContext()) {
             testContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -191,35 +422,57 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
                 }
             });
 
+            Exception exception = assertThrows(Exception.class, testContext::start);
+
+            assertTrue(hasIllegalArgumentException(exception),
+                    () -> "Expected an IllegalArgumentException for mixed static/dynamic destinations, but got: "
+                          + exception);
+            assertTrue(exceptionChainContains(exception, "contains a dynamic destination"),
+                    () -> "Expected a clear dynamic-destination error, but got: " + exception);
+        }
+    }
+
+    @Test
+    void testSinkOptionsWithEnrichOnly() throws Exception {
+        assertDynamicSinkOptionsRejected("enrich", "enrich");
+    }
+
+    @Test
+    void testSinkOptionsWithPollEnrichOnly() throws Exception {
+        assertDynamicSinkOptionsRejected("pollEnrich", "pollEnrich");
+    }
+
+    @Test
+    void wireTapIsNotTreatedAsTheMainSinkDestination() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("wiretap-sink")
+                            .from("kamelet:source")
+                            .wireTap("mock:side-effect")
+                            .to("mock:main-sink?retain-first=0");
+
+                    from("direct:trigger")
+                            .kamelet("wiretap-sink?sink.retain-first=1");
+                }
+            });
+
             testContext.start();
 
-            RouteDefinition expandedRoute = testContext.getRouteDefinitions().stream()
-                    .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
-                    .filter(route -> route.getOutputs() != null)
-                    .filter(route -> route.getOutputs().stream()
-                            .anyMatch(ToDynamicDefinition.class::isInstance))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("Expanded Kamelet route not found"));
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(testContext, "mock:main-sink");
+            ToDefinition mainSink = findToDefinition(expandedRoute, "mock:main-sink");
 
-            ToDefinition fixedOutput = expandedRoute.getOutputs().stream()
-                    .filter(ToDefinition.class::isInstance)
-                    .map(ToDefinition.class::cast)
-                    .filter(output -> output.getEndpointUri() != null
-                            && output.getEndpointUri().startsWith("mock://fixed-sink"))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("Fixed sink output not found"));
+            assertNotNull(mainSink, "Expected main sink endpoint");
+            assertTrue(mainSink.getEndpointUri().contains("retain-first=1"),
+                    () -> "Expected advanced option on main sink: " + mainSink.getEndpointUri());
 
-            ToDynamicDefinition dynamicOutput = expandedRoute.getOutputs().stream()
-                    .filter(ToDynamicDefinition.class::isInstance)
-                    .map(ToDynamicDefinition.class::cast)
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("Dynamic sink output not found"));
+            boolean wireTapHasAdvancedOption = expandedRoute.getOutputs().stream()
+                    .filter(output -> output.getClass().getSimpleName().contains("WireTap"))
+                    .anyMatch(output -> output.toString().contains("retain-first=1"));
 
-            assertTrue(fixedOutput.getEndpointUri().contains("retain-first=1"),
-                    () -> "Expected sink.retain-first=1 on fixed endpoint, but was: "
-                          + fixedOutput.getEndpointUri());
-            assertEquals("mock:${header.destination}", dynamicOutput.getUri(),
-                    "Dynamic endpoint expression should remain unchanged");
+            assertFalse(wireTapHasAdvancedOption,
+                    "The wireTap destination should not receive sink options");
         }
     }
 
@@ -248,6 +501,172 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
 
             dynamicSink.assertIsSatisfied();
         }
+    }
+
+    @Test
+    void routeScopedPropertyDoesNotClashWithAdvancedOptions() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("sink-template")
+                            .from("kamelet:source")
+                            .to("mock:result?retain-first=0");
+
+                    from("direct:trigger")
+                            .kamelet("sink-template/testRoute?sink.retain-first=1");
+                }
+            });
+
+            Properties properties = new Properties();
+            // This is a route-scoped property that should NOT be treated as an advanced option
+            properties.put("camel.kamelet.sink-template.testRoute.source.retainFirst", "999");
+            testContext.getPropertiesComponent().setInitialProperties(properties);
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(testContext, "mock:result");
+            ToDefinition sink = findToDefinition(expandedRoute, "mock:result");
+
+            assertNotNull(sink, "Expected sink endpoint");
+            String uri = sink.getEndpointUri();
+            assertTrue(uri.contains("retain-first=1"),
+                    () -> "Expected URI parameter sink.retain-first=1 from advanced option: " + uri);
+            assertFalse(uri.contains("retain-first=999"),
+                    () -> "Route-scoped property should not be treated as advanced option: " + uri);
+        }
+    }
+
+    @Test
+    void routeScopedPropertyCannotInjectInternalPrefix() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("sink-template")
+                            .from("kamelet:source")
+                            .to("mock:result?retain-first=0");
+
+                    from("direct:trigger")
+                            .kamelet("sink-template/testRoute");
+                }
+            });
+
+            Properties properties = new Properties();
+            // Attempt to inject via route-scoped property - should NOT work
+            properties.put("camel.kamelet.sink-template.testRoute.internal.advanced.sink.retain-first", "999");
+            testContext.getPropertiesComponent().setInitialProperties(properties);
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(testContext, "mock:result");
+            ToDefinition sink = findToDefinition(expandedRoute, "mock:result");
+
+            assertNotNull(sink, "Expected sink endpoint");
+            String uri = sink.getEndpointUri();
+            // The internal prefix should be ignored when coming from route-scoped properties
+            assertFalse(uri.contains("retain-first=999"),
+                    () -> "Route-scoped property with internal prefix should be ignored: " + uri);
+            assertTrue(uri.contains("retain-first=0"),
+                    () -> "Original value should remain: " + uri);
+        }
+    }
+
+    @Test
+    void sinkOptionsRejectAmbiguousLogAndStaticDestinations() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("sink-with-log")
+                            .from("kamelet:source")
+                            .to("log:before-sink")
+                            .to("mock:actual-sink?retain-first=0");
+
+                    from("direct:trigger")
+                            .kamelet("sink-with-log?sink.retain-first=1");
+                }
+            });
+
+            Exception exception = assertThrows(Exception.class, testContext::start);
+
+            assertTrue(hasIllegalArgumentException(exception),
+                    () -> "Expected an IllegalArgumentException for multiple static destinations, but got: "
+                          + exception);
+            assertTrue(exceptionChainContains(exception, "multiple top-level static to() destinations"),
+                    () -> "Expected a clear ambiguity error, but got: " + exception);
+        }
+    }
+
+    private void assertDynamicSinkOptionsRejected(String processor, String description) throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    if ("enrich".equals(processor)) {
+                        routeTemplate("dynamic-enricher")
+                                .from("kamelet:source")
+                                .enrich("mock:enrich-destination");
+                    } else if ("pollEnrich".equals(processor)) {
+                        routeTemplate("dynamic-enricher")
+                                .from("kamelet:source")
+                                .pollEnrich("mock:poll-enrich-destination");
+                    } else {
+                        throw new IllegalArgumentException("Unsupported processor: " + processor);
+                    }
+
+                    from("direct:trigger")
+                            .kamelet("dynamic-enricher?sink.block=true");
+                }
+            });
+
+            Exception exception = assertThrows(Exception.class, testContext::start);
+            assertTrue(hasIllegalArgumentException(exception),
+                    () -> "Expected an IllegalArgumentException for " + description + ", but got: " + exception);
+            assertTrue(exceptionChainContains(exception,
+                    "sink.* advanced options cannot be applied"),
+                    () -> "Expected a clear explanation for " + description + ", but got: " + exception);
+        }
+    }
+
+    private RouteDefinition findExpandedRouteWithOutput(CamelContext testContext, String uriPrefix) {
+        return ((ModelCamelContext) testContext).getRouteDefinitions().stream()
+                .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
+                .filter(route -> findToDefinition(route, uriPrefix) != null)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expanded Kamelet route not found for " + uriPrefix));
+    }
+
+    private ToDefinition findToDefinition(RouteDefinition route, String uriPrefix) {
+        return findToDefinitionInOutputs(route, uriPrefix);
+    }
+
+    private ToDefinition findToDefinitionInOutputs(
+            ProcessorDefinition<?> parent, String uriPrefix) {
+        if (parent.getOutputs() == null) {
+            return null;
+        }
+
+        for (ProcessorDefinition<?> output : parent.getOutputs()) {
+            if (output instanceof ToDefinition) {
+                ToDefinition to = (ToDefinition) output;
+                if (to.getEndpointUri() != null && to.getEndpointUri().startsWith(uriPrefix)) {
+                    return to;
+                }
+            }
+
+            ToDefinition nested = findToDefinitionInOutputs(output, uriPrefix);
+            if (nested != null) {
+                return nested;
+            }
+        }
+
+        return null;
+    }
+
+    private long countOccurrences(String value, String target) {
+        return Pattern.compile(Pattern.quote(target))
+                .matcher(value)
+                .results()
+                .count();
     }
 
     private boolean exceptionChainContains(Throwable exception, String text) {
@@ -283,11 +702,20 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
                 .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
                 .filter(route -> route.getInput() != null)
                 .map(route -> route.getInput().getEndpointUri())
-                .filter(endpointUri -> endpointUri != null && endpointUri.startsWith(prefix))
+                .filter(endpointUri -> endpointUri != null)
+                .filter(endpointUri -> endpointUri.startsWith(prefix))
                 .findFirst()
                 .orElse(null);
 
-        assertNotNull(uri, "No expanded Kamelet route input found with prefix " + prefix);
+        assertNotNull(uri, () -> {
+            String available = context.getRouteDefinitions().stream()
+                    .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
+                    .filter(route -> route.getInput() != null)
+                    .map(route -> route.getId() + " -> " + route.getInput().getEndpointUri())
+                    .collect(java.util.stream.Collectors.joining(", "));
+            return "No expanded Kamelet route input found with prefix " + prefix
+                   + ". Available Kamelet inputs: " + available;
+        });
         return uri;
     }
 
@@ -334,15 +762,6 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
                 from("direct:basic-trigger")
                         .routeId("basicTrigger")
                         .kamelet("mock-sink");
-
-                routeTemplate("mock-multi-sink")
-                        .from("kamelet:source")
-                        .to("mock:first-advanced-sink?retain-first=0")
-                        .to("mock:second-advanced-sink?retain-first=0");
-
-                from("direct:multi-sink-trigger")
-                        .routeId("multiSinkTrigger")
-                        .kamelet("mock-multi-sink?sink.retain-first=1");
             }
         };
     }
