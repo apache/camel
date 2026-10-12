@@ -228,7 +228,7 @@ public final class EndpointConsumerChecks {
             }
             String uri = n.uri();
             if (uri == null || RouteModel.hasUnknownValue(uri)
-                    || EndpointRules.isDynamic(uri) && EndpointRules.mayBeChecked(uri)) {
+                    || (EndpointRules.isDynamic(uri) && EndpointRules.mayBeChecked(uri))) {
                 return null;
             }
             String endpoint = EndpointRules.endpoint(uri);
