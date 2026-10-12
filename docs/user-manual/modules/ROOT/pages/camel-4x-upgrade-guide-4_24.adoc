@@ -287,3 +287,17 @@ at a time: while an attempt waits for the server (up to the connect timeout), th
 are skipped, and `maxReconnectAttempts` counts these attempts one after the other. Previously every interval started
 another attempt, and when the server answered late each of them opened a WebSocket, so that every message was routed
 once per WebSocket. A consumer that is stopped no longer reconnects.
+
+=== camel-core - a route from a route template has the template's resource as its source
+
+A route created from a route template or a Kamelet now returns the resource with the route template from
+`Route.getSourceResource()` (it returned null). This is the resource its source location (`Route.getSourceLocation()`)
+was already in, so the debugger and message history consoles show the source code of these routes too.
+
+A route created from a `templatedRoute` also remembers the resource that declares the `templatedRoute`
+(`Route.getTemplatedRouteResource()`, the `TemplatedRouteSource` JMX attribute, and `templatedRouteSource` in the
+route dev console), and the route template id is available from `Route.getRouteTemplateId()`, the `RouteTemplateId`
+JMX attribute, and `routeTemplateId` in the route dev console.
+
+Code that took a null source resource to mean that a route was created from a route template should use
+`Route.isCreatedByRouteTemplate()` instead.

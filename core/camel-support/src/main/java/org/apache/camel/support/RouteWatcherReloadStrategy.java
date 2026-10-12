@@ -376,11 +376,12 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 // times and fail on a duplicate route id, CAMEL-24866)
                 // (the file of a route may have been removed since it loaded: on-demand reload only passes the files
                 // that exist, so its routes are removed like those of a changed file, CAMEL-25427)
+                // (a route from a templated route needs the file with the route template, and the file with the
+                // templated route, CAMEL-25598; a route from a Kamelet is created again by its parent route)
                 getCamelContext().getRoutes().forEach(r -> {
-                    Resource rs = r.getSourceResource();
-                    if (rs != null && !isDeletedFile(rs) && !equalResourceLocation(resources, rs)
-                            && !equalResourceLocation(sources, rs)) {
-                        sources.add(rs);
+                    if (!r.isCreatedByKamelet()) {
+                        addRouteSource(resources, sources, r.getSourceResource());
+                        addRouteSource(resources, sources, r.getTemplatedRouteResource());
                     }
                 });
                 // first stop and remove all routes
@@ -597,6 +598,17 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             LOG.warn("Reload failed and the previous routes could not be restored due to: {}. The application runs"
                      + " without routes until the file is fixed",
                     e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Adds the source of a running route to the sources to load again, unless it is one of the updated resources, it is
+     * already added, or its file is gone.
+     */
+    private static void addRouteSource(Collection<Resource> resources, List<Resource> sources, Resource rs) {
+        if (rs != null && !isDeletedFile(rs) && !equalResourceLocation(resources, rs)
+                && !equalResourceLocation(sources, rs)) {
+            sources.add(rs);
         }
     }
 
