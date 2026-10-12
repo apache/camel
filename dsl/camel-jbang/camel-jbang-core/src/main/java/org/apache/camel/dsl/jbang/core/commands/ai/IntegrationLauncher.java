@@ -58,6 +58,13 @@ public final class IntegrationLauncher {
      */
     private static final Map<Path, ProcessHandle> LAUNCHED = new ConcurrentHashMap<>();
 
+    /**
+     * CAMEL-25561: the name of an integration whose restart failed, by its directory. The failed restart leaves it
+     * stopped, and camel_run without a name would start it again under the default name (from the first file), which
+     * the tools and scripts that know it by its own name do not find.
+     */
+    private static final Map<Path, String> STOPPED_BY_RESTART = new ConcurrentHashMap<>();
+
     private IntegrationLauncher() {
     }
 
@@ -66,19 +73,23 @@ public final class IntegrationLauncher {
      *
      * @param  directory the project directory (the working directory of the process)
      * @param  files     the source files to run, relative to the directory; empty runs every route file in it
-     * @param  name      the integration name (the {@code --name} option); null keeps the default
+     * @param  name      the integration name (the {@code --name} option); null keeps the name it had before a failed
+     *                   restart, else the default
      * @param  dev       dev mode (reload on file changes)
      * @param  extraArgs further {@code camel run} arguments
      * @return           status started (with pid, name, log), failed (with the output) or starting
      */
     public static JsonObject run(Path directory, List<String> files, String name, boolean dev, List<String> extraArgs) {
+        String runName = runName(directory, name);
+        boolean before = runName != null && !runName.equals(name);
         List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
         // no files given: the whole directory is the app (camel run --source-dir), so a file the agent adds later,
         // a bean file, a Java class under src/main/java, is part of it and reloaded in dev mode (CAMEL-24861);
         // with files given only those run, for a directory that holds several apps
         boolean sourceDir = files == null || files.isEmpty();
         List<String> sources = sourceDir ? sourceFiles(directory) : files;
-        cmd.addAll(sourceDir ? sourceDirArguments(name, dev, extraArgs) : runArguments(sources, name, dev, extraArgs));
+        cmd.addAll(sourceDir
+                ? sourceDirArguments(runName, dev, extraArgs) : runArguments(sources, runName, dev, extraArgs));
         JsonObject result = new JsonObject();
         // with --source-dir the guard looks at the top level only; a class under src/main/java is an app too
         if (!sourceDir && sources.isEmpty()) {
@@ -131,8 +142,10 @@ public final class IntegrationLauncher {
             if (info != null) {
                 // the name the other tools find the process by: the one the caller gave, else the Camel context name
                 // (the source file name without its extensions); the pid is in the result as well
-                String started = name != null && !name.isBlank()
-                        ? name : info.contextName() != null && !info.contextName().isBlank() ? info.contextName() : info.name();
+                String started = runName != null && !runName.isBlank()
+                        ? runName
+                        : info.contextName() != null && !info.contextName().isBlank() ? info.contextName() : info.name();
+                STOPPED_BY_RESTART.remove(key(directory));
                 result.put("status", "started");
                 result.put("pid", pid);
                 result.put("name", started);
@@ -140,6 +153,7 @@ public final class IntegrationLauncher {
                 result.put("devMode", dev);
                 result.put("sourceDir", sourceDir);
                 result.put("message", "Started " + started + " (pid " + pid + ")"
+                                      + (before ? ", under the name it had before its restart failed" : "")
                                       + (dev
                                               ? sourceDir
                                                       ? "; dev mode watches the directory: a changed or added file is"
@@ -390,6 +404,26 @@ public final class IntegrationLauncher {
         }
     }
 
+    /**
+     * The name camel_run starts a directory under: the one given, else the one the integration had before its restart
+     * failed (CAMEL-25561), else null for the default name.
+     */
+    static String runName(Path directory, String name) {
+        return name != null && !name.isBlank() ? name : STOPPED_BY_RESTART.get(key(directory));
+    }
+
+    /**
+     * Keeps the name of an integration whose restart failed and left it stopped, so camel_run without a name starts it
+     * again under that name; false when the directory or the name is not known.
+     */
+    static boolean stoppedByRestart(Path directory, String name) {
+        if (directory == null || name == null || name.isBlank()) {
+            return false;
+        }
+        STOPPED_BY_RESTART.put(key(directory), name);
+        return true;
+    }
+
     /** The key of a directory in {@link #LAUNCHED}: its real path, the same through any symlink. */
     private static Path key(Path directory) {
         try {
@@ -509,8 +543,10 @@ public final class IntegrationLauncher {
                 Thread.sleep(250);
             }
             if (!p.isAlive()) {
+                boolean kept = stoppedByRestart(directory, name);
                 return "Restart of " + (name != null ? name : "pid " + pid) + " failed with exit code "
-                       + p.exitValue() + ", so it is stopped now: fix the cause below, then camel_run starts it again.\n"
+                       + p.exitValue() + ", so it is stopped now: fix the cause below, then camel_run starts it again"
+                       + (kept ? " (directory " + directory + ") under the same name, " + name : "") + ".\n"
                        + failureOutput(output);
             }
             return "Restarting " + (name != null ? name : "pid " + pid) + " as pid " + p.pid()
