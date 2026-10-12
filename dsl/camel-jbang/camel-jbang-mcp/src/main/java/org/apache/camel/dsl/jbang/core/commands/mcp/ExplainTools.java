@@ -26,6 +26,7 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 
@@ -67,7 +68,7 @@ public class ExplainTools {
             String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
 
             // Extract and document components
-            List<String> componentNames = extractComponents(route, catalog);
+            List<String> componentNames = RouteComponents.of(route, format, catalog);
             List<RouteComponent> components = new ArrayList<>();
             for (String comp : componentNames) {
                 ComponentModel model = catalog.componentModel(comp);
@@ -100,22 +101,6 @@ public class ExplainTools {
     }
 
     /**
-     * Extract component names from route content.
-     */
-    private List<String> extractComponents(String route, CamelCatalog catalog) {
-        List<String> found = new ArrayList<>();
-        String lowerRoute = route.toLowerCase();
-
-        for (String comp : catalog.findComponentNames()) {
-            if (containsComponent(lowerRoute, comp)) {
-                found.add(comp);
-            }
-        }
-
-        return found;
-    }
-
-    /**
      * Extract EIP names from route content.
      */
     private List<String> extractEips(String route, CamelCatalog catalog) {
@@ -134,12 +119,6 @@ public class ExplainTools {
         }
 
         return found;
-    }
-
-    private boolean containsComponent(String content, String comp) {
-        return content.contains(comp + ":")
-                || content.contains("\"" + comp + "\"")
-                || content.contains("'" + comp + "'");
     }
 
     private String camelCaseToDash(String text) {
