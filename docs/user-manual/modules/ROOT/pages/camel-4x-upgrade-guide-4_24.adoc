@@ -13,6 +13,16 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-lra - warning for unsigned participant callbacks, and reserved saga option names
+
+The LRA saga service now logs a warning at startup when no `callbackSecret` is configured: the callbacks that the LRA
+coordinator sends to the participant endpoints are then not verified, so these endpoints must only be reachable by the
+coordinator. The Saga EIP documentation describes how to sign them.
+
+A saga option named like a parameter of the participant callback URLs, in any case (`Camel-Saga-Compensate`,
+`Camel-Saga-Complete`, `Camel-Saga-Signature` or `Camel-Saga-Lra`), now fails the creation of its route, with or
+without a callback secret. The value of such an option could not be read back from the callback before.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint

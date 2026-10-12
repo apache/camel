@@ -46,6 +46,7 @@ import org.mockito.Mockito;
 
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
+import static org.apache.camel.service.lra.LRAConstants.URL_LRA_KEY;
 import static org.apache.camel.service.lra.LRAConstants.URL_SIGNATURE_KEY;
 
 public class LRAClientTest extends CamelTestSupport {
@@ -147,6 +148,8 @@ public class LRAClientTest extends CamelTestSupport {
         for (String path : new String[] { PARTICIPANT_PATH_COMPENSATE, PARTICIPANT_PATH_COMPLETE }) {
             Map<String, String> parameters = callbacks.get(path);
             Assertions.assertEquals("42", parameters.get("id"), "saga option must be in the " + path + " URL");
+            Assertions.assertEquals("http://localhost/lra-coordinator/0_1", parameters.get(URL_LRA_KEY),
+                    "the LRA must be in the " + path + " URL");
             String signature = parameters.remove(URL_SIGNATURE_KEY);
             Assertions.assertTrue(signer.verify(path, parameters, signature),
                     "the " + path + " URL must carry a valid signature");
@@ -161,6 +164,7 @@ public class LRAClientTest extends CamelTestSupport {
         for (Map<String, String> parameters : callbacks.values()) {
             Assertions.assertEquals("42", parameters.get("id"), "saga option must be in the callback URL");
             Assertions.assertFalse(parameters.containsKey(URL_SIGNATURE_KEY), "callback URL must not be signed");
+            Assertions.assertFalse(parameters.containsKey(URL_LRA_KEY), "callback URL must not carry the LRA");
         }
     }
 

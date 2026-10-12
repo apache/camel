@@ -45,6 +45,7 @@ import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENS
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
 import static org.apache.camel.service.lra.LRAConstants.URL_COMPENSATION_KEY;
 import static org.apache.camel.service.lra.LRAConstants.URL_COMPLETION_KEY;
+import static org.apache.camel.service.lra.LRAConstants.URL_LRA_KEY;
 import static org.apache.camel.service.lra.LRAConstants.URL_SIGNATURE_KEY;
 
 public class LRAClient implements Closeable {
@@ -120,11 +121,15 @@ public class LRAClient implements Closeable {
                     .compensation(step.getCompensation())
                     .completion(step.getCompletion());
 
-            LRAUrlBuilder compensationUrl = participantBaseUrl.path(PARTICIPANT_PATH_COMPENSATE);
-            LRAUrlBuilder completionUrl = participantBaseUrl.path(PARTICIPANT_PATH_COMPLETE);
             LRACallbackSigner signer = sagaService.getCallbackSigner();
             if (signer != null) {
-                Map<String, String> parameters = callbackParameters(step);
+                // the LRA is signed too, so that a callback URL is only valid for the LRA it was enlisted for
+                participantBaseUrl = participantBaseUrl.query(URL_LRA_KEY, lra.toString());
+            }
+            LRAUrlBuilder compensationUrl = participantBaseUrl.path(PARTICIPANT_PATH_COMPENSATE);
+            LRAUrlBuilder completionUrl = participantBaseUrl.path(PARTICIPANT_PATH_COMPLETE);
+            if (signer != null) {
+                Map<String, String> parameters = callbackParameters(step, lra);
                 compensationUrl = compensationUrl.query(URL_SIGNATURE_KEY,
                         signer.sign(PARTICIPANT_PATH_COMPENSATE, parameters));
                 completionUrl = completionUrl.query(URL_SIGNATURE_KEY,
@@ -208,12 +213,13 @@ public class LRAClient implements Closeable {
     }
 
     /**
-     * The query parameters of the participant callback URLs of a step, as the participant receives them back.
+     * The query parameters of the signed participant callback URLs of a step, as the participant receives them back.
      */
-    private static Map<String, String> callbackParameters(LRASagaStep step) {
+    private static Map<String, String> callbackParameters(LRASagaStep step, URL lra) {
         Map<String, String> parameters = new HashMap<>(step.getOptions());
         step.getCompensation().ifPresent(endpoint -> parameters.put(URL_COMPENSATION_KEY, endpoint.getEndpointUri()));
         step.getCompletion().ifPresent(endpoint -> parameters.put(URL_COMPLETION_KEY, endpoint.getEndpointUri()));
+        parameters.put(URL_LRA_KEY, lra.toString());
         return parameters;
     }
 

@@ -57,7 +57,8 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
 
     private static final Logger LOG = LoggerFactory.getLogger(LRASagaService.class);
     private static final List<String> RESERVED_OPTION_NAMES = List.of(
-            LRAConstants.URL_COMPENSATION_KEY, LRAConstants.URL_COMPLETION_KEY, LRAConstants.URL_SIGNATURE_KEY);
+            LRAConstants.URL_COMPENSATION_KEY, LRAConstants.URL_COMPLETION_KEY, LRAConstants.URL_SIGNATURE_KEY,
+            LRAConstants.URL_LRA_KEY);
 
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
@@ -274,6 +275,11 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
                         "allowedCoordinatorUrls must hold http or https coordinator URLs with a host name, but no such"
                                                    + " URL could be read from: " + coordinator);
             }
+        }
+        if (callbackSecret != null && callbackSecret.isBlank()) {
+            // for example an empty environment variable, which would otherwise switch the verification off
+            throw new IllegalArgumentException(
+                    "callbackSecret is set on the LRA saga service but blank: set a secret, or remove the option");
         }
         if (callbackSigner == null) {
             LOG.warn("Callbacks to the LRA participant endpoints under {} are not signed. Configure a callbackSecret"

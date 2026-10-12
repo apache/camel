@@ -154,7 +154,8 @@ public class LRASagaServiceAllowlistTest extends CamelTestSupport {
     void testRegisterStepRejectsReservedOptionNames() {
         Endpoint compensation = context().getEndpoint("direct:compensate1");
         for (String name : new String[] {
-                "Camel-Saga-Compensate", "Camel-Saga-Complete", "Camel-Saga-Signature", "camel-saga-signature" }) {
+                "Camel-Saga-Compensate", "Camel-Saga-Complete", "Camel-Saga-Signature", "Camel-Saga-Lra",
+                "camel-saga-signature" }) {
             CamelSagaStep step = new CamelSagaStep(
                     compensation, null, Map.of(name, ExpressionBuilder.constantExpression("value")), null);
 

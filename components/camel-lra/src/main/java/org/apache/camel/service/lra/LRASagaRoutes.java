@@ -162,9 +162,14 @@ public class LRASagaRoutes extends RouteBuilder {
         Message message = exchange.getIn();
         String callbackPath = isCompensation ? PARTICIPANT_PATH_COMPENSATE : PARTICIPANT_PATH_COMPLETE;
 
+        // the raw query first, as some consumers, such as camel-netty-http, decode CamelHttpQuery
+        String query = message.getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (query == null) {
+            query = message.getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         Map<String, String> parameters;
         try {
-            parameters = parseQuery(message.getHeader(Exchange.HTTP_QUERY, String.class));
+            parameters = parseQuery(query);
         } catch (IllegalStateException e) {
             // a repeated parameter, which a URL enlisted by the participant never has
             parameters = null;
@@ -174,15 +179,29 @@ public class LRASagaRoutes extends RouteBuilder {
         message.removeHeader(URL_COMPENSATION_KEY);
         message.removeHeader(URL_COMPLETION_KEY);
         message.removeHeader(URL_SIGNATURE_KEY);
-        if (!signer.verify(callbackPath, parameters, signature)) {
+        if (!signer.verify(callbackPath, parameters, signature) || parameters.get(URL_LRA_KEY) == null) {
             LOG.warn("Rejected a call to the LRA participant endpoint {} without a valid signature", callbackPath);
             message.setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
             message.setBody(null);
             exchange.setRouteStop(true);
             return false;
         }
+        // the step works on the LRA the URL was signed for, not on the one named by the request
+        message.setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, parameters.remove(URL_LRA_KEY));
         parameters.forEach(message::setHeader);
+        // keep the signature out of the step route
+        removeSignature(message, Exchange.HTTP_RAW_QUERY);
+        removeSignature(message, Exchange.HTTP_QUERY);
         return true;
+    }
+
+    private static void removeSignature(Message message, String queryHeader) {
+        String query = message.getHeader(queryHeader, String.class);
+        if (query != null) {
+            message.setHeader(queryHeader, Arrays.stream(query.split("&"))
+                    .filter(parameter -> !parameter.startsWith(URL_SIGNATURE_KEY + "="))
+                    .collect(Collectors.joining("&")));
+        }
     }
 
 }
