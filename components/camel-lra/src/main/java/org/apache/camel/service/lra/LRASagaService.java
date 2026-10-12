@@ -44,6 +44,8 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Camel saga service based on Microprofile LRA (https://github.com/eclipse/microprofile-lra).
@@ -52,6 +54,8 @@ import org.apache.camel.util.ObjectHelper;
 @Configurer
 @ManagedResource(description = "Managed LRASagaService")
 public class LRASagaService extends ServiceSupport implements StaticService, CamelSagaService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LRASagaService.class);
 
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
@@ -73,6 +77,9 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     private String localParticipantContextPath = LRAConstants.DEFAULT_LOCAL_PARTICIPANT_CONTEXT_PATH;
     @Metadata(label = "security")
     private String allowedCoordinatorUrls;
+    @Metadata(label = "security", security = "secret")
+    private String callbackSecret;
+    private LRACallbackSigner callbackSigner;
 
     public LRASagaService() {
     }
@@ -246,6 +253,11 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
                                                    + " URL could be read from: " + coordinator);
             }
         }
+        if (callbackSigner == null) {
+            LOG.warn("Callbacks to the LRA participant endpoints under {} are not signed. Configure a callbackSecret"
+                     + " on the LRA saga service, or make sure that only the LRA coordinator can reach these endpoints.",
+                    localParticipantContextPath);
+        }
 
         if (this.executorService == null) {
             this.executorService = camelContext.getExecutorServiceManager()
@@ -372,6 +384,24 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
      */
     public void setAllowedCoordinatorUrls(String allowedCoordinatorUrls) {
         this.allowedCoordinatorUrls = allowedCoordinatorUrls;
+    }
+
+    public String getCallbackSecret() {
+        return callbackSecret;
+    }
+
+    /**
+     * Secret used to sign the participant callback URLs that are enlisted with the LRA coordinator, and to verify them
+     * when the coordinator calls back. When set, a compensation or completion callback with a missing or invalid
+     * signature is rejected with HTTP 403. All the instances of a participant must use the same secret.
+     */
+    public void setCallbackSecret(String callbackSecret) {
+        this.callbackSecret = callbackSecret;
+        this.callbackSigner = ObjectHelper.isNotEmpty(callbackSecret) ? new LRACallbackSigner(callbackSecret) : null;
+    }
+
+    LRACallbackSigner getCallbackSigner() {
+        return callbackSigner;
     }
 
     public Set<String> getRegisteredCompensationURIs() {

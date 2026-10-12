@@ -18,15 +18,35 @@ package org.apache.camel.service.lra;
 
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.saga.CamelSagaStep;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
+import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
+import static org.apache.camel.service.lra.LRAConstants.URL_SIGNATURE_KEY;
 
 public class LRAClientTest extends CamelTestSupport {
 
@@ -116,6 +136,90 @@ public class LRAClientTest extends CamelTestSupport {
         HttpRequest.Builder actual = client.prepareRequest(uri, null);
 
         Assertions.assertEquals(actual.build(), expected.build());
+    }
+
+    @DisplayName("Tests whether join() signs the participant callback URLs when a callback secret is set")
+    @Test
+    void testJoinSignsCallbackUrlsWithCallbackSecret() throws Exception {
+        Map<String, Map<String, String>> callbacks = joinAndCaptureCallbacks("a-callback-secret");
+
+        LRACallbackSigner signer = new LRACallbackSigner("a-callback-secret");
+        for (String path : new String[] { PARTICIPANT_PATH_COMPENSATE, PARTICIPANT_PATH_COMPLETE }) {
+            Map<String, String> parameters = callbacks.get(path);
+            Assertions.assertEquals("42", parameters.get("id"), "saga option must be in the " + path + " URL");
+            String signature = parameters.remove(URL_SIGNATURE_KEY);
+            Assertions.assertTrue(signer.verify(path, parameters, signature),
+                    "the " + path + " URL must carry a valid signature");
+        }
+    }
+
+    @DisplayName("Tests whether join() leaves the participant callback URLs unsigned without a callback secret")
+    @Test
+    void testJoinDoesNotSignCallbackUrlsWithoutCallbackSecret() throws Exception {
+        Map<String, Map<String, String>> callbacks = joinAndCaptureCallbacks(null);
+
+        for (Map<String, String> parameters : callbacks.values()) {
+            Assertions.assertEquals("42", parameters.get("id"), "saga option must be in the callback URL");
+            Assertions.assertFalse(parameters.containsKey(URL_SIGNATURE_KEY), "callback URL must not be signed");
+        }
+    }
+
+    /**
+     * Joins an LRA through a mocked HTTP client, and returns the query parameters of the enlisted callback URLs, by
+     * participant path.
+     */
+    private Map<String, Map<String, String>> joinAndCaptureCallbacks(String callbackSecret) throws Exception {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        try {
+            LRASagaService sagaService = new LRASagaService() {
+                @Override
+                public ScheduledExecutorService getExecutorService() {
+                    return executor;
+                }
+            };
+            applyMockProperties(sagaService);
+            sagaService.setCallbackSecret(callbackSecret);
+
+            HttpClient httpClient = Mockito.mock(HttpClient.class);
+            @SuppressWarnings("unchecked")
+            HttpResponse<String> response = Mockito.mock(HttpResponse.class);
+            Mockito.when(response.statusCode()).thenReturn(200);
+            ArgumentCaptor<HttpRequest> request = ArgumentCaptor.forClass(HttpRequest.class);
+            Mockito.when(httpClient.sendAsync(request.capture(), Mockito.<HttpResponse.BodyHandler<String>> any()))
+                    .thenReturn(CompletableFuture.completedFuture(response));
+
+            Map<String, Expression> options = new HashMap<>();
+            options.put("id", ExpressionBuilder.constantExpression("42"));
+            CamelSagaStep step = new CamelSagaStep(
+                    context().getEndpoint("direct:cancelOrder"), context().getEndpoint("direct:confirmOrder"), options, null);
+            Exchange exchange = new DefaultExchange(context());
+
+            new LRAClient(sagaService, httpClient)
+                    .join(URI.create("http://localhost/lra-coordinator/0_1").toURL(),
+                            LRASagaStep.fromCamelSagaStep(step, exchange), exchange)
+                    .get(10, TimeUnit.SECONDS);
+
+            String link = request.getValue().headers().firstValue("Link").orElseThrow();
+            Map<String, Map<String, String>> callbacks = new HashMap<>();
+            Matcher matcher = Pattern.compile("<[^>?]+(/[a-z]+)\\?([^>]*)>; rel=").matcher(link);
+            while (matcher.find()) {
+                callbacks.put(matcher.group(1), parseQuery(matcher.group(2)));
+            }
+            Assertions.assertEquals(2, callbacks.size(), "the Link header must hold the compensate and complete URLs");
+            return callbacks;
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    private static Map<String, String> parseQuery(String query) {
+        Map<String, String> parameters = new HashMap<>();
+        for (String parameter : query.split("&")) {
+            String[] pair = parameter.split("=", 2);
+            parameters.put(URLDecoder.decode(pair[0], StandardCharsets.UTF_8),
+                    URLDecoder.decode(pair[1], StandardCharsets.UTF_8));
+        }
+        return parameters;
     }
 
     private void applyMockProperties(LRASagaService sagaService) {

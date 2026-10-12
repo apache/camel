@@ -38,6 +38,8 @@ public class LraConfigurationProperties implements BootstrapCloseable {
     private String localParticipantContextPath = "/lra-participant";
     @Metadata(label = "security")
     private String allowedCoordinatorUrls;
+    @Metadata(label = "security", security = "secret")
+    private String callbackSecret;
 
     public LraConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -124,6 +126,19 @@ public class LraConfigurationProperties implements BootstrapCloseable {
         this.allowedCoordinatorUrls = allowedCoordinatorUrls;
     }
 
+    public String getCallbackSecret() {
+        return callbackSecret;
+    }
+
+    /**
+     * Secret used to sign the participant callback URLs that are enlisted with the LRA coordinator, and to verify them
+     * when the coordinator calls back. When set, a compensation or completion callback with a missing or invalid
+     * signature is rejected with HTTP 403. All the instances of a participant must use the same secret.
+     */
+    public void setCallbackSecret(String callbackSecret) {
+        this.callbackSecret = callbackSecret;
+    }
+
     /**
      * The URL for the LRA coordinator service that orchestrates the transactions
      */
@@ -170,6 +185,15 @@ public class LraConfigurationProperties implements BootstrapCloseable {
      */
     public LraConfigurationProperties withAllowedCoordinatorUrls(String allowedCoordinatorUrls) {
         this.allowedCoordinatorUrls = allowedCoordinatorUrls;
+        return this;
+    }
+
+    /**
+     * Secret used to sign the participant callback URLs that are enlisted with the LRA coordinator, and to verify them
+     * when the coordinator calls back.
+     */
+    public LraConfigurationProperties withCallbackSecret(String callbackSecret) {
+        this.callbackSecret = callbackSecret;
         return this;
     }
 

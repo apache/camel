@@ -33,6 +33,7 @@ public final class LRAConstants {
 
     static final String URL_COMPENSATION_KEY = "Camel-Saga-Compensate";
     static final String URL_COMPLETION_KEY = "Camel-Saga-Complete";
+    static final String URL_SIGNATURE_KEY = "Camel-Saga-Signature";
 
     private LRAConstants() {
     }

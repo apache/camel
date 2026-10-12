@@ -24,7 +24,9 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -41,6 +43,9 @@ import static org.apache.camel.service.lra.LRAConstants.HEADER_LINK;
 import static org.apache.camel.service.lra.LRAConstants.HEADER_TIME_LIMIT;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPENSATE;
 import static org.apache.camel.service.lra.LRAConstants.PARTICIPANT_PATH_COMPLETE;
+import static org.apache.camel.service.lra.LRAConstants.URL_COMPENSATION_KEY;
+import static org.apache.camel.service.lra.LRAConstants.URL_COMPLETION_KEY;
+import static org.apache.camel.service.lra.LRAConstants.URL_SIGNATURE_KEY;
 
 public class LRAClient implements Closeable {
 
@@ -115,8 +120,19 @@ public class LRAClient implements Closeable {
                     .compensation(step.getCompensation())
                     .completion(step.getCompletion());
 
-            String compensationURL = participantBaseUrl.path(PARTICIPANT_PATH_COMPENSATE).build();
-            String completionURL = participantBaseUrl.path(PARTICIPANT_PATH_COMPLETE).build();
+            LRAUrlBuilder compensationUrl = participantBaseUrl.path(PARTICIPANT_PATH_COMPENSATE);
+            LRAUrlBuilder completionUrl = participantBaseUrl.path(PARTICIPANT_PATH_COMPLETE);
+            LRACallbackSigner signer = sagaService.getCallbackSigner();
+            if (signer != null) {
+                Map<String, String> parameters = callbackParameters(step);
+                compensationUrl = compensationUrl.query(URL_SIGNATURE_KEY,
+                        signer.sign(PARTICIPANT_PATH_COMPENSATE, parameters));
+                completionUrl = completionUrl.query(URL_SIGNATURE_KEY,
+                        signer.sign(PARTICIPANT_PATH_COMPLETE, parameters));
+            }
+
+            String compensationURL = compensationUrl.build();
+            String completionURL = completionUrl.build();
 
             StringBuilder link = new StringBuilder();
             link.append('<').append(compensationURL).append('>').append("; rel=compensate");
@@ -189,6 +205,16 @@ public class LRAClient implements Closeable {
 
     protected HttpRequest.Builder prepareRequest(URI uri, Exchange exchange) {
         return HttpRequest.newBuilder().uri(uri);
+    }
+
+    /**
+     * The query parameters of the participant callback URLs of a step, as the participant receives them back.
+     */
+    private static Map<String, String> callbackParameters(LRASagaStep step) {
+        Map<String, String> parameters = new HashMap<>(step.getOptions());
+        step.getCompensation().ifPresent(endpoint -> parameters.put(URL_COMPENSATION_KEY, endpoint.getEndpointUri()));
+        step.getCompletion().ifPresent(endpoint -> parameters.put(URL_COMPLETION_KEY, endpoint.getEndpointUri()));
+        return parameters;
     }
 
     private URL toURL(Object url) {

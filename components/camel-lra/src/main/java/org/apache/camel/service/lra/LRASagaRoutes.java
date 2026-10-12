@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,11 +107,17 @@ public class LRASagaRoutes extends RouteBuilder {
 
     /**
      * Check if the request is pointing to an allowed URI to prevent unauthorized remote uri invocation. Validates only
-     * the URI relevant to the callback type against the corresponding allowlist.
+     * the URI relevant to the callback type against the corresponding allowlist. When a callback secret is configured,
+     * the signature of the called URL is verified first.
      */
     private void verifyRequest(Exchange exchange, boolean isCompensation) {
         if (exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) == null) {
             throw new IllegalArgumentException("Missing " + Exchange.SAGA_LONG_RUNNING_ACTION + " header in received request");
+        }
+
+        LRACallbackSigner signer = sagaService.getCallbackSigner();
+        if (signer != null && !applySignedParameters(exchange, signer, isCompensation)) {
+            return;
         }
 
         String compensationURI = exchange.getIn().getHeader(URL_COMPENSATION_KEY, String.class);
@@ -142,6 +149,40 @@ public class LRASagaRoutes extends RouteBuilder {
                 throw new IllegalArgumentException("URI " + uri + " is not allowed");
             }
         }
+    }
+
+    /**
+     * Verifies the signature of the called URL, and sets the step URIs and the saga options from its query parameters,
+     * so that only signed values reach the step endpoint. A callback with a missing or invalid signature is answered
+     * with HTTP 403 and not routed any further.
+     *
+     * @return true if the signature is valid
+     */
+    private boolean applySignedParameters(Exchange exchange, LRACallbackSigner signer, boolean isCompensation) {
+        Message message = exchange.getIn();
+        String callbackPath = isCompensation ? PARTICIPANT_PATH_COMPENSATE : PARTICIPANT_PATH_COMPLETE;
+
+        Map<String, String> parameters;
+        try {
+            parameters = parseQuery(message.getHeader(Exchange.HTTP_QUERY, String.class));
+        } catch (IllegalStateException e) {
+            // a repeated parameter, which a URL enlisted by the participant never has
+            parameters = null;
+        }
+        String signature = parameters != null ? parameters.remove(URL_SIGNATURE_KEY) : null;
+
+        message.removeHeader(URL_COMPENSATION_KEY);
+        message.removeHeader(URL_COMPLETION_KEY);
+        message.removeHeader(URL_SIGNATURE_KEY);
+        if (!signer.verify(callbackPath, parameters, signature)) {
+            LOG.warn("Rejected a call to the LRA participant endpoint {} without a valid signature", callbackPath);
+            message.setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
+            message.setBody(null);
+            exchange.setRouteStop(true);
+            return false;
+        }
+        parameters.forEach(message::setHeader);
+        return true;
     }
 
 }
