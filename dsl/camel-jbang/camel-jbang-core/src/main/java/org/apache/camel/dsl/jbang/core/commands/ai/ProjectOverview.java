@@ -38,6 +38,7 @@ import java.util.function.Supplier;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Endpoint;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes.Route;
+import org.apache.camel.dsl.yaml.validator.EndpointRules;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -56,6 +57,8 @@ public final class ProjectOverview {
 
     /** The most routes an overview lists; a project with more is summarized by its groups and systems. */
     static final int MAX_ROUTES = 300;
+    /** The components that hand a message to another route in memory, without waiting for it. */
+    private static final Set<String> IN_MEMORY = Set.of("seda", "disruptor", "disruptor-vm");
 
     private ProjectOverview() {
     }
@@ -196,8 +199,7 @@ public final class ProjectOverview {
      */
     static String category(String scheme, CamelCatalog catalog) {
         String s = scheme.toLowerCase(Locale.ROOT);
-        String family = ProjectRoutes.family(s);
-        if ("direct".equals(family) || "seda".equals(family) || "kamelet".equals(s) || s.startsWith("dynamic")) {
+        if ("direct".equals(s) || IN_MEMORY.contains(s) || "kamelet".equals(s) || s.startsWith("dynamic")) {
             return "internal";
         }
         ComponentModel model = componentModel(s, catalog);
@@ -307,11 +309,11 @@ public final class ProjectOverview {
 
     /** call (waits for the answer), async (hands off in memory), event (over a broker) or shared (e.g. a folder). */
     static String linkKind(String scheme, CamelCatalog catalog) {
-        String family = ProjectRoutes.family(scheme.toLowerCase(Locale.ROOT));
-        if ("direct".equals(family) || "kamelet".equals(family)) {
+        String s = scheme.toLowerCase(Locale.ROOT);
+        if ("direct".equals(s) || "kamelet".equals(s)) {
             return "call";
         }
-        if ("seda".equals(family)) {
+        if (IN_MEMORY.contains(s)) {
             return "async";
         }
         return "messaging".equals(category(scheme, catalog)) ? "event" : "shared";
@@ -377,6 +379,14 @@ public final class ProjectOverview {
 
     // ---- findings ----
 
+    /**
+     * Whether the endpoint is a fixed one of a component whose consumer is a route of the application, by the
+     * {@link EndpointRules} camel validate uses too.
+     */
+    private static boolean isChecked(Endpoint e) {
+        return EndpointRules.endpoint(e.key()) != null;
+    }
+
     private static List<Finding> findings(List<Route> routes, List<Link> links, boolean truncated) {
         List<Finding> answer = new ArrayList<>();
         Map<String, List<Route>> byId = new LinkedHashMap<>();
@@ -399,11 +409,12 @@ public final class ProjectOverview {
                         id));
             }
         });
+        // as camel validate: a route that consumes an endpoint only known at runtime could consume any of them
+        boolean consumersKnown = routes.stream().flatMap(r -> r.consumes().stream())
+                .noneMatch(e -> EndpointRules.isDynamic(e.key()) && EndpointRules.mayBeChecked(e.key()));
         for (Route r : routes) {
             for (Endpoint e : r.produces()) {
-                String family = e.key().substring(0, e.key().indexOf(':'));
-                if (!e.dynamic() && ("direct".equals(family) || "seda".equals(family)) && !e.uri().contains("{{")
-                        && !consumed.contains(e.key())) {
+                if (consumersKnown && !e.dynamic() && isChecked(e) && !consumed.contains(e.key())) {
                     answer.add(new Finding(
                             "warning", "missing-route",
                             r.key() + " sends to " + e.uri() + " but no route in the project consumes from it", r.key()));
@@ -413,8 +424,7 @@ public final class ProjectOverview {
         for (Route r : routes) {
             Endpoint from = r.from();
             if (from != null && "route".equals(r.kind())) {
-                String family = from.key().substring(0, from.key().indexOf(':'));
-                if (("direct".equals(family) || "seda".equals(family)) && !produced.contains(from.key())) {
+                if (isChecked(from) && !produced.contains(from.key())) {
                     answer.add(new Finding(
                             "info", "unreferenced", r.key() + " consumes from " + from.uri()
                                                     + " but no route in the project sends there (it may be called from code)",
