@@ -27,32 +27,43 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultDumpRoutesStrategy;
 import org.apache.camel.java.in.JavaParseResult;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceHelper;
 
 /**
- * {@code camel transform route} for Java routes without compiling them (CAMEL-25202): the sources are read into the
- * model by the Java DSL parser of camel-java-io, and dumped as YAML or XML by the same dump strategy a running Camel
- * uses ({@code camel.main.dumpRoutes}), in a CamelContext that is never started. Nothing of the project is compiled,
- * loaded or run.
+ * Java routes read without compiling them: the sources are read into the model by the Java DSL parser of camel-java-io,
+ * and dumped by the same dump strategy a running Camel uses ({@code camel.main.dumpRoutes}), in a CamelContext that is
+ * never started. Nothing of the project is compiled, loaded or run.
+ * <p>
+ * Used by {@code camel transform route} (as YAML or XML, CAMEL-25202), and by {@code camel cmd route-diagram},
+ * {@code route-structure} and {@code route-topology} (as the route structure and topology JSON, CAMEL-25565).
  */
-final class TransformJavaRoutes {
+public final class TransformJavaRoutes {
 
-    /** Whether the routes were transformed, and why not: the first part the parser could not read. */
-    record Result(boolean transformed, String reason) {
+    /**
+     * Whether the routes were dumped, and why not; and the parts the parser could not read (empty when every route was
+     * read completely).
+     */
+    public record Result(boolean transformed, String reason, List<String> unread) {
+    }
+
+    /** The routes read from the files, and the parts of them the parser could not read. */
+    private record Read(List<JavaParseResult> results, List<Resource> resources, List<String> unread, String failure) {
     }
 
     private TransformJavaRoutes() {
     }
 
     /** Whether the files are all Java sources, which the parser may read. */
-    static boolean applies(List<String> files) {
+    public static boolean applies(List<String> files) {
         return !files.isEmpty()
                 && files.stream().allMatch(f -> f.endsWith(".java") && Files.isRegularFile(Path.of(f)));
     }
@@ -67,33 +78,86 @@ final class TransformJavaRoutes {
      */
     static Result transform(List<String> files, String format, String output, boolean uriAsParameters)
             throws Exception {
+        Read read = read(files, true);
+        if (read.failure() != null) {
+            return new Result(false, read.failure(), read.unread());
+        }
+        dump(read, format, output, uriAsParameters);
+        return new Result(true, null, List.of());
+    }
+
+    /**
+     * Dumps the route structure and the route topology of the Java routes of the files as JSON, as
+     * {@code camel.main.dumpRoutes=json} does: one route structure file per source file, and
+     * {@code route-topology.json}. A route the parser reads only partly is dumped too: a step it cannot work out (a
+     * lambda, a processor) is the placeholder the parser puts in the model, and the parts it could not read are
+     * returned.
+     *
+     * @param  output the directory (or file) to write to
+     * @return        whether they were dumped; else why not (no file has a route the parser can read)
+     */
+    public static Result dumpStructure(List<String> files, String output) throws Exception {
+        Read read = read(files, false);
+        if (read.failure() != null) {
+            return new Result(false, read.failure(), read.unread());
+        }
+        dump(read, "json", output, false);
+        return new Result(true, null, read.unread());
+    }
+
+    /**
+     * Reads the routes of the files.
+     *
+     * @param complete whether every route must be read completely: else the first part the parser could not read is the
+     *                 failure; when not, a file without routes is skipped, and the failure is that no file has one
+     */
+    private static Read read(List<String> files, boolean complete) throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog();
         Map<String, Supplier<String>> sources = javaSources(files);
         List<JavaParseResult> results = new ArrayList<>();
         List<Resource> resources = new ArrayList<>();
+        List<String> unread = new ArrayList<>();
         for (String f : files) {
             String content = Files.readString(Path.of(f), StandardCharsets.UTF_8);
             JavaParseResult result = ProjectRoutes.parseJava(content, sources, catalog);
             for (JavaParseResult.Unresolved u : result.unresolved()) {
                 if (!JavaParseResult.configuresTheContext(u)) {
-                    return new Result(false, f + ":" + u.line() + " " + u.text() + " (" + u.reason() + ")");
+                    String part = f + ":" + u.line() + " " + u.text() + " (" + u.reason() + ")";
+                    if (complete) {
+                        return new Read(List.of(), List.of(), List.of(part), part);
+                    }
+                    unread.add(part);
                 }
             }
             if (result.routes().getRoutes().isEmpty() && result.rests().getRests().isEmpty()
                     && result.routeTemplates().getRouteTemplates().isEmpty()
                     && result.routeConfigurations().getRouteConfigurations().isEmpty()) {
-                return new Result(false, f + " has no routes the parser can read");
+                if (complete) {
+                    return new Read(List.of(), List.of(), List.of(), f + " has no routes the parser can read");
+                }
+                continue;
             }
             results.add(result);
             // the source file, so each is dumped on its own and named after it, as when the routes run
             resources.add(ResourceHelper.fromString("file:" + Path.of(f).getFileName(), content));
         }
+        if (results.isEmpty()) {
+            return new Read(List.of(), List.of(), unread, String.join(", ", files) + " has no routes the parser can read");
+        }
+        return new Read(results, resources, unread, null);
+    }
+
+    private static void dump(Read read, String format, String output, boolean uriAsParameters) throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             // never started: adding the definitions only registers them
-            for (int i = 0; i < results.size(); i++) {
-                JavaParseResult r = results.get(i);
-                Resource resource = resources.get(i);
+            for (int i = 0; i < read.results().size(); i++) {
+                JavaParseResult r = read.results().get(i);
+                Resource resource = read.resources().get(i);
                 r.routes().getRoutes().forEach(d -> d.setResource(resource));
+                if ("json".equals(format)) {
+                    // the source of each step, as a routes loader records it (the route structure shows it)
+                    r.routes().getRoutes().forEach(d -> locate(d, resource.getLocation()));
+                }
                 r.rests().getRests().forEach(d -> d.setResource(resource));
                 r.routeTemplates().getRouteTemplates().forEach(d -> d.setResource(resource));
                 r.routeConfigurations().getRouteConfigurations().forEach(d -> d.setResource(resource));
@@ -111,7 +175,20 @@ final class TransformJavaRoutes {
             dumper.setOutput(output);
             dumper.dumpRoutes(format);
         }
-        return new Result(true, null);
+    }
+
+    /** Sets the source location of the node and its children (the line numbers the parser has set already). */
+    private static void locate(NamedNode node, String location) {
+        if (node.getLocation() == null) {
+            node.setLocation(location);
+        }
+        if (node instanceof RouteDefinition route && route.getInput() != null) {
+            route.getInput().setLocation(location);
+        }
+        List<? extends NamedNode> children = node.getChildren();
+        if (children != null) {
+            children.forEach(c -> locate(c, location));
+        }
     }
 
     /** The Java sources of the files' folders, for the constants a route takes from another class. */

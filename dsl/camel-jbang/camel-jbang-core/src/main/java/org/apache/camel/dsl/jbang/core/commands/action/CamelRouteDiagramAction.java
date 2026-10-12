@@ -126,6 +126,11 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
+    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
+                        description = "Whether to compile Java source files and load their routes. By default Java "
+                                      + "routes are read by the Java DSL parser, without compiling them")
+    boolean compile;
+
     private long pid;
 
     private DiagramColors colors;
@@ -371,13 +376,12 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     }
 
     /**
-     * Loads the given source files via a transient Camel boot (see
-     * {@link #dumpRoutesFromSource(List, String, boolean)}) and returns the merged route structure across all of them,
-     * or {@code null} if a file does not exist or loading failed (an error is already printed to the user in that
-     * case). Package visible for testing.
+     * Loads the given source files (see {@link #dumpRoutesFromSource(List, String, boolean, boolean)}) and returns the
+     * merged route structure across all of them, or {@code null} if a file does not exist or loading failed (an error
+     * is already printed to the user in that case). Package visible for testing.
      */
     List<RouteInfo> doCallSource(List<String> sourceFiles) throws Exception {
-        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-diagram-source-", ignoreLoadingError);
+        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-diagram-source-", ignoreLoadingError, compile);
         if (dump == null) {
             return null;
         }

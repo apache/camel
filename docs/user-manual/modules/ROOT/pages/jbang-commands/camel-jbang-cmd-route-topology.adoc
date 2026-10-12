@@ -20,6 +20,7 @@ camel cmd route-topology [options]
 |===
 | Option | Description | Default | Type
 | `--box-width` | Width of diagram node boxes | 180 | int
+| `--compile` | Whether to compile Java source files and load their routes. By default Java routes are read by the Java DSL parser, without compiling them | false | boolean
 | `--description` | Prefer route description over route id in node labels |  | boolean
 | `--external` | Include external systems (consumers at top, producers at bottom) |  | boolean
 | `--font-size` | Font size in logical pixels for node text | 12 | int

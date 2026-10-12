@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -189,18 +190,22 @@ abstract class ActionBaseCommand extends CamelCommand {
     }
 
     /**
-     * Boots the given source files through a transient Camel run (see {@link Run#runTransform(boolean)}) that dumps the
-     * route structure as JSON into a temporary work directory, so route-diagram / route-topology can render from source
-     * files without a running integration. The caller reads the dumped JSON from {@link SourceDump#workDir()} and is
-     * responsible for deleting that directory when done.
+     * Dumps the route structure of the given source files as JSON into a temporary work directory, so route-diagram /
+     * route-topology can render from source files without a running integration. Java sources are read by the Java DSL
+     * parser (see {@link TransformJavaRoutes#dumpStructure(List, String)}) without compiling them, unless
+     * {@code compile} is set; other sources, or Java sources with {@code compile}, are booted through a transient Camel
+     * run (see {@link Run#runTransform(boolean)}). The caller reads the dumped JSON from {@link SourceDump#workDir()}
+     * and is responsible for deleting that directory when done.
      *
      * @param  sourceFiles        the source files to load
      * @param  workDirPrefix      prefix for the (pid-suffixed) temporary work directory name
      * @param  ignoreLoadingError whether to ignore route loading and compilation errors
-     * @return                    the dump location and the instant the boot started, or {@code null} if a file does not
-     *                            exist or the boot failed (an error is already printed to the user in that case)
+     * @param  compile            whether to compile Java sources and boot them, instead of reading them with the parser
+     * @return                    the dump location and the instant the dump started, or {@code null} if a file does not
+     *                            exist or the dump failed (an error is already printed to the user in that case)
      */
-    protected SourceDump dumpRoutesFromSource(List<String> sourceFiles, String workDirPrefix, boolean ignoreLoadingError)
+    protected SourceDump dumpRoutesFromSource(
+            List<String> sourceFiles, String workDirPrefix, boolean ignoreLoadingError, boolean compile)
             throws Exception {
         for (String name : sourceFiles) {
             File f = new File(name);
@@ -216,6 +221,10 @@ abstract class ActionBaseCommand extends CamelCommand {
         // anything this boot dumps must be newer than this: guards readers against a stale dump left over from a
         // previous --watch iteration whose cleanup above raced with (or lost against) a slow filesystem
         Instant bootStart = Instant.now();
+
+        if (!compile && TransformJavaRoutes.applies(sourceFiles)) {
+            return dumpJavaRoutes(sourceFiles, target) ? new SourceDump(workDir, bootStart) : null;
+        }
 
         Run run = new Run(getMain()) {
             @Override
@@ -240,6 +249,32 @@ abstract class ActionBaseCommand extends CamelCommand {
             return null;
         }
         return new SourceDump(workDir, bootStart);
+    }
+
+    /**
+     * Dumps the route structure and topology JSON of Java sources read by the Java DSL parser, and prints what the
+     * parser could not read.
+     *
+     * @return whether the routes were dumped (else an error is already printed)
+     */
+    protected boolean dumpJavaRoutes(List<String> sourceFiles, String target) throws Exception {
+        TransformJavaRoutes.Result result = TransformJavaRoutes.dumpStructure(sourceFiles, target);
+        if (!result.transformed()) {
+            printer().printErr("No routes found: " + result.reason()
+                               + " (use --compile to compile the source and load its routes)");
+            return false;
+        }
+        if (!result.unread().isEmpty() && printSourceNotes()) {
+            printer().println("Routes read without compiling them; the parser could not work out these parts "
+                              + "(use --compile to compile the source instead):");
+            result.unread().forEach(u -> printer().println("  " + u));
+        }
+        return true;
+    }
+
+    /** Whether to print the parts of Java sources the parser could not read: not when the output is JSON. */
+    protected boolean printSourceNotes() {
+        return true;
     }
 
     /**

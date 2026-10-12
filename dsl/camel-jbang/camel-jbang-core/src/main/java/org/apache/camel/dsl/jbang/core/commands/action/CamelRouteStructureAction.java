@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -87,6 +88,11 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
+
+    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
+                        description = "Whether to compile Java source files and load their routes. By default Java "
+                                      + "routes are read by the Java DSL parser, without compiling them")
+    boolean compile;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = NameIdCompletionCandidates.class,
                         description = "Sort route by name or id", defaultValue = "name")
@@ -224,6 +230,9 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         }
 
         final String target = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/structure-output.json";
+        if (!compile && TransformJavaRoutes.applies(List.of(name))) {
+            return dumpJavaRoutes(List.of(name), target) ? 0 : 1;
+        }
 
         Run run = new Run(getMain()) {
             @Override
@@ -339,4 +348,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         String description;
     }
 
+    @Override
+    protected boolean printSourceNotes() {
+        return !jsonOutput;
+    }
 }
