@@ -23,6 +23,10 @@ If your participants reach the same coordinator under different URLs, for exampl
 other coordinator URLs, including the context path, in the new `allowedCoordinatorUrls` option
 (`camel.lra.allowedCoordinatorUrls`).
 
+This also applies to the LRAs the service starts itself, which a nested saga route looks up again: when the
+coordinator returns LRA URLs under another base URL than `coordinatorUrl`, for example behind a proxy, add that
+base URL to `allowedCoordinatorUrls` as well.
+
 === camel-management - Route group exchange counters count once per entry into the group again
 
 In 4.22.1, the route group MBean (`ManagedRouteGroupMBean`) exchange counters and processing times

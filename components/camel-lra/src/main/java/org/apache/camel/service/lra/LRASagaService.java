@@ -16,11 +16,14 @@
  */
 package org.apache.camel.service.lra;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -148,7 +151,14 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
      * path of the coordinator.
      */
     private static boolean isHostedBy(URI lra, URI coordinator) {
-        if (lra.getScheme() == null || lra.getHost() == null || lra.getRawUserInfo() != null) {
+        // host and port are read through URL, which also takes host names that URI does not, such as lra_coordinator
+        URL lraUrl = toUrl(lra);
+        URL coordinatorUrl = toUrl(coordinator);
+        if (lraUrl == null || coordinatorUrl == null || lraUrl.getUserInfo() != null || lraUrl.getHost().isEmpty()) {
+            return false;
+        }
+        String rawPath = lra.getRawPath();
+        if (rawPath == null || hasEncodedOrParameterSegment(rawPath)) {
             return false;
         }
         String lraPath = lra.normalize().getRawPath();
@@ -156,17 +166,31 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
         if (!coordinatorPath.endsWith("/")) {
             coordinatorPath += "/";
         }
-        return lra.getScheme().equalsIgnoreCase(coordinator.getScheme())
-                && lra.getHost().equalsIgnoreCase(coordinator.getHost())
-                && port(lra) == port(coordinator)
-                && lraPath != null && lraPath.startsWith(coordinatorPath);
+        return lraUrl.getProtocol().equalsIgnoreCase(coordinatorUrl.getProtocol())
+                && lraUrl.getHost().equalsIgnoreCase(coordinatorUrl.getHost())
+                && port(lraUrl) == port(coordinatorUrl)
+                && lraPath.startsWith(coordinatorPath);
     }
 
-    private static int port(URI uri) {
-        if (uri.getPort() != -1) {
-            return uri.getPort();
+    /**
+     * Whether the path holds a path parameter, or an encoded dot, slash or backslash. A server may resolve them as dot
+     * segments after this check, so such a path could leave the path of the coordinator.
+     */
+    private static boolean hasEncodedOrParameterSegment(String rawPath) {
+        String path = rawPath.toLowerCase(Locale.ROOT);
+        return path.contains(";") || path.contains("%2e") || path.contains("%2f") || path.contains("%5c");
+    }
+
+    private static URL toUrl(URI uri) {
+        try {
+            return uri.isAbsolute() ? uri.toURL() : null;
+        } catch (MalformedURLException | IllegalArgumentException e) {
+            return null;
         }
-        return "https".equalsIgnoreCase(uri.getScheme()) ? 443 : 80;
+    }
+
+    private static int port(URL url) {
+        return url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
     }
 
     @Override
@@ -214,9 +238,12 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
             throw new IllegalStateException("localParticipantUrl must be configured on the LRA saga service");
         }
         for (URI coordinator : additionalCoordinators()) {
-            if (!coordinator.isAbsolute() || coordinator.getHost() == null) {
+            URL url = toUrl(coordinator);
+            if (url == null || url.getHost().isEmpty()
+                    || !("http".equals(url.getProtocol()) || "https".equals(url.getProtocol()))) {
                 throw new IllegalArgumentException(
-                        "allowedCoordinatorUrls must hold absolute coordinator URLs, but got: " + coordinator);
+                        "allowedCoordinatorUrls must hold http or https coordinator URLs with a host name, but no such"
+                                                   + " URL could be read from: " + coordinator);
             }
         }
 

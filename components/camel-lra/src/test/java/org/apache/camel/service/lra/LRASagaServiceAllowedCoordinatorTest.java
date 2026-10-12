@@ -82,6 +82,23 @@ class LRASagaServiceAllowedCoordinatorTest {
     }
 
     @Test
+    void rejectsEncodedOrParameterDotSegments() {
+        assertRejected("http://lra-coordinator:8080/lra-coordinator/%2e%2e/other/0_1");
+        assertRejected("http://lra-coordinator:8080/lra-coordinator/%2E%2E/other/0_1");
+        assertRejected("http://lra-coordinator:8080/lra-coordinator/..;/other/0_1");
+        assertRejected("http://lra-coordinator:8080/lra-coordinator/..%2fother/0_1");
+        assertRejected("http://lra-coordinator:8080/lra-coordinator/..%5Cother/0_1");
+    }
+
+    @Test
+    void acceptsAnLraOfACoordinatorWithAnUnderscoreInItsHostName() {
+        sagaService.setCoordinatorUrl("http://lra_coordinator:8080");
+
+        assertAccepted("http://lra_coordinator:8080/lra-coordinator/0_1");
+        assertRejected("http://other_coordinator:8080/lra-coordinator/0_1");
+    }
+
+    @Test
     void rejectsAnLraWithUserInfo() {
         assertRejected("http://user@lra-coordinator:8080/lra-coordinator/0_1");
     }
@@ -89,16 +106,25 @@ class LRASagaServiceAllowedCoordinatorTest {
     @Test
     void acceptsAnLraOfAnAllowedCoordinatorUrl() {
         sagaService.setAllowedCoordinatorUrls(
-                "http://lra-coordinator.lra.svc:8080/lra-coordinator, https://lra.example.com/coordinator");
+                "http://lra-coordinator.lra.svc:8080/lra-coordinator, https://lra.example.com/coordinator,"
+                                              + " http://lra_coordinator:8080/lra-coordinator");
 
         assertAccepted("http://lra-coordinator.lra.svc:8080/lra-coordinator/0_1");
         assertAccepted("https://lra.example.com/coordinator/0_1");
+        assertAccepted("http://lra_coordinator:8080/lra-coordinator/0_1");
         assertRejected("http://elsewhere:8080/lra-coordinator/0_1");
     }
 
     @Test
     void failsToStartWithARelativeAllowedCoordinatorUrl() {
         sagaService.setAllowedCoordinatorUrls("lra-coordinator/lra-coordinator");
+
+        assertThrows(IllegalArgumentException.class, sagaService::doStart);
+    }
+
+    @Test
+    void failsToStartWithAnAllowedCoordinatorUrlThatIsNotHttp() {
+        sagaService.setAllowedCoordinatorUrls("ftp://lra-coordinator/lra-coordinator");
 
         assertThrows(IllegalArgumentException.class, sagaService::doStart);
     }
