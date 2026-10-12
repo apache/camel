@@ -38,6 +38,8 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used for Rest DSL with binding to json/xml for incoming requests and outgoing responses.
@@ -50,6 +52,8 @@ import org.apache.camel.util.ObjectHelper;
  * @see RestBindingAdviceFactory
  */
 public class RestBindingAdvice extends ServiceSupport implements CamelInternalProcessorAdvice<Map<String, Object>> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestBindingAdvice.class);
 
     private static final String STATE_KEY_DO_MARSHAL = "doMarshal";
     private static final String STATE_KEY_ACCEPT = "accept";
@@ -465,6 +469,12 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
                 }
             }
         } catch (Exception e) {
+            // the response marshalling happens after routing has completed, so this failure is not routed through
+            // the error handler and would otherwise be invisible. Log it so operators can diagnose why the response
+            // could not be bound (see CAMEL-24594).
+            LOG.warn("Error marshalling REST DSL response body for exchange: {} due to: {}."
+                     + " This exception is set on the exchange to fail the response.",
+                    exchange, e.getMessage(), e);
             exchange.setException(e);
         }
 
@@ -489,14 +499,34 @@ public class RestBindingAdvice extends ServiceSupport implements CamelInternalPr
             return;
         }
 
-        // favor json over xml as a concrete single media type
-        if (isJson) {
+        // the verb declares what it produces, so use one of those media types, favoring json over xml
+        String produced = contentType != null ? selectProducedMediaType(contentType, isXml, isJson) : null;
+        if (produced != null) {
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, produced);
+        } else if (isJson) {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
         } else if (isXml) {
             exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-        } else if (contentType != null) {
-            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentType);
         }
+    }
+
+    private static String selectProducedMediaType(String produces, boolean isXml, boolean isJson) {
+        String kind = isJson ? "json" : isXml ? "xml" : null;
+        String first = null;
+        for (String type : produces.split(",")) {
+            type = type.trim();
+            // a wildcard cannot be the Content-Type of a response
+            if (type.contains("*")) {
+                continue;
+            }
+            if (kind != null && type.toLowerCase(Locale.ENGLISH).contains(kind)) {
+                return type;
+            }
+            if (first == null) {
+                first = type;
+            }
+        }
+        return first;
     }
 
     private void setCORSHeaders(Exchange exchange) {

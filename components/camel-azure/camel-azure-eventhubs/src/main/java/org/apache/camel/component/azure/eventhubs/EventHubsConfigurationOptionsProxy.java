@@ -38,11 +38,22 @@ public class EventHubsConfigurationOptionsProxy {
     }
 
     public String getPartitionKey(final Exchange exchange) {
-        return getOption(exchange, EventHubsConstants.PARTITION_KEY, configuration::getPartitionKey, String.class);
+        return getOption(exchange, EventHubsConstants.PARTITION_KEY, EventHubsConstants.RECEIVED_PARTITION_KEY,
+                configuration::getPartitionKey, String.class);
     }
 
     public String getPartitionId(final Exchange exchange) {
-        return getOption(exchange, EventHubsConstants.PARTITION_ID, configuration::getPartitionId, String.class);
+        return getOption(exchange, EventHubsConstants.PARTITION_ID, EventHubsConstants.RECEIVED_PARTITION_ID,
+                configuration::getPartitionId, String.class);
+    }
+
+    /**
+     * The partition key of the event received by an azure-eventhubs consumer, when the exchange comes from one.
+     */
+    public String getReceivedPartitionKey(final Exchange exchange) {
+        return ObjectHelper.isEmpty(exchange)
+                ? null
+                : exchange.getProperty(EventHubsConstants.RECEIVED_PARTITION_KEY, String.class);
     }
 
     public EventHubsConfiguration getConfiguration() {
@@ -50,11 +61,19 @@ public class EventHubsConfigurationOptionsProxy {
     }
 
     private <R> R getOption(
-            final Exchange exchange, final String headerName, final Supplier<R> fallbackFn, final Class<R> type) {
+            final Exchange exchange, final String headerName, final String receivedPropertyName,
+            final Supplier<R> fallbackFn, final Class<R> type) {
         // we first try to look if our value in exchange otherwise fallback to fallbackFn which could be either a function or constant
-        return ObjectHelper.isEmpty(exchange) || ObjectHelper.isEmpty(getObjectFromHeaders(exchange, headerName, type))
-                ? fallbackFn.get()
-                : getObjectFromHeaders(exchange, headerName, type);
+        if (ObjectHelper.isEmpty(exchange)) {
+            return fallbackFn.get();
+        }
+        final R value = getObjectFromHeaders(exchange, headerName, type);
+        // a header still holding the value of the received event describes that event, it is not a partition
+        // chosen by the route
+        if (ObjectHelper.isEmpty(value) || value.equals(exchange.getProperty(receivedPropertyName, type))) {
+            return fallbackFn.get();
+        }
+        return value;
     }
 
 }

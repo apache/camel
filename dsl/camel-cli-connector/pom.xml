@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>4.18.5-SNAPSHOT</version>
+        <version>4.18.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cli-connector</artifactId>
@@ -67,6 +67,17 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

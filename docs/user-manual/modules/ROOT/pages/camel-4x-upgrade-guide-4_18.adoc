@@ -13,6 +13,22 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.4 to 4.18.5
 
+=== camel-docling - output path handling
+
+The `CamelDoclingOutputFilePath` header, which selects the CLI output directory, is now normalized lexically
+(redundant separators and `.`/`..` segments are resolved) before it is passed to Docling; a header value
+without such segments is still used as given. A new `outputBaseDirectory` option additionally confines the
+header the same way `inputBaseDirectory` confines input paths - when set, an output path that resolves outside
+it, including an absolute path, is rejected with an `IOException`. `outputBaseDirectory` is unset by default.
+
+=== camel-core - Rest DSL response Content-Type
+
+Under json or xml binding, a response without a Content-Type header again takes it from the `produces` of the rest
+verb, as before Camel 4.18.4 and 4.22.0. Those releases used `application/json` (or `application/xml`) whenever the
+binding mode allowed it and marshalled the body, so a verb producing `text/plain` answered with a json-quoted body and
+a binary body failed. When `produces` lists several media types, the first json (or xml) type is used, otherwise the
+first one. Wildcards such as `*/*` are skipped, falling back to `application/json` or `application/xml`.
+
 === camel-hazelcast - ReplicatedHazelcastAggregationRepository now applies the default serialization filter
 
 `ReplicatedHazelcastAggregationRepository` now applies the same default
@@ -73,6 +89,24 @@ level by default.
 Note that JGroups deserializes the payload inside its own receive path, so this check is a
 defense-in-depth allow-list on the resulting body type. The JVM-wide `jdk.serialFilter`, together
 with a channel secured with `AUTH` and encryption, remain the primary mitigations.
+
+=== camel-undertow - WebSocket endpoints apply the security provider, allowed roles and handlers
+
+WebSocket endpoints (`ws://` and `wss://`) now apply the `UndertowSecurityProvider` (the `securityConfiguration` or
+`securityProvider` option), the `allowedRoles` option, and the `handlers` and `accessLog` options, as HTTP endpoints
+do. Previously these options had no effect on WebSocket endpoints. They apply to the upgrade request: a client that
+the security provider rejects, or that connects to an endpoint with `allowedRoles` but no security provider, now gets
+the same status code as on an HTTP endpoint (for example `403`) and no connection is opened. The headers that the
+security provider adds are set on the exchanges of the connection.
+
+All the endpoints of a WebSocket path share its connections. The settings of the consumer apply to the path,
+including the messages sent by producers on that path, and keep applying while the consumer is stopped; a path that
+only has producers applies their settings. A connection that was opened before these settings applied does not
+receive the messages of the producers, and it is closed when it sends a message.
+
+A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
+rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
+
 == Upgrading from 4.18.3 to 4.18.4
 
 === camel-core - Multicast EIP honors UseOriginalAggregationStrategy
@@ -1768,3 +1802,13 @@ custom `headerFilterStrategy` is used as-is and is unaffected.
 
 Routes that relied on one of those headers reaching the wire must set it through the endpoint
 configuration or supply a `headerFilterStrategy` that permits it.
+
+=== camel-file - jailStartingDirectory resolves symbolic links
+
+With `jailStartingDirectory` enabled (the default), the file consumer and producer now resolve symbolic links when
+checking that a file stays within the starting directory. The consumer skips a file or (with `recursive=true`) a
+directory that is a link resolving outside of it, and the producer fails to write through such a link or a dangling
+link. Links resolving inside the starting directory work as before. Set `jailStartingDirectory=false` to keep following
+links to other directories (this also turns off the check of `../` in producer file names). A skipped file is logged
+at WARN the first time and at DEBUG on later polls; this log-level change also applies to the remote file consumers,
+which keep their existing lexical check.
