@@ -20,8 +20,10 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 
@@ -257,6 +259,10 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
         Collection<ResponseInputStream<GetObjectResponse>> s3Objects = new ArrayList<>();
         Queue<Exchange> answer = new LinkedList<>();
+        // the listed objects that could not be got, other than those that no longer exist, by key
+        Map<String, RuntimeException> failures = new LinkedHashMap<>();
+        // whether S3 answered the get of at least one listed object
+        boolean anyGot = false;
         try {
             for (S3Object s3ObjectSummary : s3ObjectSummaries) {
                 String key = s3ObjectSummary.key();
@@ -284,8 +290,9 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                         getRequest.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                     }
                 }
-                // a failure to get one listed object, or to create its exchange, does not fail the poll: the object is
-                // skipped, the other listed objects are consumed, and a later poll tries it again
+                // a failure to get one listed object, or to create its exchange, does not fail the poll as long as
+                // another listed object could be got: the object is skipped, the other listed objects are consumed,
+                // and a later poll tries it again
                 ResponseInputStream<GetObjectResponse> s3Object = null;
                 try {
                     s3Object = getAmazonS3Client().getObject(getRequest.build(), ResponseTransformer.toInputStream());
@@ -293,23 +300,23 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                         Exchange exchange = createExchange(s3Object, key);
                         s3Objects.add(s3Object);
                         answer.add(exchange);
+                        anyGot = true;
                     } else {
                         // If includeFolders != true and the object is not included, it is safe to close the object
                         // here. If includeFolders == true, the exchange will close the object.
                         IOHelper.close(s3Object);
                         // remove in progress
                         getEndpoint().getInProgressRepository().remove(key);
+                        anyGot = true;
                     }
                 } catch (NoSuchKeyException e) {
                     // deleted after it was listed (by another consumer, a lifecycle rule, or the exchange of an
                     // earlier poll that completed meanwhile)
                     LOG.debug("Skipping as s3 object no longer exists: {}", key);
                     skipS3Object(s3Object, key);
-                } catch (Exception e) {
-                    // no stack trace: an object that cannot be got (archived, access denied) is logged at every poll
-                    LOG.warn("Error getting S3Object {} from bucket {} due: {}. Skipping it for this poll.", key,
-                            getConfiguration().getBucketName(), e.getMessage());
+                } catch (RuntimeException e) {
                     skipS3Object(s3Object, key);
+                    failures.put(key, e);
                 }
             }
         } catch (Exception e) {
@@ -327,6 +334,26 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
                 releaseExchange(exchange, true);
             }
             throw e;
+        }
+
+        if (!failures.isEmpty()) {
+            if (!anyGot) {
+                // none of the listed objects could be got, so this is not about one object (expired credentials, no
+                // permission to get, throttling, no connection): the poll fails as it does when the listing fails, and
+                // the error handling and the backoff of the scheduled consumer apply
+                Map.Entry<String, RuntimeException> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the listed objects of bucket {} could be got ({} failed, the first is {}): the poll fails",
+                        getConfiguration().getBucketName(), failures.size(), first.getKey());
+                throw first.getValue();
+            }
+            // as processCommit does: the consumer goes on, and a custom exception handler or bridgeErrorHandler sees
+            // the failure
+            for (Map.Entry<String, RuntimeException> failure : failures.entrySet()) {
+                String message = "Error getting S3Object " + failure.getKey() + " from bucket "
+                                 + getConfiguration().getBucketName()
+                                 + ". The object is skipped for this poll. This exception is ignored.";
+                getExceptionHandler().handleException(message, failure.getValue());
+            }
         }
 
         return answer;

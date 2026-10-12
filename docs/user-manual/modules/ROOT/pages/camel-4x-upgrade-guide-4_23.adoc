@@ -623,15 +623,21 @@ The objects of a poll that a stopping consumer does not process are no longer ke
 they are consumed when the route is started again.
 
 When the consumer lists the bucket, a failure to get one of the listed objects (or to download its content) no longer
-fails the poll: the object is skipped, the other listed objects are consumed in that poll, and the skipped object is
-tried again by a later poll. Such a failure is therefore no longer given to the exception handler of the consumer (or
-to the route with `bridgeErrorHandler=true`) as a failed poll, and does not count for `backoffErrorThreshold`. It is
-logged instead: at `DEBUG` when the object no longer exists (for example deleted by another consumer after the
-listing), and at `WARN`, with the key and the error message but no stack trace, for any other error. An object that can
-never be read (for example archived, or access denied) is logged at every poll that lists it, until it can be read or
-is removed from the bucket. Before, the poll failed, and the object (or a new object with the same key) was then
-skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed get still fails the
-poll.
+fails the poll, as long as another object of that listing could be got: the object is skipped, the other listed
+objects are consumed in that poll, and the skipped object is tried again by a later poll. An object that no longer
+exists (for example deleted by another consumer after the listing) is skipped with a log line at `DEBUG`. Any other
+failure is given to the exception handler of the consumer as an ignored exception, with the key in the message: by
+default that is a `WARN` with the stack trace, and with `bridgeErrorHandler=true` the route's error handler gets it.
+This happens at every poll that lists an object that can never be read (for example archived, or access denied),
+until it can be read or is removed from the bucket. Such a poll is a successful poll, so it does not count for
+`backoffErrorThreshold`.
+
+The poll still fails, as before, when none of the listed objects could be got and at least one get failed with an
+error other than that the object no longer exists (for example expired credentials, no permission to get objects,
+throttling): the failure of the first object is then the failure of the poll, and `backoffErrorThreshold` applies.
+In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
+the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
+get still fails the poll.
 
 === camel-aws2-sqs
 
