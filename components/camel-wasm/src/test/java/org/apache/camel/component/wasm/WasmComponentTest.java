@@ -17,6 +17,7 @@
 package org.apache.camel.component.wasm;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -48,6 +49,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.TypeConverterSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.wasm.WasiCommand;
 import org.apache.camel.wasm.Wasm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -62,7 +65,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 /**
- * Runs small WASI Preview 1 command modules, written in WAT in this class and compiled when the tests run.
+ * Runs small WASI Preview 1 command modules, written in WAT in this class and translated to Wasm when the tests run.
+ * The modules are interpreted here; {@link WasmCompiledComponentTest} runs the same tests with compile=true.
  */
 class WasmComponentTest {
 
@@ -250,34 +254,52 @@ class WasmComponentTest {
                 (drop (call $fd_write (i32.const 1) (i32.const 0) (i32.const 1) (i32.const 8)))))
             """;
 
+    /** The start of the names of the classes the Endive runtime compiler generates for a module. */
+    private static final String COMPILED_CLASS = "run.endive.$gen.";
+
     @TempDir
-    static Path dir;
+    Path dir;
 
     /**
-     * Compiles the prelude plus the given functions to a module file and returns its location for the endpoint URI.
+     * Whether the endpoints of the tests compile their module (the compile option) or interpret it.
      */
-    private static String module(String name, String functions) throws Exception {
+    boolean compile() {
+        return false;
+    }
+
+    /**
+     * Translates the prelude plus the given functions to a module file and returns its location for the endpoint URI.
+     */
+    private String module(String name, String functions) throws Exception {
         return wat(name, PRELUDE + functions + ")");
     }
 
-    private static String wat(String name, String wat) throws Exception {
+    private String wat(String name, String wat) throws Exception {
         Path file = dir.resolve(name + ".wasm");
         Files.write(file, Wat2Wasm.parse(wat));
         return "file:" + file.toAbsolutePath();
     }
 
-    private static CamelContext context(String uri) throws Exception {
+    /**
+     * The endpoint URI with the compile option of this class: every route of the tests uses it.
+     */
+    private String endpoint(String uri) {
+        return uri + (uri.contains("?") ? "&" : "?") + "compile=" + compile();
+    }
+
+    private CamelContext context(String uri) throws Exception {
+        String endpoint = endpoint(uri);
         CamelContext cc = new DefaultCamelContext();
         cc.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:in").routeId("wasm").to(uri);
+                from("direct:in").routeId("wasm").to(endpoint);
             }
         });
         return cc;
     }
 
-    private static CamelContext start(String uri) throws Exception {
+    private CamelContext start(String uri) throws Exception {
         CamelContext cc = context(uri);
         cc.start();
         return cc;
@@ -287,20 +309,30 @@ class WasmComponentTest {
      * Starts a context that hands a stream body to the endpoint as it is, instead of as a StreamCache that was already
      * read into memory when the exchange entered the route.
      */
-    private static CamelContext startWithoutStreamCaching(String uri) throws Exception {
+    private CamelContext startWithoutStreamCaching(String uri) throws Exception {
         CamelContext cc = context(uri);
         cc.setStreamCaching(false);
         cc.start();
         return cc;
     }
 
-    private static void assertStartFails(String uri, String message) throws Exception {
+    private void assertStartFails(String uri, String message) throws Exception {
         try (CamelContext cc = context(uri)) {
             assertThatThrownBy(cc::start)
                     .rootCause()
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining(message);
         }
+    }
+
+    /**
+     * The only wasm endpoint of the context.
+     */
+    private static WasmEndpoint wasmEndpoint(CamelContext cc) {
+        List<WasmEndpoint> endpoints = cc.getEndpoints().stream()
+                .filter(WasmEndpoint.class::isInstance).map(WasmEndpoint.class::cast).toList();
+        assertThat(endpoints).hasSize(1);
+        return endpoints.get(0);
     }
 
     private static Exchange send(CamelContext cc, Object body) {
@@ -316,7 +348,8 @@ class WasmComponentTest {
     }
 
     /**
-     * Whether a thread of a wasm producer (named "... - Wasm" by Camel) is running guest code.
+     * Whether a thread of a wasm producer (named "... - Wasm" by Camel) is running guest code. Interpreted or compiled,
+     * guest code is entered through the Endive runtime.
      */
     private static boolean moduleRunning() {
         return Thread.getAllStackTraces().entrySet().stream()
@@ -653,7 +686,7 @@ class WasmComponentTest {
     @ParameterizedTest
     @ValueSource(strings = { "", "?timeout=30000" })
     void streamBodyAfterAFailedRunWithStreamCaching(String options) throws Exception {
-        String uri = "wasm:" + module("readexit", READ_EXIT) + options;
+        String uri = endpoint("wasm:" + module("readexit", READ_EXIT) + options);
         AtomicReference<String> seen = new AtomicReference<>();
         try (CamelContext cc = new DefaultCamelContext()) {
             cc.addRoutes(new RouteBuilder() {
@@ -834,6 +867,105 @@ class WasmComponentTest {
                 }
             } finally {
                 pool.shutdownNow();
+            }
+        }
+    }
+
+    @Test
+    void compileOptionSelectsCompiledCodeOrTheInterpreter() throws Exception {
+        try (CamelContext cc = start("wasm:" + module("trap", TRAP))) {
+            Exchange out = send(cc, "in");
+
+            // the stack of the trap, above the call of _start, shows what ran the module: the interpreter of Endive, or
+            // the classes its compiler generated for the module
+            assertThat(out.getException()).hasCauseInstanceOf(TrapException.class);
+            List<String> guestFrames = Arrays.stream(out.getException().getCause().getStackTrace())
+                    .map(StackTraceElement::getClassName)
+                    .takeWhile(name -> !name.startsWith("run.endive.runtime.Instance"))
+                    .toList();
+            if (compile()) {
+                assertThat(guestFrames).isNotEmpty().allMatch(name -> name.startsWith(COMPILED_CLASS));
+            } else {
+                assertThat(guestFrames).isNotEmpty()
+                        .allMatch(name -> name.equals("run.endive.runtime.InterpreterMachine"));
+            }
+            assertThat(wasmEndpoint(cc).command().isCompiled()).isEqualTo(compile());
+        }
+    }
+
+    @Test
+    void moduleIsLoadedOncePerEndpoint() throws Exception {
+        String module = module("once", UPPER);
+        try (CamelContext cc = start("wasm:" + module)) {
+            assertThat(text(send(cc, "first"))).isEqualTo("FIRST");
+            WasmEndpoint endpoint = wasmEndpoint(cc);
+            WasiCommand command = endpoint.command();
+            assertThat(command.isCompiled()).isEqualTo(compile());
+
+            // with the file gone, a producer that loaded (and compiled) the module again would fail to start
+            Files.delete(Path.of(module.substring("file:".length())));
+            WasmProducer second = (WasmProducer) endpoint.createProducer();
+            try {
+                ServiceHelper.startService(second);
+                Exchange exchange = endpoint.createExchange();
+                exchange.getMessage().setBody("second");
+                second.process(exchange);
+
+                assertThat(text(exchange)).isEqualTo("SECOND");
+                // and it runs the command of the first producer: the module was compiled once, not once per producer
+                assertThat(second.command()).isSameAs(command);
+            } finally {
+                ServiceHelper.stopAndShutdownService(second);
+            }
+        }
+    }
+
+    @Test
+    void routeStopAndStartKeepsTheLoadedModule() throws Exception {
+        String module = module("restart", UPPER);
+        try (CamelContext cc = start("wasm:" + module)) {
+            assertThat(text(send(cc, "first"))).isEqualTo("FIRST");
+            WasmEndpoint endpoint = wasmEndpoint(cc);
+            WasiCommand command = endpoint.command();
+
+            cc.getRouteController().stopRoute("wasm");
+            // with the file gone, a route that loaded (and compiled) the module again would fail to start
+            Files.delete(Path.of(module.substring("file:".length())));
+            cc.getRouteController().startRoute("wasm");
+
+            assertThat(text(send(cc, "second"))).isEqualTo("SECOND");
+            assertThat(wasmEndpoint(cc)).isSameAs(endpoint);
+            assertThat(endpoint.command()).isSameAs(command);
+        }
+    }
+
+    @Test
+    void moduleIsLoadedAgainAfterAFailedLoad() throws Exception {
+        Path file = dir.resolve("later.wasm");
+        try (CamelContext cc = new DefaultCamelContext()) {
+            cc.start();
+            WasmEndpoint endpoint = cc.getEndpoint(endpoint("wasm:file:" + file.toAbsolutePath()), WasmEndpoint.class);
+
+            // the module is not there yet: the producer cannot be started
+            WasmProducer first = (WasmProducer) endpoint.createProducer();
+            assertThatThrownBy(() -> ServiceHelper.startService(first))
+                    .rootCause()
+                    .isInstanceOf(FileNotFoundException.class);
+            ServiceHelper.stopAndShutdownService(first);
+
+            // the failure is not kept: once the module is there, the next producer of the same endpoint loads it
+            Files.write(file, Wat2Wasm.parse(PRELUDE + UPPER + ")"));
+            WasmProducer second = (WasmProducer) endpoint.createProducer();
+            try {
+                ServiceHelper.startService(second);
+                Exchange exchange = endpoint.createExchange();
+                exchange.getMessage().setBody("later");
+                second.process(exchange);
+
+                assertThat(text(exchange)).isEqualTo("LATER");
+                assertThat(second.command().isCompiled()).isEqualTo(compile());
+            } finally {
+                ServiceHelper.stopAndShutdownService(second);
             }
         }
     }

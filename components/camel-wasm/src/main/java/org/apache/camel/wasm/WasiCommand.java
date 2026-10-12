@@ -23,15 +23,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import run.endive.compiler.InterpreterFallback;
+import run.endive.compiler.MachineFactoryCompiler;
 import run.endive.runtime.ImportValues;
 import run.endive.runtime.Instance;
+import run.endive.runtime.Machine;
 import run.endive.runtime.Memory;
 import run.endive.runtime.TrapException;
 import run.endive.wasi.WasiExitException;
 import run.endive.wasi.WasiOptions;
 import run.endive.wasi.WasiPreview1;
+import run.endive.wasm.WasmEngineException;
 import run.endive.wasm.WasmModule;
 import run.endive.wasm.types.Export;
 import run.endive.wasm.types.ExportSection;
@@ -47,8 +54,14 @@ import run.endive.wasm.types.MemorySection;
  * guest memory or globals and need no lock. A run gets exactly the standard streams, arguments and environment
  * variables it is given: no preopened directories (so no files) and no sockets. The clock is the host's, and
  * {@code random_get} is served by a {@link SecureRandom} of the host.
+ * <p/>
+ * The module is interpreted, unless the command is created with {@code compile} set: then the module is translated to
+ * JVM bytecode once, in the constructor, and every run executes that code on its own instance. The generated classes
+ * belong to the command: they can be unloaded when the command is no longer reachable.
  */
 public final class WasiCommand {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WasiCommand.class);
 
     private static final String START = "_start";
     private static final String WASI_MODULE = "wasi_snapshot_preview1";
@@ -63,8 +76,13 @@ public final class WasiCommand {
     private final WasmModule module;
     private final List<String> arguments;
     private final MemoryLimits memoryLimits;
+    /** Creates the compiled code of the module for an instance; null when the module is interpreted. */
+    private final Function<Instance, Machine> machineFactory;
+    private final boolean interpreterFallback;
 
     /**
+     * Creates a command that interprets the module.
+     *
      * @param  module                   the parsed module
      * @param  arguments                the program's arguments, the program name first
      * @param  maxMemoryPages           the maximum number of 64 KiB pages the module's memory may grow to, or 0 to keep
@@ -73,10 +91,77 @@ public final class WasiCommand {
      *                                  than the initial memory the module declares
      */
     public WasiCommand(WasmModule module, List<String> arguments, int maxMemoryPages) {
+        this(module, arguments, maxMemoryPages, false);
+    }
+
+    /**
+     * @param  module                   the parsed module
+     * @param  arguments                the program's arguments, the program name first
+     * @param  maxMemoryPages           the maximum number of 64 KiB pages the module's memory may grow to, or 0 to keep
+     *                                  the maximum the module declares
+     * @param  compile                  whether to translate the module to JVM bytecode now, with the Endive runtime
+     *                                  compiler, instead of interpreting it. This defines classes at run time, which a
+     *                                  GraalVM native image cannot do. A function that is too large for a JVM method is
+     *                                  left to the interpreter, which is logged once, at WARN
+     * @throws IllegalArgumentException if the module is not a WASI Preview 1 command module, or maxMemoryPages is lower
+     *                                  than the initial memory the module declares
+     * @throws IllegalStateException    if compile is set and the Endive runtime compiler is not on the classpath, or
+     *                                  cannot compile the module. The message names the module by its program name (the
+     *                                  first argument)
+     */
+    public WasiCommand(WasmModule module, List<String> arguments, int maxMemoryPages, boolean compile) {
         this.module = Objects.requireNonNull(module);
         this.arguments = List.copyOf(arguments);
         validate(module);
         this.memoryLimits = memoryLimits(module, maxMemoryPages);
+
+        Function<Instance, Machine> factory = null;
+        boolean fallback = false;
+        if (compile) {
+            String name = this.arguments.isEmpty() ? "(no name)" : this.arguments.get(0);
+            try {
+                try {
+                    factory = RuntimeCompiler.compile(module, false);
+                } catch (WasmEngineException e) {
+                    // Endive could not compile every function. When the reason is a function that is too large for a
+                    // JVM method, the module still works with that function interpreted, so compile again with the
+                    // interpreter as fallback; for any other reason this second attempt fails as the first one did.
+                    factory = RuntimeCompiler.compile(module, true);
+                    fallback = true;
+                    LOG.warn("The Wasm module {} is compiled in part only: it has functions that are too large for a"
+                             + " JVM method, which are interpreted",
+                            name);
+                    LOG.debug("The Endive compiler reported for the Wasm module {}: {}", name, e.getMessage());
+                }
+            } catch (NoClassDefFoundError e) {
+                throw new IllegalStateException(
+                        "compile=true needs the Endive runtime compiler on the classpath (run.endive:compiler, a dependency"
+                                                + " of camel-wasm, and its ASM dependencies), but a class is missing: "
+                                                + e.getMessage(),
+                        e);
+            } catch (RuntimeException e) {
+                throw new IllegalStateException(
+                        "The Wasm module " + name + " cannot be compiled to JVM bytecode (compile=true): " + e.getMessage(),
+                        e);
+            }
+        }
+        this.machineFactory = factory;
+        this.interpreterFallback = fallback;
+    }
+
+    /**
+     * Whether the module was compiled to JVM bytecode; otherwise it is interpreted.
+     */
+    public boolean isCompiled() {
+        return machineFactory != null;
+    }
+
+    /**
+     * Whether the module was compiled with some of its functions left to the interpreter, because they are too large
+     * for a JVM method. Package-private for tests only.
+     */
+    boolean usesInterpreterFallback() {
+        return interpreterFallback;
     }
 
     /**
@@ -139,7 +224,29 @@ public final class WasiCommand {
         if (memoryLimits != null) {
             builder.withMemoryLimits(memoryLimits);
         }
+        if (machineFactory != null) {
+            builder.withMachineFactory(machineFactory);
+        }
         return builder.build();
+    }
+
+    /**
+     * The only class that refers to the Endive runtime compiler, so that this command can be loaded and used with the
+     * interpreter when the compiler is not on the classpath.
+     */
+    private static final class RuntimeCompiler {
+
+        /**
+         * Compiles the module. A function that is too large for a JVM method either fails the compilation, or is left
+         * to the interpreter without a message. Endive's own default (InterpreterFallback.WARN) is not used: it reports
+         * the fallback on System.err, past the logging of the application.
+         */
+        static Function<Instance, Machine> compile(WasmModule module, boolean interpretTooLargeFunctions) {
+            return MachineFactoryCompiler.builder(module)
+                    .withInterpreterFallback(
+                            interpretTooLargeFunctions ? InterpreterFallback.SILENT : InterpreterFallback.FAIL)
+                    .compile();
+        }
     }
 
     private static void validate(WasmModule module) {

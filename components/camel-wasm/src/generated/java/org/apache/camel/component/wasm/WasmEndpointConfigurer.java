@@ -24,6 +24,7 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
         WasmEndpoint target = (WasmEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": target.getConfiguration().setArgs(property(camelContext, java.lang.String.class, value)); return true;
+        case "compile": target.getConfiguration().setCompile(property(camelContext, boolean.class, value)); return true;
         case "environment": target.getConfiguration().setEnvironment(property(camelContext, java.util.Map.class, value)); return true;
         case "environmentheaders":
         case "environmentHeaders": target.getConfiguration().setEnvironmentHeaders(property(camelContext, java.lang.String.class, value)); return true;
@@ -44,6 +45,7 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": return java.lang.String.class;
+        case "compile": return boolean.class;
         case "environment": return java.util.Map.class;
         case "environmentheaders":
         case "environmentHeaders": return java.lang.String.class;
@@ -65,6 +67,7 @@ public class WasmEndpointConfigurer extends PropertyConfigurerSupport implements
         WasmEndpoint target = (WasmEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": return target.getConfiguration().getArgs();
+        case "compile": return target.getConfiguration().isCompile();
         case "environment": return target.getConfiguration().getEnvironment();
         case "environmentheaders":
         case "environmentHeaders": return target.getConfiguration().getEnvironmentHeaders();

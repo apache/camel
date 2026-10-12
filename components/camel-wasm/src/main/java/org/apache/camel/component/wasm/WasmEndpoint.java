@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.wasm;
 
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -26,7 +31,11 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.wasm.WasiCommand;
 import org.apache.camel.wasm.Wasm;
+import run.endive.wasm.Parser;
+import run.endive.wasm.WasmModule;
 
 /**
  * Run Wasm programs (WASI Preview 1 command modules) with the message body as standard input.
@@ -42,6 +51,9 @@ public class WasmEndpoint extends DefaultEndpoint {
     private final String module;
     @UriParam
     private WasmConfiguration configuration;
+
+    private final Lock lock = new ReentrantLock();
+    private volatile WasiCommand command;
 
     public WasmEndpoint(String endpointUri, Component component, String module,
                         WasmConfiguration configuration) {
@@ -61,6 +73,44 @@ public class WasmEndpoint extends DefaultEndpoint {
 
     public WasmConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * The module of this endpoint as a command. The module is loaded, checked and, with compile=true, compiled on the
+     * first call, by the first producer that is initialized; all producers of the endpoint then share the result, which
+     * is immutable, for as long as the endpoint exists. So a route that is stopped and started again gets a new
+     * producer, but neither loads nor compiles the module again, and the classes generated for a compiled module can
+     * only be unloaded when the endpoint is no longer reachable (removed from the context, or the context stopped), not
+     * when a route stops.
+     * <p/>
+     * A failed call leaves nothing behind, so the next call (of the next producer that is initialized) tries again.
+     */
+    WasiCommand command() throws Exception {
+        WasiCommand answer = command;
+        if (answer == null) {
+            lock.lock();
+            try {
+                answer = command;
+                if (answer == null) {
+                    List<String> arguments
+                            = WasmProducer.arguments(WasmProducer.programName(module), configuration.getArgs());
+                    for (String argument : arguments) {
+                        WasmProducer.checkNoNul("argument " + argument, argument);
+                    }
+                    WasmModule parsed;
+                    try (InputStream is
+                            = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), module)) {
+                        parsed = Parser.parse(is);
+                    }
+                    answer = new WasiCommand(
+                            parsed, arguments, configuration.getMaxMemoryPages(), configuration.isCompile());
+                    command = answer;
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        return answer;
     }
 
     @Override
