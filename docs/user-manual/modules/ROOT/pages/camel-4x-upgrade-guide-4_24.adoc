@@ -74,6 +74,37 @@ This also applies to the LRAs the service starts itself, which a nested saga rou
 coordinator returns LRA URLs under another base URL than `coordinatorUrl`, for example behind a proxy, add that
 base URL to `allowedCoordinatorUrls` as well.
 
+=== camel-openai, camel-ai-tool - AI events now use CamelEvent.Type.Ai
+
+The events fired by the AI components now share a common contract, `org.apache.camel.ai.AiEvent` (a
+`CamelEvent` of the new `CamelEvent.Type.Ai`), instead of each being a component-specific
+`CamelEvent.Type.Custom` event. Events that relate to a single exchange implement the exchange-backed subtype
+`AiEvent.ExchangeAiEvent` (the root `AiEvent` itself is not an `ExchangeEvent`). This lets an `EventNotifier` recognise AI activity — and route it to metrics or
+tracing — by type and by the `AiEvent` sub-interfaces, without depending on an AI component.
+
+The events shipped in 4.23.0 are affected:
+
+* `camel-ai-tool`: `AiToolAuthorizationDeniedEvent` now implements `AiEvent.ToolCallDeniedEvent`;
+* `camel-openai`: `OpenAIAgenticLoopStartedEvent`, `OpenAIAgenticToolCallExecutedEvent` and
+  `OpenAIAgenticLoopCompletedEvent` now implement `AiEvent.AgentLoopStartedEvent`, `AiEvent.ToolCallExecutedEvent`
+  and `AiEvent.AgentLoopCompletedEvent`.
+
+Their `getType()` now returns `CamelEvent.Type.Ai` rather than `CamelEvent.Type.Custom`, and they are now
+`CamelEvent.ExchangeEvent`s (via `AiEvent.ExchangeAiEvent`). An `EventNotifier` that recognised these events by
+`event.getType() == CamelEvent.Type.Custom` must match on `CamelEvent.Type.Ai` instead, or — preferably —
+on `event instanceof org.apache.camel.ai.AiEvent` (or one of its sub-interfaces), which no longer requires a
+dependency on the AI component. The concrete event classes and all their accessors are unchanged, so code that
+references them directly is not affected.
+
+Because the shipped AI events are now `ExchangeEvent`s (via `AiEvent.ExchangeAiEvent`), a notifier that filters on
+`instanceof ExchangeEvent` now also receives them. AI events are their own category: a new `ignoreAiEvents` flag
+(`EventNotifier.setIgnoreAiEvents(boolean)`, default `false`) opts a notifier out, and `ignoreExchangeEvents` does
+**not** drop AI events (so an AI-observability notifier can keep `ignoreExchangeEvents=true` for performance). Camel's
+own exchange-oriented notifiers (the debugger, the dev-console event ring, the micrometer and OpenTelemetry metrics
+exchange notifiers) set
+`ignoreAiEvents=true` so AI events do not reach them; a custom exchange-focused notifier that should not see AI events
+should do the same.
+
 === camel-report-maven-plugin - Java routes are read with the Java DSL parser
 
 The `validate` and `route-coverage` goals read Java routes with the Java DSL parser of camel-java-io instead of

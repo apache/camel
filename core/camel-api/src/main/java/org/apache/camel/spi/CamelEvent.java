@@ -85,7 +85,7 @@ public interface CamelEvent {
          * Events fired by Camel AI components (tool calls, agentic loops, ...); see
          * {@link org.apache.camel.ai.AiEvent}.
          *
-         * @since 4.23
+         * @since 4.24
          */
         Ai,
         Custom

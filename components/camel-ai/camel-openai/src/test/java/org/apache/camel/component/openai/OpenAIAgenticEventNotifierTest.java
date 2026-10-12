@@ -152,7 +152,7 @@ class OpenAIAgenticEventNotifierTest extends CamelTestSupport {
         assertThat(toolEvents).hasSize(1);
         assertThat(toolEvents.get(0).getToolName()).isEqualTo("get_weather");
         assertThat(toolEvents.get(0).getIteration()).isEqualTo(1);
-        assertThat(toolEvents.get(0).getDurationMillis()).isGreaterThanOrEqualTo(0);
+        assertThat(toolEvents.get(0).getDurationMs()).isGreaterThanOrEqualTo(0);
         assertThat(completed).hasSize(1);
         assertThat(completed.get(0).getIterationCount()).isEqualTo(1);
         assertThat(completed.get(0).getTotalTokens()).isPositive();

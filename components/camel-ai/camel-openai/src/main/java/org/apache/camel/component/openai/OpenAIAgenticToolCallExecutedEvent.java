@@ -57,7 +57,7 @@ public final class OpenAIAgenticToolCallExecutedEvent extends AbstractOpenAIExch
     }
 
     @Override
-    public long getDurationMillis() {
+    public long getDurationMs() {
         return durationMs;
     }
 

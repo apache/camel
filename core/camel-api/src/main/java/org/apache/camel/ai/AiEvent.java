@@ -51,7 +51,7 @@ public interface AiEvent extends CamelEvent.ExchangeEvent {
      * {@link CamelEvent.FailureEvent}, so {@link #getCause()} returns the {@code CamelAuthorizationException} the
      * policy raised.
      *
-     * @since 4.23
+     * @since 4.24
      */
     interface ToolCallDeniedEvent extends AiEvent, CamelEvent.FailureEvent {
 
@@ -62,7 +62,7 @@ public interface AiEvent extends CamelEvent.ExchangeEvent {
     /**
      * Fired after a single tool call has been executed.
      *
-     * @since 4.23
+     * @since 4.24
      */
     interface ToolCallExecutedEvent extends AiEvent {
 
@@ -73,13 +73,13 @@ public interface AiEvent extends CamelEvent.ExchangeEvent {
         boolean isSuccess();
 
         /** How long the tool call took, in milliseconds. */
-        long getDurationMillis();
+        long getDurationMs();
     }
 
     /**
      * Fired when an agentic loop starts.
      *
-     * @since 4.23
+     * @since 4.24
      */
     interface AgentLoopStartedEvent extends AiEvent {
 
@@ -93,7 +93,7 @@ public interface AiEvent extends CamelEvent.ExchangeEvent {
     /**
      * Fired when an agentic loop completes.
      *
-     * @since 4.23
+     * @since 4.24
      */
     interface AgentLoopCompletedEvent extends AiEvent {
 
