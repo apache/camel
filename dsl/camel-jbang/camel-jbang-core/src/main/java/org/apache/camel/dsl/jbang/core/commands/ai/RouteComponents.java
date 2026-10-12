@@ -78,10 +78,13 @@ public final class RouteComponents {
      * @param  content    the route source: YAML, XML or Java DSL
      * @param  format     yaml, xml or java; null or blank to tell from the content
      * @param  catalog    the catalog the components are looked up in
-     * @param  components the names of the components to look for, not null
+     * @param  components the names of the components to look for
      * @return            the names of the given components the route uses
      */
     public static List<String> of(String content, String format, CamelCatalog catalog, List<String> components) {
+        if (components == null || components.isEmpty()) {
+            return List.of();
+        }
         List<String> used = of(content, format, catalog);
         return components.stream().filter(used::contains).toList();
     }
