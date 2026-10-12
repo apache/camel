@@ -78,8 +78,10 @@ public class DuplicateKeyTest {
                                   - log:
                                       message: eu
                 """;
+        // a when for each branch, as XML and Java write them: in YAML the branches are the list of one when:
         assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
-                .contains("line 13: when: is given twice in this choice: (lines 6 and 13)"));
+                .contains("line 13: when: is given twice in this choice: (lines 6 and 13)")
+                .contains("when: takes a list, so write when: once and put the - items of both under it"));
     }
 
     @Test

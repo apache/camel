@@ -50,15 +50,14 @@ final class DuplicateKeys {
                 walk(item, owner, answer);
             }
         } else if (node instanceof MappingNode map) {
-            Map<String, Integer> seen = new HashMap<>();
+            Map<String, NodeTuple> seen = new HashMap<>();
             for (NodeTuple t : map.getValue()) {
                 String key = t.getKeyNode() instanceof ScalarNode s ? s.getValue() : null;
                 // <<: is a merge key, which YAML allows more than once
                 if (key != null && !"<<".equals(key)) {
-                    int line = line(t.getKeyNode());
-                    Integer first = seen.putIfAbsent(key, line);
+                    NodeTuple first = seen.putIfAbsent(key, t);
                     if (first != null) {
-                        answer.add(message(key, owner, first, line));
+                        answer.add(message(key, owner, first, t));
                     }
                 }
                 walk(t.getValueNode(), key != null ? key : owner, answer);
@@ -66,11 +65,17 @@ final class DuplicateKeys {
         }
     }
 
-    private static String message(String key, String owner, int first, int line) {
+    private static String message(String key, String owner, NodeTuple first, NodeTuple again) {
+        int before = line(first.getKeyNode());
+        int line = line(again.getKeyNode());
         String where = owner != null ? "this " + owner + ":" : "one mapping";
-        return "line " + line + ": " + key + ": is given twice in " + where + " (lines " + first + " and " + line
-               + "); YAML keeps only the last one, so the " + key + ": at line " + first + " is lost: write " + key
-               + ": once, with the value you mean";
+        String lost = "line " + line + ": " + key + ": is given twice in " + where + " (lines " + before + " and " + line
+                      + "); YAML keeps only the last one, so the " + key + ": at line " + before + " is lost";
+        // XML and Java write one when for each branch of a choice; YAML has one when: key with the branches as its list
+        if (first.getValueNode() instanceof SequenceNode && again.getValueNode() instanceof SequenceNode) {
+            return lost + ": " + key + ": takes a list, so write " + key + ": once and put the - items of both under it";
+        }
+        return lost + ": write " + key + ": once, with the value you mean";
     }
 
     private static int line(Node node) {
