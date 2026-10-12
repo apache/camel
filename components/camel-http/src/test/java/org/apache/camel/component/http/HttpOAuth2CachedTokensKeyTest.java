@@ -27,6 +27,7 @@ import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.component.http.handler.OAuth2TokenRequestHandler;
 import org.apache.hc.client5.http.HttpHostConnectException;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NoHttpResponseException;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The options that decide which requests share a cached OAuth2 token (CAMEL-22080). The default ({@code HOST_ONLY}) and
@@ -158,7 +160,13 @@ public class HttpOAuth2CachedTokensKeyTest extends BaseHttpTest {
             oauth2Server.close();
             Exchange exchange = template.request(uri(localServer, oauth2Server, second, options), e -> {
             });
-            assertInstanceOf(HttpHostConnectException.class, exchange.getException());
+            // When the token endpoint server is closed, the HTTP client may report either
+            // HttpHostConnectException (connection refused) or NoHttpResponseException (mid-shutdown).
+            // Both indicate the token endpoint is unreachable, so accept either.
+            Exception ex = exchange.getException();
+            assertTrue(
+                    ex instanceof HttpHostConnectException || ex instanceof NoHttpResponseException,
+                    "Expected a connection-failure exception but got: " + ex.getClass().getName());
         }
     }
 
