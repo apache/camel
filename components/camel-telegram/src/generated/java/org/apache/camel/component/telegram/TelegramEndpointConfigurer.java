@@ -77,6 +77,8 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "webhooksecrettoken":
+        case "webhookSecretToken": target.getConfiguration().setWebhookSecretToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -138,6 +140,8 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeout": return java.lang.Integer.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "webhooksecrettoken":
+        case "webhookSecretToken": return java.lang.String.class;
         default: return null;
         }
     }
@@ -200,6 +204,8 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeout": return target.getConfiguration().getTimeout();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "webhooksecrettoken":
+        case "webhookSecretToken": return target.getConfiguration().getWebhookSecretToken();
         default: return null;
         }
     }

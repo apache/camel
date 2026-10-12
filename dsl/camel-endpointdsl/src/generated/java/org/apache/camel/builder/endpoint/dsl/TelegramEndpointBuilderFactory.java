@@ -692,6 +692,27 @@ public interface TelegramEndpointBuilderFactory {
             doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
+        /**
+         * The secret token that Telegram sends in the
+         * X-Telegram-Bot-Api-Secret-Token header of every webhook request. In
+         * webhook mode, Camel registers the webhook with this token, and
+         * rejects a webhook request that does not carry it with HTTP 403. Only
+         * the characters A-Z, a-z, 0-9, _ and - are allowed, up to 256
+         * characters. When not set, a token derived from the authorization
+         * token is used. Set it when the webhook is registered outside Camel,
+         * and register the webhook with the same secret_token.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param webhookSecretToken the value to set
+         * @return the dsl builder
+         */
+        default TelegramEndpointConsumerBuilder webhookSecretToken(String webhookSecretToken) {
+            doSetProperty("webhookSecretToken", webhookSecretToken);
+            return this;
+        }
     }
 
     /**

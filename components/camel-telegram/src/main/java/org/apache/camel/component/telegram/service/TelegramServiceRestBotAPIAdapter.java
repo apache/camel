@@ -19,9 +19,11 @@ package org.apache.camel.component.telegram.service;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -181,7 +183,15 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
     @Override
     public boolean setWebhook(String url) {
-        final String uri = baseUri + "/setWebhook?url=" + url;
+        return setWebhook(url, null);
+    }
+
+    @Override
+    public boolean setWebhook(String url, String secretToken) {
+        String uri = baseUri + "/setWebhook?url=" + url;
+        if (secretToken != null) {
+            uri += "&secret_token=" + URLEncoder.encode(secretToken, StandardCharsets.UTF_8);
+        }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder().uri(URI.create(uri)).GET();
 

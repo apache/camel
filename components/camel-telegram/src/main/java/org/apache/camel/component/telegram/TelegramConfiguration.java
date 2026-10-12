@@ -62,6 +62,14 @@ public class TelegramConfiguration {
               optionalPrefix = "consumer.", defaultValue = "100", label = "consumer")
     private Integer limit = 100;
 
+    @UriParam(description = "The secret token that Telegram sends in the X-Telegram-Bot-Api-Secret-Token header of every webhook request."
+                            + " In webhook mode, Camel registers the webhook with this token, and rejects a webhook request that does not"
+                            + " carry it with HTTP 403. Only the characters A-Z, a-z, 0-9, _ and - are allowed, up to 256 characters."
+                            + " When not set, a token derived from the authorization token is used. Set it when the webhook is"
+                            + " registered outside Camel, and register the webhook with the same secret_token.",
+              label = "consumer,security", security = "secret")
+    private String webhookSecretToken;
+
     @UriParam(label = "advanced",
               description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
     private String baseUri;
@@ -131,6 +139,14 @@ public class TelegramConfiguration {
 
     public void setLimit(Integer limit) {
         this.limit = limit;
+    }
+
+    public String getWebhookSecretToken() {
+        return webhookSecretToken;
+    }
+
+    public void setWebhookSecretToken(String webhookSecretToken) {
+        this.webhookSecretToken = webhookSecretToken;
     }
 
     public String getBaseUri() {

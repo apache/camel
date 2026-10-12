@@ -45,6 +45,18 @@ A message that the route marks rollback only every time was removed before, and 
 Handle such a message in the route instead, for example by moving it aside, rather than marking it rollback only
 every time.
 
+=== camel-telegram - webhook requests are verified with a secret token
+
+In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
+`X-Telegram-Bot-Api-Secret-Token` header of every webhook request, and rejects a webhook request that does not carry
+the token with HTTP 403. The token is the value of the new `webhookSecretToken` option or, when that option is not
+set, a value derived from the authorization token.
+
+No change is needed when Camel registers the webhook, either at startup (`webhookAutoRegister=true`, the default)
+or through the `WebhookRoutePolicy`. If you register the webhook outside Camel, set `webhookSecretToken` and pass
+the same value as the `secret_token` parameter of `setWebhook`. A client that calls the webhook endpoint directly,
+for example in a test, must send the header too.
+
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
 A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now

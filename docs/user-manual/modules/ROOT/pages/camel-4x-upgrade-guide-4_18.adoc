@@ -34,6 +34,18 @@ user is now accepted only when one of their roles is equal to one of those names
 whitespace around each name and blank entries are ignored, and a value of `*` still accepts any role. A roles value
 that uses another separator, such as `admin;guest` or `admin guest`, must be changed to `admin,guest`.
 
+=== camel-telegram - webhook requests are verified with a secret token
+
+In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
+`X-Telegram-Bot-Api-Secret-Token` header of every webhook request, and rejects a webhook request that does not carry
+the token with HTTP 403. The token is the value of the new `webhookSecretToken` option or, when that option is not
+set, a value derived from the authorization token.
+
+No change is needed when Camel registers the webhook, either at startup (`webhookAutoRegister=true`, the default)
+or through the `WebhookRoutePolicy`. If you register the webhook outside Camel, set `webhookSecretToken` and pass
+the same value as the `secret_token` parameter of `setWebhook`. A client that calls the webhook endpoint directly,
+for example in a test, must send the header too.
+
 === camel-spring-ws - internal Camel headers are no longer written into SOAP headers
 
 The default `messageFilter` of the `spring-ws` component, `BasicMessageFilter`, now applies the endpoint's
