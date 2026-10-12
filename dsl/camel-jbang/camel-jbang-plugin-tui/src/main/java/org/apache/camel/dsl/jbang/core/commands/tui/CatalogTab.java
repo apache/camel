@@ -16,13 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -43,7 +48,9 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -483,17 +490,17 @@ class CatalogTab extends AbstractTableTab {
         return md.toString();
     }
 
-    private static final java.util.regex.Pattern KAMELET_URI
-            = java.util.regex.Pattern.compile("kamelet:([a-z0-9][a-z0-9-]*)");
+    private static final Pattern KAMELET_URI
+            = Pattern.compile("kamelet:([a-z0-9][a-z0-9-]*)");
 
     /**
      * The Kamelets of the catalog view: the project's own Kamelet files always, the Kamelets of the catalog its routes
      * use, and with the full catalog all the Kamelets of the catalog.
      */
     static List<CatalogEntry> kameletEntries(
-            Path dir, boolean full, java.util.Map<String, KameletDefinitions.Definition> catalogKamelets) {
+            Path dir, boolean full, Map<String, KameletDefinitions.Definition> catalogKamelets) {
         List<CatalogEntry> entries = new ArrayList<>();
-        java.util.Map<String, KameletDefinitions.Definition> project = KameletDefinitions.projectKamelets(dir);
+        Map<String, KameletDefinitions.Definition> project = KameletDefinitions.projectKamelets(dir);
         for (KameletDefinitions.Definition def : project.values()) {
             entries.add(kameletEntry(def, true));
         }
@@ -518,25 +525,37 @@ class CatalogTab extends AbstractTableTab {
         return entry;
     }
 
-    /** The Kamelets the route files of the directory send to or consume from, kamelet:source and :sink left out. */
+    /**
+     * The Kamelets the route files of the directory send to or consume from, kamelet:source and :sink left out. Each
+     * file is read as routes of its DSL, as camel overview reads it (a Java route with the Java DSL parser, so
+     * {@code kamelet("timer-source")} and constants count, and a commented-out endpoint does not); a file that is not a
+     * route file is searched for kamelet: uris.
+     */
     static Set<String> usedKamelets(Path dir) {
         Set<String> used = new HashSet<>();
-        if (dir == null || !java.nio.file.Files.isDirectory(dir)) {
+        if (dir == null || !Files.isDirectory(dir)) {
             return used;
         }
-        try (java.util.stream.Stream<Path> files = java.nio.file.Files.walk(dir, 6)) {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        try (Stream<Path> files = Files.walk(dir, 6)) {
             files.filter(f -> {
                 String n = f.getFileName().toString();
                 return (n.endsWith(".yaml") || n.endsWith(".yml") || n.endsWith(".java") || n.endsWith(".xml"))
                         && !f.toString().contains("/target/") && !f.toString().contains("/.");
             }).forEach(f -> {
                 try {
-                    java.util.regex.Matcher m = KAMELET_URI.matcher(java.nio.file.Files.readString(f));
-                    while (m.find()) {
-                        String name = m.group(1);
-                        if (!"source".equals(name) && !"sink".equals(name)) {
-                            used.add(name);
+                    String content = Files.readString(f);
+                    List<ProjectRoutes.Route> routes = ProjectRoutes.parse(f.getFileName().toString(), content, catalog);
+                    if (routes.isEmpty()) {
+                        Matcher m = KAMELET_URI.matcher(content);
+                        while (m.find()) {
+                            addKamelet(used, m.group(1));
                         }
+                    }
+                    for (ProjectRoutes.Route r : routes) {
+                        addKamelet(used, r.from());
+                        r.consumes().forEach(e -> addKamelet(used, e));
+                        r.produces().forEach(e -> addKamelet(used, e));
                     }
                 } catch (Exception e) {
                     // an unreadable file uses none
@@ -546,6 +565,20 @@ class CatalogTab extends AbstractTableTab {
             // no directory listing: none used
         }
         return used;
+    }
+
+    private static void addKamelet(Set<String> used, ProjectRoutes.Endpoint e) {
+        if (e != null && "kamelet".equals(e.scheme()) && e.key().startsWith("kamelet:")) {
+            String name = e.key().substring("kamelet:".length());
+            int end = name.indexOf('/');
+            addKamelet(used, end > 0 ? name.substring(0, end) : name);
+        }
+    }
+
+    private static void addKamelet(Set<String> used, String name) {
+        if (name != null && !name.isEmpty() && !name.contains("{{") && !"source".equals(name) && !"sink".equals(name)) {
+            used.add(name);
+        }
     }
 
     private void addDetailField(List<Line> lines, String label, String value, int width) {
