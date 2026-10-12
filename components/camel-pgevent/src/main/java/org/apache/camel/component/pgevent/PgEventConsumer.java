@@ -43,9 +43,11 @@ public class PgEventConsumer extends DefaultConsumer {
 
     private final PgEventListener listener = new PgEventListener();
     private final PgEventEndpoint endpoint;
-    private PGConnection dbConnection;
+    // set from the thread that connects (start, or the reconnect pool) and read from the thread that stops
+    private volatile PGConnection dbConnection;
     private ScheduledExecutorService reconnectPool;
-    private BackgroundTask reconnectTask;
+    // the task of the current (or last) reconnect, set from the thread that reports the lost connection
+    private volatile BackgroundTask reconnectTask;
     private ExecutorService workerPool;
     private boolean shutdownWorkerPool;
 
@@ -69,7 +71,11 @@ public class PgEventConsumer extends DefaultConsumer {
         // used for re-connecting to the database
         reconnectPool = getEndpoint().getCamelContext().getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, "PgEventReconnect");
-        reconnectTask = Tasks.backgroundTask()
+        reconnectTask = null;
+    }
+
+    private BackgroundTask createReconnectTask() {
+        return Tasks.backgroundTask()
                 .withScheduledExecutor(reconnectPool)
                 .withBudget(Budgets.iterationTimeBudget()
                         .withInterval(Duration.ofMillis(endpoint.getReconnectDelay()))
@@ -89,6 +95,12 @@ public class PgEventConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        // a pending reconnect has the thread that reported the lost connection (a thread of the driver) waiting in
+        // run(). No attempt runs once the pool is shut down, so nothing else would release that thread.
+        BackgroundTask task = reconnectTask;
+        if (task != null) {
+            task.cancel(true);
+        }
         listener.closeConnection();
         getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(reconnectPool);
         if (shutdownWorkerPool && workerPool != null) {
@@ -101,16 +113,34 @@ public class PgEventConsumer extends DefaultConsumer {
     public class PgEventListener implements PGNotificationListener {
 
         public void reconnect() {
+            if (!isRunAllowed()) {
+                // stopping: the reconnect pool is about to be shut down and would never run the task
+                return;
+            }
             // only submit the task if not already running
-            if (!reconnectTask.isRunning()) {
-                reconnectTask.run(endpoint.getCamelContext(), () -> {
+            BackgroundTask current = reconnectTask;
+            if (current == null || !current.isRunning()) {
+                // a background task completes only once (running it again does nothing), so every reconnect needs
+                // its own task
+                final BackgroundTask task = createReconnectTask();
+                reconnectTask = task;
+                if (!isRunAllowed()) {
+                    // the stop began after the check above: it may have looked for a task to cancel before this one
+                    // was set
+                    return;
+                }
+                task.run(endpoint.getCamelContext(), () -> {
                     if (isRunAllowed()) {
-                        LOG.debug("Connecting attempt #{}", reconnectTask.iteration());
+                        LOG.debug("Connecting attempt #{}", task.iteration());
                         try {
                             initConnection();
+                            if (!isRunAllowed()) {
+                                // the consumer was stopped while this attempt was connecting
+                                closeConnection();
+                            }
                         } catch (Exception e) {
                             String message
-                                    = "Failed to connect attempt #" + reconnectTask.iteration() + " due to: " + e.getMessage();
+                                    = "Failed to connect attempt #" + task.iteration() + " due to: " + e.getMessage();
                             getExceptionHandler().handleException(message, e);
                             // make the task runner aware of the exception (will retry)
                             throw new TaskRunFailureException(message, e);
@@ -123,36 +153,71 @@ public class PgEventConsumer extends DefaultConsumer {
         }
 
         public void initConnection() throws Exception {
-            dbConnection = endpoint.initJdbc();
             String channel = endpoint.getChannel();
             if (!channel.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
                 throw new IllegalArgumentException("Invalid channel name");
             }
-            String sql = String.format("LISTEN %s", channel);
-            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) { // NOSONAR
-                statement.execute();
+            // the connection that is replaced (a lost one, when reconnecting) is closed first, so that a pooled
+            // data source gets it back
+            PGConnection previous = dbConnection;
+            dbConnection = null;
+            closeQuietly(previous, channel);
+
+            PGConnection connection = endpoint.initJdbc();
+            try {
+                String sql = String.format("LISTEN %s", channel);
+                try (PreparedStatement statement = connection.prepareStatement(sql)) { // NOSONAR
+                    statement.execute();
+                }
+                connection.addNotificationListener(channel, channel, listener);
+            } catch (Exception e) {
+                // not used, and the next attempt gets a new one
+                closeQuietly(connection, channel);
+                throw e;
             }
-            dbConnection.addNotificationListener(channel, channel, listener);
+            dbConnection = connection;
         }
 
         public void closeConnection() throws Exception {
-            if (dbConnection != null) {
+            PGConnection connection = dbConnection;
+            dbConnection = null;
+            if (connection != null) {
+                String channel = endpoint.getChannel();
                 try {
-                    String channel = endpoint.getChannel();
                     if (!channel.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
                         throw new IllegalArgumentException("Invalid channel name");
                     }
-                    dbConnection.removeNotificationListener(channel);
+                    connection.removeNotificationListener(channel);
                     String sql = String.format("UNLISTEN %s", channel);
-                    try (PreparedStatement statement = dbConnection.prepareStatement(sql)) { // NOSONAR
+                    try (PreparedStatement statement = connection.prepareStatement(sql)) { // NOSONAR
                         statement.execute();
                     }
-                    dbConnection.close();
                 } catch (Exception e) {
                     // ignore
+                } finally {
+                    // also when UNLISTEN failed, as it does on a connection that is lost
+                    closeQuietly(connection, channel);
                 }
             }
-            dbConnection = null;
+        }
+
+        /**
+         * Closes a connection that is no longer used, without its listener being told about it.
+         */
+        private void closeQuietly(PGConnection connection, String channel) {
+            if (connection == null) {
+                return;
+            }
+            try {
+                connection.removeNotificationListener(channel);
+            } catch (Exception e) {
+                // ignore
+            }
+            try {
+                connection.close();
+            } catch (Exception e) {
+                // ignore
+            }
         }
 
         @Override

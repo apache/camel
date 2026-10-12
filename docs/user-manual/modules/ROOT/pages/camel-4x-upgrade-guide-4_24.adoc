@@ -60,6 +60,20 @@ now resolves to no value, as it already did without a field, so its default valu
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
 
+=== camel-lra - only an LRA hosted by the configured coordinator is joined
+
+The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
+coordinator (`coordinatorUrl` followed by `coordinatorContextPath`). A message whose `Long-Running-Action` header holds
+the URL of another coordinator now fails, instead of the saga service calling that URL.
+
+If your participants reach the same coordinator under different URLs, for example with different host names, list the
+other coordinator URLs, including the context path, in the new `allowedCoordinatorUrls` option
+(`camel.lra.allowedCoordinatorUrls`).
+
+This also applies to the LRAs the service starts itself, which a nested saga route looks up again: when the
+coordinator returns LRA URLs under another base URL than `coordinatorUrl`, for example behind a proxy, add that
+base URL to `allowedCoordinatorUrls` as well.
+
 === camel-report-maven-plugin - Java routes are read with the Java DSL parser
 
 The `validate` and `route-coverage` goals read Java routes with the Java DSL parser of camel-java-io instead of
@@ -74,6 +88,39 @@ The `route-parser` plugin (`camel route-parser`) and its `camel-jbang-plugin-rou
 `camel cmd route-structure MyRoute.java` instead: it prints the structure of the routes of a Java source, read
 without compiling it, and of YAML and XML sources too. If you installed the plugin, remove it with
 `camel plugin delete route-parser`.
+
+=== camel-wasm - the endpoint runs WASI command modules (Breaking change)
+
+The `wasm` endpoint now runs WASI Preview 1 command modules (the body is standard input, standard output becomes the
+body, the exit code and standard error are in `CamelWasmExitCode` and `CamelWasmStderr`) and no longer supports the
+custom `alloc`/`dealloc` and JSON message ABI. The URI path is now the module (`wasm:classpath:upper.wasm`); the
+function name and the `module` option are removed, and a header reaches the module only when listed in
+`environmentHeaders`. To migrate, turn the function into a program that reads standard input and writes standard
+output, built for `wasm32-wasip1` (Rust) or with `GOOS=wasip1 GOARCH=wasm` (Go). The `wasm` language is unchanged.
+
+The endpoint runs every exchange on a new instance of the module, so a module can no longer keep state from one
+message to the next. The 4.23 note that a failed call discards the Wasm instance therefore now only applies to the
+`wasm` expression.
+
+The following API of `camel-wasm` is removed or changed with the old ABI:
+
+* `WasmComponent.getModule()` and `setModule(String)`, and `WasmConfiguration.getModule()` and `setModule(String)`:
+the module is the path of the endpoint URI, available as `WasmEndpoint.getModule()`.
+* The `functionName` path parameter of the endpoint: the third argument of the `WasmEndpoint` constructor is now the
+module.
+* `WasmSupport.deserialize(byte[], Exchange)`.
+* The constructor `WasmProducer(Endpoint, String, String)` is replaced by `WasmProducer(WasmEndpoint)`.
+
+=== camel-vertx-http - a header with several values is sent as several headers
+
+A message header whose value is a `java.util.Collection` or an object array (as the HTTP consumers map a request
+header that occurs more than once) was sent as one HTTP header with the `toString()` of the value, for example
+`[a, b]`. The producer now sends one HTTP header per value. A collection or an object array that is empty, or that
+holds only null values, now sends no header (an empty List was sent as the header value `[]`).
+
+Every other value is converted to one String and sent as one header as before: a String (also when it contains
+commas), a `byte[]` and the other primitive arrays, a `Map`, and a Vert.x `JsonObject` or `JsonArray` (sent as JSON).
+A route that needs the old single header can set the header to a String, for example with `String.valueOf(list)`.
 
 === camel-jira - the producers wait for the answer of Jira
 

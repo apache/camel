@@ -49,6 +49,11 @@
             <artifactId>runtime</artifactId>
             <version>${endive-version}</version>
         </dependency>
+        <dependency>
+            <groupId>run.endive</groupId>
+            <artifactId>wasi</artifactId>
+            <version>${endive-version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

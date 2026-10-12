@@ -36,6 +36,8 @@ public class LraConfigurationProperties implements BootstrapCloseable {
     private String localParticipantUrl;
     @Metadata(defaultValue = "/lra-participant")
     private String localParticipantContextPath = "/lra-participant";
+    @Metadata(label = "security")
+    private String allowedCoordinatorUrls;
 
     public LraConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -109,6 +111,19 @@ public class LraConfigurationProperties implements BootstrapCloseable {
         this.localParticipantContextPath = localParticipantContextPath;
     }
 
+    public String getAllowedCoordinatorUrls() {
+        return allowedCoordinatorUrls;
+    }
+
+    /**
+     * Comma-separated URLs, including the context path, of further LRA coordinators whose LRAs may be joined, completed
+     * or compensated. By default, only an LRA hosted by the configured coordinator is accepted. Use it when
+     * participants reach the same coordinator under different URLs, for example with different host names.
+     */
+    public void setAllowedCoordinatorUrls(String allowedCoordinatorUrls) {
+        this.allowedCoordinatorUrls = allowedCoordinatorUrls;
+    }
+
     /**
      * The URL for the LRA coordinator service that orchestrates the transactions
      */
@@ -146,6 +161,15 @@ public class LraConfigurationProperties implements BootstrapCloseable {
      */
     public LraConfigurationProperties withLocalParticipantContextPath(String localParticipantContextPath) {
         this.localParticipantContextPath = localParticipantContextPath;
+        return this;
+    }
+
+    /**
+     * Comma-separated URLs, including the context path, of further LRA coordinators whose LRAs may be joined, completed
+     * or compensated.
+     */
+    public LraConfigurationProperties withAllowedCoordinatorUrls(String allowedCoordinatorUrls) {
+        this.allowedCoordinatorUrls = allowedCoordinatorUrls;
         return this;
     }
 
