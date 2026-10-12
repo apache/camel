@@ -198,7 +198,16 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            return validate(target, bodylessEndpoints);
+            List<Error> errors = validate(target, bodylessEndpoints);
+            // CAMEL-25560: the tree keeps the last of two equal keys, so a key given twice is only seen in the YAML nodes
+            List<String> duplicates = DuplicateKeys.find(YamlPointerLines.root(content));
+            if (duplicates.isEmpty()) {
+                return errors;
+            }
+            List<Error> answer = new ArrayList<>();
+            duplicates.forEach(d -> answer.add(hint(d)));
+            answer.addAll(errors);
+            return answer;
         } catch (Exception e) {
             return List.of(parseError(e, content));
         }
