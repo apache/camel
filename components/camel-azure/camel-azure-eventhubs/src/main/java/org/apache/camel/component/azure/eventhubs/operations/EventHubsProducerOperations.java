@@ -58,8 +58,15 @@ public class EventHubsProducerOperations {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
         ObjectHelper.notNull(callback, "callback cannot be null");
 
-        final SendOptions sendOptions = createSendOptions(configurationOptionsProxy.getPartitionKey(exchange),
-                configurationOptionsProxy.getPartitionId(exchange));
+        String partitionKey = configurationOptionsProxy.getPartitionKey(exchange);
+        final String partitionId = configurationOptionsProxy.getPartitionId(exchange);
+        if (ObjectHelper.isEmpty(partitionKey) && ObjectHelper.isEmpty(partitionId)) {
+            // neither the route nor the endpoint chose a partition: keep the partition key of a received event,
+            // so events with the same key stay together, but never its partition id, as partitions differ between
+            // Event Hubs
+            partitionKey = configurationOptionsProxy.getReceivedPartitionKey(exchange);
+        }
+        final SendOptions sendOptions = createSendOptions(partitionKey, partitionId);
         final Iterable<EventData> eventData = createEventData(exchange);
 
         return sendAsyncEvents(eventData, sendOptions, exchange, callback);

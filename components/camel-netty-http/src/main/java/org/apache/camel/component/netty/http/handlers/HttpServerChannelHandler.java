@@ -19,7 +19,9 @@ package org.apache.camel.component.netty.http.handlers;
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -232,14 +234,29 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return true;
         }
 
-        // see if any of the user roles is contained in the roles list
+        // the user must have one of the roles, compared by the exact role name
+        Set<String> names = roleNames(roles);
         for (String userRole : ObjectHelper.createIterable(userRoles)) {
-            if (roles.contains(userRole)) {
+            if (names.contains(userRole.trim())) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * The role names in the comma separated list of roles, trimmed and without blank entries.
+     */
+    private static Set<String> roleNames(String roles) {
+        Set<String> names = new HashSet<>();
+        for (String role : ObjectHelper.createIterable(roles)) {
+            String name = role.trim();
+            if (!name.isEmpty()) {
+                names.add(name);
+            }
+        }
+        return names;
     }
 
     /**

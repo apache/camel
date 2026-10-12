@@ -244,6 +244,17 @@ protected void doProcessSoapAttachements(Message inOrOut, SoapMessage response)
 { your code /*no need to call super*/ }
 -------------------------------------------------------------------------------
 
+The `BasicMessageFilter` that the component creates for an endpoint
+applies the endpoint's `headerFilterStrategy` to the message headers it
+writes into the SOAP header, so by default headers whose names start
+with `Camel` or `camel` are not written. A message filter you provide
+yourself, global or local, does not know which endpoint it runs for: a
+`BasicMessageFilter`, or a subclass of it, created with the no-argument
+constructor applies a `SpringWebserviceHeaderFilterStrategy`, whatever
+`headerFilterStrategy` the endpoint is configured with. To apply another
+strategy, create it with the `BasicMessageFilter(Supplier<HeaderFilterStrategy>)`
+constructor, or override `getHeaderFilterStrategy()`.
+
 === Using a custom MessageSender and MessageFactory
 
 A custom message sender or factory in the registry can be referenced

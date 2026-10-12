@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws.filter.impl;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import jakarta.activation.DataHandler;
 
@@ -27,15 +28,49 @@ import javax.xml.namespace.QName;
 import org.apache.camel.Exchange;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
+import org.apache.camel.component.spring.ws.SpringWebserviceHeaderFilterStrategy;
 import org.apache.camel.component.spring.ws.filter.MessageFilter;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 
 /**
  * This class populates a SOAP header and attachments in the WebServiceMessage instance.
+ * <p>
+ * A message header is written into the SOAP header only when the {@link HeaderFilterStrategy} does not filter it, so by
+ * default the internal {@code Camel} and {@code camel} header namespace is not written.
  */
 public class BasicMessageFilter implements MessageFilter {
+
+    private final Supplier<HeaderFilterStrategy> headerFilterStrategy;
+
+    /**
+     * Creates a filter that applies a {@link SpringWebserviceHeaderFilterStrategy} to the message headers it writes
+     * into the SOAP header.
+     */
+    public BasicMessageFilter() {
+        HeaderFilterStrategy strategy = new SpringWebserviceHeaderFilterStrategy();
+        this.headerFilterStrategy = () -> strategy;
+    }
+
+    /**
+     * Creates a filter that applies the {@link HeaderFilterStrategy} returned by the given supplier to the message
+     * headers it writes into the SOAP header. A {@code null} strategy disables the filtering.
+     *
+     * @param headerFilterStrategy supplies the strategy to apply, such as the one configured on the endpoint
+     */
+    public BasicMessageFilter(Supplier<HeaderFilterStrategy> headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    /**
+     * The {@link HeaderFilterStrategy} applied to the message headers written into the SOAP header, or {@code null}
+     * when they are not filtered.
+     */
+    protected HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy != null ? headerFilterStrategy.get() : null;
+    }
 
     /**
      * Whether a header is valid
@@ -85,10 +120,13 @@ public class BasicMessageFilter implements MessageFilter {
      * The SOAP header is populated from exchange.getOut().getHeaders() if this class is used by the consumer or
      * exchange.getIn().getHeaders() if this class is used by the producer. If .getHeaders() contains under a certain
      * key a value with the QName object, it is directly added as a new header element. If it contains only a String
-     * value, it is transformed into a header attribute. Following headers are excluded:
+     * value, it is transformed into a header attribute. The spring-ws headers, the breadcrumb id and Content-Type are
+     * excluded, and so is any header that the {@link HeaderFilterStrategy} filters.
      */
     protected void doProcessSoapHeader(AttachmentMessage inOrOut, SoapMessage soapMessage) {
         SoapHeader soapHeader = soapMessage.getSoapHeader();
+        HeaderFilterStrategy strategy = getHeaderFilterStrategy();
+        Exchange exchange = inOrOut.getExchange();
 
         Map<String, Object> headers = inOrOut.getHeaders();
 
@@ -116,6 +154,9 @@ public class BasicMessageFilter implements MessageFilter {
             }
 
             Object value = headers.get(name);
+            if (strategy != null && strategy.applyFilterToCamelHeaders(name, value, exchange)) {
+                continue;
+            }
             if (value instanceof QName qname) {
                 soapHeader.addHeaderElement(qname);
             } else {

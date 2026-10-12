@@ -299,7 +299,7 @@ public class Run extends CamelCommand {
                           " (ex. /path/to/file.properties,/path/to/other.properties")
     public String propertiesFiles;
 
-    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)", arity = "0")
+    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)")
     public String[] property;
 
     @Option(names = { "--stub" }, description = "Stubs all the matching endpoint uri with the given component name or pattern."

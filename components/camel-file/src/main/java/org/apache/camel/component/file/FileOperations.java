@@ -30,6 +30,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
@@ -256,11 +257,41 @@ public class FileOperations implements GenericFileOperations<File> {
         // java.io.File
     }
 
+    /**
+     * The jailStartingDirectory check of the producer is lexical (see {@code GenericFileProducer.createFileName}), so a
+     * symbolic link inside the starting directory (a link to a file, or a directory segment of the name) would redirect
+     * the write outside of it. Only paths that are lexically inside the starting directory are checked, so a
+     * tempFileName the route author placed outside of it (such as ../work) keeps working. The producer also calls this
+     * before it creates missing parent directories of the target.
+     */
+    void jailToStartingDirectory(File target) {
+        if (!endpoint.isJailStartingDirectory()) {
+            return;
+        }
+        Path startingDirectory = endpoint.getFile().toPath();
+        if (!target.toPath().toAbsolutePath().normalize().startsWith(startingDirectory.toAbsolutePath().normalize())) {
+            return;
+        }
+        boolean within;
+        try {
+            within = GenericFileHelper.isWithinDirectoryResolvingLinks(target.toPath(), startingDirectory);
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(
+                    "Cannot verify file: " + target + " is within the starting directory: " + endpoint.getFile(), e);
+        }
+        if (!within) {
+            throw new GenericFileOperationFailedException(
+                    "Cannot write file: " + target + " as it resolves outside the starting directory: "
+                                                          + endpoint.getFile());
+        }
+    }
+
     @Override
     public boolean storeFile(String fileName, Exchange exchange, long size) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
 
         File file = new File(fileName);
+        jailToStartingDirectory(file);
 
         // if an existing file already exists what should we do?
         if (file.exists()) {
@@ -355,6 +386,7 @@ public class FileOperations implements GenericFileOperations<File> {
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
         File file = new File(name);
+        jailToStartingDirectory(file);
         try {
             Files.writeString(file.toPath(), payload, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.CREATE);
