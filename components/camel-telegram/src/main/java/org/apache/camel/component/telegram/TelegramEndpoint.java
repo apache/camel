@@ -169,6 +169,8 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     static String deriveWebhookSecretToken(String authorizationToken) {
         try {
             Mac mac = Mac.getInstance("HmacSHA256");
+            // the authorization token (the secret) is the key, and a fixed label is the message: the derived token
+            // cannot be computed without the authorization token, and changes only when the authorization token does
             mac.init(new SecretKeySpec(authorizationToken.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
             byte[] digest = mac.doFinal("camel-telegram-webhook-secret-token".getBytes(StandardCharsets.UTF_8));
             // base64url without padding only uses the characters that Telegram allows in a secret token
