@@ -223,7 +223,8 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
                     } else {
                         LOG.debug("Error response Headers {}", response.headers());
                         exchange.setException(new RuntimeCamelException(
-                                uri + " responded: " + statusCode + " and body: " + response.body()));
+                                URISupport.sanitizeUri(uri) + " responded: " + statusCode + " and body: "
+                                                                        + response.body()));
                     }
                 } catch (Exception e) {
                     // any failure while handling the response (not only a JSON one) must fail the exchange

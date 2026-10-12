@@ -96,6 +96,7 @@ class WhatsAppProducerFailureTest extends CamelTestSupport {
                 .get(30, TimeUnit.SECONDS);
 
         assertThat(exchange.getException()).isInstanceOf(RuntimeCamelException.class)
+                .hasMessageContaining("http://localhost:" + server.getAddress().getPort())
                 .hasMessageContaining("responded: 400").hasMessageContaining("Unsupported post request");
     }
 
