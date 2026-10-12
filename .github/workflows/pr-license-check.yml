@@ -54,7 +54,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-          cache: 'maven'
       - name: Check license headers
         # -N: non-recursive — only checks files at the root project level, which
         # is where the license plugin configuration and all file-type mappings
@@ -62,4 +61,4 @@ jobs:
         # covered by the main build. The goal of this check is to catch new
         # root-level files (e.g. Jenkinsfile.jdkNN) whose extension has not been
         # added to the <mapping> section in pom.xml.
-        run: ./mvnw -B --no-transfer-progress license:check -N
+        run: ./mvnw -B --no-transfer-progress com.mycila:license-maven-plugin:check -N
