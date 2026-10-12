@@ -47,7 +47,7 @@ class DrawOverlay {
     void setDrawing(List<DrawCell> newCells, int durationSeconds) {
         this.cells = new ArrayList<>(newCells);
         if (durationSeconds > 0) {
-            this.autoDismissTime = System.currentTimeMillis() + (durationSeconds * 1000L);
+            this.autoDismissTime = MonotonicClock.millis() + (durationSeconds * 1000L);
         } else {
             this.autoDismissTime = 0;
         }
@@ -66,6 +66,7 @@ class DrawOverlay {
         autoDismissTime = 0;
     }
 
+    /** Dismisses the drawing once its duration is over; now is a {@link MonotonicClock} time. */
     void tick(long now) {
         if (autoDismissTime > 0 && now > autoDismissTime) {
             clear();

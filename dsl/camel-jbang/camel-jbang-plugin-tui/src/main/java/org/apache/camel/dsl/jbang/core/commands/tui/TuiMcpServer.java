@@ -134,7 +134,7 @@ class TuiMcpServer {
     }
 
     boolean isRecentActivity() {
-        return System.currentTimeMillis() - lastToolCallTime < 2000;
+        return MonotonicClock.millis() - lastToolCallTime < 2000;
     }
 
     int getToolCallCount() {
@@ -146,7 +146,7 @@ class TuiMcpServer {
      * client that never says initialize, one that sent a request in the last minute. Null when there is none.
      */
     String getConnectedClient() {
-        if (sessionOpen || System.currentTimeMillis() - lastActivity < CLIENT_TIMEOUT_MS) {
+        if (sessionOpen || MonotonicClock.millis() - lastActivity < CLIENT_TIMEOUT_MS) {
             return clientName != null ? clientName : "connected";
         }
         return null;
@@ -154,12 +154,12 @@ class TuiMcpServer {
 
     /** For tests: as if the last request came that many milliseconds ago. */
     void idleFor(long millis) {
-        lastActivity = System.currentTimeMillis() - millis;
+        lastActivity = MonotonicClock.millis() - millis;
     }
 
     private void handleMcp(HttpExchange exchange) throws IOException {
         try {
-            lastActivity = System.currentTimeMillis();
+            lastActivity = MonotonicClock.millis();
             String method = exchange.getRequestMethod();
             if ("DELETE".equals(method)) {
                 // the client closes its session: it is gone
@@ -527,7 +527,7 @@ class TuiMcpServer {
             args = Map.of();
         }
 
-        lastToolCallTime = System.currentTimeMillis();
+        lastToolCallTime = MonotonicClock.millis();
         toolCallCount.incrementAndGet();
 
         String text;

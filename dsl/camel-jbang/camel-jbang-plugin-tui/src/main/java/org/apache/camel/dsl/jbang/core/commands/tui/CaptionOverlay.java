@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.LongSupplier;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
@@ -40,6 +41,9 @@ class CaptionOverlay {
     private static final long FADE_DURATION_MS = 1000;
     private static final long INLINE_IDLE_TIMEOUT_MS = 3000;
 
+    // the clock of the times below: the MonotonicClock, or a fake one in tests
+    private final LongSupplier clock;
+
     private boolean inlineMode;
     private StringBuilder inlineBuffer;
     private long inlineLastKeystroke;
@@ -48,6 +52,15 @@ class CaptionOverlay {
     private long captionStartTime;
     private long captionFullyTypedTime;
     private long captionAutoDismissTime;
+
+    CaptionOverlay() {
+        this(MonotonicClock::millis);
+    }
+
+    /** With a clock, for tests that drive the time. */
+    CaptionOverlay(LongSupplier clock) {
+        this.clock = clock;
+    }
 
     boolean isInlineMode() {
         return inlineMode;
@@ -69,25 +82,25 @@ class CaptionOverlay {
     void openInline() {
         inlineMode = true;
         inlineBuffer = new StringBuilder();
-        inlineLastKeystroke = System.currentTimeMillis();
+        inlineLastKeystroke = clock.getAsLong();
         captionText = "";
-        captionStartTime = System.currentTimeMillis();
+        captionStartTime = clock.getAsLong();
         captionFullyTypedTime = 0;
     }
 
     void showCaption(String text) {
         captionText = text.replace("\\n", "\n");
-        captionStartTime = System.currentTimeMillis();
+        captionStartTime = clock.getAsLong();
         captionFullyTypedTime = 0;
         captionAutoDismissTime = 0;
     }
 
     void showCaption(String text, int durationSeconds) {
         captionText = text.replace("\\n", "\n");
-        captionStartTime = System.currentTimeMillis();
+        captionStartTime = clock.getAsLong();
         captionFullyTypedTime = 0;
         if (durationSeconds > 0) {
-            captionAutoDismissTime = System.currentTimeMillis() + (durationSeconds * 1000L);
+            captionAutoDismissTime = clock.getAsLong() + (durationSeconds * 1000L);
         } else {
             captionAutoDismissTime = 0;
         }
@@ -109,12 +122,12 @@ class CaptionOverlay {
                     // the last character, both chars of an emoji
                     inlineBuffer.setLength(inlineBuffer.offsetByCodePoints(inlineBuffer.length(), -1));
                     captionText = inlineBuffer.toString();
-                    inlineLastKeystroke = System.currentTimeMillis();
+                    inlineLastKeystroke = clock.getAsLong();
                 }
             } else if (FormHelper.typedText(ke) != null) {
                 inlineBuffer.append(ke.string());
                 captionText = inlineBuffer.toString();
-                inlineLastKeystroke = System.currentTimeMillis();
+                inlineLastKeystroke = clock.getAsLong();
             }
             return true;
         }
@@ -129,6 +142,7 @@ class CaptionOverlay {
         return false;
     }
 
+    /** Finishes an idle inline caption and dismisses an expired one; now is a time of the caption's clock. */
     void tick(long now) {
         if (inlineMode && !inlineBuffer.isEmpty()
                 && now - inlineLastKeystroke > INLINE_IDLE_TIMEOUT_MS) {
@@ -170,7 +184,7 @@ class CaptionOverlay {
         }
         captionText = inlineBuffer.toString().replace("\\n", "\n");
         inlineBuffer = null;
-        captionFullyTypedTime = System.currentTimeMillis();
+        captionFullyTypedTime = clock.getAsLong();
     }
 
     void render(Frame frame, Rect area) {
@@ -220,7 +234,7 @@ class CaptionOverlay {
     }
 
     private void renderCaption(Frame frame, Rect area) {
-        long now = System.currentTimeMillis();
+        long now = clock.getAsLong();
         long elapsed = now - captionStartTime;
         // typed a character at a time, an emoji (two chars) at once
         int charsToShow = Math.min((int) (elapsed / CHAR_DELAY_MS), captionText.codePointCount(0, captionText.length()));

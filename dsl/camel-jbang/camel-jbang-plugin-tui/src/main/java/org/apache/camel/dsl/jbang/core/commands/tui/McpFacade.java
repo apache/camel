@@ -59,9 +59,15 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 class McpFacade {
 
     /**
-     * Pending key event queued for injection into the TUI event loop.
+     * Pending key event queued for injection into the TUI event loop, by an MCP client or a tape. It fires on the first
+     * tick at or after fireAt, a {@link MonotonicClock} time.
      */
     record PendingKey(KeyEvent event, long fireAt) {
+
+        /** Whether the key fires at the given {@link MonotonicClock} time. */
+        boolean isDue(long now) {
+            return now >= fireAt;
+        }
     }
 
     /**
@@ -283,8 +289,8 @@ class McpFacade {
         }
         long before = done.getAsLong();
         request.run();
-        long deadline = System.currentTimeMillis() + FULL_SCAN_TIMEOUT_MS;
-        while (done.getAsLong() <= before && System.currentTimeMillis() < deadline) {
+        long deadline = MonotonicClock.millis() + FULL_SCAN_TIMEOUT_MS;
+        while (done.getAsLong() <= before && MonotonicClock.millis() < deadline) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -619,7 +625,7 @@ class McpFacade {
     // ---- Key injection ----
 
     int injectKeys(List<String> keys, int delayMs) {
-        long fireAt = System.currentTimeMillis();
+        long fireAt = MonotonicClock.millis();
         int count = 0;
         for (String key : keys) {
             KeyEvent ke = parseKey(key);
@@ -739,8 +745,8 @@ class McpFacade {
         if (data != null || !tab.ensureDataLoaded()) {
             return data;
         }
-        long deadline = System.currentTimeMillis() + timeoutMs;
-        while (data == null && System.currentTimeMillis() < deadline && tab.dataLoadError() == null) {
+        long deadline = MonotonicClock.millis() + timeoutMs;
+        while (data == null && MonotonicClock.millis() < deadline && tab.dataLoadError() == null) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -1348,18 +1354,18 @@ class McpFacade {
             }
         }
         if (writeMode == WriteMode.LIVE && exists && bridge != null) {
-            long waitStart = System.currentTimeMillis();
+            long waitStart = MonotonicClock.millis();
             ReplayOutcome outcome = bridge.replayFileWrite(request);
-            lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
+            lastConfirmWaitMs = MonotonicClock.millis() - waitStart;
             if (outcome != null) {
                 return replayResult(target, dir, file, content, outcome);
             }
             // could not replay (for example unsaved edits in the editor): fall back to the dialog
         }
         if (confirm || writeMode != WriteMode.AUTO) {
-            long waitStart = System.currentTimeMillis();
+            long waitStart = MonotonicClock.millis();
             boolean confirmed = bridge != null && bridge.confirmFileWrite(request);
-            lastConfirmWaitMs = System.currentTimeMillis() - waitStart;
+            lastConfirmWaitMs = MonotonicClock.millis() - waitStart;
             if (!confirmed) {
                 JsonObject result = new JsonObject();
                 result.put("status", "rejected");

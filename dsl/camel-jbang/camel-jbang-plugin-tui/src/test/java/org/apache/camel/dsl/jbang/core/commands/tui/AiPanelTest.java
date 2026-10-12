@@ -71,13 +71,13 @@ class AiPanelTest {
     @Test
     void thePanelIsIdleOnlyWhenNothingIsTypedOrAsked() {
         AiPanel panel = new AiPanel();
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         assertTrue(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, now), "nothing typed yet");
 
         type(panel, "why");
-        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, System.currentTimeMillis()), "typing a question");
+        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, MonotonicClock.millis()), "typing a question");
         // still typed, even long after the last key
-        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, System.currentTimeMillis() + 60_000));
+        assertFalse(panel.idleFor(AiPanel.OVERVIEW_IDLE_MS, MonotonicClock.millis() + 60_000));
     }
 
     @Test

@@ -574,7 +574,7 @@ class AiPanel {
             // it waits until the panel is idle, so a question asked right away is answered first
             Thread t = new Thread(
                     () -> projectOverview.autoExplain(dir, c, mcpFacade, this::addOverviewEntry,
-                            () -> idleFor(OVERVIEW_IDLE_MS, System.currentTimeMillis())),
+                            () -> idleFor(OVERVIEW_IDLE_MS, MonotonicClock.millis())),
                     "tui-ai-overview-check");
             t.setDaemon(true);
             t.start();
@@ -584,7 +584,10 @@ class AiPanel {
     /** How long the panel is left alone (nothing typed, no question running) before the summary starts. */
     static final long OVERVIEW_IDLE_MS = 3000;
 
-    /** Whether the panel has been idle for a while: no question or command running, nothing typed. */
+    /**
+     * Whether the panel has been idle for a while: no question or command running, nothing typed. Now is a
+     * {@link MonotonicClock} time.
+     */
     boolean idleFor(long ms, long now) {
         return !thinking.get() && activeCliCommand == null && inputBuffer.isEmpty() && now - lastInputMs >= ms;
     }
@@ -863,7 +866,7 @@ class AiPanel {
     }
 
     boolean handleKeyEvent(KeyEvent ke) {
-        lastInputMs = System.currentTimeMillis();
+        lastInputMs = MonotonicClock.millis();
         if (permissionPopup.isVisible()) {
             if (ke.isCtrlC()) {
                 interruptBusyOperation();
@@ -1581,7 +1584,7 @@ class AiPanel {
         noteQuestionStarted(question);
         log(LogLevel.QUESTION, "Question", question);
         thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
-        thinkingStartTime = System.currentTimeMillis();
+        thinkingStartTime = MonotonicClock.millis();
         thinking.set(true);
 
         // re-read the tool mode so a change made in F2 -> Settings applies to the next question, and rebuild the
@@ -1650,10 +1653,10 @@ class AiPanel {
                 throw new InterruptedException();
             }
 
-            long callStart = System.currentTimeMillis();
+            long callStart = MonotonicClock.millis();
             drainClientOutput();
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
-            long callLatency = System.currentTimeMillis() - callStart;
+            long callLatency = MonotonicClock.millis() - callStart;
             turnAiMs += callLatency;
             if (response == null) {
                 String err = "No response from LLM";
@@ -1692,7 +1695,7 @@ class AiPanel {
                     String key = toolCall.name() + " " + arguments;
                     int repeats = callCounts.merge(key, 1, Integer::sum);
                     String result;
-                    long toolStart = System.currentTimeMillis();
+                    long toolStart = MonotonicClock.millis();
                     if (repeats > MAX_IDENTICAL_TOOL_CALLS) {
                         result = "You have already called " + toolCall.name() + " with these exact arguments "
                                  + (repeats - 1) + " times in this turn and the result will not change. Stop calling "
@@ -1700,7 +1703,7 @@ class AiPanel {
                     } else {
                         result = executeTuiTool(toolCall.name(), toolCall.arguments());
                     }
-                    long toolElapsed = System.currentTimeMillis() - toolStart;
+                    long toolElapsed = MonotonicClock.millis() - toolStart;
                     if (toolRegistry != null) {
                         // waiting for the user to confirm a file write is not tool time
                         toolElapsed = Math.max(0, toolElapsed - toolRegistry.consumeConfirmWaitMs());
@@ -1740,10 +1743,10 @@ class AiPanel {
                 "You have used all " + MAX_ITERATIONS + " tool calls available for this question and cannot call any"
                                             + " more; do not call a tool. Answer now: summarize what you did, what"
                                             + " you found, what failed, and what the user could try next."));
-        long wrapUpStart = System.currentTimeMillis();
+        long wrapUpStart = MonotonicClock.millis();
         drainClientOutput();
         LlmClient.ChatResponse wrapUp = client.chatWithTools(systemPrompt, messages, tools);
-        long wrapUpLatency = System.currentTimeMillis() - wrapUpStart;
+        long wrapUpLatency = MonotonicClock.millis() - wrapUpStart;
         turnAiMs += wrapUpLatency;
         if (wrapUp != null) {
             turnRequests++;
@@ -1752,10 +1755,10 @@ class AiPanel {
         }
         if (wrapUp == null || wrapUp.text() == null || wrapUp.text().isBlank()) {
             // the model called a tool regardless: once more without any tool to call, at the price of the prefix
-            wrapUpStart = System.currentTimeMillis();
+            wrapUpStart = MonotonicClock.millis();
             drainClientOutput();
             wrapUp = client.chatWithTools(systemPrompt, messages, List.of());
-            wrapUpLatency = System.currentTimeMillis() - wrapUpStart;
+            wrapUpLatency = MonotonicClock.millis() - wrapUpStart;
             turnAiMs += wrapUpLatency;
             if (wrapUp != null) {
                 turnRequests++;
@@ -1798,7 +1801,7 @@ class AiPanel {
             List<LlmClient.Message> messages) {
         sessionTotalTokens += totalUsage.totalTokens();
         if (text != null && !text.isBlank()) {
-            long elapsed = System.currentTimeMillis() - thinkingStartTime;
+            long elapsed = MonotonicClock.millis() - thinkingStartTime;
             String note = problems.isEmpty() ? null : answerNote(problems);
             ConversationEntry entry = new ConversationEntry(
                     AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
@@ -2011,7 +2014,7 @@ class AiPanel {
         conversation.add(new ConversationEntry(AiRole.USER, question));
         log(LogLevel.QUESTION, "Question", question);
         thinkingVerb = THINKING_VERBS.get(ThreadLocalRandom.current().nextInt(THINKING_VERBS.size()));
-        thinkingStartTime = System.currentTimeMillis();
+        thinkingStartTime = MonotonicClock.millis();
         thinking.set(true);
         // The panel keeps showing exactly what was typed (including an explicit /agent: escape), but the agent
         // itself only ever sees its own command name: /agent:clear reaches it as /clear.
@@ -2269,7 +2272,7 @@ class AiPanel {
         }
 
         synchronized void finish(String stopReason) {
-            long elapsed = System.currentTimeMillis() - thinkingStartTime;
+            long elapsed = MonotonicClock.millis() - thinkingStartTime;
             // the agent reports what its context holds now, not what the turn spent: the turn is the growth, and a
             // context that shrank because the agent compacted spends nothing
             long previous = acpContextUsed;
@@ -2681,15 +2684,15 @@ class AiPanel {
     }
 
     private void renderThinkingStatus(Frame frame, Rect area) {
-        long elapsed = (System.currentTimeMillis() - thinkingStartTime) / 1000;
+        long elapsed = (MonotonicClock.millis() - thinkingStartTime) / 1000;
         Spinner spinner = Spinner.builder()
                 .spinnerStyle(SpinnerStyle.DOTS)
                 .style(Style.EMPTY.fg(Theme.accent()).bold())
                 .build();
         Rect spinnerArea = new Rect(area.left(), area.top(), 2, 1);
-        frame.renderStatefulWidget(spinner, spinnerArea, new SpinnerState(System.currentTimeMillis() / 100));
+        frame.renderStatefulWidget(spinner, spinnerArea, new SpinnerState(MonotonicClock.millis() / 100));
 
-        long dots = (System.currentTimeMillis() / 500) % 4;
+        long dots = (MonotonicClock.millis() / 500) % 4;
         String text = " " + (thinkingVerb != null ? thinkingVerb : THINKING_VERBS.get(0));
         if (elapsed > 0) {
             text += " (" + elapsed + "s)";

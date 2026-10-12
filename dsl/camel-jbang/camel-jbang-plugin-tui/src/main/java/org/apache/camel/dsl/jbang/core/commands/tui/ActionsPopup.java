@@ -981,6 +981,7 @@ class ActionsPopup {
         }
     }
 
+    /** Watches the launches; now is a {@link MonotonicClock} time. */
     void tick(long now) {
         launchManager.tick(now);
     }
@@ -1331,7 +1332,7 @@ class ActionsPopup {
         runOptionsForm.close();
 
         // the project stays listed (Starting) until its app shows up and stands in for it
-        phantom.startingSince = System.currentTimeMillis();
+        phantom.startingSince = MonotonicClock.millis();
 
         // the app is found by the process it runs in: a folder runs from elsewhere, and reports another directory
         phantom.launchedProcess = phantom.projectType != null

@@ -1582,7 +1582,7 @@ class SourceTab extends AbstractTab {
 
     /** The beans and classes the project declares, read again when a file of the project changed. */
     ProjectBeans projectBeans() {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         if (now - projectBeansChecked < 2000) {
             // the quick doc asks on every frame: look at the files at most every 2 seconds
             return projectBeans;

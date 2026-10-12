@@ -312,7 +312,7 @@ public class CamelMonitor extends CamelCommand {
         TapePlayer.Driver driver = new TapePlayer.Driver() {
             @Override
             public void key(KeyEvent event) {
-                pendingKeys.add(new McpFacade.PendingKey(event, System.currentTimeMillis()));
+                pendingKeys.add(new McpFacade.PendingKey(event, MonotonicClock.millis()));
             }
 
             @Override
@@ -2030,10 +2030,10 @@ public class CamelMonitor extends CamelCommand {
     }
 
     private boolean handleTickEvent(TuiRunner runner) {
-        long now = System.currentTimeMillis();
+        long now = MonotonicClock.millis();
         boolean keyProcessed = false;
         McpFacade.PendingKey pk;
-        while ((pk = pendingKeys.peek()) != null && now >= pk.fireAt()) {
+        while ((pk = pendingKeys.peek()) != null && pk.isDue(now)) {
             pendingKeys.poll();
             mcpInjectedKey = true;
             handleEvent(pk.event(), runner);
@@ -2249,7 +2249,7 @@ public class CamelMonitor extends CamelCommand {
             }
         }
         if (monitorNotification != null) {
-            if (System.currentTimeMillis() > monitorNotificationExpiry) {
+            if (MonotonicClock.millis() > monitorNotificationExpiry) {
                 monitorNotification = null;
             }
         }
@@ -2798,7 +2798,7 @@ public class CamelMonitor extends CamelCommand {
     private void setNotification(String message, boolean error) {
         monitorNotification = message;
         monitorNotificationError = error;
-        monitorNotificationExpiry = System.currentTimeMillis() + (error ? 20000 : 10000);
+        monitorNotificationExpiry = MonotonicClock.millis() + (error ? 20000 : 10000);
         notificationWaveState.reset();
     }
 
@@ -2981,12 +2981,12 @@ public class CamelMonitor extends CamelCommand {
         List<Span> rightSpans = new ArrayList<>();
 
         if (recordingManager.isRecording() && !recordingManager.getRecentKeys().isEmpty()) {
-            long now = System.currentTimeMillis();
+            long now = MonotonicClock.millis();
             List<RecordingManager.KeyRecord> recentKeys = recordingManager.getRecentKeys();
             int maxKeys = Math.min(recentKeys.size(), 8);
             List<RecordingManager.KeyRecord> visible = recentKeys.subList(recentKeys.size() - maxKeys, recentKeys.size());
             for (RecordingManager.KeyRecord kr : visible) {
-                long age = now - kr.timestamp();
+                long age = now - kr.pressedAt();
                 Style style = age < 1000
                         ? Theme.selectionBg()
                         : Theme.muted();
