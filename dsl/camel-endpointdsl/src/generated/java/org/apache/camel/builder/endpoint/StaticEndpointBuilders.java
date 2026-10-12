@@ -17695,18 +17695,20 @@ public class StaticEndpointBuilders {
     }
     /**
      * Wasm (camel-wasm)
-     * Invoke Wasm functions.
+     * Run Wasm programs (WASI Preview 1 command modules) with the message body
+     * as standard input.
      * 
      * Category: core,script
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-wasm
      * 
-     * Syntax: <code>wasm:functionName</code>
+     * Syntax: <code>wasm:module</code>
      * 
-     * Path parameter: functionName (required)
-     * The Function Name
+     * Path parameter: module (required)
+     * The WASI Preview 1 command module to run, as a resource: by default from
+     * the classpath, or with a prefix such as classpath:, file: or http:
      * 
-     * @param path functionName
+     * @param path module
      * @return the dsl builder
      */
     public static WasmEndpointBuilderFactory.WasmEndpointBuilder wasm(String path) {
@@ -17714,20 +17716,22 @@ public class StaticEndpointBuilders {
     }
     /**
      * Wasm (camel-wasm)
-     * Invoke Wasm functions.
+     * Run Wasm programs (WASI Preview 1 command modules) with the message body
+     * as standard input.
      * 
      * Category: core,script
      * Since: 4.4
      * Maven coordinates: org.apache.camel:camel-wasm
      * 
-     * Syntax: <code>wasm:functionName</code>
+     * Syntax: <code>wasm:module</code>
      * 
-     * Path parameter: functionName (required)
-     * The Function Name
+     * Path parameter: module (required)
+     * The WASI Preview 1 command module to run, as a resource: by default from
+     * the classpath, or with a prefix such as classpath:, file: or http:
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
-     * @param path functionName
+     * @param path module
      * @return the dsl builder
      */
     public static WasmEndpointBuilderFactory.WasmEndpointBuilder wasm(String componentName, String path) {

@@ -13,6 +13,20 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.1 to 4.22.2
 
+=== camel-lra - only an LRA hosted by the configured coordinator is joined
+
+The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
+coordinator (`coordinatorUrl` followed by `coordinatorContextPath`). A message whose `Long-Running-Action` header holds
+the URL of another coordinator now fails, instead of the saga service calling that URL.
+
+If your participants reach the same coordinator under different URLs, for example with different host names, list the
+other coordinator URLs, including the context path, in the new `allowedCoordinatorUrls` option
+(`camel.lra.allowedCoordinatorUrls`).
+
+This also applies to the LRAs the service starts itself, which a nested saga route looks up again: when the
+coordinator returns LRA URLs under another base URL than `coordinatorUrl`, for example behind a proxy, add that
+base URL to `allowedCoordinatorUrls` as well.
+
 === camel-management - Route group exchange counters count once per entry into the group again
 
 In 4.22.1, the route group MBean (`ManagedRouteGroupMBean`) exchange counters and processing times
