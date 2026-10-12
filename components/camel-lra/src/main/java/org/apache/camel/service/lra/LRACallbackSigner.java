@@ -68,12 +68,13 @@ final class LRACallbackSigner {
      * Checks the signature of a callback URL, in constant time.
      *
      * @param  callbackPath the participant path that was called (compensate or complete)
-     * @param  parameters   the query parameters of the called URL, without the signature
+     * @param  parameters   the query parameters of the called URL, without the signature, may be <tt>null</tt> when
+     *                      they could not be read
      * @param  signature    the signature received with the URL, may be <tt>null</tt>
      * @return              true if the signature matches the path and the parameters
      */
     boolean verify(String callbackPath, Map<String, String> parameters, String signature) {
-        if (signature == null) {
+        if (parameters == null || signature == null) {
             return false;
         }
         byte[] expected = sign(callbackPath, parameters).getBytes(StandardCharsets.UTF_8);

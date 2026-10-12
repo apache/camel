@@ -56,6 +56,8 @@ import org.slf4j.LoggerFactory;
 public class LRASagaService extends ServiceSupport implements StaticService, CamelSagaService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LRASagaService.class);
+    private static final List<String> RESERVED_OPTION_NAMES = List.of(
+            LRAConstants.URL_COMPENSATION_KEY, LRAConstants.URL_COMPLETION_KEY, LRAConstants.URL_SIGNATURE_KEY);
 
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
@@ -202,10 +204,30 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
 
     @Override
     public void registerStep(CamelSagaStep step) {
+        checkOptionNames(step);
         step.getCompensation().map(Endpoint::getEndpointUri).ifPresent(compensationURIs::add);
         step.getCompletion().map(Endpoint::getEndpointUri).ifPresent(completionURIs::add);
         if (step.getRouteId() != null) {
             stepsByRouteId.computeIfAbsent(step.getRouteId(), k -> new CopyOnWriteArrayList<>()).add(step);
+        }
+    }
+
+    /**
+     * The saga options travel in the query of the participant callback URLs, next to the parameters of the saga
+     * service, so an option cannot use one of their names. Header names are case-insensitive, so neither can it use
+     * them in another case.
+     */
+    private static void checkOptionNames(CamelSagaStep step) {
+        if (step.getOptions() == null) {
+            return;
+        }
+        for (String name : step.getOptions().keySet()) {
+            for (String reserved : RESERVED_OPTION_NAMES) {
+                if (reserved.equalsIgnoreCase(name)) {
+                    throw new IllegalArgumentException(
+                            "The saga option " + name + " uses a name reserved by the LRA saga service");
+                }
+            }
         }
     }
 

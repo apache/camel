@@ -17,10 +17,12 @@
 package org.apache.camel.service.lra;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.saga.CamelSagaStep;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LRASagaServiceAllowlistTest extends CamelTestSupport {
@@ -144,5 +147,19 @@ public class LRASagaServiceAllowlistTest extends CamelTestSupport {
         sagaService.unregisterSteps("unknownRoute");
 
         assertTrue(sagaService.getRegisteredCompensationURIs().contains("direct://compensate1"));
+    }
+
+    @DisplayName("registerStep rejects a saga option named like a parameter of the callback URLs, in any case")
+    @Test
+    void testRegisterStepRejectsReservedOptionNames() {
+        Endpoint compensation = context().getEndpoint("direct:compensate1");
+        for (String name : new String[] {
+                "Camel-Saga-Compensate", "Camel-Saga-Complete", "Camel-Saga-Signature", "camel-saga-signature" }) {
+            CamelSagaStep step = new CamelSagaStep(
+                    compensation, null, Map.of(name, ExpressionBuilder.constantExpression("value")), null);
+
+            assertThrows(IllegalArgumentException.class, () -> sagaService.registerStep(step), name);
+        }
+        assertTrue(sagaService.getRegisteredURIs().isEmpty());
     }
 }

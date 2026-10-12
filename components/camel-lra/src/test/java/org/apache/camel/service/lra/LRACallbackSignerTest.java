@@ -101,6 +101,13 @@ class LRACallbackSignerTest {
     }
 
     @Test
+    void missingParametersDoNotMatch() {
+        String signature = signer.sign(PARTICIPANT_PATH_COMPENSATE, parameters());
+
+        assertFalse(signer.verify(PARTICIPANT_PATH_COMPENSATE, null, signature));
+    }
+
+    @Test
     void nullValueIsSignedAsAnEmptyValue() {
         Map<String, String> withNull = parameters();
         withNull.put("note", null);
