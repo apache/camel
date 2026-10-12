@@ -1582,8 +1582,9 @@ public final class EventHelper {
      * creates the event lazily (via {@code eventSupplier}) only when some notifier wants it, and delivers through
      * {@code doNotifyEvent} so one failing notifier does not stop delivery to the others.
      * <p>
-     * AI events are their own category: {@code ignoreExchangeEvents} does <em>not</em> suppress them even though an
-     * {@code AiEvent} is an exchange event. A notifier opts out with {@code setIgnoreAiEvents(true)}.
+     * AI events are their own category: {@code ignoreExchangeEvents} does <em>not</em> suppress them, even for the
+     * exchange-backed {@link AiEvent.ExchangeAiEvent} subtype. A notifier opts out with
+     * {@code setIgnoreAiEvents(true)}.
      *
      * @since 4.24
      */
@@ -1603,18 +1604,26 @@ public final class EventHelper {
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
-            if (notifier.isDisabled() || notifier.isIgnoreAiEvents()) {
-                continue;
-            }
-
-            if (event == null) {
-                // only create event once, and only when a notifier wants it
-                event = eventSupplier.get();
-                if (event == null) {
-                    return false;
+            // isDisabled()/isIgnoreAiEvents() are overridable callbacks, so guard them per notifier too (not only the
+            // isEnabled()/notify() calls inside doNotifyEvent): a broken notifier must neither escape - which would
+            // change the producer's outcome, e.g. an authorization refusal - nor stop delivery to the other notifiers.
+            try {
+                if (notifier.isDisabled() || notifier.isIgnoreAiEvents()) {
+                    continue;
                 }
+
+                if (event == null) {
+                    // only create event once, and only when a notifier wants it
+                    event = eventSupplier.get();
+                    if (event == null) {
+                        return answer;
+                    }
+                }
+                answer |= doNotifyEvent(notifier, event);
+            } catch (Throwable e) {
+                LOG.warn("Error notifying AI event {}. This exception will be ignored.",
+                        event != null ? event : "<not created>", e);
             }
-            answer |= doNotifyEvent(notifier, event);
         }
         return answer;
     }

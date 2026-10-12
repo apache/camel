@@ -212,14 +212,52 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
     }
 
     @Test
-    void aNotifierThrowingAnErrorDoesNotBreakTheRefusalNorTheHealthyNotifier() {
-        // EventHelper.doNotifyEvent isolates each notifier: a notifier that throws an Error must neither escape (turning
-        // the denial into a propagating failure) nor stop delivery to the healthy notifier registered in @BeforeEach.
+    void aFailingNotifierNeitherBreaksTheRefusalNorStopsALaterSubscriber() {
+        // Each notifier must be isolated across ALL its callbacks: a notifier that throws from the AI eligibility check
+        // (isIgnoreAiEvents, called in EventHelper.notifyAiEvent) or from isEnabled/notify (called in doNotifyEvent)
+        // must neither escape - turning the denial into a propagating failure - nor stop delivery to a subscriber
+        // registered AFTER it. Registering the healthy collector last is what exercises the continuation.
+        // (isDisabled is the other eligibility check my guard wraps, but it is also called unguarded by the generic
+        // lifecycle paths such as context stop, so throwing there would only break teardown; isIgnoreAiEvents is the
+        // AI-specific one that exercises this fix cleanly.)
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public boolean isIgnoreAiEvents() {
+                throw new AssertionError("broken isIgnoreAiEvents");
+            }
+
+            @Override
+            public void notify(CamelEvent event) {
+            }
+        });
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public boolean isEnabled(CamelEvent event) {
+                if (event instanceof AiEvent) {
+                    throw new AssertionError("broken isEnabled");
+                }
+                return true;
+            }
+
+            @Override
+            public void notify(CamelEvent event) {
+            }
+        });
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             @Override
             public void notify(CamelEvent event) {
-                if (event instanceof AiToolAuthorizationDeniedEvent) {
-                    throw new AssertionError("broken notifier");
+                if (event instanceof AiEvent) {
+                    throw new AssertionError("broken notify");
+                }
+            }
+        });
+        // a healthy subscriber registered AFTER the failing ones
+        List<AiEvent> later = new CopyOnWriteArrayList<>();
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiEvent ai) {
+                    later.add(ai);
                 }
             }
         });
@@ -231,8 +269,8 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
         AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
 
         assertThat(result).isInstanceOf(AiToolResult.AuthorizationDenied.class);
-        // the healthy @BeforeEach notifier still received the event despite the other one throwing
-        assertThat(events).hasSize(1);
+        // the subscriber registered after the failing notifiers still received the event
+        assertThat(later).hasSize(1);
     }
 
     @Test
