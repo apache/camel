@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
@@ -37,13 +38,14 @@ import org.slf4j.LoggerFactory;
 public class TelegramAsyncHandler {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramAsyncHandler.class);
 
-    private final String uri;
+    // describes the request without its URI, which contains the authorization token
+    private final String request;
     private final Class<? extends MessageResult> resultClass;
     private final ObjectMapper mapper;
     private final Exchange exchange;
 
     TelegramAsyncHandler(String uri, Class<? extends MessageResult> resultClass, ObjectMapper mapper, Exchange exchange) {
-        this.uri = uri;
+        this.request = TelegramServiceRestBotAPIAdapter.describe("POST", URI.create(uri));
         this.resultClass = resultClass;
         this.mapper = mapper;
         this.exchange = exchange;
@@ -97,7 +99,7 @@ public class TelegramAsyncHandler {
             if (success) {
                 if (LOG.isTraceEnabled()) {
                     final String body = IOHelper.toString(r);
-                    LOG.trace("Received body for {}: {}", uri, body);
+                    LOG.trace("Received body for {}: {}", request, body);
                     result = mapper.readValue(body, resultClass);
                 } else {
                     result = mapper.readValue(r, resultClass);
@@ -106,12 +108,12 @@ public class TelegramAsyncHandler {
                 exchange.getMessage().setBody(result);
             } else {
                 throw new RuntimeCamelException(
-                        uri + " responded: " + response.statusCode() + IOHelper.toString(r));
+                        request + " responded: " + response.statusCode() + IOHelper.toString(r));
             }
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException(ex);
         } catch (IOException ex) {
-            throw new RuntimeCamelException("Could not parse the response from " + uri, ex);
+            throw new RuntimeCamelException("Could not parse the response from " + request, ex);
         }
 
         return exchange;

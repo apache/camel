@@ -130,12 +130,22 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @Override
     public Processor createWebhookHandler(Processor next) {
+        if (!configuration.isWebhookSecretTokenEnabled()) {
+            LOG.warn("The webhook secret token is disabled (webhookSecretTokenEnabled=false): webhook requests to {} are not"
+                     + " verified",
+                    this);
+            return new TelegramWebhookProcessor(next, null);
+        }
         return new TelegramWebhookProcessor(next, resolveWebhookSecretToken());
     }
 
     @Override
     public void registerWebhook() throws Exception {
-        if (!telegramService.setWebhook(webhookConfiguration.computeFullExternalUrl(), resolveWebhookSecretToken())) {
+        String url = webhookConfiguration.computeFullExternalUrl();
+        boolean registered = configuration.isWebhookSecretTokenEnabled()
+                ? telegramService.setWebhook(url, resolveWebhookSecretToken())
+                : telegramService.setWebhook(url);
+        if (!registered) {
             throw new RuntimeCamelException("The Telegram API refused to register a webhook");
         }
     }

@@ -75,6 +75,14 @@ class TelegramWebhookSecretTokenTest extends TelegramTestSupport {
         assertEquals("url=http://my-domain.com/my-test&secret_token=configured_Secret-token-42", query);
     }
 
+    @Test
+    void registrationSendsNoSecretTokenWhenDisabled() throws Exception {
+        String query = register("webhook:telegram:bots?webhookPath=/my-test&webhook-external-url=http://my-domain.com"
+                                + "&webhookSecretTokenEnabled=false");
+
+        assertEquals("url=http://my-domain.com/my-test", query);
+    }
+
     /**
      * Starts a webhook route against a mock Telegram API, and returns the query of the setWebhook call.
      */

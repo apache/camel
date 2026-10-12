@@ -70,6 +70,12 @@ public class TelegramConfiguration {
               label = "consumer,security", security = "secret")
     private String webhookSecretToken;
 
+    @UriParam(description = "Whether, in webhook mode, Camel registers the webhook with a secret token and rejects a webhook request"
+                            + " that does not carry it. Set it to false to restore the behaviour of earlier versions, where the webhook"
+                            + " was registered without a secret token and webhook requests were not verified.",
+              label = "consumer,security", defaultValue = "true", security = "insecure:dev", insecureValue = "false")
+    private boolean webhookSecretTokenEnabled = true;
+
     @UriParam(label = "advanced",
               description = "Can be used to set an alternative base URI, e.g. when you want to test the component against a mock Telegram API")
     private String baseUri;
@@ -147,6 +153,14 @@ public class TelegramConfiguration {
 
     public void setWebhookSecretToken(String webhookSecretToken) {
         this.webhookSecretToken = webhookSecretToken;
+    }
+
+    public boolean isWebhookSecretTokenEnabled() {
+        return webhookSecretTokenEnabled;
+    }
+
+    public void setWebhookSecretTokenEnabled(boolean webhookSecretTokenEnabled) {
+        this.webhookSecretTokenEnabled = webhookSecretTokenEnabled;
     }
 
     public String getBaseUri() {

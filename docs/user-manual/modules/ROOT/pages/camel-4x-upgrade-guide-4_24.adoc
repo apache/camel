@@ -50,12 +50,25 @@ every time.
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
 `X-Telegram-Bot-Api-Secret-Token` header of every webhook request, and rejects a webhook request that does not carry
 the token with HTTP 403. The token is the value of the new `webhookSecretToken` option or, when that option is not
-set, a value derived from the authorization token.
+set, a value derived from the authorization token. A client that calls the webhook endpoint directly, for example in
+a test, must send the header too.
 
-No change is needed when Camel registers the webhook, either at startup (`webhookAutoRegister=true`, the default)
-or through the `WebhookRoutePolicy`. If you register the webhook outside Camel, set `webhookSecretToken` and pass
-the same value as the `secret_token` parameter of `setWebhook`. A client that calls the webhook endpoint directly,
-for example in a test, must send the header too.
+When Camel registers the webhook at startup (`webhookAutoRegister=true`, the default), nothing needs to change: each
+upgraded instance registers the webhook with the token, and the instances that are not upgraded yet ignore the header.
+
+When the webhook is registered in another way, through the `WebhookRoutePolicy` or outside Camel, the registration
+made with the previous version has no secret token, and the upgraded instances reject every update until the webhook
+is registered again with it. Register the webhook again first, then upgrade the instances that receive the updates:
+instances of the previous version ignore the header. With the `WebhookRoutePolicy`, run the registration with the new
+version. Outside Camel, set `webhookSecretToken`, and pass the same value as the `secret_token` parameter of
+`setWebhook`.
+
+The default webhook path is a hash of the endpoint URI, so adding an option to the URI, such as `webhookSecretToken`,
+changes the path. When the webhook is not registered by Camel at startup, set `webhookPath` to keep the path that is
+registered.
+
+To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
+secret token, and webhook requests are not verified.
 
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 

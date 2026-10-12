@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,24 +46,31 @@ public class TelegramWebhookProcessor extends AsyncProcessorSupport {
     private AsyncProcessor next;
     private final byte[] secretToken;
 
+    /**
+     * @param next        the processor that receives the updates
+     * @param secretToken the secret token that a webhook request must carry, or {@code null} to accept every webhook
+     *                    request without verifying it
+     */
     public TelegramWebhookProcessor(Processor next, String secretToken) {
         this.next = AsyncProcessorConverterHelper.convert(next);
-        this.secretToken = ObjectHelper.notNull(secretToken, "secretToken").getBytes(StandardCharsets.UTF_8);
+        this.secretToken = secretToken != null ? secretToken.getBytes(StandardCharsets.UTF_8) : null;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        String token = exchange.getIn().getHeader(SECRET_TOKEN_HEADER, String.class);
-        if (token == null || !MessageDigest.isEqual(secretToken, token.getBytes(StandardCharsets.UTF_8))) {
-            LOG.warn("Rejecting a Telegram webhook request with a missing or invalid {} header."
-                     + " A webhook registered outside Camel must use the webhookSecretToken as its secret_token.",
-                    SECRET_TOKEN_HEADER);
-            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
-            exchange.getMessage().setBody("");
-            callback.done(true);
-            return true;
+        if (secretToken != null) {
+            String token = exchange.getIn().getHeader(SECRET_TOKEN_HEADER, String.class);
+            if (token == null || !MessageDigest.isEqual(secretToken, token.getBytes(StandardCharsets.UTF_8))) {
+                LOG.warn("Rejecting a Telegram webhook request with a missing or invalid {} header."
+                         + " A webhook registered outside Camel must use the webhookSecretToken as its secret_token.",
+                        SECRET_TOKEN_HEADER);
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
+                exchange.getMessage().setBody("");
+                callback.done(true);
+                return true;
+            }
         }
-        // the token has been checked, and is not passed on to the route
+        // the token is not passed on to the route
         exchange.getIn().removeHeader(SECRET_TOKEN_HEADER);
 
         // Let's process the body and transform it into a Telegram incoming message

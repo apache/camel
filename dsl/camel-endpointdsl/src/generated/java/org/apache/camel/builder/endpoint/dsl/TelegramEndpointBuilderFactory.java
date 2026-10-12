@@ -713,6 +713,44 @@ public interface TelegramEndpointBuilderFactory {
             doSetProperty("webhookSecretToken", webhookSecretToken);
             return this;
         }
+        /**
+         * Whether, in webhook mode, Camel registers the webhook with a secret
+         * token and rejects a webhook request that does not carry it. Set it to
+         * false to restore the behaviour of earlier versions, where the webhook
+         * was registered without a secret token and webhook requests were not
+         * verified.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookSecretTokenEnabled the value to set
+         * @return the dsl builder
+         */
+        default TelegramEndpointConsumerBuilder webhookSecretTokenEnabled(boolean webhookSecretTokenEnabled) {
+            doSetProperty("webhookSecretTokenEnabled", webhookSecretTokenEnabled);
+            return this;
+        }
+        /**
+         * Whether, in webhook mode, Camel registers the webhook with a secret
+         * token and rejects a webhook request that does not carry it. Set it to
+         * false to restore the behaviour of earlier versions, where the webhook
+         * was registered without a secret token and webhook requests were not
+         * verified.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param webhookSecretTokenEnabled the value to set
+         * @return the dsl builder
+         */
+        default TelegramEndpointConsumerBuilder webhookSecretTokenEnabled(String webhookSecretTokenEnabled) {
+            doSetProperty("webhookSecretTokenEnabled", webhookSecretTokenEnabled);
+            return this;
+        }
     }
 
     /**
