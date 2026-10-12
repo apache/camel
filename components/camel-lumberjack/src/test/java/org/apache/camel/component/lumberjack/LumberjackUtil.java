@@ -99,9 +99,16 @@ final class LumberjackUtil {
             windows.stream().forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s.bin", window))));
             if (waitForResult) {
                 Awaitility.await().atMost(30, TimeUnit.SECONDS).untilAsserted(
-                        () -> Assertions.assertThat(responses)
-                                .as("Expected one ACK per window frame sent (%d), but received: %s", windows.size(), responses)
-                                .hasSize(windows.size()));
+                        () -> {
+                            List<Integer> received;
+                            synchronized (responses) {
+                                received = new ArrayList<>(responses);
+                            }
+                            Assertions.assertThat(received)
+                                    .as("Expected one ACK per window frame sent (%d), but received: %s", windows.size(),
+                                            received)
+                                    .hasSize(windows.size());
+                        });
             }
 
             channel.close().sync();
@@ -114,7 +121,7 @@ final class LumberjackUtil {
         }
     }
 
-    private static ByteBuf readSample(String resource) {
+    static ByteBuf readSample(String resource) {
         try (InputStream stream = LumberjackUtil.class.getResourceAsStream(resource)) {
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             int input;
