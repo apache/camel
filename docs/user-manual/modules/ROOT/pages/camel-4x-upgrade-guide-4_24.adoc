@@ -27,3 +27,11 @@ A `hashicorp:` property with a field of a secret that does not exist, such as `{
 now resolves to no value, as it already did without a field, so its default value or an optional placeholder
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
+
+=== camel-report-maven-plugin - Java routes are read with the Java DSL parser
+
+The `validate` and `route-coverage` goals read Java routes with the Java DSL parser of camel-java-io instead of
+camel-route-parser (Roaster). XML routes are read as before. The parser reads every `configure()` method of a source
+file, including those of a route builder created inside a test, so `validate` can find and validate endpoints it did
+not see before. An endpoint uri that is only a method call, such as `from(inboxQueue())`, is not validated (it was
+validated as a property placeholder without a component before); with `logUnparseable=true` it is logged.
