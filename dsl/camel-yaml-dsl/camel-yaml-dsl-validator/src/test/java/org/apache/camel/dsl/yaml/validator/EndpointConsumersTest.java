@@ -25,7 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * CAMEL-24955: a direct: or seda: endpoint a route sends to, and no route of the application consumes. With direct: the
- * route fails to start; with seda: nothing fails and the message is never read.
+ * exchange fails; with seda: nothing fails and the message is never read. The endpoints and EIPs that count are the
+ * {@link EndpointRules} camel overview uses too (CAMEL-25180).
  */
 public class EndpointConsumersTest {
 
@@ -44,7 +45,7 @@ public class EndpointConsumersTest {
         List<String> messages = EndpointConsumers.check(SENDS_TO.formatted("direct:lookup"), Set.of());
         assertThat(messages).containsExactly(
                 "route tick: sends to direct:lookup, and no route consumes it - not in this file, nor in the other route"
-                                             + " files of the directory: the route fails to start with No consumers available"
+                                             + " files of the directory: the exchange fails with No consumers available"
                                              + " on endpoint; add a route with from: direct:lookup, or correct the name");
     }
 
@@ -180,4 +181,112 @@ public class EndpointConsumersTest {
                 """;
         assertThat(EndpointConsumers.consumed(kamelet)).isNull();
     }
+
+    @Test
+    public void testAPollingStepConsumesTheEndpoint() {
+        // a poll or a pollEnrich of seda:orders reads the queue: the route consumes it, as camel overview counts it
+        String yaml = SENDS_TO.formatted("seda:orders") + """
+                - route:
+                    from:
+                      uri: timer:batch
+                      steps:
+                        - pollEnrich:
+                            constant: seda:orders
+                            timeout: 1000
+                """;
+        assertThat(EndpointConsumers.check(yaml, Set.of())).isEmpty();
+        assertThat(EndpointConsumers.consumed(yaml)).containsExactly("seda:orders");
+    }
+
+    @Test
+    public void testDisruptorIsCheckedAndNotMixedWithSeda() {
+        // disruptor:q and seda:q are different endpoints at runtime
+        assertThat(EndpointConsumers.check(SENDS_TO.formatted("disruptor:orders"), Set.of("seda:orders")))
+                .singleElement().asString().contains("sends to disruptor:orders");
+        assertThat(EndpointConsumers.check(SENDS_TO.formatted("disruptor-vm:orders"), Set.of())).isEmpty();
+    }
+
+    @Test
+    public void testRestDeadLetterAndRouteConfigurationSend() {
+        String yaml = """
+                - rest:
+                    get:
+                      - path: /orders
+                        to: direct:orders
+                - routeConfiguration:
+                    onException:
+                      - onException:
+                          exception:
+                            - java.lang.Exception
+                          steps:
+                            - to: seda:errors
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:dlq
+                """;
+        assertThat(EndpointConsumers.check(yaml, Set.of()))
+                .hasSize(3)
+                .anySatisfy(m -> assertThat(m).contains("sends to direct:orders"))
+                .anySatisfy(m -> assertThat(m).contains("sends to seda:errors"))
+                .anySatisfy(m -> assertThat(m).contains("sends to direct:dlq"));
+    }
+
+    @Test
+    public void testTheFlowsOfAnIntegrationConsume() {
+        String integration = """
+                apiVersion: camel.apache.org/v1
+                kind: Integration
+                metadata:
+                  name: lookup
+                spec:
+                  flows:
+                    - from:
+                        uri: direct:lookup
+                        steps:
+                          - to: seda:audit
+                """;
+        assertThat(EndpointConsumers.consumed(integration)).containsExactly("direct:lookup");
+        assertThat(EndpointConsumers.check(integration, Set.of()))
+                .singleElement().asString().contains("sends to seda:audit");
+    }
+
+    @Test
+    public void testAPipeConsumesWhatIsNotKnown() {
+        String pipe = """
+                apiVersion: camel.apache.org/v1
+                kind: Pipe
+                metadata:
+                  name: orders
+                spec:
+                  source:
+                    ref:
+                      kind: Kamelet
+                      name: timer-source
+                  sink:
+                    uri: direct:orders
+                """;
+        assertThat(EndpointConsumers.consumed(pipe)).isNull();
+        // a YAML file that is not a route file consumes nothing, and does not keep the check quiet
+        assertThat(EndpointConsumers.consumed("services:\n  db:\n    image: postgres\n")).isEmpty();
+    }
+
+    @Test
+    public void testAnExternalConsumerOnlyKnownAtRuntimeDoesNotKeepTheCheckQuiet() {
+        // kafka:{{topic}} is no direct: or seda: endpoint, whatever the topic; {{endpoint}} could be any of them
+        String yaml = SENDS_TO.formatted("direct:lookup") + """
+                - from:
+                    uri: "kafka:{{topic}}"
+                    steps:
+                      - log: got
+                """;
+        assertThat(EndpointConsumers.check(yaml, Set.of())).hasSize(1);
+        String anyEndpoint = SENDS_TO.formatted("direct:lookup") + """
+                - from:
+                    uri: "{{endpoint}}"
+                    steps:
+                      - log: got
+                """;
+        assertThat(EndpointConsumers.consumed(anyEndpoint)).isNull();
+    }
+
 }
