@@ -480,7 +480,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-rabbitmq",
   "version" : "4.23.0-SNAPSHOT",
-  "serviceVersion" : "4.2.5-management",
+  "serviceVersion" : "4.3.6-management",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.mosquitto.services.MosquittoInfraService",
