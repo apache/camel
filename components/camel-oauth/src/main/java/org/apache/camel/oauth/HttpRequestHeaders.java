@@ -24,15 +24,17 @@ import java.util.Optional;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads a header of the HTTP request a message was created from.
  * <p>
  * HTTP consumers also map query and form parameters into the message headers, so a message header is not necessarily
  * the request header of that name. Credentials are therefore read from the HTTP request itself whenever the message
- * carries it: platform-http on Vert.x, the servlet based consumers and camel-netty-http. The message types are matched
- * by name, and a transport specific class is only loaded for a message of its own type, so none of these transports has
- * to be on the classpath.
+ * carries it: platform-http on Vert.x and on Spring Boot, the servlet based consumers (camel-servlet, camel-jetty) and
+ * camel-netty-http. The message types are matched by name, and a transport specific class is only loaded for a message
+ * of its own type, so none of these transports has to be on the classpath.
  * <p>
  * Any other message falls back to the message headers, leaving out a value that also appears in the query string of the
  * request: the consumer may have mapped it from a query parameter, and a credential does not belong in a url anyway
@@ -40,9 +42,14 @@ import org.apache.camel.Message;
  */
 final class HttpRequestHeaders {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HttpRequestHeaders.class);
+
     private static final String VERTX_HTTP_MESSAGE = "org.apache.camel.component.platform.http.vertx.HttpMessage";
     private static final String SERVLET_HTTP_MESSAGE = "org.apache.camel.http.common.HttpMessage";
     private static final String NETTY_HTTP_MESSAGE = "org.apache.camel.component.netty.http.NettyHttpMessage";
+    // from camel-platform-http-starter, it holds the servlet request in the CamelHttpServletRequest header
+    private static final String SPRING_BOOT_PLATFORM_HTTP_MESSAGE
+            = "org.apache.camel.component.platform.http.springboot.PlatformHttpMessage";
 
     private HttpRequestHeaders() {
     }
@@ -69,6 +76,9 @@ final class HttpRequestHeaders {
             if (NETTY_HTTP_MESSAGE.equals(type.getName())) {
                 return NettyHttpRequestHeaders.values(message, name);
             }
+            if (SPRING_BOOT_PLATFORM_HTTP_MESSAGE.equals(type.getName())) {
+                return ServletHttpRequestHeaders.valuesOfServletRequestHeader(message, name);
+            }
         }
         return Optional.empty();
     }
@@ -93,8 +103,13 @@ final class HttpRequestHeaders {
         if (query != null && !query.isEmpty() && !values.isEmpty()) {
             String rawQuery = query;
             String decodedQuery = decode(rawQuery);
-            // a query string that cannot be decoded cannot be checked either, so none of the values is used
-            values.removeIf(value -> decodedQuery == null || rawQuery.contains(value) || decodedQuery.contains(value));
+            if (decodedQuery == null) {
+                // a query string that cannot be decoded cannot be checked either, so none of the values is used
+                LOG.debug("The {} message header is not used: the query string of the request cannot be decoded", name);
+                values.clear();
+            } else if (values.removeIf(value -> rawQuery.contains(value) || decodedQuery.contains(value))) {
+                LOG.debug("A {} message header value is not used: the query string of the request holds it too", name);
+            }
         }
         return values;
     }

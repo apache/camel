@@ -16,10 +16,17 @@
  */
 package org.apache.camel.oauth;
 
+import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.platform.http.springboot.PlatformHttpMessage;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
@@ -28,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A message that gives no access to the HTTP request: the header values are read from the message, without the values
- * that also appear in the query string of the request.
+ * that also appear in the query string of the request. And the message of platform-http on Spring Boot, which holds the
+ * servlet request in a header.
  */
 class HttpRequestHeadersTest {
 
@@ -95,5 +103,53 @@ class HttpRequestHeadersTest {
 
             assertEquals(List.of(), HttpRequestHeaders.values(message, "Authorization"));
         }
+    }
+
+    @Test
+    void springBootMessageIsReadFromTheServletRequest() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            Message message = new PlatformHttpMessage(
+                    context, servletRequest(Map.of("authorization", List.of("Bearer request-token"))));
+            // what the binding maps from a form field of the same name
+            message.setHeader("Authorization", "Bearer form-token");
+
+            assertEquals(List.of("Bearer request-token"), HttpRequestHeaders.values(message, "Authorization"));
+        }
+    }
+
+    @Test
+    void springBootMessageHeaderIsNotReadWhenTheRequestHasNone() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            Message message = new PlatformHttpMessage(context, servletRequest(Map.of()));
+            message.setHeader("Authorization", "Bearer form-token");
+
+            assertEquals(List.of(), HttpRequestHeaders.values(message, "Authorization"));
+        }
+    }
+
+    @Test
+    void springBootMessageWithoutTheServletRequestFallsBackToTheMessageHeaders() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            Message message = new PlatformHttpMessage(context, null);
+            message.setHeader("Authorization", "Bearer token");
+
+            assertEquals(List.of("Bearer token"), HttpRequestHeaders.values(message, "Authorization"));
+        }
+    }
+
+    /**
+     * A servlet request with the given headers, keyed by lower case name, that only answers {@code getHeaders}.
+     */
+    private static HttpServletRequest servletRequest(Map<String, List<String>> headers) {
+        return (HttpServletRequest) Proxy.newProxyInstance(HttpRequestHeadersTest.class.getClassLoader(),
+                new Class<?>[] { HttpServletRequest.class },
+                (proxy, method, args) -> switch (method.getName()) {
+                    case "getHeaders" -> Collections.enumeration(
+                            headers.getOrDefault(((String) args[0]).toLowerCase(Locale.ROOT), List.of()));
+                    case "toString" -> "HttpServletRequest" + headers;
+                    case "hashCode" -> System.identityHashCode(proxy);
+                    case "equals" -> proxy == args[0];
+                    default -> throw new UnsupportedOperationException(method.getName());
+                });
     }
 }

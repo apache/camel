@@ -20,20 +20,38 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.http.common.HttpMessage;
 
 /**
- * Reads request headers from a message of the servlet based HTTP consumers. Only loaded for a message of that type, see
- * {@link HttpRequestHeaders}.
+ * Reads request headers from a message of the servlet based HTTP consumers. Only loaded for a message of such a type,
+ * see {@link HttpRequestHeaders}.
  */
 final class ServletHttpRequestHeaders {
 
     private ServletHttpRequestHeaders() {
     }
 
+    /**
+     * Reads the headers of the request of a camel-http-common {@link HttpMessage} (camel-servlet, camel-jetty).
+     */
     static Optional<List<String>> values(Message message, String name) {
-        var request = ((HttpMessage) message).getRequest();
+        return values(((HttpMessage) message).getRequest(), name);
+    }
+
+    /**
+     * Reads the headers of the request that the message holds in the {@link Exchange#HTTP_SERVLET_REQUEST} header, as
+     * the message of platform-http on Spring Boot does.
+     */
+    static Optional<List<String>> valuesOfServletRequestHeader(Message message, String name) {
+        return message.getHeader(Exchange.HTTP_SERVLET_REQUEST) instanceof HttpServletRequest request
+                ? values(request, name) : Optional.empty();
+    }
+
+    private static Optional<List<String>> values(HttpServletRequest request, String name) {
         // a container that does not allow access to the headers returns null
         var values = request != null ? request.getHeaders(name) : null;
         return values != null ? Optional.of(Collections.list(values)) : Optional.empty();
