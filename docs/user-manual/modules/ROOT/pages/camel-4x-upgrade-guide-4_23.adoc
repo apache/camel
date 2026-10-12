@@ -2791,12 +2791,15 @@ A message header with several values is now sent as one HTTP header per value.
 
 The Knative HTTP producer sent a header whose value is a collection or an object array (as the consumer maps a
 request header that occurs more than once) as one HTTP header with the `toString()` of the value, for example
-`[a, b]`. It now sends one HTTP header per value, as camel-http does. The reply of the consumer sent only the last
-value of such a header and now sends all of them. Every other value is one header: a String is sent as before, also
-when it contains commas, and a `byte[]` is now converted to a String with the type converter (the producer sent its
-`toString()`, such as `[B@1dc9f5ad`, and the reply only its last byte as a number).
-A collection or an object array that is empty, or that holds only null values, sends no header, as with camel-http
-and camel-netty-http (the producer sent an empty List as the header value `[]`; the reply sent no header before too).
+`[a, b]`. It now sends one HTTP header per value, aligned with camel-netty-http and camel-undertow, which send one
+header per value. The HTTP producers are not uniform here: camel-http sends a header with two or more values as a
+single header in the form `[a, b]`. The reply of the consumer sent only the last value of such a header and now sends
+all of them. Every other value is one header: a String is sent as before, also when it contains commas, and a `byte[]`
+is now converted to a String with the type converter (the producer sent its `toString()`, such as `[B@1dc9f5ad`, and
+the reply only its last byte as a number).
+A collection or an object array that is empty, or that holds only null values, sends no header, as with camel-http,
+camel-netty-http and camel-undertow (the producer sent an empty List as the header value `[]`; the reply sent no
+header before too).
 
 === camel-paho
 

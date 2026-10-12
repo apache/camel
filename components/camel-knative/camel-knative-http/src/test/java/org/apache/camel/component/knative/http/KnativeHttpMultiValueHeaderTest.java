@@ -52,6 +52,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * A header with several values (a collection or an array, as the consumer maps a request header that occurs more than
  * once) must be sent as one HTTP header per value, in the request of the producer and in the reply of the consumer.
+ * This is aligned with camel-netty-http and camel-undertow, which send one header per value. The HTTP producers are not
+ * uniform: camel-http sends two or more values as a single header in the form [a, b].
  */
 class KnativeHttpMultiValueHeaderTest {
 
