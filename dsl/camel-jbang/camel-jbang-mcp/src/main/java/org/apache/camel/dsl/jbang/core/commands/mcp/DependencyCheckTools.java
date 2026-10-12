@@ -26,6 +26,7 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.tooling.model.ComponentModel;
 
 /**
@@ -158,13 +159,9 @@ public class DependencyCheckTools {
     private List<MissingDependency> checkMissingDependencies(
             String routes, List<String> existingDeps, CamelCatalog catalog) {
         List<MissingDependency> missing = new ArrayList<>();
-        String lowerRoutes = routes.toLowerCase();
 
-        for (String comp : catalog.findComponentNames()) {
-            if (!containsComponent(lowerRoutes, comp)) {
-                continue;
-            }
-
+        // the components of the routes' endpoints, not every name in the text (CAMEL-25586)
+        for (String comp : RouteComponents.of(routes, null, catalog)) {
             ComponentModel model = catalog.componentModel(comp);
             if (model == null) {
                 continue;
@@ -267,12 +264,6 @@ public class DependencyCheckTools {
     }
 
     // --- Helpers ---
-
-    private boolean containsComponent(String content, String comp) {
-        return content.contains(comp + ":")
-                || content.contains("\"" + comp + "\"")
-                || content.contains("'" + comp + "'");
-    }
 
     /**
      * Compare two version strings. Returns negative if v1 < v2, 0 if equal, positive if v1 > v2.
