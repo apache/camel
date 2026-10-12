@@ -134,7 +134,8 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         Object result = template.requestBody("ignite-compute:" + resourceUid + "?executionType=BROADCAST",
                 TestIgniteComputeResources.TEST_RUNNABLE, Object.class);
         Assertions.assertThat(result).isNull();
-        Assertions.assertThat(TestIgniteComputeResources.COUNTER.get()).isEqualTo(3);
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> Assertions.assertThat(TestIgniteComputeResources.COUNTER.get()).isEqualTo(3));
 
         // Single Callable.
         Collection<String> colResult = template.requestBody("ignite-compute:" + resourceUid + "?executionType=BROADCAST",
@@ -209,18 +210,27 @@ public class IgniteComputeTest extends AbstractIgniteTest {
         Awaitility.await().atMost(30, TimeUnit.SECONDS)
                 .until(() -> {
                     IgniteCluster cluster = igniteInstance.cluster();
+                    IgniteCluster mainCluster = ignite().cluster();
                     return cluster.nodes().size() == ADDITIONAL_INSTANCES.size() + 1
-                            && cluster.state().active();
+                            && cluster.state().active()
+                            && mainCluster.nodes().size() == ADDITIONAL_INSTANCES.size() + 1
+                            && mainCluster.state().active();
                 });
 
     }
 
     @AfterEach
     public void stopAdditionalIgniteInstances() {
-        for (Ignite ignite : ADDITIONAL_INSTANCES) {
-            ignite.close();
+        if (!ADDITIONAL_INSTANCES.isEmpty()) {
+            for (Ignite ignite : ADDITIONAL_INSTANCES) {
+                ignite.close();
+            }
+            ADDITIONAL_INSTANCES.clear();
+            if (ignite() != null) {
+                Awaitility.await().atMost(30, TimeUnit.SECONDS)
+                        .until(() -> ignite().cluster().nodes().size() == 1);
+            }
         }
-        ADDITIONAL_INSTANCES.clear();
     }
 
     @AfterEach
