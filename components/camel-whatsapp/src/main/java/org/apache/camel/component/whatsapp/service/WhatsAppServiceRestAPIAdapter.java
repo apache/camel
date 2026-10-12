@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Supplier;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -51,6 +52,7 @@ import org.apache.camel.component.whatsapp.model.TextMessageRequest;
 import org.apache.camel.component.whatsapp.model.UploadMediaRequest;
 import org.apache.camel.component.whatsapp.util.FileUploadStreamSupplier;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,8 +199,20 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
             CompletableFuture<HttpResponse<String>> asyncResponse
                     = httpClient.sendAsync(httpRequestBuilder.build(), HttpResponse.BodyHandlers.ofString());
 
-            asyncResponse.thenAccept(response -> {
+            // whenComplete (and not thenAccept), so that the exchange is also completed when there is no response,
+            // for example when the connection failed or the connect timeout expired. The request itself has no
+            // timeout, so a server that accepts the connection and never answers is not covered here.
+            asyncResponse.whenComplete((response, failure) -> {
                 try {
+                    if (failure != null) {
+                        Throwable cause = failure instanceof CompletionException && failure.getCause() != null
+                                ? failure.getCause() : failure;
+                        // the exception of the HTTP client often has no message (a refused connection), so say
+                        // where the request went
+                        exchange.setException(new RuntimeCamelException(
+                                "Could not send message to " + URISupport.sanitizeUri(uri), cause));
+                        return;
+                    }
                     int statusCode = response.statusCode();
                     LOG.info("Response received with status {} and body {}", statusCode, response.body());
                     final boolean success = statusCode >= 200 && statusCode < 300;
@@ -208,14 +222,13 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
                         exchange.getMessage().setBody(result);
                     } else {
                         LOG.debug("Error response Headers {}", response.headers());
-                        RuntimeException exception = new RuntimeCamelException(
-                                uri + " responded: " + statusCode + " and body: " + response.body());
-                        exchange.setException(exception);
-                        throw exception;
+                        exchange.setException(new RuntimeCamelException(
+                                URISupport.sanitizeUri(uri) + " responded: " + statusCode + " and body: "
+                                                                        + response.body()));
                     }
-                } catch (JsonProcessingException e) {
+                } catch (Exception e) {
+                    // any failure while handling the response (not only a JSON one) must fail the exchange
                     exchange.setException(e);
-                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 } finally {
                     callback.done(false);
                 }

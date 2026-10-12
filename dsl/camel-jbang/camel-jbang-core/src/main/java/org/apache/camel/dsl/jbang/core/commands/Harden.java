@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.FileUtil;
@@ -472,7 +473,7 @@ public class Harden extends CamelCommand {
         StringBuilder prompt = new StringBuilder();
 
         if (catalogContext) {
-            appendCatalogContext(prompt, routeContent);
+            appendCatalogContext(prompt, routeContent, fileExtension);
         }
 
         prompt.append("File: ").append(fileName).append("\n");
@@ -484,21 +485,20 @@ public class Harden extends CamelCommand {
         return prompt.toString();
     }
 
-    private void appendCatalogContext(StringBuilder prompt, String routeContent) {
-        String catalogInfo = buildCatalogContext(routeContent);
+    private void appendCatalogContext(StringBuilder prompt, String routeContent, String fileExtension) {
+        String catalogInfo = buildCatalogContext(routeContent, fileExtension);
         if (catalogInfo.isEmpty()) {
             return;
         }
         prompt.append("Security-relevant component information:\n").append(catalogInfo).append("\n");
     }
 
-    private String buildCatalogContext(String routeContent) {
+    private String buildCatalogContext(String routeContent, String fileExtension) {
         StringBuilder context = new StringBuilder();
         CamelCatalog catalog = new DefaultCamelCatalog();
-        String lowerContent = routeContent.toLowerCase();
 
-        SECURITY_SENSITIVE_COMPONENTS.stream()
-                .filter(comp -> containsComponent(lowerContent, comp))
+        // the components of the route's endpoints, not every name in the text (CAMEL-25586)
+        RouteComponents.of(routeContent, fileExtension, catalog, SECURITY_SENSITIVE_COMPONENTS)
                 .forEach(comp -> {
                     ComponentModel model = catalog.componentModel(comp);
                     if (model != null) {
@@ -534,12 +534,6 @@ public class Harden extends CamelCommand {
             case "smtp", "imap" -> "Use TLS (SMTPS/IMAPS); authenticate securely";
             default -> null;
         };
-    }
-
-    private boolean containsComponent(String content, String comp) {
-        return content.contains(comp + ":")
-                || content.contains("\"" + comp + "\"")
-                || content.contains("'" + comp + "'");
     }
 
     String callOllama(String endpoint, String sysPrompt, String userPrompt) {
