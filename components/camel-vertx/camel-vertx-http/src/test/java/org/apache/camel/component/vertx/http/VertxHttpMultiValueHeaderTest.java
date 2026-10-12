@@ -18,8 +18,12 @@ package org.apache.camel.component.vertx.http;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -27,9 +31,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * A header with several values (a collection or an array, as the HTTP consumers map a repeated request header) must be
- * sent as one HTTP header per value, aligned with camel-netty-http and camel-undertow, which send one header per value.
- * The HTTP producers are not uniform: camel-http sends two or more values as a single header in the form [a, b].
+ * A header whose value is a collection or an object array (as the HTTP consumers map a repeated request header) must be
+ * sent as one HTTP header per value. Any other value is one header.
  */
 class VertxHttpMultiValueHeaderTest extends VertxHttpTestSupport {
 
@@ -60,6 +63,31 @@ class VertxHttpMultiValueHeaderTest extends VertxHttpTestSupport {
         byte[] value = "abc".getBytes(StandardCharsets.UTF_8);
         String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", value, String.class);
         assertEquals("abc", result);
+    }
+
+    @Test
+    void sendsAJsonObjectHeaderAsItsJson() {
+        // a Vert.x JsonObject is an Iterable of its entries, but it is one value
+        JsonObject value = new JsonObject().put("a", "b").put("c", "d");
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", value, String.class);
+        assertEquals("{\"a\":\"b\",\"c\":\"d\"}", result);
+    }
+
+    @Test
+    void sendsAJsonArrayHeaderAsItsJson() {
+        // a Vert.x JsonArray is an Iterable of its elements, but it is one value (a List has one header per value)
+        JsonArray value = new JsonArray().add("a").add("b");
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", value, String.class);
+        assertEquals("[\"a\",\"b\"]", result);
+    }
+
+    @Test
+    void sendsAMapHeaderAsOneValue() {
+        Map<String, Object> value = new LinkedHashMap<>();
+        value.put("a", "b");
+        value.put("c", "d");
+        String result = template.requestBodyAndHeader(getProducerUri(), null, "X-Test", value, String.class);
+        assertEquals("{a=b, c=d}", result);
     }
 
     @Test
