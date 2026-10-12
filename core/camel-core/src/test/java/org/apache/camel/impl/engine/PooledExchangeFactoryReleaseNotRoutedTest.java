@@ -21,15 +21,18 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.PooledExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.PooledObjectFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A consumer that gives back an exchange it never routed (a batch cut down to maxMessagesPerPoll, a consumer that is
@@ -70,6 +73,10 @@ class PooledExchangeFactoryReleaseNotRoutedTest extends ContextTestSupport {
         assertPooledOnce(consumer, exchange);
     }
 
+    /**
+     * Releasing an exchange a second time is still a bug of the consumer. It does no harm here only because nobody took
+     * the exchange from the pool in between; otherwise the second release would reset the exchange of another message.
+     */
     @Test
     void autoReleaseExchangeThatWasRoutedIsPooledOnceWhenReleasedAgain() throws Exception {
         Consumer consumer = context.getRoute("foo").getConsumer();
@@ -94,6 +101,52 @@ class PooledExchangeFactoryReleaseNotRoutedTest extends ContextTestSupport {
         consumer.releaseExchange(exchange, false);
 
         assertPooledOnce(consumer, exchange);
+    }
+
+    @Test
+    void releaseReturnsFalseWhenThePoolIsFullAndTheNotRoutedExchangeIsDiscarded() {
+        PooledExchangeFactory factory = newFactoryWithCapacityOne();
+
+        Exchange first = factory.create(true);
+        Exchange second = factory.create(true);
+
+        assertTrue(factory.release(first), "the pool has room for the first exchange");
+        assertFalse(factory.release(second), "the pool is full, so the second exchange is discarded");
+
+        assertEquals(1, factory.getSize(), "exchanges in the pool");
+        assertEquals(1, factory.getStatistics().getReleasedCounter());
+        assertEquals(1, factory.getStatistics().getDiscardedCounter());
+
+        // the discarded exchange was reset
+        assertEquals(0, second.getClock().getCreated());
+        assertSame(first, factory.create(true));
+        assertNotSame(first, factory.create(true));
+    }
+
+    @Test
+    void releaseReturnsTrueWhenTheExchangeWasAlreadyGivenBackByItsUnitOfWork() {
+        PooledExchangeFactory factory = newFactoryWithCapacityOne();
+
+        Exchange routed = factory.create(true);
+        // what the unit of work does when the route is done
+        ((PooledExchange) routed).done();
+        assertEquals(1, factory.getSize(), "exchanges in the pool");
+
+        assertTrue(factory.release(routed), "nothing to do: the exchange is in the pool already");
+
+        assertEquals(1, factory.getSize(), "exchanges in the pool");
+        assertEquals(1, factory.getStatistics().getReleasedCounter());
+        assertEquals(0, factory.getStatistics().getDiscardedCounter());
+    }
+
+    private PooledExchangeFactory newFactoryWithCapacityOne() {
+        PooledExchangeFactory factory = new PooledExchangeFactory();
+        factory.setCamelContext(context);
+        factory.setCapacity(1);
+        factory.setStatisticsEnabled(true);
+        // build creates the pool; the factory is not started, as it has no consumer to be registered with
+        factory.build();
+        return factory;
     }
 
     private void assertPooledOnce(Consumer consumer, Exchange released) {
