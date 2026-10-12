@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.FileUtil;
@@ -286,7 +287,7 @@ public class Explain extends CamelCommand {
         StringBuilder prompt = new StringBuilder();
 
         if (catalogContext) {
-            appendCatalogContext(prompt, routeContent);
+            appendCatalogContext(prompt, routeContent, fileExtension);
         }
 
         prompt.append("File: ").append(fileName).append("\n");
@@ -298,28 +299,29 @@ public class Explain extends CamelCommand {
         return prompt.toString();
     }
 
-    private void appendCatalogContext(StringBuilder prompt, String routeContent) {
-        String catalogInfo = buildCatalogContext(routeContent);
+    private void appendCatalogContext(StringBuilder prompt, String routeContent, String fileExtension) {
+        String catalogInfo = buildCatalogContext(routeContent, fileExtension);
         if (catalogInfo.isEmpty()) {
             return;
         }
         prompt.append("Reference information:\n").append(catalogInfo).append("\n");
     }
 
-    private String buildCatalogContext(String routeContent) {
+    private String buildCatalogContext(String routeContent, String fileExtension) {
         StringBuilder context = new StringBuilder();
         CamelCatalog catalog = new DefaultCamelCatalog();
         String lowerContent = routeContent.toLowerCase();
 
-        appendComponentDescriptions(context, catalog, lowerContent);
+        appendComponentDescriptions(context, catalog, routeContent, fileExtension);
         appendEipDescriptions(context, catalog, lowerContent);
 
         return context.toString();
     }
 
-    private void appendComponentDescriptions(StringBuilder context, CamelCatalog catalog, String content) {
-        COMMON_COMPONENTS.stream()
-                .filter(comp -> containsComponent(content, comp))
+    private void appendComponentDescriptions(
+            StringBuilder context, CamelCatalog catalog, String content, String fileExtension) {
+        // the components of the route's endpoints, not every name in the text (CAMEL-25586)
+        RouteComponents.of(content, fileExtension, catalog, COMMON_COMPONENTS)
                 .forEach(comp -> appendModelDescription(context, catalog.componentModel(comp), comp, ""));
     }
 
@@ -327,12 +329,6 @@ public class Explain extends CamelCommand {
         COMMON_EIPS.stream()
                 .filter(eip -> content.contains(eip.toLowerCase()) || content.contains(camelCaseToDash(eip)))
                 .forEach(eip -> appendModelDescription(context, catalog.eipModel(eip), eip, " (EIP)"));
-    }
-
-    private boolean containsComponent(String content, String comp) {
-        return content.contains(comp + ":")
-                || content.contains("\"" + comp + "\"")
-                || content.contains("'" + comp + "'");
     }
 
     private void appendModelDescription(StringBuilder context, Object model, String name, String suffix) {
