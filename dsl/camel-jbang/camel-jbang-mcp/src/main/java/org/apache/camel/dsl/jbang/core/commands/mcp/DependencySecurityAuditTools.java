@@ -28,6 +28,7 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.SecurityAdvisoryModel;
 
@@ -162,25 +163,12 @@ public class DependencySecurityAuditTools {
     }
 
     /**
-     * Detect which components a route uses by walking the known catalog component names, the same way
-     * {@link DependencyCheckTools} and {@code HardenTools} do. Tokenizing the route text instead would treat the DSL's
-     * own structural keywords ({@code from:}, {@code to:}, {@code steps:}, {@code uri:}) as component schemes.
+     * The components the routes use: the components of their endpoints, read as routes of their DSL (CAMEL-25586).
+     * Tokenizing the route text instead would treat the DSL's own structural keywords ({@code from:}, {@code to:},
+     * {@code steps:}, {@code uri:}) as component schemes.
      */
     private List<String> extractUsedSchemes(String routes, CamelCatalog catalog) {
-        List<String> schemes = new ArrayList<>();
-        String lower = routes.toLowerCase();
-        for (String comp : catalog.findComponentNames()) {
-            if (containsComponent(lower, comp) && !schemes.contains(comp)) {
-                schemes.add(comp);
-            }
-        }
-        return schemes;
-    }
-
-    private boolean containsComponent(String content, String comp) {
-        return content.contains(comp + ":")
-                || content.contains("\"" + comp + "\"")
-                || content.contains("'" + comp + "'");
+        return RouteComponents.of(routes, null, catalog);
     }
 
     private boolean isReachable(String artifactId, List<String> usedSchemes, CamelCatalog catalog) {
