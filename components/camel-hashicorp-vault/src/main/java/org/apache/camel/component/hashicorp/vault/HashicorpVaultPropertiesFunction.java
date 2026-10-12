@@ -65,11 +65,11 @@ import org.springframework.vault.support.VaultResponse;
  * instance on the engine 'engine'. When no engine is given, such as <tt>hashicorp:token</tt>, the 'secret' engine is
  * used.
  *
- * Another way of retrieving a secret value is using the following notation <tt>hashicorp:engine:database/username</tt>:
+ * Another way of retrieving a secret value is using the following notation <tt>hashicorp:engine:database#username</tt>:
  * in this case the field username of the secret database will be returned. As a fallback, the user could provide a
  * default value, which will be returned in case the secret doesn't exist, the secret has been marked for deletion or,
  * for example, if a particular field of the secret doesn't exist. For using this feature, the user could use the
- * following notation <tt>hashicorp:engine:database/username:admin</tt>. The admin value will be returned as default
+ * following notation <tt>hashicorp:engine:database#username:admin</tt>. The admin value will be returned as default
  * value, if the conditions above were all met.
  */
 
