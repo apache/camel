@@ -41,20 +41,6 @@ public final class WasmSupport {
         return MAPPER.writeValueAsBytes(env);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void deserialize(byte[] in, Exchange out) throws Exception {
-        // cleanup
-        out.getMessage().getHeaders().clear();
-        out.getMessage().setBody(null);
-
-        Wrapper w = MAPPER.readValue(in, Wrapper.class);
-        out.getMessage().setBody(w.body);
-
-        if (w.headers != null) {
-            out.getMessage().setHeaders((Map) w.headers);
-        }
-    }
-
     public static class Wrapper {
         @JsonProperty
         public Map<String, String> headers = new HashMap<>();
