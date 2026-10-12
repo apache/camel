@@ -28,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A header with several values (a collection or an array, as the HTTP consumers map a repeated request header) must be
- * sent as one HTTP header per value, as camel-http, camel-netty-http and camel-undertow do.
+ * sent as one HTTP header per value, aligned with camel-netty-http and camel-undertow, which send one header per value.
+ * The HTTP producers are not uniform: camel-http sends two or more values as a single header in the form [a, b].
  */
 class VertxHttpMultiValueHeaderTest extends VertxHttpTestSupport {
 

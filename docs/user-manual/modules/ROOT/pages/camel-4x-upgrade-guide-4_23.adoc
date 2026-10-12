@@ -4018,11 +4018,12 @@ configuration or supply a `headerFilterStrategy` that permits it.
 
 A message header whose value is a collection or an object array (as the HTTP consumers map a request header that
 occurs more than once) was sent as one HTTP header with the `toString()` of the value, for example `[a, b]`. The
-producer now sends one HTTP header per value, as camel-http, camel-netty-http and camel-undertow do. Every other value
-is converted to one String and sent as one header as before: a String (also when it contains commas), a `byte[]` and
-the other primitive arrays.
+producer now sends one HTTP header per value, aligned with camel-netty-http and camel-undertow, which send one header
+per value. The HTTP producers are not uniform here: camel-http sends a header with two or more values as a single
+header in the form `[a, b]`. Every other value is converted to one String and sent as one header as before: a String
+(also when it contains commas), a `byte[]` and the other primitive arrays.
 A collection or an object array that is empty, or that holds only null values, now sends no header, as with
-camel-http and camel-netty-http (an empty List was sent as the header value `[]`).
+camel-http, camel-netty-http and camel-undertow (an empty List was sent as the header value `[]`).
 
 === camel-vertx - the vertxFactory option takes the public VertxBuilder
 
