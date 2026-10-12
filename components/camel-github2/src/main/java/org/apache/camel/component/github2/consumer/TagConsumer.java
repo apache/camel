@@ -55,7 +55,6 @@ public class TagConsumer extends AbstractGitHub2Consumer {
         for (GHTag tag : getRepository().listTags()) {
             if (!tagNames.contains(tag.getName())) {
                 newTags.push(tag);
-                tagNames.add(tag.getName());
             }
         }
 
@@ -67,5 +66,10 @@ public class TagConsumer extends AbstractGitHub2Consumer {
             exchanges.add(e);
         }
         return processBatch(exchanges);
+    }
+
+    @Override
+    protected void onRouting(Exchange exchange) {
+        tagNames.add(exchange.getIn().getBody(GHTag.class).getName());
     }
 }
