@@ -23,11 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import run.endive.runtime.TrapException;
 import run.endive.wabt.Wat2Wasm;
 import run.endive.wasi.WasiOptions;
 import run.endive.wasm.Parser;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class WasiCommandTest {
 
@@ -42,5 +44,17 @@ class WasiCommandTest {
         // Endive's default is ThreadLocalRandom, which is predictable; guests use random_get for keys and nonces
         assertThat(options.random()).isInstanceOf(SecureRandom.class);
         assertThat(options.arguments()).containsExactly("noop.wasm");
+    }
+
+    @Test
+    void trapOfAModuleWithoutMemory() {
+        WasiCommand command = new WasiCommand(
+                Parser.parse(Wat2Wasm.parse("(module (func (export \"_start\") unreachable))")), List.of("trap.wasm"), 0);
+
+        // the hint about a memory at its maximum does not apply, and looking for it must not fail
+        assertThatThrownBy(() -> command.run(
+                InputStream.nullInputStream(), OutputStream.nullOutputStream(), OutputStream.nullOutputStream(), Map.of()))
+                .isInstanceOf(TrapException.class)
+                .hasMessageNotContaining("maxMemoryPages");
     }
 }

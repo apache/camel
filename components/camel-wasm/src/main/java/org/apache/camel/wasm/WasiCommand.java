@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import run.endive.runtime.ImportValues;
 import run.endive.runtime.Instance;
+import run.endive.runtime.Memory;
 import run.endive.runtime.TrapException;
 import run.endive.wasi.WasiExitException;
 import run.endive.wasi.WasiOptions;
@@ -192,14 +193,11 @@ public final class WasiCommand {
      * maxMemoryPages was lowered: its allocator could not grow the memory and aborted. Null when there is no hint.
      */
     private static String memoryHint(Instance instance) {
-        try {
-            if (instance != null && instance.memory() != null
-                    && instance.memory().pages() >= instance.memory().maximumPages()) {
-                return " (the module's memory is at its maximum of " + instance.memory().maximumPages()
-                       + " pages, see the maxMemoryPages option)";
-            }
-        } catch (RuntimeException e) {
-            // the module has no memory: no hint
+        // the memory is null when the module has none
+        Memory memory = instance != null ? instance.memory() : null;
+        if (memory != null && memory.pages() >= memory.maximumPages()) {
+            return " (the module's memory is at its maximum of " + memory.maximumPages()
+                   + " pages, see the maxMemoryPages option)";
         }
         return null;
     }

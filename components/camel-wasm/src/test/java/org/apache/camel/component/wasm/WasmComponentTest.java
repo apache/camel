@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.wasm;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,10 +25,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -149,6 +156,41 @@ class WasmComponentTest {
               (loop $forever (br $forever)))
             """;
 
+    /** Reads its standard input to the end, then never returns. */
+    private static final String READ_SPIN = """
+            (func (export "_start")
+              (block $done
+                (loop $more
+                  (br_if $done (i32.eqz (call $read (i32.const 1024) (i32.const 4096))))
+                  (br $more)))
+              (loop $forever (br $forever)))
+            """;
+
+    /** Reads its standard input to the end, then exits with code 3. */
+    private static final String READ_EXIT = """
+            (func (export "_start")
+              (block $done
+                (loop $more
+                  (br_if $done (i32.eqz (call $read (i32.const 1024) (i32.const 4096))))
+                  (br $more)))
+              (call $proc_exit (i32.const 3)))
+            """;
+
+    /**
+     * Sleeps for an hour in the WASI poll_oneoff call: one subscription at address 0, to the monotonic clock (type 0 at
+     * offset 8, clock 1 at offset 16) with a relative timeout in nanoseconds at offset 24.
+     */
+    private static final String SLEEP = """
+            (module
+              (import "wasi_snapshot_preview1" "poll_oneoff" (func $poll_oneoff (param i32 i32 i32 i32) (result i32)))
+              (memory (export "memory") 1)
+              (func (export "_start")
+                (i32.store8 (i32.const 8) (i32.const 0))
+                (i32.store (i32.const 16) (i32.const 1))
+                (i64.store (i32.const 24) (i64.const 3600000000000))
+                (drop (call $poll_oneoff (i32.const 0) (i32.const 64) (i32.const 1) (i32.const 128)))))
+            """;
+
     /** Writes "panicked" to standard error, then traps, as a Rust program does on a panic. */
     private static final String TRAP = """
             (data (i32.const 16) "panicked")
@@ -233,6 +275,17 @@ class WasmComponentTest {
 
     private static CamelContext start(String uri) throws Exception {
         CamelContext cc = context(uri);
+        cc.start();
+        return cc;
+    }
+
+    /**
+     * Starts a context that hands a stream body to the endpoint as it is, instead of as a StreamCache that was already
+     * read into memory when the exchange entered the route.
+     */
+    private static CamelContext startWithoutStreamCaching(String uri) throws Exception {
+        CamelContext cc = context(uri);
+        cc.setStreamCaching(false);
         cc.start();
         return cc;
     }
@@ -498,6 +551,125 @@ class WasmComponentTest {
     }
 
     @Test
+    void timeoutInterruptsAModuleSleepingInAHostCall() throws Exception {
+        try (CamelContext cc = start("wasm:" + wat("sleep", SLEEP) + "?timeout=500")) {
+            Exchange out = send(cc, "in");
+
+            // a module whose sleep ended early would have exited with code 0
+            assertThat(out.getException()).isInstanceOf(ExchangeTimedOutException.class);
+
+            // the sleep ended on the interrupt: the thread of the producer is free again
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !moduleRunning());
+        }
+    }
+
+    @Test
+    void timeoutReadsTheBodyOnTheCallingThread() throws Exception {
+        try (CamelContext cc = startWithoutStreamCaching("wasm:" + module("upper", UPPER) + "?timeout=30000")) {
+            ObservedStream body = new ObservedStream("hello wasi", false);
+
+            Exchange out = send(cc, body);
+
+            assertThat(out.getException()).isNull();
+            assertThat(text(out)).isEqualTo("HELLO WASI");
+            // the module got a copy: the stream of the route was never read by a thread of the producer
+            assertThat(body.readers).containsExactly(Thread.currentThread());
+        }
+    }
+
+    @Test
+    void timeoutWithABodyThatBlocksKeepsTheProducerThreadsOffTheStream() throws Exception {
+        ObservedStream body = new ObservedStream("hello wasi", true);
+        ExecutorService caller = Executors.newSingleThreadExecutor(r -> new Thread(r, "caller"));
+        try (CamelContext cc = startWithoutStreamCaching("wasm:" + module("upper", UPPER) + "?timeout=30000")) {
+            try {
+                Future<Exchange> result = caller.submit(() -> send(cc, body));
+
+                // a thread is blocked in a read of the body, which an interrupt does not end: it is the caller, and
+                // not a thread of the producer that a timeout would leave behind on a stream the route uses again
+                assertThat(body.reading.await(10, TimeUnit.SECONDS)).isTrue();
+                assertThat(body.readers).extracting(Thread::getName).containsExactly("caller");
+
+                body.release.countDown();
+                Exchange out = result.get(30, TimeUnit.SECONDS);
+
+                assertThat(out.getException()).isNull();
+                assertThat(text(out)).isEqualTo("HELLO WASI");
+                assertThat(body.readers).extracting(Thread::getName).containsExactly("caller");
+            } finally {
+                // never leave a reader blocked, and release it before the context stops
+                body.release.countDown();
+                caller.shutdownNow();
+            }
+        }
+    }
+
+    @Test
+    void timedOutModuleLeavesNoThreadReadingTheBody() throws Exception {
+        try (CamelContext cc = startWithoutStreamCaching("wasm:" + module("readspin", READ_SPIN) + "?timeout=500")) {
+            ObservedStream body = new ObservedStream("hello wasi", false);
+
+            Exchange out = send(cc, body);
+
+            assertThat(out.getException()).isInstanceOf(ExchangeTimedOutException.class);
+            int reads = body.reads.get();
+            assertThat(body.readers).containsExactly(Thread.currentThread());
+            assertThat(body.inRead).hasValue(0);
+            // the body was a stream that is used up: it is replaced by what was read from it
+            assertThat(out.getMessage().getBody()).isEqualTo("hello wasi".getBytes(StandardCharsets.UTF_8));
+
+            // and the module that was left behind ends without touching the stream
+            await().atMost(10, TimeUnit.SECONDS).until(() -> !moduleRunning());
+            assertThat(body.reads).hasValue(reads);
+        }
+    }
+
+    @Test
+    void streamBodyAfterAFailedRunWithoutStreamCaching() throws Exception {
+        String module = module("readexit", READ_EXIT);
+        try (CamelContext cc = startWithoutStreamCaching("wasm:" + module)) {
+            InputStream body = new ByteArrayInputStream("in".getBytes(StandardCharsets.UTF_8));
+
+            Exchange out = send(cc, body);
+
+            // without a timeout the module read the stream itself: the body is the same stream, at its end
+            assertThat(out.getException()).isInstanceOf(WasmExitCodeException.class);
+            assertThat(out.getMessage().getBody()).isSameAs(body);
+            assertThat(body.read()).isEqualTo(-1);
+        }
+        try (CamelContext cc = startWithoutStreamCaching("wasm:" + module + "?timeout=30000")) {
+            Exchange out = send(cc, new ByteArrayInputStream("in".getBytes(StandardCharsets.UTF_8)));
+
+            // with a timeout the body was read into memory first, and that copy is the body after the failure
+            assertThat(out.getException()).isInstanceOf(WasmExitCodeException.class);
+            assertThat(out.getMessage().getBody()).isEqualTo("in".getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "?timeout=30000" })
+    void streamBodyAfterAFailedRunWithStreamCaching(String options) throws Exception {
+        String uri = "wasm:" + module("readexit", READ_EXIT) + options;
+        AtomicReference<String> seen = new AtomicReference<>();
+        try (CamelContext cc = new DefaultCamelContext()) {
+            cc.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    onException(WasmExitCodeException.class).handled(true)
+                            .process(e -> seen.set(e.getMessage().getBody(String.class)));
+                    from("direct:in").to(uri);
+                }
+            });
+            cc.start();
+
+            send(cc, new ByteArrayInputStream("in".getBytes(StandardCharsets.UTF_8)));
+
+            // stream caching is on by default: the module read the cached stream, and Camel reset it for the handler
+            assertThat(seen).hasValue("in");
+        }
+    }
+
+    @Test
     void timeoutAcrossARouteRestart() throws Exception {
         try (CamelContext cc = start("wasm:" + module("upper", UPPER) + "?timeout=30000")) {
             assertThat(text(send(cc, "before"))).isEqualTo("BEFORE");
@@ -606,5 +778,60 @@ class WasmComponentTest {
         String uri = "wasm:" + wat("other", "(module (import \"env\" \"f\" (func)) (func (export \"_start\")))");
 
         assertStartFails(uri, "cannot be provided: env.f");
+    }
+
+    /**
+     * A body stream that records the threads that read it. When blocking, a read waits until the stream is released
+     * (for 30 seconds at most) and, like a read from a socket, is not ended by an interrupt.
+     */
+    private static final class ObservedStream extends InputStream {
+        final Set<Thread> readers = ConcurrentHashMap.newKeySet();
+        final AtomicInteger reads = new AtomicInteger();
+        final AtomicInteger inRead = new AtomicInteger();
+        final CountDownLatch reading = new CountDownLatch(1);
+        final CountDownLatch release;
+        private final ByteArrayInputStream data;
+
+        ObservedStream(String content, boolean blocking) {
+            this.data = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
+            this.release = new CountDownLatch(blocking ? 1 : 0);
+        }
+
+        @Override
+        public int read() {
+            byte[] one = new byte[1];
+            return read(one, 0, 1) < 0 ? -1 : one[0] & 0xFF;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) {
+            readers.add(Thread.currentThread());
+            reads.incrementAndGet();
+            inRead.incrementAndGet();
+            try {
+                reading.countDown();
+                awaitRelease();
+                return data.read(b, off, len);
+            } finally {
+                inRead.decrementAndGet();
+            }
+        }
+
+        private void awaitRelease() {
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
+            boolean interrupted = false;
+            while (true) {
+                try {
+                    // returns at once when the stream is released or the deadline has passed
+                    release.await(deadline - System.nanoTime(), TimeUnit.NANOSECONDS);
+                    break;
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 }

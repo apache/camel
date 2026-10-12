@@ -114,8 +114,10 @@ public interface WasmEndpointBuilderFactory {
          * passed to the module as environment variables of the same name.
          * Headers usually come from whoever sent the message, so no header
          * reaches the module unless it is listed here. A listed header that is
-         * not on the message is left unset. A name may not be listed here and
-         * also be configured with environment.
+         * not on the message is left unset. Camel matches header names ignoring
+         * case, so listing TENANT also passes a header named tenant, as the
+         * variable TENANT. A name may not be listed here and also be configured
+         * with environment.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -130,8 +132,10 @@ public interface WasmEndpointBuilderFactory {
         }
         /**
          * Whether a module that exits with a non-zero exit code fails the
-         * exchange, with a WasmExitCodeException, leaving the message body
-         * unchanged. When false, the standard output of the module replaces the
+         * exchange with a WasmExitCodeException. No new body is set then, but a
+         * body that is a stream has been read by the module: it can be read
+         * again when handling the failure if stream caching is on (the
+         * default). When false, the standard output of the module replaces the
          * message body whatever the exit code, which is available in the
          * CamelWasmExitCode header.
          * 
@@ -149,8 +153,10 @@ public interface WasmEndpointBuilderFactory {
         }
         /**
          * Whether a module that exits with a non-zero exit code fails the
-         * exchange, with a WasmExitCodeException, leaving the message body
-         * unchanged. When false, the standard output of the module replaces the
+         * exchange with a WasmExitCodeException. No new body is set then, but a
+         * body that is a stream has been read by the module: it can be read
+         * again when handling the failure if stream caching is on (the
+         * default). When false, the standard output of the module replaces the
          * message body whatever the exit code, which is available in the
          * CamelWasmExitCode header.
          * 
@@ -208,7 +214,9 @@ public interface WasmEndpointBuilderFactory {
          * The maximum number of bytes the module may write to its standard
          * output, and separately to its standard error, which are buffered in
          * memory. A module that writes more is stopped and the exchange fails.
-         * 0 (the default) means no limit.
+         * 0 (the default) means no limit: a module that keeps writing then
+         * fills the heap of the JVM, so set a limit for modules whose output
+         * size is not known.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -225,7 +233,9 @@ public interface WasmEndpointBuilderFactory {
          * The maximum number of bytes the module may write to its standard
          * output, and separately to its standard error, which are buffered in
          * memory. A module that writes more is stopped and the exchange fails.
-         * 0 (the default) means no limit.
+         * 0 (the default) means no limit: a module that keeps writing then
+         * fills the heap of the JVM, so set a limit for modules whose output
+         * size is not known.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -243,7 +253,9 @@ public interface WasmEndpointBuilderFactory {
          * milliseconds. When it is exceeded the module is interrupted and the
          * exchange fails with an ExchangeTimedOutException. When a timeout is
          * set, the module runs on a separate thread while the calling thread
-         * waits. 0 (the default) means no timeout.
+         * waits, and the message body is read into memory before the module
+         * starts, instead of being streamed to it. The time to read the body
+         * does not count. 0 (the default) means no timeout.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -261,7 +273,9 @@ public interface WasmEndpointBuilderFactory {
          * milliseconds. When it is exceeded the module is interrupted and the
          * exchange fails with an ExchangeTimedOutException. When a timeout is
          * set, the module runs on a separate thread while the calling thread
-         * waits. 0 (the default) means no timeout.
+         * waits, and the message body is read into memory before the module
+         * starts, instead of being streamed to it. The time to read the body
+         * does not count. 0 (the default) means no timeout.
          * 
          * The option will be converted to a <code>long</code> type.
          * 

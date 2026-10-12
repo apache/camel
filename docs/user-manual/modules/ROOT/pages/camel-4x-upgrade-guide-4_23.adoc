@@ -3236,20 +3236,11 @@ Routes that deliberately read a `Camel`-prefixed header produced by the Tika par
 themselves after the `tika:parse` step, for example with a `setHeader` reading the corresponding
 non-prefixed metadata name.
 
-=== camel-wasm - the endpoint runs WASI command modules (Breaking change)
-
-The `wasm` endpoint now runs WASI Preview 1 command modules (the body is standard input, standard output becomes the
-body, the exit code and standard error are in `CamelWasmExitCode` and `CamelWasmStderr`) and no longer supports the
-custom `alloc`/`dealloc` and JSON message ABI. The URI path is now the module (`wasm:classpath:upper.wasm`); the
-function name and the `module` option are removed, and a header reaches the module only when listed in
-`environmentHeaders`. To migrate, turn the function into a program that reads standard input and writes standard
-output, built for `wasm32-wasip1` (Rust) or with `GOOS=wasip1 GOARCH=wasm` (Go). The `wasm` language is unchanged.
-
 === camel-wasm - a failed call discards the Wasm instance
 
-When a Wasm function fails without returning (a trap, such as a Rust `panic`), the `wasm` expression now discards its
-module instance and creates a new one for the next message, instead of reusing an instance whose memory kept everything
-the failed call had allocated. State that the module keeps between messages is reset at that point.
+When a Wasm function fails without returning (a trap, such as a Rust `panic`), the `wasm` producer or `wasm` expression
+now discards its module instance and creates a new one for the next message, instead of reusing an instance whose memory
+kept everything the failed call had allocated. State that the module keeps between messages is reset at that point.
 
 === camel-wasm - the wasm predicate
 

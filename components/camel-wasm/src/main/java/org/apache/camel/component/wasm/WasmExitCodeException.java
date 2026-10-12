@@ -21,7 +21,11 @@ import org.apache.camel.Exchange;
 
 /**
  * Thrown when a module exits with a non-zero exit code and the endpoint fails on that (failOnNonZeroExit, the default).
- * The message body is left as it was before the call.
+ * <p/>
+ * The standard output of the module is not set as the body. The body is the object it was before the call, but the
+ * module may have read it: a body that is a stream has been read, and can only be read again when it is a
+ * {@link org.apache.camel.StreamCache} (stream caching, the default), which Camel resets. When the endpoint has a
+ * timeout, a body that was a stream but not a StreamCache is replaced by the bytes that were read from it.
  */
 public class WasmExitCodeException extends CamelExchangeException {
 

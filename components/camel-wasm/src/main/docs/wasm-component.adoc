@@ -45,6 +45,11 @@ The `module` is the location of the `.wasm` file, loaded as a resource: from the
 prefix such as `classpath:`, `file:` or `http:`. For example `wasm:classpath:upper.wasm` or
 `wasm:file:/opt/transforms/upper.wasm`.
 
+WARNING: Use a static URI. With a dynamic one, such as `toD("wasm:${header.module}")`, data of the message chooses the
+program that runs, including a module downloaded from an `http:` location, and the module is loaded and parsed again
+for every new URI (0.2 to 0.4 seconds for a Go program). To choose between known modules, use a
+xref:eips:choice-eip.adoc[Choice] with one static `wasm` endpoint per module.
+
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
@@ -104,8 +109,9 @@ the program passed to `proc_exit`,
 . and replaces the message body with the standard output of the program, as a `byte[]`.
 
 When the program exits with a non-zero code, the exchange fails with a `WasmExitCodeException` (which holds the exit
-code and the standard error) and the message body is left as it was, unless `failOnNonZeroExit` is `false`: then the
-standard output replaces the body as for any other exit code. The other headers of the message are kept.
+code and the standard error) and the standard output is not set as the body, unless `failOnNonZeroExit` is `false`:
+then the standard output replaces the body as for any other exit code. The other headers of the message are kept.
+See <<the-message-body-after-a-failure>> for what the body holds when the exchange fails.
 
 Every exchange runs on its own instance, so exchanges never share the memory or the globals of the module and can
 run in parallel without a lock. A module cannot keep state from one message to the next.
@@ -121,9 +127,10 @@ not terminals.
 the directories, the host, user info and query of the location are not passed on), followed by the `args` option, for
 example `args=--level 2`. Use double quotes around an argument that contains spaces. Arguments are fixed by the route.
 * *Environment variables*: only the ones configured with `environment.NAME=value`, and the message headers listed in
-`environmentHeaders`, passed under the name they are listed with (header names are matched the way Camel matches
-them, ignoring case). A listed header that is not on the message is not set. Headers usually come from whoever sent
-the message, so no header reaches the module unless it is listed. The environment of the JVM is never passed on.
+`environmentHeaders`, passed under the name they are listed with. Header names are matched the way Camel matches
+them, ignoring case: `environmentHeaders=TENANT` also passes a header named `tenant`, as the variable `TENANT`. A
+listed header that is not on the message is not set. Headers usually come from whoever sent the message, so no
+header reaches the module unless it is listed. The environment of the JVM is never passed on.
 * *Files and network*: none. The module gets no preopened directories, so it cannot open files, and no sockets.
 * *Clock*: the one of the host.
 * *Random numbers*: WASI `random_get` (used by Go `crypto/rand` and Rust `getrandom`) returns bytes from a
@@ -138,11 +145,27 @@ no maximum by default, so the memory of one run can grow to gigabytes of JVM hea
 the memory fails inside the module, which then usually traps or exits with an error.
 * `timeout`: the maximum time one run may take. The module then runs on a thread of the producer while the route
 thread waits. When the time is up, the module is interrupted at its next function call or loop iteration and the
-exchange fails with an `ExchangeTimedOutException`. A module blocked in a host call that does not react to an
-interrupt, such as reading a body stream from a slow network connection, keeps its thread until that call returns,
-but the exchange still fails on time. Without a `timeout`, a module that never ends blocks the route thread.
+exchange fails with an `ExchangeTimedOutException`. Without a `timeout`, a module that never ends blocks the route
+thread.
 * `maxOutputSize`: the maximum number of bytes the module may write to its standard output, and separately to its
 standard error. Both are buffered in memory. A module that writes more is stopped and the exchange fails.
+
+WARNING: Without `maxOutputSize` the standard output and the standard error are buffered without a limit: a module
+that keeps writing fills the heap of the JVM, which affects the whole application and not only one exchange. Set
+`maxOutputSize` unless the output size of the module is known and small, for example `maxOutputSize=16777216`
+(16 MiB).
+
+With a `timeout`, the message body is read into memory, on the route thread, before the module starts, and the module
+reads that copy. Without a `timeout` the body is streamed to the module. The copy is what makes the timeout safe: the
+thread of a module that timed out can run for a moment longer, and it must not read a stream that the route is using
+again. It also means that:
+
+* the whole body is on the heap for the time of the run, in addition to the buffered output,
+* the time to read the body is not part of the `timeout`: a body stream that delivers slowly, such as a slow network
+connection, holds the route thread as it does without a `timeout`,
+* the threads of the producer are never blocked on the body, so a module that timed out gives its thread back at its
+next function call or loop iteration. The pool of these threads has no maximum size and needs none: it holds one
+thread for each exchange that is in the endpoint at the same time.
 
 These limits are robustness controls, not a sandbox. A module is trusted code chosen by the route author, like a
 processor or a bean, as described in the xref:manual::security-model.adoc[security model]: the limits keep a
@@ -155,7 +178,7 @@ defence against a module written to attack the host.
 |===
 | What happens | Result
 | The program exits with code 0 | The body is the standard output. `CamelWasmExitCode` is 0.
-| The program exits with another code | A `WasmExitCodeException`, body unchanged, `CamelWasmExitCode` and
+| The program exits with another code | A `WasmExitCodeException`, no new body, `CamelWasmExitCode` and
 `CamelWasmStderr` set. With `failOnNonZeroExit=false`: the body is the standard output.
 | The program traps, for example on a Rust `panic` | A `CamelExchangeException` caused by the `TrapException`
 of Endive, with the start of the standard error in its message. `CamelWasmStderr` is set, `CamelWasmExitCode` is not.
@@ -166,6 +189,28 @@ wrote to its standard error, `CamelWasmExitCode` is not.
 |===
 
 In every case, the instance the program ran on is discarded.
+
+[[the-message-body-after-a-failure]]
+=== The message body after a failure
+
+When the exchange fails (a non-zero exit code, a trap, the output limit or the timeout), the component does not set
+a new body, but the program may already have read the old one as its standard input:
+
+[width="100%",cols="2,4",options="header"]
+|===
+| Body before the call | Body when the exchange has failed
+| A `String`, a `byte[]`, a file, or another value that is converted to a stream | Unchanged.
+| A cached stream (a `StreamCache`): what xref:manual::stream-caching.adoc[stream caching], which is on by default,
+makes of a stream body | The same stream cache. The program has read from it; Camel resets it for the error handler
+and for a redelivery, so it can be read again.
+| A stream that is not cached, and no `timeout` | The same stream, read as far as the program read it, usually to
+its end. Its content cannot be read again.
+| A stream that is not cached, with a `timeout` | A `byte[]` with the content of the stream: the body was read into
+memory before the run, and the component puts that copy back.
+|===
+
+So keep stream caching on when an `onException` or a dead letter channel needs the body of a failed exchange and the
+body is a stream.
 
 === Performance
 

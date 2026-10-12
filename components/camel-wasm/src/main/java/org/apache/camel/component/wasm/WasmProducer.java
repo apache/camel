@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.wasm;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,6 +38,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -54,6 +56,15 @@ import run.endive.wasm.WasmModule;
  * The module is parsed once, when the producer is initialized, and every exchange runs on a new instance of it, so
  * exchanges never share guest memory or globals and need no lock. The instance is dropped after its run, whatever the
  * outcome.
+ * <p/>
+ * Without a timeout the module runs on the calling thread and reads the body as a stream. With a timeout the module
+ * runs on a thread of the producer, and the body is first read into memory on the calling thread: the module then reads
+ * a private copy, so a module that is abandoned after a timeout never reads a stream that the route is still using.
+ * <p/>
+ * When the exchange fails, the producer does not set a new body, but the module may have read the old one: a body that
+ * is a stream has been read, partly or to its end. With stream caching (the default) the body can be read again: Camel
+ * resets a {@link StreamCache}. When a timeout is set, a body that was a stream but not a StreamCache is replaced by
+ * the bytes that were read from it, so that error handling still sees the content.
  */
 public class WasmProducer extends DefaultProducer {
 
@@ -127,14 +138,14 @@ public class WasmProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
-
         ExecutorService pool = executor;
         executor = null;
         if (pool != null) {
             // interrupts the modules that are still running
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(pool);
         }
+
+        super.doStop();
     }
 
     @Override
@@ -149,40 +160,66 @@ public class WasmProducer extends DefaultProducer {
         Map<String, String> env = environment(message);
         // no body is empty standard input; a body that cannot be read as a stream fails the exchange instead of
         // silently running the module with empty input
-        InputStream stdin = message.getBody() != null
-                ? message.getMandatoryBody(InputStream.class) : InputStream.nullInputStream();
+        Object body = message.getBody();
+        InputStream in = body != null ? message.getMandatoryBody(InputStream.class) : InputStream.nullInputStream();
+        byte[] restore = null;
+        if (conf.getTimeout() > 0 && body != null) {
+            // with a timeout the module runs on another thread, which goes on for a moment after the timeout and is
+            // not stopped by an interrupt while it is blocked in a read of the body. So the body is read here, on the
+            // calling thread, and the module gets a copy that no other thread uses and that never blocks.
+            byte[] input = in.readAllBytes();
+            in = new ByteArrayInputStream(input);
+            if (body instanceof InputStream && !(body instanceof StreamCache)) {
+                // the stream of the body is used up: if the exchange fails, the body becomes what was read from it
+                restore = input;
+            }
+        }
+        InputStream stdin = in;
         LimitedOutputStream stdout = new LimitedOutputStream("standard output", conf.getMaxOutputSize());
         LimitedOutputStream stderr = new LimitedOutputStream("standard error", conf.getMaxOutputSize());
 
-        int exitCode;
+        boolean done = false;
         try {
-            exitCode = run(exchange, conf.getTimeout(), () -> command.run(stdin, stdout, stderr, env));
-        } catch (TrapException e) {
-            String err = setStderr(message, stderr);
-            throw new CamelExchangeException(
-                    "The Wasm module " + name() + " trapped: " + e.getMessage() + excerpt(err),
-                    exchange, e);
-        } catch (OutputLimitExceededException e) {
-            setStderr(message, stderr);
-            throw new CamelExchangeException(
-                    "The Wasm module " + name() + " was stopped: " + e.getMessage(), exchange);
-        }
+            int exitCode;
+            try {
+                exitCode = run(exchange, conf.getTimeout(), () -> command.run(stdin, stdout, stderr, env));
+            } catch (TrapException e) {
+                String err = setStderr(message, stderr);
+                throw new CamelExchangeException(
+                        "The Wasm module " + name() + " trapped: " + e.getMessage() + excerpt(err),
+                        exchange, e);
+            } catch (OutputLimitExceededException e) {
+                setStderr(message, stderr);
+                throw new CamelExchangeException(
+                        "The Wasm module " + name() + " was stopped: " + e.getMessage(), exchange);
+            }
 
-        message.setHeader(Wasm.Headers.EXIT_CODE, exitCode);
-        String err = setStderr(message, stderr);
-        if (exitCode != 0 && conf.isFailOnNonZeroExit()) {
-            throw new WasmExitCodeException(
-                    "The Wasm module " + name() + " exited with code " + exitCode + excerpt(err),
-                    exitCode, err, exchange);
+            message.setHeader(Wasm.Headers.EXIT_CODE, exitCode);
+            String err = setStderr(message, stderr);
+            if (exitCode != 0 && conf.isFailOnNonZeroExit()) {
+                throw new WasmExitCodeException(
+                        "The Wasm module " + name() + " exited with code " + exitCode + excerpt(err),
+                        exitCode, err, exchange);
+            }
+            message.setBody(stdout.toByteArray());
+            done = true;
+        } finally {
+            if (!done && restore != null) {
+                message.setBody(restore);
+            }
         }
-        message.setBody(stdout.toByteArray());
     }
 
     /**
      * Runs the module on the calling thread, or on a thread of the producer when a timeout is set. On timeout that
-     * thread is interrupted: Endive checks the interrupt flag on every call and every backward branch, so a module
-     * stops at its next loop iteration. Interrupting a thread of the producer, not the calling thread, keeps the
-     * interrupt flag away from the threads of the route.
+     * thread is interrupted: Endive checks the interrupt flag on every call and every branch, and its WASI sleep
+     * (poll_oneoff) ends on an interrupt, so a module stops at its next call or loop iteration. Interrupting a thread
+     * of the producer, not the calling thread, keeps the interrupt flag away from the threads of the route.
+     * <p/>
+     * The threads come from a cached pool without a maximum size. It needs none: a thread is only taken while an
+     * exchange waits for it, so there are as many threads as exchanges in this producer at the same time, plus the
+     * threads of timed out runs for the moment they need to reach their next call or branch. The standard streams of a
+     * run with a timeout are all in memory, so no call into the host can keep a thread after its exchange is gone.
      */
     private int run(Exchange exchange, long timeout, Callable<Integer> task) throws Exception {
         if (timeout <= 0) {
