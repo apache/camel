@@ -80,7 +80,11 @@ class WhatsAppProducerFailureTest extends CamelTestSupport {
         Exchange exchange = template.asyncSend("direct:unreachable", e -> e.getIn().setBody(textMessage()))
                 .get(30, TimeUnit.SECONDS);
 
-        assertThat(exchange.getException()).isInstanceOf(IOException.class);
+        // the exception of the HTTP client (a ConnectException without a message) is the cause, and the message says
+        // where the request went
+        assertThat(exchange.getException()).isInstanceOf(RuntimeCamelException.class)
+                .hasMessageContaining("Could not send message to http://localhost:" + closedPort)
+                .hasCauseInstanceOf(IOException.class);
     }
 
     @Test

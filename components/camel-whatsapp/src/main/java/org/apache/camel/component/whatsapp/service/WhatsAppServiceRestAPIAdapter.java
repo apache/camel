@@ -52,6 +52,7 @@ import org.apache.camel.component.whatsapp.model.TextMessageRequest;
 import org.apache.camel.component.whatsapp.model.UploadMediaRequest;
 import org.apache.camel.component.whatsapp.util.FileUploadStreamSupplier;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,9 +205,12 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
             asyncResponse.whenComplete((response, failure) -> {
                 try {
                     if (failure != null) {
-                        exchange.setException(
-                                failure instanceof CompletionException && failure.getCause() != null
-                                        ? failure.getCause() : failure);
+                        Throwable cause = failure instanceof CompletionException && failure.getCause() != null
+                                ? failure.getCause() : failure;
+                        // the exception of the HTTP client often has no message (a refused connection), so say
+                        // where the request went
+                        exchange.setException(new RuntimeCamelException(
+                                "Could not send message to " + URISupport.sanitizeUri(uri), cause));
                         return;
                     }
                     int statusCode = response.statusCode();
