@@ -31,6 +31,7 @@ import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -211,9 +212,9 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
     }
 
     @Test
-    void aNotifierThrowingAnErrorDoesNotBreakTheRefusal() {
-        // ManagementStrategy.notify does not isolate a failing notifier, so without a Throwable guard a notifier that
-        // throws an Error would escape and turn the denial into a propagating failure. The refusal must survive.
+    void aNotifierThrowingAnErrorDoesNotBreakTheRefusalNorTheHealthyNotifier() {
+        // EventHelper.doNotifyEvent isolates each notifier: a notifier that throws an Error must neither escape (turning
+        // the denial into a propagating failure) nor stop delivery to the healthy notifier registered in @BeforeEach.
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             @Override
             public void notify(CamelEvent event) {
@@ -230,6 +231,75 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
         AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
 
         assertThat(result).isInstanceOf(AiToolResult.AuthorizationDenied.class);
+        // the healthy @BeforeEach notifier still received the event despite the other one throwing
+        assertThat(events).hasSize(1);
+    }
+
+    @Test
+    void aiIsItsOwnCategoryAndIgnoreExchangeEventsDoesNotDropIt() {
+        // a notifier with ignoreExchangeEvents=true (but ignoreAiEvents=false) must still receive AI events, so an
+        // AI-observability notifier can keep ignoreExchangeEvents for performance
+        List<AiEvent> exchangeIgnorer = new CopyOnWriteArrayList<>();
+        EventNotifierSupport n = new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiEvent ai) {
+                    exchangeIgnorer.add(ai);
+                }
+            }
+        };
+        n.setIgnoreExchangeEvents(true);
+        context.getManagementStrategy().addEventNotifier(n);
+
+        AiToolSpec spec = findSpec("guarded");
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty("subject", "mallory");
+
+        AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(exchangeIgnorer).hasSize(1);
+    }
+
+    @Test
+    void dispatchesAnAiEventThatHasNoExchange() {
+        // the root AiEvent does not require a live Exchange; the helper must deliver an Exchange-free AiEvent
+        List<AiEvent> received = new CopyOnWriteArrayList<>();
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiEvent ai) {
+                    received.add(ai);
+                }
+            }
+        });
+
+        AiEvent exchangeFree = new AiEvent() {
+            @Override
+            public String getProvider() {
+                return "unit";
+            }
+
+            @Override
+            public Object getSource() {
+                return "unit";
+            }
+
+            @Override
+            public long getTimestamp() {
+                return 0;
+            }
+
+            @Override
+            public void setTimestamp(long timestamp) {
+            }
+        };
+
+        boolean notified = EventHelper.notifyAiEvent(context, () -> exchangeFree);
+
+        assertThat(notified).isTrue();
+        assertThat(received).containsExactly(exchangeFree);
+        assertThat(exchangeFree).isNotInstanceOf(CamelEvent.ExchangeEvent.class);
+        assertThat(exchangeFree.getType()).isEqualTo(CamelEvent.Type.Ai);
     }
 
     private AiToolSpec findSpec(String toolName) {

@@ -22,22 +22,24 @@ import org.jspecify.annotations.Nullable;
 /**
  * Common contract for events fired by Camel AI components (tool calls, agentic loops, ...).
  * <p>
- * An {@code AiEvent} is a {@link CamelEvent.ExchangeEvent} of {@link CamelEvent.Type#Ai}: it carries the exchange it
- * relates to (so it can be correlated by route id or exchange id) and is typed {@code Ai} rather than {@code Custom},
- * so an {@link org.apache.camel.spi.EventNotifier} can recognise AI activity — and route it to metrics, tracing or a
+ * An {@code AiEvent} is typed {@link CamelEvent.Type#Ai} rather than {@link CamelEvent.Type#Custom}, so an
+ * {@link org.apache.camel.spi.EventNotifier} can recognise AI activity — and route it to metrics, tracing or a
  * GenAI-observability backend — by type and by these sub-interfaces, without depending on any AI component or doing an
  * {@code instanceof} against each component's own event class.
  * <p>
- * Concrete event classes live in the AI components (they implement these interfaces); the only thing shared across
- * components is this contract.
+ * The root does <em>not</em> require a live {@link org.apache.camel.Exchange}: an event that relates to one implements
+ * {@link ExchangeAiEvent}, while an event that has no single exchange (for example a detached evaluation or a
+ * population-level signal) implements {@code AiEvent} directly. Concrete event classes live in the AI components (they
+ * implement these interfaces); the only thing shared across components is this contract.
  *
- * @since 4.23
+ * @since 4.24
  */
-public interface AiEvent extends CamelEvent.ExchangeEvent {
+public interface AiEvent extends CamelEvent {
 
     /**
-     * The AI provider the event originates from, e.g. {@code openai} or {@code ai-tool}. Intended as a low-cardinality
-     * label for metrics and spans.
+     * The integration or provider family publishing the event, e.g. {@code openai}, {@code ai-tool}, or
+     * {@code semantic}. Intended as a stable, low-cardinality label for metrics and spans; not an expert instance,
+     * model revision, invocation ID, or an indication that the event necessarily involved inference.
      */
     String getProvider();
 
@@ -47,13 +49,22 @@ public interface AiEvent extends CamelEvent.ExchangeEvent {
     }
 
     /**
+     * An {@link AiEvent} that relates to a specific {@link org.apache.camel.Exchange}, so it can be correlated by route
+     * id or exchange id. AI events without a single exchange implement {@link AiEvent} directly instead.
+     *
+     * @since 4.24
+     */
+    interface ExchangeAiEvent extends AiEvent, CamelEvent.ExchangeEvent {
+    }
+
+    /**
      * Fired when a tool call is denied by the route's {@code authorizationPolicy}. Also a
      * {@link CamelEvent.FailureEvent}, so {@link #getCause()} returns the {@code CamelAuthorizationException} the
      * policy raised.
      *
      * @since 4.24
      */
-    interface ToolCallDeniedEvent extends AiEvent, CamelEvent.FailureEvent {
+    interface ToolCallDeniedEvent extends ExchangeAiEvent, CamelEvent.FailureEvent {
 
         /** The name (route id) of the tool whose call was denied. */
         String getToolName();
@@ -64,7 +75,7 @@ public interface AiEvent extends CamelEvent.ExchangeEvent {
      *
      * @since 4.24
      */
-    interface ToolCallExecutedEvent extends AiEvent {
+    interface ToolCallExecutedEvent extends ExchangeAiEvent {
 
         /** The name of the tool that was called. */
         String getToolName();
@@ -81,7 +92,7 @@ public interface AiEvent extends CamelEvent.ExchangeEvent {
      *
      * @since 4.24
      */
-    interface AgentLoopStartedEvent extends AiEvent {
+    interface AgentLoopStartedEvent extends ExchangeAiEvent {
 
         /** The number of tools available to the loop. */
         int getToolCount();
@@ -95,7 +106,7 @@ public interface AiEvent extends CamelEvent.ExchangeEvent {
      *
      * @since 4.24
      */
-    interface AgentLoopCompletedEvent extends AiEvent {
+    interface AgentLoopCompletedEvent extends ExchangeAiEvent {
 
         /** The number of iterations the loop actually ran. */
         int getIterationCount();

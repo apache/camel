@@ -29,7 +29,7 @@ import org.apache.camel.ai.AiEvent;
  * {@code EventNotifier} can recognise them as AI activity and correlate them (route id, exchange id) without depending
  * on this component.
  */
-abstract class AbstractOpenAIExchangeEvent extends EventObject implements AiEvent {
+abstract class AbstractOpenAIExchangeEvent extends EventObject implements AiEvent.ExchangeAiEvent {
 
     @Serial
     private static final long serialVersionUID = 1L;
