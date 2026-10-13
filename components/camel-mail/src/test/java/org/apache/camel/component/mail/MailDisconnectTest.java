@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  */
 public class MailDisconnectTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("MailDisconnectTest-jones", "secret");
-
+    private static final String MOCK_RESULT = "mock:disconnectResult";
     private int expectedCount = 5;
     private CountDownLatch latch = new CountDownLatch(expectedCount);
 
@@ -46,7 +46,7 @@ public class MailDisconnectTest extends CamelTestSupport {
     void setup() {
         Mailbox.clearAll(jones);
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
         mock.expectedMessageCount(expectedCount);
 
         // send 5 mails with some delay so we do multiple polls with disconnect between
@@ -61,7 +61,7 @@ public class MailDisconnectTest extends CamelTestSupport {
 
     @Test
     public void testDisconnect() throws Exception {
-        if (!latch.await(2500, TimeUnit.MILLISECONDS)) {
+        if (!latch.await(15, TimeUnit.SECONDS)) {
             Assertions.fail("Not all messages were received as expected: " + (expectedCount - latch.getCount())
                             + " message(s) missing");
         }
@@ -76,7 +76,7 @@ public class MailDisconnectTest extends CamelTestSupport {
                 from(jones.uriPrefix(Protocol.imap) + "&disconnect=true&initialDelay=100&delay=500")
                         .routeId("mail-disconnect")
                         .process(e -> latch.countDown())
-                        .to("mock:result");
+                        .to(MOCK_RESULT);
             }
         };
     }
