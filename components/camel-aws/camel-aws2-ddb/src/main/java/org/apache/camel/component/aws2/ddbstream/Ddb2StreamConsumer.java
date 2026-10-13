@@ -18,10 +18,12 @@ package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -43,6 +45,12 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
     private final ShardIteratorHandler shardIteratorHandler;
     private final Map<String, String> lastSeenSequenceNumbers = new HashMap<>();
+    // Shards of which only the first records of a response were routed, as the consumer was being suspended or
+    // stopped: the next poll continues after the last routed record instead of after the response
+    private final Set<String> shardsOfUnfinishedBatch = new HashSet<>();
+    // Shards of which no record was routed yet, and whose first response with records was not routed at all for the
+    // same reason: the sequence number of the first record of that response
+    private final Map<String, String> firstNotRoutedSequenceNumbers = new HashMap<>();
 
     public Ddb2StreamConsumer(Ddb2StreamEndpoint endpoint, Processor processor) {
         this(endpoint, processor, new ShardIteratorHandler(endpoint));
@@ -67,6 +75,11 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
                     getEndpoint().getConfiguration().getMaxResultsPerRequest() / shardIterators.size());
             String shardId = shardIteratorEntry.getKey();
             String shardIterator = shardIteratorEntry.getValue();
+            if (shardsOfUnfinishedBatch.contains(shardId)) {
+                // not requested when the batch was cut short: that thread may have been interrupted by the stop
+                shardIterator = shardIteratorHandler.requestFreshShardIterator(shardId, lastSeenSequenceNumbers.get(shardId));
+                shardsOfUnfinishedBatch.remove(shardId);
+            }
             GetRecordsResponse result;
             try {
                 GetRecordsRequest req = GetRecordsRequest.builder()
@@ -76,9 +89,21 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
                 result = getEndpoint().getClient().getRecords(req);
             } catch (ExpiredIteratorException e) {
                 String lastSeenSequenceNumber = lastSeenSequenceNumbers.get(shardId);
-                LOG.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
+                String firstNotRoutedSequenceNumber
+                        = lastSeenSequenceNumber == null ? firstNotRoutedSequenceNumbers.get(shardId) : null;
+                String freshShardIterator;
+                if (firstNotRoutedSequenceNumber != null) {
+                    // the iterator that was kept for the records that were not routed has expired, and there is no
+                    // routed record to continue after: start at the first of them, not at the start of the shard
+                    LOG.warn("Expired Shard Iterator, attempting to resume at {}", firstNotRoutedSequenceNumber, e);
+                    freshShardIterator
+                            = shardIteratorHandler.requestFreshShardIteratorAt(shardId, firstNotRoutedSequenceNumber);
+                } else {
+                    LOG.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
+                    freshShardIterator = shardIteratorHandler.requestFreshShardIterator(shardId, lastSeenSequenceNumber);
+                }
                 GetRecordsRequest req = GetRecordsRequest.builder()
-                        .shardIterator(shardIteratorHandler.requestFreshShardIterator(shardId, lastSeenSequenceNumber))
+                        .shardIterator(freshShardIterator)
                         .limit(limitPerRecordsRequest)
                         .build();
                 result = getEndpoint().getClient().getRecords(req);
@@ -88,11 +113,33 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
             for (Record polledRecord : records) {
                 exchanges.add(createExchange(polledRecord));
             }
-            processedExchangeCount += processBatch(CastUtils.cast(exchanges));
+            int routed = processBatch(CastUtils.cast(exchanges));
+            processedExchangeCount += routed;
+
+            if (routed < records.size()) {
+                // the route is being suspended or stopped, and processBatch did not route the rest of the records:
+                // do not move past them, so that they are routed when the consumer runs again. When nothing was
+                // routed, the shard iterator of this request is kept and used again.
+                if (routed > 0) {
+                    lastSeenSequenceNumbers.put(shardId, records.get(routed - 1).dynamodb().sequenceNumber());
+                    firstNotRoutedSequenceNumbers.remove(shardId);
+                    shardsOfUnfinishedBatch.add(shardId);
+                } else if (!lastSeenSequenceNumbers.containsKey(shardId)) {
+                    // only needed when the kept iterator has expired before the consumer runs again
+                    firstNotRoutedSequenceNumbers.put(shardId, records.get(0).dynamodb().sequenceNumber());
+                }
+                // processBatch removes the exchanges it routes: those left are never routed, and nothing else gives
+                // them back to the exchange factory
+                for (Exchange notRouted : exchanges) {
+                    releaseExchange(notRouted, true);
+                }
+                break;
+            }
 
             shardIteratorHandler.updateShardIterator(shardId, result.nextShardIterator());
             if (!records.isEmpty()) {
                 lastSeenSequenceNumbers.put(shardId, records.get(records.size() - 1).dynamodb().sequenceNumber());
+                firstNotRoutedSequenceNumbers.remove(shardId);
             }
         }
         return processedExchangeCount;
