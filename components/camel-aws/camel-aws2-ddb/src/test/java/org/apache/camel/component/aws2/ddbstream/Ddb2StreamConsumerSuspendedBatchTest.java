@@ -18,8 +18,10 @@ package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +35,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.DescribeStreamRequest;
 import software.amazon.awssdk.services.dynamodb.model.DescribeStreamResponse;
+import software.amazon.awssdk.services.dynamodb.model.ExpiredIteratorException;
 import software.amazon.awssdk.services.dynamodb.model.GetRecordsRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetRecordsResponse;
 import software.amazon.awssdk.services.dynamodb.model.GetShardIteratorRequest;
@@ -41,6 +44,7 @@ import software.amazon.awssdk.services.dynamodb.model.ListStreamsRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListStreamsResponse;
 import software.amazon.awssdk.services.dynamodb.model.OperationType;
 import software.amazon.awssdk.services.dynamodb.model.Record;
+import software.amazon.awssdk.services.dynamodb.model.SequenceNumberRange;
 import software.amazon.awssdk.services.dynamodb.model.Shard;
 import software.amazon.awssdk.services.dynamodb.model.ShardIteratorType;
 import software.amazon.awssdk.services.dynamodb.model.Stream;
@@ -62,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
 
     static final String ROUTE_ID = "ddbstream";
+    static final String LATEST_ROUTE_ID = "ddbstream-latest";
 
     @BindToRegistry("ddbStreams")
     final FakeStreamsClient client = new FakeStreamsClient();
@@ -72,6 +77,8 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
     private final AtomicBoolean suspendRequested = new AtomicBoolean();
     private final AtomicReference<Exception> suspendFailure = new AtomicReference<>();
     private volatile Thread suspender;
+    // the route that the test starts, suspends and resumes
+    private volatile String routeId = ROUTE_ID;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -81,6 +88,14 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
                 from("aws2-ddbstream://table?amazonDynamoDbStreamsClient=#ddbStreams&streamIteratorType=FROM_START"
                      + "&initialDelay=0&delay=10")
                         .routeId(ROUTE_ID).autoStartup(false)
+                        .to("direct:records");
+
+                from("aws2-ddbstream://table?amazonDynamoDbStreamsClient=#ddbStreams&streamIteratorType=FROM_LATEST"
+                     + "&initialDelay=0&delay=10")
+                        .routeId(LATEST_ROUTE_ID).autoStartup(false)
+                        .to("direct:records");
+
+                from("direct:records")
                         .process(exchange -> {
                             String sequenceNumber
                                     = exchange.getMessage().getHeader(Ddb2StreamConstants.SEQUENCE_NUMBER, String.class);
@@ -146,6 +161,35 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
         assertEquals(List.of("1", "2", "3", "4"), routed);
     }
 
+    @Test
+    void firstRecordsOfAShardThatWereNotRoutedAreNotReplacedByTheWholeShardWhenTheIteratorExpires() throws Exception {
+        routeId = LATEST_ROUTE_ID;
+        // stored before the consumer starts: a FROM_LATEST consumer does not route them
+        client.put("1", "2");
+
+        context.getRouteController().startRoute(LATEST_ROUTE_ID);
+        await().atMost(20, TimeUnit.SECONDS).until(() -> client.recordRequests() >= 1);
+        // the first response with records arrives while the route is suspended: none of its records is routed, and
+        // no record of the shard was routed before
+        client.onRecordsReturned = this::suspendRouteDuringThePoll;
+        client.put("3", "4");
+        awaitRouteSuspended();
+        assertEquals(List.of(), routed, "nothing is routed by the suspending consumer");
+
+        // the route stays suspended for longer than a shard iterator is valid
+        client.expireIterators();
+        context.getRouteController().resumeRoute(LATEST_ROUTE_ID);
+        await().atMost(20, TimeUnit.SECONDS).until(() -> routed.size() >= 2);
+        // a few more polls: nothing else is routed
+        int requests = client.recordRequests();
+        await().atMost(20, TimeUnit.SECONDS).until(() -> client.recordRequests() >= requests + 3);
+        assertEquals(List.of("3", "4"), routed, "the records that were not routed, and not the shard from its start");
+
+        GetShardIteratorRequest last = client.iteratorRequests.get(client.iteratorRequests.size() - 1);
+        assertEquals(ShardIteratorType.AT_SEQUENCE_NUMBER, last.shardIteratorType());
+        assertEquals("3", last.sequenceNumber());
+    }
+
     /**
      * Called by the thread that polls: suspends the route from another thread, as a route must not suspend itself, and
      * returns when the suspend has reached the consumer (it no longer routes the following records of the batch).
@@ -154,10 +198,11 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
         if (!suspendRequested.compareAndSet(false, true)) {
             return;
         }
-        Ddb2StreamConsumer consumer = (Ddb2StreamConsumer) context.getRoute(ROUTE_ID).getConsumer();
+        String id = routeId;
+        Ddb2StreamConsumer consumer = (Ddb2StreamConsumer) context.getRoute(id).getConsumer();
         suspender = new Thread(() -> {
             try {
-                context.getRouteController().suspendRoute(ROUTE_ID);
+                context.getRouteController().suspendRoute(id);
             } catch (Exception e) {
                 suspendFailure.set(e);
             }
@@ -194,7 +239,7 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
         suspender.join(TimeUnit.SECONDS.toMillis(60));
         assertFalse(suspender.isAlive(), "the route suspend has returned");
         assertNull(suspendFailure.get());
-        assertEquals(ServiceStatus.Suspended, context.getRouteController().getRouteStatus(ROUTE_ID));
+        assertEquals(ServiceStatus.Suspended, context.getRouteController().getRouteStatus(routeId));
     }
 
     /**
@@ -203,8 +248,11 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
     static final class FakeStreamsClient implements DynamoDbStreamsClient {
         final List<GetShardIteratorRequest> iteratorRequests = new CopyOnWriteArrayList<>();
         volatile Runnable onGetRecords;
+        // as onGetRecords, for a response that has records
+        volatile Runnable onRecordsReturned;
         private final List<Record> records = new ArrayList<>();
         private final Map<String, Integer> iterators = new HashMap<>();
+        private final Set<String> expiredIterators = new HashSet<>();
         private int recordRequests;
 
         synchronized void put(String... sequenceNumbers) {
@@ -218,6 +266,11 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
             return recordRequests;
         }
 
+        /** The shard iterators given out so far are no longer valid. */
+        synchronized void expireIterators() {
+            expiredIterators.addAll(iterators.keySet());
+        }
+
         @Override
         public ListStreamsResponse listStreams(ListStreamsRequest request) {
             return ListStreamsResponse.builder().streams(Stream.builder().streamArn("arn:stream").build()).build();
@@ -226,7 +279,11 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
         @Override
         public DescribeStreamResponse describeStream(DescribeStreamRequest request) {
             return DescribeStreamResponse.builder().streamDescription(
-                    StreamDescription.builder().shards(Shard.builder().shardId("shard-0").build()).build()).build();
+                    StreamDescription.builder().shards(Shard.builder().shardId("shard-0")
+                            // an open shard: no ending sequence number
+                            .sequenceNumberRange(SequenceNumberRange.builder().startingSequenceNumber("1").build())
+                            .build()).build())
+                    .build();
         }
 
         @Override
@@ -236,6 +293,12 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
             switch (request.shardIteratorType()) {
                 case TRIM_HORIZON:
                     position = 0;
+                    break;
+                case LATEST:
+                    position = records.size();
+                    break;
+                case AT_SEQUENCE_NUMBER:
+                    position = Integer.parseInt(request.sequenceNumber()) - 1;
                     break;
                 case AFTER_SEQUENCE_NUMBER:
                     position = Integer.parseInt(request.sequenceNumber());
@@ -251,6 +314,9 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
             GetRecordsResponse response;
             synchronized (this) {
                 recordRequests++;
+                if (expiredIterators.contains(request.shardIterator())) {
+                    throw ExpiredIteratorException.builder().message("Iterator expired").build();
+                }
                 int from = iterators.get(request.shardIterator());
                 int to = Math.min(records.size(), from + request.limit());
                 response = GetRecordsResponse.builder().records(new ArrayList<>(records.subList(from, to)))
@@ -258,6 +324,10 @@ class Ddb2StreamConsumerSuspendedBatchTest extends CamelTestSupport {
             }
             Runnable hook = onGetRecords;
             if (hook != null) {
+                hook.run();
+            }
+            hook = onRecordsReturned;
+            if (hook != null && response.hasRecords() && !response.records().isEmpty()) {
                 hook.run();
             }
             return response;
