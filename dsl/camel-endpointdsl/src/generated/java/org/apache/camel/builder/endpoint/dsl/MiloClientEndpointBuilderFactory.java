@@ -2559,6 +2559,8 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The node ID of the value, as configured in the node or nodes option.
+         * Not to be confused with CamelMiloNodeIds, the list of nodes that the
+         * producer reads.
          * 
          * The option is a: {@code String} type.
          * 

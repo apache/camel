@@ -65,7 +65,11 @@ public class MiloClientConsumer extends DefaultConsumer {
         super.doStart();
         final Map<ExpandedNodeId, Consumer<DataValue>> valueConsumers = new LinkedHashMap<>();
         for (final String node : resolveNodes()) {
-            valueConsumers.put(ExpandedNodeId.parse(node), value -> handleValueUpdate(node, value));
+            try {
+                valueConsumers.put(ExpandedNodeId.parse(node), value -> handleValueUpdate(node, value));
+            } catch (final Exception e) {
+                throw new IllegalArgumentException("Invalid node ID: " + node, e);
+            }
         }
         this.connection = getEndpoint().createConnection();
         this.handle = this.connection.monitorValues(valueConsumers, this.samplingInterval, this.queueSize,

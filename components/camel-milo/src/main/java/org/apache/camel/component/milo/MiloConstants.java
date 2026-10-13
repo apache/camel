@@ -30,7 +30,9 @@ public final class MiloConstants {
     @Metadata(label = "producer", description = "The \"await\" setting for writes.", javaType = "Boolean",
               applicableFor = SCHEME_CLIENT)
     public static final String HEADER_AWAIT = "CamelMiloAwait";
-    @Metadata(label = "consumer", description = "The node ID of the value, as configured in the node or nodes option.",
+    @Metadata(label = "consumer",
+              description = "The node ID of the value, as configured in the node or nodes option. Not to be confused with"
+                            + " CamelMiloNodeIds, the list of nodes that the producer reads.",
               javaType = "String", applicableFor = SCHEME_CLIENT)
     public static final String HEADER_NODE_ID = "CamelMiloNodeId";
 

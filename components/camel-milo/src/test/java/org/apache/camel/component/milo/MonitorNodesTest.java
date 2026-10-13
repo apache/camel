@@ -164,6 +164,16 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
     }
 
     @Test
+    void invalidNodeIdIsNamed() throws Exception {
+        final Consumer consumer = context.getEndpoint(resolve(MILO_CLIENT + "&nodes=RAW(" + NODE_1 + ",ns=2;x=foo)"))
+                .createConsumer(exchange -> {
+                });
+
+        final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, consumer::start);
+        assertEquals("Invalid node ID: ns=2;x=foo", e.getMessage());
+    }
+
+    @Test
     void singleNodeConsumerSetsTheNodeHeader() throws Exception {
         writeServerValues();
 
