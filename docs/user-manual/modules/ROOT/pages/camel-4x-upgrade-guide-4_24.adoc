@@ -202,11 +202,3 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
-
-=== camel-vertx-websocket
-
-When the WebSocket of a consumer with `consumeAsClient=true` is closed, the consumer now makes one reconnect attempt
-at a time: while an attempt waits for the server (up to the connect timeout), the next runs of `reconnectInterval`
-are skipped, and `maxReconnectAttempts` counts these attempts one after the other. Previously every interval started
-another attempt, and when the server answered late each of them opened a WebSocket, so that every message was routed
-once per WebSocket. A consumer that is stopped no longer reconnects.
