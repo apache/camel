@@ -317,6 +317,18 @@ silently can use the `upsert` operation, or handle the exception, for example wi
 The producer also closes the Kudu session of each operation. The sessions stayed registered with the Kudu client until
 the client was closed, one more for every exchange.
 
+=== camel-mllp - the producer verifies the host name of the server over TLS
+
+When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the
+MLLP producer now checks that the certificate of the server matches the host it connects to, with the same rules as an
+HTTPS client. Before, it accepted any certificate trusted by the trust store, whatever host the certificate was issued
+for.
+
+A producer that connects with a host name or an IP address that the certificate does not list now fails the TLS
+handshake; an IP address must be listed as a subject alternative name of the certificate. Use a certificate that
+matches the host of the endpoint, or set the new `hostnameVerification` option to `false` to keep the previous
+behaviour.
+
 === camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
 
 With `sortEntries=true` the `atom` consumer sorted the entries of a feed by their published date and routed them from
