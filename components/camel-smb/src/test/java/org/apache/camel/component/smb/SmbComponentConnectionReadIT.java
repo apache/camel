@@ -70,7 +70,8 @@ class SmbComponentConnectionReadIT extends CamelTestSupport {
                         .build();
                 context.getRegistry().bind("smbConfig", config);
 
-                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig",
+                // only consume the 100 files seeded by the container (1.txt ... 100.txt), ignoring files left by other tests
+                fromF("smb:%s/%s?username=%s&password=%s&smbConfig=#smbConfig&include=^[0-9][0-9]*[.]txt$&idempotent=true",
                         service.address(), service.shareName(),
                         service.userName(), service.password())
                         .to("seda:intermediate");
