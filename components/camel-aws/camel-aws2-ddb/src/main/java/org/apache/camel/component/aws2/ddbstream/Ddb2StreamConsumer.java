@@ -28,7 +28,6 @@ import java.util.Set;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -113,7 +112,7 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
                 // processBatch removes the exchanges it routes: those left are never routed, and nothing else gives
                 // them back to the exchange factory
                 for (Exchange notRouted : exchanges) {
-                    releaseNotRoutedExchange(notRouted);
+                    releaseExchange(notRouted, true);
                 }
                 break;
             }
@@ -151,16 +150,6 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         }
 
         return answer;
-    }
-
-    private void releaseNotRoutedExchange(Exchange exchange) {
-        if (exchange instanceof PooledExchange pooled) {
-            // created with autoRelease, so done() also gives it back to the pool, once: releaseExchange would then
-            // add it to the pool a second time, and two later records would share the exchange
-            pooled.done();
-        } else {
-            releaseExchange(exchange, true);
-        }
     }
 
     protected Exchange createExchange(Record record) {
