@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -71,6 +72,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     // Written concurrently from poll()'s parallelStream over the shard list, so both must be thread-safe.
     private final Map<String, String> currentShardIterators = new ConcurrentHashMap<>();
     private final Set<String> warnLogged = ConcurrentHashMap.newKeySet();
+    // The sequence number of the last record routed from each shard: the position of a new shard iterator when the
+    // cached one has expired. Like the cached iterators it is not cleared in doStop, and a route that is stopped and
+    // started gets a new consumer.
+    private final Map<String, String> lastSequenceNumbers = new ConcurrentHashMap<>();
+    // Written by the shard monitor, read by poll(): the shards of the lists seen so far, and those of them that
+    // appeared after the first list as the child of a listed shard (resharding).
+    private final Set<String> knownShardIds = ConcurrentHashMap.newKeySet();
+    private final Set<String> childShardIds = ConcurrentHashMap.newKeySet();
 
     private volatile List<Shard> currentShardList = List.of();
     private static final String SHARD_MONITOR_EXECUTOR_NAME = "Kinesis_shard_monitor";
@@ -181,10 +190,12 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             throw new RuntimeException(e);
         }
 
-        // May cache the last successful sequence number, and pass it to the
-        // getRecords request. That way, on the next poll, we start from where
-        // we left off, however, I don't know what happens to subsequent
-        // exchanges when an earlier exchange fails.
+        // remember the last record of the batch, to continue after it when the next shard iterator has expired
+        // before it is used (an iterator is valid for 5 minutes)
+        List<Record> records = result.records();
+        if (!records.isEmpty()) {
+            lastSequenceNumbers.put(shard.shardId(), records.get(records.size() - 1).sequenceNumber());
+        }
         updateShardIterator(shard, result.nextShardIterator());
     }
 
@@ -261,16 +272,29 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             }
 
             GetShardIteratorRequest.Builder request = GetShardIteratorRequest.builder()
-                    .streamName(getEndpoint().getConfiguration().getStreamName()).shardId(shardId)
-                    .shardIteratorType(getEndpoint().getConfiguration().getIteratorType());
+                    .streamName(getEndpoint().getConfiguration().getStreamName()).shardId(shardId);
 
-            if (hasSequenceNumber()) {
-                request.startingSequenceNumber(getEndpoint().getConfiguration().getSequenceNumber());
-            }
+            String lastSequenceNumber = lastSequenceNumbers.get(shardId);
+            if (lastSequenceNumber != null) {
+                // the cached iterator of this shard has expired: continue after the last record that was routed.
+                // The configured iterator type is where the consumer starts: it would route the records of the
+                // shard again (TRIM_HORIZON, AT_TIMESTAMP, a sequence number) or skip the new ones (LATEST)
+                request.shardIteratorType(ShardIteratorType.AFTER_SEQUENCE_NUMBER)
+                        .startingSequenceNumber(lastSequenceNumber);
+            } else if (childShardIds.contains(shardId)) {
+                // a shard created by resharding while the consumer was reading its parent: all its records are new
+                request.shardIteratorType(ShardIteratorType.TRIM_HORIZON);
+            } else {
+                request.shardIteratorType(getEndpoint().getConfiguration().getIteratorType());
 
-            if (hasMessageTimestamp()) {
-                String messageTimestamp = getEndpoint().getConfiguration().getMessageTimestamp();
-                request.timestamp(parseMessageTimestamp(messageTimestamp));
+                if (hasSequenceNumber()) {
+                    request.startingSequenceNumber(getEndpoint().getConfiguration().getSequenceNumber());
+                }
+
+                if (hasMessageTimestamp()) {
+                    String messageTimestamp = getEndpoint().getConfiguration().getMessageTimestamp();
+                    request.timestamp(parseMessageTimestamp(messageTimestamp));
+                }
             }
 
             resume(shardId, request);
@@ -469,11 +493,44 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             try {
                 List<Shard> latestShardList = getShardList(connection);
                 if (ObjectHelper.isNotEmpty(latestShardList)) {
+                    // before the list is published, so that poll() knows the child shards of the list it reads
+                    trackChildShards(latestShardList);
                     setCurrentShardList(latestShardList);
                 }
             } catch (Exception e) {
                 LOG.warn("Exception getting latest shard list", e);
             }
+        }
+
+        /**
+         * The shards of the first list are read from the configured iterator type. A shard that appears in a later list
+         * and descends from a known shard was created by a split or a merge while the consumer was reading the stream,
+         * so it is read from its first record.
+         */
+        private void trackChildShards(List<Shard> latestShardList) {
+            if (!knownShardIds.isEmpty()) {
+                Set<String> parents = new HashSet<>(knownShardIds);
+                boolean found = true;
+                // repeated, as the list is not required to have a new shard before the shards created from it
+                while (found) {
+                    found = false;
+                    for (Shard shard : latestShardList) {
+                        if (!parents.contains(shard.shardId()) && hasParentIn(shard, parents)) {
+                            childShardIds.add(shard.shardId());
+                            parents.add(shard.shardId());
+                            found = true;
+                        }
+                    }
+                }
+            }
+            for (Shard shard : latestShardList) {
+                knownShardIds.add(shard.shardId());
+            }
+        }
+
+        private boolean hasParentIn(Shard shard, Set<String> parents) {
+            return shard.parentShardId() != null && parents.contains(shard.parentShardId())
+                    || shard.adjacentParentShardId() != null && parents.contains(shard.adjacentParentShardId());
         }
 
         private List<Shard> getShardList(final KinesisConnection kinesisConnection) {

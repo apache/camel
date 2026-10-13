@@ -26,7 +26,6 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.model.MessageResult;
@@ -42,15 +41,12 @@ public class TelegramAsyncHandler {
     private final Class<? extends MessageResult> resultClass;
     private final ObjectMapper mapper;
     private final Exchange exchange;
-    private final AsyncCallback callback;
 
-    TelegramAsyncHandler(String uri, Class<? extends MessageResult> resultClass, ObjectMapper mapper, Exchange exchange,
-                         AsyncCallback callback) {
+    TelegramAsyncHandler(String uri, Class<? extends MessageResult> resultClass, ObjectMapper mapper, Exchange exchange) {
         this.uri = uri;
         this.resultClass = resultClass;
         this.mapper = mapper;
         this.exchange = exchange;
-        this.callback = callback;
     }
 
     public static String extractCharset(String line, String defaultValue) {
@@ -78,6 +74,10 @@ public class TelegramAsyncHandler {
 
     }
 
+    /**
+     * Sets the result of a successful response as the message body. Throws for a response with an error status and for
+     * a body that cannot be read; the caller fails the exchange with that exception and completes it.
+     */
     public Object handleCompressedResponse(HttpResponse<InputStream> response) {
         Object result;
         final boolean success = response.statusCode() >= 200 && response.statusCode() < 300;
@@ -112,8 +112,6 @@ public class TelegramAsyncHandler {
             throw new RuntimeException(ex);
         } catch (IOException ex) {
             throw new RuntimeCamelException("Could not parse the response from " + uri, ex);
-        } finally {
-            callback.done(false);
         }
 
         return exchange;

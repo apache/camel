@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Vertx;
@@ -67,7 +69,8 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
 
     private WebSocketClient client;
     private WebSocketClientOptions resolvedClientOptions;
-    private WebSocket webSocket;
+    private volatile WebSocket webSocket;
+    private final Lock clientConsumerConnectLock = new ReentrantLock();
 
     public VertxWebsocketEndpoint(String uri, VertxWebsocketComponent component, VertxWebsocketConfiguration configuration) {
         super(uri, component);
@@ -151,6 +154,15 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         return getComponent().getVertx();
     }
 
+    /**
+     * The lock under which the client consumers of this endpoint connect ({@code consumeAsClient=true}). It belongs to
+     * the endpoint and not to the consumer, because a route that is stopped and started again gets a new consumer while
+     * a reconnect attempt of the previous one can still be waiting for its handshake.
+     */
+    Lock getClientConsumerConnectLock() {
+        return clientConsumerConnectLock;
+    }
+
     protected WebSocket getWebSocket() throws Exception {
         return getWebSocket((java.util.function.Consumer<WebSocket>) null);
     }
@@ -182,22 +194,36 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
             client.connect(connectOptions).onComplete(result -> {
                 if (result.succeeded()) {
                     WebSocket ws = result.result();
+                    if (future.isDone()) {
+                        // the caller gave up waiting (see below): nobody would use or close this WebSocket
+                        ws.close();
+                        return;
+                    }
                     LOG.info("Connected to WebSocket on {}", ws.remoteAddress());
                     if (setupCallback != null) {
                         try {
                             setupCallback.accept(ws);
                         } catch (Exception e) {
+                            ws.close();
                             future.completeExceptionally(e);
                             return;
                         }
                     }
-                    future.complete(ws);
+                    if (!future.complete(ws)) {
+                        ws.close();
+                    }
                 } else {
-                    webSocket = null;
                     future.completeExceptionally(result.cause());
                 }
             });
-            webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
+            try {
+                webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                webSocket = null;
+                // a connect that completes from now on closes its WebSocket
+                future.cancel(false);
+                throw e;
+            }
         }
         return webSocket;
     }
