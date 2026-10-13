@@ -825,42 +825,12 @@ class LogTab extends AbstractTab {
                 Span.raw(entry.message != null ? entry.message : ""));
     }
 
-    /**
-     * The rows a line of text takes when wrapped at word boundaries into the width, as the paragraph wraps it with word
-     * wrap on (a word longer than the width is broken).
-     */
-    static int wrappedRows(String text, int width) {
-        if (width <= 0 || text == null || text.isEmpty()) {
-            return 1;
-        }
-        int rows = 1;
-        int col = 0;
-        boolean first = true;
-        for (String word : text.split(" ", -1)) {
-            int w = CharWidth.of(word);
-            if (first) {
-                col = w;
-                first = false;
-            } else if (col + 1 + w <= width) {
-                col += 1 + w;
-            } else {
-                rows++;
-                col = w;
-            }
-            while (col > width) {
-                rows++;
-                col -= width;
-            }
-        }
-        return rows;
-    }
-
     /** The first entry from which the last entries fit the height when wrapped (follow mode with word wrap). */
     static int firstEntryThatFits(List<Line> lines, int height, int width) {
         int rows = 0;
         int i = lines.size();
         while (i > 0) {
-            int r = wrappedRows(lineText(lines.get(i - 1)), width);
+            int r = TuiHelper.wrappedRows(lines.get(i - 1), width);
             if (rows + r > height) {
                 break;
             }
@@ -876,7 +846,7 @@ class LogTab extends AbstractTab {
         int rows = 0;
         int n = 0;
         for (int i = start; i < lines.size(); i++) {
-            int r = wrappedRows(lineText(lines.get(i)), width);
+            int r = TuiHelper.wrappedRows(lines.get(i), width);
             if (rows + r > height && n > 0) {
                 break;
             }
@@ -884,12 +854,6 @@ class LogTab extends AbstractTab {
             n++;
         }
         return n;
-    }
-
-    private static String lineText(Line line) {
-        StringBuilder sb = new StringBuilder();
-        line.spans().forEach(sp -> sb.append(sp.content()));
-        return sb.toString();
     }
 
     private static Style levelStyle(String level) {

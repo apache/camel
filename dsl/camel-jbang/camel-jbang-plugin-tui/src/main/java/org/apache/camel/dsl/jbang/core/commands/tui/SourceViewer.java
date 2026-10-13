@@ -2721,10 +2721,7 @@ class SourceViewer {
             if (selectedLine < scrollY) {
                 scrollY = selectedLine;
             } else if (wordWrap) {
-                while (scrollY < selectedLine
-                        && countVisualRows(scrollY, selectedLine + 1, contentWidth) > visibleLines) {
-                    scrollY++;
-                }
+                scrollY = Math.max(scrollY, firstLineThatFits(selectedLine, visibleLines, contentWidth));
             } else if (selectedLine >= scrollY + visibleLines) {
                 scrollY = selectedLine - visibleLines + 1;
             }
@@ -2732,15 +2729,7 @@ class SourceViewer {
 
         int maxScroll;
         if (wordWrap) {
-            maxScroll = 0;
-            int visualFromEnd = 0;
-            for (int i = lines.size() - 1; i >= 0; i--) {
-                visualFromEnd += wrapRowCount(lines.get(i), contentWidth);
-                if (visualFromEnd >= visibleLines) {
-                    maxScroll = i;
-                    break;
-                }
-            }
+            maxScroll = firstLineThatFits(lines.size() - 1, visibleLines, contentWidth);
         } else {
             maxScroll = Math.max(0, lines.size() - visibleLines);
         }
@@ -4191,19 +4180,31 @@ class SourceViewer {
         return lastCommentLine >= 0 ? lastCommentLine + 1 : 0;
     }
 
-    private int countVisualRows(int fromLine, int toLine, int contentWidth) {
-        int count = 0;
-        for (int i = fromLine; i < toLine && i < lines.size(); i++) {
-            count += wrapRowCount(lines.get(i), contentWidth);
+    /**
+     * The first line from which the lines down to {@code last} fit the rows when word wrapped, or {@code last} when it
+     * is taller than the rows on its own.
+     */
+    private int firstLineThatFits(int last, int rows, int contentWidth) {
+        if (last < 0 || last >= lines.size()) {
+            return 0;
         }
-        return count;
+        int first = last;
+        int used = wrapRowCount(last, contentWidth);
+        while (first > 0) {
+            int r = wrapRowCount(first - 1, contentWidth);
+            if (used + r > rows) {
+                break;
+            }
+            used += r;
+            first--;
+        }
+        return first;
     }
 
-    private int wrapRowCount(String line, int contentWidth) {
-        if (!wordWrap || contentWidth <= 0 || line.length() <= contentWidth) {
-            return 1;
-        }
-        return (line.length() + contentWidth - 1) / contentWidth;
+    /** The rows a line takes when word wrapped: as it is drawn, with its marker, line number and live column. */
+    private int wrapRowCount(int lineIndex, int contentWidth) {
+        Line shown = highlightSourceLine(lines.get(lineIndex), lineIndex, 0, lineIndex == selectedLine, contentWidth + 1);
+        return TuiHelper.wrappedRows(shown, contentWidth);
     }
 
     private void scanDeprecatedLines() {

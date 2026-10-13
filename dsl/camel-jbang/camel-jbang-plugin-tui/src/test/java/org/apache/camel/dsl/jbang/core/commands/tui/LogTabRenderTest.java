@@ -114,11 +114,24 @@ class LogTabRenderTest {
     }
 
     @Test
-    void wrappedLinesAreCountedByTheirRows() {
-        assertEquals(1, LogTab.wrappedRows("short line", 40));
-        assertEquals(2, LogTab.wrappedRows("one two three four five six seven eight nine ten", 30));
-        assertEquals(3, LogTab.wrappedRows("x".repeat(70), 30));
-        assertEquals(1, LogTab.wrappedRows("", 30));
+    void followingWithWordWrapShowsTheNewestLineAfterAStackTrace() {
+        List<LogEntry> entries = new ArrayList<>();
+        entries.add(LogTab.parseLogLine(
+                "2026-10-05 20:14:58.101 ERROR 33838 --- [mer://inventory] o.a.c.p.e.DefaultErrorHandler : Failed delivery"));
+        for (int i = 0; i < 20; i++) {
+            // a stack trace line starts with a tab, and the paragraph continues it under its "at" when it wraps
+            entries.add(LogTab.parseLogLine("\tat org.apache.camel.processor.errorhandler.RedeliveryErrorHandler"
+                                            + "$RedeliveryTask.run(RedeliveryErrorHandler.java:" + (1200 + i)
+                                            + ") ~[camel-core-processor-4.23.0.jar:4.23.0]"));
+        }
+        entries.add(LogTab.parseLogLine(
+                "2026-10-05 20:14:59.906 ERROR 33838 --- [mer://inventory] orders.camel.yaml:44 : The newest line"));
+        LogTab tab = new LogTab(ctx);
+        tab.setEntriesForTesting(entries);
+
+        String rendered = TuiTestHelper.renderToString(tab, 83, 20);
+
+        assertTrue(rendered.contains("The newest line"), rendered);
     }
 
     @Test
