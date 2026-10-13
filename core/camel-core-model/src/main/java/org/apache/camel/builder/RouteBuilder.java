@@ -18,7 +18,9 @@ package org.apache.camel.builder;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -818,6 +820,35 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (RouteDefinition route : routeCollection.getRoutes()) {
             String id = route.getRouteId();
             answer.add(id);
+        }
+
+        return answer;
+    }
+
+    @Override
+    public Set<String> updateTemplatedRoutesToCamelContext(CamelContext context) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
+        if (getTemplatedRouteCollection().getTemplatedRoutes().isEmpty()) {
+            return answer;
+        }
+
+        // a route created from a templated route replaces an existing route with the same id, so the routes created
+        // are those whose definition was not in the model before
+        Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+        Set<RouteDefinition> before = Collections.newSetFromMap(new IdentityHashMap<>());
+        before.addAll(model.getRouteDefinitions());
+
+        populateTemplatedRoutes(context);
+
+        for (RouteDefinition route : model.getRouteDefinitions()) {
+            if (!before.contains(route) && route.getRouteId() != null) {
+                answer.add(route.getRouteId());
+            }
+        }
+
+        // the routes created must be started, same as in updateRoutesToCamelContext
+        if (context.getRouteController() instanceof SupervisingRouteController src) {
+            src.startRoutes(true);
         }
 
         return answer;
