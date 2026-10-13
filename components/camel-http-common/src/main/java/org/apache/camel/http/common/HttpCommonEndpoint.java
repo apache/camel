@@ -84,9 +84,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
                             + " data from the request to Java and that can be a potential security risk.",
               security = "insecure:serialization")
     boolean transferException;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer", defaultValue = "true",
               description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
-    boolean muteException;
+    boolean muteException = true;
     @UriParam(label = "consumer",
               description = "If enabled and an Exchange failed processing on the consumer side the exception's stack trace will be logged"
                             + " when the exception stack trace is not sent in the response's body.")
