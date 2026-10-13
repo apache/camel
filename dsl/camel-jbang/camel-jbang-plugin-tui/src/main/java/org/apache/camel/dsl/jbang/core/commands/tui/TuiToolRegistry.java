@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
@@ -83,6 +82,7 @@ class TuiToolRegistry {
     private volatile AnimationState currentAnimation;
 
     private volatile List<ToolDef> cachedTools;
+    private volatile Map<String, TuiTool> toolsByName;
     private volatile List<JsonObject> exampleCatalog;
 
     TuiToolRegistry(McpFacade facade) {
@@ -99,7 +99,7 @@ class TuiToolRegistry {
      * directory unless a directory is given (a write then goes through the TUI's confirm dialog or live replay),
      * camel_control knows the TUI's own actions, camel_get_log also reads an infra service log.
      */
-    private String executeSharedWithTuiExtras(String name, Map<String, Object> args) {
+    String executeSharedWithTuiExtras(String name, Map<String, Object> args) {
         if (facade != null && args.get("directory") instanceof String d && !d.isBlank() && !d.contains("/")
                 && !d.contains("\\") && facade.hasIntegration(d)) {
             // a model often passes the integration's name where the tool asks for its directory
@@ -128,7 +128,7 @@ class TuiToolRegistry {
      * Runs a shared tool from the registry over a context built from the TUI's selection: the selected integration's
      * pid, Camel version and source directory, and the editor's Spring Boot property check.
      */
-    private String executeShared(String name, Map<String, Object> args) {
+    String executeShared(String name, Map<String, Object> args) {
         ToolDescriptor descriptor = ToolRegistry.findTool(name);
         if (descriptor == null) {
             throw new IllegalArgumentException("Unknown tool: " + name);
@@ -202,12 +202,6 @@ class TuiToolRegistry {
         }
     }
 
-    /**
-     * The tools needed to answer questions and troubleshoot from the built-in AI panel. The remaining tools drive the
-     * screen (drawing, animation, key presses, tape recording, themes) and exist for external MCP agents. Every tool
-     * schema is sent on every request, and a local model pays for that in prompt-processing time, so the AI panel sends
-     * only this subset to local providers unless configured otherwise.
-     */
     static final String SHARED_PREFIX = "camel_";
     static final String CONTROL_TOOL = "camel_control";
     static final String LOG_TOOL = "camel_get_log";
@@ -217,38 +211,46 @@ class TuiToolRegistry {
     static final String VALIDATE_TOOL = "camel_validate_source";
     static final String SAVE_SUMMARY_TOOL = "camel_save_project_summary";
 
-    /** The TUI's own tools in the core subset; the shared tools add those flagged core in the registry. */
-    // CAMEL-24760: a tool earns its place here by the questions a local model gets asked, not by its size.
-    // tui_get_diagram is the ASCII drawing of what tui_get_topology returns as JSON, tui_filter a screen nicety
-    // (tui_get_table returns the whole table), tui_set_log_level a rare request the prompt guards anyway.
-    private static final Set<String> CORE_TUI_TOOLS = Set.of(
-            "tui_get_state", "tui_get_options", "tui_get_table", "tui_get_topology",
-            "tui_get_processor_detail", "tui_get_history", "tui_get_spans", "tui_send_message",
-            "tui_get_readme", "tui_navigate", "tui_get_status", "tui_infra");
-
-    static final Set<String> CORE_TOOLS = Stream.concat(
-            CORE_TUI_TOOLS.stream(),
-            ToolRegistry.authoringTools().stream().filter(ToolDescriptor::isCore).map(ToolDescriptor::name))
-            .collect(Collectors.toUnmodifiableSet());
-
-    /** The TUI's own read-only tools; the shared tools add those flagged read-only in the registry. */
-    private static final Set<String> READ_ONLY_TUI_TOOLS = Set.of(
-            "tui_get_audit", "tui_get_ai_log", "tui_get_diagram", "tui_get_events", "tui_get_history", "tui_get_mcp_log",
-            "tui_get_ollama", "tui_get_options", "tui_get_processor_detail", "tui_get_readme", "tui_get_screen",
-            "tui_get_spans", "tui_http_endpoints",
-            "tui_get_state", "tui_get_status", "tui_get_table", "tui_get_themes", "tui_get_topology",
-            "tui_list_examples", "tui_locate", "tui_wait_for_idle");
+    /**
+     * The tools needed to answer questions and troubleshoot from the built-in AI panel, those flagged
+     * {@link TuiTool.Flag#CORE}. The remaining tools drive the screen (drawing, animation, key presses, tape recording,
+     * themes) and exist for external MCP agents. Every tool schema is sent on every request, and a local model pays for
+     * that in prompt-processing time, so the AI panel sends only this subset to local providers unless configured
+     * otherwise.
+     */
+    static final Set<String> CORE_TOOLS = namesWith(TuiTool.Flag.CORE);
 
     /**
-     * Tools that inspect information without executing application actions, editing data or changing the visible view.
-     * The ACP permission handler approves calls to these without asking; anything else, including camel_control,
-     * tui_send_message and tui_execute_sql, is put in front of the user. camel_eval_expression is read-only because it
-     * evaluates an expression against a scratch exchange and sends nothing through a route.
+     * Tools that inspect information without executing application actions, editing data or changing the visible view,
+     * those flagged {@link TuiTool.Flag#READ_ONLY}. The ACP permission handler approves calls to these without asking;
+     * anything else, including camel_control, tui_send_message and tui_execute_sql, is put in front of the user.
+     * camel_eval_expression is read-only because it evaluates an expression against a scratch exchange and sends
+     * nothing through a route.
      */
-    static final Set<String> READ_ONLY_TOOLS = Stream.concat(
-            READ_ONLY_TUI_TOOLS.stream(),
-            ToolRegistry.authoringTools().stream().filter(ToolDescriptor::isReadOnly).map(ToolDescriptor::name))
-            .collect(Collectors.toUnmodifiableSet());
+    static final Set<String> READ_ONLY_TOOLS = namesWith(TuiTool.Flag.READ_ONLY);
+
+    private static Set<String> namesWith(TuiTool.Flag flag) {
+        // the flags do not depend on the facade: a registry without one defines the same tools
+        return TuiToolDefinitions.all(new TuiToolRegistry(null)).stream()
+                .filter(tool -> tool.has(flag))
+                .map(TuiTool::name)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /** The tools by name, in registry order; built once. */
+    private Map<String, TuiTool> tools() {
+        Map<String, TuiTool> tools = toolsByName;
+        if (tools == null) {
+            tools = new LinkedHashMap<>();
+            for (TuiTool tool : TuiToolDefinitions.all(this)) {
+                if (tools.put(tool.name(), tool) != null) {
+                    throw new IllegalStateException("Tool defined twice: " + tool.name());
+                }
+            }
+            toolsByName = tools;
+        }
+        return tools;
+    }
 
     /**
      * Returns all tool definitions. The result is cached since it is immutable.
@@ -258,7 +260,7 @@ class TuiToolRegistry {
         if (tools != null) {
             return tools;
         }
-        tools = TuiToolDefinitions.all();
+        tools = tools().values().stream().map(TuiTool::def).toList();
         cachedTools = tools;
         return tools;
     }
@@ -286,67 +288,23 @@ class TuiToolRegistry {
     }
 
     /**
-     * Executes a tool by name, returns result string.
+     * Executes a tool by name, returns result string. A shared camel_ tool the TUI does not list is run by the shared
+     * registry, as the TUI runs those it lists.
      */
     String execute(String name, Map<String, Object> args) throws Exception {
+        TuiTool tool = name != null ? tools().get(name) : null;
+        if (tool != null) {
+            return tool.handler().call(args);
+        }
         if (name != null && name.startsWith(SHARED_PREFIX)) {
             return executeSharedWithTuiExtras(name, args);
         }
-        return switch (name) {
-            case "tui_get_screen" -> callGetScreen(args);
-            case "tui_get_events" -> callGetEvents(args);
-            case "tui_get_state" -> callGetState();
-            case "tui_get_status" -> callGetStatus(args);
-            case "tui_show_caption" -> callShowCaption(args);
-            case "tui_navigate" -> callNavigate(args);
-            case "tui_send_keys" -> callSendKeys(args);
-            case "tui_get_options" -> callGetOptions();
-            case "tui_wait_for_idle" -> callWaitForIdle(args);
-            case "tui_tape_start" -> callTapeStart(args);
-            case "tui_tape_stop" -> callTapeStop(args);
-            case "tui_sleep" -> callSleep(args);
-            case "tui_draw" -> callDraw(args);
-            case "tui_draw_clear" -> callDrawClear();
-            case "tui_get_table" -> callGetTable(args);
-            case "tui_get_audit" -> callGetAudit(args);
-            case "tui_action" -> callAction(args);
-            case "tui_get_themes" -> callGetThemes();
-            case "tui_set_theme" -> callSetTheme(args);
-            case "tui_get_diagram" -> callGetDiagram();
-            case "tui_get_history" -> callGetHistory(args);
-            case "tui_get_topology" -> callGetTopology();
-            case "tui_send_message" -> callSendMessage(args);
-            case "tui_execute_sql" -> callExecuteSql(args);
-            case "tui_http_endpoints" -> executeShared("get_http_endpoints", args);
-            case "tui_http_request" -> executeShared("http_request", args);
-            case "tui_update_row" -> callUpdateRow(args);
-            case "tui_set_log_level" -> callSetLogLevel(args);
-            case "tui_filter" -> callFilter(args);
-            case "tui_set_input" -> callSetInput(args);
-            case "tui_toggle_trace_display" -> callToggleTraceDisplay(args);
-            case "tui_get_readme" -> callGetReadme(args);
-            case "tui_infra" -> callInfra(args);
-            case "tui_open_project" -> callOpenProject(args);
-            case "tui_get_spans" -> callGetSpans(args);
-            case "tui_get_ollama" -> callGetOllama(args);
-            case "tui_locate" -> callLocate(args);
-            case "tui_draw_shape" -> callDrawShape(args);
-            case "tui_canvas_open" -> callCanvasOpen(args);
-            case "tui_canvas_close" -> callCanvasClose();
-            case "tui_animate" -> callAnimate(args);
-            case "tui_animate_status" -> callAnimateStatus(args);
-            case "tui_get_processor_detail" -> callGetProcessorDetail(args);
-            case "tui_get_ai_log" -> callGetAiLog(args);
-            case "tui_get_mcp_log" -> callGetMcpLog(args);
-            case "tui_list_examples" -> callListExamples(args);
-            case "tui_run_example" -> callRunExample(args);
-            default -> throw new IllegalArgumentException("Unknown tool: " + name);
-        };
+        throw new IllegalArgumentException("Unknown tool: " + name);
     }
 
     // --- Tool execution methods ---
 
-    private String callGetScreen(Map<String, Object> args) {
+    String callGetScreen(Map<String, Object> args) {
         Buffer buf = facade.getLastBuffer();
         if (buf == null) {
             return "Screen not yet available";
@@ -364,7 +322,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callGetEvents(Map<String, Object> args) {
+    String callGetEvents(Map<String, Object> args) {
         int limit = 50;
         Object limitArg = args.get("limit");
         if (limitArg instanceof Number n) {
@@ -389,7 +347,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callGetState() {
+    String callGetState() {
         JsonObject result = new JsonObject();
         result.put("activeTab", facade.getActiveTabName());
         result.put("tabIndex", facade.getActiveTabIndex());
@@ -415,7 +373,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callShowCaption(Map<String, Object> args) {
+    String callShowCaption(Map<String, Object> args) {
         String text = (String) args.get("text");
         if (text == null || text.isBlank()) {
             return "Error: text is required";
@@ -440,7 +398,7 @@ class TuiToolRegistry {
         return "Caption displayed: " + text;
     }
 
-    private String callNavigate(Map<String, Object> args) {
+    String callNavigate(Map<String, Object> args) {
         JsonObject result = new JsonObject();
         String tab = (String) args.get("tab");
         String integration = (String) args.get("integration");
@@ -539,7 +497,7 @@ class TuiToolRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private String callSendKeys(Map<String, Object> args) {
+    String callSendKeys(Map<String, Object> args) {
         Object keysArg = args.get("keys");
         if (!(keysArg instanceof List)) {
             return "Error: keys must be an array of strings";
@@ -602,7 +560,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callGetOptions() {
+    String callGetOptions() {
         JsonObject result = new JsonObject();
         JsonArray tabsArray = new JsonArray();
         for (TabRegistry.TabEntry entry : facade.getTabEntries()) {
@@ -642,7 +600,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callWaitForIdle(Map<String, Object> args) {
+    String callWaitForIdle(Map<String, Object> args) {
         int timeout = 5000;
         Object timeoutArg = args.get("timeout");
         if (timeoutArg instanceof Number n) {
@@ -687,7 +645,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callTapeStart(Map<String, Object> args) {
+    String callTapeStart(Map<String, Object> args) {
         if (facade.isTapeRecording()) {
             return "Tape recording is already active. Stop it first with tui_tape_stop.";
         }
@@ -696,7 +654,7 @@ class TuiToolRegistry {
         return "Tape recording started" + (title != null ? ": " + title : "");
     }
 
-    private String callTapeStop(Map<String, Object> args) {
+    String callTapeStop(Map<String, Object> args) {
         if (!facade.isTapeRecording()) {
             return "No tape recording is active. Start one with tui_tape_start.";
         }
@@ -727,7 +685,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callSleep(Map<String, Object> args) {
+    String callSleep(Map<String, Object> args) {
         Object secArg = args.get("seconds");
         int seconds = secArg instanceof Number n ? n.intValue() : 3;
         seconds = Math.max(1, Math.min(30, seconds));
@@ -748,7 +706,7 @@ class TuiToolRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private String callDraw(Map<String, Object> args) {
+    String callDraw(Map<String, Object> args) {
         List<DrawOverlay.DrawCell> drawCells = new ArrayList<>();
         int cellCount = 0;
         int shapeCount = 0;
@@ -835,12 +793,12 @@ class TuiToolRegistry {
         return sb.toString();
     }
 
-    private String callDrawClear() {
+    String callDrawClear() {
         facade.clearDrawing();
         return "Drawing cleared";
     }
 
-    private String callCanvasOpen(Map<String, Object> args) {
+    String callCanvasOpen(Map<String, Object> args) {
         facade.openCanvas();
 
         // Draw shapes if provided
@@ -873,7 +831,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callCanvasClose() {
+    String callCanvasClose() {
         facade.closeCanvas();
         AnimationState anim = currentAnimation;
         if (anim != null && "running".equals(anim.status)) {
@@ -884,7 +842,7 @@ class TuiToolRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private String callAnimate(Map<String, Object> args) {
+    String callAnimate(Map<String, Object> args) {
         // Cancel any running animation
         AnimationState prev = currentAnimation;
         if (prev != null && "running".equals(prev.status)) {
@@ -982,7 +940,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callAnimateStatus(Map<String, Object> args) {
+    String callAnimateStatus(Map<String, Object> args) {
         AnimationState anim = currentAnimation;
         if (anim == null) {
             return "No animation has been started";
@@ -1000,7 +958,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callGetAudit(Map<String, Object> args) {
+    String callGetAudit(Map<String, Object> args) {
         Set<String> filters
                 = Set.of("category", "action", "expert", "routeId", "namespace", "correlationId", "breadcrumbId", "since");
         JsonObject request = new JsonObject();
@@ -1044,7 +1002,7 @@ class TuiToolRegistry {
         }
     }
 
-    private String callGetTable(Map<String, Object> args) {
+    String callGetTable(Map<String, Object> args) {
         String tab = args.get("tab") instanceof String s ? s : null;
         JsonObject data = facade.getTableData(tab);
         if (data == null) {
@@ -1053,7 +1011,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(data);
     }
 
-    private String callGetStatus(Map<String, Object> args) {
+    String callGetStatus(Map<String, Object> args) {
         String section = args.get("section") instanceof String s ? s.trim() : "";
         if (section.isEmpty()) {
             return "Error: section is required (use 'sections' to list the available names)";
@@ -1125,7 +1083,7 @@ class TuiToolRegistry {
         return found;
     }
 
-    private String callAction(Map<String, Object> args) {
+    String callAction(Map<String, Object> args) {
         String action = (String) args.get("action");
         if (action == null || action.isBlank()) {
             return "Error: action is required";
@@ -1140,7 +1098,7 @@ class TuiToolRegistry {
                + "or a menu label from tui_get_options actions";
     }
 
-    private String callGetThemes() {
+    String callGetThemes() {
         JsonObject result = new JsonObject();
         result.put("current", Theme.mode());
         JsonArray dark = new JsonArray();
@@ -1164,7 +1122,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callSetTheme(Map<String, Object> args) {
+    String callSetTheme(Map<String, Object> args) {
         String themeId = (String) args.get("theme");
         if (themeId == null || themeId.isBlank()) {
             return "Error: theme is required. Use tui_get_themes to list available IDs.";
@@ -1216,7 +1174,7 @@ class TuiToolRegistry {
                + (running.isEmpty() ? "none" : String.join(", ", running));
     }
 
-    private String callInfra(Map<String, Object> args) {
+    String callInfra(Map<String, Object> args) {
         String action = args.get("action") instanceof String s ? s.strip().toLowerCase(Locale.ROOT) : "";
         if (action.isEmpty()) {
             return "Error: action is required (list, log, start, stop, restart)";
@@ -1285,7 +1243,7 @@ class TuiToolRegistry {
         }
     }
 
-    private String callGetDiagram() {
+    String callGetDiagram() {
         JsonObject data = facade.getDiagramData();
         if (data == null) {
             return "No diagram available. Navigate to the Diagram tab first.";
@@ -1293,7 +1251,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(data);
     }
 
-    private String callGetHistory(Map<String, Object> args) {
+    String callGetHistory(Map<String, Object> args) {
         String exchangeId = args.get("exchangeId") instanceof String s ? s : null;
         if (exchangeId != null && !exchangeId.isBlank()) {
             facade.navigateToTab("History");
@@ -1306,7 +1264,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(data);
     }
 
-    private String callGetTopology() {
+    String callGetTopology() {
         JsonObject data = facade.getTopologyData();
         if (data == null) {
             return "No topology data available. The Diagram tab may not have loaded yet.";
@@ -1314,7 +1272,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(data);
     }
 
-    private String callGetOllama(Map<String, Object> args) {
+    String callGetOllama(Map<String, Object> args) {
         int limit = 50;
         if (args.get("limit") instanceof Number n) {
             limit = Math.max(1, n.intValue());
@@ -1322,7 +1280,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(facade.getOllamaData(limit));
     }
 
-    private String callGetSpans(Map<String, Object> args) {
+    String callGetSpans(Map<String, Object> args) {
         String traceId = args.get("traceId") instanceof String s ? s : null;
         int limit = 500;
         if (args.get("limit") instanceof Number n) {
@@ -1332,7 +1290,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(data);
     }
 
-    private String callSendMessage(Map<String, Object> args) {
+    String callSendMessage(Map<String, Object> args) {
         String endpoint = (String) args.get("endpoint");
         if (endpoint == null || endpoint.isBlank()) {
             return "Error: endpoint is required";
@@ -1384,7 +1342,7 @@ class TuiToolRegistry {
                + endpoint.substring(colon) + "'.";
     }
 
-    private String callExecuteSql(Map<String, Object> args) {
+    String callExecuteSql(Map<String, Object> args) {
         String query = (String) args.get("query");
         if (query == null || query.isBlank()) {
             return "Error: query is required";
@@ -1399,7 +1357,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(response);
     }
 
-    private String callUpdateRow(Map<String, Object> args) {
+    String callUpdateRow(Map<String, Object> args) {
         String table = (String) args.get("table");
         if (table == null || table.isBlank()) {
             return "Error: table is required";
@@ -1420,7 +1378,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(response);
     }
 
-    private String callSetLogLevel(Map<String, Object> args) {
+    String callSetLogLevel(Map<String, Object> args) {
         String level = (String) args.get("level");
         if (level == null || level.isBlank()) {
             return "Error: level is required (ERROR, WARN, INFO, DEBUG, TRACE)";
@@ -1434,7 +1392,7 @@ class TuiToolRegistry {
         return "Log level set to " + level;
     }
 
-    private String callFilter(Map<String, Object> args) {
+    String callFilter(Map<String, Object> args) {
         String filter = args.get("filter") instanceof String s ? s : "";
         String tab = args.get("tab") instanceof String s ? s : null;
         boolean applied = facade.setTabFilter(tab, filter);
@@ -1444,7 +1402,7 @@ class TuiToolRegistry {
         return filter.isEmpty() ? "Filter cleared" : "Filter set to: " + filter;
     }
 
-    private String callSetInput(Map<String, Object> args) {
+    String callSetInput(Map<String, Object> args) {
         String field = (String) args.get("field");
         if (field == null || field.isBlank()) {
             return "Error: field is required";
@@ -1458,7 +1416,7 @@ class TuiToolRegistry {
         return "Input set: " + field + " = " + (value.length() > 80 ? value.substring(0, 80) + "..." : value);
     }
 
-    private String callToggleTraceDisplay(Map<String, Object> args) {
+    String callToggleTraceDisplay(Map<String, Object> args) {
         String section = (String) args.get("section");
         if (section == null || section.isBlank()) {
             return "Error: section is required (headers, properties, variables, body, wrap)";
@@ -1471,7 +1429,7 @@ class TuiToolRegistry {
         return result;
     }
 
-    private String callGetReadme(Map<String, Object> args) {
+    String callGetReadme(Map<String, Object> args) {
         String name = args.get("name") instanceof String s ? s : null;
         JsonObject response = facade.getReadme(name);
         JsonObject summary = facade.getIntegrationSummary(name);
@@ -1503,7 +1461,7 @@ class TuiToolRegistry {
         return facade.controlIntegration(action, (String) args.get("name"));
     }
 
-    private String callOpenProject(Map<String, Object> args) {
+    String callOpenProject(Map<String, Object> args) {
         String directory = (String) args.get("directory");
         if (directory == null || directory.isBlank()) {
             return "Error: directory is required";
@@ -1558,7 +1516,7 @@ class TuiToolRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private String callLocate(Map<String, Object> args) {
+    String callLocate(Map<String, Object> args) {
         String text = args.get("text") instanceof String s ? s : null;
         String node = args.get("node") instanceof String s ? s : null;
         List<String> nodes = args.get("nodes") instanceof List<?> list
@@ -1588,7 +1546,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callDrawShape(Map<String, Object> args) {
+    String callDrawShape(Map<String, Object> args) {
         String shape = args.get("shape") instanceof String s ? s : null;
         if (shape == null) {
             return "Error: 'shape' is required";
@@ -1667,7 +1625,7 @@ class TuiToolRegistry {
         return DrawOverlay.generateShape(shape, x, y, width, height, length, color);
     }
 
-    private String callGetProcessorDetail(Map<String, Object> args) {
+    String callGetProcessorDetail(Map<String, Object> args) {
         String routeId = args.get("routeId") instanceof String v ? v : "*";
         boolean includeDocs = Boolean.TRUE.equals(args.get("includeDocs"));
 
@@ -1802,7 +1760,7 @@ class TuiToolRegistry {
         return doc;
     }
 
-    private String callGetAiLog(Map<String, Object> args) {
+    String callGetAiLog(Map<String, Object> args) {
         int limit = args.get("limit") instanceof Number n ? n.intValue() : 50;
         List<AiPanel.LogEntry> entries = facade.getAiActivityLog();
         if (entries.size() > limit) {
@@ -1825,7 +1783,7 @@ class TuiToolRegistry {
         return result.toJson();
     }
 
-    private String callGetMcpLog(Map<String, Object> args) {
+    String callGetMcpLog(Map<String, Object> args) {
         int limit = args.get("limit") instanceof Number n ? n.intValue() : 50;
         List<TuiMcpServer.LogEntry> entries = facade.getMcpActivityLog();
         if (entries.size() > limit) {
@@ -1853,7 +1811,7 @@ class TuiToolRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    private String callListExamples(Map<String, Object> args) {
+    String callListExamples(Map<String, Object> args) {
         List<JsonObject> catalog = exampleCatalog;
         if (catalog == null) {
             catalog = ExampleHelper.loadCatalog();
@@ -1919,7 +1877,7 @@ class TuiToolRegistry {
         return Jsoner.serialize(result);
     }
 
-    private String callRunExample(Map<String, Object> args) throws Exception {
+    String callRunExample(Map<String, Object> args) throws Exception {
         String name = args.get("name") instanceof String v ? v : null;
         if (name == null || name.isEmpty()) {
             return "{\"error\": \"'name' parameter is required\"}";

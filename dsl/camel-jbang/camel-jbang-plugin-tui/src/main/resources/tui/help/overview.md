@@ -143,6 +143,8 @@ are recorded in `F2` → `AI & MCP` → `AI Log`.
 - `Enter` — view routes for selected integration
 - `s` — cycle sort column (for the focused panel)
 - `S` — reverse sort order
+- `t` — toggle top mode: the processing times of each integration (mean, max, min, last, delta and percentiles)
+- `a` — cycle the sparkline chart: all integrations, the selected one, off
 - `F2` — actions menu (includes theme toggle, go to tab, etc.)
 - `F3` — switch integration
 - `Ctrl+F` — browse the selected integration's files (plain `f` on the Overview tab)

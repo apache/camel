@@ -19,39 +19,21 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
-import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
-import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.widgets.Clear;
-import dev.tamboui.widgets.block.Block;
-import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.list.ListItem;
-import dev.tamboui.widgets.list.ListState;
-import dev.tamboui.widgets.list.ListWidget;
-import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
-class GotoRoutePopup {
+/**
+ * Go to Route of the source editor: the routes of the project with their endpoint and file. Also lists other places
+ * under another name, such as the usages of an endpoint.
+ */
+class GotoRoutePopup extends FilterListPopup<GotoRoutePopup.RouteItem> {
 
-    private boolean visible;
-    private final FuzzyFilter filter = new FuzzyFilter();
-    private final ListState listState = new ListState();
-    private final ScrollbarState scrollbarState = new ScrollbarState();
     private List<RouteItem> allEntries;
-    private List<RouteItem> filteredEntries;
     private RouteItem selectedEntry;
     private String name = "Go to Route";
 
     record RouteItem(String routeId, String fromUri, String filePath, int fromLine) {
-    }
-
-    boolean isVisible() {
-        return visible;
     }
 
     void open(List<SourceTab.RouteEntry> routeIndex) {
@@ -66,129 +48,55 @@ class GotoRoutePopup {
     void openItems(List<RouteItem> items, String name) {
         this.name = name;
         allEntries = new ArrayList<>(items);
-        visible = true;
-        filter.clearFilter();
-        rebuildList();
+        show();
     }
 
-    void close() {
-        visible = false;
-        filter.clearFilter();
-    }
-
+    /** The place chosen with Enter, or null; cleared by the call. */
     RouteItem consumeSelection() {
         RouteItem entry = selectedEntry;
         selectedEntry = null;
         return entry;
     }
 
-    boolean handleKeyEvent(KeyEvent ke) {
-        int size = filteredEntries != null ? filteredEntries.size() : 0;
-        if (ke.isCancel()) {
-            close();
-            return true;
-        }
-        if (ke.isUp()) {
-            listState.selectPrevious();
-            return true;
-        }
-        if (ke.isDown()) {
-            listState.selectNext(size);
-            return true;
-        }
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 5; i++) {
-                listState.selectPrevious();
-            }
-            return true;
-        }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            for (int i = 0; i < 5; i++) {
-                listState.selectNext(size);
-            }
-            return true;
-        }
-        if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
-            listState.selectFirst();
-            return true;
-        }
-        if (ke.isEnd() || ke.isKey(KeyCode.END)) {
-            listState.selectLast(size);
-            return true;
-        }
-        if (ke.isConfirm()) {
-            Integer sel = listState.selected();
-            if (sel != null && filteredEntries != null && sel < filteredEntries.size()) {
-                selectedEntry = filteredEntries.get(sel);
-                close();
-            }
-            return true;
-        }
-        if (ke.isKey(KeyCode.BACKSPACE)) {
-            filter.deleteChar();
-            rebuildList();
-            return true;
-        }
-        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
-            filter.append(ke.string());
-            rebuildList();
-            return true;
-        }
-        return true;
+    @Override
+    protected List<RouteItem> entries() {
+        return allEntries;
     }
 
-    void render(Frame frame, Rect area) {
-        if (filteredEntries == null) {
-            return;
-        }
-        int popupW = Math.min(80, area.width() - 4);
-        int contentH = filteredEntries.size() + 2;
-        int maxH = area.height() - 4;
-        int popupH = contentH + 2 <= maxH ? contentH + 2 : Math.min(contentH + 2, maxH - 6);
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + 2;
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+    @Override
+    protected String name() {
+        return name;
+    }
 
-        frame.renderWidget(Clear.INSTANCE, popup);
+    @Override
+    protected boolean matches(RouteItem entry, String typed) {
+        return matchesText(entry.routeId() + " " + entry.fromUri(), typed);
+    }
 
-        String filterText = filter.hasFilter() ? filter.filter() : "";
-        String prompt = "> " + filterText + "█";
+    @Override
+    protected void chosen(RouteItem entry) {
+        selectedEntry = entry;
+    }
 
-        List<ListItem> items = new ArrayList<>();
-        items.add(ListItem.from(Line.from(Span.styled(prompt, Theme.info()))));
-        String sep = "─".repeat(Math.max(1, popupW - 2));
-        items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
-
-        // compute column widths for alignment
+    @Override
+    protected List<Line> rows(List<RouteItem> entries, int width) {
+        // the route ids and endpoints take the width of the longest, so the columns line up
         int maxIdW = 0;
         int maxUriW = 0;
-        for (RouteItem entry : filteredEntries) {
+        for (RouteItem entry : entries) {
             maxIdW = Math.max(maxIdW, entry.routeId().length());
             maxUriW = Math.max(maxUriW, entry.fromUri().equals(entry.routeId()) ? 0 : entry.fromUri().length());
         }
 
-        Style normalStyle = Style.EMPTY;
         Style matchStyle = Theme.label().bold();
         Style dimStyle = Style.EMPTY.dim();
-        for (RouteItem entry : filteredEntries) {
+        List<Line> rows = new ArrayList<>();
+        for (RouteItem entry : entries) {
             List<Span> spans = new ArrayList<>();
             spans.add(Span.raw(" "));
-
             String routeId = entry.routeId();
-            String padded = routeId + " ".repeat(Math.max(0, maxIdW - routeId.length()));
-
-            if (filter.hasFilter()) {
-                int[] nameMatch = FuzzyFilter.fuzzyMatch(routeId, filter.filter());
-                if (nameMatch != null) {
-                    Line hl = FuzzyFilter.highlightLine(routeId, nameMatch, normalStyle, matchStyle);
-                    spans.addAll(hl.spans());
-                    spans.add(Span.raw(" ".repeat(Math.max(0, maxIdW - routeId.length()))));
-                } else {
-                    spans.add(Span.styled(padded, normalStyle));
-                }
-            } else {
-                spans.add(Span.styled(padded, normalStyle));
-            }
+            spans.addAll(highlighted(routeId, Style.EMPTY, matchStyle));
+            spans.add(Span.raw(" ".repeat(Math.max(0, maxIdW - routeId.length()))));
 
             // a route without an id is named by its endpoint: no need to show it twice
             String uri = entry.fromUri().equals(entry.routeId()) ? "" : entry.fromUri();
@@ -201,58 +109,8 @@ class GotoRoutePopup {
                 fileName = fileName.substring(lastSep + 1);
             }
             spans.add(Span.styled("  " + fileName + ":" + (entry.fromLine() + 1), dimStyle));
-            items.add(ListItem.from(Line.from(spans)));
+            rows.add(Line.from(spans));
         }
-
-        ListState renderState = new ListState();
-        Integer sel = listState.selected();
-        if (sel != null) {
-            renderState.select(sel + 2);
-        }
-
-        int total = allEntries != null ? allEntries.size() : 0;
-        int shown = filteredEntries.size();
-        String title = shown == total
-                ? " " + name + " (" + total + ") "
-                : " " + name + " (" + shown + "/" + total + ") ";
-
-        ListWidget list = ListWidget.builder()
-                .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Theme.selectionBg())
-                .highlightSymbol("")
-                .scrollMode(ScrollMode.AUTO_SCROLL)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(title)
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, popup, renderState);
-        TuiHelper.renderListScrollbar(frame, popup, shown + 2, renderState.offset(), scrollbarState);
-    }
-
-    private void rebuildList() {
-        if (allEntries == null) {
-            filteredEntries = List.of();
-            return;
-        }
-        if (!filter.hasFilter()) {
-            filteredEntries = new ArrayList<>(allEntries);
-        } else {
-            filteredEntries = new ArrayList<>();
-            String f = filter.filter();
-            for (RouteItem entry : allEntries) {
-                String searchText = entry.routeId() + " " + entry.fromUri();
-                boolean matches;
-                if (f.length() <= 2) {
-                    matches = searchText.toLowerCase().contains(f);
-                } else {
-                    matches = filter.match(searchText) != null;
-                }
-                if (matches) {
-                    filteredEntries.add(entry);
-                }
-            }
-        }
-        listState.select(filteredEntries.isEmpty() ? null : 0);
+        return rows;
     }
 }

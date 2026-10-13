@@ -87,9 +87,20 @@ class ErrorsTab extends AbstractTableTab {
 
     @Override
     public void onTabSelected() {
+        // read at once, so the tab does not open on the errors of the last refresh
+        refreshWhileVisible();
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info != null && !info.errors.isEmpty() && tableState.selected() == null) {
             tableState.select(0);
+        }
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        DataRefreshService data = ctx.dataService;
+        List<Long> pids = data != null ? data.selectedPidAsList() : List.of();
+        if (!pids.isEmpty()) {
+            data.refreshErrorData(pids);
         }
     }
 

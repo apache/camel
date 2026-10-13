@@ -152,7 +152,7 @@ class SimpleCompletionTest {
                       - setBody:
                           simple: "${bean:orderService.total}"
                 """);
-        viewer.setSimpleCompletion((c, lines) -> SimpleCompletions.provide(catalog, c, lines,
+        viewer.completion().setSimpleCompletion((c, lines) -> SimpleCompletions.provide(catalog, c, lines,
                 new SimpleCompletions.Project(
                         () -> List.of(
                                 new AutocompletePopup.CompletionItem("orderService", null, null, null, false, null, null),
@@ -361,9 +361,9 @@ class SimpleCompletionTest {
         AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
         SourceEditAssist assist = new SourceEditAssist(new MonitorContext(data, infraData));
         SourceViewer viewer = new SourceViewer();
-        viewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-        viewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
-        viewer.setSimpleCompletion(assist::provideSimpleCompletions);
+        viewer.completion().setAutocompleteProvider(assist::provideYamlKeyCompletions);
+        viewer.completion().setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+        viewer.completion().setSimpleCompletion(assist::provideSimpleCompletions);
         viewer.loadFile(file);
         viewer.enterEditMode();
         return viewer;

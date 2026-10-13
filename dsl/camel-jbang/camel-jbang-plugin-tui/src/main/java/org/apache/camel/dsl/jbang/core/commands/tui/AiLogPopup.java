@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.markdown.MarkdownView;
@@ -26,206 +25,70 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyCode;
-import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
-import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.list.ListItem;
-import dev.tamboui.widgets.list.ListState;
-import dev.tamboui.widgets.list.ListWidget;
-import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.paragraph.Paragraph;
-import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
-import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
+/**
+ * The AI Log: the questions, answers and tool calls of the AI panel. An answer or a prompt is shown as Markdown, a tool
+ * call with its arguments or result as JSON.
+ */
+class AiLogPopup extends ActivityLogPopup<AiPanel.LogEntry> {
 
-class AiLogPopup {
-
-    private boolean visible;
-    private Supplier<List<AiPanel.LogEntry>> activityLog;
-    private List<AiPanel.LogEntry> entries;
-    private int selected;
-    private int detailScroll;
-
-    void setActivityLog(Supplier<List<AiPanel.LogEntry>> activityLog) {
-        this.activityLog = activityLog;
+    @Override
+    protected String title() {
+        return " AI Log ";
     }
 
-    boolean isVisible() {
-        return visible;
+    @Override
+    protected String emptyMessage() {
+        return "No AI activity yet. Open the AI panel (F8) and ask a question.";
     }
 
-    void open() {
-        entries = activityLog != null ? activityLog.get() : List.of();
-        selected = entries.isEmpty() ? 0 : entries.size() - 1;
-        detailScroll = 0;
-        visible = true;
+    @Override
+    protected Line entryLine(AiPanel.LogEntry entry) {
+        Style levelStyle = switch (entry.level()) {
+            case QUESTION -> Style.EMPTY.fg(Theme.accent());
+            case TOOL -> Theme.warning();
+            case RESULT -> Theme.success();
+            case RESPONSE -> Theme.notice();
+            case ERROR -> Theme.error();
+        };
+        String levelTag = switch (entry.level()) {
+            case QUESTION -> " ASK      ";
+            case TOOL -> " TOOL     ";
+            case RESULT -> " RESULT   ";
+            case RESPONSE -> " RESPONSE ";
+            case ERROR -> " ERROR    ";
+        };
+        return entryLine(entry.timestamp(), levelTag, levelStyle, entry.message());
     }
 
-    void close() {
-        visible = false;
-    }
-
-    boolean handleKeyEvent(KeyEvent ke) {
-        if (!visible) {
-            return false;
-        }
-        if (ke.isCancel()) {
-            visible = false;
-        } else if (ke.isUp() || ke.isChar('k')) {
-            if (entries != null && !entries.isEmpty()) {
-                selected = Math.max(0, selected - 1);
-                detailScroll = 0;
-            }
-        } else if (ke.isDown() || ke.isChar('j')) {
-            if (entries != null && !entries.isEmpty()) {
-                selected = Math.min(entries.size() - 1, selected + 1);
-                detailScroll = 0;
-            }
-        } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            detailScroll = Math.max(0, detailScroll - 5);
-        } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            // kept within the detail when it is drawn
-            detailScroll += 5;
-        }
-        return true;
-    }
-
-    void render(Frame frame, Rect area) {
-        Rect popup = new Rect(area.left() + 2, area.top() + 1, area.width() - 4, area.height() - 2);
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        if (entries == null || entries.isEmpty()) {
-            Block block = Block.builder()
-                    .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                    .title(" AI Log ")
-                    .build();
-            frame.renderWidget(block, popup);
-            Rect inner = block.inner(popup);
-            frame.renderWidget(Paragraph.from(Line.from(
-                    Span.styled("No AI activity yet. Open the AI panel (F8) and ask a question.", Style.EMPTY.dim()))),
-                    inner);
-            return;
-        }
-
-        int splitY = popup.top() + Math.max(3, (popup.height() * 2) / 5);
-        Rect masterArea = new Rect(popup.left(), popup.top(), popup.width(), splitY - popup.top());
-        Rect detailArea = new Rect(popup.left(), splitY, popup.width(), popup.bottom() - splitY);
-
-        renderMaster(frame, masterArea);
-        renderDetail(frame, detailArea);
-    }
-
-    void renderFooter(List<Span> spans) {
-        hint(spans, TuiIcons.HINT_SCROLL, "select");
-        hint(spans, "PgUp/Dn", "detail");
-        hintLast(spans, "Esc", "close");
-    }
-
-    private void renderMaster(Frame frame, Rect area) {
-        List<ListItem> items = new ArrayList<>();
-        for (AiPanel.LogEntry entry : entries) {
-            Style levelStyle = switch (entry.level()) {
-                case QUESTION -> Style.EMPTY.fg(Theme.accent());
-                case TOOL -> Theme.warning();
-                case RESULT -> Theme.success();
-                case RESPONSE -> Theme.notice();
-                case ERROR -> Theme.error();
-            };
-            String levelTag = switch (entry.level()) {
-                case QUESTION -> " ASK      ";
-                case TOOL -> " TOOL     ";
-                case RESULT -> " RESULT   ";
-                case RESPONSE -> " RESPONSE ";
-                case ERROR -> " ERROR    ";
-            };
-            items.add(ListItem.from(Line.from(
-                    Span.styled(entry.timestamp(), Style.EMPTY.dim()),
-                    Span.styled(levelTag, levelStyle),
-                    Span.raw(entry.message()))));
-        }
-
-        ListState masterState = new ListState();
-        masterState.select(selected);
-        ListWidget list = ListWidget.builder()
-                .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Theme.selectionBg())
-                .highlightSymbol("▸ ")
-                .scrollMode(ScrollMode.AUTO_SCROLL)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" AI Log ")
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, area, masterState);
-    }
-
-    private void renderDetail(Frame frame, Rect area) {
-        AiPanel.LogEntry entry = entries.get(selected);
-        String content = entry.detail();
-        if (content != null && !content.isBlank()
-                && entry.level() != AiPanel.LogLevel.TOOL && entry.level() != AiPanel.LogLevel.RESULT) {
+    @Override
+    protected void renderDetail(Frame frame, Rect area, AiPanel.LogEntry entry) {
+        String detail = entry.detail();
+        boolean toolCall = entry.level() == AiPanel.LogLevel.TOOL || entry.level() == AiPanel.LogLevel.RESULT;
+        if (detail != null && !detail.isBlank() && !toolCall) {
             // an answer or a prompt is Markdown: shown as the AI panel shows it (bold, code, lists), wrapped
-            Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Detail ").build();
+            Block block = detailBlock();
             MarkdownView.Builder view = MarkdownView.builder()
-                    .source(content)
+                    .source(detail)
                     .styles(Theme.chatMarkdownStyles())
                     .syntaxTheme(Theme.syntaxTheme());
             Rect inner = block.inner(area);
-            detailScroll = Math.min(detailScroll,
-                    Math.max(0, view.build().computeHeight(inner.width()) - inner.height()));
-            frame.renderWidget(view.scroll(detailScroll).block(block).build(), area);
+            int scroll = clampDetailScroll(view.build().computeHeight(inner.width()) - inner.height());
+            frame.renderWidget(view.scroll(scroll).block(block).build(), area);
             return;
         }
         List<Line> lines = new ArrayList<>();
-
-        String detail = entry.detail();
         if (detail != null && !detail.isBlank()) {
-            // a tool call or its result (an answer or a prompt is shown as Markdown above)
+            // a tool call or its result
+            boolean call = entry.level() == AiPanel.LogLevel.TOOL;
             lines.add(Line.from(Span.styled(
-                    entry.level() == AiPanel.LogLevel.TOOL
-                            ? TuiIcons.ARROW_RIGHT + " Arguments"
-                            : TuiIcons.ARROW_LEFT + " Result",
-                    (entry.level() == AiPanel.LogLevel.TOOL ? Theme.warning() : Theme.success()).bold())));
+                    call ? TuiIcons.ARROW_RIGHT + " Arguments" : TuiIcons.ARROW_LEFT + " Result",
+                    (call ? Theme.warning() : Theme.success()).bold())));
             addJsonLines(lines, detail);
         } else {
             lines.add(Line.from(Span.styled("(no detail data)", Style.EMPTY.dim())));
         }
-
-        Block detailBlock = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(" Detail ")
-                .build();
-        frame.renderWidget(detailBlock, area);
-        Rect inner = detailBlock.inner(area);
-
-        int visibleLines = inner.height();
-        int totalLines = lines.size();
-        // the scroll stays within the detail, so PgUp moves at once after PgDn went past its end
-        detailScroll = Math.min(detailScroll, Math.max(0, totalLines - visibleLines));
-        int end = Math.min(detailScroll + visibleLines, totalLines);
-        if (detailScroll < end) {
-            List<Line> visible = lines.subList(detailScroll, end);
-            frame.renderWidget(
-                    Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
-                    inner);
-        }
-    }
-
-    private static void addJsonLines(List<Line> lines, String json) {
-        try {
-            String pretty = Jsoner.prettyPrint(json, 2);
-            for (String line : pretty.split("\n", -1)) {
-                lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
-            }
-        } catch (Exception e) {
-            for (String line : json.split("\n", -1)) {
-                lines.add(Line.from(Span.styled("  " + line, Style.EMPTY.dim())));
-            }
-        }
+        renderDetailLines(frame, area, lines);
     }
 }

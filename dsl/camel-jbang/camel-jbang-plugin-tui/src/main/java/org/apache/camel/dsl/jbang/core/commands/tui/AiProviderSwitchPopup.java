@@ -16,28 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import dev.tamboui.layout.Rect;
-import dev.tamboui.style.Style;
-import dev.tamboui.terminal.Frame;
-import dev.tamboui.text.Line;
-import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
-import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.tui.event.MouseEvent;
-import dev.tamboui.tui.event.MouseEventKind;
-import dev.tamboui.widgets.Clear;
-import dev.tamboui.widgets.block.Block;
-import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.list.ListItem;
-import dev.tamboui.widgets.list.ListState;
-import dev.tamboui.widgets.list.ListWidget;
-import dev.tamboui.widgets.list.ScrollMode;
-
-final class AiProviderSwitchPopup {
+/** Switches the AI panel to another provider and model, or an ACP agent, for the session. */
+final class AiProviderSwitchPopup extends ChoicePopup<AiProviderSwitchPopup.ProviderChoice> {
 
     record ProviderChoice(String provider, String model, String url, boolean persistedDefault) {
         ProviderChoice {
@@ -55,111 +37,22 @@ final class AiProviderSwitchPopup {
         }
     }
 
-    private boolean visible;
-    private List<ProviderChoice> choices = List.of();
-    private final ListState listState = new ListState();
-    private ProviderChoice pendingChoice;
-    private Rect popupRect;
-
-    boolean isVisible() {
-        return visible;
-    }
-
     void open(List<ProviderChoice> choices) {
-        this.choices = new ArrayList<>(choices);
-        listState.selectFirst();
-        pendingChoice = null;
-        visible = true;
+        show(choices);
     }
 
-    void close() {
-        visible = false;
+    @Override
+    protected String title() {
+        return " AI Provider ";
     }
 
-    ProviderChoice consumePendingChoice() {
-        ProviderChoice choice = pendingChoice;
-        pendingChoice = null;
-        return choice;
+    @Override
+    protected String label(ProviderChoice choice) {
+        return choice.label();
     }
 
-    boolean handleMouseEvent(MouseEvent me) {
-        if (!visible) {
-            return false;
-        }
-        if (me.kind() == MouseEventKind.SCROLL_UP) {
-            handleKeyEvent(KeyEvent.ofKey(KeyCode.UP));
-            return true;
-        }
-        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-            handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN));
-            return true;
-        }
-        if (me.isClick()) {
-            if (popupRect != null && popupRect.contains(me.x(), me.y())) {
-                int idx = TuiHelper.listItemAt(popupRect, listState.offset(), choices.size(), me.x(), me.y());
-                if (idx >= 0) {
-                    listState.select(idx);
-                    handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
-                }
-                return true;
-            }
-            handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE));
-            return true;
-        }
-        return true;
-    }
-
-    void handleKeyEvent(KeyEvent ke) {
-        if (ke.isCancel()) {
-            close();
-        } else if (ke.isUp()) {
-            listState.selectPrevious();
-        } else if (ke.isDown()) {
-            listState.selectNext(choices.size());
-        } else if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 5; i++) {
-                listState.selectPrevious();
-            }
-        } else if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            for (int i = 0; i < 5; i++) {
-                listState.selectNext(choices.size());
-            }
-        } else if (ke.isConfirm()) {
-            Integer selected = listState.selected();
-            if (selected != null && selected < choices.size()) {
-                pendingChoice = choices.get(selected);
-                close();
-            }
-        }
-    }
-
-    void render(Frame frame, Rect area) {
-        int popupW = Math.max(1, Math.min(72, area.width() - 4));
-        int popupH = Math.max(1, Math.min(choices.size() + 2, area.height() - 4));
-        Rect popup = DialogHelper.centered(area, popupW, popupH);
-        this.popupRect = popup;
-        frame.renderWidget(Clear.INSTANCE, popup);
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(" AI Provider ")
-                .build();
-        frame.renderWidget(block, popup);
-
-        List<ListItem> items = new ArrayList<>();
-        for (ProviderChoice choice : choices) {
-            items.add(ListItem.from(Line.from(Span.styled(" " + choice.label(), Style.EMPTY))));
-        }
-        ListWidget list = ListWidget.builder()
-                .items(items.toArray(ListItem[]::new))
-                .scrollMode(ScrollMode.AUTO_SCROLL)
-                .highlightStyle(Theme.selectionBg())
-                .highlightSymbol("")
-                .build();
-        frame.renderStatefulWidget(list, block.inner(popup), listState);
-    }
-
-    void renderFooter(List<Span> spans) {
-        TuiHelper.hint(spans, "Enter", "select");
-        TuiHelper.hintLast(spans, "Esc", "close");
+    @Override
+    protected String confirmLabel() {
+        return "select";
     }
 }

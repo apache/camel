@@ -42,6 +42,11 @@ class MonitorContext {
 
     final AtomicReference<List<IntegrationInfo>> data;
     final AtomicReference<List<InfraInfo>> infraData;
+    /**
+     * Reads the integrations and the data tabs show on demand (errors, activity, history, traces, spans); set by
+     * CamelMonitor at startup, before the tabs are created. Null in a test that builds a context by hand.
+     */
+    DataRefreshService dataService;
     TuiRunner runner;
     final ExecutorService backgroundExecutor = Executors.newCachedThreadPool(r -> {
         Thread t = new Thread(r, "camel-tui-bg");

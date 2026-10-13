@@ -140,11 +140,11 @@ class SourceKameletValidationTest {
 
     @Test
     void theOptionsPopupIsNamedAfterTheKamelet() {
-        assertThat(SourceViewer.optionsTitle("kamelet", "kamelet:tag-order-action")).isEqualTo("tag-order-action options");
-        assertThat(SourceViewer.optionsTitle("kamelet", "kamelet:timer-source?period=1000"))
+        assertThat(SourceCompletion.optionsTitle("kamelet", "kamelet:tag-order-action")).isEqualTo("tag-order-action options");
+        assertThat(SourceCompletion.optionsTitle("kamelet", "kamelet:timer-source?period=1000"))
                 .isEqualTo("timer-source options");
-        assertThat(SourceViewer.optionsTitle("kamelet", null)).isEqualTo("kamelet options");
-        assertThat(SourceViewer.optionsTitle("timer", "timer:tick")).isEqualTo("timer options");
+        assertThat(SourceCompletion.optionsTitle("kamelet", null)).isEqualTo("kamelet options");
+        assertThat(SourceCompletion.optionsTitle("timer", "timer:tick")).isEqualTo("timer options");
     }
 
     @Test

@@ -19,21 +19,17 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -59,9 +55,6 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.tui.event.MouseEventKind;
-import dev.tamboui.widgets.barchart.Bar;
-import dev.tamboui.widgets.barchart.BarChart;
-import dev.tamboui.widgets.barchart.BarGroup;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -70,10 +63,6 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.spinner.Spinner;
 import dev.tamboui.widgets.spinner.SpinnerState;
 import dev.tamboui.widgets.spinner.SpinnerStyle;
-import dev.tamboui.widgets.table.Cell;
-import dev.tamboui.widgets.table.Row;
-import dev.tamboui.widgets.table.Table;
-import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
@@ -137,8 +126,6 @@ class AiPanel {
     private static final DateTimeFormatter TIME_FMT
             = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
     private static final String INPUT_PROMPT = "❯ ";
-    /** A multi-line question shows up to this many rows; longer ones scroll to keep the cursor visible. */
-    static final int MAX_INPUT_ROWS = 6;
     static final String TOOL_MODE_AUTO = "auto";
     static final String TOOL_MODE_CORE = "core";
     static final String TOOL_MODE_FULL = "full";
@@ -162,27 +149,9 @@ class AiPanel {
     private final PanelAnimation anim = new PanelAnimation();
     private MonitorContext ctx;
 
-    // Input state
-    private final StringBuilder inputBuffer = new StringBuilder();
+    /** The question being typed, its history (Up, Ctrl+R) and TAB completion. */
+    private final AiInputLine inputLine = new AiInputLine();
     private volatile long lastInputMs;
-    private int cursorPos;
-    private TuiPromptHistory promptHistory;
-
-    // Reverse-i-search state (Ctrl+R)
-    private boolean historySearchActive;
-    private final StringBuilder searchTerm = new StringBuilder();
-    private int searchIndex = -1;
-    private String savedInput;
-
-    // TAB completion cycle state. completionMatches holds the candidate command names for the active cycle;
-    // completionSnapshot is the buffer text a TAB press last produced. The cycle continues only while the buffer still
-    // equals that snapshot, so any other edit (typing, backspace, cursor move) transparently starts a fresh completion.
-    private List<String> completionMatches;
-    private int completionCycleIndex = -1;
-    private String completionSnapshot;
-    // Buffer offset of the token being completed: 1 for a command name (after the slash), or the start of the
-    // first argument for commands that complete arguments (/model, /tools).
-    private int completionStart = 1;
     // Models offered by TAB after "/model ". Fetched once in the background (a provider round trip) on the first TAB
     // and reset whenever the client or provider changes.
     private volatile List<String> modelCompletionCache;
@@ -219,14 +188,6 @@ class AiPanel {
     private volatile int knownContextWindow;
     /** Prefill speed measured on requests that hit no cache, for the compaction notice. */
     private volatile double coldPrefillTokensPerSecond;
-    /** What the ACP agent last reported in its context window, and how big that window is (0 = not reported). */
-    private volatile long acpContextUsed;
-    private volatile long acpContextSize;
-    private volatile long sessionToolTimeMs;
-    private volatile int sessionToolCalls;
-    /** Per answered question: [aiMs, toolMs, toolCalls], in order, for the time chart in the usage view. */
-    private final List<long[]> turnTimings = new CopyOnWriteArrayList<>();
-
     // Slash commands
     private final AiSlashCommandRegistry slashCommands = AiSlashCommandRegistry.defaults();
     private final ProjectOverviewAssist projectOverview = new ProjectOverviewAssist();
@@ -262,8 +223,6 @@ class AiPanel {
             print(String.format(format, args));
         }
     };
-    // auto | core | full, see useCoreTools(); loaded from camel.tui.ai.tools, null means auto
-    private volatile String toolMode;
     private final AiCliCommandExecutor cliCommandExecutor = new AiCliCommandExecutor();
     private volatile CompletableFuture<AiCliCommandExecutor.Result> activeCliCommand;
     private Runnable exitCallback;
@@ -279,31 +238,33 @@ class AiPanel {
     private List<AiProviderSwitchPopup.ProviderChoice> providerChoicesForTesting;
     private boolean testingClientInjected;
 
-    // ACP backend: set when the selected provider is an external coding agent (provider id "acp:*"). The agent
-    // process is spawned lazily on the first prompt so a slow first npx download never freezes the UI.
-    private static final Duration ACP_INIT_TIMEOUT = Duration.ofSeconds(120);
-    private static final Duration ACP_SESSION_TIMEOUT = Duration.ofSeconds(60);
-    private static final Duration ACP_AUTH_TIMEOUT = Duration.ofSeconds(300);
     private static final String TUI_TOOL_PREFIX = "mcp__camel-tui__";
     private static final Set<String> FILE_OR_SHELL_KINDS = Set.of("edit", "delete", "move", "execute", "fetch");
     private static final String AGENT_COMMAND_PREFIX = "/agent:";
-    private volatile AiProviderSelector.AcpPreset acpPreset;
-    private volatile AcpAgentClient acpClient;
-    private volatile AcpAgentClient.AgentInfo acpAgentInfo;
-    private volatile String acpSessionId;
-    private volatile boolean acpPreambleSent;
     private final AcpHeaderStrip acpHeader = new AcpHeaderStrip();
-    private String acpMcpUrl;
-    private Path acpCwd;
-    private AcpClientFactory acpClientFactory = this::spawnAcpAgent;
-    private Callable<String> mcpUrlSupplier;
+    private final AcpSession acpSession = new AcpSession(new AcpSession.Host() {
+        @Override
+        public void say(String text) {
+            conversation.add(new ConversationEntry(AiRole.SYSTEM, text));
+        }
+
+        @Override
+        public void log(LogLevel level, String message, String detail) {
+            AiPanel.this.log(level, message, detail);
+        }
+
+        @Override
+        public AcpAgentClient.PermissionHandler permissionHandler() {
+            return new AcpPanelPermissionHandler();
+        }
+
+        @Override
+        public Path workingDir() {
+            return acpWorkingDir();
+        }
+    });
     private final AcpPermissionPopup permissionPopup = new AcpPermissionPopup();
     private volatile CompletableFuture<String> pendingPermission;
-
-    /** Creates the client for a preset; replaced in tests with one backed by {@code FakeAcpAgent}. */
-    interface AcpClientFactory {
-        AcpAgentClient create(AiProviderSelector.AcpPreset preset, Path cwd) throws IOException;
-    }
 
     /** The selected integration as the tool groups see it; replaced in tests. */
     interface AppStatusSource {
@@ -322,34 +283,20 @@ class AiPanel {
     // /write: confirm (dialog per write), auto (the model may skip it with confirm=false) or live (the edit is replayed
     // in the source editor and the user saves or discards it)
     private McpFacade.WriteMode writeMode = McpFacade.WriteMode.CONFIRM;
-    private TuiToolRegistry toolRegistry;
-    // CAMEL-24834: the tool groups (SQL, tracing, resilience) of the selected integration that the core set gets, see
-    // refreshToolGroups()
-    private volatile AppStatusSource appStatusSource;
-    private volatile String toolGroupsPid;
-    private volatile int toolGroupsReloads = -1;
-    private volatile AppFeatures toolGroupsFeatures = AppFeatures.none();
-    private volatile TuiToolGroups.Selection toolGroups = TuiToolGroups.Selection.none();
-    private boolean mcpServerActive;
-    private int mcpServerPort;
-
     // Activity log for AI Log popup
     private final List<LogEntry> activityLog = new ArrayList<>();
     private static final int MOUSE_SCROLL_LINES = 3;
     private Rect lastArea;
 
-    // AI usage stats
-    private final List<AiUsageEntry> usageHistory = new CopyOnWriteArrayList<>();
+    /** The system prompt and the tools sent to the model, and the tool registry that runs them. */
+    private final AiToolSet toolSet = new AiToolSet();
+    /** The usage of the session: tokens, latency and time per question, for /usage and the Ctrl+U view. */
+    private final AiUsageStats usage = new AiUsageStats();
     /** Sequence number of the current question; tags the usage entries recorded while answering it. */
     private volatile int questionCounter;
     /** The question the current turn answers, for grouping its requests on the Ollama tab. */
     private volatile String currentQuestion;
-    /** Route usage (GenAI spans) recorded before this instant is left out after a {@code /usage reset}. */
-    private volatile Instant usageResetAt = Instant.EPOCH;
-    private AtomicReference<List<SpanEntry>> otelSpans = new AtomicReference<>(List.of());
-    private final TableState statsTableState = new TableState();
     private boolean statsView;
-    private int statsScrollOffset;
     boolean spanRefreshRequested;
 
     enum AiUsageSource {
@@ -422,30 +369,6 @@ class AiPanel {
         }
     }
 
-    /**
-     * One model round trip. {@code question} is the sequence number of the panel question the request was made for (a
-     * question takes several round trips when the model calls tools), so usage can be grouped per question; it is 0 for
-     * route requests, which belong to no question.
-     */
-    /**
-     * How many questions the panel's own requests were made for: a question takes one request per model round trip, and
-     * consecutive requests with the same question number belong to one question. Route calls do not count.
-     */
-    static int countQuestions(List<AiUsageEntry> entries) {
-        int questions = 0;
-        int lastQuestion = -1;
-        for (AiUsageEntry e : entries) {
-            if (e.source() == AiUsageSource.ROUTE) {
-                continue;
-            }
-            if (questions == 0 || e.question() != lastQuestion) {
-                questions++;
-                lastQuestion = e.question();
-            }
-        }
-        return questions;
-    }
-
     record AiUsageEntry(String model, String provider, int inputTokens, int outputTokens,
             int totalTokens, long latencyMs, String stopReason, Instant timestamp,
             AiUsageSource source, String routeId, int question) {
@@ -479,17 +402,16 @@ class AiPanel {
         this.mcpFacade = mcpFacade;
         if (mcpFacade != null) {
             mcpFacade.setWriteMode(writeMode);
-            this.toolRegistry = new TuiToolRegistry(mcpFacade);
+            toolSet.setRegistry(new TuiToolRegistry(mcpFacade));
         }
     }
 
     void setMcpInfo(boolean active, int port) {
-        this.mcpServerActive = active;
-        this.mcpServerPort = port;
+        toolSet.setMcpInfo(active, port);
     }
 
     void setOtelSpans(AtomicReference<List<SpanEntry>> otelSpans) {
-        this.otelSpans = otelSpans != null ? otelSpans : new AtomicReference<>(List.of());
+        usage.setOtelSpans(otelSpans);
     }
 
     synchronized List<LogEntry> getActivityLog() {
@@ -562,11 +484,11 @@ class AiPanel {
 
     void open() {
         visible = true;
-        reloadPromptHistory();
+        inputLine.reloadPromptHistory();
         if (client == null) {
             initClient();
         }
-        if (acpPreset == null && client != null) {
+        if (!acpSession.isSelected() && client != null) {
             // AI Overview: auto explains the project when its summary is missing or out of date (CAMEL-25143); reading
             // the project is kept off the UI thread
             LlmClient c = client;
@@ -589,7 +511,7 @@ class AiPanel {
      * {@link MonotonicClock} time.
      */
     boolean idleFor(long ms, long now) {
-        return !thinking.get() && activeCliCommand == null && inputBuffer.isEmpty() && now - lastInputMs >= ms;
+        return !thinking.get() && activeCliCommand == null && inputLine.isEmpty() && now - lastInputMs >= ms;
     }
 
     /** The project the AI overview is about: the selected integration's sources, else the folder the TUI runs in. */
@@ -607,7 +529,7 @@ class AiPanel {
      * arrive: the Diagram tab's ai setting pressed when the project has no summary yet.
      */
     void startProjectOverview() {
-        if (client == null && acpPreset == null) {
+        if (client == null && !acpSession.isSelected()) {
             initClient();
         }
         String message = projectOverview("");
@@ -620,7 +542,7 @@ class AiPanel {
     }
 
     String projectOverview(String arguments) {
-        if (acpPreset != null) {
+        if (acpSession.isSelected()) {
             return "Ask the agent to explain the project: it has the camel_project_overview and"
                    + " camel_save_project_summary tools.";
         }
@@ -653,7 +575,7 @@ class AiPanel {
         visible = true;
         statsView = false;
         scrollOffset = 0;
-        replaceInputBuffer(prefill);
+        inputLine.replace(prefill);
         editQuestionHandler = handler;
         editCompact = true;
     }
@@ -668,7 +590,7 @@ class AiPanel {
         }
         statsView = false;
         scrollOffset = 0;
-        replaceInputBuffer(question);
+        inputLine.replace(question);
     }
 
     boolean isAskingAboutEdit() {
@@ -684,7 +606,7 @@ class AiPanel {
     void destroy() {
         close();
         stopAgentThread();
-        closeAcpClient();
+        acpSession.close();
     }
 
     private void initClient() {
@@ -694,16 +616,16 @@ class AiPanel {
         if (AiProviderSelector.isAcp(provider)) {
             try {
                 TuiSettings settings = TuiSettings.load();
-                acpPreset = providerSelector.acpPreset(provider, settings);
+                acpSession.setPreset(providerSelector.acpPreset(provider, settings));
                 initError = null;
             } catch (IllegalArgumentException e) {
-                acpPreset = null;
+                acpSession.setPreset(null);
                 initError = e.getMessage();
             }
             client = null;
             return;
         }
-        acpPreset = null;
+        acpSession.setPreset(null);
         try {
             LlmClient created = LlmClient.create()
                     .withTemperature(0.3)
@@ -717,8 +639,8 @@ class AiPanel {
                 TuiSettings settings = TuiSettings.load();
                 providerSelector.applyChoice(created, settings.getAiProvider(), settings.getAiModel(), settings.getAiUrl());
             }
-            if (toolMode == null) {
-                toolMode = normalizeToolMode(TuiSettings.load().getAiTools());
+            if (toolSet.mode() == null) {
+                toolSet.setMode(normalizeToolMode(TuiSettings.load().getAiTools()));
             }
             client = created;
             if (!client.detectEndpoint()) {
@@ -731,7 +653,7 @@ class AiPanel {
             // know the Ollama window before the first question instead of resolving it in front of the first request
             client.resolveOllamaContextWindowInBackground();
             messages = new ArrayList<>();
-            tools = buildTuiToolDefinitions();
+            tools = toolSet.definitions(client);
         } catch (Exception e) {
             initError = "Failed to initialize AI: " + e.getMessage();
             client = null;
@@ -740,26 +662,26 @@ class AiPanel {
 
     private void applyProviderChoice(AiProviderSwitchPopup.ProviderChoice choice) {
         stopAgentThread();
-        closeAcpClient();
+        acpSession.close();
         sessionProviderChoice = choice;
         if (AiProviderSelector.isAcp(choice.provider())) {
             client = null;
             initError = null;
             try {
                 TuiSettings settings = TuiSettings.load();
-                acpPreset = providerSelector.acpPreset(choice.provider(), settings);
+                acpSession.setPreset(providerSelector.acpPreset(choice.provider(), settings));
             } catch (IllegalArgumentException e) {
-                acpPreset = null;
+                acpSession.setPreset(null);
                 sessionProviderChoice = null;
                 conversation.add(new ConversationEntry(AiRole.ERROR, e.getMessage()));
                 return;
             }
             conversation.add(new ConversationEntry(
                     AiRole.SYSTEM,
-                    "Selected " + acpPreset.label() + ". The agent starts with your first question."));
+                    "Selected " + acpSession.preset().label() + ". The agent starts with your first question."));
             return;
         }
-        acpPreset = null;
+        acpSession.setPreset(null);
         if (testingClientInjected && client != null) {
             // Keep tests independent of the locally installed camel-jbang-core artifact.
         } else {
@@ -776,32 +698,6 @@ class AiPanel {
                     AiRole.ERROR,
                     "Failed to switch to " + choice.provider() + ": " + initError));
         }
-    }
-
-    private void closeAcpClient() {
-        AcpAgentClient agent = acpClient;
-        acpClient = null;
-        acpSessionId = null;
-        acpAgentInfo = null;
-        acpPreambleSent = false;
-        acpContextUsed = 0;
-        acpContextSize = 0;
-        if (agent != null) {
-            // Do not block the TUI event thread: close() destroys the agent process and waits up to 5 seconds for
-            // it to die. Nothing here observes the shutdown, so it runs on a short-lived daemon thread.
-            Thread closer = new Thread(agent::close, "tui-acp-close");
-            closer.setDaemon(true);
-            closer.start();
-        }
-    }
-
-    private String acpLabel() {
-        AcpAgentClient.AgentInfo info = acpAgentInfo;
-        AiProviderSelector.AcpPreset preset = acpPreset;
-        if (info != null) {
-            return info.label();
-        }
-        return preset != null ? preset.label() : "ACP agent";
     }
 
     private String displayModel(AiProviderSwitchPopup.ProviderChoice choice) {
@@ -895,8 +791,9 @@ class AiPanel {
             copyChoice(copyPopup.consumePendingChoice());
             return true;
         }
-        if (historySearchActive) {
-            return handleSearchKeyEvent(ke);
+        if (inputLine.isSearching()) {
+            // a key the search does not take ends it, and is then handled as usual
+            return inputLine.handleSearchKey(ke) || handleKeyEvent(ke);
         }
         if (ke.isKey(KeyCode.F8)) {
             close();
@@ -906,8 +803,8 @@ class AiPanel {
             return false;
         }
         if (!statsView && !thinking.get() && ke.hasCtrl() && ke.isCharIgnoreCase('r')
-                && promptHistory != null && promptHistory.isEnabled() && promptHistory.size() > 0) {
-            enterHistorySearch();
+                && inputLine.canSearchHistory()) {
+            inputLine.enterSearch();
             return true;
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('p') && !thinking.get() && activeCliCommand == null) {
@@ -928,13 +825,13 @@ class AiPanel {
         }
         if (ke.hasCtrl() && ke.isCharIgnoreCase('n') && !statsView && (!thinking.get() || editQuestionHandler != null)) {
             // a line break in the question; terminals deliver Shift+Enter and Alt+Enter as plain Enter or nothing
-            insertInput("\n");
+            inputLine.insert("\n");
             return true;
         }
         if (ke.isKey(KeyCode.PAGE_UP)) {
             if (statsView) {
                 // the usage view scrolls its model table from the top
-                statsScrollOffset = Math.max(0, statsScrollOffset - 5);
+                usage.scroll(-5);
             } else {
                 scrollOffset += 5;
             }
@@ -942,24 +839,16 @@ class AiPanel {
         }
         if (ke.isKey(KeyCode.PAGE_DOWN)) {
             if (statsView) {
-                statsScrollOffset += 5;
+                usage.scroll(5);
             } else {
                 scrollOffset = Math.max(0, scrollOffset - 5);
             }
             return true;
         }
-        if (!statsView && ke.isKey(KeyCode.UP) && moveCursorLine(-1)) {
+        if (!statsView && ke.isKey(KeyCode.UP) && (inputLine.moveCursorLine(-1) || inputLine.historyPrevious())) {
             return true;
         }
-        if (!statsView && ke.isKey(KeyCode.DOWN) && moveCursorLine(1)) {
-            return true;
-        }
-        if (!statsView && ke.isKey(KeyCode.UP) && promptHistory != null && promptHistory.isEnabled()) {
-            promptHistory.previous(inputBuffer.toString()).ifPresent(this::replaceInputBuffer);
-            return true;
-        }
-        if (!statsView && ke.isKey(KeyCode.DOWN) && promptHistory != null && promptHistory.isEnabled()) {
-            promptHistory.next(inputBuffer.toString()).ifPresent(this::replaceInputBuffer);
+        if (!statsView && ke.isKey(KeyCode.DOWN) && (inputLine.moveCursorLine(1) || inputLine.historyNext())) {
             return true;
         }
         if (editQuestionHandler != null && ke.isKey(KeyCode.ESCAPE)) {
@@ -981,63 +870,16 @@ class AiPanel {
             return true;
         }
         if (ke.isKey(KeyCode.ENTER)) {
-            if (!inputBuffer.isEmpty()) {
+            if (!inputLine.isEmpty()) {
                 submitInput();
             }
             return true;
         }
-        // the cursor moves and deletes a code point at a time, so an emoji (two chars) is not cut in half
-        if (ke.isKey(KeyCode.BACKSPACE)) {
-            if (cursorPos > 0) {
-                if (promptHistory != null) {
-                    promptHistory.resetNavigation();
-                }
-                int previous = inputBuffer.offsetByCodePoints(cursorPos, -1);
-                inputBuffer.delete(previous, cursorPos);
-                cursorPos = previous;
-            }
-            return true;
-        }
-        if (ke.isKey(KeyCode.DELETE)) {
-            if (cursorPos < inputBuffer.length()) {
-                if (promptHistory != null) {
-                    promptHistory.resetNavigation();
-                }
-                inputBuffer.delete(cursorPos, inputBuffer.offsetByCodePoints(cursorPos, 1));
-            }
-            return true;
-        }
-        if (ke.isKey(KeyCode.LEFT)) {
-            if (cursorPos > 0) {
-                cursorPos = inputBuffer.offsetByCodePoints(cursorPos, -1);
-            }
-            return true;
-        }
-        if (ke.isKey(KeyCode.RIGHT)) {
-            if (cursorPos < inputBuffer.length()) {
-                cursorPos = inputBuffer.offsetByCodePoints(cursorPos, 1);
-            }
-            return true;
-        }
-        if (ke.isKey(KeyCode.HOME)) {
-            cursorPos = lineStart(cursorPos);
-            return true;
-        }
-        if (ke.isKey(KeyCode.END)) {
-            cursorPos = lineEnd(cursorPos);
-            return true;
-        }
         if (ke.isKey(KeyCode.TAB)) {
-            handleTabCompletion(ke.hasShift());
+            inputLine.complete(ke.hasShift(), this::completionFor);
             return true;
         }
-        String typed = FormHelper.typedText(ke);
-        if (typed != null) {
-            if (promptHistory != null) {
-                promptHistory.resetNavigation();
-            }
-            inputBuffer.insert(cursorPos, typed);
-            cursorPos += typed.length();
+        if (inputLine.handleEditKey(ke)) {
             return true;
         }
         if (isGlobalShortcut(ke)) {
@@ -1055,73 +897,8 @@ class AiPanel {
         return ke.hasCtrl() && (ke.isCharIgnoreCase('f') || ke.isCharIgnoreCase('l'));
     }
 
-    // ---- Reverse-i-search (Ctrl+R) ----
-
-    private void enterHistorySearch() {
-        savedInput = inputBuffer.toString();
-        historySearchActive = true;
-        searchTerm.setLength(0);
-        searchIndex = -1;
-    }
-
-    private void exitHistorySearch(boolean accept) {
-        historySearchActive = false;
-        if (accept && searchIndex >= 0) {
-            replaceInputBuffer(promptHistory.get(searchIndex));
-        } else {
-            replaceInputBuffer(savedInput);
-        }
-        searchTerm.setLength(0);
-        searchIndex = -1;
-        savedInput = null;
-    }
-
-    private void performSearch(int fromIndex) {
-        if (searchTerm.isEmpty()) {
-            searchIndex = -1;
-            return;
-        }
-        searchIndex = promptHistory.searchBackward(searchTerm.toString(), fromIndex);
-    }
-
-    private boolean handleSearchKeyEvent(KeyEvent ke) {
-        if (ke.hasCtrl() && ke.isCharIgnoreCase('r')) {
-            if (searchIndex > 0) {
-                performSearch(searchIndex - 1);
-            }
-            return true;
-        }
-        if (ke.isKey(KeyCode.ENTER)) {
-            exitHistorySearch(true);
-            return true;
-        }
-        if (ke.isKey(KeyCode.ESCAPE) || ke.isCtrlC()) {
-            exitHistorySearch(false);
-            return true;
-        }
-        if (ke.isKey(KeyCode.BACKSPACE)) {
-            if (searchTerm.isEmpty()) {
-                exitHistorySearch(false);
-            } else {
-                searchTerm.setLength(searchTerm.offsetByCodePoints(searchTerm.length(), -1));
-                performSearch(promptHistory.size() - 1);
-            }
-            return true;
-        }
-        String typed = FormHelper.typedText(ke);
-        if (typed != null) {
-            searchTerm.append(typed);
-            int from = searchIndex >= 0 ? searchIndex : promptHistory.size() - 1;
-            performSearch(from);
-            return true;
-        }
-        // Any other key: accept match and let the key be processed normally
-        exitHistorySearch(true);
-        return handleKeyEvent(ke);
-    }
-
     boolean isHistorySearchActive() {
-        return historySearchActive;
+        return inputLine.isSearching();
     }
 
     /**
@@ -1134,142 +911,24 @@ class AiPanel {
             return;
         }
         String normalized = text.replace("\r\n", "\n").replace('\r', '\n');
-        if (historySearchActive) {
-            searchTerm.append(normalized.replace('\n', ' '));
-            performSearch(searchIndex >= 0 ? searchIndex : promptHistory.size() - 1);
-            return;
-        }
         // pasted line breaks stay: a multi-line question is sent as typed
-        insertInput(normalized);
-    }
-
-    private void insertInput(String text) {
-        if (promptHistory != null) {
-            promptHistory.resetNavigation();
-        }
-        completionMatches = null;
-        inputBuffer.insert(cursorPos, text);
-        cursorPos += text.length();
-    }
-
-    // ---- multi-line input: the buffer holds '\n', the cursor moves by line with Up/Down, Home/End ----
-
-    private int lineStart(int pos) {
-        int nl = inputBuffer.lastIndexOf("\n", Math.max(0, pos - 1));
-        return pos > 0 && nl >= 0 && nl < pos ? nl + 1 : 0;
-    }
-
-    private int lineEnd(int pos) {
-        int nl = inputBuffer.indexOf("\n", pos);
-        return nl < 0 ? inputBuffer.length() : nl;
-    }
-
-    /** Moves the cursor to the previous (-1) or next (1) line of the input; false when there is no such line. */
-    private boolean moveCursorLine(int direction) {
-        int start = lineStart(cursorPos);
-        // the column in code points, so the cursor does not land inside an emoji on the other line
-        int column = inputBuffer.codePointCount(start, cursorPos);
-        int targetStart;
-        if (direction < 0) {
-            if (start == 0) {
-                return false;
-            }
-            targetStart = lineStart(start - 1);
-        } else {
-            int end = lineEnd(cursorPos);
-            if (end >= inputBuffer.length()) {
-                return false;
-            }
-            targetStart = end + 1;
-        }
-        int targetEnd = lineEnd(targetStart);
-        cursorPos = inputBuffer.offsetByCodePoints(targetStart,
-                Math.min(column, inputBuffer.codePointCount(targetStart, targetEnd)));
-        return true;
-    }
-
-    private List<String> inputLines() {
-        return List.of(inputBuffer.toString().split("\n", -1));
-    }
-
-    /** Rows the input needs: one per line, capped so the conversation keeps most of the panel. */
-    private int inputRows() {
-        return Math.min(MAX_INPUT_ROWS, inputLines().size());
+        inputLine.paste(normalized);
     }
 
     String searchTermForTesting() {
-        return searchTerm.toString();
+        return inputLine.searchTerm();
     }
 
-    /**
-     * Completes the slash command name at the cursor. With multiple matches, TAB first fills in the longest common
-     * prefix; once no further prefix can be added it cycles forward through the matches (wrapping so every match is
-     * reachable with TAB alone). A single match is completed fully and a trailing space is appended. Shift+TAB cycles
-     * backward. TAB is a no-op unless the buffer is a partial command name (starts with {@code /}, no arguments yet).
-     */
-    /**
-     * Completes the slash command name at the cursor, or the first argument of {@code /model} (against the models the
-     * provider reports) and {@code /tools} (auto, core, full). With multiple matches, TAB first fills in the longest
-     * common prefix; once no further prefix can be added it cycles forward through the matches (wrapping so every match
-     * is reachable with TAB alone). A single match is completed fully and a trailing space is appended. Shift+TAB
-     * cycles backward.
-     */
-    private void handleTabCompletion(boolean backward) {
-        String text = inputBuffer.toString();
-        boolean continuing = text.equals(completionSnapshot) && completionMatches != null && completionMatches.size() > 1;
-        if (continuing) {
-            int size = completionMatches.size();
-            if (completionCycleIndex < 0) {
-                completionCycleIndex = backward ? size - 1 : 0;
-            } else {
-                completionCycleIndex = backward
-                        ? (completionCycleIndex - 1 + size) % size
-                        : (completionCycleIndex + 1) % size;
-            }
-            applyCompletionToken(completionMatches.get(completionCycleIndex), false);
-            return;
-        }
-
-        List<String> names;
-        String currentToken;
-        ArgumentCompletion argument = argumentCompletion(text);
+    /** What TAB completes in the text: the argument of /model, /tools or /write, else the slash command name. */
+    private AiInputLine.Completion completionFor(String text) {
+        AiInputLine.Completion argument = argumentCompletion(text);
         if (argument != null) {
-            names = argument.candidates();
-            currentToken = argument.token();
-            completionStart = argument.start();
-        } else {
-            names = slashCommands.completionsFor(text, agentCommandDescriptors()).stream()
-                    .map(AiSlashCommandRegistry.Descriptor::name)
-                    .toList();
-            currentToken = text.length() > 1 ? text.substring(1) : "";
-            completionStart = 1;
+            return argument;
         }
-        if (names.isEmpty()) {
-            completionMatches = null;
-            completionCycleIndex = -1;
-            completionSnapshot = null;
-            return;
-        }
-        if (names.size() == 1) {
-            applyCompletionToken(names.get(0), true);
-            // A single completion ends with a trailing space, so there is nothing left to cycle.
-            completionMatches = null;
-            completionCycleIndex = -1;
-            completionSnapshot = null;
-            return;
-        }
-        String prefix = longestCommonPrefix(names);
-        completionMatches = names;
-        if (prefix.length() > currentToken.length()) {
-            applyCompletionToken(prefix, false);
-            completionCycleIndex = -1;
-        } else {
-            completionCycleIndex = backward ? names.size() - 1 : 0;
-            applyCompletionToken(names.get(completionCycleIndex), false);
-        }
-    }
-
-    private record ArgumentCompletion(int start, String token, List<String> candidates) {
+        List<String> names = slashCommands.completionsFor(text, acpSession.commandDescriptors()).stream()
+                .map(AiSlashCommandRegistry.Descriptor::name)
+                .toList();
+        return new AiInputLine.Completion(1, text.length() > 1 ? text.substring(1) : "", names);
     }
 
     /**
@@ -1277,7 +936,7 @@ class AiPanel {
      * {@code null} when the buffer is not at the first argument of one of those commands. The model list comes from the
      * provider, so the first TAB kicks off a background fetch and returns nothing; TAB again once it is loaded.
      */
-    private ArgumentCompletion argumentCompletion(String text) {
+    private AiInputLine.Completion argumentCompletion(String text) {
         if (!text.startsWith("/")) {
             return null;
         }
@@ -1316,7 +975,7 @@ class AiPanel {
         List<String> matches = candidates.stream()
                 .filter(candidate -> candidate.toLowerCase().startsWith(lower))
                 .toList();
-        return new ArgumentCompletion(start, token, matches);
+        return new AiInputLine.Completion(start, token, matches);
     }
 
     private List<String> modelCompletionCandidates() {
@@ -1339,37 +998,10 @@ class AiPanel {
         return List.of();
     }
 
-    private void applyCompletionToken(String token, boolean trailingSpace) {
-        inputBuffer.setLength(completionStart);
-        inputBuffer.append(token);
-        if (trailingSpace) {
-            inputBuffer.append(' ');
-        }
-        cursorPos = inputBuffer.length();
-        completionSnapshot = inputBuffer.toString();
-    }
-
-    private static String longestCommonPrefix(List<String> values) {
-        String prefix = values.get(0);
-        for (int i = 1; i < values.size() && !prefix.isEmpty(); i++) {
-            String value = values.get(i);
-            int max = Math.min(prefix.length(), value.length());
-            int j = 0;
-            while (j < max && prefix.charAt(j) == value.charAt(j)) {
-                j++;
-            }
-            prefix = prefix.substring(0, j);
-        }
-        return prefix;
-    }
-
     private void submitInput() {
-        String input = inputBuffer.toString().trim();
-        if (promptHistory != null) {
-            promptHistory.remember(input);
-        }
-        inputBuffer.setLength(0);
-        cursorPos = 0;
+        String input = inputLine.text().trim();
+        inputLine.remember(input);
+        inputLine.clear();
         scrollOffset = 0;
         if (input.startsWith("/")) {
             executeSlashCommand(input);
@@ -1391,27 +1023,11 @@ class AiPanel {
         submitQuestion(input);
     }
 
-    private void reloadPromptHistory() {
-        TuiSettings settings = TuiSettings.load();
-        promptHistory = TuiPromptHistory.load(settings.getAiPromptHistoryLimit(), TuiHistoryFiles.aiPromptHistoryFile());
-    }
-
-    private void replaceInputBuffer(String text) {
-        inputBuffer.setLength(0);
-        if (text != null) {
-            inputBuffer.append(text);
-        }
-        cursorPos = inputBuffer.length();
-        completionMatches = null;
-        completionCycleIndex = -1;
-        completionSnapshot = null;
-    }
-
     private void executeSlashCommand(String input) {
-        if (acpPreset != null && input.startsWith(AGENT_COMMAND_PREFIX)) {
+        if (acpSession.isSelected() && input.startsWith(AGENT_COMMAND_PREFIX)) {
             String rest = input.substring(AGENT_COMMAND_PREFIX.length()).strip();
             if (rest.isEmpty()) {
-                conversation.add(new ConversationEntry(AiRole.SYSTEM, agentCommandListing()));
+                conversation.add(new ConversationEntry(AiRole.SYSTEM, acpSession.commandListing()));
                 return;
             }
             // explicit escape: reaches the agent even when the name is also a panel command
@@ -1431,7 +1047,7 @@ class AiPanel {
             }
         }
 
-        if (parsed.isEmpty() && acpPreset != null) {
+        if (parsed.isEmpty() && acpSession.isSelected()) {
             // not a panel command: hand it to the agent verbatim (its own slash commands and skills)
             submitQuestion(input);
             return;
@@ -1522,15 +1138,7 @@ class AiPanel {
                 permission.complete(null);
                 permissionPopup.close();
             }
-            AcpAgentClient agent = acpClient;
-            String session = acpSessionId;
-            if (agent != null && session != null) {
-                // Do not block the TUI event thread: cancel() writes to the agent under the client's writer lock.
-                // prompt() sends the same notification on its own interrupt path; a duplicate cancel is harmless.
-                Thread canceller = new Thread(() -> agent.cancel(session), "tui-acp-cancel");
-                canceller.setDaemon(true);
-                canceller.start();
-            }
+            acpSession.cancelTurn();
             stopAgentThread();
             conversation.add(new ConversationEntry(AiRole.SYSTEM, "(cancelled)"));
         }
@@ -1561,7 +1169,7 @@ class AiPanel {
 
     private void submitQuestion(String question) {
         stopAgentThread();
-        if (acpPreset != null) {
+        if (acpSession.isSelected()) {
             submitAcpQuestion(question);
             return;
         }
@@ -1590,11 +1198,11 @@ class AiPanel {
         // re-read the tool mode so a change made in F2 -> Settings applies to the next question, and rebuild the
         // tools in case mcpFacade was wired after init
         if (!testingClientInjected) {
-            toolMode = normalizeToolMode(TuiSettings.load().getAiTools());
+            toolSet.setMode(normalizeToolMode(TuiSettings.load().getAiTools()));
         }
-        refreshToolGroups();
-        tools = buildTuiToolDefinitions();
-        String systemPrompt = buildSystemPrompt();
+        toolSet.refreshToolGroups(mcpFacade);
+        tools = toolSet.definitions(client);
+        String systemPrompt = toolSet.systemPrompt(client);
 
         agentThread = new Thread(() -> {
             try {
@@ -1638,7 +1246,8 @@ class AiPanel {
         }
         String note = pendingNote;
         pendingNote = null;
-        messages.add(LlmClient.Message.user(contextualize(note == null ? question : "[" + note + "]\n" + question)));
+        messages.add(LlmClient.Message
+                .user(AiToolSet.contextualize(mcpFacade, note == null ? question : "[" + note + "]\n" + question)));
 
         LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
         Map<String, Integer> callCounts = new HashMap<>();
@@ -1704,14 +1313,14 @@ class AiPanel {
                         result = executeTuiTool(toolCall.name(), toolCall.arguments());
                     }
                     long toolElapsed = MonotonicClock.millis() - toolStart;
+                    TuiToolRegistry toolRegistry = toolSet.registry();
                     if (toolRegistry != null) {
                         // waiting for the user to confirm a file write is not tool time
                         toolElapsed = Math.max(0, toolElapsed - toolRegistry.consumeConfirmWaitMs());
                     }
                     turnToolMs += toolElapsed;
                     turnToolCalls++;
-                    sessionToolTimeMs += toolElapsed;
-                    sessionToolCalls++;
+                    usage.addToolCall(toolElapsed);
                     log(LogLevel.RESULT, toolCall.name() + " (" + formatToolTime(toolElapsed) + ")", result);
                     recentCalls.add(toolCall.name() + " " + summarize(arguments, 80) + " -> " + summarize(result, 120));
                     results.add(new LlmClient.ToolResult(toolCall.id(), truncateToolResult(result)));
@@ -1807,7 +1416,7 @@ class AiPanel {
                     AiRole.ASSISTANT, text, elapsed, turnAiMs, turnToolMs, turnToolCalls,
                     totalUsage.totalTokens(), turnRequests, wrapUp, contextFillPercent(), corrections, note);
             conversation.add(entry);
-            turnTimings.add(new long[] { turnAiMs, turnToolMs, turnToolCalls });
+            usage.addTurn(turnAiMs, turnToolMs, turnToolCalls);
             String label = wrapUp ? "Response after reaching the tool call limit (" : "Response (";
             log(LogLevel.RESPONSE, label + entry.byline() + describeCacheSignal(totalUsage) + ")",
                     note == null ? text : text + "\n\n" + note);
@@ -1936,7 +1545,7 @@ class AiPanel {
 
     /** Estimate of the next prompt: static prefix plus history, in tokens. */
     private int promptTokensEstimate() {
-        return estimateTokens(buildSystemPrompt().length()) + estimateTokens(toolSchemaChars())
+        return estimateTokens(toolSet.systemPrompt(client).length()) + estimateTokens(toolSet.schemaChars(client))
                + estimateTokens(historyChars(messages));
     }
 
@@ -1961,7 +1570,7 @@ class AiPanel {
         return sb.toString();
     }
 
-    private static String formatSeconds(long millis) {
+    static String formatSeconds(long millis) {
         return String.format(Locale.ROOT, "%.1fs", millis / 1000.0);
     }
 
@@ -2050,151 +1659,25 @@ class AiPanel {
         String message = e.getMessage() != null ? e.getMessage() : e.toString();
         conversation.add(new ConversationEntry(AiRole.ERROR, message));
         log(LogLevel.ERROR, "ACP error", message);
-        AcpAgentClient agent = acpClient;
+        AcpAgentClient agent = acpSession.client();
         boolean dead = agent == null || !agent.isAlive()
                 || (acp != null && (acp.code() == AcpAgentClient.CONNECTION || acp.code() == AcpAgentClient.TIMEOUT));
         if (dead) {
-            closeAcpClient();
+            acpSession.close();
         }
     }
 
     private void runAcpTurn(String question) throws IOException {
-        AcpAgentClient agent = ensureAcpSession();
+        AcpAgentClient agent = acpSession.ensureSession();
         boolean agentCommand = question.startsWith("/");
-        String text = acpPreambleSent || agentCommand ? question : acpPreamble() + "\n\n" + question;
+        String text = acpSession.preambleSent() || agentCommand
+                ? question : toolSet.acpPreamble(client) + "\n\n" + question;
         AcpTurnListener listener = new AcpTurnListener();
-        String stopReason = agent.prompt(acpSessionId, text, listener);
+        String stopReason = agent.prompt(acpSession.sessionId(), text, listener);
         if (!agentCommand) {
-            acpPreambleSent = true;
+            acpSession.markPreambleSent();
         }
         listener.finish(stopReason);
-    }
-
-    /**
-     * The ACP agent's advertised commands as display-only descriptors (null executor: they are forwarded, never run
-     * locally). Displayed and completed under the {@code agent:} name so they never collide with a panel command of the
-     * same name; the bare name is registered as an alias so typing it still suggests the prefixed form.
-     */
-    private List<AiSlashCommandRegistry.Descriptor> agentCommandDescriptors() {
-        AcpAgentClient agent = acpClient;
-        if (acpPreset == null || agent == null) {
-            return List.of();
-        }
-        List<AiSlashCommandRegistry.Descriptor> out = new ArrayList<>();
-        for (AcpAgentClient.AgentCommand command : agent.availableCommands()) {
-            out.add(new AiSlashCommandRegistry.Descriptor(
-                    "agent:" + command.name(), List.of(command.name()), command.description(), command.hint(), null));
-        }
-        return out;
-    }
-
-    /**
-     * Formats the {@code /agent:} listing shown when the prefix is typed alone, e.g. {@code /agent:review focus area}.
-     */
-    private String agentCommandListing() {
-        List<AiSlashCommandRegistry.Descriptor> commands = agentCommandDescriptors();
-        if (commands.isEmpty()) {
-            return "The agent has not advertised any commands yet.";
-        }
-        List<AiSlashCommandRegistry.Descriptor> sorted = commands.stream()
-                .sorted(Comparator.comparing(AiSlashCommandRegistry.Descriptor::name))
-                .toList();
-        int width = AiSlashCommandRegistry.commandColumnWidth(sorted);
-        StringBuilder sb = new StringBuilder("Agent commands (").append(sorted.size()).append(")\n\n```\n");
-        for (AiSlashCommandRegistry.Descriptor descriptor : sorted) {
-            sb.append(AiSlashCommandRegistry.formatAlignedLine(descriptor, width)).append('\n');
-        }
-        return sb.append("```").toString();
-    }
-
-    /**
-     * Spawns the agent and negotiates the protocol on first use, then opens a session when none is active (first
-     * prompt, or after /clear). Runs on the agent thread; every failure is reported by the caller.
-     */
-    private AcpAgentClient ensureAcpSession() throws IOException {
-        AiProviderSelector.AcpPreset preset = acpPreset;
-        AcpAgentClient agent = acpClient;
-        if (agent == null || !agent.isAlive()) {
-            closeAcpClient();
-            String mcpUrl;
-            try {
-                mcpUrl = mcpUrlSupplier != null ? mcpUrlSupplier.call() : null;
-            } catch (Exception e) {
-                throw new IllegalStateException("Could not start the TUI MCP server: " + e.getMessage(), e);
-            }
-            if (mcpUrl == null) {
-                throw new IllegalStateException("The TUI MCP server is not available in this session.");
-            }
-            Path cwd = acpWorkingDir();
-            conversation.add(new ConversationEntry(AiRole.SYSTEM, "Starting " + preset.label() + "…"));
-            agent = acpClientFactory.create(preset, cwd);
-            agent.setPermissionHandler(new AcpPanelPermissionHandler());
-            AcpAgentClient.AgentInfo info;
-            try {
-                info = agent.initialize(ACP_INIT_TIMEOUT);
-                if (info.protocolVersion() != AcpAgentClient.PROTOCOL_VERSION) {
-                    String mismatch = preset.label() + " negotiated ACP protocol version " + info.protocolVersion()
-                                      + "; the TUI supports version " + AcpAgentClient.PROTOCOL_VERSION + ".";
-                    throw new IllegalStateException(mismatch);
-                }
-                if (!info.httpMcp()) {
-                    throw new IllegalStateException(
-                            preset.label() + " does not support HTTP MCP servers, so it cannot reach the TUI tools.");
-                }
-            } catch (RuntimeException e) {
-                agent.close();
-                throw e;
-            }
-            acpAgentInfo = info;
-            // written before the volatile acpClient write below, which publishes them to the other threads
-            acpMcpUrl = mcpUrl;
-            acpCwd = cwd;
-            acpClient = agent;
-            acpSessionId = null;
-            log(LogLevel.RESULT, "ACP agent started", info.label() + " cwd=" + cwd);
-        }
-        if (acpSessionId == null) {
-            acpSessionId = openAcpSession(agent, acpAgentInfo, acpMcpUrl, acpCwd);
-            acpPreambleSent = false;
-            acpContextUsed = 0;
-            acpContextSize = 0;
-            log(LogLevel.RESULT, "ACP session", acpSessionId);
-        }
-        return agent;
-    }
-
-    private String openAcpSession(AcpAgentClient agent, AcpAgentClient.AgentInfo info, String mcpUrl, Path cwd) {
-        try {
-            return agent.newSession(cwd, mcpUrl, ACP_SESSION_TIMEOUT);
-        } catch (AcpAgentClient.AcpException e) {
-            if (e.code() != AcpAgentClient.AUTH_REQUIRED) {
-                throw e;
-            }
-            AcpAgentClient.AuthMethod method = info.authMethods().stream()
-                    .filter(m -> m.id() != null && (m.type() == null || "agent".equals(m.type())))
-                    .findFirst()
-                    .orElse(null);
-            if (method == null) {
-                throw new IllegalStateException("Authentication required. " + acpPreset.loginHint());
-            }
-            conversation.add(new ConversationEntry(
-                    AiRole.SYSTEM, "Authenticating with " + info.label() + " (" + method.name() + ")…"));
-            try {
-                agent.authenticate(method.id(), ACP_AUTH_TIMEOUT);
-                return agent.newSession(cwd, mcpUrl, ACP_SESSION_TIMEOUT);
-            } catch (AcpAgentClient.AcpException retry) {
-                throw new IllegalStateException(
-                        "Authentication failed: " + retry.getMessage() + ". " + acpPreset.loginHint());
-            }
-        }
-    }
-
-    private AcpHeaderStrip.Model acpHeaderModel() {
-        AiProviderSelector.AcpPreset preset = acpPreset;
-        AcpAgentClient agent = acpClient;
-        int commands = agent != null ? agent.availableCommands().size() : 0;
-        return new AcpHeaderStrip.Model(
-                preset.label(), preset.glyph(), preset.color(), acpLabel(), acpSessionId, acpCwd, commands);
     }
 
     private Path acpWorkingDir() {
@@ -2275,9 +1758,7 @@ class AiPanel {
             long elapsed = MonotonicClock.millis() - thinkingStartTime;
             // the agent reports what its context holds now, not what the turn spent: the turn is the growth, and a
             // context that shrank because the agent compacted spends nothing
-            long previous = acpContextUsed;
-            acpContextUsed = usedTokens;
-            acpContextSize = contextSize;
+            long previous = acpSession.recordContext(usedTokens, contextSize);
             int tokens = (int) Math.min(Integer.MAX_VALUE, Math.max(0, usedTokens - previous));
             if (liveIndex >= 0) {
                 // the agent runs its own tools, so ACP reports no ai/tool split to fill in
@@ -2285,10 +1766,10 @@ class AiPanel {
                         new ConversationEntry(AiRole.ASSISTANT, text.toString(), elapsed, 0, 0, 0, tokens));
             }
             if (usedTokens > 0) {
-                AiProviderSelector.AcpPreset preset = acpPreset;
+                AiProviderSelector.AcpPreset preset = acpSession.preset();
                 sessionTotalTokens += tokens;
-                usageHistory.add(new AiUsageEntry(
-                        acpLabel(), preset != null ? preset.id() : "acp", 0, 0, tokens, elapsed,
+                usage.add(new AiUsageEntry(
+                        acpSession.label(), preset != null ? preset.id() : "acp", 0, 0, tokens, elapsed,
                         stopReason, Instant.now()));
             }
             switch (stopReason) {
@@ -2399,7 +1880,7 @@ class AiPanel {
         }
         String model = client.model() != null ? client.model() : "unknown";
         String provider = client.apiType() != null ? client.apiType().name() : "unknown";
-        usageHistory.add(new AiUsageEntry(
+        usage.add(new AiUsageEntry(
                 model, provider,
                 response.usage().inputTokens(), response.usage().outputTokens(),
                 response.usage().totalTokens(), latencyMs,
@@ -2442,10 +1923,10 @@ class AiPanel {
                     Span.styled(" AI ", Style.EMPTY.bold()),
                     Span.styled("(" + formatSeconds(titleElapsed) + tokenSuffix + describeContextFillSuffix() + ") ",
                             Style.EMPTY.dim()));
-        } else if (acpPreset != null) {
+        } else if (acpSession.isSelected()) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
-                    Span.styled("· " + acpLabel() + describeAcpContextSuffix() + " ", Style.EMPTY.dim()));
+                    Span.styled("· " + acpSession.label() + acpSession.contextSuffix() + " ", Style.EMPTY.dim()));
         } else if (sessionTotalTokens > 0) {
             titleLine = Line.from(
                     Span.styled(" AI ", Style.EMPTY.bold()),
@@ -2469,7 +1950,7 @@ class AiPanel {
         }
 
         if (statsView) {
-            renderStats(frame, inner);
+            usage.render(frame, inner);
             if (providerSwitchPopup.isVisible()) {
                 providerSwitchPopup.render(frame, inner);
             }
@@ -2483,11 +1964,11 @@ class AiPanel {
         }
 
         Rect body = inner;
-        if (acpPreset != null && acpSessionId != null && inner.height() >= 8) {
+        if (acpSession.isSelected() && acpSession.sessionId() != null && inner.height() >= 8) {
             List<Rect> top = Layout.vertical()
                     .constraints(Constraint.length(AcpHeaderStrip.ROWS), Constraint.length(1), Constraint.fill())
                     .split(inner);
-            acpHeader.render(frame, top.get(0), acpHeaderModel());
+            acpHeader.render(frame, top.get(0), acpSession.headerModel());
             frame.renderWidget(Paragraph.from(Line.from(Span.styled("─".repeat(top.get(1).width()), Style.EMPTY.dim()))),
                     top.get(1));
             body = top.get(2);
@@ -2496,7 +1977,7 @@ class AiPanel {
         // Split the body area: conversation (fill) + optional slash hints + separator (1 row) + input (1 row per line)
         List<AiSlashCommandRegistry.Descriptor> slashHints = slashCommandHints();
         int hintRows = slashHints.isEmpty() ? 0 : slashHints.size();
-        int inputRows = historySearchActive ? 1 : inputRows();
+        int inputRows = inputLine.rows();
         List<Rect> parts;
         if (hintRows == 0) {
             parts = Layout.vertical()
@@ -2520,7 +2001,8 @@ class AiPanel {
         String line = "─".repeat(separatorArea.width());
         frame.renderWidget(Paragraph.from(Line.from(Span.styled(line, Style.EMPTY.dim()))),
                 separatorArea);
-        renderInput(frame, inputArea);
+        inputLine.render(frame, inputArea, INPUT_PROMPT, thinking.get() && editQuestionHandler == null,
+                slashCommands::placeholderFor);
         if (providerSwitchPopup.isVisible()) {
             providerSwitchPopup.render(frame, inner);
         }
@@ -2536,7 +2018,7 @@ class AiPanel {
         if (thinking.get() || statsView || providerSwitchPopup.isVisible()) {
             return List.of();
         }
-        return slashCommands.completionsFor(inputBuffer.toString(), agentCommandDescriptors());
+        return slashCommands.completionsFor(inputLine.text(), acpSession.commandDescriptors());
     }
 
     private void renderSlashCommandHints(Frame frame, Rect area, List<AiSlashCommandRegistry.Descriptor> hints) {
@@ -2702,111 +2184,6 @@ class AiPanel {
                 new Rect(area.left() + 2, area.top(), Math.max(0, area.width() - 2), 1));
     }
 
-    private void renderInput(Frame frame, Rect area) {
-        if (historySearchActive) {
-            renderSearchInput(frame, area);
-            return;
-        }
-        if (area.height() < 1) {
-            return;
-        }
-        String prompt = INPUT_PROMPT;
-        List<String> lines = inputLines();
-        boolean locked = thinking.get() && editQuestionHandler == null;
-        // the line the cursor is on, and which lines are shown when there are more than rows
-        int cursorLine = 0;
-        int cursorColumn = cursorPos;
-        for (int i = 0, offset = 0; i < lines.size(); i++) {
-            int end = offset + lines.get(i).length();
-            if (cursorPos <= end || i == lines.size() - 1) {
-                cursorLine = i;
-                cursorColumn = cursorPos - offset;
-                break;
-            }
-            offset = end + 1;
-        }
-        int rows = Math.max(1, area.height());
-        int firstLine = Math.max(0, Math.min(cursorLine - rows + 1, lines.size() - rows));
-        int maxWidth = area.width() - prompt.length();
-        if (maxWidth <= 0) {
-            return;
-        }
-        List<Line> rendered = new ArrayList<>();
-        for (int i = firstLine; i < Math.min(lines.size(), firstLine + rows); i++) {
-            String text = lines.get(i);
-            List<Span> spans = new ArrayList<>();
-            String gutter = i == 0 ? prompt : " ".repeat(prompt.length());
-            spans.add(Span.styled(gutter, Style.EMPTY.fg(Theme.accent()).bold()));
-            if (locked) {
-                spans.add(Span.styled(text, Style.EMPTY.dim()));
-            } else if (i != cursorLine) {
-                spans.add(Span.raw(text.length() > maxWidth ? text.substring(0, maxWidth) : text));
-            } else {
-                // ensure the cursor is visible by adjusting the text window of its line
-                int windowStart = cursorColumn > maxWidth - 1 ? cursorColumn - maxWidth + 1 : 0;
-                int windowEnd = Math.min(text.length(), windowStart + maxWidth);
-                // the window does not cut an emoji (two chars) in half
-                if (windowStart > 0 && windowStart < text.length() && Character.isLowSurrogate(text.charAt(windowStart))) {
-                    windowStart++;
-                }
-                if (windowEnd < text.length() && windowEnd > windowStart
-                        && Character.isHighSurrogate(text.charAt(windowEnd - 1))) {
-                    windowEnd--;
-                }
-                String visible = text.substring(windowStart, Math.max(windowStart, windowEnd));
-                int cursorInWindow = cursorColumn - windowStart;
-                if (cursorInWindow >= 0 && cursorInWindow < visible.length()) {
-                    // the whole character under the cursor, both chars of an emoji
-                    int cursorEnd = Math.min(visible.length(),
-                            cursorInWindow + Character.charCount(visible.codePointAt(cursorInWindow)));
-                    spans.add(Span.raw(visible.substring(0, cursorInWindow)));
-                    spans.add(Span.styled(visible.substring(cursorInWindow, cursorEnd), Style.EMPTY.reversed()));
-                    spans.add(Span.raw(visible.substring(cursorEnd)));
-                } else {
-                    spans.add(Span.raw(visible));
-                    if (cursorInWindow == visible.length()) {
-                        spans.add(Span.styled(" ", Style.EMPTY.reversed()));
-                    }
-                }
-                if (lines.size() == 1 && cursorPos == inputBuffer.length()) {
-                    Optional<String> placeholder = slashCommands.placeholderFor(text);
-                    if (placeholder.isPresent()) {
-                        spans.add(Span.styled(" " + placeholder.get(), Style.EMPTY.dim()));
-                    }
-                }
-            }
-            rendered.add(Line.from(spans));
-        }
-        frame.renderWidget(Paragraph.from(new Text(rendered, Alignment.LEFT)), area);
-    }
-
-    private void renderSearchInput(Frame frame, Rect area) {
-        boolean failing = !searchTerm.isEmpty() && searchIndex < 0;
-        String label = failing ? "failing bck-i-search: " : "bck-i-search: ";
-        String query = searchTerm.toString();
-
-        List<Span> spans = new ArrayList<>();
-        Style labelStyle = failing
-                ? Theme.error()
-                : Style.EMPTY.fg(Theme.accent());
-        spans.add(Span.styled(label, labelStyle));
-        spans.add(Span.raw(query));
-        spans.add(Span.styled("_", Style.EMPTY.reversed()));
-
-        if (searchIndex >= 0) {
-            String matched = promptHistory.get(searchIndex);
-            int maxWidth = area.width() - label.length() - query.length() - 1;
-            if (maxWidth > 4) {
-                String preview = matched.length() > maxWidth
-                        ? matched.substring(0, maxWidth - 1) + "…"
-                        : matched;
-                spans.add(Span.styled("  " + preview, Style.EMPTY.dim()));
-            }
-        }
-
-        frame.renderWidget(Paragraph.from(Line.from(spans)), area);
-    }
-
     void renderFooter(List<Span> spans) {
         if (permissionPopup.isVisible()) {
             permissionPopup.renderFooter(spans);
@@ -2928,285 +2305,20 @@ class AiPanel {
         }
     }
 
-    private void renderStats(Frame frame, Rect area) {
-        if (area.height() < 3) {
-            return;
-        }
-
-        List<AiUsageEntry> entries = combinedUsageEntries();
-        if (entries.isEmpty()) {
-            frame.renderWidget(
-                    Paragraph.from(Line.from(Span.styled(
-                            "No AI usage data yet. Ask a question, or run an integration with GenAI observability and --observe.",
-                            Style.EMPTY.dim()))),
-                    area);
-            return;
-        }
-
-        // Compute aggregates
-        int totalInput = 0;
-        int totalOutput = 0;
-        int totalTokens = 0;
-        long totalLatency = 0;
-        long tuiLatency = 0;
-        int tuiRequests = 0;
-        int routeRequests = 0;
-        for (AiUsageEntry e : entries) {
-            totalInput += e.inputTokens();
-            totalOutput += e.outputTokens();
-            totalTokens += e.totalTokens();
-            totalLatency += e.latencyMs();
-            if (e.source() == AiUsageSource.ROUTE) {
-                routeRequests++;
-            } else {
-                tuiRequests++;
-                tuiLatency += e.latencyMs();
-            }
-        }
-        int requestCount = entries.size();
-        int questionCount = countQuestions(entries);
-
-        // Per-model aggregation
-        Map<String, long[]> perModel = new LinkedHashMap<>();
-        for (AiUsageEntry e : entries) {
-            String key = modelTableKey(e);
-            long[] stats = perModel.computeIfAbsent(key, k -> new long[5]);
-            stats[0]++; // requests
-            stats[1] += e.inputTokens();
-            stats[2] += e.outputTokens();
-            stats[3] += e.totalTokens();
-            stats[4] += e.latencyMs();
-        }
-
-        // Tokens per question (panel requests only): the round trips made for one question share its sequence
-        // number. Grouping by that, rather than by a pause between requests, keeps a follow-up typed right after the
-        // previous answer as its own bar.
-        List<Integer> turnTokens = new ArrayList<>();
-        int lastQuestion = -1;
-        for (AiUsageEntry e : usageHistory) {
-            if (e.question() != lastQuestion) {
-                turnTokens.add(0);
-                lastQuestion = e.question();
-            }
-            int last = turnTokens.size() - 1;
-            turnTokens.set(last, turnTokens.get(last) + e.totalTokens());
-        }
-
-        // Layout: summary (2 rows) + model table (header + models + 1 blank) + chart (fill)
-        int tableRows = perModel.size() + 1;
-        int summaryRows = 2;
-        int chartMinRows = 4;
-        boolean hasChart = area.height() > summaryRows + tableRows + chartMinRows + 1;
-
-        List<Constraint> constraints = new ArrayList<>();
-        constraints.add(Constraint.length(summaryRows));
-        constraints.add(Constraint.length(tableRows + 1));
-        if (hasChart) {
-            constraints.add(Constraint.fill());
-        }
-        List<Rect> sections = Layout.vertical()
-                .constraints(constraints)
-                .split(area);
-
-        // --- Summary ---
-        Rect summaryArea = sections.get(0);
-        Style dimStyle = Theme.muted();
-        Style cyanStyle = Style.EMPTY.fg(Theme.accent());
-        List<Line> summaryLines = new ArrayList<>();
-        summaryLines.add(Line.from(
-                Span.styled("Requests: ", dimStyle),
-                Span.styled(String.valueOf(requestCount), cyanStyle),
-                Span.styled(" (TUI: ", dimStyle),
-                Span.styled(String.valueOf(tuiRequests), cyanStyle),
-                Span.styled(" / integration: ", dimStyle),
-                Span.styled(String.valueOf(routeRequests), cyanStyle),
-                Span.styled(")   Total tokens: ", dimStyle),
-                Span.styled(LlmClient.formatTokens(totalTokens), cyanStyle),
-                Span.styled(" (in: ", dimStyle),
-                Span.styled(LlmClient.formatTokens(totalInput), Theme.success()),
-                Span.styled(" / out: ", dimStyle),
-                Span.styled(LlmClient.formatTokens(totalOutput), Theme.label()),
-                Span.styled(")", dimStyle)));
-        summaryLines.add(Line.from(
-                Span.styled("Avg per question: ", dimStyle),
-                Span.styled(formatSeconds(questionCount > 0 ? tuiLatency / questionCount : totalLatency / requestCount),
-                        cyanStyle),
-                Span.styled(" (" + formatSeconds(totalLatency / requestCount) + " per request)", dimStyle),
-                Span.styled("   AI time: ", dimStyle),
-                Span.styled(formatSeconds(totalLatency), cyanStyle),
-                Span.styled("   Tool time: ", dimStyle),
-                Span.styled(formatSeconds(sessionToolTimeMs), cyanStyle),
-                Span.styled(" (" + sessionToolCalls + " calls)", dimStyle)));
-        frame.renderWidget(
-                Paragraph.from(new Text(summaryLines, Alignment.LEFT)),
-                summaryArea);
-
-        // --- Per-model table ---
-        Rect tableArea = sections.get(1);
-        List<Row> rows = new ArrayList<>();
-        for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
-            long[] s = entry.getValue();
-            rows.add(Row.from(
-                    Cell.from(Span.styled(entry.getKey(), cyanStyle)),
-                    Cell.from(String.valueOf(s[0])),
-                    Cell.from(LlmClient.formatTokens((int) s[1])),
-                    Cell.from(LlmClient.formatTokens((int) s[2])),
-                    Cell.from(LlmClient.formatTokens((int) s[3])),
-                    Cell.from(formatSeconds(s[4] / s[0]))));
-        }
-        Table table = Table.builder()
-                .rows(rows)
-                .header(Row.from(
-                        Cell.from(Span.styled("MODEL", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("REQS", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("INPUT", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("OUTPUT", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("TOTAL", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("AVG/REQ", Style.EMPTY.bold()))))
-                .widths(
-                        Constraint.fill(),
-                        Constraint.length(6),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8),
-                        Constraint.length(8))
-                .build();
-        // PgUp/PgDn scroll the models that do not fit below the header
-        int visibleModels = Math.max(0, tableArea.height() - 1);
-        statsScrollOffset = Math.max(0, Math.min(statsScrollOffset, rows.size() - visibleModels));
-        statsTableState.setOffset(statsScrollOffset);
-        frame.renderStatefulWidget(table, tableArea, statsTableState);
-
-        // --- Charts per question: tokens on the left, AI vs tool time on the right ---
-        if (hasChart && (turnTokens.size() > 1 || turnTimings.size() > 1)) {
-            Rect chartsArea = sections.get(2);
-            List<long[]> timings = new ArrayList<>(turnTimings);
-            boolean showTime = timings.size() > 1 && chartsArea.width() >= 40;
-            List<Rect> halves = showTime
-                    ? Layout.horizontal().constraints(Constraint.fill(), Constraint.length(1), Constraint.fill())
-                            .split(chartsArea)
-                    : List.of(chartsArea);
-            if (turnTokens.size() > 1) {
-                renderTokensPerQuestion(frame, halves.get(0), turnTokens);
-            }
-            if (showTime) {
-                renderTimePerQuestion(frame, halves.get(2), timings);
-            }
-        }
-    }
-
-    private void renderTokensPerQuestion(Frame frame, Rect chartArea, List<Integer> turnTokens) {
-        {
-
-            // Title row + chart
-            List<Rect> chartParts = Layout.vertical()
-                    .constraints(Constraint.length(1), Constraint.fill())
-                    .split(chartArea);
-            frame.renderWidget(
-                    Paragraph.from(Line.from(Span.styled("Tokens per question:", Style.EMPTY.bold()))),
-                    chartParts.get(0));
-
-            Rect barArea = chartParts.get(1);
-            int maxTokensInTurn = turnTokens.stream().mapToInt(Integer::intValue).max().orElse(1);
-
-            // Limit bars to available width
-            int maxBars = Math.max(1, barArea.width() / 2);
-            int startIdx = Math.max(0, turnTokens.size() - maxBars);
-            List<BarGroup> groups = new ArrayList<>();
-            for (int i = startIdx; i < turnTokens.size(); i++) {
-                groups.add(BarGroup.of(
-                        Bar.builder()
-                                .value(turnTokens.get(i))
-                                .textValue("")
-                                .style(Style.EMPTY.fg(Theme.accent()))
-                                .build()));
-            }
-
-            BarChart barChart = BarChart.builder()
-                    .data(groups)
-                    .max(maxTokensInTurn + 2)
-                    .barWidth(1)
-                    .barGap(1)
-                    .groupGap(0)
-                    .build();
-            frame.renderWidget(barChart, barArea);
-        }
-    }
-
-    /**
-     * One group of two bars per answered question: time waiting for the model next to time spent in tool calls.
-     */
-    private void renderTimePerQuestion(Frame frame, Rect chartArea, List<long[]> timings) {
-        List<Rect> chartParts = Layout.vertical()
-                .constraints(Constraint.length(1), Constraint.fill())
-                .split(chartArea);
-        Style aiStyle = Style.EMPTY.fg(Theme.accent());
-        Style toolStyle = Theme.warning();
-        frame.renderWidget(
-                Paragraph.from(Line.from(
-                        Span.styled("Time per question: ", Style.EMPTY.bold()),
-                        Span.styled("\u25a0 ai ", aiStyle),
-                        Span.styled("\u25a0 tools", toolStyle))),
-                chartParts.get(0));
-
-        Rect barArea = chartParts.get(1);
-        long maxMs = 1;
-        for (long[] t : timings) {
-            maxMs = Math.max(maxMs, Math.max(t[0], t[1]));
-        }
-        // each question takes two 1-wide bars plus a gap
-        int maxGroups = Math.max(1, barArea.width() / 3);
-        int startIdx = Math.max(0, timings.size() - maxGroups);
-        List<BarGroup> groups = new ArrayList<>();
-        for (int i = startIdx; i < timings.size(); i++) {
-            long[] t = timings.get(i);
-            groups.add(BarGroup.of(
-                    Bar.builder().value(t[0]).textValue("").style(aiStyle).build(),
-                    Bar.builder().value(t[1]).textValue("").style(toolStyle).build()));
-        }
-        BarChart barChart = BarChart.builder()
-                .data(groups)
-                .max(maxMs + maxMs / 20)
-                .barWidth(1)
-                .barGap(0)
-                .groupGap(1)
-                .build();
-        frame.renderWidget(barChart, barArea);
-    }
-
-    private List<AiUsageEntry> combinedUsageEntries() {
-        List<AiUsageEntry> combined = new ArrayList<>(usageHistory.size() + 8);
-        combined.addAll(usageHistory);
-        List<SpanEntry> spans = otelSpans.get();
-        if (spans != null && !spans.isEmpty()) {
-            Instant since = usageResetAt;
-            for (AiUsageEntry entry : GenAiSpanUsageExtractor.extract(spans)) {
-                if (!entry.timestamp().isBefore(since)) {
-                    combined.add(entry);
-                }
-            }
-        }
-        return combined;
-    }
-
     /**
      * Forgets the usage recorded so far: the panel's own requests are dropped, and route usage from spans that were
      * exported before now is hidden (the spans themselves stay, as the Spans tab owns them).
      */
     void resetUsage() {
-        usageHistory.clear();
-        turnTimings.clear();
-        usageResetAt = Instant.now();
-        statsScrollOffset = 0;
+        usage.reset();
     }
 
-    private static String modelTableKey(AiUsageEntry entry) {
-        String modelProvider = entry.model() + " (" + entry.provider() + ")";
-        if (entry.source() == AiUsageSource.ROUTE) {
-            String route = entry.routeId() != null && !entry.routeId().isBlank() ? entry.routeId() : "route";
-            return "[route:" + route + "] " + modelProvider;
-        }
-        return "[tui] " + modelProvider;
+    /**
+     * The usage figures of the Ctrl+U view as text for the chat: totals, then one line per model (and per route for
+     * GenAI spans from the monitored integration).
+     */
+    String usageSummary() {
+        return usage.summary();
     }
 
     boolean isStatsView() {
@@ -3215,18 +2327,18 @@ class AiPanel {
 
     void toggleStatsViewForTesting() {
         statsView = !statsView;
-        statsScrollOffset = 0;
+        usage.resetScroll();
         if (statsView) {
             spanRefreshRequested = true;
         }
     }
 
     List<AiUsageEntry> combinedUsageEntriesForTesting() {
-        return combinedUsageEntries();
+        return usage.combinedUsageEntries();
     }
 
     void recordUsageForTesting(AiUsageEntry entry) {
-        usageHistory.add(entry);
+        usage.add(entry);
     }
 
     private void renderScrollbar(Frame frame, Rect area, int totalLines, int visibleHeight, int scroll) {
@@ -3317,188 +2429,6 @@ class AiPanel {
 
                 Or press **Ctrl+P** to select and configure a provider now.
                 """;
-    }
-
-    /**
-     * The preamble an ACP agent gets ahead of its first prompt: the panel's system prompt plus the rules that only
-     * matter for an agent with file tools of its own. Not part of the prompt budget, which covers the LLM path.
-     */
-    private String acpPreamble() {
-        String prompt = buildSystemPrompt();
-        return (prompt.endsWith("\n") ? prompt : prompt + "\n")
-               + "- You run inside the Camel TUI: edit the integration's source files only with camel_edit_file or camel_write_file, "
-               + "never with your own file tools, so the user sees the diff and confirms it, or watches the edit "
-               + "being typed in the Source editor (/write live)\n";
-    }
-
-    /**
-     * The static prefix sent with every request. It deliberately contains nothing that changes between turns (the
-     * selected integration travels in the user message instead) so a local model's prompt cache can reuse it, and it
-     * does not repeat the tool list because the tool definitions already carry every description.
-     */
-    private String buildSystemPrompt() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("You are an Apache Camel assistant running inside the Camel TUI terminal console. ");
-        sb.append("You help users understand and troubleshoot their running Camel integrations.\n\n");
-
-        sb.append("You have camel_* tools for the integration and tui_* tools for the TUI; the tool definitions ");
-        sb.append("describe each one. ");
-        sb.append("All tui_get_* tools fetch data directly from any tab without changing what the user sees.\n\n");
-        sb.append("Guidelines:\n");
-        sb.append("- NEVER call tui_navigate just to read data; the tui_get_* tools read any tab without navigating\n");
-        sb.append("- Prefer tui_get_table over tui_get_screen for structured data; ");
-        sb.append("call tui_get_options only when unsure which tab has it\n");
-        sb.append("- tui_get_state tells which integration and tab is selected; tui_get_processor_detail explains ");
-        sb.append("a route's steps; tui_get_status has data no tab shows (context, runtime, health, properties)\n");
-        sb.append("- Your own tool calls are in the AI log (tui_get_ai_log); the MCP log only has external clients\n");
-        sb.append("- Be concise and actionable; when something looks wrong, explain it and suggest fixes\n");
-        sb.append("- camel_control stops/starts routes and integrations gracefully; its reset-stats action clears ");
-        sb.append("statistics without touching the routes\n");
-        sb.append("- tui_infra lists infra services (brokers, databases) and their logs\n");
-        sb.append("- Never restart, stop or kill an integration or infra service unless the user explicitly ");
-        sb.append("asked for that\n");
-        sb.append("- If a tool call returns an error, do not repeat it with the same arguments; ");
-        sb.append("say what failed and what to try\n");
-        sb.append("- To feed a route that consumes from a broker (MQTT, Kafka, JMS), tui_send_message can publish ");
-        sb.append("to the broker with the route's own component and options\n");
-        sb.append("- To edit: camel_get_files, then camel_edit_file (several places at once with edits), camel_write_file ");
-        sb.append("for a new file; the user confirms, never ");
-        sb.append(
-                "retry a rejected write. Invalid YAML/properties is refused with errors: fix them (camel_catalog_doc has the ");
-        sb.append("option names)\n");
-        sb.append("- Write files only with these tools; never paste file contents in the answer\n");
-        sb.append("- YAML DSL shape: a step is `- log: {message: ...}`, `- to: {uri: ...}`, an expression goes under ");
-        sb.append("expression: (`- setBody: {expression: {simple: ...}}`); the shorthand forms are deprecated\n");
-        sb.append("- 'log at WARN' in a route is the log step's loggingLevel in the source");
-        sb.append(useCoreTools() ? "\n" : "; tui_set_log_level is the app's root logger, only when asked\n");
-        sb.append("- Simple: functions inside ${...}, operators between them: ${header.a} == 'b', ");
-        sb.append("${body} ?: 'none'; camel_eval_expression checks one, camel_catalog_doc simple lists them\n");
-        if (!useCoreTools()) {
-            sb.append("- Use tui_locate + tui_draw_shape to visually highlight problems on screen for the user\n");
-        }
-        if (mcpServerActive) {
-            sb.append("\nThe TUI MCP server is available at http://localhost:")
-                    .append(mcpServerPort).append("/mcp for external AI agents.");
-        }
-        // last, so the prefix above stays cached when the groups change
-        if (useCoreTools() && !toolGroups.guidance().isEmpty()) {
-            sb.append(mcpServerActive ? "\n" : "").append("\nThe selected integration:\n");
-            toolGroups.guidance().forEach(line -> sb.append("- ").append(line).append('\n'));
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Loads the tool groups of the selected integration for the core set (CAMEL-24834): the SQL tools when it has a
-     * database, the guidance for its tracing and circuit breakers. Read again only when another integration is selected
-     * or the selected one reloaded (the groups then only grow: what it had before still counts), so the tools and the
-     * prompt stay the same from question to question and a local model's prompt cache keeps working. While an
-     * integration has no groups yet its status is read again, since one that just started may not have written it
-     * completely. Full mode also uses these features to discover semantic audit history.
-     */
-    private void refreshToolGroups() {
-        AppStatusSource source = appStatusSource != null ? appStatusSource : facadeStatusSource();
-        String pid = source != null ? source.selectedPid() : null;
-        int reloads = source != null ? source.reloadCount() : 0;
-        boolean samePid = Objects.equals(pid, toolGroupsPid);
-        if (samePid && reloads == toolGroupsReloads && !toolGroups.groups().isEmpty()) {
-            return;
-        }
-        AppFeatures read = pid != null ? source.features() : AppFeatures.none();
-        toolGroupsFeatures = samePid ? toolGroupsFeatures.merge(read) : read;
-        toolGroupsPid = pid;
-        toolGroupsReloads = reloads;
-        toolGroups = TuiToolGroups.select(toolGroupsFeatures);
-    }
-
-    private AppStatusSource facadeStatusSource() {
-        McpFacade facade = mcpFacade;
-        if (facade == null) {
-            return null;
-        }
-        return new AppStatusSource() {
-            @Override
-            public String selectedPid() {
-                return facade.getSelectedPid();
-            }
-
-            @Override
-            public int reloadCount() {
-                return facade.getSelectedReloadCount();
-            }
-
-            @Override
-            public AppFeatures features() {
-                return AppFeatures.fromStatus(facade.readSelectedStatus());
-            }
-        };
-    }
-
-    /**
-     * Prefixes the question with the integration the user is looking at. This used to live in the system prompt, but
-     * there it invalidated the model's cached prompt prefix every time the selection changed.
-     */
-    private String contextualize(String question) {
-        String selectedName = mcpFacade != null ? mcpFacade.getSelectedIntegrationName() : null;
-        String selectedPid = mcpFacade != null ? mcpFacade.getSelectedPid() : null;
-        if (selectedName != null && selectedPid != null) {
-            return "[Monitoring " + selectedName + " (PID " + selectedPid + ")]\n" + question;
-        }
-        return question;
-    }
-
-    /**
-     * Whether only the {@link TuiToolRegistry#CORE_TOOLS} are sent: always in {@code core} mode, never in {@code full}
-     * mode, and for local providers in {@code auto} mode.
-     */
-    private boolean useCoreTools() {
-        String mode = toolMode == null ? TOOL_MODE_AUTO : toolMode;
-        if (TOOL_MODE_CORE.equals(mode)) {
-            return true;
-        }
-        if (TOOL_MODE_FULL.equals(mode)) {
-            return false;
-        }
-        return client != null && client.isLocalEndpoint();
-    }
-
-    private String describeToolMode() {
-        if (acpPreset != null) {
-            return acpLabel() + " reaches the camel-tui tools through the MCP server directly; "
-                   + "the tool set only applies to LLM providers";
-        }
-        if (toolRegistry == null) {
-            return "no tools available";
-        }
-        int total = toolRegistry.getToolDefinitions().size();
-        int active = useCoreTools()
-                ? toolRegistry.getCoreToolDefinitions(toolGroups.tools()).size()
-                : toolRegistry.getAvailableToolDefinitions(toolGroups.tools()).size();
-        String mode = toolMode == null ? TOOL_MODE_AUTO : toolMode;
-        String detail = TOOL_MODE_AUTO.equals(mode)
-                ? (useCoreTools() ? " (local provider)" : " (hosted provider)") : "";
-        String groups = "";
-        if (useCoreTools()) {
-            groups = toolGroups.groups().isEmpty()
-                    ? "; groups: none loaded"
-                    : "; groups: " + toolGroups.groupIds() + " (from the selected integration)";
-        }
-        return (useCoreTools() ? "core" : "full") + " (" + active + " of " + total + " tools), mode " + mode + detail
-               + groups;
-    }
-
-    private List<LlmClient.ToolDef> buildTuiToolDefinitions() {
-        if (toolRegistry == null) {
-            return List.of();
-        }
-        List<LlmClient.ToolDef> defs = new ArrayList<>();
-        List<TuiToolRegistry.ToolDef> source = useCoreTools()
-                ? toolRegistry.getCoreToolDefinitions(toolGroups.tools())
-                : toolRegistry.getAvailableToolDefinitions(toolGroups.tools());
-        for (TuiToolRegistry.ToolDef td : source) {
-            defs.add(new LlmClient.ToolDef(td.name(), td.description(), td.inputSchema()));
-        }
-        return defs;
     }
 
     /**
@@ -3644,18 +2574,9 @@ class AiPanel {
         return turns;
     }
 
-    private long toolSchemaChars() {
-        long chars = 0;
-        for (LlmClient.ToolDef def : buildTuiToolDefinitions()) {
-            chars += 40 + def.name().length() + (def.description() != null ? def.description().length() : 0)
-                     + (def.parameters() != null ? def.parameters().toJson().length() : 0);
-        }
-        return chars;
-    }
-
     String describeContext() {
-        if (acpPreset != null) {
-            return describeAcpContext();
+        if (acpSession.isSelected()) {
+            return acpSession.describe(estimateTokens(toolSet.acpPreamble(client).length()));
         }
         StringBuilder sb = new StringBuilder();
         if (client == null) {
@@ -3669,8 +2590,8 @@ class AiPanel {
             sb.append(client.isLocalEndpoint() ? " (local)" : " (hosted)").append('\n');
         }
         sb.append("Tools: ").append(describeToolMode()).append('\n');
-        int promptTokens = estimateTokens(buildSystemPrompt().length());
-        int toolTokens = estimateTokens(toolSchemaChars());
+        int promptTokens = estimateTokens(toolSet.systemPrompt(client).length());
+        int toolTokens = estimateTokens(toolSet.schemaChars(client));
         sb.append("Static prefix: ~").append(LlmClient.formatTokens(promptTokens + toolTokens))
                 .append(" tokens (system prompt ~").append(LlmClient.formatTokens(promptTokens))
                 .append(", tool schemas ~").append(LlmClient.formatTokens(toolTokens)).append(")\n");
@@ -3713,70 +2634,9 @@ class AiPanel {
         return (int) (measured * 100L / window);
     }
 
-    /** The title's context figure, empty until the agent reports one. */
-    private String describeAcpContextSuffix() {
-        long used = acpContextUsed;
-        if (used <= 0) {
-            return "";
-        }
-        long size = acpContextSize;
-        return " (context: " + formatAcpTokens(used) + (size > 0 ? "/" + formatAcpTokens(size) : "") + " tokens)";
-    }
-
-    private static String formatAcpTokens(long tokens) {
-        return LlmClient.formatTokens((int) Math.min(Integer.MAX_VALUE, tokens));
-    }
-
-    /**
-     * The {@code /context} answer while an ACP agent is selected. The agent owns the conversation history and runs its
-     * own tools, so the interesting figures are its session, the MCP server it was given and the preamble the panel
-     * prepends to the first prompt.
-     */
-    private String describeAcpContext() {
-        AiProviderSelector.AcpPreset preset = acpPreset;
-        AcpAgentClient agent = acpClient;
-        StringBuilder sb = new StringBuilder();
-        sb.append("Agent: ").append(acpLabel())
-                .append(" (preset ").append(preset != null ? preset.id() : "acp").append(")\n");
-        if (acpSessionId != null) {
-            sb.append("Session: ").append(acpSessionId).append(" in ").append(acpCwd).append('\n');
-            sb.append("MCP: ").append(acpMcpUrl).append(" (read-only camel-tui tools are approved automatically)\n");
-        } else {
-            sb.append("Session: not started yet; the next prompt opens one and starts the MCP server on demand\n");
-        }
-        sb.append("Agent commands: ").append(agent != null ? agent.availableCommands().size() : 0)
-                .append(" (/agent: lists them)\n");
-        sb.append("Preamble: ~").append(LlmClient.formatTokens(estimateTokens(acpPreamble().length())))
-                .append(" tokens, sent once per session ahead of the first prompt (/prompt shows it); ")
-                .append(acpPreambleSent ? "sent" : "not sent yet").append('\n');
-        if (acpContextUsed > 0) {
-            sb.append("Context: ").append(formatAcpTokens(acpContextUsed));
-            if (acpContextSize > 0) {
-                sb.append(" of ").append(formatAcpTokens(acpContextSize));
-            }
-            sb.append(" tokens in the agent's window\n");
-        } else {
-            sb.append("Context: not reported yet\n");
-        }
-        sb.append("History and tools are managed by the agent: /compact and /tools do not apply here");
-        return sb.toString();
-    }
-
-    /**
-     * Explains that a panel command has no meaning while an agent is selected, pointing at the agent's own command of
-     * the same name when it advertises one.
-     */
-    private String acpNotApplicable(String command, String what) {
-        AcpAgentClient agent = acpClient;
-        boolean offered = agent != null
-                && agent.availableCommands().stream().anyMatch(c -> command.equals(c.name()));
-        return "/" + command + " does not apply here: " + acpLabel() + " " + what + "."
-               + (offered ? " Use /agent:" + command + "." : "");
-    }
-
     String compactHistoryNow() {
-        if (acpPreset != null) {
-            return acpNotApplicable("compact", "manages its own conversation history");
+        if (acpSession.isSelected()) {
+            return acpSession.notApplicable("compact", "manages its own conversation history");
         }
         if (messages == null || messages.isEmpty()) {
             return "History is empty, nothing to compact";
@@ -3798,7 +2658,7 @@ class AiPanel {
      * so the question is simply sent again.
      */
     boolean retryLastQuestion() {
-        if ((client == null && acpPreset == null) || thinking.get()) {
+        if ((client == null && !acpSession.isSelected()) || thinking.get()) {
             return false;
         }
         String question = null;
@@ -3811,7 +2671,7 @@ class AiPanel {
         if (question == null || question.isBlank()) {
             return false;
         }
-        if (acpPreset == null && messages != null) {
+        if (!acpSession.isSelected() && messages != null) {
             for (int i = messages.size() - 1; i >= 0; i--) {
                 LlmClient.Message m = messages.get(i);
                 if ("user".equals(m.role()) && m.toolCalls() == null && m.toolResults() == null) {
@@ -3824,90 +2684,16 @@ class AiPanel {
         return true;
     }
 
-    /**
-     * The usage figures of the Ctrl+U view as text for the chat: totals, then one line per model (and per route for
-     * GenAI spans from the monitored integration).
-     */
-    String usageSummary() {
-        List<AiUsageEntry> entries = combinedUsageEntries();
-        if (entries.isEmpty()) {
-            return "No AI usage yet. Ask a question, or run an integration with GenAI observability and --observe to see "
-                   + "their usage here.";
-        }
-        int totalInput = 0;
-        int totalOutput = 0;
-        int totalTokens = 0;
-        long totalLatency = 0;
-        long tuiLatency = 0;
-        int tuiRequests = 0;
-        int routeRequests = 0;
-        Map<String, long[]> perModel = new LinkedHashMap<>();
-        for (AiUsageEntry e : entries) {
-            totalInput += e.inputTokens();
-            totalOutput += e.outputTokens();
-            totalTokens += e.totalTokens();
-            totalLatency += e.latencyMs();
-            if (e.source() == AiUsageSource.ROUTE) {
-                routeRequests++;
-            } else {
-                tuiRequests++;
-                tuiLatency += e.latencyMs();
-            }
-            long[] stats = perModel.computeIfAbsent(modelTableKey(e), k -> new long[5]);
-            stats[0]++;
-            stats[1] += e.inputTokens();
-            stats[2] += e.outputTokens();
-            stats[3] += e.totalTokens();
-            stats[4] += e.latencyMs();
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("**AI usage:** ").append(entries.size()).append(" request(s)");
-        if (routeRequests > 0) {
-            sb.append(" (").append(tuiRequests).append(" from this panel, ").append(routeRequests)
-                    .append(" from the integration)");
-        }
-        sb.append("\n\n");
-        sb.append("- **Tokens:** ").append(LlmClient.formatTokens(totalTokens))
-                .append(" (in ").append(LlmClient.formatTokens(totalInput))
-                .append(", out ").append(LlmClient.formatTokens(totalOutput)).append(")\n");
-        int questionCount = countQuestions(entries);
-        sb.append("- **Avg per question:** ")
-                .append(formatSeconds(questionCount > 0 ? tuiLatency / questionCount : totalLatency / entries.size()))
-                .append(" (").append(formatSeconds(totalLatency / entries.size())).append(" per request)\n");
-        if (sessionToolCalls > 0) {
-            sb.append("- **AI time:** ").append(formatSeconds(totalLatency))
-                    .append(", **Tool time:** ").append(formatSeconds(sessionToolTimeMs))
-                    .append(" in ").append(sessionToolCalls).append(" tool call(s)\n");
-        }
-        AiUsageEntry last = usageHistory.isEmpty() ? null : usageHistory.get(usageHistory.size() - 1);
-        if (last != null) {
-            sb.append("- **Last request:** ").append(LlmClient.formatTokens(last.totalTokens()))
-                    .append(" tokens in ").append(formatSeconds(last.latencyMs())).append("\n");
-        }
-        sb.append("\n| Model | Reqs | In | Out | Total | Avg/req |\n|---|---|---|---|---|---|\n");
-        for (Map.Entry<String, long[]> entry : perModel.entrySet()) {
-            long[] stats = entry.getValue();
-            sb.append("| ").append(entry.getKey())
-                    .append(" | ").append(stats[0])
-                    .append(" | ").append(LlmClient.formatTokens((int) stats[1]))
-                    .append(" | ").append(LlmClient.formatTokens((int) stats[2]))
-                    .append(" | ").append(LlmClient.formatTokens((int) stats[3]))
-                    .append(" | ").append(formatSeconds(stats[4] / stats[0]))
-                    .append(" |\n");
-        }
-        sb.append("\n_Ctrl+U opens the full usage view with the per-question charts._");
-        return sb.toString().strip();
-    }
-
     private void toggleUsageView() {
         statsView = !statsView;
-        statsScrollOffset = 0;
+        usage.resetScroll();
         if (statsView) {
             spanRefreshRequested = true;
         }
     }
 
     private String executeTuiTool(String name, JsonObject args) {
+        TuiToolRegistry toolRegistry = toolSet.registry();
         if (toolRegistry == null) {
             return "Error: TUI tools not available";
         }
@@ -3978,37 +2764,30 @@ class AiPanel {
     }
 
     void clearConversation() {
-        if (acpPreset != null && thinking.get()) {
+        if (acpSession.isSelected() && thinking.get()) {
             // an abandoned ACP turn would keep writing into the list we are about to clear
             interruptBusyOperation();
         }
         conversation.clear();
         activityLog.clear();
-        inputBuffer.setLength(0);
-        cursorPos = 0;
+        inputLine.clear();
         scrollOffset = 0;
-        usageHistory.clear();
-        turnTimings.clear();
-        statsScrollOffset = 0;
+        usage.clear();
         sessionTotalTokens = 0;
-        sessionToolTimeMs = 0;
-        sessionToolCalls = 0;
         if (messages != null) {
             messages.clear();
         }
         // the next prompt opens a fresh agent session (context reset), keeping the process
-        acpSessionId = null;
-        acpPreambleSent = false;
-        acpContextUsed = 0;
-        acpContextSize = 0;
+        acpSession.resetSession();
     }
 
     void setPromptHistoryForTesting(TuiPromptHistory history) {
-        this.promptHistory = history;
+        inputLine.setPromptHistory(history);
     }
 
     List<String> promptHistoryEntriesForTesting() {
-        return promptHistory == null ? List.of() : promptHistory.entriesForTesting();
+        TuiPromptHistory history = inputLine.promptHistory();
+        return history == null ? List.of() : history.entriesForTesting();
     }
 
     void setClientForTesting(LlmClient client) {
@@ -4023,36 +2802,23 @@ class AiPanel {
     }
 
     boolean isAcpProviderForTesting() {
-        return acpPreset != null;
+        return acpSession.isSelected();
     }
 
-    void setAcpClientFactoryForTesting(AcpClientFactory factory) {
-        this.acpClientFactory = factory;
+    void setAcpClientFactoryForTesting(AcpSession.AcpClientFactory factory) {
+        acpSession.setClientFactory(factory);
     }
 
     void setMcpUrlSupplierForTestingOrRuntime(Callable<String> supplier) {
-        this.mcpUrlSupplier = supplier;
+        acpSession.setMcpUrlSupplier(supplier);
     }
 
     String acpSessionIdForTesting() {
-        return acpSessionId;
+        return acpSession.sessionId();
     }
 
     boolean isPermissionPopupVisibleForTesting() {
         return permissionPopup.isVisible();
-    }
-
-    private AcpAgentClient spawnAcpAgent(AiProviderSelector.AcpPreset preset, Path cwd) throws IOException {
-        // ProcessBuilder only tries .exe on Windows, so the resolved file (npx.cmd and friends) has to be launched
-        String resolved = AiProviderSelector.resolveExecutable(preset.executable());
-        if (resolved == null) {
-            throw new IOException(preset.installHint());
-        }
-        List<String> command = new ArrayList<>(preset.command());
-        if (!command.isEmpty() && command.get(0).equals(preset.executable())) {
-            command.set(0, resolved);
-        }
-        return AcpAgentClient.spawn(command, cwd, line -> log(LogLevel.ERROR, "ACP", line));
     }
 
     void setSlashCommandContextForTesting(AiSlashCommandContext context) {
@@ -4072,7 +2838,7 @@ class AiPanel {
     }
 
     long[] acpContextForTesting() {
-        return new long[] { acpContextUsed, acpContextSize };
+        return new long[] { acpSession.contextUsed(), acpSession.contextSize() };
     }
 
     int messageCountForTesting() {
@@ -4092,7 +2858,7 @@ class AiPanel {
     }
 
     String inputBufferForTesting() {
-        return inputBuffer.toString();
+        return inputLine.text();
     }
 
     /**
@@ -4111,31 +2877,39 @@ class AiPanel {
     }
 
     void setToolRegistryForTesting(TuiToolRegistry registry) {
-        this.toolRegistry = registry;
+        toolSet.setRegistry(registry);
     }
 
     void setToolModeForTesting(String mode) {
-        this.toolMode = normalizeToolMode(mode);
+        toolSet.setMode(normalizeToolMode(mode));
     }
 
     String systemPromptForTesting() {
-        return buildSystemPrompt();
+        return toolSet.systemPrompt(client);
     }
 
     void setAppStatusSourceForTesting(AppStatusSource source) {
-        this.appStatusSource = source;
+        toolSet.setAppStatusSource(source);
     }
 
     void refreshToolGroupsForTesting() {
-        refreshToolGroups();
+        toolSet.refreshToolGroups(mcpFacade);
     }
 
     TuiToolGroups.Selection toolGroupsForTesting() {
-        return toolGroups;
+        return toolSet.groups();
     }
 
     List<LlmClient.ToolDef> toolDefinitionsForTesting() {
-        return buildTuiToolDefinitions();
+        return toolSet.definitions(client);
+    }
+
+    private String describeToolMode() {
+        if (acpSession.isSelected()) {
+            return acpSession.label() + " reaches the camel-tui tools through the MCP server directly; "
+                   + "the tool set only applies to LLM providers";
+        }
+        return toolSet.describe(client);
     }
 
     private String describeWriteMode() {
@@ -4203,22 +2977,20 @@ class AiPanel {
 
         @Override
         public void clearHistory() {
-            if (promptHistory != null) {
-                promptHistory.clear();
-            }
+            inputLine.clearHistory();
         }
 
         @Override
         public String currentModel() {
-            if (acpPreset != null) {
-                return acpLabel();
+            if (acpSession.isSelected()) {
+                return acpSession.label();
             }
             return client != null && client.model() != null ? client.model() : "unknown";
         }
 
         @Override
         public List<String> availableModels() {
-            if (acpPreset != null) {
+            if (acpSession.isSelected()) {
                 return List.of();
             }
             return client != null ? client.listModels() : List.of();
@@ -4226,9 +2998,9 @@ class AiPanel {
 
         @Override
         public boolean switchModel(String model) {
-            if (acpPreset != null) {
+            if (acpSession.isSelected()) {
                 throw new IllegalStateException(
-                        "The model is configured in the agent (" + acpLabel() + "), not in the TUI.");
+                        "The model is configured in the agent (" + acpSession.label() + "), not in the TUI.");
             }
             if (client == null) {
                 return false;
@@ -4251,16 +3023,16 @@ class AiPanel {
 
         @Override
         public boolean switchToolMode(String mode) {
-            if (acpPreset != null) {
+            if (acpSession.isSelected()) {
                 throw new IllegalStateException(
-                        "The tool set only applies to LLM providers; " + acpLabel()
+                        "The tool set only applies to LLM providers; " + acpSession.label()
                                                 + " reaches the camel-tui tools through the MCP server directly.");
             }
             String normalized = normalizeToolMode(mode);
             if (normalized == null) {
                 return false;
             }
-            toolMode = normalized;
+            toolSet.setMode(normalized);
             TuiSettings settings = TuiSettings.load();
             settings.setAiTools(TOOL_MODE_AUTO.equals(normalized) ? null : normalized);
             settings.save();
@@ -4333,10 +3105,11 @@ class AiPanel {
 
         @Override
         public String systemPrompt() {
-            if (acpPreset != null) {
-                return "Sent to " + acpLabel() + " ahead of the first prompt of each session:\n\n" + acpPreamble();
+            if (acpSession.isSelected()) {
+                return "Sent to " + acpSession.label() + " ahead of the first prompt of each session:\n\n"
+                       + toolSet.acpPreamble(client);
             }
-            return buildSystemPrompt();
+            return toolSet.systemPrompt(client);
         }
 
         @Override

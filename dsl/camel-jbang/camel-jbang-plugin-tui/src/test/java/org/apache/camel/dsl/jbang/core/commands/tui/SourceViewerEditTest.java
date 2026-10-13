@@ -381,7 +381,7 @@ class SourceViewerEditTest {
         assertThat(viewer.isEditMode()).isTrue();
         assertThat(viewer.isVisible()).isTrue();
         // Keep tab reference used so the integration surface is exercised for construction
-        assertThat(tab.isOverlayActive()).isFalse();
+        assertThat(tab.isTextInputActive()).isFalse();
     }
 
     @Test
@@ -391,16 +391,14 @@ class SourceViewerEditTest {
                 new AtomicReference<>(List.of()),
                 new AtomicReference<>(List.of()));
         SourceTab tab = new SourceTab(ctx);
-        assertThat(tab.isSourceViewerTextInputActive()).isFalse();
+        assertThat(tab.isTextInputActive()).isFalse();
 
         tab.gotoRoutePopup.open(List.of(new SourceTab.RouteEntry("a", "direct:a", "a.java", 0)));
-        assertThat(tab.isSourceViewerTextInputActive()).isTrue();
-        assertThat(tab.isOverlayActive()).isTrue();
+        assertThat(tab.isTextInputActive()).isTrue();
         tab.gotoRoutePopup.close();
 
         tab.gotoSourceNodePopup.open(List.of(), 10);
-        assertThat(tab.isSourceViewerTextInputActive()).isTrue();
-        assertThat(tab.isOverlayActive()).isTrue();
+        assertThat(tab.isTextInputActive()).isTrue();
     }
 
     @Test

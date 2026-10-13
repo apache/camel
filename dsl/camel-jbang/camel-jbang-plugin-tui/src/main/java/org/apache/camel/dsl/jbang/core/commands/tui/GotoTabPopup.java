@@ -18,313 +18,68 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
-import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
-import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
-import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.tui.event.MouseEvent;
-import dev.tamboui.tui.event.MouseEventKind;
-import dev.tamboui.widgets.Clear;
-import dev.tamboui.widgets.block.Block;
-import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.list.ListItem;
-import dev.tamboui.widgets.list.ListState;
-import dev.tamboui.widgets.list.ListWidget;
-import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 
-class GotoTabPopup {
+/**
+ * Go to Tab (Shift+F2): the tabs listed for the selected integration, by name or by what they show, with their digit or
+ * More menu shortcut.
+ */
+class GotoTabPopup extends FilterListPopup<TabRegistry.TabEntry> {
 
-    private boolean visible;
-    private final FuzzyFilter filter = new FuzzyFilter();
-    private final ListState listState = new ListState();
-    private final ScrollbarState scrollbarState = new ScrollbarState();
+    private static final int NAME_COL_WIDTH = 22;
+
     private List<TabRegistry.TabEntry> allEntries;
-    private List<TabRegistry.TabEntry> activeEntries;
-    private List<TabRegistry.TabEntry> filteredEntries;
-    private Rect popupRect;
-    // the rows the list was scrolled by in the last render, for a click
-    private int listOffset;
     private Runnable callback;
     private TabRegistry.TabEntry pendingEntry;
-    private java.util.function.Supplier<IntegrationInfo> integrationSupplier;
-    private java.util.function.Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier;
+    private Supplier<IntegrationInfo> integrationSupplier;
+    private Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier;
 
     void setTabEntries(List<TabRegistry.TabEntry> entries, Runnable callback) {
         this.allEntries = entries;
         this.callback = callback;
     }
 
+    /** Lists only the More tabs active for the selected integration, as the More menu does. */
     void setActiveTabFilter(
-            java.util.function.Supplier<IntegrationInfo> integrationSupplier,
-            java.util.function.Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier) {
+            Supplier<IntegrationInfo> integrationSupplier, Supplier<List<TabRegistry.MoreTab>> moreTabsSupplier) {
         this.integrationSupplier = integrationSupplier;
         this.moreTabsSupplier = moreTabsSupplier;
     }
 
-    boolean isVisible() {
-        return visible;
-    }
-
     void open() {
-        visible = true;
-        filter.clearFilter();
-        rebuildList();
+        show();
     }
 
-    void close() {
-        visible = false;
-        filter.clearFilter();
-    }
-
+    /** The tab chosen, for the callback to go to; cleared by the call. */
     TabRegistry.TabEntry consumePendingEntry() {
         TabRegistry.TabEntry e = pendingEntry;
         pendingEntry = null;
         return e;
     }
 
-    boolean handleKeyEvent(KeyEvent ke) {
-        int size = filteredEntries != null ? filteredEntries.size() : 0;
-        if (ke.isCancel()) {
-            close();
-            return true;
-        }
-        if (ke.isUp()) {
-            listState.selectPrevious();
-            return true;
-        }
-        if (ke.isDown()) {
-            listState.selectNext(size);
-            return true;
-        }
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 10; i++) {
-                listState.selectPrevious();
-            }
-            return true;
-        }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            for (int i = 0; i < 10; i++) {
-                listState.selectNext(size);
-            }
-            return true;
-        }
-        if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
-            listState.selectFirst();
-            return true;
-        }
-        if (ke.isEnd() || ke.isKey(KeyCode.END)) {
-            listState.selectLast(size);
-            return true;
-        }
-        if (ke.isConfirm()) {
-            Integer sel = listState.selected();
-            if (sel != null && filteredEntries != null && sel < filteredEntries.size()) {
-                TabRegistry.TabEntry entry = filteredEntries.get(sel);
-                close();
-                navigateToEntry(entry);
-            }
-            return true;
-        }
-        if (ke.isKey(KeyCode.BACKSPACE)) {
-            filter.deleteChar();
-            rebuildList();
-            return true;
-        }
-        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
-            filter.append(ke.string());
-            rebuildList();
-            return true;
-        }
-        return true;
-    }
-
-    boolean handleMouseEvent(MouseEvent me) {
-        if (me.kind() == MouseEventKind.SCROLL_UP) {
-            listState.selectPrevious();
-            return true;
-        }
-        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-            int size = filteredEntries != null ? filteredEntries.size() : 0;
-            listState.selectNext(size);
-            return true;
-        }
-        if (me.isClick()) {
-            if (popupRect != null && popupRect.contains(me.x(), me.y())) {
-                int idx = TuiHelper.listItemAt(popupRect, listOffset,
-                        (filteredEntries != null ? filteredEntries.size() : 0) + 2,
-                        me.x(), me.y());
-                if (idx >= 2 && filteredEntries != null && idx - 2 < filteredEntries.size()) {
-                    listState.select(idx - 2);
-                    handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
-                }
-                return true;
-            }
-            close();
-            return true;
-        }
-        return true;
-    }
-
-    void render(Frame frame, Rect area) {
-        if (filteredEntries == null) {
-            return;
-        }
-        int nameColWidth = 22;
-        int popupW = Math.min(110, area.width() - 4);
-        int descColWidth = popupW - nameColWidth - 8;
-        int contentH = filteredEntries.size() + 2;
-        int maxH = area.height() - 4;
-        int popupH = contentH + 2 <= maxH ? contentH + 2 : Math.min(contentH + 2, maxH - 6);
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + 2;
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
-        this.popupRect = popup;
-
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        String filterText = filter.hasFilter() ? filter.filter() : "";
-        String prompt = "> " + filterText + "█";
-
-        List<ListItem> items = new ArrayList<>();
-        items.add(ListItem.from(Line.from(Span.styled(prompt, Theme.info()))));
-        String sep = "─".repeat(Math.max(1, popupW - 2));
-        items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
-
-        Style normalStyle = Style.EMPTY;
-        Style matchStyle = Theme.label().bold();
-        Style dimStyle = Style.EMPTY.dim();
-        for (TabRegistry.TabEntry entry : filteredEntries) {
-            List<Span> spans = new ArrayList<>();
-            String sc = entry.shortcut();
-            spans.add(Span.raw(" "));
-            spans.add(Span.styled(sc, Theme.mnemonic()));
-            if (sc.length() < 2) {
-                spans.add(Span.raw(" "));
-            }
-            spans.add(Span.raw(" " + entry.icon() + " "));
-            String name = entry.name();
-            if (name.length() > nameColWidth) {
-                name = name.substring(0, nameColWidth);
-            } else {
-                name = String.format("%-" + nameColWidth + "s", name);
-            }
-            if (filter.hasFilter()) {
-                int[] nameMatch = FuzzyFilter.fuzzyMatch(name, filter.filter());
-                if (nameMatch != null) {
-                    Line hl = FuzzyFilter.highlightLine(name, nameMatch, normalStyle, matchStyle);
-                    spans.addAll(hl.spans());
-                } else {
-                    spans.add(Span.styled(name, normalStyle));
-                }
-            } else {
-                spans.add(Span.styled(name, normalStyle));
-            }
-            String desc = entry.description();
-            if (desc != null) {
-                if (desc.length() > descColWidth) {
-                    desc = desc.substring(0, Math.max(0, descColWidth - 1)) + "…";
-                }
-                spans.add(Span.styled(" ", dimStyle));
-                if (filter.hasFilter() && filter.filter().length() >= 2) {
-                    String f = filter.filter();
-                    int idx = desc.toLowerCase().indexOf(f);
-                    if (idx >= 0) {
-                        if (idx > 0) {
-                            spans.add(Span.styled(desc.substring(0, idx), dimStyle));
-                        }
-                        spans.add(Span.styled(desc.substring(idx, idx + f.length()), matchStyle));
-                        if (idx + f.length() < desc.length()) {
-                            spans.add(Span.styled(desc.substring(idx + f.length()), dimStyle));
-                        }
-                    } else {
-                        spans.add(Span.styled(desc, dimStyle));
-                    }
-                } else {
-                    spans.add(Span.styled(desc, dimStyle));
-                }
-            }
-            items.add(ListItem.from(Line.from(spans)));
-        }
-
-        ListState renderState = new ListState();
-        Integer sel = listState.selected();
-        if (sel != null) {
-            renderState.select(sel + 2);
-        }
-
-        int total = activeEntries != null ? activeEntries.size() : 0;
-        int shown = filteredEntries.size();
-        String title = shown == total
-                ? " Go to Tab (" + total + ") "
-                : " Go to Tab (" + shown + "/" + total + ") ";
-
-        ListWidget list = ListWidget.builder()
-                .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Theme.selectionBg())
-                .highlightSymbol("")
-                .scrollMode(ScrollMode.AUTO_SCROLL)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(title)
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, popup, renderState);
-        listOffset = renderState.offset();
-        TuiHelper.renderListScrollbar(frame, popup, shown + 2, listOffset, scrollbarState);
-    }
-
     SelectionContext getSelectionContext() {
-        if (!visible || filteredEntries == null || filteredEntries.isEmpty()) {
+        if (!isVisible() || shown().isEmpty()) {
             return null;
         }
-        List<String> items = filteredEntries.stream().map(TabRegistry.TabEntry::name).toList();
-        Integer sel = listState.selected();
+        List<String> items = shown().stream().map(TabRegistry.TabEntry::name).toList();
+        Integer sel = selectedIndex();
         return new SelectionContext("popup", items, sel != null ? sel : -1, items.size(), "Go to Tab");
     }
 
-    private void rebuildList() {
-        if (allEntries == null) {
-            filteredEntries = List.of();
-            return;
-        }
-        activeEntries = filterActiveEntries(allEntries);
-        List<TabRegistry.TabEntry> active = activeEntries;
-        if (!filter.hasFilter()) {
-            filteredEntries = new ArrayList<>(active);
-        } else {
-            filteredEntries = new ArrayList<>();
-            String f = filter.filter();
-            for (TabRegistry.TabEntry entry : active) {
-                boolean nameMatch;
-                if (f.length() <= 2) {
-                    nameMatch = entry.name().toLowerCase().contains(f);
-                } else {
-                    nameMatch = filter.match(entry.name()) != null;
-                }
-                boolean descMatch = f.length() >= 2 && entry.description() != null
-                        && entry.description().toLowerCase().contains(f);
-                if (nameMatch || descMatch) {
-                    filteredEntries.add(entry);
-                }
-            }
-        }
-        listState.select(filteredEntries.isEmpty() ? null : 0);
-    }
-
-    private List<TabRegistry.TabEntry> filterActiveEntries(List<TabRegistry.TabEntry> entries) {
-        if (integrationSupplier == null || moreTabsSupplier == null) {
-            return entries;
+    /** The tabs to list: all of them, less the More tabs not active for the selected integration. */
+    @Override
+    protected List<TabRegistry.TabEntry> entries() {
+        if (allEntries == null || integrationSupplier == null || moreTabsSupplier == null) {
+            return allEntries;
         }
         IntegrationInfo info = integrationSupplier.get();
         List<TabRegistry.MoreTab> moreTabs = moreTabsSupplier.get();
         List<TabRegistry.TabEntry> active = new ArrayList<>();
-        for (TabRegistry.TabEntry entry : entries) {
+        for (TabRegistry.TabEntry entry : allEntries) {
             if (entry.moreIndex() >= 0 && entry.moreIndex() < moreTabs.size()) {
                 TabRegistry.MoreTab mt = moreTabs.get(entry.moreIndex());
                 if (!TabRegistry.isMoreTabActive(mt, info)) {
@@ -336,10 +91,86 @@ class GotoTabPopup {
         return active;
     }
 
-    private void navigateToEntry(TabRegistry.TabEntry entry) {
+    @Override
+    protected String name() {
+        return "Go to Tab";
+    }
+
+    @Override
+    protected boolean matches(TabRegistry.TabEntry entry, String typed) {
+        boolean descMatch = typed.length() >= 2 && entry.description() != null
+                && entry.description().toLowerCase().contains(typed);
+        return matchesText(entry.name(), typed) || descMatch;
+    }
+
+    @Override
+    protected void chosen(TabRegistry.TabEntry entry) {
         if (callback != null) {
             pendingEntry = entry;
             callback.run();
         }
+    }
+
+    @Override
+    protected int maxWidth() {
+        return 110;
+    }
+
+    @Override
+    protected int pageStep() {
+        return 10;
+    }
+
+    @Override
+    protected List<Line> rows(List<TabRegistry.TabEntry> entries, int width) {
+        int descColWidth = width - NAME_COL_WIDTH - 8;
+        Style matchStyle = Theme.label().bold();
+        Style dimStyle = Style.EMPTY.dim();
+        List<Line> rows = new ArrayList<>();
+        for (TabRegistry.TabEntry entry : entries) {
+            List<Span> spans = new ArrayList<>();
+            String sc = entry.shortcut();
+            spans.add(Span.raw(" "));
+            spans.add(Span.styled(sc, Theme.mnemonic()));
+            if (sc.length() < 2) {
+                spans.add(Span.raw(" "));
+            }
+            spans.add(Span.raw(" " + entry.icon() + " "));
+            String name = entry.name();
+            if (name.length() > NAME_COL_WIDTH) {
+                name = name.substring(0, NAME_COL_WIDTH);
+            } else {
+                name = String.format("%-" + NAME_COL_WIDTH + "s", name);
+            }
+            spans.addAll(highlighted(name, Style.EMPTY, matchStyle));
+            String desc = entry.description();
+            if (desc != null) {
+                if (desc.length() > descColWidth) {
+                    desc = desc.substring(0, Math.max(0, descColWidth - 1)) + "…";
+                }
+                spans.add(Span.styled(" ", dimStyle));
+                spans.addAll(descriptionSpans(desc, dimStyle, matchStyle));
+            }
+            rows.add(Line.from(spans));
+        }
+        return rows;
+    }
+
+    /** The description, with the typed text marked where it appears in it (from two characters). */
+    private List<Span> descriptionSpans(String desc, Style dimStyle, Style matchStyle) {
+        String typed = filter.filter();
+        int idx = typed.length() >= 2 ? desc.toLowerCase().indexOf(typed) : -1;
+        if (idx < 0) {
+            return List.of(Span.styled(desc, dimStyle));
+        }
+        List<Span> spans = new ArrayList<>();
+        if (idx > 0) {
+            spans.add(Span.styled(desc.substring(0, idx), dimStyle));
+        }
+        spans.add(Span.styled(desc.substring(idx, idx + typed.length()), matchStyle));
+        if (idx + typed.length() < desc.length()) {
+            spans.add(Span.styled(desc.substring(idx + typed.length()), dimStyle));
+        }
+        return spans;
     }
 }

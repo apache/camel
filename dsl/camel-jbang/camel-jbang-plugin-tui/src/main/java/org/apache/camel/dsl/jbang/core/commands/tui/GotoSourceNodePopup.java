@@ -17,256 +17,174 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
-import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.tui.event.KeyCode;
-import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.widgets.Clear;
-import dev.tamboui.widgets.block.Block;
-import dev.tamboui.widgets.block.BorderType;
-import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.list.ListItem;
-import dev.tamboui.widgets.list.ListState;
-import dev.tamboui.widgets.list.ListWidget;
-import dev.tamboui.widgets.list.ScrollMode;
-import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors;
 
-class GotoSourceNodePopup {
+/**
+ * Go to node or line of the source editor: the routes of the file and their processors as a tree; a number typed goes
+ * to that line instead. A typed text keeps a route when the route or one of its processors matches.
+ */
+class GotoSourceNodePopup extends FilterListPopup<YamlRouteNodeScanner.NodeEntry> {
 
-    private boolean visible;
-    private final FuzzyFilter filter = new FuzzyFilter();
-    private final ListState listState = new ListState();
-    private final ScrollbarState scrollbarState = new ScrollbarState();
     private List<YamlRouteNodeScanner.NodeEntry> allEntries;
-    private List<YamlRouteNodeScanner.NodeEntry> filteredEntries;
     private YamlRouteNodeScanner.NodeEntry selectedEntry;
     private int gotoLineNumber = -1;
     private int totalLineCount;
 
-    boolean isVisible() {
-        return visible;
-    }
-
     void open(List<YamlRouteNodeScanner.NodeEntry> entries, int lineCount) {
         allEntries = entries != null ? new ArrayList<>(entries) : List.of();
         totalLineCount = lineCount;
-        visible = true;
-        filter.clearFilter();
         gotoLineNumber = -1;
-        rebuildList();
+        show();
     }
 
+    @Override
     void close() {
-        visible = false;
-        filter.clearFilter();
+        super.close();
         gotoLineNumber = -1;
     }
 
+    /** The node chosen with Enter, or null; cleared by the call. */
     YamlRouteNodeScanner.NodeEntry consumeSelection() {
         YamlRouteNodeScanner.NodeEntry entry = selectedEntry;
         selectedEntry = null;
         return entry;
     }
 
+    /** The line number typed and confirmed with Enter, or -1; cleared by the call. */
     int consumeGotoLineNumber() {
         int line = gotoLineNumber;
         gotoLineNumber = -1;
         return line;
     }
 
-    boolean handleKeyEvent(KeyEvent ke) {
-        int size = filteredEntries != null ? filteredEntries.size() : 0;
-        if (ke.isCancel()) {
-            close();
-            return true;
+    @Override
+    protected List<YamlRouteNodeScanner.NodeEntry> entries() {
+        return allEntries;
+    }
+
+    @Override
+    protected String name() {
+        return "Go to Node";
+    }
+
+    @Override
+    protected void chosen(YamlRouteNodeScanner.NodeEntry entry) {
+        selectedEntry = entry;
+    }
+
+    @Override
+    protected boolean confirmTyped(String typed) {
+        if (!isLineNumber(typed)) {
+            return false;
         }
-        if (ke.isUp()) {
-            listState.selectPrevious();
-            return true;
-        }
-        if (ke.isDown()) {
-            listState.selectNext(size);
-            return true;
-        }
-        if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-            for (int i = 0; i < 5; i++) {
-                listState.selectPrevious();
-            }
-            return true;
-        }
-        if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-            for (int i = 0; i < 5; i++) {
-                listState.selectNext(size);
-            }
-            return true;
-        }
-        if (ke.isHome() || ke.isKey(KeyCode.HOME)) {
-            listState.selectFirst();
-            return true;
-        }
-        if (ke.isEnd() || ke.isKey(KeyCode.END)) {
-            listState.selectLast(size);
-            return true;
-        }
-        if (ke.isConfirm()) {
-            if (filter.hasFilter() && isLineNumber(filter.filter())) {
-                int num = Integer.parseInt(filter.filter().trim());
-                gotoLineNumber = Math.max(1, Math.min(num, totalLineCount));
-                visible = false;
-                filter.clearFilter();
-                return true;
-            }
-            Integer sel = listState.selected();
-            if (sel != null && filteredEntries != null && sel < filteredEntries.size()) {
-                selectedEntry = filteredEntries.get(sel);
-                close();
-            }
-            return true;
-        }
-        if (ke.isKey(KeyCode.BACKSPACE)) {
-            filter.deleteChar();
-            rebuildList();
-            return true;
-        }
-        if (ke.code() == KeyCode.CHAR && !ke.hasCtrl() && !ke.hasAlt()) {
-            filter.append(ke.string());
-            rebuildList();
-            return true;
-        }
+        int num = Integer.parseInt(typed.trim());
+        close();
+        gotoLineNumber = Math.max(1, Math.min(num, totalLineCount));
         return true;
     }
 
-    void render(Frame frame, Rect area) {
-        if (filteredEntries == null) {
-            return;
+    @Override
+    protected int maxWidth() {
+        return 90;
+    }
+
+    @Override
+    protected Line prompt(String typed) {
+        Line prompt = super.prompt(typed);
+        if (isLineNumber(typed)) {
+            List<Span> spans = new ArrayList<>(prompt.spans());
+            spans.add(Span.styled("  Go to line " + typed.trim(), Style.EMPTY.dim()));
+            return Line.from(spans);
         }
-        int popupW = Math.min(90, area.width() - 4);
-        int contentH = filteredEntries.size() + 2;
-        int maxH = area.height() - 4;
-        int popupH = contentH + 2 <= maxH ? contentH + 2 : Math.min(contentH + 2, maxH - 6);
-        int x = area.left() + Math.max(0, (area.width() - popupW) / 2);
-        int y = area.top() + 2;
-        Rect popup = new Rect(x, y, Math.min(popupW, area.width()), Math.min(popupH, area.height() - 2));
+        return prompt;
+    }
 
-        frame.renderWidget(Clear.INSTANCE, popup);
-
-        String filterText = filter.hasFilter() ? filter.filter() : "";
-        boolean lineNumberMode = filter.hasFilter() && isLineNumber(filterText);
-        String prompt = "> " + filterText + "█";
-
-        List<ListItem> items = new ArrayList<>();
-        if (lineNumberMode) {
-            items.add(ListItem.from(Line.from(
-                    Span.styled(prompt, Theme.info()),
-                    Span.styled("  Go to line " + filterText.trim(), Style.EMPTY.dim()))));
-        } else {
-            items.add(ListItem.from(Line.from(Span.styled(prompt, Theme.info()))));
+    @Override
+    protected String title(int shownCount, int total) {
+        if (filter.hasFilter() && isLineNumber(filter.filter())) {
+            return " Go to Line ";
         }
-        String sep = "─".repeat(Math.max(1, popupW - 2));
-        items.add(ListItem.from(Line.from(Span.styled(sep, Style.EMPTY.dim()))));
+        if (total == 0) {
+            return " Go to Line (type a line number) ";
+        }
+        return super.title(shownCount, total);
+    }
 
+    /** A route stays when it or one of its processors matches; a processor when it or its route matches. */
+    @Override
+    protected List<YamlRouteNodeScanner.NodeEntry> filter(List<YamlRouteNodeScanner.NodeEntry> entries, String typed) {
+        Map<String, Boolean> routeMatched = new LinkedHashMap<>();
+        for (YamlRouteNodeScanner.NodeEntry entry : entries) {
+            if (entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
+                routeMatched.put(routeKey(entry), matches(entry, typed));
+            }
+        }
+        List<YamlRouteNodeScanner.NodeEntry> result = new ArrayList<>();
+        for (YamlRouteNodeScanner.NodeEntry entry : entries) {
+            String key = routeKey(entry);
+            if (entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
+                if (Boolean.TRUE.equals(routeMatched.get(key)) || hasMatchingProcessor(entry, typed)) {
+                    result.add(entry);
+                }
+            } else if (Boolean.TRUE.equals(routeMatched.get(key)) || matches(entry, typed)) {
+                result.add(entry);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected boolean matches(YamlRouteNodeScanner.NodeEntry entry, String typed) {
+        String searchText = entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE
+                ? entry.routeId() + " " + entry.fromUri()
+                : entry.type() + " " + entry.label() + " " + entry.routeId();
+        return matchesText(searchText, typed);
+    }
+
+    @Override
+    protected List<Line> rows(List<YamlRouteNodeScanner.NodeEntry> entries, int width) {
         int maxTypeW = 0;
-        for (YamlRouteNodeScanner.NodeEntry entry : filteredEntries) {
+        for (YamlRouteNodeScanner.NodeEntry entry : entries) {
             if (entry.kind() == YamlRouteNodeScanner.EntryKind.PROCESSOR) {
                 maxTypeW = Math.max(maxTypeW, entry.type().length());
             }
         }
-        int maxLabelW = Math.max(10, popupW - maxTypeW - 14);
+        int maxLabelW = Math.max(10, width - maxTypeW - 14);
 
-        Style normalStyle = Style.EMPTY;
         Style matchStyle = Theme.label().bold();
-        Style dimStyle = Style.EMPTY.dim();
         Style treeStyle = Style.EMPTY.dim();
         Style routeStyle = Theme.label().bold();
-
-        for (int idx = 0; idx < filteredEntries.size(); idx++) {
-            YamlRouteNodeScanner.NodeEntry entry = filteredEntries.get(idx);
+        List<Line> rows = new ArrayList<>();
+        for (int idx = 0; idx < entries.size(); idx++) {
+            YamlRouteNodeScanner.NodeEntry entry = entries.get(idx);
             List<Span> spans = new ArrayList<>();
-
             if (entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
                 // route[routeId]  from[uri]
                 spans.add(Span.raw(" "));
-                String searchable = "route[" + entry.routeId() + "]";
-                Color routeColor = DiagramColors.getEipColor("route");
-                if (filter.hasFilter()) {
-                    int[] match = FuzzyFilter.fuzzyMatch(searchable, filter.filter());
-                    if (match != null) {
-                        spans.addAll(FuzzyFilter.highlightLine(searchable, match, routeStyle, matchStyle).spans());
-                    } else {
-                        spans.add(Span.styled(searchable, routeStyle));
-                    }
-                } else {
-                    spans.add(Span.styled(searchable, routeStyle));
-                }
+                spans.addAll(highlighted("route[" + entry.routeId() + "]", routeStyle, matchStyle));
             } else {
                 // tree prefix + type[label] matching diagram panel format
-                String prefix = buildTreePrefix(filteredEntries, idx, entry);
-                spans.add(Span.styled(prefix, treeStyle));
+                spans.add(Span.styled(buildTreePrefix(entries, idx, entry), treeStyle));
                 String typeTag = entry.type();
                 Color eipColor = DiagramColors.getEipColor(YamlSourceContext.dashToCamelCase(typeTag));
                 String label = entry.label().isBlank() ? "" : entry.label();
                 if (label.length() > maxLabelW && maxLabelW > 3) {
                     label = label.substring(0, maxLabelW - 1) + "…";
                 }
-                String searchable = typeTag + "[" + label + "]";
-
-                if (filter.hasFilter()) {
-                    int[] nameMatch = FuzzyFilter.fuzzyMatch(searchable, filter.filter());
-                    if (nameMatch != null) {
-                        Line hl = FuzzyFilter.highlightLine(searchable, nameMatch,
-                                Style.EMPTY.fg(eipColor), matchStyle);
-                        spans.addAll(hl.spans());
-                    } else {
-                        spans.add(Span.styled(searchable, Style.EMPTY.fg(eipColor)));
-                    }
-                } else {
-                    spans.add(Span.styled(searchable, Style.EMPTY.fg(eipColor)));
-                }
+                spans.addAll(highlighted(typeTag + "[" + label + "]", Style.EMPTY.fg(eipColor), matchStyle));
             }
-
-            items.add(ListItem.from(Line.from(spans)));
+            rows.add(Line.from(spans));
         }
-
-        ListState renderState = new ListState();
-        Integer sel = listState.selected();
-        if (sel != null) {
-            renderState.select(sel + 2);
-        }
-
-        int total = allEntries != null ? allEntries.size() : 0;
-        int shown = filteredEntries.size();
-        String title;
-        if (lineNumberMode) {
-            title = " Go to Line ";
-        } else if (total == 0) {
-            title = " Go to Line (type a line number) ";
-        } else if (shown == total) {
-            title = " Go to Node (" + total + ") ";
-        } else {
-            title = " Go to Node (" + shown + "/" + total + ") ";
-        }
-
-        ListWidget list = ListWidget.builder()
-                .items(items.toArray(ListItem[]::new))
-                .highlightStyle(Theme.selectionBg())
-                .highlightSymbol("")
-                .scrollMode(ScrollMode.AUTO_SCROLL)
-                .block(Block.builder()
-                        .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(title)
-                        .build())
-                .build();
-        frame.renderStatefulWidget(list, popup, renderState);
-        TuiHelper.renderListScrollbar(frame, popup, shown + 2, renderState.offset(), scrollbarState);
+        return rows;
     }
 
     static String buildTreePrefix(
@@ -276,7 +194,7 @@ class GotoSourceNodePopup {
         boolean last = isLastSiblingNorm(entries, idx, entry.indent());
         StringBuilder sb = new StringBuilder(" ");
         for (int d = 1; d < depth; d++) {
-            sb.append(hasAncestorSiblingNorm(entries, idx, d, entries) ? "│ " : "  ");
+            sb.append(hasAncestorSiblingNorm(entries, idx, d) ? "│ " : "  ");
         }
         if (depth > 0) {
             sb.append(last ? "└─" : "├─");
@@ -320,8 +238,7 @@ class GotoSourceNodePopup {
     }
 
     private static boolean hasAncestorSiblingNorm(
-            List<YamlRouteNodeScanner.NodeEntry> entries, int idx, int normDepth,
-            List<YamlRouteNodeScanner.NodeEntry> allEntries) {
+            List<YamlRouteNodeScanner.NodeEntry> entries, int idx, int normDepth) {
         // Find the raw indent that corresponds to normDepth for this entry's route
         int rawIndent = findRawIndentForDepth(entries, idx, normDepth);
         if (rawIndent < 0) {
@@ -344,7 +261,7 @@ class GotoSourceNodePopup {
 
     private static int findRawIndentForDepth(List<YamlRouteNodeScanner.NodeEntry> entries, int idx, int targetDepth) {
         // Walk backwards collecting ancestor indent levels
-        java.util.List<Integer> indents = new java.util.ArrayList<>();
+        List<Integer> indents = new ArrayList<>();
         int curIndent = entries.get(idx).indent();
         indents.add(curIndent);
         for (int i = idx - 1; i >= 0; i--) {
@@ -357,7 +274,7 @@ class GotoSourceNodePopup {
                 curIndent = e.indent();
             }
         }
-        java.util.Collections.reverse(indents);
+        Collections.reverse(indents);
         if (targetDepth > 0 && targetDepth <= indents.size()) {
             return indents.get(targetDepth - 1);
         }
@@ -377,49 +294,12 @@ class GotoSourceNodePopup {
         return true;
     }
 
-    private static String shortFileName(String filePath) {
-        int lastSep = filePath.lastIndexOf('/');
-        return lastSep >= 0 ? filePath.substring(lastSep + 1) : filePath;
-    }
-
-    private void rebuildList() {
-        if (allEntries == null) {
-            filteredEntries = List.of();
-            return;
-        }
-        if (!filter.hasFilter()) {
-            filteredEntries = new ArrayList<>(allEntries);
-        } else {
-            filteredEntries = new ArrayList<>();
-            String f = filter.filter().toLowerCase();
-            Map<String, Boolean> routeMatched = new LinkedHashMap<>();
-
-            for (YamlRouteNodeScanner.NodeEntry entry : allEntries) {
-                if (entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
-                    routeMatched.put(routeKey(entry), matches(entry, f));
-                }
-            }
-
-            for (YamlRouteNodeScanner.NodeEntry entry : allEntries) {
-                String key = routeKey(entry);
-                if (entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE) {
-                    if (Boolean.TRUE.equals(routeMatched.get(key)) || hasMatchingProcessor(entry, f)) {
-                        filteredEntries.add(entry);
-                    }
-                } else if (Boolean.TRUE.equals(routeMatched.get(key)) || matches(entry, f)) {
-                    filteredEntries.add(entry);
-                }
-            }
-        }
-        listState.select(filteredEntries.isEmpty() ? null : 0);
-    }
-
-    private boolean hasMatchingProcessor(YamlRouteNodeScanner.NodeEntry routeEntry, String f) {
+    private boolean hasMatchingProcessor(YamlRouteNodeScanner.NodeEntry routeEntry, String typed) {
         String key = routeKey(routeEntry);
         for (YamlRouteNodeScanner.NodeEntry entry : allEntries) {
             if (entry.kind() == YamlRouteNodeScanner.EntryKind.PROCESSOR
                     && routeKey(entry).equals(key)
-                    && matches(entry, f)) {
+                    && matches(entry, typed)) {
                 return true;
             }
         }
@@ -428,15 +308,5 @@ class GotoSourceNodePopup {
 
     private static String routeKey(YamlRouteNodeScanner.NodeEntry entry) {
         return entry.filePath() + "#" + entry.routeFromLine();
-    }
-
-    private boolean matches(YamlRouteNodeScanner.NodeEntry entry, String f) {
-        String searchText = entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE
-                ? entry.routeId() + " " + entry.fromUri()
-                : entry.type() + " " + entry.label() + " " + entry.routeId();
-        if (f.length() <= 2) {
-            return searchText.toLowerCase().contains(f);
-        }
-        return filter.match(searchText) != null;
     }
 }

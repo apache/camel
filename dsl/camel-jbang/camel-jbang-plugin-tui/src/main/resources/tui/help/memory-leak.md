@@ -126,4 +126,5 @@ are not being collected.
 | S | Reverse sort order |
 | m | Cycle minimum size filter |
 | PgUp/PgDn | Scroll detail panel |
+| h | Write a heap dump of the integration |
 | Esc | Back |

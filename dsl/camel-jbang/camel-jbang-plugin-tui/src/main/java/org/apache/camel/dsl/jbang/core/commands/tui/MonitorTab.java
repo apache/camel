@@ -43,7 +43,39 @@ interface MonitorTab {
         return false;
     }
 
+    /**
+     * Esc on the tab. CamelMonitor handles Esc before the keys go to {@link #handleKeyEvent}, so Esc never reaches it:
+     * a tab closes its open text field, popup or detail view here and returns {@code true}. When it returns
+     * {@code false}, Esc goes back to the Overview tab.
+     */
     default boolean handleEscape() {
+        return false;
+    }
+
+    /**
+     * Whether a text field of the tab (a filter, search, probe or editor field, or a popup of the tab that takes typed
+     * text) has the keyboard. While it has, the global keys that are plain characters ({@code q} quits, the digits
+     * switch tabs, {@code ?} opens help) are typed into it, and a paste goes to {@link #handlePaste(String)}.
+     * CamelMonitor asks only the active tab, so a tab with a text field must override this, or {@code q} quits the TUI
+     * while the user types.
+     */
+    default boolean isTextInputActive() {
+        return false;
+    }
+
+    /**
+     * Pastes text into the text field that has the keyboard; returns {@code false} when none has, as the default does.
+     */
+    default boolean handlePaste(String text) {
+        return false;
+    }
+
+    /**
+     * Whether the tab takes this key although it is a global shortcut, which then leaves it to {@link #handleKeyEvent}:
+     * a key an editor of the tab uses while it has the keyboard, such as Ctrl+L that clears the Semantic tab's input
+     * but elsewhere pins the log.
+     */
+    default boolean claimsKey(KeyEvent ke) {
         return false;
     }
 
@@ -87,7 +119,20 @@ interface MonitorTab {
     default void renderFKeyHints(List<Span> spans) {
     }
 
+    /**
+     * Called on the UI thread when the tab becomes the one on screen (a digit key, a click on the tab bar, the More
+     * menu, Go to), before it is drawn. A tab that shows data fetched on demand fetches it here, or starts the fetch,
+     * so it does not open on stale data.
+     */
     default void onTabSelected() {
+    }
+
+    /**
+     * Fetches the data only this tab shows (errors, activity, history, spans), on every data refresh while the tab is
+     * the one on screen. Runs on the background refresh thread ({@code camel-tui-bg}) after the integrations were read,
+     * so it may read files and ask the integration, but must not draw. The data service is {@code ctx.dataService}.
+     */
+    default void refreshWhileVisible() {
     }
 
     /**
@@ -130,10 +175,6 @@ interface MonitorTab {
     }
 
     default boolean setInputValue(String field, String value) {
-        return false;
-    }
-
-    default boolean isOverlayActive() {
         return false;
     }
 
