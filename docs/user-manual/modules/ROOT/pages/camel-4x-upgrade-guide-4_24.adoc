@@ -147,6 +147,19 @@ nothing was stored and the exchange completed without an error. The requests are
 the answer like the other state operations: the states are stored, and a request that Dapr rejects (or a sidecar that
 cannot be reached) fails the exchange.
 
+=== camel-influxdb2 - a write is synchronous and a rejected write fails the exchange
+
+The producer wrote with the batching write API of the InfluxDB client: the point was put into a buffer of the client
+and sent later by a background thread, so the exchange completed before anything was written, and a write that
+InfluxDB rejected (a line it cannot parse, an unknown bucket, a token that is not authorized) or could not receive was
+only logged by the client while the route continued as if the data had been stored. The producer now writes with the
+synchronous write API: the exchange continues when InfluxDB has answered, and a failed write fails the exchange with a
+`CamelInfluxDb2Exception` (cause: the `InfluxException` of the client), which the error handler can redeliver.
+
+Each exchange is now one write request, where the client used to collect the points of up to one second into one
+request, and the client no longer retries a write in the background. Routes with a high message rate can send a
+`Points`, `Measurements` or `Records` body (for example from an aggregator) to write many points with one request.
+
 === camel-jira - the producers wait for the answer of Jira
 
 The `addComment`, `addIssueLink`, `addWorkLog`, `attach`, `deleteIssue`, `transitionIssue` and `watchers` producers
