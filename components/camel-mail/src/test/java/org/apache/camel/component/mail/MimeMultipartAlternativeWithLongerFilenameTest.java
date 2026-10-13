@@ -40,17 +40,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSupport {
-    private static final MailboxUser ryanWithLongerFilename
-            = Mailbox.getOrCreateUser("MimeMultipartAlternativeWithLongerFilenameTest-ryanWithLongerFilename", "secret");
+    private static final MailboxUser ryanInline
+            = Mailbox.getOrCreateUser("MimeMultipartAlternativeWithLongerFilenameTest-ryanInline", "secret");
+    private static final MailboxUser ryanRegular
+            = Mailbox.getOrCreateUser("MimeMultipartAlternativeWithLongerFilenameTest-ryanRegular", "secret");
     private Logger log = LoggerFactory.getLogger(getClass());
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:myCoolLogo.jpeg\"></body></html>";
 
-    private void sendMultipartEmail(boolean useInlineattachments) {
-        Mailbox.clearAll(ryanWithLongerFilename);
+    private void sendMultipartEmail(MailboxUser user, boolean useInlineattachments, String mockUri, String routeId)
+            throws Exception {
+        Mailbox.clearAll(user);
 
         // create an exchange with a normal body and attachment to be produced as email
-        MailEndpoint endpoint = context.getEndpoint(ryanWithLongerFilename.uriPrefix(Protocol.smtp), MailEndpoint.class);
+        MailEndpoint endpoint = context.getEndpoint(user.uriPrefix(Protocol.smtp), MailEndpoint.class);
         endpoint.getConfiguration().setUseInlineAttachments(useInlineattachments);
         endpoint.getConfiguration().setAlternativeBodyHeader(MailConstants.MAIL_ALTERNATIVE_BODY);
 
@@ -62,15 +65,19 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         in.addAttachment("cid:myCoolLogo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
 
         // create a producer that can produce the exchange (= send the mail)
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint(mockUri);
         mock.expectedMessageCount(1);
         mock.message(0).header(MailConstants.MAIL_ALTERNATIVE_BODY).isNull();
 
         context.createProducerTemplate().send(endpoint, exchange);
+
+        // a POP3 folder is a snapshot taken when it is opened (closeFolder=false keeps it open), so the
+        // consumer must only start polling once the mail is in the mailbox
+        context.getRouteController().startRoute(routeId);
     }
 
-    private void verifyTheRecivedEmail(String expectString) throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
+    private void verifyTheRecivedEmail(String mockUri, String expectString) throws Exception {
+        MockEndpoint mock = getMockEndpoint(mockUri);
         mock.assertIsSatisfied();
 
         Exchange out = mock.assertExchangeReceived(0);
@@ -92,22 +99,26 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
 
     @Test
     public void testMultipartEmailWithInlineAttachments() throws Exception {
-        sendMultipartEmail(true);
-        verifyTheRecivedEmail("Content-Disposition: inline; filename=myCoolLogo.jpeg");
+        sendMultipartEmail(ryanInline, true, "mock:resultInline", "routeInline");
+        verifyTheRecivedEmail("mock:resultInline", "Content-Disposition: inline; filename=myCoolLogo.jpeg");
     }
 
     @Test
     public void testMultipartEmailWithRegularAttachments() throws Exception {
-        sendMultipartEmail(false);
-        verifyTheRecivedEmail("Content-Disposition: attachment; filename=myCoolLogo.jpeg");
+        sendMultipartEmail(ryanRegular, false, "mock:resultRegular", "routeRegular");
+        verifyTheRecivedEmail("mock:resultRegular", "Content-Disposition: attachment; filename=myCoolLogo.jpeg");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(ryanWithLongerFilename.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&closeFolder=false")
-                        .to("mock:result");
+                from(ryanInline.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&closeFolder=false")
+                        .routeId("routeInline").autoStartup(false)
+                        .to("mock:resultInline");
+                from(ryanRegular.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&closeFolder=false")
+                        .routeId("routeRegular").autoStartup(false)
+                        .to("mock:resultRegular");
             }
         };
     }
