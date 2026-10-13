@@ -304,8 +304,9 @@ public final class Kamelet {
             return value;
         }
         if (value.contains("&") || value.contains("=") || value.contains("?")
-                || value.contains("+") || value.contains("%")) {
-            return "RAW(" + value + ")";
+                || value.contains("+") || value.contains("%")
+                || value.contains(")")) {
+            return "RAW{" + value + "}";
         }
 
         return value;
@@ -437,7 +438,8 @@ public final class Kamelet {
             // (if ppid is null then it is a source kamelet)
             if (ppid != null) {
                 ProcessorDefinition<?> pro = mcc.getProcessorDefinition(ppid);
-                wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(mcc, pro, null, CamelContextHelper.parseBoolean(mcc, pro.getInheritErrorHandler()));
+                wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(mcc, pro, null,
+                        CamelContextHelper.parseBoolean(mcc, pro.getInheritErrorHandler()));
             }
             if (wrap && parent != null && parent.isKamelet() == null) {
                 // do not wrap if the parent is also a kamelet
