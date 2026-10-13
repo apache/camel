@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.milo.client;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -118,16 +119,28 @@ public class MiloClientConnection implements AutoCloseable {
             final ExpandedNodeId nodeId, Double samplingInterval, Integer queueSize,
             MonitorFilterConfiguration monitorFilterConfiguration, Consumer<DataValue> valueConsumer) {
 
-        requireNonNull(configuration);
         requireNonNull(valueConsumer);
+
+        return monitorValues(Collections.singletonMap(nodeId, valueConsumer), samplingInterval, queueSize,
+                monitorFilterConfiguration);
+    }
+
+    /**
+     * Monitors several nodes, each with its own value consumer. The monitored items of all nodes are created together,
+     * and the returned handle deletes them together.
+     */
+    public MonitorHandle monitorValues(
+            final Map<ExpandedNodeId, Consumer<DataValue>> valueConsumers, final Double samplingInterval,
+            final Integer queueSize, final MonitorFilterConfiguration monitorFilterConfiguration) {
+
+        requireNonNull(valueConsumers);
 
         checkInit();
 
-        final UInteger handle
-                = this.manager.registerItem(nodeId, samplingInterval, queueSize, valueConsumer,
-                        monitorFilterConfiguration);
+        final List<UInteger> handles
+                = this.manager.registerItems(valueConsumers, samplingInterval, queueSize, monitorFilterConfiguration);
 
-        return () -> MiloClientConnection.this.manager.unregisterItem(handle);
+        return () -> MiloClientConnection.this.manager.unregisterItems(handles);
     }
 
     public String getConnectionId() {

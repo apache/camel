@@ -16,10 +16,18 @@
  */
 package org.apache.camel.component.milo.client;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.milo.Messages;
+import org.apache.camel.component.milo.MiloConstants;
 import org.apache.camel.component.milo.client.MiloClientConnection.MonitorHandle;
 import org.apache.camel.support.DefaultConsumer;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
@@ -33,14 +41,15 @@ public class MiloClientConsumer extends DefaultConsumer {
 
     private MiloClientConnection connection;
     private MonitorHandle handle;
-    private ExpandedNodeId node;
     private Double samplingInterval;
     private Integer queueSize;
     private boolean omitNullValues;
 
     public MiloClientConsumer(final MiloClientEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
-        this.node = endpoint.getNodeId();
+        if (endpoint.getNode() != null && endpoint.getNodes() != null) {
+            throw new IllegalArgumentException("Configure either the node or the nodes option, not both");
+        }
         this.samplingInterval = endpoint.getSamplingInterval();
         this.queueSize = endpoint.getQueueSize();
         this.omitNullValues = endpoint.isOmitNullValues();
@@ -54,9 +63,34 @@ public class MiloClientConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        final Map<ExpandedNodeId, Consumer<DataValue>> valueConsumers = new LinkedHashMap<>();
+        for (final String node : resolveNodes()) {
+            valueConsumers.put(ExpandedNodeId.parse(node), value -> handleValueUpdate(node, value));
+        }
         this.connection = getEndpoint().createConnection();
-        this.handle = this.connection.monitorValue(this.node, this.samplingInterval, this.queueSize,
-                getEndpoint().getMonitorFilterConfiguration(), this::handleValueUpdate);
+        this.handle = this.connection.monitorValues(valueConsumers, this.samplingInterval, this.queueSize,
+                getEndpoint().getMonitorFilterConfiguration());
+    }
+
+    /**
+     * The node IDs of the node or nodes option, in the configured order and without duplicates
+     */
+    private Set<String> resolveNodes() {
+        final String node = getEndpoint().getNode();
+        if (node != null) {
+            return Set.of(node);
+        }
+
+        final String nodes = getEndpoint().getNodes();
+        final Set<String> result = new LinkedHashSet<>();
+        if (nodes != null) {
+            Arrays.stream(nodes.split(",")).map(String::trim).filter(entry -> !entry.isEmpty()).forEach(result::add);
+        }
+
+        if (result.isEmpty()) {
+            throw new IllegalArgumentException("No node to monitor, configure the node or the nodes option");
+        }
+        return result;
     }
 
     @Override
@@ -71,7 +105,7 @@ public class MiloClientConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    private void handleValueUpdate(final DataValue value) {
+    private void handleValueUpdate(final String node, final DataValue value) {
         LOG.debug("Handle item update - {} = {}", node, value);
 
         if (omitNullValues && (value == null || value.getValue() == null || value.getValue().getValue() == null)) {
@@ -82,6 +116,7 @@ public class MiloClientConsumer extends DefaultConsumer {
         final Exchange exchange = createExchange(true);
         try {
             mapToMessage(value, exchange.getMessage());
+            exchange.getMessage().setHeader(MiloConstants.HEADER_NODE_ID, node);
             getProcessor().process(exchange);
         } catch (final Exception e) {
             getExceptionHandler().handleException("Error processing exchange", e);

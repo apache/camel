@@ -362,6 +362,21 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma-separated node definitions to monitor with one consumer,
+         * instead of node (see Node ID).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder nodes(String nodes) {
+            doSetProperty("nodes", nodes);
+            return this;
+        }
+        /**
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
          * 
@@ -2541,6 +2556,18 @@ public interface MiloClientEndpointBuilderFactory {
          */
         public String miloAwait() {
             return "CamelMiloAwait";
+        }
+        /**
+         * The node ID of the value, as configured in the node or nodes option.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MiloNodeId}.
+         */
+        public String miloNodeId() {
+            return "CamelMiloNodeId";
         }
     }
     static MiloClientEndpointBuilder endpointBuilder(String componentName, String path) {
