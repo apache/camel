@@ -16,10 +16,13 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.console.AbstractDevConsole;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -73,5 +76,57 @@ public class DefaultDevConsoleRegistryTest extends ContextTestSupport {
         boolean unregistered = registry.unregister(customConsole);
         Assertions.assertTrue(unregistered);
         Assertions.assertFalse(registry.getConsole("custom-test").isPresent());
+    }
+
+    @Test
+    public void testRegisterWhileStarting() throws Exception {
+        DefaultDevConsoleRegistry registry = new DefaultDevConsoleRegistry(context);
+        registry.start();
+
+        // a console that registers another console when started, such as camel-cli-connector
+        // resolving consoles from its own thread while the registry is starting its consoles
+        DevConsole first = new TestConsole("a-first") {
+            @Override
+            protected void doStart() throws Exception {
+                registry.register(new TestConsole("z-late-" + registry.stream().count()));
+            }
+        };
+        registry.register(first);
+        registry.register(new TestConsole("b-second"));
+        registry.stop();
+
+        // starting again registers a console while the registry iterates its consoles
+        registry.start();
+
+        Assertions.assertTrue(registry.getConsole("a-first").isPresent());
+        Assertions.assertTrue(registry.getConsole("b-second").isPresent());
+        Assertions.assertEquals(4, registry.stream().count());
+    }
+
+    @Test
+    public void testRegisterSameIdTwice() {
+        DefaultDevConsoleRegistry registry = new DefaultDevConsoleRegistry(context);
+
+        DevConsole console = new TestConsole("same");
+        Assertions.assertTrue(registry.register(console));
+        Assertions.assertFalse(registry.register(new TestConsole("same")));
+        Assertions.assertSame(console, registry.getConsole("same").orElse(null));
+    }
+
+    private static class TestConsole extends AbstractDevConsole {
+
+        TestConsole(String id) {
+            super("test", id, id, id);
+        }
+
+        @Override
+        protected Map<String, Object> doCallJson(Map<String, Object> options) {
+            return Map.of();
+        }
+
+        @Override
+        protected String doCallText(Map<String, Object> options) {
+            return "";
+        }
     }
 }
