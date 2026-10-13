@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.mina;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The producer checks that the certificate of the server matches the host it connects to.
@@ -46,9 +49,12 @@ class MinaSslContextParametersHostnameVerificationTest extends BaseMinaTest {
 
         // MINA keeps the handshake error in its SslHandler, so the producer fails when the write does not complete:
         // short timeouts keep the test fast
-        assertThrows(CamelExecutionException.class,
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody(producerUri("127.0.0.1", "&writeTimeout=2000&timeout=2000"), "Hello"));
 
+        // connected, but the message was never written (MinaClientSslFilterTest checks the handshake error itself)
+        CamelExchangeException cause = assertInstanceOf(CamelExchangeException.class, e.getCause());
+        assertTrue(cause.getMessage().startsWith("Cannot write body"), cause.getMessage());
         result.assertIsSatisfied();
     }
 

@@ -118,5 +118,5 @@ configured with the xref:manual::camel-configuration-utilities.adoc[Camel JSSE C
 
 The producer checks that the certificate of the server matches the `hostname` of the endpoint, with the same rules as
 an HTTPS client. A producer that connects by IP address needs a certificate that lists that address as a subject
-alternative name. Set `hostnameVerification=false` to turn this check off; the certificate chain is still validated
-against the trust store.
+alternative name, and a producer URI without a host name (such as `mllp://8888`) cannot pass the check. Set
+`hostnameVerification=false` to turn this check off; the certificate chain is still validated against the trust store.

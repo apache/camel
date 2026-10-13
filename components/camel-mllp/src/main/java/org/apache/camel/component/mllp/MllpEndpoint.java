@@ -337,6 +337,10 @@ public class MllpEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     public void setHostnameVerification(boolean hostnameVerification) {
         configuration.setHostnameVerification(hostnameVerification);
     }
+
+    public boolean isHostnameVerification() {
+        return configuration.isHostnameVerification();
+    }
     // Utility methods for producers and consumers
 
     public boolean checkBeforeSendProperties(Exchange exchange, Socket socket, Logger log) {

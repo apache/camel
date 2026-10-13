@@ -108,6 +108,11 @@ of the server matches the `host` of the endpoint, with the same rules as an HTTP
 needs a certificate that lists that address as a subject alternative name. Set `hostnameVerification=false` to turn
 this check off; the certificate chain is still validated against the trust store.
 
+MINA keeps a failed handshake in its SSL handler instead of passing the error on, so a certificate that does not match
+shows up as a timeout of the producer (after `writeTimeout`, or `timeout` while waiting for a reply) rather than as an
+SSL error. The handshake error is logged at `ERROR` level by `org.apache.mina.filter.ssl.SslHandler`: when a producer
+times out after you enable SSL, check that log and the subject alternative names of the certificate.
+
 == Examples
 
 === Example with sync=false

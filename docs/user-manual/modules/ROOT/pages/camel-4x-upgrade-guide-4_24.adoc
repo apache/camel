@@ -325,9 +325,9 @@ HTTPS client. Before, it accepted any certificate trusted by the trust store, wh
 for.
 
 A producer that connects with a host name or an IP address that the certificate does not list now fails the TLS
-handshake; an IP address must be listed as a subject alternative name of the certificate. Use a certificate that
-matches the host of the endpoint, or set the new `hostnameVerification` option to `false` to keep the previous
-behaviour.
+handshake; an IP address must be listed as a subject alternative name of the certificate, and a producer URI without a
+host name (such as `mllp://8888`) cannot pass the check. Use a certificate that matches the host of the endpoint, or set
+the new `hostnameVerification` option to `false` to keep the previous behaviour.
 
 === camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
 
@@ -371,6 +371,11 @@ whatever host the certificate was issued for.
 A connection to a host name or an IP address that the certificate does not list now fails the SSL handshake; an IP
 address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
 endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+MINA does not pass a failed handshake on as an error: the producer fails with a timeout (after `writeTimeout`, or
+`timeout` while waiting for a reply), and the handshake error is logged at `ERROR` level by
+`org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
+certificate that does not list the host.
 
 === camel-aws2-kinesis - the consumer continues after the last record when a shard iterator expired
 
