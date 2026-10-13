@@ -285,10 +285,10 @@ public final class Kamelet {
         char sep = result.indexOf('?') < 0 ? '?' : '&';
 
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            sb.append(sep)
-                    .append(entry.getKey())
-                    .append('=')
-                    .append(wrapRawIfNeeded(String.valueOf(entry.getValue())));
+            sb.append(sep).append(entry.getKey());
+            if (entry.getValue() != null) {
+                sb.append('=').append(wrapRawIfNeeded(String.valueOf(entry.getValue())));
+            }
             sep = '&';
         }
 
@@ -298,23 +298,29 @@ public final class Kamelet {
     /**
      * Re-wraps values that contain URI-sensitive characters. RAW wrappers may already have been stripped by
      * {@link URISupport#resolveRawParameterValues(Map)} before options reach this method.
+     * <p>
+     * RAW(...) and RAW{...} have limitations when their closing delimiter is followed by an ampersand. Avoid RAW{...}
+     * for values starting with '{' or ending with '}', as they may be interpreted as property placeholders.
      */
     private static String wrapRawIfNeeded(String value) {
-        if (isRawToken(value)) {
+        if (value == null || value.isEmpty() || isRawToken(value)) {
             return value;
         }
         if (value.contains("&") || value.contains("=") || value.contains("?")
                 || value.contains("+") || value.contains("%")) {
-            // RAW(...) ends at ")&"; RAW{...} would make a value starting with { or ending with } a property placeholder
-            return value.contains(")&") ? "RAW{" + value + "}" : "RAW(" + value + ")";
+            if (value.contains(")&") && !value.startsWith("{") && !value.endsWith("}")) {
+                return "RAW{" + value + "}";
+            }
+            return "RAW(" + value + ")";
         }
 
         return value;
     }
 
     private static boolean isRawToken(String value) {
-        return (value.startsWith("RAW(") && value.endsWith(")"))
-                || (value.startsWith("RAW{") && value.endsWith("}"));
+        return value != null
+                && ((value.startsWith("RAW(") && value.endsWith(")"))
+                        || (value.startsWith("RAW{") && value.endsWith("}")));
     }
 
     /**

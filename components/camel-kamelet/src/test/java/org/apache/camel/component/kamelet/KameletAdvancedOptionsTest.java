@@ -34,6 +34,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.URISupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -839,6 +840,102 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
                     () -> "Expected the JSON value to remain intact: " + uri);
             assertFalse(query.containsKey("c\"}"),
                     () -> "Ampersand in the JSON must not create a spurious parameter: " + uri);
+        }
+    }
+
+    @Disabled("Requires a shared URIScanner fix; RAW values containing )& inside quoted JSON are truncated during query parsing")
+    @Test
+    void sinkOptionsPreserveJsonRawValueWithClosingParenthesisAndAmpersand() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("json-edge-case-sink")
+                            .from("kamelet:source")
+                            .to("http://localhost/unused-json-edge-case");
+
+                    from("direct:trigger-json-edge-case")
+                            .kamelet("json-edge-case-sink?sink.filter=RAW({\"filter\":\"(x)&y\"})");
+
+                }
+            });
+
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(
+                    testContext, "http://localhost/unused-json-edge-case");
+            ToDefinition sink = findToDefinition(
+                    expandedRoute, "http://localhost/unused-json-edge-case");
+
+            assertNotNull(sink, "Expected sink endpoint for JSON edge case");
+
+            String uri = sink.getEndpointUri();
+            assertFalse(uri.contains("RAW{{"),
+                    () -> "JSON must not be wrapped as RAW{{...}}: " + uri);
+            Map<String, Object> query = parseUriQuery(uri);
+
+            assertEquals("{\"filter\":\"(x)&y\"}", rawOrPlain(query.get("filter")),
+                    () -> "Expected JSON containing )& to remain intact: " + uri);
+            assertFalse(query.containsKey("y}"),
+                    () -> "Ampersand in the JSON must not create a spurious parameter: " + uri);
+
+            HttpEndpoint http = findHttpEndpoint(testContext, "/unused-json-edge-case");
+            assertNotNull(http, "Expected the HTTP sink endpoint to be created");
+            Map<String, Object> httpQuery = URISupport.parseQuery(http.getHttpUri().getRawQuery());
+            assertEquals("{\"filter\":\"(x)&y\"}", urlDecode(rawOrPlain(httpQuery.get("filter"))),
+                    () -> "Expected the HTTP endpoint to receive the complete JSON: " + http.getHttpUri());
+            assertFalse(httpQuery.containsKey("y}"),
+                    () -> "The HTTP endpoint must not receive a spurious y} parameter: " + http.getHttpUri());
+        }
+    }
+
+    @Test
+    void sinkOptionsPreserveMultipleAmpersands() throws Exception {
+        assertHttpSinkOption("/unused-multi-amp", "sink.password=RAW(a&b&c)", "password", "a&b&c", "b", "c");
+    }
+
+    @Test
+    void sinkOptionsPreserveUnquotedCloseParenAmpersand() throws Exception {
+        assertHttpSinkOption("/unused-unquoted-paren-amp", "sink.password=RAW{p@ss)&word}", "password", "p@ss)&word",
+                "word)");
+    }
+
+    @Test
+    void sinkOptionsPreservePlusEqualsAndQuestionMark() throws Exception {
+        assertHttpSinkOption("/unused-plus-eq-q", "sink.filter=RAW(a+b=c?d)", "filter", "a+b=c?d", new String[0]);
+    }
+
+    private void assertHttpSinkOption(
+            String path, String sinkQuery, String optionName, String expectedValue, String... forbiddenKeys)
+            throws Exception {
+        String templateId = path.substring(1);
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate(templateId)
+                            .from("kamelet:source")
+                            .to("http://localhost" + path);
+
+                    from("direct:trigger")
+                            .kamelet(templateId + "?" + sinkQuery);
+                }
+            });
+
+            testContext.start();
+
+            ToDefinition sink = findToDefinition(
+                    findExpandedRouteWithOutput(testContext, "http://localhost" + path),
+                    "http://localhost" + path);
+            assertNotNull(sink, "Expected sink endpoint");
+            String uri = sink.getEndpointUri();
+            Map<String, Object> query = parseUriQuery(uri);
+            assertEquals(expectedValue, rawOrPlain(query.get(optionName)),
+                    () -> "Expected option " + optionName + " to remain intact: " + uri);
+            for (String forbidden : forbiddenKeys) {
+                assertFalse(query.containsKey(forbidden),
+                        () -> "Must not treat " + forbidden + " as a separate parameter: " + uri);
+            }
         }
     }
 
