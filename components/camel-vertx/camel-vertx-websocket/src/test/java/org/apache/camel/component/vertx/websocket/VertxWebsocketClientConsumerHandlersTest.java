@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Verifies that a client consumer started against an already-open WebSocket (CAMEL-25601) correctly registers its
- * message, close, and exception handlers.
+ * message, close, and exception handlers, and that stopping the consumer detaches them so no messages leak through.
  * <p>
  * Two scenarios:
  * <ol>
@@ -56,6 +56,13 @@ public class VertxWebsocketClientConsumerHandlersTest extends VertxWebSocketTest
 
         // Stop the consumer route. The WebSocket stays open (the endpoint is not stopped).
         context.getRouteController().stopRoute("client-consumer");
+
+        // While the route is stopped, messages must NOT be delivered to the mock (stop half of CAMEL-25601).
+        mock.reset();
+        mock.expectedMessageCount(0);
+        mock.setAssertPeriod(500);
+        template.sendBody(serverUri, "while-stopped");
+        mock.assertIsSatisfied();
 
         // Restart the consumer route. The WebSocket is already open — the fix ensures handlers are re-registered.
         context.getRouteController().startRoute("client-consumer");

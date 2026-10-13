@@ -171,6 +171,20 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         return webSocket != null && !webSocket.isClosed();
     }
 
+    /**
+     * Clears the message, close, and exception handlers on the endpoint's WebSocket, but only if it is still open and
+     * {@code owner} is the last consumer that registered handlers on it. The caller must hold
+     * {@link #clientConsumerConnectLock}.
+     */
+    void clearWebSocketHandlers(WebSocket owner) {
+        if (owner != null && webSocket == owner && !webSocket.isClosed()) {
+            webSocket.textMessageHandler(null);
+            webSocket.binaryMessageHandler(null);
+            webSocket.closeHandler(null);
+            webSocket.exceptionHandler(null);
+        }
+    }
+
     protected WebSocket getWebSocket() throws Exception {
         return getWebSocket((java.util.function.Consumer<WebSocket>) null);
     }
