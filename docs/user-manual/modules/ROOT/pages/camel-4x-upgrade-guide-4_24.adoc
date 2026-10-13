@@ -287,11 +287,3 @@ at a time: while an attempt waits for the server (up to the connect timeout), th
 are skipped, and `maxReconnectAttempts` counts these attempts one after the other. Previously every interval started
 another attempt, and when the server answered late each of them opened a WebSocket, so that every message was routed
 once per WebSocket. A consumer that is stopped no longer reconnects.
-
-=== camel-aws2-ddb - aws2-ddbstream consumer and a suspended route
-
-When a route is suspended (`RouteController.suspendRoute`, also when a route policy calls it, or
-`CamelContext.suspend()`) while the `aws2-ddbstream` consumer routes the records of a poll, the consumer stops after
-the record that is being routed. The other records of that poll (up to `maxResultsPerRequest`, default 100) were
-skipped when the route was resumed. They are now routed after the resume. A consumer that is suspended directly
-(`consumer.suspend()`) routes all the records of its poll and was not affected.
