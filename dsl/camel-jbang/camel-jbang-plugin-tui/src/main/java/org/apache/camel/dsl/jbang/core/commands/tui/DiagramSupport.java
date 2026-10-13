@@ -1850,8 +1850,8 @@ class DiagramSupport {
     void loadHighlightedNativeDiagramInBackground(
             MonitorContext ctx, String pid,
             String[] messageHistory, boolean failed, int initialStepIndex) {
-        // Single IPC call: topology + route structures
-        JsonObject jo = requestRouteTopology(ctx, pid, false, true);
+        // the topology and the structure of the routes, with the numbers of the status file
+        JsonObject jo = ctx.diagramTopology.load(ctx, pid);
         if (jo == null) {
             close();
             return;
@@ -2389,11 +2389,11 @@ class DiagramSupport {
 
     void loadAllDiagramsInBackground(
             MonitorContext ctx, String pid, boolean metrics, int externalMode) {
-        // Single IPC call: topology + route structures
         boolean external = externalMode > 0;
         Set<String> hidden = hiddenRouteIds;
         int boxColumns = wantedBoxColumns();
-        JsonObject topoJson = requestRouteTopology(ctx, pid, external, true);
+        // the topology and the structure of the routes, with the numbers of the status file
+        JsonObject topoJson = ctx.diagramTopology.load(ctx, pid);
 
         TopologyLayoutResult topoResult = null;
         int nodeW = 0;
@@ -2568,26 +2568,6 @@ class DiagramSupport {
                 }
             }
         });
-    }
-
-    private JsonObject requestRouteTopology(MonitorContext ctx, String pid, boolean external, boolean routes) {
-        JsonObject root = new JsonObject();
-        root.put("action", "route-topology");
-        root.put("metric", "true");
-        root.put("external", "true");
-        if (routes) {
-            root.put("routes", "true");
-        }
-        return ctx.executeAction(pid, root, 5000);
-    }
-
-    private JsonObject requestRouteStructure(MonitorContext ctx, String pid) {
-        JsonObject root = new JsonObject();
-        root.put("action", "route-structure");
-        root.put("filter", "*");
-        root.put("brief", false);
-        root.put("metric", true);
-        return ctx.executeAction(pid, root, 5000);
     }
 
     static void addParentNodes(List<RouteDiagramLayoutEngine.NodeInfo> nodes, Set<String> nodeIds) {

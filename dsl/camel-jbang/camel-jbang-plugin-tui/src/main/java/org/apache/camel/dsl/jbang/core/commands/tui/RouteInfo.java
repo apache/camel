@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 class RouteInfo {
     String routeId;
@@ -48,5 +49,7 @@ class RouteInfo {
     String sinceLastStarted;
     String sinceLastCompleted;
     String sinceLastFailed;
+    /** The statistics as the status file has them, for the route diagram (DiagramTopology). */
+    Map<String, ?> statistics;
     final List<ProcessorInfo> processors = new ArrayList<>();
 }

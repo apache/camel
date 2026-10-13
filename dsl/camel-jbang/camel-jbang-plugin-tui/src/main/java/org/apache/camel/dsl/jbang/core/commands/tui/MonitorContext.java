@@ -58,6 +58,8 @@ class MonitorContext {
         t.setDaemon(true);
         return t;
     });
+    /** The structure of the routes the diagrams draw, asked of an integration again only when its routes change. */
+    final DiagramTopology diagramTopology = new DiagramTopology();
 
     volatile String selectedPid;
     volatile String lastSelectedName;
