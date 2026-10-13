@@ -80,13 +80,13 @@ public class InMemorySessionStore implements OAuthSessionStore {
     private Map<String, String> getCookies(Exchange exchange) {
 
         var msg = exchange.getMessage();
-        var maybeCookie = Optional.ofNullable(msg.getHeader("Cookie"));
+        var maybeCookie = getCookieHeader(msg);
         if (maybeCookie.isEmpty()) {
             log.warn("No Cookie in HTTP request");
             return Map.of();
         }
 
-        var value = maybeCookie.get().toString();
+        var value = maybeCookie.get();
         var cookieMap = Arrays.stream(value.split(";"))
                 .map(String::trim)
                 .map(s -> s.split("=", 2))
@@ -95,6 +95,16 @@ public class InMemorySessionStore implements OAuthSessionStore {
                         arr -> arr.length > 1 ? arr[1] : ""));
 
         return cookieMap;
+    }
+
+    /**
+     * The Cookie header of the request, read with {@link HttpRequestHeaders} because the message headers also hold the
+     * query and form parameters of the request.
+     */
+    private static Optional<String> getCookieHeader(Message msg) {
+        var values = HttpRequestHeaders.values(msg, "Cookie");
+        // HTTP/2 may send the cookies in several Cookie headers (RFC 9113 section 8.2.3)
+        return values.isEmpty() ? Optional.empty() : Optional.of(String.join("; ", values));
     }
 
     private void setSessionCookie(Message msg, OAuthSession session) {
