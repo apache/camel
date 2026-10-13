@@ -203,22 +203,18 @@ In both cases the objects are no longer kept in the `inProgressRepository`; befo
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
 
-=== camel-kamelet - support advanced component and endpoint options
+=== camel-kamelet - `source.*` and `sink.*` parameters are set on the endpoint of the Kamelet
 
-Kamelets can now support advanced component and endpoint options when creating
-the underlying component and endpoint. This allows Kamelets to expose and use
-options beyond the standard options previously handled by the Kamelet component,
-including options that require special handling of endpoint URI parameters.
-
-**Breaking change:** The `source.` and `sink.` prefixes in Kamelet URI parameters
-are now reserved for passing options to the underlying component endpoint. Any
-Kamelet template property previously named with a `source.` or `sink.` prefix
-and passed as a URI query parameter (e.g. `kamelet:my-kamelet?source.retries=3`)
-will now be intercepted and forwarded to the underlying endpoint instead of the
-Kamelet template. Rename such properties to avoid conflicts.
-
-When no advanced options are supplied (no `source.` or `sink.` prefix is present
-in the URI parameters), existing Kamelets retain their current behavior.
+A `kamelet:` endpoint parameter whose name starts with `source.` or `sink.` is no longer passed to the Kamelet
+template as a parameter. Camel removes the prefix and sets the option on the endpoint of the Kamelet:
+`source.*` on the input endpoint of a source Kamelet, and `sink.*` on the single top-level static `to()` of a sink or
+action Kamelet.
+The option replaces a parameter of the same name that is already in that endpoint URI.
+A Kamelet template parameter whose name starts with `source.` or `sink.` can therefore no longer be set in the
+endpoint URI, and must be renamed.
+A route now fails at startup when it uses `sink.*` on a source Kamelet or
+`source.*` on a sink Kamelet, or when it uses `sink.*` on a Kamelet without exactly one top-level static `to()`, or
+with a `toD`, `enrich` or `pollEnrich`.
 
 === camel-aws2-kinesis - the consumer continues after the last record when a shard iterator expired
 

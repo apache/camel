@@ -89,9 +89,11 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "The route note (only present when configured)") String note,
             @Metadata(description = "Whether the route was created by a Kamelet") boolean createdByKamelet,
             @Metadata(description = "Whether the route was created by a route template") boolean createdByRouteTemplate,
+            @Metadata(description = "The id of the route template (or Kamelet) the route was created from (only present when known)") String routeTemplateId,
             @Metadata(description = "The route's endpoint URI") String from,
             @Metadata(description = "Whether the endpoint is remote") boolean remote,
             @Metadata(description = "The source location (only present when known)") String source,
+            @Metadata(description = "The source that declares the templated route the route was created from (only present when known)") String templatedRouteSource,
             @Metadata(description = "The route state") String state,
             @Metadata(description = "Whether the route supports suspension") boolean supportsSuspension,
             @Metadata(description = "Route uptime, human readable text") String uptime,
@@ -158,10 +160,16 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (mrb.isCreatedByRouteTemplate()) {
                 sb.append(String.format("%n    Created By Route Template: %s", true));
             }
+            if (mrb.getRouteTemplateId() != null) {
+                sb.append(String.format("%n    Route Template Id: %s", mrb.getRouteTemplateId()));
+            }
             sb.append(String.format("%n    From: %s", mrb.getEndpointUri()));
             sb.append(String.format("%n    Remote: %s", mrb.isRemoteEndpoint()));
             if (mrb.getSourceLocation() != null) {
                 sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
+            }
+            if (mrb.getTemplatedRouteSource() != null) {
+                sb.append(String.format("%n    Templated Route Source: %s", mrb.getTemplatedRouteSource()));
             }
             sb.append(String.format("%n    State: %s", mrb.getState()));
             Route r = getCamelContext().getRoute(mrb.getRouteId());
@@ -304,8 +312,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             Route r = getCamelContext().getRoute(mrb.getRouteId());
             list.add(new RouteEntry(
                     mrb.getRouteId(), mrb.getRouteGroup(), mrb.getNodePrefixId(), mrb.getDescription(), mrb.getNote(),
-                    mrb.isCreatedByKamelet(), mrb.isCreatedByRouteTemplate(), mrb.getEndpointUri(),
-                    mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getState(),
+                    mrb.isCreatedByKamelet(), mrb.isCreatedByRouteTemplate(), mrb.getRouteTemplateId(), mrb.getEndpointUri(),
+                    mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getTemplatedRouteSource(), mrb.getState(),
                     r != null && r.supportsSuspension(), mrb.getUptime(), lastError, stats, procList));
             return null;
         };

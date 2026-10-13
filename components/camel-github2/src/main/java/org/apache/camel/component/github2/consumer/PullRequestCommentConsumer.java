@@ -80,9 +80,14 @@ public class PullRequestCommentConsumer extends AbstractGitHub2Consumer {
             e.getIn().setBody(comment);
             e.getIn().setHeader(GitHub2Constants.GITHUB_PULLREQUEST, comment.getParent().getNumber());
             exchanges.add(e);
-            lastCommentId = comment.getId();
         }
 
         return processBatch(exchanges);
+    }
+
+    @Override
+    protected void onRouting(Exchange exchange) {
+        // the comments are routed in the order of their ids
+        lastCommentId = exchange.getIn().getBody(GHIssueComment.class).getId();
     }
 }

@@ -58,6 +58,12 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route Source Location (Short)")
     String getSourceLocationShort();
 
+    @ManagedAttribute(description = "The id of the route template (or Kamelet) this route was created from")
+    String getRouteTemplateId();
+
+    @ManagedAttribute(description = "The source (resource) that declares the templated route this route was created from")
+    String getTemplatedRouteSource();
+
     @ManagedAttribute(description = "Route Configuration ID")
     String getRouteConfigurationId();
 

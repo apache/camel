@@ -32,6 +32,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -80,6 +81,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private final Resource sourceResource;
     private final String sourceLocation;
     private final String sourceLocationShort;
+    private final String routeTemplateId;
+    private final Resource templatedRouteResource;
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>(0);
     private ManagementInterceptStrategy managementInterceptStrategy;
@@ -132,6 +135,10 @@ public class DefaultRoute extends ServiceSupport implements Route {
         this.sourceResource = resource;
         this.sourceLocation = LoggerHelper.getSourceLocation(route);
         this.sourceLocationShort = LoggerHelper.getLineNumberLoggerName(route);
+        // keep these as the route model is cleared once the route is created
+        NamedRoute namedRoute = route instanceof NamedRoute nr ? nr : null;
+        this.routeTemplateId = namedRoute != null ? namedRoute.getRouteTemplateId() : null;
+        this.templatedRouteResource = namedRoute != null ? namedRoute.getTemplatedRouteResource() : null;
     }
 
     @Override
@@ -219,6 +226,16 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public Resource getSourceResource() {
         return sourceResource;
+    }
+
+    @Override
+    public String getRouteTemplateId() {
+        return routeTemplateId;
+    }
+
+    @Override
+    public Resource getTemplatedRouteResource() {
+        return templatedRouteResource;
     }
 
     @Override

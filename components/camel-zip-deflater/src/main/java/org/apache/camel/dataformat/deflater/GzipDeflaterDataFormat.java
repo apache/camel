@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.deflater;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -59,8 +60,11 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
 
         OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
         try {
+            // The gzip reader marks and resets a stream that supports mark, and uses it as it is. The stream may be the
+            // message body (a stream cache), which goes back to its last mark when it is reset to be read again, so
+            // give the reader a stream of its own to mark.
             unzipInput = GzipCompressorInputStream.builder()
-                    .setInputStream(inputStream)
+                    .setInputStream(new BufferedInputStream(inputStream))
                     .setDecompressConcatenated(true)
                     .get();
             IOHelper.copy(unzipInput, osb);

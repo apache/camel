@@ -58,6 +58,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PluginHelper;
@@ -193,6 +194,17 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
     @Override
     public String getSourceLocationShort() {
         return sourceLocationShort;
+    }
+
+    @Override
+    public String getRouteTemplateId() {
+        return route.getRouteTemplateId();
+    }
+
+    @Override
+    public String getTemplatedRouteSource() {
+        Resource resource = route.getTemplatedRouteResource();
+        return resource != null ? resource.getLocation() : null;
     }
 
     @Override

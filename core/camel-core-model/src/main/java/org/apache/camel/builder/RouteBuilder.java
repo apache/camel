@@ -18,7 +18,9 @@ package org.apache.camel.builder;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -823,6 +825,35 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return answer;
     }
 
+    @Override
+    public Set<String> updateTemplatedRoutesToCamelContext(CamelContext context) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
+        if (getTemplatedRouteCollection().getTemplatedRoutes().isEmpty()) {
+            return answer;
+        }
+
+        // a route created from a templated route replaces an existing route with the same id, so the routes created
+        // are those whose definition was not in the model before
+        Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+        Set<RouteDefinition> before = Collections.newSetFromMap(new IdentityHashMap<>());
+        before.addAll(model.getRouteDefinitions());
+
+        populateTemplatedRoutes(context);
+
+        for (RouteDefinition route : model.getRouteDefinitions()) {
+            if (!before.contains(route) && route.getRouteId() != null) {
+                answer.add(route.getRouteId());
+            }
+        }
+
+        // the routes created must be started, same as in updateRoutesToCamelContext
+        if (context.getRouteController() instanceof SupervisingRouteController src) {
+            src.startRoutes(true);
+        }
+
+        return answer;
+    }
+
     /**
      * Configures the routes
      *
@@ -917,6 +948,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             getTemplatedRouteCollection().setResource(getResource());
             for (BeanFactoryDefinition def : beans) {
                 def.setResource(getResource());
+            }
+            // the route templates and templated routes are created before the resource is set on their collections
+            // (the routes get their resource when they are prepared)
+            for (RouteTemplateDefinition def : getRouteTemplateCollection().getRouteTemplates()) {
+                if (def.getResource() == null) {
+                    def.setResource(getResource());
+                }
+            }
+            for (TemplatedRouteDefinition def : getTemplatedRouteCollection().getTemplatedRoutes()) {
+                if (def.getResource() == null) {
+                    def.setResource(getResource());
+                }
             }
 
             for (RouteDefinition route : getRouteCollection().getRoutes()) {

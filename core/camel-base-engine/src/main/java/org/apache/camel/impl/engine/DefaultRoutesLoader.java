@@ -318,17 +318,24 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
         }
         for (RoutesBuilder builder : builders) {
             // update any existing routes
-            Set<String> ids = builder.updateRoutesToCamelContext(getCamelContext());
-            // check we do not have duplicate route ids in this group of resources
-            for (String id : ids) {
-                if (answer.contains(id)) {
-                    throw new FailedToStartRouteException(
-                            id,
-                            "duplicate route id detected " + id + ". Please correct ids to be unique among all your routes.");
-                }
-            }
-            answer.addAll(ids);
+            addUpdatedRouteIds(answer, builder.updateRoutesToCamelContext(getCamelContext()));
         }
+        for (RoutesBuilder builder : builders) {
+            // templated routes last, as they may use a route template from another resource (same as when loading)
+            addUpdatedRouteIds(answer, builder.updateTemplatedRoutesToCamelContext(getCamelContext()));
+        }
+    }
+
+    private static void addUpdatedRouteIds(Set<String> answer, Set<String> ids) throws FailedToStartRouteException {
+        // check we do not have duplicate route ids in this group of resources
+        for (String id : ids) {
+            if (answer.contains(id)) {
+                throw new FailedToStartRouteException(
+                        id,
+                        "duplicate route id detected " + id + ". Please correct ids to be unique among all your routes.");
+            }
+        }
+        answer.addAll(ids);
     }
 
     protected RoutesBuilderLoader resolveRoutesBuilderLoader(Resource resource, boolean optional) throws Exception {

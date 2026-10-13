@@ -46,14 +46,20 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
         this.buffer.markReaderIndex();
     }
 
+    /**
+     * Marking is not supported: {@link #mark(int)} does nothing, and {@link #reset()} always goes back to the start of
+     * the body, which is what {@link StreamCache#reset()} is for. A reader that needs mark support has to wrap this
+     * stream (for example in a {@link java.io.BufferedInputStream}), and so cannot change where a reset goes back to.
+     */
     @Override
     public boolean markSupported() {
-        return true;
+        return false;
     }
 
     @Override
     public int read() {
-        return buffer.readByte();
+        // an unsigned byte, and -1 at the end, as InputStream requires
+        return buffer.isReadable() ? buffer.readByte() & 0xFF : -1;
     }
 
     @Override
@@ -64,17 +70,16 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     @Override
     public int read(byte[] b, int off, int len) {
         // are we at end, then return -1
-        if (buffer.readerIndex() == buffer.capacity()) {
+        int max = buffer.readableBytes();
+        if (max == 0) {
             return -1;
         }
 
         // ensure we don't read more than what we have in the buffer
-        int before = buffer.readerIndex();
-        int max = buffer.capacity() - before;
         len = Math.min(max, len);
 
         buffer.readBytes(b, off, len);
-        return buffer.readerIndex() - before;
+        return len;
     }
 
     @Override

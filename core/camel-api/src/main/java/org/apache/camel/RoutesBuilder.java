@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -54,9 +55,25 @@ public interface RoutesBuilder {
      * Adds or updates the routes from this Route Builder to the CamelContext.
      *
      * @param  context   the Camel context
-     * @return           route ids for the routes that was updated
+     * @return           route ids for the routes that were updated
      * @throws Exception is thrown if initialization of routes failed
      */
     Set<String> updateRoutesToCamelContext(CamelContext context) throws Exception;
+
+    /**
+     * Adds or updates the templated routes from this Route Builder to the CamelContext.
+     * <p/>
+     * This is called after the routes (and route templates) of all the Route Builders that are updated together have
+     * been updated, as a templated route may use a route template from another Route Builder.
+     *
+     * @param  context   the Camel context
+     * @return           route ids for the routes that were created from the templated routes
+     * @throws Exception is thrown if initialization of routes failed
+     * @since            4.24
+     */
+    default Set<String> updateTemplatedRoutesToCamelContext(CamelContext context) throws Exception {
+        addTemplatedRoutesToCamelContext(context);
+        return Collections.emptySet();
+    }
 
 }
