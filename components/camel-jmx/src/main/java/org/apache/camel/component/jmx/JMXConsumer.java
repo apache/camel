@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
@@ -51,8 +52,8 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     private static final Logger LOG = LoggerFactory.getLogger(JMXConsumer.class);
 
     private JMXEndpoint mJmxEndpoint;
-    private JMXConnector mConnector;
-    private String mConnectionId;
+    private volatile JMXConnector mConnector;
+    private volatile String mConnectionId;
 
     /**
      * Used for processing notifications (should not block notification thread)
@@ -63,7 +64,13 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     /**
      * Used to schedule delayed connection attempts
      */
-    private ScheduledExecutorService mScheduledExecutor;
+    private volatile ScheduledExecutorService mScheduledExecutor;
+
+    /**
+     * Whether a reconnect is scheduled and has not begun: a lost connection is reported more than once (the connector
+     * sends "failed" and then "closed" for it) and must be followed by one reconnect
+     */
+    private final AtomicBoolean mReconnectPending = new AtomicBoolean();
 
     /**
      * Used to receive notifications about lost connections
@@ -139,6 +146,13 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     private void initNetworkConnection() throws IOException {
         if (mConnector != null) {
             try {
+                // this consumer closes the connection itself, so its "closed" notification is not a lost connection:
+                // without the listener it cannot schedule a reconnect for a connection that is being replaced
+                mConnector.removeConnectionNotificationListener(getConnectionNotificationListener());
+            } catch (Exception e) {
+                // ignore, the listener is not registered on a connector that could not be opened
+            }
+            try {
                 mConnector.close();
             } catch (Exception e) {
                 // ignore, as this is best effort
@@ -189,8 +203,16 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         @Override
         public void handleNotification(Notification notification, Object handback) {
             JMXConnectionNotification connectionNotification = (JMXConnectionNotification) notification;
+            if (connectionNotification.getType().equals(JMXConnectionNotification.OPENED)) {
+                connectorReconnected(connectionNotification.getConnectionId());
+                return;
+            }
             // only reset the connection if the notification is for the connection from this endpoint
             if (!connectionNotification.getConnectionId().equals(mConnectionId)) {
+                return;
+            }
+            if (!isRunAllowed()) {
+                // a notification that arrives after the consumer was stopped
                 return;
             }
             if (connectionNotification.getType().equals(JMXConnectionNotification.NOTIFS_LOST)
@@ -208,10 +230,44 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     }
 
     /**
-     * Schedules an attempt to re-initialize a lost connection after the reconnect delay
+     * The connector lost its connection and opened another one by itself (the listener is added after the connector is
+     * connected, so the first connection is not reported here). The new connection has another id, which the following
+     * notifications carry, and the connector has registered the listener of this consumer again only if the MBean
+     * existed at that moment.
+     */
+    private void connectorReconnected(String connectionId) {
+        if (connectionId == null || connectionId.equals(mConnectionId)) {
+            return;
+        }
+        mConnectionId = connectionId;
+        if (!isRunAllowed()) {
+            return;
+        }
+        if (mJmxEndpoint.isReconnectOnConnectionFailure()) {
+            LOG.warn("The JMX connector has opened a new connection for: {}. Reconnecting to subscribe again.",
+                    URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()));
+            scheduleReconnect();
+        } else {
+            LOG.warn("The JMX connector has opened a new connection for: {}. The JMX consumer may not be subscribed"
+                     + " anymore. Use 'reconnectOnConnectionFailure' to enable reconnections.",
+                    URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()));
+        }
+    }
+
+    /**
+     * Schedules an attempt to re-initialize a lost connection after the reconnect delay, unless an attempt is already
+     * scheduled or the consumer is stopped
      */
     protected void scheduleReconnect() {
+        if (!isRunAllowed() || !mReconnectPending.compareAndSet(false, true)) {
+            return;
+        }
         Runnable startRunnable = () -> {
+            // from here on a lost connection needs another attempt, also when it is reported while this one runs
+            mReconnectPending.set(false);
+            if (!isRunAllowed()) {
+                return;
+            }
             try {
                 initNetworkConnection();
                 addNotificationListener();
@@ -222,7 +278,12 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         };
         LOG.info("Delaying JMX consumer reconnection for endpoint {}. Trying again in {} seconds.",
                 URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), mJmxEndpoint.getReconnectDelay());
-        getExecutor().schedule(startRunnable, mJmxEndpoint.getReconnectDelay(), TimeUnit.SECONDS);
+        try {
+            getExecutor().schedule(startRunnable, mJmxEndpoint.getReconnectDelay(), TimeUnit.SECONDS);
+        } catch (RuntimeException e) {
+            mReconnectPending.set(false);
+            throw e;
+        }
     }
 
     /**
@@ -267,6 +328,8 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(mScheduledExecutor);
             mScheduledExecutor = null;
         }
+        // the scheduled reconnect, if there was one, is cancelled
+        mReconnectPending.set(false);
 
         removeNotificationListeners();
 
