@@ -19,9 +19,11 @@ package org.apache.camel.component.telegram.service;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -152,6 +154,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     }
 
     <T> T sendSyncRequest(final HttpRequest request, Class<T> resultType) {
+        final String description = describe(request.method(), request.uri());
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -159,29 +162,44 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             if (code >= 200 && code < 300) {
                 final String responseBody = response.body();
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Received body for {} {}: {}", request.method(), request.uri(), responseBody);
+                    LOG.trace("Received body for {}: {}", description, responseBody);
                 }
                 return mapper.readValue(responseBody, resultType);
             } else {
                 throw new TelegramException(
-                        "Could not " + request.method() + " " + request.uri() + ": " + response.statusCode() + " "
-                                            + response.body(),
+                        "Could not " + description + ": " + response.statusCode() + " " + response.body(),
                         response.statusCode(), response.body());
             }
         } catch (JsonProcessingException e) {
-            throw new RuntimeCamelException(
-                    "Could not parse the response from " + request.method() + " " + request.uri(), e);
+            throw new RuntimeCamelException("Could not parse the response from " + description, e);
         } catch (IOException e) {
-            throw new RuntimeCamelException("Could not request " + request.method() + " " + request.uri(), e);
+            throw new RuntimeCamelException("Could not request " + description, e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeCamelException(e);
         }
     }
 
+    /**
+     * Describes a request to the Bot API in logs and exception messages by its HTTP method and the method of the Bot
+     * API, such as {@code GET getUpdates}. The request URI is not used, as it contains the authorization token.
+     */
+    static String describe(String httpMethod, URI uri) {
+        String path = uri.getPath();
+        return httpMethod + " " + path.substring(path.lastIndexOf('/') + 1);
+    }
+
     @Override
     public boolean setWebhook(String url) {
-        final String uri = baseUri + "/setWebhook?url=" + url;
+        return setWebhook(url, null);
+    }
+
+    @Override
+    public boolean setWebhook(String url, String secretToken) {
+        String uri = baseUri + "/setWebhook?url=" + url;
+        if (secretToken != null) {
+            uri += "&secret_token=" + URLEncoder.encode(secretToken, StandardCharsets.UTF_8);
+        }
 
         final HttpRequest.Builder request = HttpRequest.newBuilder().uri(URI.create(uri)).GET();
 
