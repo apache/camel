@@ -202,19 +202,3 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
-
-=== camel-servlet and camel-jetty - gzip request body that arrives after the headers
-
-The servlet and Jetty consumers uncompressed a request body with `Content-Encoding: gzip` only when some of its bytes
-had already arrived when the consumer started to read it. When the client sent the body later than the headers (for
-example a client that sends `Expect: 100-continue`), the route got the compressed bytes. Such a body is now
-uncompressed like any other gzip request body. A route that uncompressed the body itself in that case must no longer
-do so. An empty body is passed on as before, and so is the body of an exchange with the `CamelSkipGzipEncoding`
-property.
-A request with `Content-Encoding: gzip` whose body is not gzip data now fails with a `ZipException` before the route
-is called (Jetty answers 500) also when the body arrives after the headers, where the route got the bytes as they
-were sent; it already failed in this way when the body had arrived.
-With `disableStreamCache=true` the consumer now waits for the first bytes (the GZIP header) of a gzip request body
-before it calls the route; with stream caching, the default, it already read the whole body before that.
-The same applies to every consumer that reads the request body with `DefaultHttpBinding.parseBody` of
-`camel-http-common`, such as the Spring Boot `platform-http` consumer with `useStreaming=true`.
