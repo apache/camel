@@ -84,6 +84,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
     private static final String[] EXTRA_KEYS
             = new String[] {
                     "apipassword", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
+                    "callbacksecret",
                     SECRET, "keystorePassword" };
 
     // extra security options from camel-main properties that are not in component JSON files
