@@ -22,6 +22,7 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     private static final Map<String, Object> ALL_OPTIONS;
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
+        map.put("AllowedCoordinatorUrls", java.lang.String.class);
         map.put("CoordinatorContextPath", java.lang.String.class);
         map.put("CoordinatorUrl", java.lang.String.class);
         map.put("Enabled", boolean.class);
@@ -34,6 +35,8 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.LraConfigurationProperties target = (org.apache.camel.main.LraConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedcoordinatorurls":
+        case "allowedCoordinatorUrls": target.setAllowedCoordinatorUrls(property(camelContext, java.lang.String.class, value)); return true;
         case "coordinatorcontextpath":
         case "coordinatorContextPath": target.setCoordinatorContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "coordinatorurl":
@@ -55,6 +58,8 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedcoordinatorurls":
+        case "allowedCoordinatorUrls": return java.lang.String.class;
         case "coordinatorcontextpath":
         case "coordinatorContextPath": return java.lang.String.class;
         case "coordinatorurl":
@@ -72,6 +77,8 @@ public class LraConfigurationPropertiesConfigurer extends org.apache.camel.suppo
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.LraConfigurationProperties target = (org.apache.camel.main.LraConfigurationProperties) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedcoordinatorurls":
+        case "allowedCoordinatorUrls": return target.getAllowedCoordinatorUrls();
         case "coordinatorcontextpath":
         case "coordinatorContextPath": return target.getCoordinatorContextPath();
         case "coordinatorurl":
