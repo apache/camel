@@ -205,6 +205,116 @@ get still fails the poll.
 
 === camel-kamelet - support advanced component and endpoint options
 
-Kamelets can now support advanced component and endpoint options when creating the underlying component and endpoint. This allows Kamelets to expose and use options beyond the standard options previously handled by the Kamelet component, including options that require special handling of endpoint URI parameters.
+Kamelets can now support advanced component and endpoint options when creating
+the underlying component and endpoint. This allows Kamelets to expose and use
+options beyond the standard options previously handled by the Kamelet component,
+including options that require special handling of endpoint URI parameters.
 
-Existing Kamelets that use these advanced options can now pass them through to the underlying component or endpoint. Review custom Kamelets that define or forward endpoint options to ensure that the options are intended for the underlying component or endpoint and that they do not conflict with Kamelet-specific options.
+**Breaking change:** The `source.` and `sink.` prefixes in Kamelet URI parameters
+are now reserved for passing options to the underlying component endpoint. Any
+Kamelet template property previously named with a `source.` or `sink.` prefix
+and passed as a URI query parameter (e.g. `kamelet:my-kamelet?source.retries=3`)
+will now be intercepted and forwarded to the underlying endpoint instead of the
+Kamelet template. Rename such properties to avoid conflicts.
+
+When no advanced options are supplied (no `source.` or `sink.` prefix is present
+in the URI parameters), existing Kamelets retain their current behavior.
+
+=== camel-aws2-kinesis - the consumer continues after the last record when a shard iterator expired
+
+When a cached shard iterator has expired (an iterator is valid for 5 minutes, so after a route was suspended for
+longer, or with a `delay` or back-off above 5 minutes), the consumer now continues after the last record it routed
+from that shard. Previously it requested a new iterator of the configured `iteratorType`: with `TRIM_HORIZON` (the
+default) it routed all the records of the shard again, with `LATEST` it skipped the records stored meanwhile.
+
+A shard created by a split or a merge while the consumer is running is now read from its first record, whatever the
+`iteratorType`. Previously, with `LATEST`, the records stored in the new shard before the consumer listed it were
+skipped. The shards that exist when the consumer starts are read from the configured `iteratorType`, as before.
+
+=== camel-servlet and camel-jetty - gzip request body that arrives after the headers
+
+The servlet and Jetty consumers uncompressed a request body with `Content-Encoding: gzip` only when some of its bytes
+had already arrived when the consumer started to read it. When the client sent the body later than the headers (for
+example a client that sends `Expect: 100-continue`), the route got the compressed bytes. Such a body is now
+uncompressed like any other gzip request body. A route that uncompressed the body itself in that case must no longer
+do so. An empty body is passed on as before, and so is the body of an exchange with the `CamelSkipGzipEncoding`
+property.
+A request with `Content-Encoding: gzip` whose body is not gzip data now fails with a `ZipException` before the route
+is called (Jetty answers 500) also when the body arrives after the headers, where the route got the bytes as they
+were sent; it already failed in this way when the body had arrived.
+With `disableStreamCache=true` the consumer now waits for the first bytes (the GZIP header) of a gzip request body
+before it calls the route; with stream caching, the default, it already read the whole body before that.
+The same applies to every consumer that reads the request body with `DefaultHttpBinding.parseBody` of
+`camel-http-common`, such as the Spring Boot `platform-http` consumer with `useStreaming=true`.
+
+=== camel-github2 - consumers and items of a poll that were not routed
+
+The `github2` consumers (`commit`, `event`, `pullRequest`, `pullRequestComment`, `tag`) remembered every item of a
+poll as consumed before routing it. Items that were not routed because the route was suspended during the poll were
+never routed. They are now routed by the first poll after the route is resumed.
+
+The `commit` consumer also lost the new commits of a poll in which the GitHub lookup of an author or a committer
+failed (for example a 404 for a deleted account, or a server error). Such a commit is now routed, and a WARN is logged
+for it. Its `CamelGitHubCommitAuthor` and `CamelGitHubCommitCommitter` headers then have the name that git recorded in
+the commit instead of the name of the GitHub profile, and are not set when the commit has no name either.
+
+=== camel-netty-http - the request body read as an InputStream
+
+The body of a request received by the consumer is a `NettyChannelBufferStreamCache`. Its `read()` method now returns
+a byte as a value from 0 to 255, and -1 at the end of the body, as `java.io.InputStream` requires. Before, a byte
+from 0x80 was returned as a negative value (0xFF as -1, which a reader takes for the end of the body), and the method
+threw an `IndexOutOfBoundsException` at the end. `markSupported()` now returns `false` (`mark(int)` never did
+anything): a reader that needs mark support has to wrap the stream, for example in a `BufferedInputStream`.
+`reset()` goes back to the start of the body, as before.
+
+=== camel-dropbox - search and get read every page of the result
+
+The `search` operation (producer and consumer) now returns every match that the service gives. Previously it returned
+only the first page of the matches (the Dropbox SDK asks for 100 matches per page), and the rest was dropped without
+any sign. A search with many matches now sends one request per page, for the consumer at each poll. When one of these
+requests fails, the operation fails and no match is returned, as before.
+
+The `get` operation on a folder (producer and consumer) now downloads every file of the folder. Previously it
+downloaded only the files of the first page of the folder listing. As before, the content of all the files is in the
+message body, so a large folder needs more memory than it did when only the first page was read.
+
+=== camel-box - getEnterpriseEvents returns the events of every chunk
+
+The `getEnterpriseEvents` operation of the `event-logs` API now returns all the events between `after` and `before`.
+Previously it returned only the first chunk of the event log (at most 500 events), and the rest was dropped without
+any sign. A wide `after`/`before` window now returns every event in one list: that is one request per 500 events plus
+one that finds the end of the log, and more memory. Narrow the window when the event log is large.
+
+=== camel-telegram - a failed send fails the exchange once
+
+When Telegram answers a message with an error status (for example `400` for an unknown chat), or with a body that
+cannot be read, the producer now fails the exchange once and the route stops there. Previously the route first
+continued after the producer as if the message had been sent, and then the exchange failed as well.
+
+The exception of the exchange is the one that `process()` of the producer threw before: a `RuntimeException` that
+wraps an `ExecutionException`, with the `RuntimeCamelException` (status and body of the answer) as its cause, or the
+`IOException` when the request got no answer. The producer still waits for the answer before it returns, so the
+order of the messages is the same. The steps after the producer now run on the calling thread, and no longer on a
+thread of the HTTP client.
+
+=== camel-vertx-websocket - the client consumer makes one reconnect attempt at a time
+
+When the WebSocket of a consumer with `consumeAsClient=true` is closed, the consumer now makes one reconnect attempt
+at a time: while an attempt waits for the server (up to the connect timeout), the next runs of `reconnectInterval`
+are skipped, and `maxReconnectAttempts` counts these attempts one after the other. Previously every interval started
+another attempt, and when the server answered late each of them opened a WebSocket, so that every message was routed
+once per WebSocket. A consumer that is stopped no longer reconnects.
+
+=== camel-core - a route from a route template has the template's resource as its source
+
+A route created from a route template or a Kamelet now returns the resource with the route template from
+`Route.getSourceResource()` (it returned null). This is the resource its source location (`Route.getSourceLocation()`)
+was already in, so the debugger and message history consoles show the source code of these routes too.
+
+A route created from a `templatedRoute` also remembers the resource that declares the `templatedRoute`
+(`Route.getTemplatedRouteResource()`, the `TemplatedRouteSource` JMX attribute, and `templatedRouteSource` in the
+route dev console), and the route template id is available from `Route.getRouteTemplateId()`, the `RouteTemplateId`
+JMX attribute, and `routeTemplateId` in the route dev console.
+
+Code that took a null source resource to mean that a route was created from a route template should use
+`Route.isCreatedByRouteTemplate()` instead.
