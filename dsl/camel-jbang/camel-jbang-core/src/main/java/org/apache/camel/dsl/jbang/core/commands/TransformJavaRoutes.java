@@ -35,6 +35,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultDumpRoutesStrategy;
 import org.apache.camel.java.in.JavaParseResult;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceHelper;
 
@@ -165,6 +166,14 @@ public final class TransformJavaRoutes {
                 context.addRestDefinitions(r.rests().getRests(), false);
                 context.addRouteTemplateDefinitions(r.routeTemplates().getRouteTemplates());
                 context.addRouteDefinitions(r.routes().getRoutes());
+            }
+            if ("json".equals(format)) {
+                // the ids a start assigns: the route structure looks each route up by its id, and shows the step ids
+                // (a route id that is a property placeholder is kept as it is, as there are no properties)
+                context.getPropertiesComponent().setIgnoreMissingProperty(true);
+                List<RouteDefinition> routes = context.getRouteDefinitions();
+                RouteDefinitionHelper.forceAssignIds(context, routes);
+                routes.forEach(route -> RouteDefinitionHelper.forceAssignIds(context, route));
             }
             DefaultDumpRoutesStrategy dumper = new DefaultDumpRoutesStrategy();
             dumper.setCamelContext(context);

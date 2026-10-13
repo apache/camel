@@ -65,6 +65,21 @@ class RouteActionJavaSourceTest {
             }
             """;
 
+    private static final String MIXED = """
+            import org.apache.camel.builder.RouteBuilder;
+
+            public class Mixed extends RouteBuilder {
+                @Override
+                public void configure() {
+                    from("timer:tick").routeId("named")
+                        .to("direct:next");
+
+                    from("direct:next")
+                        .log("${body}");
+                }
+            }
+            """;
+
     @Test
     void diagramReadsJavaRoutesWithoutCompilingThem(@TempDir Path dir) throws Exception {
         Path orders = write(dir, "Orders.java", ORDERS);
@@ -151,6 +166,37 @@ class RouteActionJavaSourceTest {
                 .contains("billing")
                 .contains("direct:billing")
                 .contains("an object created in the route");
+    }
+
+    @Test
+    void diagramReadsJavaRoutesWithoutRouteId(@TempDir Path dir) throws Exception {
+        Path mixed = write(dir, "Mixed.java", MIXED);
+        StringPrinter printer = new StringPrinter();
+        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
+
+        List<RouteInfo> routes = command.doCallSource(List.of(mixed.toString()));
+
+        // the route without an id gets one, as when Camel starts, and the named route is kept
+        assertThat(routes).extracting(r -> r.routeId).hasSize(2).contains("named").doesNotContainNull();
+    }
+
+    @Test
+    void structureReadsJavaRouteWithoutRouteId(@TempDir Path dir) throws Exception {
+        Path mixed = write(dir, "Mixed.java", MIXED);
+        StringPrinter printer = new StringPrinter();
+        CamelRouteStructureAction command = new CamelRouteStructureAction(new CamelJBangMain().withPrinter(printer));
+        command.name = mixed.toString();
+        // the default of --sort (two routes are sorted)
+        command.sort = "name";
+
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        assertThat(printer.getOutput())
+                .contains("Source: Mixed.java")
+                .contains("named")
+                .contains("timer:tick")
+                .contains("direct:next");
     }
 
     private static Path write(Path dir, String name, String content) throws Exception {
