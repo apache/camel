@@ -438,7 +438,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param muteException the value to set
@@ -454,7 +454,7 @@ public interface JettyHttp12EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: consumer
          * 
          * @param muteException the value to set
