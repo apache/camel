@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -752,6 +753,92 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
                     () -> "Expected an IllegalArgumentException, but got: " + exception);
             assertTrue(exceptionChainContains(exception, "no top-level static to() destination"),
                     () -> "Expected no-static-sink error, but got: " + exception);
+        }
+    }
+
+    @Test
+    void sinkOptionsPreservePercentEncodedSecretThroughRouteTemplate() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("percent-password-sink")
+                            .from("kamelet:source")
+                            .to("http://localhost/unused-percent-secret");
+
+                    from("direct:trigger")
+                            .kamelet("percent-password-sink?sink.password=RAW(se+cret%41)");
+                }
+            });
+
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(
+                    testContext, "http://localhost/unused-percent-secret");
+            ToDefinition sink = findToDefinition(expandedRoute, "http://localhost/unused-percent-secret");
+
+            assertNotNull(sink, "Expected sink endpoint");
+            String uri = sink.getEndpointUri();
+            Map<String, Object> query = parseUriQuery(uri);
+            String password = rawOrPlain(query.get("password"));
+
+            assertEquals("se+cret%41", password,
+                    () -> "Expected the original literal password to remain intact: " + uri);
+            assertNotEquals("se cretA", password,
+                    () -> "+ and % must not be URI-decoded: " + uri);
+            assertNotEquals("se cret", password,
+                    () -> "+ must not be decoded as a space: " + uri);
+            assertNotEquals("secretA", password,
+                    () -> "%41 must not be decoded as A: " + uri);
+
+            HttpEndpoint http = findHttpEndpoint(testContext, "/unused-percent-secret");
+            assertNotNull(http, "Expected the HTTP sink endpoint to be created");
+            String rawQuery = http.getHttpUri().getRawQuery();
+            assertNotNull(rawQuery, "Expected HTTP URI query parameters");
+            Map<String, Object> httpQuery = URISupport.parseQuery(rawQuery);
+            String httpPassword = urlDecode(rawOrPlain(httpQuery.get("password")));
+            assertEquals("se+cret%41", httpPassword,
+                    () -> "Expected the HTTP endpoint to receive the original literal password: "
+                          + http.getHttpUri());
+            assertNotEquals("se cretA", httpPassword,
+                    () -> "+ and % must not be URI-decoded on the HTTP endpoint: " + http.getHttpUri());
+        }
+    }
+
+    @Test
+    void sinkOptionsPreserveJsonRawValueWithoutPropertyPlaceholder() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("json-filter-sink")
+                            .from("kamelet:source")
+                            .to("http://localhost/unused-json-filter");
+
+                    from("direct:trigger")
+                            .kamelet("json-filter-sink?sink.filter=RAW({\"a\":\"b&c\"})");
+                }
+            });
+
+            testContext.start();
+
+            RouteDefinition expandedRoute = findExpandedRouteWithOutput(
+                    testContext, "http://localhost/unused-json-filter");
+            ToDefinition sink = findToDefinition(expandedRoute, "http://localhost/unused-json-filter");
+
+            assertNotNull(sink, "Expected sink endpoint");
+            String uri = sink.getEndpointUri();
+            assertFalse(uri.contains("RAW{{"),
+                    () -> "JSON must not be wrapped as RAW{{...}} or it becomes a property placeholder: "
+                          + uri);
+            assertTrue(uri.contains("RAW("),
+                    () -> "Expected RAW(...) wrapping for the JSON value: " + uri);
+
+            Map<String, Object> query = parseUriQuery(uri);
+            assertEquals("{\"a\":\"b&c\"}", rawOrPlain(query.get("filter")),
+                    () -> "Expected the JSON value to remain intact: " + uri);
+            assertFalse(query.containsKey("c\"}"),
+                    () -> "Ampersand in the JSON must not create a spurious parameter: " + uri);
         }
     }
 

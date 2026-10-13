@@ -304,9 +304,9 @@ public final class Kamelet {
             return value;
         }
         if (value.contains("&") || value.contains("=") || value.contains("?")
-                || value.contains("+") || value.contains("%")
-                || value.contains(")")) {
-            return "RAW{" + value + "}";
+                || value.contains("+") || value.contains("%")) {
+            // RAW(...) ends at ")&"; RAW{...} would make a value starting with { or ending with } a property placeholder
+            return value.contains(")&") ? "RAW{" + value + "}" : "RAW(" + value + ")";
         }
 
         return value;
