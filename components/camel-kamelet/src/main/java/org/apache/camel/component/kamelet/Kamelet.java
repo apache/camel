@@ -88,8 +88,7 @@ public final class Kamelet {
         return item -> item.startsWith(prefix);
     }
 
-    public static String extractTemplateId(
-            CamelContext context, String remaining, Map<String, Object> parameters) {
+    public static String extractTemplateId(CamelContext context, String remaining, Map<String, Object> parameters) {
         Object param = parameters.get(PARAM_TEMPLATE_ID);
         if (param != null) {
             return CamelContextHelper.mandatoryConvertTo(context, String.class, param);
@@ -114,8 +113,7 @@ public final class Kamelet {
         return UUID.generateUuid();
     }
 
-    public static String extractRouteId(
-            CamelContext context, String remaining, Map<String, Object> parameters, String uuid) {
+    public static String extractRouteId(CamelContext context, String remaining, Map<String, Object> parameters, String uuid) {
         Object param = parameters.get(PARAM_ROUTE_ID);
         if (param != null) {
             return CamelContextHelper.mandatoryConvertTo(context, String.class, param);
@@ -144,8 +142,7 @@ public final class Kamelet {
         return null;
     }
 
-    public static void extractKameletProperties(
-            CamelContext context, Map<String, Object> properties, String... elements) {
+    public static void extractKameletProperties(CamelContext context, Map<String, Object> properties, String... elements) {
         PropertiesComponent pc = context.getPropertiesComponent();
         StringBuilder prefixBuffer = new StringBuilder(Kamelet.PROPERTIES_PREFIX);
 
@@ -166,7 +163,7 @@ public final class Kamelet {
      * made without considering camelCase keys in the elements. The second lookup is converting camelCase to
      * underscores.
      *
-     * For example given an ENV variable in either format: CAMEL_KAMELET_AWSS3SOURCE_BUCKETNAMEORARN=myArn
+     * For example given an ENV variable in either format: - CAMEL_KAMELET_AWSS3SOURCE_BUCKETNAMEORARN=myArn -
      * CAMEL_KAMELET_AWS_S3_SOURCE_BUCKET_NAME_OR_ARN=myArn
      */
     public static void extractKameletEnvironmentVariables(Map<String, Object> properties, String... elements) {
@@ -179,6 +176,7 @@ public final class Kamelet {
                 continue;
             }
             prefixBuffer.append(IOHelper.normalizeEnvironmentVariable(element)).append('_');
+
             String prefix = prefixBuffer.toString();
             System.getenv().keySet().stream()
                     .filter(Kamelet.startsWith(prefix))
@@ -186,12 +184,12 @@ public final class Kamelet {
         }
 
         prefixBuffer = new StringBuilder(Kamelet.ENV_VAR_PREFIX);
+
         for (String element : elements) {
             if (element == null) {
                 continue;
             }
-            prefixBuffer.append(IOHelper.normalizeEnvironmentVariable(StringHelper.camelCaseToDash(element)))
-                    .append('_');
+            prefixBuffer.append(IOHelper.normalizeEnvironmentVariable(StringHelper.camelCaseToDash(element))).append('_');
 
             String prefix = prefixBuffer.toString();
             System.getenv().keySet().stream()
@@ -295,9 +293,11 @@ public final class Kamelet {
         if (isRawToken(value)) {
             return value;
         }
-        if (value.contains("&") || value.contains("=") || value.contains("?")) {
+        if (value.contains("&") || value.contains("=") || value.contains("?")
+                || value.contains("+") || value.contains("%")) {
             return "RAW(" + value + ")";
         }
+
         return value;
     }
 
@@ -424,8 +424,9 @@ public final class Kamelet {
             RouteDefinition parent = mcc.getRouteDefinition(prid);
             boolean wrap = true;
 
-            // The Kamelet is used from a processor, and we need to check if this processor has any error handler.
-            // If not, the Kamelet should not use an error handler either. If ppid is null, this is a source Kamelet.
+            // the kamelet are used from a processor, and we need to check if this processor
+            // has any error handler or not (if not then we should also not use error handler in the kamelet)
+            // (if ppid is null then it is a source kamelet)
             if (ppid != null) {
                 ProcessorDefinition<?> pro = mcc.getProcessorDefinition(ppid);
                 wrap = pro == null || ProcessorDefinitionHelper.shouldWrapInErrorHandler(
@@ -526,7 +527,7 @@ public final class Kamelet {
             }
         }
 
-        // There must be at least one sink.
+        // there must be at least one sink
         int line = -1;
         boolean sink = false;
         Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);

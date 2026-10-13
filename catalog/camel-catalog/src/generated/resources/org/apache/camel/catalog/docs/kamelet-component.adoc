@@ -183,7 +183,7 @@ from("kamelet:my-source?source.bridgeErrorHandler=true")
 
 In this example, `source.bridgeErrorHandler=true` passes `bridgeErrorHandler=true` to the source component endpoint. If the endpoint URI already contains the same option, the advanced option overrides its existing value.
 
-Property placeholders and RAW expressions in endpoint URIs are preserved when advanced options are applied. For example, `kafka:{{topic}}` or `aws2-s3:{{bucket}}?secretKey=RAW({{secret}})` remain intact.
+Property placeholders and RAW expressions in endpoint URIs are preserved when advanced options are applied. For example, `+kafka:{{topic}}+` or `+aws2-s3:{{bucket}}?secretKey=RAW({{secret}})+` remain intact.
 
 ==== Sink and action Kamelets
 
