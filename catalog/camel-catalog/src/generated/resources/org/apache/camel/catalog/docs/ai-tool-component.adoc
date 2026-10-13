@@ -455,19 +455,20 @@ Because the guard runs in front of the route, a denied call is caught before the
 exchange-lifecycle event or route span. Every denial is instead:
 
 * logged at `WARN`, and
-* published as an `org.apache.camel.component.ai.tool.AiToolAuthorizationDeniedEvent` — a `CamelEvent` of type
-  `Custom` carrying the denied tool name, the tool exchange (for correlation), and the `CamelAuthorizationException`
-  the policy raised.
+* published as an `org.apache.camel.component.ai.tool.AiToolAuthorizationDeniedEvent` — an
+  `org.apache.camel.ai.AiEvent.ToolCallDeniedEvent` (a `CamelEvent` of type `Ai`) carrying the denied tool name, the
+  tool exchange (for correlation), and the `CamelAuthorizationException` the policy raised.
 
 Register an `EventNotifier` to count, log or alert on denials — for example to drive a micrometer counter — without
-changing what the model sees (still the short refusal):
+changing what the model sees (still the short refusal). Match on the shared `AiEvent.ToolCallDeniedEvent` interface so
+the notifier does not depend on this component:
 
 [source,java]
 ----
 context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
     @Override
     public void notify(CamelEvent event) {
-        if (event instanceof AiToolAuthorizationDeniedEvent denied) {
+        if (event instanceof AiEvent.ToolCallDeniedEvent denied) {
             meterRegistry.counter("ai.tool.authorization.denied", "tool", denied.getToolName()).increment();
         }
     }

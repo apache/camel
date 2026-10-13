@@ -18,12 +18,14 @@ package org.apache.camel.support;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.ai.AiEvent;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -1570,6 +1572,58 @@ public final class EventHelper {
                 }
             }
             answer |= doNotifyEvent(notifier, event);
+        }
+        return answer;
+    }
+
+    /**
+     * Notifies an {@link AiEvent} to the started event notifiers, following the same path as every other event
+     * category: it loops the started notifiers, skips those that are disabled or have {@code ignoreAiEvents} set,
+     * creates the event lazily (via {@code eventSupplier}) only when some notifier wants it, and delivers through
+     * {@code doNotifyEvent} so one failing notifier does not stop delivery to the others.
+     * <p>
+     * AI events are their own category: {@code ignoreExchangeEvents} does <em>not</em> suppress them, even for the
+     * exchange-backed {@link AiEvent.ExchangeAiEvent} subtype. A notifier opts out with
+     * {@code setIgnoreAiEvents(true)}.
+     *
+     * @since 4.24
+     */
+    public static boolean notifyAiEvent(CamelContext context, Supplier<AiEvent> eventSupplier) {
+        ManagementStrategy management = context != null ? context.getManagementStrategy() : null;
+        if (management == null) {
+            return false;
+        }
+
+        List<EventNotifier> notifiers = management.getStartedEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return false;
+        }
+
+        boolean answer = false;
+        CamelEvent event = null;
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < notifiers.size(); i++) {
+            EventNotifier notifier = notifiers.get(i);
+            // isDisabled()/isIgnoreAiEvents() are overridable callbacks, so guard them per notifier too (not only the
+            // isEnabled()/notify() calls inside doNotifyEvent): a broken notifier must neither escape - which would
+            // change the producer's outcome, e.g. an authorization refusal - nor stop delivery to the other notifiers.
+            try {
+                if (notifier.isDisabled() || notifier.isIgnoreAiEvents()) {
+                    continue;
+                }
+
+                if (event == null) {
+                    // only create event once, and only when a notifier wants it
+                    event = eventSupplier.get();
+                    if (event == null) {
+                        return answer;
+                    }
+                }
+                answer |= doNotifyEvent(notifier, event);
+            } catch (Throwable e) {
+                LOG.warn("Error notifying AI event {}. This exception will be ignored.",
+                        event != null ? event : "<not created>", e);
+            }
         }
         return answer;
     }

@@ -25,11 +25,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.ai.AiEvent;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -140,10 +142,40 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
         // ...and the denial is now observable as a single event
         assertThat(events).hasSize(1);
         AiToolAuthorizationDeniedEvent event = events.get(0);
-        assertThat(event.getType()).isEqualTo(CamelEvent.Type.Custom);
+        assertThat(event.getType()).isEqualTo(CamelEvent.Type.Ai);
         assertThat(event.getToolName()).isEqualTo("guarded");
         assertThat(event.getExchange()).isSameAs(exchange);
         assertThat(event.getCause()).isInstanceOf(CamelAuthorizationException.class);
+        // recognisable through the shared contract, without a dependency on this component
+        assertThat(event).isInstanceOf(AiEvent.ToolCallDeniedEvent.class);
+        assertThat(event.getProvider()).isEqualTo("ai-tool");
+    }
+
+    @Test
+    void aNotifierThatIgnoresAiEventsIsSkipped() {
+        // EventHelper.notifyAiEvent skips notifiers with ignoreAiEvents set, while the default notifier from
+        // @BeforeEach (ignoreAiEvents=false) still receives the event
+        List<AiEvent> ignored = new CopyOnWriteArrayList<>();
+        EventNotifierSupport ignoring = new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiEvent ai) {
+                    ignored.add(ai);
+                }
+            }
+        };
+        ignoring.setIgnoreAiEvents(true);
+        context.getManagementStrategy().addEventNotifier(ignoring);
+
+        AiToolSpec spec = findSpec("guarded");
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty("subject", "mallory");
+
+        AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(result).isInstanceOf(AiToolResult.AuthorizationDenied.class);
+        assertThat(events).hasSize(1);
+        assertThat(ignored).isEmpty();
     }
 
     @Test
@@ -180,14 +212,52 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
     }
 
     @Test
-    void aNotifierThrowingAnErrorDoesNotBreakTheRefusal() {
-        // ManagementStrategy.notify does not isolate a failing notifier, so without a Throwable guard a notifier that
-        // throws an Error would escape and turn the denial into a propagating failure. The refusal must survive.
+    void aFailingNotifierNeitherBreaksTheRefusalNorStopsALaterSubscriber() {
+        // Each notifier must be isolated across ALL its callbacks: a notifier that throws from the AI eligibility check
+        // (isIgnoreAiEvents, called in EventHelper.notifyAiEvent) or from isEnabled/notify (called in doNotifyEvent)
+        // must neither escape - turning the denial into a propagating failure - nor stop delivery to a subscriber
+        // registered AFTER it. Registering the healthy collector last is what exercises the continuation.
+        // (isDisabled is the other eligibility check my guard wraps, but it is also called unguarded by the generic
+        // lifecycle paths such as context stop, so throwing there would only break teardown; isIgnoreAiEvents is the
+        // AI-specific one that exercises this fix cleanly.)
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public boolean isIgnoreAiEvents() {
+                throw new AssertionError("broken isIgnoreAiEvents");
+            }
+
+            @Override
+            public void notify(CamelEvent event) {
+            }
+        });
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public boolean isEnabled(CamelEvent event) {
+                if (event instanceof AiEvent) {
+                    throw new AssertionError("broken isEnabled");
+                }
+                return true;
+            }
+
+            @Override
+            public void notify(CamelEvent event) {
+            }
+        });
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             @Override
             public void notify(CamelEvent event) {
-                if (event instanceof AiToolAuthorizationDeniedEvent) {
-                    throw new AssertionError("broken notifier");
+                if (event instanceof AiEvent) {
+                    throw new AssertionError("broken notify");
+                }
+            }
+        });
+        // a healthy subscriber registered AFTER the failing ones
+        List<AiEvent> later = new CopyOnWriteArrayList<>();
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiEvent ai) {
+                    later.add(ai);
                 }
             }
         });
@@ -199,6 +269,75 @@ class AiToolAuthorizationDeniedEventTest extends CamelTestSupport {
         AiToolResult result = AiToolExecutor.execute(spec, Map.of(), exchange);
 
         assertThat(result).isInstanceOf(AiToolResult.AuthorizationDenied.class);
+        // the subscriber registered after the failing notifiers still received the event
+        assertThat(later).hasSize(1);
+    }
+
+    @Test
+    void aiIsItsOwnCategoryAndIgnoreExchangeEventsDoesNotDropIt() {
+        // a notifier with ignoreExchangeEvents=true (but ignoreAiEvents=false) must still receive AI events, so an
+        // AI-observability notifier can keep ignoreExchangeEvents for performance
+        List<AiEvent> exchangeIgnorer = new CopyOnWriteArrayList<>();
+        EventNotifierSupport n = new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiEvent ai) {
+                    exchangeIgnorer.add(ai);
+                }
+            }
+        };
+        n.setIgnoreExchangeEvents(true);
+        context.getManagementStrategy().addEventNotifier(n);
+
+        AiToolSpec spec = findSpec("guarded");
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty("subject", "mallory");
+
+        AiToolExecutor.execute(spec, Map.of(), exchange);
+
+        assertThat(exchangeIgnorer).hasSize(1);
+    }
+
+    @Test
+    void dispatchesAnAiEventThatHasNoExchange() {
+        // the root AiEvent does not require a live Exchange; the helper must deliver an Exchange-free AiEvent
+        List<AiEvent> received = new CopyOnWriteArrayList<>();
+        context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+            @Override
+            public void notify(CamelEvent event) {
+                if (event instanceof AiEvent ai) {
+                    received.add(ai);
+                }
+            }
+        });
+
+        AiEvent exchangeFree = new AiEvent() {
+            @Override
+            public String getProvider() {
+                return "unit";
+            }
+
+            @Override
+            public Object getSource() {
+                return "unit";
+            }
+
+            @Override
+            public long getTimestamp() {
+                return 0;
+            }
+
+            @Override
+            public void setTimestamp(long timestamp) {
+            }
+        };
+
+        boolean notified = EventHelper.notifyAiEvent(context, () -> exchangeFree);
+
+        assertThat(notified).isTrue();
+        assertThat(received).containsExactly(exchangeFree);
+        assertThat(exchangeFree).isNotInstanceOf(CamelEvent.ExchangeEvent.class);
+        assertThat(exchangeFree.getType()).isEqualTo(CamelEvent.Type.Ai);
     }
 
     private AiToolSpec findSpec(String toolName) {

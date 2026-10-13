@@ -397,6 +397,9 @@ public class DefaultDebugger extends ServiceSupport implements Debugger {
         private DebugEventNotifier() {
             setIgnoreCamelContextEvents(true);
             setIgnoreServiceEvents(true);
+            // AI events are ExchangeEvents but are a specialized category; the debugger must not forward them to
+            // breakpoints (it blind-casts every event to ExchangeEvent)
+            setIgnoreAiEvents(true);
         }
 
         @Override

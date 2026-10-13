@@ -19,13 +19,15 @@ package org.apache.camel.component.openai;
 import java.io.Serial;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ai.AiEvent;
 
 /**
  * Fired after a single tool call completes during an OpenAI MCP agentic loop.
  *
  * @since 4.23
  */
-public final class OpenAIAgenticToolCallExecutedEvent extends AbstractOpenAIExchangeEvent {
+public final class OpenAIAgenticToolCallExecutedEvent extends AbstractOpenAIExchangeEvent
+        implements AiEvent.ToolCallExecutedEvent {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -49,14 +51,17 @@ public final class OpenAIAgenticToolCallExecutedEvent extends AbstractOpenAIExch
         return iteration;
     }
 
+    @Override
     public String getToolName() {
         return toolName;
     }
 
+    @Override
     public long getDurationMs() {
         return durationMs;
     }
 
+    @Override
     public boolean isSuccess() {
         return success;
     }

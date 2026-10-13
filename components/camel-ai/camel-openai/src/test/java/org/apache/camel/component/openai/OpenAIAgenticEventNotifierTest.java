@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.spec.McpSchema;
 import org.apache.camel.Exchange;
+import org.apache.camel.ai.AiEvent;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
@@ -85,14 +86,14 @@ class OpenAIAgenticEventNotifierTest extends CamelTestSupport {
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             @Override
             public void notify(CamelEvent event) {
-                if (event.getType() == CamelEvent.Type.Custom) {
+                if (event.getType() == CamelEvent.Type.Ai) {
                     events.add(event);
                 }
             }
 
             @Override
             public boolean isEnabled(CamelEvent event) {
-                return event.getType() == CamelEvent.Type.Custom;
+                return event.getType() == CamelEvent.Type.Ai;
             }
         });
     }
@@ -153,6 +154,9 @@ class OpenAIAgenticEventNotifierTest extends CamelTestSupport {
         assertThat(toolEvents.get(0).getToolName()).isEqualTo("get_weather");
         assertThat(toolEvents.get(0).getIteration()).isEqualTo(1);
         assertThat(toolEvents.get(0).getDurationMs()).isGreaterThanOrEqualTo(0);
+        // recognisable through the shared contract, without a dependency on camel-openai
+        assertThat(toolEvents.get(0)).isInstanceOf(AiEvent.ToolCallExecutedEvent.class);
+        assertThat(toolEvents.get(0).getProvider()).isEqualTo("openai");
         assertThat(completed).hasSize(1);
         assertThat(completed.get(0).getIterationCount()).isEqualTo(1);
         assertThat(completed.get(0).getTotalTokens()).isPositive();

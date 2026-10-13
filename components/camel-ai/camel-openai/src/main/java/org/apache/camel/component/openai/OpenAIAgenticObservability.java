@@ -19,10 +19,12 @@ package org.apache.camel.component.openai;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import com.openai.models.chat.completions.ChatCompletionMessageToolCall;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.ai.AiEvent;
+import org.apache.camel.support.EventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,18 +51,18 @@ final class OpenAIAgenticObservability {
 
     void onLoopStarted(int toolCount, int maxIterations) {
         loopStarted = true;
-        notify(new OpenAIAgenticLoopStartedEvent(exchange, toolCount, maxIterations));
+        notify(() -> new OpenAIAgenticLoopStartedEvent(exchange, toolCount, maxIterations));
     }
 
     void onLoopCompleted(int iterationCount, OpenAIAgenticTokenTracker tokenTracker, String stopReason) {
         loopCompleted = true;
-        notify(new OpenAIAgenticLoopCompletedEvent(
-                exchange, iterationCount, tokenTracker.getTotalTokens(), stopReason));
+        long totalTokens = tokenTracker.getTotalTokens();
+        notify(() -> new OpenAIAgenticLoopCompletedEvent(exchange, iterationCount, totalTokens, stopReason));
         publishTrace();
     }
 
     void onToolCallExecuted(int iteration, McpToolCallExecutor.ToolResult result) {
-        notify(new OpenAIAgenticToolCallExecutedEvent(
+        notify(() -> new OpenAIAgenticToolCallExecutedEvent(
                 exchange, iteration, result.toolName(), result.durationMs(), result.success()));
     }
 
@@ -121,16 +123,9 @@ final class OpenAIAgenticObservability {
         return value.substring(0, MAX_TRACE_TEXT_LENGTH) + "...";
     }
 
-    private void notify(CamelEvent event) {
-        if (exchange.getContext().getManagementStrategy().getEventNotifiers().isEmpty()) {
-            return;
-        }
-        try {
-            exchange.getContext().getManagementStrategy().notify(event);
-        } catch (Exception e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Unable to notify agentic lifecycle event {}", event.getClass().getSimpleName(), e);
-            }
-        }
+    private void notify(Supplier<AiEvent> eventSupplier) {
+        // route through EventHelper like every other event category: it skips notifiers with ignoreAiEvents set,
+        // builds the event lazily (only when a notifier wants it) and isolates a failing notifier
+        EventHelper.notifyAiEvent(exchange.getContext(), eventSupplier);
     }
 }
