@@ -308,7 +308,8 @@ public final class Kamelet {
         }
         if (value.contains("&") || value.contains("=") || value.contains("?")
                 || value.contains("+") || value.contains("%")) {
-            if (value.contains(")&") && !value.startsWith("{") && !value.endsWith("}")) {
+            if (value.contains(")&") && !value.startsWith("{") && !value.endsWith("}")
+                    && !value.contains("}&")) {
                 return "RAW{" + value + "}";
             }
             return "RAW(" + value + ")";
@@ -555,7 +556,7 @@ public final class Kamelet {
         }
 
         if (!sink) {
-            // This is appended and is used to go back to the Kamelet that called me.
+            // this is appended and is used to go back to the kamelet that called me
             ToDefinition to = new ToDefinition("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
             to.setLocation(def.getInput().getLocation());
             if (line != -1) {
