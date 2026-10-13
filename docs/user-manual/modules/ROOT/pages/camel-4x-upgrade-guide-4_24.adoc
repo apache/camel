@@ -202,14 +202,3 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
-
-=== camel-github2 - consumers and items of a poll that were not routed
-
-The `github2` consumers (`commit`, `event`, `pullRequest`, `pullRequestComment`, `tag`) remembered every item of a
-poll as consumed before routing it. Items that were not routed because the route was suspended during the poll were
-never routed. They are now routed by the first poll after the route is resumed.
-
-The `commit` consumer also lost the new commits of a poll in which the GitHub lookup of an author or a committer
-failed (for example a 404 for a deleted account, or a server error). Such a commit is now routed, and a WARN is logged
-for it. Its `CamelGitHubCommitAuthor` and `CamelGitHubCommitCommitter` headers then have the name that git recorded in
-the commit instead of the name of the GitHub profile, and are not set when the commit has no name either.
