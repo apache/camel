@@ -273,15 +273,16 @@ public final class Kamelet {
         }
 
         String result = uri;
+        StringBuilder qs = new StringBuilder();
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             String name = entry.getKey();
             String value = String.valueOf(entry.getValue());
 
             result = removeQueryParameter(result, name);
-            result += result.contains("?") ? "&" : "?";
-            result += name + "=" + wrapRawIfNeeded(value);
+            qs.append(result.contains("?") || qs.length() > 0 ? "&" : "?");
+            qs.append(name).append('=').append(wrapRawIfNeeded(value));
         }
-
+        result += qs;
         return result;
     }
 
@@ -302,8 +303,8 @@ public final class Kamelet {
     }
 
     private static boolean isRawToken(String value) {
-        return value.startsWith("RAW(") && value.endsWith(")")
-                || value.startsWith("RAW{") && value.endsWith("}");
+        return (value.startsWith("RAW(") && value.endsWith(")"))
+                || (value.startsWith("RAW{") && value.endsWith("}"));
     }
 
     /**
