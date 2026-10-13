@@ -57,6 +57,7 @@ import java.util.Base64;
 import java.util.Map;
 
 import javax.net.SocketFactory;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -71,9 +72,18 @@ import org.jsmpp.session.connection.socket.SocketConnection;
  */
 public final class SmppConnectionFactory implements ConnectionFactory {
     private final SmppConfiguration config;
+    private final SSLSocketFactory sslSocketFactory;
 
     private SmppConnectionFactory(SmppConfiguration config) {
+        this(config, null);
+    }
+
+    /**
+     * Creates a factory that uses the given SSL socket factory instead of the default one of the JVM (for testing).
+     */
+    SmppConnectionFactory(SmppConfiguration config, SSLSocketFactory sslSocketFactory) {
         this.config = config;
+        this.sslSocketFactory = sslSocketFactory;
     }
 
     public static SmppConnectionFactory getInstance(SmppConfiguration config) {
@@ -86,11 +96,11 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             Socket socket;
             SocketFactory socketFactory;
             socketFactory = config.isUsingSSL() && config.getHttpProxyHost() == null
-                    ? SSLSocketFactory
-                            .getDefault()
+                    ? getSslSocketFactory()
                     : SocketFactory.getDefault();
             // NOTE: the socket must be closed by the factory method client.
             socket = socketFactory.createSocket(); // NOSONAR
+            configureHostnameVerification(socket);
             if (config.getHttpProxyHost() != null) {
                 // setup the proxy tunnel
                 // jsmpp uses enquire link timer as socket read timeout, so also use it to establish the initial connection
@@ -104,9 +114,9 @@ public final class SmppConnectionFactory implements ConnectionFactory {
 
             if (config.isUsingSSL() && config.getHttpProxyHost() != null) {
                 // Init the SSL socket which is based on the proxy socket
-                SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
                 // NOTE: the socket must be closed by the factory method client.
-                SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(socket, host, port, true); // NOSONAR
+                SSLSocket sslSocket = (SSLSocket) getSslSocketFactory().createSocket(socket, host, port, true); // NOSONAR
+                configureHostnameVerification(sslSocket);
                 sslSocket.startHandshake();
                 socket = sslSocket;
             }
@@ -114,6 +124,19 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             return new SocketConnection(socket);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    private SSLSocketFactory getSslSocketFactory() {
+        return sslSocketFactory != null ? sslSocketFactory : (SSLSocketFactory) SSLSocketFactory.getDefault();
+    }
+
+    private void configureHostnameVerification(Socket socket) {
+        if (config.isHostnameVerification() && socket instanceof SSLSocket sslSocket) {
+            // check that the certificate of the SMSC matches the host we connect to
+            SSLParameters sslParameters = sslSocket.getSSLParameters();
+            sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
+            sslSocket.setSSLParameters(sslParameters);
         }
     }
 

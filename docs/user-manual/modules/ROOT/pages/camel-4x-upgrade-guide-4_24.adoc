@@ -272,6 +272,16 @@ failed (for example a 404 for a deleted account, or a server error). Such a comm
 for it. Its `CamelGitHubCommitAuthor` and `CamelGitHubCommitCommitter` headers then have the name that git recorded in
 the commit instead of the name of the GitHub profile, and are not set when the commit has no name either.
 
+=== camel-smpp - the host name of the SMSC is verified over SSL
+
+With `smpps` (or `usingSSL=true`), directly or through an HTTP proxy, the connection now checks that the certificate of
+the SMSC matches the host it connects to, with the same rules as an HTTPS client. Before, any certificate trusted by the
+JVM was accepted, whatever host it was issued for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the SSL handshake; an IP
+address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
+endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
 === camel-netty-http - the request body read as an InputStream
 
 The body of a request received by the consumer is a `NettyChannelBufferStreamCache`. Its `read()` method now returns
