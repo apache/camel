@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import io.vertx.core.Vertx;
@@ -164,14 +165,6 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     }
 
     /**
-     * Returns {@code true} if this endpoint's cached WebSocket is currently open. Used by
-     * {@link VertxWebsocketClientConsumer} to distinguish a newly-opened socket from a pre-existing one.
-     */
-    boolean isWebSocketOpen() {
-        return webSocket != null && !webSocket.isClosed();
-    }
-
-    /**
      * Clears the message, close, and exception handlers on the endpoint's WebSocket, but only if it is still open and
      * {@code owner} is the last consumer that registered handlers on it. The caller must hold
      * {@link #clientConsumerConnectLock}.
@@ -253,6 +246,70 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         } else if (setupCallback != null) {
             // WebSocket already open — register the caller's handlers on the existing socket (CAMEL-25601).
             setupCallback.accept(webSocket);
+        }
+        return webSocket;
+    }
+
+    /**
+     * Like {@link #getWebSocket(java.util.function.Consumer)}, but the setup callback also receives a flag indicating
+     * whether the WebSocket was already open before this call ({@code true}) or was newly connected ({@code false}).
+     * This lets the caller distinguish the two cases without a racy external check, since {@code getWebSocket} itself
+     * knows which branch it took.
+     */
+    WebSocket getWebSocket(BiConsumer<WebSocket, Boolean> setupCallback) throws Exception {
+        if (client == null) {
+            resolvedClientOptions = configuration.getClientOptions();
+            if (resolvedClientOptions == null) {
+                resolvedClientOptions = new WebSocketClientOptions();
+            }
+
+            SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
+            if (sslContextParameters != null) {
+                VertxHelper.setupSSLOptions(getCamelContext(), sslContextParameters, resolvedClientOptions);
+            }
+
+            client = getVertx().createWebSocketClient(resolvedClientOptions);
+        }
+
+        if (webSocket == null || webSocket.isClosed()) {
+            WebSocketConnectOptions connectOptions = getWebSocketConnectOptions(resolvedClientOptions);
+            CompletableFuture<WebSocket> future = new CompletableFuture<>();
+            client.connect(connectOptions).onComplete(result -> {
+                if (result.succeeded()) {
+                    WebSocket ws = result.result();
+                    if (future.isDone()) {
+                        ws.close();
+                        return;
+                    }
+                    LOG.info("Connected to WebSocket on {}", ws.remoteAddress());
+                    if (setupCallback != null) {
+                        try {
+                            setupCallback.accept(ws, false);
+                        } catch (Exception e) {
+                            ws.close();
+                            future.completeExceptionally(e);
+                            return;
+                        }
+                    }
+                    if (!future.complete(ws)) {
+                        ws.close();
+                    }
+                } else {
+                    future.completeExceptionally(result.cause());
+                }
+            });
+            try {
+                webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                webSocket = null;
+                future.cancel(false);
+                throw e;
+            }
+        } else {
+            if (setupCallback != null) {
+                // WebSocket already open — register the caller's handlers on the existing socket (CAMEL-25601).
+                setupCallback.accept(webSocket, true);
+            }
         }
         return webSocket;
     }
