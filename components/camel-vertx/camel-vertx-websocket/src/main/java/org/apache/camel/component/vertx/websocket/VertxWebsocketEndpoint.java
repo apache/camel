@@ -71,6 +71,8 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     private WebSocketClient client;
     private WebSocketClientOptions resolvedClientOptions;
     private volatile WebSocket webSocket;
+    // the consumer that last registered handlers on the endpoint's WebSocket, guarded by clientConsumerConnectLock
+    private VertxWebsocketClientConsumer handlerOwner;
     private final Lock clientConsumerConnectLock = new ReentrantLock();
 
     public VertxWebsocketEndpoint(String uri, VertxWebsocketComponent component, VertxWebsocketConfiguration configuration) {
@@ -166,16 +168,27 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
 
     /**
      * Clears the message, close, and exception handlers on the endpoint's WebSocket, but only if it is still open and
-     * {@code owner} is the last consumer that registered handlers on it. The caller must hold
-     * {@link #clientConsumerConnectLock}.
+     * {@code consumer} is the current handler owner. The caller must hold {@link #clientConsumerConnectLock}.
+     * <p>
+     * Checking the consumer rather than the socket prevents one consumer from detaching another's handlers when two
+     * routes consume the same {@code consumeAsClient} URI and therefore share this endpoint's WebSocket.
      */
-    void clearWebSocketHandlers(WebSocket owner) {
-        if (owner != null && webSocket == owner && !webSocket.isClosed()) {
+    void clearWebSocketHandlers(VertxWebsocketClientConsumer consumer) {
+        if (consumer != null && handlerOwner == consumer && webSocket != null && !webSocket.isClosed()) {
             webSocket.textMessageHandler(null);
             webSocket.binaryMessageHandler(null);
             webSocket.closeHandler(null);
             webSocket.exceptionHandler(null);
+            handlerOwner = null;
         }
+    }
+
+    /**
+     * Records {@code consumer} as the current handler owner on the endpoint's WebSocket. The caller must hold
+     * {@link #clientConsumerConnectLock}.
+     */
+    void setHandlerOwner(VertxWebsocketClientConsumer consumer) {
+        this.handlerOwner = consumer;
     }
 
     protected WebSocket getWebSocket() throws Exception {
@@ -224,6 +237,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
                 if (result.succeeded()) {
                     WebSocket ws = result.result();
                     if (future.isDone()) {
+                        // the caller gave up waiting (see below): nobody would use or close this WebSocket
                         ws.close();
                         return;
                     }
@@ -248,6 +262,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
                 webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 webSocket = null;
+                // a connect that completes from now on closes its WebSocket
                 future.cancel(false);
                 throw e;
             }

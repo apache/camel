@@ -44,8 +44,6 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
     // the WebSocket that a reconnect attempt closed because the consumer was stopped: its close event is not a lost
     // connection
     private volatile WebSocket discarded;
-    // the WebSocket on which this consumer last registered its handlers, used to detach them on stop
-    private volatile WebSocket handlerWebSocket;
 
     public VertxWebsocketClientConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -107,8 +105,7 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
         Lock connectLock = getEndpoint().getClientConsumerConnectLock();
         connectLock.lock();
         try {
-            getEndpoint().clearWebSocketHandlers(handlerWebSocket);
-            handlerWebSocket = null;
+            getEndpoint().clearWebSocketHandlers(this);
         } finally {
             connectLock.unlock();
         }
@@ -116,7 +113,7 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
     }
 
     protected void configureWebSocketHandlers(WebSocket webSocket) {
-        this.handlerWebSocket = webSocket;
+        getEndpoint().setHandlerOwner(this);
         webSocket.binaryMessageHandler(buffer -> this.handleResult(buffer.getBytes()));
         webSocket.textMessageHandler(this::handleResult);
         webSocket.closeHandler(event -> {
