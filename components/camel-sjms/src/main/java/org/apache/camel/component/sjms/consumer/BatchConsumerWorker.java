@@ -143,7 +143,7 @@ public class BatchConsumerWorker implements Runnable {
                 if (endpoint.getExceptionListener() != null) {
                     endpoint.getExceptionListener().onException(jmsException);
                 } else {
-                    LOG.warn("JMS exception on {} (no ExceptionListener configured); recovery will be attempted",
+                    LOG.warn("JMS exception on {} (no ExceptionListener configured)",
                             endpoint.getEndpointUri(), jmsException);
                 }
             } else {
