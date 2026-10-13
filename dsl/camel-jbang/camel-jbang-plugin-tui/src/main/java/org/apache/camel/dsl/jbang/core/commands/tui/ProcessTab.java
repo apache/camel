@@ -168,8 +168,7 @@ class ProcessTab extends AbstractTab {
         if (wrap) {
             contentHeight = 0;
             for (Line l : lines) {
-                int w = l.width();
-                contentHeight += Math.max(1, (w + visibleWidth - 1) / visibleWidth);
+                contentHeight += TuiHelper.wrappedRows(l, visibleWidth);
             }
             contentHeight += visibleHeight;
         } else {
