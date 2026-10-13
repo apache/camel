@@ -666,3 +666,10 @@ project in the same way.
 A name in camel case that starts with a lower-case letter, such as the datasource `myOrders` or `my_DataSource`, still
 looks like an option name and is written in dash case as a whole, underscores included (`my-orders`,
 `my-data-source`). Quote it to keep it: `quarkus.datasource."myOrders".db-kind`.
+
+=== camel-mongodb-gridfs - the consumer routes a file once
+
+With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
+every file uploaded since the consumer started again at each poll (every `delay`, 500 ms by default). The upload
+date of the last routed file is now kept between the polls, so a file is routed once. A route that relied on
+receiving the same file repeatedly now receives it once.

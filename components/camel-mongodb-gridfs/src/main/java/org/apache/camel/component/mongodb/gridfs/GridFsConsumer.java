@@ -51,6 +51,10 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     private final GridFsEndpoint endpoint;
     private volatile ScheduledExecutorService taskExecutor;
     private volatile ExecutorService executor;
+    // the upload date of the newest file that was routed: a poll only asks for the files uploaded after it.
+    // Kept between the polls. Two threads use it: run() sets the start value on the thread of the executor,
+    // before it schedules the polls; the polls then read and move it on the thread of the taskExecutor.
+    private volatile Date fromDate;
 
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -82,7 +86,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     public void run() {
-        Date fromDate = null;
+        fromDate = null;
 
         QueryStrategy queryStrategy = endpoint.getQueryStrategy();
         boolean usesTimestamp = queryStrategy != QueryStrategy.FileAttribute;
@@ -126,15 +130,14 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 .build();
 
         MongoCollection<Document> finalPtsCollection = ptsCollection;
-        Date finalFromDate = fromDate;
         Document finalPersistentTimestamp = persistentTimestamp;
         task.run(endpoint.getCamelContext(),
-                () -> processCollection(finalFromDate, usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
+                () -> processCollection(usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
                         finalPersistentTimestamp));
     }
 
     private boolean processCollection(
-            Date fromDate, boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute,
+            boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute,
             final MongoCollection<Document> ptsCollection, final Document persistentTimestamp) {
 
         if (!isStarted()) {
