@@ -52,6 +52,34 @@ final class HeaderChecks {
             "timer", List.of("CamelTimerCounter", "CamelTimerName", "CamelTimerPeriod", "CamelTimerTime"));
 
     /**
+     * The option without which a component sets none of its {@link #EXCHANGE_PROPERTIES}: TimerConsumer sets them only
+     * with includeMetadata=true.
+     */
+    static final Map<String, String> METADATA_OPTION = Map.of("timer", "includeMetadata");
+
+    static final Pattern EXCHANGE_PROPERTY_REF_PATTERN = Pattern.compile("\\$\\{exchangeProperty\\.(Camel[A-Z][A-Za-z0-9]*)");
+
+    /** Whether the option that makes the component set its exchange properties is true somewhere in the content. */
+    static boolean setsExchangeProperties(String scheme, String content) {
+        String option = METADATA_OPTION.get(scheme);
+        return option == null
+                || Pattern.compile(Pattern.quote(option) + "\\s*[=:]\\s*[\"']?true").matcher(content).find();
+    }
+
+    /**
+     * Whether a header reference also finds an exchange property of that name: Simple's ${header.x} and the header("x")
+     * expression look in the exchange properties when the message has no such header; ${headers.x} reads the map.
+     */
+    static boolean fallsBackToProperties(String reference) {
+        return reference.startsWith("${header.") || reference.startsWith("header(");
+    }
+
+    private static String onlyWithOption(int line, String scheme, String name) {
+        return "Line " + line + ": " + scheme + " sets " + name + " only with " + METADATA_OPTION.get(scheme)
+               + "=true on the endpoint, as the exchange property ${exchangeProperty." + name + "}";
+    }
+
+    /**
      * What an invented Camel* header is usually reaching for, keyed on a fragment of its name, and the expression that
      * answers it. Tried when no real header is close: in a timer-triggered route there is no message source to name, so
      * a beginner or a model writes CamelFromEndpoint or CamelEndpointUri for "which endpoint did this come from" and
@@ -139,8 +167,12 @@ final class HeaderChecks {
                 if (propertyOwner != null) {
                     // before the header metadata: an exchange property is never a header, whatever the metadata says
                     reported.add(name);
-                    msgs.add("Line " + (i + 1) + ": " + name + " is an exchange property set by " + propertyOwner
-                             + ", not a header (the header would be null): write ${exchangeProperty." + name + "}");
+                    if (!setsExchangeProperties(propertyOwner, content)) {
+                        msgs.add(onlyWithOption(i + 1, propertyOwner, name));
+                    } else if (!fallsBackToProperties(m.group())) {
+                        msgs.add("Line " + (i + 1) + ": " + name + " is an exchange property set by " + propertyOwner
+                                 + ", not a header (the header would be null): write ${exchangeProperty." + name + "}");
+                    }
                     continue;
                 }
                 if (!reported.add(name)) {
@@ -179,14 +211,32 @@ final class HeaderChecks {
                 for (String sc : schemes) {
                     List<String> props = EXCHANGE_PROPERTIES.getOrDefault(sc, List.of());
                     if (!props.isEmpty()) {
-                        sb.append(" ").append(sc).append(" sets the exchange properties ").append(String.join(", ", props))
-                                .append(" (${exchangeProperty.").append(props.get(0)).append("}).");
+                        sb.append(" ").append(sc).append(" sets the exchange properties ").append(String.join(", ", props));
+                        if (METADATA_OPTION.containsKey(sc)) {
+                            sb.append(" with ").append(METADATA_OPTION.get(sc)).append("=true");
+                        }
+                        sb.append(" (${exchangeProperty.").append(props.get(0)).append("}).");
                     }
                 }
                 if (m.group(1) == null) {
                     sb.append(" A header no component sets stays null unless a setHeader step sets it earlier in the route.");
                 }
                 msgs.add(sb.toString());
+            }
+        }
+        // an exchange property read without the option that sets it stays null as well
+        for (String scheme : schemes) {
+            if (setsExchangeProperties(scheme, content)) {
+                continue;
+            }
+            List<String> props = EXCHANGE_PROPERTIES.getOrDefault(scheme, List.of());
+            for (int i = 0; i < lines.length; i++) {
+                Matcher pm = EXCHANGE_PROPERTY_REF_PATTERN.matcher(lines[i]);
+                while (pm.find()) {
+                    if (props.contains(pm.group(1)) && reported.add(pm.group(1))) {
+                        msgs.add(onlyWithOption(i + 1, scheme, pm.group(1)));
+                    }
+                }
             }
         }
         return msgs;

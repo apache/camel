@@ -480,6 +480,11 @@ class SourceViewer {
         return plainMode;
     }
 
+    /** Whether a dialog over the editor has the keys (discard, the problems of a save, the diff, refactor). */
+    boolean showsDialog() {
+        return pendingDiscard || editMode && (validationErrors != null || diffOverlay || refactor.isPopupOpen());
+    }
+
     /**
      * True when the viewer is consuming typed input (search box or plain-text edit mode). Used by the monitor to avoid
      * treating digit/letter keys as global shortcuts.

@@ -71,6 +71,26 @@ class SourceViewerEditTest {
     }
 
     @Test
+    void theDiffAndTheDiscardQuestionAreDialogsOverTheEditor() {
+        // their footer goes before that of a live edit, which shows the keys of the edit
+        viewer.loadFile(sourceFile);
+        viewer.enterEditMode();
+        assertThat(viewer.showsDialog()).isFalse();
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('x', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F7, KeyModifiers.NONE));
+        assertThat(viewer.showsDialog()).as("the diff").isTrue();
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).isFalse();
+
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).as("discard the change?").isTrue();
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).isFalse();
+        assertThat(viewer.isEditMode()).isFalse();
+    }
+
+    @Test
     void loadFileMarksLocalWritableFileEditable() {
         viewer.loadFile(sourceFile);
 

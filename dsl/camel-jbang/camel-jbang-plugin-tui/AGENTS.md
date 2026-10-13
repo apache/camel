@@ -28,7 +28,7 @@ and use each other's package-private members, so there are no sub-packages. Clas
 | `TabRegistry` | the tabs: the nine digit-key tabs, and the More tabs in `moreTabs` (one `MoreTab` entry each) |
 | `MonitorTab`, `AbstractTab`, `AbstractTableTab` | what a tab implements, and its base classes |
 | `*Tab` | one tab each |
-| `MonitorContext` (`ctx`) | what the tabs share: the selected integration (`selectedPid`), settings, callbacks into CamelMonitor, `backgroundExecutor`, `runner`, `dataService`, and `executeAction` to ask an integration |
+| `MonitorContext` (`ctx`) | what the tabs share: the selected integration (`selectedPid`), settings, callbacks into CamelMonitor, `backgroundExecutor`, `runner`, `dataService`, `executeAction` to ask an integration and `fireAction` to tell it (a file per request since Camel 4.21, so requests cannot overwrite each other) |
 | `DataRefreshService`, `StatusFileReader`, `StatusParser` | read the status files of the integrations (`~/.camel/<pid>-status.json`) into `IntegrationInfo` and the `*Info` classes |
 | `*Popup`, `PopupManager` | popups; `PopupManager` has the switch integration (F3), More and confirm popups |
 | `FilterListPopup`, `ChoicePopup`, `ActivityLogPopup`, `DialogHelper` | what popups are built on: a list narrowed down by typing, a short list of choices, a log with a detail panel, and centered confirm and input dialogs |
@@ -37,7 +37,7 @@ and use each other's package-private members, so there are no sub-packages. Clas
 | `AbstractDiagramTab` | what the Diagram and Routes tabs share of the route diagram: its state, keys, drilling into a route and back |
 | `AiPanel`, `AiSlashCommandRegistry` | the F8 AI panel; its input line is `AiInputLine`, its tools and system prompt `AiToolSet`, its usage statistics `AiUsageStats`, and an external coding agent (ACP) `AcpSession` over `AcpAgentClient` |
 | `LiveEdit`, `EditReplay` | `/write live`: a file an AI tool writes is typed into the source editor, to watch and then save or discard |
-| `TuiMcpServer`, `TuiToolDefinitions`, `TuiToolRegistry`, `McpFacade` | the MCP server: the tools (`TuiTool`: schema, handler, flags), their implementations, the bridge to the screen |
+| `TuiMcpServer`, `TuiToolDefinitions`, `TuiToolRegistry`, `McpFacade` | the MCP server: the tools (`TuiTool`: schema, handler, flags), their implementations, the bridge to the screen; the shared file tools are `TuiFileTools`, which writes only to an integration's source directory, through the AI panel's write mode |
 | `Theme`, `TuiIcons` | colours (themes in `src/main/resources/tui/themes`) and icons |
 | `TuiSettings`, `SettingsPopup` | persisted settings |
 | `TuiHelper` | shared helpers: text width, wrapping and truncation, ANSI, number and duration formats, footer hints |
@@ -66,7 +66,9 @@ popups, the AI panel (F8), the global keys (`handleGlobalKeys`), and last to the
 
 Each key a tab takes is written down in three places: the footer hint (`renderFooter`, with `TuiHelper.hint`), the
 Keys section of the tab's help page (`src/main/resources/tui/help/<tab>.md`), and the user manual. Change all three;
-`FooterKeysInHelpTest` fails when a key of the footer of a tab is missing from its help page.
+`FooterKeysInHelpTest` fails when a key of the footer of a tab is missing from its help page. A footer too wide for
+the screen drops the F-keys every screen has first, then the tab's hints from the tail (`FooterHints`): put the
+important hints of a tab first.
 
 ## Threads and time
 

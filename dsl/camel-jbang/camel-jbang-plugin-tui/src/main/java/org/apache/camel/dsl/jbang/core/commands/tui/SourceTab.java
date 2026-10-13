@@ -125,6 +125,11 @@ class SourceTab extends AbstractTab {
         return sourceViewer.isEditMode();
     }
 
+    /** Whether a dialog over the editor has the keys (discard, the problems of a save, the diff, refactor). */
+    boolean showsViewerDialog() {
+        return sourceViewer.showsDialog();
+    }
+
     /** Steps whose uri: lines are destinations; for switch those of its cases and fallback. */
     private static final Set<String> LINKABLE_KEYWORDS = Set.of(
             "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel", "switch");

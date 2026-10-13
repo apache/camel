@@ -2460,7 +2460,7 @@ public class CamelMonitor extends CamelCommand {
         } else if (aiPanel.isOpen()) {
             // asking about a paused AI edit, or the panel came back after a replay
             aiPanel.renderFooter(spans);
-        } else if (liveEdit.isShown()) {
+        } else if (liveEdit.isShown() && !tabRegistry.sourceTab().showsViewerDialog()) {
             liveEdit.renderFooter(spans);
         } else if (shellPanel.isOpen()) {
             shellPanel.renderFooter(spans);
@@ -2527,14 +2527,10 @@ public class CamelMonitor extends CamelCommand {
             rightSpans.clear();
             rightWidth = 0;
             minGap = 0;
-            // Drop secondary F-key hints (F2/F3/F6) before tab-specific action hints.
-            hintsWidth = dropFKeyHints(spans, fKeyTotal, tabFKeySpans, hintsWidth, area.width());
-            // Then drop tab-specific hints from the tail, keeping at least 4 spans
-            while (spans.size() > 4 && hintsWidth > area.width()) {
-                Span labelSpan = spans.remove(spans.size() - 1);
-                Span keySpan = spans.remove(spans.size() - 1);
-                hintsWidth -= keySpan.width() + labelSpan.width();
-            }
+            // the F-keys every screen has go first, what belongs to the screen last
+            hintsWidth = fKeyTotal > 0
+                    ? FooterHints.fit(spans, fKeyStart, fKeyTotal - tabFKeySpans, tabFKeySpans, hintsWidth, area.width())
+                    : FooterHints.fit(spans, spans.size(), 0, 0, hintsWidth, area.width());
         }
 
         if (!rightSpans.isEmpty()) {
@@ -2547,15 +2543,16 @@ public class CamelMonitor extends CamelCommand {
         frame.renderWidget(Paragraph.from(Line.from(spans)), area);
     }
 
-    // how many of the F-key hint spans of the footer are the screen's own (after F1/F2/F10)
+    // how many of the F-key hint spans of the footer are the screen's own (after F1/F2/F10), and where they start
     private int tabFKeySpans;
+    private int fKeyStart;
 
     private int insertFKeyHints(List<Span> spans) {
         int insertPos = Math.min(2, spans.size());
         List<Span> fKeySpans = new ArrayList<>();
         MonitorTab tab = tabRegistry.activeTab();
-        boolean hasHelp = tab != null && tab.getHelpText() != null;
-        if (hasHelp) {
+        // F1 opens the help of every tab, but is seldom pressed: the Overview, the first screen, names it
+        if (tab == tabRegistry.overviewTab() && tab.getHelpText() != null) {
             hint(fKeySpans, "F1", "help");
         }
         hint(fKeySpans, "F2", "actions");
@@ -2565,51 +2562,10 @@ public class CamelMonitor extends CamelCommand {
             tab.renderFKeyHints(fKeySpans);
         }
         tabFKeySpans = fKeySpans.size() - globalFKeys;
+        fKeyStart = insertPos;
         spans.addAll(insertPos, fKeySpans);
-        // Return total F-key span count. The footer drop loop uses this to remove pairs from
-        // the tail, stopping before the first pair (F1 help when present).
+        // the number of F-key spans, global and the screen's own: FooterHints.fit drops the global ones first
         return fKeySpans.size();
-    }
-
-    /**
-     * Drops secondary F-key hint pairs from an overflowing footer. The F-key pairs are inserted at position 2 (after
-     * the first tab hint), so the last pair's key span sits at index {@code fKeyTotal}. Pairs are removed from the
-     * tail, so F2 goes first, and the loop stops at 2 so the first pair (F1 help when present) is always preserved.
-     *
-     * @param  spans      the footer spans, mutated in place by removing dropped pairs
-     * @param  fKeyTotal  total number of F-key spans that were inserted (e.g. 4 for F1/F2)
-     * @param  hintsWidth the current rendered width of {@code spans}
-     * @param  available  the available footer width
-     * @return            the rendered width of {@code spans} after dropping
-     */
-    static int dropFKeyHints(List<Span> spans, int fKeyTotal, int hintsWidth, int available) {
-        return dropFKeyHints(spans, fKeyTotal, 0, hintsWidth, available);
-    }
-
-    /**
-     * As {@link #dropFKeyHints(List, int, int, int)}, with the screen's own F-key hints (such as Shift+F8 fix with AI
-     * or F12 file actions) after the global ones: the global F2/F10 are dropped first, as they are the same on every
-     * screen, and then the screen's own from the tail.
-     *
-     * @param tabFKeys how many of the F-key spans are the screen's own, at the end of the F-key spans
-     */
-    static int dropFKeyHints(List<Span> spans, int fKeyTotal, int tabFKeys, int hintsWidth, int available) {
-        int globalTotal = fKeyTotal - Math.max(0, tabFKeys);
-        while (globalTotal > 2 && hintsWidth > available) {
-            // the last global pair: its key span is at index globalTotal (the F-keys start at 2)
-            Span labelSpan = spans.remove(globalTotal + 1);
-            Span keySpan = spans.remove(globalTotal);
-            hintsWidth -= keySpan.width() + labelSpan.width();
-            globalTotal -= 2;
-            fKeyTotal -= 2;
-        }
-        while (fKeyTotal > Math.max(2, globalTotal) && hintsWidth > available) {
-            Span labelSpan = spans.remove(fKeyTotal + 1);
-            Span keySpan = spans.remove(fKeyTotal);
-            hintsWidth -= keySpan.width() + labelSpan.width();
-            fKeyTotal -= 2;
-        }
-        return hintsWidth;
     }
 
     private int renderOverviewFooter(List<Span> spans) {

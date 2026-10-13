@@ -72,8 +72,13 @@ class GotoNodePopup extends FilterListPopup<GotoNodePopup.NodeEntry> {
     }
 
     @Override
+    protected String matchText(NodeEntry entry) {
+        return entry.type() + " " + entry.label() + " " + entry.nodeId();
+    }
+
+    @Override
     protected boolean matches(NodeEntry entry, String typed) {
-        return matchesText(entry.type() + " " + entry.label() + " " + entry.nodeId(), typed);
+        return matchesText(matchText(entry), typed);
     }
 
     @Override

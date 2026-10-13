@@ -56,8 +56,13 @@ class TocPopup extends FilterListPopup<TocPopup.TocEntry> {
     }
 
     @Override
+    protected String matchText(TocEntry entry) {
+        return entry.title();
+    }
+
+    @Override
     protected boolean matches(TocEntry entry, String typed) {
-        return matchesText(entry.title(), typed);
+        return matchesText(matchText(entry), typed);
     }
 
     @Override

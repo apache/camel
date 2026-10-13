@@ -59,7 +59,7 @@ class SourceSizeTest {
             AiPanel.java 3189
             AiPanel.runAgentLoop 159
             AiUsageStats.render 166
-            CamelMonitor.java 2833
+            CamelMonitor.java 2789
             DiagramDetailSupport.renderEipInfoPanel 159
             DiagramDetailSupport.renderRouteInfoPanel 154
             DiagramSupport.java 2697
@@ -80,7 +80,7 @@ class SourceSizeTest {
             SettingsPopup.handleKeyEvent 160
             SourceEditAssist.java 2006
             SourceViewer.handleEditKeyEvent 231
-            SourceViewer.java 3050
+            SourceViewer.java 3055
             SourceViewer.renderContent 207
             SourceViewer.renderEditMode 256
             TuiToolDefinitions.addInteractionTools 183

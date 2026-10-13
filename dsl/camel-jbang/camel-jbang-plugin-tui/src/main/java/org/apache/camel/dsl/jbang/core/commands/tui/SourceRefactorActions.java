@@ -72,16 +72,20 @@ class SourceRefactorActions {
         this.editor = editor;
     }
 
+    boolean isPopupOpen() {
+        return refactorPopup != null && refactorPopup.isVisible();
+    }
+
     /** Closes the popup; true when it was open. */
     boolean closePopup() {
-        boolean open = refactorPopup != null && refactorPopup.isVisible();
+        boolean open = isPopupOpen();
         refactorPopup = null;
         return open;
     }
 
     /** The keys of the popup while it is open: true then, as it takes them all. */
     boolean handleKeyEvent(KeyEvent ke) {
-        if (refactorPopup == null || !refactorPopup.isVisible()) {
+        if (!isPopupOpen()) {
             return false;
         }
         refactorPopup.handleKeyEvent(ke);
@@ -93,14 +97,14 @@ class SourceRefactorActions {
     }
 
     void render(Frame frame, Rect area) {
-        if (refactorPopup != null && refactorPopup.isVisible()) {
+        if (isPopupOpen()) {
             refactorPopup.render(frame, area);
         }
     }
 
     /** The footer hints of the popup while it is open: true then, as they replace those of the editor. */
     boolean renderFooter(List<Span> spans) {
-        if (refactorPopup == null || !refactorPopup.isVisible()) {
+        if (!isPopupOpen()) {
             return false;
         }
         refactorPopup.renderFooter(spans);

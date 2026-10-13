@@ -69,8 +69,13 @@ class GotoRoutePopup extends FilterListPopup<GotoRoutePopup.RouteItem> {
     }
 
     @Override
+    protected String matchText(RouteItem entry) {
+        return entry.routeId() + " " + entry.fromUri();
+    }
+
+    @Override
     protected boolean matches(RouteItem entry, String typed) {
-        return matchesText(entry.routeId() + " " + entry.fromUri(), typed);
+        return matchesText(matchText(entry), typed);
     }
 
     @Override

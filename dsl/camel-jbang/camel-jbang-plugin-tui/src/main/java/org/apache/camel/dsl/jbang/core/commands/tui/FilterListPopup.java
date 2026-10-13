@@ -177,7 +177,7 @@ abstract class FilterListPopup<T> {
         listState.select(index);
     }
 
-    /** Narrows the entries down again after the typed text, or the entries, changed; selects the first. */
+    /** Narrows the entries down again after the typed text, or the entries, changed; selects the best match. */
     protected final void refilter() {
         List<T> all = entries();
         if (all == null) {
@@ -185,7 +185,40 @@ abstract class FilterListPopup<T> {
             return;
         }
         shown = filter.hasFilter() ? filter(all, filter.filter()) : new ArrayList<>(all);
-        listState.select(shown.isEmpty() ? null : 0);
+        listState.select(shown.isEmpty() ? null : bestMatch());
+    }
+
+    /**
+     * The text an entry is matched against: with it the entry that contains the typed text as it is gets selected,
+     * rather than the first one shown. Null when the popup does not say.
+     */
+    protected String matchText(T entry) {
+        return null;
+    }
+
+    /**
+     * The entry to select: the first whose text contains the typed text as it is (log[${body}] for log, before the
+     * fuzzy l...o...g of a longer one above it), else the first that matches itself (not a row shown as the context of
+     * others, such as the route of a matching processor), else the first.
+     */
+    private int bestMatch() {
+        if (!filter.hasFilter()) {
+            return 0;
+        }
+        String typed = filter.filter();
+        String lower = typed.toLowerCase();
+        int firstMatch = -1;
+        for (int i = 0; i < shown.size(); i++) {
+            T entry = shown.get(i);
+            String text = matchText(entry);
+            if (text != null && text.toLowerCase().contains(lower)) {
+                return i;
+            }
+            if (firstMatch < 0 && matches(entry, typed)) {
+                firstMatch = i;
+            }
+        }
+        return Math.max(firstMatch, 0);
     }
 
     boolean handleKeyEvent(KeyEvent ke) {

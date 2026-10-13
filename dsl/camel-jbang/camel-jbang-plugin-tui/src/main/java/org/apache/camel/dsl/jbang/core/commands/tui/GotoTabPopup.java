@@ -97,6 +97,11 @@ class GotoTabPopup extends FilterListPopup<TabRegistry.TabEntry> {
     }
 
     @Override
+    protected String matchText(TabRegistry.TabEntry entry) {
+        return entry.name();
+    }
+
+    @Override
     protected boolean matches(TabRegistry.TabEntry entry, String typed) {
         boolean descMatch = typed.length() >= 2 && entry.description() != null
                 && entry.description().toLowerCase().contains(typed);

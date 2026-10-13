@@ -143,11 +143,15 @@ class GotoSourceNodePopup extends FilterListPopup<YamlRouteNodeScanner.NodeEntry
     }
 
     @Override
-    protected boolean matches(YamlRouteNodeScanner.NodeEntry entry, String typed) {
-        String searchText = entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE
+    protected String matchText(YamlRouteNodeScanner.NodeEntry entry) {
+        return entry.kind() == YamlRouteNodeScanner.EntryKind.ROUTE
                 ? entry.routeId() + " " + entry.fromUri()
                 : entry.type() + " " + entry.label() + " " + entry.routeId();
-        return matchesText(searchText, typed);
+    }
+
+    @Override
+    protected boolean matches(YamlRouteNodeScanner.NodeEntry entry, String typed) {
+        return matchesText(matchText(entry), typed);
     }
 
     @Override

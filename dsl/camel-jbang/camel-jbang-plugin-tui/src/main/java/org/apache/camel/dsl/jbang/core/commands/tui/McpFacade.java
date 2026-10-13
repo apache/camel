@@ -19,11 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -1119,9 +1121,54 @@ class McpFacade {
                     return info;
                 }
             }
+            // the pid, which tells apart two integrations of the same name (see integrationWithSourceDirectory)
+            for (IntegrationInfo info : data.get()) {
+                if (!info.vanishing && name.equals(info.pid)) {
+                    return info;
+                }
+            }
             return null;
         }
         return ctx != null ? ctx.findSelectedIntegration() : null;
+    }
+
+    /**
+     * The pid of the integration whose source directory the given one is, as an agent passes it to a file tool: the
+     * selected integration's when it is that, else the first other one's; null when it is the source directory of none.
+     */
+    String integrationWithSourceDirectory(String directory) {
+        Path wanted;
+        try {
+            wanted = realDirectory(Path.of(directory));
+        } catch (InvalidPathException e) {
+            return null;
+        }
+        IntegrationInfo selected = findIntegration(null);
+        if (selected != null && !selected.vanishing && wanted.equals(sourceDirectory(selected))) {
+            return selected.pid;
+        }
+        for (IntegrationInfo info : data.get()) {
+            if (!info.vanishing && wanted.equals(sourceDirectory(info))) {
+                return info.pid;
+            }
+        }
+        return null;
+    }
+
+    private static Path sourceDirectory(IntegrationInfo info) {
+        Path dir = FilesBrowser.resolveSourceDirectory(info);
+        return dir != null ? realDirectory(dir) : null;
+    }
+
+    /**
+     * The directory with symlinks resolved (/tmp is /private/tmp on macOS), or as it is written when it is not there.
+     */
+    private static Path realDirectory(Path dir) {
+        try {
+            return dir.toRealPath();
+        } catch (IOException e) {
+            return dir.toAbsolutePath().normalize();
+        }
     }
 
     /**
@@ -1419,6 +1466,9 @@ class McpFacade {
     }
 
     /** As {@link #editFile(String, String, String, String, boolean)} with several edits, written once (CAMEL-25501). */
+    /** The statuses of a write that changed the file: written directly, or saved in the editor after a live replay. */
+    private static final Set<String> APPLIED_WRITES = Set.of("overwritten", "created", "written");
+
     JsonObject editFile(String name, String file, String find, String replace, String edits, boolean confirm) {
         IntegrationInfo target = findIntegration(name);
         if (target == null) {
@@ -1435,7 +1485,8 @@ class McpFacade {
             return edit; // not-found, ambiguous or an error: the shared answer says what to do
         }
         JsonObject result = writeFile(name, file, content, confirm);
-        if (!"invalid".equals(result.getString("status")) && !"error".equals(result.getString("status"))) {
+        // only an edit the file got is "edited": one the user rejected, or a live replay not yet saved, keeps saying so
+        if (APPLIED_WRITES.contains(result.getString("status"))) {
             result.put("status", "edited");
             result.put("editedAtLine", edit.getInteger("editedAtLine"));
             result.put("replacedLines", edit.getInteger("replacedLines"));

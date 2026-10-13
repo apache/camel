@@ -37,7 +37,6 @@ import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
@@ -78,6 +77,7 @@ class TuiToolRegistry {
     }
 
     private final McpFacade facade;
+    private final TuiFileTools fileTools;
     private final AtomicInteger animCounter = new AtomicInteger();
     private volatile AnimationState currentAnimation;
 
@@ -87,6 +87,7 @@ class TuiToolRegistry {
 
     TuiToolRegistry(McpFacade facade) {
         this.facade = facade;
+        this.fileTools = facade != null ? new TuiFileTools(facade, this) : null;
     }
 
     /** The launcher the TUI wired into the facade, or null when there is none to launch with. */
@@ -95,9 +96,9 @@ class TuiToolRegistry {
     }
 
     /**
-     * Runs a shared {@code camel_} tool with the TUI's extras: the file tools work on the selected integration's source
-     * directory unless a directory is given (a write then goes through the TUI's confirm dialog or live replay),
-     * camel_control knows the TUI's own actions, camel_get_log also reads an infra service log.
+     * Runs a shared {@code camel_} tool with the TUI's extras: the file tools are {@link TuiFileTools}' (the source
+     * directory of an integration, each write confirmed by the user), camel_control knows the TUI's own actions,
+     * camel_get_log also reads an infra service log.
      */
     String executeSharedWithTuiExtras(String name, Map<String, Object> args) {
         if (facade != null && args.get("directory") instanceof String d && !d.isBlank() && !d.contains("/")
@@ -108,18 +109,12 @@ class TuiToolRegistry {
             byName.put("name", d);
             args = byName;
         }
-        boolean hasDirectory = args.get("directory") instanceof String d && !d.isBlank();
-        boolean named = args.get("name") instanceof String n && !n.isBlank();
-        boolean facadeSelection = facade != null && (named || facade.getSelectedIntegrationName() != null);
+        if (fileTools != null && TuiFileTools.TOOLS.contains(name)) {
+            return fileTools.execute(name, args);
+        }
         return switch (name) {
             case CONTROL_TOOL -> facade != null ? callControl(args) : executeShared(name, args);
             case LOG_TOOL -> facade != null ? callGetLog(args) : executeShared(name, args);
-            case FILES_TOOL -> !hasDirectory && facadeSelection ? callGetFiles(args) : executeShared(name, args);
-            case WRITE_TOOL -> !hasDirectory && facadeSelection ? callWriteFile(args) : executeShared(name, args);
-            case EDIT_TOOL -> !hasDirectory && facadeSelection ? callEditFile(args) : executeShared(name, args);
-            case VALIDATE_TOOL -> !hasDirectory && facadeSelection && args.get("content") == null
-                    ? callValidateSource(args) : executeShared(name, args);
-            case SAVE_SUMMARY_TOOL -> !hasDirectory && facadeSelection ? callSaveSummary(args) : executeShared(name, args);
             default -> executeShared(name, args);
         };
     }
@@ -143,7 +138,7 @@ class TuiToolRegistry {
         }
     }
 
-    private static Map<String, String> stringArgs(Map<String, Object> args) {
+    static Map<String, String> stringArgs(Map<String, Object> args) {
         Map<String, String> stringArgs = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : args.entrySet()) {
             if (e.getValue() instanceof Map<?, ?> || e.getValue() instanceof List<?>) {
@@ -157,7 +152,7 @@ class TuiToolRegistry {
     }
 
     /** A tool context over the TUI's selection: pid, Camel version, source directory, property check. */
-    private ToolContext sharedContext() {
+    ToolContext sharedContext() {
         ToolContext ctx = new ToolContext();
         // what the user selected is the integration; nothing selected means nothing, not the only one running
         ctx.setAutoSelectSingleProcess(false);
@@ -175,31 +170,6 @@ class TuiToolRegistry {
             ctx.setPropertyLineValidator(facade.getPropertyLineValidator());
         }
         return ctx;
-    }
-
-    /**
-     * Saves the AI project summary of the selected integration through the TUI's write path, so the user sees and
-     * confirms it like any file the model writes (CAMEL-25143).
-     */
-    private String callSaveSummary(Map<String, Object> args) {
-        Path dir = facade.getSelectedSourceDirectory();
-        if (dir == null) {
-            return executeShared(SAVE_SUMMARY_TOOL, args);
-        }
-        try {
-            AuthoringTools.SummaryUpdate update = AuthoringTools.summaryUpdate(dir, sharedContext(), stringArgs(args));
-            String name = args.get("name") instanceof String n ? n : null;
-            JsonObject written = facade.writeFile(name, IntegrationSummary.FILE_NAME, update.content(), true);
-            JsonObject result = update.result();
-            result.put("status", written.get("status"));
-            if (written.get("message") != null) {
-                result.put("message", written.get("message"));
-            }
-            IntegrationSummaryHints.invalidate(dir);
-            return result.toJson();
-        } catch (ToolExecutionException e) {
-            return "Error: " + e.getMessage();
-        }
     }
 
     static final String SHARED_PREFIX = "camel_";
@@ -1469,50 +1439,9 @@ class TuiToolRegistry {
         return facade.openProject(directory);
     }
 
-    private String callGetFiles(Map<String, Object> args) {
-        String name = args.get("name") instanceof String s ? s : null;
-        String file = args.get("file") instanceof String s ? s : null;
-        JsonObject response = facade.getFiles(name, file);
-        if (response == null) {
-            return name != null
-                    ? "No source files found for integration '" + name + "'"
-                    : "No source files found for the selected integration";
-        }
-        return Jsoner.serialize(response);
-    }
-
     /** Time the last tool call spent waiting for the user (a camel_write_file confirmation), see the AI panel. */
     long consumeConfirmWaitMs() {
         return facade != null ? facade.consumeConfirmWaitMs() : 0;
-    }
-
-    private String callWriteFile(Map<String, Object> args) {
-        String name = args.get("name") instanceof String s ? s : null;
-        String file = args.get("file") instanceof String s ? s : null;
-        String content = args.get("content") instanceof String s ? s : null;
-        boolean confirm = !Boolean.FALSE.equals(args.get("confirm"));
-        // the write always validates: the tool has no switch, a model given one turns it off (CAMEL-24897)
-        return Jsoner.serialize(facade.writeFile(name, file, content, confirm));
-    }
-
-    private String callEditFile(Map<String, Object> args) {
-        String name = args.get("name") instanceof String s ? s : null;
-        String file = args.get("file") instanceof String s ? s : null;
-        String find = args.get("find") instanceof String s ? s : null;
-        String replace = args.get("replace") instanceof String s ? s : "";
-        Object list = args.get("edits");
-        String edits = list instanceof Map<?, ?> || list instanceof List<?> ? Jsoner.serialize(list)
-                : list instanceof String text ? text : null;
-        boolean confirm = !Boolean.FALSE.equals(args.get("confirm"));
-        // an edit is confirmed and replayed in the editor like a write (CAMEL-24909), several edits as one (CAMEL-25501)
-        return Jsoner.serialize(facade.editFile(name, file, find, replace, edits, confirm));
-    }
-
-    private String callValidateSource(Map<String, Object> args) {
-        String name = args.get("name") instanceof String s ? s : null;
-        String file = args.get("file") instanceof String s ? s : null;
-        String content = args.get("content") instanceof String s ? s : null;
-        return Jsoner.serialize(facade.validateSource(name, file, content));
     }
 
     @SuppressWarnings("unchecked")
