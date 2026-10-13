@@ -55,3 +55,14 @@ This map will represent a row of the table whose elements are columns, where the
 The output body format will be a `java.util.List<java.util.Map<String, Object>>`.
 Each element of the list will be a different row of the table.
 Each row is a `Map<String, Object>` whose elements will be each pair of column name and column value for that row.
+
+=== Row errors
+
+The producer fails the exchange with a `KuduRowErrorException` when the answer to an insert, delete, update or upsert
+carries a row error. Its `getRowError()` returns the row error of the Kudu client, whose status tells the kind of
+error. There are two cases:
+
+* a row that Kudu rejected: an insert of a row whose key is already in the table, or an update or a delete of a row
+that is not in the table. The row was not written. Use the `upsert` operation to write a row whether it exists or not.
+* a request that failed, for example because it timed out or because no tablet server could be reached. The Kudu
+client reports it the same way. In this case it is not known whether the row was written.
