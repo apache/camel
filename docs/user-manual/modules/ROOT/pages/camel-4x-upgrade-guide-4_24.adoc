@@ -402,4 +402,5 @@ Given Java source files, `camel cmd route-diagram`, `camel cmd route-structure` 
 `camel_render_route_diagram` MCP tool) now read the routes with the Java DSL parser, as `camel transform route` and
 `camel overview` do, instead of compiling the sources and loading their routes in a short-lived Camel. A step the parser
 cannot work out, such as a lambda or a processor, is shown as a placeholder, and the parts it could not read are
-listed. Use the new `--compile` option to compile the sources and load their routes as before.
+listed (with `--json`, as an `unread` array in the JSON). Use the new `--compile` option to compile the sources and
+load their routes as before.

@@ -142,13 +142,16 @@ class RouteActionJavaSourceTest {
         int exit = command.doCall();
 
         assertThat(exit).isZero();
-        // with --json only the JSON is printed, not the parts the parser could not read
+        // with --json only the JSON is printed, and the parts the parser could not read are listed in it
         JsonObject topology = (JsonObject) Jsoner.deserialize(printer.getOutput());
         JsonArray edges = (JsonArray) topology.get("edges");
         assertThat(edges).hasSize(1);
         JsonObject edge = (JsonObject) edges.get(0);
         assertThat(edge.getString("fromRouteId")).isEqualTo("intake");
         assertThat(edge.getString("toRouteId")).isEqualTo("billing");
+        JsonArray unread = (JsonArray) topology.get("unread");
+        assertThat(unread).isNotEmpty();
+        assertThat(unread.get(0).toString()).contains("Orders.java:");
     }
 
     @Test

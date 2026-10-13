@@ -134,6 +134,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         JsonObject jo = waitForOutputFile(outputFile);
         if (jo != null) {
             if (jsonOutput) {
+                addUnreadSourceParts(jo);
                 String dump = Jsoner.prettyPrint(jo.toJson(), 2);
                 printer().println(dump);
             } else {

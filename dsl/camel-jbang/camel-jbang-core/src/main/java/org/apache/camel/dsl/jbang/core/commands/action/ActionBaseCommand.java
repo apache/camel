@@ -37,10 +37,14 @@ import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 abstract class ActionBaseCommand extends CamelCommand {
+
+    /** The parts of Java sources the parser could not read, when the routes were read from Java sources. */
+    private List<String> unreadSourceParts;
 
     protected ActionBaseCommand(CamelJBangMain main) {
         super(main);
@@ -264,17 +268,31 @@ abstract class ActionBaseCommand extends CamelCommand {
                                + " (use --compile to compile the source and load its routes)");
             return false;
         }
-        if (!result.unread().isEmpty() && printSourceNotes()) {
+        unreadSourceParts = result.unread();
+        if (!unreadSourceParts.isEmpty() && printSourceNotes()) {
             printer().println("Routes read without compiling them; the parser could not work out these parts "
                               + "(use --compile to compile the source instead):");
-            result.unread().forEach(u -> printer().println("  " + u));
+            unreadSourceParts.forEach(u -> printer().println("  " + u));
         }
         return true;
     }
 
-    /** Whether to print the parts of Java sources the parser could not read: not when the output is JSON. */
+    /**
+     * Whether to print the parts of Java sources the parser could not read: not when the output is JSON, which lists
+     * them instead (see {@link #addUnreadSourceParts(JsonObject)}).
+     */
     protected boolean printSourceNotes() {
         return true;
+    }
+
+    /**
+     * Adds the parts of Java sources the parser could not read to the JSON output, as an {@code unread} array, so a
+     * tool reading the JSON can tell that routes may be missing from it.
+     */
+    protected void addUnreadSourceParts(JsonObject jo) {
+        if (unreadSourceParts != null && !unreadSourceParts.isEmpty()) {
+            jo.put("unread", new JsonArray(unreadSourceParts));
+        }
     }
 
     /**

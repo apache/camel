@@ -192,6 +192,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
      */
     int renderTopology(JsonObject jo) throws Exception {
         if (jsonOutput) {
+            addUnreadSourceParts(jo);
             String dump = Jsoner.prettyPrint(jo.toJson(), 2);
             printer().println(dump);
         } else if (theme != null) {
