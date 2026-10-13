@@ -78,6 +78,11 @@ public class HttpProducerMultiValueHeaderTest extends BaseHttpTest {
         assertEquals("a|b", send(Arrays.asList("a", null, "b")));
     }
 
+    @Test
+    public void testSingleElementListIsOneHeader() {
+        assertEquals("x", send(List.of("x")));
+    }
+
     private String send(Object headerValue) {
         String uri = "http://localhost:" + localServer.getLocalPort() + "/myapp";
         return template.requestBodyAndHeader(uri, null, "test", headerValue, String.class);

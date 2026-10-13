@@ -210,7 +210,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             continue;
                         }
 
-                        // a collection or an object array is sent as one header per value; any other value is a single header
+                        // a collection or an object array is sent as one header per value; any other value
+                        // (including an Iterable that is not a Collection) is sent as a single header
                         HttpUtil.applyHeaderValue(strategy, exchange, headerValue, tc, key,
                                 (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
                     }
