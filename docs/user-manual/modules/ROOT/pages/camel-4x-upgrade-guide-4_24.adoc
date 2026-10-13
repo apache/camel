@@ -85,6 +85,18 @@ now resolves to no value, as it already did without a field, so its default valu
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
 
+=== camel-ical - each unmarshal parses with its own calendar builder
+
+The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at
+the same time could get the events of each other, or the calendar of the other exchange. Each unmarshal now uses its
+own builder.
+
+A builder also has its own time zone registry, so a `VTIMEZONE` of one calendar is no longer used for the calendars
+unmarshalled after it. A date with a `TZID` that is not a standard time zone and that its calendar does not define is
+now read as a local date-time without a zone (`getDate()` returns a `LocalDateTime`); before, it was read with the
+definition of an earlier message, if there was one. A calendar that defines a `TZID` an earlier message has defined
+differently is now read with its own definition.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA

@@ -37,7 +37,6 @@ public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFo
     private boolean validating;
 
     private CalendarOutputter outputer;
-    private CalendarBuilder builder;
 
     @Override
     public String getDataFormatName() {
@@ -52,13 +51,13 @@ public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        return builder.build(stream);
+        // a CalendarBuilder keeps the calendar it is building in its fields, so each call needs its own
+        return new CalendarBuilder().build(stream);
     }
 
     @Override
     protected void doStart() throws Exception {
         outputer = new CalendarOutputter(validating);
-        builder = new CalendarBuilder();
     }
 
     @Override
