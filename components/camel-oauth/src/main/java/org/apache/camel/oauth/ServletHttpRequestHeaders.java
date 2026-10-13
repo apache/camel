@@ -25,12 +25,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.http.common.HttpMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads request headers from a message of the servlet based HTTP consumers. Only loaded for a message of such a type,
  * see {@link HttpRequestHeaders}.
  */
 final class ServletHttpRequestHeaders {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServletHttpRequestHeaders.class);
 
     private ServletHttpRequestHeaders() {
     }
@@ -43,12 +47,30 @@ final class ServletHttpRequestHeaders {
     }
 
     /**
-     * Reads the headers of the request that the message holds in the {@link Exchange#HTTP_SERVLET_REQUEST} header, as
-     * the message of platform-http on Spring Boot does.
+     * Reads the headers of the request of a platform-http message on Spring Boot. The request comes from the
+     * {@code getRequest()} method of the message, which camel-oauth does not depend on, or else from the
+     * {@link Exchange#HTTP_SERVLET_REQUEST} header that the message also sets, but that a route may remove. Without a
+     * request no value is read at all, rather than the message headers, which also hold the form parameters.
      */
-    static Optional<List<String>> valuesOfServletRequestHeader(Message message, String name) {
-        return message.getHeader(Exchange.HTTP_SERVLET_REQUEST) instanceof HttpServletRequest request
-                ? values(request, name) : Optional.empty();
+    static Optional<List<String>> valuesOfSpringBootMessage(Message message, String name) {
+        var request = springBootRequest(message);
+        if (request == null) {
+            LOG.debug("No HTTP request on the platform-http message, so no {} header is read", name);
+            return Optional.of(List.of());
+        }
+        return Optional.of(values(request, name).orElse(List.of()));
+    }
+
+    private static HttpServletRequest springBootRequest(Message message) {
+        try {
+            if (message.getClass().getMethod("getRequest").invoke(message) instanceof HttpServletRequest request) {
+                return request;
+            }
+        } catch (ReflectiveOperationException | SecurityException e) {
+            LOG.debug("Cannot call getRequest() on {}, reading the {} header instead", message.getClass().getName(),
+                    Exchange.HTTP_SERVLET_REQUEST, e);
+        }
+        return message.getHeader(Exchange.HTTP_SERVLET_REQUEST) instanceof HttpServletRequest request ? request : null;
     }
 
     private static Optional<List<String>> values(HttpServletRequest request, String name) {

@@ -47,7 +47,7 @@ final class HttpRequestHeaders {
     private static final String VERTX_HTTP_MESSAGE = "org.apache.camel.component.platform.http.vertx.HttpMessage";
     private static final String SERVLET_HTTP_MESSAGE = "org.apache.camel.http.common.HttpMessage";
     private static final String NETTY_HTTP_MESSAGE = "org.apache.camel.component.netty.http.NettyHttpMessage";
-    // from camel-platform-http-starter, it holds the servlet request in the CamelHttpServletRequest header
+    // from camel-platform-http-starter, which camel-oauth does not depend on; it gives the servlet request
     private static final String SPRING_BOOT_PLATFORM_HTTP_MESSAGE
             = "org.apache.camel.component.platform.http.springboot.PlatformHttpMessage";
 
@@ -77,7 +77,7 @@ final class HttpRequestHeaders {
                 return NettyHttpRequestHeaders.values(message, name);
             }
             if (SPRING_BOOT_PLATFORM_HTTP_MESSAGE.equals(type.getName())) {
-                return ServletHttpRequestHeaders.valuesOfServletRequestHeader(message, name);
+                return ServletHttpRequestHeaders.valuesOfSpringBootMessage(message, name);
             }
         }
         return Optional.empty();

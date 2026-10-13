@@ -128,12 +128,25 @@ class HttpRequestHeadersTest {
     }
 
     @Test
-    void springBootMessageWithoutTheServletRequestFallsBackToTheMessageHeaders() throws Exception {
+    void springBootMessageIsReadWhenTheRouteRemovedTheServletRequestHeader() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            Message message = new PlatformHttpMessage(
+                    context, servletRequest(Map.of("authorization", List.of("Bearer request-token"))));
+            message.setHeader("Authorization", "Bearer form-token");
+            // as the hardening checklist of the security model advises for untrusted callers
+            message.removeHeaders("Camel*");
+
+            assertEquals(List.of("Bearer request-token"), HttpRequestHeaders.values(message, "Authorization"));
+        }
+    }
+
+    @Test
+    void springBootMessageWithoutARequestReadsNothing() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             Message message = new PlatformHttpMessage(context, null);
-            message.setHeader("Authorization", "Bearer token");
+            message.setHeader("Authorization", "Bearer form-token");
 
-            assertEquals(List.of("Bearer token"), HttpRequestHeaders.values(message, "Authorization"));
+            assertEquals(List.of(), HttpRequestHeaders.values(message, "Authorization"));
         }
     }
 

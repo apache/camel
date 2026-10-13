@@ -24,13 +24,20 @@ import org.apache.camel.support.DefaultMessage;
 
 /**
  * Test stand-in for the message of platform-http on Spring Boot (camel-platform-http-starter, in camel-spring-boot),
- * which camel-oauth does not depend on. It has the same name, and like the real one it holds the servlet request in the
- * {@link Exchange#HTTP_SERVLET_REQUEST} header.
+ * which camel-oauth does not depend on. It has the same name and, like the real one, gives the servlet request from
+ * {@link #getRequest()} and holds it in the {@link Exchange#HTTP_SERVLET_REQUEST} header.
  */
 public class PlatformHttpMessage extends DefaultMessage {
 
+    private final HttpServletRequest request;
+
     public PlatformHttpMessage(CamelContext camelContext, HttpServletRequest request) {
         super(camelContext);
+        this.request = request;
         setHeader(Exchange.HTTP_SERVLET_REQUEST, request);
+    }
+
+    public HttpServletRequest getRequest() {
+        return request;
     }
 }
