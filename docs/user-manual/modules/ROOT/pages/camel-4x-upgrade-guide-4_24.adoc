@@ -202,3 +202,9 @@ throttling): the failure of the first object is then the failure of the poll, an
 In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
+
+=== camel-kamelet - support advanced component and endpoint options
+
+Kamelets can now support advanced component and endpoint options when creating the underlying component and endpoint. This allows Kamelets to expose and use options beyond the standard options previously handled by the Kamelet component, including options that require special handling of endpoint URI parameters.
+
+Existing Kamelets that use these advanced options can now pass them through to the underlying component or endpoint. Review custom Kamelets that define or forward endpoint options to ensure that the options are intended for the underlying component or endpoint and that they do not conflict with Kamelet-specific options.

@@ -151,6 +151,7 @@ public final class Kamelet {
                 continue;
             }
             prefixBuffer.append(element).append('.');
+
             Properties prefixed = pc.loadProperties(Kamelet.startsWith(prefixBuffer.toString()));
             for (String name : prefixed.stringPropertyNames()) {
                 properties.put(name.substring(prefixBuffer.toString().length()), prefixed.getProperty(name));
@@ -273,17 +274,25 @@ public final class Kamelet {
         }
 
         String result = uri;
-        StringBuilder qs = new StringBuilder();
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            String name = entry.getKey();
-            String value = String.valueOf(entry.getValue());
 
+        // First remove all parameters that will be overridden.
+        for (String name : parameters.keySet()) {
             result = removeQueryParameter(result, name);
-            qs.append(result.contains("?") || qs.length() > 0 ? "&" : "?");
-            qs.append(name).append('=').append(wrapRawIfNeeded(value));
         }
-        result += qs;
-        return result;
+
+        // Then append the options to the preserved URI.
+        StringBuilder sb = new StringBuilder(result);
+        char sep = result.indexOf('?') < 0 ? '?' : '&';
+
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            sb.append(sep)
+                    .append(entry.getKey())
+                    .append('=')
+                    .append(wrapRawIfNeeded(String.valueOf(entry.getValue())));
+            sep = '&';
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -410,14 +419,12 @@ public final class Kamelet {
         ObjectHelper.notNull(uuid, PARAM_UUID);
 
         RouteDefinition def = in.asRouteDefinition();
-
         // mark this as created from a kamelet
         def.setKamelet(true);
         def.setLocation(in.getLocation());
         def.setLineNumber(in.getLineNumber());
         def.setId(rid);
         def.setNodePrefixId(uuid);
-
         if (noErrorHandler) {
             def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
         } else if (prid != null) {
