@@ -55,7 +55,7 @@ public final class BatchTestHelper {
 
     static final String DEFAULT_MESSAGE_TEXT = "Hello World!";
     static final String BATCH_ROUTEBUILDER_MOCK_START = "mock:%s.start";
-    static final String BATCH_ROUTEBUILDER_MOCK_FINISH = "mock:%s.complete";
+    static final String BATCH_ROUTEBUILDER_MOCK_FINISH = "mock:%s.finish";
 
     private BatchTestHelper() {
     }

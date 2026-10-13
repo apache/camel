@@ -77,7 +77,7 @@ public class BatchConsumerWorker implements Runnable {
 
     @Override
     public void run() {
-        LOG.debug("run START");
+        LOG.trace("run START");
         int batchSize = endpoint.getBatchSize();
         long batchInterval = endpoint.getBatchInterval();
         List<Message> buffer = new ArrayList<>();
@@ -117,7 +117,7 @@ public class BatchConsumerWorker implements Runnable {
             }
             throw new BatchConsumerWorkerException(e);
         }
-        LOG.info("run STOP");
+        LOG.trace("run STOP");
     }
 
     private void dispatchOrDiscard(List<Message> batch) {
