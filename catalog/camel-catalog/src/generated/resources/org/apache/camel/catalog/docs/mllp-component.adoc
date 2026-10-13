@@ -109,3 +109,14 @@ The state of the TCP Socket can be controlled by these properties on the Camel e
 |`CamelMllpCloseConnectionAfterSend` | `Boolean` | If true, the Socket will be closed immediately after sending data
 |`CamelMllpResetConnectionAfterSend` | `Boolean` | If true, the Socket will be reset immediately after sending any data
 |====================================
+
+=== Using TLS
+
+Set `sslContextParameters` on the endpoint, or `useGlobalSslContextParameters` on the component, to secure the
+connections of the consumer and the producer with TLS. The trust store, key store, protocols and cipher suites are
+configured with the xref:manual::camel-configuration-utilities.adoc[Camel JSSE Configuration Utility].
+
+The producer checks that the certificate of the server matches the `hostname` of the endpoint, with the same rules as
+an HTTPS client. A producer that connects by IP address needs a certificate that lists that address as a subject
+alternative name. Set `hostnameVerification=false` to turn this check off; the certificate chain is still validated
+against the trust store.
