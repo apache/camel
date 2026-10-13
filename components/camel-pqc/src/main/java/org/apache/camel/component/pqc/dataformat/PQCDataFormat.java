@@ -163,8 +163,12 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         try {
             // Generate KEM encapsulation and the fresh shared secret
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength), SecureRandomHelper.getSecureRandom());
-            SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
+            SecretKeyWithEncapsulation secretKey;
+            synchronized (kg) {
+                kg.init(new KEMGenerateSpec(kp.getPublic(), symAlg, symmetricKeyLength),
+                        SecureRandomHelper.getSecureRandom());
+                secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
+            }
             byte[] encapsulation = secretKey.getEncapsulation();
 
             // Encrypt the payload with an authenticated cipher using a fresh random nonce
@@ -221,9 +225,12 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
 
             // Extract the shared secret from the encapsulation
             KeyGenerator kg = getOrCreateKeyGenerator(kemAlg);
-            kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength),
-                    SecureRandomHelper.getSecureRandom());
-            SecretKeyWithEncapsulation secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
+            SecretKeyWithEncapsulation secretKey;
+            synchronized (kg) {
+                kg.init(new KEMExtractSpec(kp.getPrivate(), encapsulation, symAlg, symmetricKeyLength),
+                        SecureRandomHelper.getSecureRandom());
+                secretKey = (SecretKeyWithEncapsulation) kg.generateKey();
+            }
 
             // Decrypt. doFinal() verifies the authentication tag and throws on tampering; this must not be done with
             // CipherInputStream, which can silently swallow an AEAD tag failure and return truncated plaintext.
@@ -250,17 +257,8 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         }
 
         if (keyEncapsulationAlgorithm != null && keyGenerator == null) {
-            PQCKeyEncapsulationAlgorithms kemEnum = PQCKeyEncapsulationAlgorithms.valueOf(keyEncapsulationAlgorithm);
-            String algorithm = kemEnum.getAlgorithm();
-            String bcProvider = kemEnum.getBcProvider();
-
-            if (provider != null) {
-                keyGenerator = KeyGenerator.getInstance(algorithm, provider);
-            } else if (bcProvider != null) {
-                keyGenerator = KeyGenerator.getInstance(algorithm, bcProvider);
-            } else {
-                keyGenerator = KeyGenerator.getInstance(algorithm);
-            }
+            // Fail fast on an unknown algorithm or provider. The instance is not kept, see getOrCreateKeyGenerator()
+            createKeyGenerator(keyEncapsulationAlgorithm);
         }
     }
 
@@ -341,12 +339,19 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         }
     }
 
+    /**
+     * Returns the KeyGenerator for one marshal or unmarshal operation. A KEM {@code KeyGenerator} keeps the spec passed
+     * to {@code init()} until {@code generateKey()} reads it and is not thread-safe, so a new one is created for every
+     * operation. A configured KeyGenerator is returned as-is and shared by all operations, which serialize on it.
+     */
     private KeyGenerator getOrCreateKeyGenerator(String kemAlgorithm) throws Exception {
         if (keyGenerator != null) {
             return keyGenerator;
         }
+        return createKeyGenerator(kemAlgorithm);
+    }
 
-        // Create a temporary key generator for this operation
+    private KeyGenerator createKeyGenerator(String kemAlgorithm) throws Exception {
         PQCKeyEncapsulationAlgorithms kemEnum = PQCKeyEncapsulationAlgorithms.valueOf(kemAlgorithm);
         String algorithm = kemEnum.getAlgorithm();
         String bcProvider = kemEnum.getBcProvider();
@@ -426,7 +431,8 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     /**
-     * Sets a custom KeyGenerator for KEM operations. If not set, one will be created based on the KEM algorithm.
+     * Sets a custom KeyGenerator for KEM operations. If not set, a new one is created for every operation based on the
+     * KEM algorithm. A configured KeyGenerator is shared by all operations, which then run one at a time on it.
      */
     public void setKeyGenerator(KeyGenerator keyGenerator) {
         this.keyGenerator = keyGenerator;

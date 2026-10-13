@@ -81,6 +81,18 @@ A `BasicMessageFilter` created in application code applies a `SpringWebserviceHe
 created with another strategy. A route that relies on the previous behaviour can supply a custom
 `headerFilterStrategy` on the `spring-ws` endpoint.
 
+=== camel-pqc - a configured KeyGenerator is used by one exchange at a time
+
+When Camel creates the instance itself, the KEM operations of the `pqc` component and the PQC data format now use a
+new `KeyGenerator` for every operation. A configured instance is still shared: a registry bean, which is autowired into
+every `pqc` endpoint, a `KeyGenerator` set on the data format, or the default material used when no key material is
+configured. Each operation now holds its lock from `init` until the result is returned, so concurrent exchanges that
+use it run one at a time.
+
+A started PQC data format no longer keeps a `KeyGenerator` of its own: `getKeyGenerator()` returns only a configured
+instance and, unless one is configured, the `CamelPQCKemAlgorithm` header now selects the KEM algorithm of each
+operation.
+
 === camel-undertow - WebSocket endpoints apply the security provider, allowed roles and handlers
 
 WebSocket endpoints (`ws://` and `wss://`) now apply the `UndertowSecurityProvider` (the `securityConfiguration` or

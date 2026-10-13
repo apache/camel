@@ -407,6 +407,19 @@ The `get` operation on a folder (producer and consumer) now downloads every file
 downloaded only the files of the first page of the folder listing. As before, the content of all the files is in the
 message body, so a large folder needs more memory than it did when only the first page was read.
 
+=== camel-pqc - a configured KeyGenerator or KeyAgreement is used by one exchange at a time
+
+When Camel creates the instance itself, the KEM operations of the `pqc` component (including the hybrid KEM
+operations) and the PQC data format now use a new `KeyGenerator`, and for the hybrid operations a new `KeyAgreement`,
+for every operation. A configured instance is still shared: a registry bean, which is autowired into every `pqc`
+endpoint, a `KeyGenerator` set on the data format, or the default material used when no key material is configured.
+Each operation now holds its lock from `init` until the result is returned, so concurrent exchanges that use it run
+one at a time.
+
+A started PQC data format no longer keeps a `KeyGenerator` of its own: `getKeyGenerator()` returns only a configured
+instance and, unless one is configured, the `CamelPQCKemAlgorithm` header now selects the KEM algorithm of each
+operation.
+
 === camel-box - getEnterpriseEvents returns the events of every chunk
 
 The `getEnterpriseEvents` operation of the `event-logs` API now returns all the events between `after` and `before`.
