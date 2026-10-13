@@ -116,7 +116,12 @@ public class LRASagaRoutes extends RouteBuilder {
         }
 
         LRACallbackSigner signer = sagaService.getCallbackSigner();
-        if (signer != null && !applySignedParameters(exchange, signer, isCompensation)) {
+        if (signer != null) {
+            // the signed parameters are the only source of the step URIs: no fallback to the query below
+            if (applySignedParameters(exchange, signer, isCompensation)) {
+                checkAllowed(exchange.getIn().getHeader(isCompensation ? URL_COMPENSATION_KEY : URL_COMPLETION_KEY,
+                        String.class), isCompensation);
+            }
             return;
         }
 
@@ -140,7 +145,10 @@ public class LRASagaRoutes extends RouteBuilder {
             }
         }
 
-        String uri = isCompensation ? compensationURI : completionURI;
+        checkAllowed(isCompensation ? compensationURI : completionURI, isCompensation);
+    }
+
+    private void checkAllowed(String uri, boolean isCompensation) {
         if (uri != null) {
             Set<String> allowedURIs = isCompensation
                     ? sagaService.getRegisteredCompensationURIs()

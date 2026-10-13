@@ -27,6 +27,16 @@ This also applies to the LRAs the service starts itself, which a nested saga rou
 coordinator returns LRA URLs under another base URL than `coordinatorUrl`, for example behind a proxy, add that
 base URL to `allowedCoordinatorUrls` as well.
 
+=== camel-lra - warning for unsigned participant callbacks, and reserved saga option names
+
+The LRA saga service now logs a warning at startup when no `callbackSecret` is configured: the callbacks that the LRA
+coordinator sends to the participant endpoints are then not verified, so these endpoints must only be reachable by the
+coordinator. The Saga EIP documentation describes how to sign them.
+
+A saga option named like a parameter of the participant callback URLs, in any case (`Camel-Saga-Compensate`,
+`Camel-Saga-Complete`, `Camel-Saga-Signature` or `Camel-Saga-Lra`), now fails the creation of its route, with or
+without a callback secret. The value of such an option could not be read back from the callback before.
+
 === camel-netty-http - the roles of a security constraint are matched by role name
 
 The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
@@ -62,16 +72,6 @@ receive the messages of the producers, and it is closed when it sends a message.
 
 A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
 rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
-
-=== camel-lra - warning for unsigned participant callbacks, and reserved saga option names
-
-The LRA saga service now logs a warning at startup when no `callbackSecret` is configured: the callbacks that the LRA
-coordinator sends to the participant endpoints are then not verified, so these endpoints must only be reachable by the
-coordinator. The Saga EIP documentation describes how to sign them.
-
-A saga option named like a parameter of the participant callback URLs, in any case (`Camel-Saga-Compensate`,
-`Camel-Saga-Complete`, `Camel-Saga-Signature` or `Camel-Saga-Lra`), now fails the creation of its route, with or
-without a callback secret. The value of such an option could not be read back from the callback before.
 
 == Upgrading from 4.18.4 to 4.18.5
 

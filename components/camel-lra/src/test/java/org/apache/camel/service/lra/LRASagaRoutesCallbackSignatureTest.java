@@ -243,6 +243,28 @@ class LRASagaRoutesCallbackSignatureTest extends CamelTestSupport {
         assertEquals(LRA, exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION));
     }
 
+    @Test
+    void signedCallbackWithoutStepUrisDoesNotReadThemFromTheQuery() throws Exception {
+        // a step without compensation and completion URIs, whose signed option value holds an encoded parameter that
+        // the decoded CamelHttpQuery of camel-netty-http shows as a step URI
+        Map<String, String> parameters = new LinkedHashMap<>();
+        parameters.put("note", "x&" + URL_COMPENSATION_KEY + "=mock://cancel");
+        parameters.put(URL_LRA_KEY, LRA);
+        String rawQuery = signedQuery(PARTICIPANT_PATH_COMPENSATE, parameters);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, REQUEST_LRA);
+        exchange.getIn().setHeader(Exchange.HTTP_RAW_QUERY, rawQuery);
+        exchange.getIn().setHeader(Exchange.HTTP_QUERY, URLDecoder.decode(rawQuery, StandardCharsets.UTF_8));
+
+        Method verify = LRASagaRoutes.class.getDeclaredMethod("verifyCompensationRequest", Exchange.class);
+        verify.setAccessible(true);
+        verify.invoke(new LRASagaRoutes(sagaService), exchange);
+
+        assertNull(exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("x&" + URL_COMPENSATION_KEY + "=mock://cancel", exchange.getIn().getHeader("note"));
+        assertNull(exchange.getIn().getHeader(URL_COMPENSATION_KEY));
+    }
+
     private int callback(String path, String query, String... headers) throws Exception {
         HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(
                 "http://localhost:" + port.getPort() + DEFAULT_LOCAL_PARTICIPANT_CONTEXT_PATH + path + "?" + query))
