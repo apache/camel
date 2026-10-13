@@ -193,61 +193,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
      * the caller's handlers are registered.
      */
     protected WebSocket getWebSocket(java.util.function.Consumer<WebSocket> setupCallback) throws Exception {
-        if (client == null) {
-            resolvedClientOptions = configuration.getClientOptions();
-            if (resolvedClientOptions == null) {
-                resolvedClientOptions = new WebSocketClientOptions();
-            }
-
-            SSLContextParameters sslContextParameters = configuration.getSslContextParameters();
-            if (sslContextParameters != null) {
-                VertxHelper.setupSSLOptions(getCamelContext(), sslContextParameters, resolvedClientOptions);
-            }
-
-            client = getVertx().createWebSocketClient(resolvedClientOptions);
-        }
-
-        if (webSocket == null || webSocket.isClosed()) {
-            WebSocketConnectOptions connectOptions = getWebSocketConnectOptions(resolvedClientOptions);
-            CompletableFuture<WebSocket> future = new CompletableFuture<>();
-            client.connect(connectOptions).onComplete(result -> {
-                if (result.succeeded()) {
-                    WebSocket ws = result.result();
-                    if (future.isDone()) {
-                        // the caller gave up waiting (see below): nobody would use or close this WebSocket
-                        ws.close();
-                        return;
-                    }
-                    LOG.info("Connected to WebSocket on {}", ws.remoteAddress());
-                    if (setupCallback != null) {
-                        try {
-                            setupCallback.accept(ws);
-                        } catch (Exception e) {
-                            ws.close();
-                            future.completeExceptionally(e);
-                            return;
-                        }
-                    }
-                    if (!future.complete(ws)) {
-                        ws.close();
-                    }
-                } else {
-                    future.completeExceptionally(result.cause());
-                }
-            });
-            try {
-                webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
-            } catch (Exception e) {
-                webSocket = null;
-                // a connect that completes from now on closes its WebSocket
-                future.cancel(false);
-                throw e;
-            }
-        } else if (setupCallback != null) {
-            // WebSocket already open — register the caller's handlers on the existing socket (CAMEL-25601).
-            setupCallback.accept(webSocket);
-        }
-        return webSocket;
+        return getWebSocket(setupCallback != null ? (ws, alreadyOpen) -> setupCallback.accept(ws) : null);
     }
 
     /**
