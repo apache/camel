@@ -63,6 +63,7 @@ import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ModelReifierFactory;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.support.CamelContextHelper;
@@ -536,6 +537,15 @@ public class DefaultModel implements Model {
             String parentRouteId, String parentProcessorId,
             RouteTemplateContext routeTemplateContext)
             throws Exception {
+        return doAddRouteFromTemplate(routeId, routeTemplateId, prefixId, group, parentRouteId, parentProcessorId,
+                routeTemplateContext, null);
+    }
+
+    private String doAddRouteFromTemplate(
+            String routeId, String routeTemplateId, String prefixId, String group,
+            String parentRouteId, String parentProcessorId,
+            RouteTemplateContext routeTemplateContext, Resource templatedRouteResource)
+            throws Exception {
 
         RouteTemplateDefinition target = null;
         for (RouteTemplateDefinition def : routeTemplateDefinitions) {
@@ -702,6 +712,12 @@ public class DefaultModel implements Model {
         routeCollection.setRoutes(getRouteDefinitions());
         routeCollection.prepareRoute(def);
 
+        // the route is in the resource with the route template (its source location is there too), and is declared
+        // in the resource with the templated route (if any); set after the route is prepared, as preparing it sets the
+        // resource of the route collection
+        def.setResource(target.getResource());
+        def.setTemplatedRouteResource(templatedRouteResource);
+
         // add route and return the id it was assigned
         addRouteDefinition(def);
         return def.getId();
@@ -759,8 +775,9 @@ public class DefaultModel implements Model {
             }
         }
         // Add the route
-        addRouteFromTemplate(templatedRouteDefinition.getRouteId(), templatedRouteDefinition.getRouteTemplateRef(),
-                templatedRouteDefinition.getPrefixId(), templatedRouteDefinition.getGroup(), routeTemplateContext);
+        doAddRouteFromTemplate(templatedRouteDefinition.getRouteId(), templatedRouteDefinition.getRouteTemplateRef(),
+                templatedRouteDefinition.getPrefixId(), templatedRouteDefinition.getGroup(), null, null,
+                routeTemplateContext, templatedRouteDefinition.getResource());
     }
 
     private RouteTemplateContext toRouteTemplateContext(TemplatedRouteDefinition templatedRouteDefinition) {

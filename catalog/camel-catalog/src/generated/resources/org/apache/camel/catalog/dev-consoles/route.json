@@ -113,6 +113,10 @@
               "type": "boolean",
               "description": "Whether the route was created by a route template"
             },
+            "routeTemplateId": {
+              "type": "string",
+              "description": "The id of the route template (or Kamelet) the route was created from (only present when known)"
+            },
             "from": {
               "type": "string",
               "description": "The route's endpoint URI"
@@ -124,6 +128,10 @@
             "source": {
               "type": "string",
               "description": "The source location (only present when known)"
+            },
+            "templatedRouteSource": {
+              "type": "string",
+              "description": "The source that declares the templated route the route was created from (only present when known)"
             },
             "state": {
               "type": "string",

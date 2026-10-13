@@ -949,6 +949,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             for (BeanFactoryDefinition def : beans) {
                 def.setResource(getResource());
             }
+            // the route templates and templated routes are created before the resource is set on their collections
+            // (the routes get their resource when they are prepared)
+            for (RouteTemplateDefinition def : getRouteTemplateCollection().getRouteTemplates()) {
+                if (def.getResource() == null) {
+                    def.setResource(getResource());
+                }
+            }
+            for (TemplatedRouteDefinition def : getTemplatedRouteCollection().getTemplatedRoutes()) {
+                if (def.getResource() == null) {
+                    def.setResource(getResource());
+                }
+            }
 
             for (RouteDefinition route : getRouteCollection().getRoutes()) {
                 // ensure the route is prepared after configure method is complete
