@@ -73,10 +73,16 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
         Lock connectLock = getEndpoint().getClientConsumerConnectLock();
         connectLock.lock();
         try {
+            // Check before connecting: if the WebSocket is already open, the setup callback will be invoked on it
+            // (see getWebSocket javadoc), but "opened" must only track newly-opened sockets so that the reconnect
+            // guard below does not attempt to close the shared endpoint WebSocket.
+            boolean alreadyOpen = getEndpoint().isWebSocketOpen();
             AtomicReference<WebSocket> opened = new AtomicReference<>();
             WebSocket webSocket = getEndpoint().getWebSocket(ws -> {
                 configureWebSocketHandlers(ws);
-                opened.set(ws);
+                if (!alreadyOpen) {
+                    opened.set(ws);
+                }
             });
             WebSocket mine = opened.get();
             if (reconnect && mine != null && !isStarted()) {

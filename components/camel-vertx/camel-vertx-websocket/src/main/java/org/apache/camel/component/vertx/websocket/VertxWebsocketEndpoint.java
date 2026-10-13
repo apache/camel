@@ -163,6 +163,14 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         return clientConsumerConnectLock;
     }
 
+    /**
+     * Returns {@code true} if this endpoint's cached WebSocket is currently open. Used by
+     * {@link VertxWebsocketClientConsumer} to distinguish a newly-opened socket from a pre-existing one.
+     */
+    boolean isWebSocketOpen() {
+        return webSocket != null && !webSocket.isClosed();
+    }
+
     protected WebSocket getWebSocket() throws Exception {
         return getWebSocket((java.util.function.Consumer<WebSocket>) null);
     }
@@ -172,6 +180,10 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
      * {@code future.get()} returns. This guarantees that any message/close/exception handlers supplied by the callback
      * are registered atomically with the connection, so no messages sent by the server immediately after the handshake
      * can be missed.
+     * <p>
+     * If the WebSocket is already open (e.g. a producer connected first, or the consumer route was stopped and
+     * restarted while the connection was healthy), the setup callback is still invoked on the existing socket so that
+     * the caller's handlers are registered.
      */
     protected WebSocket getWebSocket(java.util.function.Consumer<WebSocket> setupCallback) throws Exception {
         if (client == null) {
@@ -224,6 +236,9 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
                 future.cancel(false);
                 throw e;
             }
+        } else if (setupCallback != null) {
+            // WebSocket already open — register the caller's handlers on the existing socket (CAMEL-25601).
+            setupCallback.accept(webSocket);
         }
         return webSocket;
     }
