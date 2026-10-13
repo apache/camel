@@ -55,7 +55,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.http.HttpUtil;
@@ -211,10 +210,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             continue;
                         }
 
-                        // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
-                        final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
-
-                        HttpUtil.applyHeader(strategy, exchange, it, tc, key,
+                        // a collection or an object array is sent as one header per value; any other value is a single header
+                        HttpUtil.applyHeaderValue(strategy, exchange, headerValue, tc, key,
                                 (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
                     }
                 }
@@ -340,12 +337,11 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     }
 
     private static void applyHeader(HttpUriRequest httpRequest, String key, List<String> multiValues, String prev) {
-        // add the value(s) as a http request header
+        // add the value(s) as http request header(s), one header line per value
         if (multiValues != null) {
-            // use the default toString of a ArrayList to create in the form [xxx, yyy]
-            // if multi valued, for a single value, then just output the value as is
-            String s = multiValues.size() > 1 ? multiValues.toString() : multiValues.get(0);
-            httpRequest.addHeader(key, s);
+            for (String value : multiValues) {
+                httpRequest.addHeader(key, value);
+            }
         } else if (prev != null) {
             httpRequest.addHeader(key, prev);
         }
