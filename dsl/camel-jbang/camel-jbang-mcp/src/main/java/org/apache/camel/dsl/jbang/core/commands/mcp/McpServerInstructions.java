@@ -59,7 +59,7 @@ public class McpServerInstructions implements InitialResponseInfo {
             http/https for an HTTP client. camel_catalog_find maps a protocol or product to the scheme.
             - YAML DSL: onException, errorHandler, routeConfiguration, intercept and onCompletion are top-level \
             entries beside route (or inside routeConfiguration), never steps. handled and continued are \
-            expressions: handled: {constant: "true"}.
+            expressions: handled: {constant: {expression: "true"}}.
             - camel run: camel.server.port (or camel run --port) sets the HTTP port. Extra jars: a //DEPS line in a \
             source file, camel.jbang.dependencies=group:artifact:version in application.properties, or --dep on the \
             command line (camel_run has no dependencies argument, so use one of the first two).

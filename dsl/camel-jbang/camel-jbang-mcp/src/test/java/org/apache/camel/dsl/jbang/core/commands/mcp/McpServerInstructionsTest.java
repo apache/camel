@@ -63,7 +63,7 @@ class McpServerInstructionsTest {
 
         assertThat(text).containsSubsequence(
                 "URI scheme: smtp", "platform-http",
-                "top-level", "handled: {constant: \"true\"}",
+                "top-level", "handled: {constant: {expression: \"true\"}}",
                 "camel.server.port", "//DEPS", "camel.jbang.dependencies", "--dep",
                 "useHeaderSubject=true", "useHeaderFrom=true", "useHeaderRecipients=true",
                 "removeHeaders", "Camel*",
