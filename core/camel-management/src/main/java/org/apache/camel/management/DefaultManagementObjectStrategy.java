@@ -473,7 +473,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof SendProcessor sp) {
                 // special for sending to throughput logger
                 if (sp.getDestination() instanceof LogEndpoint le && le.getLogger() instanceof ThroughputLogger tl) {
-                    answer = new ManagedThroughputLogger(context, tl, definition);
+                    answer = new ManagedThroughputLogger(context, tl, definition, le);
                 }
                 // regular send processor
                 if (answer == null) {
