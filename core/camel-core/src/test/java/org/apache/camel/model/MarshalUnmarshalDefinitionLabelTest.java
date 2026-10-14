@@ -16,11 +16,17 @@
  */
 package org.apache.camel.model;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.DummyDataformat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,10 +44,18 @@ public class MarshalUnmarshalDefinitionLabelTest {
     }
 
     @Test
-    public void testLabelOfDataFormatInstance() {
+    public void testLabelOfDataFormatInstanceWithName() {
+        // DummyDataformat declares its name with DataFormatName
         DataFormatDefinition instance = new DataFormatDefinition(new DummyDataformat());
-        assertEquals("marshal[DummyDataformat]", new MarshalDefinition(instance).getLabel());
-        assertEquals("unmarshal[DummyDataformat]", new UnmarshalDefinition(instance).getLabel());
+        assertEquals("marshal[dummy]", new MarshalDefinition(instance).getLabel());
+        assertEquals("unmarshal[dummy]", new UnmarshalDefinition(instance).getLabel());
+    }
+
+    @Test
+    public void testLabelOfDataFormatInstanceWithoutName() {
+        DataFormatDefinition instance = new DataFormatDefinition(new MyDataFormat());
+        assertEquals("marshal[MyDataFormat]", new MarshalDefinition(instance).getLabel());
+        assertEquals("unmarshal[MyDataFormat]", new UnmarshalDefinition(instance).getLabel());
     }
 
     @Test
@@ -55,5 +69,17 @@ public class MarshalUnmarshalDefinitionLabelTest {
     public void testLabelWithoutDataFormat() {
         assertEquals("marshal[]", new MarshalDefinition().getLabel());
         assertEquals("unmarshal[]", new UnmarshalDefinition().getLabel());
+    }
+
+    private static class MyDataFormat extends ServiceSupport implements DataFormat {
+
+        @Override
+        public void marshal(Exchange exchange, Object graph, OutputStream stream) {
+        }
+
+        @Override
+        public Object unmarshal(Exchange exchange, InputStream stream) {
+            return null;
+        }
     }
 }

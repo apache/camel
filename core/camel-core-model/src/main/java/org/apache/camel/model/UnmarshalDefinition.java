@@ -73,6 +73,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -181,6 +182,9 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         }
         // the name of the data format (such as jackson or csv), as its toString is the object for most data formats
         String name = dataFormatType.getDataFormatName();
+        if (name == null && dataFormatType.getDataFormat() instanceof DataFormatName dfn) {
+            name = dfn.getDataFormatName();
+        }
         if (name == null && dataFormatType.getDataFormat() != null) {
             name = dataFormatType.getDataFormat().getClass().getSimpleName();
         }
