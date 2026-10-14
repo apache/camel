@@ -129,13 +129,13 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(from).routeId("myRoute").to(to).process(exchange -> {
+                from(from).routeId("myRoute").process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
                     PulsarMessageReceipt receipt
                             = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
-                });
+                }).to(to);
             }
         });
 
