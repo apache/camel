@@ -212,6 +212,13 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             initConsumers();
             connectionLock.lock();
             try {
+                if (consumers == null) {
+                    // the new connection failed while its consumers were created: onException dropped them, and
+                    // did not schedule another recovery as this one is running. So this one has to try again
+                    LOG.debug("JMS Connection failed again during recovery (attempt: {}). Will try again in {} millis",
+                            task.iteration(), endpoint.getRecoveryInterval());
+                    return false;
+                }
                 if (recoverFuture != null) {
                     recoverFuture.cancel(false);
                 }
@@ -358,14 +365,33 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             if (consumers == null) {
                 LOG.debug("Initializing {} concurrent consumers as JMS listener on destination: {}", concurrentConsumers,
                         destinationName);
-                sessions = new HashSet<>(concurrentConsumers);
-                consumers = new HashSet<>(concurrentConsumers);
-                for (int i = 0; i < this.concurrentConsumers; i++) {
-                    Session session = createSession(connection, endpoint);
-                    MessageConsumer consumer = createMessageConsumer(session);
-                    configureConsumer(consumer, session);
-                    sessions.add(session);
-                    consumers.add(consumer);
+                Set<Session> newSessions = new HashSet<>(concurrentConsumers);
+                Set<MessageConsumer> newConsumers = new HashSet<>(concurrentConsumers);
+                // assigned before the loop, so that an onException during the creation (it sets the fields to null)
+                // is seen by recoverConnection, which then tries again
+                sessions = newSessions;
+                consumers = newConsumers;
+                try {
+                    for (int i = 0; i < this.concurrentConsumers; i++) {
+                        Session session = createSession(connection, endpoint);
+                        newSessions.add(session);
+                        MessageConsumer consumer = createMessageConsumer(session);
+                        newConsumers.add(consumer);
+                        configureConsumer(consumer, session);
+                    }
+                } catch (Exception e) {
+                    // not all the consumers could be created (the connection failed again, the destination is not
+                    // available yet). Close the ones that were, and leave no half filled set behind: the next
+                    // attempt (connection recovery, restart) would take it for the consumers and create none
+                    this.consumers = null;
+                    this.sessions = null;
+                    for (MessageConsumer consumer : newConsumers) {
+                        closeConsumer(consumer);
+                    }
+                    for (Session session : newSessions) {
+                        closeSession(session);
+                    }
+                    throw e;
                 }
             }
         } finally {
