@@ -45,6 +45,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -429,51 +430,55 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
     }
 
     private CommandInfo parseCommandClass(File file) throws IOException {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(file);
+        JavaType<?> parsedFile = Roaster.parse(file);
+        if (parsedFile instanceof JavaClassSource clazz) {
 
-        // Check if this class has @Command annotation
-        AnnotationSource<?> commandAnn = findAnnotation(clazz, "Command");
-        if (commandAnn == null) {
+            // Check if this class has @Command annotation
+            AnnotationSource<?> commandAnn = findAnnotation(clazz, "Command");
+            if (commandAnn == null) {
+                return null;
+            }
+
+            CommandInfo info = new CommandInfo();
+            info.className = clazz.getName();
+            info.qualifiedName = clazz.getQualifiedName();
+
+            // Parse @Command annotation
+            String name = commandAnn.getStringValue("name");
+            if (name != null) {
+                info.name = name.replace("\"", "");
+            } else {
+                info.name = clazz.getName().toLowerCase();
+            }
+
+            String description = commandAnn.getStringValue("description");
+            if (description != null) {
+                description = description.replace("\"", "");
+                // Clean up description - remove help hints
+                if (description.contains("(use")) {
+                    description = description.substring(0, description.indexOf("(use")).trim();
+                }
+                info.description = description;
+            }
+
+            // Check for deprecated
+            if (clazz.getAnnotation(Deprecated.class) != null) {
+                info.deprecated = true;
+            }
+
+            // Check for hidden
+            if ("true".equals(commandAnn.getStringValue("hidden"))) {
+                info.hidden = true;
+            }
+
+            // Parse options from this class AND parent classes
+            info.options = new ArrayList<>();
+            parseOptionsFromClassHierarchy(clazz, info.options, file.getParentFile());
+
+            return info;
+        } else {
             return null;
         }
-
-        CommandInfo info = new CommandInfo();
-        info.className = clazz.getName();
-        info.qualifiedName = clazz.getQualifiedName();
-
-        // Parse @Command annotation
-        String name = commandAnn.getStringValue("name");
-        if (name != null) {
-            info.name = name.replace("\"", "");
-        } else {
-            info.name = clazz.getName().toLowerCase();
-        }
-
-        String description = commandAnn.getStringValue("description");
-        if (description != null) {
-            description = description.replace("\"", "");
-            // Clean up description - remove help hints
-            if (description.contains("(use")) {
-                description = description.substring(0, description.indexOf("(use")).trim();
-            }
-            info.description = description;
-        }
-
-        // Check for deprecated
-        if (clazz.getAnnotation(Deprecated.class) != null) {
-            info.deprecated = true;
-        }
-
-        // Check for hidden
-        if ("true".equals(commandAnn.getStringValue("hidden"))) {
-            info.hidden = true;
-        }
-
-        // Parse options from this class AND parent classes
-        info.options = new ArrayList<>();
-        parseOptionsFromClassHierarchy(clazz, info.options, file.getParentFile());
-
-        return info;
     }
 
     private void parseOptionsFromClassHierarchy(JavaClassSource clazz, List<OptionInfo> options, File baseDir) {
@@ -490,8 +495,12 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
             File parentFile = findClassFile(baseDir, parentClassName);
             if (parentFile != null && parentFile.exists()) {
                 try {
-                    JavaClassSource parentClazz = (JavaClassSource) Roaster.parse(parentFile);
-                    parseOptionsFromClassHierarchy(parentClazz, options, parentFile.getParentFile());
+                    JavaType<?> parsedParent = Roaster.parse(parentFile);
+                    if (parsedParent instanceof JavaClassSource parentClazz) {
+                        parseOptionsFromClassHierarchy(parentClazz, options, parentFile.getParentFile());
+                    } else {
+                        getLog().debug("Skipping options from non-class parent type: " + parentClassName);
+                    }
                 } catch (Exception e) {
                     getLog().debug("Could not parse parent class: " + parentClassName + " - " + e.getMessage());
                 }
@@ -529,8 +538,12 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 File mixinFile = findClassFile(baseDir, mixinTypeName);
                 if (mixinFile != null && mixinFile.exists()) {
                     try {
-                        JavaClassSource mixinClazz = (JavaClassSource) Roaster.parse(mixinFile);
-                        parseOptionsFromClassHierarchy(mixinClazz, options, mixinFile.getParentFile());
+                        JavaType<?> parsedMixin = Roaster.parse(mixinFile);
+                        if (parsedMixin instanceof JavaClassSource mixinClazz) {
+                            parseOptionsFromClassHierarchy(mixinClazz, options, mixinFile.getParentFile());
+                        } else {
+                            getLog().debug("Skipping options from non-class mixin type: " + mixinTypeName);
+                        }
                     } catch (Exception e) {
                         getLog().debug("Could not parse mixin class: " + mixinTypeName + " - " + e.getMessage());
                     }
@@ -761,8 +774,12 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
 
         if (classFile != null) {
             try {
-                JavaClassSource candidatesClass = (JavaClassSource) Roaster.parse(classFile);
-                return extractCandidateValues(candidatesClass);
+                JavaType<?> parsedCandidates = Roaster.parse(classFile);
+                if (parsedCandidates instanceof JavaClassSource candidatesClass) {
+                    return extractCandidateValues(candidatesClass);
+                } else {
+                    getLog().debug("Skipping completion candidates from non-class type: " + className);
+                }
             } catch (Exception e) {
                 getLog().debug("Could not parse completion candidates class: " + className + " - " + e.getMessage());
             }
