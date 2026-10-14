@@ -332,8 +332,11 @@ class ExportQuarkus extends Export {
             // skip "camel.server." or "camel.management." as this is for camel-main only
             return null;
         }
-        // quarkus use dash cased properties and lets turn camel into dash as well (skip hawtio)
-        boolean dash = key.startsWith("camel.") || (key.startsWith("quarkus.") && !key.startsWith("quarkus.hawtio."));
+        // camel.* keys are written dash-cased, because Camel's property binding turns the dashes back at runtime.
+        // quarkus.* keys are written as given: Quarkus accepts both camelCase and kebab-case for its own option
+        // names, and dash-converting them otherwise mangles user-chosen name segments such as datasource names, log
+        // categories and quoted keys (e.g. quarkus.datasource.Orders or quarkus.log.category."com.example.MyRoute").
+        boolean dash = key.startsWith("camel.");
         if (dash) {
             key = StringHelper.camelCaseToDash(key);
         }
