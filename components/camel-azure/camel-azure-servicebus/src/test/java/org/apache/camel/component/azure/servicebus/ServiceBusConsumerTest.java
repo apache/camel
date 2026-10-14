@@ -386,6 +386,78 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
+    void synchronizationBoundsTheDeadLetterReasonAndDescription() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+            when(configuration.isEnableDeadLettering()).thenReturn(true);
+
+            consumer.doStart();
+            when(messageContext.getMessage()).thenReturn(message);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            Exchange exchange = exchangeCaptor.getValue();
+            exchange.setException(exceptionWithALongMessageAndADeepStackTrace());
+
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            synchronization.onFailure(exchange);
+
+            ArgumentCaptor<DeadLetterOptions> captor = ArgumentCaptor.captor();
+            verify(messageContext).deadLetter(captor.capture());
+            DeadLetterOptions options = captor.getValue();
+
+            // Azure asks for the exception type and its stack trace here, but warns the result can push the message
+            // past the 256 KB quota of the Standard tier - so both are capped, and visibly so
+            assertThat(options.getDeadLetterReason())
+                    .hasSizeLessThanOrEqualTo(1024 + 3)
+                    .startsWith(IllegalStateException.class.getName())
+                    .endsWith("...");
+            assertThat(options.getDeadLetterErrorDescription())
+                    .hasSizeLessThanOrEqualTo(8192 + 3)
+                    .contains(getClass().getName())
+                    .endsWith("...");
+        }
+    }
+
+    @Test
+    void synchronizationReportsARejectedDeadLetterInsteadOfThrowing() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+            when(configuration.isEnableDeadLettering()).thenReturn(true);
+            consumer.setExceptionHandler(exceptionHandler);
+
+            consumer.doStart();
+            when(messageContext.getMessage()).thenReturn(message);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            Exchange exchange = exchangeCaptor.getValue();
+            final Exception routeFailure = new Exception("Test exception");
+            exchange.setException(routeFailure);
+
+            // the broker refuses the request, for instance because the message is over the size quota
+            final RuntimeException rejected = new IllegalStateException("Dead-lettering rejected");
+            doThrow(rejected).when(messageContext).deadLetter(any(DeadLetterOptions.class));
+
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            // must not escape into the SDK's processor callback, where nothing would report it
+            synchronization.onFailure(exchange);
+
+            verify(exceptionHandler).handleException(anyString(), eq(exchange), eq(rejected));
+        }
+    }
+
+    private static Exception exceptionWithALongMessageAndADeepStackTrace() {
+        Exception answer = new IllegalStateException("x".repeat(4096));
+        StackTraceElement[] frames = new StackTraceElement[512];
+        for (int i = 0; i < frames.length; i++) {
+            frames[i] = new StackTraceElement(
+                    ServiceBusConsumerTest.class.getName(), "frame" + i,
+                    "ServiceBusConsumerTest.java", i);
+        }
+        answer.setStackTrace(frames);
+        return answer;
+    }
+
+    @Test
     void synchronizationDeadLettersMessageWithoutOptionsWhenExceptionNotPresent() throws Exception {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);

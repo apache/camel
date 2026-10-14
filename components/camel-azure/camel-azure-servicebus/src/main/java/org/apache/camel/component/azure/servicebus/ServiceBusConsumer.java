@@ -46,6 +46,7 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,14 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
     private static final int LOCK_RENEW_INTERVAL_SECONDS = 10;
+    // Azure recommends putting the exception type in the dead-letter reason and its stack trace in the description,
+    // but warns that doing so "might result in some messages exceeding the 256 KB quota limit for the Standard tier".
+    // A rejected dead-letter request leaves the message locked, so cap both rather than risk the quota: the head of a
+    // stack trace carries the cause, the tail is error-handler frames.
+    private static final int MAX_DEAD_LETTER_REASON_LENGTH = 1024;
+    private static final int MAX_DEAD_LETTER_DESCRIPTION_LENGTH = 8192;
+    // so that whoever reads the dead-letter queue can see the text was cut rather than the trace having ended
+    private static final String TRUNCATED_SUFFIX = "...";
 
     private ServiceBusProcessorClient client;
     private boolean clientCloseable;
@@ -385,17 +394,10 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                 if (getConfiguration().getServiceBusReceiveMode() == ServiceBusReceiveMode.PEEK_LOCK) {
                     if (getConfiguration().isEnableDeadLettering() && (ObjectHelper.isEmpty(getConfiguration().getSubQueue())
                             || ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
-                        DeadLetterOptions deadLetterOptions = new DeadLetterOptions();
                         if (cause != null) {
-                            deadLetterOptions
-                                    .setDeadLetterReason(
-                                            String.format("%s: %s", cause.getClass().getName(), cause.getMessage()));
-                            deadLetterOptions.setDeadLetterErrorDescription(Arrays.stream(cause.getStackTrace())
-                                    .map(StackTraceElement::toString)
-                                    .collect(Collectors.joining("\n")));
-                            messageContext.deadLetter(deadLetterOptions);
+                            deadLetter(exchange, deadLetterOptions(cause));
                         } else {
-                            messageContext.deadLetter();
+                            deadLetter(exchange, null);
                         }
                     } else {
                         messageContext.abandon();
@@ -403,6 +405,44 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                 }
             } finally {
                 pendingExchanges.decrementAndGet();
+            }
+        }
+
+        /**
+         * Describes the failure for the dead-letter queue, bounded so that the diagnostics cannot be what makes the
+         * broker reject the message.
+         */
+        private DeadLetterOptions deadLetterOptions(Exception cause) {
+            String stackTrace = Arrays.stream(cause.getStackTrace())
+                    .map(StackTraceElement::toString)
+                    .collect(Collectors.joining("\n"));
+
+            return new DeadLetterOptions()
+                    .setDeadLetterReason(StringHelper.limitLength(
+                            String.format("%s: %s", cause.getClass().getName(), cause.getMessage()),
+                            MAX_DEAD_LETTER_REASON_LENGTH, TRUNCATED_SUFFIX))
+                    .setDeadLetterErrorDescription(StringHelper.limitLength(
+                            stackTrace, MAX_DEAD_LETTER_DESCRIPTION_LENGTH, TRUNCATED_SUFFIX));
+        }
+
+        /**
+         * Dead-letters the message, reporting a rejected request instead of letting it leave this synchronization.
+         * <p/>
+         * Nothing else would report it: the exception would surface inside the Azure SDK's processor callback, the
+         * message would stay locked until the lock expired, and Service Bus would redeliver it until
+         * {@code maxDeliveryCount} was reached - dead-lettering it with its own reason, which is the opposite of what
+         * {@code enableDeadLettering} is for.
+         */
+        private void deadLetter(Exchange exchange, DeadLetterOptions options) {
+            try {
+                if (options != null) {
+                    messageContext.deadLetter(options);
+                } else {
+                    messageContext.deadLetter();
+                }
+            } catch (Exception e) {
+                getExceptionHandler().handleException(
+                        "Cannot dead-letter the message. It stays locked and will be redelivered.", exchange, e);
             }
         }
     }
