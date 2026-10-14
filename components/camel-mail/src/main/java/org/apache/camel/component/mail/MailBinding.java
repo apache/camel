@@ -148,8 +148,8 @@ public class MailBinding {
             setRecipientFromEndpointConfiguration(mimeMessage, endpoint, exchange);
         }
 
-        // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
-        // and headers, the headers win UNLESS useHeaderReplyTo is set to false.
+        // set the replyTo if it was passed in as an option in the uri. Note: the Reply-To header is
+        // ignored unless useHeaderReplyTo is set to true (default false), in which case the header wins.
         String replyTo = null;
         if (endpoint.getConfiguration().isUseHeaderReplyTo()) {
             replyTo = exchange.getIn().getHeader(MailConstants.MAIL_REPLY_TO, String.class);
@@ -173,8 +173,8 @@ public class MailBinding {
             throw new IllegalArgumentException("The mail message does not have any recipients set.");
         }
 
-        // set the subject if it was passed in as an option in the uri. Note: if it is in both the URI
-        // and headers the headers win UNLESS useHeaderSubject is set to false.
+        // set the subject if it was passed in as an option in the uri. Note: the Subject header is
+        // ignored unless useHeaderSubject is set to true (default false), in which case the header wins.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
             mimeMessage.setSubject(subject, ExchangeHelper.getCharsetName(exchange, false));
