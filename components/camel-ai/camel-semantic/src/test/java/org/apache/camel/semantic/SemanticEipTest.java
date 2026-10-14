@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -66,7 +65,6 @@ class SemanticEipTest extends CamelTestSupport {
                         return new SemanticResult(value, null, null, null, Map.of("provider", "fixture"));
                     }
                 });
-                ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("classifier");
                 SemanticEvaluations.get(context).replace("test", Map.of(
                         "department", evaluation("department", "choice"),
                         "actionable", evaluation("actionable", "boolean"),
@@ -150,7 +148,7 @@ class SemanticEipTest extends CamelTestSupport {
     }
 
     private static SemanticEvaluation evaluation(String name, String type) {
-        return new SemanticEvaluation(type, null, null, switch (type) {
+        return new SemanticEvaluation(type, "classifier", null, switch (type) {
             case "boolean" -> Map.of("instructions", name, "threshold", 0.5,
                     "uncertainty", 0.0, "uncertaintyPolicy", "fail");
             case "choice" -> Map.of("instructions", name, "criteria",

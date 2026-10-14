@@ -17,50 +17,34 @@
 package org.apache.camel.semantic;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.main.Main;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticPropertiesTest {
     @ParameterizedTest
-    @ValueSource(strings = { "bean", "class", "placeholder", "defaultExpert" })
-    void camelMainBindsAdapterAndDefaultState(String selection) throws Exception {
+    @ValueSource(strings = { "classifier", "{{expert.name}}" })
+    void camelMainBindsDefaultStateAndExplicitExpertPlaceholders(String expert) throws Exception {
         Main main = new Main();
         SemanticLanguageTest.LabelAdapter bean = new SemanticLanguageTest.LabelAdapter();
         main.bind("classifier", bean);
-        String adapter = switch (selection) {
-            case "bean", "defaultExpert" -> "classifier";
-            case "placeholder" -> "{{adapter.name}}";
-            default -> SemanticLanguageTest.LabelAdapter.class.getName();
-        };
-        main.addProperty("adapter.name", "classifier");
-        main.addProperty(selection.equals("defaultExpert")
-                ? "camel.language.semantic.default-expert" : "camel.language.semantic.adapter", adapter);
+        main.addProperty("expert.name", "classifier");
         main.addProperty("camel.language.semantic.default-state", "${header.selected}");
         main.configure().addRoutesBuilder(new RouteBuilder() {
             public void configure() {
                 SemanticEvaluations.get(getContext()).replace("test", Map.of("q",
-                        SemanticLanguageTest.evaluation("choice", null, 0.5, 0,
-                                "fail")));
+                        new SemanticEvaluation(
+                                "choice", expert, null, Map.of("instructions", "Which department?",
+                                        "criteria", Map.of("billing", "Payments", "technical", "Bugs")))));
                 from("direct:start").setHeader("answer").language("semantic", "ref:q");
             }
         });
         try {
             main.start();
-            if (!selection.equals("class")) {
-                assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
-            } else {
-                assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME))
-                        .isInstanceOf(SemanticLanguageTest.LabelAdapter.class).isNotSameAs(bean);
-            }
             try (var template = main.getCamelContext().createProducerTemplate()) {
                 var result = template.request("direct:start", exchange -> {
                     exchange.getMessage().setBody("original");
@@ -76,33 +60,4 @@ class SemanticPropertiesTest {
         }
     }
 
-    @Test
-    void classReferenceIsTypeCheckedBeforeConstruction() {
-        Main main = new Main();
-        WrongType.constructed.set(0);
-        main.addProperty("camel.language.semantic.adapter", WrongType.class.getName());
-        main.configure().addRoutesBuilder(new RouteBuilder() {
-            public void configure() {
-                SemanticEvaluations.get(getContext()).replace("test", Map.of("q",
-                        SemanticLanguageTest.evaluation("choice", null, 0.5, 0,
-                                "fail")));
-                from("direct:start").setHeader("answer").language("semantic", "ref:q");
-            }
-        });
-        try {
-            assertThatThrownBy(main::start).hasStackTraceContaining("ClassCastException");
-            assertThat(WrongType.constructed).hasValue(0);
-            assertThat(main.getCamelContext().getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
-        } finally {
-            main.stop();
-        }
-    }
-
-    public static class WrongType {
-        static final AtomicInteger constructed = new AtomicInteger();
-
-        public WrongType() {
-            constructed.incrementAndGet();
-        }
-    }
 }

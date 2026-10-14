@@ -371,9 +371,9 @@ class SemanticContractTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticEvaluations(this).expert("content")
-                            .evaluation("categories").operation("classify").end()
-                            .evaluation("safety").operation("safety").register();
+                    semanticEvaluations(this)
+                            .evaluation("categories").expert("content").operation("classify").end()
+                            .evaluation("safety").expert("content").operation("safety").register();
                     from("direct:check").choice()
                             .when(simple("${semantic('categories')} contains 'privacy'"))
                             .setHeader("review", constant(true)).end()
@@ -403,9 +403,9 @@ class SemanticContractTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticEvaluations(this).expert("content")
-                            .evaluation("injection").operation("detect").parameter("threshold", 0.9).end()
-                            .evaluation("defaultPolicy").operation("detect").register();
+                    semanticEvaluations(this)
+                            .evaluation("injection").expert("content").operation("detect").parameter("threshold", 0.9).end()
+                            .evaluation("defaultPolicy").expert("content").operation("detect").register();
                 }
             });
             context.start();
@@ -475,18 +475,18 @@ class SemanticContractTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void nestedSelectorsDoNotActivateOwnedProvidersDuringValidation(boolean started) throws Exception {
+    void nestedSelectorsDoNotTakeOverRegisteredProviderLifecycle(boolean started) throws Exception {
         try (var context = new DefaultCamelContext()) {
             SemanticExpertTest.ManagedExpert.initialized = 0;
             SemanticExpertTest.ManagedExpert.started = 0;
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setAdapter(SemanticExpertTest.ManagedExpert.class.getName());
+            context.getRegistry().bind("managed", new SemanticExpertTest.ManagedExpert());
             context.getRegistry().bind("content", new ContentExpert());
             if (started) {
                 context.start();
             }
             SemanticEvaluations.get(context).replace("test", Map.of(
-                    "inner", new SemanticEvaluation("boolean", null, null, Map.of()),
+                    "inner", new SemanticEvaluation("boolean", "managed", null, Map.of()),
                     "outer", new SemanticEvaluation("detect", "content", "${semantic('inner')} ready", Map.of())));
             context.start();
             assertThat(SemanticExpertTest.ManagedExpert.initialized).isZero();
@@ -494,8 +494,8 @@ class SemanticContractTest {
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody("content");
             assertThat(language.createExpression("ref:outer").evaluate(exchange, Boolean.class)).isTrue();
-            assertThat(SemanticExpertTest.ManagedExpert.initialized).isOne();
-            assertThat(SemanticExpertTest.ManagedExpert.started).isOne();
+            assertThat(SemanticExpertTest.ManagedExpert.initialized).isZero();
+            assertThat(SemanticExpertTest.ManagedExpert.started).isZero();
         }
     }
 
@@ -554,17 +554,17 @@ class SemanticContractTest {
         } else if (dsl.equals("yaml")) {
             yamlDeclaration(context, """
                     - semantic:
-                        expert: content
                         evaluation:
                           numeric:
+                            expert: content
                             operation: classify
                             parameters:
                               limit: %s
                     """.formatted(value));
         } else {
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("numeric.xml", """
-                    <semantic expert="content">
-                      <evaluation name="numeric" operation="classify">
+                    <semantic>
+                      <evaluation expert="content" name="numeric" operation="classify">
                         <parameters><parameter name="limit"><number>%s</number></parameter></parameters>
                       </evaluation>
                     </semantic>
@@ -587,8 +587,8 @@ class SemanticContractTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticEvaluations(this).expert("content").state("${body}")
-                            .evaluation("categories").operation("classify")
+                    semanticEvaluations(this).state("${body}")
+                            .evaluation("categories").expert("content").operation("classify")
                             .parameter("limit", Double.valueOf(getContext().resolvePropertyPlaceholders("{{limit:2}}")))
                             .parameter("policy",
                                     Map.of("allowed-tags", List.of("{{label:privacy}}", "unsafe"), "enabled", true, "cutoff",
@@ -599,10 +599,10 @@ class SemanticContractTest {
         } else if (dsl.equals("yaml")) {
             String yaml = """
                     - semantic:
-                        expert: content
                         state: "${body}"
                         evaluation:
                           categories:
+                            expert: content
                             operation: classify
                             parameters:
                               limit: !number "{{limit:2}}"
@@ -615,8 +615,8 @@ class SemanticContractTest {
         } else {
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("contract.xml",
                     """
-                            <semantic expert="content" state="${body}">
-                              <evaluation name="categories" operation="classify">
+                            <semantic state="${body}">
+                              <evaluation expert="content" name="categories" operation="classify">
                                 <parameters>
                                   <parameter name="limit"><number>{{limit:2}}</number></parameter>
                                   <parameter name="policy"><map>

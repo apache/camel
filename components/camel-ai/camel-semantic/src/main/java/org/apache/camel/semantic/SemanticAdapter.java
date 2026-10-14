@@ -25,8 +25,8 @@ import java.util.Map;
  * credentials. Validation must not perform inference or contact external services. Provider configuration belongs to
  * the provider component.
  *
- * Adapters created by the language receive the Camel context when CamelContextAware and are managed when Service.
- * Referenced registry beans retain their existing lifecycle owner.
+ * Experts are explicit registry beans and retain their registry or application lifecycle owner. The semantic language
+ * does not instantiate, discover or manage provider services.
  */
 public interface SemanticAdapter {
     /** Reject unsupported evaluation kinds, criteria, decision policies or input selectors before traffic starts. */

@@ -31,7 +31,6 @@ import org.apache.camel.spi.Resource;
 public final class SemanticEvaluationsBuilder {
     private static final String LIFECYCLE = SemanticEvaluationsBuilder.class.getName();
     private SemanticAuditConfiguration audit;
-    private String expert;
     private String state;
     private final CamelContext context;
     private final RouteBuilder builder;
@@ -64,18 +63,9 @@ public final class SemanticEvaluationsBuilder {
         return this;
     }
 
-    public SemanticEvaluationsBuilder expert(String expert) {
-        this.expert = expert;
-        return this;
-    }
-
     public SemanticEvaluationsBuilder state(String state) {
         this.state = state;
         return this;
-    }
-
-    String getExpert() {
-        return expert;
     }
 
     String getState() {
@@ -101,7 +91,7 @@ public final class SemanticEvaluationsBuilder {
             try {
                 definitions.put(name, evaluation.build(context));
             } catch (IllegalArgumentException e) {
-                String expert = evaluation.getExpert() != null ? evaluation.getExpert() : "default/automatic";
+                String expert = evaluation.getExpert() != null ? evaluation.getExpert() : "not provided";
                 throw new IllegalArgumentException(
                         "Invalid semantic evaluation '" + name + "': " + e.getMessage() + " (expert '" + expert + "')", e);
             }

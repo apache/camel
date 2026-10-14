@@ -69,7 +69,6 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
                     }
                 });
                 SemanticLanguage language = (SemanticLanguage) context.resolveLanguage("semantic");
-                language.setAdapter("evaluator");
                 SemanticEvaluations.get(context).replace("test", Map.of(
                         "retryable", evaluation("Is another attempt worthwhile?", "${exchangeProperty.retryState}"),
                         "withinScope", evaluation("Does the proposed action serve the approved task?", "${body}")));
@@ -117,7 +116,7 @@ class SemanticRetryAndValidationTest extends CamelTestSupport {
 
     private static SemanticEvaluation evaluation(String instructions, String state) {
         return new SemanticEvaluation(
-                "boolean", null, state,
+                "boolean", "evaluator", state,
                 Map.of("instructions", instructions, "threshold", 0.8, "uncertainty", 0.05, "uncertaintyPolicy", "fail"));
     }
 

@@ -16504,9 +16504,6 @@
           "audit" : {
             "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$AuditSchema"
           },
-          "expert" : {
-            "type" : "string"
-          },
           "state" : {
             "type" : "string"
           }
@@ -16584,9 +16581,6 @@
               "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
             }
           },
-          "expert" : {
-            "type" : "string"
-          },
           "state" : {
             "type" : "string"
           }
@@ -16597,9 +16591,6 @@
         "type" : "object",
         "additionalProperties" : false,
         "properties" : {
-          "expert" : {
-            "type" : "string"
-          },
           "state" : {
             "type" : "string"
           }
@@ -16614,9 +16605,6 @@
             "additionalProperties" : {
               "$ref" : "#/items/definitions/org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$EvaluationSchema"
             }
-          },
-          "expert" : {
-            "type" : "string"
           },
           "state" : {
             "type" : "string"
@@ -16672,7 +16660,7 @@
             "type" : "string"
           }
         },
-        "required" : [ "criteria" ]
+        "required" : [ "criteria", "expert" ]
       },
       "org.apache.camel.semantic.yaml.SemanticDefinitionDeserializer$MapCriteriaSchema" : {
         "type" : "object",
@@ -16711,7 +16699,8 @@
           "uncertaintyPolicy" : {
             "type" : "string"
           }
-        }
+        },
+        "required" : [ "expert" ]
       },
       "org.apache.camel.dsl.yaml.deserializers.OutputAwareFromDefinition$Inline" : {
         "type" : "object",

@@ -36,7 +36,7 @@ import picocli.CommandLine;
                              "  camel semantic my-app",
                              "  camel semantic get my-app --expert=guard",
                              "  camel semantic eval my-app --evaluation=safe --body='Sample message' --json",
-                             "  camel semantic audit my-app --category=decision --json" })
+                             "  camel semantic audit my-app --category=evaluation --json" })
 public class CamelSemantic extends SemanticActionCommand {
 
     @CommandLine.Option(names = "--expert", description = "Show the operations and parameter contract of this expert")
@@ -95,17 +95,6 @@ public class CamelSemantic extends SemanticActionCommand {
                 new Column().header("REFERENCE").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "reference")),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "name")),
                 new Column().header("ERROR").dataAlign(HorizontalAlign.LEFT).with(r -> text(r, "error")))));
-        String defaultExpert = text(response, "defaultExpert");
-        printer().println("Default expert: " + (defaultExpert.isEmpty() ? "none" : defaultExpert));
-        String defaultError = text(response, "defaultError");
-        String defaultErrorCode = text(response, "defaultErrorCode");
-        // Older runtimes expose only the message; structured codes take precedence when available.
-        boolean noUniqueExpert = defaultErrorCode.isEmpty()
-                ? defaultError.startsWith("Semantic language requires exactly one eligible expert")
-                : "no_unique_expert".equals(defaultErrorCode);
-        if (!defaultError.isEmpty() && !noUniqueExpert) {
-            printer().println("Default expert error: " + defaultError);
-        }
     }
 
     private static List<JsonObject> rows(JsonArray values) {

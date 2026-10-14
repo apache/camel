@@ -63,11 +63,8 @@ record SemanticCompletionContext(String expert, boolean shorthand) {
                                             && tuple.getKeyNode().getStartMark().orElseThrow().getLine() == row);
                             if (atOperation) {
                                 Node expert = field(evaluation, "expert");
-                                if (expert == null) {
-                                    expert = field(block, "expert");
-                                }
                                 String name = expert == null ? null : text(expert);
-                                if (expert != null && (name == null || name.isBlank() || !Tag.STR.equals(expert.getTag()))) {
+                                if (expert == null || name == null || name.isBlank() || !Tag.STR.equals(expert.getTag())) {
                                     return null;
                                 }
                                 return new SemanticCompletionContext(name, "type".equals(key));

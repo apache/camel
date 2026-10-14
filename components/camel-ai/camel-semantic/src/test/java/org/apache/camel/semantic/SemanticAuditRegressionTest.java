@@ -87,7 +87,7 @@ class SemanticAuditRegressionTest {
         var builder = new RouteBuilder() {
             public void configure() {
                 SemanticEvaluationsBuilder.semanticEvaluations(this).audit(auditConfiguration())
-                        .expert("security").evaluation("check").operation("boolean").register();
+                        .evaluation("check").expert("security").operation("boolean").register();
             }
         };
         builder.setResource(ResourceHelper.resolveResource(context, path.toUri().toString()));

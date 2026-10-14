@@ -20542,9 +20542,6 @@
         "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
         "required" : true
       }, {
-        "name" : "expert",
-        "type" : "string"
-      }, {
         "name" : "state",
         "type" : "string"
       }, {
@@ -20560,9 +20557,6 @@
         "type" : "object",
         "ref" : "semanticDefinitionDeserializer$AuditSchema",
         "required" : true
-      }, {
-        "name" : "expert",
-        "type" : "string"
       }, {
         "name" : "state",
         "type" : "string"
@@ -20625,18 +20619,12 @@
         "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
         "required" : true
       }, {
-        "name" : "expert",
-        "type" : "string"
-      }, {
         "name" : "state",
         "type" : "string"
       } ]
     },
     "semanticDefinitionDeserializer$DeclarationSchema" : {
       "children" : [ {
-        "name" : "expert",
-        "type" : "string"
-      }, {
         "name" : "state",
         "type" : "string"
       } ]
@@ -20648,9 +20636,6 @@
         "ref" : "semanticDefinitionDeserializer$EvaluationSchema",
         "required" : true
       }, {
-        "name" : "expert",
-        "type" : "string"
-      }, {
         "name" : "state",
         "type" : "string"
       } ]
@@ -20661,7 +20646,8 @@
         "type" : "any"
       }, {
         "name" : "expert",
-        "type" : "string"
+        "type" : "string",
+        "required" : true
       }, {
         "name" : "instructions",
         "type" : "string"
@@ -20695,7 +20681,8 @@
         "required" : true
       }, {
         "name" : "expert",
-        "type" : "string"
+        "type" : "string",
+        "required" : true
       }, {
         "name" : "instructions",
         "type" : "string"
@@ -20728,7 +20715,8 @@
         "type" : "object"
       }, {
         "name" : "expert",
-        "type" : "string"
+        "type" : "string",
+        "required" : true
       }, {
         "name" : "instructions",
         "type" : "string"

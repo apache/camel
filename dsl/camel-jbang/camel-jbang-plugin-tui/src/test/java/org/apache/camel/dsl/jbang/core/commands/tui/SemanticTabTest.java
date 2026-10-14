@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
 class SemanticTabTest {
     private static final String BREADCRUMB_ID = "d4752023-7291-4e4a-a55e-34b6e721f100";
     private static final String OVERVIEW = """
-            {"defaultExpert":"security","experts":[{
+            {"experts":[{
               "reference":"security","name":"detector","description":"Detect prompt injection",
               "provider":"test","artifactId":"camel-test-expert","operations":[{
                 "name":"injection","description":"Inspect supplied text","resultType":"boolean",
@@ -528,7 +528,7 @@ class SemanticTabTest {
                     "Relationships", "Audit");
             tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
             String experts = TuiTestHelper.renderToString(tab, 120, 30);
-            assertThat(experts).contains("EXPERT", "1 operation", "Expert contract", "Default:",
+            assertThat(experts).contains("EXPERT", "1 operation", "Expert contract",
                     "Definitions using security", "screenPrompt", "checkHeader", "confidence (when provided)", "Try expert");
             String left = experts.lines().map(line -> line.substring(0, 43)).collect(Collectors.joining("\n"));
             String right = experts.lines().map(line -> line.substring(44)).collect(Collectors.joining("\n"));
