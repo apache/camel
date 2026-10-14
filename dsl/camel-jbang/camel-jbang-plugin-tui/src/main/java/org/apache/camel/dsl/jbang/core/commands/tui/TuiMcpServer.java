@@ -532,10 +532,15 @@ class TuiMcpServer {
 
         String text;
         boolean isError = false;
+        ToolDescriptor tool = toolName != null ? ToolRegistry.findTool(toolName) : null;
         try {
-            JsonObject repeat = toolName != null
-                    ? repeatedCalls.repeatOf(ToolRegistry.findTool(toolName), args) : null;
-            text = repeat != null ? repeat.toJson() : toolRegistry.execute(toolName, args);
+            JsonObject repeat = repeatedCalls.repeatOf(tool, args);
+            if (repeat != null) {
+                text = repeat.toJson();
+            } else {
+                text = toolRegistry.execute(toolName, args);
+                repeatedCalls.recordSuccessfulAnswer(tool, args);
+            }
         } catch (IllegalArgumentException e) {
             text = "Unknown tool: " + toolName;
             isError = true;
