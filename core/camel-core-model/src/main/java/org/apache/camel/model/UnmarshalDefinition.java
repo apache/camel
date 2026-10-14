@@ -176,11 +176,15 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     }
 
     protected String description() {
-        if (dataFormatType != null) {
-            return dataFormatType.toString();
-        } else {
+        if (dataFormatType == null) {
             return "";
         }
+        // the name of the data format (such as jackson or csv), as its toString is the object for most data formats
+        String name = dataFormatType.getDataFormatName();
+        if (name == null && dataFormatType.getDataFormat() != null) {
+            name = dataFormatType.getDataFormat().getClass().getSimpleName();
+        }
+        return name != null ? name : dataFormatType.toString();
     }
 
     @Override
