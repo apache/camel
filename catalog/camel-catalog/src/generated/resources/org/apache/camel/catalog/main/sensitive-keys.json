@@ -19,6 +19,7 @@
   "azureclientsecret",
   "blobaccesskey",
   "blobstoragesharedkeycredential",
+  "callbacksecret",
   "certresourcepassword",
   "clientid",
   "clientsecret",

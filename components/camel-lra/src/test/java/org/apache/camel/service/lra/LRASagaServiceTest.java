@@ -17,9 +17,13 @@
 package org.apache.camel.service.lra;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.saga.CamelSagaStep;
+import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -73,6 +77,32 @@ public class LRASagaServiceTest extends CamelTestSupport {
         Mockito.when(client.newLRA(exchange)).thenReturn(expected);
         sagaService.newSaga(exchange);
         Mockito.verify(client).newLRA(exchange);
+    }
+
+    @DisplayName("Tests whether doStart() fails when the callback secret is set but blank")
+    @Test
+    void testBlankCallbackSecretFailsToStart() {
+        LRASagaService sagaService = new LRASagaService();
+        applyMockProperties(sagaService);
+        sagaService.setCallbackSecret(" ");
+
+        Assertions.assertThrows(IllegalArgumentException.class, sagaService::doStart);
+    }
+
+    @DisplayName("Tests whether registerStep() rejects a saga option named like a parameter of the callback URLs, in any case")
+    @Test
+    void testRegisterStepRejectsReservedOptionNames() {
+        LRASagaService sagaService = new LRASagaService();
+        Endpoint compensation = context().getEndpoint("direct:compensate1");
+        for (String name : new String[] {
+                "Camel-Saga-Compensate", "Camel-Saga-Complete", "Camel-Saga-Signature", "Camel-Saga-Lra",
+                "camel-saga-signature" }) {
+            CamelSagaStep step = new CamelSagaStep(
+                    compensation, null, Map.of(name, ExpressionBuilder.constantExpression("value")), null);
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> sagaService.registerStep(step), name);
+        }
+        Assertions.assertTrue(sagaService.getRegisteredURIs().isEmpty());
     }
 
     private void applyMockProperties(LRASagaService sagaService) {
