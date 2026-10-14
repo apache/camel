@@ -23,12 +23,14 @@ import java.util.Set;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
+import org.apache.camel.diagram.RouteErrorFrame;
+import org.apache.camel.diagram.TopologyAsciiRenderer;
+import org.apache.camel.diagram.TopologyErrorFrame;
+import org.apache.camel.diagram.TopologyErrorFrame.ErrorPath;
 import org.apache.camel.diagram.TopologyLayoutEngine;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
-import org.apache.camel.dsl.jbang.core.commands.tui.diagram.ErrorLayer;
-import org.apache.camel.dsl.jbang.core.commands.tui.diagram.ErrorLayer.ErrorPath;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.junit.jupiter.api.Test;
 
@@ -49,9 +51,9 @@ class TopologyErrorLayerTest {
 
     @Test
     void theRoutesReachedOnlyOnError() {
-        assertThat(DiagramSupport.errorOnlyRoutes(List.of(charge), errors)).containsExactly("parked");
+        assertThat(TopologyErrorFrame.errorOnlyRoutes(List.of(charge), errors)).containsExactly("parked");
         // a route that is also called is on the happy path
-        assertThat(DiagramSupport.errorOnlyRoutes(
+        assertThat(TopologyErrorFrame.errorOnlyRoutes(
                 List.of(charge, edge("checkout", "parked", "call", null, null)), errors)).isEmpty();
     }
 
@@ -71,22 +73,48 @@ class TopologyErrorLayerTest {
                 new ArrayList<>(List.of(charge)));
         List<ErrorPath> paths = errors.stream()
                 .map(e -> new ErrorPath(e.fromRouteId, e.toRouteId, e.via, e.handling)).toList();
-        DiagramSupport.PlacedErrors placed = DiagramSupport.placeErrorRoutes(
-                happy, List.of(node("parked", "direct:parked")), paths, Set.of("parked"), engine.getNodeWidth(),
-                engine.getNodeHeight());
+        TopologyErrorFrame.Placed placed = TopologyErrorFrame.place(
+                happy, List.of(node("parked", "direct:parked")), paths, engine.getNodeWidth(), engine.getNodeHeight(),
+                TopologyAsciiRenderer.ROW_HEIGHT);
 
         int happyBottom = happy.nodes.stream().mapToInt(n -> n.y + n.height).max().orElseThrow();
         assertThat(placed.layout().nodes).extracting(n -> n.routeId)
                 .containsExactlyInAnyOrder("checkout", "payment-provider", "parked");
         assertThat(placed.layout().nodes).filteredOn(n -> "parked".equals(n.routeId))
                 .allMatch(n -> n.y > happyBottom);
-        assertThat(placed.layer().frameTopY()).isGreaterThan(happyBottom);
+        assertThat(placed.frame().topY()).isGreaterThan(happyBottom);
 
-        String screen = render(placed.layout(), engine.getNodeWidth(), placed.layer());
+        String screen = render(placed.layout(), engine.getNodeWidth(), placed.frame());
         assertThat(screen).contains("Error handling");
         assertThat(screen).contains("◂ checkout: onException, handled · dead letter, handled");
         assertThat(screen).contains("⚠ own failures: dead letter, handled");
         assertThat(screen).contains("parked");
+    }
+
+    @Test
+    void anExternalSystemOnlyAnErrorRouteUsesIsInTheFrameBelowIt() {
+        // with e: parked writes the parked orders to file:parked, which no other route uses
+        TopologyNodeInfo file = node("out-parked-0", "file:parked");
+        file.nodeType = "external-out";
+        TopologyEdgeInfo writes = edge("parked", "out-parked-0", null, null, null);
+        writes.connectionType = "external";
+        List<TopologyNodeInfo> nodes = new ArrayList<>(
+                List.of(
+                        node("checkout", "file:orders"), node("payment-provider", "direct:charge"),
+                        node("parked", "direct:parked"), file));
+        List<TopologyEdgeInfo> calls = new ArrayList<>(List.of(charge, writes));
+
+        TopologyErrorFrame.Taken taken = TopologyErrorFrame.take(nodes, calls, Set.of("parked"));
+
+        assertThat(nodes).extracting(n -> n.routeId).containsExactly("checkout", "payment-provider");
+        assertThat(calls).containsExactly(charge);
+        TopologyLayoutEngine engine = new TopologyLayoutEngine();
+        TopologyErrorFrame.Placed placed = TopologyErrorFrame.place(
+                engine.layout(nodes, calls), taken.routes(), taken.externals(),
+                List.of(new ErrorPath("checkout", "parked", "errorHandler", "handled")),
+                engine.getNodeWidth(), engine.getNodeHeight(), TopologyAsciiRenderer.ROW_HEIGHT);
+        String screen = render(placed.layout(), engine.getNodeWidth(), placed.frame());
+        assertThat(screen.indexOf("file:parked")).isGreaterThan(screen.indexOf("◂ checkout: dead letter, handled"));
     }
 
     @Test
@@ -129,7 +157,7 @@ class TopologyErrorLayerTest {
         route.nodes.add(step("unmarshal", 1));
         route.nodes.add(step("to", 1));
 
-        DiagramSupport.RouteSplit split = DiagramSupport.splitErrorHandling(route);
+        RouteErrorFrame.Split split = RouteErrorFrame.split(route);
 
         assertThat(split.happy().nodes).extracting(n -> n.type).containsExactly("from", "unmarshal", "to");
         assertThat(split.blocks()).hasSize(1);
@@ -143,12 +171,12 @@ class TopologyErrorLayerTest {
         List<ErrorPath> paths = errors.stream()
                 .map(e -> new ErrorPath(e.fromRouteId, e.toRouteId, e.via, e.handling)).toList();
 
-        assertThat(DiagramSupport.routeErrorLines("checkout", paths))
+        assertThat(RouteErrorFrame.lines("checkout", paths, TopologyErrorFrame.LineStyle.UNICODE))
                 .containsExactly("\u25b8 on failure to parked: onException, handled \u00b7 dead letter, handled");
-        assertThat(DiagramSupport.routeErrorLines("parked", paths)).containsExactly(
+        assertThat(RouteErrorFrame.lines("parked", paths, TopologyErrorFrame.LineStyle.UNICODE)).containsExactly(
                 "\u26a0 own failures: dead letter, handled",
                 "\u25c2 reached when checkout handles a failure: onException, handled \u00b7 dead letter, handled");
-        assertThat(DiagramSupport.routeErrorLines("payment-provider", paths)).isEmpty();
+        assertThat(RouteErrorFrame.lines("payment-provider", paths, TopologyErrorFrame.LineStyle.UNICODE)).isEmpty();
     }
 
     private static RouteDiagramLayoutEngine.NodeInfo step(String type, int level) {
@@ -159,7 +187,7 @@ class TopologyErrorLayerTest {
         return n;
     }
 
-    private static String render(TopologyLayoutResult layout, int nodeWidth, ErrorLayer layer) {
+    private static String render(TopologyLayoutResult layout, int nodeWidth, TopologyErrorFrame layer) {
         TopologyDiagramWidget widget = new TopologyDiagramWidget(layout, nodeWidth, -1, 0, 0, false, false)
                 .withErrorLayer(layer);
         Rect area = new Rect(0, 0, Math.max(100, widget.getTotalCols()), widget.getTotalRows());

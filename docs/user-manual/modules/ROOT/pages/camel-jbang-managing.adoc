@@ -171,6 +171,8 @@ camel cmd route-diagram myApp
 
 This prints a Unicode route diagram in the terminal. Use `--theme=ascii` for plain text,
 or `--output=diagram.png --theme=light` to save as an image.
+A route diagram draws the steps of each route. With `--errors`, its `onException` clauses are drawn as well, in a
+frame of their own below its steps, with where its failures go.
 
 You can also render diagrams directly from source files (no running process needed):
 
@@ -188,6 +190,9 @@ camel cmd route-topology myApp --external
 ----
 
 The `--external` flag includes external systems (Kafka, databases, etc.) as nodes in the graph.
+With a `--theme`, the `--errors` flag also draws the error handling: the routes reached only while a failure is
+handled (such as the target of a dead letter channel), in a frame of their own below the routes, with where their
+failures come from. With `--external` as well, the external systems only they use are in the frame too.
 Routes created by Kamelets are hidden, as they are an implementation detail of the Kamelet; use `--kamelets` to include them.
 Both commands include live metrics by default — use `--metric=false` to disable.
 

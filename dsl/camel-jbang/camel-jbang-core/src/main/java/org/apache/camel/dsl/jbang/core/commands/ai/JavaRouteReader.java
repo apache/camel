@@ -74,6 +74,8 @@ final class JavaRouteReader {
     private final String file;
     private final CamelCatalog catalog;
     private final List<Route> routes = new ArrayList<>();
+    /** The RouteBuilder's own errorHandler(...): each route it creates holds the same one. */
+    private ErrorHandlerFactory builderErrorHandler;
 
     private JavaRouteReader(String file, CamelCatalog catalog) {
         this.file = file;
@@ -84,6 +86,7 @@ final class JavaRouteReader {
     static List<Route> read(String file, String content, CamelCatalog catalog, ConstantResolver constants) {
         JavaParseResult result = parse(content, catalog, constants);
         JavaRouteReader reader = new JavaRouteReader(file, catalog);
+        reader.builderErrorHandler = result.routes().getErrorHandlerFactory();
         List<Integer> starts = new ArrayList<>();
         result.routes().getRoutes().forEach(r -> starts.add(r.getLineNumber()));
         for (RouteDefinition r : result.routes().getRoutes()) {
@@ -151,16 +154,22 @@ final class JavaRouteReader {
         for (ProcessorDefinition<?> p : r.getOutputs()) {
             decisions(p, scope, decisions, visited, 0);
         }
+        // where the route's own dead letter channel sends its failures (the builder's is read as a handler of its own)
+        if (r.isErrorHandlerFactorySet() && r.getErrorHandlerFactory() instanceof DeadLetterChannelDefinition dlc
+                && dlc != builderErrorHandler && dlc.getDeadLetterUri() != null) {
+            add(produces, ProjectRoutes.endpoint(dlc.getDeadLetterUri(), null, false, catalog).asOnError());
+        }
         Route route = new Route(
                 id, template != null ? "routeTemplate" : "route", description, r.getGroup(), file, Math.max(1, line),
                 "java", partial, from, consumes, produces, r.getOutputs().size(), -1, 0, null, null,
                 logOnly(r, produces), note, decisions);
-        // the route's own error handler, such as errorHandler(noErrorHandler())
+        // the route's own error handler, such as errorHandler(noErrorHandler()); a dead letter channel the route holds
+        // because the RouteBuilder has it is the builder's, used by all its routes, but noErrorHandler is none either way
         if (r.isErrorHandlerFactorySet()) {
             ErrorHandlerFactory eh = r.getErrorHandlerFactory();
             if (eh instanceof NoErrorHandlerDefinition) {
                 route = route.withErrorHandler("noErrorHandler");
-            } else if (eh instanceof DeadLetterChannelDefinition) {
+            } else if (eh instanceof DeadLetterChannelDefinition && eh != builderErrorHandler) {
                 route = route.withErrorHandler("deadLetterChannel");
             }
         }
@@ -330,7 +339,8 @@ final class JavaRouteReader {
         }
         for (RouteDefinition r : result.routes().getRoutes()) {
             ErrorHandlerFactory eh = r.getErrorHandlerFactory();
-            if (eh instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
+            // the RouteBuilder's dead letter channel, which each of its routes holds; a route's own is read with it
+            if (eh == builderErrorHandler && eh instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
                 add(produces, ProjectRoutes.endpoint(dlc.getDeadLetterUri(), null, false, catalog).asOnError());
                 if (!labels.contains("dead letter channel")) {
                     labels.add("dead letter channel");

@@ -162,6 +162,9 @@ When running with Camel CLI, you can generate topology diagrams via:
 camel cmd route-topology
 ----
 
+Add `--theme=unicode --errors` to draw the error handling as well: the routes reached only while a failure is
+handled, in a frame of their own below the routes (see xref:components:others:diagram.adoc[Diagram]).
+
 See xref:jbang-commands/camel-jbang-cmd-route-topology.adoc[] for more details.
 
 The developer console is also available at: `http://localhost:8080/q/dev/route-topology` (JSON/text data),
@@ -177,6 +180,9 @@ You can control topology generation with the following options:
 
 - `topology` — Whether to generate a topology diagram (default: `true`)
 - `topologyExternal` — Whether to include external systems in the topology (default: `true`)
+- `errors` (`dumpRouteDiagramErrors` in `@CamelMainTest`) — Whether to draw the error handling: the `onException`
+  clauses of each route in a frame below its steps, and the routes reached only on error in a frame below the other
+  routes of the topology. Otherwise a route diagram draws only the steps of the route (default: `false`)
 
 ==== Camel Main Example
 

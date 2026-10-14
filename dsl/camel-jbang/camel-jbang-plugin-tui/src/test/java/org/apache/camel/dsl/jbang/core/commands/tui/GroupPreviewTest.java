@@ -155,4 +155,48 @@ class GroupPreviewTest {
                 " \u251c\u2500 to \u2192 amqp:queue:widget.queue",
                 " \u2514\u2500 to \u2192 amqp:queue:gadget.queue"));
     }
+
+    @Test
+    void withTheErrorHandlingShownARouteListsWhereItsFailuresGo() {
+        // a dead letter channel of the file: checkout uses it, payment-provider has none (CAMEL-25466)
+        String yaml = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:parked
+                - route:
+                    id: checkout
+                    from:
+                      uri: file:orders
+                      steps:
+                        - to: direct:charge
+                - route:
+                    id: payment-provider
+                    errorHandler:
+                      noErrorHandler: {}
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - to: kafka:payments
+                - route:
+                    id: parked
+                    from:
+                      uri: direct:parked
+                      steps:
+                        - to: file:parked
+                """;
+        ProjectOverview.Overview o
+                = ProjectOverview.analyze(Path.of("shop"), Map.of("shop.camel.yaml", yaml), new DefaultCamelCatalog());
+        ProjectCapabilities.Capabilities caps
+                = ProjectCapabilities.withErrorHandling(o, ProjectCapabilities.build(o, null));
+        ProjectCapabilities.Group other = caps.group(ProjectCapabilities.OTHER);
+
+        String off = text(GroupPreview.lines(other, caps, o, 60, 20, r -> r, s -> true, false));
+        assertThat(off).doesNotContain("parked");
+
+        String on = text(GroupPreview.lines(other, caps, o, 60, 20, r -> r, s -> true, true));
+        assertThat(on).contains(" checkout\n \u251c\u2500 call \u2192 payment-provider\n"
+                                + " \u2514\u2500 on error \u2192 parked  Error handling");
+        // payment-provider has noErrorHandler: its failures go back to checkout, it lists none of its own
+        assertThat(on.substring(on.indexOf("\n payment-provider\n"))).doesNotContain("on error");
+    }
 }

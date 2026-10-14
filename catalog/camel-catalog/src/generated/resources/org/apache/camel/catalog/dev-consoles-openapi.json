@@ -6308,6 +6308,16 @@
 						}
 					},
 					{
+						"name": "errors",
+						"in": "query",
+						"description": "Whether to draw the error handling. In route mode the onException clauses of each route are drawn in a frame below its steps, with where its failures go (otherwise only the steps of the route are drawn). In topology mode the routes reached only on error are drawn in a frame below the other routes.",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
 						"name": "external",
 						"in": "query",
 						"description": "Whether to include external systems (kafka, http, etc.) in topology mode",

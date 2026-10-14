@@ -79,6 +79,11 @@ public class DiagramDevConsole extends AbstractDevConsole {
               defaultValue = "true", javaType = "java.lang.Boolean")
     public static final String EXTERNAL = "external";
 
+    @Metadata(label = "query",
+              description = "Whether to draw the error handling. In route mode the onException clauses of each route are drawn in a frame below its steps, with where its failures go (otherwise only the steps of the route are drawn). In topology mode the routes reached only on error are drawn in a frame below the other routes.",
+              defaultValue = "false", javaType = "java.lang.Boolean")
+    public static final String ERRORS = "errors";
+
     public DiagramDevConsole() {
         super("camel", "route-diagram", "Route Diagram", "Visual route diagrams");
     }
@@ -112,22 +117,24 @@ public class DiagramDevConsole extends AbstractDevConsole {
             format = "html";
         }
         boolean external = optionBoolean(options, EXTERNAL, true);
+        boolean errors = optionBoolean(options, ERRORS, false);
 
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
             boolean textFormat = isTextFormat(format);
             if ("topology".equalsIgnoreCase(mode)) {
-                sj.add(doCallTopologyText(dumper, theme, nodeWidth, metric, fontSize, refresh, format, external));
+                sj.add(doCallTopologyText(dumper, theme, nodeWidth, metric, fontSize, refresh, format, external, errors));
             } else if (isTextTheme(theme) || textFormat) {
                 boolean unicode = isUnicodeTheme(theme) || "unicode".equalsIgnoreCase(format);
                 String text = dumper.dumpRoutesAsAsciiArt(filter,
                         RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
-                        nodeWidth, unicode);
+                        nodeWidth, unicode, errors);
                 sj.add(text);
             } else if ("png".equalsIgnoreCase(format)) {
                 BufferedImage image = dumper.dumpRoutesAsImage(filter,
                         RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize,
+                        errors);
                 String base64 = dumper.imageToBase64(image);
                 String html = String.format(
                         """
@@ -144,7 +151,7 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 html = "<html>\n" + html + "</html>\n";
                 sj.add(html);
             } else {
-                sj.add(buildRouteWebComponentHtml(filter, metric, refresh));
+                sj.add(buildRouteWebComponentHtml(filter, metric, refresh, errors));
             }
         } catch (Exception e) {
             // ignore
@@ -175,21 +182,23 @@ public class DiagramDevConsole extends AbstractDevConsole {
         }
         boolean metric = optionBoolean(options, METRIC, true);
         boolean external = optionBoolean(options, EXTERNAL, true);
+        boolean errors = optionBoolean(options, ERRORS, false);
 
         String text = null;
         String image = null;
         try {
             RouteDiagramDumper dumper = PluginHelper.getRouteDiagramDumper(getCamelContext());
             if ("topology".equalsIgnoreCase(mode)) {
-                return doCallTopologyJson(dumper, theme, nodeWidth, metric, fontSize, external);
+                return doCallTopologyJson(dumper, theme, nodeWidth, metric, fontSize, external, errors);
             } else if (isTextTheme(theme)) {
                 text = dumper.dumpRoutesAsAsciiArt(filter,
                         RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()),
-                        nodeWidth, isUnicodeTheme(theme));
+                        nodeWidth, isUnicodeTheme(theme), errors);
             } else {
                 BufferedImage bufferedImage = dumper.dumpRoutesAsImage(filter,
                         RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()),
-                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize);
+                        metric, RouteDiagramDumper.NodeLabelMode.valueOf(nodeLabel.toUpperCase()), nodeWidth, fontSize,
+                        errors);
                 image = dumper.imageToBase64(bufferedImage);
             }
         } catch (Exception e) {
@@ -201,15 +210,15 @@ public class DiagramDevConsole extends AbstractDevConsole {
 
     private String doCallTopologyText(
             RouteDiagramDumper dumper, String theme, int nodeWidth,
-            boolean metric, int fontSize, boolean refresh, String format, boolean external)
+            boolean metric, int fontSize, boolean refresh, String format, boolean external, boolean errors)
             throws Exception {
         boolean textFormat = isTextFormat(format);
         if (isTextTheme(theme) || textFormat) {
             boolean unicode = isUnicodeTheme(theme) || "unicode".equalsIgnoreCase(format);
-            return dumper.dumpTopologyAsAsciiArt(nodeWidth, unicode, external);
+            return dumper.dumpTopologyAsAsciiArt(nodeWidth, unicode, external, errors);
         } else if ("png".equalsIgnoreCase(format)) {
             BufferedImage image = dumper.dumpTopologyAsImage(
-                    RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize, external);
+                    RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize, external, errors);
             if (image == null) {
                 return "";
             }
@@ -226,21 +235,21 @@ public class DiagramDevConsole extends AbstractDevConsole {
             }
             return "<html>\n" + html + "</html>\n";
         } else {
-            return buildTopologyWebComponentHtml(metric, refresh, external);
+            return buildTopologyWebComponentHtml(metric, refresh, external, errors);
         }
     }
 
     private Map<String, Object> doCallTopologyJson(
             RouteDiagramDumper dumper, String theme, int nodeWidth,
-            boolean metric, int fontSize, boolean external)
+            boolean metric, int fontSize, boolean external, boolean errors)
             throws Exception {
         String text = null;
         String image = null;
         if (isTextTheme(theme)) {
-            text = dumper.dumpTopologyAsAsciiArt(nodeWidth, isUnicodeTheme(theme), external);
+            text = dumper.dumpTopologyAsAsciiArt(nodeWidth, isUnicodeTheme(theme), external, errors);
         } else {
             BufferedImage bufferedImage = dumper.dumpTopologyAsImage(
-                    RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize, external);
+                    RouteDiagramDumper.Theme.valueOf(theme.toUpperCase()), metric, nodeWidth, fontSize, external, errors);
             if (bufferedImage != null) {
                 image = dumper.imageToBase64(bufferedImage);
             }
@@ -251,10 +260,11 @@ public class DiagramDevConsole extends AbstractDevConsole {
     private static final String WEB_COMPONENT_JS = loadWebComponentJs("camel-route-diagram.js");
     private static final String TOPOLOGY_WEB_COMPONENT_JS = loadWebComponentJs("camel-topology-diagram.js");
 
-    private static String buildTopologyWebComponentHtml(boolean metric, boolean refresh, boolean external) {
+    private static String buildTopologyWebComponentHtml(boolean metric, boolean refresh, boolean external, boolean errors) {
         String metricAttr = metric ? "" : " metric=\"false\"";
         String refreshAttr = refresh ? " refresh=\"5000\"" : "";
         String externalAttr = external ? "" : " external=\"false\"";
+        String errorsAttr = errors ? " errors=\"true\"" : "";
         return """
                 <html>
                   <head>
@@ -269,15 +279,17 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 """.formatted(
                 TOPOLOGY_WEB_COMPONENT_JS, String.format(
                         """
-                                    <camel-topology-diagram src="route-topology"%s%s%s></camel-topology-diagram>%n\
+                                    <camel-topology-diagram src="route-topology"%s%s%s%s></camel-topology-diagram>%n\
                                 """,
-                        metricAttr, refreshAttr, externalAttr));
+                        metricAttr, refreshAttr, externalAttr, errorsAttr));
     }
 
-    private static String buildRouteWebComponentHtml(String filter, boolean metric, boolean refresh) {
+    private static String buildRouteWebComponentHtml(String filter, boolean metric, boolean refresh, boolean errors) {
         String f = filter == null ? "*" : filter;
         String metricAttr = metric ? "" : " metric=\"false\"";
         String refreshAttr = refresh ? " refresh=\"5000\"" : "";
+        // the lines of the error frames come from the route topology, a sibling console
+        String errorsAttr = errors ? " errors=\"true\" topology=\"route-topology\"" : "";
         // inline the web component script: static resource serving is not available when only the developer
         // console is enabled (camel run --console). route-structure is a sibling console on the same origin.
         return """
@@ -293,8 +305,8 @@ public class DiagramDevConsole extends AbstractDevConsole {
                 </html>
                 """.formatted(
                 WEB_COMPONENT_JS, String.format(
-                        "    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s%s></camel-route-diagram>%n",
-                        escapeAttr(f), metricAttr, refreshAttr));
+                        "    <camel-route-diagram src=\"route-structure\" filter=\"%s\"%s%s%s></camel-route-diagram>%n",
+                        escapeAttr(f), metricAttr, refreshAttr, errorsAttr));
     }
 
     private static String loadWebComponentJs(String filename) {

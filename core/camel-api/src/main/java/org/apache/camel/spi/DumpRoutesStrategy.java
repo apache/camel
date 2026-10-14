@@ -105,4 +105,26 @@ public interface DumpRoutesStrategy extends StaticService {
      */
     void setTopologyExternal(boolean topologyExternal);
 
+    /**
+     * Whether the route diagrams draw the error handling: the onException clauses of each route in a frame below its
+     * steps, and in the topology diagram the routes reached only on error in a frame below the other routes. Default is
+     * false, when a route diagram draws only the steps of the route.
+     *
+     * @since 4.24
+     */
+    default boolean isErrors() {
+        return false;
+    }
+
+    /**
+     * Whether the route diagrams draw the error handling: the onException clauses of each route in a frame below its
+     * steps, and in the topology diagram the routes reached only on error in a frame below the other routes. Default is
+     * false, when a route diagram draws only the steps of the route.
+     *
+     * @since 4.24
+     */
+    default void setErrors(boolean errors) {
+        // not supported by default
+    }
+
 }

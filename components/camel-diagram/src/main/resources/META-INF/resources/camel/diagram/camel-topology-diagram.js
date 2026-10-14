@@ -269,6 +269,167 @@ function layoutTopology(nodes, edges) {
     return { layoutNodes: allNodes, layoutEdges, totalWidth, totalHeight };
 }
 
+// ─── Error handling (ported from TopologyErrorFrame.java) ───────────────────
+
+const LINE_H = 16;
+
+/** The routes reached only on error: a target of an error path that no route calls. */
+function errorOnlyRoutes(calls, errors) {
+    const called = new Set(calls.map(e => e.toRouteId));
+    const answer = new Set();
+    for (const e of errors) {
+        if (e.toRouteId && !called.has(e.toRouteId)) answer.add(e.toRouteId);
+    }
+    return answer;
+}
+
+/** The external systems only the routes in the frame link to, each under the first route that uses it. */
+function frameExternals(nodes, calls, errorOnly) {
+    const linked = new Set();
+    for (const e of calls) {
+        if (!errorOnly.has(e.fromRouteId) && !errorOnly.has(e.toRouteId)) {
+            linked.add(e.fromRouteId);
+            linked.add(e.toRouteId);
+        }
+    }
+    const byId = new Map(nodes.map(n => [n.routeId, n]));
+    const byRoute = new Map();
+    const placed = new Set();
+    const links = [];
+    for (const e of calls) {
+        const target = byId.get(e.toRouteId);
+        if (errorOnly.has(e.fromRouteId) && target && isExternal(target.nodeType) && !linked.has(e.toRouteId)) {
+            if (!placed.has(target.routeId)) {
+                placed.add(target.routeId);
+                if (!byRoute.has(e.fromRouteId)) byRoute.set(e.fromRouteId, []);
+                byRoute.get(e.fromRouteId).push(target);
+            }
+            links.push(e);
+        }
+    }
+    return { byRoute, links };
+}
+
+/**
+ * Takes the routes reached only on error, and the external systems only they use, out of the topology: they are
+ * removed from the nodes, and their links from the calls.
+ */
+function takeErrorRoutes(nodes, calls, errors) {
+    const errorOnly = errorOnlyRoutes(calls, errors);
+    const routes = nodes.filter(n => errorOnly.has(n.routeId));
+    const externals = frameExternals(nodes, calls, errorOnly);
+    const taken = new Set(errorOnly);
+    for (const list of externals.byRoute.values()) {
+        for (const n of list) taken.add(n.routeId);
+    }
+    for (let i = nodes.length - 1; i >= 0; i--) {
+        if (taken.has(nodes[i].routeId)) nodes.splice(i, 1);
+    }
+    for (let i = calls.length - 1; i >= 0; i--) {
+        if (taken.has(calls[i].fromRouteId) || taken.has(calls[i].toRouteId)) calls.splice(i, 1);
+    }
+    return { routes, externals };
+}
+
+function errorPathLabel(e) {
+    const how = e.via === 'errorHandler' ? 'dead letter' : e.via;
+    const what = e.handling == null ? 'decided at runtime'
+        : e.handling === 'notHandled' ? 'not handled, goes on to the caller' : e.handling;
+    return `${how}, ${what}`;
+}
+
+/** The lines under a route of the frame: where its failures come from, one line per route that sends there. */
+function frameLines(routeId, errors) {
+    const bySource = new Map();
+    const seen = new Set();
+    for (const e of errors) {
+        if (e.toRouteId !== routeId) continue;
+        const key = [e.fromRouteId, e.via, e.handling].join('|');
+        if (seen.has(key)) continue;
+        seen.add(key);
+        if (!bySource.has(e.fromRouteId)) bySource.set(e.fromRouteId, []);
+        bySource.get(e.fromRouteId).push(errorPathLabel(e));
+    }
+    const lines = [];
+    for (const [from, labels] of bySource) {
+        lines.push(from === routeId
+            ? `\u26A0 own failures: ${labels.join(' \u00B7 ')}`
+            : `\u25C2 ${from}: ${labels.join(' \u00B7 ')}`);
+    }
+    return lines;
+}
+
+function frameNode(info, x, y) {
+    return {
+        routeId: info.routeId,
+        description: info.description,
+        from: info.from,
+        fromScheme: info.fromScheme,
+        nodeType: info.nodeType,
+        connectionType: info.connectionType,
+        x, y,
+        width: NODE_W,
+        height: NODE_H,
+        layer: -1,
+        exchangesTotal: info.exchangesTotal ?? 0,
+        exchangesFailed: info.exchangesFailed ?? 0,
+    };
+}
+
+/**
+ * Places the routes reached only on error in a row below the other routes, with their lines under them, and the
+ * external systems only they use below that, under their route.
+ */
+function placeErrorFrame(taken, errors, happyWidth, happyHeight, fontFamily) {
+    const top = happyHeight + 12;
+    const boxesY = top + 30;
+    const step = NODE_W + NODE_W / 2;
+    const nodes = [];
+    const lines = [];
+    const byId = new Map();
+    let x = PADDING;
+    let maxLines = 0;
+    let width = happyWidth;
+    for (const info of taken.routes) {
+        const n = frameNode(info, x, boxesY);
+        nodes.push(n);
+        byId.set(info.routeId, n);
+        const texts = frameLines(info.routeId, errors);
+        maxLines = Math.max(maxLines, texts.length);
+        texts.forEach((text, i) => {
+            const w = measureWidth(text, 11, fontFamily) ?? text.length * 6.5;
+            lines.push({ x, y: boxesY + NODE_H + LINE_H * (i + 1), text, width: w });
+            width = Math.max(width, x + w + PADDING);
+        });
+        width = Math.max(width, x + NODE_W + PADDING);
+        x += step;
+    }
+    let bottom = boxesY + NODE_H + LINE_H * (maxLines + 1);
+    // below the lines of their route, the arrow from the route passing behind them
+    const externalsY = boxesY + NODE_H + LINE_H * maxLines + 40;
+    for (const [routeId, list] of taken.externals.byRoute) {
+        const route = byId.get(routeId);
+        if (!route) continue;
+        let y = externalsY;
+        for (const info of list) {
+            const n = frameNode(info, route.x, y);
+            nodes.push(n);
+            byId.set(info.routeId, n);
+            y += NODE_H + 30;
+            bottom = Math.max(bottom, n.y + NODE_H + 16);
+        }
+    }
+    const edges = [];
+    for (const e of taken.externals.links) {
+        const from = byId.get(e.fromRouteId);
+        const to = byId.get(e.toRouteId);
+        if (from && to) {
+            edges.push({ from, to, endpoint: e.endpoint, connectionType: e.connectionType, backEdge: false, selfLoop: false });
+        }
+    }
+    return { top, nodes, edges, lines, bottom, width, height: bottom + 12 };
+}
+
 // ─── Web component ──────────────────────────────────────────────────────────
 
 function isExternal(nodeType) {
@@ -376,6 +537,9 @@ function nodeColor(nodeType) {
  *   metric    - show live metrics (default: true)
  *   external  - include external endpoint nodes (default: true)
  *   interlink - show intermediary nodes for routes connected via shared externals (default: true)
+ *   errors    - "true" draws the routes reached only on error (such as the target of a dead letter channel) in a
+ *               frame below the other routes, with where their failures come from and the external systems only
+ *               they use (default: false)
  *
  * CSS custom properties (all optional):
  *   --ctd-bg, --ctd-node-bg, --ctd-fg, --ctd-edge, --ctd-font, --ctd-font-size
@@ -384,13 +548,14 @@ function nodeColor(nodeType) {
  * @since 4.21
  */
 class CamelTopologyDiagram extends HTMLElement {
-    static observedAttributes = ['src', 'refresh', 'metric', 'external', 'interlink'];
+    static observedAttributes = ['src', 'refresh', 'metric', 'external', 'interlink', 'errors'];
 
     #src = '';
     #refresh = 0;
     #metric = true;
     #external = true;
     #interlink = true;
+    #errors = false;
     #timer = null;
     #controller = null;
     #data = null;
@@ -433,6 +598,10 @@ class CamelTopologyDiagram extends HTMLElement {
                 break;
             case 'interlink':
                 this.#interlink = newValue !== 'false';
+                if (this.isConnected) this.#render();
+                break;
+            case 'errors':
+                this.#errors = newValue != null && newValue !== 'false';
                 if (this.isConnected) this.#render();
                 break;
             case 'refresh':
@@ -513,12 +682,14 @@ class CamelTopologyDiagram extends HTMLElement {
             exchangesTotal: n.exchangesTotal ?? 0,
             exchangesFailed: n.exchangesFailed ?? 0,
         }));
-        const edges = (data.edges ?? []).map(e => ({
+        // an error path is no call: a route sends there only when it handles a failure (Camel 4.23 or newer)
+        const edges = (data.edges ?? []).filter(e => e.kind !== 'error').map(e => ({
             fromRouteId: e.fromRouteId,
             toRouteId: e.toRouteId,
             endpoint: e.endpoint,
             connectionType: e.connectionType ?? 'internal',
         }));
+        const errors = (data.edges ?? []).filter(e => e.kind === 'error');
 
         if (this.#external) {
             addExternalEndpoints(nodes, edges, data);
@@ -527,15 +698,38 @@ class CamelTopologyDiagram extends HTMLElement {
             }
         }
 
+        // the routes reached only on error go into a frame below the others, with the external systems only they use
+        const taken = this.#errors ? takeErrorRoutes(nodes, edges, errors) : null;
         const { layoutNodes, layoutEdges, totalWidth, totalHeight } = layoutTopology(nodes, edges);
-        if (!layoutNodes.length) return '<p class="loading">No routes</p>';
+        if (!layoutNodes.length && !taken?.routes.length) return '<p class="loading">No routes</p>';
 
-        const edgeSvg = layoutEdges.map(e => this.#edgeHTML(e)).join('');
-        const nodeSvg = layoutNodes.map(n => this.#nodeHTML(n, fontFamily)).join('');
+        let edgeSvg = layoutEdges.map(e => this.#edgeHTML(e)).join('');
+        let nodeSvg = layoutNodes.map(n => this.#nodeHTML(n, fontFamily)).join('');
+        let frameSvg = '';
+        let lineSvg = '';
+        let width = totalWidth;
+        let height = totalHeight;
+        if (taken?.routes.length) {
+            const frame = placeErrorFrame(taken, errors, totalWidth, totalHeight, fontFamily);
+            width = Math.max(width, frame.width);
+            height = frame.height;
+            const title = 'Error handling';
+            const titleW = (measureWidth(title, 11, fontFamily) ?? title.length * 6.5) + 8;
+            frameSvg = `
+      <rect x="${PADDING / 2}" y="${frame.top}" width="${width - PADDING}" height="${frame.bottom - frame.top}"
+            rx="8" ry="8" fill="none" stroke="var(--ctd-edge, #94a3b8)" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <rect x="${PADDING}" y="${frame.top - 8}" width="${titleW}" height="16" fill="var(--ctd-node-bg, #ffffff)"/>
+      <text x="${PADDING + 4}" y="${frame.top + 4}" font-size="11" font-weight="600" fill="currentColor">${title}</text>`;
+            edgeSvg += frame.edges.map(e => this.#edgeHTML(e)).join('');
+            nodeSvg += frame.nodes.map(n => this.#nodeHTML(n, fontFamily)).join('');
+            lineSvg = frame.lines.map(l => `
+      <rect x="${l.x}" y="${l.y - 11}" width="${l.width}" height="${LINE_H - 1}" fill="var(--ctd-node-bg, #ffffff)"/>
+      <text x="${l.x}" y="${l.y}" font-size="11" fill="currentColor">${esc(l.text)}</text>`).join('');
+        }
 
-        return `<svg width="${totalWidth}" height="${totalHeight}" viewBox="0 0 ${totalWidth} ${totalHeight}"
+        return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
                      aria-label="Route topology diagram">
-            ${edgeSvg}${nodeSvg}
+            ${frameSvg}${edgeSvg}${nodeSvg}${lineSvg}
         </svg>`;
     }
 

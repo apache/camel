@@ -62,8 +62,8 @@ class SourceSizeTest {
             CamelMonitor.java 2789
             DiagramDetailSupport.renderEipInfoPanel 159
             DiagramDetailSupport.renderRouteInfoPanel 154
-            DiagramSupport.java 2677
-            DiagramSupport.loadAllDiagramsInBackground 182
+            DiagramSupport.java 2460
+            DiagramSupport.loadAllDiagramsInBackground 180
             DiagramSupport.loadHighlightedNativeDiagramInBackground 212
             EndpointsTab.renderContent 170
             HistoryTab.java 2727

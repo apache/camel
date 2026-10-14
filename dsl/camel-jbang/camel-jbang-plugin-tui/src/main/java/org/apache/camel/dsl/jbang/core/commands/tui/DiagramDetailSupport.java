@@ -166,7 +166,8 @@ final class DiagramDetailSupport {
      * else the AI's, marked) and its group, in the group's colour, so going down a level keeps the context
      * (CAMEL-25147).
      */
-    static Line withRouteContext(Line title, IntegrationInfo info, String routeId, Path dir, boolean groups) {
+    static Line withRouteContext(
+            Line title, IntegrationInfo info, String routeId, Path dir, boolean groups, boolean errors) {
         List<Span> spans = new ArrayList<>(title.spans());
         String label = null;
         boolean ai = false;
@@ -187,7 +188,7 @@ final class DiagramDetailSupport {
                     ? Span.styled(IntegrationSummaryHints.MARK + label.strip() + " ", Theme.aiAssisted())
                     : Span.styled(label.strip() + " ", Style.EMPTY.fg(Theme.baseFg())));
         }
-        RouteGroups.Tag tag = groups ? RouteGroups.of(dir).get(routeId) : null;
+        RouteGroups.Tag tag = groups ? RouteGroups.of(dir, errors).get(routeId) : null;
         if (tag != null) {
             spans.add(Span.styled("\u00b7 ", Theme.muted()));
             spans.add(tag.ai()
@@ -226,8 +227,8 @@ final class DiagramDetailSupport {
      * The route's group: its route group from the source, or where the AI project overview placed it (a capability,
      * utility), marked and styled as AI-assisted (CAMEL-25147).
      */
-    private static void addGroup(List<Line> lines, IntegrationInfo info, RouteInfo route) {
-        RouteGroups.Tag tag = RouteGroups.of(FilesBrowser.resolveSourceDirectory(info)).get(route.routeId);
+    private static void addGroup(List<Line> lines, IntegrationInfo info, RouteInfo route, boolean errors) {
+        RouteGroups.Tag tag = RouteGroups.of(FilesBrowser.resolveSourceDirectory(info), errors).get(route.routeId);
         if (tag == null) {
             return;
         }
@@ -292,7 +293,7 @@ final class DiagramDetailSupport {
             lines.add(Line.from(
                     Span.styled(" State: ", Theme.muted()),
                     Span.styled(stateLabel, stateStyle)));
-            addGroup(lines, info, route);
+            addGroup(lines, info, route, diagram.isShowErrorPaths());
             addDescription(lines, info, route, area.width() - 3);
 
             lines.add(Line.from(Span.raw("")));

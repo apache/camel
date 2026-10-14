@@ -63,6 +63,43 @@ class CamelRouteTopologyActionRenderTest {
         assertTrue(out.contains("\"fromRouteId\": \"producer\""), "should dump raw json edges, was: " + out);
     }
 
+    @Test
+    void testDrawsTheErrorHandlingInAFrameWhenAsked() throws Exception {
+        JsonObject topology = twoRouteTopologyWithEdge();
+        JsonObject parked = new JsonObject();
+        parked.put("routeId", "parked");
+        parked.put("from", "direct:parked");
+        parked.put("fromScheme", "direct");
+        parked.put("nodeType", "route");
+        ((JsonArray) topology.get("nodes")).add(parked);
+        JsonObject error = new JsonObject();
+        error.put("fromRouteId", "producer");
+        error.put("toRouteId", "parked");
+        error.put("endpoint", "direct:parked");
+        error.put("connectionType", "internal");
+        error.put("kind", "error");
+        error.put("via", "errorHandler");
+        error.put("handling", "handled");
+        ((JsonArray) topology.get("edges")).add(error);
+
+        StringPrinter printer = new StringPrinter();
+        CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        command.theme = "ascii";
+        command.renderTopology(topology);
+        assertTrue(!printer.getOutput().contains("Error handling"), "the happy path by default: " + printer.getOutput());
+
+        // CAMEL-25466: parked, reached only on error, in a frame of its own with where its failures come from
+        printer = new StringPrinter();
+        command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
+        command.theme = "ascii";
+        command.errors = true;
+        command.renderTopology(topology);
+        String out = printer.getOutput();
+        assertTrue(out.contains("+- Error handling -"), "the frame: " + out);
+        assertTrue(out.contains("< producer: dead letter, handled"), "where its failures come from: " + out);
+        assertTrue(out.indexOf("Error handling") < out.indexOf("parked"), "parked in the frame: " + out);
+    }
+
     private static JsonObject twoRouteTopologyWithEdge() {
         JsonObject producer = new JsonObject();
         producer.put("routeId", "producer");

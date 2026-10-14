@@ -56,7 +56,8 @@ class DiagramTab extends AbstractDiagramTab {
     private final DragSplit hSplit = new DragSplit();
 
     private final ArchitectureView architecture
-            = new ArchitectureView(ctx, this::focusGroup, () -> diagram.isShowDescription());
+            = new ArchitectureView(
+                    ctx, this::focusGroup, () -> diagram.isShowDescription(), () -> diagram.isShowErrorPaths());
     /** Whether the user chose descriptions on or off with n; until then they are on when the routes have any. */
     private boolean descriptionChosen;
     /** Whether the topology shows each route's group; null until the user presses g (then on when there are groups). */
@@ -112,6 +113,12 @@ class DiagramTab extends AbstractDiagramTab {
             }
             if (ke.isChar('s')) {
                 IntegrationSummaryDoc.open(ctx, selectedSourceDirectory(), IntegrationSummaryDoc.ARCHITECTURE);
+                return true;
+            }
+            // the error handling: one setting with the topology's, a box of the routes reached only on error here
+            if (ke.isCharIgnoreCase('x')) {
+                diagram.setShowErrorPaths(!diagram.isShowErrorPaths());
+                architecture.refresh();
                 return true;
             }
             return architecture.handleKeyEvent(ke);
@@ -426,7 +433,7 @@ class DiagramTab extends AbstractDiagramTab {
      */
     private void prepareTopology() {
         diagram.setAiSourceDirectory(selectedSourceDirectory());
-        Map<String, RouteGroups.Tag> all = RouteGroups.of(selectedSourceDirectory());
+        Map<String, RouteGroups.Tag> all = RouteGroups.of(selectedSourceDirectory(), diagram.isShowErrorPaths());
         Map<String, RouteGroups.Tag> tags = isShowGroups() ? all : Map.of();
         Set<String> hidden = architecture.isShowUtility() ? Set.of() : RouteGroups.utility(all);
         diagram.setGroups(RouteGroups.tagLines(tags), RouteGroups.colors(tags));
@@ -443,7 +450,7 @@ class DiagramTab extends AbstractDiagramTab {
     }
 
     private boolean hasUtilityRoutes() {
-        return !RouteGroups.utility(RouteGroups.of(selectedSourceDirectory())).isEmpty();
+        return !RouteGroups.utility(RouteGroups.of(selectedSourceDirectory(), diagram.isShowErrorPaths())).isEmpty();
     }
 
     /** Groups are shown when the user said so, else when the project has any. */
@@ -483,6 +490,7 @@ class DiagramTab extends AbstractDiagramTab {
         return switch (level()) {
             case ARCHITECTURE -> List.of(view,
                     new SubViewBar.Toggle("u", "utility", architecture.isShowUtility() ? "on" : "off"),
+                    new SubViewBar.Toggle("x", "errors", diagram.isShowErrorPaths() ? "on" : "off"),
                     new SubViewBar.Toggle("e", "external", architecture.isShowExternal() ? "edges" : "off"));
             case TOPOLOGY -> {
                 List<SubViewBar.Toggle> toggles = new ArrayList<>();
@@ -574,7 +582,7 @@ class DiagramTab extends AbstractDiagramTab {
                     && diagram.getRouteLayout(drillDownRouteId) != null) {
                 Line title = withLevels(DiagramDetailSupport.withRouteContext(
                         DiagramDetailSupport.buildBreadcrumbTitle(routeNavigationStack, drillDownRouteId), info,
-                        drillDownRouteId, selectedSourceDirectory(), isShowGroups()));
+                        drillDownRouteId, selectedSourceDirectory(), isShowGroups(), diagram.isShowErrorPaths()));
                 var routeLayout = diagram.getRouteLayout(drillDownRouteId);
                 if (area.width() > 60) {
                     infoPanelWidth = Math.max(10, Math.min(infoPanelWidth, area.width() - 20));

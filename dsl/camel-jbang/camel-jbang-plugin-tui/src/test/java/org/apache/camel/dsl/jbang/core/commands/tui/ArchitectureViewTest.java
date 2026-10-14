@@ -224,6 +224,36 @@ class ArchitectureViewTest {
         assertTrue(systemBoxes(render(view)).isEmpty(), "off again");
     }
 
+    @Test
+    void theErrorHandlingInABoxOfItsOwn() {
+        boolean[] errors = { false };
+        ArchitectureView view = new ArchitectureView(null, opened::add, () -> true, () -> errors[0]);
+        view.open(project);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !view.isLoadingForTesting());
+        assertFalse(render(view, 60).contains("Error handling"), "off by default");
+
+        // x: dlq, reached only from the doCatch of order, leaves Utility (hidden) for a box of its own (CAMEL-25466)
+        errors[0] = true;
+        view.refresh();
+        String screen = render(view, 60);
+        String box = screen.lines().filter(l -> l.contains("Error handling")).findFirst().orElse("");
+        assertTrue(box.chars().filter(c -> c == '\u2506').count() >= 2, "a dashed box: " + screen);
+
+        view.selectForTesting(ProjectCapabilities.ERRORS);
+        screen = render(view, 60);
+        assertTrue(screen.contains("reached only on error"), screen);
+        assertTrue(screen.contains("Failures from"), screen);
+        assertTrue(screen.contains("Order taking"), "the capability of order, whose doCatch sends there: " + screen);
+
+        // the capability's failures go there
+        view.selectForTesting("capability:Order taking");
+        assertTrue(render(view, 60).contains("on failure \u2192 Error handling"), render(view, 60));
+
+        errors[0] = false;
+        view.refresh();
+        assertFalse(render(view, 60).contains("Error handling"), "off again");
+    }
+
     /** The lines of the dashed boxes: the external systems. */
     private static String systemBoxes(String screen) {
         return screen.lines().filter(l -> l.chars().filter(c -> c == '\u2506').count() >= 2)

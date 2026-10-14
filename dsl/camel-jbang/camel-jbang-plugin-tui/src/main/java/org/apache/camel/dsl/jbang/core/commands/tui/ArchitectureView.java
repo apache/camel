@@ -55,6 +55,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.Capabilit
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.Group;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities.GroupLink;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget.NodeLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
@@ -66,9 +67,10 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
  * It shows one box per group: the route groups of the source, the capabilities the AI project overview proposed, shared
  * services (routes several groups use), Other, and Utility (plumbing, hidden until {@code u}). Each box shows its
  * facts: routes, entry points, external systems, warnings; {@code e} draws the systems as boxes of their own, linked to
- * the groups that use them. Enter goes down to the topology of all routes with the group's routes highlighted, so the
- * whole picture of how routes connect is never lost. What an AI decided is drawn in the ai-assisted style with the
- * mark, so it is never taken for what the source says.
+ * the groups that use them, and {@code x} the routes reached only on error in a box of their own (CAMEL-25466), linked
+ * from the groups whose failures go there. Enter goes down to the topology of all routes with the group's routes
+ * highlighted, so the whole picture of how routes connect is never lost. What an AI decided is drawn in the ai-assisted
+ * style with the mark, so it is never taken for what the source says.
  * <p/>
  * It reads the source files of the selected integration, not the running routes, so it works for any project the TUI
  * can see the sources of.
@@ -84,6 +86,8 @@ final class ArchitectureView {
     /** Goes down to the topology with a group's routes highlighted. */
     private final Consumer<Group> openGroup;
     private final BooleanSupplier labels;
+    /** Whether the error handling is shown: the Diagram tab's x, one setting with the topology's. */
+    private final BooleanSupplier errors;
 
     private boolean active;
     private boolean suspended;
@@ -93,6 +97,8 @@ final class ArchitectureView {
     private ProjectOverview.Overview overview;
     /** The groups shown: with the AI's capabilities, or from the facts alone when its hints are not shown. */
     private Capabilities capabilities;
+    /** The AI's groups or the facts', before the error handling is taken out of them. */
+    private Capabilities picked;
     private Capabilities aiCapabilities;
     private Capabilities factCapabilities;
     private boolean showUtility;
@@ -115,9 +121,15 @@ final class ArchitectureView {
      *               the Diagram tab's view setting
      */
     ArchitectureView(MonitorContext ctx, Consumer<Group> openGroup, BooleanSupplier labels) {
+        this(ctx, openGroup, labels, () -> false);
+    }
+
+    /** @param errors whether the error handling is shown in a box of its own: the Diagram tab's x setting */
+    ArchitectureView(MonitorContext ctx, Consumer<Group> openGroup, BooleanSupplier labels, BooleanSupplier errors) {
         this.ctx = ctx;
         this.openGroup = openGroup;
         this.labels = labels;
+        this.errors = errors;
     }
 
     /** Draws the groups again, after the view setting changed. */
@@ -224,9 +236,14 @@ final class ArchitectureView {
         reload(true);
     }
 
-    /** The groups to show: the AI's while its hints are shown (setting on, ai view on), else the facts alone. */
+    /**
+     * The groups to show: the AI's while its hints are shown (setting on, ai view on), else the facts alone; with the
+     * routes reached only on error in a box of their own while the error handling is shown.
+     */
     private void pick() {
-        capabilities = IntegrationSummaryHints.enabled() ? aiCapabilities : factCapabilities;
+        picked = IntegrationSummaryHints.enabled() ? aiCapabilities : factCapabilities;
+        capabilities = picked != null && overview != null && errors.getAsBoolean()
+                ? ProjectCapabilities.withErrorHandling(overview, picked) : picked;
     }
 
     private static long summaryModified(Path d) {
@@ -262,12 +279,20 @@ final class ArchitectureView {
                 .filter(g -> showUtility || !ProjectCapabilities.UTILITY.equals(g.kind())).toList();
     }
 
+    private static boolean isErrorHandling(Group g) {
+        return ProjectCapabilities.ERRORS.equals(g.kind());
+    }
+
     private void showMap(String select) {
         List<TopologyNodeInfo> nodes = new ArrayList<>();
         Map<String, List<NodeLine>> lines = new LinkedHashMap<>();
         Set<String> shown = new LinkedHashSet<>();
         for (Group g : visibleGroups()) {
-            nodes.add(node(g.id()));
+            TopologyNodeInfo n = node(g.id());
+            if (isErrorHandling(g)) {
+                n.nodeType = TopologyDiagramWidget.ERROR_HANDLING;
+            }
+            nodes.add(n);
             lines.put(g.id(), groupLines(g, labels.getAsBoolean(), !showExternal));
             shown.add(g.id());
         }
@@ -284,7 +309,8 @@ final class ArchitectureView {
         Map<String, Color> colors = new LinkedHashMap<>();
         List<Group> all = capabilities.groups();
         for (int i = 0; i < all.size(); i++) {
-            if (shown.contains(all.get(i).id())) {
+            // the error handling box is drawn dashed, as the links that carry failures into it
+            if (shown.contains(all.get(i).id()) && !isErrorHandling(all.get(i))) {
                 colors.put(all.get(i).id(), RouteGroups.colorOf(i));
             }
         }
@@ -349,6 +375,16 @@ final class ArchitectureView {
      */
     private static List<NodeLine> groupLines(Group g, boolean labels, boolean systems) {
         List<NodeLine> lines = new ArrayList<>();
+        if (isErrorHandling(g)) {
+            // the routes reached only on error, by name: there are few, and which ones is the point
+            lines.add(new NodeLine(g.name(), Theme.warning().bold()));
+            String count = g.routes().size() + (g.routes().size() == 1 ? " route" : " routes");
+            lines.add(new NodeLine(
+                    g.warnings() > 0 ? count + " \u00b7 " + g.warnings() + " warn" : count,
+                    g.warnings() > 0 ? Theme.warning() : Theme.muted()));
+            lines.add(new NodeLine(String.join(", ", g.routes()), Style.EMPTY.fg(Theme.baseFg())));
+            return lines;
+        }
         String name = g.ai() ? IntegrationSummaryHints.MARK + g.name() : g.name();
         lines.add(new NodeLine(name, (g.ai() ? Theme.aiAssisted() : Theme.label()).bold()));
         String count = g.routes().size() + (g.routes().size() == 1 ? " route" : " routes");
@@ -510,9 +546,9 @@ final class ArchitectureView {
         checkForChanges();
         // the AI's groups come and go with its hints (the ai view setting, the AI overview setting)
         Capabilities want = IntegrationSummaryHints.enabled() ? aiCapabilities : factCapabilities;
-        if (want != null && want != capabilities && !loading && error == null) {
+        if (want != null && want != picked && !loading && error == null) {
             String selected = support.getSelectedRouteId();
-            capabilities = want;
+            pick();
             showMap(selected);
         }
         if (loading || error != null || capabilities == null) {
@@ -560,7 +596,7 @@ final class ArchitectureView {
             return;
         }
         List<Line> lines = GroupPreview.lines(g, capabilities, overview, w - 2, h - 2, r -> RouteKeys.display(dir, r),
-                scheme -> ProjectOverview.isRemote(scheme, catalog()));
+                scheme -> ProjectOverview.isRemote(scheme, catalog()), errors.getAsBoolean());
         h = Math.min(h, lines.size() + 2);
         Rect rect = freeCorner(frame, area, w, h);
         frame.renderWidget(Clear.INSTANCE, rect);
@@ -657,11 +693,17 @@ final class ArchitectureView {
             }
         }
         section(lines, "Talks to", to, Set.of());
-        if (g.warnings() > 0) {
-            lines.add(Line.from(Span.raw("")));
-            lines.add(Line.from(Span.styled(" " + g.warnings() + " warnings: camel overview lists them",
-                    Theme.warning())));
+        if (isErrorHandling(g)) {
+            List<String> from = new ArrayList<>();
+            for (GroupLink l : capabilities.links()) {
+                if (l.to().equals(g.id())) {
+                    Group sender = capabilities.group(l.from());
+                    from.add(sender != null ? sender.name() : l.from());
+                }
+            }
+            section(lines, "Failures from", from, Set.of());
         }
+        warnings(lines, g);
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(TuiHelper.hangingWrap(lines, Math.max(1, area.width() - 2))))
                 .overflow(Overflow.CLIP)
@@ -693,12 +735,29 @@ final class ArchitectureView {
         }
     }
 
+    /** The warnings camel overview finds in the routes of a group, each with where it is. */
+    private void warnings(List<Line> lines, Group g) {
+        List<String> found = overview.findings().stream()
+                .filter(f -> !"info".equals(f.level()) && f.route() != null && g.routes().contains(f.route()))
+                .map(ProjectOverview.Finding::message).toList();
+        if (found.isEmpty()) {
+            return;
+        }
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled(" Warnings", Theme.warning())));
+        for (String w : found) {
+            lines.add(Line.from(Span.styled("  " + w, Theme.warning())));
+        }
+    }
+
     private static String kindLabel(Group g) {
         return switch (g.kind()) {
             case "group" -> "route group (from the source)";
             case "capability" -> "capability " + IntegrationSummary.AI_MARK;
             case ProjectCapabilities.SHARED -> "used by several groups";
             case ProjectCapabilities.UTILITY -> g.ai() ? "plumbing, partly " + IntegrationSummary.AI_MARK : "plumbing";
+            case ProjectCapabilities.ERRORS -> "reached only on error: a dead letter channel, onException or doCatch"
+                                               + " sends there";
             case SYSTEM_IN -> "external: messages come in";
             case SYSTEM_OUT -> "external: messages go out";
             default -> "not grouped yet: the AI project overview groups the routes (F8, then /overview)";

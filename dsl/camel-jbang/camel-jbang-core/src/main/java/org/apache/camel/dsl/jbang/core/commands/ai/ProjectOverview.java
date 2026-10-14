@@ -184,7 +184,8 @@ public final class ProjectOverview {
         List<Link> links = links(routes, catalog);
         List<SystemUse> systems = systems(routes, catalog);
         List<EntryPoint> entryPoints = entryPoints(routes, links, catalog);
-        List<Finding> findings = findings(routes, links, sources.size() > 0 && routes.size() == MAX_ROUTES);
+        List<Finding> findings
+                = findings(routes, links, catalog, sources.size() > 0 && routes.size() == MAX_ROUTES);
         return new Overview(
                 dir, List.copyOf(sources.keySet()), List.copyOf(routes), links, systems, entryPoints,
                 findings, fingerprint(sources));
@@ -310,13 +311,19 @@ public final class ProjectOverview {
     /** call (waits for the answer), async (hands off in memory), event (over a broker) or shared (e.g. a folder). */
     static String linkKind(String scheme, CamelCatalog catalog) {
         String s = scheme.toLowerCase(Locale.ROOT);
-        if ("direct".equals(s) || "kamelet".equals(s)) {
+        if (isCall(s)) {
             return "call";
         }
         if (IN_MEMORY.contains(s)) {
             return "async";
         }
         return "messaging".equals(category(scheme, catalog)) ? "event" : "shared";
+    }
+
+    /** Whether a route consuming from the scheme is called: its caller waits, and gets its failures back. */
+    static boolean isCall(String scheme) {
+        String s = scheme.toLowerCase(Locale.ROOT);
+        return "direct".equals(s) || "kamelet".equals(s);
     }
 
     // ---- systems and entry points ----
@@ -387,7 +394,7 @@ public final class ProjectOverview {
         return EndpointRules.endpoint(e.key()) != null;
     }
 
-    private static List<Finding> findings(List<Route> routes, List<Link> links, boolean truncated) {
+    private static List<Finding> findings(List<Route> routes, List<Link> links, CamelCatalog catalog, boolean truncated) {
         List<Finding> answer = new ArrayList<>();
         Map<String, List<Route>> byId = new LinkedHashMap<>();
         Set<String> consumed = new LinkedHashSet<>();
@@ -415,9 +422,12 @@ public final class ProjectOverview {
         for (Route r : routes) {
             for (Endpoint e : r.produces()) {
                 if (consumersKnown && !e.dynamic() && isChecked(e) && !consumed.contains(e.key())) {
+                    // sent to while handling a failure: by an error handler, or a route's own error handling
+                    String lost = isErrorHandler(r) || e.onError() ? ": the failed messages it handles are lost" : "";
                     answer.add(new Finding(
                             "warning", "missing-route",
-                            r.key() + " sends to " + e.uri() + " but no route in the project consumes from it", r.key()));
+                            who(r) + " sends to " + e.uri() + " but no route in the project consumes from it" + lost,
+                            r.key()));
                 }
             }
         }
@@ -432,6 +442,8 @@ public final class ProjectOverview {
                 }
             }
         }
+        errorRouteLoops(routes, links, answer);
+        unhandledFailures(routes, links, catalog, answer);
         for (List<String> cycle : cycles(links)) {
             answer.add(new Finding(
                     "warning", "cycle", "Routes call each other in a cycle: " + String.join(" -> ", cycle),
@@ -467,6 +479,88 @@ public final class ProjectOverview {
             answer.add(new Finding("info", "truncated", "Only the first " + MAX_ROUTES + " routes are included", null));
         }
         return answer;
+    }
+
+    /**
+     * An error route that uses the error handling that sends to it (CAMEL-25467): a failure in it goes back to it. When
+     * the dead letter channel's own route fails, the failure is retried, then sent to that route again with its own
+     * exception in place of the first, and when it fails again the dead letter channel gives up and only logs it.
+     */
+    private static void errorRouteLoops(List<Route> routes, List<Link> links, List<Finding> answer) {
+        Map<String, Route> byKey = new HashMap<>();
+        routes.forEach(r -> byKey.putIfAbsent(r.key(), r));
+        Map<Route, List<Route>> loops = new LinkedHashMap<>();
+        for (Link l : links) {
+            Route handler = byKey.get(l.from());
+            Route target = byKey.get(l.to());
+            if (handler != null && target != null && isErrorHandler(handler) && usesHandler(target, handler)) {
+                loops.computeIfAbsent(target, k -> new ArrayList<>()).add(handler);
+            }
+        }
+        loops.forEach((target, handlers) -> answer.add(new Finding(
+                "warning", "error-route-loop",
+                target.key() + " (" + target.file() + ":" + target.line() + ") receives the failures of "
+                                               + String.join(" and ", handlers.stream().map(ProjectOverview::who).toList())
+                                               + " and uses " + (handlers.size() == 1 ? "it" : "them") + " too: a failure in "
+                                               + target.key() + " goes back to " + target.key()
+                                               + ", with its own exception in place of the first; give " + target.key()
+                                               + " an error handler of its own, such as a dead letter channel to a log",
+                target.key())));
+    }
+
+    /**
+     * Whether a route uses an error handler written outside routes: one of its own file (as the routes of a YAML file
+     * or a RouteBuilder share their errorHandler and onException). A route with noErrorHandler uses none; one with an
+     * error handler of its own does not use the file's, but the file's onException clauses still act on its failures.
+     */
+    public static boolean usesHandler(Route route, Route handler) {
+        if (route.noErrorHandler() || !"route".equals(route.kind()) || route.file() == null
+                || !route.file().equals(handler.file())) {
+            return false;
+        }
+        String label = handler.description() != null ? handler.description() : "";
+        boolean onExceptionOnly = label.startsWith("onException") && !label.contains(";");
+        return route.errorHandler() == null || onExceptionOnly;
+    }
+
+    /**
+     * A route with noErrorHandler whose messages do not come from a calling route (CAMEL-25467): its failures go back
+     * to its own consumer (a timer only logs them), and no error handler or onException acts on them. An HTTP entry
+     * point is left out: its caller gets the failure as the answer.
+     */
+    private static void unhandledFailures(List<Route> routes, List<Link> links, CamelCatalog catalog, List<Finding> answer) {
+        for (Route r : routes) {
+            Endpoint from = r.from();
+            if (!r.noErrorHandler() || !"route".equals(r.kind()) || from == null || from.dynamic()
+                    || isCall(from.scheme()) || "http".equals(category(from.scheme(), catalog))) {
+                continue;
+            }
+            List<String> senders = links.stream().filter(l -> l.to().equals(r.key()) && !l.onError())
+                    .map(l -> l.from() + " hands off to it over " + l.endpoint()).distinct().toList();
+            String reached = senders.isEmpty()
+                    ? "no route calls it"
+                    : "no route waits for it (" + String.join(", ", senders) + ")";
+            answer.add(new Finding(
+                    "warning", "unhandled-failures",
+                    r.key() + " (" + r.file() + ":" + r.line() + ") has noErrorHandler and " + reached
+                                                     + ": its failures go back to the consumer of " + from.uri()
+                                                     + ", and no error handler or onException acts on them",
+                    r.key()));
+        }
+    }
+
+    /** An errorHandler, onException or route configuration written outside routes. */
+    public static boolean isErrorHandler(Route r) {
+        return "errorHandler".equals(r.kind());
+    }
+
+    /** A route by its key, an error handler by what it is and where it is written (it has no id). */
+    static String who(Route r) {
+        if (!isErrorHandler(r)) {
+            return r.key();
+        }
+        String label = r.description() != null ? r.description() : "error handling";
+        return (label.startsWith("onException") ? "" : "the ") + label + " (" + r.file() + ":" + r.line() + ")";
     }
 
     /** A direct or seda endpoint: a hop inside Camel that a route could make itself. */
@@ -627,6 +721,11 @@ public final class ProjectOverview {
             jo.put("level", f.level());
             jo.put("kind", f.kind());
             jo.put("message", f.message());
+            Route r = f.route() != null ? overview.route(f.route()) : null;
+            if (r != null) {
+                jo.put("route", f.route());
+                jo.put("source", r.file() + ":" + r.line());
+            }
             findings.add(jo);
         }
         out.put("findings", findings);

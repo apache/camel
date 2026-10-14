@@ -21,6 +21,7 @@ camel cmd route-topology [options]
 | Option | Description | Default | Type
 | `--box-width` | Width of diagram node boxes | 180 | int
 | `--description` | Prefer route description over route id in node labels |  | boolean
+| `--errors` | Draw the error handling: the routes reached only on error in a frame of their own below the routes, with where their failures come from (with --theme) |  | boolean
 | `--external` | Include external systems (consumers at top, producers at bottom) |  | boolean
 | `--font-size` | Font size in logical pixels for node text | 12 | int
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
