@@ -701,10 +701,13 @@ help validate, scaffold, and provide mock guidance for that workflow.
   and transform the code.
 
 | `camel_migration_guide_search`
-| Searches Camel migration and upgrade guides for a specific term or component name. Returns matching snippets
-  from the official guides with version info and URLs. Supports fuzzy matching for typo tolerance. Use this
-  instead of web search when looking up migration-related changes, removed components, API renames, or breaking
-  changes.
+| Searches Camel migration and upgrade guides for a specific term or component name. Each result is one topic
+  entry of a release (e.g. `Upgrading Camel 4.20 to 4.21 / camel-cxf`) with the lines around the best match,
+  version info and URL. Results are ranked by relevance with typo tolerance, generic words such as camel, migration
+  or upgrade are ignored, and no results are returned when nothing is relevant. The optional `currentVersion` and
+  `targetVersion` arguments (e.g. `2.25` and `4.22`) restrict the search to the guides of that migration and rank
+  the 2.x to 3.0 and 3.x to 4.0 migration guides higher. Use this instead of web search when looking up
+  migration-related changes, removed components, API renames, or breaking changes.
 
 | `camel_migration_wildfly_karaf`
 | Provides migration guidance for Camel projects running on WildFly, Karaf, or WAR-based application servers.
