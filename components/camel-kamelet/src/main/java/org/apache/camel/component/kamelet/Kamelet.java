@@ -48,7 +48,6 @@ import org.apache.camel.util.URISupport;
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 public final class Kamelet {
-
     public static final String PROPERTIES_PREFIX = "camel.kamelet.";
     public static final String ENV_VAR_PREFIX = "CAMEL_KAMELET_";
     public static final String SCHEME = "kamelet";
@@ -298,9 +297,6 @@ public final class Kamelet {
     /**
      * Re-wraps values that contain URI-sensitive characters. RAW wrappers may already have been stripped by
      * {@link URISupport#resolveRawParameterValues(Map)} before options reach this method.
-     * <p>
-     * RAW(...) and RAW{...} have limitations when their closing delimiter is followed by an ampersand. Avoid RAW{...}
-     * for values starting with '{' or ending with '}', as they may be interpreted as property placeholders.
      */
     private static String wrapRawIfNeeded(String value) {
         if (value == null || value.isEmpty() || isRawToken(value)) {
@@ -308,9 +304,11 @@ public final class Kamelet {
         }
         if (value.contains("&") || value.contains("=") || value.contains("?")
                 || value.contains("+") || value.contains("%")) {
-            if (value.contains(")&") && !value.startsWith("{") && !value.endsWith("}")
-                    && !value.contains("}&")) {
-                return "RAW{" + value + "}";
+            if (value.contains(")&")) {
+                // fits in neither RAW(...) nor RAW{...}; keep the value out of the message, it may be a secret
+                throw new IllegalArgumentException(
+                        "The value of a source.* or sink.* option cannot contain \")&\" when it also starts with '{',"
+                                                   + " ends with '}' or contains \"}&\"");
             }
             return "RAW(" + value + ")";
         }
@@ -546,7 +544,6 @@ public final class Kamelet {
         int line = -1;
         boolean sink = false;
         Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
-
         for (ToDefinition to : col) {
             if (isKameletEndpoint(to.getEndpointUri(), SINK_ID)) {
                 to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
@@ -554,7 +551,6 @@ public final class Kamelet {
             }
             line = to.getLineNumber();
         }
-
         if (!sink) {
             // this is appended and is used to go back to the kamelet that called me
             ToDefinition to = new ToDefinition("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);

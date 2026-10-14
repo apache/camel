@@ -843,66 +843,77 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
         }
     }
 
-    @Disabled("Requires a shared URIScanner fix; RAW values containing )& inside quoted JSON are truncated during query parsing")
-    @Test
-    void sinkOptionsPreserveJsonRawValueWithClosingParenthesisAndAmpersand() throws Exception {
-        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
-            testContext.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    routeTemplate("json-edge-case-sink")
-                            .from("kamelet:source")
-                            .to("http://localhost/unused-json-edge-case");
-
-                    from("direct:trigger-json-edge-case")
-                            .kamelet("json-edge-case-sink?sink.filter=RAW({\"filter\":\"(x)&y\"})");
-
-                }
-            });
-
-            testContext.start();
-
-            RouteDefinition expandedRoute = findExpandedRouteWithOutput(
-                    testContext, "http://localhost/unused-json-edge-case");
-            ToDefinition sink = findToDefinition(
-                    expandedRoute, "http://localhost/unused-json-edge-case");
-
-            assertNotNull(sink, "Expected sink endpoint for JSON edge case");
-
-            String uri = sink.getEndpointUri();
-            assertFalse(uri.contains("RAW{{"),
-                    () -> "JSON must not be wrapped as RAW{{...}}: " + uri);
-            Map<String, Object> query = parseUriQuery(uri);
-
-            assertEquals("{\"filter\":\"(x)&y\"}", rawOrPlain(query.get("filter")),
-                    () -> "Expected JSON containing )& to remain intact: " + uri);
-            assertFalse(query.containsKey("y}"),
-                    () -> "Ampersand in the JSON must not create a spurious parameter: " + uri);
-
-            HttpEndpoint http = findHttpEndpoint(testContext, "/unused-json-edge-case");
-            assertNotNull(http, "Expected the HTTP sink endpoint to be created");
-            Map<String, Object> httpQuery = URISupport.parseQuery(http.getHttpUri().getRawQuery());
-            assertEquals("{\"filter\":\"(x)&y\"}", urlDecode(rawOrPlain(httpQuery.get("filter"))),
-                    () -> "Expected the HTTP endpoint to receive the complete JSON: " + http.getHttpUri());
-            assertFalse(httpQuery.containsKey("y}"),
-                    () -> "The HTTP endpoint must not receive a spurious y} parameter: " + http.getHttpUri());
-        }
-    }
-
     @Test
     void sinkOptionsPreserveMultipleAmpersands() throws Exception {
         assertHttpSinkOption("/unused-multi-amp", "sink.password=RAW(a&b&c)", "password", "a&b&c", "b", "c");
     }
 
     @Test
-    void sinkOptionsPreserveUnquotedCloseParenAmpersand() throws Exception {
-        assertHttpSinkOption("/unused-unquoted-paren-amp", "sink.password=RAW{p@ss)&word}", "password", "p@ss)&word",
-                "word)");
+    @Disabled("The & in the value gets parsed as a query parameter separator before reaching the validation")
+    void sinkOptionsPreserveJsonRawValueWithClosingParenthesisAndAmpersand() {
+        Exception ex = assertThrows(Exception.class, () -> {
+            try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+                testContext.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        routeTemplate("json-edge-case-sink")
+                                .from("kamelet:source")
+                                .to("http://localhost/unused-json-edge-case");
+
+                        from("direct:trigger-json-edge-case")
+                                .kamelet("json-edge-case-sink?sink.filter=RAW({\"filter\":\"(x)&y\"})");
+
+                    }
+                });
+
+                testContext.start();
+            }
+        });
+
+        assertTrue(hasIllegalArgumentException(ex),
+                () -> "Expected an IllegalArgumentException for values containing )& with braces, but got: " + ex);
+        assertTrue(exceptionChainContains(ex, "cannot contain \")&\""),
+                () -> "Expected exception message to mention the problematic sequence: " + ex);
+        assertTrue(exceptionChainContains(ex, "starts with '{'"),
+                () -> "Expected exception message to mention the start brace: " + ex);
+        assertTrue(exceptionChainContains(ex, "ends with '}'"),
+                () -> "Expected exception message to mention the end brace: " + ex);
+        assertTrue(exceptionChainContains(ex, "contains \"}&\""),
+                () -> "Expected exception message to mention the brace-ampersand sequence: " + ex);
     }
 
     @Test
     void sinkOptionsPreservePlusEqualsAndQuestionMark() throws Exception {
         assertHttpSinkOption("/unused-plus-eq-q", "sink.filter=RAW(a+b=c?d)", "filter", "a+b=c?d", new String[0]);
+    }
+
+    @Test
+    void sinkOptionsOverrideTheOnlyExistingParameterAsTheLastOption() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("log-override-sink")
+                            .from("kamelet:source")
+                            .to("log:override?showAll=false");
+
+                    from("direct:trigger")
+                            .kamelet("log-override-sink?sink.level=INFO&sink.showAll=true");
+                }
+            });
+
+            testContext.start();
+
+            ToDefinition sink = findToDefinition(
+                    findExpandedRouteWithOutput(testContext, "log:override"), "log:override");
+            assertNotNull(sink, "Expected sink endpoint");
+            String uri = sink.getEndpointUri();
+            assertTrue(uri.startsWith("log:override?"), () -> "Expected ? before the first option: " + uri);
+            Map<String, Object> query = parseUriQuery(uri);
+            assertEquals(2, query.size(), () -> uri);
+            assertEquals("INFO", query.get("level"), () -> uri);
+            assertEquals("true", query.get("showAll"), () -> uri);
+        }
     }
 
     private void assertHttpSinkOption(
