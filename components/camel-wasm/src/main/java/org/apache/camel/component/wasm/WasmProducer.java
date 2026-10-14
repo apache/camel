@@ -73,7 +73,6 @@ import run.endive.runtime.TrapException;
 public class WasmProducer extends DefaultProducer {
 
     private static final int MAX_STDERR_IN_MESSAGE = 256;
-    private static final String DEFAULT_PROGRAM_NAME = "module.wasm";
 
     private WasiCommand command;
     private Map<String, String> environment = Collections.emptyMap();
@@ -100,7 +99,7 @@ public class WasmProducer extends DefaultProducer {
         if (conf.getEnvironment() != null) {
             for (Map.Entry<String, Object> e : conf.getEnvironment().entrySet()) {
                 String value = e.getValue() != null ? e.getValue().toString() : "";
-                env.put(checkName(e.getKey()), checkNoNul("environment variable " + e.getKey(), value));
+                env.put(checkName(e.getKey()), WasmEndpoint.checkNoNul("environment variable " + e.getKey(), value));
             }
         }
         List<String> headers = new ArrayList<>();
@@ -288,7 +287,7 @@ public class WasmProducer extends DefaultProducer {
         for (String name : environmentHeaders) {
             String value = message.getHeader(name, String.class);
             if (value != null) {
-                answer.put(name, checkNoNul("header " + name, value));
+                answer.put(name, WasmEndpoint.checkNoNul("header " + name, value));
             }
         }
         return answer;
@@ -315,83 +314,6 @@ public class WasmProducer extends DefaultProducer {
             throw new IllegalArgumentException("Invalid environment variable name: '" + name + "'");
         }
         return name;
-    }
-
-    static String checkNoNul(String what, String value) {
-        // WASI passes arguments and environment variables as NUL terminated strings
-        if (value.indexOf('\0') >= 0) {
-            throw new IllegalArgumentException("The " + what + " contains a NUL character, which a module cannot receive");
-        }
-        return value;
-    }
-
-    /**
-     * The program name the module receives as argument zero: the file name of the module location, without scheme,
-     * directories, user info or query. The location itself is not passed on: it can carry credentials (an http location
-     * with user info or a token in the query) and shows host paths to a module that has no file access.
-     */
-    static String programName(String location) {
-        String name = location;
-        int query = name.indexOf('?');
-        if (query >= 0) {
-            name = name.substring(0, query);
-        }
-        int scheme = name.indexOf(':');
-        if (scheme > 0) {
-            String prefix = name.substring(0, scheme);
-            if ("base64".equals(prefix) || "gzip".equals(prefix)) {
-                // the rest is the module itself, not a name
-                return DEFAULT_PROGRAM_NAME;
-            }
-            name = name.substring(scheme + 1);
-        }
-        if (name.startsWith("//")) {
-            // host, port and user info are not part of the name
-            int path = name.indexOf('/', 2);
-            name = path < 0 ? "" : name.substring(path);
-        }
-        name = name.substring(Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\')) + 1);
-        return name.isEmpty() ? DEFAULT_PROGRAM_NAME : name;
-    }
-
-    /**
-     * Splits the args option into the argument list of the module, with the program name first. Arguments are separated
-     * by whitespace; double quotes group an argument that contains whitespace.
-     */
-    static List<String> arguments(String program, String args) {
-        List<String> answer = new ArrayList<>();
-        answer.add(program);
-        if (args == null) {
-            return answer;
-        }
-        StringBuilder current = null;
-        boolean quoted = false;
-        for (int i = 0; i < args.length(); i++) {
-            char c = args.charAt(i);
-            if (c == '"') {
-                quoted = !quoted;
-                if (current == null) {
-                    current = new StringBuilder();
-                }
-            } else if (Character.isWhitespace(c) && !quoted) {
-                if (current != null) {
-                    answer.add(current.toString());
-                    current = null;
-                }
-            } else {
-                if (current == null) {
-                    current = new StringBuilder();
-                }
-                current.append(c);
-            }
-        }
-        if (quoted) {
-            throw new IllegalArgumentException("Unbalanced double quote in args: " + args);
-        }
-        if (current != null) {
-            answer.add(current.toString());
-        }
-        return answer;
     }
 
     /**

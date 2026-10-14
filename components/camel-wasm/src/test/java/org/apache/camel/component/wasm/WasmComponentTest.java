@@ -526,8 +526,8 @@ class WasmComponentTest {
             "base64:AGFzbQEAAAA=, module.wasm",
             "gzip:H4sIAAAA/abc, module.wasm" })
     void argumentZeroIsTheFileNameOfTheModule(String location, String expected) {
-        assertThat(WasmProducer.programName(location)).isEqualTo(expected);
-        assertThat(WasmProducer.arguments(WasmProducer.programName(location), "-v")).containsExactly(expected, "-v");
+        assertThat(WasmEndpoint.programName(location)).isEqualTo(expected);
+        assertThat(WasmEndpoint.arguments(WasmEndpoint.programName(location), "-v")).containsExactly(expected, "-v");
     }
 
     @Test
