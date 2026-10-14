@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.util.Map;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -66,16 +68,21 @@ public class DiagnoseTools {
         if (error == null || error.isBlank()) {
             throw new ToolCallException("Error message or stack trace is required", null);
         }
+        Map<String, String> diagArgs = AuthoringTools.args("error", error,
+                "runtime", runtime, "camelVersion", camelVersion, "platformBom", platformBom);
         JsonObject repeat = repeatedCalls != null
-                ? repeatedCalls.repeatOf(connection, "camel_error_diagnose", AuthoringTools.args("error", error,
-                        "runtime", runtime, "camelVersion", camelVersion, "platformBom", platformBom))
+                ? repeatedCalls.repeatOf(connection, "camel_error_diagnose", diagArgs)
                 : null;
         if (repeat != null) {
             return repeat;
         }
         try {
             CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, platformBom);
-            return ErrorDiagnoser.diagnose(error, catalog);
+            JsonObject answer = ErrorDiagnoser.diagnose(error, catalog);
+            if (repeatedCalls != null) {
+                repeatedCalls.recordSuccessfulAnswer(connection, "camel_error_diagnose", diagArgs);
+            }
+            return answer;
         } catch (ToolCallException e) {
             throw e;
         } catch (Throwable e) {

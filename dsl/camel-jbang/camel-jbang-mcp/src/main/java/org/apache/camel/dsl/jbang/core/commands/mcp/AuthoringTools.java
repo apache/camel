@@ -402,9 +402,13 @@ public class AuthoringTools {
             ToolContext ctx = new ToolContext();
             if (catalogService != null) {
                 String camelVersion = args != null ? args.get("camelVersion") : null;
-                String runtime = args != null ? args.get("runtime") : null;
                 try {
-                    CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, null);
+                    // Set the version first: setCamelVersion() on a fresh context nulls out any previously set catalog,
+                    // so the catalog must be set after (or the version set before, so it is a no-op when they match).
+                    if (camelVersion != null && !camelVersion.isBlank()) {
+                        ctx.setCamelVersion(camelVersion.trim());
+                    }
+                    CamelCatalog catalog = catalogService.loadCatalog(null, camelVersion, null);
                     ctx.setCatalog(catalog);
                 } catch (Exception e) {
                     // catalog load failed: fall through to ToolContext's own lazy-load, which handles the error

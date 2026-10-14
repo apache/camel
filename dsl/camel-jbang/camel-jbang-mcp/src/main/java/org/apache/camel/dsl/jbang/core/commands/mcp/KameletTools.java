@@ -73,7 +73,7 @@ public class KameletTools {
             @ToolArg(description = "Apache Camel Kamelets version. If not specified, uses the default version.",
                      required = false) String kameletsVersion) {
 
-        int maxResults = limit != null ? Math.max(1, limit) : 50;
+        int maxResults = limit != null && limit > 0 ? limit : 50;
 
         try {
             String version = kameletsVersion != null && !kameletsVersion.isBlank()

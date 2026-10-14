@@ -226,8 +226,11 @@ public class CatalogService {
         if (runtimeType == RuntimeType.springBoot) {
             return CatalogLoader.loadSpringBootCatalog(repos, null, true);
         } else if (runtimeType == RuntimeType.quarkus) {
-            // platformBom should have been resolved in loadCatalog() before doLoadCatalog() is called; passing null
-            // here would silently produce an unusable catalog, so we guard with an assertion to surface the bug early.
+            // loadCatalog() always resolves the platform BOM for Quarkus before calling doLoadCatalog(),
+            // so platformBom is never null here.
+            if (platformBom == null) {
+                throw new IllegalStateException("No Quarkus platform BOM resolved");
+            }
             return CatalogLoader.loadQuarkusCatalog(platformBom, downloader()::resolveArtifact);
         }
 

@@ -475,6 +475,9 @@ the same answer, and the note also says to change the line the error names. Vali
 `content` with a `directory` (the checks then read the other files of the project, which a fix can change), is
 always answered in full.
 
+A call that fails (the catalog version cannot be downloaded, the file argument is missing) does not count:
+the model can try again without the note getting in the way.
+
 Calls with other arguments, and the tools that read files, logs or the running integration, are always answered
 in full, so re-reading a file after an edit or polling a log keeps working.
 
