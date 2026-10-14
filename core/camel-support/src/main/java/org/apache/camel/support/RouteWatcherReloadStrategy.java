@@ -248,14 +248,26 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         if (relative == null || relative.isEmpty()) {
             return false;
         }
-        AntPathMatcher matcher = new AntPathMatcher();
         for (String part : excludes) {
             // inbox and inbox/** match the folder itself; a file pattern such as *.json does not leave a folder out
-            if (part.equals(relative) || matcher.match(part, relative + "/_", false)) {
+            if (part.equals(relative) || AntPathMatcher.INSTANCE.match(part, relative + "/_", false)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /** The file a route was loaded from, as an absolute path, or null when it is not a file. */
+    private static Path sourcePath(Resource resource) {
+        String location = resource != null ? resource.getLocation() : null;
+        if (location == null || location.contains(":") && !location.startsWith("file:")) {
+            return null;
+        }
+        try {
+            return Paths.get(location.startsWith("file:") ? location.substring(5) : location).toAbsolutePath().normalize();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /** The path of the file relative to the watched folder, with / separators, or null when it is not under it. */
@@ -309,18 +321,19 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * was loaded from it, or it is a properties, Java or Groovy file), else null.
      */
     private String dataFolder(List<File> changed) {
-        Set<String> sources = new HashSet<>();
+        // by full path: a data file named as a route source (inbox/route.yaml and route.yaml) is still data
+        Set<Path> sources = new HashSet<>();
         for (Route route : getCamelContext().getRoutes()) {
-            Resource rs = route.getSourceResource();
-            if (rs != null && rs.getLocation() != null) {
-                sources.add(FileUtil.stripPath(rs.getLocation()));
+            Path source = sourcePath(route.getSourceResource());
+            if (source != null) {
+                sources.add(source);
             }
         }
         String data = null;
         for (File file : changed) {
             String name = file.getName();
             if (name.endsWith(".properties") || name.endsWith(".java") || name.endsWith(".groovy")
-                    || sources.contains(name)) {
+                    || sources.contains(file.toPath().toAbsolutePath().normalize())) {
                 return null;
             }
             String relative = relativePath(file);

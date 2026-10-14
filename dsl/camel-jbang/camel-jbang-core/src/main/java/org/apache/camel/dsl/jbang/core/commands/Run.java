@@ -2108,6 +2108,21 @@ public class Run extends CamelCommand {
      * (--data-dir), whose files the routes read and write: a change there is not a change of the sources, and reloading
      * the routes for it restarts them, so they write again and reload again (CAMEL-25670).
      */
+    /**
+     * --data-dir only changes what dev mode watches in a source directory: without one only the given files are
+     * watched, and their data folders are not, so the option has nothing to leave out. Said when it is given on the
+     * command line; camel.jbang.dataDir in an application.properties is not, as an example that declares its data
+     * folders also runs with its files (camel run --example).
+     */
+    private void warnDataDirWithoutSourceDir() {
+        if (dataDir != null && spec != null && spec.commandLine() != null
+                && spec.commandLine().getParseResult() != null
+                && spec.commandLine().getParseResult().hasMatchedOption("--data-dir")) {
+            printer().printErr("WARN: --data-dir is used with --source-dir: without a source directory dev mode only"
+                               + " watches the given files, so --data-dir=" + dataDir + " has no effect");
+        }
+    }
+
     static String sourceDirReloadPattern(String dataDir) {
         StringJoiner sj = new StringJoiner(",");
         sj.add("*");
@@ -2140,6 +2155,7 @@ public class Run extends CamelCommand {
             reloadDir = sourceDir;
             pattern = sourceDirReloadPattern(dataDir);
         } else {
+            warnDataDirWithoutSourceDir();
             // use the directory of the first file that is in another folder than the current dir
             reloadDir = ".";
             StringJoiner sj = new StringJoiner(",");
@@ -2708,6 +2724,7 @@ public class Run extends CamelCommand {
                 main.addInitialProperty("camel.main.routesReloadPattern", sourceDirReloadPattern(dataDir));
                 main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
             } else {
+                warnDataDirWithoutSourceDir();
                 String pattern = sjReload.toString();
                 String reloadDir = ".";
                 // use current dir, however if we run a file that are in another folder, then we should track that folder instead
