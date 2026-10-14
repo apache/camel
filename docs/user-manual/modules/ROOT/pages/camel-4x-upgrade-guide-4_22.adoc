@@ -90,6 +90,19 @@ Code that creates key material itself has to follow the same move: the `CMCEPara
 `CMCEParameterSpec`, `FrodoKEMParameterSpec`, `MLKEMParameterSpec`, `MLDSAParameterSpec` and
 `SLHDSAParameterSpec` of `org.bouncycastle.jcajce.spec` with the `BC` provider instead.
 
+=== camel-pqc - a configured KeyGenerator or KeyAgreement is used by one exchange at a time
+
+When Camel creates the instance itself, the KEM operations of the `pqc` component (including the hybrid KEM
+operations) and the PQC data format now use a new `KeyGenerator`, and for the hybrid operations a new `KeyAgreement`,
+for every operation. A configured instance is still shared: a registry bean, which is autowired into every `pqc`
+endpoint, a `KeyGenerator` set on the data format, or the default material used when no key material is configured.
+Each operation now holds its lock from `init` until the result is returned, so concurrent exchanges that use it run
+one at a time.
+
+A started PQC data format no longer keeps a `KeyGenerator` of its own: `getKeyGenerator()` returns only a configured
+instance and, unless one is configured, the `CamelPQCKemAlgorithm` header now selects the KEM algorithm of each
+operation.
+
 === camel-netty-http - the roles of a security constraint are matched by role name
 
 The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
