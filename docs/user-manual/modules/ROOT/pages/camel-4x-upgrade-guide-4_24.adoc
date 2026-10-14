@@ -523,6 +523,30 @@ Previously it returned only the first chunk of the event log (at most 500 events
 any sign. A wide `after`/`before` window now returns every event in one list: that is one request per 500 events plus
 one that finds the end of the log, and more memory. Narrow the window when the event log is large.
 
+=== camel-chunk - message data printed with a direct tag is rendered literally
+
+Previously the `chunk` component bound the message body, headers and variables into the Chunk engine so that
+Chunk re-parsed those values as template source: a value that itself contained Chunk tags (such as a body of
+`{$headers.name}`) had those tags expanded instead of being printed verbatim.
+
+Message data bound to the engine is now neutralised so that a direct `{$tag}` printing the body, a header, a
+variable, or an element of a nested map, list or array renders the value literally instead of evaluating the
+tags inside it. Tag-free data is unchanged and Chunk's string filters (for example `slice`, `get`, `join`)
+keep their existing behaviour. Routes that relied on message data being evaluated as Chunk template code must
+move that markup into the template itself.
+
+As part of this, a non-`List` `Collection` value (such as a `Set`) is now bound as a `List`, so a direct
+`{$body}` prints Chunk's list placeholder instead of the collection's `toString()`, and a filter such as
+`|join` operates on its elements.
+
+This does not cover every path: Chunk re-parses any string it produces while rendering, so the output of a
+filter (`{$body|trim}`), a string property of a bean body (`{$body.name}`, `{$exception.message}`) and string
+items bound by a `{% loop %}` are still parsed as template code. Keep untrusted data to direct `{$tag}`
+output; do not pass untrusted values through Chunk filters, bean properties or loops. If untrusted data must
+go through one of those paths, remove the `{` and `}` characters from it in the route before the `chunk`
+endpoint (Chunk has no escape for tags inside data), for example with a processor that rewrites the body or
+header.
+
 === camel-telegram - a failed send fails the exchange once
 
 When Telegram answers a message with an error status (for example `400` for an unknown chat), or with a body that
