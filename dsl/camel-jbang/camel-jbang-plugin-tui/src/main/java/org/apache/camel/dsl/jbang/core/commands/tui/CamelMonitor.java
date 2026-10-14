@@ -635,7 +635,7 @@ public class CamelMonitor extends CamelCommand {
             }
             tui.run(
                     this::handleEvent,
-                    this::render);
+                    frame -> ScreenSanitizer.render(frame, this::render));
         } finally {
             shellPanel.destroy();
             aiPanel.destroy();
