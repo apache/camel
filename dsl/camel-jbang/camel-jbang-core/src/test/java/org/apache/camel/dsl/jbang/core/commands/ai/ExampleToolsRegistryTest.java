@@ -83,6 +83,17 @@ class ExampleToolsRegistryTest {
     }
 
     @Test
+    void anAmbiguousShortNameListsTheCandidates() {
+        List<JsonObject> catalog = List.of(new JsonObject(Map.of("name", "route/x")),
+                new JsonObject(Map.of("name", "transform/x")));
+
+        assertThatThrownBy(() -> ToolRegistry.resolveExample(catalog, "x"))
+                .isInstanceOf(ToolExecutionException.class)
+                .hasMessage("Ambiguous example: x. Use one of: route/x, transform/x");
+        assertThat(ToolRegistry.resolveExample(catalog, "transform/x").getString("name")).isEqualTo("transform/x");
+    }
+
+    @Test
     void anUnknownFileListsTheFilesOfTheExample() {
         assertThatThrownBy(() -> exampleFile("timer-log", "route.camel.yaml"))
                 .isInstanceOf(ToolExecutionException.class)

@@ -1170,16 +1170,7 @@ public final class ToolRegistry {
         }
         String wanted = example.trim();
         String fileName = file.trim();
-        List<JsonObject> catalog = ExampleHelper.loadCatalog();
-        JsonObject entry = ExampleHelper.findExample(catalog, wanted);
-        if (entry == null) {
-            List<String> similar = ExampleHelper.suggestExamples(catalog, wanted);
-            throw new ToolExecutionException(
-                    "Example not found: " + wanted
-                                             + (similar.isEmpty()
-                                                     ? ". Use list_examples to see the examples."
-                                                     : ". Did you mean: " + String.join(", ", similar) + "?"));
-        }
+        JsonObject entry = resolveExample(ExampleHelper.loadCatalog(), wanted);
         String name = entry.getString("name");
         List<String> files = ExampleHelper.getFiles(entry);
         if (!files.contains(fileName)) {
@@ -1204,6 +1195,32 @@ public final class ToolRegistry {
             answer.put("githubUrl", ExampleHelper.getGithubUrl(entry) + "/" + fileName);
         }
         return answer;
+    }
+
+    /**
+     * The catalog entry of an example by its full name, or by its short name when only one example has it, as camel run
+     * resolves it; an ambiguous short name answers with the candidates, an unknown one with the closest names.
+     */
+    static JsonObject resolveExample(List<JsonObject> catalog, String example) {
+        if (!example.contains("/")) {
+            List<JsonObject> same = ExampleHelper.findExamplesByShortName(catalog, example);
+            if (same.size() > 1) {
+                throw new ToolExecutionException(
+                        "Ambiguous example: " + example + ". Use one of: "
+                                                 + same.stream().map(e -> e.getString("name"))
+                                                         .collect(Collectors.joining(", ")));
+            }
+        }
+        JsonObject entry = ExampleHelper.findExample(catalog, example);
+        if (entry == null) {
+            List<String> similar = ExampleHelper.suggestExamples(catalog, example);
+            throw new ToolExecutionException(
+                    "Example not found: " + example
+                                             + (similar.isEmpty()
+                                                     ? ". Use list_examples to see the examples."
+                                                     : ". Did you mean: " + String.join(", ", similar) + "?"));
+        }
+        return entry;
     }
 
     // ---- Processor detail enrichment ----
