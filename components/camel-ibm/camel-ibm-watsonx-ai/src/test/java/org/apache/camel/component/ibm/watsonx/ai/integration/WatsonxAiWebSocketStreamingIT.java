@@ -70,6 +70,8 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
     @RegisterExtension
     AvailablePortFinder.Port port = AvailablePortFinder.find();
     private Vertx vertx;
+    // kept until the end of the test, as a Vert.x WebSocket client that is garbage collected closes its WebSockets
+    private WebSocketClient client;
 
     @AfterEach
     void tearDown() {
@@ -227,7 +229,7 @@ public class WatsonxAiWebSocketStreamingIT extends WatsonxAiTestSupport {
     private WebSocket openWebSocketConnection(String host, int port, String path, Consumer<String> handler)
             throws Exception {
         vertx = Vertx.vertx();
-        WebSocketClient client = vertx.createWebSocketClient();
+        client = vertx.createWebSocketClient();
         CompletableFuture<WebSocket> future = client.connect(port, host, path)
                 .toCompletionStage()
                 .toCompletableFuture();

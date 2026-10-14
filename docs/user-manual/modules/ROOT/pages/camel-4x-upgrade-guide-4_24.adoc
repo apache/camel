@@ -51,6 +51,43 @@ evaluation capture. For external readers, `retained` is `unknown` instead of a c
 and responses; backend implementations may split retrieval into their own batches. The 100-reference
 limit on legacy persisted evidence records remains unchanged.
 
+=== Vert.x 5
+
+Camel now uses Vert.x 5. This affects `camel-vertx`, `camel-vertx-http`, `camel-vertx-websocket`,
+`camel-platform-http-vertx`, `camel-platform-http-main`, `camel-platform-http-jolokia`, `camel-knative-http`
+and `camel-oauth`. Application code that uses the Vert.x API directly, for example to create a custom `Vertx`
+instance, a custom `Router` handler, or an authentication provider for platform-http, must be migrated as
+described in the https://vertx.io/docs/guides/vertx-5-migration-guide/[Vert.x 5 migration guide]. Notably,
+the callback variants of asynchronous methods are removed in favour of the methods returning a `Future`.
+
+A metrics or tracing factory can no longer be set on the `VertxOptions` given to a component (the
+`MetricsOptions.setFactory` and `TracingOptions.setFactory` methods are removed). Either create the `Vertx`
+instance with `Vertx.builder()` and set it on the component (or bind it to the registry), or register the factory
+as a `io.vertx.core.spi.VertxServiceProvider` service.
+
+`VertxPlatformHttpRouter.mountSubRouter` is removed, as it is no longer part of the Vert.x `Router` API.
+Use `router.route(mountPoint + "*").subRouter(subRouter)` instead.
+
+When the connection of a WebSocket is lost without a close frame, the `camel-vertx-websocket` consumer no longer
+passes the resulting exception to the consumer exception handler, and no longer routes it as an `ERROR` event. It is
+handled as a WebSocket closed with a close frame: a consumer with `fireWebSocketConnectionEvents=true` routes a `CLOSE`
+event, and a consumer with `consumeAsClient=true` reconnects. With the default `fireWebSocketConnectionEvents=false`,
+the lost connection of a peer is therefore no longer logged as a warning.
+
+When the WebSocket of a consumer with `consumeAsClient=true` reports any other error, the consumer exception handler
+now receives that exception. Previously it received the cause of that exception, which could be `null`.
+
+When the WebSocket that the `camel-vertx-websocket` producer sends to (a server not managed by Camel) reports an error
+other than a lost connection, the exchange now fails with that exception. Previously it failed with the cause of that
+exception, which could be `null`.
+
+`camel-arangodb` still uses Vert.x 4, as the ArangoDB Java driver does not support Vert.x 5 yet
+(see https://github.com/arangodb/arangodb-java-driver/issues/625[arangodb-java-driver#625]). An application that
+uses `camel-arangodb` together with one of the components above resolves a single version of the `io.vertx`
+artifacts, so either the ArangoDB driver or the other components fail at runtime. The workaround suggested by the
+driver maintainers is to replace `com.arangodb:arangodb-java-driver` with `com.arangodb:arangodb-java-driver-shaded`,
+which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-arangodb` cannot be used in that case.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint
