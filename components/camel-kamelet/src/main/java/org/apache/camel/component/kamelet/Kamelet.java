@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.kamelet;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
@@ -374,8 +374,8 @@ public final class Kamelet {
     }
 
     /**
-     * Removes a query parameter by name, treating camelCase and kebab-case names as aliases. Returns the original URI
-     * unchanged when the parameter is not present, so encoded values in the query are not rewritten.
+     * Removes a query parameter by name, treating camelCase and kebab-case names as aliases. Respects RAW(...) and
+     * RAW{...} boundaries so ampersands inside raw values do not split parameters.
      */
     static String removeQueryParameter(String uri, String parameterName) {
         int queryIndex = uri.indexOf('?');
@@ -386,19 +386,49 @@ public final class Kamelet {
         String query = uri.substring(queryIndex + 1);
         String normalizedName = StringHelper.camelCaseToDash(parameterName);
 
-        String[] parts = query.split("&");
-        String rebuilt = Arrays.stream(parts)
-                .filter(p -> {
-                    String key = p.contains("=") ? p.substring(0, p.indexOf('=')) : p;
-                    return !StringHelper.camelCaseToDash(key).equals(normalizedName);
-                })
-                .collect(Collectors.joining("&"));
+        List<String> parts = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        int parenDepth = 0;
+        int braceDepth = 0;
 
-        if (rebuilt.length() == query.length()) {
-            return uri; // parameter was not present, leave URI unchanged
+        for (int i = 0; i < query.length(); i++) {
+            char c = query.charAt(i);
+            if (c == '(') {
+                parenDepth++;
+            } else if (c == ')') {
+                parenDepth = Math.max(0, parenDepth - 1);
+            } else if (c == '{') {
+                braceDepth++;
+            } else if (c == '}') {
+                braceDepth = Math.max(0, braceDepth - 1);
+            } else if (c == '&' && parenDepth == 0 && braceDepth == 0) {
+                parts.add(current.toString());
+                current.setLength(0);
+                continue;
+            }
+            current.append(c);
+        }
+        if (current.length() > 0) {
+            parts.add(current.toString());
+        }
+
+        List<String> filtered = new ArrayList<>();
+        boolean removed = false;
+        for (String p : parts) {
+            String key = p.contains("=") ? p.substring(0, p.indexOf('=')) : p;
+            if (StringHelper.camelCaseToDash(key).equals(normalizedName)) {
+                removed = true;
+            } else {
+                filtered.add(p);
+            }
+        }
+
+        if (!removed) {
+            return uri;
         }
 
         String base = uri.substring(0, queryIndex);
+        String rebuilt = String.join("&", filtered);
         return rebuilt.isEmpty() ? base : base + "?" + rebuilt;
     }
 

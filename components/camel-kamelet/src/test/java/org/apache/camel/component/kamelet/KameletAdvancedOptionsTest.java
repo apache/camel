@@ -1150,6 +1150,19 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
         }
     }
 
+    @Test
+    void removeQueryParameterHandlesRawAmpersandSafely() {
+        String uri = "http://host?auth=RAW(user:pass&token)&timeout=30";
+
+        // Test removing the parameter after the RAW value
+        String resultAfter = Kamelet.removeQueryParameter(uri, "timeout");
+        assertEquals("http://host?auth=RAW(user:pass&token)", resultAfter);
+
+        // Test removing the RAW value parameter itself
+        String resultBefore = Kamelet.removeQueryParameter(uri, "auth");
+        assertEquals("http://host?timeout=30", resultBefore);
+    }
+
     private void assertHttpSinkOption(
             String path, String sinkQuery, String optionName, String expectedValue, String... forbiddenKeys)
             throws Exception {
