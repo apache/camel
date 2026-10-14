@@ -75,6 +75,16 @@ public class LRASagaServiceTest extends CamelTestSupport {
         Mockito.verify(client).newLRA(exchange);
     }
 
+    @DisplayName("Tests whether doStart() fails when the callback secret is set but blank")
+    @Test
+    void testBlankCallbackSecretFailsToStart() {
+        LRASagaService sagaService = new LRASagaService();
+        applyMockProperties(sagaService);
+        sagaService.setCallbackSecret(" ");
+
+        Assertions.assertThrows(IllegalArgumentException.class, sagaService::doStart);
+    }
+
     private void applyMockProperties(LRASagaService sagaService) {
         sagaService.setCoordinatorUrl("mockCoordinatorUrl");
         sagaService.setLocalParticipantUrl("mockLocalParticipantUrl");
