@@ -82,31 +82,37 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
     public void testPingAsyncAsyncRecovery() throws Exception {
         int messageGroupCount = 5;
         for (int i = 1; i <= messageGroupCount; i++) {
-            template.sendBody("direct:grpc-stream-async-async-route",
+            template.sendBody("direct:grpc-stream-async-async-recovery-route",
                     PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
         }
 
-        template.sendBody("direct:grpc-stream-async-async-route", PingRequest.newBuilder().setPingName("error").build());
+        template.sendBody("direct:grpc-stream-async-async-recovery-route",
+                PingRequest.newBuilder().setPingName("error").build());
 
         MockEndpoint replies = getMockEndpoint("mock:grpc-replies");
-        replies.expectedMessageCount(messageGroupCount);
+        // 5 normal replies + 1 forwarded onError event (forwardOnError=true on this route)
+        replies.expectedMessageCount(messageGroupCount + 1);
         replies.assertIsSatisfied();
 
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertListSize(pingPongServer.getLastStreamRequests(), 1));
+        // The forwarder closes its current stream before forwarding the onError event to the
+        // replies endpoint, so once the event is received the next batch opens a fresh stream.
+        // Reset the mock before sending: replies arrive asynchronously and must not be dropped
+        // by a late reset().
+        replies.reset();
+        replies.expectedMessageCount(messageGroupCount);
 
         for (int i = messageGroupCount + 1; i <= 2 * messageGroupCount; i++) {
-            template.sendBody("direct:grpc-stream-async-async-route",
+            template.sendBody("direct:grpc-stream-async-async-recovery-route",
                     PingRequest.newBuilder().setPingName(String.valueOf(i)).build());
         }
 
-        replies.reset();
-        replies.expectedMessageCount(messageGroupCount);
         replies.assertIsSatisfied();
 
         context().stop();
 
         assertNotNull(pingPongServer.getLastStreamRequests());
-        await().untilAsserted(() -> assertListSize(pingPongServer.getLastStreamRequests(), 2));
+        await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertListSize(pingPongServer.getLastStreamRequests(), 2));
         assertListSize(pingPongServer.getLastStreamRequests().get(0), messageGroupCount + 1);
         assertListSize(pingPongServer.getLastStreamRequests().get(1), messageGroupCount);
     }
@@ -119,6 +125,13 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
                 from("direct:grpc-stream-async-async-route")
                         .to("grpc://localhost:" + grpcServer.getPort()
                             + "/org.apache.camel.component.grpc.PingPong?producerStrategy=STREAMING&streamRepliesTo=direct:grpc-replies&method=pingAsyncAsync");
+
+                // Same endpoint but with forwardOnError=true so the recovery test receives a
+                // deterministic client-side signal that the stream has been torn down before
+                // sending the second batch of messages.
+                from("direct:grpc-stream-async-async-recovery-route")
+                        .to("grpc://localhost:" + grpcServer.getPort()
+                            + "/org.apache.camel.component.grpc.PingPong?producerStrategy=STREAMING&streamRepliesTo=direct:grpc-replies&method=pingAsyncAsync&forwardOnError=true");
 
                 from("direct:grpc-replies")
                         .to("mock:grpc-replies");
