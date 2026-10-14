@@ -112,6 +112,12 @@
             <artifactId>camel-yaml-dsl</artifactId>
         </dependency>
 
+        <!-- rest-openapi component: the OpenAPI tools follow its rules (generated operation ids) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rest-openapi</artifactId>
+        </dependency>
+
         <!-- Swagger/OpenAPI parser for contract-first OpenAPI tools -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
@@ -143,6 +149,11 @@
         </dependency>
 
         <!-- test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-direct</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-dsl</artifactId>

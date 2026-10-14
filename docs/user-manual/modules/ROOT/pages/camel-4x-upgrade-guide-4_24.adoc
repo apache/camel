@@ -709,6 +709,18 @@ it audits the `camelVersion` argument, else lists every advisory of the declared
 `warnings`. Its `reachable` is null when no routes are given, advisories without components are returned as
 `uncheckedAdvisories`, and `clean` is true only when none of them apply.
 
+=== camel-jbang-mcp - camel_openapi_mock_guidance is removed
+
+The `camel_openapi_mock_guidance` MCP tool is removed. Call `camel_openapi_scaffold` with
+`missingOperation=mock` instead: its answer explains the mode and lists the `camel-mock/` files, one per path
+of the spec. The scaffold and `camel_openapi_validate` now follow the rules of camel-rest-openapi: an operation
+without `operationId` is routed to `direct:GENOPID_<METHOD><path>` with `/` replaced by `.` and the braces of
+path parameters by `_` (`direct:GENOPID_GET.pets._petId_` for `GET /pets/{petId}`), and a mock file has the
+request path as its name, without the HTTP method (`camel-mock/pets/42.json` for `GET /pets/42`). The
+security scheme diagnostics of `camel_openapi_validate` are now all warnings with a `SECURITY_<type>` code
+(`SECURITY_APIKEY`, `SECURITY_HTTP`, ...), as camel-rest-openapi enforces none of them, and `OPENAPI_31` is
+reported as information instead of a warning.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

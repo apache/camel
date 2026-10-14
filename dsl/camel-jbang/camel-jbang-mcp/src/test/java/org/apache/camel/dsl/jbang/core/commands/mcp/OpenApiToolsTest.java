@@ -221,7 +221,7 @@ class OpenApiToolsTest {
         assertThat(result.valid()).isTrue();
         assertThat(result.warnings()).anySatisfy(w -> {
             assertThat(w.code()).isEqualTo("MISSING_OPERATION_ID");
-            assertThat(w.message()).contains("GENOPID_");
+            assertThat(w.message()).contains("direct:GENOPID_GET.items");
         });
     }
 
@@ -229,14 +229,12 @@ class OpenApiToolsTest {
     void validateSecuritySchemeWarnings() {
         OpenApiTools.ValidateResult result = tools.camel_openapi_validate(SPEC_WITH_SECURITY);
 
-        // apiKey in query should be info
-        assertThat(result.info()).anySatisfy(i -> assertThat(i.code()).isEqualTo("SECURITY_APIKEY_QUERY"));
-        // apiKey in header should be warning
-        assertThat(result.warnings()).anySatisfy(w -> assertThat(w.code()).isEqualTo("SECURITY_APIKEY_NOT_QUERY"));
-        // HTTP bearer should be warning
-        assertThat(result.warnings()).anySatisfy(w -> assertThat(w.code()).isEqualTo("SECURITY_HTTP"));
-        // OAuth2 should be warning
-        assertThat(result.warnings()).anySatisfy(w -> assertThat(w.code()).isEqualTo("SECURITY_OAUTH2"));
+        // camel-rest-openapi enforces none of the schemes, an apiKey in query included
+        assertThat(result.info()).isEmpty();
+        assertThat(result.warnings())
+                .extracting(OpenApiTools.DiagnosticMessage::code)
+                .containsExactlyInAnyOrder("SECURITY_APIKEY", "SECURITY_APIKEY", "SECURITY_HTTP", "SECURITY_OAUTH2");
+        assertThat(result.warnings()).allSatisfy(w -> assertThat(w.message()).contains("does not enforce"));
     }
 
     @Test
@@ -252,7 +250,8 @@ class OpenApiToolsTest {
         OpenApiTools.ValidateResult result = tools.camel_openapi_validate(SPEC_31_WITH_WEBHOOKS);
 
         assertThat(result.warnings()).anySatisfy(w -> assertThat(w.code()).isEqualTo("WEBHOOKS_PRESENT"));
-        assertThat(result.warnings()).anySatisfy(w -> assertThat(w.code()).isEqualTo("OPENAPI_31"));
+        // 3.1 is parsed and served like 3.0: information, not a warning
+        assertThat(result.info()).anySatisfy(i -> assertThat(i.code()).isEqualTo("OPENAPI_31"));
     }
 
     // ---- Scaffold tests ----
@@ -351,84 +350,24 @@ class OpenApiToolsTest {
                 .hasMessageContaining("missingOperation");
     }
 
-    // ---- Mock guidance tests ----
-
     @Test
-    void mockGuidanceDefaultModeIsMock() {
-        OpenApiTools.MockGuidanceResult result = tools.camel_openapi_mock_guidance(MINIMAL_SPEC, null);
+    void scaffoldMockModeListsOneMockFilePerPath() {
+        OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(MINIMAL_SPEC, null, "mock");
 
-        assertThat(result.mode()).isEqualTo("mock");
-        assertThat(result.modeExplanation()).contains("mock");
-    }
-
-    @Test
-    void mockGuidanceGeneratesMockFilePaths() {
-        OpenApiTools.MockGuidanceResult result = tools.camel_openapi_mock_guidance(MINIMAL_SPEC, "mock");
-
-        assertThat(result.mockFiles()).isNotNull();
-        assertThat(result.mockFiles()).anySatisfy(f -> assertThat(f.filePath()).contains("camel-mock/"));
-    }
-
-    @Test
-    void mockGuidanceFailModeExplanation() {
-        OpenApiTools.MockGuidanceResult result = tools.camel_openapi_mock_guidance(MINIMAL_SPEC, "fail");
-
-        assertThat(result.mode()).isEqualTo("fail");
-        assertThat(result.modeExplanation()).contains("fail");
-        assertThat(result.modeExplanation()).contains("exception");
-        // No mock files for fail mode
-        assertThat(result.mockFiles()).isNull();
-        assertThat(result.directoryStructure()).isNull();
-    }
-
-    @Test
-    void mockGuidanceIgnoreModeExplanation() {
-        OpenApiTools.MockGuidanceResult result = tools.camel_openapi_mock_guidance(MINIMAL_SPEC, "ignore");
-
-        assertThat(result.mode()).isEqualTo("ignore");
-        assertThat(result.modeExplanation()).contains("ignore");
-        assertThat(result.modeExplanation()).contains("404");
-    }
-
-    @Test
-    void mockGuidanceConfigYamlCorrect() {
-        OpenApiTools.MockGuidanceResult result = tools.camel_openapi_mock_guidance(MINIMAL_SPEC, "mock");
-
-        assertThat(result.configurationYaml()).contains("missingOperation: mock");
-        assertThat(result.configurationYaml()).contains("specification: openapi.json");
-    }
-
-    @Test
-    void mockGuidanceNullSpecThrows() {
-        assertThatThrownBy(() -> tools.camel_openapi_mock_guidance(null, "mock"))
-                .isInstanceOf(ToolCallException.class)
-                .hasMessageContaining("spec");
-    }
-
-    @Test
-    void mockGuidanceExampleContentPopulated() {
-        OpenApiTools.MockGuidanceResult result = tools.camel_openapi_mock_guidance(MINIMAL_SPEC, "mock");
-
-        // The MINIMAL_SPEC has example data on the GET /pets response
-        assertThat(result.mockFiles()).isNotNull();
-        assertThat(result.mockFiles()).anySatisfy(f -> {
-            assertThat(f.operation()).isEqualTo("listPets");
-            assertThat(f.exampleContent()).isNotNull();
+        assertThat(result.modeExplanation()).contains("ends with the request path");
+        assertThat(result.mockFiles()).singleElement().satisfies(f -> {
+            assertThat(f.filePath()).isEqualTo("camel-mock/pets.json");
+            assertThat(f.operationIds()).containsExactly("listPets", "createPet");
+            assertThat(f.exampleContent()).contains("dog");
+            assertThat(f.note()).contains("GET answers the example", "POST echoes the request body");
         });
     }
 
     @Test
-    void mockGuidanceInvalidModeThrows() {
-        assertThatThrownBy(() -> tools.camel_openapi_mock_guidance(MINIMAL_SPEC, "invalid"))
-                .isInstanceOf(ToolCallException.class)
-                .hasMessageContaining("mode");
-    }
+    void scaffoldListsNoMockFileOutsideMockMode() {
+        OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(MINIMAL_SPEC, null, "ignore");
 
-    @Test
-    void mockGuidanceDirectoryStructurePresent() {
-        OpenApiTools.MockGuidanceResult result = tools.camel_openapi_mock_guidance(MINIMAL_SPEC, "mock");
-
-        assertThat(result.directoryStructure()).isNotNull();
-        assertThat(result.directoryStructure()).contains("camel-mock");
+        assertThat(result.modeExplanation()).contains("ignore");
+        assertThat(result.mockFiles()).isNull();
     }
 }
