@@ -49,7 +49,9 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                     Header[] from = request.getHeaders("from");
                     assertEquals("me", from[0].getValue());
                     Header[] to = request.getHeaders("to");
-                    assertEquals("[foo, bar]", to[0].getValue());
+                    assertEquals(2, to.length);
+                    assertEquals("foo", to[0].getValue());
+                    assertEquals("bar", to[1].getValue());
 
                     response.setHeader("bar", "yes");
                     response.addHeader("foo", "123");
@@ -61,7 +63,9 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                     Header[] from = request.getHeaders("from");
                     assertEquals("me", from[0].getValue());
                     Header[] to = request.getHeaders("to");
-                    assertEquals("[foo, bar]", to[0].getValue());
+                    assertEquals(2, to.length);
+                    assertEquals("foo", to[0].getValue());
+                    assertEquals("bar", to[1].getValue());
 
                     response.setHeader("bar", "yes");
                     response.addHeader("foo", "123");
