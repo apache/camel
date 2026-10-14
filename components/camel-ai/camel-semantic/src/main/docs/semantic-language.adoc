@@ -172,7 +172,9 @@ A negative detection does not establish general safety or grant authorization.
 === Text and image input
 
 Experts declare supported modalities in their operation contract. `IMAGE` allows explicit image
-parts; it does not imply that every expert accepts images. TypeSafe AI accepts text and its structured state, and Wolf Defender accepts text. Unsupported input fails
+parts; it does not imply that every expert accepts images. The
+xref:others:semantic-openai.adoc[OpenAI Decisions expert] accepts text and images, TypeSafe AI
+accepts text and its structured state, and Wolf Defender accepts text. Unsupported input fails
 before inference, including before any expert in a mixed batch runs.
 
 For `$\{body}`, an image `Content-Type` such as `image/png` identifies a `byte[]`, `InputStream`,

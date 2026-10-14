@@ -1,0 +1,170 @@
+= Semantic OpenAI Component
+:doctitle: Semantic OpenAI
+:shortname: semantic-openai
+:artifactid: camel-semantic-openai
+:description: Assess text and images with typed OpenAI Decisions through Semantic experts
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+This module supplies an explicit expert for the xref:languages:semantic-language.adoc[Semantic language].
+It asks the https://developers.openai.com/api/docs/guides/decisions[OpenAI Decisions API]
+for an assessment. The Camel route decides what action to take with that assessment.
+It has no routing endpoint of its own. It depends on `camel-semantic` and `camel-openai`;
+`camel-openai` remains independently usable and does not depend on Semantic.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-semantic-openai</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+== Register an expert
+
+The adapter uses an `openai:decisions` endpoint's managed client, credentials, base URL,
+proxy, TLS, timeout and retry configuration. Configure the component as described in
+xref:ROOT:openai-component.adoc[OpenAI]. It does not create a second HTTP client or
+initialize route tools or MCP connections for Decisions calls.
+
+[source,properties]
+----
+camel.component.openai.api-key={{env:OPENAI_API_KEY}}
+----
+
+[source,yaml]
+----
+- beans:
+    - name: vision
+      type: org.apache.camel.semantic.openai.OpenAIDecisionsSemanticAdapter
+      properties:
+        endpointUri: "openai:decisions?model=gpt-6-luna"
+- semantic:
+    evaluation:
+      damaged:
+        expert: vision
+        operation: boolean
+        state: "${body}"
+        parameters:
+          instructions: Is the package visibly damaged?
+          threshold: 0.5
+          uncertainty: 0.1
+          uncertaintyPolicy: fail
+- route:
+    from:
+      uri: direct:inspect
+      steps:
+        - setVariable:
+            name: damaged
+            simple: "${semantic('damaged')}"
+        - to: direct:route-policy
+----
+
+`endpointUri` defaults to `openai:decisions`; set it before the first evaluation.
+Configure a Decisions model explicitly on the endpoint, for example `model=gpt-6-luna`.
+An endpoint without a model is rejected before inference.
+The selected endpoint/model must implement Decisions; OpenAI-compatible chat support alone
+is insufficient. There is no fallback to chat completion or structured prompting.
+When constructing the bean in Java, set its `CamelContext` before binding it to the registry.
+Every evaluation must explicitly name an expert. Capability inspection and declaration
+validation do not perform inference.
+
+== Input
+
+Supported modalities are text, images and ordered combinations of text and images.
+Audio, video, file IDs, hosted image URLs and other modalities are rejected; no transcription,
+OCR, URL fetching or modality conversion service is invoked.
+The native image representation follows the Decisions guide: an inline base64 data URL for
+PNG, JPEG, GIF or WebP. Use the Camel-managed OpenAI Java SDK (4.78.0 or newer, which includes
+Decisions). The generic API reference may describe additional forms; this adapter validates
+the forms supported by this integration.
+
+For a single image in the message body, set `Content-Type` to the image MIME type, for example
+`image/png`. The body may be a `byte[]`, `InputStream`, Camel `StreamCache`, or plain base64
+`String`. A string starting with `data:image/` is self-describing and needs no header:
+
+[source,text]
+----
+data:image/png;base64,iVBORw0KGgo...
+----
+
+The example is abbreviated. Plain strings without an image content type remain text; Camel
+does not guess whether an arbitrary string is base64. Content-Type applies when the selected
+state is `$\{body}`; it does not reclassify a separately selected header or variable.
+Streams are cached and reset before evaluation. Downstream steps receive a replayable stream
+cache containing the same bytes. Byte arrays and strings keep their original body identity.
+
+Use an explicit envelope for multiple ordered parts, or an image selected from a header or variable:
+
+[source,json]
+----
+{
+  "$semanticInput": [
+    {"type": "text", "text": "Inspect the package in this photograph."},
+    {"type": "image", "data": "data:image/png;base64,...", "detail": "high"}
+  ]
+}
+----
+
+Replace the abbreviated payload with actual base64. `detail` is optional and may be `auto`,
+`low`, `high` or `original`. In Java, `SemanticInput.ofParts`, `text`, and `image` build this
+JSON-compatible envelope; `image(byte[], mediaType)` encodes binary image data.
+An ordinary application map is not implicitly treated as media.
+
+The expert accepts at most 128 images and 200 questions per request. Every part and question
+is checked before contacting the provider. Other experts validate their own supported input:
+TypeSafe AI accepts text and its structured application state, while Wolf Defender accepts text.
+Neither silently converts images into text. In a batch, all experts validate input before any
+expert starts inference.
+
+== Result contract
+
+[cols="1,1,3"]
+|===
+|Operation |Value type |Meaning
+|`boolean` |`Boolean` |Provider predicate probability compared once against the configured threshold.
+|`choice` |`String` |One of the declared category keys.
+|`score` |`Number` |Provider probability-weighted zero-based rubric index, including its fractional part.
+|===
+
+Every operation requires `instructions`. `choice` also requires a `criteria` map with 2–255
+distinct category keys and descriptions. `score` requires an ordered, nonempty `criteria` list
+of distinct labels and accepts an optional `descriptions` map keyed by those labels.
+
+For example, `[low, medium, high]` defines indices 0, 1 and 2. A score of `1.1` is an assessment
+between medium and high; it is not a Boolean probability and is not rounded to a label.
+Audit and playground output retain the ordered rubric and descriptions. Score probability
+keys are the decimal zero-based indices (`"0"`, `"1"`, `"2"`).
+
+`boolean` defaults to an inclusive threshold of `0.5`, matching TypeSafe AI's convention.
+An optional `threshold` overrides it. `uncertainty` defaults to zero; a positive value defines
+an inclusive band of that half-width around the threshold. Both edges must be within `[0,1]`.
+Inside the band, `uncertaintyPolicy=fail` raises an exception; explicit `non-match` returns false.
+The original provider probability is retained in either successful result. Camel does not
+invent a confidence value or recalibrate provider uncertainty.
+
+Detailed probability, distribution and optional confidence are available through
+`CamelSemanticResult` (single evaluation) or `CamelSemanticResults` (batch). Missing provider
+fields remain absent. Named `refs:` batches use one Decisions request per expert instance and
+retain declaration order. A failed or refused answer prevents publishing partial batch results.
+
+== Failures
+
+Refusal raises `OpenAIDecisionRefusalException`. Invalid or inconsistent provider output raises
+`OpenAIDecisionResponseException`. Transport/API/client-start failures raise
+`OpenAIDecisionServiceException`. These exceptions belong to `camel-openai` and can be handled
+with the route's normal `onException` policy. Unsupported input and invalid declarations fail
+validation; infrastructure failure is never mapped to false or a score.
+
+== Opt-in API smoke tests
+
+`camel-openai` includes `OpenAIDecisionsExternalServiceIT` for native text batches and mixed
+text/image input. It is disabled by default. To run it against an explicitly configured service,
+run `mvn verify -Pit -Dit.test=OpenAIDecisionsExternalServiceIT -Dopenai.live.tests=true` in
+`components/camel-ai/camel-openai`, providing `openai.live.baseUrl`, `openai.live.apiKey` and
+`openai.live.decisions.model` as system properties. These tests send requests to the service
+and may incur charges. Assertions check response types and ranges, not exact probabilities.
