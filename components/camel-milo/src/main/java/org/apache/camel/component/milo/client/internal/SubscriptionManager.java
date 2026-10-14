@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.milo.client.internal;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.NodeIds;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
@@ -584,6 +586,7 @@ public class SubscriptionManager {
     private final MiloClientConfiguration configuration;
     private final ScheduledExecutorService executor;
     private final long reconnectTimeout;
+    private final ServerCertificateTrust serverCertificateTrust;
     private final Lock lock = new ReentrantLock();
 
     private Connected connected;
@@ -597,6 +600,7 @@ public class SubscriptionManager {
         this.configuration = configuration;
         this.executor = executor;
         this.reconnectTimeout = reconnectTimeout;
+        this.serverCertificateTrust = new ServerCertificateTrust(configuration);
 
         connect();
     }
@@ -724,6 +728,9 @@ public class SubscriptionManager {
 
         LOG.debug("Selected endpoint: {}", endpoint);
 
+        // the same validator checks the server certificate for the secure channel, the session and the identity token
+        final CertificateValidator certificateValidator = this.serverCertificateTrust.validatorFor(endpoint);
+
         // set identity providers
         final List<IdentityProvider> providers = new LinkedList<>();
 
@@ -733,7 +740,8 @@ public class SubscriptionManager {
         final String explicitPassword = this.configuration.getPassword();
         if (explicitUsername != null && !explicitUsername.isEmpty()) {
             LOG.debug("Enable username/password provider (explicit parameter): {}", explicitUsername);
-            providers.add(new UsernameProvider(explicitUsername, explicitPassword != null ? explicitPassword : ""));
+            providers.add(new UsernameProvider(
+                    explicitUsername, explicitPassword != null ? explicitPassword : "", certificateValidator));
         } else if (user != null && !user.isEmpty()) {
             final String[] creds = user.split(":", 2);
             if (creds != null) {
@@ -741,7 +749,7 @@ public class SubscriptionManager {
                     LOG.debug("Enable username/password provider: {}", creds[0]);
                 }
 
-                providers.add(new UsernameProvider(creds[0], creds.length == 2 ? creds[1] : ""));
+                providers.add(new UsernameProvider(creds[0], creds.length == 2 ? creds[1] : "", certificateValidator));
             }
         }
 
@@ -750,6 +758,7 @@ public class SubscriptionManager {
         final OpcUaClientConfigBuilder cfg = this.configuration.newBuilder();
         cfg.setIdentityProvider(new CompositeProvider(providers));
         cfg.setEndpoint(endpoint);
+        cfg.setCertificateValidator(certificateValidator);
 
         // create client
         final OpcUaClient client = OpcUaClient.create(
@@ -813,6 +822,12 @@ public class SubscriptionManager {
         if (connected != null) {
             // dispose outside of lock
             connected.dispose();
+        }
+
+        try {
+            this.serverCertificateTrust.close();
+        } catch (final IOException e) {
+            LOG.debug("Failed to close the trust list. This exception is ignored.", e);
         }
     }
 

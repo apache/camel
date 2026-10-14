@@ -38,6 +38,8 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationUri": getOrCreateConfiguration(target).setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "certificatevalidator":
+        case "certificateValidator": getOrCreateConfiguration(target).setCertificateValidator(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class, value)); return true;
         case "channellifetime":
         case "channelLifetime": getOrCreateConfiguration(target).setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
         case "clientid":
@@ -80,6 +82,10 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "sessionName": getOrCreateConfiguration(target).setSessionName(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": getOrCreateConfiguration(target).setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "trustlistdirectory":
+        case "trustListDirectory": getOrCreateConfiguration(target).setTrustListDirectory(property(camelContext, java.lang.String.class, value)); return true;
         case "username": getOrCreateConfiguration(target).setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -101,6 +107,8 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationUri": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "certificatevalidator":
+        case "certificateValidator": return org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class;
         case "channellifetime":
         case "channelLifetime": return java.lang.Long.class;
         case "clientid":
@@ -143,6 +151,10 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "sessionName": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return java.lang.Long.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "trustlistdirectory":
+        case "trustListDirectory": return java.lang.String.class;
         case "username": return java.lang.String.class;
         default: return null;
         }
@@ -160,6 +172,8 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationUri": return getOrCreateConfiguration(target).getApplicationUri();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "certificatevalidator":
+        case "certificateValidator": return getOrCreateConfiguration(target).getCertificateValidator();
         case "channellifetime":
         case "channelLifetime": return getOrCreateConfiguration(target).getChannelLifetime();
         case "clientid":
@@ -202,6 +216,10 @@ public class MiloBrowseComponentConfigurer extends PropertyConfigurerSupport imp
         case "sessionName": return getOrCreateConfiguration(target).getSessionName();
         case "sessiontimeout":
         case "sessionTimeout": return getOrCreateConfiguration(target).getSessionTimeout();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        case "trustlistdirectory":
+        case "trustListDirectory": return getOrCreateConfiguration(target).getTrustListDirectory();
         case "username": return getOrCreateConfiguration(target).getUsername();
         default: return null;
         }

@@ -686,6 +686,40 @@ public interface MiloBrowseEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory.
+         * 
+         * The option is a:
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder certificateValidator(org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder certificateValidator(String certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
          * characters (such as {code }, {code /}, {code }, {code &amp;}).
@@ -699,6 +733,63 @@ public interface MiloBrowseEndpointBuilderFactory {
          */
         default MiloBrowseEndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder trustAllCertificates(String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * The directory holding the trust list used to validate the certificate
+         * of the OPC UA server, in the layout used by Eclipse Milo: trusted
+         * certificates in trusted/certs, CRLs of trusted certificates in
+         * trusted/crl, certificates of issuing CAs in issuer/certs and their
+         * CRLs in issuer/crl. The directories are created if they do not exist.
+         * A server certificate that fails validation is written to
+         * rejected/certs, from where it can be moved to trusted/certs once it
+         * has been checked.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustListDirectory the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder trustListDirectory(String trustListDirectory) {
+            doSetProperty("trustListDirectory", trustListDirectory);
             return this;
         }
         /**

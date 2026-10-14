@@ -491,6 +491,24 @@ public interface MiloClientComponentBuilderFactory {
         }
     
         /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.eclipse.milo.opcua.stack.core.security.CertificateValidator&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientComponentBuilder certificateValidator(org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+    
+        /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
          * characters (such as {code }, {code /}, {code }, {code &amp;}).
@@ -504,6 +522,48 @@ public interface MiloClientComponentBuilderFactory {
          */
         default MiloClientComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
+            return this;
+        }
+    
+        
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientComponentBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+    
+        /**
+         * The directory holding the trust list used to validate the certificate
+         * of the OPC UA server, in the layout used by Eclipse Milo: trusted
+         * certificates in trusted/certs, CRLs of trusted certificates in
+         * trusted/crl, certificates of issuing CAs in issuer/certs and their
+         * CRLs in issuer/crl. The directories are created if they do not exist.
+         * A server certificate that fails validation is written to
+         * rejected/certs, from where it can be moved to trusted/certs once it
+         * has been checked.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param trustListDirectory the value to set
+         * @return the dsl builder
+         */
+        default MiloClientComponentBuilder trustListDirectory(java.lang.String trustListDirectory) {
+            doSetProperty("trustListDirectory", trustListDirectory);
             return this;
         }
     
@@ -570,7 +630,10 @@ public interface MiloClientComponentBuilderFactory {
             case "requestTimeout": getOrCreateConfiguration((MiloClientComponent) component).setRequestTimeout((java.lang.Long) value); return true;
             case "sessionName": getOrCreateConfiguration((MiloClientComponent) component).setSessionName((java.lang.String) value); return true;
             case "sessionTimeout": getOrCreateConfiguration((MiloClientComponent) component).setSessionTimeout((java.lang.Long) value); return true;
+            case "certificateValidator": getOrCreateConfiguration((MiloClientComponent) component).setCertificateValidator((org.eclipse.milo.opcua.stack.core.security.CertificateValidator) value); return true;
             case "password": getOrCreateConfiguration((MiloClientComponent) component).setPassword((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((MiloClientComponent) component).setTrustAllCertificates((boolean) value); return true;
+            case "trustListDirectory": getOrCreateConfiguration((MiloClientComponent) component).setTrustListDirectory((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((MiloClientComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
