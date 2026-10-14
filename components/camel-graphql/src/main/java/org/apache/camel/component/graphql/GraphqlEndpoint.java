@@ -19,7 +19,7 @@ package org.apache.camel.component.graphql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Arrays;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -46,9 +46,12 @@ import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.net.URIAuthority;
 
 /**
  * Send GraphQL queries and mutations to external systems.
@@ -152,17 +155,67 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
                 if (jwtAuthorizationType != null) {
                     authType = jwtAuthorizationType;
                 }
-                httpClientBuilder.setDefaultHeaders(
-                        Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken)));
+                Header authorization = new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken);
+                // added per request, and only for the authority of httpUri, as camel-http does for its own
+                // credentials (CAMEL-24452): a default header would go with every request the client executes
+                httpClientBuilder.addRequestInterceptorLast((request, entity, context) -> {
+                    if (!request.containsHeader(HttpHeaders.AUTHORIZATION) && isHttpUriAuthority(request)) {
+                        request.addHeader(authorization);
+                    }
+                });
             }
-            if (username != null && password != null) {
+            URIAuthority authority = httpUriAuthority();
+            if (username != null && password != null && authority != null) {
                 CredentialsStore credentialsProvider = new BasicCredentialsProvider();
                 credentialsProvider.setCredentials(
-                        new AuthScope(null, -1),
+                        new AuthScope(
+                                httpUri.getScheme(), authority.getHostName(),
+                                effectivePort(httpUri.getScheme(), authority.getPort()), null, null),
                         new UsernamePasswordCredentials(username, password.toCharArray()));
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
         }
+    }
+
+    private boolean isHttpUriAuthority(HttpRequest request) {
+        String scheme = httpUri.getScheme();
+        URIAuthority authority = httpUriAuthority();
+        URIAuthority target = request.getAuthority();
+        return scheme != null && authority != null && target != null
+                && scheme.equalsIgnoreCase(request.getScheme())
+                && authority.getHostName().equalsIgnoreCase(target.getHostName())
+                && effectivePort(scheme, authority.getPort()) == effectivePort(scheme, target.getPort());
+    }
+
+    /**
+     * The authority of httpUri as HttpClient reads it, which also accepts a host name that java.net.URI does not parse,
+     * such as one with an underscore.
+     */
+    private URIAuthority httpUriAuthority() {
+        if (httpUri.getHost() != null) {
+            return new URIAuthority(httpUri.getHost(), httpUri.getPort());
+        }
+        if (httpUri.getRawAuthority() == null) {
+            return null;
+        }
+        try {
+            return URIAuthority.create(httpUri.getRawAuthority());
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    private static int effectivePort(String scheme, int port) {
+        if (port >= 0) {
+            return port;
+        }
+        if ("https".equalsIgnoreCase(scheme)) {
+            return 443;
+        }
+        if ("http".equalsIgnoreCase(scheme)) {
+            return 80;
+        }
+        return -1;
     }
 
     public URI getHttpUri() {
