@@ -29,6 +29,8 @@ import org.apache.kudu.client.RowError;
  * client reports such a request the same way in the default flush mode of a session. In this case it is not known
  * whether the row was written.</li>
  * </ul>
+ * The message holds the status only. It does not include the row, because the text of a {@link RowError} prints every
+ * column value of the row; {@link #getRowError()} gives access to it.
  */
 public class KuduRowErrorException extends RuntimeCamelException {
 
@@ -37,7 +39,7 @@ public class KuduRowErrorException extends RuntimeCamelException {
     private final transient RowError rowError;
 
     public KuduRowErrorException(RowError rowError) {
-        super("Kudu reported a row error for the operation: " + rowError);
+        super("Kudu reported a row error for the operation: " + rowError.getErrorStatus());
         this.rowError = rowError;
     }
 

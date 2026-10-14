@@ -86,7 +86,9 @@ class KuduProducerRowErrorTest extends CamelTestSupport {
         when(table.newUpsert()).thenAnswer(invocation -> operation(Upsert.class, schema));
         when(session.apply(any(Operation.class))).thenReturn(response);
         when(response.getRowError()).thenReturn(rowError);
-        when(rowError.toString()).thenReturn("Row error for row=(int32 id=5), status=Already present: key already present");
+        when(rowError.getErrorStatus()).thenReturn(Status.AlreadyPresent("key already present"));
+        when(rowError.toString())
+                .thenReturn("Row error for row=(int32 id=5, string name=secret), status=Already present: key already present");
 
         CamelContext context = super.createCamelContext();
         KuduComponent kudu = new KuduComponent();
@@ -121,8 +123,8 @@ class KuduProducerRowErrorTest extends CamelTestSupport {
         KuduRowErrorException failure = assertInstanceOf(KuduRowErrorException.class, exchange.getException(),
                 "exception of an exchange whose " + operation + " was answered with a row error");
         assertSame(rowError, failure.getRowError());
-        assertEquals("Kudu reported a row error for the operation: Row error for row=(int32 id=5),"
-                     + " status=Already present: key already present",
+        // the status only: the text of the row error prints the column values of the row
+        assertEquals("Kudu reported a row error for the operation: Already present: key already present",
                 failure.getMessage());
         result.assertIsSatisfied();
         verify(session, times(1)).close();
@@ -144,6 +146,7 @@ class KuduProducerRowErrorTest extends CamelTestSupport {
                 "exception of an exchange whose delete was answered with the row error of a request that timed out");
         assertSame(timedOut, failure.getRowError().getErrorStatus());
         assertTrue(failure.getRowError().getErrorStatus().isTimedOut());
+        assertEquals("Kudu reported a row error for the operation: " + timedOut, failure.getMessage());
         result.assertIsSatisfied();
         verify(session, times(1)).close();
     }
