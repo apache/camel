@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.kamelet;
 
-import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
@@ -46,7 +47,6 @@ import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -343,8 +343,7 @@ public final class Kamelet {
     }
 
     /**
-     * Re-wraps values that contain URI-sensitive characters. RAW wrappers may already have been stripped by
-     * {@link URISupport#resolveRawParameterValues(Map)} before options reach this method.
+     * Re-wraps values that contain URI-sensitive characters.
      */
     private static String wrapRawIfNeeded(String value) {
         if (value == null || value.isEmpty() || isRawToken(value)) {
@@ -385,23 +384,22 @@ public final class Kamelet {
         }
 
         String query = uri.substring(queryIndex + 1);
-
-        Map<String, Object> params;
-        try {
-            params = URISupport.parseQuery(query);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid URI query: " + query, e);
-        }
-
         String normalizedName = StringHelper.camelCaseToDash(parameterName);
-        boolean present = params.keySet().removeIf(
-                name -> StringHelper.camelCaseToDash(name).equals(normalizedName));
-        if (!present) {
-            return uri;
+
+        String[] parts = query.split("&");
+        String rebuilt = Arrays.stream(parts)
+                .filter(p -> {
+                    String key = p.contains("=") ? p.substring(0, p.indexOf('=')) : p;
+                    return !StringHelper.camelCaseToDash(key).equals(normalizedName);
+                })
+                .collect(Collectors.joining("&"));
+
+        if (rebuilt.length() == query.length()) {
+            return uri; // parameter was not present, leave URI unchanged
         }
 
         String base = uri.substring(0, queryIndex);
-        return params.isEmpty() ? base : base + "?" + URISupport.createQueryString(params, false);
+        return rebuilt.isEmpty() ? base : base + "?" + rebuilt;
     }
 
     /**
