@@ -3016,6 +3016,18 @@ a parse error. The command now catches the exception per file, prints
 non-zero when at least one file failed. Files that convert successfully are still written to the
 output directory.
 
+==== camel validate normalize writes one file per input file to an output directory
+
+`camel validate normalize <files> --output=<dir>` now writes one normalized file per input file into the
+directory, with the name of the input file, instead of merging all the routes into `normalized.yaml`. A
+top-level `onException` of a file then keeps applying to the routes of that file only, as it does in the
+source. `normalized.yaml` is only written for what was not loaded from one of the input files. Input
+files with the same name in different directories are written as `<parent directory>-<name>`. Scripts
+that read `<dir>/normalized.yaml` must read the per-file outputs instead.
+
+With `--output=<file>` or without `--output`, the routes are still merged, and the command now warns when
+the top-level `onException` of one file applies to the routes of the other files in the merged output.
+
 === camel-jcr - internal Camel headers are now filtered when mapping node properties
 
 The `jcr` producer now applies a `HeaderFilterStrategy` when converting between JCR node properties and

@@ -115,6 +115,41 @@ Without `--output` the result is printed. The routes are loaded (not run) to wri
 placeholders are kept as they are. Use `camel validate yaml --canonical` to report the shorthands instead
 of rewriting them.
 
+=== Normalizing several files
+
+When `--output` is a directory (an existing one, or a name ending with `/`), each input file is normalized
+into a file of its own in that directory, with the name of the input file:
+
+[source,bash]
+----
+camel validate normalize a.yaml b.yaml --output=out/
+----
+
+writes `out/a.yaml` and `out/b.yaml`. A top-level `onException` applies to the routes of its own file only,
+and so it does in the normalized files. A Kamelet is written back to a file of its own name too, with only
+its template normalized.
+
+The files of the output directory are named as follows:
+
+* an input file keeps its name;
+* input files with the same name in different directories get the name of their parent directory in front:
+`orders/routes.yaml` and `billing/routes.yaml` are written as `orders-routes.yaml` and `billing-routes.yaml`;
+* when these names are the same too (`x/orders/routes.yaml` and `y/orders/routes.yaml`), the input files are
+numbered in the order they are given: `routes-1.yaml`, `routes-2.yaml`.
+
+Beans, data formats, rests, route configurations and route templates go to the file they were loaded from.
+What was not loaded from one of the input files goes to `normalized.yaml` in the output directory
+(`normalized-1.yaml` if an input file is named `normalized.yaml`).
+
+With `--output` set to a file, or without `--output`, the routes of all the files are merged into one
+YAML document. A top-level `onException` of one file then applies to the routes of all the files when
+the result is loaded, so the command prints a warning when this happens:
+
+[source,text]
+----
+WARN: the top-level onException of b.yaml applies to the routes of a.yaml too, as the routes of all the files are written together: use --output with a directory to write one file per input file
+----
+
 == Validating against another Camel version or runtime
 
 Both commands validate against the CLI's own Camel version. A project that runs another version, or Camel
