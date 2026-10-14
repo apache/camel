@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -212,8 +213,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                         }
 
                         if (isSentAsOneJoinedHeader(headerValue)) {
-                            // a primitive array (other than byte[] and char[]), an Iterator, or an Iterable that is
-                            // not a Collection is sent as one header in the form [a, b], as before
+                            // a primitive array (other than byte[] and char[]), an Iterator, a Stream, or an Iterable
+                            // that is not a Collection is sent as one header in the form [a, b], as before
                             final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
                             HttpUtil.applyHeader(strategy, exchange, it, tc, key,
                                     (multiValues, prev) -> applyJoinedHeader(httpRequest, key, multiValues, prev));
@@ -358,7 +359,8 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     }
 
     private static boolean isSentAsOneJoinedHeader(Object value) {
-        if (value instanceof Iterator || (value instanceof Iterable && !(value instanceof Collection))) {
+        if (value instanceof Iterator || value instanceof Stream
+                || (value instanceof Iterable && !(value instanceof Collection))) {
             return true;
         }
         Class<?> type = value.getClass();

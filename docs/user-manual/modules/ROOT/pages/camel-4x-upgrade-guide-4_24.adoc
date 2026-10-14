@@ -236,8 +236,10 @@ collection with one value is sent as one header with that value, as before.
 Every other value is sent as one header. A String is sent as before, also when it contains commas. A `byte[]` or a
 `char[]` is now converted to a String with the type converter, for example `abc` (it was sent as `[97, 98, 99]`), and
 a `Map` is sent as its `toString()`, such as `{k1=v1, k2=v2}` (it was `[k1=v1, k2=v2]`). The other primitive arrays,
-an `Iterator` and an `Iterable` that is not a collection are sent in the form `[a, b]` as before. A route that needs
+an `Iterator`, a `java.util.stream.Stream` and an `Iterable` that is not a collection are sent in the form `[a, b]` as before. A route that needs
 the old single header can set the header to a String, for example with `String.valueOf(list)`.
+
+This also applies to camel-graphql, which sends its requests with camel-http.
 
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 

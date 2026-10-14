@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpStatus;
@@ -96,6 +97,22 @@ public class HttpProducerMultiValueHeaderTest extends BaseHttpTest {
     @Test
     public void testByteArrayIsSentAsText() {
         assertEquals("abc", send("abc".getBytes(StandardCharsets.US_ASCII)));
+    }
+
+    @Test
+    public void testStreamIsOneHeaderAsBefore() {
+        assertEquals("[a, b]", send(Stream.of("a", "b")));
+    }
+
+    @Test
+    public void testCharArrayIsSentAsText() {
+        assertEquals("ab", send(new char[] { 'a', 'b' }));
+    }
+
+    @Test
+    public void testIterableIsOneHeaderAsBefore() {
+        Iterable<String> iterable = () -> List.of("a", "b").iterator();
+        assertEquals("[a, b]", send(iterable));
     }
 
     private String send(Object headerValue) {
