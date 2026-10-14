@@ -378,10 +378,15 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 // that exist, so its routes are removed like those of a changed file, CAMEL-25427)
                 // (a route from a templated route needs the file with the route template, and the file with the
                 // templated route, CAMEL-25598; a route from a Kamelet is created again by its parent route)
+                // (the file with the templated route is only loaded again when its route template comes from a file:
+                // a route template added from Java is removed below and nothing adds it again, so loading the
+                // templated route would fail the whole reload, CAMEL-25616)
                 getCamelContext().getRoutes().forEach(r -> {
                     if (!r.isCreatedByKamelet()) {
                         addRouteSource(resources, sources, r.getSourceResource());
-                        addRouteSource(resources, sources, r.getTemplatedRouteResource());
+                        if (r.getSourceResource() != null) {
+                            addRouteSource(resources, sources, r.getTemplatedRouteResource());
+                        }
                     }
                 });
                 // first stop and remove all routes

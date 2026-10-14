@@ -25,6 +25,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.yaml.support.YamlTestSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
@@ -132,6 +133,41 @@ class RouteReloadTemplatedRouteSourceTest extends YamlTestSupport {
             assertThat(context.createFluentProducerTemplate().to("direct:plain").request(String.class))
                     .isEqualTo("plain changed");
             assertThat(context.getRoute("greet").getTemplatedRouteResource().getLocation()).isEqualTo("file:" + uses);
+        } finally {
+            strategy.doStop();
+        }
+    }
+
+    @Test
+    void reloadOfAnotherFileWithTheRouteTemplateFromJava() throws Exception {
+        // the route template comes from Java (no file) and the templated route from a file: a reload of another file
+        // must not fail on the route template that the reload removed (CAMEL-25616)
+        context.getRouteController().removeAllRoutes();
+        context.removeRouteTemplates("*");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                routeTemplate("greeting").templateParameter("greeting")
+                        .from("direct:greet").setBody(constant("{{greeting}}"));
+            }
+        });
+        loadRoutes(ResourceHelper.resolveResource(context, "file:" + uses),
+                ResourceHelper.resolveResource(context, "file:" + plain));
+        assertThat(context.getRoute("greet").getSourceResource()).isNull();
+
+        TestableStrategy strategy = new TestableStrategy(dir.toString());
+        strategy.setCamelContext(context);
+        strategy.setPattern("*.yaml");
+        strategy.doStart();
+        try {
+            Files.writeString(plain, plainRoute("plain changed"));
+            strategy.getResourceReload().onReload(plain.toString(),
+                    ResourceHelper.resolveResource(context, "file:" + plain));
+
+            assertThat(strategy.getFailedCounter()).isZero();
+            assertThat(strategy.getLastError()).isNull();
+            assertThat(context.createFluentProducerTemplate().to("direct:plain").request(String.class))
+                    .isEqualTo("plain changed");
         } finally {
             strategy.doStop();
         }
