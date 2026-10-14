@@ -19,11 +19,11 @@ package org.apache.camel.component.citrus;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.support.DefaultComponent;
 
 @Component("citrus")
-public class CitrusComponent extends DefaultComponent {
+public class CitrusComponent extends MockComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

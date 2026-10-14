@@ -24,11 +24,23 @@ public class CitrusEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(4);
+        Set<String> props = new HashSet<>(16);
+        props.add("assertPeriod");
+        props.add("browseLimit");
+        props.add("copyOnExchange");
+        props.add("expectedCount");
+        props.add("failFast");
         props.add("lazyStartProducer");
+        props.add("log");
         props.add("messageType");
         props.add("name");
         props.add("operation");
+        props.add("reportGroup");
+        props.add("resultMinimumWaitTime");
+        props.add("resultWaitTime");
+        props.add("retainFirst");
+        props.add("retainLast");
+        props.add("sleepForEmptyTest");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();
@@ -48,7 +60,7 @@ public class CitrusEndpointUriFactory extends org.apache.camel.support.component
         Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "operation", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "name", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "name", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

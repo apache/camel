@@ -29,7 +29,7 @@ class CitrusMultipleEndpointsTest extends CamelTestSupport {
     void shouldValidateMultipleEndpointsInRoute() throws Exception {
         CitrusEndpoint orderCheck
                 = context.getEndpoint("citrus:validate/orderCheck", CitrusEndpoint.class);
-        orderCheck.allMessages().body("""
+        orderCheck.validateAll().body("""
                 {
                   "orderId": "${orderId}",
                   "status": "created"
@@ -39,7 +39,7 @@ class CitrusMultipleEndpointsTest extends CamelTestSupport {
 
         CitrusEndpoint responseCheck
                 = context.getEndpoint("citrus:validate/responseCheck", CitrusEndpoint.class);
-        responseCheck.allMessages().body("""
+        responseCheck.validateAll().body("""
                 {
                   "orderId": "${orderId}",
                   "status": "processed"
@@ -60,8 +60,8 @@ class CitrusMultipleEndpointsTest extends CamelTestSupport {
         orderCheck.assertIsSatisfied();
         responseCheck.assertIsSatisfied();
 
-        assertThat(orderCheck.getReceivedCount()).isEqualTo(1);
-        assertThat(responseCheck.getReceivedCount()).isEqualTo(1);
+        assertThat(orderCheck.getReceivedCounter()).isEqualTo(1);
+        assertThat(responseCheck.getReceivedCounter()).isEqualTo(1);
     }
 
     @Override

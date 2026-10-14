@@ -23,9 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.citrus.CitrusEndpoint.MessageResponseSpec;
-import org.apache.camel.component.citrus.CitrusEndpoint.MessageValidationSpec;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.Processor;
 import org.citrusframework.CitrusContext;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.message.DefaultMessage;
@@ -40,74 +38,158 @@ import org.citrusframework.validation.context.ValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CitrusProducer extends DefaultProducer {
+class CitrusValidationProcessor implements Processor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CitrusProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CitrusValidationProcessor.class);
 
-    private volatile CitrusContext citrusContext;
+    private final CitrusContext citrusContext;
+    private final String messageType;
+    private final MessageValidationSpec spec;
+    private final MessageResponseSpec responseSpec;
 
-    public CitrusProducer(CitrusEndpoint endpoint) {
-        super(endpoint);
+    CitrusValidationProcessor(CitrusContext citrusContext, String messageType,
+                              MessageValidationSpec validationSpec) {
+        this(citrusContext, messageType, validationSpec, null);
     }
 
-    @Override
-    public CitrusEndpoint getEndpoint() {
-        return (CitrusEndpoint) super.getEndpoint();
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        citrusContext = CitrusContext.create();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (citrusContext != null) {
-            citrusContext.close();
-            citrusContext = null;
-        }
+    CitrusValidationProcessor(CitrusContext citrusContext, String messageType,
+                              MessageValidationSpec validationSpec,
+                              MessageResponseSpec responseSpec) {
+        this.citrusContext = citrusContext;
+        this.messageType = messageType;
+        this.spec = validationSpec;
+        this.responseSpec = responseSpec;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        CitrusEndpoint endpoint = getEndpoint();
-
-        int index = endpoint.nextExchangeIndex();
         TestContext testContext = citrusContext.createTestContext();
         propagateExchangeVariables(exchange, testContext);
 
         try {
-            MessageValidationSpec spec = endpoint.resolveValidationSpec(index);
             if (spec != null) {
                 DefaultMessage receivedMessage = buildReceivedMessage(exchange);
                 DefaultMessage controlMessage = buildControlMessage(spec, testContext);
 
-                String messageType = resolveMessageType(endpoint, spec);
-                controlMessage.setType(messageType);
+                String resolvedType = resolveMessageType(spec);
+                controlMessage.setType(resolvedType);
 
                 List<ValidationContext> validationContexts = buildValidationContexts(spec);
-
-                performValidation(receivedMessage, controlMessage, testContext, validationContexts, messageType);
+                performCitrusValidation(receivedMessage, controlMessage, testContext, validationContexts, resolvedType);
             }
 
-            if ("receive".equals(endpoint.getOperation())) {
-                MessageResponseSpec responseSpec = endpoint.resolveResponseSpec(index);
-                if (responseSpec != null) {
-                    applyResponse(exchange, responseSpec, testContext);
-                }
-            }
-        } catch (Exception e) {
-            endpoint.addFailure(e);
-            if ("receive".equals(endpoint.getOperation())) {
-                throw e;
+            if (responseSpec != null) {
+                applyResponse(exchange, responseSpec, testContext);
             }
         } finally {
             writeBackExtractedVariables(exchange, testContext);
-            endpoint.onExchangeReceived(exchange);
         }
     }
+
+    // --- Citrus validation helpers ---
+
+    private DefaultMessage buildReceivedMessage(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        Map<String, Object> headers = new LinkedHashMap<>(exchange.getIn().getHeaders());
+        return new DefaultMessage(body, headers);
+    }
+
+    private DefaultMessage buildControlMessage(MessageValidationSpec spec, TestContext testContext) {
+        Object resolvedBody = resolveBody(spec.getBody(), spec.getBodyBuilder(), testContext);
+        DefaultMessage controlMessage = resolvedBody != null
+                ? new DefaultMessage(resolvedBody)
+                : new DefaultMessage();
+
+        for (Map.Entry<String, Object> entry : spec.getHeaders().entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof String s) {
+                value = testContext.replaceDynamicContentInString(s);
+            }
+            controlMessage.setHeader(entry.getKey(), value);
+        }
+        return controlMessage;
+    }
+
+    private String resolveMessageType(MessageValidationSpec spec) {
+        if (messageType != null) {
+            if (MessageType.knows(messageType)) {
+                return MessageType.valueOf(messageType.toUpperCase(Locale.ROOT)).name();
+            } else {
+                return messageType.toUpperCase(Locale.ROOT);
+            }
+        }
+
+        String expectedBody = spec.getBody();
+        if (expectedBody != null) {
+            if (MessagePayloadUtils.isJson(expectedBody)) {
+                return MessageType.JSON.name();
+            } else if (MessagePayloadUtils.isXml(expectedBody)) {
+                return MessageType.XML.name();
+            } else if (MessagePayloadUtils.isYaml(expectedBody)) {
+                return MessageType.YAML.name();
+            }
+        }
+        return MessageType.PLAINTEXT.name();
+    }
+
+    private List<ValidationContext> buildValidationContexts(MessageValidationSpec spec) {
+        List<ValidationContext> contexts = new ArrayList<>();
+        contexts.add(new DefaultMessageValidationContext());
+        if (!spec.getHeaders().isEmpty()) {
+            contexts.add(new HeaderValidationContext());
+        }
+        for (ValidationContext.Builder<?, ?> builder : spec.getValidationContextBuilders()) {
+            contexts.add(builder.build());
+        }
+        return contexts;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void performCitrusValidation(
+            DefaultMessage receivedMessage, DefaultMessage controlMessage,
+            TestContext testContext, List<ValidationContext> validationContexts,
+            String resolvedType) {
+
+        MessageValidatorRegistry registry = testContext.getMessageValidatorRegistry();
+        List<MessageValidator<? extends ValidationContext>> validators
+                = registry.findMessageValidators(resolvedType, receivedMessage);
+
+        if (validators.isEmpty()) {
+            throw new IllegalStateException(
+                    "No Citrus message validator found for message type '" + resolvedType
+                                            + "'. Make sure to add the required Citrus validation module "
+                                            + "to the test classpath (e.g. citrus-validation-json, "
+                                            + "citrus-validation-xml, citrus-validation-text).");
+        }
+
+        LOG.debug("Validating exchange with {} Citrus validator(s) for message type '{}'",
+                validators.size(), resolvedType);
+
+        for (MessageValidator validator : validators) {
+            validator.validateMessage(receivedMessage, controlMessage, testContext, validationContexts);
+        }
+    }
+
+    private void applyResponse(Exchange exchange, MessageResponseSpec responseSpec, TestContext testContext) {
+        Object resolvedBody = resolveBody(responseSpec.getBody(), responseSpec.getBodyBuilder(), testContext);
+        if (resolvedBody != null) {
+            exchange.getIn().setBody(resolvedBody);
+        }
+        Map<String, Object> resolvedHeaders = testContext.resolveDynamicValuesInMap(responseSpec.getHeaders());
+        resolvedHeaders.forEach((key, value) -> exchange.getIn().setHeader(key, value));
+    }
+
+    private Object resolveBody(String body, MessagePayloadBuilder bodyBuilder, TestContext testContext) {
+        if (bodyBuilder != null) {
+            return bodyBuilder.buildPayload(testContext);
+        }
+        if (body != null) {
+            return testContext.replaceDynamicContentInString(body);
+        }
+        return null;
+    }
+
+    // --- Variable propagation ---
 
     private void propagateExchangeVariables(Exchange exchange, TestContext testContext) {
         for (Map.Entry<String, Object> entry : exchange.getProperties().entrySet()) {
@@ -129,119 +211,5 @@ public class CitrusProducer extends DefaultProducer {
                 exchange.setVariable(key, entry.getValue());
             }
         }
-    }
-
-    private DefaultMessage buildReceivedMessage(Exchange exchange) {
-        Object body = exchange.getIn().getBody();
-        Map<String, Object> headers = new LinkedHashMap<>(exchange.getIn().getHeaders());
-        return new DefaultMessage(body, headers);
-    }
-
-    private DefaultMessage buildControlMessage(MessageValidationSpec spec, TestContext testContext) {
-        DefaultMessage controlMessage;
-        Object resolvedBody = resolveBody(spec.getBody(), spec.getBodyBuilder(), testContext);
-
-        if (resolvedBody != null) {
-            controlMessage = new DefaultMessage(resolvedBody);
-        } else {
-            controlMessage = new DefaultMessage();
-        }
-
-        Map<String, Object> expectedHeaders = spec.getHeaders();
-        for (Map.Entry<String, Object> entry : expectedHeaders.entrySet()) {
-            Object value = entry.getValue();
-            if (value instanceof String s) {
-                value = testContext.replaceDynamicContentInString(s);
-            }
-            controlMessage.setHeader(entry.getKey(), value);
-        }
-
-        return controlMessage;
-    }
-
-    private String resolveMessageType(CitrusEndpoint endpoint, MessageValidationSpec spec) {
-        String type = endpoint.getMessageType();
-        if (type != null) {
-            if (MessageType.knows(type)) {
-                return MessageType.valueOf(type.toUpperCase(Locale.ROOT)).name();
-            } else {
-                return type.toUpperCase(Locale.ROOT);
-            }
-        }
-
-        String expectedBody = spec.getBody();
-        if (expectedBody != null) {
-            if (MessagePayloadUtils.isJson(expectedBody)) {
-                return MessageType.JSON.name();
-            } else if (MessagePayloadUtils.isXml(expectedBody)) {
-                return MessageType.XML.name();
-            } else if (MessagePayloadUtils.isYaml(expectedBody)) {
-                return MessageType.YAML.name();
-            }
-        }
-
-        return MessageType.PLAINTEXT.name();
-    }
-
-    private List<ValidationContext> buildValidationContexts(MessageValidationSpec spec) {
-        List<ValidationContext> contexts = new ArrayList<>();
-
-        contexts.add(new DefaultMessageValidationContext());
-
-        if (!spec.getHeaders().isEmpty()) {
-            contexts.add(new HeaderValidationContext());
-        }
-
-        for (ValidationContext.Builder<?, ?> builder : spec.getValidationContextBuilders()) {
-            contexts.add(builder.build());
-        }
-
-        return contexts;
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void performValidation(
-            DefaultMessage receivedMessage, DefaultMessage controlMessage,
-            TestContext testContext, List<ValidationContext> validationContexts,
-            String messageType) {
-
-        MessageValidatorRegistry registry = testContext.getMessageValidatorRegistry();
-        List<MessageValidator<? extends ValidationContext>> validators
-                = registry.findMessageValidators(messageType, receivedMessage);
-
-        if (validators.isEmpty()) {
-            throw new IllegalStateException(
-                    "No Citrus message validator found for message type '" + messageType
-                                            + "'. Make sure to add the required Citrus validation module "
-                                            + "to the test classpath (e.g. citrus-validation-json, "
-                                            + "citrus-validation-xml, citrus-validation-text).");
-        }
-
-        LOG.debug("Validating exchange with {} Citrus validator(s) for message type '{}'",
-                validators.size(), messageType);
-
-        for (MessageValidator validator : validators) {
-            validator.validateMessage(receivedMessage, controlMessage, testContext, validationContexts);
-        }
-    }
-
-    private void applyResponse(Exchange exchange, MessageResponseSpec responseSpec, TestContext testContext) {
-        Object resolvedBody = resolveBody(responseSpec.getBody(), responseSpec.getBodyBuilder(), testContext);
-        if (resolvedBody != null) {
-            exchange.getIn().setBody(resolvedBody);
-        }
-
-        Map<String, Object> resolvedHeaders = testContext.resolveDynamicValuesInMap(responseSpec.getHeaders());
-        resolvedHeaders.forEach((key, value) -> exchange.getIn().setHeader(key, value));
-    }
-
-    private Object resolveBody(String body, MessagePayloadBuilder bodyBuilder, TestContext testContext) {
-        if (bodyBuilder != null) {
-            return bodyBuilder.buildPayload(testContext);
-        }
-        if (body != null) {
-            return testContext.replaceDynamicContentInString(body);
-        }
-        return null;
     }
 }

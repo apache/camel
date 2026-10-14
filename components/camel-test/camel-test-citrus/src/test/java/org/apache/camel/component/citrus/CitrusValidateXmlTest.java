@@ -29,7 +29,7 @@ class CitrusValidateXmlTest extends CamelTestSupport {
     @Test
     void shouldValidateXmlBody() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=xml", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 <greeting>
                   <text>Hello World!</text>
                 </greeting>
@@ -43,13 +43,13 @@ class CitrusValidateXmlTest extends CamelTestSupport {
                 """);
 
         citrus.assertIsSatisfied();
-        assertThat(citrus.getReceivedCount()).isEqualTo(1);
+        assertThat(citrus.getReceivedCounter()).isEqualTo(1);
     }
 
     @Test
     void shouldValidateXpathExpressions() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=xml", CitrusEndpoint.class);
-        citrus.allMessages().validate(new DefaultValidations().xpath()
+        citrus.validateAll().validate(new DefaultValidations().xpath()
                 .expression("/greeting/text", "Hello World!")
                 .expression("/greeting/author", "Camel"));
         citrus.expectedMessageCount(1);
@@ -67,7 +67,7 @@ class CitrusValidateXmlTest extends CamelTestSupport {
     @Test
     void shouldAutoDetectXmlMessageType() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 <greeting>
                   <text>Hello World!</text>
                 </greeting>
