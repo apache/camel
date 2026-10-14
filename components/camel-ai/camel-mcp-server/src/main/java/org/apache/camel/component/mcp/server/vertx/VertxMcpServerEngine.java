@@ -28,6 +28,7 @@ import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
+import io.vertx.ext.auth.User;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.ai.tool.AiToolAnnotations;
 import org.apache.camel.component.mcp.server.McpResourceReadResult;
@@ -168,8 +169,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
                     Object principal = exchange.transportContext() != null
                             ? exchange.transportContext().get(TRANSPORT_PRINCIPAL_KEY) : null;
-                    McpToolCallContext context = principal != null
-                            ? new McpToolCallContext(principal) : McpToolCallContext.EMPTY;
+                    McpToolCallContext context = toToolCallContext(principal);
                     McpToolCallResult result = tool.handler().call(arguments, context);
                     McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
                             .addTextContent(result.text())
@@ -182,6 +182,22 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                 .build();
         server.addTool(spec);
         LOG.debug("MCP tool added: {}", tool.name());
+    }
+
+    /**
+     * Builds the tool-call context from the transport principal, deriving a runtime-neutral name and roles when it is a
+     * Vert.x {@link User} so a tool route or its authorization policy can authorize on a stable identity without
+     * depending on Vert.x. A non-{@code User} principal is still carried as the raw object, and {@code null} yields the
+     * empty context.
+     */
+    private static McpToolCallContext toToolCallContext(Object principal) {
+        if (principal instanceof User user) {
+            return new McpToolCallContext(user, VertxMcpPrincipal.name(user), VertxMcpPrincipal.roles(user));
+        }
+        if (principal != null) {
+            return new McpToolCallContext(principal);
+        }
+        return McpToolCallContext.EMPTY;
     }
 
     @Override
