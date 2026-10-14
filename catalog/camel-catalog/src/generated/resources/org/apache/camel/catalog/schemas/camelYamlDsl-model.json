@@ -532,7 +532,7 @@
         "ref" : "throwException",
         "title" : "Throw Exception",
         "description" : "Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one",
-        "label" : "error,errorhandling"
+        "label" : "eip,error,errorhandling"
       }, {
         "name" : "to",
         "type" : "object",
@@ -8944,7 +8944,7 @@
     "throwException" : {
       "title" : "Throw Exception",
       "description" : "Throws an exception during route processing, either creating a new exception instance or re-throwing an existing one",
-      "label" : "error,errorhandling",
+      "label" : "eip,error,errorhandling",
       "input" : true,
       "isListItem" : true,
       "children" : [ {
