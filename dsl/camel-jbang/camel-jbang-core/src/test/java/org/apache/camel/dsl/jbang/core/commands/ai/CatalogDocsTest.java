@@ -589,4 +589,98 @@ class CatalogDocsTest {
         EipModel element = new DefaultCamelCatalog().eipModel("templateParameter");
         assertEquals("templateParameter", CatalogDocs.yamlKey(null, "routeTemplate", "templateParameter", element));
     }
+
+    /** CAMEL-25539: onException says it is a top-level entry, and handled that it is an expression. */
+    @Test
+    void onExceptionSaysWhereItGoesAndTheShapeOfHandled() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", null, "all", false, false, null);
+        assertTrue(doc.getString("placement").startsWith("top-level entry"), doc.toJson());
+        assertTrue(doc.getString("sampleHint").contains("camel_catalog_sample name=onException"), doc.toJson());
+        assertEquals("handled: {constant: \"true\"}", yamlExample(option(doc, "handled")));
+        assertEquals("continued: {constant: \"true\"}", yamlExample(option(doc, "continued")));
+        assertTrue(yamlExample(option(doc, "onWhen")).startsWith("onWhen: {simple: "), doc.toJson());
+        // the elements written in their own way keep no hint
+        assertFalse(option(doc, "redeliveryPolicy").containsKey("yaml"), doc.toJson());
+        assertFalse(option(doc, "exception").containsKey("yaml"), doc.toJson());
+    }
+
+    /** CAMEL-25539: each kind of EIP says where it goes, and a step has no shape hint it does not need. */
+    @Test
+    void placementByKindOfEip() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "errorHandler", null, "eip", null, null, false, false, null);
+        assertTrue(doc.getString("placement").startsWith("errorHandler: with the kind"), doc.toJson());
+        doc = CatalogDocs.catalogDoc(catalog, "routeConfiguration", null, "eip", null, null, false, false, null);
+        assertTrue(doc.getString("placement").startsWith("top-level entry"), doc.toJson());
+        doc = CatalogDocs.catalogDoc(catalog, "when", null, "eip", null, null, false, false, null);
+        assertTrue(doc.getString("placement").startsWith("a part of choice"), doc.toJson());
+        doc = CatalogDocs.catalogDoc(catalog, "split", null, "eip", null, "all", false, false, null);
+        assertTrue(doc.getString("placement").startsWith("a step inside the steps of a route"), doc.toJson());
+        for (Object o : (JsonArray) doc.get("options")) {
+            assertFalse(((JsonObject) o).containsKey("yaml"), ((JsonObject) o).toJson());
+        }
+    }
+
+    /** CAMEL-25539: the shape hints show the expected YAML, which passes the YAML DSL schema and the catalog checks. */
+    @Test
+    void theShapeHintsAreValidYaml() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var onException = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", null, "all", false, false, null);
+        var aggregate = CatalogDocs.catalogDoc(catalog, "aggregate", null, "eip", null, "all", false, false, null);
+        var xpath = CatalogDocs.catalogDoc(catalog, "xpath", null, "language", null, null, false, false, null);
+        // the namespace of xpath, xquery and xtokenize is a list of key/value pairs
+        assertEquals("namespace: [{key: c, value: \"http://acme.com/cheese\"}]", yamlExample(option(xpath, "namespace")));
+        for (String language : List.of("xquery", "xtokenize")) {
+            var doc = CatalogDocs.catalogDoc(catalog, language, null, "language", null, "all", false, false, null);
+            assertTrue(yamlExample(option(doc, "namespace")).startsWith("namespace: [{key: c, "), doc.toJson());
+        }
+        String yaml = """
+                - onException:
+                    exception: [java.io.IOException]
+                    %s
+                    %s
+                    %s
+                    steps:
+                      - log: failed
+                - onException:
+                    exception: [java.net.ConnectException]
+                    %s
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - setHeader:
+                            name: price
+                            expression:
+                              xpath:
+                                expression: /c:order/c:price/text()
+                                %s
+                        - aggregate:
+                            aggregationStrategy: "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy"
+                            %s
+                            %s
+                            steps:
+                              - log: done
+                """.formatted(
+                yamlExample(option(onException, "handled")), yamlExample(option(onException, "onWhen")),
+                yamlExample(option(onException, "retryWhile")), yamlExample(option(onException, "continued")),
+                yamlExample(option(xpath, "namespace")), yamlExample(option(aggregate, "correlationExpression")),
+                yamlExample(option(aggregate, "completionPredicate")));
+        assertEquals(List.of(), SourceValidator.validateCamelYaml(yaml, catalog), yaml);
+    }
+
+    private static JsonObject option(JsonObject doc, String name) {
+        return ((JsonArray) doc.get("options")).stream().map(JsonObject.class::cast)
+                .filter(o -> name.equals(o.getString("name"))).findFirst().orElseThrow(() -> new AssertionError(
+                        name + " not in " + doc.toJson()));
+    }
+
+    /** The YAML of a shape hint, without the comment that explains it. */
+    private static String yamlExample(JsonObject option) {
+        String yaml = option.getString("yaml");
+        assertNotNull(yaml, option.toJson());
+        int comment = yaml.indexOf("  # ");
+        return comment > 0 ? yaml.substring(0, comment) : yaml;
+    }
 }

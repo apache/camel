@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -740,6 +741,28 @@ public final class CatalogSamples {
             return "top-level entry: a list item at the same level as route or from, not a step inside a route";
         }
         return "a step inside the steps of a route (or of another EIP)";
+    }
+
+    /**
+     * Where an EIP of the catalog goes in a YAML file, for its camel_catalog_doc answer (CAMEL-25539): a top-level
+     * entry, the error handler, a part of another EIP, or a step. Null for an element written under the EIP or the
+     * configuration that holds it (resilience4jConfiguration, a load balancer) and for a verb of rest, whose place the
+     * doc of that EIP gives.
+     */
+    static String placement(EipModel model) {
+        String name = model.getName();
+        if (ERROR_HANDLERS.contains(name) || TOP_LEVEL.contains(name)) {
+            return placement(name);
+        }
+        String partOf = PART_OF.get(name);
+        if (partOf != null) {
+            return "a part of " + partOf + ": written inside " + partOf + ", not as a step of its own";
+        }
+        String label = model.getLabel() != null ? model.getLabel() : "";
+        if (model.isInput() && !List.of(label.split(",")).contains("rest")) {
+            return placement(name);
+        }
+        return null;
     }
 
     static String placement(CamelCatalog catalog, String kind, String name) {

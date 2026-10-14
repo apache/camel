@@ -119,6 +119,12 @@ public final class CatalogDocs {
      */
     static final int DOC_EXCERPT_BUDGET_PROSE = 3600;
 
+    /** The java type of an expression option of an EIP other than its main expression: handled, completionPredicate. */
+    private static final String EXPRESSION_SUB_ELEMENT = "org.apache.camel.model.ExpressionSubElementDefinition";
+
+    /** The java type of a list of key/value properties: namespace of xpath, componentProperty of restConfiguration. */
+    private static final String PROPERTY_LIST = "java.util.List<org.apache.camel.model.PropertyDefinition>";
+
     private static final Pattern XREF = Pattern.compile("xref:[^\\[]*\\[([^]]*)]");
     private static final Pattern INTERNAL_REF = Pattern.compile("<<[^,>]*,([^>]*)>>");
 
@@ -1702,6 +1708,13 @@ public final class CatalogDocs {
         result.put("input", model.isInput());
         result.put("output", model.isOutput());
         addCommonModelFields(result, model);
+        // where it goes: onException written as a step inside a route fails the schema (CAMEL-25539)
+        String placement = CatalogSamples.placement(model);
+        if (placement != null) {
+            result.put("placement", placement);
+        }
+        result.put("sampleHint", "camel_catalog_sample name=" + model.getName()
+                                 + " returns a validated YAML example, when the documentation has one");
         if (scope != OptionScope.NONE) {
             putOptions(result, model.getOptions(), filter, scope);
         }
@@ -1829,7 +1842,43 @@ public final class CatalogDocs {
             o.put("oneOf", oneOf);
             o.put("yaml", "write one of oneOf as the key, not '" + opt.getName() + "': for example "
                           + opt.getOneOfs().get(0) + ": {...}");
+        } else {
+            String shape = yamlShape(opt);
+            if (shape != null) {
+                o.put("yaml", shape);
+            }
         }
         return o;
+    }
+
+    /**
+     * How an option whose type says only object or array is written in YAML (CAMEL-25539): an expression has its
+     * language as the key (handled: true fails the schema), and a list of properties is a list of key/value pairs
+     * (namespace of xpath). The example comes first and is valid YAML, the explanation follows as a comment. Null for
+     * any other option.
+     */
+    static String yamlShape(BaseOptionModel opt) {
+        String name = opt.getName();
+        if ("expression".equals(opt.getKind()) && EXPRESSION_SUB_ELEMENT.equals(opt.getJavaType())) {
+            if (opt.isAsPredicate()) {
+                return name + ": {constant: \"true\"}  # a predicate with its language as the key, not a plain"
+                       + " true/false; simple: instead of constant: for a condition";
+            }
+            return name + ": {header: myKey}  # an expression with its language as the key (header, simple, jq, ...)";
+        }
+        if ("element".equals(opt.getKind()) && "object".equals(opt.getType()) && opt.isAsPredicate()
+                && (opt.getOneOfs() == null || opt.getOneOfs().isEmpty())) {
+            return name + ": {simple: \"${header.foo} == 'bar'\"}  # a predicate with its language as the key"
+                   + " (simple, jq, xpath, ...)";
+        }
+        if ("array".equals(opt.getType()) && PROPERTY_LIST.equals(opt.getJavaType())) {
+            String desc = opt.getDescription() != null ? opt.getDescription().toLowerCase(Locale.ROOT) : "";
+            if (desc.contains("namespace")) {
+                return name + ": [{key: c, value: \"http://acme.com/cheese\"}]  # a list of key/value pairs: the"
+                       + " prefix as key, the namespace uri as value";
+            }
+            return name + ": [{key: foo, value: bar}]  # a list of key/value pairs";
+        }
+        return null;
     }
 }
