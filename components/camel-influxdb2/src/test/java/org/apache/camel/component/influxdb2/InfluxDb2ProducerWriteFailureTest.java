@@ -94,7 +94,6 @@ class InfluxDb2ProducerWriteFailureTest extends CamelTestSupport {
 
     @Override
     protected void cleanupResources() {
-        // the server goes first, so that a client that still has something to send cannot wait for an answer
         if (server != null) {
             server.stop(0);
         }
