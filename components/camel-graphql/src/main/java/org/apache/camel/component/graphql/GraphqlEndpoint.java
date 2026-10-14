@@ -19,7 +19,7 @@ package org.apache.camel.component.graphql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Arrays;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -47,9 +47,14 @@ import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.message.BasicHeader;
+import org.apache.hc.core5.net.URIAuthority;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Send GraphQL queries and mutations to external systems.
@@ -57,6 +62,8 @@ import org.apache.hc.core5.http.message.BasicHeader;
 @UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
              category = { Category.API }, producerOnly = true, lenientProperties = true)
 public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GraphqlEndpoint.class);
 
     @UriPath
     @Metadata(required = true)
@@ -143,22 +150,86 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
             int port = Integer.parseInt(parts[1]);
             httpClientBuilder.setProxy(new HttpHost(hostname, port));
         }
+        configureAuthentication(httpClientBuilder);
+        return httpClientBuilder.build();
+    }
+
+    private void configureAuthentication(HttpClientBuilder httpClientBuilder) {
+        boolean basicAuth = username != null && password != null;
+        if (accessToken == null && !basicAuth) {
+            return;
+        }
+        // the credentials belong to the authority of httpUri, as camel-http does for its own (CAMEL-24452)
+        String scheme = httpUri.getScheme();
+        URIAuthority authority = httpUriAuthority();
+        if (scheme == null || authority == null) {
+            LOG.warn("Cannot read the scheme, host and port of httpUri on {}: the access token and the basic "
+                     + "credentials are not sent",
+                    this);
+            return;
+        }
+        String host = authority.getHostName();
+        int port = effectivePort(scheme, authority.getPort());
         if (accessToken != null) {
             String authType = "Bearer";
             if (this.jwtAuthorizationType != null) {
                 authType = this.jwtAuthorizationType;
             }
-            httpClientBuilder.setDefaultHeaders(
-                    Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken)));
+            Header authorization = new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken);
+            // added per request rather than as a default header, which would go with every request the client
+            // executes
+            httpClientBuilder.addRequestInterceptorLast((request, entity, context) -> {
+                if (!request.containsHeader(HttpHeaders.AUTHORIZATION) && isAuthority(request, scheme, host, port)) {
+                    request.addHeader(authorization);
+                }
+            });
         }
-        if (username != null && password != null) {
+        if (basicAuth) {
             CredentialsStore credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(
-                    new AuthScope(null, -1),
+                    new AuthScope(scheme, host, port, null, null),
                     new UsernamePasswordCredentials(username, password.toCharArray()));
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
-        return httpClientBuilder.build();
+    }
+
+    private static boolean isAuthority(HttpRequest request, String scheme, String host, int port) {
+        URIAuthority target = request.getAuthority();
+        return target != null
+                && scheme.equalsIgnoreCase(request.getScheme())
+                && host.equalsIgnoreCase(target.getHostName())
+                && port == effectivePort(scheme, target.getPort());
+    }
+
+    /**
+     * The authority of httpUri as HttpClient reads it, which also accepts a host name that java.net.URI does not parse,
+     * such as one with an underscore.
+     */
+    private URIAuthority httpUriAuthority() {
+        if (httpUri.getHost() != null) {
+            return new URIAuthority(httpUri.getHost(), httpUri.getPort());
+        }
+        if (httpUri.getRawAuthority() == null) {
+            return null;
+        }
+        try {
+            return URIAuthority.create(httpUri.getRawAuthority());
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    private static int effectivePort(String scheme, int port) {
+        if (port >= 0) {
+            return port;
+        }
+        if ("https".equalsIgnoreCase(scheme)) {
+            return 443;
+        }
+        if ("http".equalsIgnoreCase(scheme)) {
+            return 80;
+        }
+        return -1;
     }
 
     public URI getHttpUri() {
