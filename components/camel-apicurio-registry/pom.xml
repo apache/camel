@@ -45,6 +45,18 @@
             <artifactId>camel-vertx-common</artifactId>
         </dependency>
 
+        <!-- used directly to build the HTTP client, aligned with the Vert.x version used by Camel -->
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web-client</artifactId>
+            <version>${vertx-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-auth-oauth2</artifactId>
+            <version>${vertx-version}</version>
+        </dependency>
+
         <!-- Apicurio Registry SDK -->
         <dependency>
             <groupId>io.apicurio</groupId>

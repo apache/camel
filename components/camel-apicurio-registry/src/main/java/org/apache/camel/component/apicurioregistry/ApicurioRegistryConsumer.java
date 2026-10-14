@@ -45,6 +45,7 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
     private final ApicurioRegistryEndpoint endpoint;
     private final ApicurioRegistryConfiguration configuration;
     private volatile Long lastSeenGlobalId;
+    private Long notFoundGlobalId;
 
     public ApicurioRegistryConsumer(ApicurioRegistryEndpoint endpoint, Processor processor,
                                     ApicurioRegistryConfiguration configuration) {
@@ -64,7 +65,9 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
             Long globalId = version.getGlobalId();
             if (configuration.isFetchContent() && version.getState() == VersionState.DISABLED) {
                 // the registry answers 404 for the content of a disabled version, so it can never be delivered
-                LOG.debug("Skipping disabled artifact version {} (globalId {})", version.getVersion(), globalId);
+                LOG.info("Skipping disabled artifact version {} (globalId {}): its content cannot be fetched and it will not be"
+                         + " delivered again if it is enabled later",
+                        version.getVersion(), globalId);
                 lastSeenGlobalId = globalId;
                 continue;
             }
@@ -82,11 +85,29 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
                 }
 
                 if (configuration.isFetchContent()) {
-                    byte[] content = fetchContent(client, groupId, artifactId, version);
-                    if (content == null) {
+                    byte[] content;
+                    try {
+                        content = fetchContent(client, groupId, artifactId, version);
+                    } catch (ProblemDetails e) {
+                        if (e.getStatus() == null || e.getStatus() != 404) {
+                            throw e;
+                        }
+                        if (!globalId.equals(notFoundGlobalId)) {
+                            // a 404 is not always final: with replicated storage another registry node may not have
+                            // the version yet, so only give up on it if it is still missing on the next poll
+                            LOG.debug("Content of artifact version {} (globalId {}) not found, retrying on the next poll",
+                                    version.getVersion(), globalId);
+                            notFoundGlobalId = globalId;
+                            break;
+                        }
+                        LOG.warn("Skipping artifact version {} (globalId {}) whose content is still not available (HTTP 404)"
+                                 + " on a second attempt; it will not be delivered: {}",
+                                version.getVersion(), globalId, e.getDetail());
+                        notFoundGlobalId = null;
                         lastSeenGlobalId = globalId;
                         continue;
                     }
+                    notFoundGlobalId = null;
                     message.setBody(content);
                 } else {
                     message.setBody(version);
@@ -114,23 +135,12 @@ public class ApicurioRegistryConsumer extends ScheduledPollConsumer {
         return count;
     }
 
-    /**
-     * Fetches the content of a version, or returns null if the version no longer has retrievable content (it was
-     * disabled or deleted after the version list was read).
-     */
     private static byte[] fetchContent(
             RegistryClient client, String groupId, String artifactId, SearchedVersion version)
             throws Exception {
         try (InputStream content = client.groups().byGroupId(groupId).artifacts().byArtifactId(artifactId)
                 .versions().byVersionExpression(version.getVersion()).content().get()) {
             return content.readAllBytes();
-        } catch (ProblemDetails e) {
-            if (e.getStatus() != null && e.getStatus() == 404) {
-                LOG.debug("Skipping artifact version {} (globalId {}) whose content is no longer available: {}",
-                        version.getVersion(), version.getGlobalId(), e.getDetail());
-                return null;
-            }
-            throw e;
         }
     }
 

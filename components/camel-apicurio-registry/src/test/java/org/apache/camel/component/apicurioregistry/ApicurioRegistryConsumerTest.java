@@ -183,30 +183,67 @@ class ApicurioRegistryConsumerTest {
     }
 
     @Test
-    void testFetchContentSkipsDisabledAndMissingVersions() throws Exception {
+    void testFetchContentSkipsDisabledVersions() throws Exception {
         SearchedVersion disabled = FakeVersionPages.version(2);
         disabled.setState(VersionState.DISABLED);
-        pages.add(1).add(disabled).add(3, 4);
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().byVersionExpression("1").content().get())
-                .thenReturn(new ByteArrayInputStream(new byte[] { 1 }));
-        // a version disabled or deleted after the list was read: the registry answers 404 for its content
-        ProblemDetails notFound = new ProblemDetails();
-        notFound.setStatus(404);
-        notFound.setName("VersionNotFoundException");
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().byVersionExpression("3").content().get()).thenThrow(notFound);
-        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
-                .versions().byVersionExpression("4").content().get())
-                .thenReturn(new ByteArrayInputStream(new byte[] { 4 }));
+        pages.add(1).add(disabled).add(3);
+        stubContent("1", new byte[] { 1 });
+        stubContent("3", new byte[] { 3 });
         List<Exchange> received = new ArrayList<>();
         ApicurioRegistryConsumer consumer = createConsumer(ENDPOINT_URI + "&fetchContent=true", received);
 
         assertThat(consumer.poll()).isEqualTo(2);
-        assertThat(globalIds(received)).containsExactly(1L, 4L);
+        assertThat(globalIds(received)).containsExactly(1L, 3L);
         verify(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
                 .versions().byVersionExpression("2").content(), never()).get();
         assertThat(consumer.poll()).isZero();
+    }
+
+    @Test
+    void testContentNotFoundIsRetriedOnceThenSkipped() throws Exception {
+        pages.add(1, 2);
+        stubContent("1", new byte[] { 1 });
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().byVersionExpression("2").content().get())
+                .thenThrow(notFound()).thenThrow(notFound());
+        List<Exchange> received = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = createConsumer(ENDPOINT_URI + "&fetchContent=true", received);
+
+        // the first 404 stops the poll without moving the watermark past version 2
+        assertThat(consumer.poll()).isEqualTo(1);
+        // still not found on the next poll: skipped for good
+        assertThat(consumer.poll()).isZero();
+        pages.add(3);
+        stubContent("3", new byte[] { 3 });
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(globalIds(received)).containsExactly(1L, 3L);
+    }
+
+    @Test
+    void testContentNotFoundOnceIsDeliveredOnNextPoll() throws Exception {
+        pages.add(1);
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().byVersionExpression("1").content().get())
+                .thenThrow(notFound()).thenReturn(new ByteArrayInputStream(new byte[] { 1 }));
+        List<Exchange> received = new ArrayList<>();
+        ApicurioRegistryConsumer consumer = createConsumer(ENDPOINT_URI + "&fetchContent=true", received);
+
+        assertThat(consumer.poll()).isZero();
+        assertThat(consumer.poll()).isEqualTo(1);
+        assertThat(received.get(0).getIn().getBody()).isEqualTo(new byte[] { 1 });
+    }
+
+    private void stubContent(String version, byte[] content) {
+        when(mockClient.groups().byGroupId("testGroup").artifacts().byArtifactId("testArtifact")
+                .versions().byVersionExpression(version).content().get())
+                .thenReturn(new ByteArrayInputStream(content));
+    }
+
+    private static ProblemDetails notFound() {
+        ProblemDetails notFound = new ProblemDetails();
+        notFound.setStatus(404);
+        notFound.setName("VersionNotFoundException");
+        return notFound;
     }
 
     @Test

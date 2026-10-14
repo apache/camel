@@ -328,6 +328,23 @@ class ApicurioRegistryProducerTest extends CamelTestSupport {
                 .hasRootCauseMessage("Unsupported value 'size' for header CamelApicurioRegistrySearchOrderBy");
     }
 
+    @Test
+    void testUnknownIfExistsFailsClearly() throws Exception {
+        injectMockClient(
+                "apicurio-registry:testGroup/testArtifact?registryUrl=http://localhost:8080/apis/registry/v3&operation=createArtifact");
+        when(mockClient.groups().byGroupId("testGroup").artifacts().post(any(CreateArtifact.class), any()))
+                .thenAnswer(call -> {
+                    ArtifactsRequestBuilder builder = mockClient.groups().byGroupId("testGroup").artifacts();
+                    Consumer<ArtifactsRequestBuilder.PostRequestConfiguration> configurer = call.getArgument(1);
+                    configurer.accept(builder.new PostRequestConfiguration());
+                    return new CreateArtifactResponse();
+                });
+
+        assertThatThrownBy(() -> template.requestBodyAndHeader("direct:createArtifact", "{}",
+                ApicurioRegistryConstants.HEADER_IF_EXISTS, "CREATE_VERSIONS"))
+                .hasRootCauseMessage("Unsupported value 'CREATE_VERSIONS' for header CamelApicurioRegistryIfExists");
+    }
+
     @ParameterizedTest
     @ValueSource(strings = { "getArtifactMetadata", "deleteArtifact", "listVersions", "validate" })
     void testMissingArtifactIdFailsClearly(String operation) throws Exception {

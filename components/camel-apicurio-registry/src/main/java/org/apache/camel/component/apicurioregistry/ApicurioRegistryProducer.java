@@ -121,7 +121,8 @@ public class ApicurioRegistryProducer extends HeaderSelectorProducer {
         CreateArtifactResponse result = getClient().groups().byGroupId(groupId).artifacts()
                 .post(createArtifact, config -> {
                     if (ifExistsVal != null) {
-                        config.queryParameters.ifExists = IfArtifactExists.forValue(ifExistsVal);
+                        config.queryParameters.ifExists = parseEnum(IfArtifactExists.forValue(ifExistsVal), ifExistsVal,
+                                ApicurioRegistryConstants.HEADER_IF_EXISTS);
                     }
                 });
         message.setBody(result);
