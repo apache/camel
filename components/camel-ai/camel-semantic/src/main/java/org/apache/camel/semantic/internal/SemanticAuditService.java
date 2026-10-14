@@ -155,6 +155,7 @@ public final class SemanticAuditService extends ServiceSupport {
         synchronized (this) {
             frozen = true;
         }
+        SemanticMonitoringService.get(context);
         observers = List.copyOf(context.getRegistry().findByType(SemanticObserver.class));
         if (memory == null || memory.getCapacity() != configuration.getCapacity()) {
             memory = new MemorySemanticAuditStore(configuration.getCapacity());
@@ -412,7 +413,8 @@ public final class SemanticAuditService extends ServiceSupport {
         if (management != null && management.getStartedEventNotifiers() != null) {
             for (var notifier : management.getStartedEventNotifiers()) {
                 try {
-                    if (!notifier.isDisabled() && !notifier.isIgnoreAiEvents()) {
+                    if (!(notifier instanceof SemanticMonitoringService)
+                            && !notifier.isDisabled() && !notifier.isIgnoreAiEvents()) {
                         return true;
                     }
                 } catch (Throwable failure) {

@@ -7112,6 +7112,15 @@
 						}
 					},
 					{
+						"name": "definition",
+						"in": "query",
+						"description": "Filter by recorded definition name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "eventId",
 						"in": "query",
 						"description": "Event ID to inspect; legacy records remain exportable",
@@ -7187,6 +7196,42 @@
 						}
 					},
 					{
+						"name": "operation",
+						"in": "query",
+						"description": "Filter by recorded expert operation",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultLabel",
+						"in": "query",
+						"description": "Exact member of the captured Classification result; requires resultType=CLASSIFICATION",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultType",
+						"in": "query",
+						"description": "Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultValue",
+						"in": "query",
+						"description": "Exact Boolean, Choice or numeric Score value; requires resultType",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "routeId",
 						"in": "query",
 						"description": "Filter by route",
@@ -7196,9 +7241,36 @@
 						}
 					},
 					{
+						"name": "scoreMax",
+						"in": "query",
+						"description": "Inclusive numeric upper bound; requires resultType=SCORE",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "scoreMin",
+						"in": "query",
+						"description": "Inclusive numeric lower bound; requires resultType=SCORE",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "since",
 						"in": "query",
 						"description": "UTC earliest timestamp in ISO-8601 format",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "until",
+						"in": "query",
+						"description": "Exclusive upper event timestamp in ISO-8601 format",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7495,28 +7567,9 @@
 		"\/q\/dev\/semantic-monitoring": {
 			"get": {
 				"summary": "Semantic Monitoring",
-				"description": "Read supplied semantic metrics and comparisons",
+				"description": "Read current semantic measurements",
 				"operationId": "semantic-monitoring",
 				"parameters": [
-					{
-						"name": "history",
-						"in": "query",
-						"description": "Include bounded retained snapshots",
-						"required": false,
-						"schema": {
-							"type": "boolean",
-							"default": false
-						}
-					},
-					{
-						"name": "since",
-						"in": "query",
-						"description": "Visualization lower bound; snapshots without supplied bounds remain marked unknown",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
 					{
 						"name": "source",
 						"in": "query",
@@ -7541,86 +7594,48 @@
 												"type": "object",
 												"additionalProperties": true
 											},
-											"description": "Producer-supplied measurements and comparisons"
+											"description": "Current producer-supplied measurements"
 										},
-										"defaultExpert": {
+										"scope": {
 											"type": "string",
-											"description": "Scope of the selected snapshots"
+											"description": "Scope of the returned measurements"
 										},
 										"sources": {
 											"type": "object",
 											"additionalProperties": true,
 											"description": "Source sampling health"
 										},
-										"stores": {
-											"type": "object",
-											"additionalProperties": true,
-											"description": "Store persistence and recovery health"
-										},
 										"omittedSources": {
 											"type": "integer",
 											"description": "Sources beyond the registration limit"
 										},
-										"omittedStores": {
-											"type": "integer",
-											"description": "Stores beyond the registration limit"
-										},
-										"recoveredOrdering": {
-											"type": "string",
-											"description": "Ordering guarantees for recovered snapshots"
-										},
 										"freshness": {
 											"type": "string",
-											"description": "How to interpret source and snapshot freshness"
+											"description": "How to interpret freshness"
 										},
 										"sourceErrors": {
 											"type": "integer",
 											"description": "Source sampling failures"
 										},
-										"storeErrors": {
-											"type": "integer",
-											"description": "Store failures"
-										},
-										"dropped": {
-											"type": "integer",
-											"description": "Dropped persistence tasks"
-										},
 										"evicted": {
 											"type": "integer",
-											"description": "Snapshots evicted from the bounded cache"
+											"description": "Series evicted from the current-value cache"
 										},
 										"managementErrors": {
 											"type": "integer",
 											"description": "Management registration failures"
 										},
-										"recovery": {
-											"type": "string",
-											"description": "Recovery availability"
-										},
 										"capacity": {
 											"type": "integer",
-											"description": "Maximum retained snapshot count"
+											"description": "Maximum cached series count"
+										},
+										"sampleIntervalSeconds": {
+											"type": "integer",
+											"description": "Sampling cadence in seconds"
 										},
 										"lastSample": {
 											"type": "string",
 											"description": "Last sampling time when available"
-										},
-										"audit": {
-											"type": "object",
-											"additionalProperties": true,
-											"description": "Audit capture and delivery health"
-										},
-										"comparability": {
-											"type": "string",
-											"description": "Ownership of population comparability"
-										},
-										"visualizationSince": {
-											"type": "string",
-											"description": "Requested visualization lower bound"
-										},
-										"windowPolicy": {
-											"type": "string",
-											"description": "Treatment of missing window bounds"
 										},
 										"error": {
 											"type": "string",

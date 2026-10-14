@@ -1,4 +1,4 @@
-= Semantic audit
+= Semantic audit and monitoring
 
 CAMEL-25499 supplies the audit foundation. CAMEL-25618 builds the result, case and monitoring surfaces on
 the shared AiEvent contract introduced by CAMEL-25408. CAMEL-25357 does not need a second recorder.
@@ -30,7 +30,14 @@ flowchart LR
     A --> Q[Bounded queue and capability-aware audit sinks]
     E --> H[EventHelper.notifyAiEvent]
     H --> N[Registered EventNotifier listeners]
-    N --> P[Expert or application event consumers]
+    N -->|SemanticEvent completions| P[Metric producers]
+    P -->|Current local measurements| C[Bounded cache of latest measurements]
+    N -->|SemanticMonitoringEvent measurements| C
+    P --> M[Typed monitoring AiEvent]
+    M --> H
+    C --> V[Read-only JMX / TUI / CLI / MCP]
+    N --> X[Optional Micrometer exporter - CAMEL-25648]
+    X --> B[External monitoring backend owns history and comparisons]
 ----
 
 
@@ -41,7 +48,7 @@ Each completed batch member has its own occurrence. Generic consumers select the
 Route-bound occurrences use SemanticExchangeEvent and AiEvent.ExchangeAiEvent for live correlation. Detached
 calls do not fabricate an Exchange. Synchronous listeners can access the live body and headers, while getData
 and JSON contain only frozen occurrence data. Consumers that enqueue or retain data must not retain the live
-event or Exchange; the built-in recorder retains only frozen data.
+event or Exchange; the built-in recorder and monitoring projections retain only frozen data.
 
 The event carries the complete declared interpretation, including its original labels and meanings.
 It is visible to all subscribed listeners. Event production does not truncate interpretation to an
@@ -78,7 +85,39 @@ lists still permit at most 100 references. Case retrieval has a five-second coop
 backend operations. Backends must bound individual I/O calls and honor interruption.
 
 Cases are scoped to the selected source and reader. Use a recorded breadcrumb, then exchange, invocation
-or event identity, and retain supplied batch/request relationships. Additional reader filters are optional;
+or event identity, and retain supplied batch/request relationships. Audit pages support inclusive `since`, exclusive `until`, exact definition/operation identity and
+explicitly typed result predicates (Boolean/Choice equality, Score equality/ranges, Classification membership).
+All filters apply before pagination and participate in cursor identity; queries only cover retained captured
+records, not necessarily the whole monitored population. Additional reader filters are optional;
 unsupported relationships and limited retrieval are visible. Retained history never proves completeness.
 Case/bulk summaries exclude input. Explicit input-bearing export includes the untrusted-data warning.
 Browsing, diagnostics and creating a playground draft must never invoke an expert.
+
+== Producer-owned metrics and monitoring
+
+SemanticResultMetrics offers bounded typed-result counters for an explicitly selected population. The
+owner supplies dimensions, labels' meaning and numeric buckets. Choices count the returned selection;
+probability entries are not additional answers. Booleans use the final returned value without a second
+threshold. Scores keep fractions. Classification counts membership and empty sets. Execution failures,
+unavailable results and cardinality loss remain separate. No provider-attempt count is fabricated.
+
+SemanticMetricSource supplies immutable current measurements with bounded identity, dimensions, units,
+observation times and population metadata. SemanticMonitoringEvent is an optional metrics publication path,
+distinct from assessment events so collectors do not count their own output. The runtime caches only the
+latest value per series, up to 100 series from at most 32 registered sources, and samples once per second.
+JMX, CLI, TUI and MCP read that cache without inference, audit scans or remote I/O. Restart clears the cache;
+source failures retain the last measurement and expose collection health. Missing values remain unknown.
+
+External monitoring systems own durable time-series storage, historical queries, baselines, comparisons,
+detector state, alerts, dashboards and cross-signal correlation. Camel has no monitoring-store SPI, recovery
+queue, sampled history, comparison/signal report model or example audit-event ID list. The TUI displays
+current counts, distributions and evaluation duration with expert/definition grouping and collection health.
+There are no historical-period or baseline controls. Register a bounded number of read-only management
+facades per source, never one MBean per event or answer. JMX-disabled deployments retain the console.
+
+CAMEL-25648 adds a shared Micrometer instrumentation/export bridge for Camel Main, Spring Boot and Quarkus.
+It reuses the runtime registry; Prometheus or another registry backend owns monitoring history and queries.
+Correlation, exchange, breadcrumb and invocation IDs are not metric labels. They remain audit/log/trace
+context; standard tracing exemplars may supply sampled metric-to-trace references where supported. Audit
+investigation uses a matching time window, definition/operation and typed-result predicate, without requiring
+metric-attached event IDs. Audit capture and retention can make its population incomplete.

@@ -100,9 +100,15 @@ Choose **Audit** to inspect retained evaluations and request outcomes. Result an
 The same formatter as the playground preserves fractional scores, empty label sets, declared meanings and
 reported probability diagnostics. Historical interpretation is captured once; it is never rebuilt from current definitions.
 
-- `/` edits exact filters: `category`, `expert`, `routeId` (entry), `executingRouteId`, `exchangeId`, `breadcrumbId`, `since`.
-  Quote spaces, for example `expert="team expert"`. `page.status`, `page.result`, `page.definition` refine this loaded page only.
-- `c`, `e`, `t` select category, expert and recent-time presets.
+- `/` edits retained-history filters: `category`, `expert`, `definition`, `operation`, `routeId` (entry),
+  `executingRouteId`, `exchangeId`, `breadcrumbId`, `since` (inclusive) and `until` (exclusive).
+  ISO-8601 time bounds select event/completion time; `since` must precede `until`.
+  Supply `resultType=BOOLEAN|CHOICE|SCORE|CLASSIFICATION` with `resultValue` for exact Boolean/Choice or numeric Score
+  equality, `resultLabel` for Classification membership, or inclusive `scoreMin`/`scoreMax` for Score ranges.
+  For example: `definition=routeRequest resultType=CHOICE resultValue=none_of_these`.
+  Quote spaces, for example `resultLabel="needs review"`. Missing/omitted results do not match value filters.
+  `page.status`, `page.result`, `page.definition` refine this loaded page only.
+- `c`, `e`, `t` select category, expert and recent-time presets. A time preset clears a fixed `until` bound.
 - Up/Down select records. Scroll the mouse wheel over the **Expert evaluation** inspector to read more,
   or click it / press `Tab` to focus it, then use Up/Down or Page Up/Down. Home/End jump to the beginning/end.
   A scrollbar and line range show hidden content. `Tab` returns to the record list; scrolling the inspector
@@ -123,3 +129,31 @@ An active OpenTelemetry tracer does not prove an external collector received a t
 Case/export maxRecords is 1..1000 and input requires explicit includeInput. Detail input is labelled untrusted.
 Generic `tui_get_table` Audit snapshots omit captured input even when the human inspector shows it.
 `tui_set_input` supports audit.view, audit.filter, audit.page, audit.eventId and audit.case.
+
+## Monitoring
+
+Choose **Monitoring** for current measurements from the same cache used by CLI, MCP and optional JMX.
+Reading performs no inference or audit-history scans. Historical queries, baselines, comparisons and alerts
+belong to the external monitoring system.
+
+- Click **Group** or press `g` to choose **Expert**, **Definition** or **All sources**.
+  Expert totals include direct calls. Definition totals require separately collected named-definition measurements;
+  direct calls have no definition. The switch selects supplied aggregates without combining counters or averaging means.
+- Click the Definition, Expert or Availability filters, or press `a`, `x` or `s`, to cycle supplied values.
+- `Tab` focuses the inspector; arrows and Page Up/Down scroll. `i` or `Enter` expands it to show
+  measurement identity, dimensions and collection health. `Esc` restores the split view.
+- `Space` freezes the display, including an in-flight refresh. Collection continues. Press it again to resume.
+  `r` requests a refresh.
+
+The framed table shows answers, failures and mean evaluation duration when supplied. The inspector shows
+observation times, duration range and count, answer distributions or score buckets. Timings include successful
+and failed executions with a recorded duration, excluding non-executed calls. They measure semantic evaluations,
+not individual provider requests or distributed spans. Missing values say **not provided**.
+
+The cache holds only the latest values for up to 100 series, sampled each second. It has no persistence or
+recovery. Collection failures keep the last value and expose failure health. Observation times remain visible.
+Correlation belongs to audit and tracing; no example audit-event IDs or comparison reports are retained here.
+
+`tui_get_monitoring` accepts an optional source without changing the screen. `tui_set_input` supports
+monitoring.view, monitoring.source, monitoring.aggregation (expert/definition/all), monitoring.definition,
+monitoring.expert and monitoring.availability.

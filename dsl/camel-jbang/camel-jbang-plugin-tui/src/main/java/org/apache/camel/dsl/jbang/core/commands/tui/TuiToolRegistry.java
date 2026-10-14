@@ -235,7 +235,7 @@ class TuiToolRegistry {
 
     List<ToolDef> getAvailableToolDefinitions(Collection<String> selected) {
         return getToolDefinitions().stream()
-                .filter(tool -> !"tui_get_audit".equals(tool.name())
+                .filter(tool -> !Set.of("tui_get_audit", "tui_get_monitoring").contains(tool.name())
                         || selected.contains(tool.name()))
                 .toList();
     }
@@ -930,6 +930,10 @@ class TuiToolRegistry {
 
     String callGetAudit(Map<String, Object> args) {
         return SemanticMcpQueries.audit(facade, args);
+    }
+
+    String callGetMonitoring(Map<String, Object> args) {
+        return SemanticMcpQueries.monitoring(facade, args);
     }
 
     String callGetTable(Map<String, Object> args) {

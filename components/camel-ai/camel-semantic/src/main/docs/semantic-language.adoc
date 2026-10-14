@@ -1240,6 +1240,12 @@ The event's `getData()` and JSON representation remain frozen and do not include
 asynchronous consumers must copy that data instead of holding the event or its live Exchange. Audit queues,
 sinks and monitoring snapshots never retain the Exchange.
 Events continue when audit retention is disabled, if an interested notifier is registered.
+Notifiers based on `EventNotifierSupport` or `SimpleEventNotifierSupport` that do not consume AI events
+should call `setIgnoreAiEvents(true)`; `ignoreExchangeEvents` does not suppress AI events.
+Custom implementations of `EventNotifier` must report the same choice from `isIgnoreAiEvents()`.
+Eligibility follows `EventHelper`: disabled and AI-ignoring notifiers do not trigger event creation.
+Other registered notifiers may need the real event to evaluate `isEnabled(event)`, so filtering there
+can avoid delivery but not the cost of constructing that event. Camel does not probe them with a sentinel.
 The existing `SemanticObserver` tracing hooks remain independent of event delivery and audit sampling.
 
 Interpretation is captured once from the resolved expert contract and effective parameters before the
@@ -1300,10 +1306,39 @@ camel semantic audit my-app --event-ids=EVENT_1,EVENT_2 --max-records=200 --json
 ----
 
 The `semantic-audit` console, CLI and MCP share the selected reader. Page filters are `category`
-(`evaluation` or `request`), `expert`, entry `routeId`, `executingRouteId`, `exchangeId`, `breadcrumbId` and
-`since` (ISO-8601). Page size remains 1..200. Backend capability checks reject unsupported filters instead
+(`evaluation` or `request`), `expert`, `definition`, `operation`, entry `routeId`, `executingRouteId`,
+`exchangeId` and `breadcrumbId`. `since` is inclusive and `until` is exclusive, both ISO-8601 timestamps
+with a UTC offset, applied to recorded event/completion time: `[since, until)`. Either bound may be omitted;
+when both are supplied, `since` must precede `until`. Page size remains 1..200. Backend capability checks reject unsupported filters instead
 of silently returning unfiltered data. Cursors belong to their backend and query. Errors, expired cursors,
 loss and missing IDs are reported separately. A read failure never becomes an empty successful export.
+
+Typed result filters use the captured `semantics.resultType` and `result.value`, never display text or
+current definitions. Supply `resultType` as `BOOLEAN`, `CHOICE`, `SCORE` or `CLASSIFICATION`:
+
+* `resultValue` matches `true`/`false` for Boolean, an exact case-sensitive Choice label, or numeric Score equality.
+* `resultLabel` requires Classification and matches membership of its captured label set.
+* `scoreMin` and `scoreMax` require Score and are inclusive finite numeric bounds. Either may be omitted.
+
+All predicates are ANDed before pagination. Missing or omitted values do not match value predicates;
+`resultType` alone can match recorded semantics without a value. No-match is an expert-defined label:
+Camel does not infer it from a failure, an empty result or a low probability. For example:
+
+[source,shell]
+----
+camel semantic audit my-app --definition=routeRequest --operation=choice \
+  --since=2026-10-14T12:00:00Z --until=2026-10-14T12:15:00Z \
+  --result-type=CHOICE --result-value=none_of_these --json
+camel semantic audit my-app --result-type=SCORE --score-min=1.5 --score-max=2 --json
+camel semantic audit my-app --result-type=CLASSIFICATION --result-label="needs review" --json
+----
+
+Reuse both bounds and every predicate with a returned cursor. Custom readers opt in through
+`getSupportedFilters()`, including `until` for the upper time bound and each implemented result predicate.
+The original four-argument `SemanticAuditQuery` constructor remains open-ended; the five-argument overload
+adds `until`. `query.matches(record)` implements these predicates for readers that scan retained records.
+An audit query returns matching *retained* records; disabled capture, drops or eviction can make that
+population smaller than the monitoring population.
 
 Cases use the anchor's breadcrumb, falling back to exchange, invocation or event identity when absent.
 Batch and request relationships are included where the reader supports those filters. These are source-local
@@ -1322,7 +1357,7 @@ the existing response and are not calibrated certainty, accuracy measurements or
 
 TUI filters accept quoted values, for example `expert="team expert" executingRouteId="assess order"`.
 `page.status`, `page.result` and `page.definition` are clearly marked refinements of the loaded page only.
-`t` offers rolling recent-time presets on the live page; an explicit ISO `since` stays fixed. Older pages keep
+`t` offers rolling recent-time presets on the live page and clears a fixed `until`; explicit ISO bounds stay fixed. Older pages keep
 the original time bound. `Space` pauses refresh, `r` refreshes the current page and selected detail, `n` loads an
 older page, and `g` goes to latest. Selection stays pinned by event ID during refresh and new arrivals are reported.
 Live polling refreshes summaries only, so captured input is not downloaded each second. Inspector notices do
@@ -1340,3 +1375,101 @@ and labels input as untrusted data. Review parameters and use the normal explici
 captured input from Audit summaries and the selected-record snapshot, even while the human inspector displays it.
 Explicit detail/export responses label captured input as untrusted data. The OpenTelemetry indicator describes
 the context tracer, not whether a semantic observer or exporter has been installed.
+
+=== Producer-owned monitoring
+
+Monitoring is independent of audit retention. A `SemanticMetricSource` supplies local, cached
+`SemanticMonitoringSnapshot` values; a producer may also emit `SemanticMonitoringEvent` with current measurements.
+These snapshots are immutable reads of current state, not persisted monitoring reports. Producers define
+measurement identity, bounded dimensions, units, population and revision boundaries. Camel exposes current
+values and collection health. External monitoring systems own time-series retention, historical queries,
+baselines, comparisons, anomaly detection, alerting and dashboards. Camel does not scan audit history to
+calculate metrics, invoke extra inference, correlate example audit IDs or assign route actions.
+
+`SemanticResultMetrics` is an optional event consumer for final typed results. Its constructor requires a
+producer source, meaning, dimensions, result type, explicit population predicate, bounded label capacity
+(2..64) and, for numeric histograms, ordered finite bucket bounds. Register it before context startup:
+
+[source,java]
+----
+context.getRegistry().bind("departmentMetrics", new SemanticResultMetrics(
+    "routing-expert", "Final department assessments for revision v3",
+    Map.of("revision", "v3", "definition", "department"), ResultType.CHOICE,
+    event -> "department".equals(event.getData().get("definition"))
+        && "v3".equals(event.getData().get("revision")),
+    16));
+----
+
+The helper counts completed assessments once. Choice counts the selected answer; Boolean counts the final
+normalized answer; Classification counts label memberships and empty sets; Score retains numeric aggregates
+and supplied bucket boundaries. Reported probabilities have separate histograms. Failures, non-executed and
+unavailable results are excluded from answer denominators and reported separately. Label-capacity loss is
+explicit. Provider attempt counts are *not provided*: one semantic completion is not necessarily one provider
+request. For executions that supply a non-negative `durationNanos`, it also publishes `durationCount`,
+`meanDurationNanos`, `minimumDurationNanos` and `maximumDurationNanos`. Successful and failed executions
+contribute to these timings; non-executed calls and missing durations do not. No duration aggregates are
+published before the first timed execution. These measure the semantic evaluation, not individual provider
+requests or distributed tracing spans. The helper resets its epoch on restart; producers must separate incompatible revisions/populations.
+
+To offer both expert and definition aggregation in Monitoring, register separate collectors for the
+populations you want to inspect. Set `dimensions.aggregation` to `expert` or `definition`; for definition
+aggregates also supply `dimensions.definition`. For example, this definition collector selects only
+`screenPrompt` completions, while an expert collector can select all `security` / `injection` completions:
+
+[source,java]
+----
+context.getRegistry().bind("screenPromptMetrics", new SemanticResultMetrics(
+    "screenPromptMetrics", "Injection assessments for screenPrompt",
+    Map.of("aggregation", "definition", "definition", "screenPrompt",
+           "expert", "security", "operation", "injection"), ResultType.BOOLEAN,
+    event -> "screenPrompt".equals(event.getData().get("definition"))
+        && "security".equals(event.getData().get("expert"))
+        && "injection".equals(event.getData().get("operation")),
+    2));
+----
+
+The TUI's *Group* control selects these supplied aggregates. It never combines the expert and definition
+counters or reconstructs definition totals from audit history. Direct expert calls have no definition and
+are excluded from definition collectors. Different operations, revisions and meaning remain separate
+producer-owned populations. Without an explicit aggregation dimension, a `definition` dimension identifies
+a definition aggregate, otherwise an `expert` dimension identifies an expert aggregate; *All sources* also
+shows snapshots without either. Custom sources can publish both aggregations using the same dimensions.
+
+The context monitoring service samples registered sources once per second and accepts supplied measurement
+events into a bounded current-value cache (100 series). New values replace the previous values for the same
+series. A source supplies its complete current set; retired series disappear on its next successful sample.
+Sampling failures retain the last values and report `sample_failed`, the last success and the last failure.
+The cache is cleared on restart. There is no monitoring-store SPI, retained time history or recovery.
+Audit storage and retention remain separate.
+
+Snapshot payloads are bounded to 32768 code points and 1000 nodes, with at most 16 dimensions. They have no
+raw-input, comparison, detector-state or audit-example fields; producers must supply measurements only.
+At most 32 sources are registered; omitted registrations are counted in health output. Each source supplies
+at most 64 snapshots per sample. `snapshots()` and notifier callbacks must be short and local; remote storage
+and querying belong to the external monitoring integration.
+
+Use bounded labels such as expert, definition, operation and declared result category for exported metrics.
+Per-execution correlation, exchange, breadcrumb and invocation IDs belong in audit/log/trace records, not
+metric labels. Standard tracing exemplars may provide sampled metric-to-trace references when the exporter
+supports them; Camel does not maintain example-event lists. To investigate an interval, query the audit
+reader with `since`, `until`, definition/operation and typed-result filters. Only retained captured records
+are available, which may be fewer than the monitored evaluations.
+
+[source,shell]
+----
+camel semantic monitoring my-app --json
+camel semantic monitoring my-app --source=departmentMetrics
+----
+
+The Semantic *Monitoring* sibling, `tui_get_monitoring`, `semantic-monitoring` console and CLI read this same
+current-value cache. The TUI offers expert/definition grouping, filters and an inspector for counts, durations,
+distributions, meaning, observation times and collection health. It has no historical-period, reference or
+comparison controls. Pausing affects the display only. A shared Micrometer exporter for Camel Main,
+Spring Boot and Quarkus is tracked separately by CAMEL-25648; it is not implemented by this local viewer.
+
+When JMX is enabled, the context registers one read-only aggregate facade and one per registered metric
+source under `type=semantic`, with logical names `all` and `Source(<registry-name>)`.
+The object-name pattern is `<domain>:context="<management-name>",type=semantic,name="<name>"`.
+Each exposes only a JSON `Snapshot` attribute backed by the same cache.
+There are no per-event MBeans, inference/backend reads, reset, reference-update or detector controls in JMX.
+Facades are removed at context shutdown. Monitoring also works with JMX disabled and without a connected TUI.

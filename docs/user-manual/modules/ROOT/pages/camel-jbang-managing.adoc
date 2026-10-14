@@ -385,8 +385,14 @@ capture was explicitly enabled. Detail responses label it as untrusted data. Lis
 output requires `--include-input` to include it. The full response is available with `--json`.
 
 Pages are newest first, default 50 and maximum 200. Exact filters are `--category` (`evaluation` or `request`),
-`--expert`, entry `--route-id`, `--executing-route-id`, `--exchange-id` and `--breadcrumb-id`.
-`--since` accepts an inclusive ISO-8601 timestamp. Use the returned `nextCursor` with the same filters.
+`--expert`, `--definition`, `--operation`, entry `--route-id`, `--executing-route-id`, `--exchange-id` and `--breadcrumb-id`.
+`--since` is inclusive and `--until` is exclusive, using ISO-8601 event/completion timestamps with a UTC offset.
+Together they select `[since, until)`; the lower bound must precede the upper bound.
+`--result-type` selects `BOOLEAN`, `CHOICE`, `SCORE` or `CLASSIFICATION`. With that explicit type,
+`--result-value` matches a Boolean (`true`/`false`), an exact Choice label or numeric Score equality;
+`--result-label` tests Classification membership; `--score-min`/`--score-max` specify inclusive finite Score bounds.
+Missing or omitted values do not match value predicates. These filters apply before pagination, to retained
+records only. Use the returned `nextCursor` with the same filters and both time bounds.
 Unsupported filters produce an error. `--event-id` is an exclusive detail selector and returns exit code 3
 when the record is absent. Persisted legacy decision records remain retrievable by ID and bulk export.
 
@@ -394,6 +400,23 @@ Cases associate records within one reader by breadcrumb, exchange, invocation an
 relationships. Association is not proven causality; completeness remains unknown. `--max-records` bounds
 case and bulk responses to 1..1000 (default 200), with a 4 MiB response budget. Missing IDs, bounded retrieval,
 cursor expiry and backend failures remain distinct. Backend failures return exit code 1 without partial success.
+
+=== Semantic monitoring
+
+`camel semantic monitoring` reads current cached measurements supplied by semantic metric producers.
+It works independently of audit retention and JMX. It performs no inference or backend query.
+
+[source,bash]
+----
+camel semantic monitoring my-app --json
+camel semantic monitoring my-app --source=departmentMetrics
+----
+
+Producers supply meaning, units, bounded dimensions, observation times, counts, distributions and durations.
+The response includes collection health, omitted sources and evicted series. The cache contains the latest
+values only and is cleared on restart. Historical queries, comparisons, alerting and dashboards belong in
+external monitoring systems. See xref:next@components:languages:semantic-language.adoc[Semantic evaluation]
+for the measurement contract and Micrometer follow-up scope.
 
 === Semantic command output and exit codes
 

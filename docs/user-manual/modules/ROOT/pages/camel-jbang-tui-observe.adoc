@@ -414,6 +414,35 @@ appear inline and keep the input and parameter draft for an explicit retry. If t
 application disconnects, Run is disabled and the cached draft stays visible until that connection
 returns or another integration is selected. Inspecting a contract does not probe the provider by running inference.
 
+=== Monitor semantic evaluations
+
+The *Monitoring* view reads the same cached measurements as the semantic monitoring CLI, MCP and JMX.
+It does not run inference or scan retained audit events. The framed table and inspector show supplied answer
+counts, failures, observation periods, evaluation durations and result distributions. Score results use the
+producer's histogram boundaries. Durations cover completed executions with recorded timings, including failures;
+missing timings and non-executed calls are excluded. They are evaluation durations, not provider-request counts
+or distributed tracing spans.
+
+The view shows current measurements only. Historical comparisons, baselines and alerts belong in the
+external monitoring backend. Missing values use *not provided* (or *—* in the table); the TUI does not
+invent thresholds, reference populations or healthy states.
+
+Click *Group* or press *g* to select *Expert*, *Definition* or *All sources*. Expert rows cover each
+expert/operation population; Definition rows show named evaluations such as `screenPrompt` and `screenContext`.
+The switch selects aggregates already collected by the source. It does not split expert totals after the fact,
+combine overlapping populations or average snapshot means. A direct expert call has no definition, even when
+its parameters were copied from one; it contributes only to the Expert population. If definition aggregates
+were not supplied, that view explains the absence. *All sources* also includes sources without grouping metadata.
+
+Click the Definition, Expert and Availability filters or use *a*, *x* and *s*. These controls only filter
+displayed data. *Tab* focuses the inspector; arrows and *Page Up/Down* scroll. *i* or *Enter* expands it to show
+measurement identity, dimensions and collection health. *Esc* restores the split view. *Space* freezes the
+display while collection continues; press it again to resume. *r* requests a refresh. The footer reports
+source errors, evicted series and omitted sources. Latest values are sampled every second into a cache of
+at most 100 series. It retains no time history and is cleared on restart. Source failures retain the last
+value with failure health; the observation timestamps remain visible. Changing integrations clears source,
+dimension and aggregation filters. There are no historical-period or comparison controls.
+
 === Evaluate a definition with a sample exchange
 
 Press *e* in any of the three views to open the selected definition's sample form. Supply a JSON object
@@ -506,7 +535,14 @@ selected state is captured, subject to its configured size limit and optional re
 permitted captured input into a new playground draft without running an expert.
 
 The latest page refreshes every second; `Space` pauses or resumes polling. Older pages stay fixed
-until explicitly refreshed. Filters use exact values; no time window is applied until `since` is set.
+until explicitly refreshed. Filters use exact values; `definition` and `operation` apply to all retained history.
+`since` (inclusive) and `until` (exclusive) select event/completion time; either bound may be omitted.
+Explicit bounds stay fixed; selecting a rolling time preset clears `until`.
+Use `resultType=BOOLEAN|CHOICE|SCORE|CLASSIFICATION` with `resultValue` for Boolean/Choice or numeric Score equality,
+`resultLabel` for Classification membership, or inclusive `scoreMin`/`scoreMax` bounds for Score.
+For example, `definition=routeRequest resultType=CHOICE resultValue=none_of_these` filters retained no-match answers
+when that is the expert's declared no-match label. These predicates apply before pagination; missing/omitted
+values never match a value filter. Quote labels containing spaces.
 The view reports evictions and delivery failures; the built-in memory backend is recent history,
 not persistent storage. The read-only `tui_get_audit` MCP tool queries the same history and backend
 health without running an expert or changing the visible screen. Pass `eventId` for record detail,

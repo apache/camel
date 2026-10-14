@@ -52,7 +52,8 @@ public final class MemorySemanticAuditStore extends ServiceSupport implements Se
     @Override
     public Set<String> getSupportedFilters() {
         return Set.of("category", "expert", "routeId", "breadcrumbId", "executingRouteId", "exchangeId", "invocationId",
-                "requestId", "batchId");
+                "requestId", "batchId", "until", "definition", "operation", "resultType", "resultValue", "resultLabel",
+                "scoreMin", "scoreMax");
     }
 
     @Override

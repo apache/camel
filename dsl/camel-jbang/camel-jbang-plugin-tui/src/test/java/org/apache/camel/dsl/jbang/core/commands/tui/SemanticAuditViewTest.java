@@ -70,13 +70,36 @@ class SemanticAuditViewTest {
             var view = new SemanticAuditView(runtime, clock::get, now::get);
             loaded(view);
             String since = START.minusSeconds(600).toString();
-            assertThat(view.setFilter("since=" + since)).isTrue();
+            String until = START.toString();
+            assertThat(view.setFilter("since=" + since + " until=" + until
+                                      + " definition=routeRequest operation=choice resultType=CHOICE resultValue=\"none of these\""))
+                    .isTrue();
             loaded(view);
             now.set(START.plusSeconds(60));
             clock.addAndGet(1_000_000_000L);
             loaded(view);
             assertThat(runtime.queries()).hasSize(3);
-            assertThat(runtime.lastQuery()).containsEntry("since", since);
+            assertThat(runtime.lastQuery()).containsEntry("since", since).containsEntry("until", until)
+                    .containsEntry("definition", "routeRequest").containsEntry("operation", "choice")
+                    .containsEntry("resultType", "CHOICE").containsEntry("resultValue", "none of these");
+            assertThat(render(view, 180)).contains("until=", "definition=routeRequest", "resultType=CHOICE");
+            chooseTimePreset(view, 1);
+            loaded(view);
+            assertThat(runtime.lastQuery()).doesNotContainKey("until");
+        }
+    }
+
+    @Test
+    void invalidWindowOrResultFilterDoesNotReplaceTheCurrentQuery() {
+        try (var runtime = new Runtime()) {
+            var view = new SemanticAuditView(runtime);
+            loaded(view);
+            int count = runtime.queries().size();
+            for (String filter : List.of("since=" + START + " until=" + START,
+                    "resultValue=false", "resultType=BOOLEAN resultValue=FALSE", "resultType=SCORE scoreMin=NaN")) {
+                assertThat(view.setFilter(filter)).isFalse();
+            }
+            assertThat(runtime.queries()).hasSize(count);
         }
     }
 

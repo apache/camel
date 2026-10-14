@@ -59,7 +59,8 @@ class SemanticTab extends AbstractTableTab {
         DEFINITIONS("Definitions"),
         EXPERTS("Experts"),
         RELATIONSHIPS("Relationships"),
-        AUDIT("Audit");
+        AUDIT("Audit"),
+        MONITORING("Monitoring");
 
         final String label;
 
@@ -76,6 +77,7 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private final SemanticAuditView audit;
+    private final SemanticMonitoringView monitoring;
     private JsonObject auditDraft;
     private JsonObject data;
     private CompletableFuture<JsonObject> pending;
@@ -109,6 +111,7 @@ class SemanticTab extends AbstractTableTab {
     SemanticTab(MonitorContext ctx) {
         super(ctx);
         audit = new SemanticAuditView(ctx);
+        monitoring = new SemanticMonitoringView(ctx);
     }
 
     @Override
@@ -119,6 +122,7 @@ class SemanticTab extends AbstractTableTab {
     @Override
     public void onIntegrationChanged() {
         audit.reset();
+        monitoring.reset();
         auditDraft = null;
         data = null;
         pending = null;
@@ -144,6 +148,10 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private void load() {
+        if (view == View.MONITORING) {
+            monitoring.load();
+            return;
+        }
         if (view == View.AUDIT) {
             audit.load();
             return;
@@ -215,6 +223,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean ensureDataLoaded() {
+        if (view == View.MONITORING) {
+            return monitoring.ensureLoaded();
+        }
         if (view == View.AUDIT) {
             return audit.ensureLoaded();
         }
@@ -227,6 +238,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public String dataLoadError() {
+        if (view == View.MONITORING) {
+            return monitoring.error();
+        }
         if (view == View.AUDIT) {
             return audit.error();
         }
@@ -409,6 +423,12 @@ class SemanticTab extends AbstractTableTab {
 
     private void view(View selected) {
         view = selected;
+        if (view == View.MONITORING) {
+            sample = null;
+            filterInput = null;
+            monitoring.ensureLoaded();
+            return;
+        }
         if (view == View.AUDIT) {
             sample = null;
             filterInput = null;
@@ -433,8 +453,7 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean isTextInputActive() {
-        return view == View.AUDIT
-                ? audit.inputActive()
+        return view == View.MONITORING ? false : view == View.AUDIT ? audit.inputActive()
                 : filterInput != null || sample != null || focus == Focus.PLAYGROUND;
     }
 
@@ -465,9 +484,16 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent key) {
+        if (view == View.MONITORING) {
+            if (key.isChar('v')) {
+                view(View.DEFINITIONS);
+                return true;
+            }
+            return monitoring.key(key);
+        }
         if (view == View.AUDIT) {
             if (!audit.inputActive() && key.isChar('v')) {
-                view(View.DEFINITIONS);
+                view(View.MONITORING);
                 return true;
             }
             boolean handled = audit.key(key);
@@ -591,6 +617,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleEscape() {
+        if (view == View.MONITORING) {
+            return monitoring.escape();
+        }
         if (view == View.AUDIT) {
             return audit.escape();
         }
@@ -624,6 +653,10 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private void navigate(int delta) {
+        if (view == View.MONITORING) {
+            monitoring.navigate(delta);
+            return;
+        }
         if (view == View.AUDIT) {
             audit.navigate(delta);
             return;
@@ -654,6 +687,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent event, Rect area) {
+        if (view == View.MONITORING) {
+            return monitoring.mouse(event);
+        }
         if (view == View.AUDIT) {
             return audit.mouse(event);
         }
@@ -722,6 +758,10 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        if (view == View.MONITORING) {
+            monitoring.render(frame, area);
+            return;
+        }
         if (view == View.AUDIT) {
             audit.render(frame, area);
             return;
@@ -914,6 +954,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean setFilter(String value) {
+        if (view == View.MONITORING) {
+            return monitoring.setInput("monitoring.source", value);
+        }
         if (view == View.AUDIT) {
             return audit.setFilter(value);
         }
@@ -925,6 +968,10 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (view == View.MONITORING) {
+            monitoring.footer(spans);
+            return;
+        }
         if (view == View.AUDIT) {
             audit.footer(spans);
             return;
@@ -974,6 +1021,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public SelectionContext getSelectionContext() {
+        if (view == View.MONITORING) {
+            return null;
+        }
         if (view == View.AUDIT) {
             return audit.selectionContext();
         }
@@ -987,6 +1037,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
+        if (view == View.MONITORING) {
+            return monitoring.snapshot();
+        }
         if (view == View.AUDIT) {
             return audit.snapshot();
         }
@@ -1015,6 +1068,13 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean setInputValue(String field, String value) {
+        if ("monitoring.view".equals(field)) {
+            view(View.MONITORING);
+            return true;
+        }
+        if (view == View.MONITORING) {
+            return monitoring.setInput(field, value);
+        }
         if ("audit.view".equals(field)) {
             view(View.AUDIT);
             return true;

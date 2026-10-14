@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -67,8 +68,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 /** Audit browsing owns its state independently of live definitions and inference drafts. */
 final class SemanticAuditView {
     private static final Set<String> FILTERS
-            = Set.of("category", "expert", "routeId", "executingRouteId", "exchangeId", "breadcrumbId", "since",
-                    "page.status", "page.result", "page.definition");
+            = Stream.concat(SemanticAuditFilters.QUERY_FIELDS.stream(),
+                    Stream.of("page.status", "page.result", "page.definition")).collect(Collectors.toUnmodifiableSet());
     private final MonitorContext context;
     private final LongSupplier nanoTime;
     private final Supplier<Instant> now;
@@ -449,14 +450,12 @@ final class SemanticAuditView {
         Map<String, String> parsed;
         try {
             parsed = SemanticAuditFilters.parse(text, FILTERS);
-            if (parsed.containsKey("since")) {
-                Instant.parse(parsed.get("since"));
-            }
+            SemanticAuditFilters.validateQuery(parsed);
             if ("decision".equals(parsed.get("category"))) {
                 throw new IllegalArgumentException("Use evaluation or request category");
             }
         } catch (IllegalArgumentException | DateTimeParseException failure) {
-            notice = "Use field=value; quote spaces. Filters: expert routeId executingRouteId exchangeId breadcrumbId since; page.status/result/definition";
+            notice = "Invalid filters: use field=value, since < until and a compatible resultType; quote spaces. F1 for filter help.";
             return false;
         }
         caseData = null;
@@ -556,6 +555,7 @@ final class SemanticAuditView {
                     String value = choice.insertText();
                     long preset = sinceSeconds;
                     if ("since".equals(filterField)) {
+                        values.remove("until");
                         preset = value.startsWith("last:") ? Long.parseLong(value.substring(5)) : 0;
                         if (preset > 0) {
                             value = now.get().minusSeconds(preset).toString();
@@ -829,7 +829,9 @@ final class SemanticAuditView {
             lines.add(Line.from(Span.styled("Refinements apply only to this loaded page", Theme.warning())));
         }
         List<String> other = new ArrayList<>();
-        for (String field : List.of("routeId", "executingRouteId", "exchangeId", "breadcrumbId")) {
+        for (String field : List.of("routeId", "executingRouteId", "exchangeId", "breadcrumbId", "until", "definition",
+                "operation",
+                "resultType", "resultValue", "resultLabel", "scoreMin", "scoreMax")) {
             if (filters.containsKey(field)) {
                 other.add(field + "=" + filters.get(field));
             }

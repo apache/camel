@@ -83,6 +83,25 @@ class SemanticTabTest {
     }
 
     @Test
+    void monitoringRendersCurrentMeasurementsWithoutHistoricalQueries() throws Exception {
+        try (var runtime = new Runtime()) {
+            var tab = loaded(runtime);
+            tab.setInputValue("monitoring.view", "");
+            await().atMost(5, TimeUnit.SECONDS).until(() -> tab.getTableDataAsJson().get("selected") != null);
+            for (int[] size : List.of(new int[] { 144, 40 }, new int[] { 100, 30 }, new int[] { 88, 24 })) {
+                assertThat(TuiTestHelper.renderToString(tab, size[0], size[1])).contains("Monitoring", "Case volume",
+                        "requests");
+            }
+            assertThat(tab.setInputValue("monitoring.period", "1h")).isFalse();
+            assertThat(tab.setInputValue("monitoring.comparison", "fixed")).isFalse();
+            assertThat(runtime.requests).anySatisfy(request -> assertThat(request)
+                    .containsEntry("action", "semantic-monitoring").doesNotContainKeys("history", "since"));
+            assertThat(runtime.requests)
+                    .noneSatisfy(request -> assertThat(request).containsEntry("action", "semantic-evaluate"));
+        }
+    }
+
+    @Test
     void auditMcpQueriesWithoutChangingTheVisibleView() throws Exception {
         try (var runtime = new Runtime()) {
             var tab = loaded(runtime);
@@ -95,6 +114,13 @@ class SemanticTabTest {
                     null, null, null, registry, null, bridge);
             var tools = new TuiToolRegistry(facade);
             JsonObject before = tab.getTableDataAsJson();
+            JsonObject monitoring = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_monitoring",
+                    new JsonObject(Map.of("source", "domain"))));
+            assertThat(SemanticTab.objects(monitoring, "snapshots")).singleElement().satisfies(snapshot -> assertThat(snapshot)
+                    .containsEntry("name", "Case volume").containsEntry("meaning", "Supplied meaning")
+                    .containsEntry("unit", "requests")
+                    .containsEntry("availability", "available"));
+            assertThat(tab.getTableDataAsJson()).isEqualTo(before);
             JsonObject history = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_audit", new JsonObject()));
             assertThat(SemanticTab.objects(history, "records")).hasSize(2);
             tools.execute("tui_get_audit", new JsonObject(
@@ -103,6 +129,11 @@ class SemanticTabTest {
             assertThat(runtime.requests).anySatisfy(request -> assertThat(request)
                     .containsEntry("executingRouteId", "prompt-screen").containsEntry("expert", "security")
                     .containsEntry("breadcrumbId", BREADCRUMB_ID).containsEntry("limit", 1));
+            var typedFilters = Map.of("since", "2026-10-14T12:00:00Z", "until", "2026-10-14T13:00:00Z",
+                    "definition", "routeRequest", "operation", "choice", "resultType", "CHOICE", "resultValue",
+                    "none of these");
+            tools.execute("tui_get_audit", new JsonObject(typedFilters));
+            assertThat(runtime.requests).anySatisfy(request -> assertThat(request).containsAllEntriesOf(typedFilters));
             JsonObject details = (JsonObject) Jsoner.deserialize(tools.execute("tui_get_audit",
                     new JsonObject(Map.of("eventId", "evaluation-1"))));
             assertThat(details.getJsonObject("record")).containsEntry("category", "evaluation");
@@ -114,6 +145,15 @@ class SemanticTabTest {
             assertThat(tools.execute("tui_get_audit", new JsonObject(Map.of("eventId", "x", "limit", 1)))).startsWith("Error:");
             assertThat(tools.execute("tui_get_audit", new JsonObject(Map.of("limit", 0)))).startsWith("Error:");
             assertThat(tools.execute("tui_get_audit", new JsonObject(Map.of("action", "allow")))).startsWith("Error:");
+            assertThat(tools.execute("tui_get_monitoring", new JsonObject(Map.of("threshold", 0.5)))).startsWith("Error:");
+            assertThat(tools.execute("tui_get_monitoring", new JsonObject(Map.of("history", true)))).startsWith("Error:");
+            assertThat(tools.execute("tui_get_monitoring", new JsonObject(Map.of("since", "2026-10-14T12:00:00Z"))))
+                    .startsWith("Error:");
+            for (var invalid : List.of(Map.of("since", "2026-10-14T13:00:00Z", "until", "2026-10-14T12:00:00Z"),
+                    Map.of("resultValue", "false"), Map.of("resultType", "BOOLEAN", "resultValue", "FALSE"),
+                    Map.of("resultType", "SCORE", "scoreMin", "NaN"), Map.of("eventId", "x", "definition", "routeRequest"))) {
+                assertThat(tools.execute("tui_get_audit", new JsonObject(invalid))).startsWith("Error:");
+            }
             assertThat(runtime.requests).hasSize(requests);
             tab.setInputValue("audit.view", "");
             await().atMost(5, TimeUnit.SECONDS).until(() -> !tab.ensureDataLoaded());
@@ -661,7 +701,7 @@ class SemanticTabTest {
             assertThat(definitions).doesNotContain("Evaluate sample", "Item type", "Integer: false");
             assertThat(definitions).contains("DEFINITION", "EXPERT", "OPERATION", "RESULT", "STATE", "screenPrompt", "${body}");
             assertThat(tab.subViewBar().views()).extracting(SubViewBar.View::label).containsExactly("Definitions", "Experts",
-                    "Relationships", "Audit");
+                    "Relationships", "Audit", "Monitoring");
             tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
             String experts = TuiTestHelper.renderToString(tab, 120, 30);
             assertThat(experts).contains("EXPERT", "1 operation", "Expert contract",
@@ -1493,10 +1533,8 @@ class SemanticTabTest {
                     return new JsonObject(
                             Map.of("snapshots", List.of(new JsonObject(
                                     Map.of("id", "volume", "name", "Case volume",
-                                            "source", "domain", "kind", "comparison", "unit", "requests", "meaning",
-                                            "Supplied meaning",
-                                            "comparison", Map.of("mode", "fixed", "method", "producer method"), "state",
-                                            "insufficient_data")))));
+                                            "source", "domain", "kind", "counter", "unit", "requests", "meaning",
+                                            "Supplied meaning", "values", Map.of("value", 9), "availability", "available")))));
                 }
                 if ("semantic-evaluate".equals(request.getString("action"))) {
                     if (failure != null) {
