@@ -62,6 +62,16 @@ class SemanticResultFormatterTest {
     }
 
     @Test
+    void includesCapturedRubricDescriptionsWithoutChangingTheScore() {
+        var answer = SemanticResultFormatter.audit(Map.of("status", "success", "semantics", Map.of("resultType", "SCORE"),
+                "result", Map.of("value", 0.96), "interpretation", Map.of(
+                        "scoreLevels", List.of("routine", "urgent"),
+                        "scoreDescriptions", Map.of("routine", "Within a week", "urgent", "Immediate action"))));
+        assertEquals("0.96 [SCORE]", answer.compact());
+        assertTrue(answer.details().contains("Between [0] routine — Within a week and [1] urgent — Immediate action"));
+    }
+
+    @Test
     void reportsIncompleteCapturedDomainWithoutInventingMissingProbabilities() {
         var view = SemanticResultFormatter.audit(Map.of("semantics", Map.of("resultType", "CHOICE"),
                 "result", Map.of("value", "billing", "probabilities", Map.of("billing", 0.7)),

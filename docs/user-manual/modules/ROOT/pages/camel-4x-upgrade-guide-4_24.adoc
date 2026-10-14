@@ -744,4 +744,6 @@ for every expert before any provider performs inference. A shared validation fai
 expert's group as invalid input in the audit.
 
 Semantic audit backends can opt into the additive `inputType` extension. Readers that do not
-support it keep their existing projection.
+support it keep their existing projection. The `camel semantic audit --json` display omits image
+base64 and reports metadata instead. Use `--output=<new-file>` to export the full returned JSON,
+with `--include-input` for case/bulk requests that need captured input. Existing files are not overwritten.

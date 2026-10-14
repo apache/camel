@@ -97,6 +97,10 @@ final class SemanticResultView {
             }
         }
         if (parameters instanceof Map<?, ?> values) {
+            Object descriptions = contract.get("scoreDescriptionsParameter");
+            if (descriptions instanceof String parameter && values.get(parameter) instanceof Map<?, ?> labels) {
+                result.put("scoreDescriptions", Map.copyOf(labels));
+            }
             for (String kind : List.of("choice", "boolean")) {
                 Object name = contract.get(kind + "LabelsParameter");
                 if (name instanceof String parameter && values.get(parameter) instanceof Map<?, ?> labels) {

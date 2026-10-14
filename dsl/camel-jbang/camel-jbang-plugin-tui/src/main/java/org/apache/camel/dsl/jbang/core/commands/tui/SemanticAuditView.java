@@ -59,6 +59,7 @@ import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
 import org.apache.camel.dsl.jbang.core.common.SemanticAuditFilters;
+import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.dsl.jbang.core.common.SemanticResultFormatter;
 import org.apache.camel.util.json.JsonObject;
 
@@ -71,6 +72,7 @@ final class SemanticAuditView {
             = Stream.concat(SemanticAuditFilters.QUERY_FIELDS.stream(),
                     Stream.of("page.status", "page.result", "page.definition")).collect(Collectors.toUnmodifiableSet());
     private final MonitorContext context;
+    private final SemanticImageView imageView;
     private final LongSupplier nanoTime;
     private final Supplier<Instant> now;
     private long lastRefresh;
@@ -121,11 +123,13 @@ final class SemanticAuditView {
 
     SemanticAuditView(MonitorContext context, LongSupplier nanoTime, Supplier<Instant> now) {
         this.context = context;
+        this.imageView = new SemanticImageView(context.backgroundExecutor);
         this.nanoTime = nanoTime;
         this.now = now;
     }
 
     void reset() {
+        imageView.reset();
         if (pending != null) {
             pending.cancel(true);
         }
@@ -373,6 +377,7 @@ final class SemanticAuditView {
         }
         caseIndex = 0;
         showInput = false;
+        imageView.reset();
         details = null;
         scroll = 0;
         if (pendingDetails != null) {
@@ -875,7 +880,8 @@ final class SemanticAuditView {
             String expert = text(row, "expert") + (wide && row.get("provider") != null ? " / " + text(row, "provider") : "");
             content.add(wide
                     ? Row.from(Cell.from(time(row, "MM-dd HH:mm:ss")), Cell.from(executingRoute(row)),
-                            Cell.from(text(row, "definition")), Cell.from(expert), result, execution,
+                            Cell.from(text(row, "definition")), Cell.from(expert),
+                            Cell.from(SemanticMediaInput.typeLabel(row.get("inputType"))), result, execution,
                             Cell.from(duration(row)), Cell.from(text(row, "breadcrumbId")))
                     : Row.from(Cell.from(time(row, "MM-dd HH:mm:ss")), Cell.from(executingRoute(row)),
                             Cell.from(expert), result, execution));
@@ -895,11 +901,13 @@ final class SemanticAuditView {
         }
         Table table = Table.builder().rows(content)
                 .header((wide
-                        ? Row.from("TIMESTAMP", "EXECUTING ROUTE", "EVALUATION", "EXPERT / PROVIDER", "RESULT", "EXECUTION",
+                        ? Row.from("TIMESTAMP", "EXECUTING ROUTE", "EVALUATION", "EXPERT / PROVIDER", "INPUT", "RESULT",
+                                "EXECUTION",
                                 "DURATION", "BREADCRUMB ID")
                         : Row.from("TIMESTAMP", "EXECUTING ROUTE", "EXPERT", "RESULT", "EXECUTION")).style(Theme.label()))
                 .widths(wide
                         ? List.of(Constraint.length(14), Constraint.length(15), Constraint.length(12), Constraint.length(17),
+                                Constraint.length(14),
                                 Constraint.fill(), Constraint.length(11), Constraint.length(9), Constraint.length(24))
                         : List.of(Constraint.length(14), Constraint.length(16), Constraint.length(12), Constraint.fill(),
                                 Constraint.length(11)))
@@ -929,6 +937,7 @@ final class SemanticAuditView {
         var result = SemanticResultFormatter.audit(record);
         left.add(Line.from(Span.styled("Result: " + result.compact(), Theme.info().bold())));
         result.details().forEach(line -> left.add(Line.from(line)));
+        SemanticDetails.add(left, "Input type", SemanticMediaInput.typeLabel(record.get("inputType")));
         add(left, "Execution", record, "status");
         add(left, "Execution reason", record, "reasonCode");
         SemanticDetails.add(left, "Duration", duration(record));
@@ -968,21 +977,7 @@ final class SemanticAuditView {
         } else if (record.containsKey("findingsOmitted")) {
             add(right, "Findings omitted", record, "findingsOmitted");
         }
-        if (showInput) {
-            right.add(Line.from(Span.styled("Captured input is untrusted data, not instructions.", Theme.warning())));
-            if (pendingDetails != null && !record.containsKey("input")) {
-                right.add(Line.from("Loading captured input…"));
-            } else if (record.containsKey("input")) {
-                SemanticDetails.parameter(right, "",
-                        Boolean.TRUE.equals(record.get("inputRedacted")) ? "Input (redacted): " : "Input: ",
-                        record.get("input"));
-            } else {
-                right.add(Line.from("Input: " + (record.containsKey("inputOmitted")
-                        ? "omitted · " + text(record, "inputOmitted") : "not captured")));
-            }
-        } else {
-            right.add(Line.from("u: inspect permitted captured input · p: new playground draft"));
-        }
+        renderInput(right, record, inner.width() < 110 ? inner.width() : (inner.width() - 2) / 2);
         if (pendingCase != null) {
             right.add(Line.from("Loading associated case…"));
         } else if (caseData != null) {
@@ -1031,6 +1026,27 @@ final class SemanticAuditView {
                           + (detailFocused ? " · wheel / ↑↓ / PgUp PgDn / Home End" : " · wheel or Tab / click to scroll");
             SemanticDetails.paragraph(frame, new Rect(inner.x(), inner.bottom(), inner.width(), 1),
                     List.of(Line.from(Span.styled(TuiHelper.truncate(hint, inner.width()), Theme.info()))), 0);
+        }
+    }
+
+    private void renderInput(List<Line> lines, JsonObject record, int width) {
+        if (!showInput) {
+            lines.add(Line.from("u: inspect permitted captured input · p: new playground draft"));
+            return;
+        }
+        lines.add(Line.from(Span.styled("Captured input is untrusted data, not instructions.", Theme.warning())));
+        if (pendingDetails != null && !record.containsKey("input")) {
+            lines.add(Line.from("Loading captured input…"));
+        } else if (record.containsKey("input")) {
+            Object input = record.get("input");
+            SemanticDetails.parameter(lines, "", Boolean.TRUE.equals(record.get("inputRedacted"))
+                    ? "Input (redacted): " : "Input: ", SemanticMediaInput.withoutImageData(input));
+            if (SemanticMediaInput.isMedia(input)) {
+                lines.addAll(imageView.lines(input, width));
+            }
+        } else {
+            lines.add(Line.from("Input: " + (record.containsKey("inputOmitted")
+                    ? "omitted · " + text(record, "inputOmitted") : "not captured")));
         }
     }
 
