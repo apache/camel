@@ -28,6 +28,7 @@ import io.quarkiverse.mcp.server.MetaField;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
@@ -58,6 +59,9 @@ public class AuthoringTools {
 
     @Inject
     McpSecurityConfig securityConfig;
+
+    @Inject
+    CatalogService catalogService;
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Camel catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the "
@@ -367,18 +371,46 @@ public class AuthoringTools {
     }
 
     /**
-     * As {@link #call(String, Map)} for a deterministic tool: from the third identical call of the connection the
-     * answer is a short note that it was already answered (CAMEL-25075).
+     * As {@link #call(String, Map, CatalogService)} for a deterministic tool: from the third identical call of the
+     * connection the answer is a short note that it was already answered (CAMEL-25075). Only successful answers count
+     * against the repeat budget; a call that throws does not (CAMEL-25640).
      */
     JsonObject callDeterministic(McpConnection connection, String tool, Map<String, String> args) {
         JsonObject repeat = repeatedCalls != null ? repeatedCalls.repeatOf(connection, tool, args) : null;
-        return repeat != null ? repeat : call(tool, args);
+        if (repeat != null) {
+            return repeat;
+        }
+        JsonObject result = call(tool, args, catalogService);
+        if (repeatedCalls != null) {
+            repeatedCalls.recordSuccessfulAnswer(connection, tool, args);
+        }
+        return result;
     }
 
     /** Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. */
     static JsonObject call(String tool, Map<String, String> args) {
+        return call(tool, args, null);
+    }
+
+    /**
+     * Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. When
+     * {@code catalogService} is provided, the {@link ToolContext} reuses the shared catalog cache instead of creating a
+     * new one per call (CAMEL-25640).
+     */
+    static JsonObject call(String tool, Map<String, String> args, CatalogService catalogService) {
         try {
-            return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, new ToolContext(), args));
+            ToolContext ctx = new ToolContext();
+            if (catalogService != null) {
+                String camelVersion = args != null ? args.get("camelVersion") : null;
+                String runtime = args != null ? args.get("runtime") : null;
+                try {
+                    CamelCatalog catalog = catalogService.loadCatalog(runtime, camelVersion, null);
+                    ctx.setCatalog(catalog);
+                } catch (Exception e) {
+                    // catalog load failed: fall through to ToolContext's own lazy-load, which handles the error
+                }
+            }
+            return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args));
         } catch (ToolExecutionException e) {
             throw new ToolCallException(e.getMessage(), e);
         }

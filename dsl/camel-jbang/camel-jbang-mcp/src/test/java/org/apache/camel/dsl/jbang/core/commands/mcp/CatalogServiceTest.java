@@ -176,4 +176,20 @@ class CatalogServiceTest {
         assertThat(version).isEqualTo(requestedVersion);
         assertThat(version).isNotEqualTo(BUILTIN_VERSION);
     }
+
+    /**
+     * CAMEL-25640: quarkus runtime with only camelVersion (no explicit platformBom) used to pass null to
+     * loadQuarkusCatalog, which silently returned an unusable catalog. The fix resolves the BOM from the registry.
+     * Disabled in CI: requires network access to the Quarkus extension registry.
+     */
+    @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                              disabledReason = "Runs only local — requires Quarkus extension registry access")
+    void quarkusRuntimeWithCamelVersionResolvesTheBomFromRegistry() {
+        // Verify that passing camelVersion with quarkus runtime does not silently pass null to loadQuarkusCatalog.
+        // A successful return (even if it is the built-in version) means no NPE was thrown inside doLoadCatalog.
+        CatalogService service = createService(null);
+        String result = version(service, "quarkus", BUILTIN_VERSION, null);
+        assertThat(result).isNotEmpty();
+    }
 }

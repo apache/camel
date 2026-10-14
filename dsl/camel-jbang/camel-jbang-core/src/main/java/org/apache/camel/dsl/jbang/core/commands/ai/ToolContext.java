@@ -171,6 +171,14 @@ public class ToolContext {
         return result;
     }
 
+    /**
+     * Sets the catalog to use for this context, bypassing the lazy-load. Use this to inject a pre-built, shared catalog
+     * instance (e.g. from {@code CatalogService}) so the tool does not create or download one per call.
+     */
+    public synchronized void setCatalog(CamelCatalog catalog) {
+        this.catalog = catalog;
+    }
+
     private CamelCatalog loadCatalog() {
         String version = camelVersion;
         if (version == null || version.isBlank()) {
