@@ -125,7 +125,9 @@ Configure properties before starting the service. Changes take effect on the nex
 
 == Input, probability and document limits
 
-The input must be a nonblank String. Missing input, structured objects and oversized input are errors;
+The input must be a nonblank String. Image/media envelopes, image data URLs and binary bodies
+are rejected before inference. An image `Content-Type` on the selected body identifies image
+input; this expert does not transcribe, decode or stringify it. Missing input, structured objects and oversized input are errors;
 select or convert a field explicitly in the route when necessary. No implicit `toString()` conversion is performed.
 The expert adds the pinned tokenizer's special tokens, disables truncation and padding, and supplies INT64
 `input_ids` and `attention_mask` tensors. Each evaluation runs one unpadded window.

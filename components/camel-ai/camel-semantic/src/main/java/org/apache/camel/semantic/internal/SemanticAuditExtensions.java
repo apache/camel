@@ -32,7 +32,7 @@ public final class SemanticAuditExtensions {
     private static final Set<String> INTERPRETATION_FIELDS = Set.of(
             "source", "meaning", "probabilityMeaning", "confidenceMeaning", "scoreLevels", "choices", "booleanLabels",
             "noMatchDeclared", "noMatchLabel",
-            "probabilitiesComplete", "scoreProbabilityKeys");
+            "probabilitiesComplete", "scoreProbabilityKeys", "scoreDescriptions");
 
     private SemanticAuditExtensions() {
     }
@@ -51,6 +51,7 @@ public final class SemanticAuditExtensions {
         }
         Map<String, Object> parameters = evaluation.getParameters();
         copyParameter(fields, "scoreLevels", parameters, operation.getScoreLevelsParameter());
+        copyParameter(fields, "scoreDescriptions", parameters, operation.getScoreDescriptionsParameter());
         copyParameter(fields, "choices", parameters, operation.getChoiceLabelsParameter());
         copyParameter(fields, "booleanLabels", parameters, operation.getBooleanLabelsParameter());
         if (!fields.containsKey("choices") && !operation.getLabels().isEmpty()) {
@@ -95,7 +96,7 @@ public final class SemanticAuditExtensions {
             }
             copy.put("scoreLevels", List.copyOf(levels));
         }
-        for (String name : List.of("choices", "booleanLabels")) {
+        for (String name : List.of("choices", "booleanLabels", "scoreDescriptions")) {
             if (fields.containsKey(name)) {
                 if (!(fields.get(name) instanceof Map<?, ?> labels)) {
                     throw new IllegalArgumentException("Invalid interpretation labels");

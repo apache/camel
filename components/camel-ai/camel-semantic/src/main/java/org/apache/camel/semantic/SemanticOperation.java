@@ -59,6 +59,9 @@ public @interface SemanticOperation {
      */
     String scoreLevelsParameter() default "";
 
+    /** Optional Map&lt;String, String&gt; parameter describing labels in the ordered score levels parameter. */
+    String scoreDescriptionsParameter() default "";
+
     /** Map&lt;String, String&gt; parameter declaring choice keys and their descriptions. */
     String choiceLabelsParameter() default "";
 

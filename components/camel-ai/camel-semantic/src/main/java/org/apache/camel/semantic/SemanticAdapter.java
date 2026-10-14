@@ -36,6 +36,15 @@ public interface SemanticAdapter {
     default void validateInput(SemanticEvaluation evaluation, Object state) {
     }
 
+    /**
+     * Validate requirements shared by all operations against the selected state. The language calls this once per
+     * expert group, after its per-evaluation input checks and before any expert performs inference. Use this hook for
+     * expensive checks independent of the question, such as validating image encoding. It must not contact services.
+     * Providers must also validate requests made through direct evaluate/evaluateBatch calls.
+     */
+    default void validateState(Object state) {
+    }
+
     /** Synchronous, potentially blocking evaluation. Operational errors must be thrown, never returned as decisions. */
     SemanticResult evaluate(SemanticEvaluation evaluation, Object state) throws Exception;
 

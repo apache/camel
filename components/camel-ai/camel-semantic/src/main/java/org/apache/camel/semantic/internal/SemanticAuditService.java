@@ -452,20 +452,28 @@ public final class SemanticAuditService extends ServiceSupport {
 
         /** Snapshot the effective selected state before a provider can mutate it. Observers never receive this data. */
         public void captureInput(Object input) {
-            if (fields == null || completed || inputCaptured || inputFields.isEmpty()) {
+            if (fields == null || completed || inputCaptured || !enabled) {
                 return;
             }
             inputCaptured = true;
             SemanticAuditInputConfiguration policy = configuration.getInput((String) fields.get("expert"));
             SemanticAuditInputRedactor redactor = redactors.get(fields.get("expert"));
             inputFields.clear();
+            try {
+                inputFields.put("inputType", SemanticAuditInputSnapshot.inputType(input));
+            } catch (Exception | AssertionError | LinkageError failure) {
+                inputFields.put("inputType", "unsupported");
+            }
+            if (!policy.isEnabled()) {
+                return;
+            }
             if (policy.getRedactor() != null && redactor == null) {
                 inputFields.put("inputOmitted", "redaction_failed");
                 return;
             }
             Object snapshot;
             try {
-                snapshot = SemanticAuditInputSnapshot.copy(input, policy.getMaxChars());
+                snapshot = SemanticAuditInputSnapshot.capture(input, policy.getMaxChars());
             } catch (Exception | AssertionError | LinkageError failure) {
                 // Isolate audit snapshot failures from evaluation; fatal VM errors still propagate.
                 inputFields.put("inputOmitted", "snapshot_limit_or_unsupported_type");
