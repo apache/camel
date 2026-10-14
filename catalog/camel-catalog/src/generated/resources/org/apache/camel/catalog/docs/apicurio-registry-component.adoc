@@ -134,8 +134,11 @@ can move to a page that was already read and be skipped.
 
 All version states are listed, so `DRAFT` versions are delivered as soon as they appear. If the
 registry allows changing the content of a version, a version is not delivered again after its
-content changes. With `fetchContent=true`, `DISABLED` versions are skipped, as are versions whose
-content is no longer available (HTTP 404), because the registry does not return their content.
+content changes. With `fetchContent=true`, `DISABLED` versions are skipped, because the registry
+does not return their content. If the content of a version is not found (HTTP 404), the consumer
+retries it on the next poll, since a registry node with replicated storage may not have the version
+yet; if it is still not found, the version is skipped with a warning. Skipped versions are not
+delivered again, even if a disabled version is enabled later.
 
 If fetching content fails, or the route fails to process a version (including failures
 handled by the error handler without being rethrown, such as with the default error handler),

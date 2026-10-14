@@ -18,10 +18,12 @@ package org.apache.camel.component.apicurioregistry;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Collections;
 
 import io.apicurio.registry.client.RegistryClientFactory;
 import io.apicurio.registry.client.common.RegistryClientOptions;
 import io.apicurio.registry.rest.client.RegistryClient;
+import io.netty.handler.codec.http.cookie.Cookie;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.ext.auth.oauth2.OAuth2Auth;
@@ -32,6 +34,7 @@ import io.vertx.ext.web.client.OAuth2WebClient;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.client.WebClientSession;
+import io.vertx.ext.web.client.spi.CookieStore;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -148,28 +151,82 @@ public class ApicurioRegistryEndpoint extends ScheduledPollEndpoint implements E
         return options;
     }
 
+    private void validateAuthentication() {
+        String authType = configuration.getAuthType();
+        if (ObjectHelper.isEmpty(authType) || "none".equalsIgnoreCase(authType)) {
+            return;
+        }
+        if ("basic".equalsIgnoreCase(authType)) {
+            requireOption(configuration.getUsername(), "username", authType);
+            requireOption(configuration.getPassword(), "password", authType);
+        } else if ("oidc".equalsIgnoreCase(authType)) {
+            requireOption(configuration.getTokenEndpoint(), "tokenEndpoint", authType);
+            requireOption(configuration.getClientId(), "clientId", authType);
+            requireOption(configuration.getClientSecret(), "clientSecret", authType);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported authType '" + authType + "'. Supported values are none, basic and oidc");
+        }
+    }
+
+    private static void requireOption(String value, String option, String authType) {
+        if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException("The " + option + " option is required when authType=" + authType);
+        }
+    }
+
     private WebClient createWebClient(Vertx vertx) throws Exception {
+        validateAuthentication();
         WebClientOptions options = createWebClientOptions();
         WebClient webClient = WebClient.create(vertx, options);
-        String authType = configuration.getAuthType();
-        if ("basic".equalsIgnoreCase(authType)) {
-            String credentials = configuration.getUsername() + ":" + configuration.getPassword();
-            return WebClientSession.create(webClient).addHeader("Authorization",
-                    "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8)));
-        } else if ("oidc".equalsIgnoreCase(authType)) {
-            oauth2 = OAuth2Auth.create(vertx, new OAuth2Options()
-                    .setFlow(OAuth2FlowType.CLIENT)
-                    .setHttpClientOptions(options)
-                    .setClientId(configuration.getClientId())
-                    .setClientSecret(configuration.getClientSecret())
-                    .setTokenPath(configuration.getTokenEndpoint()));
-            Oauth2Credentials credentials = new Oauth2Credentials();
-            if (configuration.getScope() != null) {
-                credentials.addScope(configuration.getScope());
+        try {
+            String authType = configuration.getAuthType();
+            if ("basic".equalsIgnoreCase(authType)) {
+                String credentials = configuration.getUsername() + ":" + configuration.getPassword();
+                // the session is only used to add the Authorization header: it gets a cookie store that keeps
+                // nothing, so response cookies are not shared between the requests of this endpoint
+                return WebClientSession.create(webClient, NoCookieStore.INSTANCE).addHeader("Authorization",
+                        "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8)));
+            } else if ("oidc".equalsIgnoreCase(authType)) {
+                oauth2 = OAuth2Auth.create(vertx, new OAuth2Options()
+                        .setHttpClientOptions(options)
+                        .setClientId(configuration.getClientId())
+                        .setClientSecret(configuration.getClientSecret())
+                        .setTokenPath(configuration.getTokenEndpoint()));
+                Oauth2Credentials credentials = new Oauth2Credentials().setFlow(OAuth2FlowType.CLIENT);
+                if (configuration.getScope() != null) {
+                    credentials.addScope(configuration.getScope());
+                }
+                return OAuth2WebClient.create(webClient, oauth2).withCredentials(credentials);
             }
-            return OAuth2WebClient.create(webClient, oauth2).withCredentials(credentials);
+            return webClient;
+        } catch (Exception e) {
+            webClient.close();
+            throw e;
         }
-        return webClient;
+    }
+
+    /**
+     * A cookie store that never keeps a cookie.
+     */
+    private static final class NoCookieStore implements CookieStore {
+
+        static final NoCookieStore INSTANCE = new NoCookieStore();
+
+        @Override
+        public Iterable<Cookie> get(Boolean ssl, String domain, String path) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public CookieStore put(Cookie cookie) {
+            return this;
+        }
+
+        @Override
+        public CookieStore remove(Cookie cookie) {
+            return this;
+        }
     }
 
     public RegistryClient getRegistryClient() {

@@ -20,6 +20,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.sun.net.httpserver.HttpServer;
@@ -28,16 +29,22 @@ import io.apicurio.registry.client.common.RegistryClientOptions;
 import io.apicurio.registry.rest.client.RegistryClient;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.ext.auth.oauth2.OAuth2Auth;
+import io.vertx.ext.auth.oauth2.OAuth2Options;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.MockedStatic;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -60,6 +67,7 @@ class ApicurioRegistryEndpointTest {
 
     private void testAuthentication(String options, String authorization, boolean oidc) throws Exception {
         AtomicReference<String> registryAuthorization = new AtomicReference<>();
+        List<String> registryCookies = new CopyOnWriteArrayList<>();
         AtomicReference<String> tokenRequest = new AtomicReference<>();
         AtomicReference<String> tokenAuthorization = new AtomicReference<>();
         HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
@@ -76,6 +84,8 @@ class ApicurioRegistryEndpointTest {
         });
         server.createContext("/apis/registry/v3/groups/g/artifacts/a", request -> {
             registryAuthorization.set(request.getRequestHeaders().getFirst("Authorization"));
+            registryCookies.add(String.valueOf(request.getRequestHeaders().getFirst("Cookie")));
+            request.getResponseHeaders().add("Set-Cookie", "LB=node1; Path=/");
             byte[] response = "{\"artifactId\":\"a\",\"groupId\":\"g\"}".getBytes(StandardCharsets.UTF_8);
             request.getResponseHeaders().set("Content-Type", "application/json");
             request.sendResponseHeaders(200, response.length);
@@ -95,6 +105,10 @@ class ApicurioRegistryEndpointTest {
                 assertThat(endpoint.getRegistryClient().groups().byGroupId("g").artifacts().byArtifactId("a")
                         .get().getArtifactId()).isEqualTo("a");
                 assertThat(registryAuthorization.get()).isEqualTo(authorization);
+                // a second request still authenticates, and response cookies are not sent back
+                endpoint.getRegistryClient().groups().byGroupId("g").artifacts().byArtifactId("a").get();
+                assertThat(registryAuthorization.get()).isEqualTo(authorization);
+                assertThat(registryCookies).containsExactly("null", "null");
                 if (oidc) {
                     assertThat(tokenRequest.get()).contains("grant_type=client_credentials", "scope=registry");
                     assertThat(tokenAuthorization.get()).isEqualTo("Basic cmVnaXN0cnktY2xpZW50OnNlY3JldA==");
@@ -230,6 +244,44 @@ class ApicurioRegistryEndpointTest {
             assertThat(options.getProxyOptions().getPort()).isEqualTo(3128);
             assertThat(options.getProxyOptions().getUsername()).isEqualTo("user");
             assertThat(options.getProxyOptions().getPassword()).isEqualTo("pass");
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "authType=basic&password=pass|The username option is required when authType=basic",
+            "authType=basic&username=user|The password option is required when authType=basic",
+            "authType=oidc&clientId=c&clientSecret=s|The tokenEndpoint option is required when authType=oidc",
+            "authType=oidc&tokenEndpoint=http://t&clientSecret=s|The clientId option is required when authType=oidc",
+            "authType=oidc&tokenEndpoint=http://t&clientId=c|The clientSecret option is required when authType=oidc",
+            "authType=oauth|Unsupported authType 'oauth'. Supported values are none, basic and oidc" })
+    void testInvalidAuthenticationFailsOnStart(String options, String message) throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.start();
+            // endpoints resolved from a started context are started immediately
+            assertThatThrownBy(() -> context.getEndpoint(
+                    "apicurio-registry:g/a?registryUrl=http://localhost:8080/apis/registry/v3&" + options))
+                    .isInstanceOf(ResolveEndpointFailedException.class)
+                    .hasRootCauseInstanceOf(IllegalArgumentException.class)
+                    .hasRootCauseMessage(message);
+        }
+    }
+
+    @Test
+    void testWebClientClosedWhenOAuth2SetupFails() throws Exception {
+        WebClient webClient = mock(WebClient.class);
+        try (MockedStatic<WebClient> webClientFactory = mockStatic(WebClient.class);
+             MockedStatic<OAuth2Auth> oauth2Factory = mockStatic(OAuth2Auth.class);
+             DefaultCamelContext context = new DefaultCamelContext()) {
+            webClientFactory.when(() -> WebClient.create(any(Vertx.class), any(WebClientOptions.class))).thenReturn(webClient);
+            oauth2Factory.when(() -> OAuth2Auth.create(any(Vertx.class), any(OAuth2Options.class)))
+                    .thenThrow(new IllegalStateException("bad oauth2 configuration"));
+            context.start();
+            assertThatThrownBy(() -> context.getEndpoint(
+                    "apicurio-registry:g/a?registryUrl=http://localhost:8080/apis/registry/v3&authType=oidc"
+                                                         + "&tokenEndpoint=http://localhost/token&clientId=c&clientSecret=s"))
+                    .hasRootCauseMessage("bad oauth2 configuration");
+            verify(webClient).close();
         }
     }
 
