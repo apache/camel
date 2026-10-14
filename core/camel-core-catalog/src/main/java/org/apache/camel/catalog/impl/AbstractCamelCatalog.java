@@ -1232,33 +1232,39 @@ public abstract class AbstractCamelCatalog {
                 int posBracket = nOption.indexOf('[');
                 validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
             }
-        } else if (key.startsWith("main.")
-                || key.startsWith("resilience4j.")
-                || key.startsWith("faulttolerance.")
-                || key.startsWith("threadpool.")
-                || key.startsWith("lra.")
-                || key.startsWith("health.")
-                || key.startsWith("rest.")) {
-            String name = StringHelper.before(key, ".");
-            if (value != null) {
-                MainModel model = mainModel();
-                if (model == null) {
-                    result.addIncapable("camel-main not detected on classpath");
-                    return result;
+        } else {
+            // Check if the key matches a main-model group (dynamic — replaces the hardcoded list)
+            MainModel.MainGroupModel matchedGroup = matchMainModelGroup(key);
+            if (matchedGroup != null) {
+                String name = StringHelper.before(key, ".");
+                if (value != null) {
+                    MainModel model = mainModel();
+                    if (model == null) {
+                        result.addIncapable("camel-main not detected on classpath");
+                        return result;
+                    }
+                    Map<String, BaseOptionModel> rows = new HashMap<>();
+                    model.getOptions().forEach(o -> rows.put(dashToCamelCase(o.getName()), o));
+
+                    // lower case option and remove dash
+                    String nOption = longKey.replace("-", "").toLowerCase(Locale.ENGLISH);
+
+                    // look for suffix or array index after the group prefix
+                    // group name depth tells us how many dots to skip: "camel.vault.aws" has 2 dots,
+                    // so the option starts after the 3rd dot in the full key
+                    int groupDots = (int) matchedGroup.getName().chars().filter(c -> c == '.').count();
+                    int pos = 0;
+                    for (int d = 0; d <= groupDots; d++) {
+                        pos = nOption.indexOf('.', pos) + 1;
+                    }
+                    // pos now points just after the group prefix in nOption (e.g. after "camel.server.")
+                    int afterGroup = pos;
+
+                    String suffix = null;
+                    int posDot = nOption.indexOf('.', afterGroup);
+                    int posBracket = nOption.indexOf('[', afterGroup);
+                    validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
                 }
-                Map<String, BaseOptionModel> rows = new HashMap<>();
-                model.getOptions().forEach(o -> rows.put(dashToCamelCase(o.getName()), o));
-
-                // lower case option and remove dash
-                String nOption = longKey.replace("-", "").toLowerCase(Locale.ENGLISH);
-
-                // look for suffix or array index after 2nd dot
-                int secondDot = nOption.indexOf('.', nOption.indexOf('.') + 1) + 1;
-
-                String suffix = null;
-                int posDot = nOption.indexOf('.', secondDot);
-                int posBracket = nOption.indexOf('[', secondDot);
-                validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
             }
         }
 
@@ -1408,20 +1414,46 @@ public abstract class AbstractCamelCatalog {
         return suffix == null || suffix.isEmpty() || suffix.equals(".");
     }
 
-    private static boolean acceptConfigurationPropertyKey(String key) {
+    private boolean acceptConfigurationPropertyKey(String key) {
         if (key == null) {
             return false;
         }
-        return key.startsWith("camel.component.")
+        // Always-accepted static prefixes (component/dataformat/language have their own models)
+        if (key.startsWith("camel.component.")
                 || key.startsWith("camel.dataformat.")
-                || key.startsWith("camel.language.")
-                || key.startsWith("camel.main.")
-                || key.startsWith("camel.resilience4j.")
-                || key.startsWith("camel.faulttolerance.")
-                || key.startsWith("camel.threadpool.")
-                || key.startsWith("camel.health.")
-                || key.startsWith("camel.lra.")
-                || key.startsWith("camel.rest.");
+                || key.startsWith("camel.language.")) {
+            return true;
+        }
+        // Dynamic: accept any prefix that matches a group in the main-model metadata
+        MainModel model = mainModel();
+        if (model != null) {
+            for (MainModel.MainGroupModel group : model.getGroups()) {
+                String groupPrefix = group.getName() + ".";
+                if (key.startsWith(groupPrefix)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the matched group from the main-model metadata when the key (with the leading {@code camel.} stripped)
+     * corresponds to one of the registered groups, or {@code null} if no group matches.
+     */
+    private MainModel.MainGroupModel matchMainModelGroup(String key) {
+        MainModel model = mainModel();
+        if (model == null) {
+            return null;
+        }
+        for (MainModel.MainGroupModel group : model.getGroups()) {
+            // group name is e.g. "camel.server" — strip the leading "camel." to get "server"
+            String groupName = group.getName().substring("camel.".length());
+            if (key.startsWith(groupName + ".")) {
+                return group;
+            }
+        }
+        return null;
     }
 
     /**

@@ -106,8 +106,12 @@ public class ConfigurationValidateTools {
 
     private PropertyValidationInfo toPropertyValidationInfo(
             int lineNumber, String text, ConfigurationPropertiesValidationResult result) {
-        boolean valid = result.isSuccess();
         boolean accepted = result.isAccepted();
+        // A key that is not accepted by the catalog is by definition not valid: the catalog
+        // returned no errors (because it returned early without checking anything), but the
+        // property is outside the set of known camel.* groups, so reporting valid=true would
+        // be misleading to the caller.
+        boolean valid = accepted && result.isSuccess();
         int errors = result.getNumberOfErrors();
         int warnings = result.getNumberOfWarnings();
 

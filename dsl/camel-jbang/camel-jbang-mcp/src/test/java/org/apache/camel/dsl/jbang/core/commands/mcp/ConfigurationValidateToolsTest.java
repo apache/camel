@@ -180,6 +180,83 @@ class ConfigurationValidateToolsTest {
 
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
         assertThat(info.accepted()).isFalse();
+        // accepted=false must imply valid=false (regression guard for CAMEL-25538 bug #2)
+        assertThat(info.valid()).isFalse();
+    }
+
+    // --- CAMEL-25538 regression tests ---
+
+    @Test
+    void camelServerPortIsAcceptedAndValid() {
+        // camel.server.* was previously not in the hardcoded prefix list — it must now be
+        // accepted and validated against the main-model metadata.
+        ConfigurationValidateTools tools = createTools();
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.server.port=9999", null, null, null);
+
+        assertThat(result.summary().total()).isEqualTo(1);
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.accepted()).isTrue();
+        assertThat(info.valid()).isTrue();
+        assertThat(info.errors()).isZero();
+        assertThat(info.issues()).isEmpty();
+    }
+
+    @Test
+    void camelServerInventedKeyIsAcceptedButNotValid() {
+        // An invented key under an accepted camel.server.* group must be reported as unknown,
+        // not silently passed as valid.
+        ConfigurationValidateTools tools = createTools();
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.server.bindPort=9999", null, null, null);
+
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.accepted()).isTrue();
+        assertThat(info.valid()).isFalse();
+        assertThat(info.issues()).anyMatch(i -> "unknown".equals(i.kind()));
+    }
+
+    @Test
+    void acceptedFalseImpliesValidFalseForNonCamelKey() {
+        // Invented key outside any known camel.* group: accepted=false AND valid=false.
+        // Before the fix, valid was true despite accepted=false (CAMEL-25538 bug #2).
+        ConfigurationValidateTools tools = createTools();
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.invented.completely.unknown=foo", null, null, null);
+
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.accepted()).isFalse();
+        assertThat(info.valid()).isFalse();
+        // The summary must not count unaccepted keys as valid
+        assertThat(result.summary().valid()).isZero();
+    }
+
+    @Test
+    void camelManagementKeyIsAccepted() {
+        // camel.management.* was also missing from the old hardcoded list.
+        ConfigurationValidateTools tools = createTools();
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.management.enabled=true", null, null, null);
+
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.accepted()).isTrue();
+        assertThat(info.valid()).isTrue();
+    }
+
+    @Test
+    void camelVaultAwsKeyIsAccepted() {
+        // camel.vault.aws.* is a nested group (3-segment name) — must also be accepted.
+        ConfigurationValidateTools tools = createTools();
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.vault.aws.accessKey=AKIA1234", null, null, null);
+
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.accepted()).isTrue();
     }
 
     @Test
