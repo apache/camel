@@ -242,32 +242,32 @@ public class PromptDefinitions {
                 Follow these steps in order:
 
                 ### Step 1: Gather context
-                Call `get_context` to understand the application state (version, uptime, total exchanges).
-                Call `get_routes` to see all routes, their states, and error counts.
+                Call `camel_runtime_context` to understand the application state (version, uptime, total exchanges).
+                Call `camel_runtime_routes` to see all routes, their states, and error counts.
 
                 ### Step 2: Check health
-                Call `get_health` to see if any health checks are failing.
+                Call `camel_runtime_health` to see if any health checks are failing.
                 Note any DOWN or UNKNOWN health statuses.
 
                 ### Step 3: Collect errors
-                Call `get_errors` to get captured routing errors with stack traces.
-                Call `get_history` to see the message history trace of the last completed exchange.
+                Call `camel_get_errors` to get the failed exchanges with their stack traces.
+                Call `camel_runtime_history` to see the message history trace of the last completed exchange.
 
                 ### Step 4: Inspect route details
-                Call `get_route_source` with filter="%s" to see the route definition.
-                Call `get_top_processors` to identify slow or failing processors.
-                Call `get_inflight` to check for stuck exchanges.
-                Call `get_blocked` to check for blocked exchanges.
+                Call `camel_runtime_route_dump` with routeId="%s" to see the route definition.
+                Call `camel_runtime_top` to identify slow or failing processors.
+                Call `camel_runtime_inflight` to check for stuck exchanges.
+                Call `camel_runtime_blocked` to check for blocked exchanges.
 
                 ### Step 5: Check infrastructure
-                Call `get_memory` to check for memory pressure or excessive GC.
-                Call `get_endpoints` to verify all endpoints are reachable.
+                Call `camel_runtime_memory` to check for memory pressure or excessive GC.
+                Call `camel_runtime_endpoints` to verify all endpoints are reachable.
 
                 ### Step 6: Advanced diagnostics (if needed)
-                If circuit breakers are involved, call `get_circuit_breakers`.
-                If datasources are involved, call `get_datasources`.
-                If the issue involves timing, call `get_spans` for trace data.
-                If the issue involves metrics, call `get_metrics`.
+                If circuit breakers are involved, call `camel_runtime_circuit_breakers`.
+                If datasources are involved, call `camel_runtime_datasources`.
+                If the issue involves timing, call `camel_runtime_spans` for trace data.
+                If the issue involves metrics, call `camel_runtime_metrics`.
 
                 ### Step 7: Root cause analysis
                 Synthesize the gathered data into a structured diagnosis:
@@ -322,27 +322,27 @@ public class PromptDefinitions {
                 Follow these steps in order:
 
                 ### Step 1: Baseline performance
-                Call `get_context` to get overall exchange statistics (total, completed, failed, mean time).
-                Call `get_routes` to get per-route throughput and timing data.
-                Call `get_top_processors` to identify the slowest processors.
+                Call `camel_runtime_context` to get overall exchange statistics (total, completed, failed, mean time).
+                Call `camel_runtime_routes` to get per-route throughput and timing data.
+                Call `camel_runtime_top` to identify the slowest processors.
 
                 ### Step 2: Resource analysis
-                Call `get_memory` to assess JVM memory usage, GC frequency, and thread counts.
-                Call `get_consumers` to check consumer configuration and polling strategies.
-                Call `get_endpoints` to review endpoint usage patterns.
+                Call `camel_runtime_memory` to assess JVM memory usage, GC frequency, and thread counts.
+                Call `camel_runtime_consumers` to check consumer configuration and polling strategies.
+                Call `camel_runtime_endpoints` to review endpoint usage patterns.
 
                 ### Step 3: Route structure analysis
-                Call `get_route_analysis` to get route structure and anti-pattern hints.
-                Call `get_eip_stats` to understand EIP usage and processor performance distribution.
+                Call `camel_runtime_route_analysis` with routeId="%s" to get route structure and anti-pattern hints.
+                Call `camel_runtime_eip_stats` to understand EIP usage and processor performance distribution.
 
                 ### Step 4: Infrastructure checks
-                Call `get_metrics` for detailed Micrometer metrics (if available).
-                Call `get_datasources` if database access is involved.
-                Call `get_circuit_breakers` if resilience patterns are in use.
+                Call `camel_runtime_metrics` for detailed Micrometer metrics (if available).
+                Call `camel_runtime_datasources` if database access is involved.
+                Call `camel_runtime_circuit_breakers` if resilience patterns are in use.
 
                 ### Step 5: Route inspection
-                Call `get_route_source` with filter="%s" to review the route code.
-                Call `get_route_dump` with routeId="%s" and format="yaml" to see the full definition.
+                Call `camel_runtime_route_dump` with routeId="%s" and format="yaml" to see the full definition.
+                Call `camel_runtime_route_source` to read the source file it was loaded from.
 
                 ### Step 6: Optimization report
                 Produce a structured optimization report:
