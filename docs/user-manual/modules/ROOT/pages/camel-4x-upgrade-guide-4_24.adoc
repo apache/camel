@@ -269,6 +269,21 @@ poll returns only the tweets newer than the last one consumed, and a page has `c
 default of 15 applied before). Raise `count` and `numberOfPages` if a search can match more tweets than that between
 two polls. A consumer with `type=direct` returned nothing when keywords were given, and now runs the search at startup.
 
+=== camel-kudu - a row error of Kudu fails the exchange
+
+The `insert`, `delete`, `update` and `upsert` operations of the producer ignored the answer of Kudu. The Kudu client
+does not throw for a row that Kudu rejected; it returns a row error, for example for an insert of a key that is already
+present, or for an update or a delete of a row that is not found. Such an exchange completed as if the row had been
+written. A write that timed out or could not reach a tablet server was reported the same way, and completed the
+exchange too; for such a write it is not known whether the row was written.
+The producer now fails the exchange in both cases with a `KuduRowErrorException` (`getRowError()` returns the row
+error of the Kudu client, whose status tells the kind of error). Routes that relied on rejected rows being skipped
+silently can use the `upsert` operation, or handle the exception, for example with
+`onException(KuduRowErrorException.class).handled(true)`.
+
+The producer also closes the Kudu session of each operation. The sessions stayed registered with the Kudu client until
+the client was closed, one more for every exchange.
+
 === camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
 
 With `sortEntries=true` the `atom` consumer sorted the entries of a feed by their published date and routed them from
