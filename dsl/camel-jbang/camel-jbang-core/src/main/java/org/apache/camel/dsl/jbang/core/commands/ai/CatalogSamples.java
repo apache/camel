@@ -765,6 +765,15 @@ public final class CatalogSamples {
         return null;
     }
 
+    /**
+     * Whether camel_catalog_sample answers the EIP with at least one sample: one validated from its documentation page,
+     * or a shipped one (also the sample of the EIP it is a part of, which shows it in place).
+     */
+    static boolean hasEipSample(CamelCatalog catalog, String name) {
+        JsonArray samples = (JsonArray) sample(catalog, "eip", name, 1).get("samples");
+        return samples != null && !samples.isEmpty();
+    }
+
     static String placement(CamelCatalog catalog, String kind, String name) {
         switch (kind) {
             case "component": {

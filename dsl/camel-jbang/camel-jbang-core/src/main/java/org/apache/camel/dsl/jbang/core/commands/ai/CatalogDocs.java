@@ -122,7 +122,10 @@ public final class CatalogDocs {
     /** The java type of an expression option of an EIP other than its main expression: handled, completionPredicate. */
     private static final String EXPRESSION_SUB_ELEMENT = "org.apache.camel.model.ExpressionSubElementDefinition";
 
-    /** The java type of a list of key/value properties: namespace of xpath, componentProperty of restConfiguration. */
+    /**
+     * The java type of a list of key/value properties. Today only the namespace option of xpath, xquery and xtokenize
+     * has it; any other option of that type gets the generic key/value form.
+     */
     private static final String PROPERTY_LIST = "java.util.List<org.apache.camel.model.PropertyDefinition>";
 
     private static final Pattern XREF = Pattern.compile("xref:[^\\[]*\\[([^]]*)]");
@@ -449,6 +452,10 @@ public final class CatalogDocs {
             String matchedTerm) {
         String doc = includeDoc ? catalog.asciiDoc(model.getName() + "-eip") : null;
         JsonObject result = eipDoc(model, filter, scope, doc);
+        if (CatalogSamples.hasEipSample(catalog, model.getName())) {
+            // only when there is one, else an agent spends a call that answers "no sample" (CAMEL-25539)
+            result.put("sampleHint", "camel_catalog_sample name=" + model.getName() + " returns a validated YAML example");
+        }
         // only when the filter matched none of the EIP's own options, also none the scope left out
         if (filter != null && scope != OptionScope.NONE && result.getIntegerOrDefault("matchedOptions", 0) == 0
                 && result.getIntegerOrDefault("omittedOptions", 0) == 0) {
@@ -1713,8 +1720,6 @@ public final class CatalogDocs {
         if (placement != null) {
             result.put("placement", placement);
         }
-        result.put("sampleHint", "camel_catalog_sample name=" + model.getName()
-                                 + " returns a validated YAML example, when the documentation has one");
         if (scope != OptionScope.NONE) {
             putOptions(result, model.getOptions(), filter, scope);
         }
@@ -1854,22 +1859,23 @@ public final class CatalogDocs {
     /**
      * How an option whose type says only object or array is written in YAML (CAMEL-25539): an expression has its
      * language as the key (handled: true fails the schema), and a list of properties is a list of key/value pairs
-     * (namespace of xpath). The example comes first and is valid YAML, the explanation follows as a comment. Null for
-     * any other option.
+     * (namespace of xpath). The example comes first in the canonical YAML form, the explanation follows as a comment.
+     * Null for any other option.
      */
     static String yamlShape(BaseOptionModel opt) {
         String name = opt.getName();
         if ("expression".equals(opt.getKind()) && EXPRESSION_SUB_ELEMENT.equals(opt.getJavaType())) {
             if (opt.isAsPredicate()) {
-                return name + ": {constant: \"true\"}  # a predicate with its language as the key, not a plain"
-                       + " true/false; simple: instead of constant: for a condition";
+                return name + ": {constant: {expression: \"true\"}}  # a predicate with its language as the key, not"
+                       + " a plain true/false; simple: instead of constant: for a condition";
             }
-            return name + ": {header: myKey}  # an expression with its language as the key (header, simple, jq, ...)";
+            return name + ": {header: {expression: myKey}}  # an expression with its language as the key (header,"
+                   + " simple, jq, ...)";
         }
         if ("element".equals(opt.getKind()) && "object".equals(opt.getType()) && opt.isAsPredicate()
                 && (opt.getOneOfs() == null || opt.getOneOfs().isEmpty())) {
-            return name + ": {simple: \"${header.foo} == 'bar'\"}  # a predicate with its language as the key"
-                   + " (simple, jq, xpath, ...)";
+            return name + ": {expression: {simple: {expression: \"${header.foo} == 'bar'\"}}}  # a predicate under"
+                   + " expression:, with its language as the key (simple, jq, xpath, ...)";
         }
         if ("array".equals(opt.getType()) && PROPERTY_LIST.equals(opt.getJavaType())) {
             String desc = opt.getDescription() != null ? opt.getDescription().toLowerCase(Locale.ROOT) : "";

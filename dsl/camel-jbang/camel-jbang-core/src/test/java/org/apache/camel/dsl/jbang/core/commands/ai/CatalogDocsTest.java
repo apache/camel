@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -597,9 +598,10 @@ class CatalogDocsTest {
         var doc = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", null, "all", false, false, null);
         assertTrue(doc.getString("placement").startsWith("top-level entry"), doc.toJson());
         assertTrue(doc.getString("sampleHint").contains("camel_catalog_sample name=onException"), doc.toJson());
-        assertEquals("handled: {constant: \"true\"}", yamlExample(option(doc, "handled")));
-        assertEquals("continued: {constant: \"true\"}", yamlExample(option(doc, "continued")));
-        assertTrue(yamlExample(option(doc, "onWhen")).startsWith("onWhen: {simple: "), doc.toJson());
+        assertEquals("handled: {constant: {expression: \"true\"}}", yamlExample(option(doc, "handled")));
+        assertEquals("continued: {constant: {expression: \"true\"}}", yamlExample(option(doc, "continued")));
+        assertEquals("onWhen: {expression: {simple: {expression: \"${header.foo} == 'bar'\"}}}",
+                yamlExample(option(doc, "onWhen")));
         // the elements written in their own way keep no hint
         assertFalse(option(doc, "redeliveryPolicy").containsKey("yaml"), doc.toJson());
         assertFalse(option(doc, "exception").containsKey("yaml"), doc.toJson());
@@ -620,11 +622,19 @@ class CatalogDocsTest {
         for (Object o : (JsonArray) doc.get("options")) {
             assertFalse(((JsonObject) o).containsKey("yaml"), ((JsonObject) o).toJson());
         }
+        assertTrue(doc.getString("sampleHint").contains("camel_catalog_sample name=split"), doc.toJson());
+        // the sample hint only for an EIP camel_catalog_sample has a sample of
+        doc = CatalogDocs.catalogDoc(catalog, "pausable", null, "eip", null, null, false, false, null);
+        assertTrue(doc.getString("placement").startsWith("a step inside the steps of a route"), doc.toJson());
+        assertFalse(doc.containsKey("sampleHint"), doc.toJson());
     }
 
-    /** CAMEL-25539: the shape hints show the expected YAML, which passes the YAML DSL schema and the catalog checks. */
+    /**
+     * CAMEL-25539: the shape hints show the expected YAML, which passes the YAML DSL schema, the catalog checks and the
+     * canonical schema.
+     */
     @Test
-    void theShapeHintsAreValidYaml() {
+    void theShapeHintsAreValidYaml() throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog();
         var onException = CatalogDocs.catalogDoc(catalog, "onException", null, "eip", null, "all", false, false, null);
         var aggregate = CatalogDocs.catalogDoc(catalog, "aggregate", null, "eip", null, "all", false, false, null);
@@ -642,7 +652,8 @@ class CatalogDocsTest {
                     %s
                     %s
                     steps:
-                      - log: failed
+                      - log:
+                          message: failed
                 - onException:
                     exception: [java.net.ConnectException]
                     %s
@@ -661,13 +672,18 @@ class CatalogDocsTest {
                             %s
                             %s
                             steps:
-                              - log: done
+                              - log:
+                                  message: done
                 """.formatted(
                 yamlExample(option(onException, "handled")), yamlExample(option(onException, "onWhen")),
                 yamlExample(option(onException, "retryWhile")), yamlExample(option(onException, "continued")),
                 yamlExample(option(xpath, "namespace")), yamlExample(option(aggregate, "correlationExpression")),
                 yamlExample(option(aggregate, "completionPredicate")));
         assertEquals(List.of(), SourceValidator.validateCamelYaml(yaml, catalog), yaml);
+        // and the canonical schema, which rejects the classic shorthand (handled: {constant: "true"})
+        YamlValidator canonical = new YamlValidator(true);
+        canonical.init();
+        assertEquals(List.of(), YamlValidator.describeAll(yaml, canonical.validate(yaml)), yaml);
     }
 
     private static JsonObject option(JsonObject doc, String name) {
