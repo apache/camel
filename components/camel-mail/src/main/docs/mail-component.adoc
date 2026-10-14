@@ -234,7 +234,9 @@ YAML::
       steps:
         - setHeader:
             name: subject
-            constant: "some subject"
+            expression:
+              constant:
+                expression: "some subject"
         - to:
             uri: smtp://james2@localhost
             parameters:
@@ -301,15 +303,11 @@ headers.put("to", "davsclaus@apache.org");
 template.sendBodyAndHeaders("smtp://admin@localhost?to=info@mycompany.com&useHeaderRecipients=true", "Hello World", headers);
 ----
 
-==== Opting out of header overrides (trust-boundary hardening)
+==== Letting message headers override the endpoint configuration
 
-For routes where message headers originate from an untrusted source (for
-example messages bridged from an HTTP endpoint, a JMS queue, or a Kafka
-topic), allowing inbound headers to override recipients, sender, subject, 
-or reply-to addresses can enable an attacker to redirect mail, intercept 
-replies, forge the sender address, or inject arbitrary subjects. Four 
-opt-in `@UriParam` options let you lock the endpoint configuration so it 
-cannot be overridden by message headers:
+By default the recipients, sender, subject and reply-to address configured
+on the endpoint cannot be overridden by message headers. Four opt-in
+`@UriParam` options let a route allow message headers to override them:
 
 [options="header"]
 |===
@@ -320,9 +318,21 @@ cannot be overridden by message headers:
 | `useHeaderReplyTo`   | `false` | Message Reply-To header can override the endpoint URI replyTo.
 |===
 
-All four default to `false`. Set to `true` to let message headers override the endpoint configuration.
+All four default to `false` since Camel 4.21. Set an option to `true` to let
+the matching message headers override the endpoint configuration.
 
-Example:
+Only enable the options a route needs, and only when the headers come from a
+trusted source. For routes where message headers originate from an untrusted
+source (for example messages bridged from an HTTP endpoint, a JMS queue, or a
+Kafka topic), allowing inbound headers to override recipients, sender, subject,
+or reply-to addresses can enable an attacker to redirect mail, intercept
+replies, forge the sender address, or inject arbitrary subjects. If such headers
+may reach the mail endpoint, leave the options disabled or remove the headers
+before sending.
+
+In the example below the route computes the recipients and the subject itself,
+so it enables `useHeaderRecipients` and `useHeaderSubject`, while the sender and
+reply-to address stay fixed to the endpoint configuration:
 
 [tabs]
 ====
@@ -330,14 +340,14 @@ Java::
 +
 [source,java]
 ----
-.to("smtp://relay@mailhost?to=safe@mycompany.com&from=noreply@mycompany.com&useHeaderRecipients=false&useHeaderFrom=false&useHeaderReplyTo=false");
+.to("smtp://relay@mailhost?to=safe@mycompany.com&from=noreply@mycompany.com&useHeaderRecipients=true&useHeaderSubject=true");
 ----
 
 XML::
 +
 [source,xml]
 ----
-<to uri="smtp://relay@mailhost?to=safe@mycompany.com&amp;from=noreply@mycompany.com&amp;useHeaderRecipients=false&amp;useHeaderFrom=false&amp;useHeaderReplyTo=false"/>
+<to uri="smtp://relay@mailhost?to=safe@mycompany.com&amp;from=noreply@mycompany.com&amp;useHeaderRecipients=true&amp;useHeaderSubject=true"/>
 ----
 
 YAML::
@@ -353,9 +363,8 @@ YAML::
             parameters:
               to: "safe@mycompany.com"
               from: "noreply@mycompany.com"
-              useHeaderRecipients: false
-              useHeaderFrom: false
-              useHeaderReplyTo: false
+              useHeaderRecipients: true
+              useHeaderSubject: true
 ----
 ====
 
