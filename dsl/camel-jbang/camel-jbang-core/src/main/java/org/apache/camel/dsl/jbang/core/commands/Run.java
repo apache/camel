@@ -2104,11 +2104,6 @@ public class Run extends CamelCommand {
     }
 
     /**
-     * The reload pattern of dev mode with a source directory: every file under it, except the data folders
-     * (--data-dir), whose files the routes read and write: a change there is not a change of the sources, and reloading
-     * the routes for it restarts them, so they write again and reload again (CAMEL-25670).
-     */
-    /**
      * --data-dir only changes what dev mode watches in a source directory: without one only the given files are
      * watched, and their data folders are not, so the option has nothing to leave out. Said when it is given on the
      * command line; camel.jbang.dataDir in an application.properties is not, as an example that declares its data
@@ -2118,11 +2113,16 @@ public class Run extends CamelCommand {
         if (dataDir != null && spec != null && spec.commandLine() != null
                 && spec.commandLine().getParseResult() != null
                 && spec.commandLine().getParseResult().hasMatchedOption("--data-dir")) {
-            printer().printErr("WARN: --data-dir is used with --source-dir: without a source directory dev mode only"
-                               + " watches the given files, so --data-dir=" + dataDir + " has no effect");
+            printer().printErr("WARN: --data-dir=" + dataDir + " has no effect without --source-dir: dev mode then only"
+                               + " watches the given files");
         }
     }
 
+    /**
+     * The reload pattern of dev mode with a source directory: every file under it, except the data folders
+     * (--data-dir), whose files the routes read and write: a change there is not a change of the sources, and reloading
+     * the routes for it restarts them, so they write again and reload again (CAMEL-25670).
+     */
     static String sourceDirReloadPattern(String dataDir) {
         StringJoiner sj = new StringJoiner(",");
         sj.add("*");
