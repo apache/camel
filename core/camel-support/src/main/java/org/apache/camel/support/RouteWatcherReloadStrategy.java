@@ -20,9 +20,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +80,20 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     /** The sources of the last failed reload: retried when the properties change, as a missing property may be why. */
     private final List<Resource> failedSources = new ArrayList<>();
     private Supplier<Collection<Resource>> beanResources;
+    /** The parts of the pattern that start with ! (without it): what is left out of reloading. */
+    private final List<String> excludes = new ArrayList<>();
+
+    /** How many reloads in a row, all for files under the same data folder, make the reload loop warning. */
+    static final int LOOP_RELOADS = 5;
+    /** Within how long those reloads must be, in millis. */
+    static final long LOOP_MILLIS = 15000;
+    /** The last reloads that were for files under one data folder: when, and which folder. */
+    private final Deque<DataReload> dataReloads = new ArrayDeque<>();
+    /** The folders the reload loop warning has named already. */
+    private final Set<String> loopWarned = new HashSet<>();
+
+    private record DataReload(long time, String folder) {
+    }
 
     public Supplier<Collection<Resource>> getBeanResources() {
         return beanResources;
@@ -110,7 +127,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * Used for inclusive filtering of routes from directories.
      *
      * Typical used for specifying to accept routes in XML or YAML files, such as <tt>*.yaml,*.xml</tt>. Multiple
-     * patterns can be specified separated by comma.
+     * patterns can be specified separated by comma. A pattern that starts with <tt>!</tt> excludes what it matches,
+     * such as <tt>*,!inbox/**</tt> to watch every file except the files under the inbox folder; a folder that an
+     * exclude matches as a whole is not scanned at all.
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;
@@ -159,29 +178,47 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         final String base = new File(getFolder()).getAbsolutePath();
         final AntPathMatcher matcher = new AntPathMatcher();
 
+        // the parts that start with ! exclude what they match, such as the data folders the routes read and write
+        List<String> includes = new ArrayList<>();
+        excludes.clear();
+        for (String part : pattern.split(",")) {
+            part = part.trim();
+            if (part.startsWith("!")) {
+                part = part.substring(1).trim();
+                if (!part.isEmpty()) {
+                    excludes.add(part);
+                }
+            } else if (!part.isEmpty()) {
+                includes.add("*".equals(part) ? "**" : part);
+            }
+        }
+        if (includes.isEmpty()) {
+            includes.add("**");
+        }
+
         if (getFileFilter() == null) {
             // file matcher that matches via the ant path matcher
-            final String[] parts = pattern.split(",");
             setFileFilter(f -> {
-                for (String part : parts) {
-                    part = part.trim();
-                    // the file name, and the path relative to the starting folder (such as sub/foo.yaml)
-                    String path = f.getAbsolutePath();
-                    String relative = null;
-                    if (path.startsWith(base)) {
-                        relative = path.substring(base.length()).replace('\\', '/');
-                        while (relative.startsWith("/")) {
-                            relative = relative.substring(1);
-                        }
-                        path = FileUtil.stripPath(path);
+                // the file name, and the path relative to the starting folder (such as sub/foo.yaml)
+                String path = f.getAbsolutePath();
+                String relative = null;
+                if (path.startsWith(base)) {
+                    relative = path.substring(base.length()).replace('\\', '/');
+                    while (relative.startsWith("/")) {
+                        relative = relative.substring(1);
                     }
-
-                    String name = FileUtil.compactPath(f.getPath());
-                    boolean exact = name.equals(part);
-                    boolean result = exact || matcher.match(part, path, false)
-                            || relative != null && matcher.match(part, relative, false);
+                    path = FileUtil.stripPath(path);
+                }
+                String name = FileUtil.compactPath(f.getPath());
+                for (String part : excludes) {
+                    if (matches(matcher, part, name, path, relative)) {
+                        LOG.trace("Excluding file pattern:!{} path:{}", part, path);
+                        return false;
+                    }
+                }
+                for (String part : includes) {
+                    boolean result = matches(matcher, part, name, path, relative);
                     LOG.trace("Accepting file pattern:{} path:{} -> {}", part, path, result);
-
                     if (result) {
                         return true;
                     }
@@ -191,6 +228,127 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         }
 
         super.doStart();
+    }
+
+    private static boolean matches(AntPathMatcher matcher, String part, String name, String path, String relative) {
+        return name.equals(part) || matcher.match(part, path, false)
+                || relative != null && matcher.match(part, relative, false);
+    }
+
+    /**
+     * A folder that an exclude of the pattern matches as a whole, such as <tt>inbox</tt> for <tt>!inbox/**</tt>: the
+     * folder is left out of the scan, so the files the routes read and write in it are not walked on every scan.
+     */
+    @Override
+    protected boolean isExcludedDirectory(Path dir) {
+        if (excludes.isEmpty() || folder == null) {
+            return false;
+        }
+        String relative = relativePath(dir.toFile());
+        if (relative == null || relative.isEmpty()) {
+            return false;
+        }
+        for (String part : excludes) {
+            // inbox and inbox/** match the folder itself; a file pattern such as *.json does not leave a folder out
+            if (part.equals(relative) || AntPathMatcher.INSTANCE.match(part, relative + "/_", false)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The file a route was loaded from, as an absolute path, or null when it is not a file. */
+    private static Path sourcePath(Resource resource) {
+        String location = resource != null ? resource.getLocation() : null;
+        if (location == null || location.contains(":") && !location.startsWith("file:")) {
+            return null;
+        }
+        try {
+            return Paths.get(location.startsWith("file:") ? location.substring(5) : location).toAbsolutePath().normalize();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** The path of the file relative to the watched folder, with / separators, or null when it is not under it. */
+    private String relativePath(File file) {
+        String base = new File(getFolder()).getAbsolutePath();
+        String path = file.getAbsolutePath();
+        if (!path.startsWith(base)) {
+            return null;
+        }
+        String relative = path.substring(base.length()).replace('\\', '/');
+        while (relative.startsWith("/")) {
+            relative = relative.substring(1);
+        }
+        return relative;
+    }
+
+    /**
+     * Routes that write files into a folder under the watched one reload themselves: the reload restarts the routes,
+     * they write again, and that is a change again (a file copied into an inbox, moved to done or archive). When the
+     * last {@link #LOOP_RELOADS} reloads within {@link #LOOP_MILLIS} were each for files under the same folder only,
+     * and none of those files is a source of a route, a properties file or a Java or Groovy source, a WARN names the
+     * folder and how to leave it out of reloading, once per folder (CAMEL-25670).
+     *
+     * @return whether the warning was logged now
+     */
+    boolean checkReloadLoop(List<File> changed, long now) {
+        String data = dataFolder(changed);
+        if (data == null) {
+            dataReloads.clear();
+            return false;
+        }
+        dataReloads.addLast(new DataReload(now, data));
+        while (dataReloads.size() > LOOP_RELOADS) {
+            dataReloads.removeFirst();
+        }
+        long took = now - dataReloads.getFirst().time();
+        if (dataReloads.size() == LOOP_RELOADS && took <= LOOP_MILLIS
+                && dataReloads.stream().allMatch(r -> r.folder().equals(data)) && loopWarned.add(data)) {
+            LOG.warn("Routes reloaded {} times in {} seconds, each time because files under {}/ changed, which are not"
+                     + " sources of the routes. If that folder holds data the routes read or write, leave it out of"
+                     + " reloading: camel run --data-dir={}, or !{}/** in the reload pattern"
+                     + " (camel.main.routesReloadPattern).",
+                    LOOP_RELOADS, Math.max(1, Math.round(took / 1000.0)), data, data, data);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * The folder right under the watched one that holds all the changed files, when none of them is a source (a route
+     * was loaded from it, or it is a properties, Java or Groovy file), else null.
+     */
+    private String dataFolder(List<File> changed) {
+        // by full path: a data file named as a route source (inbox/route.yaml and route.yaml) is still data
+        Set<Path> sources = new HashSet<>();
+        for (Route route : getCamelContext().getRoutes()) {
+            Path source = sourcePath(route.getSourceResource());
+            if (source != null) {
+                sources.add(source);
+            }
+        }
+        String data = null;
+        for (File file : changed) {
+            String name = file.getName();
+            if (name.endsWith(".properties") || name.endsWith(".java") || name.endsWith(".groovy")
+                    || sources.contains(file.toPath().toAbsolutePath().normalize())) {
+                return null;
+            }
+            String relative = relativePath(file);
+            int slash = relative != null ? relative.indexOf('/') : -1;
+            if (slash < 1) {
+                return null;
+            }
+            String top = relative.substring(0, slash);
+            if (data == null) {
+                data = top;
+            } else if (!data.equals(top)) {
+                return null;
+            }
+        }
+        return data;
     }
 
     @Override
@@ -293,6 +451,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      */
     @Override
     protected void onReloadBatch(List<File> changed) {
+        checkReloadLoop(changed, System.currentTimeMillis());
         if (changed.size() < 2) {
             super.onReloadBatch(changed);
             return;

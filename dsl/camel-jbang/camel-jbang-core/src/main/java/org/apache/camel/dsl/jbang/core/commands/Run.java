@@ -196,6 +196,10 @@ public class Run extends CamelCommand {
             description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.")
     String sourceDir;
 
+    @Option(names = { "--data-dir" },
+            description = "Folders under the source directory (comma separated) that hold data the routes read or write, not sources: in dev mode a change in them does not reload the routes (such as inbox,archive).")
+    String dataDir;
+
     @Option(names = { "--resource-dir", "--resource-dirs" },
             description = "Additional resource directories to include on the classpath (recursive, preserving structure)",
             split = ",")
@@ -939,6 +943,9 @@ public class Run extends CamelCommand {
         }
         if (sourceDir != null) {
             writeSetting(main, profileProperties, SOURCE_DIR, sourceDir);
+        }
+        if (dataDir != null) {
+            writeSetting(main, profileProperties, DATA_DIR, dataDir);
         }
         if (debugOptions.trace) {
             writeSetting(main, profileProperties, "camel.main.tracing", "true");
@@ -2097,6 +2104,46 @@ public class Run extends CamelCommand {
     }
 
     /**
+     * --data-dir only changes what dev mode watches in a source directory: without one only the given files are
+     * watched, and their data folders are not, so the option has nothing to leave out. Said when it is given on the
+     * command line; camel.jbang.dataDir in an application.properties is not, as an example that declares its data
+     * folders also runs with its files (camel run --example).
+     */
+    private void warnDataDirWithoutSourceDir() {
+        if (dataDir != null && spec != null && spec.commandLine() != null
+                && spec.commandLine().getParseResult() != null
+                && spec.commandLine().getParseResult().hasMatchedOption("--data-dir")) {
+            printer().printErr("WARN: --data-dir=" + dataDir + " has no effect without --source-dir: dev mode then only"
+                               + " watches the given files");
+        }
+    }
+
+    /**
+     * The reload pattern of dev mode with a source directory: every file under it, except the data folders
+     * (--data-dir), whose files the routes read and write: a change there is not a change of the sources, and reloading
+     * the routes for it restarts them, so they write again and reload again (CAMEL-25670).
+     */
+    static String sourceDirReloadPattern(String dataDir) {
+        StringJoiner sj = new StringJoiner(",");
+        sj.add("*");
+        if (dataDir != null) {
+            for (String dir : dataDir.split(",")) {
+                dir = dir.trim().replace('\\', '/');
+                while (dir.startsWith("./")) {
+                    dir = dir.substring(2);
+                }
+                while (dir.endsWith("/")) {
+                    dir = dir.substring(0, dir.length() - 1);
+                }
+                if (!dir.isEmpty()) {
+                    sj.add("!" + dir + "/**");
+                }
+            }
+        }
+        return sj.toString();
+    }
+
+    /**
      * Route reload (dev mode) for Camel Main watches the original source files, as the exported project only contains
      * copies of them.
      */
@@ -2106,8 +2153,9 @@ public class Run extends CamelCommand {
         String pattern;
         if (sourceDir != null) {
             reloadDir = sourceDir;
-            pattern = "*";
+            pattern = sourceDirReloadPattern(dataDir);
         } else {
+            warnDataDirWithoutSourceDir();
             // use the directory of the first file that is in another folder than the current dir
             reloadDir = ".";
             StringJoiner sj = new StringJoiner(",");
@@ -2673,9 +2721,10 @@ public class Run extends CamelCommand {
             if (sourceDir != null) {
                 main.addInitialProperty(SOURCE_DIR, sourceDir);
                 main.addInitialProperty("camel.main.routesReloadDirectory", sourceDir);
-                main.addInitialProperty("camel.main.routesReloadPattern", "*");
+                main.addInitialProperty("camel.main.routesReloadPattern", sourceDirReloadPattern(dataDir));
                 main.addInitialProperty("camel.main.routesReloadDirectoryRecursive", "true");
             } else {
+                warnDataDirWithoutSourceDir();
                 String pattern = sjReload.toString();
                 String reloadDir = ".";
                 // use current dir, however if we run a file that are in another folder, then we should track that folder instead
@@ -2773,6 +2822,7 @@ public class Run extends CamelCommand {
             quarkusPlatform = QuarkusPlatformMixin.of(answer, quarkusPlatform);
             gav = answer.getProperty(GAV, gav);
             stub = answer.getProperty(STUB, stub);
+            dataDir = answer.getProperty(DATA_DIR, dataDir);
             excludes = RuntimeUtil.getCommaSeparatedPropertyAsList(answer, EXCLUDES, excludes);
         }
 
