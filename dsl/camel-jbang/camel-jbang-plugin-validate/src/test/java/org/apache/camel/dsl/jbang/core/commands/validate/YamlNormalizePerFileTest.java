@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.validate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -72,6 +75,7 @@ class YamlNormalizePerFileTest {
     Path dir;
 
     private StringPrinter printer;
+    private String stderr;
     private Path a;
     private Path b;
 
@@ -85,7 +89,29 @@ class YamlNormalizePerFileTest {
         printer = new StringPrinter();
         YamlNormalizeCommand cmd = new YamlNormalizeCommand(new CamelJBangMain().withPrinter(printer));
         CommandLine.populateCommand(cmd, args);
-        return cmd.doCall();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        cmd.stderr = new PrintStream(err, true, StandardCharsets.UTF_8);
+        int answer = cmd.doCall();
+        stderr = err.toString(StandardCharsets.UTF_8);
+        return answer;
+    }
+
+    private static String kamelet(String name) {
+        return """
+                apiVersion: camel.apache.org/v1
+                kind: Kamelet
+                metadata:
+                  name: %s
+                spec:
+                  definition:
+                    title: %s
+                  template:
+                    from:
+                      uri: kamelet:source
+                      steps:
+                        - setBody:
+                            constant: %s
+                """.formatted(name, name, name);
     }
 
     private static String validate(Path... files) throws Exception {
@@ -125,7 +151,7 @@ class YamlNormalizePerFileTest {
 
         String merged = Files.readString(out);
         assertThat(merged).contains("id: fromA").contains("id: fromB").contains("- onException:");
-        assertThat(printer.getOutput())
+        assertThat(stderr)
                 .contains("WARN: the top-level onException of " + b + " applies to the routes of " + a + " too")
                 .contains("use --output with a directory");
         assertThat(validate(out)).contains("Validation success (files:1)");
@@ -134,12 +160,16 @@ class YamlNormalizePerFileTest {
     @Test
     void theConsoleOutputWarnsToo() throws Exception {
         assertThat(normalize(a.toString(), b.toString())).isZero();
-        assertThat(printer.getOutput()).contains("WARN: the top-level onException of " + b)
-                .contains("id: fromA").contains("id: fromB");
+        assertThat(stderr).contains("WARN: the top-level onException of " + b);
+        // stdout has only the YAML, so that it can be redirected to a file
+        String yaml = printer.getOutput();
+        assertThat(yaml).startsWith("- ").doesNotContain("WARN").contains("id: fromA").contains("id: fromB");
+        assertThat(validate(Files.writeString(dir.resolve("stdout.yaml"), yaml))).contains("Validation success (files:1)");
 
         // a single file: its onException applies to its own routes only
         assertThat(normalize(b.toString())).isZero();
-        assertThat(printer.getOutput()).doesNotContain("WARN").contains("- onException:");
+        assertThat(stderr).doesNotContain("WARN");
+        assertThat(printer.getOutput()).contains("- onException:");
     }
 
     @Test
@@ -161,11 +191,63 @@ class YamlNormalizePerFileTest {
     }
 
     @Test
+    void theInputFilesAreNotOverwritten() throws Exception {
+        String before = Files.readString(b);
+        // the directory of the inputs
+        assertThat(normalize("--output=" + dir, a.toString(), b.toString())).isOne();
+        assertThat(printer.getOutput()).contains("--output would overwrite the input file " + a);
+        // an input file as the merged output
+        assertThat(normalize("--output=" + b, a.toString(), b.toString())).isOne();
+        assertThat(printer.getOutput()).contains("--output would overwrite the input file " + b);
+        assertThat(Files.readString(a)).isEqualTo(A);
+        assertThat(Files.readString(b)).isEqualTo(before);
+    }
+
+    @Test
+    void theGeneratedNamesDoNotReplaceAnotherFile() throws Exception {
+        // review of #27818: the numbered names of two files were the name of a third file, whose routes got lost
+        Path x = Files.createDirectories(dir.resolve("x/orders"));
+        Path y = Files.createDirectories(dir.resolve("y/orders"));
+        Path kx = Files.writeString(x.resolve("action.kamelet.yaml"), kamelet("action-x"));
+        Path ky = Files.writeString(y.resolve("action.kamelet.yaml"), kamelet("action-y"));
+        Path kz = Files.writeString(dir.resolve("action-1.kamelet.yaml"), kamelet("action-z"));
+        Path rx = Files.writeString(x.resolve("routes.yaml"), A);
+        Path ry = Files.writeString(y.resolve("routes.yaml"), B);
+        Path rc = Files.writeString(dir.resolve("routes-1.yaml"), A.replace("fromA", "routeC"));
+        Path out = dir.resolve("out");
+
+        assertThat(normalize("--output=" + out + "/", kx.toString(), ky.toString(), kz.toString(), rx.toString(),
+                ry.toString(), rc.toString())).isZero();
+        assertThat(Files.readString(out.resolve("action-1.kamelet.yaml"))).contains("name: action-z");
+        assertThat(Files.readString(out.resolve("action-2.kamelet.yaml"))).contains("name: action-x");
+        assertThat(Files.readString(out.resolve("action-3.kamelet.yaml"))).contains("name: action-y");
+        assertThat(Files.readString(out.resolve("routes-1.yaml"))).contains("id: routeC").doesNotContain("fromA");
+        assertThat(Files.readString(out.resolve("routes-2.yaml"))).contains("id: fromA").doesNotContain("onException");
+        assertThat(Files.readString(out.resolve("routes-3.yaml"))).contains("id: fromB").contains("- onException:");
+        try (var files = Files.list(out)) {
+            assertThat(files).hasSize(6);
+        }
+    }
+
+    @Test
     void theOutputNames() {
         Map<Path, String> names = YamlNormalizeCommand.outputNames(
                 List.of("a.yaml", "x/routes.yaml", "y/routes.yaml", "p/z/r.yml", "q/z/r.yml", "file:b.yml"));
         assertThat(names).containsValues("a.yaml", "x-routes.yaml", "y-routes.yaml", "r-1.yml", "r-2.yml", "b.yml");
         assertThat(names.get(Path.of("q/z/r.yml").toAbsolutePath())).isEqualTo("r-2.yml");
+
+        // a numbered name is not the name of another input file
+        Map<Path, String> three = YamlNormalizeCommand.outputNames(
+                List.of("x/orders/routes.yaml", "y/orders/routes.yaml", "routes-1.yaml"));
+        assertThat(three).containsValues("routes-1.yaml", "routes-2.yaml", "routes-3.yaml");
+        assertThat(three.get(Path.of("routes-1.yaml").toAbsolutePath())).isEqualTo("routes-1.yaml");
+        // the number goes before all the extensions, and every name is distinct
+        assertThat(YamlNormalizeCommand.outputNames(
+                List.of("x/orders/action.kamelet.yaml", "y/orders/action.kamelet.yaml", "action.kamelet-1.yaml")))
+                .containsValues("action.kamelet-1.yaml", "action-1.kamelet.yaml", "action-2.kamelet.yaml");
+        // nor the prefixed name of another input file
+        assertThat(YamlNormalizeCommand.outputNames(List.of("x/routes.yaml", "y/routes.yaml", "x-routes.yaml")))
+                .containsValues("x-routes.yaml", "routes-1.yaml", "routes-2.yaml");
 
         assertThat(YamlNormalizeCommand.unattributedName(Set.of("a.yaml"))).isEqualTo("normalized.yaml");
         assertThat(YamlNormalizeCommand.unattributedName(Set.of("normalized.yaml", "normalized-1.yaml")))

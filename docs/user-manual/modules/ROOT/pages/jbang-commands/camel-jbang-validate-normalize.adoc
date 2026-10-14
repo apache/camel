@@ -23,7 +23,7 @@ camel validate normalize [options]
 | Option | Description | Default | Type
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
-| `--output` | File or directory to write normalized output. If not specified, output is printed to console. A directory (an existing one, or a name ending with /) gets one file per input file, with the name of the input file; input files with the same name are written as <parent directory>-<name> (or <name>-<n>, n being their position, when that clashes too), and what was not loaded from an input file goes to normalized.yaml. A file gets the routes of all the input files merged. |  | String
+| `--output` | File or directory to write normalized output. If not specified, output is printed to console. A directory (an existing one, or a name ending with /) gets one file per input file, with the name of the input file; input files with the same name are written as <parent directory>-<name> (or <name>-<n>, with the first number no other file uses, when that clashes too), and what was not loaded from an input file goes to normalized.yaml. A file gets the routes of all the input files merged. The output must not overwrite one of the input files. |  | String
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

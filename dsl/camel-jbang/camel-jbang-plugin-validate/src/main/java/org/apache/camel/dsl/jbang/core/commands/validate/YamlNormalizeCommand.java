@@ -17,7 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands.validate;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -58,13 +60,17 @@ public class YamlNormalizeCommand extends CamelCommand {
     @CommandLine.Mixin
     MavenResolverMixin mavenResolver;
 
+    // the warnings go to stderr, so that stdout has only the normalized YAML
+    PrintStream stderr = System.err;
+
     @CommandLine.Option(names = { "--output" },
                         description = "File or directory to write normalized output. If not specified, output is printed to console."
                                       + " A directory (an existing one, or a name ending with /) gets one file per input file,"
                                       + " with the name of the input file; input files with the same name are written as"
-                                      + " <parent directory>-<name> (or <name>-<n>, n being their position, when that clashes"
-                                      + " too), and what was not loaded from an input file goes to normalized.yaml."
-                                      + " A file gets the routes of all the input files merged.")
+                                      + " <parent directory>-<name> (or <name>-<n>, with the first number no other file uses,"
+                                      + " when that clashes too), and what was not loaded from an input file goes to"
+                                      + " normalized.yaml. A file gets the routes of all the input files merged."
+                                      + " The output must not overwrite one of the input files.")
     private String output;
 
     @CommandLine.Parameters(description = { "The Camel YAML source files to normalize." },
@@ -95,6 +101,29 @@ public class YamlNormalizeCommand extends CamelCommand {
             String content = readFile(n);
             if (content != null && KameletNormalizer.isKamelet(content)) {
                 kamelets.put(n, content);
+            }
+        }
+
+        // the output must not replace an input file
+        if (output != null) {
+            Path outPath = Path.of(output);
+            List<Path> targets = new ArrayList<>();
+            if (isDirectory(outPath)) {
+                Map<Path, String> names = outputNames(matched);
+                for (String name : names.values()) {
+                    targets.add(outPath.resolve(name));
+                }
+                targets.add(outPath.resolve(unattributedName(names.values())));
+            } else {
+                targets.add(outPath);
+            }
+            for (Path t : targets) {
+                String input = inputAt(t, matched);
+                if (input != null) {
+                    printer().printErr("--output would overwrite the input file " + input + " with " + t
+                                       + ": write the normalized files to another file or directory");
+                    return 1;
+                }
             }
         }
 
@@ -189,10 +218,8 @@ public class YamlNormalizeCommand extends CamelCommand {
         }
 
         Path outPath = output != null ? Path.of(output) : null;
-        if (outPath != null && (output.endsWith("/") || output.endsWith(File.separator))) {
+        if (outPath != null && isDirectory(outPath)) {
             Files.createDirectories(outPath);
-        }
-        if (outPath != null && Files.isDirectory(outPath)) {
             for (Map.Entry<String, String> e : perFile.entrySet()) {
                 if (!e.getValue().isBlank()) {
                     Files.writeString(outPath.resolve(names.get(sourcePath(e.getKey()))), e.getValue());
@@ -238,6 +265,13 @@ public class YamlNormalizeCommand extends CamelCommand {
     }
 
     /**
+     * Whether the output is a directory: an existing one, or a name ending with /
+     */
+    private boolean isDirectory(Path outPath) {
+        return Files.isDirectory(outPath) || output.endsWith("/") || output.endsWith(File.separator);
+    }
+
+    /**
      * Warns when the top-level onException, errorHandler, onCompletion or intercept of an input file ends up applying
      * to the routes of the other input files, as the routes of all the files are written together.
      */
@@ -253,10 +287,11 @@ public class YamlNormalizeCommand extends CamelCommand {
             Set<String> others = new LinkedHashSet<>(withRoutes);
             others.remove(e.getKey());
             if (!kinds.isEmpty() && !others.isEmpty()) {
-                printer().println("WARN: the top-level " + String.join(", ", kinds) + " of " + e.getKey()
-                                  + " applies to the routes of " + String.join(", ", others)
-                                  + " too, as the routes of all the files are written together:"
-                                  + " use --output with a directory to write one file per input file");
+                // to stderr: without --output the normalized YAML is printed to stdout
+                stderr.println("WARN: the top-level " + String.join(", ", kinds) + " of " + e.getKey()
+                               + " applies to the routes of " + String.join(", ", others)
+                               + " too, as the routes of all the files are written together:"
+                               + " use --output with a directory to write one file per input file");
             }
         }
     }
@@ -280,7 +315,10 @@ public class YamlNormalizeCommand extends CamelCommand {
     /**
      * The file name of each input file in an output directory: its own name, or, when several input files have the same
      * name, the name of their parent directory, a dash and their name ({@code orders-routes.yaml}), or, when these
-     * clash too, their name with their position among them ({@code routes-1.yaml}, {@code routes-2.yaml}).
+     * clash too, their name with a number before the extension ({@code routes-1.yaml}, {@code action-1.kamelet.yaml},
+     * as Camel picks the loader of a file by all its extensions). Every name is allocated against the names of all the
+     * input files and the names already allocated, so no two input files get the same name and no generated name is the
+     * name of another input file.
      */
     static Map<Path, String> outputNames(List<String> files) {
         Map<String, List<Path>> byName = new LinkedHashMap<>();
@@ -291,24 +329,37 @@ public class YamlNormalizeCommand extends CamelCommand {
                 same.add(p);
             }
         }
+        // the names of the input files are reserved: a generated name must not be one of them
+        Set<String> taken = new HashSet<>(byName.keySet());
         Map<Path, String> answer = new LinkedHashMap<>();
+        for (Map.Entry<String, List<Path>> e : byName.entrySet()) {
+            if (e.getValue().size() == 1) {
+                answer.put(e.getValue().get(0), e.getKey());
+            }
+        }
         for (Map.Entry<String, List<Path>> e : byName.entrySet()) {
             String name = e.getKey();
             List<Path> same = e.getValue();
             if (same.size() == 1) {
-                answer.put(same.get(0), name);
                 continue;
             }
             Set<String> prefixed = new HashSet<>();
             for (Path p : same) {
                 prefixed.add(withParent(p));
             }
-            boolean unique = prefixed.size() == same.size() && prefixed.stream().noneMatch(byName::containsKey);
-            for (int i = 0; i < same.size(); i++) {
-                Path p = same.get(i);
-                answer.put(p, unique
-                        ? withParent(p)
-                        : FileUtil.onlyName(name, true) + "-" + (i + 1) + "." + FileUtil.onlyExt(name, true));
+            boolean unique = prefixed.size() == same.size() && prefixed.stream().noneMatch(taken::contains);
+            int n = 1;
+            for (Path p : same) {
+                String answerName;
+                if (unique) {
+                    answerName = withParent(p);
+                } else {
+                    do {
+                        answerName = FileUtil.onlyName(name, false) + "-" + n++ + "." + FileUtil.onlyExt(name, false);
+                    } while (taken.contains(answerName));
+                }
+                taken.add(answerName);
+                answer.put(p, answerName);
             }
         }
         return answer;
@@ -328,6 +379,26 @@ public class YamlNormalizeCommand extends CamelCommand {
             answer = "normalized-" + i + ".yaml";
         }
         return answer;
+    }
+
+    /**
+     * The input file that a path of the output is, or null when it is none of them
+     */
+    private static String inputAt(Path target, List<String> inputs) {
+        if (!Files.exists(target)) {
+            return null;
+        }
+        for (String n : inputs) {
+            Path input = sourcePath(n);
+            try {
+                if (Files.exists(input) && Files.isSameFile(target, input)) {
+                    return n;
+                }
+            } catch (IOException e) {
+                // not the same file
+            }
+        }
+        return null;
     }
 
     private static Path sourcePath(String name) {

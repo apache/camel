@@ -56,7 +56,9 @@ class NormalizeDumpRoutesStrategy extends DefaultDumpRoutesStrategy {
 
     @Override
     public void dumpRoutes(String format) {
-        // the per-file dump first, as it needs a directory
+        // the per-file dump first, as it needs a directory: DefaultDumpRoutesStrategy calls resolveFileName per resource
+        // only while its outputFileName is null, and setOutput(file) sets it for good. This holds because dumpRoutes
+        // runs once per normalize (a new strategy per command run), so the per-file pass always comes first
         perFile = true;
         super.setOutput(directory.toString());
         super.dumpRoutes(format);

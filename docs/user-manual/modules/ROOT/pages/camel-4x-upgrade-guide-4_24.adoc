@@ -29,6 +29,24 @@ that a route sends to and no route consumes, so they report the same endpoints o
 
 So `camel validate` can report an endpoint it did not report before.
 
+=== camel-jbang - camel validate normalize writes one file per input file to an output directory
+
+`camel validate normalize <files> --output=<dir>` now writes one normalized file per input file into the
+directory, with the name of the input file, instead of merging all the routes into `normalized.yaml`. A
+top-level `onException` of a file then keeps applying to the routes of that file only, as it does in the
+source. This applies to a single input file too: `camel validate normalize orders.yaml --output=out/` now
+writes `out/orders.yaml` instead of `out/normalized.yaml`. `normalized.yaml` is only written for what was
+not loaded from one of the input files. Input files with the same name in different directories are
+written as `<parent directory>-<name>`. Scripts that read `<dir>/normalized.yaml` must read the per-file
+outputs instead.
+
+The command now refuses to write over one of its input files (for example `--output=.` in the directory of
+the routes) and exits with an error.
+
+With `--output=<file>` or without `--output`, the routes are still merged, and the command now warns, on
+the standard error, when the top-level `onException` of one file applies to the routes of the other files
+in the merged output.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
