@@ -824,6 +824,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             UriEndpoint uriEndpoint, Class<?> endpointClassElement, String title, String scheme,
             String extendsScheme, String label, String[] schemes)
             throws MojoExecutionException {
+        if (uriEndpoint.internal() && uriEndpoint.remote()) {
+            throw new MojoExecutionException(
+                    "@UriEndpoint(internal = true) on " + endpointClassElement.getName()
+                                             + " needs remote = false too: an internal component does not reach the network");
+        }
         ComponentModel model = new ComponentModel();
         model.setScheme(scheme);
         model.setName(scheme);
@@ -847,6 +852,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         model.setProducerOnly(uriEndpoint.producerOnly());
         model.setLenientProperties(uriEndpoint.lenientProperties());
         model.setRemote(uriEndpoint.remote());
+        model.setInternal(uriEndpoint.internal());
         model.setAsync(loadClass("org.apache.camel.AsyncEndpoint").isAssignableFrom(endpointClassElement));
         model.setApi(loadClass("org.apache.camel.ApiEndpoint").isAssignableFrom(endpointClassElement));
         model.setBrowsable(loadClass("org.apache.camel.spi.BrowsableEndpoint").isAssignableFrom(endpointClassElement));

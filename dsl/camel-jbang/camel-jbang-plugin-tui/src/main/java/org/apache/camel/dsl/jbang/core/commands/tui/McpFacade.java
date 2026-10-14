@@ -1631,7 +1631,11 @@ class McpFacade {
         } catch (NumberFormatException e) {
             return null;
         }
-        JsonObject rejected = confirm(ToolConfirms.sendMessage(endpoint, selectedEndpointUris()));
+        // a body file:... makes the integration read that file, relative to its working directory
+        IntegrationInfo info = findIntegration(null);
+        String fileOutside = ToolConfirms.fileOutsideProject(
+                body, info != null ? info.directory : null, getSelectedSourceDirectory());
+        JsonObject rejected = confirm(ToolConfirms.sendMessage(endpoint, selectedEndpointUris(), fileOutside));
         return rejected != null ? rejected : RuntimeHelper.sendMessage(pid, endpoint, body, headers);
     }
 

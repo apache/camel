@@ -110,7 +110,7 @@ class ToolConfirmPopupTest {
     void aCallShowsWhatTheAiWantsToRunAndEnterRunsIt() {
         ToolConfirmPopup popup = new ToolConfirmPopup();
         CompletableFuture<Boolean> answer = new CompletableFuture<>();
-        popup.open(ToolConfirms.sendMessage("file:/home/me?fileName=.zshrc", List.of("kafka:orders")), answer);
+        popup.open(ToolConfirms.sendMessage("file:/home/me?fileName=.zshrc", List.of("kafka:orders"), null), answer);
 
         assertThat(render(popup, 100, 14))
                 .contains("AI wants to send a message to an endpoint the integration does not have")

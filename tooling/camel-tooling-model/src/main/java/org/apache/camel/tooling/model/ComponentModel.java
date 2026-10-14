@@ -37,6 +37,7 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
     protected boolean lenientProperties;
     protected boolean browsable;
     protected boolean remote;
+    protected boolean internal;
     protected String verifiers;
     protected final List<EndpointOptionModel> endpointOptions = new ArrayList<>();
     protected final List<EndpointHeaderModel> headers = new ArrayList<>();
@@ -153,6 +154,18 @@ public class ComponentModel extends ArtifactModel<ComponentModel.ComponentOption
 
     public void setRemote(boolean remote) {
         this.remote = remote;
+    }
+
+    /**
+     * Whether the component stays inside the CamelContext: no file, network, process, or code or resource named in its
+     * URI, by any option or feature (see {@code UriEndpoint.internal()}).
+     */
+    public boolean isInternal() {
+        return internal;
+    }
+
+    public void setInternal(boolean internal) {
+        this.internal = internal;
     }
 
     public String getVerifiers() {

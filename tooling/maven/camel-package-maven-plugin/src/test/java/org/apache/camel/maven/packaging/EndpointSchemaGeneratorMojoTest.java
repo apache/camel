@@ -31,9 +31,11 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderInterface
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithJavadocAsDescription;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeExtendingEndpoint;
+import org.apache.camel.maven.packaging.endpoint.SomeInternalRemoteEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -129,6 +132,15 @@ class EndpointSchemaGeneratorMojoTest {
     void testHeadersNotProperlyDefinedAreIgnored() {
         mojo.addEndpointHeaders(model, SomeEndpointWithBadHeaders.class.getAnnotation(UriEndpoint.class), "some");
         assertEquals(0, model.getEndpointHeaders().size());
+    }
+
+    @Test
+    void testInternalEndpointMustNotBeRemote() {
+        UriEndpoint endpoint = SomeInternalRemoteEndpoint.class.getAnnotation(UriEndpoint.class);
+        MojoExecutionException e = assertThrows(MojoExecutionException.class,
+                () -> mojo.findComponentProperties(endpoint, SomeInternalRemoteEndpoint.class, "some", "some", null, null,
+                        null));
+        assertTrue(e.getMessage().contains("needs remote = false"), e.getMessage());
     }
 
     @Test

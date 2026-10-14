@@ -205,6 +205,7 @@ public final class JsonMapper {
         model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
         model.setBrowsable(mobj.getBooleanOrDefault("browsable", false));
         model.setRemote(mobj.getBooleanOrDefault("remote", false));
+        model.setInternal(mobj.getBooleanOrDefault("internal", false));
         parseArtifact(mobj, model);
     }
 
@@ -238,6 +239,10 @@ public final class JsonMapper {
         obj.put("lenientProperties", model.isLenientProperties());
         obj.put("browsable", model.isBrowsable());
         obj.put("remote", model.isRemote());
+        // only written for the few internal components; a catalog without it reads as not internal
+        if (model.isInternal()) {
+            obj.put("internal", true);
+        }
         obj.put("verifiers", model.getVerifiers());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();

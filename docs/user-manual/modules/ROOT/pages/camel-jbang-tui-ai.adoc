@@ -196,8 +196,12 @@ code ask you first, in a dialog that shows the call:
 
 * writing a file: the diff dialog, or the live replay in the Source editor (see `/write` above);
 * sending a message to an endpoint the integration does not have, such as a file, a command, an HTTP service or
-  another topic; a message to a route, to an internal endpoint (`direct:`, `seda:`, `log:`, `mock:`, `stub:`
-  and the like), or to an endpoint the integration uses goes ahead;
+  another topic; a message to a route, to an endpoint the integration uses, or to an internal endpoint goes ahead.
+  Internal is what the Camel catalog marks so: a component that stays inside the integration (`direct:`, `seda:`,
+  `log:`, `mock:`, `stub:` and the like), with no option or feature that reaches a file or the network, even one
+  seldom used;
+* sending a file from outside the project folder as the message body (a body that is `file:` and a path), wherever
+  the message goes; a file in the project, such as `file:data/order.json`, goes ahead;
 * SQL other than a single `SELECT`, `SHOW` or `DESCRIBE`, and updating a row;
 * evaluating an expression in a language that runs code, such as Groovy, Java, JavaScript or Python.
 

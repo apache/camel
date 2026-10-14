@@ -16,13 +16,19 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -30,8 +36,9 @@ import org.apache.camel.util.URISupport;
  * agent and an MCP client run its tools without asking, so the AI can show and tell at once (see "Developer tools" in
  * the security model). The exceptions are the calls that reach beyond the integration, may destroy data or run code:
  * <ul>
- * <li>tui_send_message to an endpoint the integration does not have; a route id, a pattern and an internal endpoint
- * (direct:, seda:, log:, mock: and the like) stay inside it;</li>
+ * <li>tui_send_message to an endpoint the integration does not have; a route id, a pattern and an endpoint of a
+ * component the catalog marks internal (direct:, seda:, log:, mock: and the like) stay inside it. Also a message whose
+ * body the integration reads from a file outside the project folder (a body that starts with file:);</li>
  * <li>tui_execute_sql with a statement that is not a single SELECT (or SHOW, DESCRIBE), and tui_update_row;</li>
  * <li>camel_eval_expression in a language that runs code, such as Groovy.</li>
  * </ul>
@@ -48,25 +55,99 @@ final class ToolConfirms {
     static final Set<String> CODE_LANGUAGES
             = Set.of("groovy", "java", "joor", "js", "javascript", "python", "mvel", "ognl", "spel");
 
-    /**
-     * The components that stay inside the integration: its routes and in-memory queues, its log and the test endpoints.
-     * Not every component the catalog marks remote=false: exec, class, bean, language and the components that load a
-     * template or a stylesheet by URI are not remote either, but run code, or read a file or a URL.
-     */
-    static final Set<String> INTERNAL_SCHEMES = Set.of(
-            "direct", "seda", "disruptor", "disruptor-vm", "log", "mock", "stub", "browse", "dataset", "dataset-test");
-
     private ToolConfirms() {
     }
 
-    /** A message to an endpoint the integration does not have, or null when it stays inside the integration. */
-    static Call sendMessage(String endpoint, Collection<String> endpointUris) {
-        if (staysInside(endpoint, endpointUris)) {
+    /**
+     * Whether a component stays inside the integration, as the catalog marks it internal: its routes, in-memory state
+     * and log, and no file, network, process, or code or resource named in its URI, by any option. This is narrower
+     * than remote=false, which exec, class, bean, language and the components that load a template or a stylesheet by
+     * URI are too. The catalog is the TUI's own, so it has the flag; a component it does not know (a custom one, or one
+     * newer than the TUI) is not internal.
+     */
+    static boolean isInternal(String scheme) {
+        if (!scheme.matches("[a-z0-9-]+")) {
+            return false;
+        }
+        try {
+            ComponentModel model = Catalog.INSTANCE.componentModel(scheme);
+            return model != null && model.isInternal();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    // loaded on the first send, not when a call only needs the SQL or language checks
+    private static final class Catalog {
+        static final CamelCatalog INSTANCE = new DefaultCamelCatalog(true);
+    }
+
+    /**
+     * A message to an endpoint the integration does not have, or with a body read from a file outside the project; null
+     * when it stays inside the integration and the project.
+     *
+     * @param fileOutside the file outside the project that the body makes the integration read (see
+     *                    {@link #fileOutsideProject}), or null
+     */
+    static Call sendMessage(String endpoint, Collection<String> endpointUris, String fileOutside) {
+        boolean inside = staysInside(endpoint, endpointUris);
+        if (fileOutside != null) {
+            return new Call(
+                    inside
+                            ? "send a file from outside the project"
+                            : "send a file from outside the project to an endpoint the integration does not have",
+                    endpoint + "\nbody: file:" + fileOutside,
+                    "The integration reads the file and sends its content, which may hold secrets");
+        }
+        if (inside) {
             return null;
         }
         return new Call(
                 "send a message to an endpoint the integration does not have", endpoint,
                 "The message may leave the integration: to a file, a broker or a service");
+    }
+
+    /**
+     * The file a message body makes the integration read when it is outside the project folder, or null. The send
+     * console sends the content of the file that a body starting with file: names, relative to the working directory of
+     * the integration. The project folder is the integration's source directory, where the AI tools write. Symlinks and
+     * .. are resolved as the integration would; a file that cannot be placed counts as outside.
+     */
+    static String fileOutsideProject(String body, String workingDirectory, Path projectDirectory) {
+        if (body == null || !body.startsWith("file:")) {
+            return null;
+        }
+        String name = body.substring(5);
+        Path file;
+        try {
+            Path path = Path.of(name);
+            if (!path.isAbsolute()) {
+                // not known, blank or relative, it cannot place the file: the JVM of the TUI is elsewhere
+                Path work = workingDirectory != null ? Path.of(workingDirectory) : null;
+                if (work == null || !work.isAbsolute()) {
+                    return name;
+                }
+                path = work.resolve(path);
+            }
+            file = realPath(path);
+        } catch (InvalidPathException e) {
+            return name;
+        }
+        return projectDirectory != null && file.startsWith(realPath(projectDirectory)) ? null : file.toString();
+    }
+
+    /**
+     * The path with symlinks and .. resolved as the file system does. A file that is not there is placed under the real
+     * path of its nearest parent that is.
+     */
+    private static Path realPath(Path path) {
+        Path absolute = path.toAbsolutePath();
+        try {
+            return absolute.toRealPath();
+        } catch (IOException e) {
+            Path parent = absolute.getParent();
+            return parent != null ? realPath(parent).resolve(absolute.getFileName()).normalize() : absolute.normalize();
+        }
     }
 
     /**
@@ -81,7 +162,7 @@ final class ToolConfirms {
         // an option can still reach out: #class:...(args) runs any constructor (a FileOutputStream truncates a file),
         // and a {{placeholder}} can put a secret in the log
         String decoded = decode(endpoint);
-        if (INTERNAL_SCHEMES.contains(endpoint.substring(0, endpoint.indexOf(':')))
+        if (isInternal(endpoint.substring(0, endpoint.indexOf(':')))
                 && !decoded.contains("#") && !decoded.contains("{{")) {
             return true;
         }

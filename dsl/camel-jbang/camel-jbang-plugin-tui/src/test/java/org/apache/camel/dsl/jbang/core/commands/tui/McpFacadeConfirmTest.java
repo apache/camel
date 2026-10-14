@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -80,8 +82,25 @@ class McpFacadeConfirmTest {
         // the endpoints of the integration come from its status
         assertThat(facade.selectedEndpointUris()).containsExactly("kafka://orders?brokers=localhost%3A9092");
         assertThat(facade.confirm(ToolConfirms.sendMessage("kafka:orders?brokers=localhost:9092",
-                facade.selectedEndpointUris()))).isNull();
+                facade.selectedEndpointUris(), null))).isNull();
         assertThat(bridge.calls).hasSize(1);
+    }
+
+    @Test
+    void aBodyReadFromAFileOutsideTheProjectAsksEvenForTheLog(@TempDir Path project) {
+        AnsweringBridge bridge = new AnsweringBridge(false);
+        MonitorContext ctx = context();
+        // the integration runs in the project folder, which is also its source directory
+        ctx.findSelectedIntegration().directory = project.toString();
+        McpFacade facade = facade(ctx, bridge);
+
+        JsonObject result = facade.sendMessage("log:demo", "file:/etc/hosts", null);
+
+        assertThat(result.getString("status")).isEqualTo("rejected");
+        assertThat(bridge.calls).singleElement().satisfies(call -> {
+            assertThat(call.title()).isEqualTo("send a file from outside the project");
+            assertThat(call.target()).startsWith("log:demo\nbody: file:").endsWith("hosts");
+        });
     }
 
     @Test
