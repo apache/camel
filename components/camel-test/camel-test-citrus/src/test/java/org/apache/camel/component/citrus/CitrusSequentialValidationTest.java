@@ -31,13 +31,13 @@ class CitrusSequentialValidationTest extends CamelTestSupport {
     void shouldValidateSequentialExchanges() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
 
-        citrus.message().body("""
+        citrus.validate().body("""
                 {"event": "created"}
                 """);
-        citrus.message().body("""
+        citrus.validate().body("""
                 {"event": "updated"}
                 """);
-        citrus.message().body("""
+        citrus.validate().body("""
                 {"event": "deleted"}
                 """);
         citrus.expectedMessageCount(3);
@@ -47,17 +47,17 @@ class CitrusSequentialValidationTest extends CamelTestSupport {
         template.sendBody("direct:start", "{\"event\": \"deleted\"}");
 
         citrus.assertIsSatisfied();
-        assertThat(citrus.getReceivedCount()).isEqualTo(3);
+        assertThat(citrus.getReceivedCounter()).isEqualTo(3);
     }
 
     @Test
     void shouldValidateSequentialExchangesWithHeaders() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
 
-        citrus.message()
+        citrus.validate()
                 .body("{\"status\": \"pending\"}")
                 .header("action", "create");
-        citrus.message()
+        citrus.validate()
                 .body("{\"status\": \"done\"}")
                 .header("action", "complete");
         citrus.expectedMessageCount(2);
@@ -69,28 +69,25 @@ class CitrusSequentialValidationTest extends CamelTestSupport {
     }
 
     @Test
-    void shouldFailWhenExchangeExceedsIndexedSpecs() {
+    void shouldPassThroughExchangeWithoutMatchingSpec() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
 
-        citrus.message(0).body("{\"event\": \"first\"}");
+        citrus.validate(1).body("{\"event\": \"first\"}");
         citrus.expectedMessageCount(2);
 
         template.sendBody("direct:start", "{\"event\": \"first\"}");
         template.sendBody("direct:start", "{\"event\": \"second\"}");
 
-        assertThatThrownBy(citrus::assertIsSatisfied)
-                .isInstanceOf(ValidationException.class)
-                .satisfies(e -> assertThat(e.getSuppressed()[0])
-                        .isInstanceOf(IllegalStateException.class)
-                        .hasMessageContaining("No validation specification for exchange at index 1"));
+        citrus.assertIsSatisfied();
+        assertThat(citrus.getReceivedCounter()).isEqualTo(2);
     }
 
     @Test
     void shouldFallBackToAllMessagesSpec() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
 
-        citrus.message(0).body("{\"event\": \"first\"}");
-        citrus.allMessages().body("{\"event\": \"default\"}");
+        citrus.validate(1).body("{\"event\": \"first\"}");
+        citrus.validateAll().body("{\"event\": \"default\"}");
         citrus.expectedMessageCount(3);
 
         template.sendBody("direct:start", "{\"event\": \"first\"}");
@@ -98,14 +95,14 @@ class CitrusSequentialValidationTest extends CamelTestSupport {
         template.sendBody("direct:start", "{\"event\": \"default\"}");
 
         citrus.assertIsSatisfied();
-        assertThat(citrus.getReceivedCount()).isEqualTo(3);
+        assertThat(citrus.getReceivedCounter()).isEqualTo(3);
     }
 
     @Test
     void shouldValidateAllMessagesWithSameSpec() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
 
-        citrus.allMessages()
+        citrus.validateAll()
                 .body("{\"status\": \"ok\"}")
                 .header("type", "health");
         citrus.expectedMessageCount(3);
@@ -121,15 +118,16 @@ class CitrusSequentialValidationTest extends CamelTestSupport {
     void shouldFailSequentialValidationOnMismatch() {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
 
-        citrus.message(0).body("{\"event\": \"created\"}");
-        citrus.message(1).body("{\"event\": \"updated\"}");
+        citrus.validate(1).body("{\"event\": \"created\"}");
+        citrus.validate(2).body("{\"event\": \"updated\"}");
         citrus.expectedMessageCount(2);
 
         template.sendBody("direct:start", "{\"event\": \"created\"}");
         template.sendBody("direct:start", "{\"event\": \"wrong\"}");
 
         assertThatThrownBy(citrus::assertIsSatisfied)
-                .isInstanceOf(ValidationException.class);
+                .isInstanceOf(AssertionError.class)
+                .hasCauseInstanceOf(ValidationException.class);
     }
 
     @Override

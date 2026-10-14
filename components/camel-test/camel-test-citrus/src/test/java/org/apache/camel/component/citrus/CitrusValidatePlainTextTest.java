@@ -30,31 +30,32 @@ class CitrusValidatePlainTextTest extends CamelTestSupport {
     @Test
     void shouldValidatePlainTextBody() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=plaintext", CitrusEndpoint.class);
-        citrus.allMessages().body("Hello Camel!");
+        citrus.validateAll().body("Hello Camel!");
         citrus.expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello Camel!");
 
         citrus.assertIsSatisfied();
-        assertThat(citrus.getReceivedCount()).isEqualTo(1);
+        assertThat(citrus.getReceivedCounter()).isEqualTo(1);
     }
 
     @Test
     void shouldFailOnPlainTextMismatch() {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=plaintext", CitrusEndpoint.class);
-        citrus.allMessages().body("Hello Camel!");
+        citrus.validateAll().body("Hello Camel!");
         citrus.expectedMessageCount(1);
 
         template.sendBody("direct:start", "Goodbye Camel!");
 
         assertThatThrownBy(citrus::assertIsSatisfied)
-                .isInstanceOf(ValidationException.class);
+                .isInstanceOf(AssertionError.class)
+                .hasCauseInstanceOf(ValidationException.class);
     }
 
     @Test
     void shouldValidateDefaultMessageType() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate", CitrusEndpoint.class);
-        citrus.allMessages().body("Default text");
+        citrus.validateAll().body("Default text");
         citrus.expectedMessageCount(1);
 
         template.sendBody("direct:default", "Default text");

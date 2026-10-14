@@ -30,9 +30,9 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldValidateAndRespond() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().allMessages().receive()
-                .body("{\"action\": \"greet\"}");
-        mock.then().allMessages().respond()
+        mock.when().receiveAll()
+                .body("{\"action\": \"greet\"}")
+                .then().respond()
                 .body("{\"greeting\": \"Hello!\"}");
         mock.expectedMessageCount(1);
 
@@ -48,9 +48,9 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldRespondWithHeaders() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().allMessages().receive()
-                .body("{\"action\": \"greet\"}");
-        mock.then().allMessages().respond()
+        mock.when().receiveAll()
+                .body("{\"action\": \"greet\"}")
+                .then().respond()
                 .body("{\"greeting\": \"Hello!\"}")
                 .header("Content-Type", "application/json")
                 .header("X-Status", "ok");
@@ -70,9 +70,9 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldRespondWithCitrusVariables() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().allMessages().receive()
-                .body("{\"action\": \"greet\", \"name\": \"@ignore@\"}");
-        mock.then().allMessages().respond()
+        mock.when().receiveAll()
+                .body("{\"action\": \"greet\", \"name\": \"@ignore@\"}")
+                .then().respond()
                 .body("{\"greeting\": \"Hello ${userName}!\"}");
         mock.expectedMessageCount(1);
 
@@ -89,9 +89,9 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldRespondWithVariablesInHeaders() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().allMessages().receive()
-                .body("{\"action\": \"check\"}");
-        mock.then().allMessages().respond()
+        mock.when().receiveAll()
+                .body("{\"action\": \"check\"}")
+                .then().respond()
                 .body("{\"result\": \"ok\"}")
                 .header("X-Correlation-Id", "${correlationId}");
         mock.expectedMessageCount(1);
@@ -110,11 +110,11 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldHandleSequentialReceiveAndRespond() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().message(0).receive().body("{\"action\": \"create\"}");
-        mock.then().message(0).respond().body("{\"id\": \"1\", \"status\": \"created\"}");
+        mock.when().receive(1).body("{\"action\": \"create\"}")
+                .then().respond().body("{\"id\": \"1\", \"status\": \"created\"}");
 
-        mock.when().message(1).receive().body("{\"action\": \"update\"}");
-        mock.then().message(1).respond().body("{\"id\": \"1\", \"status\": \"updated\"}");
+        mock.when().receive(2).body("{\"action\": \"update\"}")
+                .then().respond().body("{\"id\": \"1\", \"status\": \"updated\"}");
 
         mock.expectedMessageCount(2);
 
@@ -135,11 +135,11 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldFallBackToAllMessagesResponse() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().message(0).receive().body("{\"action\": \"first\"}");
-        mock.then().message(0).respond().body("{\"result\": \"special\"}");
+        mock.when().receive(1).body("{\"action\": \"first\"}")
+                .then().respond().body("{\"result\": \"special\"}");
 
-        mock.when().allMessages().receive().body("{\"action\": \"@ignore@\"}");
-        mock.then().allMessages().respond().body("{\"result\": \"default\"}");
+        mock.when().receiveAll().body("{\"action\": \"@ignore@\"}")
+                .then().respond().body("{\"result\": \"default\"}");
 
         mock.expectedMessageCount(3);
 
@@ -163,8 +163,8 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldUseSendAliasForRespond() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().allMessages().receive().body("{\"ping\": true}");
-        mock.then().allMessages().send().body("{\"pong\": true}");
+        mock.when().receive().body("{\"ping\": true}")
+                .then().send().body("{\"pong\": true}");
         mock.expectedMessageCount(1);
 
         Exchange result = template.send("direct:start", exchange -> {
@@ -178,8 +178,7 @@ class CitrusReceiveTest extends CamelTestSupport {
     @Test
     void shouldRespondWithoutValidation() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/responder", CitrusEndpoint.class);
-
-        mock.then().allMessages().respond()
+        mock.when().receive().then().respond()
                 .body("OK")
                 .header("status", "200");
         mock.expectedMessageCount(1);
@@ -197,9 +196,9 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldRespondWithPayloadBuilder() throws Exception {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().allMessages().receive()
-                .body("{\"action\": \"greet\"}");
-        mock.then().allMessages().respond()
+        mock.when().receiveAll()
+                .body("{\"action\": \"greet\"}")
+                .then().respond()
                 .body(testContext -> "{\"greeting\": \"Hello from builder!\"}");
         mock.expectedMessageCount(1);
 
@@ -215,9 +214,9 @@ class CitrusReceiveTest extends CamelTestSupport {
     void shouldFailOnValidationMismatch() {
         CitrusEndpoint mock = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-        mock.when().allMessages().receive()
-                .body("{\"action\": \"greet\"}");
-        mock.then().allMessages().respond()
+        mock.when().receiveAll()
+                .body("{\"action\": \"greet\"}")
+                .then().respond()
                 .body("{\"greeting\": \"Hello!\"}");
 
         Exchange result = template.send("direct:start", exchange -> {

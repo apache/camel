@@ -219,14 +219,14 @@ exchange in sequence.
 
 ==== Single validation for all exchanges
 
-Use `allMessages()` to define one validation specification that is applied to every exchange.
+Use `validateAll()` to define one validation specification that is applied to every exchange.
 The returned `MessageValidationSpec` provides a fluent API with `body()`, `header()`, and
 `validate()` methods:
 
 [source,java]
 ----
 CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
-citrus.allMessages()
+citrus.validateAll()
     .body("{\"status\": \"ok\"}")
     .header("operation", "test");
 citrus.expectedMessageCount(3);
@@ -241,17 +241,17 @@ citrus.assertIsSatisfied();
 
 ==== Per-exchange sequential validation
 
-Use `message()` to specify different validation expectations for the 1st, 2nd, 3rd, etc.
-exchange. Each call to `message()` auto-increments the index, so specs are applied in order.
+Use `validate()` to specify different validation expectations for the 1st, 2nd, 3rd, etc.
+exchange. Each call to `validate()` auto-increments the index, so specs are applied in order.
 Each incoming exchange triggers the next validation spec in sequence:
 
 [source,java]
 ----
 CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
 
-citrus.message().body("{\"event\": \"created\"}").header("action", "create");
-citrus.message().body("{\"event\": \"updated\"}").header("action", "update");
-citrus.message().body("{\"event\": \"deleted\"}").header("action", "delete");
+citrus.validate().body("{\"event\": \"created\"}").header("action", "create");
+citrus.validate().body("{\"event\": \"updated\"}").header("action", "update");
+citrus.validate().body("{\"event\": \"deleted\"}").header("action", "delete");
 citrus.expectedMessageCount(3);
 
 template.sendBodyAndHeader("direct:start", "{\"event\": \"created\"}", "action", "create");
@@ -261,24 +261,24 @@ template.sendBodyAndHeader("direct:start", "{\"event\": \"deleted\"}", "action",
 citrus.assertIsSatisfied();
 ----
 
-You can also use `message(index)` to target a specific exchange by its 0-based position.
+You can also use `validate(index)` to target a specific exchange by its 0-based position.
 
-When both `message(index)` and `allMessages()` are configured, the indexed spec takes priority —
-it replaces `allMessages()` for that exchange entirely (the two are never combined). The
-`allMessages()` spec acts as a fallback for exchanges that have no matching indexed spec.
+When both `validate(index)` and `validateAll()` are configured, the indexed spec takes priority —
+it replaces `validateAll()` for that exchange entirely (the two are never combined). The
+`validateAll()` spec acts as a fallback for exchanges that have no matching indexed spec.
 
-If an exchange arrives at an index with no matching indexed spec and no `allMessages()` fallback,
+If an exchange arrives at an index with no matching indexed spec and no `validateAll()` fallback,
 the endpoint records a failure. For the `validate` operation, the failure is collected and reported
 when `assertIsSatisfied()` is called (similar to MockEndpoint). For the `receive` operation, the
 failure is thrown immediately as an exception.
 
 [source,java]
 ----
-citrus.message(0).body("{\"event\": \"start\"}");
-citrus.allMessages().body("{\"event\": \"progress\"}").header("type", "status");
+citrus.validate(0).body("{\"event\": \"start\"}");
+citrus.validateAll().body("{\"event\": \"progress\"}").header("type", "status");
 
-// Exchange 0 → validated against message(0) only (allMessages() is NOT applied)
-// Exchange 1, 2, ... → validated against allMessages() (body + header)
+// Exchange 0 → validated against validate(0) only (validateAll() is NOT applied)
+// Exchange 1, 2, ... → validated against validateAll() (body + header)
 ----
 
 === Receive operation (request/response simulation)
@@ -395,7 +395,7 @@ such as JsonPath or XPath expressions. These are provided by the Citrus `Default
 [source,java]
 ----
 CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
-citrus.allMessages().validate(new DefaultValidations().jsonPath()
+citrus.validateAll().validate(new DefaultValidations().jsonPath()
     .expression("$.user.name", "John")
     .expression("$.user.age", "30"));
 ----
@@ -403,7 +403,7 @@ citrus.allMessages().validate(new DefaultValidations().jsonPath()
 [source,java]
 ----
 CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=xml", CitrusEndpoint.class);
-citrus.allMessages().validate(new DefaultValidations().xpath()
+citrus.validateAll().validate(new DefaultValidations().xpath()
     .expression("/order/status", "completed")
     .expression("/order/total", "99.99"));
 ----

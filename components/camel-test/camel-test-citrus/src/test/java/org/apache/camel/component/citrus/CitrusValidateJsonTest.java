@@ -31,7 +31,7 @@ class CitrusValidateJsonTest extends CamelTestSupport {
     @Test
     void shouldValidateJsonBody() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 {
                   "greeting": "Hello World!"
                 }
@@ -45,13 +45,13 @@ class CitrusValidateJsonTest extends CamelTestSupport {
                 """);
 
         citrus.assertIsSatisfied();
-        assertThat(citrus.getReceivedCount()).isEqualTo(1);
+        assertThat(citrus.getReceivedCounter()).isEqualTo(1);
     }
 
     @Test
     void shouldFailOnJsonBodyMismatch() {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 {
                   "greeting": "Hello World!"
                 }
@@ -65,13 +65,14 @@ class CitrusValidateJsonTest extends CamelTestSupport {
                 """);
 
         assertThatThrownBy(citrus::assertIsSatisfied)
-                .isInstanceOf(ValidationException.class);
+                .isInstanceOf(AssertionError.class)
+                .hasCauseInstanceOf(ValidationException.class);
     }
 
     @Test
     void shouldValidateJsonPathExpressions() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
-        citrus.allMessages().validate(new DefaultValidations().jsonPath()
+        citrus.validateAll().validate(new DefaultValidations().jsonPath()
                 .expression("$.user.name", "John")
                 .expression("$.user.age", "30"));
         citrus.expectedMessageCount(1);
@@ -91,7 +92,7 @@ class CitrusValidateJsonTest extends CamelTestSupport {
     @Test
     void shouldAutoDetectJsonMessageType() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 {
                   "greeting": "Hello World!"
                 }
@@ -110,7 +111,7 @@ class CitrusValidateJsonTest extends CamelTestSupport {
     @Test
     void shouldValidateHeaders() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
-        citrus.allMessages()
+        citrus.validateAll()
                 .body("""
                         {
                           "result": "ok"
@@ -128,7 +129,7 @@ class CitrusValidateJsonTest extends CamelTestSupport {
     @Test
     void shouldPropagateExchangePropertiesAsVariables() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 {
                   "message": "Hello ${userName}!"
                 }
@@ -150,7 +151,7 @@ class CitrusValidateJsonTest extends CamelTestSupport {
     @Test
     void shouldValidateWithPayloadBuilder() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
-        citrus.allMessages().body(testContext -> """
+        citrus.validateAll().body(testContext -> """
                 {
                   "greeting": "Hello World!"
                 }

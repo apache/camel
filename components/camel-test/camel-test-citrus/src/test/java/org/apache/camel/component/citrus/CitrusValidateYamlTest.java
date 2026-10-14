@@ -30,7 +30,7 @@ class CitrusValidateYamlTest extends CamelTestSupport {
     @Test
     void shouldValidateYamlBody() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=yaml", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 greeting: Hello World!
                 """);
         citrus.expectedMessageCount(1);
@@ -40,13 +40,13 @@ class CitrusValidateYamlTest extends CamelTestSupport {
                 """);
 
         citrus.assertIsSatisfied();
-        assertThat(citrus.getReceivedCount()).isEqualTo(1);
+        assertThat(citrus.getReceivedCounter()).isEqualTo(1);
     }
 
     @Test
     void shouldAutoDetectYamlMessageType() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 greeting: Hello World!
                 items:
                   - name: first
@@ -67,7 +67,7 @@ class CitrusValidateYamlTest extends CamelTestSupport {
     @Test
     void shouldPropagateExchangePropertiesAsVariables() throws Exception {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=yaml", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 greeting: Hello ${userName}!
                 """);
         citrus.expectedMessageCount(1);
@@ -85,7 +85,7 @@ class CitrusValidateYamlTest extends CamelTestSupport {
     @Test
     void shouldFailOnYamlBodyMismatch() {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=yaml", CitrusEndpoint.class);
-        citrus.allMessages().body("""
+        citrus.validateAll().body("""
                 greeting: Hello World!
                 """);
         citrus.expectedMessageCount(1);
@@ -95,7 +95,8 @@ class CitrusValidateYamlTest extends CamelTestSupport {
                 """);
 
         assertThatThrownBy(citrus::assertIsSatisfied)
-                .isInstanceOf(ValidationException.class);
+                .isInstanceOf(AssertionError.class)
+                .hasCauseInstanceOf(ValidationException.class);
     }
 
     @Override
