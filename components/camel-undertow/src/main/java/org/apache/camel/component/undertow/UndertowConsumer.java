@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
@@ -32,6 +33,7 @@ import io.undertow.server.handlers.accesslog.AccessLogHandler;
 import io.undertow.server.handlers.accesslog.AccessLogReceiver;
 import io.undertow.server.handlers.accesslog.JBossLoggingAccessLogReceiver;
 import io.undertow.server.handlers.form.EagerFormParsingHandler;
+import io.undertow.server.handlers.form.FormParserFactory;
 import io.undertow.util.AttachmentKey;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
@@ -118,7 +120,11 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                     wrapWithAccessLogAndHandlers(this.webSocketHandler.getUpgradeHandler(), endpoint));
         } else {
             // allow for HTTP 1.1 continue
-            HttpHandler httpHandler = new EagerFormParsingHandler().setNext(UndertowConsumer.this);
+            // form fields of a request that declares no charset are UTF-8 (as browsers send them), not the
+            // ISO-8859-1 default of Undertow; a charset that the request declares is still used
+            HttpHandler httpHandler = new EagerFormParsingHandler(
+                    FormParserFactory.builder().withDefaultCharset(StandardCharsets.UTF_8.name()).build())
+                    .setNext(UndertowConsumer.this);
             if (endpoint.getOauthHttpSecurity() != null) {
                 httpHandler = new OAuthUndertowHttpHandler(
                         endpoint.getCamelContext(), endpoint.getOauthHttpSecurity(), httpHandler, endpoint.isOptionsEnabled(),
