@@ -51,9 +51,12 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     private final GridFsEndpoint endpoint;
     private volatile ScheduledExecutorService taskExecutor;
     private volatile ExecutorService executor;
-    // the upload date of the newest file that was routed: a poll only asks for the files uploaded after it.
-    // Kept between the polls. Two threads use it: run() sets the start value on the thread of the executor,
-    // before it schedules the polls; the polls then read and move it on the thread of the taskExecutor.
+    // the polls ask for the files uploaded after this date. With the TimeStamp and PersistentTimestamp strategies it
+    // is the upload date of the newest file that was routed, kept between the polls. The strategies with a file
+    // attribute keep the start date, because the attribute already makes sure that a file is routed once, and a file
+    // whose upload date is older than one that was routed already (another uploader, clock skew) is still found.
+    // Two threads use it: run() sets the start value on the thread of the executor, before it schedules the polls;
+    // the polls then read and move it on the thread of the taskExecutor.
     private volatile Date fromDate;
 
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
@@ -144,7 +147,8 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
             return false;
         }
 
-        try (MongoCursor<GridFSFile> cursor = getGridFSFileMongoCursor(fromDate, usesTimestamp, usesAttribute)) {
+        Date pollFromDate = fromDate;
+        try (MongoCursor<GridFSFile> cursor = getGridFSFileMongoCursor(pollFromDate, usesTimestamp, usesAttribute)) {
             boolean dateModified = false;
 
             while (cursor.hasNext() && isStarted()) {
@@ -180,9 +184,12 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                             Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_DONE);
                             endpoint.getFilesCollection().findOneAndUpdate(eq("_id", fOrig.getId()), update);
                         }
-                        if (usesTimestamp && file.getUploadDate().compareTo(fromDate) > 0) {
-                            fromDate = file.getUploadDate();
+                        if (usesTimestamp && file.getUploadDate().compareTo(pollFromDate) > 0) {
+                            pollFromDate = file.getUploadDate();
                             dateModified = true;
+                            if (!usesAttribute) {
+                                fromDate = pollFromDate;
+                            }
                         }
                     } catch (Exception e) {
                         // ignore
@@ -191,7 +198,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
             }
 
             if (persistsTimestamp && dateModified) {
-                Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, fromDate);
+                Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, pollFromDate);
                 ptsCollection.findOneAndUpdate(eq("_id", persistentTimestamp.getObjectId("_id")), update);
             }
         }

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,16 +35,21 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSFile;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.bson.BsonArray;
 import org.bson.BsonDocument;
 import org.bson.BsonObjectId;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,7 +60,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * The consumer with a timestamp query strategy against a fake bucket that answers the upload date query of each poll
- * the way MongoDB does: a file that was routed must not be routed again by the following polls.
+ * the way MongoDB does: a file that was routed must not be routed again by the following polls. With a file attribute,
+ * the fake files collection marks a file as the consumer asks, and the bucket no longer returns a marked file.
  */
 class GridFsConsumerTimestampTest {
 
@@ -62,8 +70,12 @@ class GridFsConsumerTimestampTest {
     private final List<GridFSFile> stored = new CopyOnWriteArrayList<>();
     private final List<String> routed = new CopyOnWriteArrayList<>();
     private final List<Date> persisted = new CopyOnWriteArrayList<>();
+    // the ids of the files that the consumer has marked with its file attribute
+    private final Set<BsonValue> marked = ConcurrentHashMap.newKeySet();
     private final GridFSBucket bucket = mock(GridFSBucket.class);
     private final MongoDatabase database = mock(MongoDatabase.class);
+    @SuppressWarnings("unchecked")
+    private final MongoCollection<GridFSFile> files = mock(MongoCollection.class);
 
     private volatile CountDownLatch polls = new CountDownLatch(0);
     private CamelContext context;
@@ -86,6 +98,15 @@ class GridFsConsumerTimestampTest {
                     .thenReturn(stored.stream().filter(f -> f.getFilename().equals(name)).findFirst().orElseThrow());
             return stream;
         });
+        // the consumer marks a file before it routes it: only a file that is not marked yet is returned
+        when(files.findOneAndUpdate(any(Bson.class), any(Bson.class), any(FindOneAndUpdateOptions.class)))
+                .thenAnswer(invocation -> {
+                    BsonValue id = find(toDocument(invocation.getArgument(0)), "_id");
+                    return marked.add(id)
+                            ? stored.stream().filter(f -> f.getId().equals(id)).findFirst().orElseThrow() : null;
+                });
+        MongoCollection<Document> timestamps = timestampCollection();
+        when(database.getCollection("camel-timestamps")).thenReturn(timestamps);
     }
 
     @AfterEach
@@ -120,9 +141,6 @@ class GridFsConsumerTimestampTest {
 
     @Test
     void persistentTimestampStrategyRoutesAFileOnce() throws Exception {
-        MongoCollection<Document> timestamps = timestampCollection();
-        when(database.getCollection("camel-timestamps")).thenReturn(timestamps);
-
         startConsumer(QueryStrategy.PersistentTimestamp);
 
         GridFSFile first = file("first", 60);
@@ -131,6 +149,35 @@ class GridFsConsumerTimestampTest {
 
         assertEquals(List.of("first"), routed, "three polls saw the file, it must be routed by the first of them only");
         assertEquals(List.of(first.getUploadDate()), persisted, "the timestamp is stored when it moves, not at every poll");
+    }
+
+    @Test
+    void timestampStrategySkipsAFileWithAnOlderUploadDateThanARoutedFile() throws Exception {
+        startConsumer(QueryStrategy.TimeStamp);
+
+        stored.add(file("newer", 120));
+        awaitFullPolls(2);
+        // visible only now, but uploaded before the routed file (another uploader, or a client with another clock)
+        stored.add(file("older", 60));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("newer"), routed, "the strategy only asks for files uploaded after the newest routed file");
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = QueryStrategy.class, names = { "TimeStampAndFileAttribute", "PersistentTimestampAndFileAttribute" })
+    void strategyWithFileAttributeRoutesAFileWithAnOlderUploadDateThanARoutedFile(QueryStrategy strategy)
+            throws Exception {
+        startConsumer(strategy);
+
+        stored.add(file("newer", 120));
+        awaitFullPolls(2);
+        // visible only now, but uploaded before the routed file (another uploader, or a client with another clock)
+        stored.add(file("older", 60));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("newer", "older"), routed,
+                "the file attribute makes sure a file is routed once, the query keeps the start date");
     }
 
     private void startConsumer(QueryStrategy strategy) {
@@ -145,6 +192,11 @@ class GridFsConsumerTimestampTest {
             @Override
             public MongoDatabase getDB() {
                 return database;
+            }
+
+            @Override
+            public MongoCollection<GridFSFile> getFilesCollection() {
+                return files;
             }
         };
         endpoint.setCamelContext(context);
@@ -177,18 +229,41 @@ class GridFsConsumerTimestampTest {
     }
 
     /**
-     * Evaluates the <tt>{uploadDate: {$gt: date}}</tt> query of the consumer on the stored files.
+     * Evaluates the query of the consumer on the stored files: <tt>{uploadDate: {$gt: date}}</tt>, and with a file
+     * attribute also <tt>{camel-processed: null}</tt>.
      */
     private List<GridFSFile> filesUploadedAfter(Bson query) {
-        BsonDocument document = query.toBsonDocument(BsonDocument.class, MongoClientSettings.getDefaultCodecRegistry());
-        long after = document.getDocument(GridFsConstants.GRIDFS_FILE_KEY_UPLOAD_DATE).getDateTime("$gt").getValue();
+        BsonDocument document = toDocument(query);
+        long after = find(document, GridFsConstants.GRIDFS_FILE_KEY_UPLOAD_DATE).asDocument().getDateTime("$gt").getValue();
+        boolean notMarkedOnly = find(document, "camel-processed") != null;
         List<GridFSFile> found = new ArrayList<>();
         for (GridFSFile file : stored) {
-            if (file.getUploadDate().getTime() > after) {
+            if (file.getUploadDate().getTime() > after && !(notMarkedOnly && marked.contains(file.getId()))) {
                 found.add(file);
             }
         }
         return found;
+    }
+
+    private static BsonDocument toDocument(Bson bson) {
+        return bson.toBsonDocument(BsonDocument.class, MongoClientSettings.getDefaultCodecRegistry());
+    }
+
+    /**
+     * The value of the given key in a filter, or in one of the filters of an <tt>$and</tt>.
+     */
+    private static BsonValue find(BsonDocument filter, String key) {
+        if (filter.containsKey(key)) {
+            return filter.get(key);
+        }
+        BsonArray and = filter.getArray("$and", new BsonArray());
+        for (BsonValue part : and) {
+            BsonValue value = find(part.asDocument(), key);
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -212,7 +287,7 @@ class GridFsConsumerTimestampTest {
         when(timestamps.find(any(Bson.class))).thenReturn(none);
         when(timestamps.findOneAndUpdate(any(Bson.class), any(Bson.class))).thenAnswer(invocation -> {
             Bson update = invocation.getArgument(1);
-            BsonDocument document = update.toBsonDocument(BsonDocument.class, MongoClientSettings.getDefaultCodecRegistry());
+            BsonDocument document = toDocument(update);
             persisted.add(new Date(
                     document.getDocument("$set").getDateTime(GridFsConstants.PERSISTENT_TIMESTAMP_KEY).getValue()));
             return null;

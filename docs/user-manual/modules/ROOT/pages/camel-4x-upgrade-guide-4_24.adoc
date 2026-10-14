@@ -671,5 +671,10 @@ looks like an option name and is written in dash case as a whole, underscores in
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
 every file uploaded since the consumer started again at each poll (every `delay`, 500 ms by default). The upload
-date of the last routed file is now kept between the polls, so a file is routed once. A route that relied on
+date of the newest routed file is now kept between the polls, so a file is routed once. A route that relied on
 receiving the same file repeatedly now receives it once.
+These two strategies now skip a file whose upload date is older than that of a file already routed (as they did
+before Camel 3.13), for example a file from a second uploader, or from a client with another clock, that becomes
+visible later: GridFS sets the upload date on the client. Use `TimeStampAndFileAttribute` or
+`PersistentTimestampAndFileAttribute` if such files must be routed: these strategies keep the start date in their
+query, as before, and mark each file so that it is routed once.
