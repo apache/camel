@@ -77,7 +77,7 @@ public final class CamelJBangConstants {
     public static final String PARENT_POM = "camel.jbang.parentPom";
 
     @Metadata(description = "Java version",
-              javaType = "String", enums = "21", defaultValue = "21")
+              javaType = "String", enums = "21,25", defaultValue = "21")
     public static final String JAVA_VERSION = "camel.jbang.javaVersion";
 
     @Metadata(description = "Apache Camel Kamelets version. By default the Kamelets are the same version as Camel.",
