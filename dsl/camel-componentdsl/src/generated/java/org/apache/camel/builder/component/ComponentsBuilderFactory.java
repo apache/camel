@@ -1065,7 +1065,7 @@ public interface ComponentsBuilderFactory {
      * Citrus message validation component for testing
      * 
      * Category: testing
-     * Since: 4.23
+     * Since: 4.24
      * Maven coordinates: org.apache.camel:camel-test-citrus
      * 
      * @return the dsl builder
