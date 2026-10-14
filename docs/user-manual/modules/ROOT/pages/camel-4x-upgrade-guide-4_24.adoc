@@ -275,6 +275,24 @@ now read as a local date-time without a zone (`getDate()` returns a `LocalDateTi
 definition of an earlier message, if there was one. A calendar that defines a `TZID` an earlier message has defined
 differently is now read with its own definition.
 
+=== camel-milo - the OPC UA client validates the server certificate
+
+When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components
+now validate the certificate of the OPC UA server. Before, any server certificate was accepted, and no option allowed
+to validate it.
+
+Configure the trusted certificates with the new `trustListDirectory` option: put the certificate of the server, or of
+the CA that issued it, in the `trusted/certs` directory of the trust list. A rejected server certificate is written to
+`rejected/certs`, from where it can be moved to `trusted/certs` once it has been checked. A custom validator can be
+configured with the new `certificateValidator` option instead.
+
+With neither option, the client does not connect to such an endpoint, and logs that the server certificate cannot be
+validated. To restore the previous behaviour, set the new `trustAllCertificates` option to `true`. This is insecure:
+the client then does not authenticate the server.
+
+The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
+use the security policy `None` are not affected.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
