@@ -53,7 +53,7 @@ if "%JAVA_OPTS%" == "" set JAVA_OPTS=-Xmx512m
 set "LAUNCHER_JAR="
 for %%i in ("%BASEDIR%\camel-launcher-*.jar") do (
   echo %%~nxi| findstr /i /e /l /c:"-sources.jar" /c:"-javadoc.jar" > nul
-  if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%i"
+  if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%~fi"
 )
 
 @REM Execute Camel CLI, preserving arguments and the child exit code
