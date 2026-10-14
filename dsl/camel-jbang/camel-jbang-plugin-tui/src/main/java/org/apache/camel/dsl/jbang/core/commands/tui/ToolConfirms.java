@@ -122,10 +122,12 @@ final class ToolConfirms {
         try {
             Path path = Path.of(name);
             if (!path.isAbsolute()) {
-                if (workingDirectory == null) {
+                // not known, blank or relative, it cannot place the file: the JVM of the TUI is elsewhere
+                Path work = workingDirectory != null ? Path.of(workingDirectory) : null;
+                if (work == null || !work.isAbsolute()) {
                     return name;
                 }
-                path = Path.of(workingDirectory).resolve(path);
+                path = work.resolve(path);
             }
             file = realPath(path);
         } catch (InvalidPathException e) {

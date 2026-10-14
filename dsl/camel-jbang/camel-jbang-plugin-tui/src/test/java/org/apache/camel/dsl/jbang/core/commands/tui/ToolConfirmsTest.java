@@ -98,8 +98,13 @@ class ToolConfirmsTest {
         assertThat(ToolConfirms.fileOutsideProject("file:../secret.txt", work, project)).isNotNull();
         assertThat(ToolConfirms.fileOutsideProject("file:missing/../../secret.txt", work, project))
                 .isEqualTo(secret.toRealPath().toString());
-        // a relative file when the working directory is not known, any file when the project is not known
+        // a relative file when the working directory is not known (or blank or relative, which the JVM of the TUI
+        // would resolve), any file when the project is not known
         assertThat(ToolConfirms.fileOutsideProject("file:data/order.json", null, project)).isEqualTo("data/order.json");
+        assertThat(ToolConfirms.fileOutsideProject("file:data/order.json", "", project)).isEqualTo("data/order.json");
+        assertThat(ToolConfirms.fileOutsideProject("file:data/order.json", " ", project)).isEqualTo("data/order.json");
+        assertThat(ToolConfirms.fileOutsideProject("file:data/order.json", "project", project))
+                .isEqualTo("data/order.json");
         assertThat(ToolConfirms.fileOutsideProject("file:data/order.json", work, null)).isNotNull();
 
         // wherever the message goes, even to the log
