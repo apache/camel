@@ -18,6 +18,7 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
@@ -43,8 +44,55 @@ public final class SemanticMediaInput {
         return isMedia(input) ? (List<?>) ((Map<?, ?>) input).get(PARTS) : List.of();
     }
 
+    public static boolean hasImages(Object input) {
+        return input instanceof String text && text.startsWith("data:image/")
+                || parts(input).stream().anyMatch(item -> item instanceof Map<?, ?> part && "image".equals(part.get("type")));
+    }
+
+    public static boolean hasImages(Object body, Object headers) {
+        return hasImages(body) || body instanceof String && hasImageContentType(headers);
+    }
+
+    public static void validateImageSize(Object body, Object headers, int maxBytes) {
+        if (body instanceof String text && !text.startsWith("data:image/") && hasImageContentType(headers)) {
+            validateBase64Size(text, 0, maxBytes);
+        } else {
+            validateImageSize(body, maxBytes);
+        }
+    }
+
+    private static boolean hasImageContentType(Object headers) {
+        return headers instanceof Map<?, ?> values && values.entrySet().stream()
+                .anyMatch(entry -> "Content-Type".equalsIgnoreCase(entry.getKey().toString())
+                        && entry.getValue() instanceof String type
+                        && type.trim().toLowerCase(Locale.ROOT).startsWith("image/"));
+    }
+
+    /** Check encoded images before sending a tooling request, without decoding their payloads. */
+    public static void validateImageSize(Object input, int maxBytes) {
+        if (input instanceof String data && data.startsWith("data:image/")) {
+            int offset = imageDataOffset(data);
+            if (offset >= 0) {
+                validateBase64Size(data, offset, maxBytes);
+            }
+        } else {
+            for (Object item : parts(input)) {
+                if (item instanceof Map<?, ?> part && "image".equals(part.get("type"))) {
+                    validateImageSize(part.get("data"), maxBytes);
+                }
+            }
+        }
+    }
+
+    private static void validateBase64Size(String data, int offset, int maxBytes) {
+        int padding = data.endsWith("==") ? 2 : data.endsWith("=") ? 1 : 0;
+        if ((data.length() - offset) * 3L / 4 - padding > maxBytes) {
+            throw new IllegalArgumentException("Image exceeds the expert maxImageBytes limit of " + maxBytes + " bytes");
+        }
+    }
+
     /** Read only an explicitly requested local image. This must run off the TUI render thread. */
-    public static Object readImage(String value) {
+    public static Object readImage(String value, int maxBytes) {
         if (!value.startsWith("image:")) {
             return value;
         }
@@ -56,12 +104,40 @@ public final class SemanticMediaInput {
         if (type == null) {
             throw new IllegalArgumentException("image: requires a local PNG, JPEG, GIF or WebP file");
         }
+        if (maxBytes <= 0) {
+            throw new IllegalArgumentException("The selected expert must declare a positive maxImageBytes limit");
+        }
+        String tooLarge = "Image file exceeds the expert maxImageBytes limit of " + maxBytes + " bytes";
         try {
-            String data = "data:" + type + ";base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+            if (Files.size(path) > maxBytes) {
+                throw new IllegalArgumentException(tooLarge);
+            }
+            byte[] bytes;
+            try (InputStream input = Files.newInputStream(path)) {
+                // Bound the read too: a file can grow after the size check.
+                bytes = input.readNBytes(maxBytes);
+                if (input.read() != -1) {
+                    throw new IllegalArgumentException(tooLarge);
+                }
+            }
+            String data = "data:" + type + ";base64," + Base64.getEncoder().encodeToString(bytes);
             return Map.of(PARTS, List.of(Map.of("type", "image", "data", data)));
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot read the selected image file", e);
         }
+    }
+
+    /** Read the configured limit advertised by an image-capable expert operation. */
+    public static int imageMaxBytes(Map<?, ?> operation) {
+        if (operation != null && operation.get("contract") instanceof Map<?, ?> contract
+                && contract.get("inputTypes") instanceof List<?> types && types.contains("image")
+                && contract.get("maxImageBytes") instanceof Number limit
+                && limit.longValue() > 0 && limit.longValue() <= Integer.MAX_VALUE
+                && limit.doubleValue() == limit.longValue()) {
+            return limit.intValue();
+        }
+        throw new IllegalArgumentException(
+                "The selected expert must advertise image support and a positive maxImageBytes limit");
     }
 
     /** Preserve metadata in terminal/JSON displays without printing image payloads. */

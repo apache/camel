@@ -119,6 +119,7 @@ public class OpenAIDecisionsSemanticAdapter implements SemanticAdapter, CamelCon
     private static final SemanticCapabilities CAPABILITIES = SemanticCapabilities.from(OpenAIDecisionsSemanticAdapter.class);
     private CamelContext camelContext;
     private String endpointUri = "openai:decisions";
+    private int maxImageBytes = 10_000_000;
     private volatile OpenAIEndpoint endpoint;
 
     @Override
@@ -133,6 +134,19 @@ public class OpenAIDecisionsSemanticAdapter implements SemanticAdapter, CamelCon
 
     public String getEndpointUri() {
         return endpointUri;
+    }
+
+    @Override
+    public int getMaxImageBytes() {
+        return maxImageBytes;
+    }
+
+    /** Maximum bytes per image before base64 encoding. Defaults to 10 MB. Configure before evaluation. */
+    public void setMaxImageBytes(int maxImageBytes) {
+        if (maxImageBytes <= 0) {
+            throw new IllegalArgumentException("maxImageBytes must be greater than zero");
+        }
+        this.maxImageBytes = maxImageBytes;
     }
 
     /** Configured Decisions endpoint, including model and transport options. Set before the first evaluation. */
@@ -212,6 +226,7 @@ public class OpenAIDecisionsSemanticAdapter implements SemanticAdapter, CamelCon
 
     @Override
     public void validateState(Object state) {
+        SemanticInput.validateImageSize(SemanticInput.normalize(state), maxImageBytes);
         OpenAIDecisionsSupport.validateInput(input(SemanticInput.normalize(state)));
     }
 
@@ -227,6 +242,7 @@ public class OpenAIDecisionsSemanticAdapter implements SemanticAdapter, CamelCon
             throw new IllegalArgumentException("OpenAI Decisions requires 1 to 200 evaluations per batch");
         }
         Object input = SemanticInput.normalize(state);
+        SemanticInput.validateImageSize(input, maxImageBytes);
         evaluations.forEach((name, evaluation) -> {
             text(name);
             validate(evaluation);

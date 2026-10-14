@@ -183,6 +183,9 @@ final class SemanticDetails {
         result.add(Line.from(Span.styled("Operation contract", Theme.label())));
         result.add(Line.empty());
         add(result, "Input", inputTypes(op));
+        if (contract(op).containsKey("maxImageBytes")) {
+            add(result, "Maximum image bytes", text(contract(op), "maxImageBytes"));
+        }
         add(result, "Accepts", text(contract(op), "inputRequirements"));
         result.add(Line.empty());
         result.addAll(result(op, definition.get("parameters")));

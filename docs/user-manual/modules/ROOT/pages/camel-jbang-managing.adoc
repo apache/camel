@@ -343,6 +343,15 @@ example `--parameter=threshold=json:0.7`, `--variable=enabled=json:true`, or
 with `json:` or `file:`. `--body=file:sample.txt` and `--input=file:sample.txt` read the
 file as UTF-8 text.
 
+For an expert accepting images, `--body=image:/path/picture.png` or
+`--input=image:/path/picture.png` reads a local PNG, JPEG, GIF or WebP file. Before reading,
+the CLI queries the selected expert's runtime metadata for its `maxImageBytes` limit.
+It checks both the file size and the actual read, and checks inline images before submitting
+an evaluation. Configure the limit on the expert bean; the OpenAI Decisions expert defaults
+to 10 MB (10,000,000 bytes) per image before base64 encoding. Both the CLI and TUI use that
+same configuration. Missing image support or limit metadata prevents local image loading;
+no evaluation is submitted. Use a JSON string to pass a literal `image:` prefix.
+
 Evaluation prints the value, available probability or probabilities, confidence,
 provider metadata, elapsed milliseconds and any error. It invokes the configured
 provider and may incur charges. `--evaluation-timeout` bounds runtime evaluation

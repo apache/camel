@@ -552,6 +552,13 @@ envelope; the file is read only when Run is requested. Unchanged text loaded fro
 literal text, including an `image:` prefix. Definition samples also accept
 `"body":"image:/path/picture.png"`.
 
+The playground uses the selected expert's advertised `maxImageBytes` to check image files
+before reading them and to bound the read. Inline image payloads are also checked before
+submission. Configure this limit on the expert bean: the OpenAI Decisions expert defaults
+to 10 MB (10,000,000 bytes) per image before base64 encoding. The CLI and route evaluations
+use the same expert configuration. Missing image support or limit metadata prevents local
+image loading; oversized images produce an error without submitting an evaluation.
+
 The latest page refreshes every second; `Space` pauses or resumes polling. Older pages stay fixed
 until explicitly refreshed. Filters use exact values; `definition` and `operation` apply to all retained history.
 `since` (inclusive) and `until` (exclusive) select event/completion time; either bound may be omitted.

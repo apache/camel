@@ -16,6 +16,8 @@
  */
 package org.apache.camel.semantic;
 
+import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.List;
@@ -66,9 +68,15 @@ public final class SemanticInput {
 
     /**
      * Select an image body using Content-Type. Streams become replayable Camel stream caches before reading, so later
-     * route steps can still consume the body. Headers do not affect explicitly selected headers or variables.
+     * route steps can still consume the body. Headers do not affect explicitly selected headers or variables. String
+     * image bodies contain base64 or an image data URL; the selected expert validates the image data and limits.
      */
     public static Object body(Exchange exchange) throws NoTypeConversionAvailableException {
+        return body(exchange, Integer.MAX_VALUE);
+    }
+
+    /** Normalize an image body within the selected experts' per-image byte limit. */
+    public static Object body(Exchange exchange, int maxImageBytes) throws NoTypeConversionAvailableException {
         Object input = exchange.getMessage().getBody();
         String contentType = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
         String mediaType = contentType == null ? "" : contentType.split(";", 2)[0].trim().toLowerCase(Locale.ROOT);
@@ -81,23 +89,28 @@ public final class SemanticInput {
         if (!mediaType.matches("image/[a-z0-9.+-]{1,100}")) {
             throw new IllegalArgumentException("Invalid image Content-Type");
         }
-        if (input instanceof InputStream && !(input instanceof StreamCache)) {
-            input = exchange.getContext().getTypeConverter().mandatoryConvertTo(StreamCache.class, exchange, input);
+        if (input instanceof InputStream stream && !(input instanceof StreamCache)) {
+            input = exchange.getContext().getTypeConverter().mandatoryConvertTo(StreamCache.class, exchange,
+                    limitedImageStream(stream, maxImageBytes));
             exchange.getMessage().setBody(input);
         }
         if (input instanceof StreamCache cache) {
             try {
                 cache.reset();
+                checkImageSize(cache.length(), maxImageBytes);
                 byte[] data = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, cache);
+                checkImageSize(data.length, maxImageBytes);
                 return ofParts(List.of(image(data, mediaType)));
             } finally {
                 cache.reset();
             }
         }
         if (input instanceof byte[] data) {
+            checkImageSize(data.length, maxImageBytes);
             return ofParts(List.of(image(data, mediaType)));
         }
         if (input instanceof String text) {
+            checkImageSize(imageBytes(text), maxImageBytes);
             return text.startsWith("data:image/")
                     ? normalize(text)
                     : ofParts(List.of(image("data:" + mediaType + ";base64," + text)));
@@ -106,6 +119,58 @@ public final class SemanticInput {
             return input;
         }
         throw new IllegalArgumentException("An image body requires bytes, an InputStream, or a base64 string");
+    }
+
+    /**
+     * Check decoded image sizes without decoding or duplicating payloads; encoding validation belongs to the expert.
+     */
+    public static void validateImageSize(Object input, int maxImageBytes) {
+        if (isMedia(input)) {
+            for (Object item : parts(input)) {
+                if (item instanceof Map<?, ?> part && "image".equals(part.get("type"))
+                        && part.get("data") instanceof String data) {
+                    checkImageSize(imageBytes(data), maxImageBytes);
+                }
+            }
+        }
+    }
+
+    private static long imageBytes(String data) {
+        int start = data.startsWith("data:") ? data.indexOf(';') : -1;
+        start = start >= 0 && data.startsWith(";base64,", start) ? start + 8 : 0;
+        int padding = data.endsWith("==") ? 2 : data.endsWith("=") ? 1 : 0;
+        return (data.length() - start) * 3L / 4 - padding;
+    }
+
+    private static void checkImageSize(long bytes, int maxImageBytes) {
+        if (bytes > maxImageBytes) {
+            throw new IllegalArgumentException("Image exceeds the expert maxImageBytes limit of " + maxImageBytes + " bytes");
+        }
+    }
+
+    private static InputStream limitedImageStream(InputStream stream, int maxImageBytes) {
+        return new FilterInputStream(stream) {
+            private long count;
+
+            @Override
+            public int read() throws IOException {
+                int value = in.read();
+                if (value != -1) {
+                    checkImageSize(++count, maxImageBytes);
+                }
+                return value;
+            }
+
+            @Override
+            public int read(byte[] bytes, int offset, int length) throws IOException {
+                int read = in.read(bytes, offset, (int) Math.min(length, maxImageBytes - count + 1));
+                if (read > 0) {
+                    count += read;
+                    checkImageSize(count, maxImageBytes);
+                }
+                return read;
+            }
+        };
     }
 
     public static boolean isMedia(Object input) {
