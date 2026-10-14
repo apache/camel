@@ -87,6 +87,35 @@ java -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 -jar camel-jbang-
 
 IMPORTANT: The MCP server does **not** expose REST endpoints — all communication uses JSON-RPC over the MCP protocol.
 
+== Server instructions
+
+The `initialize` response carries `instructions`: a short plain-text guide (under 4096 characters) that the agent
+host gives the model at session start, before any tool call and before any tool description is loaded. It answers the
+questions that no tool answers and that agents otherwise go hunting for:
+
+* The first line is a one-sentence summary with the Camel version of the server: look components up by URI scheme
+  and validate with `camel_validate_source` before finishing.
+* The rules: components by URI scheme (`smtp`, not `mail`; `platform-http` for an HTTP server); `onException`,
+  `errorHandler`, `routeConfiguration`, `intercept` and `onCompletion` are top-level entries, not steps, and
+  `handled`/`continued` are expressions; under `camel run` the HTTP server needs `camel.server.enabled=true` plus
+  `camel.server.port`, and extra jars go in `--dep` or a `//DEPS` line, not in a properties file passed on the command
+  line; the mail Subject, From and To headers are ignored unless `useHeaderSubject`, `useHeaderFrom` and
+  `useHeaderRecipients` are `true`; remove the `Camel*` headers you did not set yourself before an http or mail producer; `xslt` gets the headers
+  and variables as stylesheet parameters; a source that passes the schema can still fail at runtime, so run it and
+  read the log.
+* Which tool answers which question, by tool name: `camel_catalog_doc`, `camel_catalog_find`,
+  `camel_catalog_sample`, `camel_catalog_examples`, `camel_dependency_for_class`, `camel_validate_source`,
+  `camel_run`, `camel_get_log`, `camel_get_errors` and `camel_project_overview`.
+
+How hosts use it: Claude Code loads it at session start (up to 4096 characters), which matters most when it defers the
+tool schemas and the model sees only tool names; Codex CLI reads it as server-wide guidance and weighs the first 512
+characters most; OpenCode sends the full text in an `<mcp_instructions>` block; Pi puts only the first line in the
+system prompt.
+
+To replace the text, set `quarkus.mcp.server.server-info.instructions`, for example
+`-Dquarkus.mcp.server.server-info.instructions="..."` with `java -jar`. When that property is set, the server sends
+its value instead of the built-in text.
+
 [[Setup]]
 == Setup
 
