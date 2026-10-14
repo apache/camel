@@ -91,18 +91,7 @@
             <artifactId>tamboui-markdown</artifactId>
             <version>${tamboui-version}</version>
         </dependency>
-        <dependency>
-            <groupId>dev.tamboui</groupId>
-            <artifactId>tamboui-aesh-backend</artifactId>
-            <version>${tamboui-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.aesh</groupId>
-            <artifactId>terminal-http</artifactId>
-            <version>${aesh-terminal-version}</version>
-        </dependency>
-        <!-- Netty is pulled in transitively by terminal-http, but TuiWebServer uses these
-             packages directly, so declare them explicitly to keep the contract clear. -->
+        <!-- TuiWebServer serves the browser page of camel tui and its WebSocket with Netty -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>

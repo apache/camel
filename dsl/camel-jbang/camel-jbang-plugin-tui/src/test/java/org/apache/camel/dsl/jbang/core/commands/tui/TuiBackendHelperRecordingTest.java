@@ -33,12 +33,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Verifies that {@code camel tui --record} actually engages TamboUI's recording backend.
  * <p>
- * camel-tui must supply an explicit {@link dev.tamboui.backend.jline3.JLineBackend} (auto-discovery would otherwise
- * pick the Aesh backend that is on the classpath for {@code --web}). Before TamboUI 0.5.0 only backends created by
- * TamboUI's own factory were wrapped for recording, so camel-tui wrapped its explicit backend itself; since 0.5.0
- * {@code TuiRunner.create} does that for explicit backends too. When the wrapping goes missing, {@code --record}
- * replays no tape and writes no {@code .cast} file, yet still exits cleanly, so only a test like this one catches the
- * regression.
+ * camel-tui supplies an explicit {@link dev.tamboui.backend.jline3.JLineBackend} rather than leaving the choice to
+ * TamboUI's auto-discovery. Before TamboUI 0.5.0 only backends created by TamboUI's own factory were wrapped for
+ * recording, so camel-tui wrapped its explicit backend itself; since 0.5.0 {@code TuiRunner.create} does that for
+ * explicit backends too. When the wrapping goes missing, {@code --record} replays no tape and writes no {@code .cast}
+ * file, yet still exits cleanly, so only a test like this one catches the regression.
  */
 // RecordingConfig.load() also reads fps and duration, so every key camel-tui sets has to be managed here: a value
 // leaking out of this class would silently reconfigure recording in an unrelated test. junit-pioneer clears each key
