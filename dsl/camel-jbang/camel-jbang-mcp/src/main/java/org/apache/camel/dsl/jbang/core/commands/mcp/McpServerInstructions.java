@@ -60,9 +60,9 @@ public class McpServerInstructions implements InitialResponseInfo {
             - YAML DSL: onException, errorHandler, routeConfiguration, intercept and onCompletion are top-level \
             entries beside route (or inside routeConfiguration), never steps. handled and continued are \
             expressions: handled: {constant: "true"}.
-            - camel run: the HTTP server needs camel.server.enabled=true plus camel.server.port. Extra jars go in \
-            --dep groupId:artifactId:version or a //DEPS line in a source file; camel.jbang.dependencies in a \
-            properties file passed on the command line is ignored.
+            - camel run: camel.server.port (or camel run --port) sets the HTTP port. Extra jars: a //DEPS line in a \
+            source file, camel.jbang.dependencies=group:artifact:version in application.properties, or --dep on the \
+            command line (camel_run has no dependencies argument, so use one of the first two).
             - mail producer: the Subject, From and To headers are ignored unless useHeaderSubject=true, \
             useHeaderFrom=true and useHeaderRecipients=true; otherwise use the subject, from and to options.
             - Before an http or mail producer, remove the Camel* headers you did not set yourself \

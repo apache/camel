@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -63,7 +64,7 @@ class McpServerInstructionsTest {
         assertThat(text).containsSubsequence(
                 "URI scheme: smtp", "platform-http",
                 "top-level", "handled: {constant: \"true\"}",
-                "camel.server.enabled=true", "camel.server.port", "--dep", "//DEPS",
+                "camel.server.port", "//DEPS", "camel.jbang.dependencies", "--dep",
                 "useHeaderSubject=true", "useHeaderFrom=true", "useHeaderRecipients=true",
                 "removeHeaders", "Camel*",
                 "xslt", "headers and variables",
@@ -102,7 +103,12 @@ class McpServerInstructionsTest {
 
     /** The names of the {@code @Tool} methods of every class in the package of the MCP server. */
     private static Set<String> toolNames() throws IOException {
-        Path classes = Path.of(McpServerInstructions.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+        Path classes;
+        try {
+            classes = Path.of(McpServerInstructions.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
         String pkg = McpServerInstructions.class.getPackageName();
         Path dir = classes.resolve(pkg.replace('.', '/'));
         Set<String> names = new HashSet<>();
