@@ -98,15 +98,15 @@ class SemanticAuditRegressionTest {
     void preStartInvocationDoesNotFreezeConfigurationAndLateObserversAreExplicitlyStartupOnly() throws Exception {
         try (var context = new DefaultCamelContext()) {
             var audit = SemanticAuditService.get(context);
-            audit.decision(null, Map.of("action", "continue"), List.of());
+            complete(audit);
             assertThat(audit.isStarted()).isFalse();
             audit.configure("audit.yaml", auditConfiguration());
             AtomicInteger before = new AtomicInteger();
             AtomicInteger after = new AtomicInteger();
-            context.getRegistry().bind("before", decisionObserver(before));
+            context.getRegistry().bind("before", completionObserver(before));
             context.start();
-            context.getRegistry().bind("after", decisionObserver(after));
-            audit.decision(null, Map.of("action", "allow"), List.of());
+            context.getRegistry().bind("after", completionObserver(after));
+            complete(audit);
             assertThatThrownBy(() -> audit.configure("audit.yaml", SemanticAuditConfiguration.DISABLED))
                     .hasMessageContaining("restart");
             audit.stop();
@@ -126,15 +126,15 @@ class SemanticAuditRegressionTest {
             context.getRegistry().bind("reader", reader);
             var audit = SemanticAuditService.get(context);
             audit.configure("test", new SemanticAuditConfiguration(false, Map.of(), List.of("memory"), "reader", 10, 10));
-            var decisions = new AtomicInteger();
-            context.getRegistry().bind("observer", decisionObserver(decisions));
+            var completions = new AtomicInteger();
+            context.getRegistry().bind("observer", completionObserver(completions));
             context.start();
             var pool = Executors.newFixedThreadPool(2);
             try {
                 var reading = pool.submit(audit::getReader);
                 assertThat(reader.entered.await(5, TimeUnit.SECONDS)).isTrue();
-                pool.submit(() -> audit.decision(null, Map.of("action", "allow"), List.of())).get(2, TimeUnit.SECONDS);
-                assertThat(decisions).hasValue(1);
+                pool.submit(() -> complete(audit)).get(2, TimeUnit.SECONDS);
+                assertThat(completions).hasValue(1);
                 reader.release.countDown();
                 assertThat(reading.get(5, TimeUnit.SECONDS)).isSameAs(reader);
             } finally {
@@ -197,7 +197,7 @@ class SemanticAuditRegressionTest {
     }
 
     @Test
-    void declarationRejectedDuringPredicateUseStillSuppliesDecisionEvidence() throws Exception {
+    void declarationRejectedDuringPredicateUseStillRecordsFailedEvaluation() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("choice", new ChoiceExpert());
             var audit = SemanticAuditService.get(context);
@@ -209,14 +209,10 @@ class SemanticAuditRegressionTest {
             exchange.getMessage().setBody("text");
             Predicate predicate = (Predicate) context.resolveLanguage("semantic").createExpression("ref:check");
             assertThatThrownBy(() -> predicate.matches(exchange)).hasMessageContaining("boolean");
-            var decision = new SemanticAuditDecision();
-            decision.setFields(Map.of("action", "review", "reasonCode", "invalid_declaration"));
-            decision.process(exchange);
             audit.stop();
             var records = audit.getReader().query(query()).getRecords();
-            assertThat(records).hasSize(2);
-            assertThat(records.get(0).toMap()).containsEntry("evidence", List.of(records.get(1).getEventId()));
-            assertThat(records.get(1).toMap()).containsEntry("reasonCode", "invalid_declaration");
+            assertThat(records).singleElement()
+                    .satisfies(record -> assertThat(record.toMap()).containsEntry("reasonCode", "invalid_declaration"));
         }
     }
 
@@ -256,16 +252,13 @@ class SemanticAuditRegressionTest {
         }
     }
 
-    private static SemanticObserver decisionObserver(AtomicInteger counter) {
-        return new SemanticObserver() {
-            public Observation started(SemanticAuditRecord record, Object parent) {
-                return null;
-            }
+    private static SemanticObserver completionObserver(AtomicInteger counter) {
+        return (record, parent) -> completed -> counter.incrementAndGet();
+    }
 
-            public void decision(SemanticAuditRecord record) {
-                counter.incrementAndGet();
-            }
-        };
+    private static void complete(SemanticAuditService audit) {
+        audit.begin(null, null, null, null, "security", "test", null, null)
+                .complete("success", "evaluation_completed", new SemanticResult(true, null, null, null, null));
     }
 
     private static SemanticAuditConfiguration auditConfiguration() {

@@ -94,7 +94,7 @@ class SemanticAuditReviewTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void expertOnlyCaptureIncludesExplicitDecisions(boolean enabled) throws Exception {
+    void expertOnlyCaptureRecordsEvaluationsWithoutRouteAnnotations(boolean enabled) throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedSemanticExpert());
             var audit = SemanticAuditService.get(context);
@@ -106,16 +106,9 @@ class SemanticAuditReviewTest {
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody("text");
             context.resolveLanguage("semantic").createExpression("ref:a").evaluate(exchange, Boolean.class);
-            var decision = new SemanticAuditDecision();
-            decision.setFields(Map.of("action", "block"));
-            decision.process(exchange);
             audit.stop();
-            assertThat(rows(audit)).hasSize(enabled ? 2 : 0);
-            if (enabled) {
-                assertThat(rows(audit).get(0).getEvidence()).containsExactly(rows(audit).get(1).getEventId());
-            } else {
-                assertThat(exchange.getProperty(SemanticAudit.REFERENCES)).isNull();
-            }
+            assertThat(rows(audit)).hasSize(enabled ? 1 : 0);
+            assertThat(rows(audit)).allSatisfy(record -> assertThat(record.getCategory()).isEqualTo("evaluation"));
         }
     }
 
@@ -131,20 +124,22 @@ class SemanticAuditReviewTest {
                     new SemanticAuditConfiguration(true, Map.of(), List.of("first", "memory"), "memory", 10, 10));
             audit.activate();
             context.start();
-            SemanticAudit.get(context).decision(null, Map.of("action", "allow"), List.of());
+            audit.begin(null, "first", null, null, "security", "test", null, null)
+                    .complete("success", "evaluation_completed", new SemanticResult(true, null, null, null, null));
             context.stop();
             assertThat(first.count).hasValue(1);
             context.getRegistry().bind("second", second);
             audit.configure("audit",
                     new SemanticAuditConfiguration(true, Map.of(), List.of("second", "memory"), "memory", 2, 10));
             context.start();
-            audit.decision(null, Map.of("action", "block"), List.of());
+            audit.begin(null, "second", null, null, "security", "test", null, null)
+                    .complete("success", "evaluation_completed", new SemanticResult(false, null, null, null, null));
             context.stop();
             assertThat(first.count).hasValue(1);
             assertThat(first.isStopped()).isTrue();
             assertThat(second.count).hasValue(1);
             assertThat(((MemorySemanticAuditStore) audit.getReader()).getCapacity()).isEqualTo(2);
-            assertThat(rows(audit)).singleElement().satisfies(r -> assertThat(r.text("action")).isEqualTo("block"));
+            assertThat(rows(audit)).singleElement().satisfies(r -> assertThat(r.text("definition")).isEqualTo("second"));
         }
     }
 

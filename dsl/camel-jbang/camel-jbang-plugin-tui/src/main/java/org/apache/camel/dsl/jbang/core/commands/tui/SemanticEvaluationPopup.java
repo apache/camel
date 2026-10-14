@@ -57,6 +57,7 @@ final class SemanticEvaluationPopup {
     private String submittedDefinition;
     private JsonObject submittedOperation;
     private List<String> submittedScoreLevels = List.of();
+    private JsonObject submittedInterpretation;
     private Rect inputArea;
     private Rect resultArea;
     private final TextAreaState input
@@ -197,6 +198,8 @@ final class SemanticEvaluationPopup {
             submittedDefinition = definition.toJson();
             submittedOperation = operation;
             submittedScoreLevels = SemanticDetails.scoreLevels(operation, definition.get("parameters"));
+            submittedInterpretation
+                    = SemanticResultView.interpretation(operation, definition.get("parameters"), submittedScoreLevels);
             pending = CompletableFuture
                     .supplyAsync(() -> ctx.executeIndependentAction(pid, request, 60000), ctx.backgroundExecutor)
                     .exceptionally(SemanticResultView::failure);
@@ -209,6 +212,9 @@ final class SemanticEvaluationPopup {
     private void refresh() {
         if (pending != null && pending.isDone()) {
             response = pending.getNow(null);
+            if (response != null && submittedInterpretation != null) {
+                response.put("interpretation", submittedInterpretation);
+            }
             pending = null;
             if (response == null) {
                 error = "Connection: no response within 60 seconds. The provider call may still be running.";

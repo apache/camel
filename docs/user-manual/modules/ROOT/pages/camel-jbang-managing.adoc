@@ -352,7 +352,7 @@ connector to cancel unfinished work. Provider interruption is cooperative; remot
 native inference may continue. Configure provider-specific request timeouts as well.
 
 Semantic commands use readable text by default: expert operations include a parameter table,
-evaluation results use labelled fields, and audit events show the record and linked evidence
+evaluation results use labelled fields, and audit events show the record and captured interpretation
 in separate sections. Add `--json` to any semantic command to receive the complete JSON response
 for scripts.
 
@@ -365,53 +365,35 @@ other's results.
 
 === Semantic audit history
 
-Use `camel semantic audit` to retrieve retained history from the application's configured
-audit reader. It uses the local connector and performs no inference. Capture settings
-remain in the semantic DSL; querying does not enable auditing or change its configuration.
-
-Stored input appears in event details and linked evaluation evidence when the expert's
-semantic audit configuration explicitly enables `input.enabled`. Capture is disabled by
-default, bounded by `maxChars`, and can use a redactor. Human-readable output preserves
-multiline text; with `--event-id`, `--json` returns the stored structure and any omission
-reason. List queries omit input, including when `--json` is selected.
+`camel semantic audit` reads retained evaluations and request outcomes from the configured reader.
+Querying performs no inference and does not change capture configuration.
 
 [source,bash]
 ----
 camel semantic audit my-app
-camel semantic audit my-app --category=decision --action=block --limit=20
-camel semantic audit my-app --expert=guard --since=2026-10-10T08:00:00Z --json
+camel semantic audit my-app --category=evaluation --executing-route-id=assess --limit=20
+camel semantic audit my-app --expert="team expert" --since=2026-10-10T08:00:00Z --json
 camel semantic audit my-app --event-id=EVENT_ID --json
+camel semantic audit my-app --case-event-id=EVENT_ID --max-records=200 --json
+camel semantic audit my-app --event-ids=EVENT_1,EVENT_2 --max-records=200 --json
 ----
 
-The default output is a table of event IDs, timestamps, categories, explicit route actions,
-evaluation statuses, experts, operations, targets, namespaces, reason codes and Camel breadcrumb
-IDs. A compact text summary reports whether capture is enabled, the reader, memory
-retention and dropped records. Sink or observer failures appear as separate error counts;
-evictions are shown below the table. An evaluation status is separate from an application's
-allow/block decision. The full audit configuration and health fields are available with `--json`.
+Tables separate typed Result from Execution and show captured route provenance and breadcrumb association.
+Detail retains fractional Score values, captured labels and declared meanings. Missing interpretation is
+shown explicitly; current definitions do not reconstruct old results. Stored input is available only when
+capture was explicitly enabled. Detail responses label it as untrusted data. Lists omit input; case/export
+output requires `--include-input` to include it. The full response is available with `--json`.
 
-`--json` returns the complete runtime response as one JSON document. `--event-id` selects
-one historical record and its linked evaluation evidence, including any retained provider,
-model, revision and result semantics. Missing linked records carry `unavailable: true`.
-A missing selected event returns exit code 3. Event lookup cannot be combined with list
-filters, `--cursor` or `--limit`.
+Pages are newest first, default 50 and maximum 200. Exact filters are `--category` (`evaluation` or `request`),
+`--expert`, entry `--route-id`, `--executing-route-id`, `--exchange-id` and `--breadcrumb-id`.
+`--since` accepts an inclusive ISO-8601 timestamp. Use the returned `nextCursor` with the same filters.
+Unsupported filters produce an error. `--event-id` is an exclusive detail selector and returns exit code 3
+when the record is absent. Persisted legacy decision records remain retrievable by ID and bulk export.
 
-Pages are newest first, with a default limit of 50 and a maximum of 200. The exact-match
-filters are `--category`, `--action`, `--expert`, `--route-id`, `--breadcrumb-id`, `--namespace` and
-`--correlation-id`. `--since` is inclusive and accepts an ISO-8601 timestamp with a UTC
-offset. Supply a returned `nextCursor` using `--cursor` to retrieve an older page, retaining
-the same filters. Cursors are opaque and belong to the configured backend.
-
-`--breadcrumb-id` selects evaluations and route decisions with the same Camel breadcrumb.
-Enable `camel.main.use-breadcrumb=true` in the application to let Camel generate missing
-breadcrumbs on route exchanges. Audit uses this existing ID; records without one have an
-empty breadcrumb column.
-
-An expired cursor returns exit code 1 and `cursorExpired: true`; start a new query without
-`--cursor`. Backend query failures also return exit code 1 and retain the stable
-`audit_query_failed` error code. An empty history is a successful query: capture may be
-disabled, no events may match, or records may have been evicted. Retained records remain
-readable even when their expert or definition is no longer available.
+Cases associate records within one reader by breadcrumb, exchange, invocation and supported batch/request
+relationships. Association is not proven causality; completeness remains unknown. `--max-records` bounds
+case and bulk responses to 1..1000 (default 200), with a 4 MiB response budget. Missing IDs, bounded retrieval,
+cursor expiry and backend failures remain distinct. Backend failures return exit code 1 without partial success.
 
 === Semantic command output and exit codes
 

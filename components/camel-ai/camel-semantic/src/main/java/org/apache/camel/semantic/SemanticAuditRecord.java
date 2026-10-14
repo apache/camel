@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.semantic.internal.SemanticAuditExtensions;
 import org.apache.camel.semantic.internal.SemanticAuditInputSnapshot;
 
 /**
@@ -30,6 +31,8 @@ import org.apache.camel.semantic.internal.SemanticAuditInputSnapshot;
  * version 1 uses UTC timestamps and keeps route actions separate from expert results.
  */
 public final class SemanticAuditRecord {
+    /** Additive field groups; destinations explicitly opt in before receiving them. */
+    public static final Set<String> EXTENSIONS = Set.of("interpretation", "findings", "executingRouteId", "identity");
     private final Map<String, Object> fields;
     private final Instant timestamp;
 
@@ -44,7 +47,8 @@ public final class SemanticAuditRecord {
                 "batchId", "definition", "target", "expert", "operation", "contextId", "exchangeId", "routeId", "semantics",
                 "status", "reasonCode", "durationNanos", "resultOmitted", "result", "action", "namespace", "correlationId",
                 "policyId", "policyVersion", "rule", "evidence", "startedAt", "provider", "model", "revision", "input",
-                "inputOmitted", "inputRedacted", "breadcrumbId");
+                "inputOmitted", "inputRedacted", "breadcrumbId", "executingRouteId", "interpretation", "interpretationOmitted",
+                "findings", "findingsOmitted", "taskId", "taskVersion");
         if (!keys.containsAll(data.keySet()) || !(data.get("schemaVersion") instanceof Number version)
                 || version.doubleValue() != 1
                 || !(data.get("eventId") instanceof String id) || id.isBlank() || id.length() > 256
@@ -54,7 +58,8 @@ public final class SemanticAuditRecord {
             throw new IllegalArgumentException("Invalid semantic audit record");
         }
         Set<String> structured
-                = Set.of("schemaVersion", "durationNanos", "semantics", "result", "evidence", "input", "inputRedacted");
+                = Set.of("schemaVersion", "durationNanos", "semantics", "result", "evidence", "input", "inputRedacted",
+                        "interpretation", "findings");
         data.forEach((key, value) -> {
             if (!structured.contains(key) && !(value instanceof String)) {
                 throw new IllegalArgumentException("Invalid audit text field: " + key);
@@ -110,9 +115,17 @@ public final class SemanticAuditRecord {
                 || !"evaluation".equals(category) && (data.containsKey("input") || data.containsKey("inputOmitted"))) {
             throw new IllegalArgumentException("Invalid audit input fields");
         }
+        if (data.containsKey("interpretation") && data.containsKey("interpretationOmitted")
+                || data.containsKey("findings") && data.containsKey("findingsOmitted")) {
+            throw new IllegalArgumentException("Captured extensions cannot also be omitted");
+        }
         Map<String, Object> copy = new LinkedHashMap<>();
-        data.forEach((key, value) -> copy.put(key, "input".equals(key)
-                ? SemanticAuditInputSnapshot.copy(value, SemanticAuditInputConfiguration.MAX_CHARS) : freeze(value, 0)));
+        data.forEach((key, value) -> copy.put(key, switch (key) {
+            case "input" -> SemanticAuditInputSnapshot.copy(value, SemanticAuditInputConfiguration.MAX_CHARS);
+            case "interpretation" -> SemanticAuditExtensions.interpretation(value);
+            case "findings" -> SemanticAuditExtensions.findings(value);
+            default -> freeze(value, 0);
+        }));
         return new SemanticAuditRecord(copy);
     }
 
@@ -198,6 +211,26 @@ public final class SemanticAuditRecord {
 
     public String text(String name) {
         return fields.get(name) instanceof String value ? value : null;
+    }
+
+    /** Project a record for a destination without adding unknown fields to older backends. */
+    public SemanticAuditRecord forExtensions(Set<String> supported) {
+        if (supported.containsAll(EXTENSIONS)) {
+            return this;
+        }
+        Map<String, Object> projected = new LinkedHashMap<>(fields);
+        for (String extension : EXTENSIONS) {
+            if (!supported.contains(extension)) {
+                if ("identity".equals(extension)) {
+                    projected.remove("taskId");
+                    projected.remove("taskVersion");
+                } else {
+                    projected.remove(extension);
+                    projected.remove(extension + "Omitted");
+                }
+            }
+        }
+        return new SemanticAuditRecord(projected);
     }
 
     public Map<String, Object> toMap() {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.semantic;
 
+import java.util.Set;
+
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
@@ -24,6 +26,11 @@ import org.slf4j.LoggerFactory;
 /** Structured records through the application's logging configuration; no independent file or exporter. */
 public final class LoggingSemanticAuditSink extends ServiceSupport implements SemanticAuditSink {
     private static final Logger LOG = LoggerFactory.getLogger("org.apache.camel.semantic.audit");
+
+    @Override
+    public Set<String> getSupportedExtensions() {
+        return SemanticAuditRecord.EXTENSIONS;
+    }
 
     @Override
     public void append(SemanticAuditRecord record) {

@@ -28,7 +28,8 @@ import java.util.TreeMap;
 /** Bounded query. Cursors are backend-specific and must not be reused with another filter. */
 public final class SemanticAuditQuery {
     private static final Set<String> FIELDS
-            = Set.of("category", "action", "expert", "routeId", "namespace", "correlationId", "breadcrumbId");
+            = Set.of("category", "action", "expert", "routeId", "namespace", "correlationId", "breadcrumbId",
+                    "executingRouteId", "exchangeId", "invocationId", "requestId", "batchId");
     private final Map<String, String> filters;
     private final Instant since;
     private final String cursor;

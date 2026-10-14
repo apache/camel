@@ -121,7 +121,7 @@ class LocalCliConnectorSemanticMetadataTest {
     }
 
     @Test
-    void forwardsBreadcrumbIdAndActionToTheAuditConsole() throws Exception {
+    void forwardsAutomaticAuditProvenanceToTheAuditConsole() throws Exception {
         try (var context = new DefaultCamelContext()) {
             var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
             connector.setCamelContext(context);
@@ -138,13 +138,13 @@ class LocalCliConnectorSemanticMetadataTest {
             });
             var answer = new AtomicReference<JsonObject>();
             var request = new JsonObject(
-                    Map.of("action", "semantic-audit", "auditAction", "block",
-                            "breadcrumbId", "camel-breadcrumb", "correlationId", "application-request", "ignored",
+                    Map.of("action", "semantic-audit", "executingRouteId", "nested-route",
+                            "breadcrumbId", "camel-breadcrumb", "exchangeId", "exchange-1", "ignored",
                             "not an option"));
             assertThat(connector.dispatch(request, answer::set)).isTrue();
-            assertThat(answer.get()).containsOnlyKeys("action", "breadcrumbId", "correlationId")
-                    .containsEntry("action", "block").containsEntry("breadcrumbId", "camel-breadcrumb")
-                    .containsEntry("correlationId", "application-request");
+            assertThat(answer.get()).containsOnlyKeys("executingRouteId", "breadcrumbId", "exchangeId")
+                    .containsEntry("executingRouteId", "nested-route").containsEntry("breadcrumbId", "camel-breadcrumb")
+                    .containsEntry("exchangeId", "exchange-1");
         }
     }
 

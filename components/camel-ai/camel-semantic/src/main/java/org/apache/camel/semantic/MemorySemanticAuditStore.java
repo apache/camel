@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.camel.support.service.ServiceSupport;
@@ -44,6 +45,17 @@ public final class MemorySemanticAuditStore extends ServiceSupport implements Se
     }
 
     @Override
+    public Set<String> getSupportedExtensions() {
+        return SemanticAuditRecord.EXTENSIONS;
+    }
+
+    @Override
+    public Set<String> getSupportedFilters() {
+        return Set.of("category", "expert", "routeId", "breadcrumbId", "executingRouteId", "exchangeId", "invocationId",
+                "requestId", "batchId");
+    }
+
+    @Override
     public synchronized void append(SemanticAuditRecord record) {
         if (records.size() == capacity) {
             records.removeLast();
@@ -59,9 +71,6 @@ public final class MemorySemanticAuditStore extends ServiceSupport implements Se
 
     @Override
     public synchronized Map<String, SemanticAuditRecord> getAll(List<String> eventIds) {
-        if (eventIds.size() > 100) {
-            throw new IllegalArgumentException("Too many audit evidence references");
-        }
         var selected = new HashSet<>(eventIds);
         Map<String, SemanticAuditRecord> found = new LinkedHashMap<>();
         for (Entry entry : records) {

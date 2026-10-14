@@ -16,6 +16,7 @@
  */
 package org.apache.camel.semantic;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -26,6 +27,7 @@ import java.util.Set;
  * revision and usage. It must not contain credentials or input state.
  */
 public final class SemanticResult {
+    private final List<SemanticFinding> findings;
     private final Object value;
     private final Double probability;
     private final Map<String, Double> probabilities;
@@ -34,6 +36,12 @@ public final class SemanticResult {
 
     public SemanticResult(Object value, Double probability, Map<String, Double> probabilities,
                           Double confidence, Map<String, Object> metadata) {
+        this(value, probability, probabilities, confidence, metadata, List.of());
+    }
+
+    public SemanticResult(Object value, Double probability, Map<String, Double> probabilities,
+                          Double confidence, Map<String, Object> metadata, List<SemanticFinding> findings) {
+        this.findings = findings == null ? List.of() : List.copyOf(findings);
         if (value instanceof Set<?> labels && labels.stream().anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("Semantic classification labels must not be null");
         }
@@ -51,6 +59,10 @@ public final class SemanticResult {
         if (value != null && (!Double.isFinite(value) || value < 0 || value > 1)) {
             throw new IllegalArgumentException("Semantic probabilities and confidence must be within [0,1]");
         }
+    }
+
+    public List<SemanticFinding> getFindings() {
+        return findings;
     }
 
     public Object getValue() {

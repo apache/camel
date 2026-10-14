@@ -16,13 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import org.apache.camel.dsl.jbang.core.common.SemanticResultFormatter;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -34,10 +34,7 @@ final class SemanticResultView {
     }
 
     static String number(Number value) {
-        double number = value.doubleValue();
-        return Double.isFinite(number)
-                ? new BigDecimal(String.format(Locale.ROOT, "%.4g", number)).stripTrailingZeros().toString()
-                : value.toString();
+        return SemanticResultFormatter.number(value);
     }
 
     static String error(String value) {
@@ -63,52 +60,17 @@ final class SemanticResultView {
             lines.add(Line.from("Draft kept · correct the input or check the service, then Ctrl+r to retry."));
             return lines;
         }
-        Object value = response.get("value");
-        String answer = value instanceof String string ? string : value instanceof Number number ? number(number)
-                : Jsoner.serialize(value);
-        lines.add(Line.from(Span.styled("Result  ", Theme.label()), Span.styled(answer, Theme.info().bold()),
-                Span.styled("   " + text(operation, "resultType") + " · success · " + text(response, "elapsedMillis") + " ms",
-                        Theme.muted())));
-        if (contract(operation).get("resultMeaning") != null) {
-            lines.add(Line.from(text(contract(operation), "resultMeaning")));
-        }
-        scoreRange(lines, levels);
-        if (value instanceof Number number && !levels.isEmpty()) {
-            double score = number.doubleValue();
-            if (Double.isFinite(score) && score >= 0 && score <= levels.size() - 1) {
-                int lower = (int) Math.floor(score);
-                int upper = (int) Math.ceil(score);
-                lines.add(Line.from(lower == upper
-                        ? levelLabel(levels, lower)
-                        : "Between " + levelLabel(levels, lower) + " and " + levelLabel(levels, upper)));
-            }
-        }
-        for (String key : List.of("probability", "confidence")) {
-            if (response.get(key) instanceof Number number) {
-                add(lines, Character.toUpperCase(key.charAt(0)) + key.substring(1), number(number));
-            }
-        }
-        if (response.get("probabilities") instanceof JsonObject probabilities && !probabilities.isEmpty()) {
-            lines.add(Line.empty());
-            lines.add(Line.from(Span.styled("Probabilities", Theme.label())));
-            if (contract(operation).get("probabilityMeaning") != null) {
-                lines.add(Line.from(Span.styled(text(contract(operation), "probabilityMeaning"), Theme.muted())));
-            }
-            probabilities.entrySet().stream().filter(entry -> entry.getValue() instanceof Number)
-                    .sorted((a, b) -> Double.compare(((Number) b.getValue()).doubleValue(),
-                            ((Number) a.getValue()).doubleValue()))
-                    .forEach(entry -> {
-                        double probability = ((Number) entry.getValue()).doubleValue();
-                        int filled = Math.max(0, Math.min(16, (int) Math.round(probability * 16)));
-                        String label = probabilityLabel(entry.getKey(), levels);
-                        if (!label.equals(entry.getKey())) {
-                            lines.add(Line.from(Span.styled(label, Theme.info())));
-                        }
-                        lines.add(Line.from(Span.styled(label.equals(entry.getKey()) ? label + "  " : "  ", Theme.info()),
-                                Span.styled("━".repeat(filled) + "·".repeat(16 - filled), Theme.info()),
-                                Span.raw("  " + number((Number) entry.getValue()))));
-                    });
-        }
+        JsonObject semantics = new JsonObject(contract(operation));
+        semantics.put("resultType", operation.get("resultType"));
+        semantics.put("meaning", contract(operation).get("resultMeaning"));
+        Map<?, ?> interpretation = response.get("interpretation") instanceof Map<?, ?> captured
+                ? captured
+                : interpretation(operation, Map.of(), levels);
+        var formatted = SemanticResultFormatter.format(response, semantics, interpretation,
+                response.getString("status"), response.get("resultOmitted"), response.get("interpretationOmitted"));
+        lines.add(Line.from(Span.styled("Result  " + formatted.compact(), Theme.info().bold()),
+                Span.styled(" · success · " + text(response, "elapsedMillis") + " ms", Theme.muted())));
+        formatted.details().forEach(line -> lines.add(Line.from(line)));
         if (response.get("metadata") instanceof JsonObject metadata && !metadata.isEmpty()) {
             lines.add(Line.empty());
             lines.add(Line.from(Span.styled("Metadata", Theme.label())));
@@ -117,17 +79,31 @@ final class SemanticResultView {
         return lines;
     }
 
-    private static String levelLabel(List<String> levels, int index) {
-        return "[" + index + "] " + levels.get(index);
-    }
-
-    private static String probabilityLabel(String key, List<String> levels) {
-        for (int i = 0; i < levels.size(); i++) {
-            if (Integer.toString(i).equals(key)) {
-                return levelLabel(levels, i);
+    static JsonObject interpretation(JsonObject operation, Object parameters, List<String> levels) {
+        JsonObject result = new JsonObject();
+        JsonObject contract = contract(operation);
+        result.put("source", "expert_contract");
+        result.put("meaning", contract.get("resultMeaning"));
+        for (String field : List.of("probabilityMeaning", "confidenceMeaning", "noMatchDeclared", "noMatchLabel",
+                "probabilitiesComplete")) {
+            if (contract.get(field) != null && !("noMatchLabel".equals(field) && "".equals(contract.get(field)))) {
+                result.put(field, contract.get(field));
             }
         }
-        return key;
+        if (!levels.isEmpty()) {
+            result.put("scoreLevels", List.copyOf(levels));
+            if (Boolean.TRUE.equals(contract.get("probabilities"))) {
+                result.put("scoreProbabilityKeys", "zero_based_levels");
+            }
+        }
+        if (parameters instanceof Map<?, ?> values) {
+            for (String kind : List.of("choice", "boolean")) {
+                Object name = contract.get(kind + "LabelsParameter");
+                if (name instanceof String parameter && values.get(parameter) instanceof Map<?, ?> labels) {
+                    result.put("choice".equals(kind) ? "choices" : "booleanLabels", Map.copyOf(labels));
+                }
+            }
+        }
+        return result;
     }
-
 }

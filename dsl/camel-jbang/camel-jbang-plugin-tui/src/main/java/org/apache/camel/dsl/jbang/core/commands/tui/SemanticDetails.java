@@ -307,6 +307,7 @@ final class SemanticDetails {
     }
 
     static String text(JsonObject value, String key) {
-        return value == null || value.get(key) == null ? "—" : value.get(key).toString();
+        return value == null || value.get(key) == null
+                ? "—" : value.get(key).toString().replaceAll("[\\p{Cc}\\p{Cf}]", "");
     }
 }

@@ -149,6 +149,17 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
             if (!op.getScoreLevelsParameter().isEmpty()) {
                 contract.put("scoreLevelsParameter", op.getScoreLevelsParameter());
             }
+            if (!op.getChoiceLabelsParameter().isEmpty()) {
+                contract.put("choiceLabelsParameter", op.getChoiceLabelsParameter());
+            }
+            if (!op.getBooleanLabelsParameter().isEmpty()) {
+                contract.put("booleanLabelsParameter", op.getBooleanLabelsParameter());
+            }
+            contract.put("noMatchDeclared", op.isNoMatchDeclared());
+            if (op.isNoMatchDeclared()) {
+                contract.put("noMatchLabel", op.getNoMatchLabel());
+            }
+            contract.put("probabilitiesComplete", op.isCompleteProbabilities());
             contract.put("probability", op.isProbability());
             contract.put("probabilities", op.isProbabilities());
             contract.put("confidence", op.isConfidence());

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.main;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.support.EventHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +46,26 @@ public class MainDurationAliasTest {
         MainConfigurationProperties config = new MainConfigurationProperties();
         config.setDuration("30");
         assertEquals(30, config.getDurationMaxSeconds());
+    }
+
+    @Test
+    public void testDurationDoesNotRequestAiEventCreation() throws Exception {
+        Main main = new Main();
+        try {
+            main.configure().withDurationMaxMessages(10);
+            main.start();
+            var notifiers = main.getCamelContext().getManagementStrategy().getStartedEventNotifiers();
+            assertEquals(1, notifiers.stream().filter(MainDurationEventNotifier.class::isInstance).count());
+            AtomicInteger created = new AtomicInteger();
+            EventHelper.notifyAiEvent(main.getCamelContext(), () -> {
+                created.incrementAndGet();
+                return null;
+            });
+            assertEquals(0, created.get(), () -> notifiers.stream().filter(n -> !n.isDisabled() && !n.isIgnoreAiEvents())
+                    .map(n -> n.getClass().getName()).toList().toString());
+        } finally {
+            main.stop();
+        }
     }
 
     @Test

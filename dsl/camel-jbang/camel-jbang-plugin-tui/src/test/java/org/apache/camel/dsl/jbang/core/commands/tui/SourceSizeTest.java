@@ -84,7 +84,7 @@ class SourceSizeTest {
             SourceViewer.renderContent 207
             SourceViewer.renderEditMode 256
             TuiToolDefinitions.addInteractionTools 183
-            TuiToolDefinitions.addStructuredDataTools 240
+            TuiToolDefinitions.addStructuredDataTools 226
             XmlCompletionContext.at 152
             YamlRouteNodeScanner.scanLines 162
             """;

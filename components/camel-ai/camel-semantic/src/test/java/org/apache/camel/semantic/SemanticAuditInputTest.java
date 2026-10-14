@@ -115,7 +115,7 @@ class SemanticAuditInputTest {
     }
 
     @Test
-    void selectedStateIsCapturedBeforeProviderMutationAndLinkedThroughConsole() throws Exception {
+    void selectedStateIsCapturedBeforeProviderMutationAndRetrievedThroughConsole() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new StructuredExpert());
             var audit = SemanticAuditService.get(context);
@@ -129,14 +129,10 @@ class SemanticAuditInputTest {
             exchange.getMessage().setBody("not selected");
             exchange.getMessage().setHeader("selected", input);
             context.resolveLanguage("semantic").createExpression("refs:a,b").evaluate(exchange, Map.class);
-            SemanticAuditDecision decision = new SemanticAuditDecision();
-            decision.setFields(Map.of("action", "allow"));
-            decision.process(exchange);
             audit.stop();
             assertThat(input).containsEntry("mutated", true);
-            assertThat(records(audit)).hasSize(3);
-            assertThat(records(audit).get(0).toMap()).doesNotContainKey("input");
-            for (var record : records(audit).subList(1, 3)) {
+            assertThat(records(audit)).hasSize(2);
+            for (var record : records(audit)) {
                 assertThat(record.toMap()).containsEntry("input", Map.of("messages", List.of("hello")));
                 var restored = SemanticAuditRecord.fromMap((JsonObject) Jsoner.deserialize(Jsoner.serialize(record.toMap())));
                 assertThat(restored.toMap()).containsEntry("input", record.toMap().get("input"));
