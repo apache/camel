@@ -41,6 +41,8 @@ concurrency:
 permissions:
   contents: read
 
+# Use the project Maven wrapper throughout: runner-provided Maven versions can differ
+# from the version supported by this branch's build extensions.
 jobs:
   # ── macOS / Linux (POSIX validators) ──────────────────────────────
   posix-validator:
@@ -88,7 +90,7 @@ jobs:
       - name: Install camel-repackager-maven-plugin (build-time plugin, unresolvable from this reactor pass)
         shell: bash
         run: |
-          mvn -B -P apache-snapshots -ntp \
+          ./mvnw -B -P apache-snapshots -ntp \
             -pl tooling/maven/camel-repackager-maven-plugin install -DskipTests
 
       - name: Build camel-launcher distribution
@@ -98,14 +100,14 @@ jobs:
         # published snapshot instead of being rebuilt from source, which is what previously turned
         # this into a ~626-module reactor build. -P apache-snapshots is required for that resolution.
         run: |
-          mvn -B -P apache-snapshots -ntp \
+          ./mvnw -B -P apache-snapshots -ntp \
             -pl buildingtools,dsl/camel-jbang/camel-launcher install -DskipTests
 
       - name: Stage a synthetic release version for offline validation
         shell: bash
         run: |
           cd dsl/camel-jbang/camel-launcher
-          REAL_VERSION=$(mvn -q -B -ntp org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate \
+          REAL_VERSION=$(../../../mvnw -q -B -P apache-snapshots -ntp org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate \
             -Dexpression=project.version -DforceStdout)
           TEST_VERSION="${REAL_VERSION%-SNAPSHOT}"
           echo "TEST_VERSION=$TEST_VERSION" >> "$GITHUB_ENV"
@@ -142,14 +144,16 @@ jobs:
         # WebsiteInstallTest's PosixShell suite only gets targeted CI coverage today as a side
         # effect of the generic incremental-build check noticing a direct change under
         # dsl/camel-jbang/camel-launcher; a PR that only touches an upstream dependency wouldn't
-        # trigger it. Run it here explicitly so this dedicated validation workflow covers it too.
+        # trigger it. Run it here explicitly, together with the POSIX launcher script tests.
         run: |
           cd dsl/camel-jbang/camel-launcher
-          mvn -B -ntp test -pl . -Dtest=PackageNativeValidationTest,WebsiteInstallTest
+          ../../../mvnw -B -P apache-snapshots -ntp test -pl . -Dtest=PackageNativeValidationTest,WebsiteInstallTest,CamelShDiscoveryTest,FakeJavaTest
 
-  # ── Windows (install.ps1 unit tests) ──────────────────────────────
+  # ── Windows (installer and launcher script unit tests) ──────────────────────────────
   windows-validator:
     runs-on: windows-latest
+    # Caps a genuine hang well below GitHub's 6h default; a passing run has taken up to ~25 minutes.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -169,7 +173,7 @@ jobs:
       - name: Install camel-repackager-maven-plugin (build-time plugin, unresolvable from this reactor pass)
         shell: bash
         run: |
-          mvn -B -P apache-snapshots -ntp \
+          ./mvnw -B -P apache-snapshots -ntp \
             -pl tooling/maven/camel-repackager-maven-plugin install -DskipTests
 
       - name: Build camel-launcher module
@@ -179,11 +183,25 @@ jobs:
         # published snapshot instead of being rebuilt from source, which is what previously turned
         # this into a ~626-module reactor build. -P apache-snapshots is required for that resolution.
         run: |
-          mvn -B -P apache-snapshots -ntp \
+          ./mvnw -B -P apache-snapshots -ntp \
             -pl buildingtools,dsl/camel-jbang/camel-launcher install -DskipTests
 
-      - name: Run Windows installer unit tests
+      - name: Run Windows installer and launcher script unit tests
         shell: bash
+        # The PowerShell suite has taken 10-20 minutes on windows-latest, straddling camel-launcher's 1200s
+        # surefire fork timeout, so slow-but-passing runs were killed. Give this job's fork more room.
         run: |
           cd dsl/camel-jbang/camel-launcher
-          mvn -B -ntp test -pl . -Dtest=WebsiteInstallTest
+          ../../../mvnw -B -P apache-snapshots -ntp test -pl . -Dtest=WebsiteInstallTest,CamelBatDiscoveryTest,FakeJavaTest -Dcamel.surefire.forkTimeout=2700
+
+      # Per-test timings for the PowerShell suite, which runs close to camel-launcher's surefire fork timeout.
+      # A fork killed on that timeout writes no XML report; the per-process timings the fixture prints to the
+      # build log cover that case.
+      - name: Archive surefire reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-validator-surefire-reports
+          path: dsl/camel-jbang/camel-launcher/target/surefire-reports
+          retention-days: 7
+          if-no-files-found: ignore

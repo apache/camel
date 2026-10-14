@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
@@ -152,11 +151,8 @@ class WebsiteInstallTest {
             Path versionDir = home.resolve(".local/share/camel-cli/versions/" + version);
             assertTrue(Files.isDirectory(versionDir), "expected version directory " + versionDir);
 
-            Process check = new ProcessBuilder("/bin/sh", shim.toString(), "version")
-                    .redirectErrorStream(true)
-                    .start();
-            String output = new String(check.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            check.waitFor();
+            String output = WebsiteInstallerFixture.execute(
+                    new ProcessBuilder("/bin/sh", shim.toString(), "version").redirectErrorStream(true)).stdout();
             assertTrue(output.contains("Camel " + version), output);
         }
 
@@ -672,9 +668,8 @@ class WebsiteInstallTest {
                           + "if ($path) { $kind = $k.GetValueKind('Path'); "
                           + "$kept = ($path -split ';') | Where-Object { $_ -and (-not ($dirs -icontains $_)) }; "
                           + "$k.SetValue('Path', ($kept -join ';'), $kind) } $k.Close() }");
-            Process cleanup = new ProcessBuilder("powershell", "-NoProfile", "-Command", script.toString())
-                    .redirectErrorStream(true).start();
-            cleanup.waitFor(30, TimeUnit.SECONDS);
+            WebsiteInstallerFixture.execute(
+                    new ProcessBuilder("powershell", "-NoProfile", "-Command", script.toString()).redirectErrorStream(true));
         }
 
         private WebsiteInstallerFixture.Result install(
@@ -716,11 +711,8 @@ class WebsiteInstallTest {
             assertTrue(Files.isDirectory(versionDir(home, version)),
                     "expected version directory " + versionDir(home, version));
 
-            Process check = new ProcessBuilder("cmd.exe", "/c", shim.toString(), "version")
-                    .redirectErrorStream(true)
-                    .start();
-            String output = new String(check.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            check.waitFor(30, TimeUnit.SECONDS);
+            String output = WebsiteInstallerFixture.execute(
+                    new ProcessBuilder("cmd.exe", "/c", shim.toString(), "version").redirectErrorStream(true)).stdout();
             assertTrue(output.contains("Camel " + version), output);
         }
 
@@ -740,13 +732,10 @@ class WebsiteInstallTest {
         }
 
         private static String queryEnvironmentPath(String scope) throws Exception {
-            Process p = new ProcessBuilder(
+            return WebsiteInstallerFixture.execute(new ProcessBuilder(
                     "powershell", "-NoProfile", "-Command",
                     "[Environment]::GetEnvironmentVariable('Path','" + scope + "')")
-                    .redirectErrorStream(true).start();
-            String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
-            p.waitFor(30, TimeUnit.SECONDS);
-            return out;
+                    .redirectErrorStream(true)).stdout().trim();
         }
 
         private static long countOccurrencesCaseInsensitive(String path, String dir) {
@@ -760,15 +749,12 @@ class WebsiteInstallTest {
 
         // Reads HKCU\Environment\Path without expanding %VAR% references, returning "" when unset.
         private static String readUserPathRaw() throws Exception {
-            Process p = new ProcessBuilder(
+            return WebsiteInstallerFixture.execute(new ProcessBuilder(
                     "powershell", "-NoProfile", "-Command",
                     "$k = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment'); "
                                                             + "if ($k) { [Console]::Out.Write($k.GetValue('Path', '', "
-                                                            + "[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)); $k.Close() }")
-                    .start();
-            String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            p.waitFor(30, TimeUnit.SECONDS);
-            return out;
+                                                            + "[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)); $k.Close() }"))
+                    .stdout();
         }
 
         // Writes HKCU\Environment\Path as a REG_EXPAND_SZ value; the value is passed via the environment
@@ -781,21 +767,18 @@ class WebsiteInstallTest {
                                                             + "[Microsoft.Win32.RegistryValueKind]::ExpandString); $k.Close()")
                     .redirectErrorStream(true);
             pb.environment().put("CAMEL_TEST_USERPATH", value);
-            Process p = pb.start();
-            String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            if (!p.waitFor(30, TimeUnit.SECONDS) || p.exitValue() != 0) {
-                throw new IllegalStateException("failed to seed user PATH: " + out);
+            WebsiteInstallerFixture.Result r = WebsiteInstallerFixture.execute(pb);
+            if (r.exit() != 0) {
+                throw new IllegalStateException("failed to seed user PATH: " + r.stdout());
             }
         }
 
         private static void deleteUserPath() throws Exception {
-            Process p = new ProcessBuilder(
+            WebsiteInstallerFixture.execute(new ProcessBuilder(
                     "powershell", "-NoProfile", "-Command",
                     "$k = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true); "
                                                             + "if ($k) { $k.DeleteValue('Path', $false); $k.Close() }")
-                    .redirectErrorStream(true).start();
-            p.getInputStream().readAllBytes();
-            p.waitFor(30, TimeUnit.SECONDS);
+                    .redirectErrorStream(true));
         }
 
         @Test
@@ -1039,14 +1022,11 @@ class WebsiteInstallTest {
                 // ("bar baz") trips cmd.exe's quote-stripping rule (it only preserves quotes when there are
                 // exactly two), which would unquote the space in "Apache Camel" and break the call. A bare
                 // command name resolved through PATH+PATHEXT avoids that quirk and mirrors real usage.
-                Process argsProc = shimProcess(binDir, "echo-args", "foo", "bar baz").start();
-                String argsOut = new String(argsProc.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-                argsProc.waitFor(30, TimeUnit.SECONDS);
+                String argsOut = WebsiteInstallerFixture.execute(shimProcess(binDir, "echo-args", "foo", "bar baz"))
+                        .stdout();
                 assertTrue(argsOut.contains("foo") && argsOut.contains("bar baz"), argsOut);
 
-                Process exitProc = shimProcess(binDir, "exit-code", "7").start();
-                exitProc.waitFor(30, TimeUnit.SECONDS);
-                assertEquals(7, exitProc.exitValue());
+                assertEquals(7, WebsiteInstallerFixture.execute(shimProcess(binDir, "exit-code", "7")).exit());
             }
         }
 
