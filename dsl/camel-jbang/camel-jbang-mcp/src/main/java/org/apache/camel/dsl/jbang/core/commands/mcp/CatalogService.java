@@ -117,7 +117,7 @@ public class CatalogService {
                 if (quarkusBom == null) {
                     throw new ToolCallException(
                             "No Quarkus platform found for Camel " + camelVersion
-                                               + " in the Quarkus extension registry",
+                                                + " in the Quarkus extension registry",
                             null);
                 }
                 platformBomGav = quarkusBom.quarkusCamelBom();
@@ -225,7 +225,7 @@ public class CatalogService {
                 if (quarkusBom == null) {
                     throw new ToolCallException(
                             "No Quarkus platform found for Camel " + camelVersion
-                                               + " in the Quarkus extension registry",
+                                                + " in the Quarkus extension registry",
                             null);
                 }
                 MavenGav resolvedBom = quarkusBom.quarkusCamelBom();

@@ -415,7 +415,8 @@ public class AuthoringTools {
                     ctx.setCatalog(catalog);
                 } catch (Exception e) {
                     // catalog load failed: fall through to ToolContext's own lazy-load, which handles the error
-                    LOG.debugf("CatalogService.loadCatalog() failed (%s), falling back to ToolContext lazy-load", e.getMessage());
+                    LOG.debugf("CatalogService.loadCatalog() failed (%s), falling back to ToolContext lazy-load",
+                            e.getMessage());
                 }
             }
             return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args));
