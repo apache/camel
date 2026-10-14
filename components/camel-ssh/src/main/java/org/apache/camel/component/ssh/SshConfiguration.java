@@ -56,11 +56,14 @@ public class SshConfiguration implements Cloneable {
     private long timeout = 30000;
     @UriParam(label = "security", security = "insecure:ssl",
               description = "Sets the resource path for a known_hosts file used to verify the SSH server host key."
+                            + " The file uses the OpenSSH known_hosts format, and its entries are matched against the"
+                            + " host and port configured on the endpoint."
                             + " When not set, the client does not verify the server host key against a known_hosts file.")
     private String knownHostsResource;
     @UriParam(label = "security", defaultValue = "false", security = "insecure:ssl", insecureValue = "false",
-              description = "Specifies whether a connection to an unknown SSH server host key should fail. When false,"
-                            + " host keys that are not present in the known_hosts resource are accepted.")
+              description = "Specifies whether a connection to a server whose host has no entry in the known_hosts"
+                            + " resource should fail. When false, such a server is accepted. A server whose host has"
+                            + " entries is always rejected when it presents a key that none of them lists.")
     private boolean failOnUnknownHost;
     @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC)
     private String channelType = Channel.CHANNEL_EXEC;
@@ -301,8 +304,9 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies whether a connection to an unknown host should fail or not. This value is only checked when the
-     * property knownHosts is set.
+     * Specifies whether a connection to a server whose host has no entry in the known_hosts resource should fail or
+     * not. This value is only checked when the property knownHostsResource is set. A server whose host has entries is
+     * always rejected when it presents a key that none of them lists.
      *
      * @param failOnUnknownHost boolean flag, whether a connection to an unknown host should fail
      */

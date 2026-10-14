@@ -16,11 +16,33 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.security.KeyPairGenerator;
+import java.security.spec.ECGenParameterSpec;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.junit.jupiter.api.Test;
 
 public class SshComponentKnownHostTest extends SshComponentTestSupport {
+
+    private String knownHostsValid;
+    private String knownHostsOtherHost;
+    private String knownHostsSeveralKeys;
+
+    @Override
+    public void doPreSetup() throws Exception {
+        super.doPreSetup();
+        String serverKey = serverPublicKey();
+        String serverEntry = "[localhost]:" + port + " " + serverKey;
+        knownHostsValid = writeKnownHosts("known_hosts_valid", serverEntry);
+        knownHostsOtherHost = writeKnownHosts("known_hosts_other_host", "old-localhost " + serverKey);
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+        generator.initialize(new ECGenParameterSpec("secp256r1"));
+        String otherKey = PublicKeyEntry.toString(generator.generateKeyPair().getPublic());
+        knownHostsSeveralKeys
+                = writeKnownHosts("known_hosts_several_keys", "[localhost]:" + port + " " + otherKey, serverEntry);
+    }
 
     @Test
     public void testProducerWithValidFile() throws Exception {
@@ -65,6 +87,30 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
     }
 
     @Test
+    void testProducerWithKeyListedForAnotherHost() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:password");
+        mock.expectedMessageCount(0);
+        getMockEndpoint("mock:error").expectedMessageCount(1);
+
+        template.sendBody("direct:sshOtherHost", "test");
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testProducerWithSeveralKeysForTheServer() throws Exception {
+        final String msg = "test";
+
+        MockEndpoint mock = getMockEndpoint("mock:password");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(msg);
+
+        template.sendBody("direct:sshSeveralKeys", msg);
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
     public void testPollingConsumerWithValidKnownHostFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -99,7 +145,8 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
                 onException(Exception.class).handled(true).to("mock:error");
 
                 from("ssh://smx:smx@localhost:" + port
-                     + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
+                     + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=" + knownHostsValid
+                     + "&failOnUnknownHost=true")
                         .to("mock:result");
 
                 from("ssh://smx:smx@localhost:" + port
@@ -112,7 +159,17 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port
-                            + "?timeout=3000&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
+                            + "?timeout=3000&knownHostsResource=" + knownHostsValid + "&failOnUnknownHost=true")
+                        .to("mock:password");
+
+                from("direct:sshOtherHost")
+                        .to("ssh://smx:smx@localhost:" + port
+                            + "?timeout=3000&knownHostsResource=" + knownHostsOtherHost + "&failOnUnknownHost=true")
+                        .to("mock:password");
+
+                from("direct:sshSeveralKeys")
+                        .to("ssh://smx:smx@localhost:" + port
+                            + "?timeout=3000&knownHostsResource=" + knownHostsSeveralKeys + "&failOnUnknownHost=true")
                         .to("mock:password");
 
                 from("direct:sshInvalid").to("ssh://smx:smx@localhost:" + port

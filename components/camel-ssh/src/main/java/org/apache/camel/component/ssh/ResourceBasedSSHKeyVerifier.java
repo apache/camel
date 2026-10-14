@@ -18,30 +18,39 @@ package org.apache.camel.component.ssh;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.sshd.client.config.hosts.KnownHostEntry;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
-import org.bouncycastle.util.Arrays;
+import org.apache.sshd.common.config.keys.KeyUtils;
+import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
+import org.apache.sshd.common.util.net.SshdSocketAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * ServerKeyVerifier that takes a camel resource as input file to validate the server key against.
- *
+ * <p/>
+ * The resource uses the OpenSSH known_hosts format. The entries are matched against the host name (or address) and port
+ * the client connects to, as configured on the endpoint: host patterns are matched as a whole, wildcard, negated and
+ * hashed patterns are supported, and an entry without a port only applies to port 22. The server is accepted when one
+ * of the matching entries holds the key it presents, and rejected when that key is marked as {@code @revoked} or when
+ * the host has entries but none of them holds that key. Only a host without any matching entry is subject to
+ * {@code failOnUnknownHost}. Host certificates ({@code @cert-authority} entries) are not supported.
  */
 public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
+    private static final String MARKER_REVOKED = "revoked";
+    private static final String MARKER_CERT_AUTHORITY = "cert-authority";
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private CamelContext camelContext;
@@ -62,21 +71,52 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     @Override
     public boolean verifyServerKey(ClientSession sshClientSession, SocketAddress remoteAddress, PublicKey serverKey) {
         log.debug("Trying to find known_hosts file {}", knownHostsResource);
+        List<KnownHostEntry> entries = Collections.emptyList();
         InputStream knownHostsInputStream = null;
         try {
             knownHostsInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext,
                     knownHostsResource);
-            List<String> possibleTokens = getKnownHostsFileTokensForSocketAddress(remoteAddress);
-            log.debug("Trying to match PublicKey against provided known_hosts file");
-            PublicKey matchingKey = findKeyForServerToken(knownHostsInputStream, possibleTokens);
-            if (matchingKey != null) {
-                log.debug("Found PublicKey match for server");
-                return Arrays.areEqual(matchingKey.getEncoded(), serverKey.getEncoded());
-            }
+            entries = KnownHostEntry.readKnownHostEntries(knownHostsInputStream, false);
         } catch (IOException ioException) {
             log.debug(String.format("Could not find known_hosts file %s", knownHostsResource), ioException);
         } finally {
             IOHelper.close(knownHostsInputStream);
+        }
+
+        SshdSocketAddress server = toServerAddress(remoteAddress);
+        boolean hostListed = false;
+        boolean keyListed = false;
+        if (server != null) {
+            log.debug("Trying to match PublicKey of {} against provided known_hosts file", server);
+            for (KnownHostEntry entry : entries) {
+                if (!entry.isHostMatch(server.getHostName(), server.getPort())
+                        || MARKER_CERT_AUTHORITY.equals(entry.getMarker())) {
+                    continue;
+                }
+                boolean sameKey = isSameKey(sshClientSession, entry, serverKey);
+                if (MARKER_REVOKED.equals(entry.getMarker())) {
+                    if (sameKey) {
+                        log.warn("The key presented by {} is marked as revoked in the known_hosts file {}", server,
+                                knownHostsResource);
+                        return false;
+                    }
+                } else {
+                    hostListed = true;
+                    if (sameKey) {
+                        keyListed = true;
+                    }
+                }
+            }
+        }
+
+        if (keyListed) {
+            log.debug("Found PublicKey match for server {}", server);
+            return true;
+        }
+        if (hostListed) {
+            log.warn("The key presented by {} does not match any key listed for it in the known_hosts file {}", server,
+                    knownHostsResource);
+            return false;
         }
         if (failOnUnknownHost) {
             log.warn("Could not find matching key for client session, connection will fail due to configuration");
@@ -88,105 +128,31 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
         }
     }
 
-    private PublicKey findKeyForServerToken(InputStream knownHostsInputStream, List<String> possibleTokens) {
-        String knowHostsLines = camelContext.getTypeConverter().convertTo(String.class, knownHostsInputStream);
-        if (knowHostsLines == null) {
-            log.warn("Could not read from the known_hosts file input stream");
-            return null;
-        }
-
-        for (String s : knowHostsLines.split("\n")) {
-            String[] parts = s.split(" ");
-            if (parts.length != 3) {
-                log.warn("Found malformed entry in known_hosts file");
-                continue;
+    private boolean isSameKey(ClientSession sshClientSession, KnownHostEntry entry, PublicKey serverKey) {
+        String keyType = entry.getKeyEntry().getKeyType();
+        try {
+            PublicKey key = entry.getKeyEntry().resolvePublicKey(sshClientSession, PublicKeyEntryResolver.IGNORING);
+            if (key == null) {
+                log.warn("Unsupported key type {} in the known_hosts file {}", keyType, knownHostsResource);
+                return false;
             }
-            String entry = parts[0];
-            String key = parts[2];
-            for (String serverToken : possibleTokens) {
-                if (entry.contains(serverToken)) {
-                    try {
-                        return loadKey(key);
-                    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                        log.warn(String.format("Could not load key for server token %s", entry), e);
-                    }
-                }
-            }
+            return KeyUtils.compareKeys(key, serverKey);
+        } catch (IOException | GeneralSecurityException | RuntimeException e) {
+            // a key that cannot be decoded cannot be the key the server presented
+            log.warn("Could not load a {} key from the known_hosts file {}", keyType, knownHostsResource, e);
+            return false;
         }
-        return null;
-    }
-
-    private List<String> getKnownHostsFileTokensForSocketAddress(SocketAddress remoteAddress) {
-        List<String> returnList = new LinkedList<>();
-        if (remoteAddress instanceof InetSocketAddress) {
-            InetSocketAddress inetSocketAddress = (InetSocketAddress) remoteAddress;
-
-            String hostName = inetSocketAddress.getHostName();
-            String ipAddress = inetSocketAddress.getAddress().getHostAddress();
-            String remotePort = String.valueOf(inetSocketAddress.getPort());
-
-            returnList.add(hostName);
-            returnList.add("[" + hostName + "]:" + remotePort);
-            returnList.add(ipAddress);
-            returnList.add("[" + ipAddress + "]:" + remotePort);
-        }
-
-        return returnList;
     }
 
     /*
-     * Decode the public key string, which is a base64 encoded string that consists
-     * of multiple parts: 1. public key type (ssh-rsa, ssh-dss, ...) 2. binary key
-     * data (May consists of multiple parts)
-     *
-     * Each part is composed by two sub-parts 1. Length of the part (4 bytes) 2.
-     * Binary part (length as defined by 1.)
-     *
-     * Uses SSHPublicKeyHolder to construct the actual PublicKey Object
-     *
-     * Note: Currently only supports RSA and DSA Public keys as required by
-     * https://tools.ietf.org/html/rfc4253#section-6.6
-     *
+     * The host name or address and the port the client connected to. The host is used exactly as given, never
+     * resolved, so an endpoint configured with an address is not looked up by the name a reverse lookup returns.
      */
-    PublicKey loadKey(String key) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        SSHPublicKeyHolder sshPublicKeyHolder = new SSHPublicKeyHolder();
-
-        byte[] keyByteArray = Base64.getDecoder().decode(key);
-        int keyByteArrayCursor = 0;
-
-        byte[] tmpData = new byte[4];
-        int tmpCursor = 0;
-
-        boolean getLengthMode = true;
-        while (keyByteArrayCursor < keyByteArray.length) {
-            if (getLengthMode) {
-                if (tmpCursor < 4) {
-                    tmpData[tmpCursor] = keyByteArray[keyByteArrayCursor];
-                    tmpCursor++;
-                    keyByteArrayCursor++;
-                    continue;
-                } else {
-                    tmpCursor = 0;
-                    getLengthMode = false;
-                    tmpData = new byte[byteArrayToInt(tmpData)];
-                }
-            }
-            tmpData[tmpCursor] = keyByteArray[keyByteArrayCursor];
-            tmpCursor++;
-            keyByteArrayCursor++;
-            if (tmpCursor == tmpData.length) {
-                sshPublicKeyHolder.push(tmpData);
-                getLengthMode = true;
-                tmpData = new byte[4];
-                tmpCursor = 0;
-            }
+    private static SshdSocketAddress toServerAddress(SocketAddress remoteAddress) {
+        if (remoteAddress instanceof InetSocketAddress || remoteAddress instanceof SshdSocketAddress) {
+            return SshdSocketAddress.toSshdSocketAddress(remoteAddress);
         }
-
-        return sshPublicKeyHolder.toPublicKey();
-    }
-
-    private int byteArrayToInt(byte[] tmpData) {
-        return new BigInteger(tmpData).intValue();
+        return null;
     }
 
 }

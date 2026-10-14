@@ -140,6 +140,27 @@ sent to the partition with the same id in the target Event Hub. To keep doing so
 Event Hubs that have the same partitions, remove the `CamelAzureEventHubsReceivedPartitionId` exchange property before
 the producer.
 
+=== camel-ssh - known_hosts entries are matched as in OpenSSH
+
+When `knownHostsResource` is set, the entries of the `known_hosts` file are now matched as OpenSSH
+matches them, against the host name or address and the port configured on the endpoint:
+
+* A host pattern must match the configured host as a whole. An entry for another host whose name or
+address contains the configured one is no longer used.
+* An entry without a port only applies to port 22. A server on another port needs an entry of the
+form `[host]:port`.
+* The configured host is used as is. An endpoint configured with a host name no longer uses entries
+listed only under its address, and an endpoint configured with an address no longer uses entries
+listed under the name that a reverse lookup of the address returns.
+* Every entry of the host is considered, so a host can be listed with several keys. Wildcard, negated
+and hashed patterns, comments and `@revoked` entries are supported. `@cert-authority` entries are
+ignored.
+
+As before, a server whose host has entries is rejected when it presents a key that none of them lists,
+whatever the value of `failOnUnknownHost`, which only applies to a host without any entry.
+Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
+endpoint is configured with.
+
 === camel-xslt and camel-xslt-saxon - implicit DOM sources
 
 When a non-`Source` input is implicitly converted to a `DOMSource` pointing at its owner document's

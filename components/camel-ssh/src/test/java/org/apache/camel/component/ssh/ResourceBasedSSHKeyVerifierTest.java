@@ -16,47 +16,203 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyPairGenerator;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.security.spec.ECGenParameterSpec;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.sshd.common.config.keys.PublicKeyEntry;
+import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
 import org.apache.sshd.common.util.io.IoUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ResourceBasedSSHKeyVerifierTest {
+class ResourceBasedSSHKeyVerifierTest {
 
-    public static final Logger LOG = LoggerFactory.getLogger(ResourceBasedSSHKeyVerifierTest.class);
+    @TempDir
+    Path dir;
+
+    private CamelContext context;
+    private PublicKey serverKey;
+    private PublicKey otherKey;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        context = new DefaultCamelContext();
+        context.start();
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+        generator.initialize(new ECGenParameterSpec("secp256r1"));
+        serverKey = generator.generateKeyPair().getPublic();
+        otherKey = generator.generateKeyPair().getPublic();
+    }
+
+    @AfterEach
+    void tearDown() {
+        context.stop();
+    }
 
     @Test
-    public void verifyAllTypesOfPublicKeys() throws IOException {
-        final Map<String, String> keys = new LinkedHashMap<>();
-        InputStream knownHosts = getClass().getResourceAsStream("/known_hosts_types");
-        assertNotNull(knownHosts);
-        IoUtils.readAllLines(knownHosts).forEach(l -> {
-            String[] tab = l.split(" ");
-            if (l.startsWith("#")) {
-                return;
-            }
-            keys.put(tab[1], tab[2]);
-        });
+    void acceptsTheKeyListedForTheHost() throws Exception {
+        assertTrue(verify(true, "db.example.com", 22, serverKey, entry("db.example.com", serverKey)));
+        assertTrue(verify(true, "db.example.com", 22, serverKey, entry("web.example.com,db.example.com", serverKey)));
+    }
 
-        ResourceBasedSSHKeyVerifier verifier = new ResourceBasedSSHKeyVerifier(null, null);
-        keys.forEach((type, data) -> {
-            LOG.info("Checking key {}", type);
-            try {
-                PublicKey publicKey = verifier.loadKey(data);
-                assertNotNull(publicKey);
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                throw new RuntimeException(e.getMessage(), e);
+    @Test
+    void doesNotUseTheEntryOfAHostWhoseNameContainsTheHostName() throws Exception {
+        assertFalse(verify(true, "db.example.com", 22, otherKey, entry("old-db.example.com", otherKey)));
+        assertFalse(verify(true, "db.example.com", 22, otherKey, entry("db.example.com.old", otherKey)));
+    }
+
+    @Test
+    void doesNotUseTheEntryOfAnAddressContainingTheAddress() throws Exception {
+        String knownHosts = entry("10.0.0.12", otherKey) + entry("10.0.0.1", serverKey);
+        assertFalse(verify(true, "10.0.0.1", 22, otherKey, knownHosts));
+        assertTrue(verify(true, "10.0.0.1", 22, serverKey, knownHosts));
+        assertFalse(verify(true, "10.0.0.1", 22, otherKey, entry("110.0.0.1", otherKey)));
+    }
+
+    @Test
+    void matchesThePort() throws Exception {
+        String knownHosts = entry("[db.example.com]:2222", otherKey);
+        assertFalse(verify(true, "db.example.com", 22, otherKey, knownHosts));
+        assertFalse(verify(true, "db.example.com", 222, otherKey, knownHosts));
+        assertTrue(verify(true, "db.example.com", 2222, otherKey, knownHosts));
+        // an entry without a port only applies to the default port
+        assertFalse(verify(true, "db.example.com", 2222, serverKey, entry("db.example.com", serverKey)));
+    }
+
+    @Test
+    void matchesWildcardNegatedAndUpperCasePatterns() throws Exception {
+        assertTrue(verify(true, "db.example.com", 22, serverKey, entry("*.example.com", serverKey)));
+        assertTrue(verify(true, "db.example.com", 22, serverKey, entry("DB.EXAMPLE.COM", serverKey)));
+        String knownHosts = entry("!db.example.com,*.example.com", otherKey);
+        assertFalse(verify(true, "db.example.com", 22, otherKey, knownHosts));
+        assertTrue(verify(true, "www.example.com", 22, otherKey, knownHosts));
+    }
+
+    @Test
+    void matchesHashedEntries() throws Exception {
+        String knownHosts = entry(hashed("db.example.com"), serverKey);
+        assertTrue(verify(true, "db.example.com", 22, serverKey, knownHosts));
+        assertFalse(verify(true, "db.example.com", 22, otherKey, knownHosts));
+        assertFalse(verify(true, "www.example.com", 22, serverKey, knownHosts));
+    }
+
+    @Test
+    void considersEveryEntryOfTheHost() throws Exception {
+        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+        generator.initialize(2048);
+        PublicKey rsaKey = generator.generateKeyPair().getPublic();
+        String knownHosts = entry("db.example.com", rsaKey) + entry("db.example.com", serverKey);
+        assertTrue(verify(true, "db.example.com", 22, serverKey, knownHosts));
+        assertTrue(verify(true, "db.example.com", 22, rsaKey, knownHosts));
+    }
+
+    @Test
+    void readsCommentsAndCrlfLineEndings() throws Exception {
+        String knownHosts = "# known hosts\r\n" + "db.example.com " + PublicKeyEntry.toString(serverKey) + " db key\r\n";
+        assertTrue(verify(true, "db.example.com", 22, serverKey, knownHosts));
+    }
+
+    @Test
+    void rejectsARevokedKey() throws Exception {
+        String knownHosts = "@revoked * " + PublicKeyEntry.toString(otherKey) + "\n" + entry("db.example.com", otherKey);
+        assertFalse(verify(true, "db.example.com", 22, otherKey, knownHosts));
+        assertFalse(verify(false, "db.example.com", 22, otherKey, knownHosts));
+        assertTrue(verify(true, "db.example.com", 22, serverKey, knownHosts + entry("db.example.com", serverKey)));
+    }
+
+    @Test
+    void ignoresCertificateAuthorityEntries() throws Exception {
+        String knownHosts = "@cert-authority db.example.com " + PublicKeyEntry.toString(serverKey) + "\n";
+        assertFalse(verify(true, "db.example.com", 22, serverKey, knownHosts));
+    }
+
+    @Test
+    void rejectsAnotherKeyForAListedHostWhateverFailOnUnknownHost() throws Exception {
+        String knownHosts = entry("10.0.0.12", otherKey) + entry("10.0.0.1", serverKey);
+        assertFalse(verify(false, "10.0.0.1", 22, otherKey, knownHosts));
+        assertFalse(verify(false, "db.example.com", 22, otherKey, entry("db.example.com", serverKey)));
+    }
+
+    @Test
+    void appliesFailOnUnknownHostToHostsWithoutEntries() throws Exception {
+        String knownHosts = entry("www.example.com", serverKey);
+        assertFalse(verify(true, "db.example.com", 22, serverKey, knownHosts));
+        assertTrue(verify(false, "db.example.com", 22, serverKey, knownHosts));
+        assertFalse(verify(true, "db.example.com", 22, serverKey, ""));
+        assertTrue(verify(false, "db.example.com", 22, serverKey, ""));
+    }
+
+    @Test
+    void looksUpAnAddressAsConfigured() throws Exception {
+        // an endpoint configured with an address is looked up by that address, not by the name of a reverse lookup
+        String knownHosts = entry("localhost", otherKey) + entry("127.0.0.1", serverKey);
+        assertFalse(verify(true, new InetSocketAddress("127.0.0.1", 22), otherKey, knownHosts));
+        assertTrue(verify(true, new InetSocketAddress("127.0.0.1", 22), serverKey, knownHosts));
+    }
+
+    @Test
+    void verifiesAllSupportedKeyTypes() throws Exception {
+        ResourceBasedSSHKeyVerifier verifier = new ResourceBasedSSHKeyVerifier(context, "classpath:known_hosts_types", true);
+        try (InputStream knownHosts = getClass().getResourceAsStream("/known_hosts_types")) {
+            assertNotNull(knownHosts);
+            for (String line : IoUtils.readAllLines(knownHosts)) {
+                String[] fields = line.split(" ");
+                PublicKey key = PublicKeyEntry.parsePublicKeyEntry(fields[1] + " " + fields[2])
+                        .resolvePublicKey(null, Collections.emptyMap(), PublicKeyEntryResolver.FAILING);
+                assertTrue(verifier.verifyServerKey(null, new InetSocketAddress(fields[0], 22), key), fields[1]);
+                assertFalse(verifier.verifyServerKey(null, new InetSocketAddress(fields[0], 22), serverKey), fields[1]);
             }
-        });
+        }
+    }
+
+    private boolean verify(boolean failOnUnknownHost, String host, int port, PublicKey presented, String knownHosts)
+            throws Exception {
+        // the SSH client hands the verifier the configured host name together with its resolved address
+        InetAddress address = InetAddress.getByAddress(host, new byte[] { 10, 0, 0, 1 });
+        return verify(failOnUnknownHost, new InetSocketAddress(address, port), presented, knownHosts);
+    }
+
+    private boolean verify(
+            boolean failOnUnknownHost, InetSocketAddress server, PublicKey presented, String knownHosts)
+            throws Exception {
+        Path file = Files.createTempFile(dir, "known_hosts", "");
+        Files.writeString(file, knownHosts, StandardCharsets.UTF_8);
+        ResourceBasedSSHKeyVerifier verifier
+                = new ResourceBasedSSHKeyVerifier(context, "file:" + file, failOnUnknownHost);
+        return verifier.verifyServerKey(null, server, presented);
+    }
+
+    private static String entry(String hosts, PublicKey key) {
+        return hosts + " " + PublicKeyEntry.toString(key) + "\n";
+    }
+
+    private static String hashed(String host) throws Exception {
+        byte[] salt = new byte[20];
+        Arrays.fill(salt, (byte) 7);
+        Mac mac = Mac.getInstance("HmacSHA1");
+        mac.init(new SecretKeySpec(salt, "HmacSHA1"));
+        byte[] hash = mac.doFinal(host.getBytes(StandardCharsets.UTF_8));
+        return "|1|" + Base64.getEncoder().encodeToString(salt) + "|" + Base64.getEncoder().encodeToString(hash);
     }
 }
