@@ -19,6 +19,7 @@ package org.apache.camel.component.citrus;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -61,15 +62,24 @@ public class CitrusProducer extends DefaultProducer {
     }
 
     @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (citrusContext != null) {
+            citrusContext.close();
+            citrusContext = null;
+        }
+    }
+
+    @Override
     public void process(Exchange exchange) throws Exception {
         CitrusEndpoint endpoint = getEndpoint();
 
-        try {
-            int index = endpoint.nextExchangeIndex();
-            MessageValidationSpec spec = endpoint.resolveValidationSpec(index);
-            TestContext testContext = citrusContext.createTestContext();
-            propagateExchangeProperties(exchange, testContext);
+        int index = endpoint.nextExchangeIndex();
+        TestContext testContext = citrusContext.createTestContext();
+        propagateExchangeVariables(exchange, testContext);
 
+        try {
+            MessageValidationSpec spec = endpoint.resolveValidationSpec(index);
             if (spec != null) {
                 DefaultMessage receivedMessage = buildReceivedMessage(exchange);
                 DefaultMessage controlMessage = buildControlMessage(spec, testContext);
@@ -90,17 +100,33 @@ public class CitrusProducer extends DefaultProducer {
             }
         } catch (Exception e) {
             endpoint.addFailure(e);
-            throw e;
+            if ("receive".equals(endpoint.getOperation())) {
+                throw e;
+            }
         } finally {
+            writeBackExtractedVariables(exchange, testContext);
             endpoint.onExchangeReceived(exchange);
         }
     }
 
-    private void propagateExchangeProperties(Exchange exchange, TestContext testContext) {
-        Map<String, Object> properties = exchange.getProperties();
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+    private void propagateExchangeVariables(Exchange exchange, TestContext testContext) {
+        for (Map.Entry<String, Object> entry : exchange.getProperties().entrySet()) {
             if (entry.getValue() != null) {
                 testContext.setVariable(entry.getKey(), entry.getValue());
+            }
+        }
+        for (Map.Entry<String, Object> entry : exchange.getVariables().entrySet()) {
+            if (entry.getValue() != null) {
+                testContext.setVariable(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    private void writeBackExtractedVariables(Exchange exchange, TestContext testContext) {
+        for (Map.Entry<String, Object> entry : testContext.getVariables().entrySet()) {
+            String key = entry.getKey();
+            if (!exchange.getProperties().containsKey(key) && !exchange.getVariables().containsKey(key)) {
+                exchange.setVariable(key, entry.getValue());
             }
         }
     }
@@ -137,9 +163,9 @@ public class CitrusProducer extends DefaultProducer {
         String type = endpoint.getMessageType();
         if (type != null) {
             if (MessageType.knows(type)) {
-                return MessageType.valueOf(type.toUpperCase()).name();
+                return MessageType.valueOf(type.toUpperCase(Locale.ROOT)).name();
             } else {
-                return type.toUpperCase();
+                return type.toUpperCase(Locale.ROOT);
             }
         }
 

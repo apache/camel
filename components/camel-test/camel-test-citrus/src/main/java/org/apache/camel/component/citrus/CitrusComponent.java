@@ -39,6 +39,10 @@ public class CitrusComponent extends DefaultComponent {
             operation = remaining;
         }
 
+        if (!"validate".equals(operation) && !"receive".equals(operation)) {
+            throw new IllegalArgumentException(
+                    "Invalid citrus operation: '" + operation + "'. Valid values are: validate, receive");
+        }
         endpoint.setOperation(operation);
         endpoint.setName(name);
         setProperties(endpoint, parameters);

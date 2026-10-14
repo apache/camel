@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.citrus;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.citrusframework.exceptions.ValidationException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,14 +73,16 @@ class CitrusSequentialValidationTest extends CamelTestSupport {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
 
         citrus.message(0).body("{\"event\": \"first\"}");
+        citrus.expectedMessageCount(2);
 
         template.sendBody("direct:start", "{\"event\": \"first\"}");
+        template.sendBody("direct:start", "{\"event\": \"second\"}");
 
-        assertThatThrownBy(() -> template.sendBody("direct:start", "{\"event\": \"second\"}"))
-                .isInstanceOf(CamelExecutionException.class)
-                .cause()
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("No validation specification for exchange at index 1");
+        assertThatThrownBy(citrus::assertIsSatisfied)
+                .isInstanceOf(ValidationException.class)
+                .satisfies(e -> assertThat(e.getSuppressed()[0])
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessageContaining("No validation specification for exchange at index 1"));
     }
 
     @Test
@@ -121,11 +123,13 @@ class CitrusSequentialValidationTest extends CamelTestSupport {
 
         citrus.message(0).body("{\"event\": \"created\"}");
         citrus.message(1).body("{\"event\": \"updated\"}");
+        citrus.expectedMessageCount(2);
 
         template.sendBody("direct:start", "{\"event\": \"created\"}");
+        template.sendBody("direct:start", "{\"event\": \"wrong\"}");
 
-        assertThatThrownBy(() -> template.sendBody("direct:start", "{\"event\": \"wrong\"}"))
-                .isInstanceOf(CamelExecutionException.class);
+        assertThatThrownBy(citrus::assertIsSatisfied)
+                .isInstanceOf(ValidationException.class);
     }
 
     @Override

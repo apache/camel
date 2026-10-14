@@ -18,7 +18,7 @@ package org.apache.camel.component.citrus;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.citrusframework.validation.DefaultValidations;
 import org.junit.jupiter.api.Test;
 

@@ -3,7 +3,7 @@
 :shortname: citrus
 :artifactid: camel-test-citrus
 :description: Citrus message validation component for testing
-:since: 4.23
+:since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
@@ -18,6 +18,17 @@ verify exchange body content, headers, and path expressions (JsonPath, XPath) us
 modules.
 
 This component is intended for use in Camel route unit and integration tests.
+
+== Maven dependency
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-citrus</artifactId>
+    <scope>test</scope>
+</dependency>
+----
 
 == URI format
 
@@ -257,7 +268,9 @@ it replaces `allMessages()` for that exchange entirely (the two are never combin
 `allMessages()` spec acts as a fallback for exchanges that have no matching indexed spec.
 
 If an exchange arrives at an index with no matching indexed spec and no `allMessages()` fallback,
-the endpoint fails with an error.
+the endpoint records a failure. For the `validate` operation, the failure is collected and reported
+when `assertIsSatisfied()` is called (similar to MockEndpoint). For the `receive` operation, the
+failure is thrown immediately as an exception.
 
 [source,java]
 ----
@@ -365,14 +378,32 @@ citrus.then().allMessages().respond()
 citrus.expectedMessageCount(1);
 ----
 
-=== Exchange properties as Citrus variables
+=== Exchange properties and variables as Citrus variables
 
-All exchange properties are automatically propagated to the Citrus test context as test variables.
-This enables the use of Citrus functions and validation matchers in expected message templates.
+All exchange properties and exchange variables are automatically propagated to the Citrus test
+context as test variables. This enables the use of Citrus variable placeholders (`${variableName}`)
+in expected message templates and response bodies.
+
+Variables extracted by Citrus during validation (e.g., via `@variable('name')@`) are written back
+to the exchange as exchange variables, making them available for downstream route processing.
 
 === Path validation
 
-Path validation expressions are automatically classified:
+Use the `validate()` method on a `MessageValidationSpec` to add Citrus validation context builders
+such as JsonPath or XPath expressions. These are provided by the Citrus `DefaultValidations` class:
 
-* Expressions starting with `$` are treated as JsonPath
-* Expressions starting with `/` are treated as XPath
+[source,java]
+----
+CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=json", CitrusEndpoint.class);
+citrus.allMessages().validate(new DefaultValidations().jsonPath()
+    .expression("$.user.name", "John")
+    .expression("$.user.age", "30"));
+----
+
+[source,java]
+----
+CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=xml", CitrusEndpoint.class);
+citrus.allMessages().validate(new DefaultValidations().xpath()
+    .expression("/order/status", "completed")
+    .expression("/order/total", "99.99"));
+----

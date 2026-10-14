@@ -125,7 +125,7 @@ public interface CitrusEndpointBuilderFactory {
          * Citrus message validation component for testing
          * 
          * Category: testing
-         * Since: 4.23
+         * Since: 4.24
          * Maven coordinates: org.apache.camel:camel-test-citrus
          * 
          * Syntax: <code>citrus:operation/name</code>
@@ -134,6 +134,7 @@ public interface CitrusEndpointBuilderFactory {
          * The operation to perform. 'validate' validates exchanges without
          * modifying them. 'receive' validates exchanges and returns a simulated
          * response.
+         * There are 2 enums and the value can be one of: validate, receive
          * 
          * Path parameter: name
          * A unique name to identify this endpoint. Allows multiple Citrus
@@ -150,7 +151,7 @@ public interface CitrusEndpointBuilderFactory {
          * Citrus message validation component for testing
          * 
          * Category: testing
-         * Since: 4.23
+         * Since: 4.24
          * Maven coordinates: org.apache.camel:camel-test-citrus
          * 
          * Syntax: <code>citrus:operation/name</code>
@@ -159,6 +160,7 @@ public interface CitrusEndpointBuilderFactory {
          * The operation to perform. 'validate' validates exchanges without
          * modifying them. 'receive' validates exchanges and returns a simulated
          * response.
+         * There are 2 enums and the value can be one of: validate, receive
          * 
          * Path parameter: name
          * A unique name to identify this endpoint. Allows multiple Citrus
