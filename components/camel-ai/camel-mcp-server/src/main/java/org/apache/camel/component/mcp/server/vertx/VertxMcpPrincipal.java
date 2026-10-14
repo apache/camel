@@ -34,8 +34,8 @@ final class VertxMcpPrincipal {
     }
 
     /**
-     * The caller name: the Vert.x {@link User#subject() subject} when set, else the {@code username} or {@code sub}
-     * claim of the principal, else {@code null}.
+     * The caller name: the Vert.x {@link User#subject() subject} when non-null and non-blank, else the {@code username}
+     * or {@code sub} claim of the principal when non-null and non-blank, else {@code null}.
      */
     static String name(User user) {
         if (user == null) {
@@ -60,9 +60,12 @@ final class VertxMcpPrincipal {
     }
 
     /**
-     * The caller roles, read from the principal's common role claims in order: a top-level {@code roles} array, the
-     * Keycloak {@code realm_access.roles} array, or a {@code groups} array. Returns {@code null} when the principal
-     * carries none, so the bridge does not stamp an empty roles property; blank and non-string entries are skipped.
+     * The caller roles, read from the authenticated token's claims copied into the principal, in order: a top-level
+     * {@code roles} array, the Keycloak {@code realm_access.roles} array, or a {@code groups} array. A claim that is
+     * present but not a JSON array (for example a single-valued {@code "roles":"admin"}, or a non-object
+     * {@code realm_access}) is ignored rather than cast, so a token in that shape cannot fail the call. Returns
+     * {@code null} when the principal carries no usable roles, so the bridge does not stamp an empty roles property;
+     * blank and non-string entries are skipped.
      */
     static List<String> roles(User user) {
         if (user == null) {
@@ -72,17 +75,19 @@ final class VertxMcpPrincipal {
         if (principal == null) {
             return null;
         }
-        JsonArray roles = principal.getJsonArray("roles");
-        if (roles == null) {
-            JsonObject realmAccess = principal.getJsonObject("realm_access");
-            if (realmAccess != null) {
-                roles = realmAccess.getJsonArray("roles");
-            }
+        // Read defensively: a token may carry these claims with an unexpected type (a single-valued
+        // "roles":"admin" string, or a non-object "realm_access"). The Vert.x JWT provider copies every
+        // non-reserved claim into principal(), so casting via getJsonArray/getJsonObject would throw a
+        // ClassCastException and fail the tool call before it runs. Ignore any shape that is not a JSON array.
+        Object value = principal.getValue("roles");
+        if (!(value instanceof JsonArray)) {
+            Object realmAccess = principal.getValue("realm_access");
+            value = realmAccess instanceof JsonObject jo ? jo.getValue("roles") : null;
         }
-        if (roles == null) {
-            roles = principal.getJsonArray("groups");
+        if (!(value instanceof JsonArray)) {
+            value = principal.getValue("groups");
         }
-        if (roles == null || roles.isEmpty()) {
+        if (!(value instanceof JsonArray roles) || roles.isEmpty()) {
             return null;
         }
         List<String> answer = new ArrayList<>(roles.size());

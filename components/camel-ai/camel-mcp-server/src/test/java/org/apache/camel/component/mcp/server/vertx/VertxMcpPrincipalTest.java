@@ -88,4 +88,23 @@ class VertxMcpPrincipalTest {
         assertThat(VertxMcpPrincipal.roles(User.create(new JsonObject()
                 .put("roles", new JsonArray().add("").addNull())))).isNull();
     }
+
+    @Test
+    void rolesIgnoreNonArrayClaimShapesInsteadOfThrowing() {
+        // a token issuer may emit these claims with a non-array shape; extraction must not throw ClassCastException
+        assertThat(VertxMcpPrincipal.roles(User.create(new JsonObject().put("roles", "admin")))).isNull();
+        assertThat(VertxMcpPrincipal.roles(User.create(new JsonObject().put("groups", "devs")))).isNull();
+        assertThat(VertxMcpPrincipal.roles(User.create(new JsonObject().put("realm_access", "nope")))).isNull();
+        assertThat(VertxMcpPrincipal.roles(User.create(new JsonObject()
+                .put("realm_access", new JsonObject().put("roles", "admin"))))).isNull();
+    }
+
+    @Test
+    void rolesFallThroughFromNonArrayRolesToGroups() {
+        // a non-array "roles" claim is ignored, and a valid "groups" array is still used
+        User user = User.create(new JsonObject()
+                .put("roles", "admin")
+                .put("groups", new JsonArray().add("g1").add("g2")));
+        assertThat(VertxMcpPrincipal.roles(user)).containsExactly("g1", "g2");
+    }
 }
