@@ -17,7 +17,10 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,6 +29,7 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.DependencyLookup;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.tooling.model.ComponentModel;
 
@@ -50,8 +54,9 @@ public class DependencyCheckTools {
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Check Camel project dependency hygiene. Given a pom.xml (and optionally route definitions), "
-                        + "detects outdated Camel dependencies compared to the latest catalog version, "
-                        + "missing Maven dependencies for components used in routes, "
+                        + "detects an outdated Camel version compared to the latest Camel release, "
+                        + "missing Maven dependencies for components used in routes (Spring Boot starters and "
+                        + "Camel Quarkus extensions count as the component they provide), "
                         + "and version conflicts between the Camel BOM and explicit dependency overrides. "
                         + "Returns actionable recommendations with corrected dependency snippets. "
                         + "POM content is automatically sanitized to mask sensitive data (passwords, tokens, API keys) "
@@ -88,12 +93,12 @@ public class DependencyCheckTools {
                     pom.camelVersion(), pom.runtimeType(), pom.javaVersion(), pom.dependencies().size());
 
             // 1. Check for outdated Camel version
-            VersionStatus versionStatus = checkVersionStatus(pom, catalog);
+            VersionStatus versionStatus = checkVersionStatus(pom, catalog, catalogService.getDefaultCatalog());
 
             // 2. Check for missing dependencies from routes
             List<MissingDependency> missingDeps = List.of();
             if (routes != null && !routes.isBlank()) {
-                missingDeps = checkMissingDependencies(routes, pom.dependencies(), catalog);
+                missingDeps = checkMissingDependencies(routes, pom, catalog);
             }
 
             // 3. Check for version conflicts (explicit overrides when BOM is present)
@@ -120,36 +125,38 @@ public class DependencyCheckTools {
     }
 
     /**
-     * Check if the project's Camel version is outdated compared to the catalog version.
+     * Check if the project's Camel version is outdated compared to the latest Camel release known to the catalog (not
+     * the catalog version, which is a SNAPSHOT on a development build).
      */
-    private VersionStatus checkVersionStatus(MigrationData.PomAnalysis pom, CamelCatalog catalog) {
+    private VersionStatus checkVersionStatus(MigrationData.PomAnalysis pom, CamelCatalog catalog, CamelCatalog releases) {
         String catalogVersion = catalog.getCatalogVersion();
+        String latest = CamelReleases.latest(releases);
+        if (latest == null) {
+            latest = catalogVersion;
+        }
 
         if (pom.camelVersion() == null) {
             return new VersionStatus(
-                    catalogVersion, null, null, "unknown",
+                    catalogVersion, latest, null, null, "unknown",
                     "Could not detect Camel version from pom.xml. "
-                                                           + "Check if the version is defined in a parent POM or BOM.");
+                                                                   + "Check if the version is defined in a parent POM or BOM.");
         }
 
-        int comparison = compareVersions(pom.camelVersion(), catalogVersion);
+        int comparison = compareVersions(pom.camelVersion(), latest);
         if (comparison < 0) {
             return new VersionStatus(
-                    catalogVersion, pom.camelVersion(), true, "outdated",
-                    "Project uses Camel " + pom.camelVersion()
-                                                                          + " but " + catalogVersion
-                                                                          + " is available. "
-                                                                          + "Consider upgrading for bug fixes and new features.");
+                    catalogVersion, latest, pom.camelVersion(), true, "outdated",
+                    "Project uses Camel " + pom.camelVersion() + " but " + latest + " is the latest release. "
+                                                                                  + "Consider upgrading for bug fixes and new features.");
         } else if (comparison == 0) {
             return new VersionStatus(
-                    catalogVersion, pom.camelVersion(), false, "current",
-                    "Project uses the latest Camel version.");
+                    catalogVersion, latest, pom.camelVersion(), false, "current",
+                    "Project uses the latest Camel release.");
         } else {
             return new VersionStatus(
-                    catalogVersion, pom.camelVersion(), false, "newer",
-                    "Project uses Camel " + pom.camelVersion()
-                                                                        + " which is newer than catalog version "
-                                                                        + catalogVersion + ".");
+                    catalogVersion, latest, pom.camelVersion(), false, "newer",
+                    "Project uses Camel " + pom.camelVersion() + " which is newer than the latest release "
+                                                                                + latest + ".");
         }
     }
 
@@ -157,8 +164,16 @@ public class DependencyCheckTools {
      * Check for components used in routes that are missing from the project's dependencies.
      */
     private List<MissingDependency> checkMissingDependencies(
-            String routes, List<String> existingDeps, CamelCatalog catalog) {
+            String routes, MigrationData.PomAnalysis pom, CamelCatalog catalog) {
         List<MissingDependency> missing = new ArrayList<>();
+        String runtime = pom.runtimeType();
+
+        // a Spring Boot starter or Camel Quarkus extension provides the component of the same name
+        Set<String> declared = new HashSet<>();
+        for (String dep : pom.dependencies()) {
+            declared.add(dep);
+            declared.add(DependencyLookup.camelArtifactId(dep));
+        }
 
         // the components of the routes' endpoints, not every name in the text (CAMEL-25586)
         for (String comp : RouteComponents.of(routes, null, catalog)) {
@@ -176,10 +191,13 @@ public class DependencyCheckTools {
                 continue;
             }
 
-            if (!existingDeps.contains(artifactId)) {
+            if (!declared.contains(artifactId)) {
+                DependencyLookup.RuntimeArtifact ga = "spring-boot".equals(runtime) || "quarkus".equals(runtime)
+                        ? DependencyLookup.runtimeArtifact(artifactId, runtime)
+                        : new DependencyLookup.RuntimeArtifact(model.getGroupId(), artifactId);
                 missing.add(new MissingDependency(
-                        comp, artifactId, model.getGroupId(), model.getTitle(),
-                        formatDependencySnippet(model.getGroupId(), artifactId)));
+                        comp, ga.artifactId(), ga.groupId(), model.getTitle(),
+                        formatDependencySnippet(ga.groupId(), ga.artifactId())));
             }
         }
 
@@ -195,6 +213,7 @@ public class DependencyCheckTools {
         boolean hasBom = pomContent.contains("camel-bom")
                 || pomContent.contains("camel-spring-boot-bom")
                 || pomContent.contains("camel-quarkus-bom")
+                || pomContent.contains("quarkus-camel-bom")
                 || pomContent.contains("camel-dependencies");
 
         if (!hasBom) {
@@ -233,9 +252,8 @@ public class DependencyCheckTools {
         if (versionStatus.outdated() != null && versionStatus.outdated()) {
             recommendations.add(new Recommendation(
                     "medium", "Version Upgrade",
-                    "Upgrade Camel from " + pom.camelVersion() + " to " + versionStatus.catalogVersion(),
-                    "Use camel_migration_compatibility and camel_migration_recipes tools "
-                                                                                                          + "to check compatibility and get automated upgrade commands.",
+                    "Upgrade Camel from " + pom.camelVersion() + " to " + versionStatus.latestVersion(),
+                    "Use the camel_migration_recipes tool to get automated upgrade commands.",
                     null));
         }
 
@@ -336,8 +354,9 @@ public class DependencyCheckTools {
     }
 
     private boolean hasCamelBom(MigrationData.PomAnalysis pom) {
-        return pom.dependencies().stream()
-                .anyMatch(d -> d.endsWith("-bom") || d.equals("camel-dependencies"));
+        return Stream.concat(pom.dependencies().stream(), pom.managedDependencies().stream())
+                .anyMatch(d -> d.startsWith("camel-") && d.endsWith("-bom") || d.equals("camel-dependencies")
+                        || d.equals("quarkus-camel-bom"));
     }
 
     private String formatDependencySnippet(String groupId, String artifactId) {
@@ -348,7 +367,7 @@ public class DependencyCheckTools {
     }
 
     private String formatBomSnippet(MigrationData.PomAnalysis pom) {
-        return dependencyData.formatBomSnippet(pom.runtimeType(), pom.camelVersion());
+        return dependencyData.formatBomSnippet(pom.runtimeType(), pom.camelVersion(), pom.quarkusVersion());
     }
 
     // Result records
@@ -362,8 +381,12 @@ public class DependencyCheckTools {
     public record ProjectInfo(String camelVersion, String runtimeType, String javaVersion, int dependencyCount) {
     }
 
+    /**
+     * @param catalogVersion the version of the catalog this server answers from
+     * @param latestVersion  the latest Camel release, what the project version is compared with
+     */
     public record VersionStatus(
-            String catalogVersion, String projectVersion, Boolean outdated,
+            String catalogVersion, String latestVersion, String projectVersion, Boolean outdated,
             String status, String message) {
     }
 
