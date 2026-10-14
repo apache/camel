@@ -24,6 +24,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
         org.apache.camel.component.wasm.WasmConfiguration target = (org.apache.camel.component.wasm.WasmConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": target.setArgs(property(camelContext, java.lang.String.class, value)); return true;
+        case "compile": target.setCompile(property(camelContext, boolean.class, value)); return true;
         case "environment": target.setEnvironment(property(camelContext, java.util.Map.class, value)); return true;
         case "environmentheaders":
         case "environmentHeaders": target.setEnvironmentHeaders(property(camelContext, java.lang.String.class, value)); return true;
@@ -42,6 +43,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": return java.lang.String.class;
+        case "compile": return boolean.class;
         case "environment": return java.util.Map.class;
         case "environmentheaders":
         case "environmentHeaders": return java.lang.String.class;
@@ -61,6 +63,7 @@ public class WasmConfigurationConfigurer extends org.apache.camel.support.compon
         org.apache.camel.component.wasm.WasmConfiguration target = (org.apache.camel.component.wasm.WasmConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": return target.getArgs();
+        case "compile": return target.isCompile();
         case "environment": return target.getEnvironment();
         case "environmentheaders":
         case "environmentHeaders": return target.getEnvironmentHeaders();

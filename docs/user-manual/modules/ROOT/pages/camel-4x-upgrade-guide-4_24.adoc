@@ -209,6 +209,11 @@ module.
 * `WasmSupport.deserialize(byte[], Exchange)`.
 * The constructor `WasmProducer(Endpoint, String, String)` is replaced by `WasmProducer(WasmEndpoint)`.
 
+`camel-wasm` has a new dependency, `run.endive:compiler`, which brings in ASM (`org.ow2.asm`). It is used by the
+new `compile` option of the endpoint (default `false`). The module is now loaded once per endpoint and no longer by
+every producer, so stopping and starting a route does not read the module again: remove the route and add it
+again, or restart the application, to load a module that has changed.
+
 === camel-vertx-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the HTTP consumers map a request

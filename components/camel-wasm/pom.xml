@@ -54,6 +54,12 @@
             <artifactId>wasi</artifactId>
             <version>${endive-version}</version>
         </dependency>
+        <!-- used with compile=true only: translates a module to JVM bytecode, once per endpoint -->
+        <dependency>
+            <groupId>run.endive</groupId>
+            <artifactId>compiler</artifactId>
+            <version>${endive-version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
