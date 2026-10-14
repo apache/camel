@@ -658,6 +658,9 @@ public class PQCProducer extends DefaultProducer {
         if (classicalKeyAgreementAlgorithm == null) {
             return classicalKeyAgreement;
         }
+        // Created the same way as at start, without naming a provider: the JDK picks a provider that accepts the key
+        // when init() is called. Unlike keyGeneratorForExchange() there is therefore no Provider object to keep, and
+        // naming one here would change which provider handles the classical keys
         return KeyAgreement.getInstance(classicalKeyAgreementAlgorithm);
     }
 
