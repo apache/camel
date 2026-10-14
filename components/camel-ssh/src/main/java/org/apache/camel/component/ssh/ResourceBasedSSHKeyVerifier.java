@@ -62,13 +62,14 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     private static final String MARKER_CERT_AUTHORITY = "@cert-authority";
     private static final String HASHED_HOST_PREFIX = "|1|";
     private static final String HASH_ALGORITHM = "HmacSHA1";
-    private static final int HASH_SALT_LENGTH = 20;
+    private static final int HASH_LENGTH = 20;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private CamelContext camelContext;
     private boolean failOnUnknownHost;
     private String knownHostsResource;
+    private String host;
 
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource) {
         this(camelContext, knownHostsResource, false);
@@ -76,9 +77,20 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
 
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
                                        boolean failOnUnknownHost) {
+        this(camelContext, knownHostsResource, failOnUnknownHost, null);
+    }
+
+    /**
+     * @param host the host name or address configured on the endpoint, which the entries are matched against as it is
+     *             written (an IPv6 address may be enclosed in brackets). When null, the host of the address the client
+     *             connected to is used, and an IPv6 address is then written in its full form.
+     */
+    public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
+                                       boolean failOnUnknownHost, String host) {
         this.camelContext = camelContext;
         this.knownHostsResource = knownHostsResource;
         this.failOnUnknownHost = failOnUnknownHost;
+        this.host = host;
     }
 
     @Override
@@ -93,7 +105,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
             return false;
         }
 
-        String server = toKnownHostsName(remoteAddress);
+        String server = toKnownHostsName(host, remoteAddress);
         boolean hostListed = false;
         boolean keyListed = false;
         int lineNumber = 0;
@@ -156,16 +168,22 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     }
 
     /*
-     * The name OpenSSH looks the server up by: the host name or address the client connected to, as configured on the
-     * endpoint and never resolved, written host for port 22 and [host]:port for another port.
+     * The name OpenSSH looks the server up by: the host name or address configured on the endpoint, as it is written
+     * and never resolved, with the port the client connected to, written host for port 22 and [host]:port for another
+     * port.
      */
-    private static String toKnownHostsName(SocketAddress remoteAddress) {
+    private static String toKnownHostsName(String configuredHost, SocketAddress remoteAddress) {
         if (!(remoteAddress instanceof InetSocketAddress) && !(remoteAddress instanceof SshdSocketAddress)) {
             return null;
         }
         SshdSocketAddress address = SshdSocketAddress.toSshdSocketAddress(remoteAddress);
-        String host = address.getHostName().toLowerCase(Locale.ROOT);
-        return address.getPort() == DEFAULT_PORT ? host : "[" + host + "]:" + address.getPort();
+        String name = configuredHost != null ? configuredHost : address.getHostName();
+        if (name.length() > 1 && name.charAt(0) == '[' && name.charAt(name.length() - 1) == ']') {
+            // an IPv6 address in an endpoint uri
+            name = name.substring(1, name.length() - 1);
+        }
+        name = name.toLowerCase(Locale.ROOT);
+        return address.getPort() == DEFAULT_PORT ? name : "[" + name + "]:" + address.getPort();
     }
 
     /*
@@ -238,14 +256,18 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
             try {
                 byte[] salt = null;
                 byte[] hash = null;
-                if (hosts.startsWith(HASHED_HOST_PREFIX)) {
+                if (hosts.startsWith("|")) {
+                    // a hashed host: only |1|salt|hash, with a SHA-1 salt and hash, is supported
+                    if (!hosts.startsWith(HASHED_HOST_PREFIX)) {
+                        return null;
+                    }
                     String[] parts = hosts.substring(HASHED_HOST_PREFIX.length()).split("\\|", -1);
                     if (parts.length != 2) {
                         return null;
                     }
                     salt = Base64.getDecoder().decode(parts[0]);
                     hash = Base64.getDecoder().decode(parts[1]);
-                    if (salt.length != HASH_SALT_LENGTH) {
+                    if (salt.length != HASH_LENGTH || hash.length != HASH_LENGTH) {
                         return null;
                     }
                 }

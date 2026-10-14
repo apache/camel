@@ -186,12 +186,17 @@ class ResourceBasedSSHKeyVerifierTest {
 
     @Test
     void rejectsEveryServerWhenALineCannotBeRead() throws Exception {
+        String key = PublicKeyEntry.toString(serverKey);
         String[] unreadableLines = {
-                "@unknown db.example.com " + PublicKeyEntry.toString(serverKey),
+                "@unknown db.example.com " + key,
                 "@revoked",
                 "db.example.com",
                 "db.example.com ssh-ed25519 not*base64",
-                "|1|c2FsdA==|aGFzaA== " + PublicKeyEntry.toString(serverKey) };
+                "|1|c2FsdA==|aGFzaA== " + key,
+                "|1|" + base64(20) + "| " + key,
+                "|1|" + base64(20) + "|" + base64(19) + " " + key,
+                "|1|" + base64(20) + "|" + base64(21) + " " + key,
+                "|2|" + base64(20) + "|" + base64(20) + " " + key };
         for (String line : unreadableLines) {
             for (String knownHosts : new String[] { line + "\n", entry("db.example.com", serverKey) + line + "\n" }) {
                 for (boolean failOnUnknownHost : new boolean[] { true, false }) {
@@ -242,6 +247,22 @@ class ResourceBasedSSHKeyVerifierTest {
     }
 
     @Test
+    void looksUpTheHostAsConfiguredOnTheEndpoint() throws Exception {
+        // the address the client connected to writes ::1 as 0:0:0:0:0:0:0:1
+        InetSocketAddress server = new InetSocketAddress("::1", 2222);
+        String knownHosts = entry("[::1]:2222", serverKey);
+        for (String host : new String[] { "::1", "[::1]" }) {
+            for (boolean failOnUnknownHost : new boolean[] { true, false }) {
+                assertTrue(verify(failOnUnknownHost, host, server, serverKey, knownHosts), host);
+                assertFalse(verify(failOnUnknownHost, host, server, otherKey, knownHosts), host);
+            }
+        }
+        InetSocketAddress address = new InetSocketAddress(InetAddress.getByAddress("10.0.0.1", new byte[] { 10, 0, 0, 1 }), 22);
+        assertTrue(verify(true, "DB.example.com", address, serverKey, entry("db.example.com", serverKey)));
+        assertFalse(verify(true, "db.example.com", address, serverKey, entry("10.0.0.1", serverKey)));
+    }
+
+    @Test
     void verifiesAllSupportedKeyTypes() throws Exception {
         ResourceBasedSSHKeyVerifier verifier = new ResourceBasedSSHKeyVerifier(context, "classpath:known_hosts_types", true);
         try (InputStream knownHosts = getClass().getResourceAsStream("/known_hosts_types")) {
@@ -266,11 +287,22 @@ class ResourceBasedSSHKeyVerifierTest {
     private boolean verify(
             boolean failOnUnknownHost, InetSocketAddress server, PublicKey presented, String knownHosts)
             throws Exception {
+        return verify(failOnUnknownHost, null, server, presented, knownHosts);
+    }
+
+    private boolean verify(
+            boolean failOnUnknownHost, String configuredHost, InetSocketAddress server, PublicKey presented,
+            String knownHosts)
+            throws Exception {
         Path file = Files.createTempFile(dir, "known_hosts", "");
         Files.writeString(file, knownHosts, StandardCharsets.UTF_8);
         ResourceBasedSSHKeyVerifier verifier
-                = new ResourceBasedSSHKeyVerifier(context, "file:" + file, failOnUnknownHost);
+                = new ResourceBasedSSHKeyVerifier(context, "file:" + file, failOnUnknownHost, configuredHost);
         return verifier.verifyServerKey(null, server, presented);
+    }
+
+    private static String base64(int length) {
+        return Base64.getEncoder().encodeToString(new byte[length]);
     }
 
     private static String entry(String hosts, PublicKey key) {

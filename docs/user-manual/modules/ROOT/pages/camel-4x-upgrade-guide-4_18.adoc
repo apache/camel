@@ -47,9 +47,10 @@ and `[host]:port` for another port:
 contains the configured one is no longer used.
 * A pattern such as `db.example.com` only applies to port 22. A server on another port needs an entry
 such as `[db.example.com]:2222`, or a pattern that matches that form, such as `*`.
-* The configured host is used as is. An endpoint configured with a host name no longer uses entries
-listed only under its address, and an endpoint configured with an address no longer uses entries
-listed under the name that a reverse lookup of the address returns.
+* The configured host is used as it is written. An endpoint configured with a host name no longer uses
+entries listed only under its address, an endpoint configured with an address no longer uses entries
+listed under the name that a reverse lookup of the address returns, and an IPv6 address such as `::1`
+is matched as written instead of in its expanded form.
 * Every entry of the host is considered, so a host can be listed with several keys. Wildcard, negated
 and hashed patterns, comments and `@revoked` entries are supported. `@cert-authority` entries are
 ignored.
