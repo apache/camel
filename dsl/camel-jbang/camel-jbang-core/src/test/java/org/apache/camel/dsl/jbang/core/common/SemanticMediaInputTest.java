@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.List;
@@ -31,7 +32,10 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockStatic;
 
 class SemanticMediaInputTest {
     @TempDir
@@ -43,7 +47,7 @@ class SemanticMediaInputTest {
         image.setRGB(0, 0, 0xff0000);
         Path path = directory.resolve("sample.png");
         ImageIO.write(image, "png", path.toFile());
-        Object input = SemanticMediaInput.readImage("image:" + path);
+        Object input = SemanticMediaInput.readImage("image:" + path, 10_000_000);
         assertTrue(SemanticMediaInput.isMedia(input));
         var description = SemanticMediaInput.withoutImageData(input).toString();
         assertTrue(description.contains("image/png"));
@@ -88,9 +92,45 @@ class SemanticMediaInputTest {
     }
 
     @Test
+    void expertLimitIncludesTheBoundaryAndRejectsLargerFiles() throws Exception {
+        Path path = directory.resolve("sample.png");
+        Files.write(path, new byte[] { 1, 2, 3 });
+        assertTrue(SemanticMediaInput.isMedia(SemanticMediaInput.readImage("image:" + path, 3)));
+        var failure = assertThrows(IllegalArgumentException.class, () -> SemanticMediaInput.readImage("image:" + path, 2));
+        assertTrue(failure.getMessage().contains("expert maxImageBytes limit of 2 bytes"));
+        assertThrows(IllegalArgumentException.class, () -> SemanticMediaInput.readImage("image:" + path, 0));
+    }
+
+    @Test
+    void readRemainsBoundedWhenTheFileGrowsAfterTheSizeCheck() throws Exception {
+        Path path = directory.resolve("growing.png");
+        Files.write(path, new byte[] { 1, 2, 3, 4 });
+        try (var files = mockStatic(Files.class, CALLS_REAL_METHODS)) {
+            files.when(() -> Files.size(path)).thenReturn(3L);
+            assertThrows(IllegalArgumentException.class, () -> SemanticMediaInput.readImage("image:" + path, 3));
+        }
+    }
+
+    @Test
+    void usesOnlyAdvertisedImageLimitsAndChecksEncodedImages() {
+        assertEquals(3, SemanticMediaInput
+                .imageMaxBytes(Map.of("contract", Map.of("inputTypes", List.of("image"), "maxImageBytes", 3))));
+        for (Object limit : List.of(0, -1, 1.5, Long.MAX_VALUE, "3")) {
+            assertThrows(IllegalArgumentException.class, () -> SemanticMediaInput.imageMaxBytes(
+                    Map.of("contract", Map.of("inputTypes", List.of("image"), "maxImageBytes", limit))));
+        }
+        assertThrows(IllegalArgumentException.class, () -> SemanticMediaInput.imageMaxBytes(Map.of()));
+        Object input = Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")));
+        assertTrue(SemanticMediaInput.hasImages(input));
+        SemanticMediaInput.validateImageSize(input, 3);
+        assertThrows(IllegalArgumentException.class, () -> SemanticMediaInput.validateImageSize(input, 2));
+    }
+
+    @Test
     void ordinaryStateAndTextKeepTheirMeaning() {
         Object input = Map.of("type", "image", "data", "application state");
         assertEquals(input, SemanticMediaInput.withoutImageData(input));
-        assertEquals("https://example.com/picture.png", SemanticMediaInput.readImage("https://example.com/picture.png"));
+        assertEquals("https://example.com/picture.png",
+                SemanticMediaInput.readImage("https://example.com/picture.png", 10_000_000));
     }
 }

@@ -29,7 +29,7 @@ import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonRecordSupport;
 
-/** Static operation metadata and published declarations for runtime tooling. */
+/** Operation metadata, configured input limits and published declarations for runtime tooling. */
 @DevConsole(name = "semantic-metadata", displayName = "Semantic Metadata",
             description = "Semantic experts and evaluation definitions")
 public class SemanticMetadataConsole extends AbstractDevConsole {
@@ -90,7 +90,8 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
         }
         List<Operation> operations;
         try {
-            operations = operations(language.getExpertCapabilities(optionString(options, EXPERT)));
+            String reference = optionString(options, EXPERT);
+            operations = operations(language.getExpertCapabilities(reference), language.getExpertMaxImageBytes(reference));
         } catch (IllegalArgumentException unavailable) {
             operations = List.of();
         }
@@ -101,7 +102,7 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
         Map<String, Expert> experts = new TreeMap<>();
         getCamelContext().getRegistry().findByTypeWithName(SemanticAdapter.class).keySet().forEach(reference -> {
             try {
-                addExpert(experts, language.describeExpert(reference));
+                addExpert(experts, language.describeExpert(reference), language.getExpertMaxImageBytes(reference));
             } catch (IllegalArgumentException e) {
                 experts.put(reference, new Expert(reference, null, null, null, null, List.of(), e.getMessage()));
             }
@@ -115,7 +116,7 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
                 String error = null;
                 try {
                     var selected = language.describeExpert(reference);
-                    reference = addExpert(experts, selected);
+                    reference = addExpert(experts, selected, language.getExpertMaxImageBytes(selected.reference()));
                     resultType = selected.capabilities().operation(evaluation.getOperation()).getResultType().name()
                             .toLowerCase(Locale.ROOT);
                 } catch (IllegalArgumentException e) {
@@ -130,20 +131,23 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
         return new Response(null, List.copyOf(experts.values()), definitions);
     }
 
-    private static String addExpert(Map<String, Expert> experts, SemanticLanguage.ExpertMetadata metadata) {
+    private static String addExpert(Map<String, Expert> experts, SemanticLanguage.ExpertMetadata metadata, int maxImageBytes) {
         SemanticCapabilities capabilities = metadata.capabilities();
         experts.putIfAbsent(metadata.reference(), new Expert(
                 metadata.reference(), capabilities.getName(),
                 capabilities.getDescription(), capabilities.getProvider(), capabilities.getArtifactId(),
-                operations(capabilities), null));
+                operations(capabilities, maxImageBytes), null));
         return metadata.reference();
     }
 
-    private static List<Operation> operations(SemanticCapabilities capabilities) {
+    private static List<Operation> operations(SemanticCapabilities capabilities, int maxImageBytes) {
         return capabilities.getOperations().values().stream().map(op -> {
             Map<String, Object> contract = new LinkedHashMap<>();
             contract.put("inputTypes",
                     op.getInputTypes().stream().map(type -> type.name().toLowerCase(Locale.ROOT)).sorted().toList());
+            if (maxImageBytes > 0 && op.getInputTypes().contains(SemanticExpert.InputType.IMAGE)) {
+                contract.put("maxImageBytes", maxImageBytes);
+            }
             contract.put("inputRequirements", op.getInputRequirements());
             contract.put("resultMeaning", op.getResultMeaning());
             if (!op.getScoreLevelsParameter().isEmpty()) {

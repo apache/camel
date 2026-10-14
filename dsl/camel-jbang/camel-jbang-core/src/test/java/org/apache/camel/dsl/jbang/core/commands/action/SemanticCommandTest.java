@@ -29,6 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -62,11 +63,61 @@ class SemanticCommandTest {
     void imageFileBodyIsSentAsExplicitMedia() throws Exception {
         Path image = home.resolve("input.png");
         Files.write(image, new byte[] { 1, 2, 3 });
-        assertEquals(0, respond(new SemanticEvaluate(main()), request -> {
+        assertEquals(0, respondImage(new SemanticEvaluate(main()), request -> {
             assertEquals(Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID"))),
                     request.get("body"));
             return jsonUnchecked("{\"status\":\"success\",\"value\":true}");
-        }, "--evaluation=inspect", "--body=image:" + image));
+        }, 10_000_000, "--evaluation=inspect", "--body=image:" + image));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void expertImageLimitRejectsBeforeSendingAnEvaluation(boolean named) throws Exception {
+        Path image = home.resolve("large.png");
+        Files.write(image, new byte[] { 1, 2, 3 });
+        String[] args = named
+                ? new String[] { "--evaluation=inspect", "--body=image:" + image, "--json" }
+                : new String[] { "--expert=inspector", "--operation=boolean", "--input=image:" + image, "--json" };
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Oversized image must not reach evaluation");
+        }, 2, args));
+        assertError(2, "expert maxImageBytes limit of 2 bytes");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "data:image/png;base64,AQID", "AQID",
+            "json:{\"$semanticInput\":[{\"type\":\"image\",\"data\":\"data:image/png;base64,AQID\"}]}" })
+    void expertLimitAlsoRejectsInlineImageBodies(String body) throws Exception {
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Oversized image must not reach evaluation");
+        }, 2, "--evaluation=inspect", "--body=" + body, "--header=content-type=image/png", "--json"));
+        assertError(2, "expert maxImageBytes limit of 2 bytes");
+    }
+
+    @Test
+    void missingExpertImageLimitRejectsWithoutOpeningTheFile() throws Exception {
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Unbounded image must not reach evaluation");
+        }, 0, "--expert=inspector", "--operation=boolean", "--input=image:" + home.resolve("missing.png"), "--json"));
+        assertError(2, "positive maxImageBytes");
+    }
+
+    private int respondImage(
+            SemanticActionCommand command, Function<JsonObject, JsonObject> response, int maxBytes,
+            String... options)
+            throws Exception {
+        return respond(command, request -> {
+            if ("semantic-metadata".equals(request.getString("action"))) {
+                return new JsonObject(
+                        Map.of("experts", List.of(Map.of("reference", "inspector", "operations", List.of(
+                                Map.of("name", "boolean", "contract",
+                                        Map.of("inputTypes", List.of("image"), "maxImageBytes", maxBytes))))),
+                                "evaluations",
+                                List.of(Map.of("name", "inspect", "expert", "inspector", "operation", "boolean"))));
+            }
+            return response.apply(request);
+        }, options);
     }
 
     @ParameterizedTest
@@ -834,17 +885,29 @@ class SemanticCommandTest {
     }
 
     private int respond(IntSupplier call, Function<JsonObject, JsonObject> response) throws Exception {
+        var completed = new AtomicBoolean();
         var responder = CompletableFuture.runAsync(() -> {
             try {
-                await().atMost(5, TimeUnit.SECONDS).until(() -> !actionFiles().isEmpty());
-                Path request = actionFiles().get(0);
-                await().atMost(5, TimeUnit.SECONDS).until(() -> Files.size(request) > 0);
-                reply(request, response.apply(json(Files.readString(request))));
+                while (!completed.get()) {
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> completed.get() || !actionFiles().isEmpty());
+                    if (completed.get()) {
+                        break;
+                    }
+                    Path request = actionFiles().get(0);
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> Files.size(request) > 0);
+                    reply(request, response.apply(json(Files.readString(request))));
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> !Files.exists(request));
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }, executor);
-        int result = call.getAsInt();
+        int result;
+        try {
+            result = call.getAsInt();
+        } finally {
+            completed.set(true);
+        }
         responder.get(5, TimeUnit.SECONDS);
         assertTrue(actionFiles().isEmpty());
         return result;

@@ -173,6 +173,11 @@ public class SemanticLanguage extends LanguageSupport {
         return describeExpert(expert).capabilities();
     }
 
+    /** Read the named expert's configured image limit without performing inference. */
+    public int getExpertMaxImageBytes(String expert) {
+        return expertBean(expertReference(expert)).getMaxImageBytes();
+    }
+
     /** The selected registry reference and its static contract. */
     public record ExpertMetadata(String reference, SemanticCapabilities capabilities) {
     }
@@ -442,7 +447,9 @@ public class SemanticLanguage extends LanguageSupport {
                 active.addAll(invocations.values());
                 failureReason = "invalid_input";
                 Object state = current.body
-                        ? SemanticInput.body(exchange)
+                        ? SemanticInput.body(exchange,
+                                current.groups.stream().mapToInt(g -> g.expert.provider.getMaxImageBytes())
+                                        .filter(limit -> limit > 0).min().orElse(Integer.MAX_VALUE))
                         : SemanticInput.normalize(current.state.evaluate(exchange, Object.class));
                 invocations.values().forEach(invocation -> invocation.captureInput(state));
                 // A state selector can itself evaluate another semantic expression.

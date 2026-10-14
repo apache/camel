@@ -29,6 +29,15 @@ import java.util.Map;
  * does not instantiate, discover or manage provider services.
  */
 public interface SemanticAdapter {
+    /**
+     * Configured maximum bytes per image before base64 encoding, or zero when no limit is advertised. Tooling uses this
+     * value before reading local files; image experts must also enforce it before inference. Inspection must not
+     * contact services. This is instance configuration, separate from the static operation contract.
+     */
+    default int getMaxImageBytes() {
+        return 0;
+    }
+
     /** Reject unsupported evaluation kinds, criteria, decision policies or input selectors before traffic starts. */
     void validate(SemanticEvaluation evaluation);
 

@@ -204,8 +204,13 @@ final class SemanticEvaluationPopup {
             pending = CompletableFuture
                     .supplyAsync(() -> {
                         JsonObject prepared = new JsonObject(request);
-                        if (prepared.get("body") instanceof String text) {
-                            prepared.put("body", SemanticMediaInput.readImage(text));
+                        if (prepared.get("body") instanceof String text && text.startsWith("image:")) {
+                            prepared.put("body",
+                                    SemanticMediaInput.readImage(text, SemanticMediaInput.imageMaxBytes(submittedOperation)));
+                        }
+                        if (SemanticMediaInput.hasImages(prepared.get("body"), prepared.get("headers"))) {
+                            SemanticMediaInput.validateImageSize(prepared.get("body"), prepared.get("headers"),
+                                    SemanticMediaInput.imageMaxBytes(submittedOperation));
                         }
                         return ctx.executeIndependentAction(pid, prepared, 60000);
                     }, ctx.backgroundExecutor)

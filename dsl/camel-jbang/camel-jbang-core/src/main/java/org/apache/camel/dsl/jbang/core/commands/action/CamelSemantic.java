@@ -111,6 +111,7 @@ public class CamelSemantic extends SemanticActionCommand {
                 continue;
             }
             renderField("Input", contract.get("inputTypes"), "  ");
+            renderField("Maximum image bytes", contract.get("maxImageBytes"), "  ");
             renderField("Requirements", contract.get("inputRequirements"), "  ");
             renderField("Result", contract.get("resultMeaning"), "  ");
             renderField("Labels", contract.get("labels"), "  ");

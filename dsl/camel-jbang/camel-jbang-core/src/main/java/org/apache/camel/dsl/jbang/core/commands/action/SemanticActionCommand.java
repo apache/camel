@@ -76,6 +76,11 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
                                 + " runs Camel " + version,
                         null);
             }
+            try {
+                prepareRequest(pid, request);
+            } catch (IllegalArgumentException e) {
+                return error(2, e.getMessage(), null);
+            }
             JsonObject response = RuntimeHelper.executeAction(pid, request, timeout);
             if (response == null) {
                 return error(4, "No reply from integration within " + timeout + " milliseconds", null);
@@ -176,6 +181,10 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
         }
         String label = key.replaceAll("([a-z0-9])([A-Z])", "$1 $2");
         return Character.toUpperCase(label.charAt(0)) + label.substring(1).replace(" Id", " ID");
+    }
+
+    /** Prepare input requiring the selected runtime's metadata before submitting an action. */
+    protected void prepareRequest(long pid, JsonObject request) throws Exception {
     }
 
     protected abstract JsonObject request();

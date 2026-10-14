@@ -18,9 +18,11 @@ package org.apache.camel.semantic.openai;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import com.openai.client.OpenAIClient;
@@ -36,6 +38,7 @@ import org.apache.camel.component.openai.OpenAIDecisionRefusalException;
 import org.apache.camel.component.openai.OpenAIDecisionServiceException;
 import org.apache.camel.component.openai.OpenAIEndpoint;
 import org.apache.camel.component.openai.OpenAIOperations;
+import org.apache.camel.console.DevConsole;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
 import org.apache.camel.semantic.SemanticCapabilities;
@@ -45,6 +48,8 @@ import org.apache.camel.semantic.SemanticInput;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.semantic.internal.SemanticAuditExtensions;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -131,6 +136,97 @@ class OpenAIDecisionsSemanticAdapterTest {
             }
         }
         verify(client.decisions(), times(5)).create(any(DecisionCreateParams.class));
+    }
+
+    @Test
+    void imageLimitAppliesToRouteBodiesAndDirectCalls() throws Exception {
+        assertThat(adapter.getMaxImageBytes()).isEqualTo(10_000_000);
+        adapter.setMaxImageBytes(2);
+        Expression expression = expression(evaluation("boolean", Map.of()));
+        byte[] bytes = { 1, 2, 3 };
+        for (Object body : List.of(bytes, new ByteArrayInputStream(bytes), "AQID", "data:image/png;base64,AQID")) {
+            var exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(body);
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "image/png");
+            assertThatThrownBy(() -> expression.evaluate(exchange, Boolean.class)).hasMessageContaining("maxImageBytes");
+        }
+        var media = SemanticInput.ofParts(List.of(SemanticInput.image("data:image/png;base64,AQID")));
+        assertThatThrownBy(() -> adapter.evaluate(evaluation("boolean", Map.of()), media))
+                .hasMessageContaining("maxImageBytes");
+        verify(client.decisions(), never()).create(any(DecisionCreateParams.class));
+        adapter.setMaxImageBytes(3);
+        respond = request -> response(predicate("question", 0.9));
+        assertThat(adapter.evaluate(evaluation("boolean", Map.of()), media).getValue()).isEqualTo(true);
+        adapter.setMaxImageBytes(1);
+        var padded = SemanticInput.ofParts(List.of(SemanticInput.image("data:image/png;base64,AQ==")));
+        assertThat(adapter.evaluate(evaluation("boolean", Map.of()), padded).getValue()).isEqualTo(true);
+    }
+
+    @Test
+    void metadataAdvertisesEachExpertConfiguredImageLimitWithoutInference() {
+        adapter.setMaxImageBytes(3);
+        var other = new OpenAIDecisionsSemanticAdapter();
+        other.setMaxImageBytes(7);
+        context.getRegistry().bind("other", other);
+        DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
+        for (String reference : List.of("expert", "other")) {
+            JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("expert", reference));
+            for (Object value : response.getCollection("operations")) {
+                assertThat(((JsonObject) value).getJsonObject("contract").getInteger("maxImageBytes"))
+                        .isEqualTo("expert".equals(reference) ? 3 : 7);
+            }
+        }
+        JsonObject overview = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("overview", true));
+        assertThat(overview.toJson()).contains("maxImageBytes");
+        verify(client.decisions(), never()).create(any(DecisionCreateParams.class));
+    }
+
+    @Test
+    void imageLimitMustBePositive() {
+        assertThatThrownBy(() -> adapter.setMaxImageBytes(0)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> adapter.setMaxImageBytes(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThat(adapter.getMaxImageBytes()).isEqualTo(10_000_000);
+    }
+
+    @Test
+    void oversizedStreamsStopBeforeBeingFullyCached() {
+        adapter.setMaxImageBytes(3);
+        var consumed = new AtomicInteger();
+        var exchange = new DefaultExchange(context);
+        exchange.getMessage().setBody(new InputStream() {
+            @Override
+            public int read() {
+                if (consumed.incrementAndGet() > 64) {
+                    throw new AssertionError("Image stream was read without a bound");
+                }
+                return 0;
+            }
+        });
+        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "image/png");
+        Expression expression = expression(evaluation("boolean", Map.of()));
+        assertThatThrownBy(() -> expression.evaluate(exchange, Boolean.class)).hasStackTraceContaining("maxImageBytes");
+        assertThat(consumed.get()).isEqualTo(4);
+        verify(client.decisions(), never()).create(any(DecisionCreateParams.class));
+    }
+
+    @Test
+    void sharedBodyUsesTheSmallestExpertLimitBeforeAnyBatchInference() {
+        adapter.setMaxImageBytes(3);
+        var strict = new OpenAIDecisionsSemanticAdapter();
+        strict.setCamelContext(context);
+        strict.setMaxImageBytes(2);
+        context.getRegistry().bind("strict", strict);
+        var evaluations = new LinkedHashMap<String, SemanticEvaluation>();
+        evaluations.put("first", evaluation("boolean", Map.of()));
+        evaluations.put("second", new SemanticEvaluation("boolean", "strict", null, Map.of("instructions", "Assess")));
+        SemanticEvaluations.get(context).replace("batch", evaluations);
+        var expression = context.resolveLanguage("semantic").createExpression("refs:first,second");
+        var exchange = new DefaultExchange(context);
+        exchange.getMessage().setBody(new byte[] { 1, 2, 3 });
+        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "image/png");
+        assertThatThrownBy(() -> expression.evaluate(exchange, Map.class))
+                .hasMessageContaining("maxImageBytes limit of 2 bytes");
+        verify(client.decisions(), never()).create(any(DecisionCreateParams.class));
     }
 
     @Test
@@ -285,6 +381,19 @@ class OpenAIDecisionsSemanticAdapterTest {
         var language = (SemanticLanguage) context.resolveLanguage("semantic");
         assertThatThrownBy(() -> language.evaluate(evaluation("boolean", Map.of()), "data:image/png;base64,invalid!"))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("base64");
+        verify(client.decisions(), never()).create(any(DecisionCreateParams.class));
+    }
+
+    @Test
+    void malformedBase64ImageBodiesAreRejectedBeforeInference() {
+        Expression expression = expression(evaluation("boolean", Map.of()));
+        for (String body : List.of("", "    ", "invalid!", "hello world", "not valid image payload\n".repeat(100_000))) {
+            var exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody(body);
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "image/png");
+            assertThatThrownBy(() -> expression.evaluate(exchange, Boolean.class))
+                    .hasRootCauseInstanceOf(IllegalArgumentException.class).hasMessageContaining("base64");
+        }
         verify(client.decisions(), never()).create(any(DecisionCreateParams.class));
     }
 

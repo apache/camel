@@ -377,8 +377,13 @@ final class SemanticPlayground {
             pending = CompletableFuture
                     .supplyAsync(() -> {
                         JsonObject prepared = new JsonObject(request);
-                        if (readLocalImage && prepared.get("input") instanceof String text) {
-                            prepared.put("input", SemanticMediaInput.readImage(text));
+                        if (readLocalImage && prepared.get("input") instanceof String text && text.startsWith("image:")) {
+                            prepared.put("input",
+                                    SemanticMediaInput.readImage(text, SemanticMediaInput.imageMaxBytes(operation)));
+                        }
+                        if (SemanticMediaInput.hasImages(prepared.get("input"))) {
+                            SemanticMediaInput.validateImageSize(prepared.get("input"),
+                                    SemanticMediaInput.imageMaxBytes(operation));
                         }
                         return ctx.executeIndependentAction(pid, prepared, 60000);
                     }, ctx.backgroundExecutor)

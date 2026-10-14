@@ -743,6 +743,11 @@ all questions for one expert. Existing per-evaluation `validateInput` hooks stil
 for every expert before any provider performs inference. A shared validation failure marks that
 expert's group as invalid input in the audit.
 
+The additive `SemanticAdapter.getMaxImageBytes()` method exposes an expert's configured per-image
+byte limit, with zero meaning no advertised limit. Image-capable adapters should advertise a
+positive limit and enforce it before inference. CLI and TUI local image loading now requires
+that metadata; the configured value appears as `maxImageBytes` in each image operation's contract.
+
 Semantic audit backends can opt into the additive `inputType` extension. Readers that do not
 support it keep their existing projection. The `camel semantic audit --json` display omits image
 base64 and reports metadata instead. Use `--output=<new-file>` to export the full returned JSON,

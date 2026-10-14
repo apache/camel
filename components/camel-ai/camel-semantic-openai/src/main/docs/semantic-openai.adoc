@@ -43,6 +43,7 @@ camel.component.openai.api-key={{env:OPENAI_API_KEY}}
       type: org.apache.camel.semantic.openai.OpenAIDecisionsSemanticAdapter
       properties:
         endpointUri: "openai:decisions?model=gpt-6-luna"
+        maxImageBytes: 10000000
 - semantic:
     evaluation:
       damaged:
@@ -73,6 +74,15 @@ When constructing the bean in Java, set its `CamelContext` before binding it to 
 Every evaluation must explicitly name an expert. Capability inspection and declaration
 validation do not perform inference.
 
+`maxImageBytes` is a positive integer configured on the expert bean, defaulting to 10 MB
+(10,000,000 bytes) per image before base64 encoding. For example, set `maxImageBytes: 20000000`
+to permit images up to 20 MB. Configure it before evaluation. The expert enforces this limit
+for route input and direct calls, including inline data URLs and mixed media envelopes.
+The CLI and TUI obtain the value from the expert's runtime metadata and check it before
+loading local files or submitting image input. There is no separate CLI or TUI setting.
+A batch uses the smallest declared image limit among its experts when normalizing a shared body.
+Base64 encoding uses additional memory; provider input limits still apply.
+
 == Input
 
 Supported modalities are text, images and ordered combinations of text and images.
@@ -95,6 +105,9 @@ data:image/png;base64,iVBORw0KGgo...
 The example is abbreviated. Plain strings without an image content type remain text; Camel
 does not guess whether an arbitrary string is base64. Content-Type applies when the selected
 state is `$\{body}`; it does not reclassify a separately selected header or variable.
+An image String body must contain base64-encoded bytes, not ordinary text. The Semantic
+input helper creates the media envelope; the OpenAI expert validates base64 syntax and
+provider input limits before inference, rejecting empty or malformed payloads locally.
 Streams are cached and reset before evaluation. Downstream steps receive a replayable stream
 cache containing the same bytes. Byte arrays and strings keep their original body identity.
 
@@ -174,6 +187,11 @@ fits the budget. A descriptor is not a replayable image. Captured content remain
 `--input=image:/path/picture.png` for a direct expert call. Use `json:` for an ordered envelope.
 The TUI playground accepts `image:/path/picture.png` and JSON envelopes when the expert advertises
 image input. Files are read only on an explicit evaluation request.
+For local `image:` input, the CLI checks the selected runtime expert's metadata first;
+the TUI uses the selected operation's advertised limit. Both check file size and bound the
+read using the expert's `maxImageBytes`, including when a file grows during reading.
+If an expert does not advertise image support and a positive limit, local image loading
+is rejected. These checks do not change the separate audit-preview bounds.
 
 The TUI Audit inspector (`u`) renders bounded inline colour previews from retained image data.
 The CLI renders a plain-terminal preview. Decoding uses locally available ImageIO readers;

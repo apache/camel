@@ -81,7 +81,8 @@ class SemanticImageViewTest {
             runtime.selectedPid = "image";
             var operation = new JsonObject(
                     Map.of("name", "boolean", "contract", new JsonObject(
-                            Map.of("inputTypes", List.of("text", "image"), "parameters", List.of()))));
+                            Map.of("inputTypes", List.of("text", "image"), "maxImageBytes", 10_000_000, "parameters",
+                                    List.of()))));
             var playground = new SemanticPlayground(runtime, "image", "expert", operation);
             var input = Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")));
             playground.loadAuditInput(new JsonObject(Map.of("eventId", "record", "input", input)));
@@ -116,7 +117,8 @@ class SemanticImageViewTest {
             runtime.selectedPid = "image";
             var operation = new JsonObject(
                     Map.of("name", "boolean", "contract", new JsonObject(
-                            Map.of("inputTypes", List.of("text", "image"), "parameters", List.of()))));
+                            Map.of("inputTypes", List.of("text", "image"), "maxImageBytes", 10_000_000, "parameters",
+                                    List.of()))));
             var playground = new SemanticPlayground(runtime, "image", "expert", operation);
             String input = "image:" + file;
             playground.loadAuditInput(new JsonObject(Map.of("eventId", "record", "input", input)));
@@ -130,6 +132,49 @@ class SemanticImageViewTest {
             await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(runtime.calls).hasSize(2));
             assertThat(runtime.calls.get(1).get("input")).isEqualTo(
                     Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID"))));
+        } finally {
+            runtime.backgroundExecutor.shutdownNow();
+        }
+    }
+
+    @Test
+    void expertLimitRejectsLocalAndInlineImagesBeforeSubmitting(@TempDir Path directory) throws Exception {
+        Path file = directory.resolve("large.png");
+        Files.write(file, new byte[] { 1, 2, 3 });
+        var runtime = new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of())) {
+            final List<JsonObject> calls = new CopyOnWriteArrayList<>();
+
+            @Override
+            JsonObject executeIndependentAction(String pid, JsonObject request, long timeout) {
+                calls.add(request);
+                return new JsonObject(Map.of("status", "success"));
+            }
+        };
+        try {
+            var integration = new IntegrationInfo();
+            integration.pid = "image";
+            runtime.data.set(List.of(integration));
+            runtime.selectedPid = "image";
+            var operation = new JsonObject(
+                    Map.of("name", "boolean", "contract", new JsonObject(
+                            Map.of("inputTypes", List.of("text", "image"), "parameters", List.of(), "maxImageBytes", 2))));
+            for (String input : List.of("image:" + file, "data:image/png;base64,AQID")) {
+                var playground = new SemanticPlayground(runtime, "image", "expert", operation);
+                assertThat(playground.setInputValue("input", input)).isTrue();
+                playground.handleKeyEvent(KeyEvent.ofChar('r', KeyModifiers.CTRL));
+                await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                        () -> assertThat(playground.snapshot().toJson()).contains("expert maxImageBytes limit of 2 bytes"));
+                assertThat(runtime.calls).isEmpty();
+            }
+            for (String body : List.of("image:" + file, "data:image/png;base64,AQID", "AQID")) {
+                var popup = new SemanticEvaluationPopup(runtime, "image", new JsonObject(Map.of("name", "inspect")), operation);
+                assertThat(popup.setInputValue("sample", new JsonObject(
+                        Map.of("body", body, "headers", Map.of("Content-Type", "image/png"))).toJson())).isTrue();
+                popup.handleKeyEvent(KeyEvent.ofChar('r', KeyModifiers.CTRL));
+                await().atMost(5, TimeUnit.SECONDS).untilAsserted(
+                        () -> assertThat(popup.snapshot().toJson()).contains("expert maxImageBytes limit of 2 bytes"));
+                assertThat(runtime.calls).isEmpty();
+            }
         } finally {
             runtime.backgroundExecutor.shutdownNow();
         }
