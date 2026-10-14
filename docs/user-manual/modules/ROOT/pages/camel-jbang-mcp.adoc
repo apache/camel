@@ -560,9 +560,11 @@ client to the next.
 | Generates a JUnit 5 test skeleton from a Camel route definition (YAML or XML). Accepts an optional `format`
   (`yaml` or `xml`, default `yaml`) and `runtime` (`main` or `spring-boot`, default `main`). For `main` runtime,
   the generated test extends `CamelTestSupport`; for `spring-boot`, it uses `@CamelSpringBootTest` with
-  `@SpringBootTest`. The tool replaces non-trivial producer endpoints with mock endpoints, generates
-  `@RegisterExtension` stubs for infrastructure components (Kafka, JMS/Artemis, MongoDB, PostgreSQL, Cassandra,
-  Elasticsearch, Redis, RabbitMQ, FTP, Consul, NATS, Pulsar, CouchDB, Infinispan, MinIO, Solr), and produces
+  `@SpringBootTest`. The tool replaces producer endpoints with mock endpoints, except those of the components
+  the Camel catalog marks internal (`direct:`, `seda:`, `log:`, `mock:` and the like), which stay inside the
+  CamelContext. It generates `@RegisterExtension` stubs for infrastructure components (Kafka, JMS/Artemis,
+  MongoDB, PostgreSQL, Cassandra, Elasticsearch, Redis, RabbitMQ, FTP, Consul, NATS, Pulsar, CouchDB, Infinispan,
+  MinIO, Solr), and produces
   a `NotifyBuilder` pattern for timer-based routes or `template.sendBody()` for direct/seda consumers. Returns
   the generated test code, detected components, mock endpoint mappings, test-infra services, and required Maven
   test dependencies.

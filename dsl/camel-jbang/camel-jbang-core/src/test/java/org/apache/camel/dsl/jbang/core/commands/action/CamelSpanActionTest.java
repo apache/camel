@@ -24,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -85,5 +86,18 @@ class CamelSpanActionTest extends ActionCommandTestSupport {
         response.put("enabled", true);
         response.put("spans", spans);
         return response;
+    }
+
+    @Test
+    void remoteComponentsComeFromTheCatalog() {
+        // as the catalog marks them; a scheme it does not know counts as remote
+        assertTrue(CamelSpanAction.isRemoteScheme("kafka"));
+        assertTrue(CamelSpanAction.isRemoteScheme("acme"));
+        assertFalse(CamelSpanAction.isRemoteScheme("direct"));
+        assertFalse(CamelSpanAction.isRemoteScheme("bean"));
+        // not in the list the check used to keep: a timer or an xslt step is not a remote call
+        assertFalse(CamelSpanAction.isRemoteScheme("timer"));
+        assertFalse(CamelSpanAction.isRemoteScheme("xslt"));
+        assertFalse(CamelSpanAction.isRemoteScheme(null));
     }
 }
