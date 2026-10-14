@@ -647,12 +647,18 @@ class LogTab extends AbstractTab {
         ctx.fireAction(pid, root);
     }
 
-    boolean isSearchInputActive() {
+    @Override
+    public boolean isTextInputActive() {
         return search.isSearchInputActive();
     }
 
-    void handlePaste(String text) {
+    @Override
+    public boolean handlePaste(String text) {
+        if (!isTextInputActive()) {
+            return false;
+        }
         search.handlePaste(text);
+        return true;
     }
 
     void refreshFromFile(String pid, String fileName) {

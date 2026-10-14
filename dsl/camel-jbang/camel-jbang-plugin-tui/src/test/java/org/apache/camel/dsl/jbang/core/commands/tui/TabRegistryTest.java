@@ -16,12 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.lang.reflect.Field;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.CharWidth;
+import dev.tamboui.widgets.input.TextAreaState;
+import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.tabs.TabsState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,6 +127,59 @@ class TabRegistryTest {
                     "More tab '" + mt.name() + "' label must carry a '" + TuiIcons.MNEMONIC_MARKER + "' marker: "
                                                 + mt.label());
         }
+    }
+
+    /**
+     * Text fields, and the components and popups of the tabs that hold one. A tab holding one of these must tell the
+     * monitor when it has the keyboard. Add the type of a new kind of text field here.
+     */
+    private static final Set<Class<?>> TEXT_FIELDS = Set.of(
+            TextInputState.class, TextAreaState.class, FilterField.class, SearchHighlighter.class, SourceViewer.class,
+            HttpProbe.class, GotoNodePopup.class, GotoRoutePopup.class, GotoSourceNodePopup.class);
+
+    // CamelMonitor asks the active tab whether a text field has the keyboard (MonitorTab.isTextInputActive) before it
+    // takes q, the digits and ? as global keys. A tab that does not answer has them act while the user types: q asked to
+    // quit in the Type Converters filter, and in the search of the source shown in the Diagram and Routes tabs.
+    @Test
+    void everyTabWithATextFieldTellsTheMonitorWhenItHasTheKeyboard() {
+        List<MonitorTab> tabs = new ArrayList<>();
+        registry.allTabEntries().stream()
+                .filter(entry -> entry.tabIndex() != TabRegistry.TAB_MORE)
+                .forEach(entry -> tabs.add(entry.tab()));
+        registry.moreTabs().forEach(mt -> tabs.add(mt.tab()));
+        assertEquals(TabRegistry.NUM_TABS - 1 + registry.moreTabs().size(), tabs.size());
+
+        for (MonitorTab tab : tabs) {
+            Class<?> type = tab.getClass();
+            if (holdsTextField(type)) {
+                assertTrue(declares(type, "isTextInputActive"),
+                        type.getSimpleName() + " holds a text field but does not override isTextInputActive()");
+            }
+        }
+    }
+
+    private static boolean holdsTextField(Class<?> type) {
+        for (Class<?> c = type; c != AbstractTab.class && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                Class<?> fieldType = field.getType().isArray() ? field.getType().getComponentType() : field.getType();
+                if (TEXT_FIELDS.contains(fieldType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean declares(Class<?> type, String method) {
+        for (Class<?> c = type; c != AbstractTab.class && c != Object.class; c = c.getSuperclass()) {
+            try {
+                c.getDeclaredMethod(method);
+                return true;
+            } catch (NoSuchMethodException e) {
+                // look in the superclass
+            }
+        }
+        return false;
     }
 
     @Test

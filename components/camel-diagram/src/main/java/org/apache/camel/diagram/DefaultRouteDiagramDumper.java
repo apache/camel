@@ -33,6 +33,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
+import org.apache.camel.diagram.TopologyErrorFrame.ErrorPath;
+import org.apache.camel.diagram.TopologyErrorFrame.LineStyle;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.spi.RouteDiagramDumper;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LoggerHelper;
@@ -64,12 +67,22 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
 
     @Override
     public void dumpRoutesToFile(String filter, Theme theme, File file) throws IOException {
-        BufferedImage image = dumpRoutesAsImage(filter, theme);
+        dumpRoutesToFile(filter, theme, false, file);
+    }
+
+    @Override
+    public void dumpRoutesToFile(String filter, Theme theme, boolean errors, File file) throws IOException {
+        BufferedImage image = dumpRoutesAsImage(filter, theme, false, NodeLabelMode.CODE, 180, 12, errors);
         ImageIO.write(image, "png", file);
     }
 
     @Override
     public void dumpRoutesToFolder(String filter, Theme theme, File folder) throws IOException {
+        dumpRoutesToFolder(filter, theme, false, folder);
+    }
+
+    @Override
+    public void dumpRoutesToFolder(String filter, Theme theme, boolean errors, File folder) throws IOException {
         // use dev-console to render the route structure in json format which the diagram render expects
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-structure");
@@ -90,13 +103,14 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         }
 
         // render by groups
+        List<ErrorPath> paths = errors ? errorPaths() : List.of();
         for (String group : groups) {
             // do not include scheme in filter
             filter = LoggerHelper.stripScheme(group);
             root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
             var routes = RouteDiagramHelper.parseRoutes(root);
 
-            BufferedImage image = renderImage(routes, theme.name(), 12, 180, "CODE", false);
+            BufferedImage image = renderImage(routes, theme.name(), 12, 180, "CODE", false, null, null, errors, paths);
             folder.mkdirs();
             String name = RouteDiagramHelper.extractSourceName(group);
             File f = new File(folder, name + ".png");
@@ -107,23 +121,60 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     @Override
     public BufferedImage dumpRoutesAsImage(
             String filter, Theme theme, boolean metrics, NodeLabelMode nodeLabel, int nodeWidth, int fontSize) {
+        return dumpRoutesAsImage(filter, theme, metrics, nodeLabel, nodeWidth, fontSize, false);
+    }
+
+    @Override
+    public BufferedImage dumpRoutesAsImage(
+            String filter, Theme theme, boolean metrics, NodeLabelMode nodeLabel, int nodeWidth, int fontSize,
+            boolean errors) {
         // use dev-console to render the route structure in json format which the diagram render expects
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-structure");
         JsonObject root
                 = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter, "metric", String.valueOf(metrics)));
         var routes = RouteDiagramHelper.parseRoutes(root);
-        return renderImage(routes, theme.name(), fontSize, nodeWidth, nodeLabel.name(), metrics);
+        return renderImage(routes, theme.name(), fontSize, nodeWidth, nodeLabel.name(), metrics, null, null,
+                errors, errors ? errorPaths() : List.of());
     }
 
     @Override
     public String dumpRoutesAsAsciiArt(
             String filter, RouteDiagramDumper.NodeLabelMode nodeLabel, int nodeWidth, boolean unicode) {
+        return dumpRoutesAsAsciiArt(filter, nodeLabel, nodeWidth, unicode, false);
+    }
+
+    @Override
+    public String dumpRoutesAsAsciiArt(
+            String filter, RouteDiagramDumper.NodeLabelMode nodeLabel, int nodeWidth, boolean unicode, boolean errors) {
         DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById("route-structure");
         JsonObject root = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
         var routes = RouteDiagramHelper.parseRoutes(root);
-        return renderAscii(routes, nodeWidth, nodeLabel.name(), unicode);
+        return renderAscii(routes, nodeWidth, nodeLabel.name(), unicode, null, null,
+                errors, errors ? errorPaths() : List.of());
+    }
+
+    /** The error paths of the route topology, for the lines in the error frames. */
+    private List<ErrorPath> errorPaths() {
+        JsonObject root = routeTopology(false);
+        if (root == null) {
+            return List.of();
+        }
+        return TopologyErrorFrame.paths(errorEdges(root));
+    }
+
+    private static List<TopologyEdgeInfo> errorEdges(JsonObject root) {
+        return TopologyHelper.parseEdges(root, true).stream().filter(TopologyEdgeInfo::isErrorPath).toList();
+    }
+
+    private JsonObject routeTopology(boolean external) {
+        DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("route-topology");
+        if (dc == null) {
+            return null;
+        }
+        return (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("external", String.valueOf(external)));
     }
 
     @Override
@@ -142,7 +193,8 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
     private static BufferedImage renderImage(
             List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth,
             String nodeLabel, boolean metrics,
-            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle,
+            boolean errors, List<ErrorPath> paths) {
         RouteDiagramRenderer renderer = new RouteDiagramRenderer(
                 nodeWidth * RouteDiagramLayoutEngine.SCALE, fontSize * RouteDiagramLayoutEngine.SCALE, metrics);
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
@@ -151,7 +203,8 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
         for (RouteDiagramLayoutEngine.RouteInfo route : routes) {
-            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(route, currentY);
+            RouteDiagramLayoutEngine.LayoutRoute lr = RouteErrorFrame.layout(engine, route, currentY, errors,
+                    highlightedNodeIds, paths, LineStyle.TEXT, RouteDiagramRenderer.rowHeight(fontSize));
             layoutRoutes.add(lr);
             currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
         }
@@ -163,15 +216,10 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         return renderer.renderDiagram(layoutRoutes, currentY, colors, highlightedNodeIds, highlightStyle);
     }
 
-    private static BufferedImage renderImage(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, String theme, int fontSize, int nodeWidth,
-            String nodeLabel, boolean metrics) {
-        return renderImage(routes, theme, fontSize, nodeWidth, nodeLabel, metrics, null, null);
-    }
-
     private static String renderAscii(
             List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode,
-            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
+            Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle,
+            boolean errors, List<ErrorPath> paths) {
         RouteDiagramLayoutEngine engine = new RouteDiagramLayoutEngine(
                 nodeWidth, RouteDiagramLayoutEngine.DEFAULT_FONT_SIZE,
                 RouteDiagramLayoutEngine.NodeLabelMode.valueOf(nodeLabel.toUpperCase()));
@@ -179,7 +227,9 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         List<RouteDiagramLayoutEngine.LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
         for (RouteDiagramLayoutEngine.RouteInfo route : routes) {
-            RouteDiagramLayoutEngine.LayoutRoute lr = engine.layoutRoute(route, currentY);
+            RouteDiagramLayoutEngine.LayoutRoute lr = RouteErrorFrame.layout(engine, route, currentY, errors,
+                    highlightedNodeIds, paths, unicode ? LineStyle.UNICODE : LineStyle.ASCII,
+                    RouteDiagramAsciiRenderer.ROW_HEIGHT);
             layoutRoutes.add(lr);
             currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
         }
@@ -189,14 +239,14 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         return renderer.renderDiagram(layoutRoutes, currentY, highlightedNodeIds, highlightStyle);
     }
 
-    private static String renderAscii(
-            List<RouteDiagramLayoutEngine.RouteInfo> routes, int nodeWidth, String nodeLabel, boolean unicode) {
-        return renderAscii(routes, nodeWidth, nodeLabel, unicode, null, null);
+    @Override
+    public void dumpTopologyToFolder(Theme theme, boolean external, File folder) throws IOException {
+        dumpTopologyToFolder(theme, external, false, folder);
     }
 
     @Override
-    public void dumpTopologyToFolder(Theme theme, boolean external, File folder) throws IOException {
-        BufferedImage image = dumpTopologyAsImage(theme, false, 180, 12);
+    public void dumpTopologyToFolder(Theme theme, boolean external, boolean errors, File folder) throws IOException {
+        BufferedImage image = dumpTopologyAsImage(theme, false, 180, 12, external, errors);
         if (image != null) {
             folder.mkdirs();
             String name = camelContext.getName();
@@ -210,13 +260,15 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
 
     @Override
     public String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode, boolean external) {
-        DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                .resolveById("route-topology");
-        if (dc == null) {
+        return dumpTopologyAsAsciiArt(nodeWidth, unicode, external, false);
+    }
+
+    @Override
+    public String dumpTopologyAsAsciiArt(int nodeWidth, boolean unicode, boolean external, boolean errors) {
+        JsonObject root = routeTopology(external);
+        if (root == null) {
             return "";
         }
-        JsonObject root
-                = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("external", String.valueOf(external)));
 
         var nodes = TopologyHelper.parseNodes(root);
         var edges = TopologyHelper.parseEdges(root);
@@ -226,22 +278,28 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         }
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine(nodeWidth);
-        TopologyLayoutEngine.TopologyLayoutResult result = engine.layout(nodes, edges);
-
         TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
                 nodeWidth * RouteDiagramLayoutEngine.SCALE, unicode);
-        return renderer.renderDiagram(result);
+        if (errors) {
+            TopologyErrorFrame.Placed placed = TopologyErrorFrame.layout(
+                    engine, nodes, edges, errorEdges(root), TopologyAsciiRenderer.ROW_HEIGHT);
+            return renderer.renderDiagram(placed.layout(), placed.frame());
+        }
+        return renderer.renderDiagram(engine.layout(nodes, edges));
     }
 
     @Override
     public BufferedImage dumpTopologyAsImage(Theme theme, boolean metrics, int nodeWidth, int fontSize, boolean external) {
-        DevConsole dc = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
-                .resolveById("route-topology");
-        if (dc == null) {
+        return dumpTopologyAsImage(theme, metrics, nodeWidth, fontSize, external, false);
+    }
+
+    @Override
+    public BufferedImage dumpTopologyAsImage(
+            Theme theme, boolean metrics, int nodeWidth, int fontSize, boolean external, boolean errors) {
+        JsonObject root = routeTopology(external);
+        if (root == null) {
             return null;
         }
-        JsonObject root
-                = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("external", String.valueOf(external)));
 
         var nodes = TopologyHelper.parseNodes(root);
         var edges = TopologyHelper.parseEdges(root);
@@ -263,12 +321,21 @@ public class DefaultRouteDiagramDumper extends ServiceSupport implements CamelCo
         }
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine(nodeWidth);
-        TopologyLayoutEngine.TopologyLayoutResult result = engine.layout(nodes, edges);
+        TopologyLayoutEngine.TopologyLayoutResult result;
+        TopologyErrorFrame frame = null;
+        if (errors) {
+            TopologyErrorFrame.Placed placed = TopologyErrorFrame.layout(
+                    engine, nodes, edges, errorEdges(root), TopologyImageRenderer.rowHeight(fontSize));
+            result = placed.layout();
+            frame = placed.frame();
+        } else {
+            result = engine.layout(nodes, edges);
+        }
 
         // Render as image
         String themeStr = theme != null ? theme.name() : "dark";
         RouteDiagramRenderer.DiagramColors colors = RouteDiagramRenderer.DiagramColors.parse(themeStr.toLowerCase());
-        return TopologyImageRenderer.renderImage(result, colors, fontSize, nodeWidth, metrics, false);
+        return TopologyImageRenderer.renderImage(result, colors, fontSize, nodeWidth, metrics, false, frame);
     }
 
 }

@@ -28,12 +28,10 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -50,9 +48,7 @@ class TypeConvertersTab extends AbstractTableTab {
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
     private int scopeIndex;
-    private boolean filterInputActive;
-    private TextInputState filterInputState = new TextInputState("");
-    private String filterTerm;
+    private final FilterField filter = new FilterField(this::filterChanged);
     private List<ConverterData> allConverters = Collections.emptyList();
     private String lastPid;
 
@@ -85,41 +81,29 @@ class TypeConvertersTab extends AbstractTableTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (filterInputActive) {
-            return handleFilterInput(ke);
-        }
-        if (ke.isChar('/')) {
-            filterInputActive = true;
-            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+        if (filter.handleKey(ke)) {
             return true;
         }
         return super.handleKeyEvent(ke);
     }
 
-    private boolean handleFilterInput(KeyEvent ke) {
-        if (ke.isKey(KeyCode.ESCAPE)) {
-            filterInputActive = false;
-            return true;
-        }
-        if (ke.isConfirm()) {
-            String text = filterInputState.text().trim();
-            filterTerm = text.isEmpty() ? null : text;
-            filterInputActive = false;
-            tableState.select(0);
-            return true;
-        }
-        FormHelper.handleTextInput(ke, filterInputState);
-        return true;
+    private void filterChanged() {
+        tableState.select(0);
+    }
+
+    @Override
+    public boolean isTextInputActive() {
+        return filter.isEditing();
+    }
+
+    @Override
+    public boolean handlePaste(String text) {
+        return filter.handlePaste(text);
     }
 
     @Override
     public boolean handleEscape() {
-        if (filterTerm != null) {
-            filterTerm = null;
-            tableState.select(0);
-            return true;
-        }
-        return false;
+        return filter.handleEscape();
     }
 
     @Override
@@ -165,9 +149,9 @@ class TypeConvertersTab extends AbstractTableTab {
         }
 
         String scope = SCOPES[scopeIndex];
-        String title = filterTerm != null
+        String title = filter.term() != null
                 ? String.format(" Type Converters [%d/%d] scope:%s filter:\"%s\" ", visible.size(), allConverters.size(),
-                        scope, filterTerm)
+                        scope, filter.term())
                 : String.format(" Type Converters [%d/%d] scope:%s ", visible.size(), allConverters.size(), scope);
 
         Table table = Table.builder()
@@ -192,22 +176,12 @@ class TypeConvertersTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        if (filterInputActive) {
-            spans.add(Span.styled(" /", Theme.label().bold()));
-            FormHelper.addCaretField(spans, filterInputState);
-            spans.add(Span.raw("  "));
-            hint(spans, "Enter", "filter");
-            hintLast(spans, "Esc", "cancel");
+        if (filter.renderEditingFooter(spans)) {
             return;
         }
-        hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        hint(spans, "Esc", filter.escapeLabel());
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
-        if (filterTerm != null) {
-            spans.add(Span.styled("  /", Theme.label().bold()));
-            spans.add(Span.raw("\"" + filterTerm + "\"  "));
-        } else {
-            hint(spans, "/", "filter");
-        }
+        filter.renderHint(spans);
         hintLast(spans, "s", "sort");
     }
 
@@ -224,7 +198,7 @@ class TypeConvertersTab extends AbstractTableTab {
 
     private List<ConverterData> sortedConverters() {
         String scope = SCOPES[scopeIndex];
-        String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
+        String ft = filter.term() != null ? filter.term().toLowerCase() : null;
         List<ConverterData> result = new ArrayList<>();
         for (ConverterData c : allConverters) {
             if ("non-jdk".equals(scope) && isJdkOnly(c)) {

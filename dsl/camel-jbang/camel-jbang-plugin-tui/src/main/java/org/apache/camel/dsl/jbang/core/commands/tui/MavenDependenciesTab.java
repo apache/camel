@@ -31,12 +31,10 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
-import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -57,9 +55,7 @@ class MavenDependenciesTab extends AbstractTableTab {
 
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
-    private boolean filterInputActive;
-    private TextInputState filterInputState = new TextInputState("");
-    private String filterTerm;
+    private final FilterField filter = new FilterField(this::refilter);
     private int scopeIndex;
     private volatile List<DependencyLoader.DepEntry> allEntries = Collections.emptyList();
     private volatile List<DependencyLoader.DepEntry> filteredEntries = Collections.emptyList();
@@ -110,8 +106,7 @@ class MavenDependenciesTab extends AbstractTableTab {
     public void onIntegrationChanged() {
         allEntries = Collections.emptyList();
         filteredEntries = Collections.emptyList();
-        filterTerm = null;
-        filterInputActive = false;
+        filter.reset();
         scopeIndex = 0;
         lastPid = null;
         errorMessage = null;
@@ -127,19 +122,14 @@ class MavenDependenciesTab extends AbstractTableTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (filterInputActive) {
-            return handleFilterInput(ke);
+        if (filter.handleKey(ke)) {
+            return true;
         }
         return super.handleKeyEvent(ke);
     }
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (ke.isChar('/')) {
-            filterInputActive = true;
-            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
-            return true;
-        }
         if (ke.isCharIgnoreCase('f')) {
             scopeIndex = (scopeIndex + 1) % SCOPES.length;
             refilter();
@@ -157,34 +147,19 @@ class MavenDependenciesTab extends AbstractTableTab {
         return false;
     }
 
-    private boolean handleFilterInput(KeyEvent ke) {
-        if (ke.isKey(KeyCode.ESCAPE)) {
-            filterInputActive = false;
-            return true;
-        }
-        if (ke.isConfirm()) {
-            String text = filterInputState.text().trim();
-            filterTerm = text.isEmpty() ? null : text;
-            filterInputActive = false;
-            refilter();
-            return true;
-        }
-        FormHelper.handleTextInput(ke, filterInputState);
-        return true;
+    @Override
+    public boolean isTextInputActive() {
+        return filter.isEditing();
     }
 
-    boolean isFilterInputActive() {
-        return filterInputActive;
+    @Override
+    public boolean handlePaste(String text) {
+        return filter.handlePaste(text);
     }
 
     @Override
     public boolean handleEscape() {
-        if (filterTerm != null) {
-            filterTerm = null;
-            refilter();
-            return true;
-        }
-        return false;
+        return filter.handleEscape();
     }
 
     @Override
@@ -255,7 +230,7 @@ class MavenDependenciesTab extends AbstractTableTab {
 
         String scope = SCOPES[scopeIndex];
         int totalCount = transitiveMode ? combinedEntries().size() : allEntries.size();
-        boolean filtered = filterTerm != null || !"all".equals(scope);
+        boolean filtered = filter.term() != null || !"all".equals(scope);
         StringBuilder title = new StringBuilder(" Maven Dependencies ");
         if (transitiveMode) {
             title.append("(+transitive) ");
@@ -270,8 +245,8 @@ class MavenDependenciesTab extends AbstractTableTab {
         if (!"all".equals(scope)) {
             title.append(" scope:").append(scope);
         }
-        if (filterTerm != null) {
-            title.append(" filter:\"").append(filterTerm).append('"');
+        if (filter.term() != null) {
+            title.append(" filter:\"").append(filter.term()).append('"');
         }
         if (dataSource != null) {
             title.append(" (").append(dataSource).append(')');
@@ -313,15 +288,10 @@ class MavenDependenciesTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        if (filterInputActive) {
-            spans.add(Span.styled(" /", Theme.label().bold()));
-            FormHelper.addCaretField(spans, filterInputState);
-            spans.add(Span.raw("  "));
-            hint(spans, "Enter", "filter");
-            hintLast(spans, "Esc", "cancel");
+        if (filter.renderEditingFooter(spans)) {
             return;
         }
-        hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        hint(spans, "Esc", filter.escapeLabel());
         hint(spans, "s", "sort");
         hint(spans, "f", "scope [" + SCOPES[scopeIndex] + "]");
         if (transitiveLoading) {
@@ -329,12 +299,7 @@ class MavenDependenciesTab extends AbstractTableTab {
         } else {
             hint(spans, "t", transitiveMode ? "direct" : "transitive");
         }
-        if (filterTerm != null) {
-            spans.add(Span.styled("  /", Theme.label().bold()));
-            spans.add(Span.raw("\"" + filterTerm + "\"  "));
-        } else {
-            hint(spans, "/", "filter");
-        }
+        filter.renderHint(spans);
     }
 
     private int sortDep(DependencyLoader.DepEntry a, DependencyLoader.DepEntry b) {
@@ -423,7 +388,7 @@ class MavenDependenciesTab extends AbstractTableTab {
                 ? combinedEntries()
                 : allEntries;
         List<DependencyLoader.DepEntry> result = new ArrayList<>();
-        String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
+        String ft = filter.term() != null ? filter.term().toLowerCase() : null;
         String scope = SCOPES[scopeIndex];
         for (DependencyLoader.DepEntry entry : source) {
             if ("camel".equals(scope) && !entry.isCamel()) {
@@ -459,9 +424,8 @@ class MavenDependenciesTab extends AbstractTableTab {
     }
 
     @Override
-    public boolean setFilter(String filter) {
-        filterTerm = filter != null && !filter.isEmpty() ? filter : null;
-        refilter();
+    public boolean setFilter(String term) {
+        filter.setTerm(term);
         return true;
     }
 

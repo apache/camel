@@ -49,11 +49,17 @@ final class RouteGroups {
     record Tag(String group, String name, boolean ai, int index) {
     }
 
-    /** The groups with the AI's capabilities, and from the facts alone (the ai view setting off). */
-    private record Entry(long checkedAt, Map<String, Tag> withAi, Map<String, Tag> facts) {
+    /**
+     * The groups with the AI's capabilities, and from the facts alone (the ai view setting off); each also with the
+     * routes reached only on error in a group of their own, as the architecture shows them with the error handling (x).
+     */
+    private record Entry(
+            long checkedAt, Map<String, Tag> withAi, Map<String, Tag> facts, Map<String, Tag> withAiErrors,
+            Map<String, Tag> factsErrors) {
 
-        Map<String, Tag> tags() {
-            return IntegrationSummaryHints.enabled() ? withAi : facts;
+        Map<String, Tag> tags(boolean errors) {
+            boolean ai = IntegrationSummaryHints.enabled();
+            return errors ? (ai ? withAiErrors : factsErrors) : (ai ? withAi : facts);
         }
     }
 
@@ -66,6 +72,14 @@ final class RouteGroups {
 
     /** The group of each route by route id, as last read; reads again in the background when it is old. */
     static Map<String, Tag> of(Path dir) {
+        return of(dir, false);
+    }
+
+    /**
+     * The group of each route by route id, as last read; with errors the routes reached only on error are in the error
+     * handling group, as in the architecture with x.
+     */
+    static Map<String, Tag> of(Path dir, boolean errors) {
         if (dir == null) {
             return Map.of();
         }
@@ -75,11 +89,12 @@ final class RouteGroups {
             Thread t = new Thread(() -> {
                 try {
                     ProjectOverview.Overview overview = ProjectOverview.analyze(key, ProjectOverviewAssist.catalog());
+                    IntegrationSummary.Summary summary = IntegrationSummary.read(key);
                     CACHE.put(key, new Entry(
-                            MonotonicClock.millis(), tags(overview, IntegrationSummary.read(key)),
-                            tags(overview, null)));
+                            MonotonicClock.millis(), tags(overview, summary, false), tags(overview, null, false),
+                            tags(overview, summary, true), tags(overview, null, true)));
                 } catch (RuntimeException ex) {
-                    CACHE.put(key, new Entry(MonotonicClock.millis(), Map.of(), Map.of()));
+                    CACHE.put(key, new Entry(MonotonicClock.millis(), Map.of(), Map.of(), Map.of(), Map.of()));
                 } finally {
                     LOADING.remove(key);
                 }
@@ -87,7 +102,7 @@ final class RouteGroups {
             t.setDaemon(true);
             t.start();
         }
-        return e != null ? withRunningIds(dir, e.tags()) : Map.of();
+        return e != null ? withRunningIds(dir, e.tags(errors)) : Map.of();
     }
 
     /** The tags also under the running id of a source route without one, as the topology names it. */
@@ -108,14 +123,23 @@ final class RouteGroups {
 
     /** Reads the groups now; for tests and the first read. */
     static Map<String, Tag> load(Path dir) {
-        ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ProjectOverviewAssist.catalog());
-        // the AI's groups only while its hints are shown
-        return tags(overview, IntegrationSummaryHints.enabled() ? IntegrationSummary.read(dir) : null);
+        return load(dir, false);
     }
 
-    private static Map<String, Tag> tags(ProjectOverview.Overview overview, IntegrationSummary.Summary summary) {
+    /** Reads the groups now, with the routes reached only on error in a group of their own when errors. */
+    static Map<String, Tag> load(Path dir, boolean errors) {
+        ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ProjectOverviewAssist.catalog());
+        // the AI's groups only while its hints are shown
+        return tags(overview, IntegrationSummaryHints.enabled() ? IntegrationSummary.read(dir) : null, errors);
+    }
+
+    private static Map<String, Tag> tags(
+            ProjectOverview.Overview overview, IntegrationSummary.Summary summary, boolean errors) {
         ProjectCapabilities.Capabilities caps
                 = ProjectCapabilities.build(overview, summary != null ? summary.ai() : null);
+        if (errors) {
+            caps = ProjectCapabilities.withErrorHandling(overview, caps);
+        }
         Map<String, Tag> tags = new LinkedHashMap<>();
         List<ProjectCapabilities.Group> groups = caps.groups();
         for (int i = 0; i < groups.size(); i++) {
@@ -162,7 +186,8 @@ final class RouteGroups {
     static Line legend(Map<String, Tag> tags, Set<String> hidden) {
         Map<String, Tag> groups = new LinkedHashMap<>();
         tags.forEach((route, t) -> {
-            if (!hidden.contains(route)) {
+            // the routes reached only on error are in the error frame, which says what they are
+            if (!hidden.contains(route) && !ProjectCapabilities.ERRORS.equals(t.group())) {
                 groups.putIfAbsent(t.group(), t);
             }
         });
@@ -183,7 +208,11 @@ final class RouteGroups {
     /** The border colour of each route, one per group. */
     static Map<String, Color> colors(Map<String, Tag> tags) {
         Map<String, Color> colors = new LinkedHashMap<>();
-        tags.forEach((route, t) -> colors.put(route, colorOf(t.index())));
+        tags.forEach((route, t) -> {
+            if (!ProjectCapabilities.ERRORS.equals(t.group())) {
+                colors.put(route, colorOf(t.index()));
+            }
+        });
         return colors;
     }
 

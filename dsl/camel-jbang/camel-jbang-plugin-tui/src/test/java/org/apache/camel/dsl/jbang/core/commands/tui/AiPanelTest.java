@@ -1357,7 +1357,7 @@ class AiPanelTest {
                 "m", "ollama", 400, 30, 430, 8_000, "stop", now,
                 AiPanel.AiUsageSource.ROUTE, "chat-route", 0));
 
-        assertEquals(2, AiPanel.countQuestions(panel.combinedUsageEntriesForTesting()));
+        assertEquals(2, AiUsageStats.countQuestions(panel.combinedUsageEntriesForTesting()));
         String summary = panel.usageSummary();
         // 8 s of panel time over 2 questions; 16 s over 5 requests
         assertTrue(summary.contains("- **Avg per question:** 4.0s (3.2s per request)"), summary);

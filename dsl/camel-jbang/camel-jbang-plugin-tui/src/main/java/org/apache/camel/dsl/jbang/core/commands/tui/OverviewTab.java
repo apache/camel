@@ -1461,6 +1461,21 @@ class OverviewTab extends AbstractTab {
         return false;
     }
 
+    /** Esc deselects the integration (or infra service), so the other tabs show none. */
+    @Override
+    public boolean handleEscape() {
+        if (ctx.selectedPid == null) {
+            return false;
+        }
+        ctx.selectedPid = null;
+        ctx.lastSelectedName = null;
+        tableState.clearSelection();
+        infraTableState.clearSelection();
+        infraFocused = false;
+        infraDetailVisible = false;
+        return true;
+    }
+
     @Override
     public String description() {
         return "Running integrations with PID, uptime, and exchange statistics";

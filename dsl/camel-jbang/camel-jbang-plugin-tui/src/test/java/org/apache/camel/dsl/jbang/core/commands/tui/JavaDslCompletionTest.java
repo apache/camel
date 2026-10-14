@@ -252,11 +252,11 @@ class JavaDslCompletionTest {
         AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
         SourceEditAssist assist = new SourceEditAssist(new MonitorContext(data, infraData));
         SourceViewer viewer = new SourceViewer();
-        viewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-        viewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
-        viewer.setUriCompletion("java");
-        viewer.setSimpleCompletion(assist::provideSimpleCompletions);
-        viewer.setJavaCompletion(c -> JavaDslCompletions.provide(catalog, c));
+        viewer.completion().setAutocompleteProvider(assist::provideYamlKeyCompletions);
+        viewer.completion().setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+        viewer.completion().setUriCompletion("java");
+        viewer.completion().setSimpleCompletion(assist::provideSimpleCompletions);
+        viewer.completion().setJavaCompletion(c -> JavaDslCompletions.provide(catalog, c));
         viewer.loadFile(file);
         viewer.enterEditMode();
         return viewer;

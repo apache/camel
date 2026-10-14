@@ -249,6 +249,13 @@ public @interface CamelMainTest {
     boolean dumpRouteDiagramTopologyExternal() default true;
 
     /**
+     * Whether the dumped route diagrams draw the error handling: the onException clauses of each route in a frame below
+     * its steps, and in the topology diagram the routes reached only on error in a frame below the other routes.
+     * Otherwise a route diagram draws only the steps of the route.
+     */
+    boolean dumpRouteDiagramErrors() default false;
+
+    /**
      * Whether JMX should be used during testing.
      *
      * @return <tt>false</tt> by default.

@@ -45,4 +45,6 @@ When you select an endpoint, the right panel shows each queued message:
 - `Tab` — switch focus between messages and detail (in detail view)
 - `Enter` — browse selected endpoint / view message detail
 - `p` — toggle pretty-print for message body
+- `s` — sort the endpoints by uri or size
+- `r` — refresh the endpoints or the messages
 - `Esc` — back to previous view

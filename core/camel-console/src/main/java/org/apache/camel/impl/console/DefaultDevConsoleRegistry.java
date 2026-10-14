@@ -19,7 +19,7 @@ package org.apache.camel.impl.console;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
@@ -56,8 +56,9 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
     }
 
     public DefaultDevConsoleRegistry(CamelContext camelContext) {
-        // sort by id
-        this.consoles = new TreeSet<>(Comparator.comparing(DevConsole::getId));
+        // sort by id, and allow consoles to be registered while the registry is iterating its consoles
+        // (such as camel-cli-connector resolving consoles while camel is starting)
+        this.consoles = new ConcurrentSkipListSet<>(Comparator.comparing(DevConsole::getId));
         setCamelContext(camelContext);
     }
 
@@ -120,8 +121,10 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
         if (answer == null) {
             DevConsoleResolver resolver = PluginHelper.getDevConsoleResolver(camelContext);
             answer = resolver.resolveDevConsole(id);
-            if (answer != null) {
-                register(answer);
+            if (answer != null && !register(answer)) {
+                // another thread registered the console in the meantime, so use that one
+                DevConsole resolved = answer;
+                answer = consoles.stream().filter(h -> h.getId().equals(id)).findFirst().orElse(resolved);
             }
         }
 
@@ -130,12 +133,8 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
 
     @Override
     public boolean register(DevConsole console) {
-        boolean result;
-        // do we have this already
-        if (getConsole(console.getId()).isPresent()) {
-            return false;
-        }
-        result = consoles.add(console);
+        // the consoles are sorted by id, so adding a console with an id that is already registered is rejected
+        boolean result = consoles.add(console);
         if (result) {
             CamelContextAware.trySetCamelContext(console, camelContext);
             // ensure console is started as it may be registered later

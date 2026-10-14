@@ -232,7 +232,8 @@ public class RouteDiagramRenderer {
     public BufferedImage renderDiagram(
             List<LayoutRoute> layoutRoutes, int totalHeight, DiagramColors colors,
             Set<String> highlightedNodeIds, RouteDiagramHelper.HighlightStyle highlightStyle) {
-        int imgWidth = layoutRoutes.stream().mapToInt(lr -> lr.maxX).max().orElse(400) + PADDING;
+        int imgWidth = Math.max(
+                layoutRoutes.stream().mapToInt(lr -> lr.maxX).max().orElse(400) + PADDING, errorLinesWidth(layoutRoutes));
         int imgHeight = totalHeight + PADDING;
 
         if (imgWidth > MAX_IMAGE_DIMENSION || imgHeight > MAX_IMAGE_DIMENSION) {
@@ -256,6 +257,7 @@ public class RouteDiagramRenderer {
             }
 
             for (LayoutRoute lr : layoutRoutes) {
+                drawErrorFrame(g, lr, colors, imgWidth);
                 drawRoute(g, lr, colors, highlightedNodeIds, highlightStyle);
             }
         } finally {
@@ -265,7 +267,8 @@ public class RouteDiagramRenderer {
     }
 
     public BufferedImage renderDiagram(List<LayoutRoute> layoutRoutes, int totalHeight, DiagramColors colors) {
-        int imgWidth = layoutRoutes.stream().mapToInt(lr -> lr.maxX).max().orElse(400) + PADDING;
+        int imgWidth = Math.max(
+                layoutRoutes.stream().mapToInt(lr -> lr.maxX).max().orElse(400) + PADDING, errorLinesWidth(layoutRoutes));
         int imgHeight = totalHeight + PADDING;
 
         if (imgWidth > MAX_IMAGE_DIMENSION || imgHeight > MAX_IMAGE_DIMENSION) {
@@ -289,12 +292,70 @@ public class RouteDiagramRenderer {
             }
 
             for (LayoutRoute lr : layoutRoutes) {
+                drawErrorFrame(g, lr, colors, imgWidth);
                 drawRoute(g, lr, colors);
             }
         } finally {
             g.dispose();
         }
         return image;
+    }
+
+    /**
+     * The height of a line of text in the error frame, in layout units: for {@link RouteErrorFrame#add}.
+     *
+     * @param fontSize the font size, in logical pixels, as given to the renderer before scaling
+     */
+    public static int rowHeight(int fontSize) {
+        return (fontSize * SCALE + SCALE) * 3 / 2;
+    }
+
+    /** How wide the image must be for the lines of the error frames. */
+    private int errorLinesWidth(List<LayoutRoute> layoutRoutes) {
+        int width = 0;
+        Graphics2D measure = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics();
+        try {
+            measure.setFont(new Font("SansSerif", Font.PLAIN, fontSizeLabel));
+            for (LayoutRoute lr : layoutRoutes) {
+                if (lr.errorFrame != null) {
+                    for (String line : lr.errorFrame.lines()) {
+                        width = Math.max(width, 2 * PADDING + measure.getFontMetrics().stringWidth(line));
+                    }
+                }
+            }
+        } finally {
+            measure.dispose();
+        }
+        return width;
+    }
+
+    /** The frame of the error handling of a route, dashed, below its steps, with its title and lines. */
+    private void drawErrorFrame(Graphics2D g, LayoutRoute lr, DiagramColors colors, int imgWidth) {
+        RouteErrorFrame frame = lr.errorFrame;
+        if (frame == null) {
+            return;
+        }
+        int left = PADDING / 2;
+        Color c = colors.getArrow();
+        g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 160));
+        g.setStroke(DASHED_STROKE);
+        g.drawRoundRect(left, frame.topY(), imgWidth - 2 * left, frame.bottomY() - frame.topY(), ARC, ARC);
+        g.setStroke(new BasicStroke(STROKE_WIDTH));
+        g.setFont(new Font("SansSerif", Font.PLAIN, fontSizeLabel));
+        FontMetrics fm = g.getFontMetrics();
+        String title = " " + TopologyErrorFrame.TITLE + " ";
+        int titleX = left + 2 * ARC;
+        if (colors.getBg() != null) {
+            g.setColor(colors.getBg());
+            g.fillRect(titleX, frame.topY() - fm.getAscent() / 2, fm.stringWidth(title), fm.getAscent());
+        }
+        g.setColor(colors.getRouteLabel());
+        g.drawString(title, titleX, frame.topY() + fm.getAscent() / 2 - fm.getDescent() / 2);
+        int y = frame.topY() + fm.getHeight() + fm.getAscent() / 2;
+        for (String line : frame.lines()) {
+            g.drawString(line, PADDING, y);
+            y += fontSizeLabel * 3 / 2;
+        }
     }
 
     private void drawRoute(

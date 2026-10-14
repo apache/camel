@@ -40,6 +40,10 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
+import org.apache.camel.diagram.RouteErrorFrame;
+import org.apache.camel.diagram.TopologyErrorFrame;
+import org.apache.camel.diagram.TopologyHelper;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.support.PatternHelper;
@@ -131,6 +135,18 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                                       + "routes are read by the Java DSL parser, without compiling them")
     boolean compile;
 
+    @CommandLine.Option(names = { "--errors" },
+                        description = "Draw the error handling of each route in a frame below its steps: its onException clauses,"
+                                      + " where its failures go and where it is reached on error from. Without it only the steps"
+                                      + " of the route are drawn")
+    boolean errors;
+
+    /**
+     * The error paths of the topology, for the lines of the error frames (Camel 4.23 or newer). Package visible for
+     * testing.
+     */
+    List<TopologyErrorFrame.ErrorPath> errorPaths = List.of();
+
     private long pid;
 
     private DiagramColors colors;
@@ -215,6 +231,9 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             } finally {
                 PathUtils.deleteFile(outputFile);
             }
+            if (errors) {
+                errorPaths = requestErrorPaths(this.pid);
+            }
         }
 
         if (routes.isEmpty()) {
@@ -262,8 +281,14 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
+        int rowHeight = isTextTheme() ? RouteDiagramAsciiRenderer.ROW_HEIGHT : RouteDiagramRenderer.rowHeight(fontSize);
+        TopologyErrorFrame.LineStyle lineStyle = isUnicodeTheme() ? TopologyErrorFrame.LineStyle.UNICODE
+                : isTextTheme() ? TopologyErrorFrame.LineStyle.ASCII : TopologyErrorFrame.LineStyle.TEXT;
         for (RouteInfo route : routes) {
-            LayoutRoute lr = engine.layoutRoute(route, currentY);
+            // the steps of the route; its error handling in a frame below them with --errors, or when the highlighted
+            // path steps into one of its onException clauses
+            LayoutRoute lr = RouteErrorFrame.layout(
+                    engine, route, currentY, errors, highlightedNodeIds, errorPaths, lineStyle, rowHeight);
             layoutRoutes.add(lr);
             currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
         }
@@ -436,7 +461,27 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             JsonObject jo = (JsonObject) Jsoner.deserialize(Files.readString(p));
             all.addAll(parseRoutes(jo));
         }
+        if (errors) {
+            // the error paths come from the topology of the same dump
+            errorPaths = errorPaths((JsonObject) Jsoner.deserialize(Files.readString(topologyMarker)));
+        }
         return all;
+    }
+
+    /** Asks the running integration for its topology, for the error paths; none when it does not answer. */
+    private List<TopologyErrorFrame.ErrorPath> requestErrorPaths(long pid) throws Exception {
+        Path outputFile = prepareAction(Long.toString(pid), "route-topology", null);
+        try {
+            JsonObject jo = getJsonObject(outputFile);
+            return jo != null ? errorPaths(jo) : List.of();
+        } finally {
+            PathUtils.deleteFile(outputFile);
+        }
+    }
+
+    private static List<TopologyErrorFrame.ErrorPath> errorPaths(JsonObject topology) {
+        return TopologyErrorFrame.paths(
+                TopologyHelper.parseEdges(topology, true).stream().filter(TopologyEdgeInfo::isErrorPath).toList());
     }
 
     private static boolean isFreshFile(Path file, Instant notBefore) throws IOException {

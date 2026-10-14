@@ -28,6 +28,7 @@ import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -118,6 +119,37 @@ class RouteGroupsTest {
         } finally {
             IntegrationSummaryHints.setShown(true);
         }
+    }
+
+    @Test
+    void withTheErrorHandlingShownARouteReachedOnlyOnErrorIsInItsGroup() throws Exception {
+        // as fail-well/error-handling: a dead letter channel sends to parked, which no route calls
+        Files.writeString(project.resolve("payment.camel.yaml"), """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:parked
+                - route:
+                    id: checkout
+                    from:
+                      uri: file:orders
+                      steps:
+                        - to: direct:invoice
+                - route:
+                    id: parked
+                    from:
+                      uri: direct:parked
+                      steps:
+                        - to: file:parked
+                """, StandardCharsets.UTF_8);
+
+        assertEquals(ProjectCapabilities.UTILITY, RouteGroups.load(project).get("parked").group());
+        // x: as in the architecture, in the error handling group
+        Map<String, RouteGroups.Tag> tags = RouteGroups.load(project, true);
+        assertEquals(ProjectCapabilities.ERRORS, tags.get("parked").group());
+        assertEquals("Error handling", tags.get("parked").name());
+        // the error frame of the topology says what it is: no colour, and not in the legend
+        assertFalse(RouteGroups.colors(tags).containsKey("parked"));
+        assertFalse(text(RouteGroups.legend(tags, Set.of())).contains("Error handling"));
     }
 
     private static String text(Line line) {

@@ -149,7 +149,10 @@ function assignPositions(node, x, y, parentWidth, positions) {
 }
 
 function layoutRoute(route) {
-    const nodes = (route.code ?? []).filter(n => n.type !== 'route');
+    return layoutNodes((route.code ?? []).filter(n => n.type !== 'route'));
+}
+
+function layoutNodes(nodes) {
     if (!nodes.length) {
         return { positions: {}, width: NODE_W + PADDING * 2, height: NODE_H + PADDING_TOP + PADDING };
     }
@@ -168,6 +171,80 @@ function layoutRoute(route) {
     }
 
     return { positions, width: maxX + PADDING, height: maxYVal + PADDING };
+}
+
+// ─── Error handling (ported from RouteErrorFrame.java) ────────────────────────
+
+/**
+ * Takes the onException clauses out of the steps of a route (a global one is copied into every route): each becomes a
+ * block of its own, its levels starting at the clause.
+ */
+function splitErrorHandling(nodes) {
+    const happy = [];
+    const blocks = [];
+    let block = null;
+    let blockLevel = -1;
+    for (const n of nodes) {
+        if (block && n.level > blockLevel) {
+            block.push({ ...n, level: n.level - blockLevel });
+            continue;
+        }
+        block = null;
+        if (n.type === 'onException') {
+            blockLevel = n.level;
+            block = [{ ...n, level: 0 }];
+            blocks.push(block);
+        } else {
+            happy.push(n);
+        }
+    }
+    return { happy, blocks };
+}
+
+/** The error paths of a route topology, once each: a route sends there only when it handles a failure. */
+function errorPaths(topology) {
+    const seen = new Set();
+    const paths = [];
+    for (const e of topology?.edges ?? []) {
+        if (e.kind !== 'error') continue;
+        const key = [e.fromRouteId, e.toRouteId, e.via, e.handling].join('|');
+        if (seen.has(key)) continue;
+        seen.add(key);
+        paths.push({ from: e.fromRouteId, to: e.toRouteId, via: e.via, handling: e.handling ?? null });
+    }
+    return paths;
+}
+
+function errorPathLabel(p) {
+    const how = p.via === 'errorHandler' ? 'dead letter' : p.via;
+    const what = p.handling == null ? 'decided at runtime'
+        : p.handling === 'notHandled' ? 'not handled, goes on to the caller' : p.handling;
+    return `${how}, ${what}`;
+}
+
+/** The lines at the top of the error frame of a route: where its failures go and where it is reached on error from. */
+function errorLines(routeId, paths) {
+    const out = new Map();
+    const into = new Map();
+    for (const p of paths) {
+        if (p.from === routeId) {
+            if (!out.has(p.to)) out.set(p.to, []);
+            out.get(p.to).push(errorPathLabel(p));
+        } else if (p.to === routeId) {
+            if (!into.has(p.from)) into.set(p.from, []);
+            into.get(p.from).push(errorPathLabel(p));
+        }
+    }
+    const lines = [];
+    for (const [to, labels] of out) {
+        lines.push(to === routeId
+            ? `\u26A0 own failures: ${labels.join(' \u00B7 ')}`
+            : `\u25B8 on failure to ${to}: ${labels.join(' \u00B7 ')}`);
+    }
+    for (const [from, labels] of into) {
+        lines.push(`\u25C2 reached when ${from} handles a failure: ${labels.join(' \u00B7 ')}`);
+    }
+    return lines;
 }
 
 // ─── Web component ────────────────────────────────────────────────────────────
@@ -299,6 +376,17 @@ const COMPONENT_STYLE = `
     }
   }
   .route-col { flex-shrink: 0; }
+  /* the label centred over the steps of the route, also when its error frame is wider */
+  .route-head { width: fit-content; }
+  .error-frame {
+    margin-top: 16px;
+    padding: 4px 12px 8px 12px;
+    border: 1.5px dashed var(--crd-edge, #94a3b8);
+    border-radius: 8px;
+  }
+  .error-title { font-weight: 600; font-size: 0.85em; opacity: .8; padding: 2px 0 4px 0; }
+  .error-line  { font-size: 0.85em; padding: 1px 0; }
+  .error-frame svg { margin-top: 8px; }
   .error   { color: #ef4444; padding: 8px; }
   .loading { opacity: .6; padding: 8px; }
   .route-label {
@@ -318,6 +406,10 @@ const COMPONENT_STYLE = `
  *   src     - URL of the route-structure dev console endpoint (required)
  *   refresh - polling interval in ms; 0 = disabled (default: 0)
  *   filter  - route ID filter, forwarded as ?filter= query param (default: all routes)
+ *   errors  - "true" draws the onException clauses of each route in a frame below its steps; otherwise only the
+ *             steps of the route are drawn (default: false)
+ *   topology - URL of the route-topology dev console endpoint: with errors, the frame says where the failures of
+ *             the route go and where it is reached on error from (optional)
  *
  * CSS custom properties (all optional):
  *   --crd-bg, --crd-node-bg, --crd-fg, --crd-edge, --crd-font, --crd-font-size, --crd-stat
@@ -326,12 +418,15 @@ const COMPONENT_STYLE = `
  * @since 4.21
  */
 class CamelRouteDiagram extends HTMLElement {
-    static observedAttributes = ['src', 'refresh', 'filter', 'metric'];
+    static observedAttributes = ['src', 'refresh', 'filter', 'metric', 'errors', 'topology'];
 
     #src = '';
     #refresh = 0;
     #filter = '';
     #metric = true;
+    #errors = false;
+    #topology = '';
+    #paths = [];
     #timer = null;
     #uid = Math.random().toString(36).slice(2);
     #controller = null;
@@ -371,6 +466,14 @@ class CamelRouteDiagram extends HTMLElement {
                 break;
             case 'metric':
                 this.#metric = newValue !== 'false';
+                if (this.isConnected) this.#doFetch();
+                break;
+            case 'errors':
+                this.#errors = newValue != null && newValue !== 'false';
+                if (this.isConnected) this.#doFetch();
+                break;
+            case 'topology':
+                this.#topology = newValue ?? '';
                 if (this.isConnected) this.#doFetch();
                 break;
             case 'refresh':
@@ -418,6 +521,7 @@ class CamelRouteDiagram extends HTMLElement {
                 this.#render();
                 return;
             }
+            this.#paths = this.#errors && this.#topology ? await this.#fetchErrorPaths() : [];
             this.#data = data;
             this.#error = null;
             this.#render();
@@ -426,6 +530,26 @@ class CamelRouteDiagram extends HTMLElement {
                 this.#error = e.message;
                 this.#render();
             }
+        }
+    }
+
+    /** The error paths of the route topology; none when it cannot be read, as the frame does without its lines. */
+    async #fetchErrorPaths() {
+        try {
+            const url = new URL(this.#topology.trim(), location.href);
+            const res = await fetch(url, {
+                signal: this.#controller.signal,
+                headers: { 'Accept': 'application/json' },
+            });
+            if (!res.ok) return [];
+            let data = await res.json();
+            if (data && !Array.isArray(data.edges) && data['route-topology']) {
+                data = data['route-topology'];
+            }
+            return errorPaths(data);
+        } catch (e) {
+            if (e.name === 'AbortError') throw e;
+            return [];
         }
     }
 
@@ -441,24 +565,46 @@ class CamelRouteDiagram extends HTMLElement {
     }
 
     #routeHTML(route, routeIdx) {
-        const { positions, width, height } = layoutRoute(route);
+        // the onException clauses are not steps of the route: they are drawn in the error frame, when shown
+        const nodes = (route.code ?? []).filter(n => n.type !== 'route');
+        const { happy, blocks } = splitErrorHandling(nodes);
         const fontFamily = getComputedStyle(this).getPropertyValue('--crd-font').trim() || 'system-ui, sans-serif';
+        const pfx = `t${this.#uid}r${routeIdx}`;
+        const label = `Route diagram for ${route.routeId}`;
+        let frame = '';
+        if (this.#errors) {
+            const lines = errorLines(route.routeId, this.#paths);
+            if (lines.length || blocks.length) {
+                frame = `
+      <div class="error-frame">
+        <div class="error-title">Error handling</div>
+        ${lines.map(l => `<div class="error-line">${esc(l)}</div>`).join('')}
+        ${blocks.map((b, i) => this.#svgHTML(b, `${pfx}e${i}`, `${label}: onException`, fontFamily)).join('')}
+      </div>`;
+            }
+        }
+        return `<div class="route-col">
+      <div class="route-head">
+        <div class="route-label">${esc(route.routeId)}</div>
+        ${this.#svgHTML(happy, pfx, label, fontFamily)}
+      </div>${frame}
+    </div>`;
+    }
+
+    #svgHTML(nodes, pfx, label, fontFamily) {
+        const { positions, width, height } = layoutNodes(nodes);
         const ids = Object.keys(positions);
-        const pfx  = `t${this.#uid}r${routeIdx}`;
         const defs = ids.map(id => {
             const p = positions[id];
             return `<clipPath id="${pfx}${safeId(id)}">` +
                    `<rect x="${p.x + 28}" y="${p.y}" width="${NODE_W - 30}" height="${NODE_H}"/></clipPath>`;
         }).join('');
-        return `<div class="route-col">
-      <div class="route-label">${esc(route.routeId)}</div>
-      <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
-           aria-label="Route diagram for ${esc(route.routeId)}">
+        return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
+           aria-label="${esc(label)}">
         <defs>${defs}</defs>
         ${ids.map(id => this.#edgeHTML(id, positions)).join('')}
         ${ids.map(id => this.#nodeHTML(positions[id], `${pfx}${safeId(id)}`, fontFamily)).join('')}
-      </svg>
-    </div>`;
+      </svg>`;
     }
 
     #edgeHTML(id, positions) {

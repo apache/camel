@@ -13,7 +13,7 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
 * <<_topology_view,*Topology view*>> -- every route and the endpoints that connect them, with live counts
 * <<_drill_down_into_routes,*Drill-down*>> -- the processors of one route, step by step
 * *Error handling* (*x*) -- the happy path by default; on, the error handling in a frame of its own, in the
-  topology and in a route
+  topology and in a route, and in a box of its own in the architecture
 * <<_external_endpoints,*External endpoints*>> -- what the integration consumes from and sends to outside
 * <<_metrics_and_source_code,*Metrics and source*>> -- throughput and timing on the boxes, and the source a box comes from
 
@@ -94,8 +94,9 @@ the topology, draws the error handling in a frame of its own below the routes: t
 handling a failure (such as the target of a dead letter channel), and under each one where its failures come
 from and how they are handled (handled: the message ends there; continued; not handled: the failure goes on
 to the caller). There are no arrows into the frame (with a global error handler every route would have one);
-selecting a route in the frame highlights the routes that send to it. Off, the topology shows the happy path
-only. A route with error handling has a dim ⚡ on its box, in the topology and in the route view, whether the
+selecting a route in the frame highlights the routes that send to it. With *e*, an external system only the
+routes in the frame use (where the failed messages end up) is in the frame too, below its route. Off, the
+topology shows the happy path only. A route with error handling has a dim ⚡ on its box, in the topology and in the route view, whether the
 error handling is shown or not.
 In the route view *x* does the same for one route: off, the route shows its own steps only, without the
 onException clauses (a global one is in every route); on, a frame below the route lists where its failures
@@ -128,14 +129,21 @@ Each route has one role:
 * *Utility* -- plumbing with little business meaning: a route reached only while handling a failure
   (from a `doCatch`, an `onException` or a dead letter channel), a route that only logs, or one the
   AI marked as utility. Hidden until you press *u*; with *x* on, the routes reached only on error are shown
-  in the error handling frame of the topology instead.
+  in the error handling frame of the topology instead, and in the *Error handling* box of the architecture.
+* *Error handling* -- with *x* on, the routes reached only on error, out of Utility into a box of their
+  own, drawn dashed, with a dashed arrow from each group whose failures go there: a route of the group
+  sends there while it handles a failure, or uses an error handler of its file that does (a route with
+  `noErrorHandler` leaves its failures to its caller). The Info panel names the groups the failures come
+  from, and the Flow panel of a group lists where each of its routes sends its failures. The route view
+  names this group in its header and Info panel too, while *x* is on.
 * *Other* -- routes nothing above placed yet; `/overview` groups them.
 
 A box shows how many routes the group has, its entry points (HTTP, schedules, consumers) and the
 external systems its routes use; a warning count when the project overview found problems in its
-routes, such as a `direct` endpoint no route consumes. Arrows between boxes are the links between
-their routes, with the strongest kind (a call over a hand-off over an event). The Info panel on the
-left lists the routes, entry points, systems, and what the AI wrote about a capability.
+routes, such as a `direct` endpoint no route consumes, or an error route that uses the error handler
+that sends to it. Arrows between boxes are the links between their routes, with the strongest kind (a
+call over a hand-off over an event). The Info panel on the left lists the routes, entry points,
+systems, what the AI wrote about a capability, and the warnings, each with where it is.
 
 A small *Flow* panel at the bottom right shows the inside of the selected group, what *Enter* goes
 down to: each of its routes in the order messages flow, with where messages enter it and what it hands
@@ -194,6 +202,6 @@ Press *e* to cycle through three modes for external endpoints:
 | *u* | In the architecture and the topology: show or hide the utility routes
 | *g* | In the topology: show each route's group (route group, AI capability, shared services, utility)
 | *x* | In the topology and a route: show or hide the error handling, in a frame of its own (needs Camel 4.23+
-in the integration)
+in the integration); in the architecture, the routes reached only on error in a box of their own
 | *s* | Open the integration summary (`camel-summary.md`) in the document viewer, from any level
 |===

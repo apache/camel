@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.diagram.TopologyAsciiRenderer;
+import org.apache.camel.diagram.TopologyErrorFrame;
 import org.apache.camel.diagram.TopologyHelper;
 import org.apache.camel.diagram.TopologyImageRenderer;
 import org.apache.camel.diagram.TopologyLayoutEngine;
@@ -100,6 +101,11 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--external" },
                         description = "Include external systems (consumers at top, producers at bottom)")
     boolean external;
+
+    @CommandLine.Option(names = { "--errors" },
+                        description = "Draw the error handling: the routes reached only on error in a frame of their own below the"
+                                      + " routes, with where their failures come from (with --theme)")
+    boolean errors;
 
     @CommandLine.Option(names = { "--kamelets" },
                         description = "Include routes created by Kamelets (hidden by default, only for a running Camel application)")
@@ -207,6 +213,11 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         return 0;
     }
 
+    /** The error paths of the topology: sent to only when a route handles a failure (Camel 4.23 or newer). */
+    private static List<TopologyEdgeInfo> errorPaths(JsonObject jo) {
+        return TopologyHelper.parseEdges(jo, true).stream().filter(TopologyEdgeInfo::isErrorPath).toList();
+    }
+
     private static boolean isErrorPath(JsonObject edge) {
         return "error".equals(edge.getString("kind"));
     }
@@ -267,11 +278,16 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         TopologyHelper.addExternalEndpoints(nodes, edges, jo);
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine(boxWidth);
-        TopologyLayoutResult result = engine.layout(nodes, edges);
-
         TopologyAsciiRenderer renderer = new TopologyAsciiRenderer(
                 engine.getNodeWidth(), isUnicodeTheme(), pid > 0 && metric, description);
-        String text = renderer.renderDiagram(result);
+        String text;
+        if (errors) {
+            TopologyErrorFrame.Placed placed = TopologyErrorFrame.layout(
+                    engine, nodes, edges, errorPaths(jo), TopologyAsciiRenderer.ROW_HEIGHT);
+            text = renderer.renderDiagram(placed.layout(), placed.frame());
+        } else {
+            text = renderer.renderDiagram(engine.layout(nodes, edges));
+        }
 
         if (output != null) {
             String fileName = output.endsWith(".png")
@@ -296,13 +312,22 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         TopologyHelper.addExternalEndpoints(nodes, edges, jo);
 
         TopologyLayoutEngine engine = new TopologyLayoutEngine(boxWidth);
-        TopologyLayoutResult result = engine.layout(nodes, edges);
+        TopologyLayoutResult result;
+        TopologyErrorFrame frame = null;
+        if (errors) {
+            TopologyErrorFrame.Placed placed = TopologyErrorFrame.layout(
+                    engine, nodes, edges, errorPaths(jo), TopologyImageRenderer.rowHeight(fontSize));
+            result = placed.layout();
+            frame = placed.frame();
+        } else {
+            result = engine.layout(nodes, edges);
+        }
 
         String colorSpec = System.getenv("DIAGRAM_COLORS");
         DiagramColors colors = DiagramColors.parse(colorSpec != null ? colorSpec : theme);
 
         BufferedImage image = TopologyImageRenderer.renderImage(
-                result, colors, fontSize, boxWidth, pid > 0 && metric, description);
+                result, colors, fontSize, boxWidth, pid > 0 && metric, description, frame);
 
         if (output != null) {
             File file = new File(output);

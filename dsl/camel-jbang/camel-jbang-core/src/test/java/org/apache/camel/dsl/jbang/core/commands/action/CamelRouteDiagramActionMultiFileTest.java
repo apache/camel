@@ -84,6 +84,28 @@ class CamelRouteDiagramActionMultiFileTest {
     }
 
     @Test
+    void testReadRoutesFromFolderTakesTheErrorPathsFromTheTopologyWithErrors(@TempDir Path tempDir) throws Exception {
+        Files.writeString(tempDir.resolve("route1.json"), """
+                {"routes":[{"routeId":"checkout","code":[{"type":"from","code":"file:orders","level":0}]}]}
+                """);
+        Files.writeString(tempDir.resolve("route-topology.json"), """
+                {"nodes":[],"edges":[
+                  {"fromRouteId":"checkout","toRouteId":"parked","endpoint":"direct:parked","kind":"error",
+                   "via":"errorHandler","handling":"handled"},
+                  {"fromRouteId":"checkout","toRouteId":"payment","endpoint":"direct:charge","kind":"call"}]}
+                """);
+
+        // CAMEL-25466: with --errors the frame of each route says where its failures go
+        CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain());
+        command.errors = true;
+        command.readRoutesFromFolder(tempDir, Instant.now().minusSeconds(60));
+
+        assertEquals(1, command.errorPaths.size(), "the error path only, not the call: " + command.errorPaths);
+        assertEquals("parked", command.errorPaths.get(0).toRouteId());
+        assertEquals("dead letter, handled", command.errorPaths.get(0).label());
+    }
+
+    @Test
     void testReadRoutesFromFolderWaitsForCompleteBatchBeforeMerging(@TempDir Path tempDir) throws Exception {
         // route1.json lands immediately, as if the dump of a multi-file batch is still in progress
         Instant bootStart = Instant.now();

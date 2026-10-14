@@ -34,6 +34,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutNode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
+import org.apache.camel.diagram.RouteErrorFrame;
 import org.apache.camel.dsl.jbang.core.commands.tui.BusinessEndpointLabels;
 import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 

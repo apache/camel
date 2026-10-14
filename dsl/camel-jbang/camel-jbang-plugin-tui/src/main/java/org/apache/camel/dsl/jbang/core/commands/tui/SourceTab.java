@@ -125,6 +125,11 @@ class SourceTab extends AbstractTab {
         return sourceViewer.isEditMode();
     }
 
+    /** Whether a dialog over the editor has the keys (discard, the problems of a save, the diff, refactor). */
+    boolean showsViewerDialog() {
+        return sourceViewer.showsDialog();
+    }
+
     /** Steps whose uri: lines are destinations; for switch those of its cases and fallback. */
     private static final Set<String> LINKABLE_KEYWORDS = Set.of(
             "to", "toD", "wireTap", "enrich", "pollEnrich", "deadLetterChannel", "switch");
@@ -153,12 +158,12 @@ class SourceTab extends AbstractTab {
         });
         sourceViewer.setOnFileCreated(this::refreshFiles);
         // the live run data of the selected integration at the end of the lines of its source
-        sourceViewer.setLiveRunData(path -> {
+        sourceViewer.liveColumn().setLiveRunData(path -> {
             IntegrationInfo info = ctx.findSelectedIntegration();
             return info != null ? LiveRunLines.of(info.routes, path) : Map.of();
         });
         // the exception of the last failure on a line, for fix with AI (Shift+F8) on a line that fails at runtime
-        sourceViewer.setLineFailures((path, line) -> {
+        sourceViewer.liveColumn().setLineFailures((path, line) -> {
             IntegrationInfo info = ctx.findSelectedIntegration();
             return info != null
                     ? RuntimeFailures.lastFailure(info.routes, RuntimeFailures.load(info.pid, ctx::getErrorFile), path, line)
@@ -177,14 +182,20 @@ class SourceTab extends AbstractTab {
         return sourceViewer.isEditMode();
     }
 
-    boolean isSourceViewerTextInputActive() {
+    @Override
+    public boolean isTextInputActive() {
         // also treat the file-actions menu and the go-to popups as active input so global single-key shortcuts
         // (q, ?, digits switching tabs, ...) do not fire while the menu, a prompt or a filter is open
         return sourceViewer.isTextInputActive() || fileActionsPopup.isVisible() || isGotoPopupVisible();
     }
 
-    void handlePaste(String text) {
+    @Override
+    public boolean handlePaste(String text) {
+        if (!isTextInputActive()) {
+            return false;
+        }
         sourceViewer.handlePaste(text);
+        return true;
     }
 
     // ---- MonitorTab ----
@@ -343,12 +354,6 @@ class SourceTab extends AbstractTab {
         }
 
         return false;
-    }
-
-    @Override
-    public boolean isOverlayActive() {
-        return fileActionsPopup.isVisible() || isGotoPopupVisible()
-                || (focusOnViewer && sourceViewer.isTextInputActive());
     }
 
     /** Whether the go to route or go to line popup is open: it takes typed text, digits too. */
@@ -903,9 +908,10 @@ class SourceTab extends AbstractTab {
         sourceViewer.setRouteValidator(routeFile ? content -> assist.validateRoutes(filePath, content) : null);
         sourceViewer.setAskAi(ctx.askAiCallback);
         String name = filePath.getFileName().toString();
-        sourceViewer.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
+        SourceCompletion completion = sourceViewer.completion();
+        completion.setUriCompletion(!routeFile ? null : name.endsWith(".java") ? "java" : "xml");
         // simple expressions in every route file: YAML, Java and XML (CAMEL-25219)
-        sourceViewer.setSimpleCompletion(routeFile || isCamelSourceFile(filePath)
+        completion.setSimpleCompletion(routeFile || isCamelSourceFile(filePath)
                 ? (c, lines) -> assist.provideSimpleCompletions(c, lines, this::beanItems) : null);
         boolean xmlRoute = routeFile && name.toLowerCase().endsWith(".xml");
         sourceViewer.setCursorQuickDocProvider(!routeFile && !isCamelSourceFile(filePath) ? null
@@ -916,17 +922,17 @@ class SourceTab extends AbstractTab {
                 }
                 : assist::provideSimpleQuickDoc);
         // the route chain of a Java route (CAMEL-25241)
-        sourceViewer.setJavaCompletion(routeFile && name.endsWith(".java") ? assist::provideJavaCompletions : null);
+        completion.setJavaCompletion(routeFile && name.endsWith(".java") ? assist::provideJavaCompletions : null);
         // the elements, attributes and values of an XML route (CAMEL-25240)
-        sourceViewer.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
-        sourceViewer.setSemanticCompletion(SourceEditAssist.isYamlFile(filePath) ? assist::provideSemanticCompletions : null);
+        completion.setXmlCompletion(routeFile && name.toLowerCase().endsWith(".xml") ? assist::provideXmlCompletions : null);
+        completion.setSemanticCompletion(SourceEditAssist.isYamlFile(filePath) ? assist::provideSemanticCompletions : null);
         if (isCamelSourceFile(filePath)) {
             sourceViewer.setDeprecatedLineScanner(null);
             if (SourceEditAssist.isYamlFile(filePath)) {
                 // the options of a kamelet: endpoint start with the properties of its Kamelet (CAMEL-25411)
-                sourceViewer.setAutocompleteProvider(
+                completion.setAutocompleteProvider(
                         c -> assist.provideYamlKeyCompletions(c, filePath.toAbsolutePath().getParent()));
-                sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+                completion.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEndpointValidator(assist::validateYamlEndpoints);
                 // in a Kamelet's template, a property written as ${header.tag} is said to be the placeholder {{tag}}
                 sourceViewer.setSimpleValidator(content -> KameletChecks.withTemplateHints(
@@ -934,12 +940,12 @@ class SourceTab extends AbstractTab {
                 // the shape of a Kamelet file and the kamelet: endpoints of a route (CAMEL-25411)
                 sourceViewer.setKameletValidator(content -> SourceEditAssist.validateKamelets(filePath, content));
                 sourceViewer.setKameletNotes(content -> SourceEditAssist.kameletNotes(filePath, content));
-                sourceViewer.setListItemNodeChecker(assist::isListChildrenNode);
+                completion.setListItemNodeChecker(assist::isListChildrenNode);
                 sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditQuickDoc));
             } else {
                 // XML: the quick doc of the routes read into the model, Tab in the uri attributes (CAMEL-25208)
-                sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-                sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+                completion.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+                completion.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
                 sourceViewer.setEditQuickDocProvider(
                         withProjectDocs((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row)));
             }
@@ -947,21 +953,21 @@ class SourceTab extends AbstractTab {
             // Java: the quick doc of the routes read into the model by the Java DSL parser (CAMEL-25208)
             sourceViewer.setDeprecatedLineScanner(null);
             // Tab in the endpoint uri of from, to, toD...: component names, options and values, as YAML uris have
-            sourceViewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-            sourceViewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+            completion.setAutocompleteProvider(assist::provideYamlKeyCompletions);
+            completion.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
             sourceViewer.setEditQuickDocProvider(
                     withProjectDocs((lines, row) -> assist.provideRouteEditQuickDoc(filePath, lines, row)));
         } else if (SourceEditAssist.isPropertiesFile(filePath)) {
             sourceViewer.setDeprecatedLineScanner(assist::scanDeprecatedProperties);
-            sourceViewer.setAutocompleteProvider(assist::providePropertyCompletions);
-            sourceViewer.setAutocompleteValueProvider(assist::providePropertyValueCompletions);
+            completion.setAutocompleteProvider(assist::providePropertyCompletions);
+            completion.setAutocompleteValueProvider(assist::providePropertyValueCompletions);
             sourceViewer.setPropertiesValidator(assist::validatePropertyLine);
             sourceViewer.setEditQuickDocProvider(withProjectDocs(assist::provideEditPropertyQuickDoc));
         } else {
             sourceViewer.setDeprecatedLineScanner(null);
-            sourceViewer.setAutocompleteProvider(null);
+            completion.setAutocompleteProvider(null);
             sourceViewer.setEditQuickDocProvider(null);
-            sourceViewer.setAutocompleteValueProvider(null);
+            completion.setAutocompleteValueProvider(null);
         }
     }
 

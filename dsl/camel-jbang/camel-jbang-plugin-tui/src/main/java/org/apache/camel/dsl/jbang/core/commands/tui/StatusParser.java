@@ -259,6 +259,7 @@ final class StatusParser {
                 ri.uptime = rj.getString("uptime");
 
                 Map<String, ?> rs = rj.getMap("statistics");
+                ri.statistics = rs;
                 if (rs != null) {
                     ri.coverage = objToString(rs.get("coverage"));
                     ri.throughput = objToString(rs.get("exchangesThroughput"));
@@ -300,8 +301,10 @@ final class StatusParser {
                         pi.processor = pj.getString("processor");
                         pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);
+                        pi.uri = pj.getString("uri");
 
                         Map<String, ?> ps = pj.getMap("statistics");
+                        pi.statistics = ps;
                         if (ps != null) {
                             pi.total = objToLong(ps.get("exchangesTotal"));
                             pi.failed = objToLong(ps.get("exchangesFailed"));

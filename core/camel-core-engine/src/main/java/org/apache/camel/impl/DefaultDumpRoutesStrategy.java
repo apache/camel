@@ -92,6 +92,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     private String outputFileName;
     private boolean topology = true;
     private boolean topologyExternal = true;
+    private boolean errors;
 
     @Override
     public CamelContext getCamelContext() {
@@ -177,6 +178,16 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
     }
 
     @Override
+    public boolean isErrors() {
+        return errors;
+    }
+
+    @Override
+    public void setErrors(boolean errors) {
+        this.errors = errors;
+    }
+
+    @Override
     public void dumpRoutes(String format) {
         if ("yaml".equalsIgnoreCase(format)) {
             doDumpRoutesAsYaml(camelContext);
@@ -209,18 +220,18 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
                 if (log) {
                     LOG.info("Dumping route diagrams as PNG to file: {}", name);
                 }
-                dumper.dumpRoutesToFile(filter, RouteDiagramDumper.Theme.LIGHT, new File(name));
+                dumper.dumpRoutesToFile(filter, RouteDiagramDumper.Theme.LIGHT, errors, new File(name));
             } else {
                 if (log) {
                     LOG.info("Dumping route diagrams as PNG files to folder: {}", folder);
                 }
-                dumper.dumpRoutesToFolder(filter, RouteDiagramDumper.Theme.LIGHT, new File(folder));
+                dumper.dumpRoutesToFolder(filter, RouteDiagramDumper.Theme.LIGHT, errors, new File(folder));
             }
             if (topology) {
                 if (log) {
                     LOG.info("Dumping route topology diagram as PNG to folder: {}", folder != null ? folder : ".");
                 }
-                dumper.dumpTopologyToFolder(RouteDiagramDumper.Theme.LIGHT, topologyExternal,
+                dumper.dumpTopologyToFolder(RouteDiagramDumper.Theme.LIGHT, topologyExternal, errors,
                         new File(folder != null ? folder : "."));
             }
         } catch (IOException e) {

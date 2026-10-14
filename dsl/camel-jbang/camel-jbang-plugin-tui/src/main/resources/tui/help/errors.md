@@ -121,3 +121,5 @@ Press `Esc` to navigate back one route in drill-down mode.
 - `w` — toggle word wrap
 - `s` — cycle sort column
 - `S` — reverse sort order
+- `PgUp/PgDn` — scroll the detail panel
+- `Home/End` — jump to the top/end of the detail panel

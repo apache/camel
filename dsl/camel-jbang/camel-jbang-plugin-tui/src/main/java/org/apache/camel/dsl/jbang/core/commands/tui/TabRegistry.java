@@ -44,19 +44,10 @@ class TabRegistry {
     static final int NUM_TABS = 10;
 
     /**
-     * Callbacks for operations that remain in {@link CamelMonitor} or other collaborators.
+     * The More popup, which {@link PopupManager} draws: the registry opens it for the More tab and keeps its selection
+     * in step.
      */
     interface TabCallbacks {
-        void refreshLogData();
-
-        void refreshHistoryData(List<Long> pids);
-
-        void refreshTraceData(List<Long> pids);
-
-        void refreshErrorData(List<Long> pids);
-
-        void refreshActivityData(List<Long> pids);
-
         void openMorePopup();
 
         void closeMorePopup();
@@ -273,7 +264,13 @@ class TabRegistry {
     // ---- Tab access ----
 
     MonitorTab activeTab() {
-        return switch (tabsState.selected()) {
+        int selected = tabsState.selected();
+        return selected == TAB_MORE ? activeMoreTab : primaryTab(selected);
+    }
+
+    /** The tab of a digit key (1-9); null for the More tab, whose tab is the one chosen in its popup. */
+    private MonitorTab primaryTab(int index) {
+        return switch (index) {
             case TAB_OVERVIEW -> overviewTab;
             case TAB_LOG -> logTab;
             case TAB_ACTIVITY -> activityTab;
@@ -283,7 +280,6 @@ class TabRegistry {
             case TAB_SOURCE -> sourceTab;
             case TAB_HISTORY -> historyTab;
             case TAB_ERRORS -> errorsTab;
-            case TAB_MORE -> activeMoreTab;
             default -> null;
         };
     }
@@ -307,58 +303,26 @@ class TabRegistry {
 
     // ---- Navigation ----
 
-    boolean handleTabKey(int tab, MonitorContext ctx, DataRefreshService dataService) {
+    /**
+     * Selects a tab by its digit key: the tab is told ({@link MonitorTab#onTabSelected()}) and fetches what it shows;
+     * the More tab opens its popup instead.
+     */
+    boolean handleTabKey(int tab) {
         if (tab != TAB_OVERVIEW) {
+            // leaving the Overview tab: what it has selected is the integration the other tabs show
             overviewTab.selectCurrentIntegration();
             routesTab.preloadDiagram();
             diagramTab.preloadDiagram();
-        }
-        if (tab == TAB_SOURCE) {
-            sourceTab.onTabSelected();
-        }
-        if (tab == TAB_LOG) {
-            callbacks.refreshLogData();
-            logTab.onTabSelected();
-        }
-        if (tab == TAB_ROUTES && routesTab != null && routesTab.isShowDiagram()) {
-            routesTab.closeDiagram();
-        }
-        if (tab == TAB_DIAGRAM) {
-            diagramTab.onTabSelected();
-        }
-        if (tab == TAB_HISTORY && ctx.selectedPid != null) {
-            try {
-                long pid = Long.parseLong(ctx.selectedPid);
-                historyTab.historyEntries = dataService.loadHistoryData(List.of(pid));
-                dataService.refreshTraceData(List.of(pid));
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-            historyTab.onTabSelected();
-        }
-        if (tab == TAB_ERRORS && ctx.selectedPid != null) {
-            try {
-                long pid = Long.parseLong(ctx.selectedPid);
-                dataService.refreshErrorData(List.of(pid));
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-            errorsTab.onTabSelected();
-        }
-        if (tab == TAB_ACTIVITY && ctx.selectedPid != null) {
-            try {
-                long pid = Long.parseLong(ctx.selectedPid);
-                callbacks.refreshActivityData(List.of(pid));
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-            activityTab.onTabSelected();
         }
         if (tab == TAB_MORE) {
             callbacks.openMorePopup();
             return true;
         }
         callbacks.closeMorePopup();
+        MonitorTab selected = primaryTab(tab);
+        if (selected != null) {
+            selected.onTabSelected();
+        }
         tabsState.select(tab);
         return true;
     }

@@ -71,6 +71,26 @@ class SourceViewerEditTest {
     }
 
     @Test
+    void theDiffAndTheDiscardQuestionAreDialogsOverTheEditor() {
+        // their footer goes before that of a live edit, which shows the keys of the edit
+        viewer.loadFile(sourceFile);
+        viewer.enterEditMode();
+        assertThat(viewer.showsDialog()).isFalse();
+
+        viewer.handleKeyEvent(KeyEvent.ofChar('x', KeyModifiers.NONE));
+        viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.F7, KeyModifiers.NONE));
+        assertThat(viewer.showsDialog()).as("the diff").isTrue();
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).isFalse();
+
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).as("discard the change?").isTrue();
+        viewer.cancelEdit();
+        assertThat(viewer.showsDialog()).isFalse();
+        assertThat(viewer.isEditMode()).isFalse();
+    }
+
+    @Test
     void loadFileMarksLocalWritableFileEditable() {
         viewer.loadFile(sourceFile);
 
@@ -381,7 +401,7 @@ class SourceViewerEditTest {
         assertThat(viewer.isEditMode()).isTrue();
         assertThat(viewer.isVisible()).isTrue();
         // Keep tab reference used so the integration surface is exercised for construction
-        assertThat(tab.isOverlayActive()).isFalse();
+        assertThat(tab.isTextInputActive()).isFalse();
     }
 
     @Test
@@ -391,16 +411,14 @@ class SourceViewerEditTest {
                 new AtomicReference<>(List.of()),
                 new AtomicReference<>(List.of()));
         SourceTab tab = new SourceTab(ctx);
-        assertThat(tab.isSourceViewerTextInputActive()).isFalse();
+        assertThat(tab.isTextInputActive()).isFalse();
 
         tab.gotoRoutePopup.open(List.of(new SourceTab.RouteEntry("a", "direct:a", "a.java", 0)));
-        assertThat(tab.isSourceViewerTextInputActive()).isTrue();
-        assertThat(tab.isOverlayActive()).isTrue();
+        assertThat(tab.isTextInputActive()).isTrue();
         tab.gotoRoutePopup.close();
 
         tab.gotoSourceNodePopup.open(List.of(), 10);
-        assertThat(tab.isSourceViewerTextInputActive()).isTrue();
-        assertThat(tab.isOverlayActive()).isTrue();
+        assertThat(tab.isTextInputActive()).isTrue();
     }
 
     @Test

@@ -105,6 +105,20 @@ class OllamaTab extends AbstractTab {
         }
     }
 
+    @Override
+    public void refreshWhileVisible() {
+        if (monitor == null) {
+            return;
+        }
+        monitor.poll();
+        // route calls to Ollama come from the GenAI spans of the selected integration, refreshed sparingly
+        DataRefreshService data = ctx.dataService;
+        if (data != null && ctx.selectedPid != null && monitor.wantsSpans()) {
+            data.refreshSpanData();
+            monitor.ingestSpans(data.otelSpans().get());
+        }
+    }
+
     // ---- input ----
 
     @Override

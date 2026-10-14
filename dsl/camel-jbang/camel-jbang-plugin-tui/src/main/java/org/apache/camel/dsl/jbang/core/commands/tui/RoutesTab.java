@@ -16,9 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +47,7 @@ import org.apache.camel.util.json.JsonObject;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
-class RoutesTab extends AbstractTab {
+class RoutesTab extends AbstractDiagramTab {
 
     private static final String[] ROUTE_SORT_COLUMNS = { "name", "from", "status", "total", "failed" };
     private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta", "p50", "p95", "p99" };
@@ -74,30 +72,19 @@ class RoutesTab extends AbstractTab {
     private int infoPanelWidth = 30;
     private final DragSplit hSplit = new DragSplit();
 
-    // Diagram support (shared rendering/loading logic)
-    private final DiagramSupport diagram = new DiagramSupport();
-    private final SourceViewer sourceViewer = new SourceViewer();
-    private boolean diagramMetrics = true;
+    // the description column of the route table (n)
     private boolean showDescription;
-    private static final String[] EXTERNAL_LABELS = { " [off]", " [edges]", " [all]" };
-    private int externalMode;
-    private boolean topologyMode = true;
-    private String drillDownRouteId;
-    private final Deque<String> routeNavigationStack = new ArrayDeque<>();
-
-    // Detail panel (d toggle in drill-down mode)
-    private boolean detailMode;
-    private final DiagramDetailSupport detail = new DiagramDetailSupport(ctx, diagram);
-
-    // Go-to node popup (g in drill-down mode)
-    private final GotoNodePopup gotoNodePopup = new GotoNodePopup();
 
     RoutesTab(MonitorContext ctx) {
         super(ctx);
     }
 
-    boolean isShowDiagram() {
-        return diagram.isShowDiagram();
+    @Override
+    public void onTabSelected() {
+        // the tab opens on its table: a diagram shown the last time is closed
+        if (isShowDiagram()) {
+            closeDiagram();
+        }
     }
 
     boolean isDiagramMetrics() {
@@ -109,20 +96,9 @@ class RoutesTab extends AbstractTab {
     }
 
     @Override
-    public boolean isOverlayActive() {
-        return sourceViewer.isVisible() || gotoNodePopup.isVisible();
-    }
-
-    @Override
     public boolean handleKeyEvent(KeyEvent ke) {
         // Go-to node popup (takes priority when active)
-        if (gotoNodePopup.isVisible()) {
-            gotoNodePopup.handleKeyEvent(ke);
-            int sel = gotoNodePopup.consumeSelectedIndex();
-            if (sel >= 0) {
-                diagram.setSelectedEipNodeIndex(sel);
-                diagram.scrollToSelectedEipNode();
-            }
+        if (handleGotoNodeKeys(ke)) {
             return true;
         }
 
@@ -131,145 +107,11 @@ class RoutesTab extends AbstractTab {
             return true;
         }
 
-        // Source viewer toggle (drill-down mode)
-        if (!topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
-            loadSourceForSelectedNode();
+        // the source of the selected node or route of the diagram
+        if (handleSourceKey(ke)) {
             return true;
         }
-        // Source viewer toggle (topology mode)
-        if (topologyMode && diagram.isShowDiagram() && ke.isChar('c')) {
-            loadSourceForSelectedTopologyRoute();
-            return true;
-        }
-
         if (handleDiagramKeys(ke)) {
-            return true;
-        }
-        return handleTableKeys(ke);
-    }
-
-    /**
-     * Keys while the topology or route diagram is shown: node navigation, jump back to topology, detail panel
-     * scrolling, diagram scrolling, metrics/external/description toggles, and Enter to jump into a linked route or
-     * drill down.
-     */
-    private boolean handleDiagramKeys(KeyEvent ke) {
-        // Topology node navigation
-        if (diagram.isShowDiagram() && topologyMode && diagram.hasDiagramData()
-                && !diagram.getNodeBoxes().isEmpty()) {
-            if (ke.isUp()) {
-                diagram.selectNodeUp();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isDown()) {
-                diagram.selectNodeDown();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isLeft()) {
-                diagram.selectNodeLeft();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isRight()) {
-                diagram.selectNodeRight();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isHome()) {
-                diagram.selectFirstNode();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-            if (ke.isEnd()) {
-                diagram.selectLastNode();
-                diagram.scrollToSelectedNode();
-                return true;
-            }
-        }
-
-        // EIP node navigation in route drill-down mode
-        if (diagram.isShowDiagram() && !topologyMode && !diagram.getEipNodeBoxes().isEmpty()) {
-            if (ke.isUp()) {
-                diagram.selectEipNodeUp();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isDown()) {
-                diagram.selectEipNodeDown();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isLeft()) {
-                diagram.selectEipNodeLeft();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isRight()) {
-                diagram.selectEipNodeRight();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isHome()) {
-                diagram.selectFirstEipNode();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-            if (ke.isEnd()) {
-                diagram.selectLastEipNode();
-                diagram.scrollToSelectedEipNode();
-                return true;
-            }
-        }
-
-        // Jump back to topology from drill-down
-        if (diagram.isShowDiagram() && !topologyMode && ke.isChar('t')) {
-            routeNavigationStack.clear();
-            diagram.setPendingSelectionRouteId(drillDownRouteId);
-            drillDownRouteId = null;
-            topologyMode = true;
-            diagram.setTopologyMode(true);
-            diagram.setSelectedEipNodeIndex(-1);
-            diagram.resetScroll();
-            if (diagram.hasNativeLayout()) {
-                return true;
-            }
-            diagram.endLoad();
-            reloadDiagram();
-            return true;
-        }
-
-        // Detail panel scrolling (PgUp/PgDn when detail mode is active)
-        if (detailMode && diagram.isShowDiagram() && !topologyMode) {
-            if (ke.isPageUp() || ke.isKey(KeyCode.PAGE_UP)) {
-                detail.scrollBy(-5);
-                return true;
-            }
-            if (ke.isPageDown() || ke.isKey(KeyCode.PAGE_DOWN)) {
-                detail.scrollBy(5);
-                return true;
-            }
-        }
-
-        // Diagram scrolling (PgUp/PgDn etc)
-        if (diagram.handleScrollKeys(ke)) {
-            return true;
-        }
-
-        // Toggle metrics (diagram mode)
-        if (diagram.isShowDiagram() && ke.isCharIgnoreCase('m')) {
-            diagramMetrics = !diagramMetrics;
-            diagram.endLoad();
-            reloadDiagram();
-            return true;
-        }
-
-        // Cycle external systems: off → edges → all → off (topology mode only)
-        if (diagram.isShowDiagram() && topologyMode && ke.isCharIgnoreCase('e')) {
-            externalMode = (externalMode + 1) % 3;
-            diagram.endLoad();
-            reloadDiagram();
             return true;
         }
 
@@ -280,57 +122,11 @@ class RoutesTab extends AbstractTab {
             reloadDiagram();
             return true;
         }
-
-        // Jump to linked route from EIP node (Enter in route mode)
-        if (diagram.isShowDiagram() && !topologyMode && ke.isConfirm() && !diagram.getEipNodeBoxes().isEmpty()) {
-            String linkedRouteId = diagram.findLinkedRouteId(drillDownRouteId);
-            if (linkedRouteId != null && diagram.getRouteLayout(linkedRouteId) != null) {
-                if (linkedRouteId.equals(drillDownRouteId)) {
-                    return true;
-                }
-                if (routeNavigationStack.contains(linkedRouteId)) {
-                    while (!routeNavigationStack.isEmpty() && !linkedRouteId.equals(routeNavigationStack.peek())) {
-                        routeNavigationStack.pop();
-                    }
-                    routeNavigationStack.pop();
-                } else {
-                    routeNavigationStack.push(drillDownRouteId);
-                }
-                drillDownRouteId = linkedRouteId;
-                diagram.selectFromNode(linkedRouteId);
-                diagram.resetScroll();
-                return true;
-            }
-            return true;
-        }
-
-        // Drill down into route diagram (Enter from topology)
-        if (diagram.isShowDiagram() && topologyMode && ke.isConfirm()) {
-            String selectedRouteId = diagram.getSelectedRouteId();
-            if (selectedRouteId != null) {
-                IntegrationInfo info = ctx.findSelectedIntegration();
-                if (info != null && info.routes.stream().anyMatch(r -> selectedRouteId.equals(r.routeId))) {
-                    routeNavigationStack.clear();
-                    drillDownRouteId = selectedRouteId;
-                    topologyMode = false;
-                    diagram.setTopologyMode(false);
-                    diagram.selectFromNode(selectedRouteId);
-                    diagram.resetScroll();
-                    diagram.endLoad();
-                    if (diagram.getRouteLayout(selectedRouteId) != null) {
-                        return true;
-                    }
-                    reloadDiagram();
-                }
-            }
-            return true;
-        }
-        return false;
+        return handleTableKeys(ke);
     }
 
     /**
-     * Keys in the route table view (sort, top mode, description, open diagram, source, start/stop, suspend/resume) plus
-     * the detail and go-to-node toggles in drill-down mode.
+     * Keys in the route table view (sort, top mode, description, open diagram, source, start/stop, suspend/resume).
      */
     private boolean handleTableKeys(KeyEvent ke) {
         // Sort (only when not in diagram)
@@ -373,21 +169,6 @@ class RoutesTab extends AbstractTab {
             return true;
         }
 
-        // d in drill-down mode toggles detail panel
-        if (diagram.isShowDiagram() && !topologyMode && !diagram.getEipNodeBoxes().isEmpty()
-                && ke.isCharIgnoreCase('d')) {
-            detailMode = !detailMode;
-            detail.reset();
-            return true;
-        }
-
-        // g in drill-down mode opens go-to node popup
-        if (diagram.isShowDiagram() && !topologyMode && !diagram.getEipNodeBoxes().isEmpty()
-                && ke.isChar('g')) {
-            gotoNodePopup.open(diagram.getEipNodeBoxes(), diagram.getSelectedEipNodeIndex());
-            return true;
-        }
-
         // Source viewer toggle (table mode — route source)
         if (!diagram.isShowDiagram() && ke.isChar('c')) {
             if (sourceViewer.isVisible()) {
@@ -414,35 +195,11 @@ class RoutesTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
-        if (gotoNodePopup.isVisible()) {
-            gotoNodePopup.close();
-            return true;
-        }
-        if (sourceViewer.isVisible()) {
-            sourceViewer.hide();
+        // the popup, the source, or back from a route
+        if (handleDiagramEscape()) {
             return true;
         }
         if (diagram.isShowDiagram()) {
-            if (!topologyMode) {
-                if (!routeNavigationStack.isEmpty()) {
-                    drillDownRouteId = routeNavigationStack.pop();
-                    diagram.selectFromNode(drillDownRouteId);
-                    diagram.resetScroll();
-                    return true;
-                }
-                // Go back to topology
-                diagram.setPendingSelectionRouteId(drillDownRouteId);
-                topologyMode = true;
-                diagram.setTopologyMode(true);
-                diagram.setSelectedEipNodeIndex(-1);
-                diagram.resetScroll();
-                if (diagram.hasNativeLayout()) {
-                    return true;
-                }
-                diagram.endLoad();
-                reloadDiagram();
-                return true;
-            }
             // Close diagram entirely from topology
             closeDiagram();
             return true;
@@ -519,12 +276,6 @@ class RoutesTab extends AbstractTab {
         drillDownRouteId = null;
         routeNavigationStack.clear();
         routeTableState.select(0);
-    }
-
-    void preloadDiagram() {
-        if (ctx.selectedPid != null) {
-            diagram.preload(ctx, ctx.selectedPid);
-        }
     }
 
     @Override
@@ -964,12 +715,6 @@ class RoutesTab extends AbstractTab {
         }
     }
 
-    void refreshDiagramIfNeeded() {
-        if (diagram.isShowDiagram() && diagramMetrics) {
-            reloadDiagram();
-        }
-    }
-
     private String routeFromLabel(RouteInfo route) {
         if (showDescription && route.description != null && !route.description.isBlank()) {
             return route.description;
@@ -1398,38 +1143,6 @@ class RoutesTab extends AbstractTab {
         ctx.fireAction(pid, root);
     }
 
-    // ---- Async loading ----
-
-    private void loadDiagram(boolean showPlaceholder) {
-        if (ctx.selectedPid == null || ctx.runner == null) {
-            return;
-        }
-        if (!diagram.beginLoad()) {
-            return;
-        }
-
-        String pid = ctx.selectedPid;
-        boolean showMetrics = diagramMetrics;
-        int external = externalMode;
-
-        if (showPlaceholder) {
-            diagram.setLoadingPlaceholder();
-        }
-
-        ctx.backgroundExecutor.execute(() -> {
-            try {
-                diagram.setTopologyMode(topologyMode);
-                diagram.loadAllDiagramsInBackground(ctx, pid, showMetrics, external);
-            } finally {
-                diagram.endLoad();
-            }
-        });
-    }
-
-    private void reloadDiagram() {
-        loadDiagram(false);
-    }
-
     private void loadSourceForSelectedRoute() {
         RouteInfo selected = selectedRoute();
         if (selected == null) {
@@ -1459,62 +1172,6 @@ class RoutesTab extends AbstractTab {
         detail.ensureProcessorDetailLoaded(routeId);
         var rl = diagram.getRouteLayout(routeId);
         sourceViewer.loadSource(ctx, routeId, 0, rl != null ? rl.source : null);
-    }
-
-    private void loadSourceForSelectedTopologyRoute() {
-        String routeId = diagram.getSelectedRouteId();
-        if (routeId == null) {
-            return;
-        }
-        IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null || info.routes.stream().noneMatch(r -> routeId.equals(r.routeId))) {
-            return;
-        }
-        sourceViewer.setOnLineSelected(sourceLine -> {
-            sourceViewer.hide();
-            // Switch to drill-down for this route
-            routeNavigationStack.clear();
-            drillDownRouteId = routeId;
-            topologyMode = false;
-            diagram.setTopologyMode(false);
-            diagram.selectFromNode(routeId);
-            diagram.resetScroll();
-            diagram.endLoad();
-            if (diagram.getRouteLayout(routeId) == null) {
-                reloadDiagram();
-            }
-            int bestIdx = diagram.findClosestEipNode(sourceLine);
-            if (bestIdx >= 0) {
-                diagram.setSelectedEipNodeIndex(bestIdx);
-                diagram.scrollToSelectedEipNode();
-            }
-        });
-        detail.ensureProcessorDetailLoaded(routeId);
-        var rl2 = diagram.getRouteLayout(routeId);
-        sourceViewer.loadSource(ctx, routeId, 0, rl2 != null ? rl2.source : null);
-    }
-
-    private void loadSourceForSelectedNode() {
-        if (drillDownRouteId == null) {
-            return;
-        }
-        int targetLine = 0;
-        var selected = diagram.getSelectedEipNodeBox();
-        if (selected != null && selected.layoutNode() != null
-                && selected.layoutNode().treeNode != null) {
-            targetLine = selected.layoutNode().treeNode.info.line;
-        }
-        sourceViewer.setOnLineSelected(sourceLine -> {
-            int bestIdx = diagram.findClosestEipNode(sourceLine);
-            if (bestIdx >= 0) {
-                diagram.setSelectedEipNodeIndex(bestIdx);
-                diagram.scrollToSelectedEipNode();
-                sourceViewer.hide();
-            }
-        });
-        detail.ensureProcessorDetailLoaded(drillDownRouteId);
-        var rl3 = diagram.getRouteLayout(drillDownRouteId);
-        sourceViewer.loadSource(ctx, drillDownRouteId, targetLine, rl3 != null ? rl3.source : null);
     }
 
     @Override

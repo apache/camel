@@ -828,7 +828,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     @Override
     public Set<String> updateTemplatedRoutesToCamelContext(CamelContext context) throws Exception {
         Set<String> answer = new LinkedHashSet<>();
-        if (getTemplatedRouteCollection().getTemplatedRoutes().isEmpty()) {
+        // only a templated route with a route id replaces its existing route: one without an id would be created
+        // again next to the existing route on every update, so it is left as it is (CAMEL-25616)
+        List<TemplatedRouteDefinition> templatedRoutes = getTemplatedRouteCollection().getTemplatedRoutes().stream()
+                .filter(t -> t.getRouteId() != null)
+                .toList();
+        if (templatedRoutes.isEmpty()) {
             return answer;
         }
 
@@ -838,7 +843,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         Set<RouteDefinition> before = Collections.newSetFromMap(new IdentityHashMap<>());
         before.addAll(model.getRouteDefinitions());
 
-        populateTemplatedRoutes(context);
+        getTemplatedRouteCollection().setCamelContext(context);
+        model.addRouteFromTemplatedRoutes(templatedRoutes);
 
         for (RouteDefinition route : model.getRouteDefinitions()) {
             if (!before.contains(route) && route.getRouteId() != null) {

@@ -49,4 +49,11 @@ public @interface EnableRouteDiagramDump {
      */
     boolean topologyExternal() default true;
 
+    /**
+     * Whether to draw the error handling: the onException clauses of each route in a frame below its steps, and in the
+     * topology diagram the routes reached only on error in a frame below the other routes. Otherwise a route diagram
+     * draws only the steps of the route.
+     */
+    boolean errors() default false;
+
 }

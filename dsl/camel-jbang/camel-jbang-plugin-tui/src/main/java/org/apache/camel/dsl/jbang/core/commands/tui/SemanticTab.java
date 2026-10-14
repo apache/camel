@@ -384,14 +384,25 @@ class SemanticTab extends AbstractTableTab {
         return new SubViewBar.Spec("v", views, List.of(), false);
     }
 
-    boolean isInputActive() {
+    @Override
+    public boolean isTextInputActive() {
         return view == View.AUDIT ? audit.inputActive() : filterInput != null || sample != null || focus == Focus.PLAYGROUND;
     }
 
-    void handlePaste(String text) {
+    @Override
+    public boolean claimsKey(KeyEvent key) {
+        // Ctrl+L clears the input that has the keyboard (the playground, the parameters); elsewhere it pins the log
+        return key.hasCtrl() && key.isCharIgnoreCase('l') && isTextInputActive();
+    }
+
+    @Override
+    public boolean handlePaste(String text) {
+        if (!isTextInputActive()) {
+            return false;
+        }
         if (view == View.AUDIT) {
             audit.paste(text);
-            return;
+            return true;
         }
         if (sample != null) {
             sample.handlePaste(text);
@@ -400,11 +411,7 @@ class SemanticTab extends AbstractTableTab {
         } else if (filterInput != null) {
             FormHelper.handlePaste(text, filterInput);
         }
-    }
-
-    @Override
-    public boolean isOverlayActive() {
-        return sample != null;
+        return true;
     }
 
     @Override

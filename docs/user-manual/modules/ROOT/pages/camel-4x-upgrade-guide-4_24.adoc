@@ -85,6 +85,18 @@ now resolves to no value, as it already did without a field, so its default valu
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
 
+=== camel-ical - each unmarshal parses with its own calendar builder
+
+The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at
+the same time could get the events of each other, or the calendar of the other exchange. Each unmarshal now uses its
+own builder.
+
+A builder also has its own time zone registry, so a `VTIMEZONE` of one calendar is no longer used for the calendars
+unmarshalled after it. A date with a `TZID` that is not a standard time zone and that its calendar does not define is
+now read as a local date-time without a zone (`getDate()` returns a `LocalDateTime`); before, it was read with the
+definition of an earlier message, if there was one. A calendar that defines a `TZID` an earlier message has defined
+differently is now read with its own definition.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
@@ -395,6 +407,26 @@ When a route is suspended (`RouteController.suspendRoute`, also when a route pol
 the record that is being routed. The other records of that poll (up to `maxResultsPerRequest`, default 100) were
 skipped when the route was resumed. They are now routed after the resume. A consumer that is suspended directly
 (`consumer.suspend()`) routes all the records of its poll and was not affected.
+
+=== camel-core - the route structure leaves out onException clauses that never run
+
+A route with `noErrorHandler` runs none of its `onException` clauses, and a global `onException` is copied into every
+route of its route builder or file. The route structure now leaves these clauses out of such routes: the
+`route-structure` dev console, `camel cmd route-structure`, and the route diagrams drawn from it. Before, they were
+listed among the steps of the route.
+
+=== camel-diagram - a route diagram draws the steps of a route
+
+A route diagram drew the `onException` clauses of a route among its steps, though they are not steps: a global
+`onException` is copied into every route, and runs only while a failure is handled. A route diagram now draws only the
+steps of the route: `camel cmd route-diagram`, the `route-diagram` dev console and its web component, and the route
+diagrams dumped by `DumpRoutesStrategy`. Use `--errors` (`?errors=true` in the dev console, the `errors` attribute of
+the `<camel-route-diagram>` web component, `errors` of `DumpRoutesStrategy` and `@EnableRouteDiagramDump`, and
+`dumpRouteDiagramErrors` of `@CamelMainTest`) to draw them in a frame of their own below the steps, with where the
+failures of the route go. A highlighted path that steps into an `onException` clause draws the frame as well.
+
+The `<camel-topology-diagram>` web component no longer draws the error paths of the route topology as calls between
+routes. With its new `errors` attribute it draws the routes reached only on error in a frame below the other routes.
 
 === camel-jbang - route-diagram, route-structure and route-topology read Java sources without compiling them
 

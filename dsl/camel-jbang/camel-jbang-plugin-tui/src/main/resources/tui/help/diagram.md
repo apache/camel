@@ -84,7 +84,8 @@ overview setting; with no summary yet it has the AI write one, as
 technical: route ids and endpoints), `m` metrics, `e` external, `d`
 detail, `g` group, `u` utility (one setting for the architecture
 and the topology, so both show the same groups), `x` errors (the
-error handling in a frame below the routes). The footer lists
+error handling in a frame below the routes; in the architecture
+a box of the routes reached only on error). The footer lists
 only actions.
 
 ## Architecture View
@@ -93,8 +94,11 @@ The Architecture level shows the routes grouped by what they
 do for the business, one box per group: route groups from the
 source, the capabilities the AI project overview proposed (`✦`,
 italic), shared services (routes several groups use), Other, and
-Utility (plumbing: error handling, logging; `u` shows it). A box
-lists its route count, entry points and external systems; the
+Utility (plumbing: error handling, logging; `u` shows it). With
+`x` on, the routes reached only on error leave Utility for a dashed
+Error handling box, with dashed arrows from the groups whose
+failures go there. A box lists its route count, entry points,
+external systems and warnings (the Info panel lists them); the
 Flow panel at the bottom right shows the inside of the selected group:
 each route in flow order, with the routes and remote systems it
 hands off to (a log is left out).
@@ -170,7 +174,8 @@ you an at-a-glance view of where you are in the route.
   error, in a frame below the routes, with where each one's failures
   come from and how they are handled (select one to highlight the
   routes that send to it; a route with error handling has a dim ⚡ on
-  its box; needs Camel 4.23+ in the integration);
+  its box; with `e`, the external systems only they use are in the
+  frame too; needs Camel 4.23+ in the integration);
   in the route view, the route's onException clauses and where its
   failures go, in a frame below its steps
 - `s` — open the integration summary (camel-summary.md)
@@ -180,6 +185,9 @@ you an at-a-glance view of where you are in the route.
 - `↑↓←→` — navigate between groups or routes
 - `Enter` — the topology of all routes, the group's highlighted
 - `u` — show or hide utility routes
+- `x` — show or hide the error handling: the routes reached only on
+  error in a box of their own, linked from the groups whose failures
+  go there (one setting with the topology's `x`)
 - `e` — external systems as boxes linked to the groups that use them
 - `s` — open the integration summary at its Architecture section
 - `Esc` — back to the groups, then to the topology

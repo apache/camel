@@ -135,10 +135,10 @@ class SemanticMetadataCompletionTest {
         var viewer = new SourceViewer();
         var assist
                 = new SourceEditAssist(new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
-        viewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-        viewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+        viewer.completion().setAutocompleteProvider(assist::provideYamlKeyCompletions);
+        viewer.completion().setAutocompleteValueProvider(assist::provideYamlValueCompletions);
         var requested = new AtomicReference<SemanticCompletionContext>();
-        viewer.setSemanticCompletion(context -> {
+        viewer.completion().setSemanticCompletion(context -> {
             requested.set(context);
             return CompletableFuture.completedFuture(injection());
         });
@@ -163,7 +163,7 @@ class SemanticMetadataCompletionTest {
         var response = new CompletableFuture<List<AutocompletePopup.CompletionItem>>();
         var viewer = waitingForMetadata(directory, response);
         response.complete(injection());
-        viewer.refreshSemanticCompletion();
+        viewer.completion().refreshSemanticCompletion();
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
         assertThat(viewer.editText()).contains("operation: injection");
     }
@@ -174,7 +174,7 @@ class SemanticMetadataCompletionTest {
         var viewer = waitingForMetadata(directory, response);
         response.complete(injection());
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
-        viewer.refreshSemanticCompletion();
+        viewer.completion().refreshSemanticCompletion();
         assertThat(viewer.editText()).doesNotContain("injection");
     }
 
@@ -186,7 +186,7 @@ class SemanticMetadataCompletionTest {
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB));
         viewer.cancelEdit();
         response.complete(injection());
-        viewer.refreshSemanticCompletion();
+        viewer.completion().refreshSemanticCompletion();
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
         assertThat(viewer.editText()).doesNotContain("injection");
     }
@@ -198,7 +198,7 @@ class SemanticMetadataCompletionTest {
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT));
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.RIGHT));
         response.complete(injection());
-        viewer.refreshSemanticCompletion();
+        viewer.completion().refreshSemanticCompletion();
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
         assertThat(viewer.editText()).doesNotContain("injection");
     }
@@ -209,9 +209,9 @@ class SemanticMetadataCompletionTest {
         Path file = directory.resolve("route.yaml");
         Files.writeString(file, "- semantic:\n    evaluation:\n      check:\n        operation:");
         var viewer = new SourceViewer();
-        viewer.setAutocompleteProvider(context -> List.of());
-        viewer.setAutocompleteValueProvider(context -> List.of());
-        viewer.setSemanticCompletion(context -> response);
+        viewer.completion().setAutocompleteProvider(context -> List.of());
+        viewer.completion().setAutocompleteValueProvider(context -> List.of());
+        viewer.completion().setSemanticCompletion(context -> response);
         viewer.loadFile(file);
         viewer.enterEditMode();
         for (int i = 0; i < 3; i++) {

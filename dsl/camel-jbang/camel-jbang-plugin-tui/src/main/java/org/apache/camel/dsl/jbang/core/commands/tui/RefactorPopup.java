@@ -37,9 +37,9 @@ import dev.tamboui.widgets.list.ListWidget;
 import dev.tamboui.widgets.list.ScrollMode;
 
 /**
- * Refactoring menu for the Source tab YAML editor (opened with F5 or Ctrl+R in view mode). Presents applicable
- * refactoring actions for the current cursor line and drives the name-entry prompt itself, emitting a single
- * {@link Request} for the host viewer to execute.
+ * Refactoring menu of the source editor (opened with Ctrl+R in edit mode, in a YAML, Java or XML route). Presents the
+ * refactoring actions that apply to the cursor line and drives the name-entry prompt itself, emitting a single
+ * {@link Request} for {@link SourceRefactorActions} to execute.
  */
 class RefactorPopup {
 
@@ -171,24 +171,7 @@ class RefactorPopup {
             }
             return true;
         }
-        if (ke.isDeleteBackward()) {
-            inputState.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            inputState.deleteForward();
-        } else if (ke.isLeft()) {
-            inputState.moveCursorLeft();
-        } else if (ke.isRight()) {
-            inputState.moveCursorRight();
-        } else if (ke.isHome()) {
-            inputState.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            inputState.moveCursorToEnd();
-        } else {
-            String typed = FormHelper.typedText(ke);
-            if (typed != null) {
-                inputState.insert(typed);
-            }
-        }
+        FormHelper.handleTextInput(ke, inputState);
         return true;
     }
 
