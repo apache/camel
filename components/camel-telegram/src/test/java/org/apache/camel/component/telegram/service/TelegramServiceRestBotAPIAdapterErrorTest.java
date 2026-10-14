@@ -59,7 +59,7 @@ class TelegramServiceRestBotAPIAdapterErrorTest extends TelegramTestSupport {
     @Test
     void errorDoesNotShowTheRequestUri() {
         TelegramServiceRestBotAPIAdapter adapter = new TelegramServiceRestBotAPIAdapter(
-                HttpClient.newHttpClient(), "http://localhost:" + port.getPort(), "mock-token", 1024);
+                HttpClient.newHttpClient(), "http://localhost:" + port, "mock-token", 1024);
 
         TelegramException e = assertThrows(TelegramException.class,
                 () -> adapter.setWebhook("http://my-domain.com/my-test", "my-secret-token"));
@@ -72,8 +72,9 @@ class TelegramServiceRestBotAPIAdapterErrorTest extends TelegramTestSupport {
     @Test
     void asyncErrorDoesNotShowTheRequestUri() {
         TelegramAsyncHandler handler = new TelegramAsyncHandler(
-                "http://localhost:" + port.getPort() + "/botmock-token/sendMessage", MessageResult.class, new ObjectMapper(),
-                new DefaultExchange(context()));
+                "http://localhost:" + port + "/botmock-token/sendMessage", MessageResult.class, new ObjectMapper(),
+                new DefaultExchange(context()), doneSync -> {
+                });
 
         RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
                 () -> handler.handleCompressedResponse(response(400, "{\"ok\":false}")));
@@ -132,7 +133,7 @@ class TelegramServiceRestBotAPIAdapterErrorTest extends TelegramTestSupport {
 
     @Override
     protected TelegramMockRoutes createMockRoutes() {
-        return new TelegramMockRoutes(port.getPort())
+        return new TelegramMockRoutes(port)
                 .addErrorEndpoint("setWebhook", "GET", 401);
     }
 }

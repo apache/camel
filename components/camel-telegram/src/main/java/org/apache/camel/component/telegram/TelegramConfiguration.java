@@ -66,13 +66,13 @@ public class TelegramConfiguration {
                             + " carry it with HTTP 403. Only the characters A-Z, a-z, 0-9, _ and - are allowed, up to 256 characters."
                             + " When not set, a token derived from the authorization token is used. Set it when the webhook is"
                             + " registered outside Camel, and register the webhook with the same secret_token.",
-              label = "consumer,security", security = "secret")
+              label = "consumer,security", secret = true)
     private String webhookSecretToken;
 
     @UriParam(description = "Whether, in webhook mode, Camel registers the webhook with a secret token and rejects a webhook request"
                             + " that does not carry it. Set it to false to restore the behaviour of earlier versions, where the webhook"
                             + " was registered without a secret token and webhook requests were not verified.",
-              label = "consumer,security", defaultValue = "true", security = "insecure:dev", insecureValue = "false")
+              label = "consumer,security", defaultValue = "true")
     private boolean webhookSecretTokenEnabled = true;
 
     @UriParam(label = "advanced",

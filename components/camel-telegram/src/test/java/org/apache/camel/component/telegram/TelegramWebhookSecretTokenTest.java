@@ -96,7 +96,7 @@ class TelegramWebhookSecretTokenTest extends TelegramTestSupport {
             mockContext.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    String api = "netty-http:http://localhost:" + port.getPort() + "/botmock-token/";
+                    String api = "netty-http:http://localhost:" + port + "/botmock-token/";
                     from(api + "setWebhook?httpMethodRestrict=GET")
                             .process(exchange -> setWebhookQueries
                                     .add(exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class)))
