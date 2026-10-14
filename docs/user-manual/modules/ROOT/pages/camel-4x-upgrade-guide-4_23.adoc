@@ -3080,6 +3080,17 @@ from("jgroups:clusterName?acceptAllObjects=true")
 
 Producers are unaffected.
 
+=== camel-jira - the producers wait for the answer of Jira
+
+The `addComment`, `addIssueLink`, `addWorkLog`, `attach`, `deleteIssue`, `transitionIssue` and `watchers` producers,
+and the watchers of `addIssue`, no longer drop the asynchronous answer of the Jira REST client: they wait for it. A
+request that Jira rejects (for example a missing permission, a transition that the workflow does not allow, or an
+unknown user or link type) now fails the exchange with a `RestClientException` instead of completing it as if it had
+succeeded, so the error handler and `onException` now apply. The producers also take the time of the Jira request.
+
+Tests that mock `IssueRestClient` have to return a completed `Promise` (for example `Promises.promise(null)`) from
+these methods instead of `null`.
+
 === camel-jms - request/reply completes the exchange once when a send fails late
 
 An InOut exchange whose JMS send fails after the request timeout, or the reply, has already completed the exchange
