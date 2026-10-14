@@ -457,8 +457,9 @@ The following are explicitly **not** framework vulnerabilities and will be close
 - An **AI assistant in Camel TUI** (the AI panel's model, an ACP agent, an MCP client) using the
   TUI's tools without asking, even after a prompt injection. Camel CLI and Camel TUI are developer
   tools on the developer's own machine; the TUI asks first only before a file write (its write
-  mode), a message to an endpoint the integration does not have, SQL that is not a `SELECT`, and a
-  code-running expression language such as Groovy. A tool breaking that contract is in scope. See
+  mode), a message to an endpoint the integration does not have or with a body read from a file
+  outside the project, SQL that is not a `SELECT`, and a code-running expression language such as
+  Groovy. A tool breaking that contract is in scope. See
   "Developer tools" in the security model.
 
 ### Operator hardening checklist

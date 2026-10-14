@@ -16,9 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Set;
@@ -34,7 +37,8 @@ import org.apache.camel.util.URISupport;
  * the security model). The exceptions are the calls that reach beyond the integration, may destroy data or run code:
  * <ul>
  * <li>tui_send_message to an endpoint the integration does not have; a route id, a pattern and an endpoint of a
- * component the catalog marks internal (direct:, seda:, log:, mock: and the like) stay inside it;</li>
+ * component the catalog marks internal (direct:, seda:, log:, mock: and the like) stay inside it. Also a message whose
+ * body the integration reads from a file outside the project folder (a body that starts with file:);</li>
  * <li>tui_execute_sql with a statement that is not a single SELECT (or SHOW, DESCRIBE), and tui_update_row;</li>
  * <li>camel_eval_expression in a language that runs code, such as Groovy.</li>
  * </ul>
@@ -78,14 +82,70 @@ final class ToolConfirms {
         static final CamelCatalog INSTANCE = new DefaultCamelCatalog(true);
     }
 
-    /** A message to an endpoint the integration does not have, or null when it stays inside the integration. */
-    static Call sendMessage(String endpoint, Collection<String> endpointUris) {
-        if (staysInside(endpoint, endpointUris)) {
+    /**
+     * A message to an endpoint the integration does not have, or with a body read from a file outside the project; null
+     * when it stays inside the integration and the project.
+     *
+     * @param fileOutside the file outside the project that the body makes the integration read (see
+     *                    {@link #fileOutsideProject}), or null
+     */
+    static Call sendMessage(String endpoint, Collection<String> endpointUris, String fileOutside) {
+        boolean inside = staysInside(endpoint, endpointUris);
+        if (fileOutside != null) {
+            return new Call(
+                    inside
+                            ? "send a file from outside the project"
+                            : "send a file from outside the project to an endpoint the integration does not have",
+                    endpoint + "\nbody: file:" + fileOutside,
+                    "The integration reads the file and sends its content, which may hold secrets");
+        }
+        if (inside) {
             return null;
         }
         return new Call(
                 "send a message to an endpoint the integration does not have", endpoint,
                 "The message may leave the integration: to a file, a broker or a service");
+    }
+
+    /**
+     * The file a message body makes the integration read when it is outside the project folder, or null. The send
+     * console sends the content of the file that a body starting with file: names, relative to the working directory of
+     * the integration. The project folder is the integration's source directory, where the AI tools write. Symlinks and
+     * .. are resolved as the integration would; a file that cannot be placed counts as outside.
+     */
+    static String fileOutsideProject(String body, String workingDirectory, Path projectDirectory) {
+        if (body == null || !body.startsWith("file:")) {
+            return null;
+        }
+        String name = body.substring(5);
+        Path file;
+        try {
+            Path path = Path.of(name);
+            if (!path.isAbsolute()) {
+                if (workingDirectory == null) {
+                    return name;
+                }
+                path = Path.of(workingDirectory).resolve(path);
+            }
+            file = realPath(path);
+        } catch (InvalidPathException e) {
+            return name;
+        }
+        return projectDirectory != null && file.startsWith(realPath(projectDirectory)) ? null : file.toString();
+    }
+
+    /**
+     * The path with symlinks and .. resolved as the file system does. A file that is not there is placed under the real
+     * path of its nearest parent that is.
+     */
+    private static Path realPath(Path path) {
+        Path absolute = path.toAbsolutePath();
+        try {
+            return absolute.toRealPath();
+        } catch (IOException e) {
+            Path parent = absolute.getParent();
+            return parent != null ? realPath(parent).resolve(absolute.getFileName()).normalize() : absolute.normalize();
+        }
     }
 
     /**

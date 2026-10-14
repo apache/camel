@@ -200,6 +200,8 @@ code ask you first, in a dialog that shows the call:
   Internal is what the Camel catalog marks so: a component that stays inside the integration (`direct:`, `seda:`,
   `log:`, `mock:`, `stub:` and the like), with no option or feature that reaches a file or the network, even one
   seldom used;
+* sending a file from outside the project folder as the message body (a body that is `file:` and a path), wherever
+  the message goes; a file in the project, such as `file:data/order.json`, goes ahead;
 * SQL other than a single `SELECT`, `SHOW` or `DESCRIBE`, and updating a row;
 * evaluating an expression in a language that runs code, such as Groovy, Java, JavaScript or Python.
 

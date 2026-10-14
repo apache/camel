@@ -154,10 +154,11 @@ deliberately few, and they are the contract:
   destroy data or runs code: a message to an endpoint the integration does not
   have (a route, an endpoint of a component the Camel catalog marks internal,
   such as `direct:`, `seda:` or `log:`, and the integration's own endpoints are
-  inside it), a SQL statement other
-  than a single `SELECT`, `SHOW` or `DESCRIBE`, a row update, and an
-  expression in a language that runs code, such as Groovy. An HTTP request
-  goes only to the integration's own server on `localhost`.
+  inside it), a message whose body the integration reads from a file outside
+  the project folder, a SQL statement other than a single `SELECT`, `SHOW` or
+  `DESCRIBE`, a row update, and an expression in a language that runs code,
+  such as Groovy. An HTTP request goes only to the integration's own server on
+  `localhost`.
 * A coding agent's own tools - its shell commands, its file changes, its
   network fetches - are put in front of the developer in the TUI.
 * Keys sent over MCP never answer a dialog that asks the developer to confirm
