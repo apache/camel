@@ -376,10 +376,9 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    @Deprecated(since = "4.24.0", forRemoval = true)
     public void clearRouteModel() {
-        route = null;
-        errorHandlerFactory = null;
-        errorHandlers.clear();
+        // no-op: the route model is now retained at runtime
     }
 
     @Override
