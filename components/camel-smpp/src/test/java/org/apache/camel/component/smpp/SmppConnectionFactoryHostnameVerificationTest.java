@@ -19,11 +19,16 @@ package org.apache.camel.component.smpp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,6 +36,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.jsmpp.session.connection.Connection;
@@ -38,6 +44,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,6 +63,7 @@ class SmppConnectionFactoryHostnameVerificationTest {
     private static final int SMSC_PORT = 2775;
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final CountDownLatch stop = new CountDownLatch(1);
     private SSLContext serverContext;
     private SSLContext clientContext;
     private ServerSocket server;
@@ -80,6 +88,7 @@ class SmppConnectionFactoryHostnameVerificationTest {
 
     @AfterEach
     void stopServer() throws IOException {
+        stop.countDown();
         if (server != null) {
             server.close();
         }
@@ -109,6 +118,34 @@ class SmppConnectionFactoryHostnameVerificationTest {
 
         SSLHandshakeException cause = assertInstanceOf(SSLHandshakeException.class, e.getCause());
         assertTrue(cause.getMessage().contains("127.0.0.1"), cause.getMessage());
+    }
+
+    /**
+     * createConnection returns no Connection when it fails, so jSMPP cannot close the socket either.
+     * <p/>
+     * An SMSC that accepts the connection and then never answers the ClientHello makes the handshake time out, and the
+     * JDK does not close the socket on a read timeout - unlike a fatal alert, which it does close. So without closing
+     * it here, every reconnect attempt against such an SMSC would leave one socket open.
+     */
+    @Test
+    void closesTheSocketWhenTheHandshakeTimesOut() throws Exception {
+        startServerThatNeverAnswers();
+
+        List<SSLSocket> created = new ArrayList<>();
+        SSLSocketFactory recording = new RecordingSslSocketFactory(clientContext.getSocketFactory(), created);
+
+        SmppConfiguration configuration = new SmppConfiguration();
+        configuration.setUsingSSL(true);
+        configuration.setHostnameVerification(true);
+        configuration.setEnquireLinkTimer(1000);
+        SmppConnectionFactory factory = new SmppConnectionFactory(configuration, recording);
+
+        IOException e
+                = assertThrows(IOException.class, () -> factory.createConnection("localhost", server.getLocalPort()));
+        assertInstanceOf(SocketTimeoutException.class, e.getCause());
+
+        assertEquals(1, created.size(), "the factory should have created exactly one socket");
+        assertTrue(created.get(0).isClosed(), "the socket must be closed when createConnection fails");
     }
 
     @Test
@@ -189,6 +226,18 @@ class SmppConnectionFactoryHostnameVerificationTest {
         });
     }
 
+    private void startServerThatNeverAnswers() throws IOException {
+        server = new ServerSocket();
+        server.bind(new InetSocketAddress(0));
+        executor.submit(() -> {
+            try (Socket socket = server.accept()) {
+                // hold the connection open without answering the ClientHello, until the test is done
+                stop.await();
+            }
+            return null;
+        });
+    }
+
     private void startProxyAnsweringWithTls() throws IOException {
         server = new ServerSocket();
         server.bind(new InetSocketAddress(0));
@@ -216,6 +265,66 @@ class SmppConnectionFactoryHostnameVerificationTest {
                 throw new IOException("Connection closed before the end of the CONNECT request");
             }
             matched = b == end[matched] ? matched + 1 : (b == end[0] ? 1 : 0);
+        }
+    }
+
+    /**
+     * Delegates to the real factory and keeps the sockets it handed out, so a test can assert they were closed.
+     */
+    private static final class RecordingSslSocketFactory extends SSLSocketFactory {
+
+        private final SSLSocketFactory delegate;
+        private final List<SSLSocket> created;
+
+        private RecordingSslSocketFactory(SSLSocketFactory delegate, List<SSLSocket> created) {
+            this.delegate = delegate;
+            this.created = created;
+        }
+
+        private Socket record(Socket socket) {
+            created.add((SSLSocket) socket);
+            return socket;
+        }
+
+        @Override
+        public Socket createSocket() throws IOException {
+            return record(delegate.createSocket());
+        }
+
+        @Override
+        public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+            return record(delegate.createSocket(s, host, port, autoClose));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port) throws IOException {
+            return record(delegate.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
+            return record(delegate.createSocket(host, port, localHost, localPort));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress host, int port) throws IOException {
+            return record(delegate.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)
+                throws IOException {
+            return record(delegate.createSocket(address, port, localAddress, localPort));
+        }
+
+        @Override
+        public String[] getDefaultCipherSuites() {
+            return delegate.getDefaultCipherSuites();
+        }
+
+        @Override
+        public String[] getSupportedCipherSuites() {
+            return delegate.getSupportedCipherSuites();
         }
     }
 }

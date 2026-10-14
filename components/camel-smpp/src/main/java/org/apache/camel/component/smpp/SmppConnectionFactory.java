@@ -92,8 +92,8 @@ public final class SmppConnectionFactory implements ConnectionFactory {
 
     @Override
     public Connection createConnection(String host, int port) throws IOException {
+        Socket socket = null;
         try {
-            Socket socket;
             SocketFactory socketFactory;
             socketFactory = config.isUsingSSL() && config.getHttpProxyHost() == null
                     ? getSslSocketFactory()
@@ -124,6 +124,11 @@ public final class SmppConnectionFactory implements ConnectionFactory {
 
             return new SocketConnection(socket);
         } catch (Exception e) {
+            // no Connection is returned, so jSMPP cannot close the socket either. The JDK closes it on a fatal
+            // alert but not on a timed out connect or handshake, which leaks one socket per reconnect attempt
+            // against an SMSC that accepts TCP and then does not answer. On the proxy path the layered SSLSocket
+            // was created with autoClose=true, so closing it closes the tunnel underneath as well
+            IOHelper.close(socket);
             throw new IOException(e.getMessage(), e);
         }
     }

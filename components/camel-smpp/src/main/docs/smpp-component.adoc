@@ -176,8 +176,9 @@ Set `hostnameVerification=false` to turn the host check off.
 The handshake runs while the connection is being created, so a certificate that does not match makes the producer or
 consumer fail to start with an `IOException` caused by an
 `SSLHandshakeException: No subject alternative names matching IP address ... found` (or
-`No name matching ... found` for a host name). An IP address has to be listed as a subject alternative name of the
-certificate; a certificate issued for the host name alone does not match a connection made to its address.
+`No subject alternative DNS name matching ... found` for a host name). An IP address has to be listed as a subject
+alternative name of the certificate; a certificate issued for the host name alone does not match a connection made to
+its address.
 
 
 // component options: START
