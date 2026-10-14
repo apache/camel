@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1051,6 +1052,17 @@ public final class ToolRegistry {
 
     // ---- Example tools ----
 
+    /** Argument descriptions of the example tools, shared with the MCP server (CAMEL-25535). */
+    public static final String EXAMPLE_LEVEL_DESC
+            = "Only the examples of one group (level): quick-start, run, transform, route, fail-well, connect, "
+              + "connect-service, contracts, ai, cloud or showcase";
+    public static final String EXAMPLE_NAME_DESC
+            = "Example name as listed, e.g. quick-start/timer-log or fail-well/circuit-breaker (the short name without "
+              + "the group, such as timer-log, works too)";
+    public static final String EXAMPLE_FILE_DESC
+            = "File name within the example, as in its files, e.g. timer-log.camel.yaml or application.properties "
+              + "for quick-start/timer-log";
+
     private static void registerExampleTools() {
         register(tool("list_examples",
                 "List the Camel CLI examples, grouped as the ladder of the examples (quick-start, run, transform, "
@@ -1061,10 +1073,7 @@ public final class ToolRegistry {
                                        + "Call it without arguments for the whole ladder, with level for one group.")
                 .param("filter", "string",
                         "Filter by name, description, or tag (case-insensitive)", false)
-                .param("level", "string",
-                        "Only the examples of one group: quick-start, run, transform, route, fail-well, connect, "
-                                          + "connect-service, contracts, ai, cloud or showcase",
-                        false)
+                .param("level", "string", EXAMPLE_LEVEL_DESC, false)
                 .param("limit", "integer", "Maximum number of examples to return (default: 50)", false)
                 .executor((ctx, args) -> {
                     String filter = args.get("filter");
@@ -1082,6 +1091,16 @@ public final class ToolRegistry {
                         }
                     }
                     List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
+                    if (level != null && !level.isBlank()) {
+                        List<String> levels = new ArrayList<>(ExampleHelper.groupByLevel(catalog2).keySet());
+                        String wanted = level.trim();
+                        if (levels.stream().noneMatch(wanted::equalsIgnoreCase)) {
+                            // an old level such as beginner answered 0 examples otherwise (CAMEL-25535)
+                            throw new ToolExecutionException(
+                                    "No example at level " + wanted + "; the levels are: " + String.join(", ", levels));
+                        }
+                        level = wanted;
+                    }
                     List<JsonObject> filtered = ExampleHelper.filterExamples(catalog2, filter);
                     List<JsonObject> groups = new ArrayList<>();
                     List<JsonObject> results = new ArrayList<>();
@@ -1117,6 +1136,7 @@ public final class ToolRegistry {
                                 jo.put("needs", needs);
                             }
                             jo.put("bundled", ExampleHelper.isBundled(entry));
+                            jo.put("requiresDocker", ExampleHelper.requiresDocker(entry));
                             jo.put("files", ExampleHelper.getFiles(entry));
                             results.add(jo);
                         }
@@ -1130,45 +1150,77 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_example_file",
-                "Get the content of a file from a bundled Camel CLI example.")
-                .param("example", "string",
-                        "Example name (e.g., timer-log, rest-api, circuit-breaker)", true)
-                .param("file", "string",
-                        "File name within the example (e.g., route.camel.yaml)", true)
-                .executor((ctx, args) -> {
-                    String example = args.get("example");
-                    String file = args.get("file");
-                    if (example == null || example.isBlank()) {
-                        throw new ToolExecutionException("example name is required");
-                    }
-                    if (file == null || file.isBlank()) {
-                        throw new ToolExecutionException("file name is required");
-                    }
-                    List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
-                    JsonObject entry = ExampleHelper.findExample(catalog2, example);
-                    if (entry == null) {
-                        return "Example not found: " + example;
-                    }
-                    List<String> files = ExampleHelper.getFiles(entry);
-                    if (!files.contains(file)) {
-                        return "File '" + file + "' not found in example '" + example + "'. Available: " + files;
-                    }
-                    if (ExampleHelper.isBundled(entry)) {
-                        String resourcePath = "examples/" + example + "/" + file;
-                        try (InputStream is
-                                = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
-                            if (is != null) {
-                                return IOHelper.loadText(is);
-                            }
-                        } catch (Exception e) {
-                            return "Error reading file: " + e.getMessage();
-                        }
-                        return "Could not read bundled file: " + resourcePath;
-                    } else {
-                        return "This example is not bundled. View it on GitHub: "
-                               + ExampleHelper.getGithubUrl(entry) + "/" + file;
-                    }
-                }));
+                "Get the content of a file from a Camel CLI example: the content of a bundled example, the GitHub "
+                                          + "URL of the file for the others. Returns the full name of the example.")
+                .param("example", "string", EXAMPLE_NAME_DESC, true)
+                .param("file", "string", EXAMPLE_FILE_DESC, true)
+                .executor((ctx, args) -> exampleFile(args.get("example"), args.get("file")).toJson()));
+    }
+
+    /**
+     * A file of an example: the catalog entry is found by its full or short name and the bundled resource is read from
+     * the entry's name, so a short name reads the file as well (CAMEL-25535).
+     */
+    static JsonObject exampleFile(String example, String file) {
+        if (example == null || example.isBlank()) {
+            throw new ToolExecutionException("example name is required");
+        }
+        if (file == null || file.isBlank()) {
+            throw new ToolExecutionException("file name is required");
+        }
+        String wanted = example.trim();
+        String fileName = file.trim();
+        JsonObject entry = resolveExample(ExampleHelper.loadCatalog(), wanted);
+        String name = entry.getString("name");
+        List<String> files = ExampleHelper.getFiles(entry);
+        if (!files.contains(fileName)) {
+            throw new ToolExecutionException(
+                    "File '" + fileName + "' not found in example '" + name + "'. Available files: " + files);
+        }
+        JsonObject answer = new JsonObject();
+        answer.put("example", name);
+        answer.put("file", fileName);
+        if (ExampleHelper.isBundled(entry)) {
+            // the resource path comes from the catalog entry, not from the name the caller gave
+            String resourcePath = "examples/" + name + "/" + fileName;
+            try (InputStream is = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
+                if (is == null) {
+                    throw new ToolExecutionException("Could not read bundled file: " + resourcePath);
+                }
+                answer.put("content", IOHelper.loadText(is));
+            } catch (IOException e) {
+                throw new ToolExecutionException("Could not read bundled file: " + resourcePath + ": " + e.getMessage());
+            }
+        } else {
+            answer.put("githubUrl", ExampleHelper.getGithubUrl(entry) + "/" + fileName);
+        }
+        return answer;
+    }
+
+    /**
+     * The catalog entry of an example by its full name, or by its short name when only one example has it, as camel run
+     * resolves it; an ambiguous short name answers with the candidates, an unknown one with the closest names.
+     */
+    static JsonObject resolveExample(List<JsonObject> catalog, String example) {
+        if (!example.contains("/")) {
+            List<JsonObject> same = ExampleHelper.findExamplesByShortName(catalog, example);
+            if (same.size() > 1) {
+                throw new ToolExecutionException(
+                        "Ambiguous example: " + example + ". Use one of: "
+                                                 + same.stream().map(e -> e.getString("name"))
+                                                         .collect(Collectors.joining(", ")));
+            }
+        }
+        JsonObject entry = ExampleHelper.findExample(catalog, example);
+        if (entry == null) {
+            List<String> similar = ExampleHelper.suggestExamples(catalog, example);
+            throw new ToolExecutionException(
+                    "Example not found: " + example
+                                             + (similar.isEmpty()
+                                                     ? ". Use list_examples to see the examples."
+                                                     : ". Did you mean: " + String.join(", ", similar) + "?"));
+        }
+        return entry;
     }
 
     // ---- Processor detail enrichment ----
