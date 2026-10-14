@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
@@ -39,15 +40,26 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
 /**
- * Asks the user to apply a file write requested by an AI tool. The summary names the file, the directory and the size
- * of the change; {@code d} switches to a unified diff (removed lines on red, added lines on green, like the source
- * editor's F7 overlay), so the user sees what the model wants to change before deciding. The diff is a view only:
- * Enter, Esc and d return to the summary, where Enter applies the write and Esc rejects it.
+ * Asks the user to confirm what an AI tool wants to do: write a file, or one of the calls {@link ToolConfirms} names (a
+ * message to an endpoint the integration does not have, SQL that is not a SELECT, an expression in a language that runs
+ * code). For a file the summary names the file, the directory and the size of the change; {@code d} switches to a
+ * unified diff (removed lines on red, added lines on green, like the source editor's F7 overlay), so the user sees what
+ * the model wants to change before deciding. The diff is a view only: Enter, Esc and d return to the summary. For a
+ * call the popup shows the endpoint, the statement or the expression, and why it asks. Enter applies or runs it, Esc
+ * rejects it.
  */
-final class FileWritePopup {
+final class ToolConfirmPopup {
 
-    private boolean visible;
+    // how long a tool waits for the user before it gives up, as rejected
+    private static final long WAIT_MINUTES = 2;
+    // the lines of a statement or an expression the popup shows
+    private static final int MAX_TARGET_LINES = 6;
+
+    // two tools that ask at once wait in turn, rather than one replacing the other's question
+    private final Object asking = new Object();
+    private volatile boolean visible;
     private McpFacade.FileWrite request;
+    private ToolConfirms.Call call;
     private CompletableFuture<Boolean> answer;
     private List<EditDiff.DiffEntry> entries = List.of();
     private String summary = "";
@@ -63,16 +75,58 @@ final class FileWritePopup {
         return visible && showDiff;
     }
 
+    /** Asks to apply a file write, blocking the calling (tool) thread until the user answers or no one does. */
+    boolean ask(McpFacade.FileWrite request) {
+        synchronized (asking) {
+            CompletableFuture<Boolean> pending = new CompletableFuture<>();
+            open(request, pending);
+            return await(pending);
+        }
+    }
+
+    /** Asks to run a call, blocking the calling (tool) thread until the user answers or no one does. */
+    boolean ask(ToolConfirms.Call call) {
+        synchronized (asking) {
+            CompletableFuture<Boolean> pending = new CompletableFuture<>();
+            open(call, pending);
+            return await(pending);
+        }
+    }
+
+    private boolean await(CompletableFuture<Boolean> pending) {
+        try {
+            return pending.get(WAIT_MINUTES, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            close();
+            return false;
+        } catch (Exception e) {
+            close();
+            return false;
+        }
+    }
+
     void open(McpFacade.FileWrite request, CompletableFuture<Boolean> answer) {
-        this.request = request;
-        this.answer = answer;
         List<String> before = request.oldContent() == null || request.oldContent().isEmpty()
                 ? List.of() : request.oldContent().lines().toList();
         List<String> after = request.newContent().isEmpty() ? List.of() : request.newContent().lines().toList();
         this.entries = EditDiff.unifiedDiff(before, after, 3);
         this.summary = EditDiff.summary(entries);
+        this.call = null;
+        this.request = request;
+        this.answer = answer;
         this.showDiff = false;
         this.diffScrollY = 0;
+        this.visible = true;
+    }
+
+    void open(ToolConfirms.Call call, CompletableFuture<Boolean> answer) {
+        this.entries = List.of();
+        this.summary = "";
+        this.request = null;
+        this.call = call;
+        this.answer = answer;
+        this.showDiff = false;
         this.visible = true;
     }
 
@@ -111,7 +165,7 @@ final class FileWritePopup {
             finish(true);
         } else if (ke.isCancel()) {
             finish(false);
-        } else if (ke.isChar('d') || ke.isChar('D')) {
+        } else if (request != null && (ke.isChar('d') || ke.isChar('D'))) {
             showDiff = true;
             diffScrollY = 0;
         }
@@ -128,7 +182,14 @@ final class FileWritePopup {
     }
 
     void render(Frame frame, Rect area) {
-        if (!visible || request == null) {
+        if (!visible) {
+            return;
+        }
+        if (call != null) {
+            renderCall(frame, area);
+            return;
+        }
+        if (request == null) {
             return;
         }
         Style accent = Theme.warning();
@@ -156,7 +217,33 @@ final class FileWritePopup {
         hint(hints, "d", "diff");
         hintLast(hints, "Esc", "reject");
         lines.add(Line.from(hints));
+        renderBox(frame, area, accent, titleText, lines);
+    }
 
+    /** The endpoint, the statement or the expression, why it asks, and the keys. */
+    private void renderCall(Frame frame, Rect area) {
+        Style accent = Theme.warning();
+        String titleText = " AI wants to " + call.title() + " ";
+        int width = Math.max(10, area.width() - 10);
+        List<Line> lines = new ArrayList<>();
+        lines.add(Line.empty());
+        List<String> target = call.target() == null ? List.of() : call.target().strip().lines().toList();
+        for (String line : target.subList(0, Math.min(target.size(), MAX_TARGET_LINES))) {
+            lines.add(Line.from(Span.styled(TuiHelper.truncate(line, width), accent.bold())));
+        }
+        if (target.size() > MAX_TARGET_LINES) {
+            lines.add(Line.from(Span.styled("... " + (target.size() - MAX_TARGET_LINES) + " more lines", Theme.muted())));
+        }
+        lines.add(Line.from(Span.styled(call.reason(), Style.EMPTY.dim())));
+        lines.add(Line.empty());
+        List<Span> hints = new ArrayList<>();
+        hint(hints, "Enter", "run");
+        hintLast(hints, "Esc", "reject");
+        lines.add(Line.from(hints));
+        renderBox(frame, area, accent, titleText, lines);
+    }
+
+    private static void renderBox(Frame frame, Rect area, Style accent, String titleText, List<Line> lines) {
         int longest = lines.stream().mapToInt(l -> l.toString().length()).max().orElse(20);
         int popupW = Math.max(1, Math.min(area.width() - 4, Math.max(longest + 6, titleText.length() + 4)));
         int popupH = Math.min(area.height() - 2, lines.size() + 2);
@@ -189,7 +276,10 @@ final class FileWritePopup {
     }
 
     void renderFooter(List<Span> spans) {
-        if (showDiff) {
+        if (call != null) {
+            hint(spans, "Enter", "run");
+            hintLast(spans, "Esc", "reject");
+        } else if (showDiff) {
             hint(spans, "↑↓/PgUp/PgDn", "scroll");
             hintLast(spans, "Enter/Esc", "back");
         } else {

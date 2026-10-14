@@ -185,6 +185,27 @@ average time per question (and per request in brackets), the model table has an 
 the average per request for that model, and the *Time per question* chart next to the token chart shows the
 two side by side for each question, so you can see whether a slow answer was the model or the tools.
 
+== What asks first
+
+Camel TUI is a developer tool: the model works on your own machine, with your own integrations, and runs the
+TUI's tools without asking, so it can show and tell at once (see
+xref:security-model.adoc#_developer_tools[Developer tools] in the security model). It reads any tab, selects
+integrations and routes, starts and stops routes and infrastructure, sends test messages to the integration's
+endpoints and evaluates expressions. The few calls that reach beyond the integration, may destroy data or run
+code ask you first, in a dialog that shows the call:
+
+* writing a file: the diff dialog, or the live replay in the Source editor (see `/write` above);
+* sending a message to an endpoint the integration does not have, such as a file, a command, an HTTP service or
+  another topic; a message to a route, to an internal endpoint (`direct:`, `seda:`, `log:`, `mock:`, `stub:`
+  and the like), or to an endpoint the integration uses goes ahead;
+* SQL other than a single `SELECT`, `SHOW` or `DESCRIBE`, and updating a row;
+* evaluating an expression in a language that runs code, such as Groovy, Java, JavaScript or Python.
+
+*Enter* runs the call and *Esc* rejects it; the model is told that you rejected it. An HTTP request
+(`tui_http_request`) reaches only the integration's own server on `localhost`. While a tape records, or
+`--record` plays one, nothing asks. The same applies to a coding agent driving the panel and to an MCP client
+(see xref:camel-jbang-tui-ai-agents.adoc[AI agents]).
+
 == AI log
 
 Every request the panel makes is recorded in the AI log (*F2* -> _AI & MCP_ -> _AI Log_, or the

@@ -37,6 +37,7 @@ and use each other's package-private members, so there are no sub-packages. Clas
 | `AbstractDiagramTab` | what the Diagram and Routes tabs share of the route diagram: its state, keys, drilling into a route and back |
 | `AiPanel`, `AiSlashCommandRegistry` | the F8 AI panel; its input line is `AiInputLine`, its tools and system prompt `AiToolSet`, its usage statistics `AiUsageStats`, and an external coding agent (ACP) `AcpSession` over `AcpAgentClient` |
 | `LiveEdit`, `EditReplay` | `/write live`: a file an AI tool writes is typed into the source editor, to watch and then save or discard |
+| `ToolConfirms`, `ToolConfirmPopup` | the AI tools run without asking (a developer tool); these are the few calls the user confirms first (a file write, a message to an endpoint the integration does not have, SQL that is not a SELECT, Groovy), and the popup that asks |
 | `TuiMcpServer`, `TuiToolDefinitions`, `TuiToolRegistry`, `McpFacade` | the MCP server: the tools (`TuiTool`: schema, handler, flags), their implementations, the bridge to the screen; the shared file tools are `TuiFileTools`, which writes only to an integration's source directory, through the AI panel's write mode |
 | `Theme`, `TuiIcons` | colours (themes in `src/main/resources/tui/themes`) and icons |
 | `TuiSettings`, `SettingsPopup` | persisted settings |

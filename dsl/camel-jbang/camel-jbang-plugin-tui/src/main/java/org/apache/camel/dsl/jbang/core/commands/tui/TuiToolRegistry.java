@@ -109,6 +109,14 @@ class TuiToolRegistry {
             byName.put("name", d);
             args = byName;
         }
+        if (EVAL_TOOL.equals(name) && facade != null) {
+            // Groovy, and the other languages that run code, ask the user first
+            JsonObject rejected = facade.confirm(ToolConfirms.evalExpression(
+                    args.get("language") instanceof String l ? l : null, String.valueOf(args.get("expression"))));
+            if (rejected != null) {
+                return Jsoner.serialize(rejected);
+            }
+        }
         if (fileTools != null && TuiFileTools.TOOLS.contains(name)) {
             return fileTools.execute(name, args);
         }
@@ -180,6 +188,7 @@ class TuiToolRegistry {
     static final String EDIT_TOOL = "camel_edit_file";
     static final String VALIDATE_TOOL = "camel_validate_source";
     static final String SAVE_SUMMARY_TOOL = "camel_save_project_summary";
+    static final String EVAL_TOOL = "camel_eval_expression";
 
     /**
      * The tools needed to answer questions and troubleshoot from the built-in AI panel, those flagged
@@ -192,12 +201,20 @@ class TuiToolRegistry {
 
     /**
      * Tools that inspect information without executing application actions, editing data or changing the visible view,
-     * those flagged {@link TuiTool.Flag#READ_ONLY}. The ACP permission handler approves calls to these without asking;
-     * anything else, including camel_control, tui_send_message and tui_execute_sql, is put in front of the user.
-     * camel_eval_expression is read-only because it evaluates an expression against a scratch exchange and sends
-     * nothing through a route.
+     * those flagged {@link TuiTool.Flag#READ_ONLY}. Nothing asks before a tool runs, read-only or not: the few calls
+     * the user confirms are in {@link ToolConfirms}. camel_eval_expression is read-only because it evaluates an
+     * expression against a scratch exchange and sends nothing through a route; in a language that runs code it asks
+     * first.
      */
     static final Set<String> READ_ONLY_TOOLS = namesWith(TuiTool.Flag.READ_ONLY);
+
+    private static final Set<String> ALL_TOOLS = TuiToolDefinitions.all(new TuiToolRegistry(null)).stream()
+            .map(TuiTool::name).collect(Collectors.toUnmodifiableSet());
+
+    /** Whether a name is a tool of the TUI: one it lists, or a shared camel_ tool it runs (see execute). */
+    static boolean isTool(String name) {
+        return ALL_TOOLS.contains(name) || name.startsWith(SHARED_PREFIX) && ToolRegistry.findTool(name) != null;
+    }
 
     private static Set<String> namesWith(TuiTool.Flag flag) {
         // the flags do not depend on the facade: a registry without one defines the same tools
@@ -477,6 +494,12 @@ class TuiToolRegistry {
                 .toList();
         if (keys.isEmpty()) {
             return "Error: keys array is empty";
+        }
+        String confirmation = facade.openConfirmation();
+        if (confirmation != null) {
+            // only the user answers a dialog that asks to confirm an action (CAMEL-25444)
+            return "Not sent: " + confirmation + " is open, and only the user answers it. Wait for the user, or tell"
+                   + " them what you need: keys sent while it is open are dropped.";
         }
         int delay = 150;
         Object delayArg = args.get("delay");

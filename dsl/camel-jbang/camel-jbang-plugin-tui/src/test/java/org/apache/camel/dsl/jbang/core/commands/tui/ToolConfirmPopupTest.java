@@ -17,18 +17,25 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FileWritePopupTest {
+class ToolConfirmPopupTest {
 
     private static McpFacade.FileWrite request() {
         return new McpFacade.FileWrite(
@@ -41,7 +48,7 @@ class FileWritePopupTest {
 
     @Test
     void enterAppliesAndReportsTheChangeSize() {
-        FileWritePopup popup = new FileWritePopup();
+        ToolConfirmPopup popup = new ToolConfirmPopup();
         CompletableFuture<Boolean> answer = new CompletableFuture<>();
         popup.open(request(), answer);
 
@@ -55,7 +62,7 @@ class FileWritePopupTest {
 
     @Test
     void theDiffIsOnlyAViewAndTheSummaryDecides() {
-        FileWritePopup popup = new FileWritePopup();
+        ToolConfirmPopup popup = new ToolConfirmPopup();
         CompletableFuture<Boolean> answer = new CompletableFuture<>();
         popup.open(request(), answer);
 
@@ -86,7 +93,7 @@ class FileWritePopupTest {
 
     @Test
     void closingWithoutAnAnswerRejects() {
-        FileWritePopup popup = new FileWritePopup();
+        ToolConfirmPopup popup = new ToolConfirmPopup();
         CompletableFuture<Boolean> answer = new CompletableFuture<>();
         popup.open(new McpFacade.FileWrite("new.yaml", Path.of("/tmp/demo"), null, "- route: {}\n", true, false),
                 answer);
@@ -97,5 +104,45 @@ class FileWritePopupTest {
         assertFalse(popup.isVisible());
         assertFalse(answer.join());
         assertFalse(popup.handleKeyEvent(KeyEvent.ofChar('d')), "a closed popup ignores keys");
+    }
+
+    @Test
+    void aCallShowsWhatTheAiWantsToRunAndEnterRunsIt() {
+        ToolConfirmPopup popup = new ToolConfirmPopup();
+        CompletableFuture<Boolean> answer = new CompletableFuture<>();
+        popup.open(ToolConfirms.sendMessage("file:/home/me?fileName=.zshrc", List.of("kafka:orders")), answer);
+
+        assertThat(render(popup, 100, 14))
+                .contains("AI wants to send a message to an endpoint the integration does not have")
+                .contains("file:/home/me?fileName=.zshrc")
+                .contains("The message may leave the integration");
+        // only a file has a diff
+        popup.handleKeyEvent(KeyEvent.ofChar('d'));
+        assertThat(popup.isDiffVisible()).isFalse();
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertThat(popup.isVisible()).isFalse();
+        assertThat(answer.join()).isTrue();
+    }
+
+    @Test
+    void aToolWaitsOnItsOwnThreadUntilTheUserAnswers() throws Exception {
+        ToolConfirmPopup popup = new ToolConfirmPopup();
+        CompletableFuture<Boolean> asked
+                = CompletableFuture.supplyAsync(() -> popup.ask(ToolConfirms.sql("DROP TABLE orders")));
+
+        await().atMost(5, TimeUnit.SECONDS).until(popup::isVisible);
+        assertThat(render(popup, 100, 14)).contains("AI wants to run SQL that is not a SELECT")
+                .contains("DROP TABLE orders");
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+
+        assertThat(asked.get(5, TimeUnit.SECONDS)).isFalse();
+    }
+
+    private static String render(ToolConfirmPopup popup, int width, int height) {
+        Rect area = new Rect(0, 0, width, height);
+        Buffer buffer = Buffer.empty(area);
+        popup.render(Frame.forTesting(buffer), area);
+        return TuiTestHelper.bufferToString(buffer);
     }
 }

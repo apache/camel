@@ -59,6 +59,11 @@ or converted to an animated GIF.
 
 An AI agent connected over MCP records a tape of what it does with `tui_tape_start` and `tui_tape_stop`.
 
+While a tape records, and while `--record` plays one, actions that ask first go ahead at once: quitting, stopping
+an integration, a file an AI writes, a tool an ACP agent runs, deleting or converting a file. The model or the tape
+does everything itself, and the keys a tape plays, like those an MCP client sends, never answer a dialog that asks the
+user to confirm. Leaving the editor with unsaved changes still asks, so save before leaving it.
+
 == Scripted Recording
 
 Use the `--record` flag to play a `.tape` file in the TUI and record what happens on screen:

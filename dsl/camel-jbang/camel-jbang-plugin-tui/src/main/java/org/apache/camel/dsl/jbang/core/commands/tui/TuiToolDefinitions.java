@@ -59,9 +59,9 @@ final class TuiToolDefinitions {
 
     /**
      * The neutral authoring tools shared with camel-jbang-mcp (CAMEL-24695): defined once in the shared registry and
-     * exposed here under the same {@code camel_} names, so an agent gets the same Camel through either MCP server. Two
-     * of them get a TUI extra: camel_control also knows the TUI's stop-all and close actions, and camel_get_log also
-     * reads the log of an infra service.
+     * exposed here under the same {@code camel_} names, so an agent gets the same Camel through either MCP server.
+     * Three of them get a TUI extra: camel_control also knows the TUI's stop-all and close actions, camel_get_log also
+     * reads the log of an infra service, and camel_eval_expression asks the user first in a language that runs code.
      */
     private static void addSharedTools(List<TuiTool> tools, TuiToolRegistry r) {
         for (ToolDescriptor td : ToolRegistry.authoringTools()) {
@@ -77,6 +77,8 @@ final class TuiToolDefinitions {
             } else if (TuiToolRegistry.LOG_TOOL.equals(td.name())) {
                 description += " With infra=<alias> the log of an infra service instead.";
                 properties.put("infra", propDef("string", "Infra service alias whose log to read instead"));
+            } else if (TuiToolRegistry.EVAL_TOOL.equals(td.name())) {
+                description += " A language that runs code, such as groovy, asks the user first.";
             }
             String name = td.name();
             tools.add(new TuiTool(
@@ -136,11 +138,11 @@ final class TuiToolDefinitions {
 
         tools.add(tool(toolDef(
                 "tui_send_keys",
-                "Sends key presses to the TUI. A human is watching the screen, "
-                                 + "so keys should be paced naturally like a skilled user would type. "
-                                 + "Key names: Enter, Esc, Tab, Backspace, Delete, Up, Down, Left, Right, "
-                                 + "Home, End, PgUp, PgDn, Space, F1-F12, or any single character. "
-                                 + "Modifiers: Ctrl+x, Shift+x, Ctrl+Shift+x.",
+                "Sends key presses to the TUI. A human is watching the screen, so keys should be paced naturally "
+                                 + "like a skilled user would type. Key names: Enter, Esc, Tab, Backspace, Delete, Up, "
+                                 + "Down, Left, Right, Home, End, PgUp, PgDn, Space, F1-F12, or any single character. "
+                                 + "Modifiers: Ctrl+x, Shift+x, Ctrl+Shift+x. Keys never answer a dialog that asks the "
+                                 + "user to confirm an action (quit, a file write): only the user does.",
                 Map.of("keys", propDef("array", "Array of key name strings to send"),
                         "delay", propDef("integer",
                                 "Delay in milliseconds between keys (default 150, minimum 80)"),
@@ -343,11 +345,11 @@ final class TuiToolDefinitions {
                 Map.of()), args -> r.callGetTopology(), READ_ONLY, CORE));
         tools.add(tool(toolDef(
                 "tui_send_message",
-                "Sends a message to any Camel endpoint URI from inside the selected integration: direct:/seda: "
-                                    + "to feed a route, or a producer such as paho-mqtt5:, kafka:, jms:, http:, file: "
-                                    + "to publish to the system a route consumes from. A route that only consumes from "
-                                    + "a broker has no direct: endpoint; publish to the broker with the same component "
-                                    + "and options the route uses.",
+                "Sends a message from inside the selected integration: direct:/seda: to feed a route, or a "
+                                    + "producer such as paho-mqtt5:, kafka:, jms: to publish to the system a route "
+                                    + "consumes from. A route that only consumes from a broker has no direct: endpoint; "
+                                    + "publish to the broker with the same component and options the route uses. An "
+                                    + "endpoint neither internal (log:, mock:) nor the integration's own asks first.",
                 Map.of("endpoint", propDef("string",
                         "Endpoint URI, e.g. 'direct:myRoute', 'paho-mqtt5:temperature?brokerUrl=tcp://localhost:1883'"),
                         "body", propDef("string", "Message body to send"),
@@ -371,10 +373,9 @@ final class TuiToolDefinitions {
                 List.of("path")), args -> r.executeShared("http_request", args)));
         tools.add(tool(toolDef(
                 "tui_execute_sql",
-                "Executes a SQL query against a DataSource in the selected integration. "
-                                   + "Returns structured JSON with columns, rows, and metadata for SELECT queries, "
-                                   + "or an update count for INSERT/UPDATE/DELETE. "
-                                   + "Requires dev console to be enabled in the running application.",
+                "Executes SQL against a DataSource of the selected integration: columns and rows for a SELECT, "
+                                   + "an update count otherwise. A statement other than SELECT, SHOW or DESCRIBE "
+                                   + "asks the user first. Needs the dev console of the integration.",
                 Map.of("query", propDef("string", "The SQL query to execute"),
                         "datasource", propDef("string",
                                 "Name of the DataSource bean (auto-detected if only one exists)"),
@@ -385,9 +386,8 @@ final class TuiToolDefinitions {
                 List.of("query")), r::callExecuteSql));
         tools.add(tool(toolDef(
                 "tui_update_row",
-                "Updates a single row in a database table. Use after tui_execute_sql returns "
-                                  + "editable=true with tableName and primaryKeys. Builds and executes "
-                                  + "an UPDATE statement using PreparedStatement for safety.",
+                "Updates one row of a table with a PreparedStatement, after tui_execute_sql returned "
+                                  + "editable=true with tableName and primaryKeys; asks the user first.",
                 Map.of("table", propDef("string", "The table name to update"),
                         "primaryKeyValues", propDef("string",
                                 "JSON object of primary key column-value pairs, e.g. {\"id\": 1}"),

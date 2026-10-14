@@ -30,9 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -170,7 +168,7 @@ public class CamelMonitor extends CamelCommand {
     private long monitorNotificationExpiry;
     private final WaveTextState notificationWaveState = new WaveTextState();
     private String lastWaveNotification;
-    private boolean mcpInjectedKey;
+    private Confirmations confirmations;
     private volatile TuiMcpServer mcpServer;
     private Path mcpJsonFile;
     private TuiWebServer webServer;
@@ -189,7 +187,7 @@ public class CamelMonitor extends CamelCommand {
     private ActionsPopup actionsPopup;
     private ProcessControl processControl;
     private ProcessControlPopup processControlPopup;
-    private final FileWritePopup fileWritePopup = new FileWritePopup();
+    private final ToolConfirmPopup toolConfirmPopup = new ToolConfirmPopup();
     private final LiveEdit liveEdit = new LiveEdit(new LiveEdit.Host() {
         @Override
         public EditReplay.Editor openFileForReplay(Path file) {
@@ -635,7 +633,7 @@ public class CamelMonitor extends CamelCommand {
      * through here too, so quitting behaves the same however it is asked for.
      */
     void quitTui(boolean confirm) {
-        if (confirm && ctx.confirmActions) {
+        if (confirm && ctx.confirmFirst()) {
             LaunchManager launches = actionsPopup.getLaunchManager();
             long running = launches.runningLaunchCount();
             if (running > 0) {
@@ -918,14 +916,12 @@ public class CamelMonitor extends CamelCommand {
 
                     @Override
                     public boolean confirmFileWrite(McpFacade.FileWrite request) {
-                        CompletableFuture<Boolean> answer = new CompletableFuture<>();
-                        fileWritePopup.open(request, answer);
-                        try {
-                            return answer.get(2, TimeUnit.MINUTES);
-                        } catch (Exception e) {
-                            fileWritePopup.close();
-                            return false;
-                        }
+                        return toolConfirmPopup.ask(request);
+                    }
+
+                    @Override
+                    public boolean confirmToolCall(ToolConfirms.Call call) {
+                        return toolConfirmPopup.ask(call);
                     }
 
                     @Override
@@ -938,6 +934,10 @@ public class CamelMonitor extends CamelCommand {
                         CamelMonitor.this.resetIntegrationTabState();
                     }
                 });
+        confirmations = Confirmations.of(
+                pendingKeys, popupManager, toolConfirmPopup, actionsPopup, liveEdit, aiPanel, filesBrowser, tabRegistry);
+        ctx.tapeDriven = () -> record != null || recordingManager.isTapeRecording();
+        mcpFacade.setConfirmations(confirmations);
         mcpFacade.setSourceValidator(tabRegistry.sourceTab().editAssist()::validateSource);
         mcpFacade.setPropertyLineValidator(tabRegistry.sourceTab().editAssist()::validateSpringBootPropertyLine);
         mcpFacade.setLaunchManager(actionsPopup.getLaunchManager());
@@ -1186,7 +1186,7 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleEvent(Event event, TuiRunner runner) {
         if (event instanceof KeyEvent ke) {
-            recordingManager.recordKey(ke, mcpInjectedKey);
+            recordingManager.recordKey(ke, confirmations.isDelivering());
             if (captionOverlay.isVisible()) {
                 if (captionOverlay.handleKeyEvent(ke)) {
                     return true;
@@ -1218,8 +1218,8 @@ public class CamelMonitor extends CamelCommand {
             if (processControlPopup.isVisible()) {
                 return processControlPopup.handleKeyEvent(ke);
             }
-            if (fileWritePopup.isVisible()) {
-                return fileWritePopup.handleKeyEvent(ke);
+            if (toolConfirmPopup.isVisible()) {
+                return toolConfirmPopup.handleKeyEvent(ke);
             }
             if (liveEdit.handleKeyEvent(ke)) {
                 return true;
@@ -1786,16 +1786,7 @@ public class CamelMonitor extends CamelCommand {
 
     private boolean handleTickEvent(TuiRunner runner) {
         long now = MonotonicClock.millis();
-        boolean keyProcessed = false;
-        McpFacade.PendingKey pk;
-        while ((pk = pendingKeys.peek()) != null && pk.isDue(now)) {
-            pendingKeys.poll();
-            mcpInjectedKey = true;
-            handleEvent(pk.event(), runner);
-            mcpInjectedKey = false;
-            keyProcessed = true;
-        }
-        if (keyProcessed) {
+        if (confirmations.deliverDue(now, key -> handleEvent(key, runner))) {
             return true;
         }
         actionsPopup.tick(now);
@@ -1963,7 +1954,7 @@ public class CamelMonitor extends CamelCommand {
         }
         actionsPopup.render(frame, contentArea);
         processControlPopup.render(frame, contentArea);
-        fileWritePopup.render(frame, contentArea);
+        toolConfirmPopup.render(frame, contentArea);
         if (captionOverlay.isCaptionVisible()) {
             captionOverlay.render(frame, contentArea);
         }
@@ -2453,8 +2444,8 @@ public class CamelMonitor extends CamelCommand {
             actionsPopup.renderFooter(spans);
         } else if (processControlPopup.isVisible()) {
             processControlPopup.renderFooter(spans);
-        } else if (fileWritePopup.isVisible()) {
-            fileWritePopup.renderFooter(spans);
+        } else if (toolConfirmPopup.isVisible()) {
+            toolConfirmPopup.renderFooter(spans);
         } else if (liveEdit.capturesKeys()) {
             liveEdit.renderFooter(spans);
         } else if (aiPanel.isOpen()) {

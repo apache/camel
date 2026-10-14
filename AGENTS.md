@@ -454,6 +454,12 @@ The following are explicitly **not** framework vulnerabilities and will be close
 - Third-party transitive dependency CVEs that are not reachable through any Camel-exposed code
   path.
 - Automated scanner reports without a PoC demonstrating an actual trust-boundary breach.
+- An **AI assistant in Camel TUI** (the AI panel's model, an ACP agent, an MCP client) using the
+  TUI's tools without asking, even after a prompt injection. Camel CLI and Camel TUI are developer
+  tools on the developer's own machine; the TUI asks first only before a file write (its write
+  mode), a message to an endpoint the integration does not have, SQL that is not a `SELECT`, and a
+  code-running expression language such as Groovy. A tool breaking that contract is in scope. See
+  "Developer tools" in the security model.
 
 ### Operator hardening checklist
 
