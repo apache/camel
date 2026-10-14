@@ -20,13 +20,19 @@ import java.util.List;
 
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * CAMEL-25640: KameletTools bugs — no caching and limit-before-sort.
+ * <p>
+ * All tests in this class download {@code camel-kamelets-catalog} from Maven Central (the module has no compile-time
+ * dependency on it, so the download is unavoidable). They are disabled in CI to avoid network failures.
  */
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Runs only local — requires camel-kamelets-catalog download from Maven Central")
 class KameletToolsTest {
 
     private final KameletTools tools = new KameletTools();
