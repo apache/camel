@@ -28,26 +28,80 @@ import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Tests a producer that sends media information.
+ * Tests the webhook endpoint that receives the updates from Telegram.
  */
 public class TelegramWebhookCallTest extends TelegramTestSupport {
+
+    private static final String CONFIGURED_SECRET_TOKEN = "configured_Secret-token-42";
 
     private int port;
 
     @Test
     public void testWebhookCall() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedBodiesReceived("aho");
+        mock.message(0).header(TelegramWebhookProcessor.SECRET_TOKEN_HEADER).isNull();
+
+        Exchange response = call("webhook", TelegramEndpoint.deriveWebhookSecretToken("mock-token"));
+
+        assertEquals(204, response.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testWebhookCallWithConfiguredSecretToken() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedBodiesReceived("aho");
+
+        Exchange response = call("webhook-configured-token", CONFIGURED_SECRET_TOKEN);
+
+        assertEquals(204, response.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testWebhookCallWithoutSecretTokenIsRejected() throws Exception {
+        Exchange response = call("webhook", null);
+
+        assertEquals(403, response.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+        assertEquals(0, getMockEndpoint("mock:endpoint").getReceivedCounter());
+    }
+
+    @Test
+    void testWebhookCallWithWrongSecretTokenIsRejected() throws Exception {
+        Exchange response = call("webhook", CONFIGURED_SECRET_TOKEN);
+
+        assertEquals(403, response.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+        assertEquals(0, getMockEndpoint("mock:endpoint").getReceivedCounter());
+    }
+
+    @Test
+    void testWebhookCallWithoutSecretTokenWhenDisabled() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedBodiesReceived("aho");
+
+        Exchange response = call("webhook-secret-token-disabled", null);
+
+        assertEquals(204, response.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
+        mock.assertIsSatisfied();
+    }
+
+    private Exchange call(String routeId, String secretToken) throws Exception {
         WebhookConfiguration config
-                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+                = ((WebhookEndpoint) context().getRoute(routeId).getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl();
 
         try (InputStream content = getClass().getClassLoader().getResourceAsStream("messages/webhook-call.json")) {
-            MockEndpoint mock = getMockEndpoint("mock:endpoint");
-            mock.expectedBodiesReceived("aho");
-            mock.expectedMinimumMessageCount(1);
-
-            template().sendBodyAndHeader("netty-http:" + url, content, Exchange.CONTENT_TYPE, "application/json");
-            mock.assertIsSatisfied();
+            return template().request("netty-http:" + url + "?throwExceptionOnFailure=false", exchange -> {
+                exchange.getIn().setBody(content);
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                if (secretToken != null) {
+                    exchange.getIn().setHeader(TelegramWebhookProcessor.SECRET_TOKEN_HEADER, secretToken);
+                }
+            });
         }
     }
 
@@ -67,6 +121,18 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
 
                 from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false")
                         .id("webhook")
+                        .convertBodyTo(String.class)
+                        .to("mock:endpoint");
+
+                from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false&webhookSecretToken="
+                     + CONFIGURED_SECRET_TOKEN)
+                        .id("webhook-configured-token")
+                        .convertBodyTo(String.class)
+                        .to("mock:endpoint");
+
+                from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false"
+                     + "&webhookSecretTokenEnabled=false")
+                        .id("webhook-secret-token-disabled")
                         .convertBodyTo(String.class)
                         .to("mock:endpoint");
             }

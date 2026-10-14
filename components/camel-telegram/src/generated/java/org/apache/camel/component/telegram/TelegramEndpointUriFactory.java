@@ -23,7 +23,7 @@ public class TelegramEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(33);
         props.add("authorizationToken");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -55,9 +55,12 @@ public class TelegramEndpointUriFactory extends org.apache.camel.support.compone
         props.add("timeout");
         props.add("type");
         props.add("useFixedDelay");
+        props.add("webhookSecretToken");
+        props.add("webhookSecretTokenEnabled");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(1);
+        Set<String> secretProps = new HashSet<>(2);
         secretProps.add("authorizationToken");
+        secretProps.add("webhookSecretToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Map<String, String> prefixes = new HashMap<>(1);
         prefixes.put("schedulerProperties", "scheduler.");
