@@ -60,7 +60,9 @@ Refusal raises `OpenAIDecisionRefusalException`, invalid provider output raises
 `OpenAIDecisionResponseException`, and transport/API/client-start failures raise
 `OpenAIDecisionServiceException`. No failure is converted into a decision value.
 
-See the
+For named Semantic evaluations, typed Boolean/Choice/Score mapping, and body image input,
+add xref:others:semantic-openai.adoc[camel-semantic-openai]. The OpenAI component itself has no
+dependency on `camel-semantic`. See the
 https://developers.openai.com/api/docs/guides/decisions[Decisions guide] for the provider contract.
 
 == URI Format

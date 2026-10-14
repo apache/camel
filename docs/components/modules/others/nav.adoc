@@ -87,6 +87,7 @@
 ** xref:salesforce-reports.adoc[Salesforce - Reports API]
 ** xref:salesforce-rest-api.adoc[Salesforce - REST API]
 ** xref:salesforce-streaming.adoc[Salesforce - Streaming and Pub/Sub]
+** xref:semantic-openai.adoc[Semantic OpenAI]
 ** xref:shiro.adoc[Shiro]
 ** xref:spring-cloud-config.adoc[Spring Cloud Config]
 ** xref:spring-main.adoc[Spring Main]

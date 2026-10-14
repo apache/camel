@@ -313,4 +313,4 @@ The Semantic adapter accepts text and TypeSafe AI's supported structured applica
 It rejects explicit `$semanticInput` image/media envelopes, including nested media envelopes,
 and binary state before initializing transport. Selecting a body with an image `Content-Type`
 or a self-describing image data URL does not make this text/structured expert multimodal.
-Use an image-capable expert for images.
+Use an image-capable expert such as xref:others:semantic-openai.adoc[Semantic OpenAI] for images.
