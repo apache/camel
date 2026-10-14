@@ -19,8 +19,15 @@ package org.apache.camel.component.telegram;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -46,6 +53,7 @@ import org.slf4j.LoggerFactory;
              category = { Category.CLOUD, Category.API, Category.CHAT }, headersClass = TelegramConstants.class)
 public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCapableEndpoint, EndpointServiceLocation {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramEndpoint.class);
+    private static final Pattern WEBHOOK_SECRET_TOKEN_PATTERN = Pattern.compile("[A-Za-z0-9_-]{1,256}");
 
     @UriParam
     private TelegramConfiguration configuration;
@@ -122,13 +130,53 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @Override
     public Processor createWebhookHandler(Processor next) {
-        return new TelegramWebhookProcessor(next);
+        if (!configuration.isWebhookSecretTokenEnabled()) {
+            LOG.warn("The webhook secret token is disabled (webhookSecretTokenEnabled=false): webhook requests to {} are not"
+                     + " verified",
+                    this);
+            return new TelegramWebhookProcessor(next, null);
+        }
+        return new TelegramWebhookProcessor(next, resolveWebhookSecretToken());
     }
 
     @Override
     public void registerWebhook() throws Exception {
-        if (!telegramService.setWebhook(webhookConfiguration.computeFullExternalUrl())) {
+        String url = webhookConfiguration.computeFullExternalUrl();
+        boolean registered = configuration.isWebhookSecretTokenEnabled()
+                ? telegramService.setWebhook(url, resolveWebhookSecretToken())
+                : telegramService.setWebhook(url);
+        if (!registered) {
             throw new RuntimeCamelException("The Telegram API refused to register a webhook");
+        }
+    }
+
+    /**
+     * Returns the secret token of the webhook: the configured one, or else one derived from the authorization token,
+     * which stays the same across restarts and replicas.
+     */
+    String resolveWebhookSecretToken() {
+        String token = configuration.getWebhookSecretToken();
+        if (token == null) {
+            return deriveWebhookSecretToken(configuration.getAuthorizationToken());
+        }
+        if (!WEBHOOK_SECRET_TOKEN_PATTERN.matcher(token).matches()) {
+            throw new IllegalArgumentException(
+                    "The webhookSecretToken must be 1 to 256 characters long, using only A-Z, a-z, 0-9, _ and -");
+        }
+        return token;
+    }
+
+    static String deriveWebhookSecretToken(String authorizationToken) {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            // the authorization token (the secret) is the key, and a fixed label is the message: the derived token
+            // cannot be computed without the authorization token, and changes only when the authorization token does
+            mac.init(new SecretKeySpec(authorizationToken.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] digest = mac.doFinal("camel-telegram-webhook-secret-token".getBytes(StandardCharsets.UTF_8));
+            // base64url without padding only uses the characters that Telegram allows in a secret token
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(digest);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeCamelException("Cannot derive the webhook secret token", e);
         }
     }
 
