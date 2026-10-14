@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.jboss.logging.Logger;
 
 /**
  * The neutral Camel authoring tools shared with {@code camel tui --mcp} (CAMEL-24695): thin MCP wrappers over the
@@ -49,6 +50,8 @@ import org.apache.camel.util.json.JsonObject;
 @McpSecured
 @ApplicationScoped
 public class AuthoringTools {
+
+    private static final Logger LOG = Logger.getLogger(AuthoringTools.class);
 
     private static final String NAME_DESC = "Integration name or pid (default: the only one running)";
     private static final String VERSION_DESC = "Camel version to answer for (default: the CLI's own)";
@@ -412,6 +415,7 @@ public class AuthoringTools {
                     ctx.setCatalog(catalog);
                 } catch (Exception e) {
                     // catalog load failed: fall through to ToolContext's own lazy-load, which handles the error
+                    LOG.debugf("CatalogService.loadCatalog() failed (%s), falling back to ToolContext lazy-load", e.getMessage());
                 }
             }
             return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args));
