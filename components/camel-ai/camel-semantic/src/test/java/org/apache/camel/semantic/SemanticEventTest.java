@@ -264,6 +264,34 @@ class SemanticEventTest {
         }
     }
 
+    @Test
+    void batchMembersFeedTypedMetricsOnceWithoutAuditRetention() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.disableJMX();
+            context.getRegistry().bind("expert", new ChoiceExpert());
+            var metrics = new SemanticResultMetrics(
+                    "choices", "Final selected categories", Map.of("taskVersion", "v1"),
+                    ResultType.CHOICE, event -> "expert".equals(event.getData().get("expert")), 8);
+            context.getRegistry().bind("metrics", metrics);
+            var events = new Collector();
+            context.getManagementStrategy().addEventNotifier(events);
+            SemanticEvaluations.get(context).replace("definitions", Map.of("first", evaluation(Map.of("choice-0", "Billing")),
+                    "second", evaluation(Map.of("choice-0", "Billing"))));
+            context.start();
+            var exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("batch input");
+            context.resolveLanguage("semantic").createExpression("refs:first,second").evaluate(exchange, Map.class);
+            assertThat(events.values.stream().filter(event -> event.getKind() == SemanticEvent.Kind.EVALUATION_COMPLETED))
+                    .hasSize(2);
+            Map<?, ?> values = (Map<?, ?>) metrics.snapshots().get(0).toMap().get("values");
+            assertThat(values.get("completed")).isEqualTo(2L);
+            assertThat(values.get("answers")).isEqualTo(2L);
+            assertThat(values.get("providerAttempts")).isEqualTo("not_provided");
+            assertThat(SemanticAuditService.get(context).getReader().query(new SemanticAuditQuery(Map.of(), null, null, 10))
+                    .getRecords()).isEmpty();
+        }
+    }
+
     static class Collector extends EventNotifierSupport {
         final List<SemanticEvent> values = new ArrayList<>();
 

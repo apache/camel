@@ -56,7 +56,8 @@ class SemanticAuditConsoleTest {
     void consoleFiltersSinceInclusivelyAndPagesThroughRetainedRecords() throws Exception {
         try (var fixture = new Fixture()) {
             var filters = Map.of("category", "evaluation", "expert", "security", "routeId", "route1",
-                    "executingRouteId", "nested-route", "exchangeId", "exchange1", "breadcrumbId", "breadcrumb1");
+                    "executingRouteId", "nested-route", "exchangeId", "exchange1", "breadcrumbId", "breadcrumb1", "definition",
+                    "screenPrompt", "operation", "injection");
             fixture.store.append(record("old", Map.of("timestamp", "2026-10-09T11:00:00Z")));
             fixture.store.append(record("matching", filters));
             fixture.store.append(record("newest", Map.of("timestamp", "2026-10-09T13:00:00Z")));
@@ -73,6 +74,54 @@ class SemanticAuditConsoleTest {
             assertThat(rows(page)).extracting(r -> r.get("eventId")).containsExactly("newest");
             assertThat(rows(fixture.call(Map.of("cursor", page.get("nextCursor"), "limit", 1))))
                     .extracting(r -> r.get("eventId")).containsExactly("matching");
+        }
+    }
+
+    @Test
+    void filtersTypedResultsWithinAnExclusiveUpperBound() throws Exception {
+        try (var fixture = new Fixture()) {
+            var fields = Map.of("definition", "routeRequest", "operation", "choice",
+                    "semantics", Map.of("resultType", "CHOICE"), "result", Map.of("value", "none_of_these"));
+            fixture.store.append(record("matching", fields));
+            fixture.store.append(record("different", Map.of("semantics", Map.of("resultType", "CHOICE"),
+                    "result", Map.of("value", "billing"))));
+            var after = new HashMap<String, Object>(fields);
+            after.put("timestamp", "2026-10-09T13:00:00Z");
+            fixture.store.append(record("upper-bound", after));
+            assertThat(rows(fixture.call(Map.of("definition", "routeRequest", "operation", "choice",
+                    "resultType", "CHOICE", "resultValue", "none_of_these", "since", TIME,
+                    "until", "2026-10-09T13:00:00Z")))).extracting(row -> row.get("eventId")).containsExactly("matching");
+            assertThat(fixture.call(Map.of("since", TIME, "until", TIME))).containsEntry("error", "audit_query_failed");
+            assertThat(fixture.call(Map.of("resultValue", "none_of_these"))).containsEntry("error", "audit_query_failed");
+        }
+    }
+
+    @Test
+    void olderReaderRejectsUnsupportedFiltersWithoutRunningItsQuery() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("legacy", new SemanticAuditReader() {
+                public SemanticAuditPage query(SemanticAuditQuery query) {
+                    throw new AssertionError("unsupported queries must not reach the reader");
+                }
+
+                public Optional<SemanticAuditRecord> get(String id) {
+                    return Optional.empty();
+                }
+            });
+            SemanticAuditService.get(context).configure("test",
+                    new SemanticAuditConfiguration(false, Map.of(), List.of("memory"), "legacy", 10, 10));
+            context.start();
+            var console = new SemanticAuditConsole();
+            console.setCamelContext(context);
+            try {
+                for (var options : List.of(Map.of("definition", "routeRequest"), Map.of("operation", "choice"),
+                        Map.of("until", TIME), Map.of("resultType", "CHOICE", "resultValue", "none_of_these"))) {
+                    var result = (JsonObject) console.call(DevConsole.MediaType.JSON, new HashMap<>(options));
+                    assertThat(result).containsEntry("error", "audit_filter_unsupported").doesNotContainKey("records");
+                }
+            } finally {
+                console.stop();
+            }
         }
     }
 
@@ -157,7 +206,7 @@ class SemanticAuditConsoleTest {
     @Test
     void consoleSanitizesInvalidQueriesAndBackendFailures() throws Exception {
         try (var fixture = new Fixture()) {
-            for (String field : List.of("since", "cursor")) {
+            for (String field : List.of("since", "until", "cursor")) {
                 var result = fixture.call(Map.of(field, "private-invalid-value"));
                 assertThat(result).containsEntry("error", "audit_query_failed").containsEntry("viewVersion", 2);
                 assertThat(result.toJson()).doesNotContain("private-invalid-value");

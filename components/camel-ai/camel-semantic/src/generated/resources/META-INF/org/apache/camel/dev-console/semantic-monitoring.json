@@ -1,0 +1,90 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "semantic-monitoring",
+    "title": "Semantic Monitoring",
+    "description": "Read current semantic measurements",
+    "deprecated": false,
+    "readOnly": true,
+    "javaType": "org.apache.camel.semantic.SemanticMonitoringConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-semantic",
+    "version": "4.23.0-SNAPSHOT"
+  },
+  "options": {
+    "source": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Source",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "string",
+      "javaType": "java.lang.String",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "description": "Producer name to inspect"
+    }
+  },
+  "response": {
+    "type": "object",
+    "properties": {
+      "snapshots": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "description": "Current producer-supplied measurements"
+      },
+      "scope": {
+        "type": "string",
+        "description": "Scope of the returned measurements"
+      },
+      "sources": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Source sampling health"
+      },
+      "omittedSources": {
+        "type": "integer",
+        "description": "Sources beyond the registration limit"
+      },
+      "freshness": {
+        "type": "string",
+        "description": "How to interpret freshness"
+      },
+      "sourceErrors": {
+        "type": "integer",
+        "description": "Source sampling failures"
+      },
+      "evicted": {
+        "type": "integer",
+        "description": "Series evicted from the current-value cache"
+      },
+      "managementErrors": {
+        "type": "integer",
+        "description": "Management registration failures"
+      },
+      "capacity": {
+        "type": "integer",
+        "description": "Maximum cached series count"
+      },
+      "sampleIntervalSeconds": {
+        "type": "integer",
+        "description": "Sampling cadence in seconds"
+      },
+      "lastSample": {
+        "type": "string",
+        "description": "Last sampling time when available"
+      },
+      "error": {
+        "type": "string",
+        "description": "Query validation error when present"
+      }
+    }
+  }
+}
+

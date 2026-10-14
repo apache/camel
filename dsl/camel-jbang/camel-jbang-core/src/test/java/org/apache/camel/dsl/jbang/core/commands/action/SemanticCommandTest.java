@@ -495,6 +495,38 @@ class SemanticCommandTest {
     }
 
     @Test
+    void monitoringPreservesProducerOwnedValuesAndOnlySendsReadOptions() throws Exception {
+        assertEquals(0, respond(new SemanticMonitoring(main()), request -> {
+            assertEquals("semantic-monitoring", request.get("action"));
+            assertFalse(request.containsKey("history"));
+            assertEquals("domainMetrics", request.get("source"));
+            return jsonUnchecked("""
+                    {"scope":"latest runtime measurements","snapshots":[{"name":"Case volume","source":"domain",
+                    "meaning":"Supplied population","unit":"requests","kind":"counter","values":{"count":9}}]}
+                    """);
+        }, "--source=domainMetrics"));
+        for (String value : List.of("Case volume", "Supplied population", "requests", "9")) {
+            assertTrue(printer.getOutput().contains(value), printer.getOutput());
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void monitoringRejectsRemovedTimeFilterAsAUsageErrorWithoutSendingARequest(boolean jsonOutput) throws Exception {
+        assertEquals(2, command(new SemanticMonitoring(main())).execute(Long.toString(pid), "--since=yesterday",
+                "--json=" + jsonOutput));
+        assertTrue(errors.toString().contains("--since"), errors.toString());
+        assertFalse(errors.toString().contains("DateTimeParseException"), errors.toString());
+        assertFalse(errors.toString().contains("\tat "), errors.toString());
+        assertTrue(actionFiles().isEmpty());
+        if (jsonOutput) {
+            assertError(2, "--since");
+        } else {
+            assertEquals("", printer.getOutput());
+        }
+    }
+
+    @Test
     void caseAndBulkExportAreBoundedWithoutChangingInputPolicy() throws Exception {
         assertEquals(0, respond(new SemanticAudit(main()), request -> {
             assertEquals("anchor", request.get("caseEventId"));
@@ -560,6 +592,35 @@ class SemanticCommandTest {
         assertEquals("", errors.toString());
     }
 
+    @Test
+    void auditForwardsBoundedTypedResultQueries() throws Exception {
+        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+            assertEquals("2026-10-10T08:00:00Z", request.get("since"));
+            assertEquals("2026-10-10T09:00:00Z", request.get("until"));
+            assertEquals("routeRequest", request.get("definition"));
+            assertEquals("choice", request.get("operation"));
+            assertEquals("CHOICE", request.get("resultType"));
+            assertEquals("none of these", request.get("resultValue"));
+            return new JsonObject(Map.of("records", List.of()));
+        }, "--since=2026-10-10T10:00:00+02:00", "--until=2026-10-10T11:00:00+02:00",
+                "--definition=routeRequest", "--operation=choice", "--result-type=CHOICE", "--result-value=none of these"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "--since=2026-10-10T10:00:00Z --until=2026-10-10T09:00:00Z",
+            "--result-type=BOOLEAN --result-value=FALSE", "--result-type=CLASSIFICATION --result-value=billing",
+            "--result-type=CHOICE --result-label=billing", "--result-type=SCORE --score-min=NaN",
+            "--result-type=SCORE --score-min=2 --score-max=1" })
+    void auditRejectsInvalidTypedPredicatesBeforeSending(String options) throws Exception {
+        var args = new ArrayList<String>();
+        args.add(Long.toString(pid));
+        args.addAll(List.of(options.split(" ")));
+        args.add("--json");
+        assertEquals(2, command(new SemanticAudit(main())).execute(args.toArray(String[]::new)));
+        assertTrue(actionFiles().isEmpty());
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     void auditEventPreservesLegacyRecordExportWithoutEvidenceWorkflow(boolean jsonOutput) throws Exception {
@@ -622,7 +683,9 @@ class SemanticCommandTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "--limit=0", "--limit=201", "--limit=not-a-number", "--since=yesterday", "--expert=",
+            "--limit=0", "--limit=201", "--limit=not-a-number", "--since=yesterday", "--until=yesterday", "--expert=",
+            "--definition=", "--operation=", "--result-type=unknown", "--result-value=false", "--result-label=billing",
+            "--score-min=1",
             "--category=", "--action=", "--namespace=", "--correlation-id=", "--breadcrumb-id=", "--route-id=", "--cursor=",
             "--event-id=" })
     void auditRejectsInvalidArgumentsBeforeSendingARequest(String option) throws Exception {
@@ -643,7 +706,8 @@ class SemanticCommandTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "--expert=guard", "--executing-route-id=nested", "--since=2026-10-10T08:00:00Z", "--cursor=older",
-            "--limit=50", "--breadcrumb-id=breadcrumb-123" })
+            "--limit=50", "--breadcrumb-id=breadcrumb-123", "--until=2026-10-10T09:00:00Z", "--definition=routeRequest",
+            "--operation=choice", "--result-type=CHOICE" })
     void auditEventLookupRejectsIgnoredQueryOptions(String option) throws Exception {
         assertEquals(2, command(new SemanticAudit(main())).execute(Long.toString(pid), "--event-id=decision-1",
                 option, "--json"));

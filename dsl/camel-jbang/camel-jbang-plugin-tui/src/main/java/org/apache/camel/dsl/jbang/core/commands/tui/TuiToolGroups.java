@@ -70,7 +70,16 @@ final class TuiToolGroups {
         List<String> tools = new ArrayList<>();
         List<String> guidance = new ArrayList<>();
         for (ToolGroup group : groups) {
-            tools.addAll(tools(group));
+            if (group == ToolGroup.SEMANTIC) {
+                if (f.semanticAudit()) {
+                    tools.add("tui_get_audit");
+                }
+                if (f.semanticMonitoring()) {
+                    tools.add("tui_get_monitoring");
+                }
+            } else {
+                tools.addAll(tools(group));
+            }
             guidance.add(guidance(group, f));
         }
         return new Selection(groups, tools, guidance);
@@ -80,7 +89,7 @@ final class TuiToolGroups {
         return switch (group) {
             case SQL -> List.of(SQL_TOOL, UPDATE_ROW_TOOL);
             case HTTP -> List.of(HTTP_ENDPOINTS_TOOL, HTTP_REQUEST_TOOL);
-            case SEMANTIC -> List.of("tui_get_audit");
+            case SEMANTIC -> List.of("tui_get_audit", "tui_get_monitoring");
             default -> List.of();
         };
     }
@@ -88,7 +97,7 @@ final class TuiToolGroups {
     static String guidance(ToolGroup group, AppFeatures f) {
         return switch (group) {
             case SEMANTIC ->
-                "Semantic: tui_get_audit reads retained evaluations and source-local cases without inference.";
+                "Semantic: read audit/current metrics; no inference.";
             case SQL -> "SQL: " + ToolGroups.describeSql(f)
                         + ". Table names come from the SQL trace (tui_get_table tab 'SQL Trace'); don't guess a schema.";
             case TRACING -> {

@@ -23,6 +23,7 @@ camel semantic audit [options]
 | `--case-event-id` | Retrieve a source-local case anchored at this event |  | String
 | `--category` | Filter by record category: evaluation or request |  | String
 | `--cursor` | Opaque cursor for an older page; retain the original filters |  | String
+| `--definition` | Filter by recorded definition name |  | String
 | `--event-id` | Retrieve one recorded event instead of a page |  | String
 | `--event-ids` | Export these event IDs; at most 1000 |  | List
 | `--exchange-id` | Filter by recorded exchange ID, when supported |  | String
@@ -32,9 +33,16 @@ camel semantic audit [options]
 | `--json` | Output a single JSON document |  | boolean
 | `--limit` | Maximum records per page (1-200) | 50 | int
 | `--max-records` | Case/export retrieval budget (1-1000) | 200 | int
+| `--operation` | Filter by recorded expert operation |  | String
+| `--result-label` | Exact Classification member; requires --result-type=CLASSIFICATION |  | String
+| `--result-type` | Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION |  | String
+| `--result-value` | Exact Boolean, Choice or numeric Score value; requires --result-type |  | String
 | `--route-id` | Filter by entry route ID |  | String
+| `--score-max` | Inclusive numeric upper bound; requires --result-type=SCORE |  | String
+| `--score-min` | Inclusive numeric lower bound; requires --result-type=SCORE |  | String
 | `--since` | Earliest timestamp, inclusive, in ISO-8601 format with a UTC offset |  | String
 | `--timeout` | Timeout in milliseconds waiting for the integration | 60000 | long
+| `--until` | Latest timestamp, exclusive, in ISO-8601 format with a UTC offset |  | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

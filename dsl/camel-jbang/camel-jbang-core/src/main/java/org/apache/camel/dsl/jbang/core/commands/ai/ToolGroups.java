@@ -148,7 +148,7 @@ public final class ToolGroups {
         if (features.httpServed()) {
             groups.add(ToolGroup.HTTP);
         }
-        if (features.semanticAudit()) {
+        if (features.semanticAudit() || features.semanticMonitoring()) {
             groups.add(ToolGroup.SEMANTIC);
         }
         return groups;

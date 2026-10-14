@@ -28,6 +28,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.SemanticAuditFilters;
 import org.apache.camel.dsl.jbang.core.common.SemanticResultFormatter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -60,6 +61,32 @@ public class SemanticAudit extends SemanticActionCommand {
 
     @CommandLine.Option(names = "--since", description = "Earliest timestamp, inclusive, in ISO-8601 format with a UTC offset")
     String since;
+
+    @CommandLine.Option(names = "--until", description = "Latest timestamp, exclusive, in ISO-8601 format with a UTC offset")
+    String until;
+
+    @CommandLine.Option(names = "--definition", description = "Filter by recorded definition name")
+    String definition;
+
+    @CommandLine.Option(names = "--operation", description = "Filter by recorded expert operation")
+    String operation;
+
+    @CommandLine.Option(names = "--result-type", description = "Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION")
+    String resultType;
+
+    @CommandLine.Option(names = "--result-value",
+                        description = "Exact Boolean, Choice or numeric Score value; requires --result-type")
+    String resultValue;
+
+    @CommandLine.Option(names = "--result-label",
+                        description = "Exact Classification member; requires --result-type=CLASSIFICATION")
+    String resultLabel;
+
+    @CommandLine.Option(names = "--score-min", description = "Inclusive numeric lower bound; requires --result-type=SCORE")
+    String scoreMin;
+
+    @CommandLine.Option(names = "--score-max", description = "Inclusive numeric upper bound; requires --result-type=SCORE")
+    String scoreMax;
 
     @CommandLine.Option(names = "--cursor", description = "Opaque cursor for an older page; retain the original filters")
     String cursor;
@@ -106,13 +133,16 @@ public class SemanticAudit extends SemanticActionCommand {
         }
         option(request, "breadcrumbId", breadcrumbId, "--breadcrumb-id", 256);
         option(request, "cursor", cursor, "--cursor", 512);
-        if (since != null) {
-            try {
-                request.put("since", Instant.parse(since).toString());
-            } catch (DateTimeParseException e) {
-                throw new IllegalArgumentException("--since must be an ISO-8601 timestamp with a UTC offset", e);
-            }
-        }
+        option(request, "definition", definition, "--definition", 256);
+        option(request, "operation", operation, "--operation", 256);
+        option(request, "resultType", resultType, "--result-type", 256);
+        option(request, "resultValue", resultValue, "--result-value", 256);
+        option(request, "resultLabel", resultLabel, "--result-label", 256);
+        option(request, "scoreMin", scoreMin, "--score-min", 256);
+        option(request, "scoreMax", scoreMax, "--score-max", 256);
+        timestamp(request, "since", since);
+        timestamp(request, "until", until);
+        SemanticAuditFilters.validateQuery(request);
         if (caseEventId != null || eventIds != null) {
             if (eventId != null || caseEventId != null && eventIds != null || cursor != null
                     || commandSpec.commandLine().getParseResult().hasMatchedOption("--limit")
@@ -143,6 +173,16 @@ public class SemanticAudit extends SemanticActionCommand {
             request.put("limit", limit);
         }
         return request;
+    }
+
+    private static void timestamp(JsonObject request, String name, String value) {
+        if (value != null) {
+            try {
+                request.put(name, Instant.parse(value).toString());
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("--" + name + " must be an ISO-8601 timestamp with a UTC offset", e);
+            }
+        }
     }
 
     private static void option(JsonObject request, String key, String value, String name, int maximum) {

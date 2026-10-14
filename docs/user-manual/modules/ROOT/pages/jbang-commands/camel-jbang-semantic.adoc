@@ -21,6 +21,7 @@ camel semantic [options]
 | xref:jbang-commands/camel-jbang-semantic-audit.adoc[audit] | Retrieve retained expert evaluations and related lifecycle records
 | xref:jbang-commands/camel-jbang-semantic-eval.adoc[eval] | Evaluate a semantic definition or expert operation
 | xref:jbang-commands/camel-jbang-semantic-get.adoc[get] | List semantic definitions and expert contracts
+| xref:jbang-commands/camel-jbang-semantic-monitoring.adoc[monitoring] | Read current semantic measurements
 |===
 
 

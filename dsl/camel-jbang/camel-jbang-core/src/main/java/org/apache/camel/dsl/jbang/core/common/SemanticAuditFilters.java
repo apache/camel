@@ -17,6 +17,8 @@
 
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +27,10 @@ import java.util.Set;
 
 /** Exact field=value filters, including quoted values and escaped whitespace/quotes. */
 public final class SemanticAuditFilters {
+    public static final Set<String> QUERY_FIELDS
+            = Set.of("category", "expert", "routeId", "executingRouteId", "exchangeId", "breadcrumbId", "since", "until",
+                    "definition", "operation", "resultType", "resultValue", "resultLabel", "scoreMin", "scoreMax");
+
     private SemanticAuditFilters() {
     }
 
@@ -80,5 +86,54 @@ public final class SemanticAuditFilters {
 
     public static String quote(String value) {
         return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+    }
+
+    /** Validate query syntax before sending to the runtime, which also enforces reader capabilities and semantics. */
+    public static void validateQuery(Map<String, ?> filters) {
+        Instant since = instant(filters.get("since"));
+        Instant until = instant(filters.get("until"));
+        if (since != null && until != null && !since.isBefore(until)) {
+            throw new IllegalArgumentException("since must be before until");
+        }
+        String type = (String) filters.get("resultType");
+        String value = (String) filters.get("resultValue");
+        if (type != null && !Set.of("BOOLEAN", "CHOICE", "SCORE", "CLASSIFICATION").contains(type)
+                || type == null && Set.of("resultValue", "resultLabel", "scoreMin", "scoreMax").stream()
+                        .anyMatch(filters::containsKey)
+                || filters.containsKey("resultLabel") && !"CLASSIFICATION".equals(type)
+                || value != null && "CLASSIFICATION".equals(type)
+                || (filters.containsKey("scoreMin") || filters.containsKey("scoreMax")) && !"SCORE".equals(type)) {
+            throw new IllegalArgumentException("Result filters require a compatible explicit resultType");
+        }
+        if (value != null && "BOOLEAN".equals(type) && !Set.of("true", "false").contains(value)) {
+            throw new IllegalArgumentException("BOOLEAN resultValue must be true or false");
+        }
+        if ("SCORE".equals(type)) {
+            decimal(value);
+            BigDecimal min = decimal((String) filters.get("scoreMin"));
+            BigDecimal max = decimal((String) filters.get("scoreMax"));
+            if (min != null && max != null && min.compareTo(max) > 0) {
+                throw new IllegalArgumentException("scoreMin must not exceed scoreMax");
+            }
+        }
+    }
+
+    private static Instant instant(Object value) {
+        return value == null ? null : Instant.parse(value.toString());
+    }
+
+    private static BigDecimal decimal(String value) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            BigDecimal number = new BigDecimal(value);
+            if (Double.isFinite(number.doubleValue())) {
+                return number;
+            }
+        } catch (NumberFormatException invalid) {
+            // Do not expose parser diagnostics or user-supplied values in the usage error.
+        }
+        throw new IllegalArgumentException("Score filters must be finite numbers");
     }
 }

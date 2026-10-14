@@ -42,6 +42,29 @@ public class SemanticAuditConsole extends AbstractDevConsole {
     public static final String LIMIT = "limit";
     @Metadata(label = "query", description = "UTC earliest timestamp in ISO-8601 format", javaType = "java.lang.String")
     public static final String SINCE = "since";
+    @Metadata(label = "query", description = "Exclusive upper event timestamp in ISO-8601 format",
+              javaType = "java.lang.String")
+    public static final String UNTIL = "until";
+    @Metadata(label = "query", description = "Filter by recorded definition name", javaType = "java.lang.String")
+    public static final String DEFINITION = "definition";
+    @Metadata(label = "query", description = "Filter by recorded expert operation", javaType = "java.lang.String")
+    public static final String OPERATION = "operation";
+    @Metadata(label = "query", description = "Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION",
+              javaType = "java.lang.String")
+    public static final String RESULT_TYPE = "resultType";
+    @Metadata(label = "query", description = "Exact Boolean, Choice or numeric Score value; requires resultType",
+              javaType = "java.lang.String")
+    public static final String RESULT_VALUE = "resultValue";
+    @Metadata(label = "query",
+              description = "Exact member of the captured Classification result; requires resultType=CLASSIFICATION",
+              javaType = "java.lang.String")
+    public static final String RESULT_LABEL = "resultLabel";
+    @Metadata(label = "query", description = "Inclusive numeric lower bound; requires resultType=SCORE",
+              javaType = "java.lang.String")
+    public static final String SCORE_MIN = "scoreMin";
+    @Metadata(label = "query", description = "Inclusive numeric upper bound; requires resultType=SCORE",
+              javaType = "java.lang.String")
+    public static final String SCORE_MAX = "scoreMax";
     @Metadata(label = "query", description = "Filter by category", javaType = "java.lang.String")
     public static final String CATEGORY = "category";
     @Metadata(label = "query", description = "Filter by expert bean reference", javaType = "java.lang.String")
@@ -114,7 +137,7 @@ public class SemanticAuditConsole extends AbstractDevConsole {
                     }
                     response.putAll(access.getAll(ids.stream().map(String.class::cast).toList()));
                 } else {
-                    response.putAll(access.caseFor(caseId, since(options)));
+                    response.putAll(access.caseFor(caseId, timestamp(options, SINCE)));
                 }
             } else if (eventId != null) {
                 if (eventId.isBlank() || eventId.length() > 256) {
@@ -137,19 +160,23 @@ public class SemanticAuditConsole extends AbstractDevConsole {
                     throw new IllegalArgumentException("Route action browsing was removed");
                 }
                 Map<String, String> filters = new LinkedHashMap<>();
-                for (String key : List.of(CATEGORY, EXPERT, ROUTE, EXECUTING_ROUTE, EXCHANGE, BREADCRUMB)) {
+                for (String key : List.of(CATEGORY, EXPERT, ROUTE, EXECUTING_ROUTE, EXCHANGE, BREADCRUMB, DEFINITION, OPERATION,
+                        RESULT_TYPE, RESULT_VALUE, RESULT_LABEL, SCORE_MIN, SCORE_MAX)) {
                     String value = optionString(options, key);
-                    if (value != null && !value.isBlank()) {
+                    if (value != null) {
                         filters.put(key, value);
                     }
                 }
-                if (!reader.getSupportedFilters().containsAll(filters.keySet())) {
+                int limit = Integer.parseInt(options.getOrDefault(LIMIT, 50).toString());
+                var query = new SemanticAuditQuery(
+                        filters, timestamp(options, SINCE), timestamp(options, UNTIL),
+                        optionString(options, CURSOR), limit);
+                if (!reader.getSupportedFilters().containsAll(filters.keySet())
+                        || query.getUntil() != null && !reader.getSupportedFilters().contains(UNTIL)) {
                     response.put("error", "audit_filter_unsupported");
                     return response;
                 }
-                int limit = Integer.parseInt(options.getOrDefault(LIMIT, 50).toString());
-                SemanticAuditPage page
-                        = reader.query(new SemanticAuditQuery(filters, since(options), optionString(options, CURSOR), limit));
+                SemanticAuditPage page = reader.query(query);
                 response.put("records", page.getRecords().stream().filter(record -> !"decision".equals(record.getCategory()))
                         .map(SemanticAuditAccess::summary).toList());
                 response.put("nextCursor", page.getNextCursor());
@@ -172,8 +199,8 @@ public class SemanticAuditConsole extends AbstractDevConsole {
         return response;
     }
 
-    private static Instant since(Map<String, Object> options) {
-        Object since = options.get(SINCE);
-        return since == null || since.toString().isBlank() ? null : Instant.parse(since.toString());
+    private static Instant timestamp(Map<String, Object> options, String name) {
+        Object value = options.get(name);
+        return value == null ? null : Instant.parse(value.toString());
     }
 }

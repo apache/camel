@@ -24,7 +24,11 @@ import java.util.Set;
 
 /** Read-only browsing, independent of the destination's append capability. */
 public interface SemanticAuditReader extends SemanticAuditCapabilities {
-    /** Exact filters implemented by this reader. New relationships are optional for existing backends. */
+    /**
+     * Query fields implemented by this reader. New filters are opt-in for existing backends. Include {@code until} only
+     * when the exclusive upper time bound is supported; {@code since} is part of the original query contract.
+     * Advertised typed result filters must implement the predicates documented by {@link SemanticAuditQuery}.
+     */
     default Set<String> getSupportedFilters() {
         return Set.of("category", "expert", "routeId", "breadcrumbId");
     }
