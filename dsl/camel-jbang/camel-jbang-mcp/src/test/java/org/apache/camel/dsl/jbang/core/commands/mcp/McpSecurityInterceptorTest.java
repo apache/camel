@@ -16,9 +16,25 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import jakarta.interceptor.InvocationContext;
+
+import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class McpSecurityInterceptorTest {
 
@@ -63,5 +79,121 @@ class McpSecurityInterceptorTest {
         assertThat(readOnly.permits(false, true)).isFalse();
         assertThat(readOnly.permits(false, false)).isFalse();
         assertThat(readOnly.permits(true, false)).isTrue();
+    }
+
+    @Test
+    void overLongArgumentIsRejectedAndTheFileLeftIntact(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("notes.txt"), "original");
+        String content = "a".repeat(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH) + "TAIL_MUST_SURVIVE";
+
+        assertThatThrownBy(() -> writeFile(securedTools(false), dir, content))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining("'content'")
+                .hasMessageContaining(String.valueOf(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH));
+        assertThat(Files.readString(dir.resolve("notes.txt"))).isEqualTo("original");
+    }
+
+    @Test
+    void argumentWithinTheLimitIsWrittenInFull(@TempDir Path dir) throws Exception {
+        String content = "a".repeat(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH - 4) + "TAIL";
+
+        writeFile(securedTools(false), dir, content);
+
+        assertThat(Files.readAllBytes(dir.resolve("notes.txt"))).isEqualTo(content.getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void redactedContentIsNotWrittenBack(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("notes.txt"), "password=hunter2");
+
+        assertThatThrownBy(() -> writeFile(securedTools(true), dir, "password=" + McpSecretRedactor.REDACTED))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining(McpSecretRedactor.REDACTED);
+        assertThat(Files.readString(dir.resolve("notes.txt"))).isEqualTo("password=hunter2");
+    }
+
+    /** An interceptor with security on, as CDI would build it, around the shared authoring tools. */
+    private static McpSecurityInterceptor securedTools(boolean redaction) {
+        McpSecurityConfig config = new McpSecurityConfig();
+        config.enabled = true;
+        config.accessLevel = "admin";
+        config.redactionEnabled = redaction;
+        config.redactionPatterns = Optional.empty();
+        config.maxArgumentLength = McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH;
+        McpSecretRedactor redactor = new McpSecretRedactor();
+        redactor.config = config;
+        McpSecurityInterceptor interceptor = new McpSecurityInterceptor();
+        interceptor.config = config;
+        interceptor.auditLogger = new McpAuditLogger();
+        interceptor.redactor = redactor;
+        return interceptor;
+    }
+
+    private static Object writeFile(McpSecurityInterceptor interceptor, Path dir, String content) throws Exception {
+        AuthoringTools tools = new AuthoringTools();
+        tools.securityConfig = interceptor.config;
+        Method method = AuthoringTools.class.getMethod("camel_write_file", String.class, String.class, String.class,
+                String.class);
+        Object result = interceptor.intercept(new Invocation(tools, method, dir.toString(), "notes.txt", content, null));
+        assertThat(((JsonObject) result).getString("status")).isIn("created", "overwritten");
+        return result;
+    }
+
+    /** The invocation of one tool method, as the CDI container hands it to the interceptor. */
+    private static final class Invocation implements InvocationContext {
+        private final Object target;
+        private final Method method;
+        private Object[] parameters;
+        private final Map<String, Object> contextData = new HashMap<>();
+
+        Invocation(Object target, Method method, Object... parameters) {
+            this.target = target;
+            this.method = method;
+            this.parameters = parameters;
+        }
+
+        @Override
+        public Object getTarget() {
+            return target;
+        }
+
+        @Override
+        public Object getTimer() {
+            return null;
+        }
+
+        @Override
+        public Method getMethod() {
+            return method;
+        }
+
+        @Override
+        public Constructor<?> getConstructor() {
+            return null;
+        }
+
+        @Override
+        public Object[] getParameters() {
+            return parameters;
+        }
+
+        @Override
+        public void setParameters(Object[] params) {
+            this.parameters = params;
+        }
+
+        @Override
+        public Map<String, Object> getContextData() {
+            return contextData;
+        }
+
+        @Override
+        public Object proceed() throws Exception {
+            try {
+                return method.invoke(target, parameters);
+            } catch (InvocationTargetException e) {
+                throw (Exception) e.getCause();
+            }
+        }
     }
 }

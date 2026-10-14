@@ -37,13 +37,15 @@ import org.apache.camel.util.json.JsonObject;
 /**
  * The neutral Camel authoring tools shared with {@code camel tui --mcp} (CAMEL-24695): thin MCP wrappers over the
  * {@link ToolRegistry}, so an AI agent gets the same tools, names and answers through either server. The logic lives in
- * camel-jbang-core ({@code AuthoringTools} there); these methods only carry the MCP annotations the security
- * interceptor and access filter work on, and pass the arguments through.
+ * camel-jbang-core ({@code AuthoringTools} there); these methods only carry the MCP annotations the access filter works
+ * on and pass the arguments through. The class is {@link McpSecured}, so every call goes through the security
+ * interceptor (audit, argument sanitisation, secret redaction of the answer).
  * <p>
  * Writing a file is validated first and refused when the content is invalid, but nobody is asked before the write: the
  * MCP client (Claude Code, Cursor, and the others ask before a non read-only tool runs) is where the human sits. The
  * {@code read-only} access level hides the tools that write, run and control.
  */
+@McpSecured
 @ApplicationScoped
 public class AuthoringTools {
 
@@ -53,6 +55,9 @@ public class AuthoringTools {
 
     @Inject
     RepeatedCallSessions repeatedCalls;
+
+    @Inject
+    McpSecurityConfig securityConfig;
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Camel catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the "
@@ -168,6 +173,7 @@ public class AuthoringTools {
                      required = true) String file,
             @ToolArg(description = "The complete new content", required = true) String content,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        refuseRedacted(content);
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
                 "camelVersion", camelVersion));
     }
@@ -187,8 +193,36 @@ public class AuthoringTools {
             @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EDITS_DESC,
                      required = false) List<FileEdit> edits,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        refuseRedacted(find, replace);
+        if (edits != null) {
+            for (FileEdit edit : edits) {
+                if (edit != null) {
+                    refuseRedacted(edit.find(), edit.replace());
+                }
+            }
+        }
         return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
                 "edits", editsJson(edits), "camelVersion", camelVersion));
+    }
+
+    /**
+     * With secret redaction on, camel_get_files answers a secret as the redaction mask; written back, the mask would
+     * replace the real secret in the file. So a write or an edit that carries the mask is refused.
+     */
+    private void refuseRedacted(String... texts) {
+        if (securityConfig == null || !securityConfig.isEnabled() || !securityConfig.isRedactionEnabled()) {
+            return;
+        }
+        for (String text : texts) {
+            if (text != null && text.contains(McpSecretRedactor.REDACTED)) {
+                throw new ToolCallException(
+                        "The content contains " + McpSecretRedactor.REDACTED + ", the mask secret redaction "
+                                            + "(camel.mcp.security.redaction.enabled) shows in place of a secret; "
+                                            + "written back it would replace the real secret, so nothing was "
+                                            + "written. Change only the lines without the mask with "
+                                            + "camel_edit_file, and leave the secret itself to a human.");
+            }
+        }
     }
 
     /** One change of camel_edit_file's edits: the text to find as it stands in the file, and what to put there. */

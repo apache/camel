@@ -39,6 +39,7 @@ import org.apache.camel.tooling.model.SecurityAdvisoryModel;
  * tool cross-references a project's declared dependencies with the Camel security advisory database and component
  * metadata to produce actionable vulnerability findings per artifact.
  */
+@McpSecured
 @ApplicationScoped
 public class DependencySecurityAuditTools {
 
