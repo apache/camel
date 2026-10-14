@@ -25,6 +25,8 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": target.setAllowedCoordinatorUrls(property(camelContext, java.lang.String.class, value)); return true;
+        case "callbacksecret":
+        case "callbackSecret": target.setCallbackSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "camelcontext":
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "coordinatorcontextpath":
@@ -44,6 +46,8 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": return java.lang.String.class;
+        case "callbacksecret":
+        case "callbackSecret": return java.lang.String.class;
         case "camelcontext":
         case "camelContext": return org.apache.camel.CamelContext.class;
         case "coordinatorcontextpath":
@@ -64,6 +68,8 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedcoordinatorurls":
         case "allowedCoordinatorUrls": return target.getAllowedCoordinatorUrls();
+        case "callbacksecret":
+        case "callbackSecret": return target.getCallbackSecret();
         case "camelcontext":
         case "camelContext": return target.getCamelContext();
         case "coordinatorcontextpath":

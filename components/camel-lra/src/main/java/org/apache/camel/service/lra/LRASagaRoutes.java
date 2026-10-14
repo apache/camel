@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class LRASagaRoutes extends RouteBuilder {
         rest(sagaService.getLocalParticipantContextPath())
                 .put(PARTICIPANT_PATH_COMPENSATE).to("direct:lra-compensation");
         from("direct:lra-compensation").routeId("lra-compensation")
-                .process(this::verifyRequest)
+                .process(this::verifyCompensationRequest)
                 .choice()
                 .when(header(URL_COMPENSATION_KEY).isNotNull())
                 .toD("${header." + URL_COMPENSATION_KEY + "}")
@@ -53,7 +54,7 @@ public class LRASagaRoutes extends RouteBuilder {
         rest(sagaService.getLocalParticipantContextPath())
                 .put(PARTICIPANT_PATH_COMPLETE).to("direct:lra-completion");
         from("direct:lra-completion").routeId("lra-completion")
-                .process(this::verifyRequest)
+                .process(this::verifyCompletionRequest)
                 .choice()
                 .when(header(URL_COMPLETION_KEY).isNotNull())
                 .toD("${header." + URL_COMPLETION_KEY + "}")
@@ -93,12 +94,32 @@ public class LRASagaRoutes extends RouteBuilder {
         return URLDecoder.decode(encodedString, StandardCharsets.UTF_8);
     }
 
+    private void verifyCompensationRequest(Exchange exchange) {
+        verifyRequest(exchange, true);
+    }
+
+    private void verifyCompletionRequest(Exchange exchange) {
+        verifyRequest(exchange, false);
+    }
+
     /**
-     * Check if the request is pointing to an allowed URI to prevent unauthorized remote uri invocation
+     * Check if the request is pointing to an allowed URI to prevent unauthorized remote uri invocation. When a callback
+     * secret is configured, the signature of the called URL is verified first, and the step URIs are only taken from
+     * the signed parameters.
      */
-    private void verifyRequest(Exchange exchange) {
+    private void verifyRequest(Exchange exchange, boolean isCompensation) {
         if (exchange.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) == null) {
             throw new IllegalArgumentException("Missing " + Exchange.SAGA_LONG_RUNNING_ACTION + " header in received request");
+        }
+
+        LRACallbackSigner signer = sagaService.getCallbackSigner();
+        if (signer != null) {
+            // the signed parameters are the only source of the step URIs: no fallback to the query below
+            if (applySignedParameters(exchange, signer, isCompensation)) {
+                checkAllowed(exchange.getIn().getHeader(URL_COMPENSATION_KEY, String.class));
+                checkAllowed(exchange.getIn().getHeader(URL_COMPLETION_KEY, String.class));
+            }
+            return;
         }
 
         Set<String> usedURIs = new HashSet<>();
@@ -136,6 +157,65 @@ public class LRASagaRoutes extends RouteBuilder {
             if (!sagaService.getRegisteredURIs().contains(uri)) {
                 throw new IllegalArgumentException("URI " + uri + " is not allowed");
             }
+        }
+    }
+
+    private void checkAllowed(String uri) {
+        if (uri != null && !sagaService.getRegisteredURIs().contains(uri)) {
+            throw new IllegalArgumentException("URI " + uri + " is not allowed");
+        }
+    }
+
+    /**
+     * Verifies the signature of the called URL, and sets the step URIs and the saga options from its query parameters,
+     * so that only signed values reach the step endpoint. A callback with a missing or invalid signature is answered
+     * with HTTP 403 and not routed any further.
+     *
+     * @return true if the signature is valid
+     */
+    private boolean applySignedParameters(Exchange exchange, LRACallbackSigner signer, boolean isCompensation) {
+        Message message = exchange.getIn();
+        String callbackPath = isCompensation ? PARTICIPANT_PATH_COMPENSATE : PARTICIPANT_PATH_COMPLETE;
+
+        // the raw query first, as some consumers, such as camel-netty-http, decode CamelHttpQuery
+        String query = message.getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (query == null) {
+            query = message.getHeader(Exchange.HTTP_QUERY, String.class);
+        }
+        Map<String, String> parameters;
+        try {
+            parameters = parseQuery(query);
+        } catch (IllegalStateException e) {
+            // a repeated parameter, which a URL enlisted by the participant never has
+            parameters = null;
+        }
+        String signature = parameters != null ? parameters.remove(URL_SIGNATURE_KEY) : null;
+
+        message.removeHeader(URL_COMPENSATION_KEY);
+        message.removeHeader(URL_COMPLETION_KEY);
+        message.removeHeader(URL_SIGNATURE_KEY);
+        if (!signer.verify(callbackPath, parameters, signature) || parameters.get(URL_LRA_KEY) == null) {
+            LOG.warn("Rejected a call to the LRA participant endpoint {} without a valid signature", callbackPath);
+            message.setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
+            message.setBody(null);
+            exchange.setRouteStop(true);
+            return false;
+        }
+        // the step works on the LRA the URL was signed for, not on the one named by the request
+        message.setHeader(Exchange.SAGA_LONG_RUNNING_ACTION, parameters.remove(URL_LRA_KEY));
+        parameters.forEach(message::setHeader);
+        // keep the signature out of the step route
+        removeSignature(message, Exchange.HTTP_RAW_QUERY);
+        removeSignature(message, Exchange.HTTP_QUERY);
+        return true;
+    }
+
+    private static void removeSignature(Message message, String queryHeader) {
+        String query = message.getHeader(queryHeader, String.class);
+        if (query != null) {
+            message.setHeader(queryHeader, Arrays.stream(query.split("&"))
+                    .filter(parameter -> !parameter.startsWith(URL_SIGNATURE_KEY + "="))
+                    .collect(Collectors.joining("&")));
         }
     }
 
