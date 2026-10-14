@@ -35,6 +35,7 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -74,6 +75,22 @@ class CamelBatDiscoveryTest {
         assertTrue(Files.isRegularFile(javaHome.resolve("bin/java.exe")),
                 "Windows test fixture requires the current JDK java.exe: " + javaHome);
         return javaHome;
+    }
+
+    @Test
+    void skipsSourcesJars(@TempDir Path base) throws Exception {
+        Path h = home(Files.createDirectories(base.resolve("launcher with spaces")));
+        Files.writeString(h.resolve("camel-launcher-9.9.9-sources.jar"), "sources");
+        Files.writeString(h.resolve("camel-launcher-zzz-sources.jar"), "sources");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD");
+        Map<String, String> env = isolatedEnvironment();
+        env.put("JAVACMD", java.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "hawtio");
+
+        assertThat(r.exitCode()).as(r.stderr()).isZero();
+        assertThat(r.stdout()).contains(h.resolve("camel-launcher-9.9.9.jar").toString())
+                .doesNotContain("-sources.jar");
     }
 
     @Test

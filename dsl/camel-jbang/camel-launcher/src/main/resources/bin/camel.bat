@@ -49,9 +49,12 @@ set "JAVACMD=%CAMEL_JAVACMD%"
 @REM Set JVM options if specified
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=-Xmx512m
 
-@REM Find the launcher JAR
+@REM Find the launcher JAR, excluding sources
 set "LAUNCHER_JAR="
-for %%i in ("%BASEDIR%\camel-launcher-*.jar") do set "LAUNCHER_JAR=%%i"
+for %%i in ("%BASEDIR%\camel-launcher-*.jar") do (
+  echo %%~nxi| findstr /i /e /l /c:"-sources.jar" > nul
+  if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%i"
+)
 
 @REM Execute Camel CLI, preserving arguments and the child exit code
 for %%e in ("%JAVACMD%") do set "_JAVACMD_EXT=%%~xe"
