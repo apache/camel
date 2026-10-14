@@ -98,6 +98,11 @@ JSON), `sample.body` (text), or `sample.headers` / `sample.variables` (JSON obje
 Reading or editing never runs the expert; Ctrl+r explicitly evaluates the draft.
 
 
+Image-capable experts accept `image:/path/picture.png` or a JSON `$semanticInput` envelope.
+The local file is read only on Run. An audit image draft keeps its captured payload out of the
+editor and submits it only on an explicit Run; omitted image data cannot be reconstructed.
+Unchanged text loaded from audit remains literal text, including an `image:` prefix.
+
 ## Audit history
 
 Choose **Audit** to inspect retained evaluations and request outcomes. Result and Execution are separate.
@@ -126,6 +131,11 @@ reported probability diagnostics. Historical interpretation is captured once; it
   were not captured, and current defaults/model revisions/route context may differ. Review the warning and parameters before Run.
 
 The inspector retains full exchange and breadcrumb IDs; tables prioritize executing route, evaluation, expert, Result and Execution.
+The Input column and inspector identify images even with payload capture disabled. `u` shows
+inline colour previews when captured image data and a local decoder are available. Oversized,
+missing or undecodable images show a reason. Preview generation runs in the background, never
+fetches a URL, and does not print base64. Stock JDKs may lack a WebP decoder.
+
 Health distinguishes capture settings, reader scope, retention, drops, evictions and delivery/query failures.
 An active OpenTelemetry tracer does not prove an external collector received a trace.
 

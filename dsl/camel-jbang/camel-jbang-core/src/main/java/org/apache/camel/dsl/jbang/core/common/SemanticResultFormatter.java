@@ -90,8 +90,9 @@ public final class SemanticResultFormatter {
                     int lower = (int) Math.floor(position);
                     int upper = (int) Math.ceil(position);
                     lines.add(lower == upper
-                            ? level(levels, lower)
-                            : "Between " + level(levels, lower) + " and " + level(levels, upper));
+                            ? level(levels, lower, interpretation)
+                            : "Between " + level(levels, lower, interpretation) + " and "
+                              + level(levels, upper, interpretation));
                 } else {
                     lines.add("Score outside the captured scale; numeric value preserved");
                 }
@@ -161,7 +162,7 @@ public final class SemanticResultFormatter {
                     }
                     for (int i = 0; i < levels.size(); i++) {
                         if (Integer.toString(i).equals(entry.getKey())) {
-                            modes.add(level(levels, i));
+                            modes.add(level(levels, i, interpretation));
                         }
                     }
                 }
@@ -178,8 +179,10 @@ public final class SemanticResultFormatter {
         return value instanceof Map<?, ?> map ? map : Map.of();
     }
 
-    private static String level(List<?> levels, int index) {
-        return "[" + index + "] " + text(levels.get(index));
+    private static String level(List<?> levels, int index, Map<?, ?> interpretation) {
+        String label = text(levels.get(index));
+        Object description = map(interpretation.get("scoreDescriptions")).get(levels.get(index));
+        return "[" + index + "] " + label + (description == null ? "" : " — " + text(description));
     }
 
     private static String value(Object value) {

@@ -58,6 +58,58 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SemanticCommandTest {
+    @Test
+    void imageFileBodyIsSentAsExplicitMedia() throws Exception {
+        Path image = home.resolve("input.png");
+        Files.write(image, new byte[] { 1, 2, 3 });
+        assertEquals(0, respond(new SemanticEvaluate(main()), request -> {
+            assertEquals(Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID"))),
+                    request.get("body"));
+            return jsonUnchecked("{\"status\":\"success\",\"value\":true}");
+        }, "--evaluation=inspect", "--body=image:" + image));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void imageAuditDisplaysTypeWithoutPrintingPayload(boolean json) throws Exception {
+        var response = new JsonObject(
+                Map.of("record", new JsonObject(
+                        Map.of("eventId", "image-event", "inputType", "image",
+                                "input", Map.of("$semanticInput",
+                                        List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")))))));
+        assertEquals(0, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--json=" + json));
+        if (json) {
+            Map<?, ?> input = (Map<?, ?>) json(printer.getOutput()).getMap("record").get("input");
+            List<?> parts = (List<?>) input.get("$semanticInput");
+            assertEquals("image/png", ((Map<?, ?>) parts.get(0)).get("mediaType"));
+        } else {
+            assertTrue(printer.getOutput().contains("image/png"));
+        }
+        assertFalse(printer.getOutput().contains("base64"));
+        if (!json) {
+            assertTrue(printer.getOutput().contains("Input type: Image"));
+            assertTrue(printer.getOutput().contains("preview unavailable"));
+        }
+    }
+
+    @Test
+    void explicitFileExportPreservesCapturedImageAndNeverOverwrites() throws Exception {
+        Path target = home.resolve("audit.json");
+        var response = new JsonObject(
+                Map.of("record", new JsonObject(
+                        Map.of("eventId", "image-event", "inputType", "image",
+                                "input", Map.of("$semanticInput",
+                                        List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")))))));
+        assertEquals(0, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--output=" + target));
+        assertEquals(response, json(Files.readString(target)));
+        assertFalse(printer.getOutput().contains("base64"));
+        assertEquals(1, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--output=" + target));
+        assertTrue(errors.toString().contains("file already exists"));
+        assertEquals(response, json(Files.readString(target)));
+    }
 
     @TempDir
     Path home;

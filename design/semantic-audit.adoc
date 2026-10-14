@@ -88,6 +88,11 @@ capture remains opt-in, bounded and redacted. An image too large for the configu
 may be replaced by a bounded descriptor (`type=image`, optional mediaType, dataOmitted=snapshot_limit).
 The redactor still processes that detached snapshot. A descriptor cannot recreate missing data.
 
+Audit displays label input type even when payload capture is disabled. TUI image decoding occurs
+off the render thread and uses only retained bytes, with bounded thumbnails and an explicit
+unavailable state. Normal CLI human/JSON display omits base64; explicit file exports can retain
+requested captured input. No historical URL is fetched and browsing never invokes an expert.
+
 == Read-only access
 
 The reader SPI has no evidence-specific limit on getAll. Explicit console callers limit requests to

@@ -160,6 +160,33 @@ Refusal raises `OpenAIDecisionRefusalException`. Invalid or inconsistent provide
 with the route's normal `onException` policy. Unsupported input and invalid declarations fail
 validation; infrastructure failure is never mapped to false or a score.
 
+== Audit, CLI and TUI
+
+Audit records classify input as text, image, text plus images, structured or unsupported even
+when payload capture is disabled; bounded classification may report unknown. The optional `inputType` audit extension is projected only
+to backends that declare support. It contains no image payload and is not added to monitoring events.
+
+Image payload capture follows the existing per-expert opt-in, redactor and `maxChars` budget.
+An oversized image retains a bounded descriptor with `dataOmitted=snapshot_limit` when that
+fits the budget. A descriptor is not a replayable image. Captured content remains untrusted data.
+
+`camel semantic eval` accepts `--body=image:/path/picture.png` for a named definition, or
+`--input=image:/path/picture.png` for a direct expert call. Use `json:` for an ordered envelope.
+The TUI playground accepts `image:/path/picture.png` and JSON envelopes when the expert advertises
+image input. Files are read only on an explicit evaluation request.
+
+The TUI Audit inspector (`u`) renders bounded inline colour previews from retained image data.
+The CLI renders a plain-terminal preview. Decoding uses locally available ImageIO readers;
+a missing decoder (for example WebP on a stock JDK), invalid data or preview resource limit
+shows an explicit unavailable reason. Previews are limited to 64 pixels per dimension and the
+first image frame, with transparency on white; they do not alter the data submitted to the expert.
+
+Normal command output, including `--json`, replaces image base64 with metadata. Use an explicit
+`--output=audit.json` on `camel semantic audit` to write the full returned data to a new file;
+case/bulk exports still require `--include-input` to request captured input. Existing files are
+never overwritten. Audit drafts retain captured images for an explicit Run without putting
+base64 into the editor. Omitted/redacted images cannot be reconstructed by the playground.
+
 == Opt-in API smoke tests
 
 `camel-openai` includes `OpenAIDecisionsExternalServiceIT` for native text batches and mixed

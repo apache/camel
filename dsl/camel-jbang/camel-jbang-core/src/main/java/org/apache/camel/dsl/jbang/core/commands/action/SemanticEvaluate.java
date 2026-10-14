@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
@@ -43,7 +44,7 @@ public class SemanticEvaluate extends SemanticActionCommand {
     @CommandLine.Option(names = "--evaluation", description = "Named semantic definition to evaluate")
     String evaluation;
 
-    @CommandLine.Option(names = "--body", description = "Sample message body (text, file:path or json:value)")
+    @CommandLine.Option(names = "--body", description = "Sample body (text, file:path, image:path or json:value)")
     String body;
 
     @CommandLine.Option(names = "--header", description = "Sample header (key=value; use json: for a typed value)")
@@ -59,7 +60,7 @@ public class SemanticEvaluate extends SemanticActionCommand {
     @CommandLine.Option(names = "--operation", description = "Expert operation to call directly")
     String operation;
 
-    @CommandLine.Option(names = "--input", description = "Direct expert input (text, file:path or json:value)")
+    @CommandLine.Option(names = "--input", description = "Direct input (text, file:path, image:path or json:value)")
     String input;
 
     @CommandLine.Option(names = "--parameter", description = "Expert parameter (key=value; use json: for a typed value)")
@@ -146,6 +147,9 @@ public class SemanticEvaluate extends SemanticActionCommand {
     }
 
     private static Object value(String value, boolean allowFile) {
+        if (allowFile && value.startsWith("image:")) {
+            return SemanticMediaInput.readImage(value);
+        }
         if (value.startsWith("json:")) {
             try {
                 return JSON_VALUE.readValue(value.substring(5));

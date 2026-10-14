@@ -536,10 +536,21 @@ and `Enter` to open one. `Esc` returns to the previous record. Association uses 
 a shared breadcrumb does not establish causality or prove that the case is complete. Missing records
 and unsupported case retrieval remain explicit.
 
+The Input column and Input type detail distinguish text, images and mixed input, including when
+payload capture is disabled. Older records show that the input type was not recorded.
+For retained images, `u` renders an inline colour preview without printing base64. Decoding happens
+in the background and uses local image readers; unavailable/corrupt/oversized images show a reason.
+No remote URL is fetched. The preview uses the first frame and at most 64 pixels per dimension.
+
 When input capture is enabled for an expert, `u` reveals the permitted stored input or its omission
 reason. Input capture is disabled by default; configure it in the semantic audit DSL. Only the
 selected state is captured, subject to its configured size limit and optional redactor. `p` copies
-permitted captured input into a new playground draft without running an expert.
+permitted captured input into a new playground draft without running an expert. Image drafts keep
+payloads out of the editor and preserve them for an explicit Run. A capture-limit descriptor is
+not a replayable image. Image-capable playgrounds accept `image:/path/picture.png` or a JSON media
+envelope; the file is read only when Run is requested. Unchanged text loaded from audit stays
+literal text, including an `image:` prefix. Definition samples also accept
+`"body":"image:/path/picture.png"`.
 
 The latest page refreshes every second; `Space` pauses or resumes polling. Older pages stay fixed
 until explicitly refreshed. Filters use exact values; `definition` and `operation` apply to all retained history.

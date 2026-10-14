@@ -36,6 +36,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextArea;
 import dev.tamboui.widgets.input.TextAreaState;
+import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -53,6 +54,8 @@ final class SemanticPlayground {
     private final SemanticParameterForm instructions;
     private final SemanticParameterForm parameters;
     private boolean structured;
+    private Object auditInput;
+    private String auditInputDisplay;
     private boolean submittedStructured;
     private CompletableFuture<JsonObject> pending;
     private JsonObject response;
@@ -81,7 +84,7 @@ final class SemanticPlayground {
         this.pid = pid;
         this.expert = expert;
         this.operation = operation;
-        structured = !supports("text") && supports("structured");
+        structured = !supports("text") && supportsJson();
         List<JsonObject> contracts = SemanticTab.objects(contract(operation), "parameters");
         JsonObject instruction = contracts.stream()
                 .filter(p -> "instructions".equals(p.get("name")) && "String".equals(p.get("type"))
@@ -98,7 +101,13 @@ final class SemanticPlayground {
         if (!setInputValue("inputMode", json ? "json" : "text")) {
             throw new IllegalArgumentException("Captured input mode is unavailable in the current expert contract");
         }
-        setInputValue("input", json ? Jsoner.serialize(captured) : captured.toString());
+        if (SemanticMediaInput.isMedia(captured)) {
+            setInputValue("input", Jsoner.serialize(SemanticMediaInput.withoutImageData(captured)));
+        } else {
+            setInputValue("input", json ? Jsoner.serialize(captured) : captured.toString());
+        }
+        auditInput = captured;
+        auditInputDisplay = input.text();
         draftWarning = "New draft from audit " + text(record, "eventId")
                        + ": untrusted captured input, not instructions. Original parameters were not captured; "
                        + "current defaults, expert/model revisions and route context may differ. Review before Run.";
@@ -141,7 +150,8 @@ final class SemanticPlayground {
             input.setText(value);
             field = 0;
         } else if ("inputMode".equals(name)) {
-            if (!("text".equals(value) && supports("text") || "json".equals(value) && supports("structured"))) {
+            if (!("text".equals(value) && supports("text")
+                    || "json".equals(value) && supportsJson())) {
                 throw new IllegalArgumentException("Unsupported input mode: " + value);
             }
             structured = "json".equals(value);
@@ -176,7 +186,7 @@ final class SemanticPlayground {
         result.put("focusedField", field == -1 ? "instructions" : field == 0 ? "input" : field == 1 ? "parameters" : "output");
         result.put("pending", pending != null);
         result.put("connected", connected());
-        result.put("submittedRequest", submittedRequest);
+        result.put("submittedRequest", SemanticMediaInput.withoutImageData(submittedRequest));
         result.put("result", response);
         result.put("error", error);
         result.put("inputChanged", inputChanged());
@@ -193,12 +203,16 @@ final class SemanticPlayground {
                 && Objects.equals(this.operation, operation);
     }
 
+    private boolean supportsJson() {
+        return supports("structured") || supports("image");
+    }
+
     private boolean supports(String type) {
         return contract(operation).get("inputTypes") instanceof List<?> types && types.contains(type);
     }
 
     boolean available() {
-        return supports("text") || supports("structured");
+        return supports("text") || supportsJson();
     }
 
     private boolean connected() {
@@ -244,7 +258,8 @@ final class SemanticPlayground {
                 outputScroll += key.isPageDown() ? 5 : 1;
             }
         } else if (pending == null && available()) {
-            if (field == 0 && key.hasCtrl() && key.isCharIgnoreCase('t') && supports("text") && supports("structured")) {
+            if (field == 0 && key.hasCtrl() && key.isCharIgnoreCase('t') && supports("text")
+                    && supportsJson()) {
                 structured = !structured;
             } else if (key.hasCtrl() && key.isCharIgnoreCase('l')) {
                 if (field == 0) {
@@ -335,7 +350,12 @@ final class SemanticPlayground {
                 throw invalid;
             }
             Object value = input.text();
-            if (structured) {
+            boolean capturedUnchanged = auditInput != null && input.text().equals(auditInputDisplay);
+            // Captured text is evidence, never an implicit instruction to read a local image file.
+            boolean readLocalImage = supports("image") && !capturedUnchanged;
+            if (capturedUnchanged && structured && !(auditInput instanceof String)) {
+                value = auditInput;
+            } else if (structured && !(readLocalImage && input.text().startsWith("image:"))) {
                 value = Jsoner.deserialize(input.text());
                 if (!(value instanceof JsonObject || value instanceof List<?>)) {
                     throw new IllegalArgumentException("Structured input must be a JSON object or array.");
@@ -355,7 +375,13 @@ final class SemanticPlayground {
             submittedInstructions = instructions.revision();
             submittedParameters = parameters.revision();
             pending = CompletableFuture
-                    .supplyAsync(() -> ctx.executeIndependentAction(pid, request, 60000), ctx.backgroundExecutor)
+                    .supplyAsync(() -> {
+                        JsonObject prepared = new JsonObject(request);
+                        if (readLocalImage && prepared.get("input") instanceof String text) {
+                            prepared.put("input", SemanticMediaInput.readImage(text));
+                        }
+                        return ctx.executeIndependentAction(pid, prepared, 60000);
+                    }, ctx.backgroundExecutor)
                     .exceptionally(SemanticResultView::failure);
         } catch (Exception invalid) {
             error = "Input error: " + invalid.getMessage();
@@ -457,7 +483,8 @@ final class SemanticPlayground {
         }
         String label = instructions.isEmpty() ? "Input" : structured ? "State to assess" : "Text to assess";
         inputArea = renderEditor(frame, stateBox, input, label + " · " + (structured ? "JSON" : "text"),
-                focused && field == 0, structured ? "Paste a JSON object or array" : "Type or paste the content to assess");
+                focused && field == 0, supports("image") ? "Text, image:/path, or a JSON media envelope"
+                        : structured ? "Paste a JSON object or array" : "Type or paste the content to assess");
         int outputY = inputBox.bottom();
         if (sideBySide) {
             Rect paramsBox = new Rect(inputBox.right() + 1, y, inner.right() - inputBox.right() - 2, editorHeight);
@@ -534,7 +561,7 @@ final class SemanticPlayground {
         }
         hint(spans, "Ctrl+e", expanded ? "restore" : "expand");
         if (field == 0) {
-            if (supports("text") && supports("structured")) {
+            if (supports("text") && supportsJson()) {
                 hint(spans, "Ctrl+t", "text/JSON");
             }
             hintLast(spans, "Enter", "new line");
