@@ -49,10 +49,10 @@ set "JAVACMD=%CAMEL_JAVACMD%"
 @REM Set JVM options if specified
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=-Xmx512m
 
-@REM Find the launcher JAR, excluding sources
+@REM Find the launcher JAR, excluding sources and javadoc
 set "LAUNCHER_JAR="
 for %%i in ("%BASEDIR%\camel-launcher-*.jar") do (
-  echo %%~nxi| findstr /i /e /l /c:"-sources.jar" > nul
+  echo %%~nxi| findstr /i /e /l /c:"-sources.jar" /c:"-javadoc.jar" > nul
   if errorlevel 1 if not defined LAUNCHER_JAR set "LAUNCHER_JAR=%%i"
 )
 

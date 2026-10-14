@@ -100,10 +100,10 @@ then
   REPO="$BASEDIR"
 fi
 
-# Find the launcher JAR, excluding sources
+# Find the launcher JAR, excluding sources and javadoc
 LAUNCHER_JAR=
 for f in "$BASEDIR"/camel-launcher-*.jar; do
-  case "$f" in *-sources.jar) continue ;; esac
+  case "$f" in *-sources.jar|*-javadoc.jar) continue ;; esac
   if [ -f "$f" ]; then
     LAUNCHER_JAR="$f"
     break
