@@ -40,7 +40,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -202,22 +201,65 @@ class JMXConsumerReconnectTest extends SimpleBeanFixture {
 
     /**
      * The connector reports that it has opened a new connection by itself (as the RMI connector does after an I/O error
-     * when the server can be reached). The consumer cannot know whether its listener was registered again, so it
-     * subscribes again on a connection of its own.
+     * when the server can be reached), and has registered the listener of the consumer again because the MBean was
+     * there. The consumer subscribes again on that connection: it does not close a connection that works, and it is
+     * subscribed once.
      */
     @Test
-    void testSubscribesAgainWhenTheConnectorReconnectedByItself() throws Exception {
+    void testSubscribesAgainOnTheConnectionThatTheConnectorOpenedByItself() throws Exception {
         MockEndpoint mock = getMockFixture().getMockEndpoint();
         awaitFirstConnection(mock);
 
-        connectionListener().handleNotification(new JMXConnectionNotification(
-                JMXConnectionNotification.OPENED, connector, "rmi://reconnected 2", 1, "Reconnected to server", null),
-                null);
-
-        assertTrue(opened.tryAcquire(20, TimeUnit.SECONDS),
-                "the consumer did not subscribe again after the connector had reconnected by itself");
+        connectorReconnected();
 
         assertKeepsConnectionAndIsSubscribedOnce(mock);
+    }
+
+    /**
+     * As above, but the connector could not register the listener of the consumer again (the MBean was not there when
+     * it reconnected). The consumer subscribes again on the connection that the connector opened.
+     */
+    @Test
+    void testSubscribesAgainWhenTheConnectorReconnectedWithoutTheListener() throws Exception {
+        MockEndpoint mock = getMockFixture().getMockEndpoint();
+        awaitFirstConnection(mock);
+
+        JMXConsumer consumer = consumer();
+        consumer.getServerConnection().removeNotificationListener(makeObjectName("simpleBean"), consumer);
+        connectorReconnected();
+
+        mock.reset();
+        mock.setMinimumExpectedMessageCount(1);
+        awaitSubscribed(mock);
+
+        assertKeepsConnectionAndIsSubscribedOnce(mock);
+    }
+
+    /**
+     * As above, but the consumer cannot subscribe on the connection that the connector opened (here: the MBean is not
+     * registered). Then it connects again, until it can subscribe.
+     */
+    @Test
+    void testReconnectsWhenItCannotSubscribeAgainOnTheConnectionThatTheConnectorOpened() throws Exception {
+        MockEndpoint mock = getMockFixture().getMockEndpoint();
+        awaitFirstConnection(mock);
+
+        unregisterBean(makeObjectName("simpleBean"));
+        beanRegistered = false;
+        connectorReconnected();
+
+        assertTrue(opened.tryAcquire(20, TimeUnit.SECONDS),
+                "the consumer did not connect again after it could not subscribe on the connection of the connector");
+
+        mock.reset();
+        mock.setMinimumExpectedMessageCount(1);
+        initBean();
+        awaitSubscribed(mock);
+
+        assertTrue(awaitNoConnectionFor(QUIET_SECONDS, 3),
+                "the consumer kept connecting although it was subscribed on a working connection");
+
+        assertDeliversOnce(mock);
     }
 
     /**
@@ -242,9 +284,21 @@ class JMXConsumerReconnectTest extends SimpleBeanFixture {
                 "the consumer connected again although it was stopped");
     }
 
+    private JMXConsumer consumer() {
+        return (JMXConsumer) getContext().getRoutes().get(0).getConsumer();
+    }
+
     private NotificationListener connectionListener() {
-        JMXConsumer consumer = (JMXConsumer) getContext().getRoutes().get(0).getConsumer();
-        return consumer.getConnectionNotificationListener();
+        return consumer().getConnectionNotificationListener();
+    }
+
+    /**
+     * Sends the notification of a connector that has opened a new connection by itself.
+     */
+    private void connectorReconnected() {
+        connectionListener().handleNotification(new JMXConnectionNotification(
+                JMXConnectionNotification.OPENED, connector, "rmi://reconnected 2", 1, "Reconnected to server", null),
+                null);
     }
 
     private void awaitFirstConnection(MockEndpoint mock) throws Exception {
@@ -267,9 +321,10 @@ class JMXConsumerReconnectTest extends SimpleBeanFixture {
     private void assertDeliversOnce(MockEndpoint mock) throws Exception {
         mock.reset();
         mock.setExpectedMessageCount(1);
+        // keep checking after the first message, so that a duplicate subscription is detected
+        mock.setAssertPeriod(1000);
         getSimpleMXBean().touch();
         mock.assertIsSatisfied(20000);
-        assertEquals(1, mock.getReceivedCounter());
     }
 
     /**

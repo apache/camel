@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.management.ListenerNotFoundException;
 import javax.management.MBeanServerConnection;
 import javax.management.Notification;
 import javax.management.NotificationFilter;
@@ -233,7 +234,8 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      * The connector lost its connection and opened another one by itself (the listener is added after the connector is
      * connected, so the first connection is not reported here). The new connection has another id, which the following
      * notifications carry, and the connector has registered the listener of this consumer again only if the MBean
-     * existed at that moment.
+     * existed at that moment. So the consumer subscribes again on that connection, and connects again only if that
+     * fails.
      */
     private void connectorReconnected(String connectionId) {
         if (connectionId == null || connectionId.equals(mConnectionId)) {
@@ -244,9 +246,9 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
             return;
         }
         if (mJmxEndpoint.isReconnectOnConnectionFailure()) {
-            LOG.warn("The JMX connector has opened a new connection for: {}. Reconnecting to subscribe again.",
+            LOG.warn("The JMX connector has opened a new connection for: {}. Subscribing again on that connection.",
                     URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()));
-            scheduleReconnect();
+            scheduleReconnect(true);
         } else {
             LOG.warn("The JMX connector has opened a new connection for: {}. The JMX consumer may not be subscribed"
                      + " anymore. Use 'reconnectOnConnectionFailure' to enable reconnections.",
@@ -259,6 +261,17 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      * scheduled or the consumer is stopped
      */
     protected void scheduleReconnect() {
+        scheduleReconnect(false);
+    }
+
+    /**
+     * Schedules an attempt to re-initialize the connection after the reconnect delay, unless an attempt is already
+     * scheduled or the consumer is stopped.
+     *
+     * @param resubscribeFirst whether the attempt first subscribes again on the current connection, which the connector
+     *                         has restored by itself, and connects again only when that fails
+     */
+    private void scheduleReconnect(boolean resubscribeFirst) {
         if (!isRunAllowed() || !mReconnectPending.compareAndSet(false, true)) {
             return;
         }
@@ -266,6 +279,9 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
             // from here on a lost connection needs another attempt, also when it is reported while this one runs
             mReconnectPending.set(false);
             if (!isRunAllowed()) {
+                return;
+            }
+            if (resubscribeFirst && resubscribe()) {
                 return;
             }
             try {
@@ -283,6 +299,29 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         } catch (RuntimeException e) {
             mReconnectPending.set(false);
             throw e;
+        }
+    }
+
+    /**
+     * Subscribes again on the current connection: removes every registration of this listener (the connector has
+     * registered it again if the MBean existed when it reconnected) and adds one. So the consumer is subscribed once,
+     * without closing a connection that works.
+     *
+     * @return false if that failed, then the connection has to be replaced
+     */
+    private boolean resubscribe() {
+        try {
+            try {
+                getServerConnection().removeNotificationListener(getEndpoint().getJMXObjectName(), this);
+            } catch (ListenerNotFoundException e) {
+                // the connector did not register the listener again
+            }
+            addNotificationListener();
+            return true;
+        } catch (Exception e) {
+            LOG.warn("Failed to subscribe again on the connection opened by the JMX connector, reconnecting. >> {}",
+                    e.getMessage());
+            return false;
         }
     }
 
