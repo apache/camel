@@ -165,49 +165,45 @@ WARNING: beware of any potential circular reference you may introduce when using
 
 === Advanced component endpoint options
 
-Kamelets expose a defined set of parameters, but the underlying Camel component may support additional endpoint options. You can pass these options when using a Kamelet by prefixing them with `source.` or `sink.`, depending on the type of Kamelet.
+Kamelets expose a defined set of parameters, but the underlying Camel component may support additional endpoint options.
+You can forward those options by enabling `advancedOptions` (disabled by default).
 
-The prefix is removed when the options are applied to the underlying endpoint URI. The options must be supported by the component used by that endpoint.
+When enabled, extra URI parameters that are not Kamelet template properties and not reserved Kamelet options
+(`routeId`, `templateId`, `location`, `advancedOptions`, and the other kamelet endpoint options) are appended to the
+endpoint wrapped by the Kamelet. No `source.` or `sink.` prefix is required.
 
-==== Source Kamelets
+Enable the feature on the component, or on a single endpoint. The endpoint setting overrides the component setting.
 
-For source Kamelets, use the `source.` prefix to pass additional options to the underlying source component endpoint.
-
-For example:
+[source,properties]
+----
+camel.component.kamelet.advanced-options=true
+----
 
 [source,java]
 ----
-from("kamelet:my-source?source.bridgeErrorHandler=true")
+from("kamelet:aws-s3-source?advancedOptions=true&bucket=x&pageSize=50")
     .to("log:info");
 ----
 
-In this example, `source.bridgeErrorHandler=true` passes `bridgeErrorHandler=true` to the source component endpoint. If the endpoint URI already contains the same option, the advanced option overrides its existing value.
+In this example, `bucket` is a template property of the Kamelet and stays a template parameter.
+`pageSize=50` is forwarded to the wrapped source endpoint. If that endpoint URI already contains the same option,
+the advanced option overrides its existing value.
 
-Property placeholders and RAW expressions in endpoint URIs are preserved when advanced options are applied. For example, `+kafka:{{topic}}+` or `+aws2-s3:{{bucket}}?secretKey=RAW({{secret}})+` remain intact.
+Source Kamelets forward extra options to their input endpoint. Sink and action Kamelets forward extra options to the
+Kamelet's main `to()` endpoint.
 
-==== Sink and action Kamelets
+The options are applied only when the Kamelet has exactly one eligible top-level, statically-defined `to()` destination.
+Kamelet endpoints and auxiliary destinations such as `wireTap()` are excluded. Nested branch destinations, such as those
+inside `choice()` or `doTry()`, are not considered eligible main destinations.
 
-For sink and action Kamelets, use the `sink.` prefix to pass additional options to the component endpoint used by the Kamelet's main output.
+If an action Kamelet has no wrapped endpoint, or the Kamelet contains multiple eligible top-level destinations, or it
+uses a dynamic destination such as `toD()`, `enrich()`, or `pollEnrich()`, startup fails with an explanatory exception
+when advanced options are supplied. In these cases, configure the options directly on the intended endpoint URI.
 
-For example:
+Property placeholders and RAW expressions in endpoint URIs are preserved when advanced options are applied. For example,
+`+kafka:{{topic}}+` or `+aws2-s3:{{bucket}}?secretKey=RAW({{secret}})+` remain intact.
 
-[source,java]
-----
-from("direct:start")
-    .to("kamelet:my-sink?sink.retain-first=1");
-----
-
-In this example, `sink.retain-first=1` passes `retain-first=1` to the main sink endpoint.
-
-The options are applied only when the Kamelet has exactly one eligible top-level, statically-defined `to()` destination. Kamelet endpoints and auxiliary destinations such as `wireTap()` are excluded. Nested branch destinations, such as those inside `choice()` or `doTry()`, are not considered eligible main destinations.
-
-If the Kamelet contains multiple eligible top-level destinations, uses a dynamic destination such as `toD()`, `enrich()`, or `pollEnrich()`, or has no eligible top-level static destination, startup fails with an explanatory exception. In these cases, configure the options directly on the intended endpoint URI.
-
-If the same option already exists on the selected output endpoint, the advanced option overrides its existing value.
-
-Use `source.` options with source Kamelets and `sink.` options with sink or action Kamelets. Supplying options with the wrong prefix results in an error.
-
-When no advanced options are supplied, the Kamelet retains its existing configuration behavior.
+When `advancedOptions` is disabled or omitted, the Kamelet retains its existing configuration behavior.
 
 == Examples
 

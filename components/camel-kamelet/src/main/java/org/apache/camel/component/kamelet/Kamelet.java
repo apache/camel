@@ -19,9 +19,11 @@ package org.apache.camel.component.kamelet;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +35,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.WireTapDefinition;
@@ -62,8 +65,7 @@ public final class Kamelet {
     public static final String PARENT_PROCESSOR_ID = "parentProcessorId";
     public static final String NO_ERROR_HANDLER = "noErrorHandler";
     public static final String BRIDGE_ERROR_HANDLER = "bridgeErrorHandler";
-    static final String ADVANCED_SOURCE_OPTIONS = "internal.advanced.source";
-    static final String ADVANCED_SINK_OPTIONS = "internal.advanced.sink";
+    static final String ADVANCED_OPTIONS = "internal.advanced.options";
 
     // use a running counter as uuid
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
@@ -227,6 +229,52 @@ public final class Kamelet {
     }
 
     /**
+     * Drops Kamelet template properties from the advanced-option candidates, treating camelCase and kebab-case names as
+     * aliases the same way {@code DefaultModel} does for route templates.
+     */
+    private static Map<String, Object> excludeTemplateParameters(
+            Map<String, Object> candidates, RouteTemplateDefinition template) {
+        if (candidates == null || candidates.isEmpty()) {
+            return new LinkedHashMap<>();
+        }
+
+        Set<String> templateNames = templateParameterNames(template);
+        if (templateNames.isEmpty()) {
+            return candidates;
+        }
+
+        Map<String, Object> filtered = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> entry : candidates.entrySet()) {
+            String name = entry.getKey();
+            if (name != null && !isTemplateParameter(name, templateNames)) {
+                filtered.put(name, entry.getValue());
+            }
+        }
+        return filtered;
+    }
+
+    private static Set<String> templateParameterNames(RouteTemplateDefinition template) {
+        Set<String> names = new HashSet<>();
+        if (template == null || template.getTemplateParameters() == null) {
+            return names;
+        }
+        for (RouteTemplateParameterDefinition param : template.getTemplateParameters()) {
+            if (param.getName() != null) {
+                names.add(param.getName());
+                names.add(StringHelper.dashToCamelCase(param.getName()));
+                names.add(StringHelper.camelCaseToDash(param.getName()));
+            }
+        }
+        return names;
+    }
+
+    private static boolean isTemplateParameter(String name, Set<String> templateNames) {
+        return templateNames.contains(name)
+                || templateNames.contains(StringHelper.dashToCamelCase(name))
+                || templateNames.contains(StringHelper.camelCaseToDash(name));
+    }
+
+    /**
      * Preserves the user-supplied option name. When both camelCase and kebab-case forms are present, the kebab-case
      * form is kept so the same option is not appended twice.
      */
@@ -304,10 +352,14 @@ public final class Kamelet {
         }
         if (value.contains("&") || value.contains("=") || value.contains("?")
                 || value.contains("+") || value.contains("%")) {
+            if (value.contains(")&") && !value.startsWith("{") && !value.endsWith("}")
+                    && !value.contains("}&")) {
+                return "RAW{" + value + "}";
+            }
             if (value.contains(")&")) {
                 // fits in neither RAW(...) nor RAW{...}; keep the value out of the message, it may be a secret
                 throw new IllegalArgumentException(
-                        "The value of a source.* or sink.* option cannot contain \")&\" when it also starts with '{',"
+                        "The value of advanced options cannot contain \")&\" when it also starts with '{',"
                                                    + " ends with '}' or contains \"}&\"");
             }
             return "RAW(" + value + ")";
@@ -376,7 +428,7 @@ public final class Kamelet {
                     && !to.getEndpointUri().startsWith("kamelet:")) {
                 if (mainSink != null) {
                     throw new IllegalArgumentException(
-                            "sink.* advanced options cannot be applied because the Kamelet has multiple "
+                            "advancedOptions cannot be applied because the Kamelet has multiple "
                                                        + "top-level static to() destinations. Configure the options directly on the "
                                                        + "intended destination endpoint URI.");
                 }
@@ -459,12 +511,10 @@ public final class Kamelet {
             throw new IllegalArgumentException("Camel route " + rid + " input does not exist.");
         }
 
-        // Extract advanced options for source/sink component endpoints.
-        // The internal.advanced.source and internal.advanced.sink keys are reserved for these option maps.
-        Map<String, Object> sourceOptions = normalizeParameterNames(
-                extractAdvancedOptions(parameters, ADVANCED_SOURCE_OPTIONS));
-        Map<String, Object> sinkOptions = normalizeParameterNames(
-                extractAdvancedOptions(parameters, ADVANCED_SINK_OPTIONS));
+        // Extract advanced options from the unified internal.advanced.options map, then drop
+        // Kamelet template properties so they stay available for placeholder resolution.
+        Map<String, Object> advancedOptions = normalizeParameterNames(
+                excludeTemplateParameters(extractAdvancedOptions(parameters, ADVANCED_OPTIONS), in));
 
         // Determine Kamelet type: source Kamelets have a real component as input;
         // sink/action Kamelets have kamelet:source as input and the real component in outputs.
@@ -472,34 +522,22 @@ public final class Kamelet {
 
         if (isSourceKamelet) {
             // Source Kamelet: the real component endpoint is the input.
-            if (!sourceOptions.isEmpty()) {
+            if (!advancedOptions.isEmpty()) {
                 String uri = def.getInput().getEndpointUri();
                 try {
-                    def.getInput().setUri(appendParametersToURI(uri, sourceOptions));
+                    def.getInput().setUri(appendParametersToURI(uri, advancedOptions));
                 } catch (Exception e) {
                     throw new IllegalArgumentException(
-                            "Failed to apply advanced source options to endpoint URI: " + uri, e);
+                            "Failed to apply advanced options to endpoint URI: " + uri, e);
                 }
-            }
-
-            if (!sinkOptions.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "sink.* advanced options are not valid for source Kamelets (input is '"
-                                                   + def.getInput().getEndpointUri() + "'). Use source.* options instead.");
             }
         } else {
             // Sink/action Kamelet: the real component endpoint is in the outputs.
-            if (!sourceOptions.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "source.* advanced options are not valid for sink/action Kamelets (input is '"
-                                                   + def.getInput().getEndpointUri() + "'). Use sink.* options instead.");
-            }
-
-            if (!sinkOptions.isEmpty()) {
+            if (!advancedOptions.isEmpty()) {
                 // If a dynamic destination exists, the intended static destination cannot be determined reliably.
                 if (hasUnsupportedDynamicSinkTarget(def.getOutputs())) {
                     throw new IllegalArgumentException(
-                            "sink.* advanced options cannot be applied because this Kamelet contains a dynamic "
+                            "advancedOptions cannot be applied because this Kamelet contains a dynamic "
                                                        + "destination (toD, enrich, or pollEnrich). Configure the options directly "
                                                        + "in the destination endpoint URI.");
                 }
@@ -508,17 +546,17 @@ public final class Kamelet {
 
                 if (mainSink == null) {
                     throw new IllegalArgumentException(
-                            "sink.* advanced options cannot be applied because the Kamelet has no top-level "
+                            "advancedOptions cannot be applied because the Kamelet has no top-level "
                                                        + "static to() destination. Configure the options directly on the destination "
                                                        + "endpoint URI.");
                 }
 
                 String uri = mainSink.getEndpointUri();
                 try {
-                    mainSink.setUri(appendParametersToURI(uri, sinkOptions));
+                    mainSink.setUri(appendParametersToURI(uri, advancedOptions));
                 } catch (Exception e) {
                     throw new IllegalArgumentException(
-                            "Failed to apply advanced sink options to endpoint URI: " + uri, e);
+                            "Failed to apply advanced options to endpoint URI: " + uri, e);
                 }
             }
         }

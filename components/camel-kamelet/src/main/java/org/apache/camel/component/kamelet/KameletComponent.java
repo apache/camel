@@ -52,8 +52,7 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.kamelet.Kamelet.ADVANCED_SINK_OPTIONS;
-import static org.apache.camel.component.kamelet.Kamelet.ADVANCED_SOURCE_OPTIONS;
+import static org.apache.camel.component.kamelet.Kamelet.ADVANCED_OPTIONS;
 import static org.apache.camel.component.kamelet.Kamelet.BRIDGE_ERROR_HANDLER;
 import static org.apache.camel.component.kamelet.Kamelet.NO_ERROR_HANDLER;
 import static org.apache.camel.component.kamelet.Kamelet.PARAM_LOCATION;
@@ -105,6 +104,10 @@ public class KameletComponent extends DefaultComponent {
     private Map<String, Properties> routeProperties;
     @Metadata(defaultValue = Kamelet.DEFAULT_LOCATION)
     private String location = Kamelet.DEFAULT_LOCATION;
+
+    @Metadata(label = "advanced", defaultValue = "false",
+              description = "Whether to forward extra URI parameters to the endpoint wrapped by the Kamelet. When enabled, parameters that are not Kamelet template properties or reserved Kamelet options are appended to the wrapped source or sink endpoint. Disabled by default.")
+    private boolean advancedOptions;
 
     public KameletComponent() {
     }
@@ -177,6 +180,7 @@ public class KameletComponent extends DefaultComponent {
             endpoint.setTimeout(timeout);
             // endpoint specific location
             endpoint.setLocation(loc);
+            endpoint.setAdvancedOptions(advancedOptions);
 
             // set endpoint specific properties
             setProperties(endpoint, parameters);
@@ -201,6 +205,7 @@ public class KameletComponent extends DefaultComponent {
             endpoint.setTimeout(timeout);
             // endpoint specific location
             endpoint.setLocation(loc);
+            endpoint.setAdvancedOptions(advancedOptions);
 
             // set and remove endpoint specific properties
             setProperties(endpoint, parameters);
@@ -253,32 +258,18 @@ public class KameletComponent extends DefaultComponent {
             //
             Kamelet.extractKameletEnvironmentVariables(kameletProperties, templateId, routeId);
 
-            //
-            // Extract advanced options from URI parameters only (not from route-scoped properties)
-            // to avoid clashes with route-scoped properties that happen to use source./sink. prefixes.
-            // We remove them from parameters before merging with route-scoped properties, then store the
-            // original maps so DefaultModel.addProperty cannot alias the inner option names.
-            //
-            Map<String, Object> sourceOptions = new LinkedHashMap<>();
-            Map<String, Object> sinkOptions = new LinkedHashMap<>();
-            Map<String, Object> parametersWithoutAdvancedOptions = new HashMap<>(parameters);
-            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-                String key = entry.getKey();
-                if (key != null) {
-                    if (key.startsWith("source.")) {
-                        sourceOptions.put(key.substring("source.".length()), entry.getValue());
-                        parametersWithoutAdvancedOptions.remove(key);
-                    } else if (key.startsWith("sink.")) {
-                        sinkOptions.put(key.substring("sink.".length()), entry.getValue());
-                        parametersWithoutAdvancedOptions.remove(key);
-                    }
-                }
+            // Snapshot remaining URI parameters as advanced-option candidates when enabled. Template
+            // parameters are filtered later in templateToRoute, after the template is loaded. Only URI
+            // leftovers are candidates, not camel.kamelet.* or environment properties.
+            Map<String, Object> advancedParamOptions = new LinkedHashMap<>();
+            if (endpoint.isAdvancedOptions()) {
+                advancedParamOptions.putAll(parameters);
             }
 
             //
             // Uri params have the highest precedence
             //
-            kameletProperties.putAll(parametersWithoutAdvancedOptions);
+            kameletProperties.putAll(parameters);
 
             //
             // And finally we have some specific properties that cannot be changed by the user.
@@ -293,12 +284,9 @@ public class KameletComponent extends DefaultComponent {
             // to prevent users from bypassing the intended separation
             kameletProperties.keySet().removeIf(key -> key.startsWith("internal.advanced."));
 
-            // Pass the original option maps as single values so inner keys keep the user-supplied spelling
-            if (!sourceOptions.isEmpty()) {
-                kameletProperties.put(ADVANCED_SOURCE_OPTIONS, sourceOptions);
-            }
-            if (!sinkOptions.isEmpty()) {
-                kameletProperties.put(ADVANCED_SINK_OPTIONS, sinkOptions);
+            // Pass the original option map as a single value so inner keys keep the user-supplied spelling
+            if (!advancedParamOptions.isEmpty()) {
+                kameletProperties.put(ADVANCED_OPTIONS, advancedParamOptions);
             }
 
             // set kamelet specific properties
@@ -407,6 +395,19 @@ public class KameletComponent extends DefaultComponent {
 
     int getStateCounter() {
         return stateCounter;
+    }
+
+    public boolean isAdvancedOptions() {
+        return advancedOptions;
+    }
+
+    /**
+     * Whether to forward extra URI parameters to the endpoint wrapped by the Kamelet. When enabled, parameters that are
+     * not Kamelet template properties or reserved Kamelet options are appended to the wrapped source or sink endpoint.
+     * Disabled by default.
+     */
+    public void setAdvancedOptions(boolean advancedOptions) {
+        this.advancedOptions = advancedOptions;
     }
 
     public void addConsumer(String key, KameletConsumer consumer) {

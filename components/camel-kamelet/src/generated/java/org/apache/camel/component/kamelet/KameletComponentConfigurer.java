@@ -23,6 +23,8 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KameletComponent target = (KameletComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "advancedoptions":
+        case "advancedOptions": target.setAdvancedOptions(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "block": target.setBlock(property(camelContext, boolean.class, value)); return true;
@@ -52,6 +54,8 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "advancedoptions":
+        case "advancedOptions": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "block": return boolean.class;
@@ -77,6 +81,8 @@ public class KameletComponentConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KameletComponent target = (KameletComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "advancedoptions":
+        case "advancedOptions": return target.isAdvancedOptions();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "block": return target.isBlock();

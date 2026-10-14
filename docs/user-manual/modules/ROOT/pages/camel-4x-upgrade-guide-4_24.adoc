@@ -203,19 +203,6 @@ In both cases the objects are no longer kept in the `inProgressRepository`; befo
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
 
-=== camel-kamelet - `source.*` and `sink.*` parameters are set on the endpoint of the Kamelet
-
-A `kamelet:` endpoint parameter whose name starts with `source.` or `sink.` is no longer passed to the Kamelet
-template as a parameter. Camel removes the prefix and sets the option on the endpoint of the Kamelet:
-`source.*` on the input endpoint of a source Kamelet, and `sink.*` on the single top-level static `to()` of a sink or
-action Kamelet.
-The option replaces a parameter of the same name that is already in that endpoint URI.
-A Kamelet template parameter whose name starts with `source.` or `sink.` can therefore no longer be set in the
-endpoint URI, and must be renamed.
-A route now fails at startup when it uses `sink.*` on a source Kamelet or
-`source.*` on a sink Kamelet, or when it uses `sink.*` on a Kamelet without exactly one top-level static `to()`, or
-with a `toD`, `enrich` or `pollEnrich`.
-
 === camel-aws2-kinesis - the consumer continues after the last record when a shard iterator expired
 
 When a cached shard iterator has expired (an iterator is valid for 5 minutes, so after a route was suspended for
