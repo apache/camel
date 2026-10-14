@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import io.quarkiverse.mcp.server.ToolCallException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MigrationToolsTest {
 
@@ -94,5 +96,32 @@ class MigrationToolsTest {
         MigrationTools.ProjectAnalysisResult result = tools.camel_migration_analyze(CLEAN_POM, null);
 
         assertThat(result.warnings()).noneMatch(w -> w.contains("Sensitive data detected"));
+    }
+
+    // ---- Guide search ----
+
+    @Test
+    void guideSearchAnswersWithTopicEntrySnippetAndNextStep() {
+        MigrationTools.GuideSearchResult result = tools.camel_migration_guide_search(
+                "CXF SOAP web service migration Camel 2 to 4", 5, "2.25", "4.22");
+
+        assertThat(result.resultCount()).isPositive();
+        assertThat(result.results().get(0).sectionTitle()).startsWith("Migrating Camel applications");
+        assertThat(result.results().get(0).snippet()).isNotBlank().containsIgnoringCase("cxf");
+        assertThat(result.results()).extracting(MigrationTools.GuideSnippet::version)
+                .noneMatch(v -> v.equals("4.23") || v.equals("4.24"));
+        assertThat(result.nextStep()).contains("camel_migration_recipes");
+    }
+
+    @Test
+    void guideSearchNoMatchHintAndInvalidVersion() {
+        MigrationTools.GuideSearchResult result
+                = tools.camel_migration_guide_search("xyznonexistent12345", null, null, null);
+
+        assertThat(result.resultCount()).isZero();
+        assertThat(result.nextStep()).contains("Rephrase").contains("camel_catalog_doc");
+        assertThatThrownBy(() -> tools.camel_migration_guide_search("cxf", 3, "latest", null))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining("fromVersion");
     }
 }
