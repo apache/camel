@@ -16,12 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -121,6 +127,58 @@ public class RuntimeService {
 
     public String stopApplication(long pid) {
         return RuntimeHelper.stopApplication(pid);
+    }
+
+    /**
+     * The size of the file the CLI connector appends the messages of the receive console to
+     * ({@code {pid}-receive.json}, read by {@code camel receive} too), to read only what arrives after this point.
+     */
+    public long receiveFileSize(long pid) {
+        try {
+            Path file = receiveFile(pid);
+            return Files.exists(file) ? Files.size(file) : 0;
+        } catch (IOException e) {
+            return 0;
+        }
+    }
+
+    /**
+     * The messages the CLI connector appended to the receive file after the given offset: each complete line is a
+     * {@code {"messages": [...]}} dump of the receive console.
+     */
+    public List<JsonObject> readReceivedMessages(long pid, long offset) {
+        List<JsonObject> messages = new ArrayList<>();
+        Path file = receiveFile(pid);
+        try {
+            if (!Files.exists(file)) {
+                return messages;
+            }
+            byte[] data = Files.readAllBytes(file);
+            // camel receive --action=clear rewrites the file: read it from the start then
+            int from = offset <= data.length ? (int) offset : 0;
+            String text = new String(data, from, data.length - from, StandardCharsets.UTF_8);
+            int end = text.lastIndexOf('\n');
+            if (end < 0) {
+                return messages;
+            }
+            for (String line : text.substring(0, end).split("\n")) {
+                Object parsed = Jsoner.deserialize(line.trim(), (JsonObject) null);
+                if (parsed instanceof JsonObject dump && dump.getCollection("messages") != null) {
+                    for (Object m : dump.getCollection("messages")) {
+                        if (m instanceof JsonObject jo) {
+                            messages.add(jo);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // not readable yet: the caller polls again
+        }
+        return messages;
+    }
+
+    private static Path receiveFile(long pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-receive.json");
     }
 
     public JsonObject executeAction(long pid, String action, Consumer<JsonObject> configure) {

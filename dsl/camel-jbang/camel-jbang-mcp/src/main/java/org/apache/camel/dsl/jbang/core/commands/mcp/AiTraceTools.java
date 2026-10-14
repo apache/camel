@@ -72,7 +72,7 @@ public class AiTraceTools {
                         + "TensorFlow Serving, HuggingFace). "
                         + "Combines message history with processor statistics filtered to AI steps.")
     public AiTraceResult camel_runtime_ai_trace(
-            @ToolArg(description = NAME_OR_PID_DESC) String nameOrPid,
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID filter (exact match or * for all, default: *)",
                      required = false) String routeFilter) {
 
@@ -107,9 +107,14 @@ public class AiTraceTools {
         }
     }
 
-    private JsonObject executeRegistryTool(String toolName, ToolContext ctx, Map<String, String> args) {
+    /**
+     * Runs one registry query. A failure (the process is gone, or did not answer in time) is an error of the whole
+     * call: answering with what the other queries returned would read as "no AI components".
+     */
+    JsonObject executeRegistryTool(String toolName, ToolContext ctx, Map<String, String> args) {
         try {
             Object result = ToolRegistry.execute(toolName, ctx, args);
+            RuntimeTools.failOnTimeout(result);
             return RuntimeTools.toJsonObject(result);
         } catch (ToolExecutionException e) {
             // such as no answer from the integration: not the same as an integration without AI components

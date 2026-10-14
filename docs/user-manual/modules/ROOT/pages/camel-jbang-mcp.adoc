@@ -819,10 +819,12 @@ process is running).
 | Get the source code of routes in the running Camel application. Supports wildcard filtering.
 
 | `camel_runtime_route_dump`
-| Dump route definitions in XML or YAML format.
+| Dump route definitions in XML, YAML or Java DSL format. `routeId` takes a route id or a pattern such as `orders*`
+  (all routes when omitted).
 
 | `camel_runtime_route_structure`
-| Show the route structure as a tree of processors.
+| Show the route structure as a tree of processors, for the routes `routeId` names (a route id or a pattern, all
+  routes when omitted). `brief=true` leaves out the options and expressions.
 
 | `camel_runtime_processor_detail`
 | Show the configured options of every processor in a route: each processor's type, id, and configured options
@@ -830,7 +832,8 @@ process is running).
   with its documentation from the Camel catalog.
 
 | `camel_runtime_route_control`
-| Control a route: start, stop, suspend, or resume it by route ID.
+| Control a route: start, stop, suspend, or resume it by route ID. Marked destructive for all four commands, as an
+  MCP hint applies to a tool, not to one of its arguments, and stop and suspend take the route's consumer offline.
 
 | `camel_runtime_route_topology`
 | Get the inter-route topology showing how routes connect to each other and to external endpoints.
@@ -867,16 +870,21 @@ process is running).
 
 | `camel_runtime_heap_dump`
 | Write a heap dump (`.hprof`) from a running integration for deep memory analysis with tools such as Eclipse MAT,
-  VisualVM or jhat. The dump is written to the process working directory.
+  VisualVM or jhat. The dump is written to the process working directory; a `name` with a directory is refused.
 
 | `camel_runtime_memory_leak`
 | Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR).
-  Use command 'start' to begin recording, 'stop' to get results, 'status' to check state,
-  and 'query' to retrieve cached results. Supports dual-recording mode for trend comparison.
+  `start` begins a recording of `duration` seconds (default 60) and returns at once; `status` checks it, `query`
+  (or `stop`, to end it early) returns the results, and `compare` compares the last two recordings (growth and
+  trend per class). For a trend, record X seconds, then 2X seconds, then compare. `mode=dual` does all of this in one
+  call that blocks for about three times the duration (90 seconds with its default of 30), longer than many MCP
+  clients wait: use it only with a client that waits that long.
 
 | `camel_runtime_history`
 | Get the message history trace of the last completed exchange. Shows the route path, processors visited,
-  headers, body, and timing.
+  headers, body, and timing. It is recorded when message history is on and the tracer is enabled or on standby,
+  which is the default of `camel run` (dev profile); elsewhere set `camel.main.message-history=true` and
+  `camel.main.tracing-standby=true`.
 
 | `camel_runtime_thread_dump`
 | Get a JVM thread dump showing thread names, states, and stack traces.
@@ -901,7 +909,7 @@ process is running).
 | `camel_runtime_http_request`
 | Sends an HTTP request (method, path, headers, body) to the application's own server on localhost and its port,
   and returns the status, the headers and the body (cut at 6000 characters, the answer says when). Any other host
-  is refused, and redirects are not followed.
+  is refused, and redirects are not followed. `timeoutSeconds` bounds the wait (default 30, at most 120).
 
 | `camel_runtime_tool_groups`
 | Which runtime tool groups (`sql`, `tracing`, `resilience`, `http`) the application needs, from what its status shows.
@@ -1000,23 +1008,33 @@ xref:camel-jbang-tui-local-models.adoc#_tool_groups_from_the_selected_integratio
 | Tool | Description
 
 | `camel_runtime_send`
-| Send a test message to a Camel endpoint in the running application.
+| Send a test message to a Camel endpoint in the running application. Marked destructive: the message runs through
+  the routes and whatever they call.
 
 | `camel_runtime_trace`
 | Enable, disable, or dump message tracing for the running Camel application.
+
+| `camel_runtime_trace_dump`
+| Dump the traced messages, the same as `camel_runtime_trace` with `action=dump`, as a read-only tool, so a client
+  at the `read-only` access level can read the traces.
 
 | `camel_runtime_ai_trace`
 | Trace the AI-specific exchange flow of a running application: token usage, model ids, guardrail outcomes,
   completion reasons, streaming chunk counts and per-component latency for the AI components (Bedrock,
   LangChain4j, Docling, Textract, OpenAI, KServe, DJL, TensorFlow Serving, HuggingFace). It combines the message
-  history with the processor statistics, filtered to the AI steps.
+  history with the processor statistics, filtered to the AI steps. A process that does not answer is reported as
+  an error.
 
 | `camel_runtime_browse`
 | Browse messages in a Camel endpoint (e.g., messages queued in a SEDA endpoint).
 
 | `camel_runtime_receive`
-| Receive (poll) a message from a Camel endpoint in the running application. Consumes one message
-  from the endpoint.
+| Receive a message from an endpoint of the running application, the complement of `camel_runtime_send`, in one
+  call: it starts a consumer on the endpoint (an endpoint uri, or a pattern matching an endpoint the application
+  sends to), waits up to `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer.
+  The consumer competes with the routes that consume the endpoint, so the message it takes does not reach them:
+  the tool is marked destructive. Use `camel_runtime_browse` to look at queued messages without taking them. It
+  refuses to run while `camel receive` is receiving from the same process.
 |===
 
 == Available Prompts
