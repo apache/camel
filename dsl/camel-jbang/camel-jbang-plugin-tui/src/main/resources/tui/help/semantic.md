@@ -64,9 +64,13 @@ Failures/timeouts keep your draft and show an inline error; `Ctrl+r` retries exp
 Run is disabled when the selected application disconnects. Listing an expert does not prove its service is reachable;
 no inference is made just to test availability.
 
-Press `p` outside the editor to load the selected definition's parameters, including instructions.
+Click **Load params** or press `Ctrl+p` to load the selected definition's parameters, including instructions.
+The shortcut also works while editing; `p` remains available outside the editor.
 This replaces the parameter draft with an editable copy labeled with its source; it keeps your text/state.
 The definition's state selector is not applied. Without this action the form starts with expert defaults.
+Click **Clear params** or press `Ctrl+k` to empty Instructions and all other parameter fields and rows,
+keeping your text/state. Unset optional parameters use expert defaults; required parameters must be filled before Run.
+Loading and clearing only change the editable draft, and are disabled while an evaluation is running.
 
 ## Definition sample evaluation
 

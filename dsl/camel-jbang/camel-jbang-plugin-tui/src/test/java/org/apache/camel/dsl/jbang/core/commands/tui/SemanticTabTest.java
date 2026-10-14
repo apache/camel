@@ -733,7 +733,7 @@ class SemanticTabTest {
             JsonObject overview = (JsonObject) Jsoner.deserialize(OVERVIEW);
             JsonObject definition = SemanticTab.objects(overview, "evaluations").get(0);
             definition.put("parameters", Jsoner.deserialize("""
-                    {"instructions":"Which department should handle this support request?",
+                    {"uncertaintyPolicy":"fail","instructions":"Which department should handle this support request?",
                      "criteria":{"billing":"Invoices, payments, refunds and duplicate charges",
                                  "technical":"Bugs, outages and system errors"}}
                     """));
@@ -741,14 +741,16 @@ class SemanticTabTest {
             var tab = loaded(runtime);
             for (int width : List.of(160, 80)) {
                 String rendered = TuiTestHelper.renderToString(tab, width, 48);
-                assertThat(rendered).contains("instructions:", "criteria:", "• billing:", "• technical:",
-                        "Invoices, payments, refunds and duplicate charges")
+                assertThat(rendered)
+                        .contains("uncertaintyPolicy: fail", "instructions:", "criteria:", "• billing:", "• technical:",
+                                "Invoices, payments, refunds and duplicate charges")
                         .doesNotContain("criteria =", "\"billing\"", "instructions =");
                 assertThat(rendered.lines().filter(line -> line.contains("• billing:")))
                         .allSatisfy(line -> assertThat(line).doesNotContain("technical", "Invoices"));
             }
             tab.subViewBar().views().get(2).select().run();
-            assertThat(TuiTestHelper.renderToString(tab, 180, 48)).contains("• billing:", "• technical:");
+            assertThat(TuiTestHelper.renderToString(tab, 180, 48))
+                    .contains("uncertaintyPolicy: fail", "• billing:", "• technical:");
 
             definition.put("parameters", Jsoner.deserialize("""
                     {"criteria":["Routine request with no urgency","Needs attention soon",
@@ -1275,6 +1277,88 @@ class SemanticTabTest {
             assertThat(global.invoke(monitor, KeyEvent.ofChar('l', KeyModifiers.CTRL), null)).isEqualTo(true);
             assertThat(runtime.logPinned).isTrue();
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "180,false", "100,true", "88,true" })
+    void parameterControlsLoadAndClearWithoutReplacingInput(int width, boolean mouse) throws Exception {
+        try (var runtime = new Runtime()) {
+            JsonObject overview = (JsonObject) Jsoner.deserialize(OVERVIEW);
+            JsonObject operation = SemanticTab.objects(SemanticTab.objects(overview, "experts").get(0), "operations").get(0);
+            SemanticDetails.contract(operation).put("parameters", Jsoner.deserialize("""
+                    [{"name":"instructions","type":"String","required":true,"minSize":1},
+                     {"name":"criteria","type":"Map","itemType":"String"},
+                     {"name":"levels","type":"List","itemType":"String"},
+                     {"name":"threshold","type":"Number"},
+                     {"name":"policy","type":"String","values":["fail","continue"]}]
+                    """));
+            SemanticTab.objects(overview, "evaluations").get(0).put("parameters", Map.of(
+                    "instructions", "Choose a department", "criteria", Map.of("billing", "Invoices"),
+                    "levels", List.of("Routine", "Urgent"), "threshold", 0.7, "policy", "fail"));
+            runtime.overview = overview.toJson();
+            var tab = loaded(runtime);
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+            tab.setInputValue("input", "Keep this text to assess");
+            String screen = TuiTestHelper.renderToString(tab, width, 44);
+            assertThat(screen).contains("Ctrl+p Load params", "Ctrl+k Clear params", "Ctrl+r Run");
+            if (width == 180) {
+                assertThat(screen.lines().filter(line -> line.contains("Load params")))
+                        .singleElement().asString().contains("Clear params", "Ctrl+r Run");
+            }
+            if (mouse) {
+                clickParameterAction(tab, width, "Load params");
+            } else {
+                tab.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.CTRL));
+            }
+            JsonObject draft = tab.getTableDataAsJson().getJsonObject("playground");
+            assertThat(draft).containsEntry("parameterSource", "screenPrompt")
+                    .containsEntry("input", "Keep this text to assess");
+            List<JsonObject> loadedParameters = SemanticTab.objects(draft, "parameters");
+            assertThat(loadedParameters).extracting(p -> p.get("value"))
+                    .contains("Choose a department", Map.of("billing", "Invoices"), List.of("Routine", "Urgent"), "fail");
+            assertThat(runtime.requests).hasSize(1);
+
+            runtime.release = new CountDownLatch(1);
+            tab.handleKeyEvent(KeyEvent.ofChar('r', KeyModifiers.CTRL));
+            assertThat(tab.getTableDataAsJson().getJsonObject("playground")).containsEntry("pending", true);
+            if (mouse) {
+                clickParameterAction(tab, width, "Clear params");
+            } else {
+                tab.handleKeyEvent(KeyEvent.ofChar('k', KeyModifiers.CTRL));
+            }
+            assertThat(SemanticTab.objects(tab.getTableDataAsJson().getJsonObject("playground"), "parameters"))
+                    .isEqualTo(loadedParameters);
+            runtime.release.countDown();
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(
+                    tab.getTableDataAsJson().getJsonObject("playground")).containsEntry("pending", false));
+            if (mouse) {
+                clickParameterAction(tab, width, "Clear params");
+            } else {
+                tab.handleKeyEvent(KeyEvent.ofChar('k', KeyModifiers.CTRL));
+            }
+            draft = tab.getTableDataAsJson().getJsonObject("playground");
+            assertThat(draft).containsEntry("parameterSource", null).containsEntry("input", "Keep this text to assess")
+                    .containsEntry("inputChanged", true);
+            for (JsonObject parameter : SemanticTab.objects(draft, "parameters")) {
+                if (parameter.containsKey("entries")) {
+                    assertThat(parameter.get("entries")).isEqualTo(List.of(Map.of("key", "", "value", "")));
+                } else {
+                    assertThat(parameter).containsEntry("text", "");
+                }
+            }
+            assertThat(runtime.requests).hasSize(2);
+            tab.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.CTRL));
+            assertThat(SemanticTab.objects(tab.getTableDataAsJson().getJsonObject("playground"), "parameters"))
+                    .isEqualTo(loadedParameters);
+        }
+    }
+
+    private static void clickParameterAction(SemanticTab tab, int width, String label) {
+        List<String> lines = TuiTestHelper.renderToString(tab, width, 44).lines().toList();
+        int row = IntStream.range(0, lines.size()).filter(i -> lines.get(i).contains(label))
+                .findFirst().orElseThrow();
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, lines.get(row).indexOf(label), row),
+                new Rect(0, 0, width, 44))).isTrue();
     }
 
     @Test

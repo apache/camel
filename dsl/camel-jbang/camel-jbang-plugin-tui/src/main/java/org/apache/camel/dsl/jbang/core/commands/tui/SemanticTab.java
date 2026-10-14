@@ -419,6 +419,9 @@ class SemanticTab extends AbstractTableTab {
             }
             auditDraft = null;
         }
+        if (playground != null) {
+            playground.setDefinition(selectedDefinition());
+        }
     }
 
     private void view(View selected) {
@@ -516,6 +519,12 @@ class SemanticTab extends AbstractTableTab {
             }
             return true;
         }
+        if (view == View.EXPERTS && playground != null && key.hasCtrl()
+                && (key.isCharIgnoreCase('p') || key.isCharIgnoreCase('k'))) {
+            playground.handleKeyEvent(key);
+            focus = Focus.PLAYGROUND;
+            return true;
+        }
         if (focus == Focus.PLAYGROUND && playground != null) {
             if (key.hasCtrl() && key.isCharIgnoreCase('e')) {
                 playgroundExpanded = !playgroundExpanded;
@@ -569,12 +578,8 @@ class SemanticTab extends AbstractTableTab {
             return true;
         }
         if (key.isChar('p') && view == View.EXPERTS) {
-            JsonObject definition = selectedDefinition();
-            if (playground != null && definition != null && definition.get("error") == null
-                    && Objects.equals(operationName, definition.get("operation"))
-                    && playground.loadParameters(definition)) {
+            if (playground != null && playground.loadParameters()) {
                 focus = Focus.PLAYGROUND;
-                playground.focusFirstField();
             }
             return true;
         }

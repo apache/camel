@@ -371,6 +371,13 @@ Criteria and other parameters stay on the right. Operations without instructions
 *Ctrl+l* clears the current field or restores an optional choice to its expert default;
 *Esc* leaves the editor while preserving the input and output.
 
+Click *Load params* or press *Ctrl+p* to copy the selected definition's parameters, including
+Instructions, into the form. The shortcut works while editing; *p* also works outside the editor.
+Click *Clear params* or press *Ctrl+k* to empty Instructions and all other parameter fields and rows.
+Both actions preserve the text/state to assess and change only the editable draft. The definition's state
+selector is not applied. Unset optional parameters use expert defaults; required values must be filled before Run.
+These controls are disabled while an evaluation is running.
+
 While editing text/state, use *Ctrl+t* to switch between literal text and JSON state when the operation supports both.
 Instructions remain plain text.
 Structured-only operations open in JSON mode. JSON state must be an object or array.

@@ -103,7 +103,13 @@ final class SemanticDetails {
                 parameter(lines, indent + "  ", "[" + i + "] ", list.get(i));
             }
         } else if (value instanceof String text) {
-            // Put text under its label so wrapped prose keeps its place in the parameter tree.
+            // Keep scalar tokens beside their labels; prose retains its own hanging indentation below.
+            if (text.codePoints().noneMatch(Character::isWhitespace)) {
+                String token = text.replaceAll("[\\p{Cntrl}\\p{Cf}]", "");
+                lines.add(Line.from(Span.styled(indent + label, Theme.label()),
+                        Span.raw(token.isEmpty() ? "\"\"" : token)));
+                return;
+            }
             lines.add(Line.from(Span.styled(indent + label.stripTrailing(), Theme.label())));
             for (String part : text.split("\\R", -1)) {
                 lines.add(Line.from(indent + "  " + (part.isEmpty() ? "\"\"" : part.replaceAll("[\\p{Cntrl}\\p{Cf}]", ""))));
