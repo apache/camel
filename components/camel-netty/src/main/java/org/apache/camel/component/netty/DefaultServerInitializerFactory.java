@@ -139,8 +139,11 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
      * {@code CertificateException: Hostname or IP address is undefined} rather than checking anything. See
      * {@code DefaultClientInitializerFactory} for the producer side.
      * <p/>
-     * In server mode the peer is deliberately not attached: there the algorithm would ask the JDK to match the client's
-     * certificate against a host name the server does not have, which is not what the option means.
+     * In server mode there is nothing to attach, and the algorithm is not set at all: the JDK does not support it on
+     * that side. When it checks a client certificate it skips the SNI name and uses {@code getPeerHost()}, and on a
+     * server engine it turns the resulting failure into
+     * {@code CertificateException: Endpoint Identification Algorithm HTTPS is not supported on the server side}. So it
+     * could only break a handshake in which the client presents a certificate - it never verified anything.
      */
     private SSLEngine createServerSSLEngine() {
         NettyConfiguration configuration = consumer.getConfiguration();
@@ -165,7 +168,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
                 // REQUIRE or WANT) when needClientAuth is not enabled
                 engine.setNeedClientAuth(true);
             }
-            if (consumer.getConfiguration().isHostnameVerification()) {
+            if (consumer.getConfiguration().isClientMode() && consumer.getConfiguration().isHostnameVerification()) {
                 SSLParameters sslParams = engine.getSSLParameters();
                 sslParams.setEndpointIdentificationAlgorithm("HTTPS");
                 engine.setSSLParameters(sslParams);

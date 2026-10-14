@@ -363,6 +363,11 @@ alternative name of its own - now fails the handshake with the mismatch as the r
 Enabling the option also makes the JDK send the host as an SNI server name, as `camel-netty-http` already did. The
 default path still creates the engine without a peer and sends no SNI.
 
+On a consumer that acts as a server the option is now ignored instead of being passed to the engine. It never verified
+anything there - the JDK does not support host name verification on the server side of a handshake, and rejected the
+client certificate with `Endpoint Identification Algorithm HTTPS is not supported on the server side` - so a consumer
+that asks for client certificates and had the option set now completes the handshake instead of failing it.
+
 === camel-dropbox - search and get read every page of the result
 
 The `search` operation (producer and consumer) now returns every match that the service gives. Previously it returned

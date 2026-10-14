@@ -686,8 +686,9 @@ A certificate that does not match makes the producer or consumer fail with an
 `No subject alternative DNS name matching ... found` for a host name). Enabling the option also makes the JDK send the
 host as an SNI server name.
 
-The option applies to the client side. On a consumer that acts as a server it does not verify the host of a client
-that connects.
+The option applies to the client side only. On a consumer that acts as a server it is ignored, because the JDK does not
+support host name verification on that side of a handshake: asked to do it anyway, it rejects the client certificate
+with `Endpoint Identification Algorithm HTTPS is not supported on the server side`.
 
 === An SSL/TCP-based Netty consumer endpoint using Request-Reply communication
 
