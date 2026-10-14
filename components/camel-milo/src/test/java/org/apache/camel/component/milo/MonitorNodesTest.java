@@ -26,10 +26,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.milo.client.MiloClientConnection;
+import org.apache.camel.component.milo.client.MiloClientEndpoint;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +50,9 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
 
     private static final String UNKNOWN_NODE = "nsu=" + MiloServerComponent.DEFAULT_NAMESPACE_URI + ";s=unknownNode";
 
+    // the same node as NODE_1 with the default server index spelled out
+    private static final String NODE_1_WITH_SERVER_INDEX = "svr=0;" + NODE_1;
+
     // the client endpoints only differ in the node options, so they share one connection
     private static final String MILO_CLIENT = "milo-client:opc.tcp://foo:bar@localhost:@@port@@"
                                               + "?allowedSecurityPolicies=None&overrideHost=true"
@@ -62,6 +68,9 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
 
     private static final String MILO_CLIENT_NODE = MILO_CLIENT + "&node=RAW(" + NODE_1 + ")";
 
+    private static final String MILO_CLIENT_SAME_NODE
+            = MILO_CLIENT + "&nodes=RAW(" + NODE_1 + "," + NODE_1_WITH_SERVER_INDEX + ")";
+
     @EndpointInject("mock:nodes")
     protected MockEndpoint nodesEndpoint;
 
@@ -74,6 +83,9 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
     @EndpointInject("mock:node")
     protected MockEndpoint nodeEndpoint;
 
+    @EndpointInject("mock:sameNode")
+    protected MockEndpoint sameNodeEndpoint;
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -84,6 +96,7 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
                 from(resolve(MILO_CLIENT_UNKNOWN_NODE)).routeId("unknownNode").autoStartup(false).to("mock:unknownNode");
                 from(resolve(MILO_CLIENT_DUPLICATES)).routeId("duplicates").autoStartup(false).to("mock:duplicates");
                 from(resolve(MILO_CLIENT_NODE)).routeId("node").autoStartup(false).to("mock:node");
+                from(resolve(MILO_CLIENT_SAME_NODE)).routeId("sameNode").autoStartup(false).to("mock:sameNode");
             }
         };
     }
@@ -145,6 +158,32 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
         assertEquals(Set.of(NODE_1, NODE_2), values.keySet());
         assertGoodValue("Foo").accept(values.get(NODE_1));
         assertGoodValue("Bar").accept(values.get(NODE_2));
+    }
+
+    @Test
+    void spellingsOfOneNodeAreMonitoredOnce() throws Exception {
+        // the entries are de-duplicated by the parsed node ID, not by their spelling
+        assertEquals(ExpandedNodeId.parse("ns=0;i=2258"), ExpandedNodeId.parse("i=2258"));
+        assertEquals(ExpandedNodeId.parse(NODE_1), ExpandedNodeId.parse(NODE_1_WITH_SERVER_INDEX));
+
+        writeServerValues();
+
+        // one exchange per value, the header carries the first spelling
+        sameNodeEndpoint.expectedMessageCount(1);
+        sameNodeEndpoint.setAssertPeriod(1000);
+        sameNodeEndpoint.expectedHeaderReceived(MiloConstants.HEADER_NODE_ID, NODE_1);
+        testBody(sameNodeEndpoint.message(0), assertGoodValue("Foo"));
+        context.getRouteController().startRoute("sameNode");
+        sameNodeEndpoint.assertIsSatisfied();
+
+        // and one monitored item on the server
+        final MiloClientEndpoint endpoint = context.getEndpoint(resolve(MILO_CLIENT_SAME_NODE), MiloClientEndpoint.class);
+        final MiloClientConnection connection = endpoint.createConnection();
+        try {
+            assertEquals(1, connection.getOpcUaClient().getSubscriptions().get(0).getMonitoredItems().size());
+        } finally {
+            endpoint.releaseConnection(connection);
+        }
     }
 
     @Test

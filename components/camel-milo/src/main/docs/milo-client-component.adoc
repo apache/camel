@@ -143,9 +143,14 @@ milo-client:opc.tcp://localhost:12345?nodes=RAW(ns=2;s=line1/temperature,ns=2;s=
 A string node ID that contains a comma cannot be used in `nodes`; monitor it with the `node` option instead. Long lists
 can come from a property placeholder, for example `+nodes=RAW({{tags}})+`.
 
-A node that cannot be monitored, for example because it does not exist on the server, does not affect the other
-nodes. To see such nodes, set `omitNullValues=false`: the consumer then delivers one exchange with the bad status
-code for that node, and the `CamelMiloNodeId` header names it.
+All nodes of the list share the `samplingInterval`, `queueSize` and `omitNullValues` options of the consumer and its
+monitor filter (`monitorFilterType`, `dataChangeFilter*`). Tags that need a different sampling interval or deadband
+need a consumer of their own.
+
+A node that does not exist on the server does not affect the other nodes. A node that cannot be monitored is
+reported once with its status code and is not retried; restarting the route creates the monitored items again. To see
+such nodes, set `omitNullValues=false`: the consumer then delivers one exchange with the bad status code for that
+node, and the `CamelMiloNodeId` header names it.
 
 === Method ID
 

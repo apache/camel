@@ -162,6 +162,15 @@ public class SubscriptionManager {
         }
     }
 
+    /**
+     * A status value for a node that could not be monitored, delivered to its consumer outside of the lock
+     */
+    private record PendingValue(Consumer<DataValue> consumer, DataValue value) {
+        void deliver() {
+            consumer.accept(value);
+        }
+    }
+
     private class Connected {
         private OpcUaClient client;
         private final OpcUaSubscription manager;
@@ -177,10 +186,21 @@ public class SubscriptionManager {
             this.manager = manager;
         }
 
-        public void putSubscriptions(final Map<UInteger, Subscription> subscriptions) throws Exception {
+        /**
+         * Creates the monitored items of the subscriptions on the server.
+         *
+         * @param  subscriptions the subscriptions to create, by client handle
+         * @return               the bad status values of the nodes that could not be monitored, to be delivered to
+         *                       their consumers after the lock of the manager has been released
+         * @throws UaException   if the server rejected the CreateMonitoredItems service call, the connection has to be
+         *                       rebuilt
+         */
+        public List<PendingValue> putSubscriptions(final Map<UInteger, Subscription> subscriptions) throws Exception {
+
+            final List<PendingValue> pendingValues = new ArrayList<>();
 
             if (subscriptions.isEmpty()) {
-                return;
+                return pendingValues;
             }
 
             // convert to requests
@@ -195,7 +215,7 @@ public class SubscriptionManager {
                 final NodeId node = lookupNamespace(s.getNodeId()).get();
 
                 if (node == null) {
-                    handleSubscriptionError(new StatusCode(StatusCodes.Bad_InvalidArgument), entry.getKey(), s);
+                    handleSubscriptionError(new StatusCode(StatusCodes.Bad_InvalidArgument), entry.getKey(), s, pendingValues);
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     final OpcUaMonitoredItem item = new OpcUaMonitoredItem(itemId, MonitoringMode.Reporting);
@@ -227,17 +247,25 @@ public class SubscriptionManager {
                 final List<MonitoredItemServiceOperationResult> results
                         = this.manager.createMonitoredItems(itemToClientHandle::containsKey);
 
+                // the service call is partitioned, a rejected partition reports its service result for each of its items
+                StatusCode rejectedServiceResult = null;
                 final List<OpcUaMonitoredItem> failedItems = new ArrayList<>();
                 for (final MonitoredItemServiceOperationResult result : results) {
                     final OpcUaMonitoredItem item = result.monitoredItem();
                     final UInteger clientHandle = itemToClientHandle.get(item);
                     if (result.isGood()) {
                         this.goodSubscriptions.put(clientHandle, item);
+                    } else if (result.serviceResult().isBad()) {
+                        failedItems.add(item);
+                        rejectedServiceResult = result.serviceResult();
                     } else {
                         // reported once, the item is created again when the consumer restarts or the connection is rebuilt
                         failedItems.add(item);
+                        final Subscription s = subscriptions.get(clientHandle);
                         final StatusCode status = result.operationResult().orElse(result.serviceResult());
-                        subscriptions.get(clientHandle).getValueConsumer().accept(new DataValue(status));
+                        LOG.warn("Monitored item for node {} could not be created: {}", s.getNodeId().toParseableString(),
+                                status);
+                        pendingValues.add(new PendingValue(s.getValueConsumer(), new DataValue(status)));
                     }
                 }
 
@@ -246,24 +274,33 @@ public class SubscriptionManager {
                     this.manager.removeMonitoredItems(failedItems);
                     this.manager.deleteMonitoredItems();
                 }
+
+                if (rejectedServiceResult != null) {
+                    // the subscription is unusable, the caller tears the connection down and builds it up again
+                    throw new UaException(rejectedServiceResult);
+                }
             }
 
             if (!this.badSubscriptions.isEmpty()) {
                 SubscriptionManager.this.executor.schedule(this::resubscribe, SubscriptionManager.this.reconnectTimeout,
                         TimeUnit.MILLISECONDS);
             }
+
+            return pendingValues;
         }
 
-        private void handleSubscriptionError(final StatusCode statusCode, final UInteger clientHandle, final Subscription s) {
+        private void handleSubscriptionError(
+                final StatusCode statusCode, final UInteger clientHandle, final Subscription s,
+                final List<PendingValue> pendingValues) {
             this.badSubscriptions.put(clientHandle, s);
-            s.getValueConsumer().accept(new DataValue(statusCode));
+            pendingValues.add(new PendingValue(s.getValueConsumer(), new DataValue(statusCode)));
         }
 
         private void resubscribe() {
             final Map<UInteger, Subscription> subscriptions = new HashMap<>(this.badSubscriptions);
             this.badSubscriptions.clear();
             try {
-                putSubscriptions(subscriptions);
+                putSubscriptions(subscriptions).forEach(PendingValue::deliver);
             } catch (final Exception e) {
                 handleConnectionFailure(e);
             }
@@ -685,6 +722,7 @@ public class SubscriptionManager {
     }
 
     private void performAndEvalConnect() {
+        final List<PendingValue> pendingValues = new ArrayList<>();
         try {
             final Connected connected = performConnect();
             LOG.debug("Connect call done");
@@ -697,7 +735,7 @@ public class SubscriptionManager {
 
                 try {
                     LOG.debug("Setting subscriptions: {}", this.subscriptions.size());
-                    connected.putSubscriptions(this.subscriptions);
+                    pendingValues.addAll(connected.putSubscriptions(this.subscriptions));
 
                     LOG.debug("Update state : {} -> {}", this.connected, connected);
                     final Connected oldConnected = this.connected;
@@ -720,6 +758,9 @@ public class SubscriptionManager {
             LOG.info("Failed to connect", e);
             triggerReconnect(false);
         }
+
+        // deliver outside of the lock, the routes may use the connection
+        pendingValues.forEach(PendingValue::deliver);
     }
 
     private Connected performConnect() throws Exception {
@@ -979,16 +1020,18 @@ public class SubscriptionManager {
                 Unsigned.uint(this.clientHandleCounter.incrementAndGet()),
                 new Subscription(nodeId, samplingInterval, queueSize, valueConsumer, monitorFilterConfiguration)));
 
+        final List<PendingValue> pendingValues = new ArrayList<>();
         lock.lock();
         try {
             this.subscriptions.putAll(subscriptions);
 
-            whenConnected(connected -> {
-                connected.putSubscriptions(subscriptions);
-            });
+            whenConnected(connected -> pendingValues.addAll(connected.putSubscriptions(subscriptions)));
         } finally {
             lock.unlock();
         }
+
+        // deliver outside of the lock, the routes may use the connection
+        pendingValues.forEach(PendingValue::deliver);
 
         return new ArrayList<>(subscriptions.keySet());
     }

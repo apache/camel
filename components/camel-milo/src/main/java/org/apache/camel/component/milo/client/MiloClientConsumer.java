@@ -18,9 +18,7 @@ package org.apache.camel.component.milo.client;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.camel.Exchange;
@@ -64,37 +62,43 @@ public class MiloClientConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         final Map<ExpandedNodeId, Consumer<DataValue>> valueConsumers = new LinkedHashMap<>();
-        for (final String node : resolveNodes()) {
-            try {
-                valueConsumers.put(ExpandedNodeId.parse(node), value -> handleValueUpdate(node, value));
-            } catch (final Exception e) {
-                throw new IllegalArgumentException("Invalid node ID: " + node, e);
-            }
-        }
+        resolveNodes().forEach((nodeId, node) -> valueConsumers.put(nodeId, value -> handleValueUpdate(node, value)));
         this.connection = getEndpoint().createConnection();
         this.handle = this.connection.monitorValues(valueConsumers, this.samplingInterval, this.queueSize,
                 getEndpoint().getMonitorFilterConfiguration());
     }
 
     /**
-     * The node IDs of the node or nodes option, in the configured order and without duplicates
+     * The node IDs of the node or nodes option, in the configured order and without duplicates. A node that is listed
+     * in several spellings is monitored once, the value is the first spelling of the node ID.
      */
-    private Set<String> resolveNodes() {
+    private Map<ExpandedNodeId, String> resolveNodes() {
+        final Map<ExpandedNodeId, String> result = new LinkedHashMap<>();
+
         final String node = getEndpoint().getNode();
         if (node != null) {
-            return Set.of(node);
+            result.put(parseNodeId(node), node);
+            return result;
         }
 
         final String nodes = getEndpoint().getNodes();
-        final Set<String> result = new LinkedHashSet<>();
         if (nodes != null) {
-            Arrays.stream(nodes.split(",")).map(String::trim).filter(entry -> !entry.isEmpty()).forEach(result::add);
+            Arrays.stream(nodes.split(",")).map(String::trim).filter(entry -> !entry.isEmpty())
+                    .forEach(entry -> result.putIfAbsent(parseNodeId(entry), entry));
         }
 
         if (result.isEmpty()) {
             throw new IllegalArgumentException("No node to monitor, configure the node or the nodes option");
         }
         return result;
+    }
+
+    private static ExpandedNodeId parseNodeId(final String node) {
+        try {
+            return ExpandedNodeId.parse(node);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Invalid node ID: " + node, e);
+        }
     }
 
     @Override
