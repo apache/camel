@@ -460,3 +460,20 @@ failures of the route go. A highlighted path that steps into an `onException` cl
 
 The `<camel-topology-diagram>` web component no longer draws the error paths of the route topology as calls between
 routes. With its new `errors` attribute it draws the routes reached only on error in a frame below the other routes.
+
+=== camel-jbang - export to Quarkus keeps the names in `quarkus.*` keys
+
+`camel export --runtime=quarkus` wrote every `quarkus.*` key except `quarkus.hawtio.*` in dash case: an upper-case
+letter became a dash and the lower-case letter, and an underscore became a dash. That also changed the names that a
+key holds, such as a log category, a datasource name or a map key. Now only option names in camel case are written in
+dash case, such as `quarkus.http.rootPath` as `quarkus.http.root-path`. A segment of the key that is quoted, that
+starts with an upper-case letter, or that has no upper-case letter is kept as it is. So
+`quarkus.log.category."com.example.MyRoute".level`, `quarkus.datasource.Orders.db-kind` and
+`quarkus.datasource.order_history.db-kind` are no longer exported as
+`quarkus.log.category."com.example.-my-route".level`, `quarkus.datasource.-orders.db-kind` and
+`quarkus.datasource.order-history.db-kind`. The same applies to `camel run --runtime=quarkus`, which exports the
+project in the same way.
+
+A name in camel case that starts with a lower-case letter, such as the datasource `myOrders` or `my_DataSource`, still
+looks like an option name and is written in dash case as a whole, underscores included (`my-orders`,
+`my-data-source`). Quote it to keep it: `quarkus.datasource."myOrders".db-kind`.
