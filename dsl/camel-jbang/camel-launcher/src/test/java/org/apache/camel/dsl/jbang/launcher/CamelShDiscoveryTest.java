@@ -27,6 +27,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,6 +55,23 @@ class CamelShDiscoveryTest {
         Path pathDir = base.resolve("path-shadow");
         FakeJava.writeFakeJava(pathDir, "java", GARBAGE, 0, "PATH-REJECTED");
         return pathDir + ":/usr/bin:/bin";
+    }
+
+    @Test
+    void skipsSourcesJars(@TempDir Path base) throws Exception {
+        Path h = home(Files.createDirectories(base.resolve("launcher with spaces")));
+        Files.writeString(h.resolve("camel-launcher-9.9.9-sources.jar"), "sources");
+        Files.writeString(h.resolve("camel-launcher-zzz-sources.jar"), "sources");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD");
+        Map<String, String> env = new HashMap<>();
+        env.put("LC_ALL", "C");
+        env.put("JAVACMD", java.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "hawtio");
+
+        assertThat(r.exitCode()).as(r.stderr()).isZero();
+        assertThat(r.stdout()).contains(h.resolve("camel-launcher-9.9.9.jar").toString())
+                .doesNotContain("-sources.jar");
     }
 
     @Test
