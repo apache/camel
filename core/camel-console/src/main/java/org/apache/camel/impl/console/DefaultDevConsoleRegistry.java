@@ -123,7 +123,8 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
             answer = resolver.resolveDevConsole(id);
             if (answer != null && !register(answer)) {
                 // another thread registered the console in the meantime, so use that one
-                answer = getConsole(id).orElse(answer);
+                DevConsole resolved = answer;
+                answer = consoles.stream().filter(h -> h.getId().equals(id)).findFirst().orElse(resolved);
             }
         }
 
@@ -132,12 +133,8 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
 
     @Override
     public boolean register(DevConsole console) {
-        boolean result;
-        // do we have this already
-        if (getConsole(console.getId()).isPresent()) {
-            return false;
-        }
-        result = consoles.add(console);
+        // the consoles are sorted by id, so adding a console with an id that is already registered is rejected
+        boolean result = consoles.add(console);
         if (result) {
             CamelContextAware.trySetCamelContext(console, camelContext);
             // ensure console is started as it may be registered later
