@@ -58,7 +58,7 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     private String modelName;
     @UriParam(label = "model")
     private String baseUrl;
-    @UriParam(label = "model,security", secret = true)
+    @UriParam(label = "model,security", security = "secret")
     private String apiKey;
     @UriParam(label = "model")
     private Double temperature;

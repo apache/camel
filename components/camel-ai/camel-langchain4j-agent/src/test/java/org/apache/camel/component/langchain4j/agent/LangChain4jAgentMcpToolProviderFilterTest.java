@@ -25,6 +25,7 @@ import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.service.Result;
+import dev.langchain4j.service.tool.AiServiceTool;
 import dev.langchain4j.service.tool.ToolProvider;
 import dev.langchain4j.service.tool.ToolProviderRequest;
 import dev.langchain4j.service.tool.ToolProviderResult;
@@ -67,9 +68,8 @@ class LangChain4jAgentMcpToolProviderFilterTest extends CamelTestSupport {
         capturedToolProvider.set(null);
     }
 
-    @Override
-    public boolean isUseAdviceWith() {
-        return true;
+    LangChain4jAgentMcpToolProviderFilterTest() {
+        testConfiguration().withUseAdviceWith(true);
     }
 
     @Override
@@ -169,8 +169,8 @@ class LangChain4jAgentMcpToolProviderFilterTest extends CamelTestSupport {
     private static Set<String> toolNames(ToolProvider toolProvider) {
         assertThat(toolProvider).isNotNull();
         ToolProviderResult result = toolProvider.provideTools(TOOL_REQUEST);
-        return result.tools().keySet().stream()
-                .map(ToolSpecification::name)
+        return result.aiServiceTools().stream()
+                .map(AiServiceTool::name)
                 .collect(Collectors.toSet());
     }
 }
