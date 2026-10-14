@@ -73,10 +73,16 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
         Lock connectLock = getEndpoint().getClientConsumerConnectLock();
         connectLock.lock();
         try {
+            // Use the BiConsumer overload: getWebSocket tells the callback whether the socket was already open.
+            // This avoids a racy external isWebSocketOpen() check: a producer (which does not hold connectLock)
+            // could open and cache a WebSocket between that check and getWebSocket(), causing the consumer to
+            // treat a pre-existing producer socket as its own and close it on stop.
             AtomicReference<WebSocket> opened = new AtomicReference<>();
-            WebSocket webSocket = getEndpoint().getWebSocket(ws -> {
+            WebSocket webSocket = getEndpoint().getWebSocket((ws, wasAlreadyOpen) -> {
                 configureWebSocketHandlers(ws);
-                opened.set(ws);
+                if (!wasAlreadyOpen) {
+                    opened.set(ws);
+                }
             });
             WebSocket mine = opened.get();
             if (reconnect && mine != null && !isStarted()) {
@@ -95,10 +101,19 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         // a stopped consumer does not reconnect
         cancelReconnect();
+        // Detach this consumer's handlers so a stopped consumer no longer processes incoming messages.
+        Lock connectLock = getEndpoint().getClientConsumerConnectLock();
+        connectLock.lock();
+        try {
+            getEndpoint().clearWebSocketHandlers(this);
+        } finally {
+            connectLock.unlock();
+        }
         super.doStop();
     }
 
     protected void configureWebSocketHandlers(WebSocket webSocket) {
+        getEndpoint().setHandlerOwner(this);
         webSocket.binaryMessageHandler(buffer -> this.handleResult(buffer.getBytes()));
         webSocket.textMessageHandler(this::handleResult);
         webSocket.closeHandler(event -> {
