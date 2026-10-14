@@ -1278,6 +1278,13 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   by design; the few calls the developer confirms are listed in _Developer
   tools_, which is the contract. See the AI-assistant entry in _Out of
   scope_.
+* *"The JSON output of a dev console shows endpoint URIs with their
+  secrets, while its text output masks them."* The dev consoles are
+  development tools (see _Developer tools_ and the profile entry in _Out
+  of scope_), and their JSON is what the tools use to address and compare
+  endpoints: sending to an endpoint, browsing one, matching the URIs of
+  routes and endpoints. A masked URI no longer reaches the endpoint it
+  names, so masking it would break them.
 
 === Triage dispositions
 
