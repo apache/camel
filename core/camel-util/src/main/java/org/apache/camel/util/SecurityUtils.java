@@ -159,6 +159,8 @@ public final class SecurityUtils {
                 "component:opa",
                 "component:openfga"));
         owners.put("hostnameverification", Set.of(
+                "component:mina",
+                "component:mllp",
                 "component:netty",
                 "component:nettyhttp",
                 "component:smpp",
