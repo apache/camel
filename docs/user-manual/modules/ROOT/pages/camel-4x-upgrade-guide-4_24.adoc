@@ -282,6 +282,15 @@ A connection to a host name or an IP address that the certificate does not list 
 address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
 endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
 
+A mismatch shows as the producer or consumer failing to start, with an `IOException` whose cause names the host that
+was checked:
+
+[source]
+----
+java.io.IOException: No subject alternative names matching IP address 127.0.0.1 found
+    Caused by: javax.net.ssl.SSLHandshakeException: No subject alternative names matching IP address 127.0.0.1 found
+----
+
 === camel-netty-http - the request body read as an InputStream
 
 The body of a request received by the consumer is a `NettyChannelBufferStreamCache`. Its `read()` method now returns

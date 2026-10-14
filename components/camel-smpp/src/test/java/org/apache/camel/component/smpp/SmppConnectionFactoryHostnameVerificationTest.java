@@ -102,14 +102,13 @@ class SmppConnectionFactoryHostnameVerificationTest {
     void failsWhenTheCertificateDoesNotMatchTheHost() throws Exception {
         startTlsServer();
 
-        Connection connection = factory(true, false).createConnection("127.0.0.1", server.getLocalPort());
-        try {
-            // the handshake runs on the first write
-            SSLHandshakeException e = assertThrows(SSLHandshakeException.class, () -> write(connection));
-            assertTrue(e.getMessage().contains("127.0.0.1"), e.getMessage());
-        } finally {
-            connection.close();
-        }
+        // the handshake runs in createConnection, so the mismatch is reported there rather than on the first
+        // read or write - which is what SMPPSession.connectAndBind rethrows when the bind fails
+        SmppConnectionFactory factory = factory(true, false);
+        IOException e = assertThrows(IOException.class, () -> factory.createConnection("127.0.0.1", server.getLocalPort()));
+
+        SSLHandshakeException cause = assertInstanceOf(SSLHandshakeException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("127.0.0.1"), cause.getMessage());
     }
 
     @Test

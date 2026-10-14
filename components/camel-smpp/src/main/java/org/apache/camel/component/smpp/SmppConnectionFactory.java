@@ -112,13 +112,14 @@ public final class SmppConnectionFactory implements ConnectionFactory {
                 socket.connect(new InetSocketAddress(host, port), config.getEnquireLinkTimer());
             }
 
-            if (config.isUsingSSL() && config.getHttpProxyHost() != null) {
-                // Init the SSL socket which is based on the proxy socket
-                // NOTE: the socket must be closed by the factory method client.
-                SSLSocket sslSocket = (SSLSocket) getSslSocketFactory().createSocket(socket, host, port, true); // NOSONAR
-                configureHostnameVerification(sslSocket);
-                sslSocket.startHandshake();
-                socket = sslSocket;
+            if (config.isUsingSSL()) {
+                if (config.getHttpProxyHost() != null) {
+                    // Init the SSL socket which is based on the proxy socket
+                    // NOTE: the socket must be closed by the factory method client.
+                    socket = getSslSocketFactory().createSocket(socket, host, port, true); // NOSONAR
+                    configureHostnameVerification(socket);
+                }
+                startHandshake((SSLSocket) socket);
             }
 
             return new SocketConnection(socket);
@@ -129,6 +130,25 @@ public final class SmppConnectionFactory implements ConnectionFactory {
 
     private SSLSocketFactory getSslSocketFactory() {
         return sslSocketFactory != null ? sslSocketFactory : (SSLSocketFactory) SSLSocketFactory.getDefault();
+    }
+
+    /**
+     * Completes the TLS handshake here, on the thread that is creating the connection, instead of leaving it to the
+     * first read or write.
+     * <p/>
+     * {@code SMPPSession.connectAndBind} starts its {@code PDUReaderWorker} before it writes the bind, so both threads
+     * reach the first I/O on this socket and only whichever of them drives {@code SSLSocketImpl.ensureNegotiated()}
+     * sees the {@link javax.net.ssl.SSLHandshakeException}. The other gets
+     * {@code SocketException: Connection or outbound has closed}, which never mentions the certificate - so a host name
+     * mismatch could surface as a bare closed-connection error on route start. Handshaking eagerly makes the cause
+     * deterministic.
+     * <p/>
+     * The read timeout is set first: without it a server that accepts the connection and then never answers blocks the
+     * handshake indefinitely. jsmpp uses the same value as its own read timeout and sets it again later.
+     */
+    private void startHandshake(SSLSocket socket) throws IOException {
+        socket.setSoTimeout(config.getEnquireLinkTimer());
+        socket.startHandshake();
     }
 
     private void configureHostnameVerification(Socket socket) {
