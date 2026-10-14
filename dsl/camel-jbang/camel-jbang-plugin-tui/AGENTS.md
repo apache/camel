@@ -42,6 +42,7 @@ and use each other's package-private members, so there are no sub-packages. Clas
 | `Theme`, `TuiIcons` | colours (themes in `src/main/resources/tui/themes`) and icons |
 | `TuiSettings`, `SettingsPopup` | persisted settings |
 | `TuiHelper` | shared helpers: text width, wrapping and truncation, ANSI, number and duration formats, footer hints |
+| `ScreenSanitizer` | cleans every drawn frame of what a terminal would act on: control and BiDi characters in text from the integrations |
 | `RecordingManager`, `TapePlayer`, `TapeRecorder` | `--record` and tapes |
 | `TuiWebServer` | `--web`, the terminal in a browser (`src/main/resources/tui/web`) |
 

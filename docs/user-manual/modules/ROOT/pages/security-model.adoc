@@ -132,7 +132,10 @@ on the developer's own machine, for the developer's own integrations, in the
 inner loop of writing and trying routes; they are not part of a production
 deployment. The developer is fully trusted, as a route author and an operator
 are, and so is the local machine: its user account, its loopback interface and
-the processes the developer starts.
+the processes the developer starts. What the integrations send the TUI is not:
+log lines, message bodies and headers, exceptions and span attributes carry
+data from external message senders, and the TUI shows them without the
+characters a terminal would act on (control and BiDi characters).
 
 Camel TUI has AI assistants: the model of the AI panel (a local or a hosted
 LLM), a coding agent driving the panel over ACP, and an MCP client connected
@@ -163,8 +166,9 @@ deliberately few, and they are the contract:
 
 A tool that breaks this contract is in scope: for example a file written
 outside the source directory, a message sent to an endpoint the integration
-does not have without the developer's confirmation, or a key sent over MCP
-that answers a confirmation. An assistant doing what the tools allow is the
+does not have without the developer's confirmation, a key sent over MCP that
+answers a confirmation, or text from an integration that acts on the
+terminal. An assistant doing what the tools allow is the
 trusted developer's case, also when untrusted data shown in the TUI - a
 message body, a log line, an example's README - steered the model to it
 (prompt injection); see _Out of scope_.
