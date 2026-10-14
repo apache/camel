@@ -130,6 +130,26 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         return answer;
     }
 
+    /**
+     * Creates the engine, carrying the host and port when this consumer connects as a client with host name
+     * verification enabled.
+     * <p/>
+     * The JDK reads the name to match from {@code SSLSession.getPeerHost()}, which the no-arg factory method leaves
+     * {@code null} - and then {@code HostnameChecker.match} throws
+     * {@code CertificateException: Hostname or IP address is undefined} rather than checking anything. See
+     * {@code DefaultClientInitializerFactory} for the producer side.
+     * <p/>
+     * In server mode the peer is deliberately not attached: there the algorithm would ask the JDK to match the client's
+     * certificate against a host name the server does not have, which is not what the option means.
+     */
+    private SSLEngine createServerSSLEngine() {
+        NettyConfiguration configuration = consumer.getConfiguration();
+        if (configuration.isClientMode() && configuration.isHostnameVerification()) {
+            return sslContext.createSSLEngine(configuration.getHost(), configuration.getPort());
+        }
+        return sslContext.createSSLEngine();
+    }
+
     private SslHandler configureServerSSLOnDemand() {
         if (!consumer.getConfiguration().isSsl()) {
             return null;
@@ -138,7 +158,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         if (consumer.getConfiguration().getSslHandler() != null) {
             return consumer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
-            SSLEngine engine = sslContext.createSSLEngine();
+            SSLEngine engine = createServerSSLEngine();
             engine.setUseClientMode(consumer.getConfiguration().isClientMode());
             if (consumer.getConfiguration().isNeedClientAuth()) {
                 // only when enabled, to keep the client authentication from the sslContextParameters (such as

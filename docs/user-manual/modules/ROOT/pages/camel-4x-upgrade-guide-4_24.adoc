@@ -348,6 +348,21 @@ threw an `IndexOutOfBoundsException` at the end. `markSupported()` now returns `
 anything): a reader that needs mark support has to wrap the stream, for example in a `BufferedInputStream`.
 `reset()` goes back to the start of the body, as before.
 
+=== camel-netty - hostnameVerification verifies the host instead of failing
+
+`hostnameVerification=true` on a `netty` producer, or on a consumer with `clientMode=true`, now checks that the
+certificate of the server matches the host the endpoint connects to. Before, it made the TLS handshake fail for every
+certificate, matching or not, with `CertificateException: Hostname or IP address is undefined` - the engine was
+created without a peer host, so the JDK had no name to compare against.
+
+A route that had the option set was therefore not connecting at all, and needs no change. A route that sets it while
+connecting to a host the certificate does not list - most commonly an IP address, which has to appear as a subject
+alternative name of its own - now fails the handshake with the mismatch as the reason. The default is unchanged:
+`hostnameVerification` is `false`, and the host is then not checked.
+
+Enabling the option also makes the JDK send the host as an SNI server name, as `camel-netty-http` already did. The
+default path still creates the engine without a peer and sends no SNI.
+
 === camel-dropbox - search and get read every page of the result
 
 The `search` operation (producer and consumer) now returns every match that the service gives. Previously it returned
