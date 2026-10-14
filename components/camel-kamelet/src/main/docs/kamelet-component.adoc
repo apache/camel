@@ -170,7 +170,7 @@ You can forward those options by enabling `advancedOptions` (disabled by default
 
 When enabled, extra URI parameters that are not Kamelet template properties and not reserved Kamelet options
 (`routeId`, `templateId`, `location`, `advancedOptions`, and the other kamelet endpoint options) are appended to the
-endpoint wrapped by the Kamelet. No `source.` or `sink.` prefix is required.
+endpoint wrapped by the Kamelet.
 
 Enable the feature on the component, or on a single endpoint. The endpoint setting overrides the component setting.
 
@@ -179,14 +179,35 @@ Enable the feature on the component, or on a single endpoint. The endpoint setti
 camel.component.kamelet.advanced-options=true
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("kamelet:aws-s3-source?advancedOptions=true&bucket=x&pageSize=50")
+from("kamelet:aws-s3-source?advancedOptions=true&bucketNameOrArn=x&maxConnections=100")
     .to("log:info");
 ----
 
-In this example, `bucket` is a template property of the Kamelet and stays a template parameter.
-`pageSize=50` is forwarded to the wrapped source endpoint. If that endpoint URI already contains the same option,
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kamelet:aws-s3-source
+      parameters:
+        advancedOptions: true
+        bucketNameOrArn: x
+        maxConnections: 100
+      steps:
+        - to:
+            uri: log:info
+----
+====
+
+In this example, `bucketNameOrArn` is a template property of the Kamelet and stays a template parameter.
+`maxConnections=100` is forwarded to the wrapped `aws2-s3` endpoint. If that endpoint URI already contains the same option,
 the advanced option overrides its existing value.
 
 Source Kamelets forward extra options to their input endpoint. Sink and action Kamelets forward extra options to the

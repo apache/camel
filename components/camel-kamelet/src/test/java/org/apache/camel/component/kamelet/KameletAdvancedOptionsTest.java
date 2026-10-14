@@ -18,6 +18,7 @@ package org.apache.camel.component.kamelet;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -250,6 +251,41 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
                 "The basic sink should retain the default retainFirst value");
         assertEquals(-1, sink.getRetainLast(),
                 "The basic sink should retain the default retainLast value");
+    }
+
+    @Test
+    void advancedOptionsDoNotLeakBetweenInstancesOfTheSameKamelet() throws Exception {
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("shared-sink")
+                            .from("kamelet:source")
+                            .to("mock:shared-sink?retain-first=0");
+
+                    from("direct:with-options")
+                            .kamelet("shared-sink/withOptions?advancedOptions=true&retain-first=1");
+
+                    from("direct:without-options")
+                            .kamelet("shared-sink/withoutOptions");
+                }
+            });
+
+            testContext.start();
+
+            List<String> uris = ((ModelCamelContext) testContext).getRouteDefinitions().stream()
+                    .filter(route -> Boolean.TRUE.equals(route.isKamelet()))
+                    .map(route -> findToDefinition(route, "mock:shared-sink"))
+                    .filter(sink -> sink != null)
+                    .map(ToDefinition::getEndpointUri)
+                    .toList();
+
+            assertEquals(2, uris.size(), () -> "Expected two expanded shared-sink instances: " + uris);
+            assertTrue(uris.stream().anyMatch(uri -> uri.contains("retain-first=1")),
+                    () -> "The instance with advancedOptions should receive retain-first=1: " + uris);
+            assertTrue(uris.stream().anyMatch(uri -> uri.contains("retain-first=0") && !uri.contains("retain-first=1")),
+                    () -> "The instance without advancedOptions must keep retain-first=0: " + uris);
+        }
     }
 
     @Test
@@ -797,18 +833,23 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
     }
 
     @Test
-    void removeQueryParameterPreservesRawAmpersands() throws Exception {
+    void removeQueryParameterPreservesRawAmpersands() {
         String uri = "kamelet:my-source?param=RAW(value&with&ampersands)&other=123";
 
-        var method = Kamelet.class.getDeclaredMethod(
-                "removeQueryParameter", String.class, String.class);
-        method.setAccessible(true);
-
-        String result = (String) method.invoke(null, uri, "other");
+        String result = Kamelet.removeQueryParameter(uri, "other");
 
         assertEquals(
                 "kamelet:my-source?param=RAW(value&with&ampersands)",
                 result);
+    }
+
+    @Test
+    void removeQueryParameterLeavesUriUnchangedWhenParameterIsAbsent() {
+        String uri = "http://host/path?filter=a%26b&keep=1";
+
+        String result = Kamelet.removeQueryParameter(uri, "pageSize");
+
+        assertEquals(uri, result);
     }
 
     @Test

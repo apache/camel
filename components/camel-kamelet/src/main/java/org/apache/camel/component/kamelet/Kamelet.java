@@ -375,15 +375,15 @@ public final class Kamelet {
     }
 
     /**
-     * Removes a query parameter by name, treating camelCase and kebab-case names as aliases.
+     * Removes a query parameter by name, treating camelCase and kebab-case names as aliases. Returns the original URI
+     * unchanged when the parameter is not present, so encoded values in the query are not rewritten.
      */
-    private static String removeQueryParameter(String uri, String parameterName) {
+    static String removeQueryParameter(String uri, String parameterName) {
         int queryIndex = uri.indexOf('?');
         if (queryIndex < 0) {
             return uri;
         }
 
-        String base = uri.substring(0, queryIndex);
         String query = uri.substring(queryIndex + 1);
 
         Map<String, Object> params;
@@ -394,9 +394,13 @@ public final class Kamelet {
         }
 
         String normalizedName = StringHelper.camelCaseToDash(parameterName);
-        params.keySet().removeIf(
+        boolean present = params.keySet().removeIf(
                 name -> StringHelper.camelCaseToDash(name).equals(normalizedName));
+        if (!present) {
+            return uri;
+        }
 
+        String base = uri.substring(0, queryIndex);
         return params.isEmpty() ? base : base + "?" + URISupport.createQueryString(params, false);
     }
 
