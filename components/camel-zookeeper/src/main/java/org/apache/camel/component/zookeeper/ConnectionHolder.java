@@ -33,31 +33,55 @@ import org.slf4j.LoggerFactory;
 public class ConnectionHolder implements Watcher {
     private static final Logger LOG = LoggerFactory.getLogger(ConnectionHolder.class);
 
-    private CountDownLatch connectionLatch = new CountDownLatch(1);
+    private volatile CountDownLatch connectionLatch = new CountDownLatch(1);
 
     private ZooKeeperConfiguration configuration;
 
-    private ZooKeeper zookeeper;
+    private volatile ZooKeeper zookeeper;
 
     public ConnectionHolder(ZooKeeperConfiguration configuration) {
         this.configuration = configuration;
     }
 
+    /**
+     * Returns the ZooKeeper handle, and creates one when there is none or when the current one can no longer be used: a
+     * handle whose session expired (or that was closed) stays closed for good, so a new handle with a new session is
+     * needed. Waits until the new handle is connected.
+     */
     public ZooKeeper getZooKeeper() {
-        if (zookeeper != null) {
-            return zookeeper;
+        ZooKeeper created;
+        CountDownLatch latch;
+        synchronized (this) {
+            ZooKeeper current = zookeeper;
+            if (current != null) {
+                if (current.getState().isAlive()) {
+                    return current;
+                }
+                LOG.info("The ZooKeeper session 0x{} to {} can no longer be used ({}). Creating a new session.",
+                        Long.toHexString(current.getSessionId()), configuration.getConnectString(), current.getState());
+                closeQuietly(current);
+                zookeeper = null;
+            }
+            if (configuration.getConnectString() == null) {
+                throw new RuntimeCamelException(
+                        "Cannot create ZooKeeper connection as connection string is null. Have servers been configured?");
+            }
+            latch = new CountDownLatch(1);
+            connectionLatch = latch;
+            try {
+                // each handle counts down its own latch, so that a late event of a previous handle cannot release
+                // the wait for a new one
+                created = new ZooKeeper(configuration.getConnectString(), configuration.getTimeout(), event -> {
+                    process(event, latch);
+                });
+                zookeeper = created;
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
         }
-        if (configuration.getConnectString() == null) {
-            throw new RuntimeCamelException(
-                    "Cannot create ZooKeeper connection as connection string is null. Have servers been configured?");
-        }
-        try {
-            zookeeper = new ZooKeeper(configuration.getConnectString(), configuration.getTimeout(), this);
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-        awaitConnection();
-        return zookeeper;
+        // wait on the latch of this handle: another thread may already have replaced the field
+        awaitConnection(latch);
+        return created;
     }
 
     public boolean isConnected() {
@@ -65,11 +89,15 @@ public class ConnectionHolder implements Watcher {
     }
 
     public void awaitConnection() {
+        awaitConnection(connectionLatch);
+    }
+
+    private void awaitConnection(CountDownLatch latch) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Awaiting Connection event from Zookeeper cluster {}", configuration.getConnectString());
         }
         try {
-            connectionLatch.await();
+            latch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -78,13 +106,25 @@ public class ConnectionHolder implements Watcher {
 
     @Override
     public void process(WatchedEvent event) {
-        if (event.getState() == KeeperState.SyncConnected) {
-            connectionLatch.countDown();
-        }
-        connectionLatch.countDown();
+        process(event, connectionLatch);
     }
 
-    public void closeConnection() {
+    private static void process(WatchedEvent event, CountDownLatch latch) {
+        if (event.getState() == KeeperState.SyncConnected) {
+            latch.countDown();
+        }
+        latch.countDown();
+    }
+
+    private void closeQuietly(ZooKeeper handle) {
+        try {
+            handle.close();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public synchronized void closeConnection() {
         try {
             if (zookeeper != null) {
                 zookeeper.close();

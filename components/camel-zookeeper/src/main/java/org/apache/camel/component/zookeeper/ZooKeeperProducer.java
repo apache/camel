@@ -66,9 +66,8 @@ public class ZooKeeperProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        if (connection == null) {
-            connection = this.zkm.getConnection();
-        }
+        // a new connection when the session of the previous one expired
+        connection = this.zkm.getConnection();
         ProductionContext context = new ProductionContext(connection, exchange);
 
         String operation = exchange.getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_OPERATION, String.class);

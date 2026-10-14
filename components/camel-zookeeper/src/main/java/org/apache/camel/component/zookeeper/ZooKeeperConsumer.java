@@ -50,7 +50,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperConsumer.class);
 
     private final ZooKeeperConnectionManager zkm;
-    private ZooKeeper connection;
+    private volatile ZooKeeper connection;
     private ZooKeeperConfiguration configuration;
     private LinkedBlockingQueue<ZooKeeperOperation> operations = new LinkedBlockingQueue<>();
     private ExecutorService executor;
@@ -154,6 +154,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                     continue;
                 }
                 String node = current.getNode();
+                boolean restarted = false;
                 try {
                     OperationResult result = current.get();
                     if (ZooKeeperUtils.hasWatchedEvent(current)) {
@@ -166,12 +167,14 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     handleException(e);
-                    backoffAndThenRestart();
+                    restarted = backoffAndThenRestart();
                 } catch (Exception e) {
                     handleException(e);
-                    backoffAndThenRestart();
+                    restarted = backoffAndThenRestart();
                 } finally {
-                    if (configuration.isRepeat()) {
+                    // after a restart the queue holds the operations of the new sequence; a copy of the failed one
+                    // (which may use a handle whose session expired) must not be added to them
+                    if (configuration.isRepeat() && !restarted) {
                         try {
                             operations.offer(current.createCopy());
                         } catch (Exception e) {
@@ -182,7 +185,13 @@ public class ZooKeeperConsumer extends DefaultConsumer {
             }
         }
 
-        private void backoffAndThenRestart() {
+        /**
+         * Waits for the backoff, then starts the sequence of operations again on the current connection, which is a new
+         * one when the session of the previous one expired.
+         *
+         * @return true when the sequence was started again
+         */
+        private boolean backoffAndThenRestart() {
             try {
                 if (isRunAllowed()) {
                     // Use Camel's task API for reconnection backoff delay instead of Thread.sleep()
@@ -199,11 +208,16 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                             .build()
                             .run(getEndpoint().getCamelContext(), () -> true);
 
-                    initializeConsumer();
+                    if (isRunAllowed()) {
+                        connection = zkm.getConnection();
+                        initializeConsumer();
+                        return true;
+                    }
                 }
             } catch (Exception e) {
                 // ignore
             }
+            return false;
         }
     }
 
