@@ -723,3 +723,25 @@ before Camel 3.13), for example a file from a second uploader, or from a client 
 visible later: GridFS sets the upload date on the client. Use `TimeStampAndFileAttribute` or
 `PersistentTimestampAndFileAttribute` if such files must be routed: these strategies keep the start date in their
 query, as before, and mark each file so that it is routed once.
+
+=== Semantic image input and audit output
+
+Semantic evaluations now recognize a selected `$\{body}` with an image `Content-Type`, and
+self-describing `data:image/...` strings, as image input. Text-only experts reject these inputs
+instead of treating encoded images as text. For binary image streams, Camel preserves the bytes
+using a replayable stream cache; downstream code must not rely on the original stream class.
+For the exact `$\{body}` selector, `audio/*` and `video/*` content types now fail before inference,
+even for a `String` body. Select an explicitly textual field to evaluate text accompanying audio
+or video. Content-Type normalization does not apply to other selectors such as `$\{bodyAs(byte[])}`;
+use `$\{body}` for image bytes or select a media envelope or image data URL explicitly.
+Ordinary strings without a media content type remain text.
+The `$semanticInput` key is reserved for explicit media envelopes. TypeSafe AI rejects that
+key in structured state, including nested objects; rename an application-state key that conflicts with it.
+
+`SemanticAdapter` has an additive default `validateState(Object)` hook for validation shared by
+all questions for one expert. Existing per-evaluation `validateInput` hooks still run; both finish
+for every expert before any provider performs inference. A shared validation failure marks that
+expert's group as invalid input in the audit.
+
+Semantic audit backends can opt into the additive `inputType` extension. Readers that do not
+support it keep their existing projection.

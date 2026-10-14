@@ -184,7 +184,10 @@ class WolfDefenderSemanticAdapterTest {
         expert.setMaxCharacters(4);
         expert.start();
         try {
-            for (Object state : new Object[] { null, Map.of("text", "x"), 42, new StringBuilder("text"), "", "  ", "12345" }) {
+            for (Object state : new Object[] {
+                    null, Map.of("text", "x"), 42, new StringBuilder("text"), "", "  ", "12345",
+                    new byte[] { 1 }, "data:image/png;base64,AA==",
+                    Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AA=="))) }) {
                 assertThatThrownBy(() -> expert.evaluate(evaluation(), state)).isInstanceOf(RuntimeException.class)
                         .satisfies(e -> assertThat(e.getMessage()).doesNotContain("12345"));
             }

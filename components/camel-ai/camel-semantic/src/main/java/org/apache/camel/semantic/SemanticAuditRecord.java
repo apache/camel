@@ -32,7 +32,8 @@ import org.apache.camel.semantic.internal.SemanticAuditInputSnapshot;
  */
 public final class SemanticAuditRecord {
     /** Additive field groups; destinations explicitly opt in before receiving them. */
-    public static final Set<String> EXTENSIONS = Set.of("interpretation", "findings", "executingRouteId", "identity");
+    public static final Set<String> EXTENSIONS
+            = Set.of("interpretation", "findings", "executingRouteId", "identity", "inputType");
     private final Map<String, Object> fields;
     private final Instant timestamp;
 
@@ -48,7 +49,7 @@ public final class SemanticAuditRecord {
                 "status", "reasonCode", "durationNanos", "resultOmitted", "result", "action", "namespace", "correlationId",
                 "policyId", "policyVersion", "rule", "evidence", "startedAt", "provider", "model", "revision", "input",
                 "inputOmitted", "inputRedacted", "breadcrumbId", "executingRouteId", "interpretation", "interpretationOmitted",
-                "findings", "findingsOmitted", "taskId", "taskVersion");
+                "findings", "findingsOmitted", "taskId", "taskVersion", "inputType");
         if (!keys.containsAll(data.keySet()) || !(data.get("schemaVersion") instanceof Number version)
                 || version.doubleValue() != 1
                 || !(data.get("eventId") instanceof String id) || id.isBlank() || id.length() > 256
@@ -68,6 +69,11 @@ public final class SemanticAuditRecord {
         if (data.containsKey("durationNanos") && (!(data.get("durationNanos") instanceof Number duration)
                 || duration.longValue() < 0 || duration.doubleValue() != duration.longValue())) {
             throw new IllegalArgumentException("Invalid audit duration");
+        }
+        if (data.containsKey("inputType") && (!"evaluation".equals(category)
+                || !Set.of("text", "image", "text-and-images", "structured", "unsupported", "unknown")
+                        .contains(data.get("inputType")))) {
+            throw new IllegalArgumentException("Invalid audit input type");
         }
         if (data.containsKey("startedAt")) {
             if (!(data.get("startedAt") instanceof String startedAt)) {

@@ -36,7 +36,8 @@ import java.lang.annotation.Target;
 public @interface SemanticExpert {
     enum InputType {
         TEXT,
-        STRUCTURED
+        STRUCTURED,
+        IMAGE
     }
 
     enum ResultType {

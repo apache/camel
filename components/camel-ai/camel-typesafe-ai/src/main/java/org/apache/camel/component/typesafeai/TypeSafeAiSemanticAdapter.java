@@ -130,6 +130,12 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
         }
     }
 
+    @Override
+    public void validateInput(SemanticEvaluation evaluation, Object state) {
+        SemanticCapabilities.from(getClass()).operation(evaluation.getOperation()).validateInput(state);
+        TypeSafeAiJson.validateState(state);
+    }
+
     private TypeSafeAiEndpoint endpoint() {
         if (endpoint == null) {
             synchronized (this) {
@@ -151,6 +157,10 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
 
     @Override
     public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticEvaluation> questions, Object state) throws Exception {
+        questions.values().forEach(question -> {
+            validate(question);
+            validateInput(question, state);
+        });
         Map<String, Object> definitions = new LinkedHashMap<>();
         questions.forEach((name, question) -> definitions.put(name, definition(question)));
         JsonObject response = endpoint().evaluate(Map.of("state", state, "questions", definitions));

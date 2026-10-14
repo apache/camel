@@ -167,6 +167,14 @@ public final class SemanticCapabilities {
                     || declaration.resultType() != ResultType.CHOICE && declaration.resultType() != ResultType.SCORE)) {
                 throw new IllegalArgumentException("Complete probabilities require a CHOICE or SCORE distribution");
             }
+            if (!declaration.scoreDescriptionsParameter().isEmpty()) {
+                Parameter descriptions = parameters.get(declaration.scoreDescriptionsParameter());
+                if (declaration.scoreLevelsParameter().isEmpty() || descriptions == null
+                        || descriptions.getType() != Map.class || descriptions.getItemType() != String.class) {
+                    throw new IllegalArgumentException(
+                            "Score descriptions require score levels and a Map<String, String> parameter");
+                }
+            }
             if (!declaration.scoreLevelsParameter().isEmpty()) {
                 Parameter levels = parameters.get(declaration.scoreLevelsParameter());
                 if (declaration.resultType() != ResultType.SCORE || levels == null
@@ -246,6 +254,10 @@ public final class SemanticCapabilities {
             return declaration.scoreLevelsParameter();
         }
 
+        public String getScoreDescriptionsParameter() {
+            return declaration.scoreDescriptionsParameter();
+        }
+
         public double getMinimum() {
             return declaration.minimum();
         }
@@ -295,10 +307,7 @@ public final class SemanticCapabilities {
         }
 
         public void validateInput(Object state) {
-            if (!(state instanceof String && inputTypes.contains(InputType.TEXT)
-                    || (state instanceof Map<?, ?> || state instanceof List<?>) && inputTypes.contains(InputType.STRUCTURED))) {
-                throw new IllegalArgumentException("Unsupported selected state; accepts " + inputTypes + " input");
-            }
+            SemanticInput.validate(state, inputTypes);
         }
 
         /** Validate the typed answer; decision policy has already been applied by the expert. */

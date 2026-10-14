@@ -43,6 +43,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
+    @Test
+    void rejectsImagesAndBinaryStateBeforeInitializingTransport() {
+        var adapter = new TypeSafeAiSemanticAdapter();
+        var question = new SemanticEvaluation("boolean", "decisions", null, Map.of("instructions", "Assess"));
+        var image = Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AA==")));
+        for (Object input : List.of(new byte[] { 1 }, image, Map.of("nested", image), "data:image/png;base64,AA==")) {
+            assertThatThrownBy(() -> adapter.validateInput(question, input)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> adapter.evaluateBatch(Map.of("q", question), input))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+        assertThat(requests).isEmpty();
+    }
+
     @BeforeEach
     void registerExpert() {
         var expert = new TypeSafeAiSemanticAdapter();

@@ -306,3 +306,11 @@ Only submit data permitted for the configured service. Test model decisions and 
 against your application; structured output does not establish correctness.
 
 include::spring-boot:partial$starter.adoc[]
+
+== Semantic media input validation
+
+The Semantic adapter accepts text and TypeSafe AI's supported structured application state.
+It rejects explicit `$semanticInput` image/media envelopes, including nested media envelopes,
+and binary state before initializing transport. Selecting a body with an image `Content-Type`
+or a self-describing image data URL does not make this text/structured expert multimodal.
+Use an image-capable expert for images.
