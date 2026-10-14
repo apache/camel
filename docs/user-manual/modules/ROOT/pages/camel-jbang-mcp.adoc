@@ -306,8 +306,17 @@ project `directory` as an argument, the runtime tools take the integration `name
   advanced pages. With `endpoint` it checks a URI against the catalog: unknown options with the closest real
   names, invalid values, missing path parts, consumer options on a producer endpoint. `includeHeaders=true`
   adds the message headers of a component (the `CamelXxx` names, their constants, types and consumer or
-  producer group), `includeDoc=true` the AsciiDoc page. An EIP alias (`fan-out`, `dedup`, `rate-limit`) or a
-  word of its title finds the EIP; the answer then names the `matchedTerm`.
+  producer group), `includeDoc=true` the AsciiDoc page. An EIP alias (`fan-out`, `dedup`, `rate-limit`) or its
+  whole title finds the EIP; the answer then names the `matchedTerm`. A page name of `camel_catalog_docs`
+  (`kafka-component`, `wireTap-eip`) and a name in another case are found too; a retry or redelivery word points
+  at the error handler. Without `optionsFilter` a component lists the required options and the first 20 others
+  in full (`limit` changes it) and the rest by name in `moreOptions`; each component option carries its
+  `application.properties` key (`configKey`), and the multi-value options that take any parameter with a prefix
+  (`mail.*` of smtp) are listed in `prefixOptions`. A filter that matches no option says so, with the closest
+  option names. The answer lists the `sections` of the component page, those that contain the filter first, and
+  `docPage=<section title>` returns one. A full key (`camel.server.port`, `camel.jbang.dependencies`) answers
+  its group of `application.properties` keys, the key first. An answer is cut at 16 000 characters, with a
+  marker that says what was left out.
   `includeOptions` picks the options listed: `common` (the default) leaves out the deprecated and advanced
   ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`
   none; `optionsFilter` matches a keyword in the option names, descriptions and groups and searches all
@@ -496,10 +505,6 @@ client to the next.
 | `camel_catalog_docs`
 | List the AsciiDoc documentation page names of the catalog (`kafka-component`, `split-eip`, ...), with a
   substring filter; `camel_catalog_doc` with `includeDoc=true` returns a page.
-
-| `camel_component_properties`
-| List valid configuration property keys for a Camel component in `camel.component.<scheme>.<name>` form,
-  including option name, type, default value, and description.
 |===
 
 === Kamelet Catalog

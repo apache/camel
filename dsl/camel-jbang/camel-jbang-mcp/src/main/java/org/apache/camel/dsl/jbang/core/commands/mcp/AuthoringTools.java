@@ -29,6 +29,7 @@ import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
@@ -75,7 +76,8 @@ public class AuthoringTools {
                         + "the variables a groovy, js, python or java script sees. endpoint validates a URI: unknown or "
                         + "invalid options, missing path. An EIP alias such as fan-out or dedup finds the EIP. "
                         + "includeHeaders=true adds the message headers of a component, includeDoc=true the AsciiDoc "
-                        + "page.")
+                        + "page, docPage one of its sections. A component option carries its application.properties "
+                        + "key (configKey); a full key (camel.server.port, camel.jbang.dependencies) lists its group.")
     @MetaField(prefix = "camel.apache.org/", name = "deterministic", type = MetaField.Type.BOOLEAN, value = "true")
     public JsonObject camel_catalog_doc(
             McpConnection connection,
@@ -90,15 +92,17 @@ public class AuthoringTools {
             @ToolArg(description = "Include the message headers of a component (default false)",
                      required = false) Boolean includeHeaders,
             @ToolArg(description = "Include the full AsciiDoc page (default false)", required = false) Boolean includeDoc,
-            @ToolArg(description = "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
+            @ToolArg(description = CatalogDocs.DOC_PAGE_DESC,
                      required = false) String docPage,
-            @ToolArg(description = "Keyword to match in option names or descriptions; for an EIP whose own options do not match, the options of its elements are searched (nestedOptions)",
+            @ToolArg(description = CatalogDocs.OPTIONS_FILTER_DESC,
                      required = false) String optionsFilter,
+            @ToolArg(description = CatalogDocs.OPTIONS_LIMIT_DESC,
+                     required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return callDeterministic(connection, "camel_catalog_doc", args("name", name, "endpoint", endpoint, "kind", kind,
                 "includeOptions", includeOptions, "includeHeaders", includeHeaders, "includeDoc", includeDoc,
                 "docPage", docPage,
-                "optionsFilter", optionsFilter, "camelVersion", camelVersion));
+                "optionsFilter", optionsFilter, "limit", limit, "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),

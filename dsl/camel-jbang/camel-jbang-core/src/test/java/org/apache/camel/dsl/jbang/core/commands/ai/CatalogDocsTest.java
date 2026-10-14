@@ -339,8 +339,10 @@ class CatalogDocsTest {
         JsonObject all = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", "all"));
         assertEquals(matched + omitted, all.getInteger("matchedOptions"));
         assertNull(all.get("omittedOptions"));
+        // listed in full or, past the limit, by name (CAMEL-25541)
         assertTrue(all.getCollection("options").stream()
-                .anyMatch(o -> "isolationLevel".equals(((JsonObject) o).getString("name"))));
+                .anyMatch(o -> "isolationLevel".equals(((JsonObject) o).getString("name")))
+                || all.getCollection("moreOptions").contains("isolationLevel"));
 
         JsonObject required = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", "required"));
         assertTrue(required.getInteger("matchedOptions") < 5);

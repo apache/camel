@@ -91,7 +91,7 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
+                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI. A full key (camel.server.port, camel.jbang.dependencies) lists its application.properties group.")
                 .param("name", "string",
                         "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                         false)
@@ -103,11 +103,9 @@ public final class AuthoringTools {
                         "common (default: no deprecated or advanced), required, all or false", false)
                 .param("includeHeaders", "boolean", "Include the message headers of a component (default false)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
-                .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
-                        false)
-                .param("optionsFilter", "string",
-                        "Keyword to match in option names or descriptions; for an EIP whose own options do not match, the options of its elements are searched (nestedOptions)",
-                        false)
+                .param("docPage", "string", CatalogDocs.DOC_PAGE_DESC, false)
+                .param("optionsFilter", "string", CatalogDocs.OPTIONS_FILTER_DESC, false)
+                .param("limit", "integer", CatalogDocs.OPTIONS_LIMIT_DESC, false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)
@@ -116,7 +114,7 @@ public final class AuthoringTools {
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
                             args.get("kind"), args.get("optionsFilter"), args.get("includeOptions"),
                             bool(args, "includeHeaders", false), bool(args, "includeDoc", false),
-                            args.get("docPage")).toJson();
+                            args.get("docPage"), integer(args, "limit", -1)).toJson();
                 }));
 
         registry.accept(tool("camel_catalog_find",
