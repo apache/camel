@@ -17,12 +17,11 @@
 package org.apache.camel.component.bonita.api.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.Serializable;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ThreadLocalRandom;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -47,10 +46,14 @@ public class BonitaAPIUtil {
 
     /**
      * Creates a helper that uploads to the Bonita server of the given configuration, with the account of that
-     * configuration. Every call creates a new helper with a JAX-RS client of its own; nothing is shared between
-     * configurations. {@code BonitaAPIBuilder} does not use this method: it binds the helper to the client of the
-     * {@code BonitaAPI} that it builds, see {@link #forClient(Client, BonitaAPIConfig)}.
+     * configuration. Every call creates a new helper with a JAX-RS client of its own, which is never closed; nothing is
+     * shared between configurations.
+     *
+     * @deprecated use {@link #forClient(Client, BonitaAPIConfig)} with a client that the caller closes.
+     *             {@code BonitaAPIBuilder} does not use this method: it binds the helper to the client of the
+     *             {@code BonitaAPI} that it builds.
      */
+    @Deprecated(since = "4.24.0")
     public static BonitaAPIUtil getInstance(BonitaAPIConfig bonitaAPIConfig) {
         ClientBuilder clientBuilder = ClientBuilder.newBuilder();
         Client client = clientBuilder.build();
@@ -79,21 +82,17 @@ public class BonitaAPIUtil {
                 .resolveTemplate("processName", processDefinition.getName())
                 .resolveTemplate("processVersion", processDefinition.getVersion());
 
-        // the temporary file only reserves a unique name for the part: the content is sent from the byte array
-        File tempFile = Files.createTempFile("tempFile", ".tmp").toFile();
-        try {
-            String dispositionValue = String.format("form-data;filename=%s;name=file", tempFile.getName());
-            Attachment attachment = new AttachmentBuilder()
-                    .object(new ByteArrayInputStream(file.getContent()))
-                    .contentDisposition(new ContentDisposition(dispositionValue))
-                    .build();
+        // the part is named like a temporary file (as before), but no file is created: the content is sent from the
+        // byte array
+        String fileName = "tempFile" + ThreadLocalRandom.current().nextLong(Long.MAX_VALUE) + ".tmp";
+        String dispositionValue = String.format("form-data;filename=%s;name=file", fileName);
+        Attachment attachment = new AttachmentBuilder()
+                .object(new ByteArrayInputStream(file.getContent()))
+                .contentDisposition(new ContentDisposition(dispositionValue))
+                .build();
 
-            return resource.request().accept(MediaType.APPLICATION_JSON).post(
-                    entity(attachment, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
-        } finally {
-            // File.delete does not throw, so a failure of the upload is never replaced by one of the clean-up
-            tempFile.delete();
-        }
+        return resource.request().accept(MediaType.APPLICATION_JSON).post(
+                entity(attachment, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
     }
 
     public Map<String, Serializable> prepareInputs(

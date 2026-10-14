@@ -65,7 +65,7 @@ class BonitaStartCaseFileUploadTest {
     private static final String PROCESS = "/bonita/API/bpm/process";
     private static final String UPLOAD = "/bonita/portal/resource/process/orders/1.0/API/formFileUpload";
     private static final String INSTANTIATION = "/bonita/API/bpm/process/7/instantiation";
-    // one part: boundary, headers with the disposition that names the temporary file, content, closing boundary
+    // one part: boundary, headers with the disposition that names the part like a temporary file, content, closing boundary
     private static final Pattern UPLOADED_PART = Pattern.compile(
             "(?:\r\n)?--(\\S+)\r\n(?:(?!Content-Disposition)[^\r\n]+\r\n)*"
                                                                  + "Content-Disposition: form-data;filename=(tempFile\\d+\\.tmp);name=file\r\n"
@@ -137,14 +137,14 @@ class BonitaStartCaseFileUploadTest {
     }
 
     @Test
-    void temporaryFileOfTheUploadIsDeleted() throws Exception {
+    void uploadLeavesNoTemporaryFile() throws Exception {
         startCase("direct:a");
 
         assertUploadedPartAndNoTemporaryFileLeft(serverA);
     }
 
     @Test
-    void temporaryFileOfTheUploadIsDeletedWhenTheUploadFails() throws Exception {
+    void uploadLeavesNoTemporaryFileWhenTheUploadFails() throws Exception {
         serverA.stubFor(post(urlEqualTo(UPLOAD)).atPriority(1)
                 .willReturn(aResponse().withStatus(500).withHeader("Content-Type", "text/plain")
                         .withBody("upload refused")));
@@ -240,8 +240,8 @@ class BonitaStartCaseFileUploadTest {
     }
 
     /**
-     * The upload is one multipart part with the content of the file input, named after a temporary file that the
-     * producer creates for the upload. That file must not be left in the temporary directory.
+     * The upload is one multipart part with the content of the file input, named like a temporary file
+     * ({@code tempFile<digits>.tmp}, as on main). No file of that name may be left in the temporary directory.
      */
     private static void assertUploadedPartAndNoTemporaryFileLeft(WireMockServer server) throws Exception {
         List<LoggedRequest> uploads = server.findAll(anyRequestedFor(urlEqualTo(UPLOAD)));
@@ -251,7 +251,7 @@ class BonitaStartCaseFileUploadTest {
         assertTrue(contentType.startsWith("multipart/form-data"), "content type of the upload: " + contentType);
         String body = upload.getBodyAsString();
         Matcher matcher = UPLOADED_PART.matcher(body);
-        assertTrue(matcher.matches(), "the upload must be one part named after the temporary file: " + body);
+        assertTrue(matcher.matches(), "the upload must be one part named like a temporary file: " + body);
         assertEquals(matcher.group(1), matcher.group(4), "closing boundary of the upload: " + body);
         assertEquals("content", matcher.group(3), "content of the uploaded part");
         Path file = Path.of(System.getProperty("java.io.tmpdir"), matcher.group(2));

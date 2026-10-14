@@ -39,6 +39,12 @@ public class BonitaAPI {
     private WebTarget webTarget;
     private final BonitaAPIUtil bonitaApiUtil;
 
+    /**
+     * @deprecated the file inputs are uploaded with a JAX-RS client of their own, which is never closed. Use
+     *             {@link #BonitaAPI(BonitaAPIConfig, WebTarget, BonitaAPIUtil)} with a helper from
+     *             {@link BonitaAPIUtil#forClient}, as {@code BonitaAPIBuilder} does.
+     */
+    @Deprecated(since = "4.24.0")
     protected BonitaAPI(BonitaAPIConfig bonitaApiConfig, WebTarget webTarget) {
         this(bonitaApiConfig, webTarget, BonitaAPIUtil.getInstance(bonitaApiConfig));
     }
