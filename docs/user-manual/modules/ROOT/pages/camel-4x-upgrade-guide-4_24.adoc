@@ -318,11 +318,13 @@ The `accessToken` (with its `jwtAuthorizationType`) is now added to a request on
 scheme, host and port of `httpUri`, and the `username` and `password` are registered for that authority only.
 Previously neither was bound to the authority of `httpUri`. A request to another authority, including the same host
 with another scheme or port, is now sent without them. A route that needs to authenticate to another authority must
-address it in `httpUri`.
+address it in `httpUri`. When `proxyHost` is set, the `username` and `password` are no longer offered to the proxy when
+it asks for authentication.
 
 The producer also no longer takes the request URL from the `CamelHttpUri`, `CamelHttpPath`, `CamelHttpQuery` and other
 camel-http control headers of the message. It did so since Camel 4.19, when the component moved onto camel-http; the
-request now always goes to `httpUri`, as it did before.
+request now always goes to `httpUri`, as it did before. For the same reason the `CamelHttpMethod` and
+`CamelHttpProtocolVersion` headers no longer apply, and the request is always a POST.
 
 === camel-servlet and camel-jetty - gzip request body that arrives after the headers
 

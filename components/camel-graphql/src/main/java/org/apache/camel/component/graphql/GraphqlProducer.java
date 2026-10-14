@@ -91,6 +91,7 @@ public class GraphqlProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
 
         Exchange httpExchange = getEndpoint().createExchange();
+        // not read by camel-http (skipControlHeaders=true): the httpMethod option of the internal endpoint decides
         httpExchange.getIn().setHeader(HttpConstants.HTTP_METHOD, "post");
         httpExchange.getIn().setHeader("Content-Type", "application/json");
         httpExchange.getIn().setHeader("Accept", "application/json");
