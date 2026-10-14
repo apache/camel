@@ -116,10 +116,10 @@ class SemanticAuditTest {
             context.getRegistry().bind("recorded", expert);
             context.getRegistry().bind("excluded", expert);
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert("excluded");
             var audit = SemanticAuditService.get(context);
             audit.configure("test", configuration(true, Map.of("excluded", false, "recorded", true)));
-            SemanticEvaluations.get(context).replace("definitions", Map.of("a", evaluation("recorded"), "b", evaluation(null)));
+            SemanticEvaluations.get(context).replace("definitions",
+                    Map.of("a", evaluation("recorded"), "b", evaluation("excluded")));
             context.start();
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody("text");
@@ -406,8 +406,7 @@ class SemanticAuditTest {
 
     @ParameterizedTest
     @CsvSource({
-            "true,security", "false,security", "true,{{expert.name}}", "false,{{expert.name}}", "true,default",
-            "false,default" })
+            "true,security", "false,security", "true,{{expert.name}}", "false,{{expert.name}}" })
     void invalidDeclarationsResolveExpertPlaceholdersBeforeAuditFiltering(boolean enabled, String expert) throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedSemanticExpert());
@@ -418,9 +417,8 @@ class SemanticAuditTest {
             audit.configure("test", configuration(true, Map.of("security", enabled)));
             context.start();
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert("security");
             assertThatThrownBy(() -> language.evaluate(
-                    new SemanticEvaluation("unknown", "default".equals(expert) ? null : expert, null, Map.of()), "text"))
+                    new SemanticEvaluation("unknown", expert, null, Map.of()), "text"))
                     .isInstanceOf(IllegalArgumentException.class);
             audit.stop();
             assertThat(records(audit)).hasSize(enabled ? 1 : 0);
@@ -472,7 +470,7 @@ class SemanticAuditTest {
     }
 
     @Test
-    void removedDefinitionIsNotAttributedToTheDefaultExpert() throws Exception {
+    void removedDefinitionIsNotAttributedToAnUnrelatedExpert() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedSemanticExpert());
             var audit = SemanticAuditService.get(context);
@@ -481,7 +479,6 @@ class SemanticAuditTest {
             definitions.replace("definitions", Map.of("check", evaluation("security")));
             context.start();
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert("security");
             var expression = language.createExpression("ref:check");
             definitions.replace("definitions", Map.of());
             var exchange = new DefaultExchange(context);

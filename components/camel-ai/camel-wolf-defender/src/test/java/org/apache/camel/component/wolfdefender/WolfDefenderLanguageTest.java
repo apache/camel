@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 
 class WolfDefenderLanguageTest {
     @Test
-    void explicitAndSoleRegistryExpertPreserveMessageAndProbability() throws Exception {
+    void explicitRegistryExpertPreservesMessageAndProbability() throws Exception {
         var inference = mock(WolfDefenderInference.class);
         when(inference.evaluate(anyString(), anyInt(), any())).thenReturn(0.03);
         var expert = expert(inference);
@@ -50,13 +50,12 @@ class WolfDefenderLanguageTest {
             context.addService(expert, true, true);
             context.start();
             SemanticEvaluations.get(context).replace("test",
-                    Map.of("injection", evaluation("security"), "automatic", evaluation()));
+                    Map.of("injection", evaluation("security")));
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody("original text");
             exchange.getMessage().setHeader("original", "header");
             var language = context.resolveLanguage("semantic");
             assertThat(language.createExpression("ref:injection").evaluate(exchange, Boolean.class)).isFalse();
-            assertThat(language.createExpression("ref:automatic").evaluate(exchange, Boolean.class)).isFalse();
             assertThat(exchange.getMessage().getBody()).isEqualTo("original text");
             assertThat(exchange.getMessage().getHeader("original")).isEqualTo("header");
             assertThat(exchange.getProperty(SemanticLanguage.RESULT)).isNotNull();
@@ -152,12 +151,12 @@ class WolfDefenderLanguageTest {
     }
 
     @Test
-    void discoveryValidatesBeforeModelLoadingAndReportsEvaluationAndExpert() throws Exception {
+    void explicitExpertIsRequiredAndValidatedBeforeModelLoading() throws Exception {
         try (var context = new DefaultCamelContext()) {
             SemanticEvaluations.get(context).replace("test", Map.of("injection", evaluation()));
-            // JDK discovery selects the packaged expert, then fails on missing local artifacts.
+            // A provider on the classpath does not replace an explicitly registered expert.
             assertThatThrownBy(() -> context.resolveLanguage("semantic").createExpression("ref:injection"))
-                    .hasStackTraceContaining("Configure modelDirectory");
+                    .hasStackTraceContaining("Unknown expert or bean does not implement SemanticAdapter: security");
         }
         try (var context = new DefaultCamelContext()) {
             var expert = new WolfDefenderSemanticAdapter();

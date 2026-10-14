@@ -16,7 +16,6 @@
  */
 package org.apache.camel.semantic;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,7 +24,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.language.semantic.SemanticLanguage;
-import org.apache.camel.semantic.internal.NoUniqueSemanticExpertException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -35,7 +33,7 @@ import org.apache.camel.util.json.JsonRecordSupport;
 @DevConsole(name = "semantic-metadata", displayName = "Semantic Metadata",
             description = "Semantic experts and evaluation definitions")
 public class SemanticMetadataConsole extends AbstractDevConsole {
-    @Metadata(label = "query", description = "Expert registry name; omitted uses the language's default selection",
+    @Metadata(label = "query", description = "Expert registry name, required for operation inspection",
               javaType = "java.lang.String")
     public static final String EXPERT = "expert";
     @Metadata(label = "query", description = "List registered experts and published evaluation definitions",
@@ -50,7 +48,7 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
     }
 
     public record Expert(
-            @Metadata(description = "Registry reference or adapter class") String reference,
+            @Metadata(description = "Registry reference") String reference,
             @Metadata(description = "Contract name") String name,
             @Metadata(description = "Expert description") String description,
             @Metadata(description = "Provider name") String provider,
@@ -72,15 +70,7 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
     public record Response(
             @Metadata(description = "Operations for completion") List<Operation> operations,
             @Metadata(description = "Known experts, when overview is requested") List<Expert> experts,
-            @Metadata(description = "Published definitions, when overview is requested") List<Definition> evaluations,
-            @Metadata(description = "Resolved default expert") String defaultExpert,
-            @Metadata(description = "Default selection error, if any") String defaultError,
-            @Metadata(description = "Default selection error code: no_unique_expert or default_expert_error") String defaultErrorCode) {
-
-        public Response(List<Operation> operations, List<Expert> experts, List<Definition> evaluations,
-                        String defaultExpert, String defaultError) {
-            this(operations, experts, evaluations, defaultExpert, defaultError, null);
-        }
+            @Metadata(description = "Published definitions, when overview is requested") List<Definition> evaluations) {
     }
 
     public SemanticMetadataConsole() {
@@ -101,31 +91,21 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
         List<Operation> operations;
         try {
             operations = operations(language.getExpertCapabilities(optionString(options, EXPERT)));
-        } catch (IllegalArgumentException | IOException unavailable) {
+        } catch (IllegalArgumentException unavailable) {
             operations = List.of();
         }
-        return JsonRecordSupport.toJsonObject(new Response(operations, null, null, null, null));
+        return JsonRecordSupport.toJsonObject(new Response(operations, null, null));
     }
 
     private Response overview(SemanticLanguage language) {
         Map<String, Expert> experts = new TreeMap<>();
-        getCamelContext().getRegistry().findByTypeWithName(SemanticAdapter.class).keySet().stream()
-                .filter(name -> !SemanticLanguage.ADAPTER_NAME.equals(name)).forEach(reference -> {
-                    try {
-                        addExpert(experts, language.describeExpert(reference));
-                    } catch (IllegalArgumentException | IOException e) {
-                        experts.put(reference, new Expert(reference, null, null, null, null, List.of(), e.getMessage()));
-                    }
-                });
-        String defaultExpert = null;
-        String defaultError = null;
-        String defaultErrorCode = null;
-        try {
-            defaultExpert = addExpert(experts, language.describeExpert(null));
-        } catch (IllegalArgumentException | IOException e) {
-            defaultError = e.getMessage();
-            defaultErrorCode = e instanceof NoUniqueSemanticExpertException ? "no_unique_expert" : "default_expert_error";
-        }
+        getCamelContext().getRegistry().findByTypeWithName(SemanticAdapter.class).keySet().forEach(reference -> {
+            try {
+                addExpert(experts, language.describeExpert(reference));
+            } catch (IllegalArgumentException e) {
+                experts.put(reference, new Expert(reference, null, null, null, null, List.of(), e.getMessage()));
+            }
+        });
         List<Definition> definitions = new ArrayList<>();
         SemanticEvaluations registry = getCamelContext().getCamelContextExtension().getContextPlugin(SemanticEvaluations.class);
         if (registry != null) {
@@ -138,7 +118,7 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
                     reference = addExpert(experts, selected);
                     resultType = selected.capabilities().operation(evaluation.getOperation()).getResultType().name()
                             .toLowerCase(Locale.ROOT);
-                } catch (IllegalArgumentException | IOException e) {
+                } catch (IllegalArgumentException e) {
                     error = e.getMessage();
                 }
                 definitions.add(new Definition(
@@ -147,7 +127,7 @@ public class SemanticMetadataConsole extends AbstractDevConsole {
                         evaluation.getParameters(), resultType, error));
             });
         }
-        return new Response(null, List.copyOf(experts.values()), definitions, defaultExpert, defaultError, defaultErrorCode);
+        return new Response(null, List.copyOf(experts.values()), definitions);
     }
 
     private static String addExpert(Map<String, Expert> experts, SemanticLanguage.ExpertMetadata metadata) {

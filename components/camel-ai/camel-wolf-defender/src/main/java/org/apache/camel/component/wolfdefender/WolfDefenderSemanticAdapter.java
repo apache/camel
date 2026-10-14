@@ -38,11 +38,9 @@ import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticOperation;
 import org.apache.camel.semantic.SemanticParameter;
 import org.apache.camel.semantic.SemanticResult;
-import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 
 /** Local, fixed-purpose prompt-injection expert. Configure before starting the Camel service. */
-@JdkService("semantic-adapter")
 @SemanticExpert(name = "wolf-defender", provider = "wolf-defender", artifactId = "camel-wolf-defender",
                 description = "Local Wolf-Defender Small prompt-injection detection",
                 operations = @SemanticOperation(name = "injection", description = "Detect prompt injection in text",

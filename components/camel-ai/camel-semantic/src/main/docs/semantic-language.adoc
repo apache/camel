@@ -24,27 +24,16 @@ concurrency limits and transport resources. TypeSafe AI uses
 `camel.component.typesafe-ai.*` settings even when a route contains no TypeSafe AI endpoint.
 
 An *expert* is a configured semantic evaluator, implemented by `SemanticAdapter`. It is not
-an autonomous agent. Each named evaluation can select a registry bean using `expert`.
-Without that field, `camel.language.semantic.default-expert=myExpert` selects the default bean.
-The existing `camel.language.semantic.adapter=myAdapter` setting remains supported as the
-default when `default-expert` is absent; it also accepts a fully qualified implementation class name.
+an autonomous agent. Every evaluation must declare `expert`, naming a registry bean.
+There is no language default, block-level expert inheritance, or automatic provider selection.
+Use plain registry names without `#bean:` or `#class:` prefixes. Property placeholders such as
+`expert: "{{selected.expert}}"` are supported. A missing, blank or unknown expert is a
+configuration error; Camel never loads a class as a fallback. Register the expert bean and
+configure its lifecycle through the usual Camel bean facilities.
 
-Without either default, Camel selects the sole eligible registered instance or advertised adapter.
-Registry aliases for one instance count once. A registered instance supersedes discovery of its
-implementation class, including advertised superclasses of registered subclasses. Differently
-configured instances remain distinct candidates.
-No eligible expert, or multiple candidates, is an initialization error listing the candidates.
-Unknown explicit names and invalid defaults fail without fallback. Selection never uses the
-evaluation's result type: two boolean experts can evaluate entirely different properties.
-Use plain names without `#bean:` or `#class:` prefixes. Registry lookup takes precedence over
-class resolution. Class selection uses Camel's class resolver and injector.
-Created adapters are registered as `camelSemanticAdapter` and managed by the context.
-A collision at that name is an error. Referenced beans retain their existing lifecycle owner.
-
-Camel Main and Camel JBang bind `camel.language.semantic.adapter`,
-`camel.language.semantic.default-expert` and `camel.language.semantic.default-state` to the language.
-Embedded applications can resolve `SemanticLanguage` from the context and call `setDefaultExpert`,
-`setAdapter` and `setDefaultState` before route setup.
+Camel Main and Camel JBang bind `camel.language.semantic.default-state` to the language.
+Embedded applications can resolve `SemanticLanguage` from the context and call `setDefaultState`
+before route setup.
 The catalog describes the generic `language` expression model; it does not provide a dedicated
 semantic Spring Boot configuration class. Configure the language bean explicitly in Spring Boot
 until generic-language starter configuration is available.
@@ -72,12 +61,13 @@ camel.beans.decisions=#class:org.apache.camel.component.typesafeai.TypeSafeAiSem
 [source,yaml]
 ----
 - semantic:
-    expert: security
     state: "${body}"
     evaluation:
       injection:
+        expert: security
         operation: injection
       categories:
+        expert: security
         operation: classify
       department:
         expert: decisions
@@ -90,7 +80,8 @@ camel.beans.decisions=#class:org.apache.camel.component.typesafeai.TypeSafeAiSem
             sales: Product and purchasing questions
 ----
 
-The block supplies default `expert` and `state` values; individual evaluations can override them.
+The block can supply a default `state` selector; individual evaluations can override it.
+Each evaluation must declare its own `expert`.
 Evaluation names belong to the application, while operation names belong to the expert.
 `type: choice` is shorthand for the expert operation named `choice`; it does not let the route
 change an operation's result type. Specify exactly one of `operation` and `type`.
@@ -116,9 +107,9 @@ For example, a nested expert policy can externalise its cutoff without convertin
 [source,yaml]
 ----
 - semantic:
-    expert: moderation
     evaluation:
       contentPolicy:
+        expert: moderation
         operation: categories
         parameters:
           policy:
@@ -190,12 +181,13 @@ For an application-provided `moderation` expert with operations `response_safety
 [source,yaml]
 ----
 - semantic:
-    expert: moderation
     state: "${body}"
     evaluation:
       responseSafety:
+        expert: moderation
         operation: response_safety
       safetyCategories:
+        expert: moderation
         operation: categories
         parameters:
           policy:
@@ -216,9 +208,9 @@ Java uses the same declaration model and validation path:
 ----
 import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
 
-semanticEvaluations(this).expert("moderation").state("${body}")
-    .evaluation("responseSafety").operation("response_safety").end()
-    .evaluation("safetyCategories").operation("categories")
+semanticEvaluations(this).state("${body}")
+    .evaluation("responseSafety").expert("moderation").operation("response_safety").end()
+    .evaluation("safetyCategories").expert("moderation").operation("categories")
         .parameter("policy", Map.of("labels", List.of("privacy", "unsafe"), "threshold", 0.8))
     .register();
 ----
@@ -230,9 +222,9 @@ parameter to request the expert's omission behaviour.
 
 [source,xml]
 ----
-<semantic xmlns="http://camel.apache.org/schema/semantic" expert="moderation" state="${body}">
-  <evaluation name="responseSafety" operation="response_safety"/>
-  <evaluation name="safetyCategories" operation="categories">
+<semantic xmlns="http://camel.apache.org/schema/semantic" state="${body}">
+  <evaluation expert="moderation" name="responseSafety" operation="response_safety"/>
+  <evaluation expert="moderation" name="safetyCategories" operation="categories">
     <parameters>
       <parameter name="policy">
         <map>
@@ -262,18 +254,21 @@ The xref:others:yaml-dsl.adoc[YAML DSL] supports declarations alongside routes, 
 - semantic:
     evaluation:
       department:
+        expert: decisions
         type: choice
         instructions: Which department should handle this message?
         criteria:
           billing: Invoices, payments and refunds
           technical: Bugs, outages and technical problems
       actionable:
+        expert: decisions
         type: boolean
         instructions: Does this message contain an actionable request?
         threshold: 0.8
         uncertainty: 0.1
         uncertaintyPolicy: fail
       urgency:
+        expert: decisions
         type: score
         instructions: Assess urgency
         criteria:
@@ -326,7 +321,7 @@ alive. Constraints can remain until an unused expression is garbage-collected; s
 does not necessarily release an expression that is still referenced elsewhere.
 Loading declarations does not perform inference or start provider resources for validation.
 
-For evaluations using `expert` or `default-expert`, the registry bean is resolved when the
+The expert registry bean is resolved when the
 expression is compiled. Rebinding that name does not update already compiled expressions.
 After replacing the bean, recreate the consuming routes or expressions, or reload their
 evaluation declarations so the expressions compile against the replacement bean.
@@ -350,7 +345,7 @@ import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvalu
 @Override
 public void configure() {
     semanticEvaluations(this)
-        .evaluation("department")
+        .evaluation("department").expert("decisions")
             .type("choice")
             .state("${header.myState}")
             .instructions("Which department should handle this message?")
@@ -402,7 +397,7 @@ Both layouts are supported. To keep declarations alongside routes, use `tickets.
 ----
 <routes>
   <semantic>
-    <evaluation name="department" type="choice" state="${header.myState}">
+    <evaluation expert="decisions" name="department" type="choice" state="${header.myState}">
       <instructions>Which department should handle this message?</instructions>
       <criterion key="billing" value="Invoices, payments, and refunds"/>
       <criterion key="technical" value="Bugs, outages, and technical problems"/>
@@ -424,7 +419,7 @@ To share declarations across route files, use a standalone `evaluations.xml`:
 [source,xml]
 ----
 <semantic>
-  <evaluation name="department" type="choice" state="${header.myState}">
+  <evaluation expert="decisions" name="department" type="choice" state="${header.myState}">
     <instructions>Which department should handle this message?</instructions>
     <criterion key="billing" value="Invoices, payments, and refunds"/>
     <criterion key="technical" value="Bugs, outages, and technical problems"/>
@@ -773,6 +768,7 @@ For example, declare this evaluation alongside routes:
 - semantic:
     evaluation:
       withinScope:
+        expert: decisions
         type: boolean
         instructions: Does the proposed action serve the approved task?
         state: ${body}
@@ -872,19 +868,9 @@ separate work. This contract does not add a new Camel Catalog model.
 
 == Implementing an adapter
 
-Implement `org.apache.camel.semantic.SemanticAdapter`. Advertise the implementation in
-`META-INF/services/org/apache/camel/semantic-adapter` using Camel's `FactoryFinder` format:
-
-[source,properties]
-----
-class=com.example.MySemanticAdapter
-----
-
-Camel components can generate this descriptor with `@JdkService("semantic-adapter")`.
-Discovery checks the declarations for ambiguity before resolving the implementation through
-`FactoryFinder`. Repeated declarations of the same class are accepted; different classes require
-explicit selection. Only the selected adapter is constructed, through Camel's `Injector`.
-Explicit bean or class selection also works when packaging does not expose discovery resources.
+Implement `org.apache.camel.semantic.SemanticAdapter`, annotate the class with `@SemanticExpert`,
+and register an instance as a named bean. Each evaluation references that bean using `expert`.
+Provider discovery descriptors are not used.
 
 The language checks the static operation contract and then calls `validate` for operation-specific
 parameter combinations and bean configuration before traffic. `validateInput` checks detailed
@@ -894,9 +880,9 @@ Boolean result is invalid: the expert must supply its Boolean verdict. Providers
 must be thread-safe, bound time and resource consumption, honor interruption and propagate
 operational failures without disclosing input or credentials. Implement `CamelContextAware`
 for context injection and Camel `Service` interfaces when the adapter owns resources.
-Created service adapters are stopped and shut down by Camel; registry references are not
-started or stopped again by the language. Provider-specific component services remain under
-normal Camel lifecycle management.
+Configure the expert bean lifecycle through Camel bean initialization and destruction methods,
+or manage it explicitly in embedded applications. The language does not start or stop registry
+beans. Provider-specific component services remain under normal Camel lifecycle management.
 
 For TypeSafe AI, boolean, choice and score map to Noul, Choice and Score respectively. The
 adapter reuses the component endpoint's managed HTTP client, including timeout, concurrency
@@ -914,10 +900,9 @@ Use `camel semantic` to inspect definitions and `camel semantic eval` to evaluat
 xref:manual::camel-jbang-managing.adoc#_semantic_definitions_and_evaluation[Camel CLI].
 
 `semantic-metadata` exposes definitions and expert contracts without performing inference.
-With `overview=true`, a failed default selection includes `defaultError` and a stable
-`defaultErrorCode`: `no_unique_expert` means automatic discovery found zero or multiple
-eligible experts; `default_expert_error` identifies a configuration, contract or descriptor
-failure. Consumers can distinguish these cases without parsing the diagnostic message.
+With `overview=true`, it lists registered experts and published evaluations, including any
+contract-resolution errors alongside their expert or evaluation. Operation inspection requires
+an explicit expert reference.
 
 `semantic-evaluate` evaluates a named definition against a sample exchange or calls an expert
 operation directly. It uses the configured provider and its normal validation, without sending

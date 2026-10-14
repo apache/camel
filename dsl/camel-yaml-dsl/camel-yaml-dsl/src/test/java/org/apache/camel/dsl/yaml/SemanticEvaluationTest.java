@@ -63,7 +63,6 @@ class SemanticEvaluationTest extends YamlTestSupport {
     @Override
     public void doSetup() {
         context.getRegistry().bind("classifier", new Classifier());
-        ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("classifier");
     }
 
     @SemanticExpert(name = "classifier", description = "Test classifier", provider = "test", artifactId = "test", operations = {
@@ -114,21 +113,13 @@ class SemanticEvaluationTest extends YamlTestSupport {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void auditSchemaAndDecisionBeanRecordOnlyTheEnabledExpert(boolean captureInput) throws Exception {
+    void auditSchemaRecordsOnlyTheEnabledExpertWithoutADecisionBean(boolean captureInput) throws Exception {
         loadRoutes("""
                 - beans:
                   - name: security
                     type: org.apache.camel.dsl.yaml.SemanticEvaluationTest$SecurityExpert
                   - name: decisions
                     type: org.apache.camel.dsl.yaml.SemanticEvaluationTest$SecurityExpert
-                  - name: recordBlocked
-                    type: org.apache.camel.semantic.SemanticAuditDecision
-                    properties:
-                      fields:
-                        action: block
-                        operation: tools/call
-                        target: support-request
-                        reasonCode: prompt_injection
                 - semantic:
                     audit:
                       enabled: true
@@ -159,8 +150,6 @@ class SemanticEvaluationTest extends YamlTestSupport {
                                     language: semantic
                                     expression: ref:screenPrompt
                                 steps:
-                                  - process:
-                                      ref: recordBlocked
                                   - to: mock:blocked
                 """.formatted(captureInput));
         context.start();
@@ -173,14 +162,13 @@ class SemanticEvaluationTest extends YamlTestSupport {
         var query = new SemanticAuditQuery(Map.of(), null, null, 10);
         audit.stop();
         var records = audit.getReader().query(query).getRecords();
-        assertThat(records).hasSize(2);
-        assertThat(records.get(0).text("action")).isEqualTo("block");
-        assertThat(records.get(0).toMap().get("evidence")).isEqualTo(List.of(records.get(1).getEventId()));
-        assertThat(records.get(1).getExpert()).isEqualTo("security");
+        assertThat(records).hasSize(1);
+        assertThat(records.get(0).getExpert()).isEqualTo("security");
+        assertThat(records.get(0).getCategory()).isEqualTo("evaluation");
         if (captureInput) {
-            assertThat(records.get(1).toMap()).containsEntry("input", "injection attempt");
+            assertThat(records.get(0).toMap()).containsEntry("input", "injection attempt");
         } else {
-            assertThat(records.get(1).toMap()).doesNotContainKey("input");
+            assertThat(records.get(0).toMap()).doesNotContainKey("input");
         }
     }
 
@@ -189,6 +177,7 @@ class SemanticEvaluationTest extends YamlTestSupport {
                 - semantic:
                     evaluation:
                       department:
+                        expert: classifier
                         type: choice
                         state: %s
                         instructions: Which department?
@@ -232,9 +221,9 @@ class SemanticEvaluationTest extends YamlTestSupport {
                 """;
         String declarations = """
                 - semantic:
-                    expert: newSecurity
                     evaluation:
                       injection:
+                        expert: newSecurity
                         operation: injection
                 """;
         if (separateResource) {
@@ -288,7 +277,8 @@ class SemanticEvaluationTest extends YamlTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                semanticEvaluations(this).evaluation("javaDepartment").type("choice").state("${header.selected}")
+                semanticEvaluations(this).evaluation("javaDepartment").expert("classifier").type("choice")
+                        .state("${header.selected}")
                         .instructions("Which department?")
                         .criterion("billing", "Invoices and refunds").criterion("technical", "Bugs and outages").register();
             }
@@ -329,9 +319,9 @@ class SemanticEvaluationTest extends YamlTestSupport {
         context.start();
         String yaml = """
                 - semantic:
-                    expert: failing
                     evaluation:
                       invalid:
+                        expert: failing
                         operation: injection
                 """;
         assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context)
@@ -523,12 +513,14 @@ class SemanticEvaluationTest extends YamlTestSupport {
                 - semantic:
                     evaluation:
                       actionable:
+                        expert: classifier
                         type: boolean
                         instructions: Is the request actionable?
                         threshold: 0.8
                         uncertainty: 0.1
                         uncertaintyPolicy: fail
                       urgency:
+                        expert: classifier
                         type: score
                         instructions: How urgent?
                         criteria: [Routine, Urgent]
@@ -541,11 +533,18 @@ class SemanticEvaluationTest extends YamlTestSupport {
     }
 
     @Test
+    void schemaRejectsEvaluationsWithoutAnExpert() {
+        assertThatThrownBy(() -> loadRoutes(declarations("${body}").replace("        expert: classifier\n", "")))
+                .hasStackTraceContaining("expert");
+    }
+
+    @Test
     void numericPlaceholdersResolveBeforeValidation() throws Exception {
         loadRoutesNoValidate("""
                 - semantic:
                     evaluation:
                       urgent:
+                        expert: classifier
                         type: boolean
                         instructions: Urgent?
                         threshold: "{{threshold:0.8}}"
@@ -562,6 +561,7 @@ class SemanticEvaluationTest extends YamlTestSupport {
                 - semantic:
                     evaluation:
                       spam:
+                        expert: classifier
                         type: boolean
                         instructions: Is this spam?
                         %s: abc
@@ -572,7 +572,7 @@ class SemanticEvaluationTest extends YamlTestSupport {
                     assertThat(error).hasMessageContaining(
                             "Invalid numeric value for '" + field + "' in semantic evaluation 'spam'");
                     assertThat(error.getProblemMark()).hasValueSatisfying(mark -> {
-                        assertThat(mark.getLine()).isEqualTo(5);
+                        assertThat(mark.getLine()).isEqualTo(6);
                         assertThat(mark.getColumn()).isEqualTo(8 + field.length() + 2);
                     });
                 });
@@ -585,6 +585,7 @@ class SemanticEvaluationTest extends YamlTestSupport {
                 - semantic:
                     evaluation:
                       spam:
+                        expert: classifier
                         type: boolean
                         instructions: Is this spam?
                 """;
@@ -605,6 +606,7 @@ class SemanticEvaluationTest extends YamlTestSupport {
                 - semantic:
                     evaluation:
                       spam:
+                        expert: classifier
                         type: BoOlEaN
                         instructions: Is this spam?
                         uncertaintyPolicy: %s
@@ -633,18 +635,18 @@ class SemanticEvaluationTest extends YamlTestSupport {
         String evaluation = """
                 - semantic:
                     evaluation:
-                      q: {type: boolean, instructions: Is it valid?}
+                      q: {expert: classifier, type: boolean, instructions: Is it valid?}
                 """;
         return Stream.of(
                 Arguments.of(declaration.replace("instructions:", "typo:"),
-                        "Unknown property 'typo' in semantic evaluation 'department'", 5, 14),
+                        "Unknown property 'typo' in semantic evaluation 'department'", 6, 14),
                 Arguments.of(declaration.replace("        type: choice\n", ""),
                         "Specify exactly one operation or type: department", 3, 8),
                 Arguments.of(declaration.replace("type: choice", "type: choice\n        type: choice"),
-                        "Duplicate key 'type' in semantic evaluation 'department'", 4, 8),
+                        "Duplicate key 'type' in semantic evaluation 'department'", 5, 8),
                 Arguments.of("- semantic: {other: {}}", "Unknown property 'other' in semantic declaration", 0, 20),
                 Arguments.of(evaluation + evaluation, "Duplicate semantic evaluation: q", 4, 4),
-                Arguments.of(evaluation + "      q: {type: boolean, instructions: Is it valid?}\n",
+                Arguments.of(evaluation + "      q: {expert: classifier, type: boolean, instructions: Is it valid?}\n",
                         "Duplicate key 'q' in semantic evaluations", 3, 6));
     }
 

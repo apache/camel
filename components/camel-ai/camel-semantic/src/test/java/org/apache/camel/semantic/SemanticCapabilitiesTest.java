@@ -93,7 +93,7 @@ class SemanticCapabilitiesTest {
             Map<Object, Object> invalid = new LinkedHashMap<>();
             invalid.put(key, true);
             for (Object value : List.of(invalid, List.of(invalid))) {
-                assertThatThrownBy(() -> new SemanticEvaluation("custom", null, null, Map.of("policy", value)))
+                assertThatThrownBy(() -> new SemanticEvaluation("custom", "expert", null, Map.of("policy", value)))
                         .isExactlyInstanceOf(IllegalArgumentException.class)
                         .hasMessage(key instanceof String
                                 ? "Parameter names must not be blank"
@@ -126,7 +126,7 @@ class SemanticCapabilitiesTest {
     @Test
     void explicitPolicyValuesArePreservedAndMutableNumbersAreRejected() {
         var evaluation = new SemanticEvaluation(
-                "boolean", null, null, Map.of("threshold", 0.5, "uncertainty", 0.0, "uncertaintyPolicy", "fail"));
+                "boolean", "expert", null, Map.of("threshold", 0.5, "uncertainty", 0.0, "uncertaintyPolicy", "fail"));
         assertThat(evaluation.getParameters()).containsEntry("threshold", 0.5).containsEntry("uncertainty", 0.0)
                 .containsEntry("uncertaintyPolicy", "fail");
         assertThatThrownBy(() -> new SemanticEvaluation("classify", "expert", null, Map.of("threshold", new AtomicInteger(1))))

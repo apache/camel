@@ -94,10 +94,14 @@ class TypeSafeAiApiPathTest extends TypeSafeAiTestSupport {
             @Override
             public void configure() {
                 if (semantic) {
+                    var expert = new TypeSafeAiSemanticAdapter();
+                    expert.setCamelContext(getContext());
+                    getContext().getRegistry().bind("decisions", expert);
                     SemanticEvaluations.get(getContext()).replace("test",
                             Map.of("refund",
                                     new SemanticEvaluation(
-                                            "boolean", null, null, Map.of("instructions", "Refund requested?", "threshold", 0.5,
+                                            "boolean", "decisions", null,
+                                            Map.of("instructions", "Refund requested?", "threshold", 0.5,
                                                     "uncertainty", 0.0, "uncertaintyPolicy", "fail"))));
                     from("direct:request").setBody().language("semantic", "ref:refund");
                 } else {

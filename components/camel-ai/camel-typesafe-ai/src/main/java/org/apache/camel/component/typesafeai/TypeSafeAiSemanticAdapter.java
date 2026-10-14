@@ -32,11 +32,9 @@ import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticOperation;
 import org.apache.camel.semantic.SemanticParameter;
 import org.apache.camel.semantic.SemanticResult;
-import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.json.JsonObject;
 
 /** Maps semantic evaluations to TypeSafe AI using the component's configured, managed transport. */
-@JdkService("semantic-adapter")
 @SemanticExpert(name = "typesafe-ai", provider = "typesafe-ai", artifactId = "camel-typesafe-ai",
                 description = "Instruction-driven decisions using TypeSafe AI",
                 operations = {

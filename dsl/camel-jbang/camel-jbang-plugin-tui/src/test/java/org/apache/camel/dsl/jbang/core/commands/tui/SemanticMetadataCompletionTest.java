@@ -38,17 +38,17 @@ import static org.awaitility.Awaitility.await;
 
 class SemanticMetadataCompletionTest {
     @Test
-    void readsOverridesAndDefaultsFromTheUnsavedBuffer() {
+    void requiresAnEvaluationExpertInTheUnsavedBuffer() {
         String yaml = "- semantic:\n    expert: decisions\n    evaluation:\n      support/team:\n"
                       + "        type:\n        expert: \"{{selected.expert}}\"\n      next:\n        operation:";
         assertThat(at(yaml, 4)).isEqualTo(new SemanticCompletionContext("{{selected.expert}}", true));
-        assertThat(at(yaml, 7)).isEqualTo(new SemanticCompletionContext("decisions", false));
+        assertThat(at(yaml, 7)).isNull();
         assertThat(at(yaml.replace("    expert: decisions\n", ""), 6))
-                .isEqualTo(new SemanticCompletionContext(null, false));
+                .isNull();
         assertThat(at(yaml.replace("operation:", "operation: \"{{unfinished"), 7))
-                .isEqualTo(new SemanticCompletionContext("decisions", false));
+                .isNull();
         assertThat(at(yaml.replace("expert: decisions", "expert: other"), 7))
-                .isEqualTo(new SemanticCompletionContext("other", false));
+                .isNull();
         assertThat(at(yaml.replace("expert: \"{{selected.expert}}\"", "expert:"), 4)).isNull();
         assertThat(at(yaml.replace("expert: \"{{selected.expert}}\"", "expert: [one, two]"), 4)).isNull();
         assertThat(at("- route:\n    from:\n      type:", 2)).isNull();
@@ -207,7 +207,7 @@ class SemanticMetadataCompletionTest {
             Path directory, CompletableFuture<List<AutocompletePopup.CompletionItem>> response)
             throws Exception {
         Path file = directory.resolve("route.yaml");
-        Files.writeString(file, "- semantic:\n    evaluation:\n      check:\n        operation:");
+        Files.writeString(file, "- semantic:\n    evaluation:\n      check:\n        operation:\n        expert: security");
         var viewer = new SourceViewer();
         viewer.completion().setAutocompleteProvider(context -> List.of());
         viewer.completion().setAutocompleteValueProvider(context -> List.of());

@@ -36,8 +36,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticMetadataConsoleTest {
     @ParameterizedTest
-    @ValueSource(ints = { 0, 2 })
-    void overviewClassifiesNonUniqueAutomaticSelection(int expertCount) throws Exception {
+    @ValueSource(ints = { 0, 1, 2 })
+    void overviewListsRegisteredExpertsWithoutSelectingADefault(int expertCount) throws Exception {
         try (var context = new DefaultCamelContext()) {
             for (int i = 0; i < expertCount; i++) {
                 context.getRegistry().bind("security" + i, new Detector());
@@ -45,72 +45,50 @@ class SemanticMetadataConsoleTest {
             context.start();
             DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
             JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("overview", true));
-            assertThat(response).containsEntry("defaultErrorCode", "no_unique_expert");
-            assertThat(response.getString("defaultError")).contains("requires exactly one eligible expert");
-            assertThat(response.get("defaultExpert")).isNull();
+            assertThat(response).doesNotContainKeys("defaultExpert", "defaultError", "defaultErrorCode");
             List<JsonObject> experts = response.getCollection("experts");
             assertThat(experts).hasSize(expertCount);
+            assertThat(operations(console, Map.of())).isEmpty();
         }
     }
 
     @Test
-    void overviewResolvesTheOnlyExpertWithoutAnErrorCode() throws Exception {
+    void overviewReportsAnInvalidRegisteredContractAlongsideValidExperts() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new Detector());
+            context.getRegistry().bind("invalid", new InvalidDetector());
             context.start();
             DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
             JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("overview", true));
-            assertThat(response).containsEntry("defaultExpert", "security");
-            assertThat(response.get("defaultError")).isNull();
-            assertThat(response.get("defaultErrorCode")).isNull();
-        }
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "missing", "wrong-type", "invalid-contract" })
-    void overviewDistinguishesBrokenDefaultsFromAutomaticSelection(String expert) throws Exception {
-        try (var context = new DefaultCamelContext()) {
-            context.getRegistry().bind("security", new Detector());
-            context.getRegistry().bind("wrong-type", new Object());
-            context.getRegistry().bind("invalid-contract", new InvalidDetector());
-            var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert(expert);
-            context.start();
-            DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
-            JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("overview", true));
-            assertThat(response).containsEntry("defaultErrorCode", "default_expert_error");
-            assertThat(response.getString("defaultError")).isNotBlank();
-            assertThat(response.get("defaultExpert")).isNull();
+            List<JsonObject> experts = response.getCollection("experts");
+            assertThat(experts).hasSize(2);
+            assertThat(experts.get(0)).containsEntry("reference", "invalid");
+            assertThat(experts.get(0).getString("error")).isNotBlank();
+            assertThat(experts.get(1)).containsEntry("reference", "security").doesNotContainKey("error");
         }
     }
 
     @Test
-    void inspectionDoesNotSelectAnAdapterAndErrorsUseTheResolvedName() throws Exception {
+    void inspectionAndEvaluationErrorsUseTheResolvedExpertName() throws Exception {
         try (var context = new DefaultCamelContext()) {
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
             context.getRegistry().bind("security", new Detector());
             Properties properties = new Properties();
-            properties.setProperty("adapter.name", "security");
+            properties.setProperty("expert.name", "security");
             context.getPropertiesComponent().setInitialProperties(properties);
-            language.setAdapter("{{adapter.name}}");
-            assertThat(language.describeExpert(null).reference()).isEqualTo("security");
-            assertThat(language).extracting("selectedAdapterName", "selectedAdapter").containsExactly(null, null);
-            language.setAdapter(null);
-            assertThat(language.describeExpert(null).reference()).isEqualTo("security");
-            assertThat(language).extracting("selectedAdapterName", "selectedAdapter").containsExactly(null, null);
+            assertThat(language.describeExpert("{{expert.name}}").reference()).isEqualTo("security");
             context.getRegistry().unbind("security");
-            language.setAdapter("{{adapter.name}}");
-            assertThatThrownBy(() -> language.describeExpert(null))
-                    .hasMessage("No semantic adapter bean or class found: security");
+            assertThatThrownBy(() -> language.describeExpert("{{expert.name}}"))
+                    .hasMessage("Unknown expert or bean does not implement SemanticAdapter: security");
             assertThatThrownBy(() -> language.evaluate(
-                    new SemanticEvaluation("injection", null, null, Map.of()), "test"))
-                    .hasStackTraceContaining("No semantic adapter bean or class found: security")
-                    .hasStackTraceContaining("security");
+                    new SemanticEvaluation("injection", "{{expert.name}}", null, Map.of()), "test"))
+                    .hasStackTraceContaining("Unknown expert or bean does not implement SemanticAdapter: security")
+                    .hasStackTraceContaining("expert 'security'");
         }
     }
 
     @Test
-    void namedDefaultAndPlaceholderExpertsExposeTheirOwnOperations() throws Exception {
+    void namedAndPlaceholderExpertsExposeTheirOwnOperations() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new Detector());
             context.getRegistry().bind("decisions", new TestSemanticAdapter() {
@@ -122,39 +100,20 @@ class SemanticMetadataConsoleTest {
             Properties properties = new Properties();
             properties.setProperty("selected.expert", "security");
             context.getPropertiesComponent().setInitialProperties(properties);
-            var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert("decisions");
             context.start();
             DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
-            assertThat(console).isNotNull();
             assertThat(operations(console, Map.of("expert", "security")))
                     .extracting(op -> op.getString("name")).containsExactly("injection");
             assertThat(operations(console, Map.of("expert", "{{selected.expert}}")))
                     .extracting(op -> op.getString("name")).containsExactly("injection");
-            assertThat(operations(console, Map.of())).extracting(op -> op.getString("name"))
+            assertThat(operations(console, Map.of("expert", "decisions"))).extracting(op -> op.getString("name"))
                     .containsExactly("boolean", "choice", "score");
             assertThat(operations(console, Map.of("expert", "security")).get(0).getJsonObject("contract"))
                     .doesNotContainKey("scoreLevelsParameter");
             assertThat(operations(console, Map.of("expert", "missing"))).isEmpty();
             assertThat(operations(console, Map.of("expert", "{{missing}}"))).isEmpty();
-            language.setDefaultExpert(null);
-            assertThat(operations(console, Map.of())).isEmpty();
             context.getRegistry().unbind("decisions");
-            assertThat(operations(console, Map.of())).extracting(op -> op.getString("name")).containsExactly("injection");
-            assertThat(operations(console, Map.of()).get(0)).containsEntry("resultType", "boolean")
-                    .containsEntry("description", "Detect injection");
-        }
-    }
-
-    @Test
-    void inspectingAConfiguredClassDoesNotConstructItOrCallTheProvider() throws Exception {
-        try (var context = new DefaultCamelContext()) {
-            var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setAdapter(UnconstructedDetector.class.getName());
-            context.start();
-            DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
-            assertThat(operations(console, Map.of())).extracting(op -> op.getString("name")).containsExactly("injection");
-            assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
+            assertThat(operations(console, Map.of())).isEmpty();
         }
     }
 
@@ -176,12 +135,6 @@ class SemanticMetadataConsoleTest {
         @Override
         public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
             throw new AssertionError("Metadata must not perform inference");
-        }
-    }
-
-    public static class UnconstructedDetector extends Detector {
-        public UnconstructedDetector() {
-            throw new AssertionError("Metadata must not construct a class-discovered expert");
         }
     }
 

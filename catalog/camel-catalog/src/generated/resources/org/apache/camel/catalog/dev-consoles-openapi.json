@@ -7307,7 +7307,7 @@
 					{
 						"name": "expert",
 						"in": "query",
-						"description": "Expert registry name; omitted uses the language's default selection",
+						"description": "Expert registry name, required for operation inspection",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7365,7 +7365,7 @@
 												"properties": {
 													"reference": {
 														"type": "string",
-														"description": "Registry reference or adapter class"
+														"description": "Registry reference"
 													},
 													"name": {
 														"type": "string",
@@ -7454,18 +7454,6 @@
 												}
 											},
 											"description": "Published definitions, when overview is requested"
-										},
-										"defaultExpert": {
-											"type": "string",
-											"description": "Resolved default expert"
-										},
-										"defaultError": {
-											"type": "string",
-											"description": "Default selection error, if any"
-										},
-										"defaultErrorCode": {
-											"type": "string",
-											"description": "Default selection error code: no_unique_expert or default_expert_error"
 										}
 									}
 								}

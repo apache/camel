@@ -707,7 +707,7 @@ class SemanticTab extends AbstractTableTab {
             List<Rect> panels
                     = Layout.horizontal().constraints(Constraint.percentage(36), Constraint.length(1), Constraint.fill())
                             .split(area);
-            int expertsHeight = Math.min(rows().size() * 2 + 3 + defaultLines(panels.get(0).width() - 4).size(),
+            int expertsHeight = Math.min(rows().size() * 2 + 3,
                     Math.max(7, area.height() / 3));
             List<Rect> left = Layout.vertical().constraints(Constraint.length(expertsHeight), Constraint.length(0),
                     Constraint.fill()).split(panels.get(0));
@@ -761,15 +761,6 @@ class SemanticTab extends AbstractTableTab {
         operationBar.render(frame, area, new SubViewBar.Spec("[ ]", views, List.of(), false));
     }
 
-    private List<Line> defaultLines(int width) {
-        String value = data != null && data.get("defaultExpert") != null ? text(data, "defaultExpert") : "none";
-        if (data != null && data.get("defaultError") != null) {
-            value += " · " + text(data, "defaultError");
-        }
-        return hangingWrap(List.of(Line.from(Span.styled("Default: ", Theme.label()), Span.raw(value))), Math.max(1, width))
-                .stream().limit(3).toList();
-    }
-
     private String filterLabel() {
         return filter.isEmpty() ? "" : " / " + filter;
     }
@@ -799,10 +790,9 @@ class SemanticTab extends AbstractTableTab {
         if (content.isEmpty()) {
             content.add(Row.from(emptyMessage()));
         }
-        List<Line> footer = defaultLines(inner.width() - 2);
         lastTableArea = new Rect(
                 inner.x() + 1, inner.y(), Math.max(0, inner.width() - 2),
-                Math.max(0, inner.height() - footer.size()));
+                inner.height());
         Table table = Table.builder().rows(content).header(Row.from("EXPERT").style(Theme.label()))
                 .widths(Constraint.fill()).highlightSymbol("› ").highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS).build();
@@ -812,9 +802,6 @@ class SemanticTab extends AbstractTableTab {
             frame.renderStatefulWidget(table, lastTableArea, tableState);
             renderScrollbar(frame, table, content.size());
         }
-        SemanticDetails.paragraph(frame, new Rect(
-                inner.x() + 1, inner.bottom() - footer.size(),
-                Math.max(0, inner.width() - 2), footer.size()), footer, 0);
     }
 
     private void renderTable(Frame frame, Rect area, List<JsonObject> rows, boolean linked) {
