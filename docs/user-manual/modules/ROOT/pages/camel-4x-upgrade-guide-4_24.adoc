@@ -233,9 +233,11 @@ header that occurs more than once) was sent as one HTTP header with the values i
 sends one HTTP header per value, as camel-vertx-http and camel-knative-http do. Null values are skipped, and a
 collection with one value is sent as one header with that value, as before.
 
-Every other value is converted to one String and sent as one header: a String as before (also when it contains
-commas), and an `Iterable` that is not a collection, whose elements were sent in the same `[a, b]` form. A route that
-needs the old single header can set the header to a String, for example with `String.valueOf(list)`.
+Every other value is sent as one header. A String is sent as before, also when it contains commas. A `byte[]` or a
+`char[]` is now converted to a String with the type converter, for example `abc` (it was sent as `[97, 98, 99]`), and
+a `Map` is sent as its `toString()`, such as `{k1=v1, k2=v2}` (it was `[k1=v1, k2=v2]`). The other primitive arrays,
+an `Iterator` and an `Iterable` that is not a collection are sent in the form `[a, b]` as before. A route that needs
+the old single header can set the header to a String, for example with `String.valueOf(list)`.
 
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 

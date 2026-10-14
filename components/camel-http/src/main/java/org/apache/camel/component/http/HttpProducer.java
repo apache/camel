@@ -55,6 +55,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.http.HttpUtil;
@@ -210,10 +211,18 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
                             continue;
                         }
 
-                        // a collection or an object array is sent as one header per value; any other value
-                        // (including an Iterable that is not a Collection) is sent as a single header
-                        HttpUtil.applyHeaderValue(strategy, exchange, headerValue, tc, key,
-                                (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
+                        if (isSentAsOneJoinedHeader(headerValue)) {
+                            // a primitive array (other than byte[] and char[]), an Iterator, or an Iterable that is
+                            // not a Collection is sent as one header in the form [a, b], as before
+                            final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
+                            HttpUtil.applyHeader(strategy, exchange, it, tc, key,
+                                    (multiValues, prev) -> applyJoinedHeader(httpRequest, key, multiValues, prev));
+                        } else {
+                            // a collection or an object array is sent as one header per value; any other value
+                            // is converted to one String and sent as a single header
+                            HttpUtil.applyHeaderValue(strategy, exchange, headerValue, tc, key,
+                                    (multiValues, prev) -> applyHeader(httpRequest, key, multiValues, prev));
+                        }
                     }
                 }
             }
@@ -343,6 +352,24 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             for (String value : multiValues) {
                 httpRequest.addHeader(key, value);
             }
+        } else if (prev != null) {
+            httpRequest.addHeader(key, prev);
+        }
+    }
+
+    private static boolean isSentAsOneJoinedHeader(Object value) {
+        if (value instanceof Iterator || (value instanceof Iterable && !(value instanceof Collection))) {
+            return true;
+        }
+        Class<?> type = value.getClass();
+        return type.isArray() && type.getComponentType().isPrimitive()
+                && type != byte[].class && type != char[].class;
+    }
+
+    private static void applyJoinedHeader(HttpUriRequest httpRequest, String key, List<String> multiValues, String prev) {
+        // two or more values are sent as one header in the form [a, b], one value as it is
+        if (multiValues != null) {
+            httpRequest.addHeader(key, multiValues.toString());
         } else if (prev != null) {
             httpRequest.addHeader(key, prev);
         }
