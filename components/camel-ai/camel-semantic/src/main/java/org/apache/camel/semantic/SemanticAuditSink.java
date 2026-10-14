@@ -23,6 +23,6 @@ import org.apache.camel.Service;
  * accepted the record, not that it is durably committed. A destination must document its own durability, bound its I/O
  * and honor interruption. The dispatcher does not retry failed appends; backend retries must preserve the event ID.
  */
-public interface SemanticAuditSink extends Service {
+public interface SemanticAuditSink extends Service, SemanticAuditCapabilities {
     void append(SemanticAuditRecord record) throws Exception;
 }

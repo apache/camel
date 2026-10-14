@@ -76,6 +76,7 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private final SemanticAuditView audit;
+    private JsonObject auditDraft;
     private JsonObject data;
     private CompletableFuture<JsonObject> pending;
     private String pid;
@@ -118,6 +119,7 @@ class SemanticTab extends AbstractTableTab {
     @Override
     public void onIntegrationChanged() {
         audit.reset();
+        auditDraft = null;
         data = null;
         pending = null;
         pid = null;
@@ -191,6 +193,21 @@ class SemanticTab extends AbstractTableTab {
             } else {
                 data = response;
                 error = null;
+                if (auditDraft != null) {
+                    JsonObject expert = objects(data, "experts").stream()
+                            .filter(row -> Objects.equals(row.get("reference"), auditDraft.get("expert"))).findFirst()
+                            .orElse(null);
+                    if (expert == null || objects(expert, "operations").stream()
+                            .noneMatch(operation -> Objects.equals(operation.get("name"), auditDraft.get("operation")))) {
+                        auditDraft = null;
+                        view = View.AUDIT;
+                        audit.draftError("Original expert/operation is unavailable; no draft was created.");
+                        return;
+                    }
+                    expertReference = auditDraft.getString("expert");
+                    operationName = auditDraft.getString("operation");
+                    operationExplicit = true;
+                }
             }
             restoreSelection();
         }
@@ -343,6 +360,21 @@ class SemanticTab extends AbstractTableTab {
         return operations.stream().filter(op -> Objects.equals(operationName, op.get("name"))).findFirst().orElse(null);
     }
 
+    private void openAuditDraft() {
+        JsonObject draft = audit.takeDraft();
+        if (draft == null) {
+            return;
+        }
+        auditDraft = draft;
+        expertReference = draft.getString("expert");
+        operationName = draft.getString("operation");
+        operationExplicit = true;
+        playground = null;
+        view = View.EXPERTS;
+        filter = "";
+        load();
+    }
+
     private void syncPlayground() {
         JsonObject operation = selectedOperation();
         if (operation != null) {
@@ -357,6 +389,21 @@ class SemanticTab extends AbstractTableTab {
                 playground = new SemanticPlayground(ctx, pid, expertReference, operation);
                 playgrounds.put(key, playground);
             }
+        }
+        if (auditDraft != null && pending == null && playground != null
+                && Objects.equals(expertReference, auditDraft.get("expert"))
+                && Objects.equals(operationName, auditDraft.get("operation"))) {
+            SemanticPlayground next = new SemanticPlayground(ctx, pid, expertReference, operation);
+            try {
+                next.loadAuditInput(auditDraft);
+                playground = next;
+                playgrounds.put(new ExpertOperation(expertReference, operationName), playground);
+                focus = Focus.PLAYGROUND;
+            } catch (IllegalArgumentException incompatible) {
+                view = View.AUDIT;
+                audit.draftError("Captured input is incompatible with the current contract; no draft was created.");
+            }
+            auditDraft = null;
         }
     }
 
@@ -386,7 +433,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean isTextInputActive() {
-        return view == View.AUDIT ? audit.inputActive() : filterInput != null || sample != null || focus == Focus.PLAYGROUND;
+        return view == View.AUDIT
+                ? audit.inputActive()
+                : filterInput != null || sample != null || focus == Focus.PLAYGROUND;
     }
 
     @Override
@@ -421,7 +470,9 @@ class SemanticTab extends AbstractTableTab {
                 view(View.DEFINITIONS);
                 return true;
             }
-            return audit.key(key);
+            boolean handled = audit.key(key);
+            openAuditDraft();
+            return handled;
         }
         refresh();
         if (sample != null) {
@@ -604,7 +655,7 @@ class SemanticTab extends AbstractTableTab {
     @Override
     public boolean handleMouseEvent(MouseEvent event, Rect area) {
         if (view == View.AUDIT) {
-            return false;
+            return audit.mouse(event);
         }
         if (sample != null) {
             sample.handleMouseEvent(event);
@@ -969,7 +1020,9 @@ class SemanticTab extends AbstractTableTab {
             return true;
         }
         if (view == View.AUDIT) {
-            return audit.setInput(field, value);
+            boolean handled = audit.setInput(field, value);
+            openAuditDraft();
+            return handled;
         }
         refresh();
         if (sample != null) {

@@ -29,6 +29,28 @@ class loading. The default state selector is unchanged.
 The semantic metadata response no longer includes `defaultExpert`, `defaultError` or
 `defaultErrorCode`. Operation inspection and completion require an explicit expert reference.
 
+=== camel-semantic - evaluation-only auditing
+
+The preview semantic audit API no longer records route actions. `SemanticAuditDecision`,
+`SemanticAudit.get(context).decision(...)` and `SemanticObserver.decision(...)` have been removed.
+Remove the corresponding decision beans and processor calls from routes. Evaluation auditing is
+automatic under the existing audit configuration; normal application routing remains unchanged.
+Previously persisted version-1 decision records remain readable and exportable as legacy data.
+Semantic audit browsing no longer accepts route-action, namespace or application-correlation filters.
+The console's `target` filter is also removed. Newly captured evaluation records use `definition` instead of
+`target`; update consumers and queries to read `definition`. Previously persisted records retain their original fields.
+Event-ID detail responses no longer expand a decision's
+`evidence` references automatically; use `caseEventId` for a bounded associated case or `eventIds` for explicit
+bulk retrieval. The original persisted record remains available in `record`.
+Use automatic evaluation provenance, including entry/executing route and Camel breadcrumb identifiers.
+The internal `CamelSemanticAuditReferences` exchange property is no longer populated.
+In audit health responses, `capturing` replaces `decisionsEnabled`; it indicates that some expert enables
+evaluation capture. For external readers, `retained` is `unknown` instead of a count from the unrelated memory store.
+
+`SemanticAuditReader.getAll` no longer imposes a 100-ID evidence limit. Callers must bound requests
+and responses; backend implementations may split retrieval into their own batches. The 100-reference
+limit on legacy persisted evidence records remains unchanged.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint

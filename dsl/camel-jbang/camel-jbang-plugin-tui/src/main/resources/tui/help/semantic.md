@@ -96,46 +96,30 @@ Reading or editing never runs the expert; Ctrl+r explicitly evaluates the draft.
 
 ## Audit history
 
-Choose **Audit** with `v` to browse retained evaluation evidence and explicit route
-decisions. Capture runs in the application while the TUI is disconnected. Audit settings
-come from the semantic DSL; expert overrides take precedence over the master default.
-Auditing and OpenTelemetry are independent.
+Choose **Audit** to inspect retained evaluations and request outcomes. Result and Execution are separate.
+The same formatter as the playground preserves fractional scores, empty label sets, declared meanings and
+reported probability diagnostics. Historical interpretation is captured once; it is never rebuilt from current definitions.
 
-- `/` edits exact `field=value` filters, separated by spaces. Available fields are
-  `category`, `action`, `expert`, `routeId`, `breadcrumbId` and `since`.
-  Example: `expert=security since=2026-10-09T12:00:00Z`.
-- Up/Down select a record. `Tab` focuses the inspector; arrows scroll its details.
-- `n` loads older records; `g` returns to the latest page; `r` refreshes the current page.
-- Esc leaves details or clears the current filter.
+- `/` edits exact filters: `category`, `expert`, `routeId` (entry), `executingRouteId`, `exchangeId`, `breadcrumbId`, `since`.
+  Quote spaces, for example `expert="team expert"`. `page.status`, `page.result`, `page.definition` refine this loaded page only.
+- `c`, `e`, `t` select category, expert and recent-time presets.
+- Up/Down select records. Scroll the mouse wheel over the **Expert evaluation** inspector to read more,
+  or click it / press `Tab` to focus it, then use Up/Down or Page Up/Down. Home/End jump to the beginning/end.
+  A scrollbar and line range show hidden content. `Tab` returns to the record list; scrolling the inspector
+  keeps the selected evaluation unchanged. Dates and the display zone remain explicit.
+- `n` loads older records; `g` goes to latest; `r` refreshes this page; `Space` pauses/resumes latest-page refresh.
+  New arrivals are counted while selection remains pinned by event ID.
+- `Enter` loads a source-local case. `[` / `]` choose an associated record and `Enter` inspects it; `Esc` returns.
+  Breadcrumb/request/batch associations are not proven causality. Case completeness is always unknown.
+- `u` explicitly inspects permitted input and its omission/redaction status. Input is untrusted message data.
+- `p` creates a **new draft** from permitted captured input; it does not run inference. Original execution parameters
+  were not captured, and current defaults/model revisions/route context may differ. Review the warning and parameters before Run.
 
-Wide terminals show timestamp, action, category, operation, target, reason and
-Camel breadcrumb ID columns. Smaller terminals move fields into the inspector. Enable
-`camel.main.use-breadcrumb=true` in the application to let Camel generate breadcrumbs for route
-exchanges. Audit uses that ID; records without a breadcrumb show `—`. A route action is
-only present for an explicit decision. Linked evaluations retain their captured result
-meaning; missing/evicted evidence is shown as unavailable. Backend status shows the master
-and expert settings, reader, evictions, drops, errors and whether a Camel OpenTelemetry
-tracer is active. This does not assert that an external collector received a trace.
+The inspector retains full exchange and breadcrumb IDs; tables prioritize executing route, evaluation, expert, Result and Execution.
+Health distinguishes capture settings, reader scope, retention, drops, evictions and delivery/query failures.
+An active OpenTelemetry tracer does not prove an external collector received a trace.
 
-The MCP tool **`tui_get_audit`** reads history without moving the screen or changing its filters or selection.
-Pass `eventId` alone to inspect a record and its evidence. For pages, pass `category`, `action`, `expert`,
-`routeId`, `breadcrumbId`, `namespace`, `correlationId`, `since`, `limit` and a returned `cursor` as needed.
-`tui_get_table` reads the visible Audit screen; `tui_set_input` changes it explicitly.
-Audit refreshes are coalesced while a query is pending; changed filters use the latest submitted value.
-
-### Audit inspector and live history
-
-Audit shows the global default and per-expert overrides separately from OpenTelemetry.
-The filter bar shows the current query; `/` edits exact `field=value` filters. With no `since`,
-the query includes all retained time. Timestamps use the local timezone displayed below the table.
-Route decisions and linked evaluations appear side by side on wide terminals and stack on narrow terminals.
-`Tab` focuses details; arrows scroll. `[` / `]` choose evidence when there is more than one linked record.
-`Enter` follows that evaluation; `Esc` or `Enter` returns to the decision.
-The newest page refreshes every second. `Space` pauses/resumes; older pages do not auto-refresh.
-The footer reports retention, evictions, dropped records and delivery errors.
-
-In Audit, `c`, `a` and `e` open searchable selectors for category, action and expert.
-Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values
-on the current page; `/` accepts arbitrary exact filters, including an ISO-8601 `since` timestamp.
-
-Audit input capture is disabled by default. Per-expert `audit.experts.<name>.input.enabled` retains the selected state; the inspector shows Input, Input (redacted), or an omission reason. Tab and arrows scroll longer input.
+`tui_get_audit` reads pages, caseEventId cases, eventIds exports or eventId details without moving the screen.
+Case/export maxRecords is 1..1000 and input requires explicit includeInput. Detail input is labelled untrusted.
+Generic `tui_get_table` Audit snapshots omit captured input even when the human inspector shows it.
+`tui_set_input` supports audit.view, audit.filter, audit.page, audit.eventId and audit.case.

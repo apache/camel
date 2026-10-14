@@ -7076,15 +7076,6 @@
 				"operationId": "semantic-audit",
 				"parameters": [
 					{
-						"name": "action",
-						"in": "query",
-						"description": "Filter by explicit route action",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
 						"name": "breadcrumbId",
 						"in": "query",
 						"description": "Filter by Camel breadcrumb ID",
@@ -7094,18 +7085,18 @@
 						}
 					},
 					{
-						"name": "category",
+						"name": "caseEventId",
 						"in": "query",
-						"description": "Filter by category",
+						"description": "Anchor event ID for a source-local case",
 						"required": false,
 						"schema": {
 							"type": "string"
 						}
 					},
 					{
-						"name": "correlationId",
+						"name": "category",
 						"in": "query",
-						"description": "Filter by application correlation ID",
+						"description": "Filter by category",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7123,7 +7114,34 @@
 					{
 						"name": "eventId",
 						"in": "query",
-						"description": "Event ID to inspect with its linked evaluation records",
+						"description": "Event ID to inspect; legacy records remain exportable",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "eventIds",
+						"in": "query",
+						"description": "Event IDs for bounded bulk export; at most 1000",
+						"required": false,
+						"schema": {
+							"type": "object"
+						}
+					},
+					{
+						"name": "exchangeId",
+						"in": "query",
+						"description": "Filter by recorded exchange ID when supported by the reader",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "executingRouteId",
+						"in": "query",
+						"description": "Filter by executing route when supported by the reader",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7139,6 +7157,16 @@
 						}
 					},
 					{
+						"name": "includeInput",
+						"in": "query",
+						"description": "Include untrusted captured input in explicit export",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
 						"name": "limit",
 						"in": "query",
 						"description": "Maximum records, between 1 and 200",
@@ -7149,12 +7177,13 @@
 						}
 					},
 					{
-						"name": "namespace",
+						"name": "maxRecords",
 						"in": "query",
-						"description": "Filter by application namespace",
+						"description": "Case or bulk retrieval record budget, between 1 and 1000",
 						"required": false,
 						"schema": {
-							"type": "string"
+							"type": "integer",
+							"default": 200
 						}
 					},
 					{
@@ -7454,6 +7483,148 @@
 												}
 											},
 											"description": "Published definitions, when overview is requested"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/semantic-monitoring": {
+			"get": {
+				"summary": "Semantic Monitoring",
+				"description": "Read supplied semantic metrics and comparisons",
+				"operationId": "semantic-monitoring",
+				"parameters": [
+					{
+						"name": "history",
+						"in": "query",
+						"description": "Include bounded retained snapshots",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
+						"name": "since",
+						"in": "query",
+						"description": "Visualization lower bound; snapshots without supplied bounds remain marked unknown",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "source",
+						"in": "query",
+						"description": "Producer name to inspect",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Semantic Monitoring output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"snapshots": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"additionalProperties": true
+											},
+											"description": "Producer-supplied measurements and comparisons"
+										},
+										"defaultExpert": {
+											"type": "string",
+											"description": "Scope of the selected snapshots"
+										},
+										"sources": {
+											"type": "object",
+											"additionalProperties": true,
+											"description": "Source sampling health"
+										},
+										"stores": {
+											"type": "object",
+											"additionalProperties": true,
+											"description": "Store persistence and recovery health"
+										},
+										"omittedSources": {
+											"type": "integer",
+											"description": "Sources beyond the registration limit"
+										},
+										"omittedStores": {
+											"type": "integer",
+											"description": "Stores beyond the registration limit"
+										},
+										"recoveredOrdering": {
+											"type": "string",
+											"description": "Ordering guarantees for recovered snapshots"
+										},
+										"freshness": {
+											"type": "string",
+											"description": "How to interpret source and snapshot freshness"
+										},
+										"sourceErrors": {
+											"type": "integer",
+											"description": "Source sampling failures"
+										},
+										"storeErrors": {
+											"type": "integer",
+											"description": "Store failures"
+										},
+										"dropped": {
+											"type": "integer",
+											"description": "Dropped persistence tasks"
+										},
+										"evicted": {
+											"type": "integer",
+											"description": "Snapshots evicted from the bounded cache"
+										},
+										"managementErrors": {
+											"type": "integer",
+											"description": "Management registration failures"
+										},
+										"recovery": {
+											"type": "string",
+											"description": "Recovery availability"
+										},
+										"capacity": {
+											"type": "integer",
+											"description": "Maximum retained snapshot count"
+										},
+										"lastSample": {
+											"type": "string",
+											"description": "Last sampling time when available"
+										},
+										"audit": {
+											"type": "object",
+											"additionalProperties": true,
+											"description": "Audit capture and delivery health"
+										},
+										"comparability": {
+											"type": "string",
+											"description": "Ownership of population comparability"
+										},
+										"visualizationSince": {
+											"type": "string",
+											"description": "Requested visualization lower bound"
+										},
+										"windowPolicy": {
+											"type": "string",
+											"description": "Treatment of missing window bounds"
+										},
+										"error": {
+											"type": "string",
+											"description": "Query validation error when present"
 										}
 									}
 								}

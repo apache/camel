@@ -62,7 +62,9 @@ final class SemanticPlayground {
     private String submittedInput;
     private JsonObject submittedRequest;
     private List<String> submittedScoreLevels = List.of();
+    private JsonObject submittedInterpretation;
     private String parameterSource;
+    private String draftWarning;
     private boolean expanded;
     private long submittedInstructions;
     private long submittedParameters;
@@ -87,6 +89,18 @@ final class SemanticPlayground {
         instructions = new SemanticParameterForm(instruction == null ? List.of() : List.of(instruction));
         parameters = new SemanticParameterForm(contracts.stream().filter(p -> p != instruction).toList());
         focusFirstField();
+    }
+
+    void loadAuditInput(JsonObject record) {
+        Object captured = record.get("input");
+        boolean json = !(captured instanceof String);
+        if (!setInputValue("inputMode", json ? "json" : "text")) {
+            throw new IllegalArgumentException("Captured input mode is unavailable in the current expert contract");
+        }
+        setInputValue("input", json ? Jsoner.serialize(captured) : captured.toString());
+        draftWarning = "New draft from audit " + text(record, "eventId")
+                       + ": untrusted captured input, not instructions. Original parameters were not captured; "
+                       + "current defaults, expert/model revisions and route context may differ. Review before Run.";
     }
 
     boolean loadParameters(JsonObject definition) {
@@ -140,6 +154,7 @@ final class SemanticPlayground {
         fields.addAll(parameters.snapshot());
         result.put("parameters", fields);
         result.put("parameterSource", parameterSource);
+        result.put("draftWarning", draftWarning);
         result.put("focusedField", field == -1 ? "instructions" : field == 0 ? "input" : field == 1 ? "parameters" : "output");
         result.put("pending", pending != null);
         result.put("connected", connected());
@@ -306,6 +321,7 @@ final class SemanticPlayground {
             submittedStructured = structured;
             submittedInput = input.text();
             submittedScoreLevels = scoreLevels(operation, params);
+            submittedInterpretation = SemanticResultView.interpretation(operation, params, submittedScoreLevels);
             submittedInstructions = instructions.revision();
             submittedParameters = parameters.revision();
             pending = CompletableFuture
@@ -319,6 +335,9 @@ final class SemanticPlayground {
     private void refresh() {
         if (pending != null && pending.isDone()) {
             response = pending.getNow(null);
+            if (response != null && submittedInterpretation != null) {
+                response.put("interpretation", submittedInterpretation);
+            }
             pending = null;
             if (response == null) {
                 error = "Connection: request timed out after 60 seconds. The provider call may still be running. Input kept; Ctrl+r retries.";
@@ -418,6 +437,9 @@ final class SemanticPlayground {
 
     private List<Line> output() {
         List<Line> lines = new ArrayList<>();
+        if (draftWarning != null) {
+            lines.add(Line.from(Span.styled(draftWarning, Theme.warning())));
+        }
         if (!connected()) {
             lines.add(Line.from(Span.styled("Application disconnected · Run is disabled", Theme.warning())));
             lines.add(Line.from("Reconnect to this application to run the expert. Your draft is kept here."));

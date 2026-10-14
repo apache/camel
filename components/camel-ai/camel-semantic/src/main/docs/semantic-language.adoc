@@ -1005,57 +1005,12 @@ XML declarations use an `audit` child of `semantic`:
 </semantic>
 ----
 
-=== Recording a route decision
+=== Automatic evaluation capture
 
-Evaluation records describe what the expert reported. They do not assert that a route
-allowed, blocked, quarantined or otherwise acted on a message. Record that action explicitly
-at the point where the route applies its policy, using `SemanticAuditDecision` as a
-normal Camel processor/bean, or `SemanticAudit.get(context).decision(...)` in Java.
-
-[source,yaml]
-----
-- beans:
-  - name: recordBlockedRequest
-    type: org.apache.camel.semantic.SemanticAuditDecision
-    properties:
-      fields:
-        action: block
-        operation: tools/call
-        target: support-request
-        namespace: default
-        reasonCode: prompt_injection
-        policyId: support-access
-        rule: injection-check
-- route:
-    from:
-      uri: direct:check-request
-      steps:
-        - choice:
-            when:
-              - expression:
-                  language:
-                    language: semantic
-                    expression: ref:screenPrompt
-                steps:
-                  - process:
-                      ref: recordBlockedRequest
-                  - stop: {}
-----
-
-The processor uses the latest invocation's `CamelSemanticAuditReferences` exchange
-property for its evidence IDs. A batch supplies the IDs of its observed members.
-An expert disabled for both audit and observation supplies no reference. Save and combine those
-IDs explicitly if a decision uses earlier invocations; set the processor's
-`evidenceProperty` to that exchange property. A Java caller can supply an empty list
-for a decision with no supporting evaluation. Explicit decisions are captured whenever the global default
-or at least one expert override enables auditing. Thus `enabled: false` with `security: {enabled: true}`
-retains both security evaluations and route decisions, including decisions without evidence. Expert overrides
-filter evaluation records; they do not select which application's actions are recorded. Disabling the global
-default and all expert overrides disables decision capture. `decisionsEnabled` reports this effective state. A reference may therefore point to an evaluation
-not retained by a particular backend; the inspector displays it as unavailable.
-
-A decision records the application's declared action, not successful execution of a
-later tool call. The immutable record is never updated by a later route branch.
+Audit records describe the expert's returned result and how its evaluation ran. Enabling
+audit capture requires no processor, decision bean or application metadata. A route remains
+responsible for its normal routing behavior; a Boolean result does not imply allow or block.
+Previously stored version-1 decision records remain readable and exportable as legacy data.
 
 === Backends and delivery
 
@@ -1064,9 +1019,11 @@ sinks as Camel beans and list their bean names in `sinks`. `SemanticAuditReader`
 separate capability with bounded `query` and `get` operations; write-only sinks need not
 implement it. Choose the reader bean explicitly with `reader`. The built-in `memory` reader requires
 `memory` in `sinks`, otherwise configuration fails rather than displaying an unfed history.
-Readers can override `getAll(List<String>)` to fetch up to 100 linked evidence records with one backend
-query; the console calls it once per selected record. The default implementation delegates to `get`,
-and the memory implementation scans its bounded history once. Missing IDs remain visibly unavailable.
+Readers can override `getAll(List<String>)` to retrieve records by ID in backend-specific batches.
+The SPI imposes no evidence-specific 100-ID cap. Console callers enforce request and response budgets;
+backends return all available requested IDs and propagate lookup failures. The default implementation
+delegates to `get`, and the memory implementation scans its bounded history once. The legacy record
+format still limits each stored evidence list to 100 references.
 The reserved backend
 names are `memory` and `log`:
 
@@ -1080,8 +1037,7 @@ The supported backend APIs are `SemanticAuditSink`, `SemanticAuditReader`, `Sema
 schema; typed timestamp, duration and evidence accessors avoid backend casts. `query.matches(record)`
 provides exact case-sensitive AND filtering with an inclusive timestamp boundary. Record field order
 is preserved for structured logging. Classes in `org.apache.camel.semantic.internal` are runtime plumbing,
-not a supported integration API. Routes use `SemanticAuditDecision` or `SemanticAudit` and its documented
-`REFERENCES` property; observers use `SemanticObserver`.
+not a supported integration API. Evaluation capture is automatic; observers use `SemanticObserver`.
 
 The context starts and stops its configured backends. A single worker dispatches each
 accepted record to the sinks in configuration order. `queueCapacity` defaults to 1000
@@ -1124,11 +1080,11 @@ before an expert is resolved emits no request record because its audit eligibili
 is not yet known. Declaration failures without an identifiable expert also omit an
 evaluation record; failures with a known reference follow that expert's override.
 
-Decision records carry explicit action, operation, target, optional namespace/correlation
-and policy identifiers, reason code and evidence IDs. They never derive application
-correlation or tenant identity from arbitrary inbound headers.
+Evaluation provenance captures the entry `routeId` and the `executingRouteId` at invocation time.
+The executing route may differ after a `direct:` handoff. An unavailable executing route is left absent;
+the entry route is not substituted. Removing or editing a route later does not change stored provenance.
 
-The CLI and TUI tables show Camel's `breadcrumbId` to connect evaluations with route decisions.
+The CLI and TUI use Camel's `breadcrumbId` to associate evaluations within the selected source.
 Enable `camel.main.use-breadcrumb=true` in Camel Main, or `context.setUseBreadcrumb(true)`
 in Java, to let Camel generate missing breadcrumbs when a route exchange starts.
 Audit copies the existing `Exchange.BREADCRUMB_ID` value; it does not generate an ID or
@@ -1139,8 +1095,8 @@ invalid values are omitted without conversion or truncation. Use `breadcrumbId` 
 query, or `--breadcrumb-id` in the CLI, to retrieve records with the same breadcrumb.
 
 Input is omitted by default. Other headers, variables, arbitrary provider metadata and exception
-messages are never copied automatically. Caller-authored score descriptions are also omitted;
-static capability meanings remain available. Result and metadata strings are limited to
+messages are never copied automatically. Declared interpretation is captured separately, as described below.
+Result and metadata strings are limited to
 256 code points, and their collections to 100 entries. An oversized result is represented by
 `resultOmitted: snapshot_limit` without changing the evaluation outcome.
 
@@ -1169,8 +1125,7 @@ Enable input capture explicitly for each expert whose submitted state should be 
 `input.enabled` defaults to `false` and does not enable auditing itself. It captures the
 selected state passed to the expert (`state`, including a selected header), before provider
 validation or execution. It does not take a copy of the entire exchange. Named, batch, direct
-and console evaluations use the same settings. Decisions link to their evaluation records;
-input is stored on the evaluation rather than duplicated on the decision.
+and console evaluations use the same settings. Input is stored only on its evaluation record.
 
 `maxChars` defaults to 4096 and accepts 1 through 100000. It bounds the total Unicode code
 points in strings, map keys and scalar representations. Snapshots accept text, JSON-compatible
@@ -1235,7 +1190,7 @@ capture and redact separately for each invocation, using that expert's input set
 
 Captured input goes to every configured audit sink and is available through the audit reader.
 The dev console, CLI, TUI and MCP list queries omit input; an `eventId` lookup returns it with
-the selected record and its linked evidence. The dev console therefore carries captured
+the selected record. Case and bulk exports require explicit `includeInput=true`. The dev console carries captured
 message data and must remain on a trusted network with access restricted to authorized
 operators; see the xref:manual::security-model.adoc[Camel security model].
 MCP detail responses label captured input as untrusted data. It can contain detected prompt
@@ -1250,15 +1205,15 @@ No automatic redaction is applied without a configured redactor. Input is never 
 `SemanticObserver`, even when audit input capture is enabled; auditing and telemetry remain
 independent. Existing records without input remain readable.
 
-The TUI inspector displays *Input* (or *Input (redacted)*) in the evaluation details, including
-linked evidence beside a route decision. It displays an omission reason when available, or
+Press `u` in the TUI inspector to display *Input* (or *Input (redacted)*) in evaluation details.
+It displays an omission reason when available, or
 *not captured* for records without input. The CLI prints it with
 `camel semantic audit my-app --event-id=<event-id>`; add `--json` for the stored structure.
 
 ==== Observation hooks
 
-Register `SemanticObserver` beans to consume start/completion and explicit decision
-hooks independently of auditing. Beans must be registered before context startup: observers are
+Register `SemanticObserver` beans to consume start/completion hooks independently of auditing.
+The preview decision callback has been removed. Beans must be registered before context startup: observers are
 discovered once when the audit service starts; later registrations take effect after restarting it.
 Observer completion runs in reverse start-callback order; registry registration order is not a contract.
 Observer failures do not replace an expert result or
@@ -1273,29 +1228,115 @@ trace sampling must not determine whether audit records are stored. This SPI sup
 hooks and does not install an OpenTelemetry exporter or bind Camel to draft guardrail
 semantic-convention names.
 
+==== Typed events and historical interpretation
+
+`SemanticEvent` implements Camel's `AiEvent`. The semantic runtime emits typed evaluation starts,
+evaluation completions and request outcomes through `EventHelper.notifyAiEvent`. Each batch member has
+its own invocation and completion; a request outcome is separate from an evaluation result.
+When an evaluation has an Exchange, the notification is a `SemanticExchangeEvent` implementing
+`AiEvent.ExchangeAiEvent`. Synchronous listeners can access that live Exchange, including its body and headers,
+for correlation. Direct expert calls and request outcomes remain detached; no synthetic Exchange is created.
+The event's `getData()` and JSON representation remain frozen and do not include the Exchange. Retaining or
+asynchronous consumers must copy that data instead of holding the event or its live Exchange. Audit queues,
+sinks and monitoring snapshots never retain the Exchange.
+Events continue when audit retention is disabled, if an interested notifier is registered.
+The existing `SemanticObserver` tracing hooks remain independent of event delivery and audit sampling.
+
+Interpretation is captured once from the resolved expert contract and effective parameters before the
+provider runs. It is immutable and includes complete declared meanings, Boolean labels, Choice alternatives,
+Score level descriptions and explicit probability/no-match contracts. It contains no arbitrary parameters,
+instructions, input bodies or live references to definitions. Runtime declarations use `choiceLabelsParameter`,
+`booleanLabelsParameter`, `scoreLevelsParameter`, `noMatchDeclared`, `noMatchLabel` and `completeProbabilities`
+on `@SemanticOperation`. Camel never infers no-match semantics from a label such as `other`.
+
+The event carries the complete interpretation, without the audit record's text limit. `EventHelper`
+dispatches synchronously and retains no history. Listener callbacks must remain short; each listener that
+retains events owns its payload, queue and retention budgets. The event's `toString()` contains identifiers
+only, so routine notifier-failure logs do not dump captured interpretation.
+
+The built-in audit recorder creates its bounded projection before enqueueing. Interpretation in stored
+records is limited to 2048 code points in total, 32 alternatives/levels and 256 code points per label,
+with the existing depth/node limits. If it does not fit, the entire stored interpretation is omitted with
+`interpretationOmitted: audit_snapshot_limit`. The event delivered to other listeners is unchanged.
+Raw input remains a separate opt-in audit snapshot and is never included in frozen event data.
+Exchange-aware listeners can access live input through `getExchange()` independently of audit capture settings.
+
+Readers and sinks advertise supported extensions through `getSupportedExtensions()`. Existing implementations
+default to none and receive their original version-1 shape; memory and logging stores support interpretation,
+findings, identity and executing-route fields. Missing capability data is visible in health output. Older
+records display *interpretation not recorded*; tools never reconstruct history from a current definition.
+
+Experts may return bounded `SemanticFinding` entries with a code, meaning and source. Severity is optional;
+when supplied it includes its value and the expert's scale. Camel displays *severity not reported* otherwise.
+For example, an expert could supply `format-anomaly` on its own `low/medium/high` scale, while another supplies
+`review-priority` on a numeric scale. Neither code nor severity causes an automatic route action.
+
+A provider-independent business assessment can return classification labels and supplementary findings,
+without route-authored policy metadata:
+
+[source,java]
+----
+return new SemanticResult(Set.of("missing-reference"), null, Map.of(), null,
+    Map.of("taskId", "invoice-review", "taskVersion", "v2"),
+    List.of(new SemanticFinding("reference-absent", "The supplied invoice has no purchase reference",
+        "invoice-expert", null, null)));
+----
+
+The route chooses how to handle that assessment. A fixed classifier declares its label domain in the
+operation contract; an instruction-driven expert declares which criteria parameter supplies label meanings.
+Arbitrary instructions remain outside audit interpretation capture.
+
 === Browsing history
 
-Use `camel semantic audit my-app` to retrieve a table of retained records from the
-xref:manual::camel-jbang-managing.adoc#_semantic_audit_history[Camel CLI]. Add `--json` for
-machine-readable output, or `--event-id=EVENT_ID` to inspect a record and its linked evidence.
-The CLI uses the same reader, filters and cursors as the console and TUI.
+Use `camel semantic audit my-app` for retained evaluations and request outcomes, `--json` for raw data,
+or `--event-id=EVENT_ID` for explicit record detail. Previously persisted version-1 decision records remain
+retrievable by ID and exportable as legacy data; current tables and filters describe evaluations only.
 
-The read-only `semantic-audit` developer console accepts `eventId` for a selected record
-and its evidence, or a bounded page query with `limit` (1 to 200), `cursor`, `since` (UTC
-ISO-8601), `category`, `action`, `expert`, `routeId`, `breadcrumbId`, `namespace` and `correlationId`.
-Cursors belong to their backend and filter. Query responses report evictions, expired
-cursors, effective settings, delivery errors and dropped records. Backend error messages
-are replaced with a stable code. Querying does not evaluate a definition or require that
-an old definition still exists.
+[source,shell]
+----
+camel semantic audit my-app --expert="team expert" --executing-route-id=assess --limit=50
+camel semantic audit my-app --case-event-id=EVENT_ID --max-records=200 --json
+camel semantic audit my-app --event-ids=EVENT_1,EVENT_2 --max-records=200 --json
+----
 
-The Semantic tab in xref:manual::camel-jbang-tui.adoc[Camel TUI] provides an Audit view
-with filters, a table and a linked-record inspector. `tui_get_audit` exposes this
-history through the TUI MCP server without changing the visible tab, filters, page or selection.
-Pass `eventId` alone to inspect a record and its evidence, or the console's filters, `limit` and returned
-`cursor` to query pages. TUI AI sessions load this tool only for integrations exposing the audit console,
-in both core and full tool modes. Screen navigation remains an explicit TUI action.
-`r` refreshes the current page and `g` returns to the latest page. Pending refreshes are coalesced,
-while the latest changed filter/page is queried after the active request finishes. `tui_get_table` also includes audit rows, filters,
-selected details, linked evidence and backend status when Audit is selected. The OpenTelemetry status
-recognizes both Camel OpenTelemetry tracer implementations, including subclasses. It reports the
-context tracer state; it does not claim that a semantic observer/exporter has been installed.
+The `semantic-audit` console, CLI and MCP share the selected reader. Page filters are `category`
+(`evaluation` or `request`), `expert`, entry `routeId`, `executingRouteId`, `exchangeId`, `breadcrumbId` and
+`since` (ISO-8601). Page size remains 1..200. Backend capability checks reject unsupported filters instead
+of silently returning unfiltered data. Cursors belong to their backend and query. Errors, expired cursors,
+loss and missing IDs are reported separately. A read failure never becomes an empty successful export.
+
+Cases use the anchor's breadcrumb, falling back to exchange, invocation or event identity when absent.
+Batch and request relationships are included where the reader supports those filters. These are source-local
+associations, not proven causality. Case completeness remains *unknown*, even if retrieval was not limited.
+`maxRecords` bounds case/export output to 1..1000 records (default 200); responses are limited to 4 MiB and
+case lookup checks a five-second deadline between backend calls. This does not interrupt a blocked custom
+reader. Bulk lookup chunks IDs in groups of 100 for compatibility with older readers.
+Lists and exports exclude input unless explicitly requested with `--include-input` / `includeInput=true`.
+
+The xref:manual::camel-jbang-tui.adoc[Camel TUI] Audit view shows Result separately from Execution.
+Its shared formatter preserves fractional Score values and adjacent captured labels, distinguishes empty
+Classification results from missing results and failures, and separates probability from confidence.
+Reported probability diagnostics show a top-two gap, ties, selected answer versus highest alternative, and
+explicit no-match semantics. Score modes use only declared zero-based level mappings. These are derived from
+the existing response and are not calibrated certainty, accuracy measurements or model reasoning.
+
+TUI filters accept quoted values, for example `expert="team expert" executingRouteId="assess order"`.
+`page.status`, `page.result` and `page.definition` are clearly marked refinements of the loaded page only.
+`t` offers rolling recent-time presets on the live page; an explicit ISO `since` stays fixed. Older pages keep
+the original time bound. `Space` pauses refresh, `r` refreshes the current page and selected detail, `n` loads an
+older page, and `g` goes to latest. Selection stays pinned by event ID during refresh and new arrivals are reported.
+Live polling refreshes summaries only, so captured input is not downloaded each second. Inspector notices do
+not stop polling. A missing executing route is shown as *n/a* for direct/sample calls and *not recorded* when
+an older record or route evaluation does not identify the executing route.
+Dates and the display zone are visible; full exchange and breadcrumb IDs remain in the inspector.
+`Enter` loads an explicit source-local case; `[` / `]` selects an associated record.
+
+Press `p` to copy permitted captured input into a new playground draft. Existing draft contents are replaced
+only by this explicit action. The draft does not run automatically. Original execution parameters were not
+captured; current defaults, contracts, model revisions and route context can differ. The draft explains this
+and labels input as untrusted data. Review parameters and use the normal explicit Run action.
+
+`tui_get_audit` reads pages, cases and exports without changing the visible TUI state. `tui_get_table` omits
+captured input from Audit summaries and the selected-record snapshot, even while the human inspector displays it.
+Explicit detail/export responses label captured input as untrusted data. The OpenTelemetry indicator describes
+the context tracer, not whether a semantic observer or exporter has been installed.

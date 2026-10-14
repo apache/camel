@@ -24,7 +24,6 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -399,7 +398,6 @@ public class SemanticLanguage extends LanguageSupport {
             List<SemanticAuditService.Invocation> active = new ArrayList<>();
             String failureReason = "invalid_declaration";
             Map<String, SemanticEvaluation> selected = Map.of();
-            exchange.removeProperty(SemanticAuditService.REFERENCES);
             exchange.removeProperty(RESULT);
             exchange.removeProperty(RESULTS);
             SemanticEvaluation single = null;
@@ -453,7 +451,6 @@ public class SemanticLanguage extends LanguageSupport {
                             "Unsupported state type for semantic evaluations: " + names
                                                        + ". Select strings, maps or lists explicitly");
                 }
-                setAuditReferences(exchange, invocations);
                 // Check every group's input before invoking any provider.
                 for (Group group : current.groups) {
                     try {
@@ -547,18 +544,6 @@ public class SemanticLanguage extends LanguageSupport {
                     throw error;
                 }
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            } finally {
-                setAuditReferences(exchange, invocations);
-            }
-        }
-
-        private void setAuditReferences(Exchange exchange, Map<String, SemanticAuditService.Invocation> invocations) {
-            List<String> references = invocations.values().stream()
-                    .map(SemanticAuditService.Invocation::getEventId).filter(Objects::nonNull).toList();
-            if (references.isEmpty()) {
-                exchange.removeProperty(SemanticAuditService.REFERENCES);
-            } else {
-                exchange.setProperty(SemanticAuditService.REFERENCES, references);
             }
         }
 

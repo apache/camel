@@ -157,6 +157,16 @@ public final class SemanticCapabilities {
                 }
             }
             parameters = Collections.unmodifiableMap(values);
+            validateLabelsParameter(declaration.choiceLabelsParameter(), ResultType.CHOICE);
+            validateLabelsParameter(declaration.booleanLabelsParameter(), ResultType.BOOLEAN);
+            if ((!declaration.noMatchLabel().isEmpty() || declaration.noMatchDeclared())
+                    && (declaration.resultType() != ResultType.CHOICE || !declaration.noMatchDeclared())) {
+                throw new IllegalArgumentException("No-match requires an explicit CHOICE declaration");
+            }
+            if (declaration.completeProbabilities() && (!declaration.probabilities()
+                    || declaration.resultType() != ResultType.CHOICE && declaration.resultType() != ResultType.SCORE)) {
+                throw new IllegalArgumentException("Complete probabilities require a CHOICE or SCORE distribution");
+            }
             if (!declaration.scoreLevelsParameter().isEmpty()) {
                 Parameter levels = parameters.get(declaration.scoreLevelsParameter());
                 if (declaration.resultType() != ResultType.SCORE || levels == null
@@ -166,6 +176,37 @@ public final class SemanticCapabilities {
                                                        + declaration.name());
                 }
             }
+        }
+
+        private void validateLabelsParameter(String name, ResultType type) {
+            if (!name.isEmpty()) {
+                Parameter parameter = parameters.get(name);
+                if (declaration.resultType() != type || parameter == null
+                        || parameter.getType() != Map.class || parameter.getItemType() != String.class) {
+                    throw new IllegalArgumentException(
+                            "Interpretation labels require a declared Map<String, String> parameter");
+                }
+            }
+        }
+
+        public String getChoiceLabelsParameter() {
+            return declaration.choiceLabelsParameter();
+        }
+
+        public String getBooleanLabelsParameter() {
+            return declaration.booleanLabelsParameter();
+        }
+
+        public boolean isNoMatchDeclared() {
+            return declaration.noMatchDeclared();
+        }
+
+        public String getNoMatchLabel() {
+            return declaration.noMatchLabel();
+        }
+
+        public boolean isCompleteProbabilities() {
+            return declaration.completeProbabilities();
         }
 
         public String getName() {
@@ -240,6 +281,17 @@ public final class SemanticCapabilities {
                 }
             }
             parameters.forEach((name, parameter) -> parameter.validate(values.get(name), values.containsKey(name)));
+            if (!getBooleanLabelsParameter().isEmpty() && values.get(getBooleanLabelsParameter()) instanceof Map<?, ?> labels
+                    && !Set.of("true", "false").containsAll(labels.keySet())) {
+                throw new IllegalArgumentException("Boolean interpretation labels must use true/false keys");
+            }
+            if (!getNoMatchLabel().isEmpty()) {
+                Object choices = values.get(getChoiceLabelsParameter());
+                if (!(choices instanceof Map<?, ?> labels && labels.containsKey(getNoMatchLabel()))
+                        && !getLabels().contains(getNoMatchLabel())) {
+                    throw new IllegalArgumentException("No-match label must belong to the declared choice domain");
+                }
+            }
         }
 
         public void validateInput(Object state) {

@@ -88,7 +88,7 @@ final class TuiToolGroups {
     static String guidance(ToolGroup group, AppFeatures f) {
         return switch (group) {
             case SEMANTIC ->
-                "Semantic: tui_get_audit reads retained evaluations, route decisions and linked evidence without replay.";
+                "Semantic: tui_get_audit reads retained evaluations and source-local cases without inference.";
             case SQL -> "SQL: " + ToolGroups.describeSql(f)
                         + ". Table names come from the SQL trace (tui_get_table tab 'SQL Trace'); don't guess a schema.";
             case TRACING -> {
