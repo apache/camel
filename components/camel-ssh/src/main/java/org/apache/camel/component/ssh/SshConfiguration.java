@@ -57,13 +57,15 @@ public class SshConfiguration implements Cloneable {
     @UriParam(label = "security", security = "insecure:ssl",
               description = "Sets the resource path for a known_hosts file used to verify the SSH server host key."
                             + " The file uses the OpenSSH known_hosts format, and its entries are matched against the"
-                            + " host and port configured on the endpoint."
+                            + " host and port configured on the endpoint. A resource that cannot be read, or that has a"
+                            + " line that cannot be read, makes every connection fail."
                             + " When not set, the client does not verify the server host key against a known_hosts file.")
     private String knownHostsResource;
     @UriParam(label = "security", defaultValue = "false", security = "insecure:ssl", insecureValue = "false",
-              description = "Specifies whether a connection to a server whose host has no entry in the known_hosts"
-                            + " resource should fail. When false, such a server is accepted. A server whose host has"
-                            + " entries is always rejected when it presents a key that none of them lists.")
+              description = "Specifies whether a connection to a server whose host has no entry without a marker in"
+                            + " the known_hosts resource should fail. When false, such a server is accepted. A server"
+                            + " whose host has entries without a marker is always rejected when it presents a key that"
+                            + " none of them lists, and a key listed in a matching @revoked entry is always rejected.")
     private boolean failOnUnknownHost;
     @UriParam(label = "advanced", defaultValue = Channel.CHANNEL_EXEC)
     private String channelType = Channel.CHANNEL_EXEC;
@@ -304,9 +306,10 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies whether a connection to a server whose host has no entry in the known_hosts resource should fail or
-     * not. This value is only checked when the property knownHostsResource is set. A server whose host has entries is
-     * always rejected when it presents a key that none of them lists.
+     * Specifies whether a connection to a server whose host has no entry without a marker in the known_hosts resource
+     * should fail or not. This value is only checked when the property knownHostsResource is set. A server whose host
+     * has entries without a marker is always rejected when it presents a key that none of them lists, and a key listed
+     * in a matching @revoked entry is always rejected.
      *
      * @param failOnUnknownHost boolean flag, whether a connection to an unknown host should fail
      */

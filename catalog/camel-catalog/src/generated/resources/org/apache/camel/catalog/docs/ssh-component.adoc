@@ -172,17 +172,21 @@ When it is `false` (the default), such a server is accepted and a warning is log
 
 The entries are matched as OpenSSH matches them:
 
-* The host name or address configured on the endpoint is compared with each comma-separated host
-pattern of an entry, ignoring case. Wildcards (`*` and `?`), negated patterns (`!`) and hashed
-entries are supported. The configured value is used as is: an endpoint configured with an address
-only uses the entries for that address.
-* An entry without a port applies to port 22 only. For another port, use the `[host]:port` form,
-for example `[db.example.com]:2222`.
-* The server is accepted when one of the entries for its host lists the key it presents. A host can be
-listed with several keys, one per line.
+* Each host pattern of an entry is compared, ignoring case, with the host name or address configured
+on the endpoint, written `host` for port 22 and `[host]:port` for another port. `*` and `?` are
+wildcards, a pattern starting with `!` excludes the hosts it matches, and hashed entries are supported.
+So `db.example.com` only applies to port 22, `[db.example.com]:2222` to port 2222, and `*` to every
+host and port. The configured value is used as is: an endpoint configured with an address only uses
+the entries for that address.
+* The server is accepted when an entry of its host lists the key it presents. A host can be listed
+with several keys, one per line.
 * The server is rejected when the key it presents is listed in a matching `@revoked` entry, or when
-its host has entries but none of them lists that key, whatever the value of `failOnUnknownHost`.
+its host has entries without a marker but none of them lists that key, whatever the value of
+`failOnUnknownHost`. That option only decides for a host without such an entry: `@revoked` and
+`@cert-authority` entries do not list a host.
 * `@cert-authority` entries (OpenSSH host certificates) are not supported and are ignored.
+* A `known_hosts` resource that cannot be read, or that has a line that cannot be read (for example
+an unknown `@` marker, a missing key, or a key that is not valid base64), makes every connection fail.
 
 The following route verifies the host key of a server listening on port 2222 against a
 `known_hosts` file that contains the line `[db.example.com]:2222 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5...`.

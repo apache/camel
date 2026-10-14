@@ -143,21 +143,27 @@ the producer.
 === camel-ssh - known_hosts entries are matched as in OpenSSH
 
 When `knownHostsResource` is set, the entries of the `known_hosts` file are now matched as OpenSSH
-matches them, against the host name or address and the port configured on the endpoint:
+matches them, against the host name or address configured on the endpoint, written `host` for port 22
+and `[host]:port` for another port:
 
-* A host pattern must match the configured host as a whole. An entry for another host whose name or
-address contains the configured one is no longer used.
-* An entry without a port only applies to port 22. A server on another port needs an entry of the
-form `[host]:port`.
+* A host pattern must match that name as a whole. An entry for another host whose name or address
+contains the configured one is no longer used.
+* A pattern such as `db.example.com` only applies to port 22. A server on another port needs an entry
+such as `[db.example.com]:2222`, or a pattern that matches that form, such as `*`.
 * The configured host is used as is. An endpoint configured with a host name no longer uses entries
 listed only under its address, and an endpoint configured with an address no longer uses entries
 listed under the name that a reverse lookup of the address returns.
 * Every entry of the host is considered, so a host can be listed with several keys. Wildcard, negated
 and hashed patterns, comments and `@revoked` entries are supported. `@cert-authority` entries are
 ignored.
+* A `known_hosts` resource that cannot be read, or that has a line that cannot be read (for example an
+unknown `@` marker, a missing key, or a key that is not valid base64), now makes every connection fail,
+whatever the value of `failOnUnknownHost`. Previously such a resource was treated as having no entry,
+and such a line was skipped.
 
-As before, a server whose host has entries is rejected when it presents a key that none of them lists,
-whatever the value of `failOnUnknownHost`, which only applies to a host without any entry.
+As before, a server whose host has entries without a marker is rejected when it presents a key that
+none of them lists, whatever the value of `failOnUnknownHost`, which only applies to a host without
+such an entry: `@revoked` and `@cert-authority` entries do not list a host.
 Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
 endpoint is configured with.
 

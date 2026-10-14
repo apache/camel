@@ -101,6 +101,24 @@ class ResourceBasedSSHKeyVerifierTest {
     }
 
     @Test
+    void matchesPatternsAgainstTheHostAndPortAsOpenSshWritesThem() throws Exception {
+        assertTrue(verify(true, "db.example.com", 2222, serverKey, entry("*", serverKey)));
+        assertTrue(verify(true, "db.example.com", 2222, serverKey, entry("[*.example.com]:2222", serverKey)));
+        assertFalse(verify(true, "db.example.com", 2222, serverKey, entry("*.example.com", serverKey)));
+        assertTrue(verify(true, "db.example.com", 2222, serverKey, entry("[db.example.com]:22?2", serverKey)));
+    }
+
+    @Test
+    void matchesNegatedPortQualifiedPatterns() throws Exception {
+        String knownHosts = entry("![excluded.example.com]:2222,[db.example.com]:2222", serverKey);
+        for (boolean failOnUnknownHost : new boolean[] { true, false }) {
+            assertTrue(verify(failOnUnknownHost, "db.example.com", 2222, serverKey, knownHosts));
+            assertFalse(verify(failOnUnknownHost, "db.example.com", 2222, otherKey, knownHosts));
+        }
+        assertFalse(verify(true, "excluded.example.com", 2222, serverKey, knownHosts));
+    }
+
+    @Test
     void matchesWildcardNegatedAndUpperCasePatterns() throws Exception {
         assertTrue(verify(true, "db.example.com", 22, serverKey, entry("*.example.com", serverKey)));
         assertTrue(verify(true, "db.example.com", 22, serverKey, entry("DB.EXAMPLE.COM", serverKey)));
@@ -115,6 +133,8 @@ class ResourceBasedSSHKeyVerifierTest {
         assertTrue(verify(true, "db.example.com", 22, serverKey, knownHosts));
         assertFalse(verify(true, "db.example.com", 22, otherKey, knownHosts));
         assertFalse(verify(true, "www.example.com", 22, serverKey, knownHosts));
+        assertFalse(verify(true, "db.example.com", 2222, serverKey, knownHosts));
+        assertTrue(verify(true, "db.example.com", 2222, serverKey, entry(hashed("[db.example.com]:2222"), serverKey)));
     }
 
     @Test
@@ -139,6 +159,56 @@ class ResourceBasedSSHKeyVerifierTest {
         assertFalse(verify(true, "db.example.com", 22, otherKey, knownHosts));
         assertFalse(verify(false, "db.example.com", 22, otherKey, knownHosts));
         assertTrue(verify(true, "db.example.com", 22, serverKey, knownHosts + entry("db.example.com", serverKey)));
+    }
+
+    @Test
+    void rejectsARevokedKeyOnEveryPortAndInEveryOrder() throws Exception {
+        String revoked = "@revoked * " + PublicKeyEntry.toString(serverKey) + "\n";
+        for (int port : new int[] { 22, 2222 }) {
+            String listed = entry(port == 22 ? "db.example.com" : "[db.example.com]:" + port, serverKey);
+            for (boolean failOnUnknownHost : new boolean[] { true, false }) {
+                assertFalse(verify(failOnUnknownHost, "db.example.com", port, serverKey, revoked + listed),
+                        () -> "revocation before the entry, port " + port + ", failOnUnknownHost " + failOnUnknownHost);
+                assertFalse(verify(failOnUnknownHost, "db.example.com", port, serverKey, listed + revoked),
+                        () -> "revocation after the entry, port " + port + ", failOnUnknownHost " + failOnUnknownHost);
+            }
+        }
+    }
+
+    @Test
+    void treatsAHostWithOnlyRevokedEntriesAsUnknown() throws Exception {
+        // as OpenSSH does: a revoked entry rejects its key but does not list the host
+        String knownHosts = "@revoked db.example.com " + PublicKeyEntry.toString(otherKey) + "\n";
+        assertFalse(verify(true, "db.example.com", 22, serverKey, knownHosts));
+        assertTrue(verify(false, "db.example.com", 22, serverKey, knownHosts));
+        assertFalse(verify(false, "db.example.com", 22, otherKey, knownHosts));
+    }
+
+    @Test
+    void rejectsEveryServerWhenALineCannotBeRead() throws Exception {
+        String[] unreadableLines = {
+                "@unknown db.example.com " + PublicKeyEntry.toString(serverKey),
+                "@revoked",
+                "db.example.com",
+                "db.example.com ssh-ed25519 not*base64",
+                "|1|c2FsdA==|aGFzaA== " + PublicKeyEntry.toString(serverKey) };
+        for (String line : unreadableLines) {
+            for (String knownHosts : new String[] { line + "\n", entry("db.example.com", serverKey) + line + "\n" }) {
+                for (boolean failOnUnknownHost : new boolean[] { true, false }) {
+                    assertFalse(verify(failOnUnknownHost, "db.example.com", 22, serverKey, knownHosts), line);
+                    assertFalse(verify(failOnUnknownHost, "www.example.com", 22, serverKey, knownHosts), line);
+                }
+            }
+        }
+    }
+
+    @Test
+    void rejectsEveryServerWhenTheResourceCannotBeRead() {
+        for (boolean failOnUnknownHost : new boolean[] { true, false }) {
+            ResourceBasedSSHKeyVerifier verifier
+                    = new ResourceBasedSSHKeyVerifier(context, "file:" + dir.resolve("missing"), failOnUnknownHost);
+            assertFalse(verifier.verifyServerKey(null, new InetSocketAddress("127.0.0.1", 22), serverKey));
+        }
     }
 
     @Test
