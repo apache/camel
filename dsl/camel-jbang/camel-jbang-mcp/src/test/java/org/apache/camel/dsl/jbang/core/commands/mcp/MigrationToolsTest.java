@@ -122,6 +122,6 @@ class MigrationToolsTest {
         assertThat(result.nextStep()).contains("Rephrase").contains("camel_catalog_doc");
         assertThatThrownBy(() -> tools.camel_migration_guide_search("cxf", 3, "latest", null))
                 .isInstanceOf(ToolCallException.class)
-                .hasMessageContaining("fromVersion");
+                .hasMessageContaining("currentVersion");
     }
 }

@@ -137,6 +137,7 @@ public class PromptDefinitions {
                         4. **Recipes**: call `camel_migration_recipes` with runtime, versions, Java version, and `dryRun=true` \
                         to get the OpenRewrite Maven commands.
                         5. **Breaking changes**: for each detected component, call `camel_migration_guide_search` \
+                        with the current and target Camel versions as `currentVersion` and `targetVersion` \
                         to find renames and API changes.
                         6. **Summary**: report current state, target state, blockers, breaking changes, \
                         migration commands, and manual steps that OpenRewrite cannot automate.

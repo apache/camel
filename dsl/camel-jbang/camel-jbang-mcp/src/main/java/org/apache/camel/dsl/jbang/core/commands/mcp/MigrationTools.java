@@ -296,8 +296,8 @@ public class MigrationTools {
           description = "Search Camel migration and upgrade guides for a specific term or component name. "
                         + "Each result is one topic entry of a release (e.g. 'Upgrading Camel 4.20 to 4.21 / camel-cxf') "
                         + "with the lines around the best match, version info and URL. "
-                        + "Pass fromVersion/toVersion (e.g. 2.25 and 4.22) to search only the guides for that "
-                        + "migration, with the 2.x to 3.0 and 3.x to 4.0 migration guides ranked first. "
+                        + "Pass currentVersion/targetVersion (e.g. 2.25 and 4.22) to search only the guides for that "
+                        + "migration, with the 2.x to 3.0 and 3.x to 4.0 migration guides ranked higher. "
                         + "Results are ranked by relevance with typo tolerance; generic words such as camel, "
                         + "migration or upgrade are ignored, and no results are returned when nothing is relevant. "
                         + "Use this instead of web search when looking up migration-related changes, "
@@ -306,12 +306,12 @@ public class MigrationTools {
             @ToolArg(description = "Search query — component name, API class, method, or keyword "
                                    + "(e.g., direct-vm, getOut, camel-http4, cxf servlet, camel-mail subject header)") String query,
             @ToolArg(description = "Maximum number of results to return (default: 3)", required = false) Integer limit,
-            @ToolArg(description = "Camel version migrating from (e.g., 2.25 or 3.20.1). "
+            @ToolArg(description = "Current Camel version, migrating from (e.g., 2.25 or 3.20.1). "
                                    + "Guides for releases up to this version are omitted.",
-                     required = false) String fromVersion,
-            @ToolArg(description = "Camel version migrating to (e.g., 4.22). "
+                     required = false) String currentVersion,
+            @ToolArg(description = "Target Camel version, migrating to (e.g., 4.22). "
                                    + "Guides for releases after this version are omitted.",
-                     required = false) String toVersion) {
+                     required = false) String targetVersion) {
 
         if (query == null || query.isBlank()) {
             throw new ToolCallException("query is required", null);
@@ -320,7 +320,7 @@ public class MigrationTools {
         int maxResults = limit != null && limit > 0 ? limit : 3;
         List<MigrationData.SearchHit> hits;
         try {
-            hits = migrationData.search(query, fromVersion, toVersion, maxResults);
+            hits = migrationData.search(query, currentVersion, targetVersion, maxResults);
         } catch (IllegalArgumentException e) {
             throw new ToolCallException(e.getMessage(), e);
         }
@@ -336,7 +336,7 @@ public class MigrationTools {
         String nextStep;
         if (snippets.isEmpty()) {
             nextStep = "No migration guide entry is relevant to this query. Rephrase it with a component name, "
-                       + "option or API class (e.g. camel-cxf, getOut), widen or drop fromVersion/toVersion, "
+                       + "option or API class (e.g. camel-cxf, getOut), widen or drop currentVersion/targetVersion, "
                        + "or ask camel_catalog_doc for the component's current documentation.";
         } else {
             nextStep = "Call camel_migration_guide_search again for other terms, or call camel_migration_recipes.";

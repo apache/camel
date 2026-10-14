@@ -89,7 +89,7 @@ class MigrationDataSearchTest {
     }
 
     @Test
-    void versionRangeRanksMajorMigrationGuidesFirst() {
+    void versionRangeFavoursMajorMigrationGuides() {
         List<MigrationData.SearchHit> hits
                 = migrationData.search("CXF SOAP web service migration Camel 2 to 4", "2.25", "4.22", 5);
 
@@ -97,6 +97,15 @@ class MigrationDataSearchTest {
         assertThat(hits.get(0).section().guide()).isEqualTo("Camel 3 Migration Guide (2.x to 3.0)");
         assertThat(hits.get(0).section().sectionTitle()).startsWith("Migrating Camel applications");
         assertThat(hits.get(0).section().content()).contains("camel-cxf");
+    }
+
+    @Test
+    void versionRangeKeepsStrongUpgradeGuideEntries() {
+        // the major guide bonus is a multiplier, not a partition: exact topic entries of upgrade guides stay on top
+        List<MigrationData.SearchHit> hits = migrationData.search("cxf servlet", "2.25", "4.22", 3);
+
+        assertThat(hits).hasSize(3);
+        assertThat(hits).extracting(h -> h.section().sectionTitle()).anyMatch(t -> t.endsWith("/ camel-cxf"));
     }
 
     @Test
@@ -113,10 +122,10 @@ class MigrationDataSearchTest {
     void invalidVersionIsRejected() {
         assertThatThrownBy(() -> migrationData.search("cxf", "four", null, 3))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("fromVersion");
+                .hasMessageContaining("currentVersion");
         assertThatThrownBy(() -> migrationData.search("cxf", "4.22", "3.20", 3))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("is after toVersion");
+                .hasMessageContaining("is after targetVersion");
     }
 
     @Test
@@ -134,8 +143,8 @@ class MigrationDataSearchTest {
 
     @Test
     void searchRespectsLimit() {
-        List<MigrationData.GuideSection> results = migrationData.searchGuides("camel", 2);
+        List<MigrationData.GuideSection> results = migrationData.searchGuides("cxf", 2);
 
-        assertThat(results).hasSizeLessThanOrEqualTo(2);
+        assertThat(results).hasSize(2);
     }
 }

@@ -314,6 +314,11 @@ public class MigrationData {
     private static final double SUBSTRING_WEIGHT = 0.3;
     /** Multiplier when the whole query appears verbatim in the entry. */
     private static final double PHRASE_BOOST = 1.25;
+    /**
+     * Multiplier for the entries of the 2.x to 3.0 and 3.x to 4.0 migration guides in a version-scoped search, so they
+     * rank above comparable upgrade guide entries without pushing out strong ones.
+     */
+    static final double MAJOR_GUIDE_BOOST = 1.85;
     /** Entries scoring below this are considered unrelated to the query and are not returned. */
     static final double MIN_SCORE = 2.5;
 
@@ -349,23 +354,23 @@ public class MigrationData {
      * Levenshtein distance (typos) or containing it, at a reduced weight. Entries matching less than half of the query
      * terms or scoring below {@link #MIN_SCORE} are dropped, so an unrelated query returns no results.
      * <p>
-     * When {@code fromVersion} and/or {@code toVersion} are given, only the guides for the releases after
-     * {@code fromVersion} up to {@code toVersion} are searched, and the entries of the major migration guides (2.x to
-     * 3.0, 3.x to 4.0) in that range are listed before the entries of the minor upgrade guides.
+     * When {@code currentVersion} and/or {@code targetVersion} are given, only the guides for the releases after
+     * {@code currentVersion} up to {@code targetVersion} are searched, and the entries of the major migration guides
+     * (2.x to 3.0, 3.x to 4.0) in that range get a higher score.
      *
      * @param  query                    the search query
-     * @param  fromVersion              the Camel version migrated from (e.g. 2.25 or 3.20.1), or null
-     * @param  toVersion                the Camel version migrated to (e.g. 4.22), or null
+     * @param  currentVersion           the Camel version migrated from (e.g. 2.25 or 3.20.1), or null
+     * @param  targetVersion            the Camel version migrated to (e.g. 4.22), or null
      * @param  maxResults               the maximum number of results
      * @return                          the matching entries, best first
-     * @throws IllegalArgumentException if a version cannot be parsed or fromVersion is after toVersion
+     * @throws IllegalArgumentException if a version cannot be parsed or currentVersion is after targetVersion
      */
-    public List<SearchHit> search(String query, String fromVersion, String toVersion, int maxResults) {
-        int[] from = parseVersion(fromVersion, "fromVersion");
-        int[] to = parseVersion(toVersion, "toVersion");
+    public List<SearchHit> search(String query, String currentVersion, String targetVersion, int maxResults) {
+        int[] from = parseVersion(currentVersion, "currentVersion");
+        int[] to = parseVersion(targetVersion, "targetVersion");
         if (from != null && to != null && compareMajorMinor(from, to) > 0) {
             throw new IllegalArgumentException(
-                    "fromVersion " + fromVersion + " is after toVersion " + toVersion);
+                    "currentVersion " + currentVersion + " is after targetVersion " + targetVersion);
         }
         boolean ranged = from != null || to != null;
 
@@ -414,18 +419,16 @@ public class MigrationData {
             if (queryTerms.size() > 1 && section.content().toLowerCase(Locale.ROOT).contains(phrase)) {
                 score *= PHRASE_BOOST;
             }
+            if (ranged && section.majorMigration()) {
+                // migrating across a major version: favour the 2.x to 3.0 and 3.x to 4.0 migration guides
+                score *= MAJOR_GUIDE_BOOST;
+            }
             if (score >= MIN_SCORE) {
                 hits.add(new SearchHit(section, score, List.copyOf(matched)));
             }
         }
 
-        Comparator<SearchHit> byScore = Comparator.comparingDouble(SearchHit::score).reversed();
-        if (ranged) {
-            // migrating across a major version: the 2.x to 3.0 and 3.x to 4.0 migration guides come first
-            hits.sort(Comparator.comparing((SearchHit h) -> !h.section().majorMigration()).thenComparing(byScore));
-        } else {
-            hits.sort(byScore);
-        }
+        hits.sort(Comparator.comparingDouble(SearchHit::score).reversed());
         return hits.size() > maxResults ? List.copyOf(hits.subList(0, maxResults)) : hits;
     }
 
@@ -545,7 +548,13 @@ public class MigrationData {
     }
 
     private static boolean inRange(GuideSection section, int[] from, int[] to) {
-        int[] version = parseVersion(section.version(), "guide version");
+        int[] version;
+        try {
+            version = parseVersion(section.version(), "guide version");
+        } catch (IllegalArgumentException e) {
+            // skip a guide whose version cannot be read rather than failing the whole search
+            return false;
+        }
         if (version == null) {
             return false;
         }
