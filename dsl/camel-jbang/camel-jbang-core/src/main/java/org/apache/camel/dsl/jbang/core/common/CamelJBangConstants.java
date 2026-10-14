@@ -175,6 +175,12 @@ public final class CamelJBangConstants {
               javaType = "String", label = "advanced")
     public static final String SOURCE_DIR = "camel.jbang.sourceDir";
 
+    @Metadata(description = "Folders under the source directory (comma separated) that hold data the routes read or write,"
+                            + " not sources: in dev mode a change in them does not reload the routes. Use this for an"
+                            + " inbox, outbox or archive folder under the source directory.",
+              javaType = "String", label = "advanced")
+    public static final String DATA_DIR = "camel.jbang.dataDir";
+
     @Metadata(description = "Whether to ignore route loading and compilation errors (use this with care!)",
               javaType = "boolean", label = "advanced")
     public static final String IGNORE_LOADING_ERROR = "camel.jbang.ignoreLoadingError";
