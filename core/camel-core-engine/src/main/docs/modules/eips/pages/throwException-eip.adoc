@@ -1,7 +1,7 @@
-= Stop EIP
-:doctitle: Stop
-:shortname: stop
-:description: Stops the processing of the current message
+= Throw Exception EIP
+:doctitle: Throw Exception
+:shortname: throwException
+:description: Throws an exception
 :since: 
 :supportlevel: Stable
 :tabs-sync-option:

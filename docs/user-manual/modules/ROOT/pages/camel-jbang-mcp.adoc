@@ -176,7 +176,7 @@ Here are example prompts you can give your AI assistant. The assistant automatic
   EIP aliases such as `fan-out`, `dedup` and `rate-limit` match)
 * _"Show me all AWS source kamelets"_ — uses `camel_catalog_kamelets`
 * _"What options does aws-s3-source accept?"_ — uses `camel_catalog_kamelet_doc`
-* _"Show me beginner REST examples"_ — uses `camel_catalog_examples`
+* _"Show me the quick-start examples"_ — uses `camel_catalog_examples`
 
 === Building routes
 
@@ -490,13 +490,18 @@ client to the next.
 
 | `camel_catalog_examples`
 | List available Camel CLI examples with filtering by name, description, or tag (case-insensitive substring match).
-  Supports filtering by difficulty level (`beginner`, `intermediate`, `advanced`) and limiting the number of results.
-  Returns name, title, description, level, tags, and file list for each example.
+  The examples are grouped by level, the steps of the examples ladder in reading order: `quick-start`, `run`,
+  `transform`, `route`, `fail-well`, `connect`, `connect-service`, `contracts`, `ai`, `cloud` and `showcase`.
+  Supports filtering by one level and limiting the number of results; an unknown level is answered with the levels
+  that exist. Returns the groups, and for each example its name, title, description, level, tags, what it teaches,
+  the infra services it needs, whether it is bundled and its files.
 
 | `camel_catalog_example_file`
-| Get the content of a specific file from a Camel CLI example. For bundled examples, returns the file content
-  directly. For non-bundled examples, returns a GitHub URL where the file can be found. Use `camel_catalog_examples`
-  first to discover example names and their files.
+| Get the content of a specific file from a Camel CLI example, named by its full name such as
+  `quick-start/timer-log` or by its short name `timer-log`, for example the file `timer-log.camel.yaml`. For bundled
+  examples, returns the file content directly. For non-bundled examples, returns a GitHub URL where the file can be
+  found. The answer gives the full name of the example; an unknown name is answered with the closest example names.
+  Use `camel_catalog_examples` first to discover example names and their files.
 |===
 
 === Route Understanding
