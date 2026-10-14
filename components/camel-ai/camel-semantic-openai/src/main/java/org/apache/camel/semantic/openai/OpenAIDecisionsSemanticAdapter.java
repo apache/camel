@@ -226,8 +226,9 @@ public class OpenAIDecisionsSemanticAdapter implements SemanticAdapter, CamelCon
 
     @Override
     public void validateState(Object state) {
-        SemanticInput.validateImageSize(SemanticInput.normalize(state), maxImageBytes);
-        OpenAIDecisionsSupport.validateInput(input(SemanticInput.normalize(state)));
+        Object normalized = SemanticInput.normalize(state);
+        SemanticInput.validateImageSize(normalized, maxImageBytes);
+        OpenAIDecisionsSupport.validateInput(input(normalized));
     }
 
     @Override
