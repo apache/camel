@@ -56,6 +56,9 @@ public class AuthoringTools {
     @Inject
     RepeatedCallSessions repeatedCalls;
 
+    @Inject
+    McpSecurityConfig securityConfig;
+
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Camel catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the "
                         + "Java API (description, options, Maven coordinates), with the URI rules of a component. For "
@@ -170,6 +173,7 @@ public class AuthoringTools {
                      required = true) String file,
             @ToolArg(description = "The complete new content", required = true) String content,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        refuseRedacted(content);
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
                 "camelVersion", camelVersion));
     }
@@ -189,8 +193,36 @@ public class AuthoringTools {
             @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EDITS_DESC,
                      required = false) List<FileEdit> edits,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        refuseRedacted(find, replace);
+        if (edits != null) {
+            for (FileEdit edit : edits) {
+                if (edit != null) {
+                    refuseRedacted(edit.find(), edit.replace());
+                }
+            }
+        }
         return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
                 "edits", editsJson(edits), "camelVersion", camelVersion));
+    }
+
+    /**
+     * With secret redaction on, camel_get_files answers a secret as the redaction mask; written back, the mask would
+     * replace the real secret in the file. So a write or an edit that carries the mask is refused.
+     */
+    private void refuseRedacted(String... texts) {
+        if (securityConfig == null || !securityConfig.isEnabled() || !securityConfig.isRedactionEnabled()) {
+            return;
+        }
+        for (String text : texts) {
+            if (text != null && text.contains(McpSecretRedactor.REDACTED)) {
+                throw new ToolCallException(
+                        "The content contains " + McpSecretRedactor.REDACTED + ", the mask secret redaction "
+                                            + "(camel.mcp.security.redaction.enabled) shows in place of a secret; "
+                                            + "written back it would replace the real secret, so nothing was "
+                                            + "written. Change only the lines without the mask with "
+                                            + "camel_edit_file, and leave the secret itself to a human.");
+            }
+        }
     }
 
     /** One change of camel_edit_file's edits: the text to find as it stands in the file, and what to put there. */
