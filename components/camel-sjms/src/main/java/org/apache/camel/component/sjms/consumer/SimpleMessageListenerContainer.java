@@ -367,6 +367,8 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                         destinationName);
                 Set<Session> newSessions = new HashSet<>(concurrentConsumers);
                 Set<MessageConsumer> newConsumers = new HashSet<>(concurrentConsumers);
+                // assigned before the loop, so that an onException during the creation (it sets the fields to null)
+                // is seen by recoverConnection, which then tries again
                 sessions = newSessions;
                 consumers = newConsumers;
                 try {
