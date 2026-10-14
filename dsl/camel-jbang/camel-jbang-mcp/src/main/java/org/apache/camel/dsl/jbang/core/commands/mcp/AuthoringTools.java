@@ -37,13 +37,15 @@ import org.apache.camel.util.json.JsonObject;
 /**
  * The neutral Camel authoring tools shared with {@code camel tui --mcp} (CAMEL-24695): thin MCP wrappers over the
  * {@link ToolRegistry}, so an AI agent gets the same tools, names and answers through either server. The logic lives in
- * camel-jbang-core ({@code AuthoringTools} there); these methods only carry the MCP annotations the security
- * interceptor and access filter work on, and pass the arguments through.
+ * camel-jbang-core ({@code AuthoringTools} there); these methods only carry the MCP annotations the access filter works
+ * on and pass the arguments through. The class is {@link McpSecured}, so every call goes through the security
+ * interceptor (audit, argument sanitisation, secret redaction of the answer).
  * <p>
  * Writing a file is validated first and refused when the content is invalid, but nobody is asked before the write: the
  * MCP client (Claude Code, Cursor, and the others ask before a non read-only tool runs) is where the human sits. The
  * {@code read-only} access level hides the tools that write, run and control.
  */
+@McpSecured
 @ApplicationScoped
 public class AuthoringTools {
 

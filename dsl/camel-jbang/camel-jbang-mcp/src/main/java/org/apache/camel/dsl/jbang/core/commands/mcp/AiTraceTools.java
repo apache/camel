@@ -41,6 +41,7 @@ import org.jboss.logging.Logger;
  * token usage, model IDs, guardrail outcomes, completion reasons, and per-component latency for AI components (Bedrock,
  * LangChain4j, Docling, Textract, OpenAI, KServe, DJL, TensorFlow Serving, HuggingFace).
  */
+@McpSecured
 @ApplicationScoped
 public class AiTraceTools {
 
