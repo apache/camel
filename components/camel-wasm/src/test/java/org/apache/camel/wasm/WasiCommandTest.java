@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.objectweb.asm.MethodTooLargeException;
 import run.endive.runtime.TrapException;
 import run.endive.wabt.Wat2Wasm;
 import run.endive.wasi.WasiOptions;
@@ -175,7 +176,25 @@ class WasiCommandTest {
         assertThatThrownBy(() -> new WasiCommand(simd, List.of("simd.wasm"), 0, true))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageStartingWith("The Wasm module simd.wasm cannot be compiled to JVM bytecode (compile=true): ")
-                .hasCauseInstanceOf(WasmEngineException.class);
+                .hasCauseInstanceOf(WasmEngineException.class)
+                // the reason is not a function too large for a JVM method, so the module was not compiled a second
+                // time with the interpreter as fallback
+                .satisfies(e -> assertThat(WasiCommand.RuntimeCompiler.isFunctionTooLarge(e.getCause())).isFalse());
+    }
+
+    @Test
+    void onlyAFunctionTooLargeForAJvmMethodIsCompiledAgainWithTheInterpreterAsFallback() {
+        // how the Endive compiler reports a function too large for a JVM method
+        MethodTooLargeException tooLarge = new MethodTooLargeException("Machine", "func_0", "()V", 70_000);
+        WasmEngineException reported = new WasmEngineException("JVM bytecode too large for WASM method", tooLarge);
+        assertThat(WasiCommand.RuntimeCompiler.isFunctionTooLarge(reported)).isTrue();
+        assertThat(WasiCommand.RuntimeCompiler.isFunctionTooLarge(new RuntimeException(reported))).isTrue();
+
+        // any other failure is not compiled again
+        assertThat(WasiCommand.RuntimeCompiler.isFunctionTooLarge(new WasmEngineException("unsupported"))).isFalse();
+        assertThat(WasiCommand.RuntimeCompiler.isFunctionTooLarge(
+                new WasmEngineException("unsupported", new IllegalArgumentException())))
+                .isFalse();
     }
 
     /**

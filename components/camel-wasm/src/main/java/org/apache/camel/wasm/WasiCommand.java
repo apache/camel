@@ -19,10 +19,13 @@ package org.apache.camel.wasm;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -125,7 +128,10 @@ public final class WasiCommand {
                 } catch (WasmEngineException e) {
                     // Endive could not compile every function. When the reason is a function that is too large for a
                     // JVM method, the module still works with that function interpreted, so compile again with the
-                    // interpreter as fallback; for any other reason this second attempt fails as the first one did.
+                    // interpreter as fallback. For any other reason a second attempt would fail as the first one did.
+                    if (!RuntimeCompiler.isFunctionTooLarge(e)) {
+                        throw e;
+                    }
                     factory = RuntimeCompiler.compile(module, true);
                     fallback = true;
                     LOG.warn("The Wasm module {} is compiled in part only: it has functions that are too large for a"
@@ -234,7 +240,10 @@ public final class WasiCommand {
      * The only class that refers to the Endive runtime compiler, so that this command can be loaded and used with the
      * interpreter when the compiler is not on the classpath.
      */
-    private static final class RuntimeCompiler {
+    static final class RuntimeCompiler {
+
+        // ASM's org.objectweb.asm.MethodTooLargeException, compared by name: the class is a dependency of the compiler
+        private static final String METHOD_TOO_LARGE = "org.objectweb.asm.MethodTooLargeException";
 
         /**
          * Compiles the module. A function that is too large for a JVM method either fails the compilation, or is left
@@ -246,6 +255,20 @@ public final class WasiCommand {
                     .withInterpreterFallback(
                             interpretTooLargeFunctions ? InterpreterFallback.SILENT : InterpreterFallback.FAIL)
                     .compile();
+        }
+
+        /**
+         * Whether the compilation failed because a function is too large for a JVM method: Endive reports that with a
+         * WasmEngineException caused by the MethodTooLargeException of ASM.
+         */
+        static boolean isFunctionTooLarge(Throwable failure) {
+            Set<Throwable> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+            for (Throwable t = failure; t != null && seen.add(t); t = t.getCause()) {
+                if (METHOD_TOO_LARGE.equals(t.getClass().getName())) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
