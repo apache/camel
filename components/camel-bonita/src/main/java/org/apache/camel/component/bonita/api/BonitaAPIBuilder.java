@@ -23,6 +23,7 @@ import jakarta.ws.rs.client.WebTarget;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
+import org.apache.camel.component.bonita.api.util.BonitaAPIUtil;
 
 public class BonitaAPIBuilder {
 
@@ -39,7 +40,8 @@ public class BonitaAPIBuilder {
         Client client = clientBuilder.build();
         client.register(new BonitaAuthFilter(bonitaAPIConfig));
         WebTarget webTarget = client.target(bonitaAPIConfig.getBaseBonitaURI()).path("/API/bpm");
-        return new BonitaAPI(bonitaAPIConfig, webTarget);
+        // the file inputs are uploaded with the client of this API, so they go to its server with its account
+        return new BonitaAPI(bonitaAPIConfig, webTarget, BonitaAPIUtil.forClient(client, bonitaAPIConfig));
     }
 
 }
