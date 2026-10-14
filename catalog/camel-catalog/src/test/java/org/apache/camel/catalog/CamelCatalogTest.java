@@ -207,6 +207,20 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testComponentInternal() {
+        // internal: stays inside the CamelContext, set with @UriEndpoint(internal = true)
+        assertTrue(catalog.componentModel("direct").isInternal());
+        assertTrue(catalog.componentModel("log").isInternal());
+        assertTrue(catalog.componentModel("disruptor-vm").isInternal());
+        assertFalse(catalog.componentModel("kafka").isInternal());
+        // not remote, but not internal either: exec runs a process, dataset-test polls the endpoint in its URI
+        for (String name : List.of("exec", "dataset-test")) {
+            assertFalse(catalog.componentModel(name).isRemote(), name);
+            assertFalse(catalog.componentModel(name).isInternal(), name);
+        }
+    }
+
+    @Test
     public void testSuggestComponentNames() {
         // exact scheme first, then words of the title or scheme
         assertEquals(List.of("aws2-s3", "aws2-s3-vectors"), catalog.suggestComponentNames("s3", 0));

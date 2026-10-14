@@ -40,6 +40,19 @@ class JsonMapperTest {
     }
 
     @Test
+    void testShouldWriteInternalOnlyWhenSet() {
+        ComponentModel model = new ComponentModel();
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"internal\""));
+        assertFalse(JsonMapper.generateComponentModel(json).isInternal());
+
+        model.setInternal(true);
+        json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"internal\": true"));
+        assertTrue(JsonMapper.generateComponentModel(json).isInternal());
+    }
+
+    @Test
     void testShouldSerializeAndDeserializeComponentWithOneHeader() {
         ComponentModel model = new ComponentModel();
         EndpointHeaderModel header = new EndpointHeaderModel();

@@ -152,8 +152,9 @@ deliberately few, and they are the contract:
   unless the developer chose `/write auto`.
 * The developer confirms a call that reaches beyond the integration, may
   destroy data or runs code: a message to an endpoint the integration does not
-  have (a route, an internal endpoint such as `direct:`, `seda:` or `log:`,
-  and the integration's own endpoints are inside it), a SQL statement other
+  have (a route, an endpoint of a component the Camel catalog marks internal,
+  such as `direct:`, `seda:` or `log:`, and the integration's own endpoints are
+  inside it), a SQL statement other
   than a single `SELECT`, `SHOW` or `DESCRIBE`, a row update, and an
   expression in a language that runs code, such as Groovy. An HTTP request
   goes only to the integration's own server on `localhost`.

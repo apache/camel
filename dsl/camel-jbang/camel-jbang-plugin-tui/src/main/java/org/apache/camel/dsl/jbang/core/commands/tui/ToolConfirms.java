@@ -23,6 +23,9 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -30,8 +33,8 @@ import org.apache.camel.util.URISupport;
  * agent and an MCP client run its tools without asking, so the AI can show and tell at once (see "Developer tools" in
  * the security model). The exceptions are the calls that reach beyond the integration, may destroy data or run code:
  * <ul>
- * <li>tui_send_message to an endpoint the integration does not have; a route id, a pattern and an internal endpoint
- * (direct:, seda:, log:, mock: and the like) stay inside it;</li>
+ * <li>tui_send_message to an endpoint the integration does not have; a route id, a pattern and an endpoint of a
+ * component the catalog marks internal (direct:, seda:, log:, mock: and the like) stay inside it;</li>
  * <li>tui_execute_sql with a statement that is not a single SELECT (or SHOW, DESCRIBE), and tui_update_row;</li>
  * <li>camel_eval_expression in a language that runs code, such as Groovy.</li>
  * </ul>
@@ -48,15 +51,31 @@ final class ToolConfirms {
     static final Set<String> CODE_LANGUAGES
             = Set.of("groovy", "java", "joor", "js", "javascript", "python", "mvel", "ognl", "spel");
 
-    /**
-     * The components that stay inside the integration: its routes and in-memory queues, its log and the test endpoints.
-     * Not every component the catalog marks remote=false: exec, class, bean, language and the components that load a
-     * template or a stylesheet by URI are not remote either, but run code, or read a file or a URL.
-     */
-    static final Set<String> INTERNAL_SCHEMES = Set.of(
-            "direct", "seda", "disruptor", "disruptor-vm", "log", "mock", "stub", "browse", "dataset", "dataset-test");
-
     private ToolConfirms() {
+    }
+
+    /**
+     * Whether a component stays inside the integration, as the catalog marks it internal: its routes, in-memory state
+     * and log, and no file, network, process, or code or resource named in its URI, by any option. This is narrower
+     * than remote=false, which exec, class, bean, language and the components that load a template or a stylesheet by
+     * URI are too. The catalog is the TUI's own, so it has the flag; a component it does not know (a custom one, or one
+     * newer than the TUI) is not internal.
+     */
+    static boolean isInternal(String scheme) {
+        if (!scheme.matches("[a-z0-9-]+")) {
+            return false;
+        }
+        try {
+            ComponentModel model = Catalog.INSTANCE.componentModel(scheme);
+            return model != null && model.isInternal();
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    // loaded on the first send, not when a call only needs the SQL or language checks
+    private static final class Catalog {
+        static final CamelCatalog INSTANCE = new DefaultCamelCatalog(true);
     }
 
     /** A message to an endpoint the integration does not have, or null when it stays inside the integration. */
@@ -81,7 +100,7 @@ final class ToolConfirms {
         // an option can still reach out: #class:...(args) runs any constructor (a FileOutputStream truncates a file),
         // and a {{placeholder}} can put a secret in the log
         String decoded = decode(endpoint);
-        if (INTERNAL_SCHEMES.contains(endpoint.substring(0, endpoint.indexOf(':')))
+        if (isInternal(endpoint.substring(0, endpoint.indexOf(':')))
                 && !decoded.contains("#") && !decoded.contains("{{")) {
             return true;
         }

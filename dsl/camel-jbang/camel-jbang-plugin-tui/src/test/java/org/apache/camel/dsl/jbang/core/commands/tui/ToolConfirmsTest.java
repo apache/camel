@@ -39,12 +39,14 @@ class ToolConfirmsTest {
         // a route id or a pattern: the send console picks one of the integration's routes
         assertThat(ToolConfirms.sendMessage("checkout", ENDPOINTS)).isNull();
         assertThat(ToolConfirms.sendMessage("kafka:*", ENDPOINTS)).isNull();
-        // an internal endpoint stays inside the integration: its routes, its log, the test endpoints
+        // an endpoint of a component the catalog marks internal stays inside the integration: its routes, in-memory
+        // state, log and test endpoints
         assertThat(ToolConfirms.sendMessage("direct:unknown", ENDPOINTS)).isNull();
         assertThat(ToolConfirms.sendMessage("seda:work", List.of())).isNull();
         assertThat(ToolConfirms.sendMessage("log:demo?showAll=true", List.of())).isNull();
         assertThat(ToolConfirms.sendMessage("mock:result", List.of())).isNull();
         assertThat(ToolConfirms.sendMessage("stub:kafka:payments", List.of())).isNull();
+        assertThat(ToolConfirms.sendMessage("caffeine-cache:orders?action=PUT&key=1", List.of())).isNull();
     }
 
     @Test
@@ -75,6 +77,15 @@ class ToolConfirmsTest {
         assertThat(ToolConfirms.sendMessage("class:java.lang.Runtime", List.of())).isNotNull();
         assertThat(ToolConfirms.sendMessage("language:groovy:'touch /tmp/x'.execute()", List.of())).isNotNull();
         assertThat(ToolConfirms.sendMessage("velocity:file:/Users/me/.ssh/id_rsa", List.of())).isNotNull();
+        // they look internal but are not, as a seldom used option or feature reaches out: dataset-test polls the
+        // endpoint in its URI (a file consumer moves the files it reads), micrometer evaluates its options with simple,
+        // which loads a resource: text from a file or a URL
+        assertThat(ToolConfirms.sendMessage("dataset-test:file:/Users/me/work", List.of())).isNotNull();
+        assertThat(ToolConfirms.sendMessage("micrometer:counter:resource:file:/Users/me/.aws/credentials", List.of()))
+                .isNotNull();
+        // a component the catalog does not know, such as a custom one
+        assertThat(ToolConfirms.sendMessage("acme:orders", List.of())).isNotNull();
+        assertThat(ToolConfirms.isInternal("../components/log")).isFalse();
     }
 
     @Test
