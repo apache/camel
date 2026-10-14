@@ -43,6 +43,8 @@ import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 import com.openai.core.Timeout;
 import com.openai.models.chat.completions.ChatCompletionFunctionTool;
+import com.openai.models.decisions.Decision;
+import com.openai.models.decisions.DecisionCreateParams;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
@@ -68,6 +70,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.OAuthHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +91,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     @UriPath
     @Metadata(required = true,
-              description = "The operation to perform: 'chat-completion', 'responses', 'responses-retrieve', "
+              description = "The operation to perform: 'chat-completion', 'decisions', 'responses', 'responses-retrieve', "
                             + "'responses-cancel', 'batch', 'batch-retrieve', 'batch-cancel', 'batch-results', "
                             + "'embeddings', 'tool-execution', 'audio-transcription', "
                             + "'audio-translation', 'audio-speech', 'moderation', 'image-generation', "
@@ -128,6 +131,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         return switch (operation) {
             case chatCompletion -> new OpenAIProducer(this);
+            case decisions -> new OpenAIDecisionsProducer(this);
             case responses -> new OpenAIResponsesProducer(this);
             case responsesRetrieve -> new OpenAIResponsesStoredProducer(this, false);
             case responsesCancel -> new OpenAIResponsesStoredProducer(this, true);
@@ -180,9 +184,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
             // the webhook consumer verifies signatures with a client of its own and needs no API key
             client = createClient();
         }
-        registerRouteToolRegistryListener();
-        initializeMcpServers();
-        refreshRouteTools();
+        if (operation != OpenAIOperations.decisions) {
+            registerRouteToolRegistryListener();
+            initializeMcpServers();
+            refreshRouteTools();
+        }
     }
 
     @Override
@@ -958,6 +964,26 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     public OpenAIConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /** Executes a Decisions request using this endpoint's managed client and configuration. */
+    public Decision decide(DecisionCreateParams request) throws Exception {
+        if (operation != OpenAIOperations.decisions) {
+            throw new IllegalStateException("Decisions requires an openai:decisions endpoint");
+        }
+        OpenAIDecisionsSupport.validateRequest(request);
+        if (Thread.currentThread().isInterrupted()) {
+            throw new InterruptedException("OpenAI decision interrupted");
+        }
+        if (getCamelContext().isStopping() || getCamelContext().isStopped()) {
+            throw new OpenAIDecisionServiceException("OpenAI Decisions requires a running CamelContext");
+        }
+        try {
+            ServiceHelper.startService(this);
+        } catch (Exception e) {
+            throw new OpenAIDecisionServiceException("Unable to start the OpenAI Decisions client", e);
+        }
+        return OpenAIDecisionsSupport.execute(client, request);
     }
 
     public OpenAIClient getClient() {
