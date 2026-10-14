@@ -33,7 +33,7 @@
     <description>Citrus message validation component for testing</description>
 
     <properties>
-        <firstVersion>4.23.0</firstVersion>
+        <firstVersion>4.24.0</firstVersion>
         <label>testing,java</label>
         <title>Test Citrus</title>
     </properties>
@@ -59,7 +59,7 @@
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-junit5</artifactId>
+            <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -100,14 +100,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${assertj-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

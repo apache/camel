@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.citrus;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.citrusframework.exceptions.ValidationException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,9 +43,12 @@ class CitrusValidatePlainTextTest extends CamelTestSupport {
     void shouldFailOnPlainTextMismatch() {
         CitrusEndpoint citrus = context.getEndpoint("citrus:validate?messageType=plaintext", CitrusEndpoint.class);
         citrus.allMessages().body("Hello Camel!");
+        citrus.expectedMessageCount(1);
 
-        assertThatThrownBy(() -> template.sendBody("direct:start", "Goodbye Camel!"))
-                .isInstanceOf(CamelExecutionException.class);
+        template.sendBody("direct:start", "Goodbye Camel!");
+
+        assertThatThrownBy(citrus::assertIsSatisfied)
+                .isInstanceOf(ValidationException.class);
     }
 
     @Test

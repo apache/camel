@@ -39,7 +39,7 @@ import org.citrusframework.exceptions.ValidationException;
 import org.citrusframework.message.MessagePayloadBuilder;
 import org.citrusframework.validation.context.ValidationContext;
 
-@UriEndpoint(firstVersion = "4.23.0", scheme = "citrus", title = "Citrus", syntax = "citrus:operation/name",
+@UriEndpoint(firstVersion = "4.24.0", scheme = "citrus", title = "Citrus", syntax = "citrus:operation/name",
              producerOnly = true, remote = false, category = { Category.TESTING })
 public class CitrusEndpoint extends DefaultEndpoint {
 
@@ -51,7 +51,8 @@ public class CitrusEndpoint extends DefaultEndpoint {
     private volatile CountDownLatch latch;
 
     @UriPath(description = "The operation to perform. 'validate' validates exchanges without modifying them."
-                           + " 'receive' validates exchanges and returns a simulated response.")
+                           + " 'receive' validates exchanges and returns a simulated response.",
+             enums = "validate,receive")
     @Metadata(required = true)
     private String operation;
 
@@ -63,15 +64,15 @@ public class CitrusEndpoint extends DefaultEndpoint {
                             + " Supported values: json, xml, yaml, plaintext.")
     private String messageType;
 
-    private MessageValidationSpec allMessagesSpec;
+    private volatile MessageValidationSpec allMessagesSpec;
     private final Map<Integer, MessageValidationSpec> indexedSpecs = new LinkedHashMap<>();
-    private int nextSpecIndex;
+    private volatile int nextSpecIndex;
 
-    private MessageResponseSpec allMessagesResponseSpec;
+    private volatile MessageResponseSpec allMessagesResponseSpec;
     private final Map<Integer, MessageResponseSpec> indexedResponseSpecs = new LinkedHashMap<>();
-    private int nextResponseSpecIndex;
+    private volatile int nextResponseSpecIndex;
 
-    private int expectedCount = -1;
+    private volatile int expectedCount = -1;
 
     public CitrusEndpoint(String endpointUri, CitrusComponent component) {
         super(endpointUri, component);
@@ -116,6 +117,8 @@ public class CitrusEndpoint extends DefaultEndpoint {
 
     public CitrusEndpoint expectedMessageCount(int count) {
         this.expectedCount = count;
+        this.receivedCount.set(0);
+        this.receivedExchanges.clear();
         this.latch = new CountDownLatch(count);
         return this;
     }
@@ -160,16 +163,21 @@ public class CitrusEndpoint extends DefaultEndpoint {
     }
 
     public void assertIsSatisfied(long timeout, TimeUnit unit) throws InterruptedException {
+        int effectiveExpected = expectedCount;
+        if (effectiveExpected < 0 && !indexedSpecs.isEmpty()) {
+            effectiveExpected = indexedSpecs.size();
+        }
+
         if (latch != null && !latch.await(timeout, unit)) {
             throw new ValidationException(
                     "Timed out waiting for %d messages on endpoint: %s"
-                            .formatted(expectedCount, getEndpointUri()));
+                            .formatted(effectiveExpected, getEndpointUri()));
         }
 
-        if (expectedCount >= 0 && receivedCount.get() != expectedCount) {
+        if (effectiveExpected >= 0 && receivedCount.get() != effectiveExpected) {
             throw new ValidationException(
                     "Expected %d messages but received %d on endpoint: %s"
-                            .formatted(expectedCount, receivedCount.get(), getEndpointUri()));
+                            .formatted(effectiveExpected, receivedCount.get(), getEndpointUri()));
         }
 
         if (!failures.isEmpty()) {

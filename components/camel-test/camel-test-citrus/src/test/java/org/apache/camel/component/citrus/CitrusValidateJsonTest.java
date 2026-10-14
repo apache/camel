@@ -18,7 +18,8 @@ package org.apache.camel.component.citrus;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.citrusframework.exceptions.ValidationException;
 import org.citrusframework.validation.DefaultValidations;
 import org.junit.jupiter.api.Test;
 
@@ -55,13 +56,16 @@ class CitrusValidateJsonTest extends CamelTestSupport {
                   "greeting": "Hello World!"
                 }
                 """);
+        citrus.expectedMessageCount(1);
 
-        assertThatThrownBy(() -> template.sendBody("direct:start", """
+        template.sendBody("direct:start", """
                 {
                   "greeting": "Goodbye!"
                 }
-                """))
-                .isInstanceOf(org.apache.camel.CamelExecutionException.class);
+                """);
+
+        assertThatThrownBy(citrus::assertIsSatisfied)
+                .isInstanceOf(ValidationException.class);
     }
 
     @Test
