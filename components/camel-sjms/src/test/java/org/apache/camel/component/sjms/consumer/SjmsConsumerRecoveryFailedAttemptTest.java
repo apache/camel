@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ExceptionListener;
 import jakarta.jms.JMSContext;
 import jakarta.jms.JMSException;
 import jakarta.jms.Session;
@@ -57,6 +58,8 @@ class SjmsConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
     private final List<TrackedConnection> connections = new CopyOnWriteArrayList<>();
     // what the next connection of the tracking connection factory does wrong (taken by that connection)
     private volatile Fault nextFault;
+    // whether the next connection of the tracking connection factory fails when it is started (taken by it)
+    private volatile boolean nextFailsOnStart;
 
     @BindToRegistry("trackingConnectionFactory")
     private final ConnectionFactory trackingConnectionFactory = new ConnectionFactory() {
@@ -164,6 +167,38 @@ class SjmsConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
     }
 
     /**
+     * The new connection reports its failure to the container (its exception listener) when the recovery starts it,
+     * that is before the consumers are created, and it delivers no message; the JMS provider still creates the sessions
+     * and consumers on it. The recovery has to notice the failure and try again with another connection, although
+     * onException found no consumers to drop and none of the create calls failed.
+     */
+    @Test
+    void testRecoveryTriesAgainWhenConnectionFailsBeforeConsumersAreCreated() throws Exception {
+        context.getRouteController().startRoute("beforeconsumers");
+        MockEndpoint mock = getMockEndpoint("mock:beforeconsumers");
+        mock.expectedBodiesReceived("before");
+        template.sendBody(QUEUE + "beforeconsumers", "before");
+        mock.assertIsSatisfied();
+
+        nextFailsOnStart = true;
+        container("beforeconsumers").onException(new JMSException("Simulated failure of the connection"));
+        await().atMost(20, TimeUnit.SECONDS).until(() -> connections.size() >= 2 && connections.get(1).failed.get());
+
+        // the first, the one that failed when it was started, the one in use
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, connections.size(),
+                "connections: the recovery must try again, the connection failed before the consumers were created"));
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(CONSUMERS, last().openConsumers(), "consumers on the new connection"));
+        assertTrue(connections.get(1).closed.get(), "the connection that failed when it was started is closed");
+
+        mock.reset();
+        mock.expectedBodiesReceived("after");
+        template.sendBody(QUEUE + "beforeconsumers", "after");
+        mock.assertIsSatisfied();
+        assertEquals(3, connections.size());
+    }
+
+    /**
      * A listener container that fails to start (the second consumer cannot be created) closes the session and consumer
      * it did create, and the session whose consumer failed. The connection is kept for the next start.
      */
@@ -207,7 +242,7 @@ class SjmsConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
             @Override
             public void configure() {
                 // each test starts its own route, so that the tracked connections are the ones of that route
-                for (String routeId : List.of("first", "last", "during")) {
+                for (String routeId : List.of("first", "last", "during", "beforeconsumers")) {
                     from(QUEUE + routeId + "?concurrentConsumers=" + CONSUMERS + "&recoveryInterval=200"
                          + "&connectionFactory=#trackingConnectionFactory")
                             .routeId(routeId).autoStartup(false).to("mock:" + routeId);
@@ -223,9 +258,21 @@ class SjmsConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
         TrackedConnection tracked = new TrackedConnection();
         tracked.fault = nextFault;
         nextFault = null;
+        tracked.failsOnStart = nextFailsOnStart;
+        nextFailsOnStart = false;
         connections.add(tracked);
         return (Connection) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] { Connection.class },
                 (proxy, method, args) -> {
+                    if ("setExceptionListener".equals(method.getName())) {
+                        tracked.exceptionListener = (ExceptionListener) args[0];
+                    }
+                    if ("start".equals(method.getName()) && tracked.failsOnStart) {
+                        // the connection is not started, so its consumers get no message, and the failure is reported
+                        // on the thread that starts it
+                        tracked.failed.set(true);
+                        tracked.exceptionListener.onException(new JMSException("Simulated: the connection failed"));
+                        return null;
+                    }
                     if ("createSession".equals(method.getName())) {
                         Fault fault = tracked.fault;
                         int number = tracked.sessionCalls.incrementAndGet();
@@ -293,7 +340,10 @@ class SjmsConsumerRecoveryFailedAttemptTest extends JmsTestSupport {
         final AtomicInteger sessionCalls = new AtomicInteger();
         final List<TrackedSession> sessions = new CopyOnWriteArrayList<>();
         final AtomicBoolean closed = new AtomicBoolean();
+        final AtomicBoolean failed = new AtomicBoolean();
         volatile Fault fault;
+        volatile boolean failsOnStart;
+        volatile ExceptionListener exceptionListener;
 
         // a closed connection has closed its sessions, and a closed session its consumer
         int openSessions() {
