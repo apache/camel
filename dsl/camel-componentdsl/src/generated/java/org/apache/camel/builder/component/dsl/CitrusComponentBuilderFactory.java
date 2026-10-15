@@ -77,6 +77,26 @@ public interface CitrusComponentBuilderFactory {
     
         
         /**
+         * To turn on logging when the mock receives an incoming message. This
+         * will log only one time at INFO level for the incoming message. For
+         * more detailed logging, then set the logger to DEBUG level for the
+         * org.apache.camel.component.mock.MockEndpoint class.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param log the value to set
+         * @return the dsl builder
+         */
+        default CitrusComponentBuilder log(boolean log) {
+            doSetProperty("log", log);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -96,6 +116,23 @@ public interface CitrusComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+    
+        /**
+         * To use a custom ExchangeFormatter to format the Exchange into a
+         * String suitable for logging.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param exchangeFormatter the value to set
+         * @return the dsl builder
+         */
+        default CitrusComponentBuilder exchangeFormatter(org.apache.camel.spi.ExchangeFormatter exchangeFormatter) {
+            doSetProperty("exchangeFormatter", exchangeFormatter);
+            return this;
+        }
     }
 
     class CitrusComponentBuilderImpl
@@ -112,7 +149,9 @@ public interface CitrusComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((CitrusComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "log": ((CitrusComponent) component).setLog((boolean) value); return true;
             case "autowiredEnabled": ((CitrusComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "exchangeFormatter": ((CitrusComponent) component).setExchangeFormatter((org.apache.camel.spi.ExchangeFormatter) value); return true;
             default: return false;
             }
         }
