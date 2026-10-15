@@ -278,8 +278,9 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 exchange.setException(e);
             }
 
-            // a rollback only exchange (without an exception) did not complete successfully either
-            boolean failed = exchange.isFailed() || exchange.isRollbackOnly();
+            // a rollback only exchange (without an exception) did not complete successfully either; markRollbackOnlyLast
+            // reaches the consumer as the last transaction when no transacted() EIP consumed the flag, so honor it too
+            boolean failed = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast();
 
             if (getEndpoint().isTransacted() && failed) {
                 // break out as we are transacted and should rollback

@@ -212,6 +212,17 @@ A message that the route marks rollback only every time was removed before, and 
 Handle such a message in the route instead, for example by moving it aside, rather than marking it rollback only
 every time.
 
+=== camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
+
+The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
+only with `markRollbackOnly()`. They now leave it unconsumed when the route marks it rollback only last with
+`markRollbackOnlyLast()` too, as the JPA and Hazelcast SEDA consumers do: the SQL consumer runs its `onConsumeFailed`
+statement instead of `onConsume` (and no statement when `onConsumeFailed` is not set), the MyBatis consumer does not
+run its `onConsume` statement, and the jOOQ consumer does not delete the entity, so the next poll reads the row
+again. With `transacted=true` the SQL and MyBatis consumers break out of the batch and roll back.
+`markRollbackOnlyLast()` reaches the consumer only when no `transacted()` EIP has consumed the flag, so the
+consumer's own transaction is the last one.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
