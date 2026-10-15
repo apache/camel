@@ -49,6 +49,16 @@ public final class IntegrationLauncher {
     /** The last log records of a failed start that are returned. */
     static final int FAILURE_RECORDS = 15;
 
+    /**
+     * How often an integration started in dev mode scans for changed files (CAMEL-25661). A write tool waits for the
+     * reload of the file it wrote, and dev mode finds the change at its next scan: at the default of 2000 ms that is
+     * about a second per write. Each write tool call writes one file and waits for its reload, so a shorter interval
+     * does not split one change into two reloads. The key is optional (the ? before the name): the camel command can be
+     * older than these tools (the MCP server run as LATEST, an older camel on the PATH), and a Camel without the option
+     * logs a warning and starts, where an unknown key would stop it from starting.
+     */
+    static final String DEV_RELOAD_INTERVAL = "--prop=camel.main.?routesReloadInterval=500";
+
     /** A stack frame, or the count of the frames a cause shares with the exception it caused. */
     private static final Pattern FRAME = Pattern.compile("^\\s*(at \\S.*|\\.\\.\\. \\d+ (more|common frames omitted))$");
 
@@ -214,6 +224,7 @@ public final class IntegrationLauncher {
         cmd.add("--source-dir=.");
         if (dev) {
             cmd.add("--dev");
+            cmd.add(DEV_RELOAD_INTERVAL);
         }
         if (name != null && !name.isBlank()) {
             cmd.add("--name=" + name);
@@ -240,6 +251,7 @@ public final class IntegrationLauncher {
         cmd.addAll(files);
         if (dev) {
             cmd.add("--dev");
+            cmd.add(DEV_RELOAD_INTERVAL);
         }
         if (name != null && !name.isBlank()) {
             cmd.add("--name=" + name);

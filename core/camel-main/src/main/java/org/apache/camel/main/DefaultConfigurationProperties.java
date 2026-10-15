@@ -142,6 +142,8 @@ public abstract class DefaultConfigurationProperties<T> {
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
     private boolean routesReloadRestartDuration;
+    @Metadata(defaultValue = "2000")
+    private long routesReloadInterval = 2000;
     private String groovyScriptPattern = "classpath:camel-groovy/*,classpath:camel-groovy-compiled/*";
     @Metadata(label = "advanced")
     private boolean groovyPreloadCompiled;
@@ -1498,6 +1500,19 @@ public abstract class DefaultConfigurationProperties<T> {
         this.routesReloadRestartDuration = routesReloadRestartDuration;
     }
 
+    public long getRoutesReloadInterval() {
+        return routesReloadInterval;
+    }
+
+    /**
+     * How often to scan the reload directory for changed files, in millis. A change is reloaded at the next scan, so a
+     * shorter interval reloads it sooner. A longer interval groups more of one save together: two files saved a second
+     * apart are one change at 2000 and two at 1000.
+     */
+    public void setRoutesReloadInterval(long routesReloadInterval) {
+        this.routesReloadInterval = routesReloadInterval;
+    }
+
     public boolean isJmxUpdateRouteEnabled() {
         return jmxUpdateRouteEnabled;
     }
@@ -2830,6 +2845,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRoutesReloadRestartDuration(boolean routesReloadRestartDuration) {
         this.routesReloadRestartDuration = routesReloadRestartDuration;
+        return (T) this;
+    }
+
+    /**
+     * How often to scan the reload directory for changed files, in millis. A change is reloaded at the next scan, so a
+     * shorter interval reloads it sooner. A longer interval groups more of one save together: two files saved a second
+     * apart are one change at 2000 and two at 1000.
+     */
+    public T withRoutesReloadInterval(long routesReloadInterval) {
+        this.routesReloadInterval = routesReloadInterval;
         return (T) this;
     }
 
