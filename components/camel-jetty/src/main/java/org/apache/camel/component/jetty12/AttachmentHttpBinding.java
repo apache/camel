@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.activation.DataHandler;
@@ -37,6 +38,8 @@ import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
+import org.eclipse.jetty.util.MultiMap;
+import org.eclipse.jetty.util.UrlEncoded;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,8 +122,9 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         // attachment is optional
         AttachmentMessage am = new DefaultAttachmentMessage(message);
 
+        Enumeration<?> names = null;
         try {
-            Enumeration<?> names = request.getParameterNames();
+            names = request.getParameterNames();
             while (names.hasMoreElements()) {
                 String name = (String) names.nextElement();
                 if (am.getAttachment(name) != null) {
@@ -157,11 +161,45 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                 }
             }
         } catch (Exception e) {
-            // In Jetty 12.1.0+, getParameterNames() may fail for multipart requests
-            // when multipart filter is disabled. This is expected behavior when
-            // enableMultipartFilter=false is used, so we silently skip parameter processing
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to populate request parameters, likely due to multipart parsing failure: {}", e.getMessage());
+            // In Jetty 12.1.0+, getParameterNames() reads the query and the body parameters together and fails for the
+            // whole request when it cannot read the body parameters, for example a multipart request when the
+            // multipart filter is disabled (enableMultipartFilter=false), or a form larger than Jetty's
+            // maxFormContentSize. The body parameters are skipped (a form body is mapped by readFormUrlEncodedBody).
+            if (names == null) {
+                // nothing has been mapped yet, and the query does not depend on the body, so map its parameters
+                LOG.debug("Failed to read the request parameters, mapping the query parameters only: {}", e.getMessage());
+                populateQueryParameters(request, message);
+            } else if (LOG.isDebugEnabled()) {
+                LOG.debug("Failed to populate request parameters: {}", e.getMessage());
+            }
+        }
+    }
+
+    private void populateQueryParameters(HttpServletRequest request, Message message) {
+        // decoded as UTF-8, which is Jetty's default query encoding
+        String query = request.getQueryString();
+        if (query == null || query.isEmpty()) {
+            return;
+        }
+        MultiMap<String> parameters;
+        try {
+            parameters = UrlEncoded.decodeQuery(query);
+        } catch (Exception e) {
+            LOG.debug("Failed to populate query parameters: {}", e.getMessage());
+            return;
+        }
+        Map<String, Object> headers = message.getHeaders();
+        for (Map.Entry<String, List<String>> entry : parameters.entrySet()) {
+            String name = entry.getKey();
+            // Avoid potential injections
+            String[] sanitizedValues = HttpHelper.sanitizeLog(entry.getValue().toArray(new String[0]));
+            for (String value : sanitizedValues) {
+                // use http helper to extract parameter value as it may contain multiple values
+                Object extracted = HttpHelper.extractHttpParameterValue(value);
+                if (getHeaderFilterStrategy() != null
+                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                    HttpHelper.appendHeader(headers, name, value);
+                }
             }
         }
     }
