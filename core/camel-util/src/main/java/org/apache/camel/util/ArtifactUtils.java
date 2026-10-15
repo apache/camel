@@ -205,6 +205,7 @@ public final class ArtifactUtils {
             Map.entry("hazelcast-seda", "camel-hazelcast"),
             Map.entry("hazelcast-set", "camel-hazelcast"),
             Map.entry("hazelcast-topic", "camel-hazelcast"),
+            Map.entry("hibernate", "camel-hibernate"),
             Map.entry("hivemq", "camel-hivemq"),
             Map.entry("http", "camel-http"),
             Map.entry("https", "camel-http"),
