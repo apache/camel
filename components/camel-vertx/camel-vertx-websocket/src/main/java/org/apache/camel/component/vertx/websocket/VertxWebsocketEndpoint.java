@@ -294,6 +294,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
      */
     static void abandonConnect(CompletableFuture<WebSocket> future) {
         if (!future.cancel(false) && !future.isCompletedExceptionally()) {
+            // the future completed normally, so join() returns at once
             future.join().close();
         }
     }
