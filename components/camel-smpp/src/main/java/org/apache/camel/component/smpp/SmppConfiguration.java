@@ -86,6 +86,8 @@ public class SmppConfiguration implements Cloneable {
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
     @UriParam(label = "security")
     private boolean usingSSL;
+    @UriParam(label = "security", defaultValue = "true")
+    private boolean hostnameVerification = true;
     @UriParam(label = "common", defaultValue = "5000")
     private long initialReconnectDelay = 5000;
     @UriParam(label = "common", defaultValue = "5000")
@@ -532,6 +534,18 @@ public class SmppConfiguration implements Cloneable {
         this.usingSSL = usingSSL;
     }
 
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * Whether to check that the certificate of the SMSC matches the host Camel connects to, when SSL is used. When
+     * disabled, any certificate trusted by the JVM is accepted, whatever host it was issued for.
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
+    }
+
     public long getInitialReconnectDelay() {
         return initialReconnectDelay;
     }
@@ -757,6 +771,7 @@ public class SmppConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "SmppConfiguration[usingSSL=" + usingSSL
+               + ", hostnameVerification=" + hostnameVerification
                + ", enquireLinkTimer=" + enquireLinkTimer
                + ", host=" + host
                + ", password=" + password
