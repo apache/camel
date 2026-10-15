@@ -26,6 +26,7 @@ camel trace [options]
 | `--find` | Find and highlight matching text (ignore case). |  | String
 | `--follow` | Keep following and outputting new traces (press enter to exit). | true | boolean
 | `--grep` | Filter traces to only output trace matching text (ignore case). |  | String
+| `--json` | Output the status of tracing in JSON Format |  | boolean
 | `--latest` | Only output traces from the latest (follow if necessary until complete and exit) |  | boolean
 | `--logging-color` | Use colored logging | true | boolean
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean
@@ -40,6 +41,7 @@ camel trace [options]
 | `--sort` | Sort by pid, name or age for showing status of tracing | pid | String
 | `--source` | Prefer to display source filename/code instead of IDs |  | boolean
 | `--tail` | The number of traces from the end of the trace to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all traces from beginning. | -1 | int
+| `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
 | `--timestamp` | Print timestamp. | true | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

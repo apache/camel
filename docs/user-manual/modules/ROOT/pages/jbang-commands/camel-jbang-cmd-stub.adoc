@@ -24,6 +24,7 @@ camel cmd stub [options]
 | `--filter` | Filter endpoints by queue name |  | String
 | `--find` | Find and highlight matching text (ignore case). |  | String
 | `--grep` | Filter browsing messages to only output trace matching text (ignore case). |  | String
+| `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter browsing queues by limiting to the given latest number of messages | 10 | int
 | `--logging-color` | Use colored logging | true | boolean
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean
@@ -31,6 +32,7 @@ camel cmd stub [options]
 | `--show-body` | Show message body in traced messages | true | boolean
 | `--show-headers` | Show message headers in traced messages | true | boolean
 | `--sort` | Sort by name, or total | name | String
+| `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
 | `--top` | Whether to browse top (latest) messages queued in the stub endpoints | true | boolean
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

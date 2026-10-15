@@ -16,16 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.support.PatternHelper;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -40,7 +39,8 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
          footer = {
                  "%nExamples:",
                  "  camel cmd route-dump",
-                 "  camel cmd route-dump --format=yaml" })
+                 "  camel cmd route-dump --format=yaml",
+                 "  camel cmd route-dump --json" })
 public class CamelRouteDumpAction extends ActionBaseCommand {
 
     public static class NameIdCompletionCandidates implements Iterable<String> {
@@ -91,6 +91,12 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
                         description = "Sort route by name or id", defaultValue = "name")
     String sort;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
 
     public CamelRouteDumpAction(CamelJBangMain main) {
@@ -101,90 +107,63 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
-        this.pid = pids.get(0);
-
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "route-dump");
-        root.put("filter", "*");
-        root.put("format", format);
-        root.put("uriAsParameters", uriAsParameters);
-        Path file = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(file, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            JsonArray arr = (JsonArray) jo.get("routes");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject o = (JsonObject) arr.get(i);
-                Row row = new Row();
-                row.location = extractSourceName(o.getString("source"));
-                row.routeId = o.getString("routeId");
-                if (!rows.contains(row)) {
-                    List<JsonObject> lines = o.getCollection("code");
-                    if (lines != null) {
-                        for (JsonObject line : lines) {
-                            Code code = new Code();
-                            code.line = line.getInteger("line");
-                            code.code = line.getString("code");
-                            row.code.add(code);
-                        }
-                    }
-                    boolean add = true;
-                    if (filter != null) {
-                        String f = filter;
-                        boolean negate = filter.startsWith("-");
-                        if (negate) {
-                            f = f.substring(1);
-                        }
-                        // make filtering easier
-                        if (!f.endsWith("*")) {
-                            f += "*";
-                        }
-                        boolean match
-                                = PatternHelper.matchPattern(row.location, f) || PatternHelper.matchPattern(row.routeId, f);
-                        if (negate) {
-                            match = !match;
-                        }
-                        if (!match) {
-                            add = false;
-                        }
-                    }
-                    if (add) {
-                        rows.add(row);
+        JsonObject jo = executeAction(process, "route-dump", root -> {
+            root.put("filter", "*");
+            root.put("format", format);
+            root.put("uriAsParameters", uriAsParameters);
+        });
+        JsonArray arr = (JsonArray) jo.get("routes");
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject o = (JsonObject) arr.get(i);
+            Row row = new Row();
+            row.location = extractSourceName(o.getString("source"));
+            row.routeId = o.getString("routeId");
+            if (!rows.contains(row)) {
+                List<JsonObject> lines = o.getCollection("code");
+                if (lines != null) {
+                    for (JsonObject line : lines) {
+                        Code code = new Code();
+                        code.line = line.getInteger("line");
+                        code.code = line.getString("code");
+                        row.code.add(code);
                     }
                 }
+                boolean add = true;
+                if (filter != null && !matchesFilter(filter, row.location, row.routeId)) {
+                    add = false;
+                }
+                if (add) {
+                    rows.add(row);
+                }
             }
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
         }
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (rows.isEmpty() && filter != null) {
+            throw CliException.notFound("No route matching: " + filter);
+        }
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows.stream().map(r -> {
+                JsonObject route = new JsonObject();
+                route.put("routeId", r.routeId);
+                route.put("location", r.location);
+                route.put("format", format);
+                route.put("code", r.code.stream().map(c -> {
+                    JsonObject line = new JsonObject();
+                    line.put("line", c.line);
+                    line.put("code", c.code);
+                    return line;
+                }).toList());
+                return route;
+            }).toList());
+        } else if (!rows.isEmpty()) {
             printSource(rows);
         }
-
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -228,10 +207,6 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
             }
             printer().println();
         }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     public static String extractSourceName(String loc) {

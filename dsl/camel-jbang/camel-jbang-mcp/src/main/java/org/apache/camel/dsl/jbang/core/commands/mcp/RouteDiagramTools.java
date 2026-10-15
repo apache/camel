@@ -28,6 +28,7 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteDiagramAction;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 
 /**
@@ -131,6 +132,11 @@ public class RouteDiagramTools {
                     ? withNotes("Diagram saved to: " + resolvedOutput, capturingPrinter)
                     : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
             return new RouteDiagramResult(success, resolvedOutput, size, message, null);
+        } catch (CliException e) {
+            // an expected failure, such as a source file without routes, or a filter that matches no route
+            return new RouteDiagramResult(
+                    false, resolvedOutput, 0L,
+                    "Failed to render diagram (exit code " + e.getExitCode() + "): " + e.getMessage(), null);
         } catch (Throwable e) {
             throw new ToolCallException(
                     "Failed to render route diagram (" + e.getClass().getName() + "): " + e.getMessage(), null);

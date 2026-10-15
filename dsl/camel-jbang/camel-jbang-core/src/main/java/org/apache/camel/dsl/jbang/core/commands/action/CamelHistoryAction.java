@@ -48,7 +48,9 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -149,6 +151,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Diagram color theme (ascii, unicode, dark, light, transparent, or custom)")
     String theme = "unicode";
 
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private MessageTableHelper tableHelper;
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
@@ -172,16 +177,27 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
 
         if (jsonOutput) {
-            for (long pid : findPids(name)) {
-                Path p = getMessageHistoryFile(Long.toString(pid));
+            // one document: the history of every matching integration (a line of the history file is one entry)
+            List<Object> entries = new ArrayList<>();
+            for (CamelProcess process : findProcesses(name)) {
+                Path p = getMessageHistoryFile(Long.toString(process.pid()));
                 if (Files.exists(p)) {
                     for (String line : Files.readAllLines(p)) {
                         if (!line.isBlank()) {
-                            printer().println(line);
+                            Object entry = Jsoner.deserialize(line, (JsonObject) null);
+                            if (entry == null) {
+                                entry = Jsoner.deserialize(line, (JsonArray) null);
+                            }
+                            if (entry instanceof JsonArray array) {
+                                entries.addAll(array);
+                            } else if (entry != null) {
+                                entries.add(entry);
+                            }
                         }
                     }
                 }
             }
+            JsonOutput.printList(printer(), entries);
             return 0;
         }
 
@@ -380,27 +396,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 : RouteDiagramHelper.HighlightStyle.SUCCESS;
 
         // request route structure from the running process
-        String pidStr = Long.toString(pid);
-        Path outputFile = getOutputFile(pidStr);
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject action = new JsonObject();
-        action.put("action", "route-structure");
-        action.put("filter", "*");
-        action.put("brief", false);
-        action.put("metric", false);
-        Path actionFile = getActionFile(pidStr);
-        try {
-            Files.writeString(actionFile, action.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-
-        JsonObject structureJson = getJsonObject(outputFile);
-        if (structureJson == null) {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
-        }
+        JsonObject structureJson = executeAction(ProcessFinder.requireOne(Long.toString(pid)), "route-structure", action -> {
+            action.put("filter", "*");
+            action.put("brief", false);
+            action.put("metric", false);
+        });
 
         try {
             List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(structureJson);
@@ -474,7 +474,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
             }
             return 0;
         } finally {
-            PathUtils.deleteFile(outputFile);
         }
     }
 
@@ -895,8 +894,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
     protected List<List<Row>> loadRows() throws Exception {
         List<List<Row>> answer = new ArrayList<>();
-        List<Long> pids = findPids(name);
-        for (long pid : pids) {
+        for (CamelProcess process : findProcesses(name)) {
+            long pid = process.pid();
             Path p = getMessageHistoryFile(Long.toString(pid));
             if (Files.exists(p)) {
                 String line;

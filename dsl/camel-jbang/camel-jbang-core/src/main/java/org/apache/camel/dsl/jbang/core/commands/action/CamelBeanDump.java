@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -27,7 +26,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -38,9 +39,10 @@ import picocli.CommandLine.Command;
          showDefaultValues = true,
          footer = {
                  "%nExamples:",
-                 "  camel cmd bean",
-                 "  camel cmd bean --filter=myBean",
-                 "  camel cmd bean --scope=user" })
+                 "  camel get bean",
+                 "  camel get bean --filter=myBean",
+                 "  camel get bean --scope=user",
+                 "  camel get bean --json" })
 public class CamelBeanDump extends ActionBaseCommand {
 
     public static class NameTypeCompletionCandidates implements Iterable<String> {
@@ -99,6 +101,12 @@ public class CamelBeanDump extends ActionBaseCommand {
                         description = "Include only beans from YAML or XML DSL", defaultValue = "false")
     boolean dsl;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
 
     public CamelBeanDump(CamelJBangMain main) {
@@ -109,70 +117,52 @@ public class CamelBeanDump extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
-        this.pid = pids.get(0);
-
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "bean");
-        if (!"all".equals(filter)) {
-            root.put("filter", filter);
-        }
-        root.put("properties", properties);
-        root.put("nulls", nulls);
-        root.put("internal", !"all".equals(scope) || internal);
-        Path f = getActionFile(Long.toString(pid));
-        PathUtils.writeTextSafely(root.toJson(), f);
-
-        JsonObject jo = waitForOutputFile(outputFile);
-
-        if (jo != null) {
-            JsonObject beans;
-            if (dsl) {
-                beans = (JsonObject) jo.get("bean-models");
-            } else {
-                beans = (JsonObject) jo.get("beans");
+        JsonObject jo = executeAction(process, "bean", root -> {
+            if (!"all".equals(filter)) {
+                root.put("filter", filter);
             }
-            for (String name : beans.keySet()) {
-                JsonObject jt = (JsonObject) beans.get(name);
-                Row row = new Row();
-                row.name = jt.getString("name");
-                row.type = jt.getString("type");
-                JsonArray arr = jt.getCollection("properties");
-                JsonArray arr2 = jt.getCollection("modelProperties");
-                if (arr != null) {
-                    row.properties = new ArrayList<>();
-                    for (int i = 0; i < arr.size(); i++) {
-                        PropertyRow pr = new PropertyRow();
-                        row.properties.add(pr);
-                        JsonObject p = (JsonObject) arr.get(i);
-                        pr.name = p.getString("name");
-                        pr.type = p.getString("type");
-                        pr.value = p.get("value");
-                        if (arr2 != null) {
-                            JsonObject p2 = (JsonObject) arr2.get(i);
-                            if (p2 != null) {
-                                pr.configValue = p2.getString("value");
-                            }
+            root.put("properties", properties);
+            root.put("nulls", nulls);
+            root.put("internal", !"all".equals(scope) || internal);
+        });
+
+        JsonObject beans;
+        if (dsl) {
+            beans = (JsonObject) jo.get("bean-models");
+        } else {
+            beans = (JsonObject) jo.get("beans");
+        }
+        if (beans == null) {
+            throw CliException.failure("Bean data not available from the running integration");
+        }
+        for (String name : beans.keySet()) {
+            JsonObject jt = (JsonObject) beans.get(name);
+            Row row = new Row();
+            row.name = jt.getString("name");
+            row.type = jt.getString("type");
+            JsonArray arr = jt.getCollection("properties");
+            JsonArray arr2 = jt.getCollection("modelProperties");
+            if (arr != null) {
+                row.properties = new ArrayList<>();
+                for (int i = 0; i < arr.size(); i++) {
+                    PropertyRow pr = new PropertyRow();
+                    row.properties.add(pr);
+                    JsonObject p = (JsonObject) arr.get(i);
+                    pr.name = p.getString("name");
+                    pr.type = p.getString("type");
+                    pr.value = p.get("value");
+                    if (arr2 != null) {
+                        JsonObject p2 = (JsonObject) arr2.get(i);
+                        if (p2 != null) {
+                            pr.configValue = p2.getString("value");
                         }
                     }
                 }
-                rows.add(row);
             }
-        } else {
-            printer().printErr("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
+            rows.add(row);
         }
 
         // filter by scope
@@ -182,7 +172,9 @@ public class CamelBeanDump extends ActionBaseCommand {
 
         // sort rows
         rows.sort(this::sortRow);
-        if (properties) {
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows.stream().map(this::toJson).toList());
+        } else if (properties) {
             for (Row row : rows) {
                 String line = "BEAN: " + row.name + " (" + row.type + "):";
                 printer().println(line);
@@ -196,10 +188,26 @@ public class CamelBeanDump extends ActionBaseCommand {
             singleTable(rows);
         }
 
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
-
         return 0;
+    }
+
+    private JsonObject toJson(Row r) {
+        JsonObject jo = new JsonObject();
+        jo.put("name", r.name);
+        jo.put("type", r.type);
+        if (r.properties != null) {
+            jo.put("properties", r.properties.stream().map(pr -> {
+                JsonObject p = new JsonObject();
+                p.put("name", pr.name);
+                p.put("type", pr.type);
+                p.put("value", pr.value);
+                if (pr.configValue != null) {
+                    p.put("configValue", pr.configValue);
+                }
+                return p;
+            }).toList());
+        }
+        return jo;
     }
 
     protected void singleTable(List<Row> rows) {
@@ -299,10 +307,6 @@ public class CamelBeanDump extends ActionBaseCommand {
             default:
                 return 0;
         }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     private static class Row {

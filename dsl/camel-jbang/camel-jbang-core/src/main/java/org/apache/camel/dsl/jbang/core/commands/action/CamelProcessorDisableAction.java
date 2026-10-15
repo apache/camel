@@ -24,7 +24,8 @@ import picocli.CommandLine;
                      description = "Disable Camel processor", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd disable-processor myId" })
+                             "  camel cmd disable-processor --id=myId",
+                             "  camel cmd disable-processor myApp --id=myId" })
 public class CamelProcessorDisableAction extends CamelProcessorAction {
 
     public CamelProcessorDisableAction(CamelJBangMain main) {
