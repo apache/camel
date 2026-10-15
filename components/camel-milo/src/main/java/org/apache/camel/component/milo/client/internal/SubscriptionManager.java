@@ -28,7 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -98,6 +97,14 @@ public class SubscriptionManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionManager.class);
 
+    /**
+     * The status codes of a request that failed because the connection or the session was lost, which the session
+     * recovery of the client deals with
+     */
+    private static final Set<Long> SESSION_LOST = Set.of(
+            StatusCodes.Bad_ConnectionClosed, StatusCodes.Bad_SessionClosed, StatusCodes.Bad_SessionIdInvalid,
+            StatusCodes.Bad_SessionNotActivated);
+
     private final AtomicLong clientHandleCounter = new AtomicLong();
 
     private final class SubscriptionListenerImpl implements OpcUaSubscription.SubscriptionListener {
@@ -105,9 +112,8 @@ public class SubscriptionManager {
         @Override
         public void onStatusChanged(final OpcUaSubscription subscription, final StatusCode status) {
             if (status.getValue() == StatusCodes.Bad_Timeout) {
-                final Optional<UInteger> id = subscription.getSubscriptionId();
                 LOG.warn("Subscription timed out on the server, recreating it");
-                executor.execute(() -> recreateSubscription(subscription, id));
+                recoverSubscription(subscription);
             } else {
                 LOG.info("Subscription status changed {} : {}", subscription.getSubscriptionId(), status);
             }
@@ -115,9 +121,8 @@ public class SubscriptionManager {
 
         @Override
         public void onWatchdogTimerElapsed(final OpcUaSubscription subscription) {
-            final Optional<UInteger> id = subscription.getSubscriptionId();
-            LOG.warn("Subscription {} stopped publishing, recreating it", id.orElse(null));
-            executor.execute(() -> recreateSubscription(subscription, id));
+            LOG.warn("Subscription {} stopped publishing, recreating it", subscription.getSubscriptionId().orElse(null));
+            recoverSubscription(subscription);
         }
 
         @Override
@@ -310,6 +315,29 @@ public class SubscriptionManager {
             final String uri = nodeId.getNamespaceUri();
             final UShort index = uri == null ? nodeId.getNamespaceIndex() : lookupNamespaceIndex(uri).get();
             return index == null ? null : toNodeId(index, nodeId);
+        }
+
+        /**
+         * Creates the subscription on the server again, with the monitored items it had, after the server lost it.
+         *
+         * @param  subscriptions the registered subscriptions, by client handle
+         * @return               the bad status values of the nodes that could not be monitored again, to be delivered
+         *                       to their consumers after the lock of the manager has been released
+         * @throws Exception     if the subscription could not be created or the server rejected the
+         *                       CreateMonitoredItems service call, the connection has to be rebuilt
+         */
+        public List<PendingValue> recreate(final Map<UInteger, Subscription> subscriptions) throws Exception {
+            final Map<UInteger, Subscription> monitored = new HashMap<>();
+            this.goodSubscriptions.keySet()
+                    .forEach(clientHandle -> monitored.put(clientHandle, subscriptions.get(clientHandle)));
+            this.goodSubscriptions.clear();
+
+            // the monitored items were reset together with the subscription, so they are dropped without a service call
+            this.manager.removeMonitoredItems(this.manager.getMonitoredItems());
+            this.manager.deleteMonitoredItems();
+
+            this.manager.create();
+            return putSubscriptions(monitored);
         }
 
         public void deactivate(final List<UInteger> clientHandles) throws Exception {
@@ -691,39 +719,69 @@ public class SubscriptionManager {
     }
 
     /**
-     * Deletes and creates the subscription of the current connection again, inside the existing session, and creates
-     * its monitored items again. Does nothing if the subscription no longer belongs to the current connection or has
-     * already been recreated since the given id was observed. Falls back to rebuilding the connection if this fails.
+     * Recovers the subscription of a connection after it stopped publishing or timed out on the server.
      * <p>
-     * The service calls run while holding {@code lock}, like {@link #registerItems} and {@link #unregisterItems} do,
-     * because the {@link OpcUaSubscription} is shared with them and is not thread-safe. A request the server does not
-     * answer fails after the client's request timeout ({@code requestTimeout}, 60 s by default), so the lock is held
-     * for at most one timeout per call before the fallback runs.
+     * The subscription is deleted first, and it is only created again, inside the existing session, once the server has
+     * confirmed that it no longer exists; one that the client has already reset because it timed out is deleted without
+     * a service call. If the delete fails because the connection or the session was lost, the session recovery of the
+     * client takes over: it resumes the subscription, which arms its watchdog again, or reports that the subscription
+     * could not be transferred. Any other failure rebuilds the connection, which closes the session together with its
+     * subscriptions.
+     * <p>
+     * The delete neither blocks nor holds {@code lock}: a request sent before the connection was lost only fails once
+     * the client notices the loss, which its keep-alive does on the threads of {@link #executor}.
      */
-    private void recreateSubscription(final OpcUaSubscription subscription, final Optional<UInteger> id) {
+    private void recoverSubscription(final OpcUaSubscription subscription) {
+        subscription.deleteAsync().whenCompleteAsync((unit, e) -> {
+            final StatusCode status = e == null
+                    ? StatusCode.GOOD
+                    : UaException.extractStatusCode(e).orElse(new StatusCode(StatusCodes.Bad_UnexpectedError));
+            if (status.isGood() || status.getValue() == StatusCodes.Bad_SubscriptionIdInvalid) {
+                recreateSubscription(subscription);
+            } else if (SESSION_LOST.contains(status.getValue())) {
+                LOG.info("Session lost while deleting subscription {}, leaving it to the session recovery: {}",
+                        subscription.getSubscriptionId().orElse(null), status);
+            } else {
+                lock.lock();
+                try {
+                    if (isCurrent(subscription)) {
+                        handleConnectionFailure(e);
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
+        }, this.executor);
+    }
+
+    /**
+     * Creates the subscription of the current connection again, inside the existing session, together with the
+     * monitored items it had. Does nothing if the subscription no longer belongs to the current connection or has been
+     * created again already. A node that cannot be monitored again is reported to its consumer, as when the consumer
+     * starts; if the subscription itself cannot be created again, the connection is rebuilt.
+     */
+    private void recreateSubscription(final OpcUaSubscription subscription) {
+        final List<PendingValue> pendingValues = new ArrayList<>();
         lock.lock();
         try {
-            if (this.disposed || this.connected == null || this.connected.manager != subscription
-                    || !subscription.getSubscriptionId().equals(id)) {
-                LOG.debug("Subscription {} is stale or already recreated", id.orElse(null));
+            if (!isCurrent(subscription) || subscription.getSubscriptionId().isPresent()) {
+                LOG.debug("Subscription is stale or already recreated");
                 return;
             }
-            try {
-                subscription.delete();
-            } catch (final UaException e) {
-                LOG.debug("Failed to delete subscription {}", id.orElse(null), e);
-                subscription.reset();
-            }
-            subscription.create();
-            if (!subscription.createMonitoredItems().stream().allMatch(MonitoredItemServiceOperationResult::isGood)) {
-                throw new UaException(StatusCodes.Bad_UnexpectedError, "Failed to create the monitored items again");
-            }
+            pendingValues.addAll(this.connected.recreate(this.subscriptions));
             LOG.info("Subscription recreated as {}", subscription.getSubscriptionId().orElse(null));
         } catch (final Exception e) {
             handleConnectionFailure(e);
         } finally {
             lock.unlock();
         }
+
+        // deliver outside of the lock, the routes may use the connection
+        pendingValues.forEach(PendingValue::deliver);
+    }
+
+    private boolean isCurrent(final OpcUaSubscription subscription) {
+        return !this.disposed && this.connected != null && this.connected.manager == subscription;
     }
 
     private void handleConnectionFailure(final Throwable e) {

@@ -169,9 +169,19 @@ does not learn that the node recovered. Set `omitNullValues=false` for a node wh
 
 The consumers of a connection share one subscription on the server. When the server stops publishing for it (no
 notification or keep-alive within about one and a half keep-alive intervals) or reports that it timed out
-(`Bad_Timeout`), Camel deletes and creates the subscription again in the existing session; if that fails, it rebuilds
-the connection to the server. After the subscription is recreated, every monitored item delivers its current value
-again, and value changes in between are not delivered.
+(`Bad_Timeout`), Camel deletes the subscription and, once the server has confirmed that it is gone, creates it again
+in the existing session. A node that can no longer be monitored is reported as described above and does not affect
+the other nodes.
+
+A network that drops silently can stop the publishing before the client notices that the connection is lost. The delete
+then fails with the connection, and the client restores the session once the server can be reached again: the
+subscription resumes publishing, or it is created again when the server reports that it timed out in the meantime. If
+the network is back before the client has noticed the loss, the delete reaches the server and the subscription is
+created again.
+
+Any other failure of the delete, or a subscription that cannot be created again, rebuilds the connection to the server.
+After the subscription is recreated, every monitored item delivers its current value again, and value changes in
+between are not delivered.
 
 === Method ID
 

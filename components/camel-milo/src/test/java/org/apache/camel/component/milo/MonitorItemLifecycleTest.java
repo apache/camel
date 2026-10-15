@@ -36,6 +36,7 @@ import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.Session;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Testing the monitored items of consumers sharing a connection, when a consumer is restarted, its node does not exist,
- * the server rejects the CreateMonitoredItems service call or the subscription stops publishing
+ * the server rejects the CreateMonitoredItems service call or the subscription stops publishing or times out
  */
 public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
 
@@ -322,16 +323,7 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
             final OpcUaClient client = connection.getOpcUaClient();
             final UInteger subscriptionId = client.getSubscriptions().get(0).getSubscriptionId().orElseThrow();
 
-            // the server reports the lifetime of the subscription as expired and removes it
-            final OpcUaServer server = context.getComponent("milo-server", MiloServerComponent.class).getServer();
-            for (final Session session : server.getSessionManager().getAllSessions()) {
-                final var subscriptions = session.getSubscriptionManager();
-                final var subscription = subscriptions.getSubscription(subscriptionId);
-                if (subscription != null) {
-                    subscriptions.sendStatusChangeNotification(subscription, new StatusCode(StatusCodes.Bad_Timeout));
-                    subscriptions.removeSubscription(subscriptionId);
-                }
-            }
+            timeOutSubscription(subscriptionId);
 
             producer1.sendBody("Bar");
             await().atMost(30, TimeUnit.SECONDS)
@@ -342,6 +334,67 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
             assertNotEquals(subscriptionId, client.getSubscriptions().get(0).getSubscriptionId().orElseThrow());
         } finally {
             endpoint.releaseConnection(connection);
+        }
+    }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void nodeThatCannotBeMonitoredAgainIsReportedWithoutRebuildingTheConnection() throws Exception {
+        producer1.sendBody("Foo");
+        producer2.sendBody("Bar");
+        context.getRouteController().startRoute("item1");
+
+        items12Endpoint.expectedMessageCount(2);
+        context.getRouteController().startRoute("items12");
+        items12Endpoint.assertIsSatisfied();
+
+        final MiloClientEndpoint endpoint = context.getEndpoint(resolve(MILO_CLIENT_ITEM_1), MiloClientEndpoint.class);
+        final MiloClientConnection connection = endpoint.createConnection();
+        try {
+            final OpcUaClient client = connection.getOpcUaClient();
+            final OpcUaSubscription subscription = client.getSubscriptions().get(0);
+            final UInteger subscriptionId = subscription.getSubscriptionId().orElseThrow();
+
+            // the second node is removed on the server before the subscription times out there
+            getServer().getAddressSpaceManager().getManagedNode(ExpandedNodeId.parse(NODE_ITEM_2)).orElseThrow().delete();
+            timeOutSubscription(subscriptionId);
+
+            // the subscription is recreated in the same session, with the monitored items of the first node only
+            await().atMost(30, TimeUnit.SECONDS)
+                    .until(() -> subscription.getSubscriptionId().filter(id -> !id.equals(subscriptionId)).isPresent());
+            assertSame(client, connection.getOpcUaClient());
+            assertEquals(2, subscription.getMonitoredItems().size());
+
+            // the consumer of the second node is told that it is gone, the consumers of the first node keep receiving
+            await().atMost(10, TimeUnit.SECONDS).until(() -> items12Endpoint.getReceivedExchanges().stream()
+                    .anyMatch(exchange -> NODE_ITEM_2.equals(exchange.getMessage().getHeader(MiloConstants.HEADER_NODE_ID))
+                            && new StatusCode(StatusCodes.Bad_NodeIdUnknown)
+                                    .equals(exchange.getMessage().getBody(DataValue.class).getStatusCode())));
+            producer1.sendBody("Baz");
+            await().atMost(10, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertGoodValue("Baz").accept(lastExchange(item1Endpoint).getMessage()
+                            .getBody(DataValue.class)));
+            assertSame(client, connection.getOpcUaClient());
+        } finally {
+            endpoint.releaseConnection(connection);
+        }
+    }
+
+    private OpcUaServer getServer() {
+        return context.getComponent("milo-server", MiloServerComponent.class).getServer();
+    }
+
+    /**
+     * The server reports the lifetime of the subscription as expired and removes it
+     */
+    private void timeOutSubscription(final UInteger subscriptionId) {
+        for (final Session session : getServer().getSessionManager().getAllSessions()) {
+            final var subscriptions = session.getSubscriptionManager();
+            final var subscription = subscriptions.getSubscription(subscriptionId);
+            if (subscription != null) {
+                subscriptions.sendStatusChangeNotification(subscription, new StatusCode(StatusCodes.Bad_Timeout));
+                subscriptions.removeSubscription(subscriptionId);
+            }
         }
     }
 
