@@ -30,7 +30,6 @@ import org.apache.camel.component.milo.client.MiloClientConnection.MonitorHandle
 import org.apache.camel.support.DefaultConsumer;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
-import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,12 +136,8 @@ public class MiloClientConsumer extends DefaultConsumer {
      * Bad or Uncertain status carries the quality of the node and is delivered.
      */
     private static boolean isNullValueWithGoodStatus(final DataValue value) {
-        if (value == null) {
-            return true;
-        }
-        final boolean nullValue = value.getValue() == null || value.getValue().getValue() == null;
-        final StatusCode status = value.getStatusCode();
-        return nullValue && (status == null || status.isGood());
+        return value == null
+                || (value.getValue().getValue() == null && value.getStatusCode().isGood());
     }
 
     private void mapToMessage(final DataValue value, final Message message) {
