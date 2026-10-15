@@ -198,7 +198,9 @@ public final class OpenAIDecisionsSupport {
             var answer = response.answers().get(i);
             Optional<String> answerName;
             if (answer.isRefusal()) {
-                throw new OpenAIDecisionRefusalException("OpenAI declined to answer a decision question");
+                throw new OpenAIDecisionRefusalException(
+                        "OpenAI declined to answer decision question at index " + i
+                                                         + name(question).map(n -> " ('" + n + "')").orElse(""));
             } else if (question.isPredicate() && answer.isPredicate()) {
                 probability(answer.asPredicate().probability());
                 answerName = answer.asPredicate().name();

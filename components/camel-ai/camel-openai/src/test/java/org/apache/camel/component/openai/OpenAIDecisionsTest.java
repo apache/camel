@@ -19,6 +19,7 @@ package org.apache.camel.component.openai;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.openai.client.OpenAIClient;
 import com.openai.models.decisions.Decision;
@@ -28,6 +29,8 @@ import com.openai.models.decisions.DecisionInputMessage;
 import com.openai.models.decisions.DecisionInputPart;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -74,7 +77,26 @@ class OpenAIDecisionsTest {
         when(client.decisions().create(request)).thenReturn(Decision.builder().model("gpt-6-luna")
                 .addAnswer(Decision.Answer.Refusal.builder().name("test").build()).usage(usage()).build());
         assertThatThrownBy(() -> OpenAIDecisionsSupport.execute(client, request))
-                .isInstanceOf(OpenAIDecisionRefusalException.class);
+                .isInstanceOf(OpenAIDecisionRefusalException.class)
+                .hasMessage("OpenAI declined to answer decision question at index 0 ('test')");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void identifiesRefusedQuestionInBatch(boolean named) {
+        var question = DecisionCreateParams.Question.Predicate.builder().instructions("Is it urgent?");
+        if (named) {
+            question.name("urgent");
+        }
+        DecisionCreateParams request = request().toBuilder().addQuestion(question.build()).build();
+        OpenAIClient client = mock(OpenAIClient.class, RETURNS_DEEP_STUBS);
+        Decision response = Decision.builder().model("gpt-6-luna")
+                .addAnswer(Decision.Answer.Predicate.builder().name("test").probability(0.9).build())
+                .addAnswer(Decision.Answer.Refusal.builder().name(Optional.empty()).build()).usage(usage()).build();
+        when(client.decisions().create(request)).thenReturn(response);
+        assertThatThrownBy(() -> OpenAIDecisionsSupport.execute(client, request))
+                .isInstanceOf(OpenAIDecisionRefusalException.class)
+                .hasMessage("OpenAI declined to answer decision question at index 1" + (named ? " ('urgent')" : ""));
     }
 
     @Test
