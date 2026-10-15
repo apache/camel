@@ -674,6 +674,22 @@ YAML::
 ----
 ====
 
+=== Verifying the host name of the server
+
+A producer, and a consumer with `clientMode=true`, connects as a TLS client when `ssl=true`. By default it accepts any
+certificate the JVM trusts, whatever host that certificate was issued for. Set `hostnameVerification=true` to also
+check that the certificate matches the host the endpoint connects to, with the same rules as an HTTPS client: a
+connection to an IP address needs a certificate that lists that address as a subject alternative name of its own.
+
+A certificate that does not match makes the producer or consumer fail with an
+`SSLHandshakeException: No subject alternative names matching IP address ... found` (or
+`No subject alternative DNS name matching ... found` for a host name). Enabling the option also makes the JDK send the
+host as an SNI server name.
+
+The option applies to the client side only. On a consumer that acts as a server it is ignored, because the JDK does not
+support host name verification on that side of a handshake: asked to do it anyway, it rejects the client certificate
+with `Endpoint Identification Algorithm HTTPS is not supported on the server side`.
+
 === An SSL/TCP-based Netty consumer endpoint using Request-Reply communication
 
 [[Netty-UsingtheJSSEConfigurationUtility]]

@@ -63,7 +63,7 @@ public final class SemanticEvaluationBuilder {
     }
 
     String getExpert() {
-        return expert != null ? expert : parent != null ? parent.getExpert() : null;
+        return expert;
     }
 
     public SemanticEvaluationBuilder state(String state) {

@@ -83,6 +83,12 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
     }
 
     @Override
+    public int available() {
+        // the whole body is in memory, so what is left of it can be read without blocking
+        return buffer.readableBytes();
+    }
+
+    @Override
     public void reset() {
         lock.lock();
         try {

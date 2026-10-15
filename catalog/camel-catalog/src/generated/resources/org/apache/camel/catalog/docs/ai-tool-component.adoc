@@ -444,10 +444,17 @@ Which runtimes carry the caller identity:
   <<The calling exchange>> above), so the identity property reaches the tool route.
 * Over the xref:others:mcp-server.adoc[MCP server] the authenticated transport caller is carried onto the tool
   exchange as the `CamelMcpSecurityPrincipal` property (the raw transport principal — for the Vert.x streamable HTTP
-  server, an `io.vertx.ext.auth.User`). A policy over MCP reads that property directly; Camel's shipped
-  identity/token policies (Keycloak, Spring Security, Shiro) do not read it yet, so MCP authorization needs a policy
-  that inspects `CamelMcpSecurityPrincipal`. Exposing a runtime-neutral principal name and roles for the shipped
-  policies is tracked as a follow-up.
+  server, an `io.vertx.ext.auth.User`). Alongside it the server stamps a runtime-neutral view derived from that
+  principal — `CamelMcpSecurityPrincipalName` (a `String`) and `CamelMcpSecurityPrincipalRoles` (a
+  `Collection<String>`) — so a tool route or a policy can authorize on a stable name and roles without knowing the
+  runtime type. Only the Vert.x streamable HTTP server (Camel Main / JBang) populates these today. There the name is
+  the user subject (or the `username`/`sub` claim), and the roles come from the authenticated token's `roles`, Keycloak
+  `realm_access.roles`, or `groups` claim (JWT/OIDC); a basic-auth caller (camel-main property-file auth) carries no
+  roles in its principal, so `CamelMcpSecurityPrincipalRoles` is not set for it. Each property is set only when the
+  server could determine it, so treat a missing name or roles as unauthorized. Camel's shipped identity/token
+  policies (Keycloak, Spring Security, Shiro) do not consume these automatically yet, so MCP authorization still needs
+  a policy (or route guard) that inspects `CamelMcpSecurityPrincipalName`/`CamelMcpSecurityPrincipalRoles` or the raw
+  `CamelMcpSecurityPrincipal`.
 
 === Observing denials
 

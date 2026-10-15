@@ -122,15 +122,16 @@ business view (`b`), marked with `✦`; the technical view (`n`)
 keeps the expression. The Info panel of such a node shows the
 label, why the route decides there, and the code.
 
-The endpoints of remote systems are the edges of the integration
-and have their own color, in the route diagram as in the topology.
-The input of a route from a remote system shows where it comes
-from in the top border of its box, `AMQP ──▶`. Where a message is
-sent to a remote system and no route of the integration consumes
-it, the bottom border names where it leaves to: `──▶ AMQP`. A
-hand-off to another route of the integration shows `↵ route`
-beside the box. A route that starts itself on a schedule (timer,
-cron, quartz, scheduler) shows `↻ ──▶` at its input.
+The endpoints of remote systems are the edges of the integration:
+they have their own color and a dashed frame (solid while
+selected), in the route diagram as in the topology. The input of
+a route from a remote system shows where it comes from in the top
+border of its box, `AMQP ──▶`. Where a message is sent to a remote
+system and no route of the integration consumes it, the bottom
+border names where it leaves to: `──▶ AMQP`. A hand-off to another
+route of the integration shows `↵ route` beside the box. A route
+that starts itself on a schedule (timer, cron, quartz, scheduler)
+shows `↻ ──▶` at its input.
 
 ## Route Diagram
 

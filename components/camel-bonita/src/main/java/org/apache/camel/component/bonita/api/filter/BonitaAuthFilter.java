@@ -57,23 +57,28 @@ public class BonitaAuthFilter implements ClientRequestFilter {
             }
             ClientBuilder clientBuilder = ClientBuilder.newBuilder();
             Client client = clientBuilder.build();
-            WebTarget webTarget = client.target(bonitaApiConfig.getBaseBonitaURI()).path("loginservice");
-            MultivaluedMap<String, String> form = new MultivaluedHashMap<>();
-            form.add("username", username);
-            form.add("password", password);
-            form.add("redirect", "false");
-            Response response = webTarget.request().accept(MediaType.APPLICATION_FORM_URLENCODED)
-                    .post(Entity.form(form));
-            Map<String, NewCookie> cr = response.getCookies();
-            ArrayList<Object> cookies = new ArrayList<>();
-            for (NewCookie cookie : cr.values()) {
-                if ("X-Bonita-API-Token".equals(cookie.getName())) {
-                    bonitaApiToken = cookie.getValue();
-                    requestContext.getHeaders().add("X-Bonita-API-Token", bonitaApiToken);
+            // a client for this login only: it is closed when the cookies of the answer are read
+            try {
+                WebTarget webTarget = client.target(bonitaApiConfig.getBaseBonitaURI()).path("loginservice");
+                MultivaluedMap<String, String> form = new MultivaluedHashMap<>();
+                form.add("username", username);
+                form.add("password", password);
+                form.add("redirect", "false");
+                Response response = webTarget.request().accept(MediaType.APPLICATION_FORM_URLENCODED)
+                        .post(Entity.form(form));
+                Map<String, NewCookie> cr = response.getCookies();
+                ArrayList<Object> cookies = new ArrayList<>();
+                for (NewCookie cookie : cr.values()) {
+                    if ("X-Bonita-API-Token".equals(cookie.getName())) {
+                        bonitaApiToken = cookie.getValue();
+                        requestContext.getHeaders().add("X-Bonita-API-Token", bonitaApiToken);
+                    }
+                    cookies.add(cookie.toString());
                 }
-                cookies.add(cookie.toString());
+                requestContext.getHeaders().put("Cookie", cookies);
+            } finally {
+                client.close();
             }
-            requestContext.getHeaders().put("Cookie", cookies);
 
         }
     }

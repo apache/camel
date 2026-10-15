@@ -47,7 +47,7 @@ class SemanticXmlAutoDiscoveryTest {
             <?xml version="1.0"?>
             <routes xmlns="http://camel.apache.org/schema/xml-io">
               <semantic xmlns="http://camel.apache.org/schema/semantic">
-                <evaluation name="urgent" type="boolean">
+                <evaluation expert="classifier" name="urgent" type="boolean">
                   <instructions>Urgent?</instructions>
                 </evaluation>
               </semantic>
@@ -71,7 +71,7 @@ class SemanticXmlAutoDiscoveryTest {
     void mainLoadsOrdinaryXmlWithoutLoaderRegistration(boolean standalone, String filename) throws Exception {
         String declarations = """
                 <semantic xmlns="http://camel.apache.org/schema/semantic">
-                  <evaluation name="department" type="choice">
+                  <evaluation expert="classifier" name="department" type="choice">
                     <instructions>Which department?</instructions>
                     <criterion key="billing" value="Invoices"/>
                   </evaluation>
@@ -97,7 +97,6 @@ class SemanticXmlAutoDiscoveryTest {
         }
         Main main = new Main();
         main.bind("classifier", new SemanticLanguageTest.LabelAdapter());
-        main.addProperty("camel.language.semantic.adapter", "classifier");
         main.configure().setRoutesIncludePattern(files);
         try {
             main.start();
@@ -169,7 +168,7 @@ class SemanticXmlAutoDiscoveryTest {
                     delegate.set(loader);
                 }
             });
-            context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
+            context.getRegistry().bind("classifier", new SemanticLanguageTest.CountingAdapter());
             context.start();
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("ordinary.xml", """
                     <camel xmlns="http://camel.apache.org/schema/xml-io">
@@ -229,11 +228,11 @@ class SemanticXmlAutoDiscoveryTest {
     @Test
     void contextWithApplicationRegistryDiscoversXmlDeclarations() throws Exception {
         try (var context = new DefaultCamelContext(new SimpleRegistry())) {
-            context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
+            context.getRegistry().bind("classifier", new SemanticLanguageTest.CountingAdapter());
             context.start();
             PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("evaluations.xml",
                     """
-                            <semantic><evaluation name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation></semantic>
+                            <semantic><evaluation expert="classifier" name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation></semantic>
                             """));
             assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("instructions")).isEqualTo("Urgent?");
         }
@@ -243,11 +242,11 @@ class SemanticXmlAutoDiscoveryTest {
     void contextRestartReinstallsAutomaticLoader() throws Exception {
         try (var context = new DefaultCamelContext()) {
             for (int i = 0; i < 2; i++) {
-                context.getRegistry().bind("fixture", new SemanticLanguageTest.CountingAdapter());
+                context.getRegistry().bind("classifier", new SemanticLanguageTest.CountingAdapter());
                 context.start();
                 PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("evaluations.xml",
                         """
-                                <semantic><evaluation name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation></semantic>
+                                <semantic><evaluation expert="classifier" name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation></semantic>
                                 """));
                 assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("instructions"))
                         .isEqualTo("Urgent?");

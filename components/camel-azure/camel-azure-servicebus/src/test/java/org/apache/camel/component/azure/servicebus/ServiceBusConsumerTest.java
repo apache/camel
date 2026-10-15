@@ -386,6 +386,103 @@ public class ServiceBusConsumerTest {
     }
 
     @Test
+    void synchronizationBoundsTheDeadLetterReasonAndDescription() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+            when(configuration.isEnableDeadLettering()).thenReturn(true);
+
+            consumer.doStart();
+            when(messageContext.getMessage()).thenReturn(message);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            Exchange exchange = exchangeCaptor.getValue();
+            exchange.setException(exceptionWithALongMessageAndADeepStackTrace());
+
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            synchronization.onFailure(exchange);
+
+            ArgumentCaptor<DeadLetterOptions> captor = ArgumentCaptor.captor();
+            verify(messageContext).deadLetter(captor.capture());
+            DeadLetterOptions options = captor.getValue();
+
+            // the .NET and JavaScript SDKs cap both fields at 4096 (MaxDeadLetterReasonLength, applied to the
+            // description too); the Java SDK does not check, so an over-long value would only fail at the broker
+            assertThat(options.getDeadLetterReason())
+                    .hasSizeLessThanOrEqualTo(4096)
+                    .startsWith(IllegalStateException.class.getName())
+                    .endsWith("...");
+            assertThat(options.getDeadLetterErrorDescription())
+                    .hasSizeLessThanOrEqualTo(4096)
+                    .contains(getClass().getName())
+                    .endsWith("...");
+        }
+    }
+
+    @Test
+    void synchronizationReportsARejectedDeadLetterInsteadOfThrowing() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+            when(configuration.isEnableDeadLettering()).thenReturn(true);
+            consumer.setExceptionHandler(exceptionHandler);
+
+            consumer.doStart();
+            when(messageContext.getMessage()).thenReturn(message);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            Exchange exchange = exchangeCaptor.getValue();
+            final Exception routeFailure = new Exception("Test exception");
+            exchange.setException(routeFailure);
+
+            // the broker refuses the request, for instance because the message is over the size quota
+            final RuntimeException rejected = new IllegalStateException("Dead-lettering rejected");
+            doThrow(rejected).when(messageContext).deadLetter(any(DeadLetterOptions.class));
+
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            // must not escape into the SDK's processor callback, where nothing would report it
+            synchronization.onFailure(exchange);
+
+            verify(exceptionHandler).handleException(anyString(), eq(exchange), eq(rejected));
+        }
+    }
+
+    @Test
+    void synchronizationReportsARejectedAbandonInsteadOfThrowing() throws Exception {
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+            // dead-lettering off, so a failed exchange is abandoned instead
+            when(configuration.isEnableDeadLettering()).thenReturn(false);
+            consumer.setExceptionHandler(exceptionHandler);
+
+            consumer.doStart();
+            when(messageContext.getMessage()).thenReturn(message);
+            processMessageCaptor.getValue().accept(messageContext);
+
+            Exchange exchange = exchangeCaptor.getValue();
+            exchange.setException(new Exception("Test exception"));
+
+            final RuntimeException rejected = new IllegalStateException("Abandon rejected");
+            doThrow(rejected).when(messageContext).abandon();
+
+            Synchronization synchronization = exchange.getExchangeExtension().handoverCompletions().get(0);
+            synchronization.onFailure(exchange);
+
+            verify(exceptionHandler).handleException(anyString(), eq(exchange), eq(rejected));
+        }
+    }
+
+    private static Exception exceptionWithALongMessageAndADeepStackTrace() {
+        Exception answer = new IllegalStateException("x".repeat(8192));
+        StackTraceElement[] frames = new StackTraceElement[512];
+        for (int i = 0; i < frames.length; i++) {
+            frames[i] = new StackTraceElement(
+                    ServiceBusConsumerTest.class.getName(), "frame" + i,
+                    "ServiceBusConsumerTest.java", i);
+        }
+        answer.setStackTrace(frames);
+        return answer;
+    }
+
+    @Test
     void synchronizationDeadLettersMessageWithoutOptionsWhenExceptionNotPresent() throws Exception {
         try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
             when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);

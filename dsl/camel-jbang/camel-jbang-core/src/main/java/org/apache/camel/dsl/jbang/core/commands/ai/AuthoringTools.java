@@ -431,9 +431,14 @@ public final class AuthoringTools {
                     applyVersion(ctx, args);
                     Path dir = ctx.resolveDirectory(args.get("directory"));
                     SummaryUpdate update = summaryUpdate(dir, ctx, args);
+                    Path summary = dir.resolve(IntegrationSummary.FILE_NAME);
+                    // asked like any other write where a client asks (camel ask, CAMEL-25676)
+                    if (ctx.confirmer() != null && !ctx.confirm(ToolConfirms.write(shownPath(ctx, summary),
+                            Files.exists(summary) ? read(summary) : null, update.content()))) {
+                        return rejectedWrite(IntegrationSummary.FILE_NAME).toJson();
+                    }
                     try {
-                        Files.writeString(dir.resolve(IntegrationSummary.FILE_NAME), update.content(),
-                                StandardCharsets.UTF_8);
+                        Files.writeString(summary, update.content(), StandardCharsets.UTF_8);
                     } catch (IOException e) {
                         throw new ToolExecutionException(
                                 "Cannot write " + IntegrationSummary.FILE_NAME + ": " + e.getMessage());
@@ -1070,12 +1075,148 @@ public final class AuthoringTools {
         }
     }
 
-    /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
+    private static final Pattern JAVA_PACKAGE = Pattern.compile("^\\s*package\\s+([\\w.]+)\\s*;", Pattern.MULTILINE);
+
+    /** The package a Java source declares, or the empty string for none. */
+    static String javaPackage(String content) {
+        Matcher m = content != null ? JAVA_PACKAGE.matcher(content) : null;
+        return m != null && m.find() ? m.group(1) : "";
+    }
+
+    /**
+     * The other files of the project with the name of the file. Folders that hold no sources of the app are left out:
+     * dot folders, build output and test sources.
+     */
+    private static List<Path> sameNamedFiles(Path dir, Path path) {
+        Path root = dir.toAbsolutePath().normalize();
+        Path self = path.toAbsolutePath().normalize();
+        String name = self.getFileName().toString();
+        List<Path> found = new ArrayList<>();
+        try {
+            Files.walkFileTree(root, EnumSet.noneOf(FileVisitOption.class), 12, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) {
+                    String n = d.getFileName() != null ? d.getFileName().toString() : "";
+                    String relative = root.relativize(d).toString().replace('\\', '/');
+                    if (!d.equals(root) && (n.startsWith(".") || "target".equals(n) || "build".equals(n)
+                            || "node_modules".equals(n) || "src/test".equals(relative) || relative.endsWith("/src/test"))) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path f, BasicFileAttributes attrs) {
+                    if (attrs.isRegularFile() && name.equals(f.getFileName().toString())
+                            && !self.equals(f.toAbsolutePath().normalize())) {
+                        found.add(f);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // best effort: without the list the write goes ahead as before
+        }
+        return found;
+    }
+
+    /**
+     * The file of the project that already defines the class a new Java source would define (the same package and
+     * name), relative to the project directory, or null. Asked to change a class of a camel run project, whose sources
+     * sit next to the routes, a model wrote a second copy under src/main/java instead, 7 times out of 11 in a benchmark
+     * (CAMEL-25673): two classes of the same name, of which the runtime uses one, while the change is in the other.
+     */
+    static String fileOfSameClass(Path dir, Path path, String content) {
+        String pkg = javaPackage(content);
+        Path root = dir.toAbsolutePath().normalize();
+        for (Path other : sameNamedFiles(dir, path)) {
+            String otherContent;
+            try {
+                otherContent = read(other);
+            } catch (ToolExecutionException e) {
+                // best effort, as the search: a file that cannot be read is no reason to refuse the write
+                continue;
+            }
+            if (pkg.equals(javaPackage(otherContent))) {
+                return root.relativize(other.toAbsolutePath().normalize()).toString().replace('\\', '/');
+            }
+        }
+        return null;
+    }
+
+    /**
+     * A note when a new beans.yaml or application.properties has the name of a file the project already has in another
+     * folder: two files of that name are easy to mix up (CAMEL-25673). Null for any other file, or when there is none.
+     */
+    static String sameNamedConfigNote(Path dir, Path path) {
+        String name = path.getFileName().toString();
+        boolean config = "application.properties".equals(name)
+                || (name.startsWith("application-") && name.endsWith(".properties"))
+                || "beans.yaml".equals(name) || "beans.yml".equals(name);
+        if (!config) {
+            return null;
+        }
+        List<Path> others = sameNamedFiles(dir, path);
+        if (others.isEmpty()) {
+            return null;
+        }
+        String other = dir.toAbsolutePath().normalize().relativize(others.get(0).toAbsolutePath().normalize()).toString()
+                .replace('\\', '/');
+        return "the project already has " + name + " at " + other + ": two files of that name are easy to mix up, so"
+               + " change that one unless you mean to have both";
+    }
+
+    /**
+     * The file as a confirmation shows it: relative to the project directory, or the full path when the call named
+     * another directory, so a write outside the project is plain to see.
+     */
+    static String shownPath(ToolContext ctx, Path path) {
+        Path file = path.toAbsolutePath().normalize();
+        Path project = ctx.defaultDirectory() != null ? ctx.defaultDirectory().toAbsolutePath().normalize() : null;
+        return project != null && file.startsWith(project)
+                ? project.relativize(file).toString().replace('\\', '/') : file.toString();
+    }
+
+    /** The answer to a write the user did not confirm. */
+    static JsonObject rejectedWrite(String file) {
+        JsonObject result = new JsonObject();
+        result.put("status", "rejected");
+        result.put("file", file);
+        result.put("message", "The user rejected the change to " + file + "; the file is unchanged and nothing is"
+                              + " pending. Do not retry unless the user asks for it: tell the user what you wanted to"
+                              + " change, and why.");
+        return result;
+    }
+
+    /**
+     * Writes a file after validating it, as {@code camel_write_file} does. The context's confirmer, when it has one, is
+     * asked first with the change ({@link ToolConfirms#write}); the TUI confirms in its own file tools.
+     */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
         boolean exists = Files.exists(path);
         if (exists && !Files.isRegularFile(path)) {
             throw new ToolExecutionException(file + " is not a regular file");
+        }
+        if (!exists && file.endsWith(".java")) {
+            String other = fileOfSameClass(dir, path, content);
+            if (other != null) {
+                String simple = path.getFileName().toString();
+                simple = simple.substring(0, simple.length() - ".java".length());
+                String pkg = javaPackage(content);
+                String fqn = pkg.isEmpty() ? simple : pkg + "." + simple;
+                JsonObject result = new JsonObject();
+                result.put("status", "invalid");
+                result.put("file", file);
+                result.put("existingFile", other);
+                result.put("errors", new JsonArray(
+                        List.of("the class " + fqn + " is already in " + other
+                                + ": a second copy is a second class of the same name, and"
+                                + " the runtime uses only one of them")));
+                result.put("message", "The file was not written: change the class where it is, in " + other
+                                      + " (camel_edit_file, or camel_write_file with file " + other + ").");
+                return result;
+            }
         }
         List<String> problemsBefore = List.of();
         if (validate && SourceValidator.isValidatableFile(file)) {
@@ -1111,6 +1252,12 @@ public final class AuthoringTools {
                 putKameletGuide(result, file, errors);
                 return result;
             }
+        }
+        // a client that asks before each write (camel ask, CAMEL-25676) shows the change first; the others write as
+        // before
+        if (ctx.confirmer() != null
+                && !ctx.confirm(ToolConfirms.write(shownPath(ctx, path), exists ? read(path) : null, content))) {
+            return rejectedWrite(file);
         }
         // the reload of a running integration is reported in the answer (CAMEL-24859): the reload records newer
         // than the ones before the write
@@ -1160,6 +1307,12 @@ public final class AuthoringTools {
             if (waiting != null) {
                 JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
                 notes.add(waiting.note());
+                result.put("notes", notes);
+            }
+            String sameNamed = exists ? null : sameNamedConfigNote(dir, path);
+            if (sameNamed != null) {
+                JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
+                notes.add(sameNamed);
                 result.put("notes", notes);
             }
         }

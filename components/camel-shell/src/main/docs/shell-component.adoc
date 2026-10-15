@@ -4,7 +4,7 @@
 :artifactid: camel-shell
 :description: Camel Shell component
 :since: 4.21
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only consumer is supported
 
@@ -145,4 +145,3 @@ from("shell:myapp")
     .to(ExchangePattern.InOnly, "activemq:queue:myqueue")
     .setBody(simple("Sent '${exchangeProperty.input}' to queue"));
 ----
-

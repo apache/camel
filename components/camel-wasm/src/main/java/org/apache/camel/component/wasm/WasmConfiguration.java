@@ -30,6 +30,8 @@ public class WasmConfiguration implements Cloneable {
 
     @UriParam
     private String args;
+    @UriParam
+    private boolean compile;
     @UriParam(prefix = "environment.", multiValue = true)
     private Map<String, Object> environment;
     @UriParam
@@ -55,6 +57,22 @@ public class WasmConfiguration implements Cloneable {
      */
     public void setArgs(String args) {
         this.args = args;
+    }
+
+    public boolean isCompile() {
+        return compile;
+    }
+
+    /**
+     * Whether to compile the module to JVM bytecode, with the runtime compiler of Endive, instead of interpreting it.
+     * The module is compiled once per endpoint, when the first producer of the endpoint is initialized (with the route,
+     * or at the first message with lazyStartProducer), which takes time for a large module; every exchange then runs
+     * the compiled code, which is much faster than the interpreter. Stopping and starting the route does not compile
+     * the module again. All other options work the same way. The compiler generates classes at run time, so this option
+     * cannot be used in a GraalVM native image.
+     */
+    public void setCompile(boolean compile) {
+        this.compile = compile;
     }
 
     public Map<String, Object> getEnvironment() {

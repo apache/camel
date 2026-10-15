@@ -27,7 +27,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import dev.tamboui.backend.aesh.AeshBackend;
+import dev.tamboui.backend.jline3.JLineBackend;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -53,18 +53,16 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.ImmediateEventExecutor;
-import org.aesh.terminal.Connection;
-import org.aesh.terminal.http.netty.HttpRequestHandler;
-import org.aesh.terminal.http.netty.TtyWebSocketFrameHandler;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.jline.terminal.Terminal;
 
 /**
- * Serves the Camel TUI dashboard to a web browser over WebSocket, using Aesh's HTTP/WebSocket terminal bridge.
+ * Serves the Camel TUI dashboard to a web browser over WebSocket: the page ({@link WebPageHandler}), then a terminal
+ * per browser session ({@link WebTerminal}).
  * <p>
- * Each incoming connection gets its own {@link CamelMonitor} instance (running the same live-monitoring logic as a
- * local terminal session) driven by an {@link AeshBackend} wrapping that connection.
+ * Each session gets its own {@link CamelMonitor} instance (running the same live-monitoring logic as a local terminal
+ * session) on a {@link JLineBackend}, as a local session runs (CAMEL-25581).
  * <p>
  * Binds to 127.0.0.1 only for security.
  */
@@ -91,7 +89,7 @@ class TuiWebServer {
                 t.setDaemon(true);
                 return t;
             });
-    private final Consumer<Connection> sessionHandler;
+    private final Consumer<Terminal> sessionHandler;
     private Channel serverChannel;
     private boolean stopped;
 
@@ -105,7 +103,7 @@ class TuiWebServer {
      * {@link CamelMonitor}.
      */
     TuiWebServer(int port, CamelJBangMain main, ClassLoader classLoader, String name, long refreshInterval,
-                 String theme, Consumer<Connection> sessionHandler) {
+                 String theme, Consumer<Terminal> sessionHandler) {
         this.port = port;
         this.main = main;
         this.classLoader = classLoader;
@@ -173,43 +171,42 @@ class TuiWebServer {
         return bossDone && workerDone && sessionDone;
     }
 
-    private void accept(Connection connection) {
+    private boolean startSession(Terminal terminal, Runnable ended) {
         try {
             sessionExecutor.submit(() -> {
                 try {
-                    sessionHandler.accept(connection);
+                    sessionHandler.accept(terminal);
                 } finally {
-                    closeQuietly(connection);
+                    closeQuietly(terminal);
+                    ended.run();
                 }
             });
+            return true;
         } catch (RejectedExecutionException e) {
             LOG.log(Level.WARNING, "Web TUI session rejected: server is stopping or too many concurrent sessions");
-            closeQuietly(connection);
+            closeQuietly(terminal);
+            return false;
         }
     }
 
-    private void runSession(Connection connection) {
+    private void runSession(Terminal terminal) {
         try {
-            AeshBackend backend = new AeshBackend(connection);
             CamelMonitor monitor = new CamelMonitor(main, classLoader);
             monitor.name = name;
             monitor.refreshInterval = refreshInterval;
             monitor.theme = theme;
-            monitor.webBackend = backend;
+            monitor.webBackend = new JLineBackend(terminal);
             monitor.call();
-        } catch (NullPointerException e) {
-            // Browser disconnected mid-render — Aesh websocket handler's context is null
-            LOG.log(Level.DEBUG, "Web TUI session disconnected", e);
         } catch (Exception e) {
             LOG.log(Level.WARNING, "Web TUI session ended with an error", e);
         }
     }
 
-    private static void closeQuietly(Connection connection) {
+    private static void closeQuietly(Terminal terminal) {
         try {
-            connection.close();
+            terminal.close();
         } catch (Exception ignored) {
-            // connection already closing
+            // the terminal is already closed
         }
     }
 
@@ -219,13 +216,12 @@ class TuiWebServer {
         protected void initChannel(SocketChannel channel) {
             ChannelPipeline pipeline = channel.pipeline();
             pipeline.addLast(new HttpServerCodec());
-            pipeline.addLast(new ChunkedWriteHandler());
             pipeline.addLast(new HttpObjectAggregator(65_536));
             pipeline.addLast(new OriginCheckingUpgradeHandler());
             pipeline.addLast(new SecurityHeadersHandler());
-            pipeline.addLast(new HttpRequestHandler("/ws", "/tui/web"));
+            pipeline.addLast(new WebPageHandler("/ws"));
             pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
-            pipeline.addLast(new TtyWebSocketFrameHandler(channels, TuiWebServer.this::accept));
+            pipeline.addLast(new WebTerminal(channels, TuiWebServer.this::startSession));
         }
     }
 

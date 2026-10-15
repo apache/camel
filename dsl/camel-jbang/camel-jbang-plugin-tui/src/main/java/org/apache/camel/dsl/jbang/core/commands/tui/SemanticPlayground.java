@@ -28,7 +28,6 @@ import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
-import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
@@ -37,7 +36,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextArea;
 import dev.tamboui.widgets.input.TextAreaState;
-import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -55,6 +54,8 @@ final class SemanticPlayground {
     private final SemanticParameterForm instructions;
     private final SemanticParameterForm parameters;
     private boolean structured;
+    private Object auditInput;
+    private String auditInputDisplay;
     private boolean submittedStructured;
     private CompletableFuture<JsonObject> pending;
     private JsonObject response;
@@ -62,7 +63,10 @@ final class SemanticPlayground {
     private String submittedInput;
     private JsonObject submittedRequest;
     private List<String> submittedScoreLevels = List.of();
+    private JsonObject submittedInterpretation;
     private String parameterSource;
+    private JsonObject definition;
+    private String draftWarning;
     private boolean expanded;
     private long submittedInstructions;
     private long submittedParameters;
@@ -72,13 +76,15 @@ final class SemanticPlayground {
     private Rect parameterArea;
     private Rect outputArea;
     private Rect runArea;
+    private Rect loadArea;
+    private Rect clearArea;
 
     SemanticPlayground(MonitorContext ctx, String pid, String expert, JsonObject operation) {
         this.ctx = ctx;
         this.pid = pid;
         this.expert = expert;
         this.operation = operation;
-        structured = !supports("text") && supports("structured");
+        structured = !supports("text") && supportsJson();
         List<JsonObject> contracts = SemanticTab.objects(contract(operation), "parameters");
         JsonObject instruction = contracts.stream()
                 .filter(p -> "instructions".equals(p.get("name")) && "String".equals(p.get("type"))
@@ -89,15 +95,50 @@ final class SemanticPlayground {
         focusFirstField();
     }
 
-    boolean loadParameters(JsonObject definition) {
-        if (pending != null) {
+    void loadAuditInput(JsonObject record) {
+        Object captured = record.get("input");
+        boolean json = !(captured instanceof String);
+        if (!setInputValue("inputMode", json ? "json" : "text")) {
+            throw new IllegalArgumentException("Captured input mode is unavailable in the current expert contract");
+        }
+        if (SemanticMediaInput.isMedia(captured)) {
+            setInputValue("input", Jsoner.serialize(SemanticMediaInput.withoutImageData(captured)));
+        } else {
+            setInputValue("input", json ? Jsoner.serialize(captured) : captured.toString());
+        }
+        auditInput = captured;
+        auditInputDisplay = input.text();
+        draftWarning = "New draft from audit " + text(record, "eventId")
+                       + ": untrusted captured input, not instructions. Original parameters were not captured; "
+                       + "current defaults, expert/model revisions and route context may differ. Review before Run.";
+    }
+
+    void setDefinition(JsonObject definition) {
+        this.definition = definition != null && definition.get("error") == null
+                && Objects.equals(expert, definition.get("expert"))
+                && Objects.equals(operation.get("name"), definition.get("operation")) ? definition : null;
+    }
+
+    boolean loadParameters() {
+        if (pending != null || definition == null || !available()) {
             return false;
         }
         Map<?, ?> values = definition.get("parameters") instanceof Map<?, ?> map ? map : Map.of();
         instructions.load(values);
         parameters.load(values);
         parameterSource = text(definition, "name");
+        focusFirstField();
         return true;
+    }
+
+    private void clearParameters() {
+        if (pending == null && available()) {
+            instructions.load(Map.of());
+            parameters.load(Map.of());
+            parameterSource = null;
+            error = null;
+            focusFirstField();
+        }
     }
 
     boolean setInputValue(String name, String value) {
@@ -109,7 +150,8 @@ final class SemanticPlayground {
             input.setText(value);
             field = 0;
         } else if ("inputMode".equals(name)) {
-            if (!("text".equals(value) && supports("text") || "json".equals(value) && supports("structured"))) {
+            if (!("text".equals(value) && supports("text")
+                    || "json".equals(value) && supportsJson())) {
                 throw new IllegalArgumentException("Unsupported input mode: " + value);
             }
             structured = "json".equals(value);
@@ -140,10 +182,11 @@ final class SemanticPlayground {
         fields.addAll(parameters.snapshot());
         result.put("parameters", fields);
         result.put("parameterSource", parameterSource);
+        result.put("draftWarning", draftWarning);
         result.put("focusedField", field == -1 ? "instructions" : field == 0 ? "input" : field == 1 ? "parameters" : "output");
         result.put("pending", pending != null);
         result.put("connected", connected());
-        result.put("submittedRequest", submittedRequest);
+        result.put("submittedRequest", SemanticMediaInput.withoutImageData(submittedRequest));
         result.put("result", response);
         result.put("error", error);
         result.put("inputChanged", inputChanged());
@@ -160,12 +203,16 @@ final class SemanticPlayground {
                 && Objects.equals(this.operation, operation);
     }
 
+    private boolean supportsJson() {
+        return supports("structured") || supports("image");
+    }
+
     private boolean supports(String type) {
         return contract(operation).get("inputTypes") instanceof List<?> types && types.contains(type);
     }
 
     boolean available() {
-        return supports("text") || supports("structured");
+        return supports("text") || supportsJson();
     }
 
     private boolean connected() {
@@ -182,6 +229,10 @@ final class SemanticPlayground {
         refresh();
         if (key.hasCtrl() && key.isCharIgnoreCase('r')) {
             run();
+        } else if (key.hasCtrl() && key.isCharIgnoreCase('p')) {
+            loadParameters();
+        } else if (key.hasCtrl() && key.isCharIgnoreCase('k')) {
+            clearParameters();
         } else if (key.isKey(KeyCode.TAB)) {
             boolean back = key.hasShift();
             if (field == 1 && parameters.next(back)) {
@@ -207,7 +258,8 @@ final class SemanticPlayground {
                 outputScroll += key.isPageDown() ? 5 : 1;
             }
         } else if (pending == null && available()) {
-            if (field == 0 && key.hasCtrl() && key.isCharIgnoreCase('t') && supports("text") && supports("structured")) {
+            if (field == 0 && key.hasCtrl() && key.isCharIgnoreCase('t') && supports("text")
+                    && supportsJson()) {
                 structured = !structured;
             } else if (key.hasCtrl() && key.isCharIgnoreCase('l')) {
                 if (field == 0) {
@@ -242,6 +294,14 @@ final class SemanticPlayground {
         }
         if (runArea != null && runArea.contains(event.x(), event.y())) {
             run();
+            return true;
+        }
+        if (loadArea != null && loadArea.contains(event.x(), event.y())) {
+            loadParameters();
+            return true;
+        }
+        if (clearArea != null && clearArea.contains(event.x(), event.y())) {
+            clearParameters();
             return true;
         }
         if (pending == null && instructions.click(event.x(), event.y())) {
@@ -290,7 +350,12 @@ final class SemanticPlayground {
                 throw invalid;
             }
             Object value = input.text();
-            if (structured) {
+            boolean capturedUnchanged = auditInput != null && input.text().equals(auditInputDisplay);
+            // Captured text is evidence, never an implicit instruction to read a local image file.
+            boolean readLocalImage = supports("image") && !capturedUnchanged;
+            if (capturedUnchanged && structured && !(auditInput instanceof String)) {
+                value = auditInput;
+            } else if (structured && !(readLocalImage && input.text().startsWith("image:"))) {
                 value = Jsoner.deserialize(input.text());
                 if (!(value instanceof JsonObject || value instanceof List<?>)) {
                     throw new IllegalArgumentException("Structured input must be a JSON object or array.");
@@ -306,10 +371,22 @@ final class SemanticPlayground {
             submittedStructured = structured;
             submittedInput = input.text();
             submittedScoreLevels = scoreLevels(operation, params);
+            submittedInterpretation = SemanticResultView.interpretation(operation, params, submittedScoreLevels);
             submittedInstructions = instructions.revision();
             submittedParameters = parameters.revision();
             pending = CompletableFuture
-                    .supplyAsync(() -> ctx.executeIndependentAction(pid, request, 60000), ctx.backgroundExecutor)
+                    .supplyAsync(() -> {
+                        JsonObject prepared = new JsonObject(request);
+                        if (readLocalImage && prepared.get("input") instanceof String text && text.startsWith("image:")) {
+                            prepared.put("input",
+                                    SemanticMediaInput.readImage(text, SemanticMediaInput.imageMaxBytes(operation)));
+                        }
+                        if (SemanticMediaInput.hasImages(prepared.get("input"))) {
+                            SemanticMediaInput.validateImageSize(prepared.get("input"),
+                                    SemanticMediaInput.imageMaxBytes(operation));
+                        }
+                        return ctx.executeIndependentAction(pid, prepared, 60000);
+                    }, ctx.backgroundExecutor)
                     .exceptionally(SemanticResultView::failure);
         } catch (Exception invalid) {
             error = "Input error: " + invalid.getMessage();
@@ -319,6 +396,9 @@ final class SemanticPlayground {
     private void refresh() {
         if (pending != null && pending.isDone()) {
             response = pending.getNow(null);
+            if (response != null && submittedInterpretation != null) {
+                response.put("interpretation", submittedInterpretation);
+            }
             pending = null;
             if (response == null) {
                 error = "Connection: request timed out after 60 seconds. The provider call may still be running. Input kept; Ctrl+r retries.";
@@ -337,6 +417,8 @@ final class SemanticPlayground {
         parameterArea = null;
         outputArea = null;
         runArea = null;
+        loadArea = null;
+        clearArea = null;
         Block block = Block.builder().borders(Borders.ALL).borderType(BorderType.ROUNDED)
                 .borderStyle(ctx.paneBorder(focused))
                 .title(" " + truncate("Try expert · " + text(operation, "name") + " · direct"
@@ -346,7 +428,24 @@ final class SemanticPlayground {
                 .build();
         frame.renderWidget(block, area);
         Rect inner = block.inner(area);
-        if (inner.height() < (instructions.isEmpty() ? 7 : 11) || inner.width() < 30) {
+        String loadLabel = " Ctrl+p Load params ";
+        String clearLabel = " Ctrl+k Clear params ";
+        String runLabel = !connected() ? " Disconnected " : pending == null ? " Ctrl+r Run " : " Running… ";
+        boolean hasParameters = !instructions.isEmpty() || !parameters.isEmpty();
+        List<String> labels = hasParameters ? List.of(loadLabel, clearLabel, runLabel) : List.of(runLabel);
+        List<Rect> actions = new ArrayList<>();
+        int actionX = inner.x() + 1;
+        int actionY = inner.y() + 1;
+        for (String label : labels) {
+            if (actionX > inner.x() + 1 && actionX + label.length() > inner.right() - 1) {
+                actionX = inner.x() + 1;
+                actionY++;
+            }
+            actions.add(new Rect(actionX, actionY, label.length(), 1));
+            actionX += label.length() + 1;
+        }
+        int actionRows = actionY - inner.y();
+        if (inner.height() < (instructions.isEmpty() ? 7 : 11) + actionRows || inner.width() < 30) {
             paragraph(frame, inner, List.of(Line.from("Enlarge the terminal to use the expert playground.")), 0);
             return;
         }
@@ -354,19 +453,23 @@ final class SemanticPlayground {
             paragraph(frame, inset(inner), List.of(Line.from("No supported input type is published for this operation.")), 0);
             return;
         }
-        Rect title = new Rect(inner.x() + 1, inner.y(), Math.max(0, inner.width() - 20), 1);
+        Rect title = new Rect(inner.x() + 1, inner.y(), Math.max(0, inner.width() - 2), 1);
         paragraph(frame, title, List.of(Line.from(Span.styled(expert + " › ", Theme.info()),
                 Span.raw(text(operation, "name") + " → " + text(operation, "resultType")),
                 Span.styled(" · input: " + (structured ? "JSON" : "text"), Theme.muted()))), 0);
-        runArea = new Rect(inner.right() - 17, inner.y(), 16, 1);
-        frame.renderWidget(Paragraph.builder().text(Text.from(Line.from(Span.styled(
-                !connected() ? " Disconnected " : pending == null ? " Ctrl+r  Run " : " Running… ",
-                connected() ? Theme.hintKey() : Theme.muted())))).build(), runArea);
+        runArea = actions.get(actions.size() - 1);
+        action(frame, runArea, runLabel, connected() && pending == null);
         boolean sideBySide = !parameters.isEmpty();
         int editorHeight = Math.max(instructions.isEmpty() ? 3 : 6,
                 Math.min(expanded ? Integer.MAX_VALUE : sideBySide || !instructions.isEmpty() ? 22 : 5,
-                        (inner.height() - (parameterSource == null ? 0 : 1)) * 2 / 3));
-        int y = inner.y() + 1;
+                        (inner.height() - actionRows - (parameterSource == null ? 0 : 1)) * 2 / 3));
+        int y = inner.y() + 1 + actionRows;
+        if (hasParameters) {
+            loadArea = actions.get(0);
+            clearArea = actions.get(1);
+            action(frame, loadArea, loadLabel, pending == null && definition != null);
+            action(frame, clearArea, clearLabel, pending == null);
+        }
         if (parameterSource != null) {
             paragraph(frame, new Rect(inner.x() + 1, y++, inner.width() - 2, 1),
                     List.of(Line
@@ -385,7 +488,8 @@ final class SemanticPlayground {
         }
         String label = instructions.isEmpty() ? "Input" : structured ? "State to assess" : "Text to assess";
         inputArea = renderEditor(frame, stateBox, input, label + " · " + (structured ? "JSON" : "text"),
-                focused && field == 0, structured ? "Paste a JSON object or array" : "Type or paste the content to assess");
+                focused && field == 0, supports("image") ? "Text, image:/path, or a JSON media envelope"
+                        : structured ? "Paste a JSON object or array" : "Type or paste the content to assess");
         int outputY = inputBox.bottom();
         if (sideBySide) {
             Rect paramsBox = new Rect(inputBox.right() + 1, y, inner.right() - inputBox.right() - 2, editorHeight);
@@ -398,6 +502,10 @@ final class SemanticPlayground {
         List<Line> lines = hangingWrap(output(), outputArea.width());
         outputScroll = Math.min(outputScroll, Math.max(0, lines.size() - outputArea.height()));
         paragraph(frame, outputArea, lines, outputScroll);
+    }
+
+    private void action(Frame frame, Rect area, String label, boolean enabled) {
+        paragraph(frame, area, List.of(Line.from(Span.styled(label, enabled ? Theme.hintKey() : Theme.muted()))), 0);
     }
 
     private Rect renderEditor(Frame frame, Rect area, TextAreaState state, String title, boolean focused, String placeholder) {
@@ -418,6 +526,9 @@ final class SemanticPlayground {
 
     private List<Line> output() {
         List<Line> lines = new ArrayList<>();
+        if (draftWarning != null) {
+            lines.add(Line.from(Span.styled(draftWarning, Theme.warning())));
+        }
         if (!connected()) {
             lines.add(Line.from(Span.styled("Application disconnected · Run is disabled", Theme.warning())));
             lines.add(Line.from("Reconnect to this application to run the expert. Your draft is kept here."));
@@ -449,13 +560,13 @@ final class SemanticPlayground {
         hint(spans, "Esc", "leave");
         hint(spans, "Ctrl+r", !connected() ? "disconnected" : pending == null ? "run" : "running");
         hint(spans, "Tab/⇧Tab", "field");
-        hint(spans, "Ctrl+l", "clear");
+        hint(spans, "Ctrl+l", "clear field");
         if (field == 1) {
             parameters.renderFooter(spans);
         }
         hint(spans, "Ctrl+e", expanded ? "restore" : "expand");
         if (field == 0) {
-            if (supports("text") && supports("structured")) {
+            if (supports("text") && supportsJson()) {
                 hint(spans, "Ctrl+t", "text/JSON");
             }
             hintLast(spans, "Enter", "new line");

@@ -66,6 +66,7 @@ import dev.tamboui.widgets.spinner.SpinnerStyle;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonObject;
@@ -1586,15 +1587,7 @@ class AiPanel {
      * broke, and to send the whole answer again. Worded so the fake clients of the tests and the log recognise it.
      */
     static String correctionRequest(List<AnswerChecks.Problem> problems) {
-        StringBuilder sb = new StringBuilder("Your answer contains ");
-        sb.append(problems.size() == 1 ? "an invalid simple expression" : "invalid simple expressions").append(":\n");
-        for (AnswerChecks.Problem p : problems) {
-            sb.append("- ").append(p.message()).append('\n');
-        }
-        sb.append("Rule: functions and values go inside ${...}, operators go between placeholders with spaces:")
-                .append(" ${header.user} ?: 'Guest', ${header.a} == 'b', ${body} != null.")
-                .append(" Send the whole answer again with the expressions fixed; do not call a tool.");
-        return sb.toString();
+        return AnswerChecks.correctionRequest(problems);
     }
 
     /** The line under an answer whose simple expressions the model did not fix, so the user is not misled. */
@@ -1784,9 +1777,11 @@ class AiPanel {
     }
 
     /**
-     * Policy A from the design: calls to the TUI's read-only tools are approved silently (allow-always preferred),
-     * everything else, including a TUI tool that changes something, is put in front of the user. Runs on the ACP
-     * request thread and blocks until the user answers or the turn is cancelled.
+     * The TUI's own tools are approved silently (allow-always preferred): Camel TUI is a developer tool, and the TUI
+     * asks the user itself before the few calls that need it (a file write in its write mode, and
+     * {@link ToolConfirms}). The agent's own tools (its shell commands, file changes and fetches) are put in front of
+     * the user. While a tape drives the monitor nothing asks at all (CAMEL-25444). Runs on the ACP request thread and
+     * blocks until the user answers or the turn is cancelled.
      */
     private final class AcpPanelPermissionHandler implements AcpAgentClient.PermissionHandler {
         @Override
@@ -1795,12 +1790,8 @@ class AiPanel {
             String title = String.valueOf(toolCall.getStringOrDefault("title", ""));
             String kind = String.valueOf(toolCall.getStringOrDefault("kind", ""));
             String tool = tuiToolName(name, title, kind);
-            boolean readOnly = tool != null && TuiToolRegistry.READ_ONLY_TOOLS.contains(tool);
-            // the facade asks the user before a camel_write_file call touches a file (the confirm dialog or the live
-            // replay), so a second question at the ACP layer would only make the user answer twice; in auto mode
-            // nothing else asks and the popup stays
-            boolean confirmedByTui = TuiToolRegistry.WRITE_TOOL.equals(tool) && writeMode != McpFacade.WriteMode.AUTO;
-            if (readOnly || confirmedByTui) {
+            boolean tuiTool = tool != null && TuiToolRegistry.isTool(tool);
+            if (tuiTool || ctx != null && ctx.tapeDriven.getAsBoolean()) {
                 String optionId = firstOptionOfKind(options, "allow_always");
                 if (optionId == null) {
                     optionId = firstOptionOfKind(options, "allow_once");
@@ -1808,9 +1799,9 @@ class AiPanel {
                 if (optionId == null && !options.isEmpty()) {
                     optionId = options.get(0).getString("optionId");
                 }
-                log(LogLevel.TOOL, readOnly
-                        ? "Auto-approved read-only TUI tool"
-                        : "Auto-approved camel_write_file (the TUI confirms the write itself)", title);
+                log(LogLevel.TOOL, tuiTool
+                        ? "Auto-approved TUI tool (the TUI asks itself when it must)"
+                        : "Auto-approved while a tape drives the monitor", title);
                 return optionId;
             }
             CompletableFuture<String> decision = new CompletableFuture<>();
@@ -1835,8 +1826,8 @@ class AiPanel {
      * The camel-tui tool a permission request is about, or null when it is not one: the name the Claude adapter sends
      * ({@code mcp__camel-tui__tui_get_state}) or a title of the form {@code tui_get_state (camel-tui MCP Server)}.
      * Kinds that touch files or run commands never qualify, whatever the title says: a path containing "camel-tui" is
-     * not a tool identity. The caller decides what the tool may do: only {@link TuiToolRegistry#READ_ONLY_TOOLS} and a
-     * write the TUI confirms itself are approved silently, everything else goes to the user.
+     * not a tool identity. The caller approves a tool of the TUI silently, as the TUI asks itself when it must;
+     * everything else goes to the user.
      */
     private static String tuiToolName(String name, String title, String kind) {
         if (FILE_OR_SHELL_KINDS.contains(kind)) {
@@ -2817,7 +2808,7 @@ class AiPanel {
         return acpSession.sessionId();
     }
 
-    boolean isPermissionPopupVisibleForTesting() {
+    boolean isPermissionPopupVisible() {
         return permissionPopup.isVisible();
     }
 

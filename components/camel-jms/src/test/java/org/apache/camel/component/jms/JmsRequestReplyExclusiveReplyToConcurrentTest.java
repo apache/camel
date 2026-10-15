@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Creates multiple threads
  */
-@Tags({ @Tag("not-parallel"), @Tag("spring") })
+@Tags({ @Tag("exclusive"), @Tag("spring") })
 public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTest {
 
     @Order(2)

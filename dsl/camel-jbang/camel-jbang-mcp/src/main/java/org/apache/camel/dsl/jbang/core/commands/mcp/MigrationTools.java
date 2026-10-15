@@ -41,6 +41,7 @@ public class MigrationTools {
     private static final String OPENREWRITE_VERSION = "6.29.0";
     private static final String CAMEL_UPGRADE_RECIPES_ARTIFACT = "camel-upgrade-recipes";
     private static final String CAMEL_SPRING_BOOT_UPGRADE_RECIPES_ARTIFACT = "camel-spring-boot-upgrade-recipes";
+    private static final int SNIPPET_LINES = 30;
 
     @Inject
     MigrationData migrationData;
@@ -289,51 +290,59 @@ public class MigrationTools {
     }
 
     /**
-     * Search migration guides for a specific term.
+     * Search migration guides for a specific term, optionally scoped to the versions being migrated between.
      */
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Search Camel migration and upgrade guides for a specific term or component name. "
-                        + "Returns matching snippets from the official guides with version info and URLs. "
-                        + "Supports fuzzy matching for typo tolerance. "
+                        + "Each result is one topic entry of a release (e.g. 'Upgrading Camel 4.20 to 4.21 / camel-cxf') "
+                        + "with the lines around the best match, version info and URL. "
+                        + "Pass currentVersion/targetVersion (e.g. 2.25 and 4.22) to search only the guides for that "
+                        + "migration, with the 2.x to 3.0 and 3.x to 4.0 migration guides ranked higher. "
+                        + "Results are ranked by relevance with typo tolerance; generic words such as camel, "
+                        + "migration or upgrade are ignored, and no results are returned when nothing is relevant. "
                         + "Use this instead of web search when looking up migration-related changes, "
                         + "removed components, API renames, or breaking changes.")
     public GuideSearchResult camel_migration_guide_search(
             @ToolArg(description = "Search query — component name, API class, method, or keyword "
-                                   + "(e.g., direct-vm, getOut, camel-http4, ExchangePattern)") String query,
-            @ToolArg(description = "Maximum number of results to return (default: 3)", required = false) Integer limit) {
+                                   + "(e.g., direct-vm, getOut, camel-http4, cxf servlet, camel-mail subject header)") String query,
+            @ToolArg(description = "Maximum number of results to return (default: 3)", required = false) Integer limit,
+            @ToolArg(description = "Current Camel version, migrating from (e.g., 2.25 or 3.20.1). "
+                                   + "Guides for releases up to this version are omitted.",
+                     required = false) String currentVersion,
+            @ToolArg(description = "Target Camel version, migrating to (e.g., 4.22). "
+                                   + "Guides for releases after this version are omitted.",
+                     required = false) String targetVersion) {
 
         if (query == null || query.isBlank()) {
             throw new ToolCallException("query is required", null);
         }
 
         int maxResults = limit != null && limit > 0 ? limit : 3;
-        List<MigrationData.GuideSection> matches = migrationData.searchGuides(query, maxResults);
+        List<MigrationData.SearchHit> hits;
+        try {
+            hits = migrationData.search(query, currentVersion, targetVersion, maxResults);
+        } catch (IllegalArgumentException e) {
+            throw new ToolCallException(e.getMessage(), e);
+        }
 
         List<GuideSnippet> snippets = new ArrayList<>();
-        for (MigrationData.GuideSection section : matches) {
-            // Truncate content to avoid huge responses
-            String snippet = truncateSnippet(section.content(), 30);
+        for (MigrationData.SearchHit hit : hits) {
+            MigrationData.GuideSection section = hit.section();
             snippets.add(new GuideSnippet(
                     section.guide(), section.version(), section.sectionTitle(),
-                    snippet, section.url()));
+                    migrationData.snippet(hit, SNIPPET_LINES), section.url()));
         }
 
-        String nextStep = "Call camel_migration_guide_search again for other terms, or call camel_migration_recipes.";
+        String nextStep;
+        if (snippets.isEmpty()) {
+            nextStep = "No migration guide entry is relevant to this query. Rephrase it with a component name, "
+                       + "option or API class (e.g. camel-cxf, getOut), widen or drop currentVersion/targetVersion, "
+                       + "or ask camel_catalog_doc for the component's current documentation.";
+        } else {
+            nextStep = "Call camel_migration_guide_search again for other terms, or call camel_migration_recipes.";
+        }
 
         return new GuideSearchResult(query, snippets.size(), snippets, nextStep);
-    }
-
-    private String truncateSnippet(String content, int maxLines) {
-        String[] lines = content.split("\n");
-        if (lines.length <= maxLines) {
-            return content;
-        }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < maxLines; i++) {
-            sb.append(lines[i]).append("\n");
-        }
-        sb.append("... (truncated, ").append(lines.length - maxLines).append(" more lines)");
-        return sb.toString();
     }
 
     // Helpers

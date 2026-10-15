@@ -24,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.semantic.SemanticInput;
+
 /** Bounded JSON values only: never converts arbitrary objects or consumes streams. */
 public final class SemanticAuditInputSnapshot {
     private int remaining;
@@ -35,6 +37,62 @@ public final class SemanticAuditInputSnapshot {
 
     public static Object copy(Object input, int maxChars) {
         return new SemanticAuditInputSnapshot(maxChars).value(input, 0);
+    }
+
+    /** Classify without reading streams, decoding content, or exposing values in an audit summary. */
+    public static String inputType(Object input) {
+        if (SemanticInput.isMedia(input)) {
+            boolean text = false;
+            boolean image = false;
+            List<?> parts = SemanticInput.parts(input);
+            if (parts.size() > 1000) {
+                return "unknown";
+            }
+            for (Object item : parts) {
+                if (!(item instanceof Map<?, ?> part)) {
+                    return "unsupported";
+                }
+                if ("text".equals(part.get("type"))) {
+                    text = true;
+                } else if ("image".equals(part.get("type"))) {
+                    image = true;
+                } else {
+                    return "unsupported";
+                }
+            }
+            return image ? text ? "text-and-images" : "image" : "text";
+        }
+        return input instanceof String ? "text"
+                : input instanceof Map<?, ?> || input instanceof List<?> ? "structured" : "unsupported";
+    }
+
+    /** Retain bounded image descriptors when the configured capture budget cannot hold the image payload. */
+    public static Object capture(Object input, int maxChars) {
+        try {
+            return copy(input, maxChars);
+        } catch (IllegalArgumentException limit) {
+            if (!SemanticInput.isMedia(input) || SemanticInput.parts(input).size() > 128) {
+                throw limit;
+            }
+            List<Object> parts = new ArrayList<>();
+            for (Object item : SemanticInput.parts(input)) {
+                if (item instanceof Map<?, ?> part && "image".equals(part.get("type"))) {
+                    Map<String, Object> descriptor = new LinkedHashMap<>();
+                    descriptor.put("type", "image");
+                    descriptor.put("dataOmitted", "snapshot_limit");
+                    if (part.get("data") instanceof String data && data.startsWith("data:image/")) {
+                        int end = data.indexOf(";base64,");
+                        if (end > 5 && end < 120 && data.substring(5, end).matches("image/[a-z0-9.+-]+")) {
+                            descriptor.put("mediaType", data.substring(5, end));
+                        }
+                    }
+                    parts.add(descriptor);
+                } else {
+                    parts.add(item);
+                }
+            }
+            return copy(Map.of(SemanticInput.PARTS, parts), maxChars);
+        }
     }
 
     private Object value(Object value, int depth) {

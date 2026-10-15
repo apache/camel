@@ -16,19 +16,9 @@
  */
 package org.apache.camel.semantic;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -38,16 +28,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinder;
-import org.apache.camel.impl.engine.DefaultInjector;
 import org.apache.camel.language.semantic.SemanticLanguage;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -55,8 +40,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticLanguageTest {
-    @TempDir
-    Path directory;
     DefaultCamelContext context;
     SemanticLanguage language;
 
@@ -68,7 +51,7 @@ class SemanticLanguageTest {
         context = new DefaultCamelContext();
         language = new SemanticLanguage();
         language.setCamelContext(context);
-        language.setAdapter(CountingAdapter.class.getName());
+        context.getRegistry().bind("classifier", new CountingAdapter());
         context.getRegistry().bind("semantic", language);
         context.init();
         evaluations(evaluation("boolean", null, 0.5, 0, "fail"));
@@ -82,7 +65,7 @@ class SemanticLanguageTest {
     static SemanticEvaluation evaluation(
             String type, String state, double threshold, double uncertainty,
             String policy) {
-        return new SemanticEvaluation(type, null, state, switch (type) {
+        return new SemanticEvaluation(type, "classifier", state, switch (type) {
             case "boolean" -> Map.of("instructions", "Classify this message", "threshold", threshold,
                     "uncertainty", uncertainty, "uncertaintyPolicy", policy);
             case "choice" -> Map.of("instructions", "Classify this message", "criteria",
@@ -96,13 +79,8 @@ class SemanticLanguageTest {
         SemanticEvaluations.get(context).replace("test", Map.of("q", evaluation));
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void warmEvaluationDoesNotAcquireTheLanguageMonitor(boolean registryOwned) throws Exception {
-        if (registryOwned) {
-            context.getRegistry().bind("registered", new CountingAdapter());
-            language.setAdapter("registered");
-        }
+    @Test
+    void warmEvaluationDoesNotAcquireTheLanguageMonitor() throws Exception {
         context.start();
         Expression expression = language.createExpression("ref:q");
         var exchange = new DefaultExchange(context);
@@ -120,206 +98,14 @@ class SemanticLanguageTest {
     }
 
     @Test
-    void createdAdapterIsRegisteredAndManagedExactlyOnce() throws Exception {
-        Expression first = language.createExpression("ref:q");
-        language.createPredicate("ref:q");
-        assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isInstanceOf(CountingAdapter.class);
-        assertThat(CountingAdapter.constructed).hasValue(1);
-        assertThat(CountingAdapter.started).hasValue(1);
-        var exchange = new DefaultExchange(context);
-        exchange.getMessage().setBody("original");
-        assertThat(first.evaluate(exchange, Boolean.class)).isTrue();
-        assertThat(exchange.getMessage().getBody()).isEqualTo("original");
-        context.stop();
-        assertThat(CountingAdapter.stopped).hasValue(1);
-        assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
-    }
-
-    @Test
     void explicitBeanRetainsIdentityAndLifecycleOwner() throws Exception {
         CountingAdapter bean = new CountingAdapter();
-        context.getRegistry().bind("custom", bean);
-        language.setAdapter("custom");
+        context.getRegistry().bind("classifier", bean);
         language.createExpression("ref:q");
-        assertThat(context.getRegistry().lookupByName("custom")).isSameAs(bean);
-        assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
+        assertThat(context.getRegistry().lookupByName("classifier")).isSameAs(bean);
         assertThat(CountingAdapter.started).hasValue(0);
         context.stop();
         assertThat(CountingAdapter.stopped).hasValue(0);
-    }
-
-    @Test
-    void explicitClassIsConstructedOnce() {
-        language.setAdapter(CountingAdapter.class.getName());
-        language.createExpression("ref:q");
-        assertThat(CountingAdapter.constructed).hasValue(1);
-    }
-
-    @Test
-    void discoversOneAdapterAndRejectsMissingOrAmbiguousWithoutConstruction() throws Exception {
-        language.setAdapter(null);
-        discovery();
-        assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("exactly one");
-        discovery("class=" + CountingAdapter.class.getName(), "class=" + LabelAdapter.class.getName());
-        assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("explicitly");
-        assertThat(CountingAdapter.constructed).hasValue(0);
-        discovery("class=" + CountingAdapter.class.getName(), "# same provider\nclass: " + CountingAdapter.class.getName());
-        language.createExpression("ref:q");
-        assertThat(CountingAdapter.constructed).hasValue(1);
-        assertThat(CountingAdapter.started).hasValue(1);
-        context.stop();
-        assertThat(CountingAdapter.stopped).hasValue(1);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "", "# no implementation", "class=", "class=   " })
-    void invalidDiscoveryDescriptorFailsBeforeConstruction(String declaration) throws Exception {
-        language.setAdapter(null);
-        discovery(declaration);
-        assertThatThrownBy(() -> language.createExpression("ref:q"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("requires a class property").hasMessageContaining("adapter-0");
-        assertThat(CountingAdapter.constructed).hasValue(0);
-    }
-
-    @Test
-    void discoveredClassIsTypeCheckedBeforeConstruction() throws Exception {
-        NotAnAdapter.constructed.set(0);
-        language.setAdapter(null);
-        discovery("class=" + NotAnAdapter.class.getName());
-        assertThatThrownBy(() -> language.createExpression("ref:q"))
-                .isInstanceOf(RuntimeCamelException.class).hasCauseInstanceOf(ClassCastException.class);
-        assertThat(NotAnAdapter.constructed).hasValue(0);
-    }
-
-    @Test
-    void factoryFinderCannotSelectADifferentAdvertisedClass() throws Exception {
-        language.setAdapter(null);
-        discovery("class=" + CountingAdapter.class.getName());
-        context.getCamelContextExtension()
-                .setDefaultFactoryFinder(new DefaultFactoryFinder(context.getClassResolver(), FactoryFinder.DEFAULT_PATH) {
-                    @Override
-                    public Optional<Class<?>> findClass(String key) {
-                        return Optional.of(FailingAdapter.class);
-                    }
-                });
-        assertThatThrownBy(() -> language.createExpression("ref:q"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("does not match advertised adapter");
-        assertThat(CountingAdapter.constructed).hasValue(0);
-    }
-
-    @Test
-    void discoveryUsesCamelInjectorForConstructorArguments() throws Exception {
-        language.setAdapter(null);
-        discovery("class=" + InjectedAdapter.class.getName());
-        context.setInjector(new DefaultInjector(context) {
-            @Override
-            public <T> T newInstance(Class<T> type, boolean postProcessBean) {
-                return type == InjectedAdapter.class
-                        ? type.cast(new InjectedAdapter("injected")) : super.newInstance(type, postProcessBean);
-            }
-        });
-        language.createExpression("ref:q");
-        InjectedAdapter instance
-                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, InjectedAdapter.class);
-        assertThat(instance.dependency).isEqualTo("injected");
-        assertThat(CountingAdapter.constructed).hasValue(1);
-        assertThat(CountingAdapter.started).hasValue(1);
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void explicitSelectionBypassesAmbiguousDiscovery(boolean bean) throws Exception {
-        discovery("class=" + CountingAdapter.class.getName(), "class=" + LabelAdapter.class.getName());
-        if (bean) {
-            context.getRegistry().bind("custom", new CountingAdapter());
-            language.setAdapter("custom");
-        }
-        language.createExpression("ref:q");
-        assertThat(CountingAdapter.constructed).hasValue(1);
-        assertThat(CountingAdapter.started).hasValue(bean ? 0 : 1);
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void registeredSubclassesSupersedeDiscoveryButDistinctInstancesRemainAmbiguous(boolean distinct) throws Exception {
-        language.setAdapter(null);
-        discovery("class=" + CountingAdapter.class.getName());
-        CountingAdapter bean = new CountingAdapter() {
-        };
-        context.getRegistry().bind("custom", bean);
-        context.getRegistry().bind("alias", distinct ? new CountingAdapter() {
-        } : bean);
-        if (distinct) {
-            assertThatThrownBy(() -> language.createExpression("ref:q"))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("available experts: [alias, custom]")
-                    .hasMessageNotContaining("java.lang.IllegalArgumentException:");
-            assertThat(CountingAdapter.constructed).hasValue(2);
-        } else {
-            language.createExpression("ref:q");
-            assertThat(CountingAdapter.constructed).hasValue(1);
-        }
-        assertThat(CountingAdapter.started).hasValue(0);
-        assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
-    }
-
-    private void discovery(String... declarations) throws Exception {
-        List<URL> urls = new ArrayList<>();
-        for (int i = 0; i < declarations.length; i++) {
-            Path descriptor = directory.resolve("adapter-" + i);
-            Files.writeString(descriptor, declarations[i]);
-            urls.add(descriptor.toUri().toURL());
-        }
-        var resolver = new DefaultClassResolver() {
-            @Override
-            public Enumeration<URL> loadAllResourcesAsURL(String name) {
-                return SemanticLanguage.ADAPTER_RESOURCE.equals(name)
-                        ? Collections.enumeration(urls) : super.loadAllResourcesAsURL(name);
-            }
-
-            @Override
-            public InputStream loadResourceAsStream(String name) {
-                if (SemanticLanguage.ADAPTER_RESOURCE.equals(name)) {
-                    try {
-                        return urls.isEmpty() ? null : urls.get(0).openStream();
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                }
-                return super.loadResourceAsStream(name);
-            }
-        };
-        context.setClassResolver(resolver);
-        context.getCamelContextExtension()
-                .setDefaultFactoryFinder(new DefaultFactoryFinder(resolver, FactoryFinder.DEFAULT_PATH));
-    }
-
-    @Test
-    void classAndBeanTypeErrorsAndRegistryCollisionDoNotFallBack() {
-        language.setAdapter(String.class.getName());
-        assertThatThrownBy(() -> language.createExpression("ref:q")).isInstanceOf(RuntimeCamelException.class)
-                .hasCauseInstanceOf(ClassCastException.class);
-        language.setAdapter("missing");
-        assertThatThrownBy(() -> language.createExpression("ref:q"))
-                .hasMessageContaining("No semantic adapter bean or class found: missing");
-        context.getRegistry().bind("wrong", "not an adapter");
-        language.setAdapter("wrong");
-        assertThatThrownBy(() -> language.createExpression("ref:q"))
-                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not implement SemanticAdapter");
-        language.setAdapter(CountingAdapter.class.getName());
-        context.getRegistry().bind(SemanticLanguage.ADAPTER_NAME, "occupied");
-        assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("already bound");
-        assertThat(CountingAdapter.constructed).hasValue(0);
-    }
-
-    @Test
-    void initializationFailureUnbindsAndShutsDownOwnedAdapter() {
-        language.setAdapter(FailingAdapter.class.getName());
-        assertThatThrownBy(() -> language.createExpression("ref:q")).hasMessageContaining("start failure");
-        assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
-        assertThat(CountingAdapter.stopped).hasValue(1);
     }
 
     @Test
@@ -334,7 +120,7 @@ class SemanticLanguageTest {
         exchange.getMessage().setHeader("selected", "${body}");
         expression.evaluate(exchange, Boolean.class);
         CountingAdapter adapter
-                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, CountingAdapter.class);
+                = context.getRegistry().lookupByNameAndType("classifier", CountingAdapter.class);
         assertThat(adapter.state).isEqualTo("${body}");
         exchange.getMessage().removeHeader("selected");
         assertThatThrownBy(() -> expression.evaluate(exchange, Object.class)).hasMessageContaining("Missing selected state");
@@ -369,7 +155,7 @@ class SemanticLanguageTest {
         exchange.getMessage().setBody("original");
         assertThat(language.createExpression("ref:q").evaluate(exchange, Boolean.class)).isTrue();
         CountingAdapter adapter
-                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, CountingAdapter.class);
+                = context.getRegistry().lookupByNameAndType("classifier", CountingAdapter.class);
         assertThat(adapter.state).isEqualTo("");
         assertThat(exchange.getMessage().getBody()).isEqualTo("original");
     }
@@ -380,17 +166,6 @@ class SemanticLanguageTest {
         language.setDefaultState(selector);
         assertThatThrownBy(() -> language.createExpression("ref:q"))
                 .isExactlyInstanceOf(IllegalArgumentException.class).hasMessageContaining("must not be blank");
-    }
-
-    @Test
-    void registryNameTakesPrecedenceOverClassName() {
-        CountingAdapter bean = new CountingAdapter();
-        context.getRegistry().bind(CountingAdapter.class.getName(), bean);
-        language.setAdapter(CountingAdapter.class.getName());
-        language.createExpression("ref:q");
-        assertThat(CountingAdapter.constructed).hasValue(1);
-        assertThat(CountingAdapter.started).hasValue(0);
-        assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
     }
 
     @Test
@@ -406,7 +181,7 @@ class SemanticLanguageTest {
                 "fail"));
         assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
         CountingAdapter adapter
-                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, CountingAdapter.class);
+                = context.getRegistry().lookupByNameAndType("classifier", CountingAdapter.class);
         assertThat(adapter.state).isEqualTo("invoice");
         assertThat(exchange.getMessage().getBody()).isSameAs(body);
     }
@@ -417,7 +192,7 @@ class SemanticLanguageTest {
         var exchange = new DefaultExchange(context);
         exchange.getMessage().setBody("content");
         CountingAdapter adapter
-                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, CountingAdapter.class);
+                = context.getRegistry().lookupByNameAndType("classifier", CountingAdapter.class);
         adapter.answer = new SemanticResult(null, 0.5, null, null, null);
         assertThat(predicate.matches(exchange)).isTrue();
         evaluations(evaluation("boolean", null, 0.5, 0.1, "fail"));
@@ -433,7 +208,8 @@ class SemanticLanguageTest {
     @Test
     void initializationChecksReplacementsBeforeRegisteringItsValidator() {
         AtomicInteger validations = new AtomicInteger();
-        context.getRegistry().bind("changing", new CountingAdapter() {
+        context.getRegistry().unbind("classifier");
+        context.getRegistry().bind("classifier", new CountingAdapter() {
             @Override
             public void validate(SemanticEvaluation evaluation) {
                 if (validations.incrementAndGet() == 1) {
@@ -441,7 +217,6 @@ class SemanticLanguageTest {
                 }
             }
         });
-        language.setAdapter("changing");
         assertThatThrownBy(() -> language.createPredicate("ref:q"))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("boolean");
         // A failed initialization must not register a predicate constraint.
@@ -474,7 +249,7 @@ class SemanticLanguageTest {
         exchange.getMessage().setHeader("updated", "new state");
         expression.evaluate(exchange, Boolean.class);
         CountingAdapter adapter
-                = context.getRegistry().lookupByNameAndType(SemanticLanguage.ADAPTER_NAME, CountingAdapter.class);
+                = context.getRegistry().lookupByNameAndType("classifier", CountingAdapter.class);
         assertThat(adapter.state).isEqualTo("new state");
         assertThatThrownBy(
                 () -> SemanticEvaluations.get(context).replace("other", Map.of("q", SemanticEvaluations.get(context).get("q"))))
@@ -507,7 +282,8 @@ class SemanticLanguageTest {
 
     @Test
     void labelOnlyProviderWorksWithoutInventedProbabilitiesAndRejectsUnsupportedKinds() {
-        language.setAdapter(LabelAdapter.class.getName());
+        context.getRegistry().unbind("classifier");
+        context.getRegistry().bind("classifier", new LabelAdapter());
         evaluations(evaluation("choice", null, 0.5, 0, "fail"));
         Expression expression = language.createExpression("ref:q");
         var exchange = new DefaultExchange(context);
@@ -556,29 +332,6 @@ class SemanticLanguageTest {
         @Override
         protected void doStop() {
             stopped.incrementAndGet();
-        }
-    }
-
-    public static class FailingAdapter extends CountingAdapter {
-        @Override
-        protected void doStart() {
-            throw new IllegalStateException("start failure");
-        }
-    }
-
-    public static class InjectedAdapter extends CountingAdapter {
-        final String dependency;
-
-        public InjectedAdapter(String dependency) {
-            this.dependency = dependency;
-        }
-    }
-
-    public static class NotAnAdapter {
-        static final AtomicInteger constructed = new AtomicInteger();
-
-        public NotAnAdapter() {
-            constructed.incrementAndGet();
         }
     }
 

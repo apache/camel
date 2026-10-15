@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -60,7 +60,7 @@
         <httpcore-version>4.4.16</httpcore-version>
         <commons-codec-version>1.22.1</commons-codec-version>
         <jcl-over-slf4j-version>${slf4j-version}</jcl-over-slf4j-version>
-        <commonmark-version>0.30.0</commonmark-version>
+        <commonmark-version>0.30.1</commonmark-version>
         <jreleaser-plugin-version>1.26.0</jreleaser-plugin-version>
     </properties>
 

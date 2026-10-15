@@ -40,6 +40,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
  * Cost data is approximate and based on published AWS pricing as of 2025. Actual costs depend on model, region, and
  * volume tiers.
  */
+@McpSecured
 @ApplicationScoped
 public class RouteCostEstimateTools {
 

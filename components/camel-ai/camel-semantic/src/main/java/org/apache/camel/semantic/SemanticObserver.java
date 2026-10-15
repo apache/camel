@@ -36,9 +36,6 @@ public interface SemanticObserver {
     /** Start a detached invocation observation using the supplied parent context. */
     Observation started(SemanticAuditRecord record, Object parentContext);
 
-    default void decision(SemanticAuditRecord record) {
-    }
-
     interface Observation {
         /** Finish on the invocation thread, including on failure. Restore temporary context before returning. */
         void completed(SemanticAuditRecord record);

@@ -218,7 +218,7 @@ class ProcessControlPopup {
             case STOP -> confirmThen("Confirm Stop", "Stop", () -> actions.stopSelectedProcess(false));
             case KILL -> {
                 // Kill has a dedicated (error-styled) confirm dialog that performs the force-kill itself.
-                if (ctx.confirmActions) {
+                if (ctx.confirmFirst()) {
                     actions.showKillConfirm();
                 } else {
                     actions.stopSelectedProcess(true);
@@ -233,7 +233,7 @@ class ProcessControlPopup {
      * Kill all terminate a running process, so they share the same "are you sure?" gate as Quit and Stop All.
      */
     private void confirmThen(String title, String verb, Runnable action) {
-        if (!ctx.confirmActions) {
+        if (!ctx.confirmFirst()) {
             action.run();
             return;
         }

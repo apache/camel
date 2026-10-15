@@ -371,6 +371,13 @@ Criteria and other parameters stay on the right. Operations without instructions
 *Ctrl+l* clears the current field or restores an optional choice to its expert default;
 *Esc* leaves the editor while preserving the input and output.
 
+Click *Load params* or press *Ctrl+p* to copy the selected definition's parameters, including
+Instructions, into the form. The shortcut works while editing; *p* also works outside the editor.
+Click *Clear params* or press *Ctrl+k* to empty Instructions and all other parameter fields and rows.
+Both actions preserve the text/state to assess and change only the editable draft. The definition's state
+selector is not applied. Unset optional parameters use expert defaults; required values must be filled before Run.
+These controls are disabled while an evaluation is running.
+
 While editing text/state, use *Ctrl+t* to switch between literal text and JSON state when the operation supports both.
 Instructions remain plain text.
 Structured-only operations open in JSON mode. JSON state must be an object or array.
@@ -413,6 +420,35 @@ A configured expert is not a service-health guarantee. Provider failures and req
 appear inline and keep the input and parameter draft for an explicit retry. If the selected
 application disconnects, Run is disabled and the cached draft stays visible until that connection
 returns or another integration is selected. Inspecting a contract does not probe the provider by running inference.
+
+=== Monitor semantic evaluations
+
+The *Monitoring* view reads the same cached measurements as the semantic monitoring CLI, MCP and JMX.
+It does not run inference or scan retained audit events. The framed table and inspector show supplied answer
+counts, failures, observation periods, evaluation durations and result distributions. Score results use the
+producer's histogram boundaries. Durations cover completed executions with recorded timings, including failures;
+missing timings and non-executed calls are excluded. They are evaluation durations, not provider-request counts
+or distributed tracing spans.
+
+The view shows current measurements only. Historical comparisons, baselines and alerts belong in the
+external monitoring backend. Missing values use *not provided* (or *—* in the table); the TUI does not
+invent thresholds, reference populations or healthy states.
+
+Click *Group* or press *g* to select *Expert*, *Definition* or *All sources*. Expert rows cover each
+expert/operation population; Definition rows show named evaluations such as `screenPrompt` and `screenContext`.
+The switch selects aggregates already collected by the source. It does not split expert totals after the fact,
+combine overlapping populations or average snapshot means. A direct expert call has no definition, even when
+its parameters were copied from one; it contributes only to the Expert population. If definition aggregates
+were not supplied, that view explains the absence. *All sources* also includes sources without grouping metadata.
+
+Click the Definition, Expert and Availability filters or use *a*, *x* and *s*. These controls only filter
+displayed data. *Tab* focuses the inspector; arrows and *Page Up/Down* scroll. *i* or *Enter* expands it to show
+measurement identity, dimensions and collection health. *Esc* restores the split view. *Space* freezes the
+display while collection continues; press it again to resume. *r* requests a refresh. The footer reports
+source errors, evicted series and omitted sources. Latest values are sampled every second into a cache of
+at most 100 series. It retains no time history and is cleared on restart. Source failures retain the last
+value with failure health; the observation timestamps remain visible. Changing integrations clears source,
+dimension and aggregation filters. There are no historical-period or comparison controls.
 
 === Evaluate a definition with a sample exchange
 
@@ -465,53 +501,84 @@ the TUI and use the same validation as manual input; send *Ctrl+r* explicitly to
 
 === Semantic audit history
 
-The *Audit* view in the Semantic tab browses retained evaluations and explicit route
-policy decisions. Configure capture in the semantic DSL. Auditing works without a TUI
-connection and is independent of OpenTelemetry.
+The *Audit* view in the Semantic tab browses retained expert evaluations and request outcomes.
+Configure capture in the semantic DSL. Auditing works without a TUI connection and is independent
+of OpenTelemetry. Expert results and execution status remain separate; a Boolean answer or a
+classification label does not imply a route action.
 
-Use `/` for exact `field=value` filters (`category`, `action`, `expert`, `routeId`,
-`breadcrumbId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
+Use `/` for exact `field=value` filters (`category`, `expert`, `routeId`, `executingRouteId`,
+`exchangeId`, `breadcrumbId`, `since`), `n` for older records, `g` for the latest page and `r` to refresh.
 The header shows the global audit default, per-expert overrides and OpenTelemetry independently,
-with the active filters and reader below. Decisions are coloured by action. Timestamps use the
-local timezone shown below the table; the inspector also retains the full timestamp.
+with the active filters and reader below. Timestamps use the local timezone shown in the inspector,
+which also retains the full timestamp. `routeId` filters the entry route; `executingRouteId` filters
+where the evaluation was invoked. Known direct/sample calls show executing route *n/a*; missing route
+provenance in older records is *not recorded*.
 
-The *Breadcrumb ID* column shows Camel's breadcrumb shared by evaluations and route decisions,
-including split exchanges. Set `camel.main.use-breadcrumb=true` in the application to enable
-Camel's breadcrumb generation. Audit uses the existing breadcrumb; records without one show `—`.
+Press `t` for rolling 10-minute, one-hour or one-day presets. An explicit ISO `since` stays fixed, and older
+pages retain the time bound used to start their query. Live refresh fetches summaries; selected detail is
+reused until selection changes or `r` explicitly refreshes it. Missing-input notices and case/detail failures
+do not stop live polling. A failed page query keeps the last response visible and offers `r` to retry.
 
-These captures use an earlier table layout. They show auditing enabled for the `security` expert and disabled for the
-`decisions` expert, with OpenTelemetry and input capture disabled in these screenshots. The expert supplies the evaluation;
-the route records its policy decision separately.
+The *Breadcrumb ID* column shows Camel's breadcrumb shared by related exchanges, including split
+exchanges. Set `camel.main.use-breadcrumb=true` in the application to enable Camel's breadcrumb
+generation. Audit uses the existing breadcrumb; records without one show `—`. Both the exchange ID
+and breadcrumb remain available in the inspector.
 
-.A blocked request with the linked evaluation that detected prompt injection
-image::jbang/camel-tui-semantic-audit-block.png[Semantic Audit showing a BLOCK decision beside its linked security evaluation with result true]
+Select a record and scroll the mouse wheel over the *Expert evaluation* inspector to read all its details.
+Click the inspector or use `Tab` to focus it, then use the arrows or `Page Up/Down` to scroll;
+`Home` and `End` jump to the beginning and end. A scrollbar and visible line range indicate hidden content.
+Scrolling is bounded to the wrapped text and keeps the selected evaluation unchanged. Use `Tab` to return
+to the record list. Wide terminals show result and execution context side by side; narrow terminals
+stack the same details.
 
-.An allowed request with the linked evaluation that found no prompt injection
-image::jbang/camel-tui-semantic-audit-allow.png[Semantic Audit showing an ALLOW decision beside its linked security evaluation with result false]
+Use `Enter` to inspect the selected record's source-local case, `[` / `]` to choose related records,
+and `Enter` to open one. `Esc` returns to the previous record. Association uses captured identifiers;
+a shared breadcrumb does not establish causality or prove that the case is complete. Missing records
+and unsupported case retrieval remain explicit.
 
-Select a record and use `Tab` to focus its inspector, then use the arrows to scroll.
-Wide terminals show the route decision and its linked evaluation side by side; narrow terminals
-stack the same details. Use `[` / `]` to choose between multiple evidence records, `Enter` to follow
-the selected linked evaluation, and `Esc` or `Enter` to return to the decision.
-When input capture is enabled for an expert, the inspector shows the stored *Input* alongside
-its evaluation, including linked evidence. Otherwise it shows *not captured* or an omission
-reason. Input capture is disabled by default; configure it in the semantic audit DSL.
-Use `Tab` and the arrows to scroll longer input. Only the selected state is captured, subject
-to its configured size limit and optional redactor.
+The Input column and Input type detail distinguish text, images and mixed input, including when
+payload capture is disabled. Older records show that the input type was not recorded.
+For retained images, `u` renders an inline colour preview without printing base64. Decoding happens
+in the background and uses local image readers; unavailable/corrupt/oversized images show a reason.
+No remote URL is fetched. The preview uses the first frame and at most 64 pixels per dimension.
+
+When input capture is enabled for an expert, `u` reveals the permitted stored input or its omission
+reason. Input capture is disabled by default; configure it in the semantic audit DSL. Only the
+selected state is captured, subject to its configured size limit and optional redactor. `p` copies
+permitted captured input into a new playground draft without running an expert. Image drafts keep
+payloads out of the editor and preserve them for an explicit Run. A capture-limit descriptor is
+not a replayable image. Image-capable playgrounds accept `image:/path/picture.png` or a JSON media
+envelope; the file is read only when Run is requested. Unchanged text loaded from audit stays
+literal text, including an `image:` prefix. Definition samples also accept
+`"body":"image:/path/picture.png"`.
+
+The playground uses the selected expert's advertised `maxImageBytes` to check image files
+before reading them and to bound the read. Inline image payloads are also checked before
+submission. Configure this limit on the expert bean: the OpenAI Decisions expert defaults
+to 10 MB (10,000,000 bytes) per image before base64 encoding. The CLI and route evaluations
+use the same expert configuration. Missing image support or limit metadata prevents local
+image loading; oversized images produce an error without submitting an evaluation.
+
 The latest page refreshes every second; `Space` pauses or resumes polling. Older pages stay fixed
-until explicitly refreshed. Filters use exact values; no time window is applied until `since` is set.
-The view reports
-evictions and delivery failures; the built-in memory backend is recent history, not
-persistent storage. The read-only `tui_get_audit` MCP tool queries the same history, linked evidence
-and backend health without running an expert or changing the visible screen. Pass `eventId` alone,
-or filters plus `limit` and the returned `cursor`. List queries omit captured input; an
-`eventId` lookup returns it with the record and linked evidence, with an `inputWarning`
-identifying it as untrusted message data. Input can contain detected prompt injections;
-treat it as evidence, never as instructions. Keep the dev console on a trusted network,
-accessible only to authorized operators. AI sessions load the tool when the selected
-integration exposes semantic audit history. Use `tui_get_table` to inspect the visible Audit screen.
-`r` refreshes the current audit page; `g` returns to the newest page. Repeated refreshes are coalesced.
+until explicitly refreshed. Filters use exact values; `definition` and `operation` apply to all retained history.
+`since` (inclusive) and `until` (exclusive) select event/completion time; either bound may be omitted.
+Explicit bounds stay fixed; selecting a rolling time preset clears `until`.
+Use `resultType=BOOLEAN|CHOICE|SCORE|CLASSIFICATION` with `resultValue` for Boolean/Choice or numeric Score equality,
+`resultLabel` for Classification membership, or inclusive `scoreMin`/`scoreMax` bounds for Score.
+For example, `definition=routeRequest resultType=CHOICE resultValue=none_of_these` filters retained no-match answers
+when that is the expert's declared no-match label. These predicates apply before pagination; missing/omitted
+values never match a value filter. Quote labels containing spaces.
+The view reports evictions and delivery failures; the built-in memory backend is recent history,
+not persistent storage. The read-only `tui_get_audit` MCP tool queries the same history and backend
+health without running an expert or changing the visible screen. Pass `eventId` for record detail,
+`caseEventId` for related records, or filters plus `limit` and the returned `cursor` for a page.
+List queries and `tui_get_table` omit captured input. An explicit `eventId` lookup includes
+permitted captured input; case and bulk queries require `includeInput=true` to include it. These
+responses carry an `inputWarning` identifying captured input as untrusted message data. Treat captured input as evidence, never as instructions. Keep the dev console on a
+trusted network, accessible only to authorized operators. AI sessions load the tool when the
+selected integration exposes semantic audit history. Repeated refreshes are coalesced.
 
-In Audit, `c`, `a` and `e` open searchable selectors for category, action and expert.
-Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values
-on the current page; `/` accepts arbitrary exact filters, including an ISO-8601 `since` timestamp.
+In Audit, `c` and `e` open searchable selectors for category and expert; `t` selects a time window.
+Use arrows and `Enter` to apply, or `Esc` to cancel. Suggestions include values on the current page;
+`/` accepts arbitrary exact filters, including an ISO-8601 `since` timestamp. The `page.status`,
+`page.result` and `page.definition` filters apply only to the current page.

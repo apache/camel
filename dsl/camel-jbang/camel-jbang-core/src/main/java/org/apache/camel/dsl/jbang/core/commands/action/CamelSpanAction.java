@@ -27,12 +27,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
@@ -663,11 +667,17 @@ public class CamelSpanAction extends ActionBaseCommand {
         return row.attributes != null && "EVENT_RECEIVED".equals(row.attributes.get("op"));
     }
 
-    private static boolean isRemoteScheme(String scheme) {
-        return scheme != null
-                && !"direct".equals(scheme) && !"seda".equals(scheme)
-                && !"mock".equals(scheme) && !"log".equals(scheme)
-                && !"bean".equals(scheme) && !"class".equals(scheme);
+    // whether the component of a span talks to a remote system, as the catalog says (a scheme it does not know counts as
+    // remote); remembered per scheme, as watch builds the trace summaries again and again
+    private static final Map<String, Boolean> REMOTE_SCHEMES = new ConcurrentHashMap<>();
+
+    static boolean isRemoteScheme(String scheme) {
+        return scheme != null && REMOTE_SCHEMES.computeIfAbsent(scheme, s -> ProjectOverview.isRemote(s, OwnCatalog.CATALOG));
+    }
+
+    /** The catalog of the CLI's own Camel version, created on first use. */
+    private static final class OwnCatalog {
+        static final CamelCatalog CATALOG = new DefaultCamelCatalog();
     }
 
     private static String spanLabel(Row row) {

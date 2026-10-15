@@ -123,7 +123,8 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
                 exchange.setException(e);
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
-            holder.consumed = !exchange.isFailed() && !exchange.isRollbackOnly();
+            // a rollback only (or rollback only last) exchange is not consumed, so the next poll reads the row again
+            holder.consumed = !exchange.isFailed() && !exchange.isRollbackOnly() && !exchange.isRollbackOnlyLast();
             releaseExchange(exchange, false);
         }
 

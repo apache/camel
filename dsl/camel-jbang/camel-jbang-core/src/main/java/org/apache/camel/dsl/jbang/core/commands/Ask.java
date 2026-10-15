@@ -16,11 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.Console;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Function;
 
+import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.reader.EndOfFileException;
@@ -69,9 +76,9 @@ public class Ask extends CamelCommand {
     String apiKey;
 
     @Option(names = { "--model" },
-            description = "Model to use",
-            defaultValue = DEFAULT_MODEL)
-    String model = DEFAULT_MODEL;
+            description = "Model to use. Default: the provider's default; with Ollama the installed model best at"
+                          + " tool calling, such as qwen3.6")
+    String model;
 
     @Option(names = { "--timeout" },
             description = "Timeout in seconds for LLM response",
@@ -84,8 +91,21 @@ public class Ask extends CamelCommand {
 
     @Option(names = { "--max-iterations" },
             description = "Maximum number of tool-calling rounds",
-            defaultValue = "10")
-    int maxIterations = 10;
+            defaultValue = "25")
+    int maxIterations = 25;
+
+    @Option(names = { "--tools" },
+            description = "The tools the model gets: core (a small set, for a local model), full, or auto (core for a"
+                          + " local model, full for a hosted one)",
+            defaultValue = "auto")
+    ToolSet tools = ToolSet.auto;
+
+    @Option(names = { "--yes" },
+            description = "Run the calls that ask first without asking: file writes, messages to endpoints the"
+                          + " integration does not have, SQL that changes data, code expressions, stopping the"
+                          + " integration, and camel commands that change something. For scripts, where there is no"
+                          + " terminal to ask on")
+    boolean yes;
 
     @Option(names = { "--show-tools" },
             description = "Show tool calls and results as they happen")
@@ -99,8 +119,20 @@ public class Ask extends CamelCommand {
             description = "Print debug information: HTTP requests, responses, and parsed results")
     boolean verbose;
 
+    /** The tools the model gets, see {@code --tools}. */
+    enum ToolSet {
+        auto,
+        core,
+        full
+    }
+
+    /** Below this size (billions of parameters) a model's answers about a running integration are often wrong. */
+    static final double SMALL_MODEL_BILLIONS = 8;
+
     private long targetPid;
     private AskTools askTools;
+    // the chat's reader, or one made on the terminal for the first call to confirm
+    private LineReader confirmReader;
 
     public Ask(CamelJBangMain main) {
         super(main);
@@ -112,19 +144,25 @@ public class Ask extends CamelCommand {
                 .withUrl(url)
                 .withApiType(apiType)
                 .withApiKey(apiKey)
-                .withModel(model)
                 .withTimeout(timeout)
                 .withTemperature(0.3)
                 .withStream(true)
                 .withMaxTokens(4096)
                 .withVerbose(verbose)
                 .withPrinter(printer());
+        if (model != null && !model.isBlank()) {
+            client.withExplicitModel(model);
+        } else {
+            // the placeholder that Ollama replaces with the installed model best at tool calling
+            client.withModel(DEFAULT_MODEL);
+        }
 
         if (!client.detectEndpoint()) {
             printer().printErr("LLM service is not reachable.");
             printer().printErr("Options: --url=<endpoint>, --api-type=anthropic, or start Ollama with: camel infra run ollama");
             return 1;
         }
+        warnSmallModel(client.model, client.ollamaParameterBillions());
 
         RuntimeHelper.ProcessInfo process = findProcess(nameOrPid);
         if (process != null) {
@@ -135,23 +173,28 @@ public class Ask extends CamelCommand {
             targetPid = -1;
         }
 
-        askTools = new AskTools(targetPid);
-        String systemPrompt = buildSystemPrompt(process);
-        List<LlmClient.ToolDef> tools = askTools.buildToolDefinitions();
+        askTools = new AskTools(targetPid, this::confirmCall);
+        boolean core = useCoreTools(tools, client.isLocalEndpoint());
+        String systemPrompt = AskTools.buildSystemPrompt(
+                process != null ? process.pid() : -1,
+                process != null ? process.name() : null,
+                core, core ? askTools.groupGuidance() : List.of());
+        List<LlmClient.ToolDef> toolDefs = askTools.buildToolDefinitions(core);
 
         if (question == null || question.isEmpty()) {
-            return runInteractiveChat(client, process, systemPrompt, tools);
+            return runInteractiveChat(client, process, systemPrompt, toolDefs);
         }
 
         String userQuestion = String.join(" ", question);
-        printer().println("Using " + client.model + " (" + client.apiType + ") to answer your question...");
+        printer().println("Using " + client.model + " (" + client.apiType + ", " + (core ? "core" : "full")
+                          + " tools) to answer your question...");
         if (process != null) {
             printer().println("Target: " + process.name() + " (PID " + process.pid() + ")");
         }
         printer().println();
 
         List<LlmClient.Message> messages = new ArrayList<>();
-        return runAgentLoop(client, systemPrompt, tools, messages, userQuestion);
+        return runAgentLoop(client, systemPrompt, toolDefs, messages, userQuestion);
     }
 
     private int runInteractiveChat(
@@ -163,6 +206,8 @@ public class Ask extends CamelCommand {
             terminal = TerminalBuilder.builder().system(true).build();
         }
         LineReader reader = LineReaderBuilder.builder().terminal(terminal).build();
+        // a call to confirm is asked at the same prompt
+        confirmReader = reader;
 
         printer().println("Camel AI Assistant (" + client.model + ", " + client.apiType + ")");
         if (process != null) {
@@ -201,6 +246,7 @@ public class Ask extends CamelCommand {
 
         long startTime = System.currentTimeMillis();
         LlmClient.TokenUsage totalUsage = LlmClient.TokenUsage.EMPTY;
+        boolean corrected = false;
         for (int i = 0; i < maxIterations; i++) {
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
             if (response == null) {
@@ -227,6 +273,18 @@ public class Ask extends CamelCommand {
             } else {
                 if (!response.streamed() && response.text() != null) {
                     printer().println(response.text());
+                }
+                // what the model says is checked like what it writes: an invalid simple expression in the answer
+                // gets one correction turn, since the answer is what the user copies (CAMEL-24805)
+                List<AnswerChecks.Problem> problems = AnswerChecks.checkSimple(response.text());
+                if (!problems.isEmpty() && !corrected && i < maxIterations - 1) {
+                    corrected = true;
+                    messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
+                    messages.add(LlmClient.Message.user(AnswerChecks.correctionRequest(problems)));
+                    printer().println();
+                    printer().println("(the answer has an invalid simple expression: asking for a corrected answer)");
+                    printer().println();
+                    continue;
                 }
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
                 printStats(totalUsage, startTime);
@@ -289,12 +347,111 @@ public class Ask extends CamelCommand {
         return null;
     }
 
-    // ---- System prompt ----
+    // ---- Tools and model ----
 
-    private String buildSystemPrompt(RuntimeHelper.ProcessInfo process) {
-        return AskTools.buildSystemPrompt(
-                process != null ? process.pid() : -1,
-                process != null ? process.name() : null);
+    /** The core tools for a local model, which pays for every tool definition in prompt-processing time. */
+    static boolean useCoreTools(ToolSet tools, boolean localEndpoint) {
+        return switch (tools) {
+            case core -> true;
+            case full -> false;
+            default -> localEndpoint;
+        };
+    }
+
+    private void warnSmallModel(String name, double billions) {
+        String note = smallModelNote(name, billions);
+        if (note != null) {
+            printer().println(note);
+        }
+    }
+
+    /**
+     * A note about a small model, or null: in a test, the llama3.2 (3B) that the CLI names as its default got three of
+     * four questions about a running integration wrong (CAMEL-25676).
+     */
+    static String smallModelNote(String name, double billions) {
+        if (billions <= 0 || billions >= SMALL_MODEL_BILLIONS) {
+            return null;
+        }
+        return "Note: " + name + " is a small model (" + String.format(Locale.ROOT, "%.1f", billions).replace(".0", "")
+               + "B parameters): its answers about a running integration are often wrong. A larger model does better,"
+               + " such as qwen3.6 (ollama pull qwen3.6).";
+    }
+
+    // ---- Confirmations ----
+
+    /**
+     * Whether a call that is confirmed first goes ahead (CAMEL-25676): with --yes it does, otherwise the user is asked
+     * on the terminal, and without a terminal to ask on it does not run.
+     */
+    boolean confirmCall(ToolConfirms.Call call) {
+        LineReader reader = yes ? null : confirmReader();
+        return confirm(call, yes, reader == null ? null : prompt -> {
+            try {
+                return reader.readLine(prompt);
+            } catch (UserInterruptException | EndOfFileException e) {
+                return null;
+            }
+        }, printer());
+    }
+
+    /**
+     * @param ask asks the user on the terminal: the prompt in, the answer out (null when the input ended); null when
+     *            there is no terminal
+     */
+    static boolean confirm(ToolConfirms.Call call, boolean yes, Function<String, String> ask, Printer printer) {
+        if (yes) {
+            printer.println("(--yes) " + call.title());
+            return true;
+        }
+        if (ask == null) {
+            printer.printErr("Not run, as there is no terminal to ask on: " + call.title()
+                             + ". Run camel ask in a terminal, or with --yes to allow such calls.");
+            return false;
+        }
+        printer.println();
+        printer.println("The AI wants to " + call.title() + ":");
+        if (call.target() != null) {
+            call.target().lines().forEach(line -> printer.println("  " + line));
+        }
+        printer.println(call.reason() + ".");
+        String answer = ask.apply("Allow? [y/N] ");
+        String a = answer != null ? answer.strip() : "";
+        return "y".equalsIgnoreCase(a) || "yes".equalsIgnoreCase(a);
+    }
+
+    private LineReader confirmReader() {
+        if (confirmReader == null && hasTerminal()) {
+            try {
+                Terminal terminal = EnvironmentHelper.getActiveTerminal();
+                if (terminal == null) {
+                    terminal = TerminalBuilder.builder().system(true).build();
+                }
+                confirmReader = LineReaderBuilder.builder().terminal(terminal).build();
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return confirmReader;
+    }
+
+    /** Whether there is a terminal to ask on: the one camel ask runs in (the camel shell), or a console. */
+    static boolean hasTerminal() {
+        if (EnvironmentHelper.getActiveTerminal() != null) {
+            return true;
+        }
+        Console console = System.console();
+        if (console == null) {
+            return false;
+        }
+        try {
+            // from Java 22 there is a console also when the input is redirected; isTerminal tells
+            return (Boolean) Console.class.getMethod("isTerminal").invoke(console);
+        } catch (NoSuchMethodException e) {
+            return true;
+        } catch (ReflectiveOperationException e) {
+            return false;
+        }
     }
 
     // ---- CLI helper methods (used by AskTools) ----

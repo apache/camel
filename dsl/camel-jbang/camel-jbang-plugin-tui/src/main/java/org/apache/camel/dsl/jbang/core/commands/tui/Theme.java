@@ -27,8 +27,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.buffer.Cell;
 import dev.tamboui.css.Styleable;
 import dev.tamboui.css.engine.StyleEngine;
+import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.widgets.syntax.SyntaxTheme;
@@ -45,11 +48,17 @@ import org.slf4j.LoggerFactory;
  * Status colors use explicit truecolor hex values in both themes (no ANSI names); accent-bg/hint-key/selection keep
  * plain white/black foregrounds. Fallbacks mirror {@code dark.tcss}. If a stylesheet is missing or malformed, the
  * facade falls back to the built-in palette below and logs once, so a cosmetic failure never crashes the TUI.
+ * <p/>
+ * The shell (F6) and AI (F8) panels can be drawn with a theme of their own, the panel theme: {@link #inPanel(Runnable)}
+ * resolves every token from it on the drawing thread while a panel is drawn.
  */
 public final class Theme {
 
     /** Camel brand orange. */
     static final Color ACCENT = Color.rgb(0xF6, 0x91, 0x23);
+
+    /** The {@code --panel-theme} value that draws the shell and AI panels with the main theme. */
+    static final String PANEL_THEME_SAME = "same";
 
     private static final Logger LOG = LoggerFactory.getLogger(Theme.class);
 
@@ -113,12 +122,16 @@ public final class Theme {
     private static StyleEngine engine;
     private static ThemeMode mode = ThemeMode.DARK;
     private static ThemeMode previewOriginal;
+    /** The theme of the shell (F6) and AI (F8) panels; null when they are drawn with the main theme. */
+    private static volatile Palette panelPalette;
+    /** The palette tokens resolve against on this thread while {@link #inPanel(Runnable)} runs. */
+    private static final ThreadLocal<Palette> SCOPE = new ThreadLocal<>();
 
     private Theme() {
     }
 
     public static synchronized Color accent() {
-        StyleEngine e = engine();
+        StyleEngine e = activeEngine();
         if (e == null) {
             return ACCENT;
         }
@@ -135,7 +148,7 @@ public final class Theme {
      * stripes stay readable on both terminals. Applied at the row level so it never overrides the selection highlight.
      */
     public static synchronized Color zebra() {
-        StyleEngine e = engine();
+        StyleEngine e = activeEngine();
         if (e == null) {
             return FALLBACK_ZEBRA;
         }
@@ -151,7 +164,7 @@ public final class Theme {
      * Base background color for the main content area. Theme-aware (dark on dark mode, white on light mode).
      */
     public static Color baseBg() {
-        StyleEngine e = engine();
+        StyleEngine e = activeEngine();
         if (e == null) {
             return FALLBACK_BASE_BG;
         }
@@ -167,7 +180,7 @@ public final class Theme {
      * Base foreground color for normal text. Theme-aware (light gray on dark mode, dark gray on light mode).
      */
     public static Color baseFg() {
-        StyleEngine e = engine();
+        StyleEngine e = activeEngine();
         if (e == null) {
             return FALLBACK_BASE_FG;
         }
@@ -473,10 +486,92 @@ public final class Theme {
         return mode.id();
     }
 
-    /** True if the active mode is dark. */
+    /**
+     * Fills cells that still have no explicit fg/bg after widget rendering with {@link #baseBg()} and
+     * {@link #baseFg()}. TamboUI clears the buffer to {@link Cell#EMPTY} each frame; when bg is unset the terminal
+     * falls back to its own default (usually black). Only patches missing colors so selection highlights, zebra
+     * stripes, and other widget backgrounds are preserved.
+     */
+    static void applyBaseColors(Buffer buffer, Rect area) {
+        Color baseBg = baseBg();
+        Color baseFg = baseFg();
+        Rect intersection = buffer.area().intersection(area);
+        for (int y = intersection.top(); y < intersection.bottom(); y++) {
+            for (int x = intersection.left(); x < intersection.right(); x++) {
+                Cell cell = buffer.get(x, y);
+                if (cell.isContinuation()) {
+                    continue;
+                }
+                Style style = cell.style();
+                Color cellBg = style.bg().orElse(null);
+                Color cellFg = style.fg().orElse(null);
+                if (cellBg == null || cellFg == null) {
+                    Style patch = Style.EMPTY;
+                    if (cellBg == null) {
+                        patch = patch.bg(baseBg);
+                    }
+                    if (cellFg == null) {
+                        patch = patch.fg(baseFg);
+                    }
+                    buffer.set(x, y, cell.patchStyle(patch));
+                }
+            }
+        }
+    }
+
+    /** True if the active mode is dark; inside {@link #inPanel(Runnable)}, if the panel theme is. */
     public static boolean isDark() {
+        Palette scoped = SCOPE.get();
+        if (scoped != null) {
+            return !scoped.mode.isLight();
+        }
         engine();
         return !mode.isLight();
+    }
+
+    /**
+     * Sets the theme the shell (F6) and AI (F8) panels are drawn with, so they stand apart from the tabs. {@code null},
+     * {@code same} or an unknown id draws them with the main theme. Nothing is persisted here: the Panel Theme setting
+     * and {@code --panel-theme} decide what is passed.
+     */
+    public static synchronized void setPanelTheme(String modeId) {
+        ThemeMode next = ThemeMode.parse(modeId).orElse(null);
+        Palette current = panelPalette;
+        if (next == null) {
+            panelPalette = null;
+        } else if (current == null || current.mode != next) {
+            panelPalette = new Palette(next, panelEngine(next));
+        }
+    }
+
+    /** The id of the panel theme, or {@code null} when the panels are drawn with the main theme. */
+    public static String panelTheme() {
+        Palette palette = panelPalette;
+        return palette != null ? palette.mode.id() : null;
+    }
+
+    /**
+     * Runs the drawing of a panel with the panel theme: every token resolved on this thread while it runs comes from
+     * the panel theme, so everything the panel draws (its frame, text, markdown and code) takes that theme. Other
+     * threads keep the main theme. Without a panel theme it just runs.
+     */
+    static void inPanel(Runnable drawing) {
+        Palette palette = panelPalette;
+        Palette outer = SCOPE.get();
+        if (palette == null || palette == outer) {
+            drawing.run();
+            return;
+        }
+        SCOPE.set(palette);
+        try {
+            drawing.run();
+        } finally {
+            if (outer != null) {
+                SCOPE.set(outer);
+            } else {
+                SCOPE.remove();
+            }
+        }
     }
 
     /** Cycle to the next theme in declaration order, persist it (outside test mode), and activate it. */
@@ -580,6 +675,8 @@ public final class Theme {
         engine = null;
         initialized = false;
         mode = ThemeMode.DARK;
+        panelPalette = null;
+        SCOPE.remove();
     }
 
     private static synchronized void activate(ThemeMode newMode, boolean cliOverride) {
@@ -595,19 +692,21 @@ public final class Theme {
     }
 
     private static synchronized Color color(String id, Color fallback) {
-        StyleEngine e = engine();
+        Palette scoped = SCOPE.get();
+        StyleEngine e = scoped != null ? scoped.engine : engine();
         if (e == null) {
             return fallback;
         }
-        Color cached = COLOR_CACHE.get(id);
+        Map<String, Color> cache = scoped != null ? scoped.colors : COLOR_CACHE;
+        Color cached = cache.get(id);
         if (cached != null) {
             return cached;
         }
         try {
             // A token the stylesheet does not define resolves to the fallback; that is cached too because the
-            // stylesheet cannot change without activate() clearing the cache.
+            // stylesheet cannot change without activate() clearing the cache (a panel palette is replaced instead).
             Color resolved = e.resolve(new Token(id)).foreground().orElse(fallback);
-            COLOR_CACHE.put(id, resolved);
+            cache.put(id, resolved);
             return resolved;
         } catch (RuntimeException ex) {
             // Not cached: a transient resolution failure must not permanently lock this token to the fallback.
@@ -617,17 +716,19 @@ public final class Theme {
     }
 
     private static synchronized Style style(String id, Style fallback) {
-        StyleEngine e = engine();
+        Palette scoped = SCOPE.get();
+        StyleEngine e = scoped != null ? scoped.engine : engine();
         if (e == null) {
             return fallback;
         }
-        Style cached = CACHE.get(id);
+        Map<String, Style> cache = scoped != null ? scoped.styles : CACHE;
+        Style cached = cache.get(id);
         if (cached != null) {
             return cached;
         }
         try {
             Style resolved = e.resolve(new Token(id)).toStyle();
-            CACHE.put(id, resolved);
+            cache.put(id, resolved);
             return resolved;
         } catch (RuntimeException ex) {
             // Not cached: a transient resolution failure must not permanently lock this token to the fallback.
@@ -651,22 +752,42 @@ public final class Theme {
             }
         }
         try {
-            StyleEngine e = StyleEngine.create();
-            String stylesheet = mode.id();
-            // Read CSS content via Theme's own classloader instead of delegating
-            // to StyleEngine.loadStylesheet() which uses StyleEngine.class.getClassLoader().
-            // Under parallel test execution the two classloaders can diverge, causing
-            // intermittent "resource not found" failures in CI.
-            String cssContent = loadCssResource(mode.stylesheetResource());
-            e.addStylesheet(stylesheet, cssContent);
-            e.setActiveStylesheet(stylesheet);
-            validateTokens(e, stylesheet);
-            engine = e;
+            engine = createEngine(mode);
         } catch (Exception ex) {
             engine = null;
             logStylesheetFallbackOnce(ex);
         }
         return engine;
+    }
+
+    /** The engine tokens resolve against on this thread: the panel theme's inside {@link #inPanel}, else the main. */
+    private static StyleEngine activeEngine() {
+        Palette scoped = SCOPE.get();
+        return scoped != null ? scoped.engine : engine();
+    }
+
+    /** The panel theme's engine, or null so its tokens take the built-in palette, as the main theme does. */
+    private static StyleEngine panelEngine(ThemeMode themeMode) {
+        try {
+            return createEngine(themeMode);
+        } catch (Exception ex) {
+            logStylesheetFallbackOnce(ex);
+            return null;
+        }
+    }
+
+    private static StyleEngine createEngine(ThemeMode themeMode) throws IOException {
+        StyleEngine e = StyleEngine.create();
+        String stylesheet = themeMode.id();
+        // Read CSS content via Theme's own classloader instead of delegating
+        // to StyleEngine.loadStylesheet() which uses StyleEngine.class.getClassLoader().
+        // Under parallel test execution the two classloaders can diverge, causing
+        // intermittent "resource not found" failures in CI.
+        String cssContent = loadCssResource(themeMode.stylesheetResource());
+        e.addStylesheet(stylesheet, cssContent);
+        e.setActiveStylesheet(stylesheet);
+        validateTokens(e, stylesheet);
+        return e;
     }
 
     /**
@@ -758,6 +879,20 @@ public final class Theme {
         if (!missing.isEmpty()) {
             throw new IllegalStateException(
                     "Theme stylesheet '" + stylesheet + "' is missing required CSS tokens: " + missing);
+        }
+    }
+
+    /** The panel theme: its stylesheet's engine (null when it failed to load) and the tokens resolved so far. */
+    private static final class Palette {
+
+        private final ThemeMode mode;
+        private final StyleEngine engine;
+        private final Map<String, Style> styles = new HashMap<>();
+        private final Map<String, Color> colors = new HashMap<>();
+
+        private Palette(ThemeMode mode, StyleEngine engine) {
+            this.mode = mode;
+            this.engine = engine;
         }
     }
 

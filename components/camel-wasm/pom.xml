@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-wasm</artifactId>
@@ -52,6 +52,12 @@
         <dependency>
             <groupId>run.endive</groupId>
             <artifactId>wasi</artifactId>
+            <version>${endive-version}</version>
+        </dependency>
+        <!-- used with compile=true only: translates a module to JVM bytecode, once per endpoint -->
+        <dependency>
+            <groupId>run.endive</groupId>
+            <artifactId>compiler</artifactId>
             <version>${endive-version}</version>
         </dependency>
 

@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,6 +72,11 @@ class MonitorContext {
     boolean logPinVisible;
     boolean ratePerMinute;
     boolean confirmActions;
+    /**
+     * Whether a tape drives the monitor: a model records one (tui_tape_start), or {@code --record} plays one. Nothing
+     * asks the user to confirm then (see {@link Confirmations}).
+     */
+    BooleanSupplier tapeDriven = () -> false;
     boolean validateOnSave = true;
     // whether the source editor shows the route tree at first (the Route Tree setting)
     boolean routeTree;
@@ -147,6 +153,15 @@ class MonitorContext {
      */
     Style paneBorder(boolean focused, Style unfocused) {
         return focused && !bottomPanelFocused ? Style.EMPTY.fg(Theme.accent()) : unfocused;
+    }
+
+    /**
+     * Whether to ask the user before an action such as quitting or stopping an integration (the Confirm actions
+     * setting). While a tape drives the monitor nothing asks: the model or the tape does everything itself, and the
+     * keys it sends would not answer the dialog anyway (CAMEL-25444).
+     */
+    boolean confirmFirst() {
+        return confirmActions && !tapeDriven.getAsBoolean();
     }
 
     String selectedName() {
@@ -264,7 +279,7 @@ class MonitorContext {
         return false;
     }
 
-    /** Whether a Camel version such as 4.23.0-SNAPSHOT is the given major.minor or later; false when unknown. */
+    /** Whether a Camel version such as 4.24.0-SNAPSHOT is the given major.minor or later; false when unknown. */
     static boolean isCamelVersionAtLeast(String version, int major, int minor) {
         Matcher m = version != null ? VERSION.matcher(version) : null;
         if (m == null || !m.find()) {

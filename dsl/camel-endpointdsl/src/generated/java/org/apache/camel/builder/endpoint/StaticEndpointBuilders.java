@@ -11289,14 +11289,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>llm:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 
@@ -12853,14 +12853,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 
@@ -12883,14 +12883,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 

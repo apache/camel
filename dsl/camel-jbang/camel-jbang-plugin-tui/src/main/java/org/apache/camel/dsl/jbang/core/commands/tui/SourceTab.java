@@ -151,6 +151,8 @@ class SourceTab extends AbstractTab {
 
     SourceTab(MonitorContext ctx) {
         super(ctx);
+        // while a tape drives the monitor nothing asks: a file is deleted or converted at once
+        fileActionsPopup.setUnattended(() -> ctx.tapeDriven.getAsBoolean());
         sourceViewer.setNotificationCallback((msg, error) -> {
             if (ctx.notificationCallback != null) {
                 ctx.notificationCallback.accept(msg, error);
@@ -187,6 +189,11 @@ class SourceTab extends AbstractTab {
         // also treat the file-actions menu and the go-to popups as active input so global single-key shortcuts
         // (q, ?, digits switching tabs, ...) do not fire while the menu, a prompt or a filter is open
         return sourceViewer.isTextInputActive() || fileActionsPopup.isVisible() || isGotoPopupVisible();
+    }
+
+    @Override
+    public boolean isConfirming() {
+        return sourceViewer.isDiscardPending() || fileActionsPopup.isConfirming();
     }
 
     @Override
@@ -462,17 +469,16 @@ class SourceTab extends AbstractTab {
         }
         if (focusOnViewer && sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
-            if (!sourceViewer.isEditMode()) {
+            // also after a jump, which moves the focus to the viewer; not while a term is typed into find or
+            // highlight, as the footer is then that field with its keys
+            if (!sourceViewer.isEditMode() && !sourceViewer.isTextInputActive()) {
                 TuiHelper.hint(spans, "Tab", "files");
-                // also after a jump, which moves the focus to the viewer; not while g is typed into search
-                if (!sourceViewer.isTextInputActive()) {
-                    if (!routeIndex.isEmpty()) {
-                        TuiHelper.hint(spans, "g", "go to route");
-                    }
-                    TuiHelper.hint(spans, "Ctrl+G", "go to");
-                    if (endpointOnSelectedLine() != null) {
-                        TuiHelper.hint(spans, "u", "usages");
-                    }
+                if (!routeIndex.isEmpty()) {
+                    TuiHelper.hint(spans, "g", "go to route");
+                }
+                TuiHelper.hint(spans, "Ctrl+G", "go to");
+                if (endpointOnSelectedLine() != null) {
+                    TuiHelper.hint(spans, "u", "usages");
                 }
             }
         } else {

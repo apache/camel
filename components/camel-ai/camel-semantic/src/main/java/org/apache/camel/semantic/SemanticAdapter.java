@@ -25,15 +25,33 @@ import java.util.Map;
  * credentials. Validation must not perform inference or contact external services. Provider configuration belongs to
  * the provider component.
  *
- * Adapters created by the language receive the Camel context when CamelContextAware and are managed when Service.
- * Referenced registry beans retain their existing lifecycle owner.
+ * Experts are explicit registry beans and retain their registry or application lifecycle owner. The semantic language
+ * does not instantiate, discover or manage provider services.
  */
 public interface SemanticAdapter {
+    /**
+     * Configured maximum bytes per image before base64 encoding, or zero when no limit is advertised. Tooling uses this
+     * value before reading local files; image experts must also enforce it before inference. Inspection must not
+     * contact services. This is instance configuration, separate from the static operation contract.
+     */
+    default int getMaxImageBytes() {
+        return 0;
+    }
+
     /** Reject unsupported evaluation kinds, criteria, decision policies or input selectors before traffic starts. */
     void validate(SemanticEvaluation evaluation);
 
     /** Validate message-dependent requirements before any operation in a batch performs inference. */
     default void validateInput(SemanticEvaluation evaluation, Object state) {
+    }
+
+    /**
+     * Validate requirements shared by all operations against the selected state. The language calls this once per
+     * expert group, after its per-evaluation input checks and before any expert performs inference. Use this hook for
+     * expensive checks independent of the question, such as validating image encoding. It must not contact services.
+     * Providers must also validate requests made through direct evaluate/evaluateBatch calls.
+     */
+    default void validateState(Object state) {
     }
 
     /** Synchronous, potentially blocking evaluation. Operational errors must be thrown, never returned as decisions. */

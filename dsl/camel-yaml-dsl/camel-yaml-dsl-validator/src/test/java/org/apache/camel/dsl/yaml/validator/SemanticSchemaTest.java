@@ -38,10 +38,12 @@ class SemanticSchemaTest {
         var validator = new YamlValidator(canonical);
         String evaluations = booleanEvaluation("\"{{limit:0.1}}\"") + """
                       topic:
+                        expert: content
                         type: choice
                         instructions: Select the topic
                         criteria: {billing: 123, support: 456}
                       urgency:
+                        expert: content
                         type: score
                         instructions: Assess urgency
                         criteria: [1, 2, 3]
@@ -68,10 +70,10 @@ class SemanticSchemaTest {
         var validator = new YamlValidator(canonical);
         String yaml = """
                 - semantic:
-                    expert: content
                     state: "${body}"
                     evaluation:
                       safety:
+                        expert: content
                         operation: classify
                         parameters:
                           policy:
@@ -79,10 +81,12 @@ class SemanticSchemaTest {
                             limit: !number "{{limit:2}}"
                             enabled: true
                       department:
+                        expert: content
                         type: choice
                         instructions: Department?
                         criteria: {billing: Invoices, support: Questions}
                       score:
+                        expert: content
                         operation: rank
                         criteria: [Low, High]
                 """;
@@ -99,13 +103,32 @@ class SemanticSchemaTest {
         assertThat(validator.validate("- semantic: {expert: content}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {audit: {enabled: true}}")).isEmpty();
-        assertThat(validator.validate("- semantic: {audit: {enabled: true}, evaluation: {q: {operation: detect}}}"))
+        assertThat(validator
+                .validate("- semantic: {audit: {enabled: true}, evaluation: {q: {expert: content, operation: detect}}}"))
                 .isEmpty();
         assertThat(validator.validate("- semantic: {audit: {unknown: true}}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {question: {}}")).isNotEmpty();
         assertThat(validator.validate("- semantic: {question: {}, evaluation: {}}")).isNotEmpty();
-        assertThat(validator.validate("- semantic: {evaluation: {q: {operation: detect, uncertaintyPolicy: expert-policy}}}"))
+        assertThat(validator.validate(
+                "- semantic: {evaluation: {q: {expert: content, operation: detect, uncertaintyPolicy: expert-policy}}}"))
                 .isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void everyEvaluationRequiresItsOwnExpert(boolean canonical) throws Exception {
+        var validator = new YamlValidator(canonical);
+        for (String declaration : new String[] {
+                "{operation: classify}", "{type: choice, criteria: {billing: Invoices}}",
+                "{type: score, criteria: [Low, High]}" }) {
+            assertThat(validator.validate("- semantic: {evaluation: {q: " + declaration + "}}"))
+                    .as("missing expert: %s", declaration).isNotEmpty();
+            assertThat(validator.validate("- semantic: {expert: content, evaluation: {q: " + declaration + "}}"))
+                    .as("block-level expert: %s", declaration).isNotEmpty();
+            String explicit = "{expert: content, " + declaration.substring(1);
+            assertThat(validator.validate("- semantic: {evaluation: {q: " + explicit + "}}"))
+                    .as("explicit expert: %s", declaration).isEmpty();
+        }
     }
 
     private static String booleanEvaluation(String value) {
@@ -113,6 +136,7 @@ class SemanticSchemaTest {
                 - semantic:
                     evaluation:
                       actionable:
+                        expert: content
                         type: boolean
                         instructions: Is this actionable?
                         threshold: %s
@@ -128,6 +152,7 @@ class SemanticSchemaTest {
                 - semantic:
                     evaluation:
                       topic:
+                        expert: content
                         type: choice
                         instructions: Select the topic
                         criteria:
@@ -147,10 +172,12 @@ class SemanticSchemaTest {
                 - semantic:
                     evaluation:
                       actionable:
+                        expert: content
                         type: boolean
                         instructions: Is this actionable?
                         uncertaintyPolicy: non-match
                       urgency:
+                        expert: content
                         type: score
                         instructions: Assess urgency
                         criteria: [Routine, Urgent]

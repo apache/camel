@@ -51,7 +51,7 @@ class SemanticEvaluationBuilderTest {
             assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    var evaluation = semanticEvaluations(this).expert("selected").evaluation("q").operation("choice");
+                    var evaluation = semanticEvaluations(this).evaluation("q").expert("selected").operation("choice");
                     configure.accept(evaluation);
                     evaluation.register();
                 }
@@ -64,7 +64,8 @@ class SemanticEvaluationBuilderTest {
     void callerCriteriaAreNeverMutated() throws Exception {
         try (var context = new DefaultCamelContext()) {
             Map<String, String> supplied = new LinkedHashMap<>(Map.of("a", "A"));
-            var builder = new SemanticEvaluationBuilder().operation("choice").parameter("criteria", supplied);
+            var builder
+                    = new SemanticEvaluationBuilder().expert("selected").operation("choice").parameter("criteria", supplied);
             builder.criterion("b", "B");
             assertThatThrownBy(() -> builder.build(context)).hasMessageContaining("Duplicate parameter 'criteria'");
             assertThat(supplied).containsExactlyEntriesOf(Map.of("a", "A"));
@@ -72,7 +73,7 @@ class SemanticEvaluationBuilderTest {
     }
 
     @Test
-    void xmlCriteriaConflictsAndStructuralErrorsNameTheBlockExpert() throws Exception {
+    void xmlCriteriaConflictsAndStructuralErrorsNameTheEvaluationExpert() throws Exception {
         try (var context = new DefaultCamelContext()) {
             for (String children : new String[] {
                     "<criterion key=\"a\" value=\"A\"/><level>B</level>",
@@ -80,7 +81,7 @@ class SemanticEvaluationBuilderTest {
                     "<unknown/>" }) {
                 assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context)
                         .loadRoutes(ResourceHelper.fromString("invalid.xml",
-                                "<semantic expert=\"selected\"><evaluation name=\"q\" operation=\"choice\">" + children
+                                "<semantic><evaluation expert=\"selected\" name=\"q\" operation=\"choice\">" + children
                                                                              + "</evaluation></semantic>")))
                         .hasStackTraceContaining("'q'").hasStackTraceContaining("expert 'selected'");
             }
@@ -93,9 +94,11 @@ class SemanticEvaluationBuilderTest {
             var properties = new Properties();
             properties.setProperty("myPolicy", "NON_MATCH");
             context.getPropertiesComponent().setInitialProperties(properties);
-            var shorthand = new SemanticEvaluationBuilder().operation("boolean").uncertaintyPolicy("{{myPolicy}}")
-                    .build(context);
-            var generic = new SemanticEvaluationBuilder().operation("custom").parameter("uncertaintyPolicy", "{{myPolicy}}")
+            var shorthand
+                    = new SemanticEvaluationBuilder().expert("selected").operation("boolean").uncertaintyPolicy("{{myPolicy}}")
+                            .build(context);
+            var generic = new SemanticEvaluationBuilder().expert("selected").operation("custom")
+                    .parameter("uncertaintyPolicy", "{{myPolicy}}")
                     .build(context);
             assertThat(shorthand.getParameters()).containsEntry("uncertaintyPolicy", "non-match");
             assertThat(generic.getParameters()).containsEntry("uncertaintyPolicy", "NON_MATCH");
@@ -105,7 +108,7 @@ class SemanticEvaluationBuilderTest {
     @Test
     void stringParametersRemainStringsAndLiteralPromptPlaceholdersCanBeEscaped() throws Exception {
         try (var context = new DefaultCamelContext()) {
-            var declaration = new SemanticEvaluationBuilder().operation("custom")
+            var declaration = new SemanticEvaluationBuilder().expert("selected").operation("custom")
                     .parameter("numberAsText", "{{limit:0.8}}")
                     .parameter("instructions", "Explain \\{{example\\}} and \\{{")
                     .parameter("policy", Map.of("action", "custom-policy"))
@@ -119,7 +122,8 @@ class SemanticEvaluationBuilderTest {
     @Test
     void nonStringNestedKeysFailWithValidationError() throws Exception {
         try (var context = new DefaultCamelContext()) {
-            var builder = new SemanticEvaluationBuilder().operation("custom").parameter("policy", Map.of(1, true));
+            var builder = new SemanticEvaluationBuilder().expert("selected").operation("custom").parameter("policy",
+                    Map.of(1, true));
             assertThatThrownBy(() -> builder.build(context))
                     .isExactlyInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Parameter maps require string keys");
@@ -134,7 +138,7 @@ class SemanticEvaluationBuilderTest {
             assertThatThrownBy(() -> context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticEvaluations(this).expert("fixed").evaluation("q").operation("boolean")
+                    semanticEvaluations(this).evaluation("q").expert("fixed").operation("boolean")
                             .uncertaintyPolicy(null).register();
                 }
             })).hasMessageContaining("'q'").hasMessageContaining("'fixed'")

@@ -24,7 +24,7 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(38);
+        Set<String> props = new HashSet<>(39);
         props.add("allowedSecurityPolicies");
         props.add("applicationName");
         props.add("applicationUri");
@@ -51,6 +51,7 @@ public class MiloClientEndpointUriFactory extends org.apache.camel.support.compo
         props.add("method");
         props.add("monitorFilterType");
         props.add("node");
+        props.add("nodes");
         props.add("omitNullValues");
         props.add("overrideHost");
         props.add("overridePort");

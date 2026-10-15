@@ -29,13 +29,15 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.http.WebSocketClient;
-import io.vertx.core.impl.VertxInternal;
-import io.vertx.core.impl.btc.BlockedThreadEvent;
+import io.vertx.core.internal.VertxInternal;
+import io.vertx.core.internal.threadchecker.BlockedThreadEvent;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.awaitility.Awaitility.await;
@@ -47,6 +49,15 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
     AvailablePortFinder.Port port = AvailablePortFinder.find();
     @RegisterExtension
     AvailablePortFinder.Port port2 = AvailablePortFinder.find();
+
+    // Registered before the extension that stops the CamelContext (order 1), so that its after each callback runs once
+    // the CamelContext is stopped: the routes may use a router created with the client Vert.x
+    @RegisterExtension
+    @Order(0)
+    AfterEachCallback clientVertxCloser = extensionContext -> closeClientVertx();
+
+    private Vertx clientVertx;
+    private WebSocketClient webSocketClient;
 
     /**
      * Returns the randomized port used for the Vert.x server if no port was provided to the consumer.
@@ -64,13 +75,41 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
     }
 
     public WebSocket openWebSocketConnection(String host, int port, String path, Consumer<String> handler) throws Exception {
-        WebSocketClient client = Vertx.vertx().createWebSocketClient();
-        CompletableFuture<WebSocket> future = client.connect(port, host, path)
+        CompletableFuture<WebSocket> future = getWebSocketClient().connect(port, host, path)
                 .toCompletionStage()
                 .toCompletableFuture();
         WebSocket webSocket = future.get(5, TimeUnit.SECONDS);
         webSocket.textMessageHandler(handler::accept);
         return webSocket;
+    }
+
+    /**
+     * The Vert.x instance used by the test for its clients and routers, closed at the end of the test.
+     */
+    private synchronized Vertx getClientVertx() {
+        if (clientVertx == null) {
+            clientVertx = Vertx.vertx();
+        }
+        return clientVertx;
+    }
+
+    /**
+     * The client is kept until the end of the test, as a Vert.x WebSocket client that is garbage collected closes its
+     * WebSockets.
+     */
+    private synchronized WebSocketClient getWebSocketClient() {
+        if (webSocketClient == null) {
+            webSocketClient = getClientVertx().createWebSocketClient();
+        }
+        return webSocketClient;
+    }
+
+    private synchronized void closeClientVertx() throws Exception {
+        if (clientVertx != null) {
+            clientVertx.close().toCompletionStage().toCompletableFuture().get(10, TimeUnit.SECONDS);
+            clientVertx = null;
+            webSocketClient = null;
+        }
     }
 
     /**
@@ -91,7 +130,7 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
     }
 
     public Router createRouter(String path, Handler<RoutingContext> handler, CountDownLatch latch) {
-        Router router = Router.router(Vertx.vertx());
+        Router router = Router.router(getClientVertx());
         Route route = router.route(path);
 
         if (handler == null) {

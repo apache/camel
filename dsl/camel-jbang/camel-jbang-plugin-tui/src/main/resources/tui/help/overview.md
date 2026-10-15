@@ -132,8 +132,9 @@ Two panels can be opened on top of any tab. Opening one closes the other.
   `Ctrl+S` saves or `Esc` discards). Type `/help` for the slash commands
 
 Where the panels open (bottom or top) is configured in Settings
-(`F2` → `Settings...` → `Panel Position`). The tool calls and answers of the AI panel
-are recorded in `F2` → `AI & MCP` → `AI Log`.
+(`F2` → `Settings...` → `Panel Position`), and `Panel Theme` draws them in a
+theme of their own, so they stand apart from the tabs. The tool calls and
+answers of the AI panel are recorded in `F2` → `AI & MCP` → `AI Log`.
 
 ## Keys
 

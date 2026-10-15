@@ -28,6 +28,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
@@ -127,6 +128,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                                 row.endpoint = o.getString("uri");
                                 row.stub = o.getBooleanOrDefault("stub", false);
                                 row.remote = o.getBooleanOrDefault("remote", true);
+                                row.scope = EndpointScope.of(row.endpoint, row.remote);
                                 row.direction = o.getString("direction");
                                 row.total = o.getString("hits");
                                 row.meanBodySize = o.getLongOrDefault("meanBodySize", -1L);
@@ -190,6 +192,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                 jo.put("total", r.total);
                 jo.put("stub", r.stub);
                 jo.put("remote", r.remote);
+                jo.put("internal", EndpointScope.INTERNAL.equals(r.scope));
                 jo.put("uri", r.endpoint);
                 if (r.meanBodySize >= 0) {
                     jo.put("minBodySize", r.minBodySize);
@@ -207,8 +210,8 @@ public class ListEndpoint extends ProcessWatchCommand {
         }
         boolean hasSize = rows.stream().anyMatch(r -> r.meanBodySize >= 0 || r.meanHeadersSize >= 0);
         // Flexible column: URI (90/140)
-        // Fixed columns: PID(8)+NAME(30)+AGE(8)+DIR(3)+TOTAL(5)+STUB(4)+REMOTE(6) ~= 64
-        int fixedW = 64;
+        // Fixed columns: PID(8)+NAME(30)+AGE(8)+DIR(3)+TOTAL(5)+STUB(4)+SCOPE(8) ~= 66
+        int fixedW = 66;
         if (hasSize) {
             // BODY-SIZE(9)+HDR-SIZE(8) = 17
             fixedW += 17;
@@ -229,7 +232,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                 new Column().header("DIR").with(r -> r.direction),
                 new Column().header("TOTAL").with(r -> r.total),
                 new Column().header("STUB").dataAlign(HorizontalAlign.CENTER).with(r -> r.stub ? "x" : ""),
-                new Column().header("REMOTE").dataAlign(HorizontalAlign.CENTER).with(r -> r.remote ? "x" : ""),
+                new Column().header("SCOPE").dataAlign(HorizontalAlign.LEFT).with(r -> r.scope),
                 new Column().header("BODY-SIZE").visible(hasSize).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> sizeToString(r.meanBodySize)),
                 new Column().header("HDR-SIZE").visible(hasSize).dataAlign(HorizontalAlign.RIGHT)
@@ -307,6 +310,8 @@ public class ListEndpoint extends ProcessWatchCommand {
         String total;
         boolean stub;
         boolean remote;
+        /** remote, internal or local ({@link EndpointScope}) */
+        String scope;
         long meanBodySize = -1;
         long meanHeadersSize = -1;
         long minBodySize = -1;

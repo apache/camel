@@ -97,7 +97,9 @@ public class BoxEventLogsManager {
                     results.add(event);
                 }
                 String nextStreamPosition = eventLog.getNextStreamPosition();
-                if (eventLog.getSize() == 0 || nextStreamPosition == null || nextStreamPosition.equals(streamPosition)) {
+                // the SDK returns the text "null" for a response whose next position is a JSON null
+                if (eventLog.getSize() == 0 || nextStreamPosition == null || "null".equals(nextStreamPosition)
+                        || nextStreamPosition.equals(streamPosition)) {
                     break;
                 }
                 streamPosition = nextStreamPosition;

@@ -362,18 +362,20 @@ class OllamaTab extends AbstractTab {
         Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Throughput ").build();
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).block(block).build(), area);
 
-        // sparkline on the remaining rows: live decode history with the runner, otherwise one bar per request
+        // sparkline on the remaining rows: live decode history from the runner's slot state, otherwise (a remote
+        // Ollama, or a runner without slots such as Ollama's MLX runner) one bar per request
         Rect inner = block.inner(area);
         int sparkY = inner.y() + lines.size();
         if (sparkY < inner.y() + inner.height() && inner.width() > 2) {
-            long[] data = s.runner() != null ? s.decodeHistory() : requestHistory(s.requests(), inner.width() - 2);
+            boolean liveHistory = s.slot() != null;
+            long[] data = liveHistory ? s.decodeHistory() : requestHistory(s.requests(), inner.width() - 2);
             String spark = sparkline(data, inner.width() - 2);
             if (!spark.isBlank()) {
                 frame.buffer().setString(inner.x() + 1, sparkY, spark, Theme.success());
             }
             int labelY = sparkY + 1;
             if (labelY < inner.y() + inner.height()) {
-                String label = s.runner() != null
+                String label = liveHistory
                         ? "decode tok/s, last " + (OllamaMonitor.HISTORY_POINTS / 2) + "s"
                         : "decode tok/s per request";
                 frame.buffer().setString(inner.x() + 1, labelY, label, Theme.muted().dim());
@@ -443,9 +445,7 @@ class OllamaTab extends AbstractTab {
             } else {
                 lines.add(Line.from(Span.styled(" no context data yet", Theme.muted())));
             }
-            lines.add(Line.from(Span.styled(s.local()
-                    ? " live state appears once the runner is found"
-                    : " live state needs the runner on this machine", Theme.muted().dim())));
+            lines.add(Line.from(Span.styled(liveStateNote(s), Theme.muted().dim())));
             Line trend = contextTrendLine(s, block.inner(area).width());
             if (trend != null) {
                 lines.add(trend);
@@ -454,6 +454,19 @@ class OllamaTab extends AbstractTab {
         // wrap: the panel is narrow, and the sentences under the gauge are cut otherwise ("once the runner is foun")
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).overflow(Overflow.WRAP_WORD).block(block).build(),
                 area);
+    }
+
+    /** Why the context panel shows the last request instead of the runner's live state. */
+    private static String liveStateNote(Snapshot s) {
+        if (!s.local()) {
+            return " live state needs the runner on this machine";
+        }
+        if (s.runner() == null) {
+            return " live state appears once the runner is found";
+        }
+        return s.runnerWithoutSlots()
+                ? " the " + s.runner().executable() + " runner has no live state"
+                : " live state appears once the runner answers";
     }
 
     /**

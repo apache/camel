@@ -457,6 +457,37 @@ class SourceViewerEditTest {
     }
 
     @Test
+    void sourceTabFooterIsTheFieldWhileATermIsTyped() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "test-app";
+        info.directory = tempDir.toString();
+        MonitorContext ctx = new MonitorContext(
+                new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.selectedPid = "1234";
+        SourceTab tab = new SourceTab(ctx);
+        tab.onTabSelected();
+
+        // the file opened, the viewer's footer offers Tab back to the files
+        assertThat(tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE))).isTrue();
+        assertThat(footer(tab)).contains(" Tab ");
+
+        // h opens the highlight field: the footer is the field and its keys, not the viewer's navigation
+        tab.handleKeyEvent(KeyEvent.ofChar('h', KeyModifiers.NONE));
+        tab.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
+        assertThat(tab.isTextInputActive()).isTrue();
+        assertThat(footer(tab)).contains(" h:", "a█", " Enter ", " Esc ").doesNotContain(" Tab ");
+    }
+
+    private static String footer(SourceTab tab) {
+        List<Span> spans = new ArrayList<>();
+        tab.renderFooter(spans);
+        StringBuilder sb = new StringBuilder();
+        spans.forEach(s -> sb.append(s.content()));
+        return sb.toString();
+    }
+
+    @Test
     void sourceTabForwardsKeysToViewerWhileEditing() throws Exception {
         IntegrationInfo info = new IntegrationInfo();
         info.pid = "1234";

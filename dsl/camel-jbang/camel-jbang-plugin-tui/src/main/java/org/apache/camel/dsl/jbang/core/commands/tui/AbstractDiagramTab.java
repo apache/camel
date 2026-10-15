@@ -72,6 +72,11 @@ abstract class AbstractDiagramTab extends AbstractTab {
     }
 
     @Override
+    public boolean isConfirming() {
+        return sourceViewer.isVisible() && sourceViewer.isDiscardPending();
+    }
+
+    @Override
     public boolean handlePaste(String text) {
         if (!sourceViewer.isVisible() || !sourceViewer.isTextInputActive()) {
             return false;

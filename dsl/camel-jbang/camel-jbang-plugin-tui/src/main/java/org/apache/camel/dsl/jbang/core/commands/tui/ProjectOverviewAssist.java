@@ -101,6 +101,11 @@ final class ProjectOverviewAssist {
         if (dir == null) {
             return "No project directory: select an integration, or start the TUI in a project folder.";
         }
+        String notOne = ProjectFolders.notOneProject(dir);
+        if (notOne != null) {
+            return notOne + ", not one project: select an integration to explain its project, or start the TUI in a"
+                   + " project folder.";
+        }
         String arg = arguments == null ? "" : arguments.strip().toLowerCase(Locale.ROOT);
         if (running.get()) {
             return "The project overview is still being written.";
@@ -156,6 +161,15 @@ final class ProjectOverviewAssist {
      */
     boolean autoExplain(Path dir, LlmClient client, McpFacade facade, Sink sink, BooleanSupplier idle) {
         if (!MODE_AUTO.equals(mode()) || dir == null || client == null || running.get()) {
+            return false;
+        }
+        String notOne = ProjectFolders.notOneProject(dir);
+        if (notOne != null) {
+            // said once a session: the routes of a workspace of checkouts, or of the home folder, are not one project
+            if (autoDone.add(dir + "|not one project")) {
+                sink.add(AiRole.SYSTEM, notOne + ", so AI Overview: auto leaves it alone; select an integration to"
+                                        + " explain its project.");
+            }
             return false;
         }
         ProjectOverview.Overview overview = ProjectOverview.analyze(dir, catalog());

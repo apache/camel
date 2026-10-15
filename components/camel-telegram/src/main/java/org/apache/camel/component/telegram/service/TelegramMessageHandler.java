@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.telegram.service;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -65,17 +66,20 @@ abstract class TelegramMessageHandler<T extends TelegramMessage> {
 
         builder.POST(bodyPublisher.newPublisher());
         final TelegramAsyncHandler telegramAsyncHandler = new TelegramAsyncHandler(uri, resultClass, mapper, exchange);
-        final CompletableFuture<Object> response
-                = apiClient.client().sendAsync(builder.build(), HttpResponse.BodyHandlers.ofInputStream())
-                        .thenApply(telegramAsyncHandler::handleCompressedResponse);
+        final CompletableFuture<HttpResponse<InputStream>> sent
+                = apiClient.client().sendAsync(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
+        final CompletableFuture<Object> response = sent.thenApply(telegramAsyncHandler::handleCompressedResponse);
 
         try {
             // the calling thread waits for the answer, so a caller sends one message after the other
             response.get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            // nobody waits for the answer any more: keep the stage from writing to the completed exchange later
+            // nobody waits for the answer any more: keep the stage from writing to the completed exchange later,
+            // and abort the request. The futures of the JDK client pass the cancel of a dependent stage on to the
+            // request; the future of a custom client may not, so the one that sendAsync returned is cancelled too
             response.cancel(true);
+            sent.cancel(true);
             exchange.setException(new RuntimeException(e));
         } catch (ExecutionException e) {
             // an error status, a body that could not be read, or a request that failed without an answer

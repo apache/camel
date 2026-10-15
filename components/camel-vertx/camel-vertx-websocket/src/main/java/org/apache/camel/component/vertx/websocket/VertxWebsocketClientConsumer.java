@@ -24,7 +24,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.WebSocket;
-import io.vertx.core.net.impl.ConnectionBase;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -73,16 +72,22 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
         Lock connectLock = getEndpoint().getClientConsumerConnectLock();
         connectLock.lock();
         try {
+            // Use the BiConsumer overload: getWebSocket tells the callback whether the socket was already open.
+            // This avoids a racy external isWebSocketOpen() check: a producer (which does not hold connectLock)
+            // could open and cache a WebSocket between that check and getWebSocket(), causing the consumer to
+            // treat a pre-existing producer socket as its own and close it on stop.
             AtomicReference<WebSocket> opened = new AtomicReference<>();
-            WebSocket webSocket = getEndpoint().getWebSocket(ws -> {
+            WebSocket webSocket = getEndpoint().getWebSocket((ws, wasAlreadyOpen) -> {
                 configureWebSocketHandlers(ws);
-                opened.set(ws);
+                if (!wasAlreadyOpen) {
+                    opened.set(ws);
+                }
             });
             WebSocket mine = opened.get();
             if (reconnect && mine != null && !isStarted()) {
                 // Stopped while connecting. Not for a WebSocket that was already open: it belongs to the endpoint.
                 discarded = mine;
-                mine.close();
+                getEndpoint().discardWebSocket(mine);
                 return null;
             }
             return webSocket;
@@ -95,10 +100,19 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         // a stopped consumer does not reconnect
         cancelReconnect();
+        // Detach this consumer's handlers so a stopped consumer no longer processes incoming messages.
+        Lock connectLock = getEndpoint().getClientConsumerConnectLock();
+        connectLock.lock();
+        try {
+            getEndpoint().clearWebSocketHandlers(this);
+        } finally {
+            connectLock.unlock();
+        }
         super.doStop();
     }
 
     protected void configureWebSocketHandlers(WebSocket webSocket) {
+        getEndpoint().setHandlerOwner(this);
         webSocket.binaryMessageHandler(buffer -> this.handleResult(buffer.getBytes()));
         webSocket.textMessageHandler(this::handleResult);
         webSocket.closeHandler(event -> {
@@ -108,13 +122,12 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
             }
         });
         webSocket.exceptionHandler(exception -> {
-            Throwable cause = exception.getCause();
-            if (cause == ConnectionBase.CLOSED_EXCEPTION) {
+            if (VertxWebsocketHelper.isConnectionClosed(exception)) {
                 // Ignore as there's already a close handler registered
                 return;
             }
             Exchange exchange = createExchange(false);
-            getExceptionHandler().handleException("Error processing exchange", exchange, cause);
+            getExceptionHandler().handleException("Error processing exchange", exchange, exception);
             releaseExchange(exchange, false);
         });
     }

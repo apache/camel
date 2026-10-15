@@ -451,7 +451,8 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * The Subject of the message being sent. Note: Setting the subject in the header takes precedence over this option.
+     * The Subject of the message being sent. The Subject message header is ignored unless useHeaderSubject=true, in
+     * which case it overrides this option.
      */
     public void setSubject(String subject) {
         this.subject = subject;
