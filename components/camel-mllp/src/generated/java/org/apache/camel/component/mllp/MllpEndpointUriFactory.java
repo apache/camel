@@ -24,7 +24,7 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(31);
+        Set<String> props = new HashSet<>(32);
         props.add("acceptTimeout");
         props.add("autoAck");
         props.add("backlog");
@@ -37,6 +37,7 @@ public class MllpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("exchangePattern");
         props.add("hl7Headers");
         props.add("hostname");
+        props.add("hostnameVerification");
         props.add("idleTimeout");
         props.add("idleTimeoutStrategy");
         props.add("keepAlive");

@@ -536,6 +536,42 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, when SSL is used by the producer, or by the
+         * consumer in client mode. When disabled, any certificate accepted by
+         * the trust store is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, when SSL is used by the producer, or by the
+         * consumer in client mode. When disabled, any certificate accepted by
+         * the trust store is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * To configure SSL security.
          * 
          * The option is a:
@@ -1303,6 +1339,42 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, when SSL is used by the producer, or by the
+         * consumer in client mode. When disabled, any certificate accepted by
+         * the trust store is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, when SSL is used by the producer, or by the
+         * consumer in client mode. When disabled, any certificate accepted by
+         * the trust store is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * To configure SSL security.
          * 
          * The option is a:
@@ -2027,6 +2099,42 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder textlineDelimiter(String textlineDelimiter) {
             doSetProperty("textlineDelimiter", textlineDelimiter);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, when SSL is used by the producer, or by the
+         * consumer in client mode. When disabled, any certificate accepted by
+         * the trust store is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, when SSL is used by the producer, or by the
+         * consumer in client mode. When disabled, any certificate accepted by
+         * the trust store is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MinaEndpointBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**

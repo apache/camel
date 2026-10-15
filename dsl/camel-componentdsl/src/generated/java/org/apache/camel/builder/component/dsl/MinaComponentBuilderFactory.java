@@ -561,6 +561,26 @@ public interface MinaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, when SSL is used by the producer, or by the
+         * consumer in client mode. When disabled, any certificate accepted by
+         * the trust store is accepted, whatever host it was issued for.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MinaComponentBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+    
         /**
          * To configure SSL security.
          * 
@@ -641,6 +661,7 @@ public interface MinaComponentBuilderFactory {
             case "objectCodecPattern": getOrCreateConfiguration((MinaComponent) component).setObjectCodecPattern((java.lang.String) value); return true;
             case "textline": getOrCreateConfiguration((MinaComponent) component).setTextline((boolean) value); return true;
             case "textlineDelimiter": getOrCreateConfiguration((MinaComponent) component).setTextlineDelimiter((org.apache.camel.component.mina.MinaTextLineDelimiter) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((MinaComponent) component).setHostnameVerification((boolean) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((MinaComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((MinaComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
