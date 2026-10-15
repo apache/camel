@@ -79,6 +79,12 @@ public class TuiCommand extends CamelCommand {
                         completionCandidates = ThemeModeCompletionCandidates.class)
     String theme;
 
+    @CommandLine.Option(names = { "--panel-theme" },
+                        description = "Color theme of the shell (F6) and AI (F8) panels, or 'same' for the main theme"
+                                      + " (overrides the Panel Theme setting for this session)",
+                        completionCandidates = ThemeModeCompletionCandidates.class)
+    String panelTheme;
+
     public TuiCommand(CamelJBangMain main, ClassLoader classLoader) {
         super(main);
         this.classLoader = classLoader;
@@ -138,6 +144,10 @@ public class TuiCommand extends CamelCommand {
         if (theme != null) {
             args.add("--theme");
             args.add(theme);
+        }
+        if (panelTheme != null) {
+            args.add("--panel-theme");
+            args.add(panelTheme);
         }
         return args;
     }

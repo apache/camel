@@ -184,6 +184,10 @@ See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard sho
 | Color theme for this session (e.g., `dark`, `tokyo-night`, `dracula`). See xref:camel-jbang-tui-settings.adoc#_theme[Theme] for the full list of 21 themes. Overrides the persisted `camel.tui.theme` preference when set.
 |
 
+| `--panel-theme`
+| Color theme of the shell (*F6*) and AI (*F8*) panels for this session, or `same` for the main theme. See xref:camel-jbang-tui-settings.adoc#_panel_theme[Panel Theme]. Overrides the persisted `camel.tui.panelTheme` preference when set.
+|
+
 | `--record`
 | Play a `.tape` file in the TUI and record it to an Asciinema `.cast` file. See xref:camel-jbang-tui-recording.adoc#_scripted_recording[Scripted Recording] for the tape commands.
 |

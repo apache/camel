@@ -34,6 +34,10 @@ via *F2* -> _AI & MCP_ -> _Setup AI_. Use *F2* -> _Settings_ to pin a provider, 
 (`camel.tui.ai.provider`, `camel.tui.ai.model`, `camel.tui.ai.url`) regardless of the environment.
 `camel.tui.ai.acp.command` sets the command line of the custom ACP agent (`acp:custom`).
 
+To set the panel apart from the tab under it, give it a theme of its own: *Panel Theme* in *F2* -> _Settings_,
+or `--panel-theme=<name>` on the command line, draws the AI and shell panels in another of the themes, such as a
+Light panel on the Dark theme (see xref:camel-jbang-tui-settings.adoc#_panel_theme[Panel theme]).
+
 image::jbang/camel-tui-ai-panel-answer.png[A local Ollama model explains why an order failed]
 
 To run the model on your own machine, with Ollama or an OpenAI-compatible server such as LM Studio, see

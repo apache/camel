@@ -36,8 +36,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import dev.tamboui.buffer.Buffer;
-import dev.tamboui.buffer.Cell;
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
@@ -154,6 +152,12 @@ public class CamelMonitor extends CamelCommand {
                         description = "Color theme (overrides persisted preference for this session)",
                         completionCandidates = ThemeModeCompletionCandidates.class)
     String theme;
+
+    @CommandLine.Option(names = { "--panel-theme" },
+                        description = "Color theme of the shell (F6) and AI (F8) panels, or 'same' for the main theme"
+                                      + " (overrides the Panel Theme setting for this session)",
+                        completionCandidates = ThemeModeCompletionCandidates.class)
+    String panelTheme;
 
     // State
     private final TabsState tabsState = new TabsState(TAB_OVERVIEW);
@@ -433,9 +437,9 @@ public class CamelMonitor extends CamelCommand {
     }
 
     /**
-     * Validates and applies the --theme option.
+     * Validates and applies the --theme and --panel-theme options.
      */
-    private void applyThemeOption() {
+    void applyThemeOption() {
         if (theme != null) {
             if (!Theme.isValidMode(theme)) {
                 String expected = String.join("' or '", ThemeMode.ids());
@@ -444,6 +448,16 @@ public class CamelMonitor extends CamelCommand {
                         "Invalid value for option '--theme': expected '" + expected + "', was '" + theme + "'");
             }
             Theme.applyStartupMode(theme);
+        }
+        if (panelTheme != null) {
+            if (!Theme.isValidMode(panelTheme) && !Theme.PANEL_THEME_SAME.equalsIgnoreCase(panelTheme.strip())) {
+                String expected = String.join("' or '", ThemeMode.ids());
+                throw new CommandLine.ParameterException(
+                        new CommandLine(this),
+                        "Invalid value for option '--panel-theme': expected '" + Theme.PANEL_THEME_SAME + "' or '" + expected
+                                               + "', was '" + panelTheme + "'");
+            }
+            Theme.setPanelTheme(panelTheme);
         }
     }
 
@@ -1127,7 +1141,12 @@ public class CamelMonitor extends CamelCommand {
         if (ctx.panelOverlay) {
             frame.renderWidget(Clear.INSTANCE, panelArea);
         }
-        panel.accept(frame, panelArea);
+        // with a panel theme (Settings > Panel Theme) the panel and its empty cells take that theme's colors, so it
+        // stands apart from the tab; the base colors of the rest of the frame are filled at the end of render()
+        Theme.inPanel(() -> {
+            panel.accept(frame, panelArea);
+            Theme.applyBaseColors(frame.buffer(), panelArea);
+        });
         // the draggable border is the panel edge that faces the tab
         panelSplit.setBorderPos(ctx.panelTop ? panelArea.bottom() - 1 : panelArea.y());
     }
@@ -1180,6 +1199,10 @@ public class CamelMonitor extends CamelCommand {
         ctx.routeTree = settings.isRouteTree();
         ctx.panelTop = settings.isPanelTop();
         ctx.panelOverlay = settings.isPanelOverlay();
+        if (panelTheme == null) {
+            // --panel-theme wins for the session
+            Theme.setPanelTheme(settings.getPanelTheme());
+        }
     }
 
     // ---- Event Handling ----
@@ -1962,7 +1985,7 @@ public class CamelMonitor extends CamelCommand {
             helpOverlay.render(frame, contentArea);
         }
         renderFooter(frame, mainChunks.get(3));
-        applyThemeBaseColors(frame.buffer(), area);
+        Theme.applyBaseColors(frame.buffer(), area);
         LinkTargets.tidy(frame.buffer());
 
         recordingManager.updateBuffer(frame.buffer());
@@ -2095,7 +2118,7 @@ public class CamelMonitor extends CamelCommand {
 
         int x5 = area.x() + Math.max(0, (area.width() - CharWidth.of(line5)) / 2);
         frame.buffer().setString(x5, startY + 4, line5, normal);
-        applyThemeBaseColors(frame.buffer(), area);
+        Theme.applyBaseColors(frame.buffer(), area);
     }
 
     private void renderTabs(Frame frame, Rect area) {
@@ -2215,38 +2238,6 @@ public class CamelMonitor extends CamelCommand {
                 subViewBar.clear();
             }
             tab.render(frame, area);
-        }
-    }
-
-    /**
-     * Fills cells that still have no explicit fg/bg after widget rendering. TamboUI clears the buffer to
-     * {@link Cell#EMPTY} each frame; when bg is unset the terminal falls back to its own default (usually black). Only
-     * patches missing colors so selection highlights, zebra stripes, and other widget backgrounds are preserved.
-     */
-    static void applyThemeBaseColors(Buffer buffer, Rect area) {
-        Color baseBg = Theme.baseBg();
-        Color baseFg = Theme.baseFg();
-        Rect intersection = buffer.area().intersection(area);
-        for (int y = intersection.top(); y < intersection.bottom(); y++) {
-            for (int x = intersection.left(); x < intersection.right(); x++) {
-                Cell cell = buffer.get(x, y);
-                if (cell.isContinuation()) {
-                    continue;
-                }
-                Style style = cell.style();
-                Color cellBg = style.bg().orElse(null);
-                Color cellFg = style.fg().orElse(null);
-                if (cellBg == null || cellFg == null) {
-                    Style patch = Style.EMPTY;
-                    if (cellBg == null) {
-                        patch = patch.bg(baseBg);
-                    }
-                    if (cellFg == null) {
-                        patch = patch.fg(baseFg);
-                    }
-                    buffer.set(x, y, cell.patchStyle(patch));
-                }
-            }
         }
     }
 

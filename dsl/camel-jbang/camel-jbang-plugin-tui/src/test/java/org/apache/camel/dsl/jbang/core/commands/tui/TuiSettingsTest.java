@@ -69,6 +69,7 @@ class TuiSettingsTest {
         settings.setAiPromptHistory("50");
         settings.setPanelPosition("top");
         settings.setPanelSpace("overlay");
+        settings.setPanelTheme("tokyo-night");
         settings.save();
 
         TuiSettings loaded = TuiSettings.load();
@@ -85,6 +86,7 @@ class TuiSettingsTest {
         assertThat(loaded.getPanelPosition()).isEqualTo("top");
         assertThat(loaded.isPanelTop()).isTrue();
         assertThat(loaded.getPanelSpace()).isEqualTo("overlay");
+        assertThat(loaded.getPanelTheme()).isEqualTo("tokyo-night");
         assertThat(loaded.isPanelOverlay()).isTrue();
     }
 

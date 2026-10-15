@@ -173,6 +173,18 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <!-- the tests write prompt and shell histories, settings and the camel-jbang log under the home
+                             directory: a home of their own keeps them out of the developer's. The local Maven
+                             repository stays the build's, so what the tests resolve is not downloaded again -->
+                        <user.home>${project.build.directory}/test-home</user.home>
+                        <maven.repo.local>${settings.localRepository}</maven.repo.local>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
                 <configuration>
