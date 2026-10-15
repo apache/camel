@@ -841,7 +841,7 @@ public class YamlValidator {
             "delay", "delay: {expression: {constant: {expression: \"1000\"}}}");
 
     private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel", "ognl",
-            "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "wasm", "datasonnet");
+            "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "datasonnet");
 
     /**
      * ${body.value} < 1 written as a groovy expression: Simple syntax inside another language, which groovy reads as a

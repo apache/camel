@@ -838,7 +838,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1341,7 +1340,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1435,7 +1433,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1572,7 +1569,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -1725,8 +1721,6 @@
                 "required" : [ "tokenize" ]
               }, {
                 "required" : [ "variable" ]
-              }, {
-                "required" : [ "wasm" ]
               }, {
                 "required" : [ "xpath" ]
               }, {
@@ -1913,14 +1907,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "wasm" ],
-            "properties" : {
-              "wasm" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -1969,7 +1955,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
@@ -2128,7 +2113,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -2336,7 +2320,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -2837,7 +2820,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -3712,7 +3694,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4176,7 +4157,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4286,7 +4266,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4450,7 +4429,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -4915,7 +4893,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5599,7 +5576,6 @@
             "spel" : { },
             "tokenize" : { },
             "variable" : { },
-            "wasm" : { },
             "xpath" : { },
             "xquery" : { },
             "xtokenize" : { },
@@ -5793,7 +5769,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5865,7 +5840,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -5982,7 +5956,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6097,7 +6070,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6175,7 +6147,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6279,8 +6250,6 @@
               }, {
                 "required" : [ "variable" ]
               }, {
-                "required" : [ "wasm" ]
-              }, {
                 "required" : [ "xpath" ]
               }, {
                 "required" : [ "xquery" ]
@@ -6350,7 +6319,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -6533,7 +6501,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7013,7 +6980,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -7453,7 +7419,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -8076,7 +8041,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -8171,7 +8135,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { },
@@ -12227,14 +12190,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "wasm" ],
-            "properties" : {
-              "wasm" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -12283,7 +12238,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }
@@ -13227,51 +13181,6 @@
           }
         } ],
         "required" : [ "expression" ]
-      },
-      "org.apache.camel.model.language.WasmExpression" : {
-        "title" : "Wasm",
-        "description" : "Call a wasm (web assembly) function",
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "additionalProperties" : false,
-          "properties" : {
-            "expression" : {
-              "type" : "string",
-              "title" : "Expression",
-              "description" : "The expression value in your chosen language syntax."
-            },
-            "id" : {
-              "type" : "string",
-              "title" : "Id",
-              "description" : "The id of this node."
-            },
-            "module" : {
-              "type" : "string",
-              "title" : "Module",
-              "description" : "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function."
-            },
-            "resolveResource" : {
-              "type" : "boolean",
-              "title" : "Resolve Resource",
-              "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
-              "default" : false
-            },
-            "resultType" : {
-              "type" : "string",
-              "title" : "Result Type",
-              "description" : "The class of the result type (type from output)."
-            },
-            "trim" : {
-              "type" : "boolean",
-              "title" : "Trim",
-              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-              "default" : true
-            }
-          }
-        } ],
-        "required" : [ "expression", "module" ]
       },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
         "title" : "XML Tokenize",
@@ -16921,14 +16830,6 @@
             }
           }, {
             "type" : "object",
-            "required" : [ "wasm" ],
-            "properties" : {
-              "wasm" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
-              }
-            }
-          }, {
-            "type" : "object",
             "required" : [ "xpath" ],
             "properties" : {
               "xpath" : {
@@ -16977,7 +16878,6 @@
           "spel" : { },
           "tokenize" : { },
           "variable" : { },
-          "wasm" : { },
           "xpath" : { },
           "xquery" : { },
           "xtokenize" : { }

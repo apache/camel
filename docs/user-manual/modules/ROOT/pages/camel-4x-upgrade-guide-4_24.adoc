@@ -547,11 +547,15 @@ body, the exit code and standard error are in `CamelWasmExitCode` and `CamelWasm
 custom `alloc`/`dealloc` and JSON message ABI. The URI path is now the module (`wasm:classpath:upper.wasm`); the
 function name and the `module` option are removed, and a header reaches the module only when listed in
 `environmentHeaders`. To migrate, turn the function into a program that reads standard input and writes standard
-output, built for `wasm32-wasip1` (Rust) or with `GOOS=wasip1 GOARCH=wasm` (Go). The `wasm` language is unchanged.
+output, built for `wasm32-wasip1` (Rust) or with `GOOS=wasip1 GOARCH=wasm` (Go).
 
 The endpoint runs every exchange on a new instance of the module, so a module can no longer keep state from one
-message to the next. The 4.23 note that a failed call discards the Wasm instance therefore now only applies to the
-`wasm` expression.
+message to the next. The 4.23 note that a failed call discards the Wasm instance no longer applies.
+
+The `wasm` language is removed: the `wasm` expression of the Java, XML and YAML DSLs, `WasmExpression` of the model,
+and `WasmLanguage`, `WasmFunction`, `WasmSupport`, `Wasm.FN_ALLOC` and `Wasm.FN_DEALLOC` of `camel-wasm`. Call the
+module with the `wasm` endpoint as a route step instead, for example `.to("wasm:classpath:transform.wasm")`, built as a
+WASI command module as described above, and use its output (the new message body) in the next steps.
 
 The following API of `camel-wasm` is removed or changed with the old ABI:
 

@@ -28,7 +28,6 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.VariableExpression;
-import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -322,22 +321,5 @@ public final class Builder {
     public static ValueBuilder regexReplaceAll(Expression content, String regex, Expression replacement) {
         Expression newExp = ExpressionBuilder.regexReplaceAll(content, regex, replacement);
         return new ValueBuilder(newExp);
-    }
-
-    /**
-     * Call a wasm (web assembly) function.
-     */
-    public static ValueBuilder wasm(String value) {
-        WasmExpression exp = new WasmExpression(value);
-        return new ValueBuilder(exp);
-    }
-
-    /**
-     * Call a wasm (web assembly) function.
-     */
-    public static ValueBuilder wasm(String value, Class<?> resultType) {
-        WasmExpression exp = new WasmExpression(value);
-        exp.setResultType(resultType);
-        return new ValueBuilder(exp);
     }
 }
