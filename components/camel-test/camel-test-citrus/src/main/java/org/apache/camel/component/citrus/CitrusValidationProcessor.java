@@ -141,7 +141,7 @@ class CitrusValidationProcessor implements Processor {
         List<ValidationContext> contexts = new ArrayList<>();
         contexts.add(new DefaultMessageValidationContext());
         if (!spec.getHeaders().isEmpty()) {
-            contexts.add(new HeaderValidationContext());
+            contexts.add(new HeaderValidationContext.Builder().ignoreCase(true).build());
         }
         for (ValidationContext.Builder<?, ?> builder : spec.getValidationContextBuilders()) {
             contexts.add(builder.build());
