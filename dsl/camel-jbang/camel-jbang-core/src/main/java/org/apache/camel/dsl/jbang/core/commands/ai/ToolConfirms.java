@@ -30,9 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -66,27 +64,12 @@ public final class ToolConfirms {
     }
 
     /**
-     * Whether a component stays inside the integration, as the catalog marks it internal: its routes, in-memory state
-     * and log, and no file, network, process, or code or resource named in its URI, by any option. This is narrower
-     * than remote=false, which exec, class, bean, language and the components that load a template or a stylesheet by
-     * URI are too. The catalog is the CLI's own, so it has the flag; a component it does not know (a custom one, or one
-     * newer than the CLI) is not internal.
+     * Whether a component stays inside the integration, as the catalog marks it internal ({@link EndpointScope}): a
+     * message to it needs no confirm. This is narrower than remote=false, which exec, class, bean, language and the
+     * components that load a template or a stylesheet by URI are too.
      */
     public static boolean isInternal(String scheme) {
-        if (!scheme.matches("[a-z0-9-]+")) {
-            return false;
-        }
-        try {
-            ComponentModel model = Catalog.INSTANCE.componentModel(scheme);
-            return model != null && model.isInternal();
-        } catch (RuntimeException e) {
-            return false;
-        }
-    }
-
-    // loaded on the first send, not when a call only needs the SQL or language checks
-    private static final class Catalog {
-        static final CamelCatalog INSTANCE = new DefaultCamelCatalog(true);
+        return EndpointScope.isInternal(scheme);
     }
 
     /**

@@ -159,6 +159,14 @@ local model gets a core set of tools (`--tools=auto`, the default), a hosted mod
 of `--max-iterations` is now 25 instead of 10, and `--model llama3.2` now selects that model also when a
 model better at tool calling, such as `qwen3.6`, is installed.
 
+=== camel-jbang - camel get endpoint shows the scope of an endpoint
+
+`camel get endpoint` replaces the `REMOTE` column with `SCOPE`, which tells three kinds of endpoint apart:
+`remote` (an external system, as before), `internal` (Camel plumbing that stays inside the integration, such as
+`direct`, `seda` or `log`, as the catalog marks its component internal) and `local` (neither, such as `exec` or
+`bean`). Scripts that read the `REMOTE` column of the table must read `SCOPE` instead. The `--json` output keeps
+`remote` and adds `internal`.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

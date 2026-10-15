@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.util.json.JsonArray;
@@ -50,6 +51,28 @@ class StatusParserTest {
         assertEquals("myIntegration", info.name);
         assertEquals("4.21.0", info.camelVersion);
         assertEquals(5, info.state);
+    }
+
+    @Test
+    void anEndpointGetsItsScopeFromTheRemoteFlagAndTheCatalog() {
+        JsonArray endpoints = new JsonArray();
+        for (String[] e : new String[][] {
+                { "kafka://orders", "true" }, { "log://payment", "false" },
+                { "exec://wc", "false" } }) {
+            JsonObject ep = new JsonObject();
+            ep.put("uri", e[0]);
+            ep.put("remote", Boolean.parseBoolean(e[1]));
+            endpoints.add(ep);
+        }
+        JsonObject holder = new JsonObject();
+        holder.put("endpoints", endpoints);
+        JsonObject root = new JsonObject();
+        root.put("context", new JsonObject());
+        root.put("endpoints", holder);
+
+        IntegrationInfo info = StatusParser.parseIntegration(ProcessHandle.current(), root);
+
+        assertEquals(List.of("remote", "internal", "local"), info.endpoints.stream().map(ep -> ep.scope).toList());
     }
 
     @Test
