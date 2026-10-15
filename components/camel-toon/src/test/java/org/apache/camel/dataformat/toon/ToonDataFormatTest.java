@@ -216,12 +216,6 @@ class ToonDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    void lengthMarkerOptionPrefixesArrayLength() {
-        String toon = template.requestBody("direct:lengthMarker", List.of("a", "b"), String.class);
-        assertThat(toon).contains("[#");
-    }
-
-    @Test
     void contentTypeHeaderIsSetByDefault() {
         Exchange exchange = template.request("direct:marshal", e -> e.getIn().setBody(Map.of("ok", true)));
         assertThat(exchange.getMessage().getHeader(Exchange.CONTENT_TYPE)).isEqualTo("text/toon");
@@ -304,7 +298,6 @@ class ToonDataFormatTest extends CamelTestSupport {
                 from("direct:pipe").marshal(dataFormat().toon().delimiter("PIPE").end());
                 from("direct:unmarshalPipe").unmarshal(dataFormat().toon().delimiter("PIPE").end());
                 from("direct:indent").marshal(dataFormat().toon().indent(4).end());
-                from("direct:lengthMarker").marshal(dataFormat().toon().lengthMarker(true).end());
                 from("direct:noContentType").marshal(dataFormat().toon().contentTypeHeader(false).end());
                 from("direct:strictFalse").unmarshal(dataFormat().toon().strict(false).end());
             }

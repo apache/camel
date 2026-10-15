@@ -162,24 +162,6 @@ public class ToonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain
-         * lengths.
-         */
-        public Builder lengthMarker(String lengthMarker) {
-            this.lengthMarker = lengthMarker;
-            return this;
-        }
-
-        /**
-         * Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain
-         * lengths.
-         */
-        public Builder lengthMarker(boolean lengthMarker) {
-            this.lengthMarker = Boolean.toString(lengthMarker);
-            return this;
-        }
-
-        /**
          * Whether to enable strict validation when unmarshalling TOON.
          */
         public Builder strict(String strict) {

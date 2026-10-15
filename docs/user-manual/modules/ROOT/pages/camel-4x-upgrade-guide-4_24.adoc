@@ -13,6 +13,12 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== Breaking changes
+
+==== camel-toon dataformat
+
+Due to upgrade to Toon 2.0.6+, the parameter `lengthMarker` has been removed.
+
 === camel-semantic - expert artifacts
 
 TypeSafe AI Semantic applications must add `org.apache.camel:camel-semantic-typesafe-ai`.
