@@ -734,6 +734,15 @@ go through one of those paths, remove the `{` and `}` characters from it in the 
 endpoint (Chunk has no escape for tags inside data), for example with a processor that rewrites the body or
 header.
 
+=== camel-azure-servicebus - the dead-letter reason and description are bounded
+
+When the consumer dead-letters a message after a failed route with `enableDeadLettering=true`, the reason and the
+error description it writes are now capped at 4096 characters, the limit the Azure SDKs apply to both fields. A value
+that was cut ends with `...`. The description holds the stack trace, so a deep one is now truncated rather than sent
+in full and rejected by the broker.
+
+A settlement request the broker rejects is now reported through the consumer's exception handler.
+
 === camel-telegram - a failed send fails the exchange once
 
 When Telegram answers a message with an error status (for example `400` for an unknown chat), or with a body that
