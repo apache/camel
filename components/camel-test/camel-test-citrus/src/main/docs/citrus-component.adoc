@@ -402,7 +402,9 @@ The two operations handle validation failures differently with respect to Camel'
 
 NOTE: Each redelivery attempt counts as a new exchange in the mock counter. So if a
 `receive(1)` spec fails and Camel redelivers, the retry is exchange 2 and
-`receive(2)` applies to it — not `receive(1)` again.
+`receive(2)` applies to it — not `receive(1)` again. If no spec exists for the retry, it
+passes without validation and the earlier failure is not recorded, so set
+`expectedMessageCount(...)` to catch the extra exchange.
 
 === Exchange properties and variables as Citrus variables
 
