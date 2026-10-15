@@ -1,5 +1,5 @@
-# Payment for the web shop orders. The payment provider is flaky for one order
-# and declines another; the error handler retries the first and parks both.
+# Payment for the web shop orders. The payment provider is flaky for one order and declines
+# another: the first is retried until it is charged, the second parked (parked.camel.yaml).
 - errorHandler:
     deadLetterChannel:
       deadLetterUri: direct:parked
@@ -65,20 +65,3 @@
                   - throwException:
                       exceptionType: java.lang.IllegalStateException
                       message: "card declined"
-
-# Parked orders are written as files for someone to look at
-- route:
-    id: parked
-    from:
-      uri: direct:parked
-      steps:
-        - log:
-            message: "Order ${body[orderId]} parked for manual review: ${exception.message}"
-        - marshal:
-            json:
-              library: Jackson
-        - to:
-            uri: file
-            parameters:
-              directoryName: parked
-              fileName: "${header.CamelFileName}"
