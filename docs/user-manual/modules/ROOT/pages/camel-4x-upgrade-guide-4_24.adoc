@@ -282,13 +282,18 @@ now validate the certificate of the OPC UA server. Before, any server certificat
 to validate it.
 
 Configure the trusted certificates with the new `trustListDirectory` option: put the certificate of the server, or of
-the CA that issued it, in the `trusted/certs` directory of the trust list. A rejected server certificate is written to
-`rejected/certs`, from where it can be moved to `trusted/certs` once it has been checked. A custom validator can be
-configured with the new `certificateValidator` option instead.
+the CA that issued it, in the `trusted/certs` directory of the trust list. A server certificate that does not chain up
+to a trusted certificate is written to `rejected/certs`, from where it can be moved to `trusted/certs` once it has been
+checked. The trust list also refuses a server certificate outside its validity period, revoked by a revocation list of
+the trust list, or whose application URI differs from the one of the server. A custom validator can be configured with
+the new `certificateValidator` option instead.
 
-With neither option, the client does not connect to such an endpoint, and logs that the server certificate cannot be
-validated. To restore the previous behaviour, set the new `trustAllCertificates` option to `true`. This is insecure:
-the client then does not authenticate the server.
+With neither option, the client does not connect to such an endpoint. It logs a `WARN` message
+`Failed to connect: The certificate of the OPC UA server cannot be validated`, followed by the endpoint and its
+security policy, and tries again every 10 seconds. A producer fails with `IllegalStateException: No connected`, caused
+by the same message. A server certificate refused by the trust list or by a `certificateValidator` is logged at `WARN`
+as `Failed to connect, because a certificate or security check failed`. To restore the previous behaviour, set the new
+`trustAllCertificates` option to `true`. This is insecure: the client then does not authenticate the server.
 
 The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
 use the security policy `None` are not affected.

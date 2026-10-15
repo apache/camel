@@ -493,7 +493,8 @@ public interface MiloClientComponentBuilderFactory {
         /**
          * A custom validator for the certificate of the OPC UA server. When
          * set, it is used instead of the trust list configured with
-         * trustListDirectory.
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
          * 
          * The option is a:
          * &lt;code&gt;org.eclipse.milo.opcua.stack.core.security.CertificateValidator&lt;/code&gt; type.
@@ -551,9 +552,11 @@ public interface MiloClientComponentBuilderFactory {
          * certificates in trusted/certs, CRLs of trusted certificates in
          * trusted/crl, certificates of issuing CAs in issuer/certs and their
          * CRLs in issuer/crl. The directories are created if they do not exist.
-         * A server certificate that fails validation is written to
-         * rejected/certs, from where it can be moved to trusted/certs once it
-         * has been checked.
+         * Besides the chain of trust, the validity period, the revocation by a
+         * CRL of the trust list and the application URI of the server
+         * certificate are checked. A server certificate that does not chain up
+         * to a trusted certificate is written to rejected/certs, from where it
+         * can be moved to trusted/certs once it has been checked.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
