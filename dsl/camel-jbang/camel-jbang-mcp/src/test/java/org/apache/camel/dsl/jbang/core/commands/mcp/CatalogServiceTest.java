@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 import java.util.Optional;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -185,13 +186,15 @@ class CatalogServiceTest {
     @Test
     @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                               disabledReason = "Runs only local — requires Quarkus extension registry access")
-    void quarkusRuntimeWithCamelVersionResolvesTheBomFromRegistry() {
+    void quarkusRuntimeWithCamelVersionResolvesTheBomFromRegistry() throws Exception {
         // CAMEL-25640: passing camelVersion with quarkus runtime must resolve the platform BOM from the Quarkus
         // extension registry and pass it to doLoadCatalog; previously it passed null and produced an NPE or a
         // silently wrong catalog. Use a released version that is not the built-in one so sameAsDefault() is false
         // and the new code path is taken.
+        // Note: getCatalogVersion() returns the CLI's own Camel version (from camel-catalog on the classpath),
+        // not the requested "4.10.0". Check the runtime provider instead to verify the Quarkus path was taken.
         CatalogService service = createService(null);
-        String result = version(service, "quarkus", "4.10.0", null);
-        assertThat(result).isEqualTo("4.10.0");
+        CamelCatalog catalog = service.loadCatalog("quarkus", "4.10.0", null);
+        assertThat(catalog.getRuntimeProvider().getProviderName()).isEqualTo("quarkus");
     }
 }
