@@ -10,7 +10,7 @@
     "javaType": "org.apache.camel.semantic.SemanticEvaluateConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-semantic",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
   },
   "options": {
     "body": {

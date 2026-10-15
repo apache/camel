@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.Expression",
     "groupId": "org.apache.camel",
     "artifactId": "camel-api",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "methods": { "evaluate": { "index": 0, "signatures": [ "<T> T evaluate(Exchange exchange, Class<T> type)" ], "javaType": "java.lang.Object", "important": true, "description": "The value, converted to the type; pass Object.class to keep it as is.", "examples": [ "(exchange, type) -> exchange.getMessage().getBody(Order.class).getItems()" ] } }
   }
 }

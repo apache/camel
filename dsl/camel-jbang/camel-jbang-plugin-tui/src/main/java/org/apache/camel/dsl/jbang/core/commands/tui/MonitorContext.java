@@ -279,7 +279,7 @@ class MonitorContext {
         return false;
     }
 
-    /** Whether a Camel version such as 4.23.0-SNAPSHOT is the given major.minor or later; false when unknown. */
+    /** Whether a Camel version such as 4.24.0-SNAPSHOT is the given major.minor or later; false when unknown. */
     static boolean isCamelVersionAtLeast(String version, int major, int minor) {
         Matcher m = version != null ? VERSION.matcher(version) : null;
         if (m == null || !m.find()) {
