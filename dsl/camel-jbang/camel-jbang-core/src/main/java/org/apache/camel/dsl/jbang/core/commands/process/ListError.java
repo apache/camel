@@ -302,6 +302,8 @@ public class ListError extends ProcessWatchCommand {
                     }
                 }
             }
+        } else if (jsonOutput && !diagram) {
+            printer().println("[]");
         }
 
         return 0;

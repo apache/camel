@@ -156,7 +156,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(
                         Jsoner.serialize(
@@ -190,8 +190,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         CamelTableColumns.since().with(r -> r.since),
                         CamelTableColumns.lastText("DESCRIPTION", descWidth).with(this::shortDescription))));
             }
-        } else if (filterName != null) {
-            // suggest similar names when filter returns no results
+        }
+        if (rows.isEmpty() && filterName != null) {
+            // suggest similar names when filter returns no results (not part of the output, which can be JSON)
             List<String> allNames = collectRows().stream().map(r -> r.name).collect(Collectors.toList());
             List<String> suggestions = new ArrayList<>(suggestNames(filterName));
             for (String similar : SuggestSimilarHelper.didYouMean(allNames, filterName)) {
@@ -200,9 +201,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                 }
             }
             if (!suggestions.isEmpty()) {
-                printer().println("No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
+                printer().printDiagnostic(
+                        "No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
             } else {
-                printer().println("No results for filter: " + filterName);
+                printer().printDiagnostic("No results for filter: " + filterName);
             }
             printer().printTip("use 'camel doc " + filterName + "' for detailed documentation.");
         }

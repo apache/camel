@@ -249,11 +249,13 @@ public class CamelRouteStatus extends ProcessWatchCommand {
             rows.subList(limit, rows.size()).clear();
         }
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (error) {
-                for (Row r : rows) {
-                    boolean error = r.lastErrorPhase != null;
-                    if (error) {
+                List<Row> failed = rows.stream().filter(r -> r.lastErrorPhase != null).toList();
+                if (jsonOutput) {
+                    printer().println(Jsoner.serialize(failed.stream().map(this::toErrorJson).collect(Collectors.toList())));
+                } else {
+                    for (Row r : failed) {
                         printErrorTable(r, remoteVisible.get());
                     }
                 }
@@ -267,29 +269,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
 
     protected void printTable(List<Row> rows, boolean remoteVisible) {
         if (jsonOutput) {
-            printer().println(Jsoner.serialize(rows.stream().map(r -> {
-                JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
-                jo.put("name", r.name);
-                jo.put("routeId", r.routeId);
-                jo.put("group", r.group);
-                jo.put("from", r.from);
-                jo.put("remote", r.remote);
-                jo.put("status", getStatus(r));
-                jo.put("age", r.age);
-                jo.put("coverage", r.coverage);
-                jo.put("throughput", getThroughput(r));
-                jo.put("total", r.total);
-                jo.put("failed", r.failed);
-                jo.put("inflight", r.inflight);
-                jo.put("mean", r.mean);
-                jo.put("min", r.min);
-                jo.put("max", r.max);
-                jo.put("last", r.last);
-                jo.put("delta", getDelta(r));
-                jo.put("sinceLast", getSinceLast(r));
-                return jo;
-            }).collect(Collectors.toList())));
+            printer().println(Jsoner.serialize(rows.stream().map(this::toJson).collect(Collectors.toList())));
             return;
         }
         // Flexible columns: FROM (45/140), ID with description (45)
@@ -334,6 +314,58 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("LAST").with(r -> r.last),
                 new Column().header("DELTA").with(this::getDelta),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
+    }
+
+    /**
+     * A row in JSON mode.
+     */
+    protected JsonObject toJson(Row r) {
+        JsonObject jo = new JsonObject();
+        jo.put("pid", r.pid);
+        jo.put("name", r.name);
+        jo.put("routeId", r.routeId);
+        jo.put("group", r.group);
+        jo.put("from", r.from);
+        jo.put("remote", r.remote);
+        jo.put("status", getStatus(r));
+        jo.put("age", r.age);
+        jo.put("coverage", r.coverage);
+        jo.put("throughput", getThroughput(r));
+        jo.put("total", r.total);
+        jo.put("failed", r.failed);
+        jo.put("inflight", r.inflight);
+        jo.put("mean", r.mean);
+        jo.put("min", r.min);
+        jo.put("max", r.max);
+        jo.put("last", r.last);
+        jo.put("delta", getDelta(r));
+        jo.put("sinceLast", getSinceLast(r));
+        return jo;
+    }
+
+    /**
+     * A route with an error in JSON mode ({@code --error}): the route and its last error.
+     */
+    protected JsonObject toErrorJson(Row r) {
+        JsonObject jo = new JsonObject();
+        jo.put("pid", r.pid);
+        jo.put("name", r.name);
+        jo.put("routeId", r.routeId);
+        jo.put("group", r.group);
+        jo.put("from", r.from);
+        jo.put("status", getStatus(r));
+        JsonObject error = new JsonObject();
+        error.put("phase", r.lastErrorPhase);
+        if (r.lastErrorTimestamp > 0) {
+            error.put("timestamp", r.lastErrorTimestamp);
+            error.put("ago", getErrorAgo(r));
+        }
+        error.put("message", r.lastErrorMessage);
+        if (r.stackTrace != null && !r.stackTrace.isEmpty()) {
+            error.put("stackTrace", r.stackTrace);
+        }
+        jo.put("lastError", error);
+        return jo;
     }
 
     protected void printErrorTable(Row er, boolean remoteVisible) {

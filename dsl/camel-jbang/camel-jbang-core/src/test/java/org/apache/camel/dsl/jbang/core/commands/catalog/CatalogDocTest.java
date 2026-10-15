@@ -19,6 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -78,12 +82,26 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
     public void shouldReportUnknownComponentAsNotFound() throws Exception {
         CatalogDoc command = createCommand("component:no-such-component-xyz", false);
 
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+
+        Assertions.assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        Assertions.assertTrue(e.getMessage().startsWith("Camel component: no-such-component-xyz not found"),
+                e.getMessage());
+        Assertions.assertEquals("", printer.getOutput());
+    }
+
+    @Test
+    public void shouldPrintComponentDocAsJson() throws Exception {
+        CatalogDoc command = createCommand("timer", false);
+        command.jsonOutput = true;
+
         int exit = command.doCall();
 
-        Assertions.assertEquals(3, exit);
-        Assertions.assertTrue(printer.getStderr().startsWith("ERROR: Camel component: no-such-component-xyz not found"),
-                printer.getStderr());
-        Assertions.assertEquals("", printer.getStdout());
+        Assertions.assertEquals(0, exit);
+        JsonObject doc = Jsoner.deserialize(printer.getOutput(), (JsonObject) null);
+        Assertions.assertNotNull(doc, printer.getOutput());
+        Assertions.assertEquals("component", doc.getString("kind"));
+        Assertions.assertEquals("timer", doc.getString("name"));
     }
 
     private CatalogDoc createCommand(String name, boolean example) {

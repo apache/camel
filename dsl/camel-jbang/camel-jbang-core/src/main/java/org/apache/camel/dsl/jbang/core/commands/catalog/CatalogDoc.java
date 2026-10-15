@@ -35,8 +35,11 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
+import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -47,10 +50,12 @@ import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
@@ -113,6 +118,10 @@ public class CatalogDoc extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     String kameletsVersion;
 
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format: the documentation the MCP tool camel_catalog_doc gives")
+    boolean jsonOutput;
+
     CamelCatalog catalog;
 
     public CatalogDoc(CamelJBangMain main) {
@@ -150,6 +159,15 @@ public class CatalogDoc extends CamelCommand {
         String prefix = StringHelper.before(name, ":");
         if (prefix != null) {
             name = StringHelper.after(name, ":");
+        }
+
+        if (jsonOutput) {
+            JsonObject doc = docJson(prefix);
+            if (doc != null) {
+                JsonOutput.print(printer(), doc);
+                return 0;
+            }
+            // not found: the same error as the text
         }
 
         // special for camel-main
@@ -216,10 +234,10 @@ public class CatalogDoc extends CamelCommand {
             }
             if (!suggestions.isEmpty()) {
                 String type = kamelet ? "kamelet" : "component";
-                printer().printErr(
+                throw CliException.notFound(
                         "Camel %s: %s not found. Did you mean? %s".formatted(type, name, String.join(", ", suggestions)));
             } else {
-                printer().printErr("Camel resource: " + name + " not found");
+                throw CliException.notFound("Camel resource: " + name + " not found");
             }
         } else {
             List<String> suggestions = switch (prefix) {
@@ -233,13 +251,45 @@ public class CatalogDoc extends CamelCommand {
                 default -> List.of();
             };
             if (!suggestions.isEmpty()) {
-                printer().printErr(
+                throw CliException.notFound(
                         "Camel %s: %s not found. Did you mean? %s".formatted(prefix, name, String.join(", ", suggestions)));
             } else {
-                printer().printErr("Camel %s: %s not found.".formatted(prefix, name));
+                throw CliException.notFound("Camel %s: %s not found.".formatted(prefix, name));
             }
         }
-        return CliExitCode.NOT_FOUND;
+    }
+
+    /**
+     * The documentation in JSON mode, in the same order as the text: the documentation the MCP tool camel_catalog_doc
+     * gives (all options), or <tt>null</tt> when there is none.
+     */
+    private JsonObject docJson(String prefix) throws Exception {
+        if ("main".equals(name) && catalog.mainModel() != null) {
+            return CatalogDocs.catalogDoc(catalog, name, null, null, filter, "all", false, false, null);
+        }
+        if (prefix == null || "kamelet".equals(prefix)) {
+            // the Kamelets of the version and repositories asked for, not only the ones of the CLI
+            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
+            if (km != null) {
+                return CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + kameletsVersion));
+            }
+        }
+        if (prefix == null || !"kamelet".equals(prefix) && !"other".equals(prefix)) {
+            JsonObject doc = CatalogDocs.catalogDoc(catalog, name, null, prefix, filter, "all", headers, false, null);
+            if (doc.get("error") == null) {
+                return doc;
+            }
+        }
+        if (prefix == null || "other".equals(prefix)) {
+            OtherModel om = catalog.otherModel(name);
+            if (om != null && JsonMapper.asJsonObject(om).get("other") instanceof JsonObject other) {
+                JsonObject doc = new JsonObject();
+                doc.put("kind", "other");
+                doc.putAll(other);
+                return doc;
+            }
+        }
+        return null;
     }
 
     private void printExample(ComponentModel cm) {

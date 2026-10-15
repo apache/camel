@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,8 +63,12 @@ public class InfraRunPropertyTest extends CamelCommandBaseTestSupport {
         infraRun.setServiceName(List.of("ollama"));
         infraRun.background = true;
 
-        assertThat(infraRun.doCall()).isEqualTo(2);
-        assertThat(printer.getStderr()).startsWith("ERROR: ").contains("key=value");
+        assertThatThrownBy(infraRun::doCall)
+                .isInstanceOf(CliException.class)
+                .hasMessageContaining("key=value")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        // nothing was started
+        assertThat(printer.getOutput()).isEmpty();
     }
 
     @Test

@@ -106,6 +106,31 @@ or set the environment variable `CAMEL_CLI_DEBUG` to `true`:
 CAMEL_CLI_DEBUG=true camel run hello.yaml
 ----
 
+== JSON output
+
+The commands that print data have a `--json` option (`camel overview` has `--format=json`).
+With it, stdout is exactly one JSON document, also when the command fails:
+
+* A list is a JSON array, and `[]` when there is nothing to list, such as `camel ps --json` when no integration
+  is running.
+* An error is a JSON object, with the exit code of the command in `code`:
++
+[source,json]
+----
+{"status":"error","code":3,"message":"No running Camel integration matches: foo"}
+----
++
+The `ERROR:` line is printed on stderr as well, so a script that does not read stdout still sees it.
+An unknown option or a missing argument with `--json` prints an error document with code `2`.
+
+Errors, warnings, tips and progress go to stderr, so they never break the JSON document.
+With `--watch`, every refresh prints one more document.
+
+[source,bash]
+----
+camel get route --json | jq -r '.[] | select(.status != "Started") | .routeId'
+----
+
 == Using the exit codes
 
 The exit code tells a script or an AI agent what to do next:

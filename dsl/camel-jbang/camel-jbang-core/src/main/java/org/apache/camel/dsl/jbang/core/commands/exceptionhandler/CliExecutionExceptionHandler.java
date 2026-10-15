@@ -21,9 +21,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.NoSuchFileException;
 
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
 import picocli.CommandLine;
@@ -40,6 +42,8 @@ import picocli.CommandLine.ParseResult;
  * exist exits with {@link CliExitCode#NOT_FOUND}. Any other exception is unexpected: it prints the error with the stack
  * trace, and exits with {@link CliExitCode#INTERNAL}. With {@code --verbose} or the environment variable
  * {@code CAMEL_CLI_DEBUG=true}, every error prints its stack trace.
+ * <p/>
+ * A command in JSON mode ({@code --json}) also prints the error as a JSON document on stdout, see {@link JsonOutput}.
  */
 public class CliExecutionExceptionHandler implements IExecutionExceptionHandler, IExitCodeExceptionMapper {
 
@@ -63,15 +67,20 @@ public class CliExecutionExceptionHandler implements IExecutionExceptionHandler,
      * Prints the error on stderr, and returns the exit code.
      *
      * @param  ex          the exception or error that ended the command
-     * @param  parseResult the parsed command line, to detect {@code --verbose}, or null
+     * @param  parseResult the parsed command line, to detect {@code --verbose} and JSON mode, or null
      * @return             the exit code
      */
     public int handle(Throwable ex, ParseResult parseResult) {
         int code = getExitCode(ex);
+        String message = message(ex);
         Printer printer = main.getOut();
-        printer.printErr(message(ex));
+        printer.printErr(message);
         if (code == CliExitCode.INTERNAL || isVerbose(parseResult)) {
             printer.printDiagnostic(stackTrace(ex));
+        }
+        if (isJsonOutput(parseResult)) {
+            // a script reads the outcome from stdout
+            JsonOutput.printError(printer, code, message);
         }
         return code;
     }
@@ -146,6 +155,14 @@ public class CliExecutionExceptionHandler implements IExecutionExceptionHandler,
             }
         }
         return false;
+    }
+
+    private static boolean isJsonOutput(ParseResult parseResult) {
+        ParseResult pr = parseResult;
+        while (pr != null && pr.hasSubcommand()) {
+            pr = pr.subcommand();
+        }
+        return pr != null && pr.commandSpec().userObject() instanceof CamelCommand command && command.isJsonOutput();
     }
 
     private static String stackTrace(Throwable ex) {

@@ -81,7 +81,10 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
     }
 
     protected void autoClearScreen() {
-        clearScreen();
+        if (!jsonOutput) {
+            // in JSON mode every refresh prints one more document, and the escape codes would break it
+            clearScreen();
+        }
     }
 
     protected void clearScreen() {

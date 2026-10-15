@@ -126,7 +126,7 @@ public class ListProcess extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         // print rows
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (pid) {
                 if (jsonOutput) {
                     printer().println(
