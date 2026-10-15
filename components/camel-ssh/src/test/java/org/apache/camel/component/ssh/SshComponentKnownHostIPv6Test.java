@@ -21,11 +21,13 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.KeyPairGenerator;
 import java.security.spec.ECGenParameterSpec;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.sshd.client.ClientBuilder;
 import org.apache.sshd.client.config.hosts.HostConfigEntry;
+import org.apache.sshd.client.config.hosts.HostConfigEntryResolver;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.junit.jupiter.api.Test;
 
@@ -131,6 +133,24 @@ class SshComponentKnownHostIPv6Test extends SshComponentTestSupport {
         }
     }
 
+    /*
+     * The host configuration of the client, as ~/.ssh/config would give it: Host review-ipv6, HostName ::1. It answers
+     * only once, so the host key must be checked against the host that the connection was resolved to, without asking
+     * the host configuration again.
+     */
+    private static HostConfigEntryResolver resolvingOnce() {
+        AtomicBoolean resolved = new AtomicBoolean();
+        return (host, hostPort, localAddress, username, proxyJump, attributes) -> {
+            if (!ALIAS.equals(host)) {
+                return null;
+            }
+            if (resolved.getAndSet(true)) {
+                throw new IOException("The host configuration answers only once");
+            }
+            return new HostConfigEntry(host, "::1", hostPort, username);
+        };
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -154,10 +174,8 @@ class SshComponentKnownHostIPv6Test extends SshComponentTestSupport {
                                                            + "&failOnUnknownHost=" + failOnUnknownHost,
                         SshEndpoint.class);
                 endpoint.setHost(host);
-                // the host configuration of the client, as ~/.ssh/config would give it: Host review-ipv6, HostName ::1
-                endpoint.getConfiguration().setClientBuilder(ClientBuilder.builder().hostConfigEntryResolver(
-                        (alias, aliasPort, localAddress, username, proxyJump, attributes) -> ALIAS.equals(alias)
-                                ? new HostConfigEntry(alias, "::1", aliasPort, username) : null));
+                endpoint.getConfiguration()
+                        .setClientBuilder(ClientBuilder.builder().hostConfigEntryResolver(resolvingOnce()));
                 from("direct:" + name).to(endpoint).to("mock:result");
             }
         };

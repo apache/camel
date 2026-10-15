@@ -33,11 +33,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.sshd.client.ClientFactoryManager;
 import org.apache.sshd.client.config.hosts.HostConfigEntry;
-import org.apache.sshd.client.config.hosts.HostConfigEntryResolver;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.client.session.ClientSessionCreator;
+import org.apache.sshd.common.AttributeRepository;
 import org.apache.sshd.common.config.keys.KeyUtils;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
@@ -68,12 +68,21 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     private static final String HASH_ALGORITHM = "HmacSHA1";
     private static final int HASH_LENGTH = 20;
 
+    /**
+     * The host configuration that the client connected with, which the ssh producer and consumer put in the connection
+     * context of the session: the entries are matched against its {@code HostName} as it is written. Without it, the
+     * address the client connected to is used, which writes an IPv6 address such as {@code ::1} in its full form.
+     *
+     * @since 4.24
+     */
+    public static final AttributeRepository.AttributeKey<HostConfigEntry> HOST_CONFIG_ENTRY
+            = new AttributeRepository.AttributeKey<>();
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private CamelContext camelContext;
     private boolean failOnUnknownHost;
     private String knownHostsResource;
-    private String host;
 
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource) {
         this(camelContext, knownHostsResource, false);
@@ -81,22 +90,9 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
 
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
                                        boolean failOnUnknownHost) {
-        this(camelContext, knownHostsResource, failOnUnknownHost, null);
-    }
-
-    /**
-     * @param host the host name or address configured on the endpoint. The entries are matched against the
-     *             {@code HostName} that the host configuration of the client (by default {@code ~/.ssh/config}) gives
-     *             for it, or else against the configured host, as it is written: an IPv6 address such as {@code ::1} is
-     *             not expanded. When null, the address the client connected to is used, which writes an IPv6 address in
-     *             its full form.
-     */
-    public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
-                                       boolean failOnUnknownHost, String host) {
         this.camelContext = camelContext;
         this.knownHostsResource = knownHostsResource;
         this.failOnUnknownHost = failOnUnknownHost;
-        this.host = host;
     }
 
     @Override
@@ -174,42 +170,33 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     }
 
     /*
-     * The name OpenSSH looks the server up by: the host name or address the client connected to, never resolved through
-     * DNS, with the port the client connected to, written host for port 22 and [host]:port for another port.
+     * The name OpenSSH looks the server up by: the host name or address the client connected to, as the host
+     * configuration writes it and never resolved through DNS, with the port the client connected to, written host for
+     * port 22 and [host]:port for another port. The connected address cannot give the host as it is written, as it
+     * writes an IPv6 address such as ::1 in its full form.
      */
-    private String toKnownHostsName(ClientSession session, SocketAddress remoteAddress) {
+    private static String toKnownHostsName(ClientSession session, SocketAddress remoteAddress) {
         if (!(remoteAddress instanceof InetSocketAddress) && !(remoteAddress instanceof SshdSocketAddress)) {
             return null;
         }
         SshdSocketAddress address = SshdSocketAddress.toSshdSocketAddress(remoteAddress);
-        String name = host != null ? effectiveHostName(session, address.getPort()) : address.getHostName();
+        String name = address.getHostName();
+        SshdSocketAddress target = session != null ? session.getAttribute(ClientSessionCreator.TARGET_SERVER) : null;
+        AttributeRepository context = session != null ? session.getConnectionContext() : null;
+        HostConfigEntry hostConfig = context != null ? context.getAttribute(HOST_CONFIG_ENTRY) : null;
+        if (target != null) {
+            // a host reached through a jump host, whose HostName SSHD keeps as it is written
+            name = target.getHostName();
+        } else if (hostConfig != null && (hostConfig.getProxyJump() == null || hostConfig.getProxyJump().isEmpty())) {
+            // the host the client connected to directly, with the host configuration it connected with
+            name = hostConfig.getHostName();
+        }
         if (name.length() > 1 && name.charAt(0) == '[' && name.charAt(name.length() - 1) == ']') {
             // an IPv6 address in brackets
             name = name.substring(1, name.length() - 1);
         }
         name = name.toLowerCase(Locale.ROOT);
         return address.getPort() == DEFAULT_PORT ? name : "[" + name + "]:" + address.getPort();
-    }
-
-    /*
-     * The host name or address the client connected to, as it is written: the HostName that the host config resolver
-     * of the client (by default ~/.ssh/config) gives for the configured host, or else the configured host. The connected
-     * address cannot be used for this, as it writes an IPv6 address such as ::1 in its full form.
-     */
-    private String effectiveHostName(ClientSession session, int port) {
-        ClientFactoryManager client = session != null ? session.getFactoryManager() : null;
-        HostConfigEntryResolver resolver = client != null ? client.getHostConfigEntryResolver() : null;
-        if (resolver != null) {
-            try {
-                HostConfigEntry entry = resolver.resolveEffectiveHost(host, port, null, session.getUsername(), null, null);
-                if (entry != null && entry.getHostName() != null && !entry.getHostName().isEmpty()) {
-                    return entry.getHostName();
-                }
-            } catch (IOException | RuntimeException e) {
-                log.warn("Could not resolve the host {} with the host configuration of the client", host, e);
-            }
-        }
-        return host;
     }
 
     /*

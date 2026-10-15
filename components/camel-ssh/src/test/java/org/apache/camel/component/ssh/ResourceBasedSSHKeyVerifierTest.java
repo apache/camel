@@ -36,13 +36,14 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.config.hosts.HostConfigEntry;
-import org.apache.sshd.client.config.hosts.HostConfigEntryResolver;
 import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.client.session.ClientSessionCreator;
+import org.apache.sshd.common.AttributeRepository;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
 import org.apache.sshd.common.util.io.IoUtils;
+import org.apache.sshd.common.util.net.SshdSocketAddress;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -253,40 +254,44 @@ class ResourceBasedSSHKeyVerifierTest {
     }
 
     @Test
-    void looksUpAnIpv6AddressAsConfiguredOnTheEndpoint() throws Exception {
+    void looksUpTheHostAsTheHostConfigurationOfTheConnectionWritesIt() throws Exception {
         // the address the client connected to writes ::1 as 0:0:0:0:0:0:0:1
-        InetSocketAddress server = new InetSocketAddress("::1", 2222);
+        InetSocketAddress ipv6 = new InetSocketAddress("::1", 2222);
         String knownHosts = entry("[::1]:2222", serverKey);
-        for (String host : new String[] { "::1", "[::1]" }) {
+        for (String hostName : new String[] { "::1", "[::1]" }) {
+            // as an endpoint configured with ::1, or Host review-ipv6 / HostName ::1 in ~/.ssh/config, connects
+            ClientSession session = session(new HostConfigEntry("review-ipv6", hostName, 2222, "smx"), null);
             for (boolean failOnUnknownHost : new boolean[] { true, false }) {
-                assertTrue(verify(failOnUnknownHost, host, server, serverKey, knownHosts), host);
-                assertFalse(verify(failOnUnknownHost, host, server, otherKey, knownHosts), host);
+                assertTrue(verify(failOnUnknownHost, session, ipv6, serverKey, knownHosts), hostName);
+                assertFalse(verify(failOnUnknownHost, session, ipv6, otherKey, knownHosts), hostName);
             }
         }
+        // Host db / HostName db.example.com in ~/.ssh/config
+        ClientSession db = session(new HostConfigEntry("db", "db.example.com", 22, "smx"), null);
+        InetSocketAddress dbAddress
+                = new InetSocketAddress(InetAddress.getByAddress("db.example.com", new byte[] { 10, 0, 0, 1 }), 22);
+        assertTrue(verify(true, db, dbAddress, serverKey, entry("db.example.com", serverKey)));
+        assertFalse(verify(true, db, dbAddress, serverKey, entry("db", serverKey)));
+        assertFalse(verify(false, db, dbAddress, otherKey, entry("db.example.com", serverKey)));
+        // without the host configuration of the connection, the connected address is used as it writes the host
+        assertFalse(verify(true, session(null, null), ipv6, serverKey, knownHosts));
     }
 
     @Test
-    void looksUpTheHostNameThatTheHostConfigurationGivesForTheConfiguredHost() throws Exception {
-        // as OpenSSH does with ~/.ssh/config: Host db, HostName db.example.com and Host review-ipv6, HostName ::1
-        ClientSession session = sessionResolving((host, port, localAddress, username, proxyJump, attributes) -> {
-            if ("db".equals(host)) {
-                return new HostConfigEntry(host, "db.example.com", port, username);
-            }
-            return "review-ipv6".equals(host) ? new HostConfigEntry(host, "::1", port, username) : null;
-        });
-        InetSocketAddress hostName
-                = new InetSocketAddress(InetAddress.getByAddress("db.example.com", new byte[] { 10, 0, 0, 1 }), 22);
-        assertTrue(verify(true, "db", session, hostName, serverKey, entry("db.example.com", serverKey)));
-        assertFalse(verify(true, "db", session, hostName, serverKey, entry("db", serverKey)));
-        assertFalse(verify(false, "db", session, hostName, otherKey, entry("db.example.com", serverKey)));
-        // the address the client connected to writes ::1 as 0:0:0:0:0:0:0:1
+    void looksUpAHostReachedThroughAJumpHostAsItIsWritten() throws Exception {
+        HostConfigEntry viaJump = new HostConfigEntry("review-ipv6", "::1", 2222, "smx", "jump.example.com");
+        // the target, which SSHD connects to through the jump host and keeps as it is written
+        ClientSession target = session(viaJump, new SshdSocketAddress("::1", 2222));
         InetSocketAddress ipv6 = new InetSocketAddress("::1", 2222);
-        for (boolean failOnUnknownHost : new boolean[] { true, false }) {
-            assertTrue(verify(failOnUnknownHost, "review-ipv6", session, ipv6, serverKey, entry("[::1]:2222", serverKey)));
-            assertFalse(verify(failOnUnknownHost, "review-ipv6", session, ipv6, otherKey, entry("[::1]:2222", serverKey)));
-        }
-        // a host without an entry in the host configuration is looked up as it is configured
-        assertTrue(verify(true, "::1", session, ipv6, serverKey, entry("[::1]:2222", serverKey)));
+        assertTrue(verify(true, target, ipv6, serverKey, entry("[::1]:2222", serverKey)));
+        assertFalse(verify(false, target, ipv6, otherKey, entry("[::1]:2222", serverKey)));
+        // the jump host itself is looked up by its own address, not by the name of the target
+        ClientSession jump = session(viaJump, null);
+        InetSocketAddress jumpAddress
+                = new InetSocketAddress(InetAddress.getByAddress("jump.example.com", new byte[] { 10, 0, 0, 2 }), 22);
+        String knownHosts = entry("jump.example.com", otherKey) + entry("[::1]:2222", serverKey);
+        assertTrue(verify(true, jump, jumpAddress, otherKey, knownHosts));
+        assertFalse(verify(true, jump, jumpAddress, serverKey, knownHosts));
     }
 
     @Test
@@ -318,36 +323,29 @@ class ResourceBasedSSHKeyVerifierTest {
     }
 
     private boolean verify(
-            boolean failOnUnknownHost, String configuredHost, InetSocketAddress server, PublicKey presented,
+            boolean failOnUnknownHost, ClientSession session, InetSocketAddress server, PublicKey presented,
             String knownHosts)
-            throws Exception {
-        return verify(failOnUnknownHost, configuredHost, null, server, presented, knownHosts);
-    }
-
-    private boolean verify(
-            boolean failOnUnknownHost, String configuredHost, ClientSession session, InetSocketAddress server,
-            PublicKey presented, String knownHosts)
             throws Exception {
         Path file = Files.createTempFile(dir, "known_hosts", "");
         Files.writeString(file, knownHosts, StandardCharsets.UTF_8);
-        ResourceBasedSSHKeyVerifier verifier
-                = new ResourceBasedSSHKeyVerifier(context, "file:" + file, failOnUnknownHost, configuredHost);
+        ResourceBasedSSHKeyVerifier verifier = new ResourceBasedSSHKeyVerifier(context, "file:" + file, failOnUnknownHost);
         return verifier.verifyServerKey(session, server, presented);
     }
 
     /*
-     * A session of a client with the given host configuration, which is all the verifier asks the session for.
+     * A session connected with the given host configuration, as the ssh producer and consumer connect, and reached
+     * through a jump host when a target server is given: all that the verifier asks the session for.
      */
-    private static ClientSession sessionResolving(HostConfigEntryResolver resolver) {
-        SshClient client = SshClient.setUpDefaultClient();
-        client.setHostConfigEntryResolver(resolver);
+    private static ClientSession session(HostConfigEntry hostConfig, SshdSocketAddress targetServer) {
+        AttributeRepository connectionContext = hostConfig != null
+                ? AttributeRepository.ofKeyValuePair(ResourceBasedSSHKeyVerifier.HOST_CONFIG_ENTRY, hostConfig) : null;
         return (ClientSession) Proxy.newProxyInstance(ClientSession.class.getClassLoader(),
                 new Class<?>[] { ClientSession.class }, (proxy, method, args) -> {
                     switch (method.getName()) {
-                        case "getFactoryManager":
-                            return client;
-                        case "getUsername":
-                            return "smx";
+                        case "getConnectionContext":
+                            return connectionContext;
+                        case "getAttribute":
+                            return args[0] == ClientSessionCreator.TARGET_SERVER ? targetServer : null;
                         default:
                             Class<?> type = method.getReturnType();
                             // the default value of a primitive type, null otherwise

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.IOException;
 import java.security.KeyPairGenerator;
 import java.security.spec.ECGenParameterSpec;
 
@@ -141,6 +142,26 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
     }
 
     @Test
+    void testProducerWithAFailingHostConfiguration() throws Exception {
+        assertNotConnected("brokenAlias");
+    }
+
+    @Test
+    void testProducerWithAFailingHostConfigurationAcceptingUnknownHosts() throws Exception {
+        assertNotConnected("brokenAliasAcceptingUnknownHosts");
+    }
+
+    private void assertNotConnected(String route) throws Exception {
+        getMockEndpoint("mock:password").expectedMessageCount(0);
+        getMockEndpoint("mock:error").expectedMessageCount(1);
+
+        template.sendBody("direct:" + route, "test");
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertFalse(authenticatedUsers.contains(route));
+    }
+
+    @Test
     public void testPollingConsumerWithValidKnownHostFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -203,6 +224,11 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
                 from("direct:aliasOtherKey").to(aliasEndpoint("aliasOtherKey", knownHostsOtherKey, false))
                         .to("mock:password");
 
+                // a host configuration that cannot resolve the host: the producer must not connect anywhere
+                from("direct:brokenAlias").to(brokenAliasEndpoint("brokenAlias", true)).to("mock:password");
+                from("direct:brokenAliasAcceptingUnknownHosts")
+                        .to(brokenAliasEndpoint("brokenAliasAcceptingUnknownHosts", false)).to("mock:password");
+
                 from("direct:sshSeveralKeys")
                         .to("ssh://smx:smx@localhost:" + port
                             + "?timeout=3000&knownHostsResource=" + knownHostsSeveralKeys + "&failOnUnknownHost=true")
@@ -227,6 +253,18 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
         endpoint.getConfiguration().setClientBuilder(ClientBuilder.builder().hostConfigEntryResolver(
                 (host, hostPort, localAddress, username, proxyJump, attributes) -> "db-alias".equals(host)
                         ? new HostConfigEntry(host, "localhost", hostPort, username) : null));
+        return endpoint;
+    }
+
+    private SshEndpoint brokenAliasEndpoint(String user, boolean failOnUnknownHost) {
+        SshEndpoint endpoint = context.getEndpoint("ssh://" + user + ":secret@broken-alias:" + port
+                                                   + "?timeout=3000&knownHostsResource=" + knownHostsValid
+                                                   + "&failOnUnknownHost=" + failOnUnknownHost,
+                SshEndpoint.class);
+        endpoint.getConfiguration().setClientBuilder(ClientBuilder.builder().hostConfigEntryResolver(
+                (host, hostPort, localAddress, username, proxyJump, attributes) -> {
+                    throw new IOException("Cannot read the host configuration");
+                }));
         return endpoint;
     }
 }

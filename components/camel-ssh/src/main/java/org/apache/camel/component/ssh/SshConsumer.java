@@ -61,7 +61,7 @@ public class SshConsumer extends ScheduledPollConsumer {
             if (knownHostResource != null) {
                 client.setServerKeyVerifier(new ResourceBasedSSHKeyVerifier(
                         exchange.getContext(), knownHostResource,
-                        endpoint.isFailOnUnknownHost(), endpoint.getHost()));
+                        endpoint.isFailOnUnknownHost()));
             }
 
             SshResult result = SshHelper.sendExecCommand(exchange.getIn().getHeaders(), command, endpoint, client);
