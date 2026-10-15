@@ -232,6 +232,21 @@ Errors, warnings and tips are printed on stderr instead of stdout, so stdout onl
 as JSON. If a script reads the error text of a command from stdout, read stderr instead. The list of plugins that are
 not installed, after `camel --help`, is printed on stderr, and only in an interactive terminal.
 
+=== camel-cli-connector - every action with a request id gets an answer
+
+An action written to `~/.camel/<pid>-action-<requestId>.json` now always gets an answer in
+`~/.camel/<pid>-output-<requestId>.json`, so a tool no longer waits for its timeout:
+
+* an action without a result (such as a route stop) answers `{"status":"success"}`,
+* an action that is unknown, throws an exception or reports an error answers
+  `{"status":"failed","error":"..."}`, with `"reason":"not-found"` when what it was asked to work on does not exist
+  (such as `No route matching: route9`, and the new `No processor matching: ...`).
+
+The WebSocket transport adds the same `reason` to its `result` frame. The shared `~/.camel/<pid>-action.json` used by
+older Camel CLI versions is unchanged. A tool built on the file transport that relied on actions without a result
+writing nothing, or that waited for a timeout, sees these answers now. The Camel MCP route tools, for example, now
+report a route stop as done instead of a timeout.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

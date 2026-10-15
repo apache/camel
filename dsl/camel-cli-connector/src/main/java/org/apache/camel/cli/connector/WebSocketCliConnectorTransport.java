@@ -619,39 +619,17 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     }
 
     private CompletableFuture<JsonObject> result(String requestId, JsonObject action) {
-        JsonObject[] output = new JsonObject[1];
-        String[] error = new String[1];
-        CompletableFuture<Boolean> completion = dispatcher.dispatchAsync(action, new CliActionOutput() {
-            @Override
-            public void write(JsonObject result) {
-                output[0] = result;
+        CompletableFuture<CliActionOutcome> outcome = CliActionOutcome.dispatch(dispatcher, action);
+        CompletableFuture<JsonObject> answer = outcome.thenApply(o -> {
+            JsonObject frame = result(requestId, o.error(), o.result() != null ? o.result() : new JsonObject());
+            if (o.reason() != null) {
+                frame.put("reason", o.reason());
             }
-
-            @Override
-            public void error(String message) {
-                error[0] = message;
-            }
-        });
-        CompletableFuture<JsonObject> answer = completion.handle((known, failure) -> {
-            if (failure != null) {
-                error[0] = failure.getMessage() != null ? failure.getMessage() : failure.getClass().getSimpleName();
-            } else if (!known) {
-                error[0] = "Unknown action: " + action.getString("action");
-            }
-            if (error[0] == null && output[0] != null) {
-                // many actions report failures inside their result, as the file transport has no other way to do it
-                String status = output[0].getString("status");
-                if ("error".equals(status) || "failed".equals(status)) {
-                    JsonObject exception = output[0].getMap("exception");
-                    error[0] = exception != null && exception.getString("message") != null
-                            ? exception.getString("message") : "Action failed";
-                }
-            }
-            return result(requestId, error[0], output[0] != null ? output[0] : new JsonObject());
+            return frame;
         });
         answer.whenComplete((value, failure) -> {
             if (answer.isCancelled()) {
-                completion.cancel(true);
+                outcome.cancel(true);
             }
         });
         return answer;
