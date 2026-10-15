@@ -137,15 +137,16 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
                 getProcessor().process(exchange);
 
                 // only consume the data when the exchange was processed successfully: a failed or rollback only
-                // exchange leaves the data as it is, so the next poll consumes it again
-                if (onConsume != null && !exchange.isFailed() && !exchange.isRollbackOnly()) {
+                // exchange leaves the data as it is, so the next poll consumes it again (rollback only last too)
+                if (onConsume != null && !exchange.isFailed() && !exchange.isRollbackOnly() && !exchange.isRollbackOnlyLast()) {
                     endpoint.getProcessingStrategy().commit(endpoint, exchange, data, onConsume);
                 }
             } catch (Exception e) {
                 handleException(e);
             }
 
-            if (getEndpoint().isTransacted() && (exchange.isFailed() || exchange.isRollbackOnly())) {
+            if (getEndpoint().isTransacted()
+                    && (exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast())) {
                 // break out as we are transacted and should rollback
                 cause = exchange.getException();
                 if (cause == null) {

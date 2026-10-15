@@ -83,6 +83,16 @@ class SqlConsumerRollbackOnlyTest extends CamelTestSupport {
     }
 
     @Test
+    void testRollbackOnlyLastExchangeIsNotConsumed() throws Exception {
+        // CAMEL-25588: an exchange marked rollback only last must be treated like rollback only - no onConsume
+        SqlConsumer consumer = (SqlConsumer) context.getRoute("on-consume-only-last").getConsumer();
+        assertEquals(3, consumer.poll());
+
+        assertEquals(List.of("LAST", "ASF", "LAST"), licenses(),
+                "the AMQ row, whose exchange was marked rollback only last, must not get onConsume");
+    }
+
+    @Test
     void testTransactedRollbackOnlyExchangeBreaksOutOfBatch() throws Exception {
         SqlConsumer consumer = (SqlConsumer) context.getRoute("transacted").getConsumer();
         // the consumer wraps the exception of the batch
@@ -111,6 +121,13 @@ class SqlConsumerRollbackOnlyTest extends CamelTestSupport {
                 consume("on-consume", ON_CONSUME + ON_CONSUME_FAILED);
                 consume("on-consume-only", ON_CONSUME);
                 consume("transacted", ON_CONSUME + ON_CONSUME_FAILED + "&transacted=true");
+
+                // CAMEL-25588: a row marked rollback only last must not be consumed either; a distinct onConsume
+                // (license = 'LAST') keeps this a separate endpoint from the on-consume-only route above
+                from("sql:select * from projects order by id?startScheduler=false&onConsume=update projects set license = 'LAST' where id = :#id")
+                        .routeId("on-consume-only-last")
+                        .choice().when(simple("${body[PROJECT]} == 'AMQ'")).markRollbackOnlyLast().end()
+                        .to("mock:processed");
             }
 
             private void consume(String routeId, String options) {
