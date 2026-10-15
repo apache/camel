@@ -1264,6 +1264,10 @@ exist, received nothing. Now it receives one `DataValue` with the bad status cod
 monitored item is created again when the route is restarted or when Camel rebuilds the connection to the server; unlike
 Camel 3.x, it is not retried every 10 seconds.
 
+A node ID with a namespace URI (`nsu=`) that is not in the namespace table of the server no longer takes the whole
+client connection down, including the consumers of other nodes. Its consumer receives one `DataValue` with
+`Bad_NodeIdUnknown`, like a node that does not exist.
+
 The consumer now sets the `CamelMiloNodeId` header on every exchange, including a consumer with a single `node`.
 
 Stopping a consumer now deletes its monitored items. Previously they stayed on the server while another endpoint kept

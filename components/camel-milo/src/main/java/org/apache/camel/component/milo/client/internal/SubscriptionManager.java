@@ -177,8 +177,6 @@ public class SubscriptionManager {
         private OpcUaClient client;
         private final OpcUaSubscription manager;
 
-        private final Map<UInteger, Subscription> badSubscriptions = new HashMap<>();
-
         private final Map<UInteger, OpcUaMonitoredItem> goodSubscriptions = new HashMap<>();
 
         private final Map<String, UShort> namespaceCache = new ConcurrentHashMap<>();
@@ -214,10 +212,14 @@ public class SubscriptionManager {
             for (final Map.Entry<UInteger, Subscription> entry : subscriptions.entrySet()) {
                 final Subscription s = entry.getValue();
 
-                final NodeId node = lookupNamespace(s.getNodeId()).get();
+                final NodeId node = lookupMonitoredNode(s.getNodeId());
 
                 if (node == null) {
-                    handleSubscriptionError(new StatusCode(StatusCodes.Bad_InvalidArgument), entry.getKey(), s, pendingValues);
+                    // reported once like a node the server rejects, the other nodes and the connection are not affected
+                    final StatusCode status = new StatusCode(StatusCodes.Bad_NodeIdUnknown);
+                    LOG.warn("Monitored item for node {} could not be created, the namespace URI is unknown to the server: {}",
+                            s.getNodeId().toParseableString(), status);
+                    pendingValues.add(new PendingValue(s.getValueConsumer(), new DataValue(status)));
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     final OpcUaMonitoredItem item = new OpcUaMonitoredItem(itemId, MonitoringMode.Reporting);
@@ -283,29 +285,17 @@ public class SubscriptionManager {
                 }
             }
 
-            if (!this.badSubscriptions.isEmpty()) {
-                SubscriptionManager.this.executor.schedule(this::resubscribe, SubscriptionManager.this.reconnectTimeout,
-                        TimeUnit.MILLISECONDS);
-            }
-
             return pendingValues;
         }
 
-        private void handleSubscriptionError(
-                final StatusCode statusCode, final UInteger clientHandle, final Subscription s,
-                final List<PendingValue> pendingValues) {
-            this.badSubscriptions.put(clientHandle, s);
-            pendingValues.add(new PendingValue(s.getValueConsumer(), new DataValue(statusCode)));
-        }
-
-        private void resubscribe() {
-            final Map<UInteger, Subscription> subscriptions = new HashMap<>(this.badSubscriptions);
-            this.badSubscriptions.clear();
-            try {
-                putSubscriptions(subscriptions).forEach(PendingValue::deliver);
-            } catch (final Exception e) {
-                handleConnectionFailure(e);
-            }
+        /**
+         * @return the node ID with the namespace index of the server, or null if its namespace URI is not in the
+         *         namespace table of the server
+         */
+        private NodeId lookupMonitoredNode(final ExpandedNodeId nodeId) throws Exception {
+            final String uri = nodeId.getNamespaceUri();
+            final UShort index = uri == null ? nodeId.getNamespaceIndex() : lookupNamespaceIndex(uri).get();
+            return index == null ? null : toNodeId(index, nodeId);
         }
 
         public void deactivate(final List<UInteger> clientHandles) throws Exception {
@@ -314,8 +304,6 @@ public class SubscriptionManager {
                 final OpcUaMonitoredItem item = this.goodSubscriptions.remove(clientHandle);
                 if (item != null) {
                     items.add(item);
-                } else {
-                    this.badSubscriptions.remove(clientHandle);
                 }
             }
             if (!items.isEmpty()) {

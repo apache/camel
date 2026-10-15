@@ -52,6 +52,9 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
 
     private static final String UNKNOWN_NODE = "nsu=" + MiloServerComponent.DEFAULT_NAMESPACE_URI + ";s=unknownNode";
 
+    // a namespace URI that is not in the namespace table of the server
+    private static final String UNKNOWN_NAMESPACE_NODE = "nsu=urn:not:there;s=node1";
+
     // the same node as NODE_1 with the default server index spelled out
     private static final String NODE_1_WITH_SERVER_INDEX = "svr=0;" + NODE_1;
 
@@ -64,6 +67,9 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
 
     private static final String MILO_CLIENT_UNKNOWN_NODE
             = MILO_CLIENT + "&nodes=RAW(" + NODE_1 + "," + UNKNOWN_NODE + "," + NODE_2 + ")";
+
+    private static final String MILO_CLIENT_UNKNOWN_NAMESPACE
+            = MILO_CLIENT + "&nodes=RAW(" + NODE_1 + "," + UNKNOWN_NAMESPACE_NODE + "," + NODE_2 + ")";
 
     private static final String MILO_CLIENT_DUPLICATES
             = MILO_CLIENT + "&nodes=RAW( " + NODE_1 + " ,, " + NODE_2 + " ," + NODE_1 + ")";
@@ -78,6 +84,9 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
 
     @EndpointInject("mock:unknownNode")
     protected MockEndpoint unknownNodeEndpoint;
+
+    @EndpointInject("mock:unknownNamespace")
+    protected MockEndpoint unknownNamespaceEndpoint;
 
     @EndpointInject("mock:duplicates")
     protected MockEndpoint duplicatesEndpoint;
@@ -96,6 +105,8 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
                 // the consumers deliver the current values while they start, so each test starts its route
                 from(resolve(MILO_CLIENT_NODES)).routeId("nodes").autoStartup(false).to("mock:nodes");
                 from(resolve(MILO_CLIENT_UNKNOWN_NODE)).routeId("unknownNode").autoStartup(false).to("mock:unknownNode");
+                from(resolve(MILO_CLIENT_UNKNOWN_NAMESPACE)).routeId("unknownNamespace").autoStartup(false)
+                        .to("mock:unknownNamespace");
                 from(resolve(MILO_CLIENT_DUPLICATES)).routeId("duplicates").autoStartup(false).to("mock:duplicates");
                 from(resolve(MILO_CLIENT_NODE)).routeId("node").autoStartup(false).to("mock:node");
                 from(resolve(MILO_CLIENT_SAME_NODE)).routeId("sameNode").autoStartup(false).to("mock:sameNode");
@@ -169,6 +180,30 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
         testBody(unknownNodeEndpoint.message(0), assertGoodValue("Baz"));
         template.sendBody("milo-server:node1", "Baz");
         unknownNodeEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    void unknownNamespaceUriReceivesBadStatusAndTheOtherNodesKeepWorking() throws Exception {
+        writeServerValues();
+
+        // the bad status is reported once, the connection stays up for the other nodes
+        unknownNamespaceEndpoint.expectedMessageCount(3);
+        unknownNamespaceEndpoint.setAssertPeriod(1000);
+        context.getRouteController().startRoute("unknownNamespace");
+        unknownNamespaceEndpoint.assertIsSatisfied();
+
+        final Map<String, DataValue> values = valuesByNode(unknownNamespaceEndpoint);
+        assertEquals(Set.of(NODE_1, UNKNOWN_NAMESPACE_NODE, NODE_2), values.keySet());
+        assertEquals(new StatusCode(StatusCodes.Bad_NodeIdUnknown), values.get(UNKNOWN_NAMESPACE_NODE).getStatusCode());
+        assertGoodValue("Foo").accept(values.get(NODE_1));
+        assertGoodValue("Bar").accept(values.get(NODE_2));
+
+        unknownNamespaceEndpoint.reset();
+        unknownNamespaceEndpoint.expectedMessageCount(1);
+        unknownNamespaceEndpoint.expectedHeaderReceived(MiloConstants.HEADER_NODE_ID, NODE_1);
+        testBody(unknownNamespaceEndpoint.message(0), assertGoodValue("Baz"));
+        template.sendBody("milo-server:node1", "Baz");
+        unknownNamespaceEndpoint.assertIsSatisfied();
     }
 
     @Test
