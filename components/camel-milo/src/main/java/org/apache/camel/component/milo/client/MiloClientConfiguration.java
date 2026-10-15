@@ -465,8 +465,9 @@ public class MiloClientConfiguration implements Cloneable {
      * Eclipse Milo: trusted certificates in trusted/certs, CRLs of trusted certificates in trusted/crl, certificates of
      * issuing CAs in issuer/certs and their CRLs in issuer/crl. The directories are created if they do not exist.
      * Besides the chain of trust, the validity period, the revocation by a CRL of the trust list and the application
-     * URI of the server certificate are checked. A server certificate that does not chain up to a trusted certificate
-     * is written to rejected/certs, from where it can be moved to trusted/certs once it has been checked.
+     * URI of the server certificate are checked. A certificate issued by a CA is refused when the trust list holds no
+     * CRL of that CA; an empty CRL is enough. A server certificate that does not chain up to a trusted certificate is
+     * written to rejected/certs, from where it can be moved to trusted/certs once it has been checked.
      */
     public void setTrustListDirectory(final String trustListDirectory) {
         this.trustListDirectory = trustListDirectory;
