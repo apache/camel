@@ -23,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -49,6 +50,9 @@ class StopProcessTest extends ProcessCommandTestSupport {
         Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(TEST_PID));
         Files.writeString(pidFile, "");
         assertTrue(Files.exists(pidFile), "Pid file must exist before stop");
+        // the output of an integration that runs in the background
+        Path log = BackgroundLog.of(TEST_PID);
+        Files.writeString(log, "started");
 
         StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
 
@@ -63,6 +67,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
             assertEquals(0, exit);
             assertFalse(Files.exists(pidFile), "Pid file should be deleted to signal graceful stop");
             assertTrue(printer.getOutput().contains("Shutting down"), "Should print shutdown message");
+            assertFalse(Files.exists(log), "the log of a stopped integration is removed");
         }
     }
 
@@ -121,6 +126,9 @@ class StopProcessTest extends ProcessCommandTestSupport {
         Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(TEST_PID));
         Files.writeString(pidFile, "");
 
+        Path log = BackgroundLog.of(TEST_PID);
+        Files.writeString(log, "started");
+
         StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
         command.noWait = true;
 
@@ -134,6 +142,7 @@ class StopProcessTest extends ProcessCommandTestSupport {
 
             assertEquals(0, exit);
             assertFalse(Files.exists(pidFile), "Pid file should be deleted to signal graceful stop");
+            assertTrue(Files.exists(log), "the integration may still write its log (camel dirty removes it later)");
         }
     }
 

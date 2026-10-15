@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -45,9 +46,12 @@ import java.util.stream.Stream;
 
 import jdk.jfr.Configuration;
 import jdk.jfr.Recording;
+import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -85,8 +89,8 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.xml.io.util.XmlStreamDetector;
@@ -209,9 +213,11 @@ public class Run extends CamelCommand {
     @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
     public boolean background;
 
-    @Option(names = { "--background-wait" }, defaultValue = "true",
-            description = "To wait for run in background to startup successfully, before returning")
-    public boolean backgroundWait = true;
+    @Option(names = { "--background-wait" }, defaultValue = "60s", converter = BackgroundWait.Converter.class,
+            parameterConsumer = BackgroundWait.Consumer.class,
+            description = "How long to wait for the integration in the background to start, before returning, in millis"
+                          + " or as a duration such as 2m (true waits 60 seconds, false does not wait)")
+    public long backgroundWait = BackgroundWait.DEFAULT;
 
     @Option(names = { "--empty" }, defaultValue = "false", description = "Run an empty Camel without loading source files")
     public boolean empty;
@@ -401,11 +407,39 @@ public class Run extends CamelCommand {
             return runExample();
         }
 
+        checkFilesExist();
         if (!exportRun) {
             printConfigurationValues("Running integration with the following configuration:");
         }
         // run
         return run();
+    }
+
+    /**
+     * Fails a local file that does not exist with exit code 3, before anything is prepared or printed. Remote files
+     * (such as github: and https:) and wildcards are checked when they are read.
+     */
+    void checkFilesExist() {
+        if (files == null) {
+            return;
+        }
+        for (String file : files) {
+            String path = file.startsWith("file:") ? file.substring(5) : file;
+            String scheme = getScheme(path);
+            if (scheme != null && scheme.length() > 1 || path.contains("*") || path.contains("?")) {
+                // a single letter is a drive on Windows
+                continue;
+            }
+            boolean exists;
+            try {
+                exists = Files.exists(Paths.get(path));
+            } catch (InvalidPathException e) {
+                exists = false;
+            }
+            if (!exists) {
+                throw CliException.notFound("File does not exist: " + path);
+            }
+        }
     }
 
     private int listExamples(String group) {
@@ -774,8 +808,7 @@ public class Run extends CamelCommand {
     private int run() throws Exception {
         if (!empty && !files.isEmpty() && sourceDir != null) {
             // cannot have both files and source dir at the same time
-            printer().printErr("Cannot specify both file(s) and source-dir at the same time.");
-            return 1;
+            throw CliException.usage("Cannot specify both file(s) and source-dir at the same time.");
         }
 
         Path baseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
@@ -1650,8 +1683,7 @@ public class Run extends CamelCommand {
 
     protected int runQuarkus() throws Exception {
         if (background) {
-            printer().printErr("Run Camel Quarkus with --background is not supported");
-            return 1;
+            throw CliException.usage("Run Camel Quarkus with --background is not supported");
         }
 
         AtomicReference<Process> processRef = new AtomicReference<>();
@@ -1812,8 +1844,7 @@ public class Run extends CamelCommand {
      */
     protected int runCamelMain() throws Exception {
         if (background) {
-            printer().printErr("Run Camel Main with --background is not supported (use --runtime=jbang)");
-            return 1;
+            throw CliException.usage("Run Camel Main with --background is not supported (use --runtime=jbang)");
         }
 
         // existing Maven project: run directly without export
@@ -2195,8 +2226,7 @@ public class Run extends CamelCommand {
 
     private int runExistingCamelMainProject() throws Exception {
         if (background) {
-            printer().printErr("Run Camel Main with --background is not supported");
-            return 1;
+            throw CliException.usage("Run Camel Main with --background is not supported");
         }
 
         AtomicReference<Process> processRef = new AtomicReference<>();
@@ -2428,8 +2458,7 @@ public class Run extends CamelCommand {
 
     protected int runSpringBoot() throws Exception {
         if (background) {
-            printer().printErr("Run Camel Spring Boot with --background is not supported");
-            return 1;
+            throw CliException.usage("Run Camel Spring Boot with --background is not supported");
         }
 
         AtomicReference<Process> processRef = new AtomicReference<>();
@@ -2745,8 +2774,11 @@ public class Run extends CamelCommand {
                 main.addInitialProperty("camel.main.routesReloadDirectoryRecursive",
                         isReloadRecursive(pattern) ? "true" : "false");
             }
-            // do not shutdown the JVM but stop routes when max duration is triggered
-            main.addInitialProperty("camel.main.durationMaxAction", "stop");
+            if (!executionLimitOptions.isSet()) {
+                // do not shutdown the JVM but stop routes when max duration is triggered, so a reload can start them
+                // again; with --max-seconds, --max-messages or --max-idle-seconds the run ends at the limit
+                main.addInitialProperty("camel.main.durationMaxAction", "stop");
+            }
         }
     }
 
@@ -2815,7 +2847,10 @@ public class Run extends CamelCommand {
             packageScanJars
                     = "true".equals(answer.getProperty(PACKAGE_SCAN_JARS, packageScanJars ? "true" : "false"));
             background = "true".equals(answer.getProperty(BACKGROUND, background ? "true" : "false"));
-            backgroundWait = "true".equals(answer.getProperty(BACKGROUND_WAIT, backgroundWait ? "true" : "false"));
+            String wait = answer.getProperty(BACKGROUND_WAIT);
+            if (wait != null) {
+                backgroundWait = BackgroundWait.parse(wait);
+            }
             jvmDebugPort = parseJvmDebugPort(answer.getProperty(JVM_DEBUG, Integer.toString(jvmDebugPort)));
             camelVersion = answer.getProperty(CAMEL_VERSION, camelVersion);
             kameletsVersion = answer.getProperty(KAMELETS_VERSION, kameletsVersion);
@@ -2890,11 +2925,7 @@ public class Run extends CamelCommand {
         }
 
         if (background) {
-            cmds.remove("--background=true");
-            cmds.remove("--background");
-            cmds.remove("--background-wait");
-            cmds.remove("--background-wait=false");
-            cmds.remove("--background-wait=true");
+            cmds = BackgroundWait.withoutBackgroundOptions(cmds);
         }
         if (camelVersion != null) {
             cmds.remove("--camel-version=" + camelVersion);
@@ -2993,11 +3024,7 @@ public class Run extends CamelCommand {
             }
         }
 
-        cmds.remove("--background=true");
-        cmds.remove("--background");
-        cmds.remove("--background-wait=false");
-        cmds.remove("--background-wait=true");
-        cmds.remove("--background-wait");
+        cmds = BackgroundWait.withoutBackgroundOptions(cmds);
 
         RunHelper.addCamelCLICommand(cmds);
 
@@ -3011,72 +3038,63 @@ public class Run extends CamelCommand {
     }
 
     protected int runBackgroundProcess(ProcessBuilder pb, String kind) throws Exception {
-        Path logPath = null;
-        if (backgroundWait) {
-            // store background output in a log file to capture any error on startup
-            logPath = getRunBackgroundLogFile("" + new Random().nextLong()); // NOSONAR
-            try {
-                Path logDir = CommandLineHelper.getCamelDir();
-                Files.createDirectories(logDir); //make sure the parent dir exists
-                Files.createFile(logPath);
-                logPath.toFile().deleteOnExit();
-            } catch (IOException e) {
-                // Ignore
-            }
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(logPath.toFile());
-        }
-
+        // the output goes to ~/.camel/<pid>-run.log, as nobody reads the output of a process in the background
+        Path logPath = BackgroundLog.redirect(pb);
         Process p = pb.start();
         this.spawnPid = p.pid();
-        if (!exportRun && !transformRun && !transformMessageRun) {
+        logPath = BackgroundLog.started(logPath, p.pid());
+
+        // the commands that run Camel for themselves (export, transform) keep quiet, and need no log afterwards
+        boolean internal = exportRun || transformRun || transformMessageRun;
+        if (!internal) {
             printer().println(
                     "Running " + kind + ": " + name + " in background with PID: " + p.pid()
-                              + (backgroundWait ? " (waiting to startup)" : ""));
+                              + (backgroundWait > 0 ? " (waiting to startup)" : ""));
+            printer().println("Log: " + logPath);
         }
-
-        int ec = 0;
-        if (logPath != null) {
-            StopWatch watch = new StopWatch();
+        try {
+            if (backgroundWait <= 0) {
+                return 0;
+            }
+            long deadline = System.currentTimeMillis() + backgroundWait;
             int state = 0; // state 5 is running
-            while (p.isAlive() && watch.taken() < 20000 && state < 5) {
+            while (p.isAlive() && System.currentTimeMillis() < deadline && state < 5) {
                 JsonObject root = loadStatus(p.pid());
-                if (root != null) {
-                    JsonObject context = (JsonObject) root.get("context");
-                    if (context != null) {
-                        state = context.getInteger("phase");
-                    }
+                if (root != null && root.get("context") instanceof JsonObject context) {
+                    state = context.getIntegerOrDefault("phase", 0);
                 }
                 if (state < 5) {
                     try {
                         Thread.sleep(500);
-                    } catch (Exception e) {
-                        // we want to exit
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                         break;
                     }
                 }
             }
             if (!p.isAlive()) {
-                ec = p.exitValue();
+                int ec = p.exitValue();
                 if (ec != 0) {
                     printer().printErr(kind + ": " + name + " startup failure");
                     printer().println("");
-                    String text = Files.readString(logPath);
-                    printer().print(text);
+                    printer().print(Files.readString(logPath));
                 }
-            } else {
-                printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
+                return ec;
             }
-        }
-        if (logPath != null) {
-            try {
+            if (state < 5) {
+                // still starting: it is left running, and the log tells why it takes long
+                String waited = backgroundWait < 1000 ? backgroundWait + "ms" : TimeUtils.printDuration(backgroundWait);
+                throw CliException.timeout(kind + ": " + name + " (PID: " + p.pid() + ") is still starting after "
+                                           + waited + "; the log is in " + logPath);
+            }
+            printer().println(kind + ": " + name + " (state: " + extractState(state) + ")");
+            return 0;
+        } finally {
+            if (internal) {
+                // as before, the output of these is only of use during startup
                 Files.deleteIfExists(logPath);
-            } catch (IOException e) {
-                // Ignore
             }
         }
-
-        return ec;
     }
 
     protected int runDebug(KameletMain main) throws Exception {
@@ -3128,11 +3146,7 @@ public class Run extends CamelCommand {
         }
 
         if (background) {
-            cmds.remove("--background=true");
-            cmds.remove("--background");
-            cmds.remove("--background-wait=true");
-            cmds.remove("--background-wait=false");
-            cmds.remove("--background-wait");
+            cmds = BackgroundWait.withoutBackgroundOptions(cmds);
         }
         if (mavenResolver.repos() != null) {
             if (!VersionHelper.isGE(v, "3.18.1")) {
@@ -3170,6 +3184,13 @@ public class Run extends CamelCommand {
         Recording jfrRecording = startJfrRecording();
         try {
             main.start();
+            if (hasNoRoutes(main)) {
+                // it would run doing nothing: a file without routes, or a mistake in it
+                printer().printErr(files.isEmpty()
+                        ? "No routes found" : "No routes found in: " + String.join(", ", files));
+                main.stop();
+                return CliExitCode.FAILURE;
+            }
             main.run();
         } finally {
             stopJfrRecording(jfrRecording);
@@ -3181,6 +3202,19 @@ public class Run extends CamelCommand {
         int code = main.getExitCode();
         // no exit code is set when Camel is stopped from outside (such as camel stop)
         return code == Integer.MIN_VALUE ? CliExitCode.OK : code;
+    }
+
+    /**
+     * Whether Camel started without routes where routes are expected: not with --empty, --source-dir or in dev mode
+     * (where files can be added or changed later), and not when Camel runs for another command (export, transform).
+     */
+    boolean hasNoRoutes(KameletMain main) {
+        if (empty || sourceDir != null || dev || ignoreLoadingError || exportRun || transformRun || transformMessageRun
+                || scriptRun) {
+            return false;
+        }
+        CamelContext context = main.getCamelContext();
+        return context != null && context.getRoutes().isEmpty();
     }
 
     /**
@@ -3798,6 +3832,13 @@ public class Run extends CamelCommand {
         @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
                 description = "For how long time in seconds Camel can be idle before stopping")
         int maxIdleSeconds;
+
+        /**
+         * Whether any of the limits is given.
+         */
+        boolean isSet() {
+            return maxMessages > 0 || maxSeconds > 0 || maxIdleSeconds > 0;
+        }
     }
 
     static class ServerOptions {

@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.junit.jupiter.api.Test;
@@ -113,7 +114,7 @@ class RestartProcessTest extends ProcessCommandTestSupport {
         Path log = dir.resolve("restart.log");
         Files.writeString(log, "one\ntwo\nthree\n");
 
-        assertEquals("two" + System.lineSeparator() + "three", RestartProcess.tail(log, 2));
-        assertEquals("", RestartProcess.tail(dir.resolve("missing.log"), 2));
+        assertEquals("two" + System.lineSeparator() + "three", BackgroundLog.tail(log, 2));
+        assertEquals("", BackgroundLog.tail(dir.resolve("missing.log"), 2));
     }
 }

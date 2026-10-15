@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
@@ -29,6 +30,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -146,6 +149,37 @@ class CommandInputErrorsTest {
         assertThatThrownBy(() -> call(new Debug(main), "--remote-attach", "--name=no-such-integration"))
                 .isInstanceOf(CliException.class)
                 .hasMessage("camel debug requires an interactive terminal")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "missing.yaml", "missing.xml", "missing.java", "file:missing.camel.yaml" })
+    void runAFileThatDoesNotExist(String file) {
+        // every extension, before anything is prepared or printed
+        assertThatThrownBy(() -> call(new Run(main), file))
+                .isInstanceOf(CliException.class)
+                .hasMessage("File does not exist: " + file.replace("file:", ""))
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(printer.getOutput()).isEmpty();
+    }
+
+    @Test
+    void runFilesAndSourceDir() throws Exception {
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--source-dir=" + dir))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Cannot specify both file(s) and source-dir at the same time.")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
+    @Test
+    void runQuarkusInTheBackground() throws Exception {
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+
+        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=quarkus", "--background"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Run Camel Quarkus with --background is not supported")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 

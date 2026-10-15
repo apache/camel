@@ -394,6 +394,23 @@ Without an interactive terminal, such as in a script, a CI job (the `CI` environ
 it off (use `--follow=false` to turn it off). In a terminal, the end of the input (Ctrl+D) stops a command that watches
 or follows, like Enter does.
 
+=== camel-jbang - camel run: startup in the background, and input errors
+
+* `camel run --background` waits up to 60 seconds for the integration to start (it was 20 seconds), and
+  `--background-wait` takes how long, such as `--background-wait=2m` (`true` and `false` still work). An integration
+  that is still starting after the wait exits with `124` and is left running; before, the command exited with `0`.
+* The output of an integration in the background goes to `~/.camel/<pid>-run.log`, whose path is printed. The log is
+  kept while the integration runs (it was removed once the integration had started), and `camel stop` removes it. With
+  `--background-wait=false` the output goes to the log as well, instead of a pipe that nobody read.
+* An integration that loads no routes exits with `1` and `No routes found in: <files>`, instead of running without
+  doing anything, except with `--source-dir`, `--empty` or in dev mode, where files can be added later.
+* `camel run` and `camel dev` with `--max-seconds`, `--max-messages` or `--max-idle-seconds` exit at the limit also in
+  dev mode, which stopped the routes and kept running. A limit from the configuration (`camel.main.durationMax...`)
+  still only stops the routes in dev mode.
+* A file that does not exist exits with `3` and `File does not exist: <file>` for every kind of file, before anything is
+  printed. Files together with `--source-dir`, and `--background` with a runtime that does not support it, exit with
+  `2`.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

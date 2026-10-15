@@ -164,6 +164,9 @@ public class Debug extends Run {
     public Integer doCall() throws Exception {
         // the debugger reads its commands from the terminal
         requireInteractiveTerminal("camel debug");
+        if (!remoteAttach) {
+            checkFilesExist();
+        }
         if (!exportRun) {
             printConfigurationValues("Debugging integration with the following configuration:");
         }
@@ -587,11 +590,7 @@ public class Debug extends Run {
         cmds.remove(0);
         cmds.add(0, "run");
 
-        cmds.remove("--background=true");
-        cmds.remove("--background");
-        cmds.remove("--background-wait=true");
-        cmds.remove("--background-wait=false");
-        cmds.remove("--background-wait");
+        cmds = BackgroundWait.withoutBackgroundOptions(cmds);
 
         // remove args from debug that are not supported by run
         removeDebugOnlyOptions(cmds);
