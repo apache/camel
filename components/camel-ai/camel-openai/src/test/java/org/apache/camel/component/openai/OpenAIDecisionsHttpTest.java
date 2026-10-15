@@ -19,6 +19,7 @@ package org.apache.camel.component.openai;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.openai.models.decisions.DecisionChoiceOption;
@@ -27,6 +28,10 @@ import com.openai.models.decisions.DecisionInputImage;
 import com.openai.models.decisions.DecisionInputMessage;
 import com.openai.models.decisions.DecisionInputPart;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.ai.observability.GenAiAttributes;
+import org.apache.camel.component.ai.observability.GenAiErrorProperties;
+import org.apache.camel.component.ai.observability.GenAiObservabilityProperties;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,8 +66,9 @@ class OpenAIDecisionsHttpTest {
         });
         server.start();
         context = new DefaultCamelContext();
+        OpenAIObservabilityTestSupport.registerRecordingTracer(context);
         endpoint = context.getEndpoint("openai:decisions?apiKey=test&maxRetries=0&baseUrl=http://127.0.0.1:"
-                                       + server.getAddress().getPort() + "/v1",
+                                       + server.getAddress().getPort() + "/v1&model=endpoint-model",
                 OpenAIEndpoint.class);
         context.start();
     }
@@ -77,6 +83,72 @@ class OpenAIDecisionsHttpTest {
             if (server != null) {
                 server.stop(0);
             }
+        }
+    }
+
+    @Test
+    void producerRecordsModelsAndTokenUsage() throws Exception {
+        response = """
+                {"model":"response-model","answers":[{"type":"predicate","name":"test","probability":0.9}],
+                 "usage":{"input_tokens":12,"output_tokens":3,"total_tokens":15}}
+                """;
+        Exchange result = sendRequest();
+        assertThat(result.getException()).isNull();
+        var spans = OpenAIObservabilityTestSupport.tracer(context).genAiSpans();
+        assertThat(spans).hasSize(1);
+        assertThat(spans.get(0).tags())
+                .containsEntry(GenAiAttributes.OPERATION_NAME, "decisions")
+                .containsEntry(GenAiAttributes.SYSTEM, "openai")
+                .containsEntry(GenAiAttributes.REQUEST_MODEL, "gpt-6-luna")
+                .containsEntry(GenAiAttributes.RESPONSE_MODEL, "response-model")
+                .containsEntry(GenAiAttributes.INPUT_TOKENS, "12")
+                .containsEntry(GenAiAttributes.OUTPUT_TOKENS, "3")
+                .containsEntry(GenAiAttributes.CAMEL_COMPONENT, "openai");
+        assertThat(received.get()).contains("gpt-6-luna").doesNotContain("endpoint-model");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", ",\"usage\":null" })
+    void producerAllowsAbsentUsage(String usage) throws Exception {
+        response = """
+                {"model":"gpt-6-luna","answers":[{"type":"predicate","name":"test","probability":0.9}]%s}
+                """.formatted(usage);
+        assertThat(sendRequest().getException()).isNull();
+        var spans = OpenAIObservabilityTestSupport.tracer(context).genAiSpans();
+        assertThat(spans).hasSize(1);
+        assertThat(spans.get(0).tags())
+                .containsEntry(GenAiAttributes.RESPONSE_MODEL, "gpt-6-luna")
+                .doesNotContainKeys(GenAiAttributes.INPUT_TOKENS, GenAiAttributes.OUTPUT_TOKENS);
+    }
+
+    @Test
+    void producerRecordsAndClosesFailedObservation() throws Exception {
+        status = 503;
+        response = "{\"error\":{\"message\":\"unavailable\"}}";
+        Exchange result = sendRequest();
+        assertThat(result.getException()).isInstanceOf(OpenAIDecisionServiceException.class);
+        assertThat(result.getProperty(GenAiErrorProperties.ERROR_CATEGORY)).isEqualTo("SERVER_ERROR");
+        var spans = OpenAIObservabilityTestSupport.tracer(context).genAiSpans();
+        assertThat(spans).hasSize(1);
+        assertThat(spans.get(0).tags())
+                .containsEntry(GenAiAttributes.ERROR_TYPE, "OpenAIDecisionServiceException");
+    }
+
+    @Test
+    void producerRespectsObservabilityToggle() throws Exception {
+        Properties properties = new Properties();
+        properties.setProperty(GenAiObservabilityProperties.ENABLED, "false");
+        context.getPropertiesComponent().setOverrideProperties(properties);
+        response = """
+                {"model":"gpt-6-luna","answers":[{"type":"predicate","name":"test","probability":0.9}]}
+                """;
+        assertThat(sendRequest().getException()).isNull();
+        assertThat(OpenAIObservabilityTestSupport.tracer(context).genAiSpans()).isEmpty();
+    }
+
+    private Exchange sendRequest() throws Exception {
+        try (var template = context.createProducerTemplate()) {
+            return template.request(endpoint.getEndpointUri(), exchange -> exchange.getMessage().setBody(request()));
         }
     }
 

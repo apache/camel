@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.openai;
 
+import com.openai.models.decisions.Decision;
 import com.openai.models.decisions.DecisionCreateParams;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.ai.observability.GenAiObservation;
+import org.apache.camel.component.ai.observability.GenAiOperationName;
+import org.apache.camel.component.ai.observability.GenAiUsage;
 import org.apache.camel.support.DefaultProducer;
 
 /** Sends native Decisions requests without executing tools or applying decision policy. */
@@ -31,6 +35,20 @@ public class OpenAIDecisionsProducer extends DefaultProducer {
         if (!(exchange.getMessage().getBody() instanceof DecisionCreateParams request)) {
             throw new IllegalArgumentException("Decisions requires a DecisionCreateParams body");
         }
-        exchange.getMessage().setBody(((OpenAIEndpoint) getEndpoint()).decide(request));
+        GenAiObservation observation
+                = OpenAIGenAiProducerSupport.start(exchange, GenAiOperationName.DECISIONS, request.model());
+        try {
+            Decision response = ((OpenAIEndpoint) getEndpoint()).decide(request);
+            var usage = response._usage().asKnown();
+            OpenAIGenAiProducerSupport.recordSuccess(observation,
+                    GenAiUsage.of(usage.map(Decision.Usage::inputTokens).orElse(null),
+                            usage.map(Decision.Usage::outputTokens).orElse(null), null, response.model()));
+            exchange.getMessage().setBody(response);
+        } catch (Exception e) {
+            OpenAIGenAiProducerSupport.recordFailure(exchange, observation, e);
+            throw e;
+        } finally {
+            observation.close();
+        }
     }
 }
