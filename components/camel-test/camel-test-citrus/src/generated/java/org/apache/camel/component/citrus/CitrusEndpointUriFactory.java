@@ -60,7 +60,7 @@ public class CitrusEndpointUriFactory extends org.apache.camel.support.component
         Map<String, Object> copy = copyParameters(properties);
 
         uri = buildPathParameter(syntax, uri, "operation", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "name", null, false, copy);
+        uri = buildPathParameter(syntax, uri, "name", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

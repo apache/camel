@@ -26,6 +26,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.citrusframework.CitrusContext;
+import org.citrusframework.context.TestContext;
 import org.citrusframework.message.MessagePayloadBuilder;
 import org.citrusframework.validation.context.ValidationContext;
 
@@ -38,10 +39,6 @@ public class CitrusEndpoint extends MockEndpoint {
              enums = "validate,receive")
     @Metadata(required = true)
     private String operation;
-
-    @UriPath(description = "A unique name to identify this endpoint. Allows multiple Citrus endpoints"
-                           + " with different validation expectations in the same route.")
-    private String name;
 
     @UriParam(description = "The message type for validation. Determines which Citrus validation module is used."
                             + " Supported values: json, xml, yaml, plaintext.")
@@ -91,14 +88,21 @@ public class CitrusEndpoint extends MockEndpoint {
     }
 
     private CitrusValidationProcessor createProcessor(MessageValidationSpec validationSpec) {
-        return new CitrusValidationProcessor(() -> citrusContext.createTestContext(), messageType, validationSpec);
+        return new CitrusValidationProcessor(this::createTestContext, messageType, validationSpec);
     }
 
     private CitrusValidationProcessor createProcessor(
             MessageValidationSpec validationSpec,
             MessageResponseSpec responseSpec) {
-        return new CitrusValidationProcessor(
-                () -> citrusContext.createTestContext(), messageType, validationSpec, responseSpec);
+        return new CitrusValidationProcessor(this::createTestContext, messageType, validationSpec, responseSpec);
+    }
+
+    private TestContext createTestContext() {
+        CitrusContext ctx = citrusContext;
+        if (ctx == null) {
+            throw new IllegalStateException("CitrusEndpoint is not started");
+        }
+        return ctx.createTestContext();
     }
 
     // --- Gherkin-style API (for 'receive' operation) ---
