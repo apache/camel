@@ -180,12 +180,12 @@ public class ListKafka extends ProcessWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        // clear before writing new data
-        if (watch) {
+        // clear before writing new data (not in JSON mode, as the escape codes would break the document)
+        if (watch && !jsonOutput) {
             clearScreen();
         }
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();

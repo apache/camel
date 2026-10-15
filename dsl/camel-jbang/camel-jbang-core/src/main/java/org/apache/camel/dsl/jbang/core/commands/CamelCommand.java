@@ -27,6 +27,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
@@ -95,6 +96,18 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     public abstract Integer doCall() throws Exception;
+
+    /**
+     * Whether the command prints its output as JSON (the option {@code --json}). Its errors are then printed as JSON on
+     * stdout too, see {@link JsonOutput}. A command with another way to ask for JSON overrides this.
+     */
+    public boolean isJsonOutput() {
+        if (spec != null) {
+            CommandLine.Model.OptionSpec option = spec.findOption(JsonOutput.OPTION);
+            return option != null && Boolean.TRUE.equals(option.getValue());
+        }
+        return false;
+    }
 
     /**
      * Prints the help of this command, which lists its sub-commands.

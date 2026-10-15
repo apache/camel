@@ -32,8 +32,10 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "yaml", description = "Parse and validate YAML routes")
@@ -53,6 +55,11 @@ public class YamlValidateCommand extends CamelCommand {
 
     @CommandLine.Mixin
     CatalogVersionMixin catalogVersion;
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
+                                      + " camel_validate_source answers")
+    boolean jsonOutput;
 
     @CommandLine.Parameters(description = { "The Camel YAML source files to parse." },
                             arity = "1..9",
@@ -103,6 +110,16 @@ public class YamlValidateCommand extends CamelCommand {
         }
 
         int count = errorCounts(reports);
+        if (jsonOutput) {
+            List<JsonObject> rows = new ArrayList<>();
+            for (var e : reports.entrySet()) {
+                List<String> errors = e.getValue().isEmpty()
+                        ? List.of() : YamlValidator.describeAll(readQuietly(e.getKey()), e.getValue());
+                rows.add(ValidateJson.file(e.getKey(), errors));
+            }
+            JsonOutput.printList(printer(), rows);
+            return count > 0 ? 1 : 0;
+        }
         if (count > 0) {
             StringBuilder sb = new StringBuilder();
             sb.append("Validation error detected (errors:").append(count).append(")\n\n");

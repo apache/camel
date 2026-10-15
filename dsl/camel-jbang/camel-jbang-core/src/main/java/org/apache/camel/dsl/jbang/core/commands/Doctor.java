@@ -20,26 +20,61 @@ import java.io.File;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "doctor", description = "Checks the environment and reports potential issues",
          sortOptions = false, showDefaultValues = true,
          footer = {
                  "%nExamples:",
-                 "  camel doctor" })
+                 "  camel doctor",
+                 "  camel doctor --json" })
 public class Doctor extends CamelCommand {
+
+    /**
+     * The check works.
+     */
+    static final String OK = "OK";
+    /**
+     * The check works, but something optional is missing or could be better.
+     */
+    static final String WARN = "WARN";
+    /**
+     * The check fails: the Camel CLI cannot work as expected.
+     */
+    static final String FAIL = "FAIL";
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format: the status (OK, WARN or FAIL) of each check")
+    boolean jsonOutput;
+
+    /**
+     * The outcome of a check.
+     *
+     * @param name    the check, such as java
+     * @param status  OK, WARN or FAIL
+     * @param message what the check found, as the text output shows it
+     */
+    record Check(String name, String status, String message) {
+    }
+
+    private final List<Check> checks = new ArrayList<>();
 
     public Doctor(CamelJBangMain main) {
         super(main);
@@ -47,9 +82,12 @@ public class Doctor extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        printer().println("Camel CLI Doctor");
-        printer().println("==================");
-        printer().println();
+        checks.clear();
+        if (!jsonOutput) {
+            printer().println("Camel CLI Doctor");
+            printer().println("==================");
+            printer().println();
+        }
 
         checkCamelVersion();
         checkJava();
@@ -60,12 +98,40 @@ public class Doctor extends CamelCommand {
         checkCommonPorts();
         checkDiskSpace();
 
-        boolean conflict = false;
         if ("true".equals(System.getProperty("camel.launcher"))) {
-            conflict = checkInstallLocations();
+            checkInstallLocations();
         }
 
-        return conflict ? 1 : 0;
+        boolean failed = checks.stream().anyMatch(c -> FAIL.equals(c.status()));
+        if (jsonOutput) {
+            boolean warned = checks.stream().anyMatch(c -> WARN.equals(c.status()));
+            JsonObject root = new JsonObject();
+            root.put("status", failed ? FAIL : warned ? WARN : OK);
+            root.put("checks", checks.stream().map(c -> {
+                JsonObject jo = new JsonObject();
+                jo.put("name", c.name());
+                jo.put("status", c.status());
+                jo.put("message", c.message());
+                return jo;
+            }).toList());
+            JsonOutput.print(printer(), root);
+        }
+        // warnings do not fail the command
+        return failed ? CliExitCode.FAILURE : CliExitCode.OK;
+    }
+
+    /**
+     * The outcomes of the checks of the last run.
+     */
+    List<Check> getChecks() {
+        return checks;
+    }
+
+    private void report(String name, String label, String status, String message) {
+        checks.add(new Check(name, status, message));
+        if (!jsonOutput) {
+            printer().printf("  %-13s%s%n", label + ":", message);
+        }
     }
 
     private void checkJava() {
@@ -73,29 +139,34 @@ public class Doctor extends CamelCommand {
         String vendor = System.getProperty("java.vendor", "");
         int major = Runtime.version().feature();
         String status;
+        String result;
         if (major >= 21) {
-            status = "OK";
+            status = OK;
+            result = "OK";
         } else if (major >= 17) {
-            status = "OK (consider upgrading to 21 or 25 for better performance)";
+            status = OK;
+            result = "OK (consider upgrading to 21 or 25 for better performance)";
         } else {
-            status = "UNSUPPORTED (17+ required)";
+            status = FAIL;
+            result = "UNSUPPORTED (17+ required)";
         }
-        printer().printf("  Java:        %s (%s) (%s)%n", version, vendor, status);
+        report("java", "Java", status, "%s (%s) (%s)".formatted(version, vendor, result));
     }
 
     private void checkJBang() {
         String version = VersionHelper.getJBangVersion();
         if (version != null) {
-            printer().printf("  JBang:       %s (OK)%n", version);
+            report("jbang", "JBang", OK, version + " (OK)");
         } else {
-            printer().printf("  JBang:       Not detected%n");
+            // the Camel CLI launcher does not need JBang
+            report("jbang", "JBang", OK, "Not detected");
         }
     }
 
     private void checkCamelVersion() {
         CamelCatalog catalog = new DefaultCamelCatalog();
         String version = catalog.getCatalogVersion();
-        printer().printf("  Camel:       %s%n", version);
+        report("camel", "Camel", OK, version);
     }
 
     private void checkMavenRepository() {
@@ -106,11 +177,12 @@ public class Doctor extends CamelCommand {
             downloader.resolveArtifacts(
                     List.of("org.apache.camel:camel-api:" + version),
                     Set.of(), false, false);
-            printer().printf("  Maven:       Artifact resolution (OK)%n");
+            report("maven", "Maven", OK, "Artifact resolution (OK)");
         } catch (MavenResolutionException e) {
-            printer().printf("  Maven:       Artifact resolution failed (%s)%n", e.getMessage());
+            // camel run downloads the dependencies of the routes
+            report("maven", "Maven", FAIL, "Artifact resolution failed (%s)".formatted(e.getMessage()));
         } catch (Exception e) {
-            printer().printf("  Maven:       Error (%s)%n", e.getMessage());
+            report("maven", "Maven", FAIL, "Error (%s)".formatted(e.getMessage()));
         }
     }
 
@@ -125,14 +197,14 @@ public class Doctor extends CamelCommand {
                 p.getInputStream().transferTo(OutputStream.nullOutputStream());
                 int exit = p.waitFor();
                 if (exit == 0) {
-                    printer().printf("  Container:   %s running (OK, optional)%n", StringHelper.capitalize(cmd));
+                    report("container", "Container", OK, "%s running (OK, optional)".formatted(StringHelper.capitalize(cmd)));
                     return;
                 }
             } catch (Exception e) {
                 // not found, try next
             }
         }
-        printer().printf("  Container:   Not found (optional — needed for running external infra services)%n");
+        report("container", "Container", WARN, "Not found (optional — needed for running external infra services)");
     }
 
     private void checkOllama() {
@@ -141,9 +213,9 @@ public class Doctor extends CamelCommand {
 
     void printOllamaStatus(OllamaDoctorSupport.Status status) {
         if (status.running()) {
-            printer().printf("  Ollama:      %s%n", OllamaDoctorSupport.cliRunningLine(status));
+            report("ollama", "Ollama", OK, OllamaDoctorSupport.cliRunningLine(status));
         } else {
-            printer().printf("  Ollama:      %s%n", OllamaDoctorSupport.cliNotDetectedLine());
+            report("ollama", "Ollama", WARN, OllamaDoctorSupport.cliNotDetectedLine());
         }
     }
 
@@ -158,9 +230,9 @@ public class Doctor extends CamelCommand {
             }
         }
         if (!conflicts.isEmpty()) {
-            printer().printf("  Ports:       In use: %s%n", conflicts);
+            report("ports", "Ports", WARN, "In use: " + conflicts);
         } else {
-            printer().printf("  Ports:       8080, 8443, 9090 free (OK)%n");
+            report("ports", "Ports", OK, "8080, 8443, 9090 free (OK)");
         }
     }
 
@@ -178,9 +250,10 @@ public class Doctor extends CamelCommand {
         long free = tmpDir.getFreeSpace();
         long mb = free / (1024 * 1024);
         long gb = mb / (1024);
-        String status = mb > 500 ? "OK" : "LOW";
+        boolean ok = mb > 500;
         String unit = gb > 0 ? "GB" : "MB";
-        printer().printf("  Disk Space:  %d %s free in temp dir (%s)%n", gb > 0 ? gb : mb, unit, status);
+        report("disk", "Disk Space", ok ? OK : WARN,
+                "%d %s free in temp dir (%s)".formatted(gb > 0 ? gb : mb, unit, ok ? "OK" : "LOW"));
     }
 
     // Only meaningful when running via the native launcher (camel.launcher=true) — the web-installer
@@ -193,21 +266,26 @@ public class Doctor extends CamelCommand {
     // "more than one installation found -> conflict" contract against fully controlled data, rather than
     // whatever InstallDetector.scanKnownLocations() happens to find on the machine running the test suite.
     boolean checkInstallLocations(List<InstallDetector.InstallInfo> installs, Optional<Path> active) {
+        String found = "Found %d Camel CLI installation%s".formatted(installs.size(), installs.size() == 1 ? "" : "s");
+        boolean conflict = installs.size() > 1;
+        checks.add(new Check("installs", conflict ? FAIL : OK, found));
+        if (jsonOutput) {
+            return conflict;
+        }
         printer().println();
-        printer().printf("Installs:    Found %d Camel CLI installation%s%n", installs.size(), installs.size() == 1 ? "" : "s");
+        printer().printf("Installs:    %s%n", found);
         for (InstallDetector.InstallInfo install : installs) {
             boolean isActive = active.isPresent() && install.location() != null
                     && active.get().toAbsolutePath().normalize().startsWith(install.location().toAbsolutePath().normalize());
             printer().printf("             %s (%s)%s%n", install.location(), install.method(), isActive ? " <- active" : "");
         }
 
-        if (installs.size() > 1) {
+        if (conflict) {
             printer().println(
                     "Warning: more than one Camel CLI installation was found. The one marked active is the one your "
                               + "shell currently runs; the others are unused but still present. See "
                               + "camel-jbang-launcher-install.adoc for how each installation method is normally removed.");
-            return true;
         }
-        return false;
+        return conflict;
     }
 }

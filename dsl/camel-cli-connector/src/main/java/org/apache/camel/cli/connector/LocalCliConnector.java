@@ -410,6 +410,10 @@ public class LocalCliConnector extends ServiceSupport
         actionOutput.error(message);
     }
 
+    private void reportNotFound(String message) {
+        actionOutput.notFound(message);
+    }
+
     private void doActionReadmeTask(JsonObject root) throws Exception {
         String readmeFiles = camelContext.getPropertiesComponent()
                 .resolveProperty("camel.jbang.readmeFiles").orElse(null);
@@ -1408,7 +1412,7 @@ public class LocalCliConnector extends ServiceSupport
             }
         }
         if (ids.isEmpty()) {
-            reportError("No route matching: " + root.getString("id"));
+            reportNotFound("No route matching: " + root.getString("id"));
         }
     }
 
@@ -1461,7 +1465,11 @@ public class LocalCliConnector extends ServiceSupport
             } catch (Exception e) {
                 LOG.warn("Error {} processor: {} due to: {}. This exception is ignored.", command, mp.getProcessorId(),
                         e.getMessage(), e);
+                reportError("Error " + command + " processor: " + mp.getProcessorId() + " due to: " + e.getMessage());
             }
+        }
+        if (mps.isEmpty()) {
+            reportNotFound("No processor matching: " + root.getString("id"));
         }
     }
 

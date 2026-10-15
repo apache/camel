@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * route-diagram, route-topology and route-structure read Java source files with the Java DSL parser (CAMEL-25565): the
@@ -93,8 +96,9 @@ class RouteActionJavaSourceTest {
         RouteInfo intake = routes.stream().filter(r -> "intake".equals(r.routeId)).findFirst().orElseThrow();
         // the lambda is a placeholder step, so the route keeps all its steps
         assertThat(intake.nodes).extracting(n -> n.type).contains("from", "setBody", "process", "to");
-        assertThat(printer.getOutput())
-                .contains("Routes read without compiling them")
+        // a warning on stderr, not part of the output
+        assertThat(printer.getStderr())
+                .contains("WARN: Routes read without compiling them")
                 .contains("Orders.java:")
                 .contains("a lambda or method reference");
     }
@@ -107,8 +111,10 @@ class RouteActionJavaSourceTest {
         command.compile = true;
 
         // the existence check comes first, also when compiling
-        assertThat(command.doCallSource(List.of(missing.toString()))).isNull();
-        assertThat(printer.getOutput()).contains("File does not exist: " + missing);
+        assertThatThrownBy(() -> command.doCallSource(List.of(missing.toString())))
+                .isInstanceOf(CliException.class)
+                .hasMessage("File does not exist: " + missing)
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
     }
 
     @Test
@@ -142,8 +148,10 @@ class RouteActionJavaSourceTest {
         int exit = command.doCall();
 
         assertThat(exit).isZero();
-        // with --json only the JSON is printed, and the parts the parser could not read are listed in it
-        JsonObject topology = (JsonObject) Jsoner.deserialize(printer.getOutput());
+        // with --json only the JSON is on stdout, and the parts the parser could not read are listed in it (and on
+        // stderr, as a warning)
+        JsonObject topology = (JsonObject) Jsoner.deserialize(printer.getStdout());
+        assertThat(printer.getStderr()).contains("WARN: Routes read without compiling them");
         JsonArray edges = (JsonArray) topology.get("edges");
         assertThat(edges).hasSize(1);
         JsonObject edge = (JsonObject) edges.get(0);

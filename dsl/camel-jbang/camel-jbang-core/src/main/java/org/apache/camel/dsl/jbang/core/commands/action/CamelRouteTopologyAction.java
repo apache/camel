@@ -374,9 +374,4 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
             cmd.files.add(arg);
         }
     }
-
-    @Override
-    protected boolean printSourceNotes() {
-        return !jsonOutput;
-    }
 }

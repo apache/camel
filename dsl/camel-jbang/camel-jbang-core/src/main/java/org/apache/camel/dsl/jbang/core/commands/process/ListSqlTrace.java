@@ -105,7 +105,7 @@ public class ListSqlTrace extends ProcessWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 

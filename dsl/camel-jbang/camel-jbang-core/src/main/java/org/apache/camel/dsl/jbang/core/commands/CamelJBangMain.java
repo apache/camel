@@ -250,7 +250,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("list", new CommandLine(new VersionList(this)))
                         .addSubcommand("set", new CommandLine(new VersionSet(this))))
                 .addSubcommand("wrapper", new CommandLine(new WrapperCommand(this)))
-                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
+                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler(this));
 
         commandLine.getHelpSectionMap().put(
                 CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST,
@@ -278,7 +278,7 @@ public class CamelJBangMain implements Callable<Integer> {
             exitCode = commandLine.execute(args);
         } catch (Error e) {
             // picocli hands exceptions to the handler, but an error (such as a class missing at runtime) escapes it
-            exitCode = new CliExecutionExceptionHandler(this).handle(e, null);
+            exitCode = new CliExecutionExceptionHandler(this).handle(e, commandLine.getParseResult());
         }
         if (isHelpRequest(args) && EnvironmentHelper.isInteractiveTerminal()) {
             printAvailablePlugins();
@@ -298,7 +298,7 @@ public class CamelJBangMain implements Callable<Integer> {
         CliExecutionExceptionHandler handler = new CliExecutionExceptionHandler(this);
         return commandLine.setExecutionExceptionHandler(handler)
                 .setExitCodeExceptionMapper(handler)
-                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
+                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler(this));
     }
 
     /**

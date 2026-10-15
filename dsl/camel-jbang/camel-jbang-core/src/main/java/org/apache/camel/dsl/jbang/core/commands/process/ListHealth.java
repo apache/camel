@@ -194,7 +194,7 @@ public class ListHealth extends ProcessWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
@@ -207,6 +207,15 @@ public class ListHealth extends ProcessWatchCommand {
                     jo.put("rate", getRate(r));
                     jo.put("since", getSince(r));
                     jo.put("message", r.message);
+                    if (trace) {
+                        // in the document, not as text after it
+                        if (r.customMeta != null) {
+                            jo.put("metadata", r.customMeta);
+                        }
+                        if (r.stackTrace != null && !r.stackTrace.isEmpty()) {
+                            jo.put("stackTrace", r.stackTrace.subList(0, Math.min(depth, r.stackTrace.size())));
+                        }
+                    }
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
@@ -240,7 +249,7 @@ public class ListHealth extends ProcessWatchCommand {
                                 .with(r -> r.message))));
             }
         }
-        if (trace) {
+        if (trace && !jsonOutput) {
             var traces
                     = rows.stream().filter(r -> r.stackTrace != null && !r.stackTrace.isEmpty()).collect(Collectors.toList());
             if (!traces.isEmpty()) {

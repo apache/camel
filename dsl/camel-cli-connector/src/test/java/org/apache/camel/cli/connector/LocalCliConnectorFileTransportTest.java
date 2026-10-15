@@ -158,7 +158,7 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
         startConnector();
 
         assertThat(dir).isDirectoryContaining(f -> f.getName().equals(PID));
-        // {pid}-action.json is created too, but the first poll consumes it (it is empty)
+        // {pid}-action.json is created too, but the connector removes it a little later (it is empty)
         for (String suffix : List.of("status", "output", "trace", "history", "error", "debug", "receive",
                 "activity")) {
             assertThat(file(PID + "-" + suffix + ".json")).exists();
@@ -232,14 +232,45 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
     }
 
     @Test
-    void unknownActionIsIgnored() {
+    void unknownActionGetsAnError() {
         startConnector();
 
         writeAction(action("does-not-exist"), "r1");
 
-        await().atMost(10, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertThat(file(PID + "-action-r1.json")).doesNotExist());
-        assertThat(file(PID + "-output-r1.json")).doesNotExist();
+        JsonObject reply = awaitJson(file(PID + "-output-r1.json"));
+        assertThat(reply).containsEntry("status", "failed").containsEntry("error", "Unknown action: does-not-exist");
+    }
+
+    @Test
+    void routeActionWithRequestIdIsAcknowledged() {
+        startConnector();
+
+        writeAction(action("route", "command", "stop", "id", "hello"), "r1");
+
+        assertThat(awaitJson(file(PID + "-output-r1.json")).toJson()).isEqualTo("{\"status\":\"success\"}");
+        assertThat(context.getRouteController().getRouteStatus("hello")).isEqualTo(ServiceStatus.Stopped);
+    }
+
+    @Test
+    void routeActionForAnUnknownRouteIsNotFound() {
+        startConnector();
+
+        writeAction(action("route", "command", "stop", "id", "nope"), "r1");
+
+        JsonObject reply = awaitJson(file(PID + "-output-r1.json"));
+        assertThat(reply).containsEntry("status", "failed").containsEntry("error", "No route matching: nope")
+                .containsEntry("reason", "not-found");
+    }
+
+    @Test
+    void processorActionForAnUnknownProcessorIsNotFound() {
+        startConnector();
+
+        writeAction(action("processor", "command", "disable", "id", "nope"), "r1");
+
+        JsonObject reply = awaitJson(file(PID + "-output-r1.json"));
+        assertThat(reply).containsEntry("status", "failed").containsEntry("error", "No processor matching: nope")
+                .containsEntry("reason", "not-found");
     }
 
     @Test
@@ -311,7 +342,7 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
     private void writeAction(JsonObject action, String requestId) {
         String name = requestId != null ? PID + "-action-" + requestId + ".json" : PID + "-action.json";
         if (requestId == null) {
-            // the connector creates an empty legacy action file on start and deletes it on its first poll, which would
+            // the connector creates an empty legacy action file on start and deletes it a little later, which would
             // also delete an action written in between
             await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(file(name)).doesNotExist());
         }
