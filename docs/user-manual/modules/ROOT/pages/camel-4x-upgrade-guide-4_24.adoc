@@ -101,7 +101,7 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
   `{"amount":"500","format":"m"}`. This affects routes that marshal the result of a `camel-kubernetes` producer
   with the `camel-jackson` data format (`marshal().json()`), and application code that uses its own Jackson 2
   `ObjectMapper`. Replace the `camel-jackson` dependency with `camel-jackson3`, which provides the same `jackson`
-  data format on Jackson 3 (see xref:dataformats:jackson3-dataformat.adoc[JSON Jackson 3]), so the route does not
+  data format on Jackson 3 (see xref:components:dataformats:jackson3-dataformat.adoc[JSON Jackson 3]), so the route does not
   change. In Java code, use Jackson 3 or `io.fabric8.kubernetes.client.utils.Serialization`.
 * Jackson 3 uses the Jackson 2 `com.fasterxml.jackson.core:jackson-annotations` artifact, and needs version 2.21
   or later. An application that pins Jackson 2 to 2.20 or older, for example through an older Spring Boot BOM,
