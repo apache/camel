@@ -425,7 +425,7 @@
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
         <openai-java-version>4.78.0</openai-java-version>
-        <openapi-generator-version>7.25.0</openapi-generator-version>
+        <openapi-generator-version>7.26.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.9.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.10.0</opensearch-java-client-version>
