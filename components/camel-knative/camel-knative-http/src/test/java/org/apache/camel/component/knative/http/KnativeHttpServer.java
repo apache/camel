@@ -159,7 +159,7 @@ public class KnativeHttpServer extends ServiceSupport {
         CompletableFuture.runAsync(
                 () -> {
                     CountDownLatch latch = new CountDownLatch(1);
-                    server.requestHandler(router).listen(port, host, result -> {
+                    server.requestHandler(router).listen(port, host).onComplete(result -> {
                         try {
                             if (result.failed()) {
                                 LOGGER.warn("Failed to start Vert.x HttpServer on {}:{}, reason: {}",
@@ -196,7 +196,7 @@ public class KnativeHttpServer extends ServiceSupport {
                             // remove the platform-http component
                             context.removeComponent(PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME);
 
-                            server.close(result -> {
+                            server.close().onComplete(result -> {
                                 try {
                                     if (result.failed()) {
                                         LOGGER.warn("Failed to close Vert.x HttpServer reason: {}",
@@ -228,7 +228,7 @@ public class KnativeHttpServer extends ServiceSupport {
                     () -> {
                         CountDownLatch latch = new CountDownLatch(1);
 
-                        vertx.close(result -> {
+                        vertx.close().onComplete(result -> {
                             try {
                                 if (result.failed()) {
                                     LOGGER.warn("Failed to close Vert.x reason: {}",

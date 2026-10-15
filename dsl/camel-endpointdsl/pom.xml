@@ -69,6 +69,13 @@
             <artifactId>netty-transport</artifactId>
             <version>${netty-version}</version>
         </dependency>
+        <!-- the generated Netty builders reference SslHandler; Vert.x 5 brings netty-handler in at runtime scope only -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>${netty-version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-allcomponents</artifactId>
