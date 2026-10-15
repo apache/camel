@@ -56,7 +56,7 @@ brew install ollama
 # Linux
 curl -fsSL https://ollama.com/install.sh | sh
 
-# Pull a model and start asking
+# Pull a model and start asking (on a Mac with Apple Silicon: qwen3.6:35b-mlx, see below)
 ollama pull qwen3.6:35b-a3b
 camel ask "what routes are running?"
 ----
@@ -76,6 +76,7 @@ Use at least a 14B model. Prefer a mixture-of-experts model such as `qwen3.6:35b
 |===
 | Model | RAM (Q4) | Notes
 | `qwen3.6:35b-a3b` | ~23 GB | Recommended: fastest prompt processing, needs 32 GB+
+| `qwen3.6:35b-mlx` | ~24 GB | The same model as an MLX build: recommended on Apple Silicon with Ollama 0.40 or later
 | `qwen2.5:14b` | ~9 GB | Minimum for 16 GB machines
 | `qwen3.6:27b` | ~18 GB | Strong dense model, several times slower prompt processing
 | `qwen2.5:32b` | ~20 GB | Good quality, slow prompt processing
@@ -84,8 +85,16 @@ Use at least a 14B model. Prefer a mixture-of-experts model such as `qwen3.6:35b
 |===
 
 On Apple Silicon, all RAM is unified — a 64 GB M-series Mac can run `llama3.3:70b` comfortably alongside the OS and other dev tools.
-Use the default (GGUF) tags rather than the `-mlx` tags: the Ollama MLX engine cannot yet reuse the
-cached prompt for Qwen 3.x models, so every question re-processes the whole prompt.
+On a Mac with Apple Silicon, use the MLX build `qwen3.6:35b-mlx` with Ollama 0.40 or later. It is the same
+35B-A3B model, in the format of Apple's MLX engine, which Ollama 0.40 uses on Apple Silicon and which reuses the cached
+prompt between the questions of a conversation. Measured on an M4 Pro with Ollama 0.40.3 and an 11K-token prompt,
+against the default (GGUF) tag: it reads the prompt about 25% faster (about 780 against 620 tokens per second), writes
+about 10% faster (about 68 against 60 tokens per second), and a follow-up question took 2.2 instead of 2.8 seconds.
+With an older Ollama keep the default (GGUF) tag: there the MLX engine could not reuse the cached prompt for Qwen 3.x
+models, so every question re-processed the whole prompt.
+
+The CLI auto-selects the first installed `qwen3.6` model in the order Ollama lists them (the latest pulled first), so
+with both builds installed pick one: `--model qwen3.6:35b-mlx` for `camel ask`, or `/model qwen3.6:35b-mlx` in the TUI.
 
 ==== Context window and keep-alive
 

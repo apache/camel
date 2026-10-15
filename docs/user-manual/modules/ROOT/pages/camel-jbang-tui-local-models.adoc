@@ -24,6 +24,9 @@ ollama pull qwen3.6:35b-a3b
 camel tui
 ----
 
+On a Mac with Apple Silicon and Ollama 0.40 or later, pull the MLX build `qwen3.6:35b-mlx` instead: the same model,
+with faster prompt processing and answers on the M chips.
+
 Then press *F8*. How to install Ollama, which models work well (at least 14B, with tool calling; a
 mixture-of-experts model such as `qwen3.6:35b-a3b` is the fastest) and how the context window is chosen
 are described in xref:camel-jbang-ai-providers.adoc#_ollama[AI Providers and Local Models], shared with
