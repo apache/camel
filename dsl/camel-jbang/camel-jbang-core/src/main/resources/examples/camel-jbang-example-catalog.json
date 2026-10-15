@@ -834,7 +834,8 @@
             "error-handling.camel.yaml",
             "orders/order-1001.json",
             "orders/order-1002.json",
-            "orders/order-1003.json"
+            "orders/order-1003.json",
+            "parked.camel.yaml"
         ],
         "order": 1
     },
