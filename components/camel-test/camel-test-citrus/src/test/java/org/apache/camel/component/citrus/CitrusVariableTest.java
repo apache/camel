@@ -73,6 +73,23 @@ class CitrusVariableTest extends CamelTestSupport {
         assertThat(result.getProperty("orderId")).isEqualTo("old-value");
     }
 
+    @Test
+    void shouldNotWriteBackPropagatedPropertiesAsVariables() throws Exception {
+        CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
+
+        citrus.validateAll().body("{\"status\": \"ok\"}");
+        citrus.expectedMessageCount(1);
+
+        Exchange result = template.send("direct:start", exchange -> {
+            exchange.setProperty("myProp", "propValue");
+            exchange.getIn().setBody("{\"status\": \"ok\"}");
+        });
+
+        citrus.assertIsSatisfied();
+        assertThat(result.getProperty("myProp")).isEqualTo("propValue");
+        assertThat(result.getVariables().containsKey("myProp")).isFalse();
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {

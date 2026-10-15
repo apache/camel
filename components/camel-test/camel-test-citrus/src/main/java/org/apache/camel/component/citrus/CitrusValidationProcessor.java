@@ -17,10 +17,12 @@
 package org.apache.camel.component.citrus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
@@ -66,6 +68,7 @@ class CitrusValidationProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         TestContext testContext = testContextSupplier.get();
         propagateExchangeVariables(exchange, testContext);
+        Map<String, Object> propagated = new HashMap<>(testContext.getVariables());
 
         try {
             if (spec != null) {
@@ -83,7 +86,7 @@ class CitrusValidationProcessor implements Processor {
                 applyResponse(exchange, responseSpec, testContext);
             }
         } finally {
-            writeBackExtractedVariables(exchange, testContext);
+            writeBackExtractedVariables(exchange, testContext, propagated);
         }
     }
 
@@ -209,13 +212,16 @@ class CitrusValidationProcessor implements Processor {
         }
     }
 
-    private void writeBackExtractedVariables(Exchange exchange, TestContext testContext) {
+    private void writeBackExtractedVariables(Exchange exchange, TestContext testContext, Map<String, Object> propagated) {
         for (Map.Entry<String, Object> entry : testContext.getVariables().entrySet()) {
             String key = entry.getKey();
             if (key.startsWith("citrus.") || key.startsWith("CITRUS_")) {
                 continue;
             }
-            exchange.setVariable(key, entry.getValue());
+            Object value = entry.getValue();
+            if (!propagated.containsKey(key) || !Objects.equals(propagated.get(key), value)) {
+                exchange.setVariable(key, value);
+            }
         }
     }
 }
