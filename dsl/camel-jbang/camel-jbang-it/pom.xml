@@ -218,6 +218,8 @@
                 <failsafe.forkCount>1C</failsafe.forkCount>
                 <x11.display>:0</x11.display>
                 <failsafe.excludedGroups/>
+                <!-- default to Docker-based service; overridden to local-camel-cli-process by the windows-dockerless profile -->
+                <camel-cli.instance.type>local-camel-cli-container</camel-cli.instance.type>
             </properties>
             <build>
                 <plugins>
@@ -278,6 +280,7 @@
                                 <cli.service.command>${cli.service.command}</cli.service.command>
                                 <jbang.it.assert.wait.timeout>300</jbang.it.assert.wait.timeout>
                                 <DISPLAY>${x11.display}</DISPLAY>
+                                <camel-cli.instance.type>${camel-cli.instance.type}</camel-cli.instance.type>
                             </systemPropertyVariables>
                             <threadCountClasses>1</threadCountClasses>
                         </configuration>
@@ -294,6 +297,20 @@
                 </property>
             </activation>
             <properties>
+                <failsafe.forkCount>1</failsafe.forkCount>
+                <failsafe.excludedGroups>container-only</failsafe.excludedGroups>
+            </properties>
+        </profile>
+        <profile>
+            <!-- On Windows, default to running tests directly on the host OS to achieve the correct configuration since the container is Fedora-based. -->
+            <id>windows-dockerless</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <camel-cli.instance.type>local-camel-cli-process</camel-cli.instance.type>
                 <failsafe.forkCount>1</failsafe.forkCount>
                 <failsafe.excludedGroups>container-only</failsafe.excludedGroups>
             </properties>
