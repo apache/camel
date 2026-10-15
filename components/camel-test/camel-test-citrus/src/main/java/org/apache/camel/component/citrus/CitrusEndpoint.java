@@ -44,7 +44,7 @@ public class CitrusEndpoint extends MockEndpoint {
     private String messageType;
 
     private volatile CitrusContext citrusContext;
-    private volatile AtomicInteger nextSpecIndex = new AtomicInteger(0);
+    private final AtomicInteger nextSpecIndex = new AtomicInteger(0);
 
     public CitrusEndpoint(String endpointUri, CitrusComponent component) {
         super(endpointUri, component);
@@ -104,7 +104,10 @@ public class CitrusEndpoint extends MockEndpoint {
     @Override
     public void reset() {
         super.reset();
-        nextSpecIndex = new AtomicInteger(0);
+        // guard against super constructor calling reset() before field initializer runs
+        if (nextSpecIndex != null) {
+            nextSpecIndex.set(0);
+        }
     }
 
     @Override
