@@ -92,6 +92,21 @@ class MyBatisOnConsumeFailedTest extends MyBatisTestSupport {
         assertEquals(1, getMockEndpoint("mock:processed").getReceivedCounter());
     }
 
+    @Test
+    void testTransactedRollbackOnlyLastExchangeBreaksOutOfBatch() throws Exception {
+        insertAccounts(account(1, "ok"), account(2, "rollbackLast"), account(3, "ok"));
+
+        MyBatisConsumer consumer = (MyBatisConsumer) context.getRoute("transacted").getConsumer();
+        RollbackExchangeException e = assertThrows(RollbackExchangeException.class, consumer::poll,
+                "a rollback only last exchange must break out of a transacted batch, as a failed exchange does");
+        assertTrue(e.getMessage().startsWith("Rollback transaction as the exchange was marked as rollback only"),
+                e.getMessage());
+
+        assertEquals(List.of(2, 3), unprocessedAccountIds(),
+                "neither the rollback only last account nor the accounts after it must be consumed");
+        assertEquals(1, getMockEndpoint("mock:processed").getReceivedCounter());
+    }
+
     private void insertAccounts(Account... accounts) {
         template.sendBody("mybatis:insertAccount?statementType=Insert", accounts);
     }
