@@ -52,6 +52,10 @@ public class PQCProducer extends DefaultProducer {
     private String signerAlgorithm;
     private String signerProvider;
     private KeyGenerator keyGenerator;
+    // The same for the KEM KeyGenerator. The provider is kept as an object, so creating another KeyGenerator does not
+    // depend on it still being registered in the JVM
+    private String keyGeneratorAlgorithm;
+    private Provider keyGeneratorProvider;
     private KeyPair keyPair;
 
     public PQCProducer(Endpoint endpoint) {
@@ -122,6 +126,8 @@ public class PQCProducer extends DefaultProducer {
                 PQCKeyEncapsulationAlgorithms kemAlg
                         = PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm());
                 keyGenerator = KeyGenerator.getInstance(kemAlg.getAlgorithm(), kemAlg.getBcProvider());
+                keyGeneratorAlgorithm = kemAlg.getAlgorithm();
+                keyGeneratorProvider = keyGenerator.getProvider();
             }
         }
 
@@ -190,25 +196,45 @@ public class PQCProducer extends DefaultProducer {
         exchange.getMessage().setHeader(PQCConstants.VERIFY, verified);
     }
 
+    /**
+     * Returns the KEM {@link KeyGenerator} to use for a single exchange.
+     * <p>
+     * A KEM {@code KeyGenerator} keeps the spec passed to {@code init()} until {@code generateKey()} reads it and is
+     * not thread-safe, so the two calls of one exchange must not interleave with those of another. As with
+     * {@link #signerForExchange()}, an instance this producer created is simply created again, while a configured one -
+     * an autowired bean can be shared by every endpoint, and {@code PQCDefault*Material.keyGenerator} JVM-wide - is
+     * handed back as-is, and the caller serializes on whatever it gets.
+     */
+    private KeyGenerator keyGeneratorForExchange() throws NoSuchAlgorithmException {
+        if (keyGeneratorAlgorithm == null) {
+            return keyGenerator;
+        }
+        return KeyGenerator.getInstance(keyGeneratorAlgorithm, keyGeneratorProvider);
+    }
+
     private void generateEncapsulation(Exchange exchange)
-            throws InvalidAlgorithmParameterException {
-        // initialise for creating an encapsulation and shared secret.
-        keyGenerator.init(
-                new KEMGenerateSpec(
-                        keyPair.getPublic(),
-                        getEndpoint().getConfiguration().getSymmetricKeyAlgorithm(),
-                        getEndpoint().getConfiguration().getSymmetricKeyLength()),
-                new SecureRandom());
-        // SecretKeyWithEncapsulation is the class to use as the secret key, it has additional
-        // methods on it for recovering the encapsulation as well.
-        SecretKeyWithEncapsulation secEnc1 = (SecretKeyWithEncapsulation) keyGenerator.generateKey();
+            throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        KeyGenerator generator = keyGeneratorForExchange();
+        SecretKeyWithEncapsulation secEnc1;
+        synchronized (generator) {
+            // initialise for creating an encapsulation and shared secret.
+            generator.init(
+                    new KEMGenerateSpec(
+                            keyPair.getPublic(),
+                            getEndpoint().getConfiguration().getSymmetricKeyAlgorithm(),
+                            getEndpoint().getConfiguration().getSymmetricKeyLength()),
+                    new SecureRandom());
+            // SecretKeyWithEncapsulation is the class to use as the secret key, it has additional
+            // methods on it for recovering the encapsulation as well.
+            secEnc1 = (SecretKeyWithEncapsulation) generator.generateKey();
+        }
 
         exchange.getMessage().setBody(secEnc1, SecretKeyWithEncapsulation.class);
     }
 
     private void extractEncapsulation(Exchange exchange)
             throws InvalidAlgorithmParameterException,
-            InvalidPayloadException {
+            InvalidPayloadException, NoSuchAlgorithmException {
         // initialise for creating an encapsulation and shared secret.
         SecretKeyWithEncapsulation payload = exchange.getMessage().getMandatoryBody(SecretKeyWithEncapsulation.class);
 
@@ -216,15 +242,19 @@ public class PQCProducer extends DefaultProducer {
             throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
         }
 
-        keyGenerator.init(
-                new KEMExtractSpec(
-                        keyPair.getPrivate(), payload.getEncapsulation(),
-                        PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
-                        getEndpoint().getConfiguration().getSymmetricKeyLength()),
-                new SecureRandom());
+        KeyGenerator generator = keyGeneratorForExchange();
+        SecretKeyWithEncapsulation secEnc2;
+        synchronized (generator) {
+            generator.init(
+                    new KEMExtractSpec(
+                            keyPair.getPrivate(), payload.getEncapsulation(),
+                            PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
+                            getEndpoint().getConfiguration().getSymmetricKeyLength()),
+                    new SecureRandom());
 
-        // initialise for extracting the shared secret from the encapsulation.
-        SecretKeyWithEncapsulation secEnc2 = (SecretKeyWithEncapsulation) keyGenerator.generateKey();
+            // initialise for extracting the shared secret from the encapsulation.
+            secEnc2 = (SecretKeyWithEncapsulation) generator.generateKey();
+        }
 
         exchange.getMessage().setBody(secEnc2, SecretKeyWithEncapsulation.class);
     }
