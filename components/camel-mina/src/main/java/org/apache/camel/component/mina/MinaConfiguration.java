@@ -83,6 +83,8 @@ public class MinaConfiguration implements Cloneable {
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", defaultValue = "true")
+    private boolean hostnameVerification = true;
     @UriParam(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16; // 16 is the default mina setting
     @UriParam(label = "advanced", defaultValue = "true")
@@ -379,6 +381,19 @@ public class MinaConfiguration implements Cloneable {
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * Whether to check that the certificate of the server matches the host Camel connects to, when SSL is used by the
+     * producer, or by the consumer in client mode. When disabled, any certificate accepted by the trust store is
+     * accepted, whatever host it was issued for.
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
     }
 
     public int getMaximumPoolSize() {

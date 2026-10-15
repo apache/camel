@@ -1063,6 +1063,42 @@ public interface MllpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the producer checks that the certificate of the server
+         * matches the host it connects to, when SSL/TLS is used. When disabled,
+         * any certificate accepted by the trust store is accepted, whatever
+         * host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MllpEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether the producer checks that the certificate of the server
+         * matches the host it connects to, when SSL/TLS is used. When disabled,
+         * any certificate accepted by the trust store is accepted, whatever
+         * host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MllpEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Sets the SSLContextParameters for securing TCP connections. If set,
          * the MLLP component will use SSL/TLS for securing both producer and
          * consumer TCP connections. This allows the configuration of trust
