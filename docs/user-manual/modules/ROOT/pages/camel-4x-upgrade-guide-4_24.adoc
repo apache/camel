@@ -88,6 +88,30 @@ artifacts, so either the ArangoDB driver or the other components fail at runtime
 driver maintainers is to replace `com.arangodb:arangodb-java-driver` with `com.arangodb:arangodb-java-driver-shaded`,
 which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-arangodb` cannot be used in that case.
 
+=== camel-kubernetes - Kubernetes client 8
+
+`camel-kubernetes` now uses the fabric8 Kubernetes client 8.0, which brings these changes for applications:
+
+* The client uses its Vert.x 5 HTTP client (`io.fabric8:kubernetes-httpclient-vertx-5`) instead of the Vert.x 4 one
+  (`io.fabric8:kubernetes-httpclient-vertx`). An application that excludes the default HTTP client, for example
+  to use OkHttp or the JDK HTTP client, must now exclude `kubernetes-httpclient-vertx-5`.
+* The client and its model use Jackson 3 (`tools.jackson`). Jackson 2 does not apply the serializers of the
+  model, so Kubernetes model objects serialized with Jackson 2 come out in a different shape. For example, a
+  `targetPort` of `8080` is written as `{"value":8080,"intVal":8080}`, and a CPU limit of `500m` as
+  `{"amount":"500","format":"m"}`. This affects routes that marshal the result of a `camel-kubernetes` producer
+  with the `camel-jackson` data format (`marshal().json()`), and application code that uses its own Jackson 2
+  `ObjectMapper`. Replace the `camel-jackson` dependency with `camel-jackson3`, which provides the same `jackson`
+  data format on Jackson 3 (see xref:components:dataformats:jackson3-dataformat.adoc[JSON Jackson 3]), so the route does not
+  change. In Java code, use Jackson 3 or `io.fabric8.kubernetes.client.utils.Serialization`.
+* Jackson 3 uses the Jackson 2 `com.fasterxml.jackson.core:jackson-annotations` artifact, and needs version 2.21
+  or later. An application that pins Jackson 2 to 2.20 or older, for example through an older Spring Boot BOM,
+  fails on the first use of the client with
+  `NoClassDefFoundError: com/fasterxml/jackson/annotation/JsonSerializeAs`. Use `jackson-annotations` 2.21 or
+  later; Camel uses 2.22.
+
+See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
+for the other changes.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint
