@@ -28,6 +28,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.main.KameletMain;
@@ -226,8 +227,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     private int doCallSource(String name) throws Exception {
         File f = new File(name);
         if (!f.isFile() || !f.exists()) {
-            printer().printErr("File does not exist: " + name);
-            return 1;
+            throw CliException.notFound("File does not exist: " + name);
         }
 
         final String target = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/structure-output.json";
@@ -347,10 +347,5 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         int level;
         String code;
         String description;
-    }
-
-    @Override
-    protected boolean printSourceNotes() {
-        return !jsonOutput;
     }
 }

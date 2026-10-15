@@ -30,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -205,8 +206,9 @@ abstract class ActionBaseCommand extends CamelCommand {
      * @param  workDirPrefix      prefix for the (pid-suffixed) temporary work directory name
      * @param  ignoreLoadingError whether to ignore route loading and compilation errors
      * @param  compile            whether to compile Java sources and boot them, instead of reading them with the parser
-     * @return                    the dump location and the instant the dump started, or {@code null} if a file does not
-     *                            exist or the dump failed (an error is already printed to the user in that case)
+     * @return                    the dump location and the instant the dump started, or {@code null} if the dump failed
+     *                            (an error is already printed to the user in that case)
+     * @throws CliException       when a source file does not exist (exit code 3)
      */
     protected SourceDump dumpRoutesFromSource(
             List<String> sourceFiles, String workDirPrefix, boolean ignoreLoadingError, boolean compile)
@@ -214,8 +216,7 @@ abstract class ActionBaseCommand extends CamelCommand {
         for (String name : sourceFiles) {
             File f = new File(name);
             if (!f.isFile() || !f.exists()) {
-                printer().printErr("File does not exist: " + name);
-                return null;
+                throw CliException.notFound("File does not exist: " + name);
             }
         }
 
@@ -269,19 +270,12 @@ abstract class ActionBaseCommand extends CamelCommand {
             return false;
         }
         unreadSourceParts = result.unread();
-        if (!unreadSourceParts.isEmpty() && printSourceNotes()) {
-            printer().println("Routes read without compiling them; the parser could not work out these parts "
-                              + "(use --compile to compile the source instead):");
-            unreadSourceParts.forEach(u -> printer().println("  " + u));
+        if (!unreadSourceParts.isEmpty()) {
+            // a warning on stderr: the JSON output stays one document, and lists them too (see addUnreadSourceParts)
+            printer().printWarn("Routes read without compiling them; the parser could not work out these parts "
+                                + "(use --compile to compile the source instead):");
+            unreadSourceParts.forEach(u -> printer().printDiagnostic("  " + u));
         }
-        return true;
-    }
-
-    /**
-     * Whether to print the parts of Java sources the parser could not read: not when the output is JSON, which lists
-     * them instead (see {@link #addUnreadSourceParts(JsonObject)}).
-     */
-    protected boolean printSourceNotes() {
         return true;
     }
 

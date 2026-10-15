@@ -26,12 +26,15 @@ import java.util.List;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -52,11 +55,12 @@ class CamelRouteDiagramActionMultiFileTest {
         StringPrinter printer = new StringPrinter();
         CamelRouteDiagramAction command = new CamelRouteDiagramAction(new CamelJBangMain().withPrinter(printer));
 
-        List<RouteInfo> routes = command.doCallSource(List.of(existing.toString(), "does-not-exist.yaml"));
+        // the missing file ends the command (exit code 3) before Camel is booted
+        CliException e = assertThrows(CliException.class,
+                () -> command.doCallSource(List.of(existing.toString(), "does-not-exist.yaml")));
 
-        assertNull(routes, "should report an error and not attempt to boot Camel when a file is missing");
-        assertTrue(printer.getOutput().contains("File does not exist: does-not-exist.yaml"),
-                "should report the missing file, was: " + printer.getOutput());
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("File does not exist: does-not-exist.yaml", e.getMessage(), "should report the missing file");
     }
 
     @Test
