@@ -841,6 +841,15 @@ failures of the route go. A highlighted path that steps into an `onException` cl
 The `<camel-topology-diagram>` web component no longer draws the error paths of the route topology as calls between
 routes. With its new `errors` attribute it draws the routes reached only on error in a frame below the other routes.
 
+=== camel-jbang - route-diagram, route-structure and route-topology read Java sources without compiling them
+
+Given Java source files, `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` (and the
+`camel_render_route_diagram` MCP tool) now read the routes with the Java DSL parser, as `camel transform route` and
+`camel overview` do, instead of compiling the sources and loading their routes in a short-lived Camel. A step the parser
+cannot work out, such as a lambda or a processor, is shown as a placeholder, and the parts it could not read are
+listed (with `--json`, as an `unread` array in the JSON). Use the new `--compile` option to compile the sources and
+load their routes as before.
+
 === camel-jbang - export to Quarkus keeps the names in `quarkus.*` keys
 
 `camel export --runtime=quarkus` wrote every `quarkus.*` key except `quarkus.hawtio.*` in dash case: an upper-case

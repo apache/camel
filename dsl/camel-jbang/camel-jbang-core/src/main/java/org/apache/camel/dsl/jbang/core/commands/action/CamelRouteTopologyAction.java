@@ -115,6 +115,11 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
+    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
+                        description = "Whether to compile Java source files and load their routes. By default Java "
+                                      + "routes are read by the Java DSL parser, without compiling them")
+    boolean compile;
+
     private long pid;
 
     public CamelRouteTopologyAction(CamelJBangMain main) {
@@ -160,7 +165,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     }
 
     private int doCallSource(List<String> sourceFiles) throws Exception {
-        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-topology-source-", ignoreLoadingError);
+        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-topology-source-", ignoreLoadingError, compile);
         if (dump == null) {
             return 1;
         }
@@ -193,6 +198,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
      */
     int renderTopology(JsonObject jo) throws Exception {
         if (jsonOutput) {
+            addUnreadSourceParts(jo);
             String dump = Jsoner.prettyPrint(jo.toJson(), 2);
             printer().println(dump);
         } else if (theme != null) {
@@ -369,4 +375,8 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
         }
     }
 
+    @Override
+    protected boolean printSourceNotes() {
+        return !jsonOutput;
+    }
 }
