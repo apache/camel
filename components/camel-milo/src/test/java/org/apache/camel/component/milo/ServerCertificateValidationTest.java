@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
@@ -125,10 +126,8 @@ class ServerCertificateValidationTest extends AbstractMiloServerTest {
             public void configure() {
                 from(DIRECT_START).to(MILO_SERVER_ITEM);
 
-                from(resolve(MILO_CLIENT + "&trustListDirectory=RAW(" + pki.resolve("trusted") + ")"))
-                        .to("mock:trustList");
-                from(resolve(MILO_CLIENT + "&trustListDirectory=RAW(" + pki.resolve("empty") + ")"))
-                        .to("mock:emptyTrustList");
+                from(resolve(trustListClient("trusted"))).to("mock:trustList");
+                from(resolve(trustListClient("empty"))).to("mock:emptyTrustList");
                 from(resolve(MILO_CLIENT)).to("mock:notConfigured");
                 from(resolve(MILO_CLIENT + "&trustAllCertificates=true")).to("mock:trustAll");
                 from(resolve(MILO_CLIENT + "&certificateValidator=#recordingValidator")).to("mock:certificateValidator");
@@ -156,6 +155,26 @@ class ServerCertificateValidationTest extends AbstractMiloServerTest {
         await().atMost(10, TimeUnit.SECONDS).until(() -> countFiles(rejectedCerts) > 0);
 
         assertTrue(this.recordingValidator.validations.get() > 0, "The configured certificate validator was not used");
+
+        // a producer of a client that cannot connect gets the reason of the last connection attempt
+        assertConnectionFailure(MILO_CLIENT, "The certificate of the OPC UA server cannot be validated");
+        assertConnectionFailure(trustListClient("empty"), "Bad_SecurityChecksFailed");
+    }
+
+    private void assertConnectionFailure(final String clientUri, final String expectedReason) {
+        final Exchange exchange = this.producer.send(resolve(clientUri + "&defaultAwaitWrites=true"),
+                e -> e.getMessage().setBody("Bar"));
+
+        final StringBuilder causes = new StringBuilder();
+        for (Throwable cause = exchange.getException(); cause != null; cause = cause.getCause()) {
+            causes.append(cause).append('\n');
+        }
+        assertTrue(causes.indexOf("No connected") >= 0, causes::toString);
+        assertTrue(causes.indexOf(expectedReason) >= 0, causes::toString);
+    }
+
+    private static String trustListClient(final String directory) {
+        return MILO_CLIENT + "&trustListDirectory=RAW(" + pki.resolve(directory) + ")";
     }
 
     private static long countFiles(final Path directory) throws IOException {

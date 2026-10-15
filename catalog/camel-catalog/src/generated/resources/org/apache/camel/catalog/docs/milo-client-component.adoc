@@ -215,18 +215,32 @@ server when it opens the secure channel and the session. Configure the trusted c
 * `trustListDirectory`: a directory holding the trust list, in the layout used by Eclipse Milo. Put the certificate of
 the server, or the certificate of the CA that issued it, in `trusted/certs`. Certificates of intermediate CAs that are
 only used to build the chain go in `issuer/certs`, and certificate revocation lists in `trusted/crl` and `issuer/crl`.
-The directories are created if they do not exist. A server certificate that fails validation is written to
-`rejected/certs`, from where it can be moved to `trusted/certs` once it has been checked.
+The directories are created if they do not exist.
 * `certificateValidator`: a custom `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`. It is used
-instead of `trustListDirectory` when both are set.
+instead of `trustListDirectory` when both are set. Endpoints share a connection only when they use the same validator
+instance.
 
-The trust list checks that the certificate chains up to a trusted certificate. The optional checks of Eclipse Milo,
-such as the validity period, the host name or the application URI, are only logged. To enforce them, configure a
-`certificateValidator`, for example a `DefaultClientCertificateValidator` created with the checks you need.
+With `trustListDirectory`, the client refuses a server certificate that:
+
+* does not chain up to a certificate in `trusted/certs`, possibly through the certificates in `issuer/certs`,
+* is outside its validity period,
+* is revoked by a certificate revocation list in `trusted/crl` or `issuer/crl`. When the trust list has no revocation
+list for an issuer, the revocation status of the certificates it issued is not checked,
+* or holds an application URI that differs from the one the server announces in its endpoint description.
+
+A failed host name, key usage or extended key usage check is only logged. A certificate that does not chain up to a
+trusted certificate is written to `rejected/certs`, from where it can be moved to `trusted/certs` once it has been
+checked. A certificate refused for another reason is not written there. To use other checks, configure a
+`certificateValidator`, for example a `DefaultClientCertificateValidator` created with the `ValidationCheck` set you
+need.
 
 If neither option is configured, the client does not connect to an endpoint that uses a security policy other than
 `None`. Setting `trustAllCertificates` to `true` makes the client accept any server certificate instead. This is
 insecure: the connection is encrypted, but the client does not authenticate the server it talks to.
+
+When the server certificate cannot be validated, the client logs a `WARN` message that starts with `Failed to
+connect`, and tries again every 10 seconds, so a certificate moved to `trusted/certs` is used at the next attempt. A
+producer fails with `IllegalStateException: No connected`, whose cause gives the reason.
 
 The same validator checks the server certificate that the user name and password are encrypted with. With the
 security policy `None`, the server is not authenticated, whatever the configuration.

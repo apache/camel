@@ -590,6 +590,7 @@ public class SubscriptionManager {
     private final Lock lock = new ReentrantLock();
 
     private Connected connected;
+    private volatile Throwable lastConnectFailure;
     private boolean disposed;
     private Future<?> reconnectJob;
     private final Map<UInteger, Subscription> subscriptions = new HashMap<>();
@@ -626,6 +627,7 @@ public class SubscriptionManager {
                 this.connected.dispose();
                 this.connected = null;
             }
+            this.lastConnectFailure = e;
 
             // log
 
@@ -675,6 +677,7 @@ public class SubscriptionManager {
                     LOG.debug("Update state : {} -> {}", this.connected, connected);
                     final Connected oldConnected = this.connected;
                     this.connected = connected;
+                    this.lastConnectFailure = null;
 
                     if (oldConnected != null) {
                         LOG.debug("Dispose old state");
@@ -690,8 +693,25 @@ public class SubscriptionManager {
                 lock.unlock();
             }
         } catch (final Exception e) {
-            LOG.info("Failed to connect", e);
+            this.lastConnectFailure = e;
+            logConnectFailure(e);
             triggerReconnect(false);
+        }
+    }
+
+    private static void logConnectFailure(final Exception e) {
+        final Throwable certificateFailure = ServerCertificateTrust.findCertificateFailure(e);
+        if (certificateFailure instanceof ServerCertificateTrust.NotConfiguredException) {
+            LOG.warn("Failed to connect: {}", certificateFailure.getMessage());
+            LOG.debug("Failed to connect", e);
+        } else if (certificateFailure != null) {
+            // a certificate rejected by the trust list can be trusted later, so the client keeps retrying
+            // passed as text: SLF4J would log a trailing Throwable as the exception, with its stack trace
+            LOG.warn("Failed to connect, because a certificate or security check failed: {}",
+                    String.valueOf(certificateFailure));
+            LOG.debug("Failed to connect", e);
+        } else {
+            LOG.info("Failed to connect", e);
         }
     }
 
@@ -945,9 +965,10 @@ public class SubscriptionManager {
         }
     }
 
-    private static <T> CompletableFuture<T> newNotConnectedResult() {
+    private <T> CompletableFuture<T> newNotConnectedResult() {
         final CompletableFuture<T> result = new CompletableFuture<>();
-        result.completeExceptionally(new IllegalStateException("No connected"));
+        // the reason of the last failed connection attempt, if any, tells the caller why there is no connection
+        result.completeExceptionally(new IllegalStateException("No connected", this.lastConnectFailure));
         return result;
     }
 

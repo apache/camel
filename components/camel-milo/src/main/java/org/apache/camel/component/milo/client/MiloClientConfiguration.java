@@ -463,9 +463,10 @@ public class MiloClientConfiguration implements Cloneable {
     /**
      * The directory holding the trust list used to validate the certificate of the OPC UA server, in the layout used by
      * Eclipse Milo: trusted certificates in trusted/certs, CRLs of trusted certificates in trusted/crl, certificates of
-     * issuing CAs in issuer/certs and their CRLs in issuer/crl. The directories are created if they do not exist. A
-     * server certificate that fails validation is written to rejected/certs, from where it can be moved to
-     * trusted/certs once it has been checked.
+     * issuing CAs in issuer/certs and their CRLs in issuer/crl. The directories are created if they do not exist.
+     * Besides the chain of trust, the validity period, the revocation by a CRL of the trust list and the application
+     * URI of the server certificate are checked. A server certificate that does not chain up to a trusted certificate
+     * is written to rejected/certs, from where it can be moved to trusted/certs once it has been checked.
      */
     public void setTrustListDirectory(final String trustListDirectory) {
         this.trustListDirectory = trustListDirectory;
@@ -477,7 +478,7 @@ public class MiloClientConfiguration implements Cloneable {
 
     /**
      * A custom validator for the certificate of the OPC UA server. When set, it is used instead of the trust list
-     * configured with trustListDirectory.
+     * configured with trustListDirectory. Endpoints share a connection only when they use the same validator instance.
      */
     public void setCertificateValidator(final CertificateValidator certificateValidator) {
         this.certificateValidator = certificateValidator;
@@ -529,7 +530,8 @@ public class MiloClientConfiguration implements Cloneable {
 
     private String serverCertificateTrustCacheId() {
         if (this.certificateValidator != null) {
-            return "|certificateValidator=" + Integer.toHexString(System.identityHashCode(this.certificateValidator));
+            return "|certificateValidator=" + this.certificateValidator.getClass().getName() + "@"
+                   + Integer.toHexString(System.identityHashCode(this.certificateValidator));
         }
         if (this.trustListDirectory != null && !this.trustListDirectory.isEmpty()) {
             return "|trustListDirectory=" + this.trustListDirectory;
