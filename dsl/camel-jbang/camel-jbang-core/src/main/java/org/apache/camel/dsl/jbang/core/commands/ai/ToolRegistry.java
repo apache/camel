@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
 
 /**
- * Central registry of all shared AI tool descriptors. Tools registered here are available to both the Agent REPL
- * ({@code AskTools}) and the MCP server. CLI-specific and file-system tools that depend on {@code CamelJBangMain} or
- * direct filesystem access remain in {@code AskTools}.
+ * Central registry of all shared AI tool descriptors. Tools registered here are available to {@code camel ask}
+ * ({@code AskTools}) and the MCP servers. The CLI tools that depend on {@code CamelJBangMain} remain in
+ * {@code AskTools}.
  */
 public final class ToolRegistry {
 
@@ -101,6 +101,7 @@ public final class ToolRegistry {
     private static void registerProcessTools() {
         register(tool("list_processes",
                 "List all running Camel processes with their PID and name. Use this to discover available processes before selecting one.")
+                .core(true)
                 .executor((ctx, args) -> {
                     List<RuntimeHelper.ProcessInfo> processes = ctx.discoverProcesses();
                     if (processes.isEmpty()) {
@@ -126,6 +127,7 @@ public final class ToolRegistry {
         register(tool("select_process",
                 "Select a running Camel process by name or PID to inspect. Required when multiple processes are running.")
                 .param("name", "string", "Name or PID of the Camel process to connect to", true)
+                .core(true)
                 .executor((ctx, args) -> {
                     String name = args.get("name");
                     if (name == null || name.isBlank()) {
@@ -152,13 +154,13 @@ public final class ToolRegistry {
     // ---- Runtime status (simple read-section) tools ----
 
     private static void registerRuntimeStatusTools() {
-        registerStatusTool("get_context", "context",
+        registerCoreStatusTool("get_context", "context",
                 "Get Camel context info: name, version, state, uptime, route count, exchange statistics.");
-        registerStatusTool("get_routes", "routes",
+        registerCoreStatusTool("get_routes", "routes",
                 "List all routes with their state, uptime, messages processed, last error, and throughput.");
-        registerStatusTool("get_health", "healthChecks",
+        registerCoreStatusTool("get_health", "healthChecks",
                 "Get health check status for the Camel application.");
-        registerStatusTool("get_endpoints", "endpoints",
+        registerCoreStatusTool("get_endpoints", "endpoints",
                 "List all endpoints registered in the Camel context with URIs and usage stats.");
         registerStatusTool("get_inflight", "inflight",
                 "Show currently in-flight exchanges (messages being processed).");
@@ -166,7 +168,7 @@ public final class ToolRegistry {
                 "Show blocked exchanges that are stuck or waiting.");
         registerStatusTool("get_consumers", "consumers",
                 "Show consumer statistics (polling and event-driven consumers).");
-        registerStatusTool("get_properties", "properties",
+        registerCoreStatusTool("get_properties", "properties",
                 "Show configuration properties of the running Camel application.");
         // get_memory combines memory, gc, and threads sections for a complete JVM resource view
         register(tool("get_memory",
@@ -203,6 +205,16 @@ public final class ToolRegistry {
                 .executor((ctx, args) -> ctx.readStatus(section)));
     }
 
+    /**
+     * A status tool of the core subset: {@code camel ask} gives a local model these and the other core runtime tools
+     * (the integration's context, routes, health, endpoints and properties), not the rest (CAMEL-25676).
+     */
+    private static void registerCoreStatusTool(String name, String section, String description) {
+        register(tool(name, description)
+                .core(true)
+                .executor((ctx, args) -> ctx.readStatus(section)));
+    }
+
     // ---- Runtime action tools (with parameters) ----
 
     private static void registerRuntimeActionTools() {
@@ -219,6 +231,7 @@ public final class ToolRegistry {
                                      + " body's type and size as it reached the step (what to read to see where the body"
                                      + " changed from text into a Map or bytes).")
                 .param("summary", "boolean", "Only the steps with route, node, elapsed, body type and size", false)
+                .core(true)
                 .executor((ctx, args) -> {
                     JsonObject history = ctx.readHistoryFile();
                     if (history == null) {
@@ -270,6 +283,7 @@ public final class ToolRegistry {
                 .param("routeId", "string", "Route ID to inspect (use * for all routes)", false)
                 .param("includeDocs", "boolean",
                         "If true, enrich each processor's options with documentation from the Camel catalog", false)
+                .core(true)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
                     String result = ctx.executeAction("processor-detail",
@@ -297,6 +311,7 @@ public final class ToolRegistry {
                 "Get the inter-route topology showing how routes connect to each other and to external endpoints.")
                 .param("metric", "string", "Include live metrics on nodes and edges (default: true)", false)
                 .param("external", "string", "Include external systems as nodes (default: true)", false)
+                .core(true)
                 .executor((ctx, args) -> ctx.executeAction("route-topology", root -> {
                     root.put("metric", args.getOrDefault("metric", "true"));
                     root.put("external", args.getOrDefault("external", "true"));
@@ -329,6 +344,7 @@ public final class ToolRegistry {
                 .param("headers", "string",
                         "Message headers as key=value pairs separated by newlines", false)
                 .readOnly(false).destructive(false)
+                .core(true)
                 .executor((ctx, args) -> {
                     String endpoint = args.get("endpoint");
                     if (endpoint == null || endpoint.isBlank()) {

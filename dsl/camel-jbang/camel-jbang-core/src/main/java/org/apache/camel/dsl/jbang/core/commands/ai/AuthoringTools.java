@@ -431,9 +431,14 @@ public final class AuthoringTools {
                     applyVersion(ctx, args);
                     Path dir = ctx.resolveDirectory(args.get("directory"));
                     SummaryUpdate update = summaryUpdate(dir, ctx, args);
+                    Path summary = dir.resolve(IntegrationSummary.FILE_NAME);
+                    // asked like any other write where a client asks (camel ask, CAMEL-25676)
+                    if (ctx.confirmer() != null && !ctx.confirm(ToolConfirms.write(shownPath(ctx, summary),
+                            Files.exists(summary) ? read(summary) : null, update.content()))) {
+                        return rejectedWrite(IntegrationSummary.FILE_NAME).toJson();
+                    }
                     try {
-                        Files.writeString(dir.resolve(IntegrationSummary.FILE_NAME), update.content(),
-                                StandardCharsets.UTF_8);
+                        Files.writeString(summary, update.content(), StandardCharsets.UTF_8);
                     } catch (IOException e) {
                         throw new ToolExecutionException(
                                 "Cannot write " + IntegrationSummary.FILE_NAME + ": " + e.getMessage());
@@ -1161,7 +1166,32 @@ public final class AuthoringTools {
                + " change that one unless you mean to have both";
     }
 
-    /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
+    /**
+     * The file as a confirmation shows it: relative to the project directory, or the full path when the call named
+     * another directory, so a write outside the project is plain to see.
+     */
+    static String shownPath(ToolContext ctx, Path path) {
+        Path file = path.toAbsolutePath().normalize();
+        Path project = ctx.defaultDirectory() != null ? ctx.defaultDirectory().toAbsolutePath().normalize() : null;
+        return project != null && file.startsWith(project)
+                ? project.relativize(file).toString().replace('\\', '/') : file.toString();
+    }
+
+    /** The answer to a write the user did not confirm. */
+    static JsonObject rejectedWrite(String file) {
+        JsonObject result = new JsonObject();
+        result.put("status", "rejected");
+        result.put("file", file);
+        result.put("message", "The user rejected the change to " + file + "; the file is unchanged and nothing is"
+                              + " pending. Do not retry unless the user asks for it: tell the user what you wanted to"
+                              + " change, and why.");
+        return result;
+    }
+
+    /**
+     * Writes a file after validating it, as {@code camel_write_file} does. The context's confirmer, when it has one, is
+     * asked first with the change ({@link ToolConfirms#write}); the TUI confirms in its own file tools.
+     */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
         boolean exists = Files.exists(path);
@@ -1222,6 +1252,12 @@ public final class AuthoringTools {
                 putKameletGuide(result, file, errors);
                 return result;
             }
+        }
+        // a client that asks before each write (camel ask, CAMEL-25676) shows the change first; the others write as
+        // before
+        if (ctx.confirmer() != null
+                && !ctx.confirm(ToolConfirms.write(shownPath(ctx, path), exists ? read(path) : null, content))) {
+            return rejectedWrite(file);
         }
         // the reload of a running integration is reported in the answer (CAMEL-24859): the reload records newer
         // than the ones before the write

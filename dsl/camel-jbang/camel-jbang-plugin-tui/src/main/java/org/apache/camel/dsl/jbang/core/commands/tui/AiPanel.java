@@ -66,6 +66,7 @@ import dev.tamboui.widgets.spinner.SpinnerStyle;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonObject;
@@ -1586,15 +1587,7 @@ class AiPanel {
      * broke, and to send the whole answer again. Worded so the fake clients of the tests and the log recognise it.
      */
     static String correctionRequest(List<AnswerChecks.Problem> problems) {
-        StringBuilder sb = new StringBuilder("Your answer contains ");
-        sb.append(problems.size() == 1 ? "an invalid simple expression" : "invalid simple expressions").append(":\n");
-        for (AnswerChecks.Problem p : problems) {
-            sb.append("- ").append(p.message()).append('\n');
-        }
-        sb.append("Rule: functions and values go inside ${...}, operators go between placeholders with spaces:")
-                .append(" ${header.user} ?: 'Guest', ${header.a} == 'b', ${body} != null.")
-                .append(" Send the whole answer again with the expressions fixed; do not call a tool.");
-        return sb.toString();
+        return AnswerChecks.correctionRequest(problems);
     }
 
     /** The line under an answer whose simple expressions the model did not fix, so the user is not misled. */

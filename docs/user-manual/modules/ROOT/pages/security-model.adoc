@@ -166,14 +166,29 @@ deliberately few, and they are the contract:
 * While the developer records a tape, or plays one with `--record`, nothing
   asks: the developer chose to let the model, the agent or the tape act alone.
 
+`camel ask` is the AI assistant of the Camel CLI, with a local or a hosted
+LLM. It keeps the same contract in a terminal:
+
+* Before each write it shows the change as a diff, and the developer
+  confirms it.
+* The developer confirms the same calls as in the TUI, and the calls that
+  `camel ask` makes without a screen of the integration in front of the
+  developer: stopping, killing or restarting the integration or its routes,
+  running an integration, browsing an endpoint the integration does not have,
+  writing a heap dump, and a `camel` command that changes something. The
+  commands that only read, such as `camel get` and `camel ps`, run without
+  asking.
+* Without a terminal to ask on, such a call does not run, unless the
+  developer passed `--yes`.
+
 A tool that breaks this contract is in scope: for example a file written
 outside the source directory, a message sent to an endpoint the integration
 does not have without the developer's confirmation, a key sent over MCP that
 answers a confirmation, or text from an integration that acts on the
 terminal. An assistant doing what the tools allow is the
-trusted developer's case, also when untrusted data shown in the TUI - a
-message body, a log line, an example's README - steered the model to it
-(prompt injection); see _Out of scope_.
+trusted developer's case, also when untrusted data shown in the TUI or read by
+`camel ask` - a message body, a log line, an example's README - steered the
+model to it (prompt injection); see _Out of scope_.
 
 === Adversary model
 
