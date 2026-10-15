@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -32,10 +33,8 @@ import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.main.KameletMain;
-import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -77,56 +76,9 @@ abstract class ActionBaseCommand extends CamelCommand {
     }
 
     List<Long> findPids(String name) {
-        List<Long> pids = new ArrayList<>();
-
-        // we need to know the pids of the running camel integrations
-        if (name.matches("\\d+")) {
-            return List.of(Long.parseLong(name));
-        } else {
-            if (name.endsWith("!")) {
-                // exclusive this name only
-                name = name.substring(0, name.length() - 1);
-            } else if (!name.endsWith("*")) {
-                // lets be open and match all that starts with this pattern
-                name = name + "*";
-            }
-        }
-
-        final long cur = ProcessHandle.current().pid();
-        final String pattern = name;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        // skip terminated processes (e.g. launcher process for spring-boot/quarkus runtimes)
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context != null) {
-                            int phase = context.getIntegerOrDefault("phase", 0);
-                            if (phase >= 9) {
-                                return;
-                            }
-                        }
-                        String pName = ProcessHelper.extractName(root, ph);
-                        // ignore file extension, so it is easier to match by name
-                        pName = FileUtil.onlyName(pName);
-                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                            pids.add(ph.pid());
-                        } else if (context != null) {
-                            // try camel context name
-                            pName = context.getString("name");
-                            if ("CamelJBang".equals(pName)) {
-                                pName = null;
-                            }
-                            if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                                pids.add(ph.pid());
-                            }
-                        }
-                    }
-                });
-
-        return pids;
+        // the running integrations that match the name or pid (see ProcessFinder)
+        return ProcessFinder.find(name).stream().map(ProcessFinder.CamelProcess::pid)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     static long extractSince(ProcessHandle ph) {

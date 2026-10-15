@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -97,8 +98,9 @@ public class CamelSendAction extends ActionBaseCommand {
                         description = "Message header (key=value)")
     List<String> headers;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be sent (and reply message if InOut messaging)")
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for message to be sent (and reply message if InOut messaging),"
+                                      + " in millis or as a duration such as 30s")
     long timeout = 20000;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",

@@ -196,6 +196,17 @@ model better at tool calling, such as `qwen3.6`, is installed.
 `bean`). Scripts that read the `REMOTE` column of the table must read `SCOPE` instead. The `--json` output keeps
 `remote` and adds `internal`.
 
+=== camel-jbang - finding integrations by name or PID
+
+All commands find running integrations the same way:
+
+* A PID given to a command must be a running Camel integration (a live process with a status file in `~/.camel`).
+  Before, any PID was used as is, so `camel stop 1234 --kill` killed whatever process had that PID.
+* The commands no longer find an integration whose Camel has stopped (phase 9 or later), such as the launcher process
+  of an integration that runs in a child process. `camel ps` does not list it anymore.
+* The `--timeout` of `camel cmd send`, `camel cmd receive`, `camel eval expression`, `camel transform message` and the
+  `camel semantic` commands also takes a duration such as `30s` (a number is still millis).
+
 === camel-jbang - exit codes, and errors on stderr
 
 The Camel CLI has a documented set of exit codes (see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]):
