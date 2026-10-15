@@ -5,7 +5,7 @@ authors:
 reviewers: []
 approvers: []
 creation-date: 2026-10-02
-last-updated: 2026-10-02
+last-updated: 2026-10-15
 status: provisional
 see-also:
   - "CAMEL-25259"
@@ -261,9 +261,22 @@ This is the loop that works for EIPs and Simple today. The TUI and its `tui_*` t
   the project being read.
 * Any Java builder joining the parser's replay surface goes through `LwJavaParserSecurityTest` (see <<Java DSL>>).
 
+== Governance
+
+A new DSL extension needs a design doc and agreement on the dev list (dev@camel.apache.org). It is a project decision,
+not a component decision.
+
+Adding a mini DSL is hard today, and that difficulty has acted as the review. This design makes adding one cheap, so the
+decision moves to the project: the design doc says why the declarations belong beside the routes rather than in the
+feature's configuration or in an external framework, and the dev list agrees before any code lands. A PR that adds a
+DSL extension without that agreement is not merged, however complete and green it is. The AI review guidelines in
+`CLAUDE.md` flag such PRs.
+
+camel-semantic is the existing extension this design starts from; it does not open the door for others by itself.
+
 == Plan
 
-. *Agree on this design* (CAMEL-25259), with the authors of camel-semantic.
+. *Agree on this design* (CAMEL-25259) on the dev list, with the authors of camel-semantic.
 . *Model and catalog:* the semantic model classes, the catalog kind and `CamelCatalog` API, and generating the YAML
   schema fragment from the model (dropping the stubs and the plugin dependency in camel-yaml-dsl).
 . *SPI and dependency detection* (CAMEL-25257): the camel-api interface, the factory finder key, and camel-jbang
@@ -292,5 +305,7 @@ This is the loop that works for EIPs and Simple today. The TUI and its `tui_*` t
 . *Java:* a data-only builder in the vetted replay surface, or reading the chain without replaying it?
 . *Versioning:* an extension's schema changes with its feature. Is the catalog entry enough for tools to handle files
   written for an older version?
-. *Which other mini DSLs would follow?* Candidates to check: the configuration that AI components declare beside
-  routes (tools, agents, guardrails), and resilience profiles.
+. *Which other mini DSLs would follow?* Each one goes through <<Governance>> first. Candidates that came up: the
+  configuration that AI components declare beside routes (tools, agents, guardrails), and resilience profiles. For the
+  AI case, the alternative to weigh is keeping that configuration in the external AI frameworks and having Camel
+  integrate with them, as with LangChain4j.
