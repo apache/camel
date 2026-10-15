@@ -148,17 +148,18 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             if (cache.containsKey(key)) {
                 return false;
             } else {
-                // always register the most used keys in the LRUCache
-                cache.put(key, key);
-
                 // now check the file store
                 boolean containsInFile = containsStore(key);
                 if (containsInFile) {
+                    // always register the most used keys in the LRUCache
+                    cache.put(key, key);
                     return false;
                 }
 
-                // its a new key so append to file store
+                // its a new key so append to file store, and only then register it in the LRUCache: a key that
+                // could not be stored is not added, so that adding it again is not taken for a duplicate
                 appendToStore(key);
+                cache.put(key, key);
 
                 // check if we hit maximum capacity (if enabled) and report a warning about this
                 if (maxFileStoreSize > 0 && fileStore.length() > maxFileStoreSize) {
