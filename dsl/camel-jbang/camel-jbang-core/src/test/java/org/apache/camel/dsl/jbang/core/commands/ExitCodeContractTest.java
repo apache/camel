@@ -118,6 +118,13 @@ class ExitCodeContractTest {
     }
 
     @Test
+    void noMatchingIntegrationIsNotFound() {
+        assertThat(run("cmd", "memory-leak", "no-such-integration")).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(printer.getStderr()).isEqualTo("ERROR: No running Camel integration matches: no-such-integration");
+        assertThat(printer.getStdout()).isEmpty();
+    }
+
+    @Test
     @StdIo
     void unknownOptionIsUsageError(StdErr err) {
         assertThat(run("test-ok", "--no-such-option")).isEqualTo(CliExitCode.USAGE);
