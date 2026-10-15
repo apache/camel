@@ -127,6 +127,36 @@ class FooterHintsTest {
         assertThat(keys(spans)).containsExactly("Enter", "Esc");
     }
 
+    @Test
+    void theFKeysGoAfterTheFirstHintOfAScreen() {
+        List<Span> spans = new ArrayList<>();
+        hint(spans, "Esc", "back");
+        hint(spans, "/", "find");
+
+        assertThat(FooterHints.fKeyPosition(spans, false)).isEqualTo(2);
+        assertThat(spans).hasSize(4);
+    }
+
+    @Test
+    void whileTextIsTypedTheFKeysGoAfterTheFieldAndItsKeys() {
+        // as a filter draws it with the caret inside the term: "ord|ers", where the caret splits the field in three
+        List<Span> spans = new ArrayList<>();
+        spans.add(Span.styled(" /", Theme.label().bold()));
+        spans.add(Span.raw("ord"));
+        spans.add(Span.styled("e", Style.EMPTY.reversed()));
+        spans.add(Span.raw("rs"));
+        spans.add(Span.raw("  "));
+        hint(spans, "Enter", "filter");
+        TuiHelper.hintLast(spans, "Esc", "cancel");
+
+        int position = FooterHints.fKeyPosition(spans, true);
+
+        // after Esc, which has no gap after it as the last key: one is added
+        assertThat(position).isEqualTo(spans.size());
+        assertThat(spans.get(position - 2).content()).isEqualTo(" cancel");
+        assertThat(spans.get(position - 1).content()).isEqualTo("  ");
+    }
+
     private static List<String> keys(List<Span> spans) {
         return spans.stream().filter(s -> Theme.hintKey().equals(s.style())).map(s -> s.content().strip()).toList();
     }

@@ -2531,9 +2531,9 @@ public class CamelMonitor extends CamelCommand {
     private int fKeyStart;
 
     private int insertFKeyHints(List<Span> spans) {
-        int insertPos = Math.min(2, spans.size());
-        List<Span> fKeySpans = new ArrayList<>();
         MonitorTab tab = tabRegistry.activeTab();
+        int insertPos = FooterHints.fKeyPosition(spans, tab != null && tab.isTextInputActive());
+        List<Span> fKeySpans = new ArrayList<>();
         // F1 opens the help of every tab, but is seldom pressed: the Overview, the first screen, names it
         if (tab == tabRegistry.overviewTab() && tab.getHelpText() != null) {
             hint(fKeySpans, "F1", "help");
