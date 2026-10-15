@@ -190,15 +190,17 @@ final class TypeSafeAiJson {
     }
 
     private static boolean mediaPart(Map<?, ?> map) {
-        // A discriminator and payload identify a media part; ordinary field names and text do not.
+        // Generic type and URL/source/data fields can describe ordinary application records.
         if (map.get("type") instanceof String type) {
             boolean media = switch (type.toLowerCase(Locale.ROOT)) {
-                case "image", "image_url", "input_image", "audio", "audio_url", "input_audio",
-                        "video", "video_url", "input_video", "input_file", "binary" ->
+                case "image_url", "input_image", "audio_url", "input_audio", "video_url", "input_video", "input_file" ->
                     true;
+                case "image", "audio", "video", "binary" -> map.containsKey("image_url") || map.containsKey("input_audio")
+                        || map.containsKey("audio_url") || map.containsKey("video_url") || map.containsKey("bytes")
+                        || mediaSource(map.get("source"));
                 case "file", "document" -> map.containsKey("file_id") || map.containsKey("file_data")
                         || map.containsKey("file_url") || map.containsKey("file") || map.containsKey("bytes")
-                        || fileSource(map.get("source"));
+                        || mediaSource(map.get("source"));
                 default -> false;
             };
             if (media && (map.containsKey("source") || map.containsKey("data") || map.containsKey("url")
@@ -214,7 +216,7 @@ final class TypeSafeAiJson {
                 if ((mime.startsWith("image/") || mime.startsWith("audio/") || mime.startsWith("video/")
                         || mime.equals("application/octet-stream") || mime.equals("application/pdf")
                         || mime.equals("application/zip") || mime.equals("application/gzip"))
-                        && (map.containsKey("data") || map.containsKey("url") || map.containsKey("bytes"))) {
+                        && (map.containsKey("data") || map.containsKey("bytes"))) {
                     return true;
                 }
             }
@@ -222,7 +224,7 @@ final class TypeSafeAiJson {
         return false;
     }
 
-    private static boolean fileSource(Object value) {
+    private static boolean mediaSource(Object value) {
         return value instanceof Map<?, ?> source
                 && ("base64".equals(source.get("type")) && source.containsKey("data")
                         || "url".equals(source.get("type")) && source.containsKey("url"));

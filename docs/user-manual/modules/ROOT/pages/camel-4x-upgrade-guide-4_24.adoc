@@ -21,6 +21,11 @@ bring in `camel-semantic`. The new expert artifact includes both dependencies tr
 Existing bean declarations and imports for
 `org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter` remain valid.
 
+Spring Boot applications using this expert must keep `camel-typesafe-ai-starter` and add
+`org.apache.camel:camel-semantic-typesafe-ai` at the matching Camel version. The existing starter
+continues configuring the component and TypeSafe AI language; register the Semantic expert explicitly
+as a named Spring bean. Applications using only the component or TypeSafe AI language need no new dependency.
+
 Replace `org.apache.camel:camel-wolf-defender` with `org.apache.camel:camel-semantic-wolf-defender`.
 The Wolf Defender Java packages, classes, model provisioning and configuration properties are unchanged.
 Its documentation page is now `semantic-wolf-defender.adoc`.
@@ -32,7 +37,9 @@ operation names remain `typesafe-ai` and `wolf-defender`; only the reported adap
 TypeSafe AI now rejects explicit media parts nested in structured input, instructions or criteria,
 which previously could be serialized and sent to the provider. Text and JSON-compatible `Map`/`List`
 state remain supported. Binary objects and image, audio or video parts are rejected before HTTP;
-plain text and ordinary application field names do not imply media. Direct Semantic adapter calls
+plain text and ordinary application field names do not imply media. Records such as
+`{type: image, url: ..., sku: 42}` and MIME metadata with a URL alone remain application state.
+Direct Semantic adapter calls
 and batches use the same validation. Wolf Defender remains text-only with its existing limits.
 
 === camel-semantic - explicit experts

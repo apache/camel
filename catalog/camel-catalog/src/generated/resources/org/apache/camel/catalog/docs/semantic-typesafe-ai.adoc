@@ -65,6 +65,33 @@ For Camel JBang, add the expert dependency explicitly:
 camel run route.yaml --dep=camel-semantic-typesafe-ai
 ----
 
+== Spring Boot
+
+Keep `org.apache.camel.springboot:camel-typesafe-ai-starter` for the component and TypeSafe AI
+language auto-configuration, and add the `org.apache.camel:camel-semantic-typesafe-ai` dependency
+shown above when using the Semantic expert. Use matching Camel and Camel Spring Boot versions.
+The component starter no longer brings in the Semantic adapter transitively.
+
+Register the expert as a named Spring bean, retaining the name referenced by the evaluations:
+
+[source,java]
+----
+import org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration(proxyBeanMethods = false)
+public class ExpertConfiguration {
+    @Bean
+    public TypeSafeAiSemanticAdapter decisions() {
+        return new TypeSafeAiSemanticAdapter();
+    }
+}
+----
+
+The expert uses the component's `camel.component.typesafe-ai.*` configuration. No dedicated
+Semantic starter is required, and adding the expert dependency does not automatically select an expert.
+
 == Supported input
 
 The expert accepts a `String`, `Map` or `List`. Structured state may contain nested maps and lists,
@@ -81,11 +108,15 @@ No input is stringified, stripped or sent to a preprocessing service.
 A media part is identified by a media discriminator and payload, such as
 `{type: image_url, image_url: {url: ...}}`, `{type: input_audio, input_audio: {data: ..., format: wav}}`,
 `{type: file, file: {file_data: ...}}`, `{type: binary, bytes: [...]}`,
-or `{mimeType: image/png, data: ...}`. MIME declarations with payloads reject image, audio and video
+or `{mimeType: image/png, data: ...}`. MIME declarations with `data` or `bytes` reject image, audio and video
 content and the binary types `application/octet-stream`, `application/pdf`, `application/zip` and
 `application/gzip`. Other application MIME labels are not assumed to represent binary data. Ordinary text mentioning media, a URL in text,
 and application fields named `image`, `audio` or `video` do not alone declare media content.
 Application records such as `{type: document, url: ..., source: legal}` remain structured data.
+Generic `image`, `audio`, `video` and `binary` type labels with ordinary `url`, `source` or `data`
+fields also remain application state, for example `{type: image, url: ..., sku: 42}`.
+A MIME label with a URL alone is metadata. Generic media type labels require media-specific
+payload fields, `bytes`, or an explicitly typed `source` before they are treated as media parts.
 File and document parts require file-specific payload fields (such as `file_data` or `file_url`)
 or a structured `source` with an explicit `type: base64` and `data`, or `type: url` and `url`.
 

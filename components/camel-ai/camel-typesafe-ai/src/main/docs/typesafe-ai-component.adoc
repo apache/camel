@@ -43,6 +43,11 @@ media discriminator with a payload, such as `{type: image_url, image_url: {url: 
 The reserved `$semanticInput` media envelope is rejected, including when nested in application state.
 Values are neither stringified nor removed to make a request acceptable.
 Application records such as `{type: document, url: ..., source: legal}` remain structured data.
+Generic `image`, `audio`, `video` and `binary` type labels with ordinary `url`, `source` or `data`
+fields also remain application state, for example `{type: image, url: ..., sku: 42}`.
+A MIME label with a URL alone is metadata; a media or binary MIME label with `data` or `bytes` declares a payload.
+Generic media type labels require media-specific payload fields, `bytes`, or an explicitly typed
+`source` before they are treated as media parts.
 File and document parts require file-specific payload fields (such as `file_data` or `file_url`)
 or a structured `source` with an explicit `type: base64` and `data`, or `type: url` and `url`.
 

@@ -447,7 +447,7 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
                 Map.of("mime_type", "application/zip", "bytes", List.of(1, 2)),
                 Map.of("type", "image_url", "image_url", Map.of("url", "https://example.test/private")),
                 Map.of("type", "input_audio", "input_audio", Map.of("data", "private", "format", "wav")),
-                Map.of("items", List.of("text", Map.of("type", "video", "source", Map.of("url", "private")))),
+                Map.of("items", List.of("text", Map.of("type", "video", "source", Map.of("type", "url", "url", "private")))),
                 List.of("text", Map.of("nested", new byte[] { 1 })));
     }
 
@@ -468,6 +468,15 @@ class TypeSafeAiSemanticAdapterTest extends TypeSafeAiTestSupport {
     static Stream<Object> supportedInputs() {
         return Stream.of(Map.of("type", "document", "url", "https://cms/42", "title", "Policy"),
                 Map.of("type", "document", "source", "legal", "title", "Policy"),
+                Map.of("type", "image", "url", "https://shop/p/42.jpg", "sku", 42),
+                Map.of("type", "video", "url", "https://cms/42", "title", "Assembly instructions"),
+                Map.of("type", "audio", "source", "library", "title", "Interview"),
+                Map.of("type", "binary", "data", "A description of the file"),
+                Map.of("type", "image", "data", Map.of("title", "Product photo")),
+                Map.of("type", "video", "source", Map.of("url", "https://cms/42")),
+                Map.of("products", List.of(Map.of("type", "image", "url", "https://shop/p/42.jpg", "sku", 42))),
+                Map.of("mimeType", "image/png", "url", "https://shop/p/42.jpg", "sku", 42),
+                Map.of("media_type", "application/pdf", "url", "https://cms/42", "title", "Policy"),
                 Map.of("type", "file", "url", "https://cms/42", "data", "Summary"),
                 List.of(Map.of("type", "document", "data", Map.of("title", "Policy"), "source", "legal")),
                 Map.of("mimeType", "application/javascript", "data", "const image = 'text';"),
