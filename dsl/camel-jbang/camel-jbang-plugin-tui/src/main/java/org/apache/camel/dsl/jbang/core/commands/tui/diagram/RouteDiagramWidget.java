@@ -347,8 +347,9 @@ public class RouteDiagramWidget implements Widget {
             borderStyle = borderStyle.patch(selectionStyle());
         }
 
-        char hChar = external ? DASH_H : H;
-        char vChar = external ? DASH_V : V;
+        // a selected box has a solid frame like any other: dashes on the selection colour break up, the vertical ones most
+        char hChar = external && !selected ? DASH_H : H;
+        char vChar = external && !selected ? DASH_V : V;
 
         // Top border
         setChar(buffer, area, row, col, TL, borderStyle);
