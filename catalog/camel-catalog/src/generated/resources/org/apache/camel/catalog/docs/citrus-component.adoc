@@ -381,7 +381,7 @@ citrus.expectedMessageCount(1);
 === Exchange properties and variables as Citrus variables
 
 All exchange properties and exchange variables are automatically propagated to the Citrus test
-context as test variables. This enables the use of Citrus variable placeholders (`${variableName}`)
+context as test variables. This enables the use of Citrus variable placeholders (pass:c[`${variableName}`])
 in expected message templates and response bodies.
 
 Variables extracted by Citrus during validation (e.g., via `@variable('name')@`) are written back
