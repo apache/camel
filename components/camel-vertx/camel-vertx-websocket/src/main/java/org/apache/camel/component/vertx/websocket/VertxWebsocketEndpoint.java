@@ -275,8 +275,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
                 webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 webSocket = null;
-                // a connect that completes from now on closes its WebSocket
-                future.cancel(false);
+                abandonConnect(future);
                 throw e;
             }
         } else {
@@ -286,6 +285,17 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
             }
         }
         return webSocket;
+    }
+
+    /**
+     * Gives up on a connect the caller stopped waiting for. A connect that completes from now on closes its own
+     * WebSocket. One that completed after the wait timed out but before this call is closed here, as nobody will use
+     * it.
+     */
+    static void abandonConnect(CompletableFuture<WebSocket> future) {
+        if (!future.cancel(false) && !future.isCompletedExceptionally()) {
+            future.join().close();
+        }
     }
 
     protected WebSocket getWebSocket(Exchange exchange) throws Exception {
