@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.tui;
+package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -193,5 +193,78 @@ class ToolConfirmsTest {
         assertThat(ToolConfirms.evalExpression("simple", "${body}")).isNull();
         assertThat(ToolConfirms.evalExpression("jsonpath", "$.id")).isNull();
         assertThat(ToolConfirms.evalExpression(null, "${body}")).isNull();
+    }
+
+    @Test
+    void aWriteIsAskedWithItsChange() {
+        String before = "- route:\n    from:\n      uri: timer:tick\n      steps:\n        - log: hello\n";
+        ToolConfirms.Call call = ToolConfirms.write("tick.camel.yaml", before, before.replace("log: hello", "log: bye"));
+
+        assertThat(call.title()).isEqualTo("change tick.camel.yaml");
+        assertThat(call.target()).isEqualTo("@@ -3,3 +3,3 @@\n       uri: timer:tick\n       steps:\n"
+                                            + "-        - log: hello\n+        - log: bye\n");
+        // a new file shows its lines, and the same content again asks nothing
+        assertThat(ToolConfirms.write("new.camel.yaml", null, "a\nb\n").target()).isEqualTo("+a\n+b\n");
+        assertThat(ToolConfirms.write("new.camel.yaml", null, "a\nb\n").title()).isEqualTo("create new.camel.yaml");
+        assertThat(ToolConfirms.write("tick.camel.yaml", before, before)).isNull();
+    }
+
+    @Test
+    void changesFarApartAreHunksOfTheirOwnAndALongChangeIsCut() {
+        StringBuilder before = new StringBuilder();
+        for (int i = 1; i <= 40; i++) {
+            before.append("line ").append(i).append('\n');
+        }
+        String after = before.toString().replace("line 3\n", "line three\n").replace("line 30\n", "line thirty\n");
+
+        assertThat(ToolConfirms.diff(before.toString(), after, 2, 80).lines().filter(line -> line.startsWith("@@")))
+                .containsExactly("@@ -1,5 +1,5 @@", "@@ -28,5 +28,5 @@");
+        assertThat(ToolConfirms.diff(before.toString(), after, 2, 4))
+                .isEqualTo("@@ -1,5 +1,5 @@\n line 1\n line 2\n-line 3\n+line three\n"
+                           + "... (the rest of the change is not shown)\n");
+    }
+
+    @Test
+    void aCamelCommandThatOnlyReadsRunsWithoutAsking() {
+        assertThat(ToolConfirms.cliCommand(new String[] { "get", "route" })).isNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "camel", "ps" })).isNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "catalog", "component", "--filter=kafka" })).isNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "infra", "ps" })).isNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "version" })).isNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "run", "--help" })).isNull();
+    }
+
+    @Test
+    void aCamelCommandThatChangesSomethingIsAsked() {
+        ToolConfirms.Call stop = ToolConfirms.cliCommand(new String[] { "camel", "stop", "orders" });
+
+        assertThat(stop.title()).isEqualTo("run camel stop");
+        assertThat(stop.target()).isEqualTo("camel stop orders");
+        assertThat(ToolConfirms.cliCommand(new String[] { "run", "orders.camel.yaml" })).isNotNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "cmd", "send", "--endpoint=exec:rm" })).isNotNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "infra", "run", "kafka" })).isNotNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "version", "set", "4.10.0" })).isNotNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "config", "set", "foo=bar" })).isNotNull();
+    }
+
+    @Test
+    void stoppingTheIntegrationOrItsRoutesIsAsked() {
+        assertThat(ToolConfirms.control("stop", "orders").title()).isEqualTo("stop the integration");
+        assertThat(ToolConfirms.control("KILL", "orders")).isNotNull();
+        assertThat(ToolConfirms.control("restart", "orders")).isNotNull();
+        assertThat(ToolConfirms.control("stop-routes", "orders")).isNotNull();
+        assertThat(ToolConfirms.stopApplication(null).target()).isEqualTo("the selected integration");
+        // starting routes, a reload and new statistics are not
+        assertThat(ToolConfirms.control("start-routes", "orders")).isNull();
+        assertThat(ToolConfirms.control("reload", "orders")).isNull();
+        assertThat(ToolConfirms.control("reset-stats", "orders")).isNull();
+    }
+
+    @Test
+    void browsingAnEndpointTheIntegrationDoesNotHaveIsAsked() {
+        assertThat(ToolConfirms.browse("seda:work", List.of())).isNull();
+        assertThat(ToolConfirms.browse("kafka:orders?groupId=shop&brokers=localhost:9092", ENDPOINTS)).isNull();
+        assertThat(ToolConfirms.browse("file:/Users/me/.ssh", ENDPOINTS).title())
+                .isEqualTo("browse an endpoint the integration does not have");
     }
 }

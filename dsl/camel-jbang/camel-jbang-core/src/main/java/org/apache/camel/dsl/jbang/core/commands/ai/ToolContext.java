@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -42,6 +43,7 @@ public class ToolContext {
     private volatile Path defaultDirectory;
     private volatile Function<String, String> propertyLineValidator;
     private volatile boolean autoSelectSingleProcess = true;
+    private volatile Predicate<ToolConfirms.Call> confirmer;
 
     public long pid() {
         return pid;
@@ -122,6 +124,25 @@ public class ToolContext {
 
     public void setDefaultDirectory(Path defaultDirectory) {
         this.defaultDirectory = defaultDirectory;
+    }
+
+    /**
+     * Who the shared tools ask before a call that the user confirms first ({@link ToolConfirms}), such as a file write:
+     * {@code camel ask} asks on the terminal (CAMEL-25676). Null, the default, asks nobody: an MCP server leaves that
+     * to its client, and the TUI confirms in its own tools.
+     */
+    public Predicate<ToolConfirms.Call> confirmer() {
+        return confirmer;
+    }
+
+    public void setConfirmer(Predicate<ToolConfirms.Call> confirmer) {
+        this.confirmer = confirmer;
+    }
+
+    /** Whether a call goes ahead: there is nothing to confirm, nobody to ask, or the user confirmed it. */
+    public boolean confirm(ToolConfirms.Call call) {
+        Predicate<ToolConfirms.Call> c = confirmer;
+        return call == null || c == null || c.test(call);
     }
 
     /**

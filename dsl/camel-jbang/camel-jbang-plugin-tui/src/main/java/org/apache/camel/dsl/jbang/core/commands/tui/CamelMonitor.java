@@ -64,6 +64,7 @@ import dev.tamboui.widgets.wavetext.WaveText;
 import dev.tamboui.widgets.wavetext.WaveTextState;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;

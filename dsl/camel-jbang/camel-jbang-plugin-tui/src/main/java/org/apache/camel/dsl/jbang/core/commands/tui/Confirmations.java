@@ -23,6 +23,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import dev.tamboui.tui.event.KeyEvent;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 
 /**
  * The dialogs that ask the user to confirm an action: quitting, stopping an integration, a file write or another call

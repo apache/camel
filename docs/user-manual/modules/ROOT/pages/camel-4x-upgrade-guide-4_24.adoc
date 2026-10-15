@@ -146,6 +146,19 @@ With `--output=<file>` or without `--output`, the routes are still merged, and t
 the standard error, when the top-level `onException` of one file applies to the routes of the other files
 in the merged output.
 
+=== camel-jbang - camel ask asks before a call that changes something, reaches out or runs code
+
+`camel ask` now asks on the terminal before a file write (showing the diff), a message to an endpoint the
+integration does not have, SQL that changes data, an expression in a language that runs code, stopping or
+restarting the integration, and a `camel` command that changes something. Without a terminal to ask on, as
+in a script, such a call does not run: pass `--yes` to let it run without asking.
+
+The model gets the shared file tools (`camel_get_files`, `camel_edit_file`, `camel_write_file`), which
+validate what they write, instead of the `read_file`, `list_files` and `write_file` tools of `camel ask`. A
+local model gets a core set of tools (`--tools=auto`, the default), a hosted model the full set. The default
+of `--max-iterations` is now 25 instead of 10, and `--model llama3.2` now selects that model also when a
+model better at tool calling, such as `qwen3.6`, is installed.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
