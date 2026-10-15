@@ -107,6 +107,20 @@ class SqlConsumerRollbackOnlyTest extends CamelTestSupport {
                 "neither the rollback only row nor the rows after it must be consumed");
     }
 
+    @Test
+    void testTransactedRollbackOnlyLastExchangeBreaksOutOfBatch() throws Exception {
+        SqlConsumer consumer = (SqlConsumer) context.getRoute("transacted-last").getConsumer();
+        // the consumer wraps the exception of the batch
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, consumer::poll,
+                "a rollback only last exchange must break out of a transacted batch, as a failed exchange does");
+        assertInstanceOf(RollbackExchangeException.class, e.getCause());
+        assertTrue(e.getCause().getMessage().startsWith("Rollback transaction as the exchange was marked as rollback only"),
+                e.getCause().getMessage());
+
+        assertEquals(List.of("LAST", "ASF", "XXX"), licenses(),
+                "neither the rollback only last row nor the rows after it must be consumed");
+    }
+
     private List<String> licenses() {
         return jdbcTemplate.queryForList("select license from projects order by id", String.class);
     }
@@ -126,6 +140,12 @@ class SqlConsumerRollbackOnlyTest extends CamelTestSupport {
                 // (license = 'LAST') keeps this a separate endpoint from the on-consume-only route above
                 from("sql:select * from projects order by id?startScheduler=false&onConsume=update projects set license = 'LAST' where id = :#id")
                         .routeId("on-consume-only-last")
+                        .choice().when(simple("${body[PROJECT]} == 'AMQ'")).markRollbackOnlyLast().end()
+                        .to("mock:processed");
+
+                // CAMEL-25588: a transacted consumer must also break out of the batch for a rollback only last row
+                from("sql:select * from projects order by id?startScheduler=false&transacted=true&onConsume=update projects set license = 'LAST' where id = :#id")
+                        .routeId("transacted-last")
                         .choice().when(simple("${body[PROJECT]} == 'AMQ'")).markRollbackOnlyLast().end()
                         .to("mock:processed");
             }
