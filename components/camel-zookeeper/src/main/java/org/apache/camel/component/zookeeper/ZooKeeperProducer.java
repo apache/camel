@@ -66,9 +66,11 @@ public class ZooKeeperProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        // a new connection when the session of the previous one expired
-        connection = this.zkm.getConnection();
-        ProductionContext context = new ProductionContext(connection, exchange);
+        // a new connection when the session of the previous one expired; a local variable keeps this message on the
+        // handle it got here, as other threads may send concurrently
+        ZooKeeper zk = this.zkm.getConnection();
+        connection = zk;
+        ProductionContext context = new ProductionContext(zk, exchange);
 
         String operation = exchange.getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_OPERATION, String.class);
         boolean isDelete = ZK_OPERATION_DELETE.equals(operation);
@@ -93,9 +95,9 @@ public class ZooKeeperProducer extends DefaultProducer {
             }
         } else {
             if (isDelete) {
-                asynchronouslyDeleteNode(connection, context);
+                asynchronouslyDeleteNode(zk, context);
             } else {
-                asynchronouslySetDataOnNode(connection, context);
+                asynchronouslySetDataOnNode(zk, context);
             }
         }
 

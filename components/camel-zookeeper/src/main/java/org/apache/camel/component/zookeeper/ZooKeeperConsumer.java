@@ -210,6 +210,12 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
                     if (isRunAllowed()) {
                         connection = zkm.getConnection();
+                        if (!isRunAllowed()) {
+                            // stopped while the connection was created: doStop may already have closed the holder,
+                            // so close the new handle (and its client threads) here
+                            zkm.shutdown();
+                            return false;
+                        }
                         initializeConsumer();
                         return true;
                     }

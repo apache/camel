@@ -49,10 +49,15 @@ public class ConnectionHolder implements Watcher {
      * needed. Waits until the new handle is connected.
      */
     public ZooKeeper getZooKeeper() {
+        // fast path without the lock: the producer calls this for every message
+        ZooKeeper current = zookeeper;
+        if (current != null && current.getState().isAlive()) {
+            return current;
+        }
         ZooKeeper created;
         CountDownLatch latch;
         synchronized (this) {
-            ZooKeeper current = zookeeper;
+            current = zookeeper;
             if (current != null) {
                 if (current.getState().isAlive()) {
                     return current;
