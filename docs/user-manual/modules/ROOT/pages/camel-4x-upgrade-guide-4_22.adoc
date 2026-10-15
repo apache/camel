@@ -191,6 +191,13 @@ the identity provider sends the browser back to. Deployments whose external addr
 property must set it to the address the browser actually reaches; a request announcing another origin is now
 redirected to the configured one and a warning is logged.
 
+=== camel-oauth - client credentials tokens are cached per client secret and requested scope
+
+OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in
+addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens
+instead of reusing the same cached token. Applications using such profiles may make additional token requests
+after upgrading.
+
 === camel-spring-ws - internal Camel headers are now filtered when mapping SOAP response headers
 
 When `allowResponseHeaderOverride` is enabled, the `spring-ws` producer now applies the endpoint's
