@@ -18,7 +18,7 @@ inference runs. Provider errors propagate through normal Camel error handling.
 == Dependencies and providers
 
 Add `org.apache.camel:camel-semantic` and a provider, such as
-xref:ROOT:typesafe-ai-component.adoc[TypeSafe AI] (`camel-typesafe-ai`), using the same Camel version.
+xref:others:semantic-typesafe-ai.adoc[TypeSafe AI] (`camel-semantic-typesafe-ai`), using the same Camel version.
 The provider owns credentials, model selection, request timeout,
 concurrency limits and transport resources. TypeSafe AI uses
 `camel.component.typesafe-ai.*` settings even when a route contains no TypeSafe AI endpoint.

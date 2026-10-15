@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "semantic-typesafe-ai",
+    "title": "Semantic TypeSafe AI",
+    "description": "Semantic expert using the TypeSafe AI decision API",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "ai",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-semantic-typesafe-ai",
+    "version": "4.23.0-SNAPSHOT"
+  }
+}

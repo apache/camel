@@ -159,6 +159,21 @@ public class KnownDependenciesResolverTest {
         assertGav(resolver, "org.apache.camel.component.aws2.s3.AWS2S3Component", "org.apache.camel", "camel-aws2-s3");
     }
 
+    @Test
+    void semanticExpertBeansAndImportsResolveTheirOwnArtifacts() {
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownDependencies();
+
+        assertGav(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter", "org.apache.camel",
+                "camel-semantic-typesafe-ai");
+        assertImport(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter", "camel-semantic-typesafe-ai");
+        assertGav(resolver, "org.apache.camel.component.wolfdefender.WolfDefenderSemanticAdapter", "org.apache.camel",
+                "camel-semantic-wolf-defender");
+        assertImport(resolver, "org.apache.camel.component.wolfdefender.WolfDefenderSemanticAdapter",
+                "camel-semantic-wolf-defender");
+        assertImport(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiEndpoint", "camel-typesafe-ai");
+    }
+
     private static void assertImport(KnownDependenciesResolver resolver, String className, String artifactId) {
         MavenGav gav = resolver.mavenGavForImport(className);
         assertNotNull(gav, className);

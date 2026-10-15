@@ -13,6 +13,35 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-semantic - expert artifacts
+
+TypeSafe AI Semantic applications must add `org.apache.camel:camel-semantic-typesafe-ai`.
+The `camel-typesafe-ai` component and TypeSafe AI language remain independently usable and no longer
+bring in `camel-semantic`. The new expert artifact includes both dependencies transitively.
+Existing bean declarations and imports for
+`org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter` remain valid.
+
+Spring Boot applications using this expert must keep `camel-typesafe-ai-starter` and add
+`org.apache.camel:camel-semantic-typesafe-ai` at the matching Camel version. The existing starter
+continues configuring the component and TypeSafe AI language; register the Semantic expert explicitly
+as a named Spring bean. Applications using only the component or TypeSafe AI language need no new dependency.
+
+Replace `org.apache.camel:camel-wolf-defender` with `org.apache.camel:camel-semantic-wolf-defender`.
+The Wolf Defender Java packages, classes, model provisioning and configuration properties are unchanged.
+Its documentation page is now `semantic-wolf-defender.adoc`.
+
+Update Maven dependencies and Camel JBang `--dep` options to the new expert artifact names.
+Each Semantic evaluation still selects an explicit named registry expert. Provider identities and
+operation names remain `typesafe-ai` and `wolf-defender`; only the reported adapter artifact changes.
+
+TypeSafe AI now rejects explicit media parts nested in structured input, instructions or criteria,
+which previously could be serialized and sent to the provider. Text and JSON-compatible `Map`/`List`
+state remain supported. Binary objects and image, audio or video parts are rejected before HTTP;
+plain text and ordinary application field names do not imply media. Records such as
+`{type: image, url: ..., sku: 42}` and MIME metadata with a URL alone remain application state.
+Direct Semantic adapter calls
+and batches use the same validation. Wolf Defender remains text-only with its existing limits.
+
 === camel-semantic - explicit experts
 
 Every evaluation in the preview semantic API now requires an explicit `expert` registry bean name.

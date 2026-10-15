@@ -20,38 +20,9 @@ Jev is the default model; the `model` option can select another model supported 
 It calls the service directly using the JDK HTTP client and Camel JSON utilities.
 For semantic conditions in Java, XML and YAML, use the xref:languages:typesafe-ai-language.adoc[TypeSafe AI language] supplied by this component.
 
-This component also provides `TypeSafeAiSemanticAdapter` for the xref:languages:semantic-language.adoc[Semantic language].
-Its static expert contract exposes `boolean`, `choice` and `score` operations. The adapter requires
-instructions and validates the supplied criteria or score levels before transport is initialized.
-For Boolean evaluations it applies the requested `threshold`, `uncertainty` and `uncertaintyPolicy`
-once and returns both the typed verdict and the provider probability. Omitted policy parameters
-use this adapter's defaults: threshold `0.5`, no uncertainty band, and failure for uncertain results.
-The semantic runtime validates the result and does not apply a second policy.
-Named boolean, choice and score evaluations use the common contract and inherit this component's
-credentials, model and transport settings without requiring a TypeSafe AI endpoint in the route.
-
-Register the expert explicitly with Camel Main or Camel JBang and reference it from every evaluation:
-
-[source,properties]
-----
-camel.beans.decisions=#class:org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter
-----
-
-[source,yaml]
-----
-- semantic:
-    evaluation:
-      urgent:
-        expert: decisions
-        operation: boolean
-        parameters:
-          instructions: Does this request need urgent attention?
-----
-
-For Java applications, bind `new TypeSafeAiSemanticAdapter()` under `decisions` in the Camel registry.
-Camel's default registry supplies its CamelContext. The adapter uses the Camel-managed component and endpoint;
-it does not require separate initialization or destruction methods. Classpath presence alone never selects
-an expert.
+For named Semantic evaluations, add the separate
+xref:others:semantic-typesafe-ai.adoc[TypeSafe AI Semantic expert] (`camel-semantic-typesafe-ai`).
+The component and its TypeSafe AI language can be used independently of Semantic.
 
 [source,xml]
 ----
@@ -61,6 +32,24 @@ an expert.
     <version>x.x.x</version>
 </dependency>
 ----
+
+== Supported input
+
+State accepts text (`String`) or structured application state (`Map` or `List`) containing JSON values.
+Binary Java objects and explicit image, audio or video parts are rejected before HTTP, even when
+nested inside structured state or a question's instructions or criteria. A media part combines an explicit
+media discriminator with a payload, such as `{type: image_url, image_url: {url: ...}}` or
+`{mimeType: audio/wav, data: ...}`. Ordinary text and field names do not imply a media modality.
+The reserved `$semanticInput` media envelope is rejected, including when nested in application state.
+Values are neither stringified nor removed to make a request acceptable.
+Application records such as `{type: document, url: ..., source: legal}` remain structured data.
+Generic `image`, `audio`, `video` and `binary` type labels with ordinary `url`, `source` or `data`
+fields also remain application state, for example `{type: image, url: ..., sku: 42}`.
+A MIME label with a URL alone is metadata; a media or binary MIME label with `data` or `bytes` declares a payload.
+Generic media type labels require media-specific payload fields, `bytes`, or an explicitly typed
+`source` before they are treated as media parts.
+File and document parts require file-specific payload fields (such as `file_data` or `file_url`)
+or a structured `source` with an explicit `type: base64` and `data`, or `type: url` and `url`.
 
 == URI format
 
@@ -306,11 +295,3 @@ Only submit data permitted for the configured service. Test model decisions and 
 against your application; structured output does not establish correctness.
 
 include::spring-boot:partial$starter.adoc[]
-
-== Semantic media input validation
-
-The Semantic adapter accepts text and TypeSafe AI's supported structured application state.
-It rejects explicit `$semanticInput` image/media envelopes, including nested media envelopes,
-and binary state before initializing transport. Selecting a body with an image `Content-Type`
-or a self-describing image data URL does not make this text/structured expert multimodal.
-Use an image-capable expert such as xref:others:semantic-openai.adoc[Semantic OpenAI] for images.
