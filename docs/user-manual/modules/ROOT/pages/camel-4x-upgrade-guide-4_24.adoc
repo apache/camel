@@ -474,6 +474,14 @@ before it calls the route; with stream caching, the default, it already read the
 The same applies to every consumer that reads the request body with `DefaultHttpBinding.parseBody` of
 `camel-http-common`, such as the Spring Boot `platform-http` consumer with `useStreaming=true`.
 
+=== camel-undertow - form fields are decoded as UTF-8
+
+The consumer now decodes the fields of an `application/x-www-form-urlencoded` or `multipart/form-data` request that
+declares no charset as UTF-8, the encoding browsers use. Before, Undertow's default ISO-8859-1 was used, so `café`
+became `cafÃ©` in the headers and the body map. A charset that the request or a part declares is still used: a client
+that sends ISO-8859-1 form data without declaring a charset now gets U+FFFD replacement characters instead of its
+text, and must declare its charset (for example `application/x-www-form-urlencoded; charset=ISO-8859-1`).
+
 === camel-github2 - consumers and items of a poll that were not routed
 
 The `github2` consumers (`commit`, `event`, `pullRequest`, `pullRequestComment`, `tag`) remembered every item of a
