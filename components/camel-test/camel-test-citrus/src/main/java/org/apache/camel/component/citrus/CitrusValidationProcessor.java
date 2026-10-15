@@ -21,11 +21,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
-import org.citrusframework.CitrusContext;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.message.DefaultMessage;
 import org.citrusframework.message.MessagePayloadBuilder;
@@ -43,20 +43,20 @@ class CitrusValidationProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CitrusValidationProcessor.class);
 
-    private final CitrusContext citrusContext;
+    private final Supplier<TestContext> testContextSupplier;
     private final String messageType;
     private final MessageValidationSpec spec;
     private final MessageResponseSpec responseSpec;
 
-    CitrusValidationProcessor(CitrusContext citrusContext, String messageType,
+    CitrusValidationProcessor(Supplier<TestContext> testContextSupplier, String messageType,
                               MessageValidationSpec validationSpec) {
-        this(citrusContext, messageType, validationSpec, null);
+        this(testContextSupplier, messageType, validationSpec, null);
     }
 
-    CitrusValidationProcessor(CitrusContext citrusContext, String messageType,
+    CitrusValidationProcessor(Supplier<TestContext> testContextSupplier, String messageType,
                               MessageValidationSpec validationSpec,
                               MessageResponseSpec responseSpec) {
-        this.citrusContext = citrusContext;
+        this.testContextSupplier = testContextSupplier;
         this.messageType = messageType;
         this.spec = validationSpec;
         this.responseSpec = responseSpec;
@@ -64,7 +64,7 @@ class CitrusValidationProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        TestContext testContext = citrusContext.createTestContext();
+        TestContext testContext = testContextSupplier.get();
         propagateExchangeVariables(exchange, testContext);
 
         try {
