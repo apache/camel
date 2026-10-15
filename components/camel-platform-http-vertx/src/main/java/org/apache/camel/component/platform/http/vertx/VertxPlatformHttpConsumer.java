@@ -492,7 +492,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
 
     /**
      * The charset parameter of the request Content-Type, whose name is case-insensitive (RFC 9110), or null when there
-     * is none or its value is empty (<tt>charset=</tt>, <tt>charset=""</tt>), as in UndertowHelper and NettyHttpHelper.
+     * is none or its value is empty ({@code charset=}, {@code charset=""}), as in UndertowHelper and NettyHttpHelper.
      */
     private static String charsetParameter(ParsedHeaderValue contentType) {
         for (Map.Entry<String, String> parameter : contentType.parameters().entrySet()) {
