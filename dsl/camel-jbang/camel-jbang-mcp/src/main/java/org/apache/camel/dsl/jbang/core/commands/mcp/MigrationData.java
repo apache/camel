@@ -318,7 +318,7 @@ public class MigrationData {
      * Multiplier for the entries of the 2.x to 3.0 and 3.x to 4.0 migration guides in a version-scoped search, so they
      * rank above comparable upgrade guide entries without pushing out strong ones.
      */
-    static final double MAJOR_GUIDE_BOOST = 1.85;
+    static final double MAJOR_GUIDE_BOOST = 1.5;
     /** Entries scoring below this are considered unrelated to the query and are not returned. */
     static final double MIN_SCORE = 2.5;
 
