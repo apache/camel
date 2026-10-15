@@ -1,0 +1,97 @@
+= Semantic TypeSafe AI Component
+:doctitle: Semantic TypeSafe AI
+:shortname: semantic-typesafe-ai
+:artifactid: camel-semantic-typesafe-ai
+:description: Semantic expert using the TypeSafe AI decision API
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+This module provides `TypeSafeAiSemanticAdapter` for the xref:languages:semantic-language.adoc[Semantic language].
+Its static expert contract exposes `boolean`, `choice` and `score` operations. The adapter requires
+instructions and validates the supplied criteria or score levels before transport is initialized.
+For Boolean evaluations it applies the requested `threshold`, `uncertainty` and `uncertaintyPolicy`
+once and returns both the typed verdict and the provider probability. Omitted policy parameters
+use this adapter's defaults: threshold `0.5`, no uncertainty band, and failure for uncertain results.
+The semantic runtime validates the result and does not apply a second policy.
+Named boolean, choice and score evaluations use the common contract and inherit the TypeSafe AI component's
+credentials, model and transport settings without requiring a TypeSafe AI endpoint in the route.
+
+Register the expert explicitly with Camel Main or Camel JBang and reference it from every evaluation:
+
+[source,properties]
+----
+camel.beans.decisions=#class:org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter
+----
+
+[source,yaml]
+----
+- semantic:
+    evaluation:
+      urgent:
+        expert: decisions
+        operation: boolean
+        parameters:
+          instructions: Does this request need urgent attention?
+----
+
+For Java applications, bind `new TypeSafeAiSemanticAdapter()` under `decisions` in the Camel registry.
+Camel's default registry supplies its CamelContext. The adapter uses the Camel-managed component and endpoint;
+it does not require separate initialization or destruction methods. Classpath presence alone never selects
+an expert.
+
+== Dependency
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-semantic-typesafe-ai</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+This dependency includes `camel-semantic` and `camel-typesafe-ai`.
+Configure credentials, base URL, API path, model, timeout and concurrency using
+xref:ROOT:typesafe-ai-component.adoc[the TypeSafe AI component options].
+The adapter keeps its Java class name `org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter`.
+
+For Camel JBang, add the expert dependency explicitly:
+
+[source,bash]
+----
+camel run route.yaml --dep=camel-semantic-typesafe-ai
+----
+
+== Supported input
+
+The expert accepts a `String`, `Map` or `List`. Structured state may contain nested maps and lists,
+strings, finite numbers, booleans and null values; object keys must be strings.
+Text parts such as `{type: text, text: hello}` remain structured application state.
+Binary objects and explicit image, audio or video parts are rejected, including parts nested
+inside structured state. Direct adapter calls and batches apply the same checks before HTTP.
+The reserved `$semanticInput` envelope is rejected, including nested envelopes and text-only envelopes.
+A string beginning with `data:image/` or a selected body with an image `Content-Type` declares image input
+and is rejected. Ordinary strings mentioning media and plain base64 text remain text.
+Use an image-capable expert such as xref:semantic-openai.adoc[Semantic OpenAI] for images.
+No input is stringified, stripped or sent to a preprocessing service.
+
+A media part is identified by a media discriminator and payload, such as
+`{type: image_url, image_url: {url: ...}}`, `{type: input_audio, input_audio: {data: ..., format: wav}}`,
+`{type: file, file: {file_data: ...}}`, `{type: binary, bytes: [...]}`,
+or `{mimeType: image/png, data: ...}`. MIME declarations with payloads reject image, audio and video
+content and the binary types `application/octet-stream`, `application/pdf`, `application/zip` and
+`application/gzip`. Other application MIME labels are not assumed to represent binary data. Ordinary text mentioning media, a URL in text,
+and application fields named `image`, `audio` or `video` do not alone declare media content.
+Application records such as `{type: document, url: ..., source: legal}` remain structured data.
+File and document parts require file-specific payload fields (such as `file_data` or `file_url`)
+or a structured `source` with an explicit `type: base64` and `data`, or `type: url` and `url`.
+
+== Operations and batching
+
+The expert exposes `boolean`, `choice` and `score` with the existing TypeSafe AI criteria and
+probability semantics. Explicit batches evaluate one shared state in one provider request and return
+named typed results. Invalid input or definitions fail before that request; provider errors and
+uncertainty failures propagate through the common Semantic contract.

@@ -122,6 +122,14 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testSemanticExpertArtifacts() {
+        assertEquals("camel-semantic-typesafe-ai", catalog.otherModel("semantic-typesafe-ai").getArtifactId());
+        assertEquals("camel-semantic-wolf-defender", catalog.otherModel("semantic-wolf-defender").getArtifactId());
+        assertEquals("camel-typesafe-ai", catalog.componentModel("typesafe-ai").getArtifactId());
+        assertFalse(catalog.findOtherNames().contains("wolf-defender"));
+    }
+
+    @Test
     public void testFindDataFormatNames() {
         List<String> names = catalog.findDataFormatNames();
         assertNotNull(names);

@@ -2710,6 +2710,16 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-semantic-typesafe-ai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-semantic-wolf-defender</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-servicenow</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3106,11 +3116,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-whatsapp</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-wolf-defender</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

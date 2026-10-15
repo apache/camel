@@ -19,6 +19,7 @@ package org.apache.camel.component.typesafeai;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -174,6 +175,7 @@ final class TypeSafeAiJson {
     private static void jsonValue(Object value) {
         if (value instanceof Map<?, ?> map) {
             require(!map.containsKey("$semanticInput"), "TypeSafe AI does not support media input envelopes");
+            require(!mediaPart(map), "TypeSafe AI does not support image, audio, video or binary media parts");
             map.forEach((key, child) -> {
                 require(key instanceof String, "JSON object keys must be strings");
                 jsonValue(child);
@@ -185,6 +187,45 @@ final class TypeSafeAiJson {
         } else {
             require(value == null || value instanceof String || value instanceof Boolean, "Unsupported JSON value");
         }
+    }
+
+    private static boolean mediaPart(Map<?, ?> map) {
+        // A discriminator and payload identify a media part; ordinary field names and text do not.
+        if (map.get("type") instanceof String type) {
+            boolean media = switch (type.toLowerCase(Locale.ROOT)) {
+                case "image", "image_url", "input_image", "audio", "audio_url", "input_audio",
+                        "video", "video_url", "input_video", "input_file", "binary" ->
+                    true;
+                case "file", "document" -> map.containsKey("file_id") || map.containsKey("file_data")
+                        || map.containsKey("file_url") || map.containsKey("file") || map.containsKey("bytes")
+                        || fileSource(map.get("source"));
+                default -> false;
+            };
+            if (media && (map.containsKey("source") || map.containsKey("data") || map.containsKey("url")
+                    || map.containsKey("image_url") || map.containsKey("input_audio") || map.containsKey("audio_url")
+                    || map.containsKey("video_url") || map.containsKey("file_id") || map.containsKey("file_data")
+                    || map.containsKey("file_url") || map.containsKey("file") || map.containsKey("bytes"))) {
+                return true;
+            }
+        }
+        for (String key : List.of("mimeType", "mime_type", "mediaType", "media_type")) {
+            if (map.get(key) instanceof String mimeType) {
+                String mime = mimeType.split(";", 2)[0].strip().toLowerCase(Locale.ROOT);
+                if ((mime.startsWith("image/") || mime.startsWith("audio/") || mime.startsWith("video/")
+                        || mime.equals("application/octet-stream") || mime.equals("application/pdf")
+                        || mime.equals("application/zip") || mime.equals("application/gzip"))
+                        && (map.containsKey("data") || map.containsKey("url") || map.containsKey("bytes"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean fileSource(Object value) {
+        return value instanceof Map<?, ?> source
+                && ("base64".equals(source.get("type")) && source.containsKey("data")
+                        || "url".equals(source.get("type")) && source.containsKey("url"));
     }
 
     private static double number(Object value) {
