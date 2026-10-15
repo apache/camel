@@ -48,10 +48,12 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
         List<String> caseKeys = new ArrayList<>();
         List<String> uris = new ArrayList<>();
         for (SwitchCaseDefinition c : definition.getCases()) {
-            if (c.getValue() == null) {
+            // resolve property placeholders (also route template parameters), as for the uri
+            String value = parseString(c.getValue());
+            if (value == null) {
                 throw new IllegalArgumentException("Switch cases require value");
             }
-            String key = c.getValue().toLowerCase(Locale.ENGLISH);
+            String key = value.toLowerCase(Locale.ENGLISH);
             caseKeys.add(key);
             uris.add(staticUri(c.getUri()));
         }
