@@ -39,8 +39,10 @@ citrus:operation/name[?options]
 Where `operation` is `validate` or `receive`, and `name` is an optional identifier to distinguish
 multiple Citrus endpoints in the same route.
 
-* `validate` — validates exchanges without modifying them (pass-through validation).
+* `validate` — validates exchanges without modifying them (pass-through validation). Validation
+  failures are collected silently and only surface when `assertIsSatisfied()` is called.
 * `receive` — validates exchanges and returns a simulated response (request/response simulation).
+  Validation failures remain on the exchange and trigger Camel's `onException` handlers.
 
 // component options: START
 include::partial$component-configure-options.adoc[]
@@ -52,6 +54,10 @@ include::partial$component-endpoint-headers.adoc[]
 
 The Citrus endpoint acts as a producer-only endpoint. Routes send exchanges *to* `citrus:validate`,
 and the component validates each exchange using Citrus message validation.
+
+NOTE: Spec setup (`validate()`, `validateAll()`, `when().receive()`) must complete before exchanges
+start arriving. For async consumers (SEDA, timer-based routes), ensure all validation chains are
+fully configured before starting the `CamelContext`.
 
 === Validation modules
 
@@ -393,6 +399,10 @@ The two operations handle validation failures differently with respect to Camel'
 * **`receive` operation** — validation failures remain on the exchange as an exception. Camel's
   `onException` handlers and redelivery policies *do* trigger, which matches the expected
   behavior for a request/response endpoint where callers need to see errors.
+
+NOTE: Each redelivery attempt counts as a new exchange in the mock counter. So if a
+`receive(1)` spec fails and Camel redelivers, the retry is exchange 2 and
+`receive(2)` applies to it — not `receive(1)` again.
 
 === Exchange properties and variables as Citrus variables
 

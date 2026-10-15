@@ -63,6 +63,9 @@ class CitrusReceiveErrorHandlingTest extends CamelTestSupport {
 
         handled.assertIsSatisfied();
         assertThat(citrus.getReceivedCounter()).isEqualTo(1);
+        // receive mode does not add to failures — assertIsSatisfied passes because
+        // the error was handled by onException, not collected by the endpoint
+        citrus.assertIsSatisfied();
     }
 
     @Override

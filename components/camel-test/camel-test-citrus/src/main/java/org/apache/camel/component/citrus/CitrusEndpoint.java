@@ -80,6 +80,10 @@ public class CitrusEndpoint extends MockEndpoint {
         return messageValidationSpec;
     }
 
+    /**
+     * Auto-incrementing variant. Do not mix with explicit {@code validate(index)} calls — the auto-index is unaware of
+     * explicit registrations and may overwrite them.
+     */
     public MessageValidationSpec validate() {
         return validate(nextSpecIndex.incrementAndGet());
     }
@@ -139,12 +143,15 @@ public class CitrusEndpoint extends MockEndpoint {
         // assertIsSatisfied() can report Citrus validation errors properly.
         Exception e = exchange.getException();
         if (e != null && !getFailures().contains(e)) {
-            getFailures().add(e);
             if ("validate".equals(operation)) {
-                // For validate-only mode, clear the exception so it does not propagate
-                // through the route — validation errors are collected, not thrown.
+                // For validate-only mode, collect the error and clear the exception so it does not
+                // propagate through the route — validation errors are collected, not thrown.
+                getFailures().add(e);
                 exchange.setException(null);
             }
+            // For receive mode, leave the exception on the exchange so Camel's onException
+            // handlers trigger. Do NOT add to failures — the error is handled by the route,
+            // not by assertIsSatisfied().
         }
     }
 
@@ -181,6 +188,9 @@ public class CitrusEndpoint extends MockEndpoint {
 
     public class WhenSpec {
 
+        /**
+         * Auto-incrementing variant. Do not mix with explicit {@code receive(index)} calls.
+         */
         public WhenMessageValidationSpec receive() {
             return receive(nextSpecIndex.incrementAndGet());
         }
