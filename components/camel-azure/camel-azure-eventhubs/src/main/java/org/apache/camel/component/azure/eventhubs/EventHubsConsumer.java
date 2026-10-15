@@ -253,6 +253,10 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
                     if (scheduledTask != null) {
                         scheduledTask.cancel(false);
                     }
+                    // the next event starts a new timeout window: the cancelled task must not be reused until its
+                    // scheduled time, else the events of the rest of that window are not checkpointed by the timeout
+                    checkpointTasksByPartition.remove(partitionId);
+                    scheduledTasksByPartition.remove(partitionId);
                     eventContext.updateCheckpointAsync()
                             .subscribe(unused -> LOG.debug("Processed one event..."),
                                     error -> LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error),
