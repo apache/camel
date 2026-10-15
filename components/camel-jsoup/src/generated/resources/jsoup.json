@@ -7,7 +7,7 @@
     "deprecated": false,
     "firstVersion": "4.21.0",
     "label": "transformation",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-jsoup",
     "version": "4.24.0-SNAPSHOT"

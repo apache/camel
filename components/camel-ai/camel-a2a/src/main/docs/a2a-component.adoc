@@ -4,7 +4,7 @@
 :artifactid: camel-a2a
 :description: A2A endpoint for agent-to-agent communication.
 :since: 4.21
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
