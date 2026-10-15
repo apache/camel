@@ -247,7 +247,7 @@ class ResourceBasedSSHKeyVerifierTest {
     }
 
     @Test
-    void looksUpTheHostAsConfiguredOnTheEndpoint() throws Exception {
+    void looksUpAnIpv6AddressAsConfiguredOnTheEndpoint() throws Exception {
         // the address the client connected to writes ::1 as 0:0:0:0:0:0:0:1
         InetSocketAddress server = new InetSocketAddress("::1", 2222);
         String knownHosts = entry("[::1]:2222", serverKey);
@@ -257,9 +257,16 @@ class ResourceBasedSSHKeyVerifierTest {
                 assertFalse(verify(failOnUnknownHost, host, server, otherKey, knownHosts), host);
             }
         }
-        InetSocketAddress address = new InetSocketAddress(InetAddress.getByAddress("10.0.0.1", new byte[] { 10, 0, 0, 1 }), 22);
-        assertTrue(verify(true, "DB.example.com", address, serverKey, entry("db.example.com", serverKey)));
-        assertFalse(verify(true, "db.example.com", address, serverKey, entry("10.0.0.1", serverKey)));
+    }
+
+    @Test
+    void looksUpTheHostNameTheClientConnectsTo() throws Exception {
+        // as OpenSSH does: the HostName that ~/.ssh/config gives for the configured host db is db.example.com
+        InetSocketAddress server
+                = new InetSocketAddress(InetAddress.getByAddress("db.example.com", new byte[] { 10, 0, 0, 1 }), 22);
+        assertTrue(verify(true, "db", server, serverKey, entry("db.example.com", serverKey)));
+        assertFalse(verify(true, "db", server, serverKey, entry("db", serverKey)));
+        assertFalse(verify(false, "db", server, otherKey, entry("db.example.com", serverKey)));
     }
 
     @Test

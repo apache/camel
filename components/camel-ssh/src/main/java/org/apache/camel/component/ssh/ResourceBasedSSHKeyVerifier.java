@@ -47,14 +47,15 @@ import org.slf4j.LoggerFactory;
  * ServerKeyVerifier that takes a camel resource as input file to validate the server key against.
  * <p>
  * The resource uses the OpenSSH known_hosts format, and its entries are matched as OpenSSH matches them. Each host
- * pattern of an entry is compared, ignoring case, with the host name or address configured on the endpoint, written
- * {@code host} for port 22 and {@code [host]:port} for another port: {@code *} and {@code ?} are wildcards, a pattern
- * starting with {@code !} excludes the hosts it matches, and hashed entries are supported. The server is accepted when
- * an entry of its host lists the key it presents. It is rejected when that key is listed in a matching {@code @revoked}
- * entry, or when its host has entries without a marker but none of them lists that key. {@code failOnUnknownHost} only
- * decides for a host without such an entry: {@code @revoked} and {@code @cert-authority} entries do not list a host,
- * and host certificates are not supported. A resource that cannot be read, or that has a line that cannot be read,
- * rejects every server.
+ * pattern of an entry is compared, ignoring case, with the host name or address the client connects to (the host
+ * configured on the endpoint, or the {@code HostName} that {@code ~/.ssh/config} gives for it, never resolved through
+ * DNS; an IPv6 address configured on the endpoint is used as it is written), written {@code host} for port 22 and
+ * {@code [host]:port} for another port: {@code *} and {@code ?} are wildcards, a pattern starting with {@code !}
+ * excludes the hosts it matches, and hashed entries are supported. The server is accepted when an entry of its host
+ * lists the key it presents. It is rejected when that key is listed in a matching {@code @revoked} entry, or when its
+ * host has entries without a marker but none of them lists that key. {@code failOnUnknownHost} only decides for a host
+ * without such an entry: {@code @revoked} and {@code @cert-authority} entries do not list a host, and host certificates
+ * are not supported. A resource that cannot be read, or that has a line that cannot be read, rejects every server.
  */
 public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     private static final int DEFAULT_PORT = 22;
@@ -81,9 +82,10 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     }
 
     /**
-     * @param host the host name or address configured on the endpoint, which the entries are matched against as it is
-     *             written (an IPv6 address may be enclosed in brackets). When null, the host of the address the client
-     *             connected to is used, and an IPv6 address is then written in its full form.
+     * @param host the host name or address configured on the endpoint. The entries are matched against the host name or
+     *             address the client connects to, as SSHD resolved it from the endpoint and {@code ~/.ssh/config},
+     *             which writes an IPv6 address in its full form. When the configured host is an IPv6 address (it may be
+     *             enclosed in brackets), it is used as it is written instead. May be null.
      */
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
                                        boolean failOnUnknownHost, String host) {
@@ -168,19 +170,25 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     }
 
     /*
-     * The name OpenSSH looks the server up by: the host name or address configured on the endpoint, as it is written
-     * and never resolved, with the port the client connected to, written host for port 22 and [host]:port for another
-     * port.
+     * The name OpenSSH looks the server up by: the host name or address the client connected to, as SSHD resolved it
+     * from the endpoint and ~/.ssh/config (the HostName there), never resolved through DNS, with the port the client
+     * connected to, written host for port 22 and [host]:port for another port. The connected address writes an IPv6
+     * address in its full form, so an IPv6 address configured on the endpoint is used as it is written.
      */
     private static String toKnownHostsName(String configuredHost, SocketAddress remoteAddress) {
         if (!(remoteAddress instanceof InetSocketAddress) && !(remoteAddress instanceof SshdSocketAddress)) {
             return null;
         }
         SshdSocketAddress address = SshdSocketAddress.toSshdSocketAddress(remoteAddress);
-        String name = configuredHost != null ? configuredHost : address.getHostName();
-        if (name.length() > 1 && name.charAt(0) == '[' && name.charAt(name.length() - 1) == ']') {
-            // an IPv6 address in an endpoint uri
-            name = name.substring(1, name.length() - 1);
+        String name = address.getHostName();
+        if (configuredHost != null) {
+            String configured = configuredHost;
+            if (configured.length() > 1 && configured.charAt(0) == '[' && configured.charAt(configured.length() - 1) == ']') {
+                configured = configured.substring(1, configured.length() - 1);
+            }
+            if (configured.indexOf(':') >= 0) {
+                name = configured;
+            }
         }
         name = name.toLowerCase(Locale.ROOT);
         return address.getPort() == DEFAULT_PORT ? name : "[" + name + "]:" + address.getPort();

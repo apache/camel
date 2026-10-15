@@ -172,13 +172,13 @@ When it is `false` (the default), such a server is accepted and a warning is log
 
 The entries are matched as OpenSSH matches them:
 
-* Each host pattern of an entry is compared, ignoring case, with the host name or address configured
-on the endpoint, written `host` for port 22 and `[host]:port` for another port. `*` and `?` are
-wildcards, a pattern starting with `!` excludes the hosts it matches, and hashed entries are supported.
-So `db.example.com` only applies to port 22, `[db.example.com]:2222` to port 2222, and `*` to every
-host and port. The configured value is used as it is written: an endpoint configured with an address
-only uses the entries for that address, and an IPv6 address such as `::1` (or `[::1]` in the endpoint
-uri) is not expanded.
+* Each host pattern of an entry is compared, ignoring case, with the host name or address the client
+connects to: the host configured on the endpoint, or the `HostName` that `~/.ssh/config` gives for it.
+It is written `host` for port 22 and `[host]:port` for another port. `*` and `?` are wildcards, a
+pattern starting with `!` excludes the hosts it matches, and hashed entries are supported. So
+`db.example.com` only applies to port 22, `[db.example.com]:2222` to port 2222, and `*` to every host
+and port. The host is never resolved: an endpoint configured with an address only uses the entries for
+that address, and an IPv6 address such as `::1` is not expanded.
 * The server is accepted when an entry of its host lists the key it presents. A host can be listed
 with several keys, one per line.
 * The server is rejected when the key it presents is listed in a matching `@revoked` entry, or when

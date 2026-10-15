@@ -143,17 +143,18 @@ the producer.
 === camel-ssh - known_hosts entries are matched as in OpenSSH
 
 When `knownHostsResource` is set, the entries of the `known_hosts` file are now matched as OpenSSH
-matches them, against the host name or address configured on the endpoint, written `host` for port 22
-and `[host]:port` for another port:
+matches them, against the host name or address the client connects to, written `host` for port 22 and
+`[host]:port` for another port:
 
 * A host pattern must match that name as a whole. An entry for another host whose name or address
 contains the configured one is no longer used.
 * A pattern such as `db.example.com` only applies to port 22. A server on another port needs an entry
 such as `[db.example.com]:2222`, or a pattern that matches that form, such as `*`.
-* The configured host is used as it is written. An endpoint configured with a host name no longer uses
-entries listed only under its address, an endpoint configured with an address no longer uses entries
-listed under the name that a reverse lookup of the address returns, and an IPv6 address such as `::1`
-is matched as written instead of in its expanded form.
+* The host is used as it is written: the host configured on the endpoint, or the `HostName` that
+`~/.ssh/config` gives for it. An endpoint configured with a host name no longer uses entries listed
+only under its address, an endpoint configured with an address no longer uses entries listed under the
+name that a reverse lookup of the address returns, and an IPv6 address such as `::1` is matched as
+written instead of in its expanded form.
 * Every entry of the host is considered, so a host can be listed with several keys. Wildcard, negated
 and hashed patterns, comments and `@revoked` entries are supported. `@cert-authority` entries are
 ignored.
