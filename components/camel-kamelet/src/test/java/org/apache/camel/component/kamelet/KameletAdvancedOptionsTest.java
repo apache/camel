@@ -18,15 +18,19 @@ package org.apache.camel.component.kamelet;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
@@ -1163,6 +1167,57 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
         assertEquals("http://host?timeout=30", resultBefore);
     }
 
+    @Test
+    void removeQueryParameterSplitsTheQueryLikeCamel() {
+        // Camel ends a RAW( value at the first ")&", so password is "p(ss" and other is a parameter of its own
+        String uri = "foo:bar?password=RAW(p(ss)&other=1";
+
+        assertEquals("foo:bar?password=RAW(p(ss)", Kamelet.removeQueryParameter(uri, "other"));
+        assertEquals("foo:bar?other=1", Kamelet.removeQueryParameter(uri, "password"));
+    }
+
+    @Test
+    void removeQueryParameterKeepsRepeatedAndEncodedValues() {
+        String uri = "http://host/path?tag=a&tag=b&filter=a%26b&timeout=30";
+
+        assertEquals("http://host/path?tag=a&tag=b&filter=a%26b", Kamelet.removeQueryParameter(uri, "timeout"));
+    }
+
+    @Test
+    void sinkOptionsAreReceivedLikeOptionsOnTheEndpointItself() throws Exception {
+        String options = "filter=a%26b&name=caf%C3%A9&q=a+b&secret=RAW(p@ss&word%41)&tag=x&tag=y";
+        try (DefaultCamelContext testContext = new DefaultCamelContext()) {
+            ProbeComponent probe = new ProbeComponent();
+            testContext.addComponent("probe", probe);
+            testContext.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("encoded-sink")
+                            .from("kamelet:source")
+                            .to("probe:via-kamelet");
+
+                    from("direct:kamelet")
+                            .kamelet("encoded-sink?advancedOptions=true&" + options);
+                    from("direct:endpoint")
+                            .to("probe:direct?" + options);
+                }
+            });
+
+            testContext.start();
+
+            Map<String, Object> received = probe.received.get("via-kamelet");
+
+            assertNotNull(received, "Expected the probe endpoint wrapped by the Kamelet");
+            assertEquals("caf\u00e9", received.get("name"));
+            assertEquals("a b", received.get("q"));
+            assertEquals("p@ss&word%41", received.get("secret"));
+            assertEquals(List.of("x", "y"), received.get("tag"));
+            // filter=a%26b is checked by comparing with the endpoint used directly
+            assertEquals(probe.received.get("direct"), received,
+                    "The wrapped endpoint must receive the options the same as when they are set on it directly");
+        }
+    }
+
     private void assertHttpSinkOption(
             String path, String sinkQuery, String optionName, String expectedValue, String... forbiddenKeys)
             throws Exception {
@@ -1402,5 +1457,17 @@ class KameletAdvancedOptionsTest extends CamelTestSupport {
                         .kamelet("mock-sink");
             }
         };
+    }
+
+    private static final class ProbeComponent extends MockComponent {
+        private final Map<String, Map<String, Object>> received = new ConcurrentHashMap<>();
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+            // record the options as the component receives them, then accept them all
+            received.put(remaining, new LinkedHashMap<>(parameters));
+            parameters.clear();
+            return new MockEndpoint(uri, this);
+        }
     }
 }

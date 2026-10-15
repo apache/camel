@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.kamelet;
 
-import java.util.ArrayList;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
@@ -47,6 +47,7 @@ import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -312,8 +313,9 @@ public final class Kamelet {
     }
 
     /**
-     * Appends query parameters without parsing or re-encoding the endpoint URI. This preserves property placeholders
-     * and RAW expressions that may appear in the URI.
+     * Appends the advanced options to the endpoint URI. The option values are the text as written in the Kamelet URI
+     * (percent-encoding and RAW(...) kept), so they are already valid URI text and are appended as is. Property
+     * placeholders and RAW expressions in the endpoint URI are preserved.
      */
     private static String appendParametersToURI(String uri, Map<String, Object> parameters) {
         if (parameters == null || parameters.isEmpty()) {
@@ -327,55 +329,14 @@ public final class Kamelet {
             result = removeQueryParameter(result, name);
         }
 
-        // Then append the options to the preserved URI.
-        StringBuilder sb = new StringBuilder(result);
         char sep = result.indexOf('?') < 0 ? '?' : '&';
-
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            sb.append(sep).append(entry.getKey());
-            if (entry.getValue() != null) {
-                sb.append('=').append(wrapRawIfNeeded(String.valueOf(entry.getValue())));
-            }
-            sep = '&';
-        }
-
-        return sb.toString();
+        return result + sep + toQueryString(parameters);
     }
 
     /**
-     * Re-wraps values that contain URI-sensitive characters.
-     */
-    private static String wrapRawIfNeeded(String value) {
-        if (value == null || value.isEmpty() || isRawToken(value)) {
-            return value;
-        }
-        if (value.contains("&") || value.contains("=") || value.contains("?")
-                || value.contains("+") || value.contains("%")) {
-            if (value.contains(")&") && !value.startsWith("{") && !value.endsWith("}")
-                    && !value.contains("}&")) {
-                return "RAW{" + value + "}";
-            }
-            if (value.contains(")&")) {
-                // fits in neither RAW(...) nor RAW{...}; keep the value out of the message, it may be a secret
-                throw new IllegalArgumentException(
-                        "The value of advanced options cannot contain \")&\" when it also starts with '{',"
-                                                   + " ends with '}' or contains \"}&\"");
-            }
-            return "RAW(" + value + ")";
-        }
-
-        return value;
-    }
-
-    private static boolean isRawToken(String value) {
-        return value != null
-                && ((value.startsWith("RAW(") && value.endsWith(")"))
-                        || (value.startsWith("RAW{") && value.endsWith("}")));
-    }
-
-    /**
-     * Removes a query parameter by name, treating camelCase and kebab-case names as aliases. Respects RAW(...) and
-     * RAW{...} boundaries so ampersands inside raw values do not split parameters.
+     * Removes a query parameter by name, treating camelCase and kebab-case names as aliases. The query is split with
+     * {@link URISupport#parseQuery(String, boolean, boolean)} in raw mode, which is how Camel itself reads an endpoint
+     * URI, and which keeps the values as written. The URI is returned unchanged when the parameter is not present.
      */
     static String removeQueryParameter(String uri, String parameterName) {
         int queryIndex = uri.indexOf('?');
@@ -383,53 +344,38 @@ public final class Kamelet {
             return uri;
         }
 
-        String query = uri.substring(queryIndex + 1);
+        Map<String, Object> query;
+        try {
+            query = URISupport.parseQuery(uri.substring(queryIndex + 1), true, true);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Invalid endpoint URI: " + URISupport.sanitizeUri(uri), e);
+        }
+
         String normalizedName = StringHelper.camelCaseToDash(parameterName);
-
-        List<String> parts = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        int parenDepth = 0;
-        int braceDepth = 0;
-
-        for (int i = 0; i < query.length(); i++) {
-            char c = query.charAt(i);
-            if (c == '(') {
-                parenDepth++;
-            } else if (c == ')') {
-                parenDepth = Math.max(0, parenDepth - 1);
-            } else if (c == '{') {
-                braceDepth++;
-            } else if (c == '}') {
-                braceDepth = Math.max(0, braceDepth - 1);
-            } else if (c == '&' && parenDepth == 0 && braceDepth == 0) {
-                parts.add(current.toString());
-                current.setLength(0);
-                continue;
-            }
-            current.append(c);
-        }
-        if (current.length() > 0) {
-            parts.add(current.toString());
-        }
-
-        List<String> filtered = new ArrayList<>();
-        boolean removed = false;
-        for (String p : parts) {
-            String key = p.contains("=") ? p.substring(0, p.indexOf('=')) : p;
-            if (StringHelper.camelCaseToDash(key).equals(normalizedName)) {
-                removed = true;
-            } else {
-                filtered.add(p);
-            }
-        }
-
-        if (!removed) {
+        if (!query.keySet().removeIf(key -> StringHelper.camelCaseToDash(key).equals(normalizedName))) {
             return uri;
         }
 
         String base = uri.substring(0, queryIndex);
-        String rebuilt = String.join("&", filtered);
-        return rebuilt.isEmpty() ? base : base + "?" + rebuilt;
+        return query.isEmpty() ? base : base + "?" + toQueryString(query);
+    }
+
+    /**
+     * Builds a query string from values that are already URI text, so nothing is encoded. A repeated parameter (a
+     * collection value) is written once per value.
+     */
+    private static String toQueryString(Map<String, Object> parameters) {
+        StringJoiner sj = new StringJoiner("&");
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            if (entry.getValue() instanceof Collection<?> values) {
+                values.forEach(value -> sj.add(entry.getKey() + "=" + value));
+            } else if (entry.getValue() != null) {
+                sj.add(entry.getKey() + "=" + entry.getValue());
+            } else {
+                sj.add(entry.getKey());
+            }
+        }
+        return sj.toString();
     }
 
     /**

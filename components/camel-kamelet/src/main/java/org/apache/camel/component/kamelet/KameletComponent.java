@@ -147,6 +147,8 @@ public class KameletComponent extends DefaultComponent {
         // resolveRawParameterValues is false
         // this ensures that parameters such as passwords are used as-is and not encoded
         // but this requires to use RAW() syntax in the kamelet template.
+        // keep the values as written first (useRawUri), as advanced options are forwarded as URI text
+        final Map<String, Object> rawParameters = copyParameters(parameters);
         URISupport.resolveRawParameterValues(parameters);
 
         final KameletEndpoint endpoint;
@@ -260,10 +262,12 @@ public class KameletComponent extends DefaultComponent {
 
             // Snapshot remaining URI parameters as advanced-option candidates when enabled. Template
             // parameters are filtered later in templateToRoute, after the template is loaded. Only URI
-            // leftovers are candidates, not camel.kamelet.* or environment properties.
+            // leftovers are candidates, not camel.kamelet.* or environment properties. The values are
+            // taken as written in the URI (percent-encoding and RAW(...) kept), so they can be appended
+            // to the wrapped endpoint URI as is.
             Map<String, Object> advancedParamOptions = new LinkedHashMap<>();
             if (endpoint.isAdvancedOptions()) {
-                advancedParamOptions.putAll(parameters);
+                parameters.keySet().forEach(key -> advancedParamOptions.put(key, rawParameters.get(key)));
             }
 
             //
@@ -307,6 +311,13 @@ public class KameletComponent extends DefaultComponent {
     @Override
     protected boolean resolveRawParameterValues() {
         return false;
+    }
+
+    private static Map<String, Object> copyParameters(Map<String, Object> parameters) {
+        // resolveRawParameterValues updates repeated parameters (lists) in place, so copy those too
+        Map<String, Object> answer = new LinkedHashMap<>();
+        parameters.forEach((key, value) -> answer.put(key, value instanceof List<?> list ? new ArrayList<>(list) : value));
+        return answer;
     }
 
     public boolean isNoErrorHandler() {

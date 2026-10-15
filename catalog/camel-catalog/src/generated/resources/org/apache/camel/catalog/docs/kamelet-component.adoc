@@ -224,6 +224,9 @@ when advanced options are supplied. In these cases, configure the options direct
 Property placeholders and RAW expressions in endpoint URIs are preserved when advanced options are applied. For example,
 `+kafka:{{topic}}+` or `+aws2-s3:{{bucket}}?secretKey=RAW({{secret}})+` remain intact.
 
+The advanced options are forwarded as they are written in the Kamelet URI. Percent-encoded values, `RAW(...)` values
+and repeated parameters reach the wrapped endpoint the same way as when the options are set on that endpoint directly.
+
 When `advancedOptions` is disabled or omitted, the Kamelet retains its existing configuration behavior.
 
 == Examples
