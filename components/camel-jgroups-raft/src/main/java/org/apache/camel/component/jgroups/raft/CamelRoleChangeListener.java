@@ -42,18 +42,34 @@ public class CamelRoleChangeListener implements RAFT.RoleChange {
     @Override
     public void roleChanged(Role role) {
         LOG.trace("New Role {} received.", role);
+        JGroupsRaftEventType eventType = toEventType(role);
+        if (eventType == null) {
+            // Guard against future jgroups-raft Role values: log and ignore rather than throw. RAFT swallows an
+            // exception thrown from this callback, so throwing would leave the consumer silently without an event.
+            LOG.warn("Ignoring jgroups-raft role change to unhandled role [{}]", role);
+            return;
+        }
         Exchange exchange = createExchange();
+        exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, eventType);
+        processExchange(role, exchange);
+    }
+
+    /**
+     * Maps a jgroups-raft {@link Role} to the {@link JGroupsRaftEventType} dispatched to the route, or {@code null} for
+     * a role that produces no event. A {@code Learner} is a non-voting follower (it replicates the log but cannot vote
+     * or become leader), so it maps to {@link JGroupsRaftEventType#FOLLOWER}: a route that stops its leader work on a
+     * {@code FOLLOWER} event then also stops it when this node steps down to {@code Learner} (CAMEL-25515). This
+     * mirrors the cluster-side handling added for CAMEL-25488.
+     */
+    static JGroupsRaftEventType toEventType(Role role) {
         switch (role) {
             case Leader:
-                exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.LEADER);
-                processExchange(role, exchange);
-                break;
+                return JGroupsRaftEventType.LEADER;
             case Follower:
-                exchange.getIn().setHeader(JGroupsRaftConstants.HEADER_JGROUPSRAFT_EVENT_TYPE, JGroupsRaftEventType.FOLLOWER);
-                processExchange(role, exchange);
-                break;
+            case Learner:
+                return JGroupsRaftEventType.FOLLOWER;
             default:
-                throw new JGroupsRaftException("Role [" + role + "] unknown.");
+                return null;
         }
     }
 
