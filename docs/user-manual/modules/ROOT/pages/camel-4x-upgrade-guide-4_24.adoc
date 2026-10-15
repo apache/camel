@@ -1902,7 +1902,7 @@ previous run is looked up. `camel dirty` does not count these files.
   `camel log --previous`), and its message says how that run ended. `previous=true` asks for that log also when the
   integration runs again. `camel_get_errors` of an integration that is not running says how its previous run ended.
 
-=== camel-toon - the lengthMarker option is removed
+=== camel-toon - the lengthMarker option is removed (Breaking change)
 
 `camel-toon` now uses JToon 2.0.7, which follows a newer version of the TOON specification.
 
