@@ -2104,7 +2104,6 @@ public class ModelParser extends BaseParser {
                 case "contentTypeHeader": def.setContentTypeHeader(val); yield true;
                 case "delimiter": def.setDelimiter(val); yield true;
                 case "indent": def.setIndent(val); yield true;
-                case "lengthMarker": def.setLengthMarker(val); yield true;
                 case "strict": def.setStrict(val); yield true;
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());

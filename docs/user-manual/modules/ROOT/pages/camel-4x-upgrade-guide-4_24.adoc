@@ -1901,3 +1901,17 @@ previous run is looked up. `camel dirty` does not count these files.
 * `camel_get_log` of an integration that is not running answers with the log of its previous run (see
   `camel log --previous`), and its message says how that run ended. `previous=true` asks for that log also when the
   integration runs again. `camel_get_errors` of an integration that is not running says how its previous run ended.
+
+=== camel-toon - the lengthMarker option is removed
+
+`camel-toon` now uses JToon 2.0.7, which follows a newer version of the TOON specification.
+
+The `lengthMarker` option of the TOON data format is removed, because the TOON specification no longer has the `[#N]`
+array length marker. Remove the option from the data format in Java, XML and YAML routes. TOON text with a `[#N]` array
+header, such as the output of a data format with `lengthMarker=true`, now fails to unmarshal in both strict and
+non-strict mode; in Camel 4.23 it already failed in strict mode (the default). To read such data, remove the `#` from
+its array headers (`tags[#2]:` becomes `tags[2]:`).
+
+With `strict=false`, unmarshalling no longer returns `null` or a partial result for malformed TOON. Only the non-strict
+recoveries of the TOON specification apply, such as accepting an array whose length differs from the declared length;
+other malformed TOON fails with `IllegalArgumentException`, as in strict mode.
