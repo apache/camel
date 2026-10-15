@@ -56,7 +56,7 @@ include::partial$component-endpoint-headers.adoc[]
 === Client
 
 The browse component shares the same base options like the Camel Milo Client component, e.g. concerning topics like discovery,
-security policies, the construction of node ids, etc.
+security policies, the validation of the server certificate, the construction of node ids, etc.
 
 Please refer to the documentation of the Camel Milo Client component for further details.
 

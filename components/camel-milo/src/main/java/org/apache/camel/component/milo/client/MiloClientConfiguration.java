@@ -30,6 +30,7 @@ import org.apache.camel.component.milo.KeyStoreLoader.Result;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClientConfigBuilder;
+import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
@@ -113,6 +114,15 @@ public class MiloClientConfiguration implements Cloneable {
     @UriParam(label = "client", defaultValue = "1_000.0")
     private Double requestedPublishingInterval = DEFAULT_REQUESTED_PUBLISHING_INTERVAL;
 
+    @UriParam(label = "security")
+    private String trustListDirectory;
+
+    @UriParam(label = "security")
+    private CertificateValidator certificateValidator;
+
+    @UriParam(label = "security")
+    private boolean trustAllCertificates;
+
     public MiloClientConfiguration() {
     }
 
@@ -138,6 +148,9 @@ public class MiloClientConfiguration implements Cloneable {
         this.overrideHost = other.overrideHost;
         this.overridePort = other.overridePort;
         this.requestedPublishingInterval = other.requestedPublishingInterval;
+        this.trustListDirectory = other.trustListDirectory;
+        this.certificateValidator = other.certificateValidator;
+        this.trustAllCertificates = other.trustAllCertificates;
     }
 
     /**
@@ -419,17 +432,76 @@ public class MiloClientConfiguration implements Cloneable {
         return requestedPublishingInterval;
     }
 
+    /**
+     * The directory holding the trust list used to validate the certificate of the OPC UA server, in the layout used by
+     * Eclipse Milo: trusted certificates in trusted/certs, CRLs of trusted certificates in trusted/crl, certificates of
+     * issuing CAs in issuer/certs and their CRLs in issuer/crl. The directories are created if they do not exist.
+     * Besides the chain of trust, the validity period, the revocation by a CRL of the trust list and the application
+     * URI of the server certificate are checked. A certificate issued by a CA is refused when the trust list holds no
+     * CRL of that CA; an empty CRL is enough. A server certificate that does not chain up to a trusted certificate is
+     * written to rejected/certs, from where it can be moved to trusted/certs once it has been checked.
+     */
+    public void setTrustListDirectory(final String trustListDirectory) {
+        this.trustListDirectory = trustListDirectory;
+    }
+
+    public String getTrustListDirectory() {
+        return this.trustListDirectory;
+    }
+
+    /**
+     * A custom validator for the certificate of the OPC UA server. When set, it is used instead of the trust list
+     * configured with trustListDirectory. Endpoints share a connection only when they use the same validator instance.
+     */
+    public void setCertificateValidator(final CertificateValidator certificateValidator) {
+        this.certificateValidator = certificateValidator;
+    }
+
+    public CertificateValidator getCertificateValidator() {
+        return this.certificateValidator;
+    }
+
+    /**
+     * Whether to accept any certificate presented by the OPC UA server. This is insecure: the connection is encrypted,
+     * but the client does not authenticate the server it talks to. It only applies when neither certificateValidator
+     * nor trustListDirectory is configured.
+     */
+    public void setTrustAllCertificates(final boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
+    }
+
+    public boolean isTrustAllCertificates() {
+        return this.trustAllCertificates;
+    }
+
     @Override
     public MiloClientConfiguration clone() {
         return new MiloClientConfiguration(this);
     }
 
     public String toCacheId() {
+        final String cacheId;
         if (this.clientId != null && !this.clientId.isEmpty()) {
-            return this.endpointUri + "|" + this.clientId;
+            cacheId = this.endpointUri + "|" + this.clientId;
         } else {
-            return this.endpointUri;
+            cacheId = this.endpointUri;
         }
+        // endpoints that validate the server certificate differently must not share a connection
+        return cacheId + serverCertificateTrustCacheId();
+    }
+
+    private String serverCertificateTrustCacheId() {
+        if (this.certificateValidator != null) {
+            return "|certificateValidator=" + this.certificateValidator.getClass().getName() + "@"
+                   + Integer.toHexString(System.identityHashCode(this.certificateValidator));
+        }
+        if (this.trustListDirectory != null && !this.trustListDirectory.isEmpty()) {
+            return "|trustListDirectory=" + this.trustListDirectory;
+        }
+        if (this.trustAllCertificates) {
+            return "|trustAllCertificates";
+        }
+        return "";
     }
 
     public OpcUaClientConfigBuilder newBuilder() {
