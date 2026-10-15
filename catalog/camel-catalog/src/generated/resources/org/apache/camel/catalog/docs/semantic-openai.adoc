@@ -61,7 +61,9 @@ camel.component.openai.api-key={{env:OPENAI_API_KEY}}
       steps:
         - setVariable:
             name: damaged
-            simple: "${semantic('damaged')}"
+            expression:
+              simple:
+                expression: "${semantic('damaged')}"
         - to: direct:route-policy
 ----
 
