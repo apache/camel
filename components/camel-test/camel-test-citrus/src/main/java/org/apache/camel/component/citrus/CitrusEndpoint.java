@@ -39,6 +39,10 @@ public class CitrusEndpoint extends MockEndpoint {
     @Metadata(required = true)
     private String operation;
 
+    @UriPath(description = "A unique name to identify this endpoint. Allows multiple Citrus endpoints"
+                           + " with different validation expectations in the same route.")
+    private String name;
+
     @UriParam(description = "The message type for validation. Determines which Citrus validation module is used."
                             + " Supported values: json, xml, yaml, plaintext.")
     private String messageType;
@@ -82,23 +86,31 @@ public class CitrusEndpoint extends MockEndpoint {
     public MessageValidationSpec validate(int index) {
         MessageValidationSpec messageValidationSpec = new MessageValidationSpec();
         whenExchangeReceived(index, createProcessor(messageValidationSpec));
+        applyImpliedMinimumCount(index);
         return messageValidationSpec;
     }
 
     private CitrusValidationProcessor createProcessor(MessageValidationSpec validationSpec) {
-        return new CitrusValidationProcessor(citrusContext, messageType, validationSpec);
+        return new CitrusValidationProcessor(() -> citrusContext.createTestContext(), messageType, validationSpec);
     }
 
     private CitrusValidationProcessor createProcessor(
             MessageValidationSpec validationSpec,
             MessageResponseSpec responseSpec) {
-        return new CitrusValidationProcessor(citrusContext, messageType, validationSpec, responseSpec);
+        return new CitrusValidationProcessor(
+                () -> citrusContext.createTestContext(), messageType, validationSpec, responseSpec);
     }
 
     // --- Gherkin-style API (for 'receive' operation) ---
 
     public WhenSpec when() {
         return new WhenSpec();
+    }
+
+    private void applyImpliedMinimumCount(int index) {
+        if (getExpectedCount() < 0 && getExpectedMinimumCount() < index) {
+            expectedMinimumMessageCount(index);
+        }
     }
 
     @Override
@@ -157,6 +169,7 @@ public class CitrusEndpoint extends MockEndpoint {
         public WhenMessageValidationSpec receive(int index) {
             WhenMessageValidationSpec messageValidationSpec = new WhenMessageValidationSpec(index);
             whenExchangeReceived(index, createProcessor(messageValidationSpec));
+            applyImpliedMinimumCount(index);
             return messageValidationSpec;
         }
 

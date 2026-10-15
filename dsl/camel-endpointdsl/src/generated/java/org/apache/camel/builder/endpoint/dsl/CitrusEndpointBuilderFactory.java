@@ -592,8 +592,9 @@ public interface CitrusEndpointBuilderFactory {
          * response.
          * There are 2 enums and the value can be one of: validate, receive
          * 
-         * Path parameter: name (required)
-         * Name of mock endpoint
+         * Path parameter: name
+         * A unique name to identify this endpoint. Allows multiple Citrus
+         * endpoints with different validation expectations in the same route.
          * 
          * @param path operation/name
          * @return the dsl builder
@@ -617,8 +618,9 @@ public interface CitrusEndpointBuilderFactory {
          * response.
          * There are 2 enums and the value can be one of: validate, receive
          * 
-         * Path parameter: name (required)
-         * Name of mock endpoint
+         * Path parameter: name
+         * A unique name to identify this endpoint. Allows multiple Citrus
+         * endpoints with different validation expectations in the same route.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
