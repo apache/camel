@@ -1125,7 +1125,14 @@ public final class AuthoringTools {
         String pkg = javaPackage(content);
         Path root = dir.toAbsolutePath().normalize();
         for (Path other : sameNamedFiles(dir, path)) {
-            if (pkg.equals(javaPackage(read(other)))) {
+            String otherContent;
+            try {
+                otherContent = read(other);
+            } catch (ToolExecutionException e) {
+                // best effort, as the search: a file that cannot be read is no reason to refuse the write
+                continue;
+            }
+            if (pkg.equals(javaPackage(otherContent))) {
                 return root.relativize(other.toAbsolutePath().normalize()).toString().replace('\\', '/');
             }
         }
@@ -1139,7 +1146,7 @@ public final class AuthoringTools {
     static String sameNamedConfigNote(Path dir, Path path) {
         String name = path.getFileName().toString();
         boolean config = "application.properties".equals(name)
-                || name.startsWith("application-") && name.endsWith(".properties")
+                || (name.startsWith("application-") && name.endsWith(".properties"))
                 || "beans.yaml".equals(name) || "beans.yml".equals(name);
         if (!config) {
             return null;
