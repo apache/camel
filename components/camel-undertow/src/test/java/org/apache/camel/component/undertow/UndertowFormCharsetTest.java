@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -61,9 +60,9 @@ class UndertowFormCharsetTest extends BaseUndertowTest {
 
     @Test
     void testUrlEncodedFormKeepsDeclaredCharset() throws Exception {
-        // a charset that the request declares is still used
+        // a charset that the request declares is still used to decode the percent-encoded bytes
         Message received = post("application/x-www-form-urlencoded; charset=ISO-8859-1",
-                ("name=" + TEXT).getBytes(ISO_8859_1));
+                "name=Gr%FC%DFe".getBytes(UTF_8));
 
         assertEquals(TEXT, received.getHeader("name"));
     }
