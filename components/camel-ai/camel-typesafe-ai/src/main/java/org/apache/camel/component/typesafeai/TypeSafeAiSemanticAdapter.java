@@ -32,18 +32,16 @@ import org.apache.camel.semantic.SemanticExpert.ResultType;
 import org.apache.camel.semantic.SemanticOperation;
 import org.apache.camel.semantic.SemanticParameter;
 import org.apache.camel.semantic.SemanticResult;
-import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.json.JsonObject;
 
 /** Maps semantic evaluations to TypeSafe AI using the component's configured, managed transport. */
-@JdkService("semantic-adapter")
 @SemanticExpert(name = "typesafe-ai", provider = "typesafe-ai", artifactId = "camel-typesafe-ai",
                 description = "Instruction-driven decisions using TypeSafe AI",
                 operations = {
                         @SemanticOperation(name = "boolean", description = "Instruction-driven boolean evaluation",
                                            inputTypes = { InputType.TEXT, InputType.STRUCTURED },
                                            inputRequirements = "Text or structured application state",
-                                           resultType = ResultType.BOOLEAN,
+                                           resultType = ResultType.BOOLEAN, booleanLabelsParameter = "criteria",
                                            resultMeaning = "True means the supplied instructions and criteria hold",
                                            probability = true,
                                            probabilityMeaning = "Probability that the supplied instructions and criteria hold",
@@ -70,7 +68,9 @@ import org.apache.camel.util.json.JsonObject;
                         @SemanticOperation(name = "choice", description = "Instruction-driven choice evaluation",
                                            inputTypes = { InputType.TEXT, InputType.STRUCTURED },
                                            inputRequirements = "Text or structured application state",
-                                           resultType = ResultType.CHOICE, resultMeaning = "One of the supplied category keys",
+                                           resultType = ResultType.CHOICE, choiceLabelsParameter = "criteria",
+                                           noMatchDeclared = true, completeProbabilities = true,
+                                           resultMeaning = "One of the supplied category keys",
                                            probabilities = true, probabilityMeaning = "Probability of each supplied category",
                                            confidence = true,
                                            confidenceMeaning = "Optional confidence reported by the provider",
@@ -130,6 +130,12 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
         }
     }
 
+    @Override
+    public void validateInput(SemanticEvaluation evaluation, Object state) {
+        SemanticCapabilities.from(getClass()).operation(evaluation.getOperation()).validateInput(state);
+        TypeSafeAiJson.validateState(state);
+    }
+
     private TypeSafeAiEndpoint endpoint() {
         if (endpoint == null) {
             synchronized (this) {
@@ -151,6 +157,10 @@ public class TypeSafeAiSemanticAdapter implements SemanticAdapter, CamelContextA
 
     @Override
     public Map<String, SemanticResult> evaluateBatch(Map<String, SemanticEvaluation> questions, Object state) throws Exception {
+        questions.values().forEach(question -> {
+            validate(question);
+            validateInput(question, state);
+        });
         Map<String, Object> definitions = new LinkedHashMap<>();
         questions.forEach((name, question) -> definitions.put(name, definition(question)));
         JsonObject response = endpoint().evaluate(Map.of("state", state, "questions", definitions));

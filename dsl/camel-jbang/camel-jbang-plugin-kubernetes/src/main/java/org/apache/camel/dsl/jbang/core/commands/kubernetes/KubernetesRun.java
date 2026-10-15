@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
-import io.fabric8.kubernetes.client.vertx.VertxHttpClientFactory;
+import io.fabric8.kubernetes.client.vertx5.Vertx5HttpClientFactory;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.file.FileSystemOptions;
@@ -637,12 +637,21 @@ public class KubernetesRun extends KubernetesBaseCommand {
             KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
             deleteCommand.name = projectName;
             deleteCommand.namespace = namespace;
-            try (var client = createKubernetesClientForShutdownHook()) {
+            // the client does not close a Vertx instance that is passed to it
+            var vertx = createVertxForShutdownHook();
+            try (var client = createKubernetesClientForShutdownHook(vertx)) {
                 KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
                 CommandHelper.cleanExportDir(workingDir, false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            } finally {
+                // close() returns before Vert.x is closed, and its daemon threads would not keep the JVM running
+                try {
+                    vertx.close().await(5, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    printer().printErr("Failed to close Vert.x - %s".formatted(e.getMessage()));
+                }
             }
         });
         devModeShutdownTask.setName(ThreadHelper.resolveThreadName(null, "CamelShutdownInterceptor"));
@@ -651,17 +660,19 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     // KubernetesClientVertx can no longer be used in ShutdownHook
     // https://issues.apache.org/jira/browse/CAMEL-21621
-    private KubernetesClient createKubernetesClientForShutdownHook() {
+    private Vertx createVertxForShutdownHook() {
         System.setProperty("vertx.disableDnsResolver", "true");
-        var vertx = Vertx.vertx((new VertxOptions())
+        return Vertx.vertx((new VertxOptions())
                 .setFileSystemOptions((new FileSystemOptions())
                         .setFileCachingEnabled(false)
                         .setClassPathResolvingEnabled(false))
                 .setUseDaemonThread(true));
-        var client = new KubernetesClientBuilder()
-                .withHttpClientFactory(new VertxHttpClientFactory(vertx))
+    }
+
+    private KubernetesClient createKubernetesClientForShutdownHook(Vertx vertx) {
+        return new KubernetesClientBuilder()
+                .withHttpClientFactory(new Vertx5HttpClientFactory(vertx))
                 .build();
-        return client;
     }
 
     // build the project locally to generate the artifacts in the target directory, but don't deploy it.

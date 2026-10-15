@@ -39,8 +39,8 @@ public final class SemanticEvaluation {
         if (operation == null || operation.isBlank()) {
             throw new IllegalArgumentException("Evaluation operation is required");
         }
-        if (expert != null && expert.isBlank()) {
-            throw new IllegalArgumentException("Evaluation expert must not be blank");
+        if (expert == null || expert.isBlank()) {
+            throw new IllegalArgumentException("Evaluation expert is required");
         }
         if (state != null && state.isBlank()) {
             throw new IllegalArgumentException("Evaluation state selector must not be blank");

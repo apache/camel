@@ -19,7 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -512,7 +514,7 @@ class AiPanelAcpTest {
         askPermissionDuringPrompt(permissionParams("mcp__camel-tui__tui_get_state", "tui_get_state"));
         ask(panel, "hi");
         awaitIdle(panel);
-        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertFalse(panel.isPermissionPopupVisible());
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"), "allow_always preferred");
     }
 
@@ -526,14 +528,42 @@ class AiPanelAcpTest {
     }
 
     @Test
-    void mutatingTuiToolOpensThePopupEvenByName() throws Exception {
+    void aTuiToolThatChangesSomethingIsApprovedToo() throws Exception {
+        // the TUI is a developer tool: its tools run without asking, and it asks itself before the few calls that
+        // need it (ToolConfirms)
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams("mcp__camel-tui__camel_control", "camel_control"));
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        awaitIdle(panel);
+        assertFalse(panel.isPermissionPopupVisible());
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"));
+    }
+
+    @Test
+    void aTitleThatNamesNoToolOfTheTuiOpensThePopup() throws Exception {
+        AiPanel panel = acpPanel();
+        askPermissionDuringPrompt(permissionParams(null, "anything (camel-tui MCP Server)"));
+        ask(panel, "hi");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisible()));
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         awaitIdle(panel);
-        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "camel_control is not read-only");
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "anything is not a tool of the TUI");
+    }
+
+    @Test
+    void aShellCommandOfTheAgentIsApprovedWithoutAskingWhileATapeDrivesTheMonitor() throws Exception {
+        // CAMEL-25444: a model records a tape, or --record plays one, and no one is there to answer
+        AiPanel panel = acpPanel();
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of()));
+        ctx.tapeDriven = () -> true;
+        panel.setContext(ctx);
+        JsonObject permission = permissionParams(null, "camel run *");
+        permission.getJsonObject("toolCall").put("kind", "execute");
+        askPermissionDuringPrompt(permission);
+        ask(panel, "hi");
+        awaitIdle(panel);
+        assertFalse(panel.isPermissionPopupVisible());
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"));
     }
 
     @Test
@@ -543,7 +573,7 @@ class AiPanelAcpTest {
         permission.getJsonObject("toolCall").put("kind", "execute");
         askPermissionDuringPrompt(permission);
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisible()));
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         awaitIdle(panel);
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "a shell call is never a TUI tool call");
@@ -556,7 +586,7 @@ class AiPanelAcpTest {
         permission.getJsonObject("toolCall").put("kind", "edit");
         askPermissionDuringPrompt(permission);
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisible()));
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         awaitIdle(panel);
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "a path is not a tool identity");
@@ -569,31 +599,31 @@ class AiPanelAcpTest {
         askPermissionDuringPrompt(permissionParams("mcp__camel-tui__camel_write_file", "camel_write_file"));
         ask(panel, "hi");
         awaitIdle(panel);
-        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertFalse(panel.isPermissionPopupVisible());
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"),
                 "the confirm dialog asks, a second question here would make the user answer twice");
     }
 
     @Test
-    void writeFileOpensThePopupWhenWritesAreAutomatic() throws Exception {
+    void writeFileIsApprovedWhenWritesAreAutomatic() throws Exception {
         AiPanel panel = acpPanel();
         ask(panel, "/write auto");
         assertTrue(panel.describeWriteModeForTesting().startsWith("auto"));
         askPermissionDuringPrompt(permissionParams("mcp__camel-tui__camel_write_file", "camel_write_file"));
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
-        panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         awaitIdle(panel);
-        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "nothing else asks in auto mode");
+        assertFalse(panel.isPermissionPopupVisible());
+        assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"), "the user chose to write without asking");
     }
 
     @Test
-    void evalExpressionIsReadOnly() throws Exception {
+    void evalExpressionIsApproved() throws Exception {
+        // in a language that runs code the TUI asks itself, when the tool runs (ToolConfirms)
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams("mcp__camel-tui__camel_eval_expression", "camel_eval_expression"));
         ask(panel, "hi");
         awaitIdle(panel);
-        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertFalse(panel.isPermissionPopupVisible());
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-always)"));
     }
 
@@ -612,7 +642,7 @@ class AiPanelAcpTest {
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams(null, "rm -rf / (camel-tui MCP Server)"));
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisible()));
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         awaitIdle(panel);
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"), "the TUI registers no such tool");
@@ -626,7 +656,7 @@ class AiPanelAcpTest {
                 AcpAgentClientTest.option("opt-reject", "Reject", "reject_once")));
         ask(panel, "hi");
         awaitIdle(panel);
-        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertFalse(panel.isPermissionPopupVisible());
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-allow)"));
     }
 
@@ -637,7 +667,7 @@ class AiPanelAcpTest {
                 AcpAgentClientTest.option("opt-reject", "Reject", "reject_once")));
         ask(panel, "hi");
         awaitIdle(panel);
-        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertFalse(panel.isPermissionPopupVisible());
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"));
     }
 
@@ -646,11 +676,11 @@ class AiPanelAcpTest {
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams("Bash", "rm -rf build"));
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisible()));
         assertTrue(panel.isThinkingForTesting(), "turn is still in progress while the popup waits");
         enter(panel);
         awaitIdle(panel);
-        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertFalse(panel.isPermissionPopupVisible());
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-allow)"));
     }
 
@@ -659,7 +689,7 @@ class AiPanelAcpTest {
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams("Bash", "rm -rf build"));
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisible()));
         panel.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
         awaitIdle(panel);
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(stopped: opt-reject)"));
@@ -670,7 +700,7 @@ class AiPanelAcpTest {
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams("Bash", "rm -rf build"));
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisible()));
         Rect area = new Rect(0, 0, 100, 30);
         Buffer buffer = Buffer.empty(area);
         panel.render(Frame.forTesting(buffer), area);
@@ -709,10 +739,10 @@ class AiPanelAcpTest {
         AiPanel panel = acpPanel();
         askPermissionDuringPrompt(permissionParams("Bash", "rm -rf build"));
         ask(panel, "hi");
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisibleForTesting()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(panel.isPermissionPopupVisible()));
         panel.handleKeyEvent(KeyEvent.ofChar('c', KeyModifiers.CTRL));
         awaitIdle(panel);
-        assertFalse(panel.isPermissionPopupVisibleForTesting());
+        assertFalse(panel.isPermissionPopupVisible());
         assertTrue(hasEntry(panel, AiRole.SYSTEM, "(cancelled)"));
     }
 

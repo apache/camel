@@ -127,7 +127,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
     private static Declaration read(CamelContext context, Node node) {
         Map<String, Node> semantic = fields(node, "semantic declaration");
         for (String field : semantic.keySet()) {
-            if (!Set.of("evaluation", "expert", "state", "audit").contains(field)) {
+            if (!Set.of("evaluation", "state", "audit").contains(field)) {
                 throw new YamlDeserializationException(
                         semantic.get(field), "Unknown property '" + field + "' in semantic declaration");
             }
@@ -142,12 +142,10 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
                     throw new YamlDeserializationException(definition, "Semantic evaluation requires a nonblank name");
                 }
                 Map<String, Node> values = fields(definition, "semantic evaluation '" + name + "'");
-                for (String common : List.of("expert", "state")) {
-                    if (!values.containsKey(common) && semantic.containsKey(common)) {
-                        values.put(common, semantic.get(common));
-                    }
+                if (!values.containsKey("state") && semantic.containsKey("state")) {
+                    values.put("state", semantic.get("state"));
                 }
-                String expert = "default/automatic";
+                String expert = "not provided";
                 try {
                     if (values.containsKey("expert")) {
                         expert = "invalid expert reference";
@@ -243,7 +241,6 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
     }
 
     @YamlType(properties = {
-            @YamlProperty(name = "expert", type = "string"),
             @YamlProperty(name = "state", type = "string")
     })
     public static class DeclarationSchema {
@@ -397,7 +394,7 @@ public class SemanticDefinitionDeserializer extends YamlDeserializerSupport impl
     @YamlType(properties = {
             @YamlProperty(name = "operation", type = "string"),
             @YamlProperty(name = "type", type = "string"),
-            @YamlProperty(name = "expert", type = "string"),
+            @YamlProperty(name = "expert", type = "string", required = true),
             @YamlProperty(name = "state", type = "string"),
             @YamlProperty(name = "parameters", type = "object"),
             @YamlProperty(name = "instructions", type = "string"),

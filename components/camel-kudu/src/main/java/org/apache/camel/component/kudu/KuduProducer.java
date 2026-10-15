@@ -30,7 +30,10 @@ import org.apache.kudu.client.Insert;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
 import org.apache.kudu.client.KuduPredicate;
+import org.apache.kudu.client.KuduSession;
 import org.apache.kudu.client.KuduTable;
+import org.apache.kudu.client.Operation;
+import org.apache.kudu.client.OperationResponse;
 import org.apache.kudu.client.PartialRow;
 import org.apache.kudu.client.Update;
 import org.apache.kudu.client.Upsert;
@@ -103,7 +106,7 @@ public class KuduProducer extends DefaultProducer {
             }
         }
 
-        connection.newSession().apply(insert);
+        apply(connection, insert);
     }
 
     private void doDelete(Exchange exchange, String tableName) throws KuduException {
@@ -124,7 +127,7 @@ public class KuduProducer extends DefaultProducer {
             }
         }
 
-        connection.newSession().apply(delete);
+        apply(connection, delete);
     }
 
     private void doUpdate(Exchange exchange, String tableName) throws KuduException {
@@ -144,7 +147,7 @@ public class KuduProducer extends DefaultProducer {
             }
         }
 
-        connection.newSession().apply(update);
+        apply(connection, update);
     }
 
     private void doUpsert(Exchange exchange, String tableName) throws KuduException {
@@ -164,7 +167,37 @@ public class KuduProducer extends DefaultProducer {
             }
         }
 
-        connection.newSession().apply(upsert);
+        apply(connection, upsert);
+    }
+
+    /**
+     * Applies one row operation with a session of its own and closes the session.
+     * <p>
+     * A session has the flush mode AUTO_FLUSH_SYNC by default: the operation is sent before the call returns, and the
+     * Kudu client does not throw but returns a response with a row error in two cases: for a row that the tablet server
+     * rejected (the key is already present, the row is not found, ...), and for a request that failed (it timed out, no
+     * tablet server could be reached, ...). In the second case it is not known whether the row was written. Both fail
+     * the exchange with a {@link KuduRowErrorException}.
+     * <p>
+     * A session stays registered with its client until it is closed. After an operation without a row error a failure
+     * of the close is thrown; in this flush mode the close has nothing left to send.
+     */
+    private static void apply(KuduClient connection, Operation operation) throws KuduException {
+        KuduSession session = connection.newSession();
+        try {
+            OperationResponse response = session.apply(operation);
+            if (response != null && response.hasRowError()) {
+                throw new KuduRowErrorException(response.getRowError());
+            }
+        } catch (KuduException | RuntimeException e) {
+            try {
+                session.close();
+            } catch (KuduException | RuntimeException closeFailure) {
+                e.addSuppressed(closeFailure);
+            }
+            throw e;
+        }
+        session.close();
     }
 
     private void doCreateTable(Exchange exchange, String tableName) throws KuduException {

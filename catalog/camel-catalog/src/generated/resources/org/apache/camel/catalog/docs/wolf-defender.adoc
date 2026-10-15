@@ -103,10 +103,9 @@ In Java, bind the expert in the registry and use `context.addService(security, t
 Explicitly registered beans otherwise retain their existing lifecycle owner.
 Two beans may use different provisioned directories or limits; their resources and identity remain separate.
 
-The normal Semantic language default/sole-expert selection rules also apply.
-For automatic service discovery without a configured bean, set
-`camel.wolf-defender.model-directory=/opt/models/wolf-defender-small`.
-The language manages the discovered expert's lifecycle. With multiple eligible experts, explicitly select one or configure a default.
+Every evaluation must explicitly name its expert bean. The language does not discover or
+construct an expert automatically. A registered bean can also read its model directory from
+`camel.wolf-defender.model-directory` when `modelDirectory` is not set directly.
 Runtime capabilities come from the expert's `@SemanticExpert` operation contract. Inspect it with
 `SemanticCapabilities.from(WolfDefenderSemanticAdapter.class)` without constructing the expert or loading native libraries.
 The Camel Catalog lists this module and its documentation; generated expert-operation descriptors and expert-specific
@@ -126,7 +125,9 @@ Configure properties before starting the service. Changes take effect on the nex
 
 == Input, probability and document limits
 
-The input must be a nonblank String. Missing input, structured objects and oversized input are errors;
+The input must be a nonblank String. Image/media envelopes, image data URLs and binary bodies
+are rejected before inference. An image `Content-Type` on the selected body identifies image
+input; this expert does not transcribe, decode or stringify it. Missing input, structured objects and oversized input are errors;
 select or convert a field explicitly in the route when necessary. No implicit `toString()` conversion is performed.
 The expert adds the pinned tokenizer's special tokens, disables truncation and padding, and supplies INT64
 `input_ids` and `attention_mask` tensors. Each evaluation runs one unpadded window.

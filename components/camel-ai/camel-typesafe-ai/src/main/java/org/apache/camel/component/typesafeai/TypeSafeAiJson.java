@@ -37,7 +37,7 @@ final class TypeSafeAiJson {
         Map<String, Object> request = new LinkedHashMap<>(input);
         request.putIfAbsent("model", model);
         text(request.get("model"));
-        content(request.get("state"));
+        validateState(request.get("state"));
         validateQuestions(request.get("questions"));
         jsonValue(request);
         // Detach nested criteria so later caller mutations cannot change response validation.
@@ -66,7 +66,7 @@ final class TypeSafeAiJson {
 
     private static void question(Map<?, ?> question) {
         if (question.get("instructions") != null) {
-            content(question.get("instructions"));
+            validateState(question.get("instructions"));
         }
         Object type = question.get("type");
         if ("noul".equals(type)) {
@@ -74,7 +74,7 @@ final class TypeSafeAiJson {
                 object(question.get("criteria")).forEach((key, value) -> {
                     require("true".equals(key) || "false".equals(key), "Noul criteria keys must be true or false");
                     if (value != null) {
-                        content(value);
+                        validateState(value);
                     }
                 });
             }
@@ -84,14 +84,14 @@ final class TypeSafeAiJson {
             criteria.forEach((key, value) -> {
                 text(key);
                 if (value != null) {
-                    content(value);
+                    validateState(value);
                 }
             });
         } else if ("score".equals(type)) {
             require(question.get("criteria") instanceof List<?>, "Score criteria must be a list");
             List<?> criteria = (List<?>) question.get("criteria");
             require(!criteria.isEmpty() && criteria.size() <= 10, "Score requires 1 to 10 levels");
-            criteria.forEach(TypeSafeAiJson::content);
+            criteria.forEach(TypeSafeAiJson::validateState);
         } else {
             throw new IllegalArgumentException("Question type must be noul, choice or score");
         }
@@ -140,7 +140,7 @@ final class TypeSafeAiJson {
             require(probabilities.keySet().equals(levels), "Score probabilities must cover the requested levels");
             Map<?, ?> legend = object(answer.get("legend"));
             require(legend.keySet().equals(levels), "Score legend must cover the requested levels");
-            legend.values().forEach(TypeSafeAiJson::content);
+            legend.values().forEach(TypeSafeAiJson::validateState);
         }
     }
 
@@ -165,7 +165,7 @@ final class TypeSafeAiJson {
         require(value instanceof String text && !text.isBlank(), "Expected a nonblank string");
     }
 
-    private static void content(Object value) {
+    static void validateState(Object value) {
         require(value instanceof String || value instanceof Map<?, ?> || value instanceof List<?>,
                 "Content must be a string, map or list");
         jsonValue(value);
@@ -173,6 +173,7 @@ final class TypeSafeAiJson {
 
     private static void jsonValue(Object value) {
         if (value instanceof Map<?, ?> map) {
+            require(!map.containsKey("$semanticInput"), "TypeSafe AI does not support media input envelopes");
             map.forEach((key, child) -> {
                 require(key instanceof String, "JSON object keys must be strings");
                 jsonValue(child);

@@ -65,6 +65,54 @@ public interface WasmEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to compile the module to JVM bytecode, with the runtime
+         * compiler of Endive, instead of interpreting it. The module is
+         * compiled once per endpoint, when the first producer of the endpoint
+         * is initialized (with the route, or at the first message with
+         * lazyStartProducer), which takes time for a large module; every
+         * exchange then runs the compiled code, which is much faster than the
+         * interpreter. Stopping and starting the route does not compile the
+         * module again. All other options work the same way. The compiler
+         * generates classes at run time, so this option cannot be used in a
+         * GraalVM native image.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param compile the value to set
+         * @return the dsl builder
+         */
+        default WasmEndpointBuilder compile(boolean compile) {
+            doSetProperty("compile", compile);
+            return this;
+        }
+        /**
+         * Whether to compile the module to JVM bytecode, with the runtime
+         * compiler of Endive, instead of interpreting it. The module is
+         * compiled once per endpoint, when the first producer of the endpoint
+         * is initialized (with the route, or at the first message with
+         * lazyStartProducer), which takes time for a large module; every
+         * exchange then runs the compiled code, which is much faster than the
+         * interpreter. Stopping and starting the route does not compile the
+         * module again. All other options work the same way. The compiler
+         * generates classes at run time, so this option cannot be used in a
+         * GraalVM native image.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param compile the value to set
+         * @return the dsl builder
+         */
+        default WasmEndpointBuilder compile(String compile) {
+            doSetProperty("compile", compile);
+            return this;
+        }
+        /**
          * Environment variables for the module, for example
          * environment.LOG_LEVEL=debug. The module sees no environment variables
          * other than these and the headers listed in environmentHeaders; the

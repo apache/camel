@@ -66,7 +66,7 @@ public final class SemanticAuditConfiguration {
         return enabled;
     }
 
-    /** Whether explicit decisions and the dispatcher are enabled, independently of individual evaluation filtering. */
+    /** Whether any expert enables evaluation capture and the dispatcher is needed. */
     public boolean isCapturing() {
         return enabled || experts.containsValue(true);
     }

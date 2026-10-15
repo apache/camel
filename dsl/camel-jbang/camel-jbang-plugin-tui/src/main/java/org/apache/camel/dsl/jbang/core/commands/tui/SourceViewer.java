@@ -480,6 +480,10 @@ class SourceViewer {
         return plainMode;
     }
 
+    boolean isDiscardPending() {
+        return pendingDiscard;
+    }
+
     /** Whether a dialog over the editor has the keys (discard, the problems of a save, the diff, refactor). */
     boolean showsDialog() {
         return pendingDiscard || editMode && (validationErrors != null || diffOverlay || refactor.isPopupOpen());
@@ -2200,7 +2204,7 @@ class SourceViewer {
             renderValidationPopup(frame, area);
         }
         if (pendingDiscard) {
-            renderDiscardPopup(frame, area);
+            DialogHelper.renderConfirm(frame, area, "Discard Changes?", "Unsaved changes will be lost.", false);
         }
         refactor.render(frame, area);
     }
@@ -2314,10 +2318,6 @@ class SourceViewer {
                     Paragraph.builder().text(Text.from(visible.toArray(Line[]::new))).build(),
                     inner);
         }
-    }
-
-    private void renderDiscardPopup(Frame frame, Rect area) {
-        DialogHelper.renderConfirm(frame, area, "Discard Changes?", "Unsaved changes will be lost.", false);
     }
 
     private static void wrapText(String text, int width, List<Line> out) {

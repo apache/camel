@@ -159,8 +159,12 @@ public final class SecurityUtils {
                 "component:opa",
                 "component:openfga"));
         owners.put("hostnameverification", Set.of(
+                "component:mina",
+                "component:mllp",
                 "component:netty",
-                "component:nettyhttp"));
+                "component:nettyhttp",
+                "component:smpp",
+                "component:smpps"));
         owners.put("httpshostnameverificationenabled", Set.of(
                 "component:paho",
                 "component:pahomqtt5"));

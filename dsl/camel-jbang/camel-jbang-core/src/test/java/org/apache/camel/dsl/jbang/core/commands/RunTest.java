@@ -248,4 +248,21 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(Run.mergeJvmArgs("-Xmx256m", "-XX:StartFlightRecording=filename=camel.jfr"))
                 .isEqualTo("-Xmx256m -XX:StartFlightRecording=filename=camel.jfr");
     }
+
+    @Test
+    public void shouldParseDataDirOption() throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--source-dir=shop", "--data-dir=inbox,archive");
+
+        assertThat(command.dataDir).isEqualTo("inbox,archive");
+    }
+
+    @Test
+    void sourceDirReloadPatternLeavesTheDataDirsOut() {
+        // CAMEL-25670: the routes read and write the files of a data folder, which must not reload them
+        assertThat(Run.sourceDirReloadPattern(null)).isEqualTo("*");
+        assertThat(Run.sourceDirReloadPattern("inbox")).isEqualTo("*,!inbox/**");
+        assertThat(Run.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
+                .isEqualTo("*,!inbox/**,!archive/**,!data/in/**");
+    }
 }

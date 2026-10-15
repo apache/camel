@@ -59,6 +59,11 @@ or converted to an animated GIF.
 
 An AI agent connected over MCP records a tape of what it does with `tui_tape_start` and `tui_tape_stop`.
 
+While a tape records, and while `--record` plays one, actions that ask first go ahead at once: quitting, stopping
+an integration, a file an AI writes, a tool an ACP agent runs, deleting or converting a file. The model or the tape
+does everything itself, and the keys a tape plays, like those an MCP client sends, never answer a dialog that asks the
+user to confirm. Leaving the editor with unsaved changes still asks, so save before leaving it.
+
 == Scripted Recording
 
 Use the `--record` flag to play a `.tape` file in the TUI and record what happens on screen:
@@ -214,7 +219,9 @@ TIP: Give each demo its own theme, so the GIFs on a page do not all look the sam
 theme for that run only and leaves your saved theme as it is, as in
 `camel tui orders --theme=tokyo-night --record=demo.tape`, and a `Theme "nord"` line in the tape switches
 it during the recording. Light themes such as `catppuccin-latte` stand out between dark ones. See
-xref:camel-jbang-tui-settings.adoc#_theme[Theme] for the list.
+xref:camel-jbang-tui-settings.adoc#_theme[Theme] for the list. In a demo of the AI or shell panel,
+`--panel-theme` gives that panel a theme of its own for the run, such as `--panel-theme=light` on a dark
+theme, so the viewer sees where the panel starts.
 
 TIP: An AI agent can write and run the tape itself: the commands for the TUI are the same as the
 xref:camel-jbang-tui-ai-agents.adoc[MCP tools] of the TUI (`tui_show_caption`, `tui_locate` with

@@ -3427,6 +3427,7 @@ public abstract class BaseMainSupport extends BaseService {
         public PlaceholderSummaryEventNotifier(CamelContext camelContext, OrderedLocationProperties propertyPlaceholders) {
             this.camelContext = camelContext;
             this.propertyPlaceholders = propertyPlaceholders;
+            setIgnoreAiEvents(true);
         }
 
         @Override

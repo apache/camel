@@ -20,7 +20,6 @@ import java.util.Map;
 
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.net.SocketAddress;
-import io.vertx.core.net.impl.ConnectionBase;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -74,7 +73,7 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     }
 
     public void onException(String connectionKey, Throwable cause, SocketAddress remote, RoutingContext routingContext) {
-        if (cause == ConnectionBase.CLOSED_EXCEPTION) {
+        if (VertxWebsocketHelper.isConnectionClosed(cause)) {
             // Ignore as VertxWebsocketHost registers a closeHandler to trap WebSocket close events
             return;
         }

@@ -28,6 +28,7 @@ import io.quarkiverse.mcp.server.ToolCallException;
  * Generates runnable YAML DSL routes that combine document processing (Docling, Textract) with AI services (Bedrock)
  * for common use cases: summarization, extraction, RAG, and classification.
  */
+@McpSecured
 @ApplicationScoped
 public class AiPipelineScaffoldTools {
 

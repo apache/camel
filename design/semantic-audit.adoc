@@ -1,77 +1,140 @@
-= Semantic audit and observation proposal
+= Semantic audit and monitoring
 
-Status: the base implementation was merged in CAMEL-25499 / PR #27649. The input capture extension
-described below is proposed as a follow-up; it does not assert prior upstream design agreement.
+CAMEL-25499 supplies the audit foundation. CAMEL-25618 builds the result, case and monitoring surfaces on
+the shared AiEvent contract introduced by CAMEL-25408. CAMEL-25357 does not need a second recorder.
+CAMEL-23369 can consume the events or the existing tracing observer hooks without an OpenTelemetry
+dependency in camel-semantic.
 
-== Scope and related work
+== Assessment and provenance
 
-CAMEL-25357 proposes semantic metadata and a bounded recent-evaluation recorder. Metadata and evaluation
-tooling already exist from CAMEL-25491. The memory sink/reader in this change implements the remaining
-recent-history role; a second recorder should not be added for CAMEL-25357. Its live-capacity proposal is
-replaced here by configuration changes while stopped. The relationship and this tradeoff remain subject
-to maintainer acceptance. No issue is closed by this proposal.
+Experts return typed assessments. Camel preserves the returned Boolean, choice, fractional score or
+classification, along with execution state and supplied findings. The framework does not interpret
+Boolean polarity, impose severity scales or infer a route action. New route-action capture, metadata,
+filters and evidence workflows are removed. The preview SemanticAudit and SemanticAuditDecision APIs
+are removed outright; the upgrade guide describes migration to automatic evaluation capture.
+Persisted v1 decision records remain readable and exportable as legacy data.
 
-The runtime/SPI and DSL, connector, TUI/MCP, and CLI retrieval are separate layers and commits. Runtime
-capture requires none of the presentation modules. Keeping these layers in one review demonstrates the
-complete path; they can be reviewed independently. Delivery is bounded and best-effort, not a durable
-compliance transaction. CAMEL-23369 can consume the independent observer SPI through Camel telemetry;
-this change adds neither a second OpenTelemetry SDK nor an exporter.
+Capture entry route and executing route separately, before invoking the provider. The existing routeId
+field and query keep their entry-route meaning. No active route means no executing-route identity.
+Copy both exchangeId and an existing valid Camel breadcrumbId without fabricating either. A breadcrumb
+associates records; it does not prove causation or completeness.
 
-== Configuration and decisions
+== Shared events and retention
 
-The first implementation uses semantic DSL configuration, as selected for this implementation. Properties
-remain a valid alternative for deployment-specific control. DSL placeholders support such values without
-introducing two competing configuration authorities. A second properties hierarchy is not rejected in
-principle, but would need an explicit precedence contract before being introduced.
+[source,mermaid]
+----
+flowchart LR
+    R[Semantic runtime captures and freezes an assessment] --> E[Typed SemanticEvent with complete declared interpretation]
+    E --> A[Audit recorder applies its own capture budget]
+    I[Separately opted-in input snapshot] --> A
+    A --> Q[Bounded queue and capability-aware audit sinks]
+    E --> H[EventHelper.notifyAiEvent]
+    H --> N[Registered EventNotifier listeners]
+    N -->|SemanticEvent completions| P[Metric producers]
+    P -->|Current local measurements| C[Bounded cache of latest measurements]
+    N -->|SemanticMonitoringEvent measurements| C
+    P --> M[Typed monitoring AiEvent]
+    M --> H
+    C --> V[Read-only JMX / TUI / CLI / MCP]
+    N --> X[Optional Micrometer exporter - CAMEL-25648]
+    X --> B[External monitoring backend owns history and comparisons]
+----
 
-The global switch is a default; explicit expert-instance overrides win in both directions. Explicit route
-decisions are recorded whenever the global default or any expert override enables capture. This preserves
-decisions in the common global-off/security-on case without guessing which supporting expert owns an action.
-Per-expert exclusions apply to evaluation records, so referenced evidence can be unavailable. Routes always
-declare actions explicitly; a boolean expert result never implies allow or block.
 
-Settings remain frozen while the audit service runs. Stop/start permits reconfiguration, resolves backends
-again and rebuilds the bounded memory store if capacity changes. Ordinary source reload does not change
-capture policy. Deleting the declaring resource removes its evaluations but preserves active settings until
-stop; a new start without that declaration uses disabled defaults.
+The semantic runtime constructs an immutable occurrence snapshot once and passes a typed SemanticEvent
+directly to the audit recorder and to EventHelper.notifyAiEvent. Starts, completed assessments and request
+outcomes have distinct kinds. A cancellation observation does not replace eventual provider completion.
+Each completed batch member has its own occurrence. Generic consumers select the kinds they understand.
+Route-bound occurrences use SemanticExchangeEvent and AiEvent.ExchangeAiEvent for live correlation. Detached
+calls do not fabricate an Exchange. Synchronous listeners can access the live body and headers, while getData
+and JSON contain only frozen occurrence data. Consumers that enqueue or retain data must not retain the live
+event or Exchange; the built-in recorder and monitoring projections retain only frozen data.
 
-== API and observation
+The event carries the complete declared interpretation, including its original labels and meanings.
+It is visible to all subscribed listeners. Event production does not truncate interpretation to an
+audit-retention budget. Consumers that retain data own their payload, queue and storage budgets. EventHelper delivers synchronously and does not keep history.
+Callbacks should perform short, bounded work; asynchronous consumers must define queue loss behavior.
+Event toString methods contain identifiers and kind only because listener failures may log them.
 
-The public backend contract consists of the sink, reader, query, page and immutable record. Records retain
-a versioned map serialization with field/type allowlists and typed timestamp, duration and evidence accessors.
-Readers can reuse public exact-filter matching. The internal dispatcher owns request identities, invocation
-handles, service startup and exchange transport; these are not extension points.
+The audit recorder is one such consumer. Before enqueueing, it projects the event into the bounded
+SemanticAuditRecord format. Interpretation capture is all-or-nothing: 2048 code points in total,
+32 alternatives/levels, 256 code points per label, and the existing bounded JSON depth/node rules.
+Oversized interpretation is explicitly marked interpretationOmitted=audit_snapshot_limit. It remains
+complete on the event delivered to other listeners. Queue closures retain the bounded record only.
+Raw input is separately opt-in and attached privately to the audit copy after applying its capture and
+redaction policy. Raw input is absent from the frozen event payload; an Exchange-aware listener can access
+live input through getExchange regardless of audit capture settings.
 
-The route-facing SemanticAudit facade and SemanticAuditDecision processor expose explicit decisions and the
-documented evidence property. Observers receive bounded snapshots independently of capture settings. Start
-and completion run on the invocation thread. Cancellation is a separate request event, not concurrent
-completion. Completion reverses start-callback order; registry insertion order is not promised.
+Each sink declares supported extension groups through SemanticAuditCapabilities. Unknown groups are
+removed for that destination, so older backends do not receive unrecognized v1 fields. Missing extension
+support does not reject startup. Health responses expose destination and reader capabilities. Older
+records without interpretation remain not recorded; current definitions never reconstruct historical meaning.
 
-== Query surfaces
+The audit queue and memory store default to 1000 entries each. Queue overflow drops the new record and
+counts it; memory overflow evicts the oldest. External stores and logging infrastructure own their
+retention and durability. Audit delivery is best effort and independent of management-listener filters.
+SemanticObserver remains available for captureContext and detached tracing completion; its established
+bounded projection and callback ordering remain compatible.
 
-All retrieval uses the same reader and console. The CLI exposes filters, cursor pages and event/evidence
-lookup. The TUI maintains its own browsing state. Its audit MCP tool queries the runtime directly without
-changing the screen, and is added to AI sessions only when the selected integration exposes audit history.
-The tables display Camel's breadcrumb ID to associate evaluations with route decisions, including split
-exchanges. Camel's existing breadcrumb mechanism owns generation and propagation; auditing only copies
-the bounded string identifier when present and never invents an ID or falls back to another identifier.
-The memory reader filters a consistent snapshot outside its append lock and binds cursors to a canonical
-SHA-256 query fingerprint. Backend failures expose a stable error code without backend messages.
+== Media input
 
-== Opt-in input capture
+The private audit copy classifies input independently of content capture using the optional
+`inputType` extension. Values are text, image, text-and-images, structured, unsupported or unknown
+when bounded classification cannot finish. Older destinations receive their existing projection.
+Neither image bytes nor this classification are added to the frozen monitoring/event payload.
 
-The follow-up retains the selected evaluation state only when that expert explicitly enables
-`input.enabled`; auditing alone never enables input retention. Capture applies to direct, named,
-batch and console evaluations. A decision refers to its evaluation evidence rather than duplicating
-submitted input. Input is excluded from observer callbacks even when audit capture is enabled.
+Ordered media input uses the provider-independent `$semanticInput` envelope. Per-expert input
+capture remains opt-in, bounded and redacted. An image too large for the configured snapshot
+may be replaced by a bounded descriptor (`type=image`, optional mediaType, dataOmitted=snapshot_limit).
+The redactor still processes that detached snapshot. A descriptor cannot recreate missing data.
 
-The snapshot is taken before provider validation or execution and bounded by `maxChars` (4096 by
-default), depth and node count. Unsupported or oversized state is omitted with a stable reason,
-without truncation or arbitrary object conversion. An optional `SemanticAuditInputRedactor` registry
-bean receives the immutable snapshot; its output is bounded again. Redaction failure omits input
-without changing the evaluation result or retaining exception messages.
+Audit displays label input type even when payload capture is disabled. TUI image decoding occurs
+off the render thread and uses only retained bytes, with bounded thumbnails and an explicit
+unavailable state. Normal CLI human/JSON display omits base64; explicit file exports can retain
+requested captured input. No historical URL is fetched and browsing never invokes an expert.
 
-Captured input follows the existing sink/reader contract and backend retention policy, including log
-output when the log sink is configured. It is available through the console, CLI, TUI and MCP. There
-is no separate input repository or telemetry payload path. Input settings use the same DSL authority
-and restart requirement as the other audit settings; existing records without input remain readable.
+== Read-only access
+
+The reader SPI has no evidence-specific limit on getAll. Explicit console callers limit requests to
+1000 IDs and responses to 4 MiB, and use batches of at most 100 IDs for existing readers. Missing IDs
+are separate from lookup failures. Query pages still permit at most 200 records; legacy stored evidence
+lists still permit at most 100 references. Case retrieval has a five-second cooperative deadline between
+backend operations. Backends must bound individual I/O calls and honor interruption.
+
+Cases are scoped to the selected source and reader. Use a recorded breadcrumb, then exchange, invocation
+or event identity, and retain supplied batch/request relationships. Audit pages support inclusive `since`, exclusive `until`, exact definition/operation identity and
+explicitly typed result predicates (Boolean/Choice equality, Score equality/ranges, Classification membership).
+All filters apply before pagination and participate in cursor identity; queries only cover retained captured
+records, not necessarily the whole monitored population. Additional reader filters are optional;
+unsupported relationships and limited retrieval are visible. Retained history never proves completeness.
+Case/bulk summaries exclude input. Explicit input-bearing export includes the untrusted-data warning.
+Browsing, diagnostics and creating a playground draft must never invoke an expert.
+
+== Producer-owned metrics and monitoring
+
+SemanticResultMetrics offers bounded typed-result counters for an explicitly selected population. The
+owner supplies dimensions, labels' meaning and numeric buckets. Choices count the returned selection;
+probability entries are not additional answers. Booleans use the final returned value without a second
+threshold. Scores keep fractions. Classification counts membership and empty sets. Execution failures,
+unavailable results and cardinality loss remain separate. No provider-attempt count is fabricated.
+
+SemanticMetricSource supplies immutable current measurements with bounded identity, dimensions, units,
+observation times and population metadata. SemanticMonitoringEvent is an optional metrics publication path,
+distinct from assessment events so collectors do not count their own output. The runtime caches only the
+latest value per series, up to 100 series from at most 32 registered sources, and samples once per second.
+JMX, CLI, TUI and MCP read that cache without inference, audit scans or remote I/O. Restart clears the cache;
+source failures retain the last measurement and expose collection health. Missing values remain unknown.
+
+External monitoring systems own durable time-series storage, historical queries, baselines, comparisons,
+detector state, alerts, dashboards and cross-signal correlation. Camel has no monitoring-store SPI, recovery
+queue, sampled history, comparison/signal report model or example audit-event ID list. The TUI displays
+current counts, distributions and evaluation duration with expert/definition grouping and collection health.
+There are no historical-period or baseline controls. Register a bounded number of read-only management
+facades per source, never one MBean per event or answer. JMX-disabled deployments retain the console.
+
+CAMEL-25648 adds a shared Micrometer instrumentation/export bridge for Camel Main, Spring Boot and Quarkus.
+It reuses the runtime registry; Prometheus or another registry backend owns monitoring history and queries.
+Correlation, exchange, breadcrumb and invocation IDs are not metric labels. They remain audit/log/trace
+context; standard tracing exemplars may supply sampled metric-to-trace references where supported. Audit
+investigation uses a matching time window, definition/operation and typed-result predicate, without requiring
+metric-attached event IDs. Audit capture and retention can make its population incomplete.

@@ -113,8 +113,8 @@ input, and the contract is:
 * It always finishes, in bounded time and memory, whatever the source.
 * What it returns (endpoint URIs, descriptions, labels, the model) is text the
   source's author chose. Consumers treat it as data, never as instructions,
-  including when it goes into an AI prompt. What an AI proposes from it goes
-  through the TUI's confirmation dialogs before anything is written.
+  including when it goes into an AI prompt. What an AI proposes from it is
+  written only through the TUI's write mode (see _Developer tools_).
 
 A crafted source that makes the tooling break this contract is in scope: for
 example parsing that executes code, loads a class from the source, defines a
@@ -124,6 +124,56 @@ case described above, not a finding. How `LwJavaParser` enforces each rule
 (the Camel DSL it may call, pinned by a test, stub classes for the project's
 classes, the limits) is described in
 https://github.com/apache/camel/blob/main/design/java-dsl-parser.adoc[`design/java-dsl-parser.adoc`].
+
+=== Developer tools
+
+Camel CLI (`camel`) and Camel TUI (`camel tui`) are developer tools. They run
+on the developer's own machine, for the developer's own integrations, in the
+inner loop of writing and trying routes; they are not part of a production
+deployment. The developer is fully trusted, as a route author and an operator
+are, and so is the local machine: its user account, its loopback interface and
+the processes the developer starts. What the integrations send the TUI is not:
+log lines, message bodies and headers, exceptions and span attributes carry
+data from external message senders, and the TUI shows them without the
+characters a terminal would act on (control and BiDi characters).
+
+Camel TUI has AI assistants: the model of the AI panel (a local or a hosted
+LLM), a coding agent driving the panel over ACP, and an MCP client connected
+to `camel tui --mcp`. They act for the developer, and the TUI's tools let them
+do what the developer does in the TUI: read the screens, start and stop routes
+and infrastructure, send test messages to the integration, query its
+database, evaluate expressions and edit the project's files. To keep the
+feedback loop fast these tools run without asking. The guardrails are
+deliberately few, and they are the contract:
+
+* The file tools write only inside the integration's source directory, and
+  each write goes through the AI panel's write mode: a confirmation dialog
+  with the diff, or a replay in the source editor that the developer saves,
+  unless the developer chose `/write auto`.
+* The developer confirms a call that reaches beyond the integration, may
+  destroy data or runs code: a message to an endpoint the integration does not
+  have (a route, an endpoint of a component the Camel catalog marks internal,
+  such as `direct:`, `seda:` or `log:`, and the integration's own endpoints are
+  inside it), a message whose body the integration reads from a file outside
+  the project folder, a SQL statement other than a single `SELECT`, `SHOW` or
+  `DESCRIBE`, a row update, and an expression in a language that runs code,
+  such as Groovy. An HTTP request goes only to the integration's own server on
+  `localhost`.
+* A coding agent's own tools - its shell commands, its file changes, its
+  network fetches - are put in front of the developer in the TUI.
+* Keys sent over MCP never answer a dialog that asks the developer to confirm
+  something.
+* While the developer records a tape, or plays one with `--record`, nothing
+  asks: the developer chose to let the model, the agent or the tape act alone.
+
+A tool that breaks this contract is in scope: for example a file written
+outside the source directory, a message sent to an endpoint the integration
+does not have without the developer's confirmation, a key sent over MCP that
+answers a confirmation, or text from an integration that acts on the
+terminal. An assistant doing what the tools allow is the
+trusted developer's case, also when untrusted data shown in the TUI - a
+message body, a log line, an example's README - steered the model to it
+(prompt injection); see _Out of scope_.
 
 === Adversary model
 
@@ -982,6 +1032,13 @@ be closed as `not a vulnerability`.
   shell out to, such as `docker`/`podman`/`camel run`) reachable from
   `127.0.0.1` is the documented contract for both flags, not a framework
   vulnerability.
+* *An AI assistant in Camel TUI using the TUI's tools.* The AI panel's model,
+  a coding agent over ACP or an MCP client that stops a route, sends a message
+  to the integration's endpoints, queries its database, evaluates an
+  expression or writes the project's files through the write mode acts for the
+  trusted developer, under the contract in _Developer tools_. That such a call
+  runs without asking, or that untrusted data in a message or a log steered
+  the model to make it, is not a finding; a tool that breaks the contract is.
 * *Vulnerabilities in third-party transitive dependencies.* Camel fixes
   CVEs in Camel code, not in third-party JARs; the report belongs
   upstream. Camel may upgrade the dependency to pick up an upstream fix,
@@ -1217,6 +1274,19 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   authored an expression or route over untrusted input, or wired an
   untrusted source straight through without `+removeHeaders("Camel*")+`,
   the disposition is the route-author position in _Out of scope_.
+* *"The AI panel of Camel TUI, or an agent driving it, runs a tool that
+  changes something without asking the user"*, also after a prompt
+  injection. Camel TUI is a developer tool whose tools run without asking
+  by design; the few calls the developer confirms are listed in _Developer
+  tools_, which is the contract. See the AI-assistant entry in _Out of
+  scope_.
+* *"The JSON output of a dev console shows endpoint URIs with their
+  secrets, while its text output masks them."* The dev consoles are
+  development tools (see _Developer tools_ and the profile entry in _Out
+  of scope_), and their JSON is what the tools use to address and compare
+  endpoints: sending to an endpoint, browsing one, matching the URIs of
+  routes and endpoints. A masked URI no longer reaches the endpoint it
+  names, so masking it would break them.
 
 === Triage dispositions
 

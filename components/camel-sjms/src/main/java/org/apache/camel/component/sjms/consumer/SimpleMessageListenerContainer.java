@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -69,6 +70,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     private final Lock consumerLock = new ReentrantLock();
     private Set<MessageConsumer> consumers;
     private Set<Session> sessions;
+    // the number of onException calls: a connection recovery compares it before and after its attempt, as an
+    // onException that comes before the consumers of the new connection are created finds none to drop
+    private final AtomicLong connectionFailures = new AtomicLong();
     private ScheduledExecutorService recoverPool;
     private BackgroundTask recoverTask;
     private Future<?> recoverFuture;
@@ -180,6 +184,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     @Override
     public void onException(JMSException exception) {
+        connectionFailures.incrementAndGet();
         if (exceptionListener != null) {
             try {
                 exceptionListener.onException(exception);
@@ -208,10 +213,21 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     protected boolean recoverConnection(BackgroundTask task) {
         LOG.debug("Recovering from JMS Connection exception (attempt: {})", task.iteration());
         try {
-            refreshConnection();
+            long failures = refreshConnectionAndCountFailures();
             initConsumers();
             connectionLock.lock();
             try {
+                if (consumers == null || connectionFailures.get() != failures) {
+                    // the new connection failed during this attempt: onException dropped its consumers while they
+                    // were created, or it came before and found none to drop (then the consumers on the failed
+                    // connection are dropped here). onException did not schedule another recovery as this one is
+                    // running. So this one has to try again
+                    this.sessions = null;
+                    this.consumers = null;
+                    LOG.debug("JMS Connection failed again during recovery (attempt: {}). Will try again in {} millis",
+                            task.iteration(), endpoint.getRecoveryInterval());
+                    return false;
+                }
                 if (recoverFuture != null) {
                     recoverFuture.cancel(false);
                 }
@@ -358,14 +374,33 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             if (consumers == null) {
                 LOG.debug("Initializing {} concurrent consumers as JMS listener on destination: {}", concurrentConsumers,
                         destinationName);
-                sessions = new HashSet<>(concurrentConsumers);
-                consumers = new HashSet<>(concurrentConsumers);
-                for (int i = 0; i < this.concurrentConsumers; i++) {
-                    Session session = createSession(connection, endpoint);
-                    MessageConsumer consumer = createMessageConsumer(session);
-                    configureConsumer(consumer, session);
-                    sessions.add(session);
-                    consumers.add(consumer);
+                Set<Session> newSessions = new HashSet<>(concurrentConsumers);
+                Set<MessageConsumer> newConsumers = new HashSet<>(concurrentConsumers);
+                // assigned before the loop, so that an onException during the creation (it sets the fields to null)
+                // is seen by recoverConnection, which then tries again
+                sessions = newSessions;
+                consumers = newConsumers;
+                try {
+                    for (int i = 0; i < this.concurrentConsumers; i++) {
+                        Session session = createSession(connection, endpoint);
+                        newSessions.add(session);
+                        MessageConsumer consumer = createMessageConsumer(session);
+                        newConsumers.add(consumer);
+                        configureConsumer(consumer, session);
+                    }
+                } catch (Exception e) {
+                    // not all the consumers could be created (the connection failed again, the destination is not
+                    // available yet). Close the ones that were, and leave no half filled set behind: the next
+                    // attempt (connection recovery, restart) would take it for the consumers and create none
+                    this.consumers = null;
+                    this.sessions = null;
+                    for (MessageConsumer consumer : newConsumers) {
+                        closeConsumer(consumer);
+                    }
+                    for (Session session : newSessions) {
+                        closeSession(session);
+                    }
+                    throw e;
                 }
             }
         } finally {
@@ -429,14 +464,27 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     protected final void refreshConnection() throws Exception {
+        refreshConnectionAndCountFailures();
+    }
+
+    /**
+     * Closes the connection and creates a new one, which is started if the container is started.
+     *
+     * @return the number of connection failures (onException calls) before the new connection was created, so a failure
+     *         that is counted later may be one of the new connection
+     */
+    private long refreshConnectionAndCountFailures() throws Exception {
         connectionLock.lock();
         try {
             closeConnection(connection);
             this.connection = null;
+            // read after the old connection is closed and before the new one has this container as exception listener
+            long failures = connectionFailures.get();
             createConnection();
             if (this.connectionStarted) {
                 startConnection();
             }
+            return failures;
         } finally {
             connectionLock.unlock();
         }

@@ -105,6 +105,10 @@ class McpFacadeWriteFileTest {
     }
 
     static McpFacade facade(Path sourceDir, boolean devMode, ConfirmingBridge bridge) {
+        return facade(sourceDir, devMode, bridge, null);
+    }
+
+    static McpFacade facade(Path sourceDir, boolean devMode, ConfirmingBridge bridge, MonitorContext ctx) {
         IntegrationInfo info = new IntegrationInfo();
         info.name = "demo";
         info.pid = "1";
@@ -114,8 +118,24 @@ class McpFacadeWriteFileTest {
         cp.value = "file:" + sourceDir.resolve("demo.camel.yaml");
         info.configProperties.add(cp);
         return new McpFacade(
-                null, new AtomicReference<>(List.of(info)), null, null, null, null, null, null, null, null, null,
+                ctx, new AtomicReference<>(List.of(info)), null, null, null, null, null, null, null, null, null,
                 null, bridge);
+    }
+
+    @Test
+    void writesWithoutAskingWhileATapeDrivesTheMonitor(@TempDir Path dir) throws IOException {
+        // CAMEL-25444: a model records a tape, or --record plays one, and no one is there to confirm
+        Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
+        ConfirmingBridge bridge = new ConfirmingBridge(false);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of()));
+        ctx.tapeDriven = () -> true;
+        McpFacade facade = facade(dir, true, bridge, ctx);
+
+        JsonObject result = facade.writeFile("demo", "demo.camel.yaml", "- route:\n    id: x\n", true);
+
+        assertEquals("overwritten", result.getString("status"));
+        assertEquals(0, bridge.asked, "nothing asks while a tape drives the monitor");
+        assertEquals("- route:\n    id: x\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
     }
 
     @Test

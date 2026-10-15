@@ -46,7 +46,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * {@code event:Exchange*} matches all exchange events, and {@code event:*} matches all events.
  */
 @UriEndpoint(firstVersion = "4.19.0", scheme = "event", title = "Event", syntax = "event:events",
-             consumerOnly = true, remote = false,
+             consumerOnly = true, remote = false, internal = true,
              category = { Category.CORE, Category.MONITORING },
              headersClass = CamelEventConstants.class)
 public class CamelEventEndpoint extends DefaultEndpoint {

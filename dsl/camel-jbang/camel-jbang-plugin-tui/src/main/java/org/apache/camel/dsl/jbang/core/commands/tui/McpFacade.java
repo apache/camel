@@ -110,6 +110,15 @@ class McpFacade {
         }
 
         /**
+         * Asks the user to confirm a call of an AI tool that reaches beyond the integration, may destroy data or runs
+         * code ({@link ToolConfirms}), blocking the calling (tool) thread until the user answers. Returns false when
+         * the user declines, or when no one answers.
+         */
+        default boolean confirmToolCall(ToolConfirms.Call call) {
+            return false;
+        }
+
+        /**
          * Replays a file write in the source editor so the user watches the edit happen and then saves or discards it
          * (write mode {@code live}), blocking the calling (tool) thread until then. Returns null when the replay could
          * not start, in which case the caller falls back to the confirm dialog.
@@ -227,6 +236,7 @@ class McpFacade {
     // the F2 menu's launcher: starts examples (tui_run_example) and infra services (tui_infra start). It is held
     // here, not in the tool registry, so the AI panel's registry and the MCP server's registry both see it.
     private volatile LaunchManager launchManager;
+    private volatile Confirmations confirmations;
     // asks the data refresh for a scan of every integration, and counts the scans done: on the other tabs only the
     // selected integration is refreshed, so the Overview rows of the others go stale while an agent reads them
     private volatile Runnable fullScanRequest;
@@ -272,6 +282,19 @@ class McpFacade {
 
     void setLaunchManager(LaunchManager launchManager) {
         this.launchManager = launchManager;
+    }
+
+    void setConfirmations(Confirmations confirmations) {
+        this.confirmations = confirmations;
+    }
+
+    /**
+     * The dialog that asks the user to confirm an action and is open, or null: the keys an MCP client sends never
+     * answer it (CAMEL-25444).
+     */
+    String openConfirmation() {
+        Confirmations c = confirmations;
+        return c != null ? c.open() : null;
     }
 
     void setFullScan(Runnable request, LongSupplier done) {
@@ -1255,6 +1278,34 @@ class McpFacade {
         return wait;
     }
 
+    /**
+     * Asks the user to confirm a call of an AI tool ({@link ToolConfirms}), on the calling (tool) thread. Returns null
+     * when the call goes ahead: there is nothing to confirm, the user confirmed it, or a tape drives the monitor (then
+     * nothing asks, CAMEL-25444). Otherwise returns the result that tells the model the user rejected it.
+     */
+    JsonObject confirm(ToolConfirms.Call call) {
+        if (call == null || ctx != null && ctx.tapeDriven.getAsBoolean()) {
+            return null;
+        }
+        long waitStart = MonotonicClock.millis();
+        boolean confirmed = bridge != null && bridge.confirmToolCall(call);
+        lastConfirmWaitMs = MonotonicClock.millis() - waitStart;
+        if (confirmed) {
+            return null;
+        }
+        JsonObject result = new JsonObject();
+        result.put("status", "rejected");
+        result.put("message", "The user did not confirm this in the TUI, so it did not run (" + call.title() + "). Do not"
+                              + " retry it unless the user asks for it: tell the user what you wanted to do, and why.");
+        return result;
+    }
+
+    /** The endpoint URIs of the selected integration, as its status lists them. */
+    List<String> selectedEndpointUris() {
+        IntegrationInfo info = ctx == null ? null : ctx.findSelectedIntegration();
+        return info == null ? List.of() : info.endpoints.stream().map(e -> e.uri).filter(uri -> uri != null).toList();
+    }
+
     private static void describeSourceDirectory(IntegrationInfo info, Path dir, JsonObject result) {
         boolean temporary = FilesBrowser.isTemporaryDirectory(dir);
         result.put("directory", dir.toString());
@@ -1400,7 +1451,9 @@ class McpFacade {
                 return result;
             }
         }
-        if (writeMode == WriteMode.LIVE && exists && bridge != null) {
+        // while a tape drives the monitor nothing asks the user: the model or the tape writes the file itself
+        boolean ask = ctx == null || !ctx.tapeDriven.getAsBoolean();
+        if (writeMode == WriteMode.LIVE && exists && bridge != null && ask) {
             long waitStart = MonotonicClock.millis();
             ReplayOutcome outcome = bridge.replayFileWrite(request);
             lastConfirmWaitMs = MonotonicClock.millis() - waitStart;
@@ -1409,7 +1462,7 @@ class McpFacade {
             }
             // could not replay (for example unsaved edits in the editor): fall back to the dialog
         }
-        if (confirm || writeMode != WriteMode.AUTO) {
+        if ((confirm || writeMode != WriteMode.AUTO) && ask) {
             long waitStart = MonotonicClock.millis();
             boolean confirmed = bridge != null && bridge.confirmFileWrite(request);
             lastConfirmWaitMs = MonotonicClock.millis() - waitStart;
@@ -1578,7 +1631,12 @@ class McpFacade {
         } catch (NumberFormatException e) {
             return null;
         }
-        return RuntimeHelper.sendMessage(pid, endpoint, body, headers);
+        // a body file:... makes the integration read that file, relative to its working directory
+        IntegrationInfo info = findIntegration(null);
+        String fileOutside = ToolConfirms.fileOutsideProject(
+                body, info != null ? info.directory : null, getSelectedSourceDirectory());
+        JsonObject rejected = confirm(ToolConfirms.sendMessage(endpoint, selectedEndpointUris(), fileOutside));
+        return rejected != null ? rejected : RuntimeHelper.sendMessage(pid, endpoint, body, headers);
     }
 
     JsonObject executeSql(String sql, String datasource, int maxRows, int queryTimeout) {
@@ -1591,7 +1649,8 @@ class McpFacade {
         } catch (NumberFormatException e) {
             return null;
         }
-        return RuntimeHelper.executeSqlQuery(pid, sql, datasource, maxRows, queryTimeout);
+        JsonObject rejected = confirm(ToolConfirms.sql(sql));
+        return rejected != null ? rejected : RuntimeHelper.executeSqlQuery(pid, sql, datasource, maxRows, queryTimeout);
     }
 
     JsonObject updateRow(String table, String datasource, String pkValuesJson, String colValuesJson) {
@@ -1604,7 +1663,9 @@ class McpFacade {
         } catch (NumberFormatException e) {
             return null;
         }
-        return RuntimeHelper.executeRowUpdate(pid, table, datasource, pkValuesJson, colValuesJson);
+        JsonObject rejected = confirm(ToolConfirms.updateRow(table, colValuesJson));
+        return rejected != null
+                ? rejected : RuntimeHelper.executeRowUpdate(pid, table, datasource, pkValuesJson, colValuesJson);
     }
 
     String controlIntegration(String action) {

@@ -108,13 +108,19 @@ public class CatalogService {
         MavenGav platformBomGav = null;
         if (!hasVersion && !hasBom) {
             if (runtimeType == RuntimeType.quarkus) {
-                platformBomGav
-                        = QuarkusHelper.findQuarkusPlatformBom(
-                                camelVersion,
-                                downloader()::resolveArtifact,
-                                true,
-                                RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL,
-                                false).quarkusCamelBom();
+                QuarkusHelper.QuarkusPlatformBom quarkusBom = QuarkusHelper.findQuarkusPlatformBom(
+                        camelVersion,
+                        downloader()::resolveArtifact,
+                        true,
+                        RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL,
+                        false);
+                if (quarkusBom == null) {
+                    throw new ToolCallException(
+                            "No Quarkus platform found for Camel " + camelVersion
+                                                + " in the Quarkus extension registry",
+                            null);
+                }
+                platformBomGav = quarkusBom.quarkusCamelBom();
                 normalizedVersion = platformBomGav.getVersion();
             }
         }
@@ -208,7 +214,22 @@ public class CatalogService {
             if (runtimeType == RuntimeType.springBoot) {
                 return CatalogLoader.loadSpringBootCatalog(repos, camelVersion, true);
             } else if (runtimeType == RuntimeType.quarkus) {
-                return CatalogLoader.loadQuarkusCatalog(platformBom, downloader()::resolveArtifact);
+                // Resolve the Quarkus platform BOM that matches the requested Camel version.
+                // platformBom is null here (only camelVersion was given), so we must look it up.
+                QuarkusHelper.QuarkusPlatformBom quarkusBom = QuarkusHelper.findQuarkusPlatformBom(
+                        camelVersion,
+                        downloader()::resolveArtifact,
+                        true,
+                        RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL,
+                        false);
+                if (quarkusBom == null) {
+                    throw new ToolCallException(
+                            "No Quarkus platform found for Camel " + camelVersion
+                                                + " in the Quarkus extension registry",
+                            null);
+                }
+                MavenGav resolvedBom = quarkusBom.quarkusCamelBom();
+                return CatalogLoader.loadQuarkusCatalog(resolvedBom, downloader()::resolveArtifact);
             } else {
                 return CatalogLoader.loadCatalog(repos, camelVersion, true);
             }
@@ -218,6 +239,11 @@ public class CatalogService {
         if (runtimeType == RuntimeType.springBoot) {
             return CatalogLoader.loadSpringBootCatalog(repos, null, true);
         } else if (runtimeType == RuntimeType.quarkus) {
+            // loadCatalog() always resolves the platform BOM for Quarkus before calling doLoadCatalog(),
+            // so platformBom is never null here.
+            if (platformBom == null) {
+                throw new IllegalStateException("No Quarkus platform BOM resolved");
+            }
             return CatalogLoader.loadQuarkusCatalog(platformBom, downloader()::resolveArtifact);
         }
 

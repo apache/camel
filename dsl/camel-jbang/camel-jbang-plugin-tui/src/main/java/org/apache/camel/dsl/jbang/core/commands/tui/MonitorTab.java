@@ -64,6 +64,14 @@ interface MonitorTab {
     }
 
     /**
+     * Whether the tab shows a dialog that asks the user to confirm an action, such as discarding changes or deleting a
+     * file. Only the user answers it: the keys an MCP client sends never reach it (see {@link Confirmations}).
+     */
+    default boolean isConfirming() {
+        return false;
+    }
+
+    /**
      * Pastes text into the text field that has the keyboard; returns {@code false} when none has, as the default does.
      */
     default boolean handlePaste(String text) {

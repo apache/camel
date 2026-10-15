@@ -16,9 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Optional;
 
+import io.quarkiverse.mcp.server.McpConnection;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -265,6 +267,38 @@ class DiagnoseToolsTest {
         assertThat(exceptions(result).size()).isGreaterThanOrEqualTo(3);
 
         assertThat(components(result).stream().map(c -> c.getString("name")).toList()).contains("kafka");
+    }
+
+    // ---- Repeated calls ----
+
+    @Test
+    void thirdIdenticalCallIsRepeated() {
+        // CAMEL-25640 regression: recordSuccessfulAnswer must be called after a successful diagnose
+        // so the third identical call gets the repeat note instead of the full answer.
+        DiagnoseTools toolsWithRepeat = new DiagnoseTools();
+        CatalogService catalogService = new CatalogService();
+        catalogService.catalogRepos = Optional.empty();
+        toolsWithRepeat.catalogService = catalogService;
+        RepeatedCallSessions sessions = new RepeatedCallSessions();
+        toolsWithRepeat.repeatedCalls = sessions;
+
+        McpConnection conn = connection("test-session");
+        String error = "org.apache.camel.NoSuchEndpointException: No endpoint could be found for: xyz:test";
+
+        // first two calls are answered in full
+        JsonObject first = toolsWithRepeat.camel_error_diagnose(conn, error, null, null, null);
+        assertThat(first.get("repeated")).isNull();
+        JsonObject second = toolsWithRepeat.camel_error_diagnose(conn, error, null, null, null);
+        assertThat(second.get("repeated")).isNull();
+        // third identical call must be the repeat note
+        JsonObject third = toolsWithRepeat.camel_error_diagnose(conn, error, null, null, null);
+        assertThat(third.get("repeated")).isEqualTo(Boolean.TRUE);
+        assertThat(third.getString("tool")).isEqualTo("camel_error_diagnose");
+    }
+
+    private static McpConnection connection(String id) {
+        return (McpConnection) Proxy.newProxyInstance(McpConnection.class.getClassLoader(),
+                new Class<?>[] { McpConnection.class }, (proxy, method, args) -> "id".equals(method.getName()) ? id : null);
     }
 
     private static List<JsonObject> exceptions(JsonObject result) {

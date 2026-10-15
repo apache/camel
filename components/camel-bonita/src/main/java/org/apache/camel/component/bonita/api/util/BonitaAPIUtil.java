@@ -17,13 +17,11 @@
 package org.apache.camel.component.bonita.api.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ThreadLocalRandom;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -44,20 +42,35 @@ import static jakarta.ws.rs.client.Entity.entity;
 
 public class BonitaAPIUtil {
 
-    private static BonitaAPIUtil instance;
     private WebTarget webTarget;
 
+    /**
+     * Creates a helper that uploads to the Bonita server of the given configuration, with the account of that
+     * configuration. Every call creates a new helper with a JAX-RS client of its own, which is never closed; nothing is
+     * shared between configurations.
+     *
+     * @deprecated use {@link #forClient(Client, BonitaAPIConfig)} with a client that the caller closes.
+     *             {@code BonitaAPIBuilder} does not use this method: it binds the helper to the client of the
+     *             {@code BonitaAPI} that it builds.
+     */
+    @Deprecated(since = "4.24.0")
     public static BonitaAPIUtil getInstance(BonitaAPIConfig bonitaAPIConfig) {
-        if (instance == null) {
-            instance = new BonitaAPIUtil();
-            ClientBuilder clientBuilder = ClientBuilder.newBuilder();
-            Client client = clientBuilder.build();
-            client.register(JacksonJsonProvider.class);
-            client.register(new JsonClientFilter());
-            client.register(new BonitaAuthFilter(bonitaAPIConfig));
-            instance.setWebTarget(client.target(bonitaAPIConfig.getBaseBonitaURI()));
-        }
-        return instance;
+        ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+        Client client = clientBuilder.build();
+        client.register(JacksonJsonProvider.class);
+        client.register(new BonitaAuthFilter(bonitaAPIConfig));
+        return forClient(client, bonitaAPIConfig);
+    }
+
+    /**
+     * Creates a helper that uploads with the given client, which must already authenticate against the Bonita server of
+     * the given configuration.
+     */
+    public static BonitaAPIUtil forClient(Client client, BonitaAPIConfig bonitaAPIConfig) {
+        BonitaAPIUtil util = new BonitaAPIUtil();
+        // the upload answers with JSON as text/plain: the filter is needed for this target only
+        util.setWebTarget(client.target(bonitaAPIConfig.getBaseBonitaURI()).register(new JsonClientFilter()));
+        return util;
     }
 
     public UploadFileResponse uploadFile(
@@ -69,13 +82,10 @@ public class BonitaAPIUtil {
                 .resolveTemplate("processName", processDefinition.getName())
                 .resolveTemplate("processVersion", processDefinition.getVersion());
 
-        File tempFile = Files.createTempFile("tempFile", ".tmp").toFile();
-
-        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-            fos.write(file.getContent());
-        }
-
-        String dispositionValue = String.format("form-data;filename=%s;name=file", tempFile.getName());
+        // the part is named like a temporary file (as before), but no file is created: the content is sent from the
+        // byte array
+        String fileName = "tempFile" + ThreadLocalRandom.current().nextLong(Long.MAX_VALUE) + ".tmp";
+        String dispositionValue = String.format("form-data;filename=%s;name=file", fileName);
         Attachment attachment = new AttachmentBuilder()
                 .object(new ByteArrayInputStream(file.getContent()))
                 .contentDisposition(new ContentDisposition(dispositionValue))

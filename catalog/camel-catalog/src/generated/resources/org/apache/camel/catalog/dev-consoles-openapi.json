@@ -7076,18 +7076,18 @@
 				"operationId": "semantic-audit",
 				"parameters": [
 					{
-						"name": "action",
+						"name": "breadcrumbId",
 						"in": "query",
-						"description": "Filter by explicit route action",
+						"description": "Filter by Camel breadcrumb ID",
 						"required": false,
 						"schema": {
 							"type": "string"
 						}
 					},
 					{
-						"name": "breadcrumbId",
+						"name": "caseEventId",
 						"in": "query",
-						"description": "Filter by Camel breadcrumb ID",
+						"description": "Anchor event ID for a source-local case",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7103,15 +7103,6 @@
 						}
 					},
 					{
-						"name": "correlationId",
-						"in": "query",
-						"description": "Filter by application correlation ID",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
 						"name": "cursor",
 						"in": "query",
 						"description": "Backend cursor for an older page",
@@ -7121,9 +7112,45 @@
 						}
 					},
 					{
+						"name": "definition",
+						"in": "query",
+						"description": "Filter by recorded definition name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "eventId",
 						"in": "query",
-						"description": "Event ID to inspect with its linked evaluation records",
+						"description": "Event ID to inspect; legacy records remain exportable",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "eventIds",
+						"in": "query",
+						"description": "Event IDs for bounded bulk export; at most 1000",
+						"required": false,
+						"schema": {
+							"type": "object"
+						}
+					},
+					{
+						"name": "exchangeId",
+						"in": "query",
+						"description": "Filter by recorded exchange ID when supported by the reader",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "executingRouteId",
+						"in": "query",
+						"description": "Filter by executing route when supported by the reader",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7139,6 +7166,16 @@
 						}
 					},
 					{
+						"name": "includeInput",
+						"in": "query",
+						"description": "Include untrusted captured input in explicit export",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					},
+					{
 						"name": "limit",
 						"in": "query",
 						"description": "Maximum records, between 1 and 200",
@@ -7149,9 +7186,46 @@
 						}
 					},
 					{
-						"name": "namespace",
+						"name": "maxRecords",
 						"in": "query",
-						"description": "Filter by application namespace",
+						"description": "Case or bulk retrieval record budget, between 1 and 1000",
+						"required": false,
+						"schema": {
+							"type": "integer",
+							"default": 200
+						}
+					},
+					{
+						"name": "operation",
+						"in": "query",
+						"description": "Filter by recorded expert operation",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultLabel",
+						"in": "query",
+						"description": "Exact member of the captured Classification result; requires resultType=CLASSIFICATION",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultType",
+						"in": "query",
+						"description": "Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "resultValue",
+						"in": "query",
+						"description": "Exact Boolean, Choice or numeric Score value; requires resultType",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7167,9 +7241,36 @@
 						}
 					},
 					{
+						"name": "scoreMax",
+						"in": "query",
+						"description": "Inclusive numeric upper bound; requires resultType=SCORE",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "scoreMin",
+						"in": "query",
+						"description": "Inclusive numeric lower bound; requires resultType=SCORE",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "since",
 						"in": "query",
 						"description": "UTC earliest timestamp in ISO-8601 format",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "until",
+						"in": "query",
+						"description": "Exclusive upper event timestamp in ISO-8601 format",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7307,7 +7408,7 @@
 					{
 						"name": "expert",
 						"in": "query",
-						"description": "Expert registry name; omitted uses the language's default selection",
+						"description": "Expert registry name, required for operation inspection",
 						"required": false,
 						"schema": {
 							"type": "string"
@@ -7365,7 +7466,7 @@
 												"properties": {
 													"reference": {
 														"type": "string",
-														"description": "Registry reference or adapter class"
+														"description": "Registry reference"
 													},
 													"name": {
 														"type": "string",
@@ -7454,18 +7555,91 @@
 												}
 											},
 											"description": "Published definitions, when overview is requested"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/semantic-monitoring": {
+			"get": {
+				"summary": "Semantic Monitoring",
+				"description": "Read current semantic measurements",
+				"operationId": "semantic-monitoring",
+				"parameters": [
+					{
+						"name": "source",
+						"in": "query",
+						"description": "Producer name to inspect",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Semantic Monitoring output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"snapshots": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"additionalProperties": true
+											},
+											"description": "Current producer-supplied measurements"
 										},
-										"defaultExpert": {
+										"scope": {
 											"type": "string",
-											"description": "Resolved default expert"
+											"description": "Scope of the returned measurements"
 										},
-										"defaultError": {
-											"type": "string",
-											"description": "Default selection error, if any"
+										"sources": {
+											"type": "object",
+											"additionalProperties": true,
+											"description": "Source sampling health"
 										},
-										"defaultErrorCode": {
+										"omittedSources": {
+											"type": "integer",
+											"description": "Sources beyond the registration limit"
+										},
+										"freshness": {
 											"type": "string",
-											"description": "Default selection error code: no_unique_expert or default_expert_error"
+											"description": "How to interpret freshness"
+										},
+										"sourceErrors": {
+											"type": "integer",
+											"description": "Source sampling failures"
+										},
+										"evicted": {
+											"type": "integer",
+											"description": "Series evicted from the current-value cache"
+										},
+										"managementErrors": {
+											"type": "integer",
+											"description": "Management registration failures"
+										},
+										"capacity": {
+											"type": "integer",
+											"description": "Maximum cached series count"
+										},
+										"sampleIntervalSeconds": {
+											"type": "integer",
+											"description": "Sampling cadence in seconds"
+										},
+										"lastSample": {
+											"type": "string",
+											"description": "Last sampling time when available"
+										},
+										"error": {
+											"type": "string",
+											"description": "Query validation error when present"
 										}
 									}
 								}

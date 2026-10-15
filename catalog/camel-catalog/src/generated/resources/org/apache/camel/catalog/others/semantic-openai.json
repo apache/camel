@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "semantic-openai",
+    "title": "Semantic OpenAI",
+    "description": "Assess text and images with typed OpenAI Decisions through Semantic experts",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "ai",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-semantic-openai",
+    "version": "4.23.0-SNAPSHOT"
+  }
+}

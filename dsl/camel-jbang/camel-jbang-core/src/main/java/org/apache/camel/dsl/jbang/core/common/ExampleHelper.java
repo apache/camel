@@ -29,10 +29,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -95,6 +98,34 @@ public final class ExampleHelper {
             }
         }
         return matches;
+    }
+
+    /**
+     * The full names of the examples closest to a name that matches none (CAMEL-25535): first the nearest by edit
+     * distance to a full or short name, then the ones whose name contains it or whose short name it contains (so an old
+     * group such as beginner/timer-log points at quick-start/timer-log), at most five.
+     */
+    public static List<String> suggestExamples(List<JsonObject> catalog, String name) {
+        if (name == null || name.isBlank()) {
+            return List.of();
+        }
+        Set<String> result = new LinkedHashSet<>();
+        for (String similar : SuggestSimilarHelper.didYouMean(getExampleNames(catalog), name)) {
+            JsonObject entry = findExample(catalog, similar);
+            if (entry != null) {
+                result.add(entry.getString("name"));
+            }
+        }
+        String key = name.trim().toLowerCase(Locale.ROOT);
+        for (JsonObject entry : catalog) {
+            String full = entry.getString("name");
+            String shortName = getShortName(entry).toLowerCase(Locale.ROOT);
+            if (full != null && (full.toLowerCase(Locale.ROOT).contains(key)
+                    || shortName.length() >= 3 && key.contains(shortName))) {
+                result.add(full);
+            }
+        }
+        return result.stream().limit(5).toList();
     }
 
     public static List<String> getExampleNames(List<JsonObject> catalog) {

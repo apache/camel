@@ -16,22 +16,33 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestEntry;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RequestSource;
+import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.RunnerInfo;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.ServerInfo;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.SlotState;
 import org.apache.camel.dsl.jbang.core.commands.tui.OllamaMonitor.Snapshot;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,6 +50,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OllamaMonitorTest {
+
+    /** What llama-server's {@code /slots} answers while it generates. */
+    private static final String SLOTS = """
+            [{"id":0,"n_ctx":262144,"is_processing":true,"n_prompt_tokens":25,"n_prompt_tokens_processed":25,
+            "n_prompt_tokens_cache":9,"next_token":[{"has_next_token":true,"n_decoded":6}]}]
+            """;
 
     /** The usage Ollama returned for a real warm request: 16 prompt tokens in 188 ms, 6 tokens in 81 ms. */
     private static final LlmClient.TokenUsage WARM = new LlmClient.TokenUsage(16, 6, 22, 0, 188, 81, 12, 300);
@@ -475,6 +492,93 @@ class OllamaMonitorTest {
         assertEquals(false, json.get("connected"));
         assertNull(json.get("server"));
         assertEquals(0, ((JsonArray) json.get("requests")).size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 404, 501 })
+    void aRunnerWithoutSlotsStaysKnownAndIsNotAskedAgain(int status) throws IOException {
+        // Ollama's MLX runner answers /slots with 404, a llama-server started without the endpoint with 501
+        AtomicInteger reads = new AtomicInteger();
+        HttpServer endpoint = runnerEndpoint(exchange -> {
+            reads.incrementAndGet();
+            exchange.sendResponseHeaders(status, -1);
+            exchange.close();
+        });
+        try {
+            OllamaMonitor monitor = new OllamaMonitor();
+            RunnerInfo runner = new RunnerInfo(
+                    ProcessHandle.current().pid(), endpoint.getAddress().getPort(), 0, 0, "qwen3.6:35b-mlx", "ollama");
+            monitor.updateRunner(runner);
+
+            // the runner stays, on this poll and the later ones, so the tab does not flip between its views
+            assertThat(monitor.pollSlots(10_000, runner)).isEqualTo(runner);
+            assertThat(monitor.pollSlots(20_000, runner)).isEqualTo(runner);
+            assertThat(monitor.pollSlots(30_000, runner)).isEqualTo(runner);
+            assertThat(reads).hasValue(1);
+            Snapshot s = monitor.snapshot();
+            assertThat(s.runner()).isEqualTo(runner);
+            assertThat(s.runnerWithoutSlots()).isTrue();
+            assertThat(s.slot()).isNull();
+            assertThat(((JsonObject) monitor.toJson(1).get("runner")).get("liveState")).isEqualTo(false);
+
+            // the runner of the next model is asked again
+            monitor.updateRunner(new RunnerInfo(runner.pid(), runner.port(), 0, 0, "qwen3.8:27b-mlx", "ollama"));
+            assertThat(monitor.snapshot().runnerWithoutSlots()).isFalse();
+        } finally {
+            endpoint.stop(0);
+        }
+    }
+
+    @Test
+    void aRunnerThatStopsAnsweringIsDroppedOnlyOnceItsProcessIsGone() throws Exception {
+        HttpServer endpoint = runnerEndpoint(exchange -> {
+            byte[] body = SLOTS.getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        int port = endpoint.getAddress().getPort();
+        OllamaMonitor monitor = new OllamaMonitor();
+        RunnerInfo alive = new RunnerInfo(ProcessHandle.current().pid(), port, 0, 0, "/blob", "llama-server");
+        monitor.updateRunner(alive);
+        try {
+            assertThat(monitor.pollSlots(10_000, alive)).isEqualTo(alive);
+            assertThat(monitor.snapshot().slot()).isNotNull();
+            assertThat(((JsonObject) monitor.toJson(1).get("runner")).get("liveState")).isEqualTo(true);
+        } finally {
+            endpoint.stop(0);
+        }
+
+        // no answer while the process lives (a slow reply during a long prefill): the runner and its slot stay
+        assertThat(monitor.pollSlots(20_000, alive)).isEqualTo(alive);
+        assertThat(monitor.snapshot().runner()).isEqualTo(alive);
+        assertThat(monitor.snapshot().slot()).isNotNull();
+
+        // no answer and the process is gone (the model was unloaded): the runner goes
+        RunnerInfo exited = new RunnerInfo(exitedPid(), port, 0, 0, "/blob", "llama-server");
+        monitor.updateRunner(exited);
+        assertThat(monitor.pollSlots(30_000, exited)).isNull();
+        assertThat(monitor.snapshot().runner()).isNull();
+        assertThat(monitor.snapshot().slot()).isNull();
+    }
+
+    /** A runner's HTTP endpoint on a free port of this machine, answering {@code /slots} with the handler. */
+    private static HttpServer runnerEndpoint(HttpHandler slots) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/slots", slots);
+        server.start();
+        return server;
+    }
+
+    /** The pid of a process that has exited. */
+    private static long exitedPid() throws Exception {
+        Process process = new ProcessBuilder(ProcessHandle.current().info().command().orElseThrow(), "-version")
+                .redirectErrorStream(true)
+                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                .start();
+        assertThat(process.waitFor(30, TimeUnit.SECONDS)).isTrue();
+        return process.pid();
     }
 
     private static SlotState slot(boolean processing, long decoded) {

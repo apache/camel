@@ -51,6 +51,7 @@ final class TuiSettings {
     static final String PROP_ROUTE_TREE = "camel.tui.routeTree";
     static final String PROP_PANEL_POSITION = "camel.tui.panelPosition";
     static final String PROP_PANEL_SPACE = "camel.tui.panelSpace";
+    static final String PROP_PANEL_THEME = "camel.tui.panelTheme";
 
     private String themeId;
     private String startTab;
@@ -73,6 +74,7 @@ final class TuiSettings {
     private String routeTree;
     private String panelPosition;
     private String panelSpace;
+    private String panelTheme;
 
     String getThemeId() {
         return themeId;
@@ -282,6 +284,15 @@ final class TuiSettings {
         return "overlay".equalsIgnoreCase(panelSpace);
     }
 
+    /** The theme those panels are drawn with, so they stand apart from the tabs; {@code null} for the main theme. */
+    String getPanelTheme() {
+        return panelTheme;
+    }
+
+    void setPanelTheme(String panelTheme) {
+        this.panelTheme = panelTheme;
+    }
+
     /**
      * Loads the current settings, resolving each key with per-key local/global precedence via {@link TuiUserConfig}.
      * Unset keys yield {@code null} fields; a read failure yields an object with {@code null} fields rather than
@@ -311,6 +322,7 @@ final class TuiSettings {
             settings.routeTree = trimToNull(TuiUserConfig.read(PROP_ROUTE_TREE));
             settings.panelPosition = trimToNull(TuiUserConfig.read(PROP_PANEL_POSITION));
             settings.panelSpace = trimToNull(TuiUserConfig.read(PROP_PANEL_SPACE));
+            settings.panelTheme = trimToNull(TuiUserConfig.read(PROP_PANEL_THEME));
         } catch (RuntimeException e) {
             // best-effort: return an object with null fields on read failure
         }
@@ -345,6 +357,7 @@ final class TuiSettings {
             TuiUserConfig.write(PROP_ROUTE_TREE, routeTree);
             TuiUserConfig.write(PROP_PANEL_POSITION, panelPosition);
             TuiUserConfig.write(PROP_PANEL_SPACE, panelSpace);
+            TuiUserConfig.write(PROP_PANEL_THEME, panelTheme);
         } catch (RuntimeException e) {
             // best-effort: a save failure must not disrupt the TUI
         }

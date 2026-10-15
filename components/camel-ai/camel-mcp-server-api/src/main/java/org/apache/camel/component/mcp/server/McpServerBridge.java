@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mcp.server;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -394,7 +395,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
 
             @Override
             public McpToolCallResult call(Map<String, Object> arguments, McpToolCallContext context) {
-                return execute(spec, arguments, context != null ? context.securityPrincipal() : null);
+                return execute(spec, arguments, context);
             }
         };
         return new McpServerTool() {
@@ -435,12 +436,10 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         };
     }
 
-    private McpToolCallResult execute(AiToolSpec spec, Map<String, Object> arguments, Object securityPrincipal) {
+    private McpToolCallResult execute(AiToolSpec spec, Map<String, Object> arguments, McpToolCallContext context) {
         Exchange exchange = spec.getConsumer().getEndpoint().createExchange();
-        if (securityPrincipal != null) {
-            // carry the transport's authenticated caller onto the tool exchange so a tool route's AuthorizationPolicy
-            // can authorize on it; it is an exchange property, which the model cannot set
-            exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_PROPERTY, securityPrincipal);
+        if (context != null) {
+            stampCallerIdentity(exchange, context);
         }
         boolean release = true;
         try {
@@ -483,6 +482,26 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             if (release) {
                 spec.getConsumer().releaseExchange(exchange, false);
             }
+        }
+    }
+
+    /**
+     * Stamps the MCP caller identity onto the tool exchange as exchange properties the model cannot set: the raw
+     * transport principal, and the runtime-neutral name and roles when the engine could derive them. A tool route's
+     * {@link org.apache.camel.spi.AuthorizationPolicy} authorizes on these.
+     */
+    private static void stampCallerIdentity(Exchange exchange, McpToolCallContext context) {
+        Object principal = context.securityPrincipal();
+        if (principal != null) {
+            exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_PROPERTY, principal);
+        }
+        String name = context.principalName();
+        if (name != null && !name.isBlank()) {
+            exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_NAME_PROPERTY, name);
+        }
+        Collection<String> roles = context.principalRoles();
+        if (roles != null && !roles.isEmpty()) {
+            exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY, roles);
         }
     }
 

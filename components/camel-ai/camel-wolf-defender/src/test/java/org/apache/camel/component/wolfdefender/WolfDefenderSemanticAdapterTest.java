@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
 
 class WolfDefenderSemanticAdapterTest {
     static SemanticEvaluation evaluation() {
-        return evaluation(null);
+        return evaluation("security");
     }
 
     static SemanticEvaluation evaluation(String expert) {
@@ -76,11 +76,11 @@ class WolfDefenderSemanticAdapterTest {
         expert.validate(evaluation());
         for (String parameter : List.of("instructions", "criteria")) {
             assertThatThrownBy(() -> expert.validate(new SemanticEvaluation(
-                    "injection", null, null, Map.of(parameter, "unsupported"))))
+                    "injection", "security", null, Map.of(parameter, "unsupported"))))
                     .hasMessageContaining("Unknown parameter '" + parameter + "'");
         }
         for (String name : List.of("boolean", "choice", "score", "classify")) {
-            assertThatThrownBy(() -> expert.validate(new SemanticEvaluation(name, null, null, Map.of())))
+            assertThatThrownBy(() -> expert.validate(new SemanticEvaluation(name, "security", null, Map.of())))
                     .hasMessageContaining("Unknown operation");
         }
         assertThatThrownBy(expert::start).hasMessageContaining("Model loading failed");
@@ -99,7 +99,7 @@ class WolfDefenderSemanticAdapterTest {
             assertThat(benign.getConfidence()).isNull();
             assertThat(benign.getMetadata()).containsEntry("revision", WolfDefenderSemanticAdapter.MODEL_REVISION);
             assertThat(expert.evaluate(evaluation(), "boundary").getValue()).isEqualTo(true);
-            var uncertain = new SemanticEvaluation("injection", null, null, Map.of("uncertainty", 0.1));
+            var uncertain = new SemanticEvaluation("injection", "security", null, Map.of("uncertainty", 0.1));
             assertThatThrownBy(() -> expert.evaluate(uncertain, "uncertain")).hasMessageContaining("uncertain");
         } finally {
             expert.stop();
@@ -117,7 +117,7 @@ class WolfDefenderSemanticAdapterTest {
                 Map.of("uncertainty", -0.1), Map.of("uncertainty", 1.1), Map.of("uncertainty", Double.NaN),
                 Map.of("uncertaintyPolicy", "ignore"), Map.of("threshold", 0.9, "uncertainty", 0.2),
                 Map.of("threshold", 0.1, "uncertainty", 0.2))) {
-            var definition = new SemanticEvaluation("injection", null, null, parameters);
+            var definition = new SemanticEvaluation("injection", "security", null, parameters);
             assertThatThrownBy(() -> expert.evaluate(definition, "text")).isInstanceOf(IllegalArgumentException.class);
         }
         verifyNoInteractions(inference);
@@ -130,11 +130,11 @@ class WolfDefenderSemanticAdapterTest {
         var expert = expert(inference);
         expert.start();
         try {
-            var uncertain = new SemanticEvaluation("injection", null, null, Map.of("uncertainty", 0.125));
+            var uncertain = new SemanticEvaluation("injection", "security", null, Map.of("uncertainty", 0.125));
             assertThatThrownBy(() -> expert.evaluate(uncertain, "lower edge")).hasMessageContaining("uncertain");
             assertThatThrownBy(() -> expert.evaluate(uncertain, "upper edge")).hasMessageContaining("uncertain");
             var nonMatch = new SemanticEvaluation(
-                    "injection", null, null,
+                    "injection", "security", null,
                     Map.of("uncertainty", 0.125, "uncertaintyPolicy", "non-match"));
             var result = expert.evaluate(nonMatch, "upper edge");
             assertThat(result.getValue()).isEqualTo(false);
@@ -184,7 +184,10 @@ class WolfDefenderSemanticAdapterTest {
         expert.setMaxCharacters(4);
         expert.start();
         try {
-            for (Object state : new Object[] { null, Map.of("text", "x"), 42, new StringBuilder("text"), "", "  ", "12345" }) {
+            for (Object state : new Object[] {
+                    null, Map.of("text", "x"), 42, new StringBuilder("text"), "", "  ", "12345",
+                    new byte[] { 1 }, "data:image/png;base64,AA==",
+                    Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AA=="))) }) {
                 assertThatThrownBy(() -> expert.evaluate(evaluation(), state)).isInstanceOf(RuntimeException.class)
                         .satisfies(e -> assertThat(e.getMessage()).doesNotContain("12345"));
             }

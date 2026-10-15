@@ -127,6 +127,25 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         return answer;
     }
 
+    /**
+     * Creates the client engine, carrying the host and port when host name verification is enabled.
+     * <p/>
+     * The JDK reads the name to match from {@code SSLSession.getPeerHost()}, which is only populated when the engine is
+     * created with the peer. With the no-arg factory method it stays {@code null} and {@code HostnameChecker.match}
+     * throws {@code CertificateException: Hostname or IP address is undefined} instead of checking anything, so every
+     * handshake fails. camel-netty-http creates its client engine the same way.
+     * <p/>
+     * The peer is attached only when the option is enabled, because it also makes the JDK send SNI - a change on the
+     * wire that the default path should not make.
+     */
+    private SSLEngine createClientSSLEngine() {
+        NettyConfiguration configuration = producer.getConfiguration();
+        if (configuration.isHostnameVerification()) {
+            return sslContext.createSSLEngine(configuration.getHost(), configuration.getPort());
+        }
+        return sslContext.createSSLEngine();
+    }
+
     private SslHandler configureClientSSLOnDemand() {
         if (!producer.getConfiguration().isSsl()) {
             return null;
@@ -135,7 +154,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory {
         if (producer.getConfiguration().getSslHandler() != null) {
             return producer.getConfiguration().getSslHandler();
         } else if (sslContext != null) {
-            SSLEngine engine = sslContext.createSSLEngine();
+            SSLEngine engine = createClientSSLEngine();
             engine.setUseClientMode(true);
             if (producer.getConfiguration().isHostnameVerification()) {
                 SSLParameters sslParams = engine.getSSLParameters();

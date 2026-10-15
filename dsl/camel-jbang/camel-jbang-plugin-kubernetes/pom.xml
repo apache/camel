@@ -41,6 +41,18 @@
         <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson3-version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
           <groupId>org.apache.camel</groupId>
@@ -105,8 +117,12 @@
         </dependency>
         <dependency>
             <groupId>io.fabric8</groupId>
-            <artifactId>kubernetes-httpclient-vertx</artifactId>
+            <artifactId>kubernetes-httpclient-vertx-5</artifactId>
             <version>${kubernetes-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- OpenShift -->
