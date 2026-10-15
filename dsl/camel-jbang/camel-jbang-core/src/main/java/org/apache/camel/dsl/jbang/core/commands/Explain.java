@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.FileUtil;
@@ -149,6 +150,14 @@ public class Explain extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // check the input before reaching out to an LLM
+        for (String file : files) {
+            if (!Files.exists(Path.of(file))) {
+                printer().printErr("File not found: " + file);
+                return CliExitCode.NOT_FOUND;
+            }
+        }
+
         LlmClient client = LlmClient.create()
                 .withUrl(url)
                 .withApiType(apiType)
@@ -208,11 +217,6 @@ public class Explain extends CamelCommand {
 
     private int explainRoute(String file, LlmClient client) throws Exception {
         Path path = Path.of(file);
-        if (!Files.exists(path)) {
-            printer().printErr("File not found: " + file);
-            return 1;
-        }
-
         String routeContent = Files.readString(path);
         String ext = Optional.ofNullable(FileUtil.onlyExt(file, false)).orElse("yaml");
 

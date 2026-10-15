@@ -154,6 +154,8 @@ class InitTest {
 
         int exit = initCommand.doCall();
 
-        assertEquals(1, exit);
+        assertEquals(2, exit);
+        assertTrue(printer.getStderr().startsWith("ERROR: Missing required parameter: <file>"), printer.getStderr());
+        assertEquals("", printer.getStdout());
     }
 }

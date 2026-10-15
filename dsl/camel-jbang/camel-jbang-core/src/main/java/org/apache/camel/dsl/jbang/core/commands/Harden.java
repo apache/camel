@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.FileUtil;
@@ -202,6 +203,14 @@ public class Harden extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // check the input before reaching out to an LLM
+        for (String file : files) {
+            if (!Files.exists(Path.of(file))) {
+                printer().printErr("File not found: " + file);
+                return CliExitCode.NOT_FOUND;
+            }
+        }
+
         String endpoint = detectEndpoint();
         if (endpoint == null) {
             printUsageHelp();
@@ -359,11 +368,6 @@ public class Harden extends CamelCommand {
 
     private int hardenRoute(String file, String endpoint, String resolvedApiKey) throws Exception {
         Path path = Path.of(file);
-        if (!Files.exists(path)) {
-            printer().printErr("File not found: " + file);
-            return 1;
-        }
-
         String routeContent = Files.readString(path);
         String ext = Optional.ofNullable(FileUtil.onlyExt(file, false)).orElse("yaml");
 

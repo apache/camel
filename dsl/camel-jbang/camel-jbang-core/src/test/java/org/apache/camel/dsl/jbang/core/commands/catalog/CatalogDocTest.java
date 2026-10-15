@@ -74,6 +74,18 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
         Assertions.assertFalse(output.contains("camel run my-route.yaml"), "Should not show example run hint");
     }
 
+    @Test
+    public void shouldReportUnknownComponentAsNotFound() throws Exception {
+        CatalogDoc command = createCommand("component:no-such-component-xyz", false);
+
+        int exit = command.doCall();
+
+        Assertions.assertEquals(3, exit);
+        Assertions.assertTrue(printer.getStderr().startsWith("ERROR: Camel component: no-such-component-xyz not found"),
+                printer.getStderr());
+        Assertions.assertEquals("", printer.getStdout());
+    }
+
     private CatalogDoc createCommand(String name, boolean example) {
         CatalogDoc command = new CatalogDoc(new CamelJBangMain().withPrinter(printer));
         command.name = name;

@@ -213,6 +213,15 @@ A script that checks the exit code of a command must take these changes into acc
 * `camel transform dataweave` exits with `2` without `--input` or `--expression`, and with `3` when the input path does
   not exist or holds no `.dwl` files, instead of `1`.
 * `camel cmd sql` exits with `124` instead of `1` when the query does not answer in time.
+* A file or a name that does not exist exits with `3` instead of `1`: a source file or `--source-dir` of `camel run`, the
+  route file of `camel explain` and `camel harden` (checked before the LLM is contacted), the `pom.xml` of
+  `camel dependency runtime`, the Kamelet of `camel init --from-kamelet`, the service of `camel infra run`, the key of
+  `camel config get`, the name given to `camel doc`, and the plugin of `camel plugin delete`.
+* `camel cmd memory-leak` and `camel restart` exit with `3` when no running integration, or more than one, matches the
+  name. `camel cmd memory-leak` exits with `124` when the integration does not reply in time.
+* `camel init` without a file, or with `--from-kamelet` and a file that is not a `.kamelet.yaml` file,
+  `camel infra run` with a malformed property, and `camel kubernetes delete` without `--name` exit with `2` instead of
+  `1`.
 * A command that runs its default sub-command (`camel config`, `camel dependency`, `camel get`, `camel infra`,
   `camel plugin`, `camel top`, `camel update` and `camel version`) exits with the exit code of that sub-command,
   instead of always `0`.

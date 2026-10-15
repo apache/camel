@@ -1199,7 +1199,7 @@ public class Run extends CamelCommand {
                 Path inputPath = Paths.get(file.substring(5));
                 if (!Files.exists(inputPath) || !Files.isRegularFile(inputPath)) {
                     printer().printErr("File does not exist: " + file);
-                    return 1;
+                    return CliExitCode.NOT_FOUND;
                 }
             }
 
@@ -1244,7 +1244,7 @@ public class Run extends CamelCommand {
             Path dirPath = Paths.get(sourceDir);
             if (!Files.exists(dirPath) || !Files.isDirectory(dirPath)) {
                 printer().printErr("Directory does not exist: " + sourceDir);
-                return 1;
+                return CliExitCode.NOT_FOUND;
             }
             // make it a pattern as we load all files from this directory
             // (optional=true as there may be non Camel routes files as well)

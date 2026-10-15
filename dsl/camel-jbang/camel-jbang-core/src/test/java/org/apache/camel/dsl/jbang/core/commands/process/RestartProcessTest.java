@@ -45,8 +45,8 @@ class RestartProcessTest extends ProcessCommandTestSupport {
 
             int exit = command.doCall();
 
-            assertEquals(1, exit, "Should return non-zero when no process matches");
-            assertTrue(printer.getOutput().contains("No matching"), "Should print no-match message");
+            assertEquals(3, exit, "Should return not found when no process matches");
+            assertTrue(printer.getStderr().contains("No matching"), "Should print no-match message on stderr");
         }
     }
 
@@ -68,8 +68,8 @@ class RestartProcessTest extends ProcessCommandTestSupport {
 
             int exit = command.doCall();
 
-            assertEquals(1, exit, "Should return non-zero when multiple processes match");
-            assertTrue(printer.getOutput().contains("Multiple"), "Should print ambiguity message");
+            assertEquals(3, exit, "Should return not found when multiple processes match");
+            assertTrue(printer.getStderr().contains("Multiple"), "Should print ambiguity message on stderr");
         }
     }
 }

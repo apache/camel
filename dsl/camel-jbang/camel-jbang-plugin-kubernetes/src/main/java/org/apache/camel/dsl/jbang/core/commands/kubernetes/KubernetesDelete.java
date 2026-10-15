@@ -27,6 +27,7 @@ import io.fabric8.kubernetes.api.model.StatusDetails;
 import io.fabric8.kubernetes.client.dsl.base.ResourceDefinitionContext;
 import io.fabric8.openshift.client.OpenShiftClient;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
@@ -45,7 +46,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
     public Integer doCall() throws Exception {
         if (name == null || name.isBlank()) {
             printer().printErr("Missing required --name option or integration name");
-            return 1;
+            return CliExitCode.USAGE;
         }
         var client = getKubernetesClient();
         namespace = Optional.ofNullable(namespace).orElse(client.getNamespace());

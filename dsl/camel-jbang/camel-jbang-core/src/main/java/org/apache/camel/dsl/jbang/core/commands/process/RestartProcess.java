@@ -27,6 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -52,19 +53,19 @@ public class RestartProcess extends ProcessBaseCommand {
     public Integer doCall() throws Exception {
         List<Long> pids = findPids(name);
         if (pids.isEmpty()) {
-            printer().println("No matching Camel integration found: " + name);
-            return 1;
+            printer().printErr("No matching Camel integration found: " + name);
+            return CliExitCode.NOT_FOUND;
         }
         if (pids.size() > 1) {
-            printer().println("Multiple integrations match '" + name + "'. Please be more specific.");
-            return 1;
+            printer().printErr("Multiple integrations match '" + name + "'. Please be more specific.");
+            return CliExitCode.NOT_FOUND;
         }
 
         long pid = pids.get(0);
         ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
         if (ph == null) {
-            printer().println("Process not found: " + pid);
-            return 1;
+            printer().printErr("Process not found: " + pid);
+            return CliExitCode.NOT_FOUND;
         }
 
         // resolve name for display
