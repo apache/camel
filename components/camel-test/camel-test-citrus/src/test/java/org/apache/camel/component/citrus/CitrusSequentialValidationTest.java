@@ -130,6 +130,20 @@ class CitrusSequentialValidationTest extends CamelTestSupport {
                 .hasCauseInstanceOf(ValidationException.class);
     }
 
+    @Test
+    void shouldFailWhenImpliedMinimumCountNotMet() {
+        CitrusEndpoint citrus = context.getEndpoint("citrus:validate/test?messageType=json", CitrusEndpoint.class);
+
+        citrus.validate(1).body("{\"event\": \"first\"}");
+        citrus.validate(2).body("{\"event\": \"second\"}");
+        citrus.validate(3).body("{\"event\": \"third\"}");
+
+        template.sendBody("direct:start", "{\"event\": \"first\"}");
+
+        assertThatThrownBy(citrus::assertIsSatisfied)
+                .isInstanceOf(AssertionError.class);
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {

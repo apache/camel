@@ -215,9 +215,7 @@ class CitrusValidationProcessor implements Processor {
             if (key.startsWith("citrus.") || key.startsWith("CITRUS_")) {
                 continue;
             }
-            if (!exchange.getProperties().containsKey(key)) {
-                exchange.setVariable(key, entry.getValue());
-            }
+            exchange.setVariable(key, entry.getValue());
         }
     }
 }
