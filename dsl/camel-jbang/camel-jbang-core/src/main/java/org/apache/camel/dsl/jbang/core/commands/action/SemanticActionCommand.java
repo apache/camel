@@ -26,6 +26,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.UsageErrorHandler;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -38,8 +39,8 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
     @CommandLine.Option(names = "--json", description = "Output a single JSON document")
     boolean json;
 
-    @CommandLine.Option(names = "--timeout", defaultValue = "60000",
-                        description = "Timeout in milliseconds waiting for the integration")
+    @CommandLine.Option(names = "--timeout", defaultValue = "60000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for the integration, in millis or as a duration such as 30s")
     long timeout = 60000;
 
     @CommandLine.Spec

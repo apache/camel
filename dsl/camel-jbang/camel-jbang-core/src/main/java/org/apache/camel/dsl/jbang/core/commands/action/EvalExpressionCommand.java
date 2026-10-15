@@ -27,6 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -81,8 +82,8 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                         description = "Exchange variable (key=value)")
     List<String> variables;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "10000",
-                        description = "Timeout in millis waiting for evaluation to be done")
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "10000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for evaluation to be done, in millis or as a duration such as 30s")
     long timeout = 10000;
 
     @CommandLine.Mixin

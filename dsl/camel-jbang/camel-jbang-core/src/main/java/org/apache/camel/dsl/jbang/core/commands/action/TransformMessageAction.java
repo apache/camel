@@ -28,6 +28,7 @@ import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -109,8 +110,8 @@ public class TransformMessageAction extends ActionWatchCommand {
                         description = "Show exception and stacktrace for failed transformation")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be transformed")
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for message to be transformed, in millis or as a duration such as 30s")
     long timeout = 20000;
 
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")

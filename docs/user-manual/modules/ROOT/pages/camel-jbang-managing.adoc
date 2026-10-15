@@ -31,7 +31,9 @@ Stopping running Camel integration (pid: 62506)
 ----
 
 NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_.
-To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`
+To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`.
+A PID must be a running Camel integration, and a name or PID that matches nothing exits with code `3`
+(see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]).
 
 Restart an integration (stop + re-launch):
 

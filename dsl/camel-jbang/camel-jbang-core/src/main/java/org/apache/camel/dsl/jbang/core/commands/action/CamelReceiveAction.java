@@ -50,6 +50,7 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -162,8 +163,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Filter messages to only output matching text (ignore case).", arity = "0..*")
     String[] grep;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be received")
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for message to be received, in millis or as a duration such as 30s")
     long timeout = 20000;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
