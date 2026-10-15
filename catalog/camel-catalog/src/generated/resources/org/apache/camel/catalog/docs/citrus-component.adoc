@@ -268,9 +268,9 @@ it replaces `validateAll()` for that exchange entirely (the two are never combin
 `validateAll()` spec acts as a fallback for exchanges that have no matching indexed spec.
 
 If an exchange arrives at an index with no matching indexed spec and no `validateAll()` fallback,
-the endpoint records a failure. For the `validate` operation, the failure is collected and reported
-when `assertIsSatisfied()` is called (similar to MockEndpoint). For the `receive` operation, the
-failure is thrown immediately as an exception.
+the exchange passes through without validation. No failure is recorded by the endpoint.
+For the `validate` operation, unmatched exchanges are ignored silently. For the `receive` operation,
+no simulated response is applied and the exchange continues unchanged.
 
 [source,java]
 ----
