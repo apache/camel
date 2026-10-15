@@ -588,6 +588,14 @@ camel-http control headers of the message. It did so since Camel 4.19, when the 
 request now always goes to `httpUri`, as it did before. For the same reason the `CamelHttpMethod` and
 `CamelHttpProtocolVersion` headers no longer apply, and the request is always a POST.
 
+=== camel-jetty - a multipart text field that occurs several times
+
+A text field of a `multipart/form-data` request that occurs several times (for example a group of checkboxes) is now
+mapped to a header whose value is the list of all its values, as a repeated query or form-urlencoded parameter already
+is. Before, the header had only the first value and the others were lost. Jetty also returns the query string values
+of the same name, so a name that is in both the query string and a multipart text field is mapped to a list of all
+these values too, as it already is for a form-urlencoded request.
+
 === camel-servlet and camel-jetty - gzip request body that arrives after the headers
 
 The servlet and Jetty consumers uncompressed a request body with `Content-Encoding: gzip` only when some of its bytes
