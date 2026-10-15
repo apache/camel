@@ -17,6 +17,8 @@
 package org.apache.camel.component.ssh;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.lang.reflect.Proxy;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +36,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.config.hosts.HostConfigEntry;
+import org.apache.sshd.client.config.hosts.HostConfigEntryResolver;
+import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
 import org.apache.sshd.common.util.io.IoUtils;
@@ -260,13 +266,27 @@ class ResourceBasedSSHKeyVerifierTest {
     }
 
     @Test
-    void looksUpTheHostNameTheClientConnectsTo() throws Exception {
-        // as OpenSSH does: the HostName that ~/.ssh/config gives for the configured host db is db.example.com
-        InetSocketAddress server
+    void looksUpTheHostNameThatTheHostConfigurationGivesForTheConfiguredHost() throws Exception {
+        // as OpenSSH does with ~/.ssh/config: Host db, HostName db.example.com and Host review-ipv6, HostName ::1
+        ClientSession session = sessionResolving((host, port, localAddress, username, proxyJump, attributes) -> {
+            if ("db".equals(host)) {
+                return new HostConfigEntry(host, "db.example.com", port, username);
+            }
+            return "review-ipv6".equals(host) ? new HostConfigEntry(host, "::1", port, username) : null;
+        });
+        InetSocketAddress hostName
                 = new InetSocketAddress(InetAddress.getByAddress("db.example.com", new byte[] { 10, 0, 0, 1 }), 22);
-        assertTrue(verify(true, "db", server, serverKey, entry("db.example.com", serverKey)));
-        assertFalse(verify(true, "db", server, serverKey, entry("db", serverKey)));
-        assertFalse(verify(false, "db", server, otherKey, entry("db.example.com", serverKey)));
+        assertTrue(verify(true, "db", session, hostName, serverKey, entry("db.example.com", serverKey)));
+        assertFalse(verify(true, "db", session, hostName, serverKey, entry("db", serverKey)));
+        assertFalse(verify(false, "db", session, hostName, otherKey, entry("db.example.com", serverKey)));
+        // the address the client connected to writes ::1 as 0:0:0:0:0:0:0:1
+        InetSocketAddress ipv6 = new InetSocketAddress("::1", 2222);
+        for (boolean failOnUnknownHost : new boolean[] { true, false }) {
+            assertTrue(verify(failOnUnknownHost, "review-ipv6", session, ipv6, serverKey, entry("[::1]:2222", serverKey)));
+            assertFalse(verify(failOnUnknownHost, "review-ipv6", session, ipv6, otherKey, entry("[::1]:2222", serverKey)));
+        }
+        // a host without an entry in the host configuration is looked up as it is configured
+        assertTrue(verify(true, "::1", session, ipv6, serverKey, entry("[::1]:2222", serverKey)));
     }
 
     @Test
@@ -301,11 +321,40 @@ class ResourceBasedSSHKeyVerifierTest {
             boolean failOnUnknownHost, String configuredHost, InetSocketAddress server, PublicKey presented,
             String knownHosts)
             throws Exception {
+        return verify(failOnUnknownHost, configuredHost, null, server, presented, knownHosts);
+    }
+
+    private boolean verify(
+            boolean failOnUnknownHost, String configuredHost, ClientSession session, InetSocketAddress server,
+            PublicKey presented, String knownHosts)
+            throws Exception {
         Path file = Files.createTempFile(dir, "known_hosts", "");
         Files.writeString(file, knownHosts, StandardCharsets.UTF_8);
         ResourceBasedSSHKeyVerifier verifier
                 = new ResourceBasedSSHKeyVerifier(context, "file:" + file, failOnUnknownHost, configuredHost);
-        return verifier.verifyServerKey(null, server, presented);
+        return verifier.verifyServerKey(session, server, presented);
+    }
+
+    /*
+     * A session of a client with the given host configuration, which is all the verifier asks the session for.
+     */
+    private static ClientSession sessionResolving(HostConfigEntryResolver resolver) {
+        SshClient client = SshClient.setUpDefaultClient();
+        client.setHostConfigEntryResolver(resolver);
+        return (ClientSession) Proxy.newProxyInstance(ClientSession.class.getClassLoader(),
+                new Class<?>[] { ClientSession.class }, (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "getFactoryManager":
+                            return client;
+                        case "getUsername":
+                            return "smx";
+                        default:
+                            Class<?> type = method.getReturnType();
+                            // the default value of a primitive type, null otherwise
+                            return type.isPrimitive() && type != void.class
+                                    ? Array.get(Array.newInstance(type, 1), 0) : null;
+                    }
+                });
     }
 
     private static String base64(int length) {

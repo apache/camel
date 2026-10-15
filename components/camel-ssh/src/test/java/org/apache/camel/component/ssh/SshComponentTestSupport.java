@@ -22,6 +22,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
@@ -31,6 +33,10 @@ import org.apache.sshd.server.SshServer;
 public class SshComponentTestSupport extends CamelTestSupport {
     protected SshServer sshd;
     protected int port;
+    /**
+     * The users the test server received credentials from, a password or a public key.
+     */
+    protected final Set<String> authenticatedUsers = ConcurrentHashMap.newKeySet();
 
     @Override
     public void doPreSetup() throws Exception {
@@ -38,8 +44,14 @@ public class SshComponentTestSupport extends CamelTestSupport {
         sshd.setPort(0);
         sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(getHostKey())));
         sshd.setCommandFactory(new TestEchoCommandFactory());
-        sshd.setPasswordAuthenticator((username, password, session) -> true);
-        sshd.setPublickeyAuthenticator((username, key, session) -> true);
+        sshd.setPasswordAuthenticator((username, password, session) -> {
+            authenticatedUsers.add(username);
+            return true;
+        });
+        sshd.setPublickeyAuthenticator((username, key, session) -> {
+            authenticatedUsers.add(username);
+            return true;
+        });
         sshd.start();
         port = sshd.getPort();
     }

@@ -24,17 +24,24 @@ import java.security.spec.ECGenParameterSpec;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.sshd.client.ClientBuilder;
+import org.apache.sshd.client.config.hosts.HostConfigEntry;
 import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
- * An endpoint configured with the IPv6 address ::1 is looked up as [::1]:port, as it is configured, although the
- * address the client connects to writes it as 0:0:0:0:0:0:0:1. The host is set on the endpoint, as the endpoint uri
- * does not accept an IPv6 address.
+ * A server reached at the IPv6 address ::1 is looked up as [::1]:port, as the address is written, although the address
+ * the client connects to writes it as 0:0:0:0:0:0:0:1: both when the endpoint is configured with ::1, and when the
+ * endpoint is configured with an alias that the host configuration of the client (as ~/.ssh/config would) gives the
+ * HostName ::1 for. The host is set on the endpoint, as the endpoint uri does not accept an IPv6 address.
  */
 class SshComponentKnownHostIPv6Test extends SshComponentTestSupport {
+
+    private static final String ALIAS = "review-ipv6";
 
     private String knownHostsServerKey;
     private String knownHostsOtherKey;
@@ -52,42 +59,67 @@ class SshComponentKnownHostIPv6Test extends SshComponentTestSupport {
 
     @Test
     void testProducerWithTheServerKey() throws Exception {
-        assertDelivered("direct:serverKey");
+        assertDelivered("serverKey");
     }
 
     @Test
     void testProducerWithTheServerKeyAcceptingUnknownHosts() throws Exception {
-        assertDelivered("direct:serverKeyAcceptingUnknownHosts");
+        assertDelivered("serverKeyAcceptingUnknownHosts");
     }
 
     @Test
     void testProducerWithAnotherKey() throws Exception {
-        assertRejected("direct:otherKey");
+        assertRejected("otherKey");
     }
 
     @Test
     void testProducerWithAnotherKeyAcceptingUnknownHosts() throws Exception {
-        assertRejected("direct:otherKeyAcceptingUnknownHosts");
+        assertRejected("otherKeyAcceptingUnknownHosts");
     }
 
-    private void assertDelivered(String endpoint) throws Exception {
+    @Test
+    void testProducerWithAnAliasAndTheServerKey() throws Exception {
+        assertDelivered("aliasServerKey");
+    }
+
+    @Test
+    void testProducerWithAnAliasAndTheServerKeyAcceptingUnknownHosts() throws Exception {
+        assertDelivered("aliasServerKeyAcceptingUnknownHosts");
+    }
+
+    @Test
+    void testProducerWithAnAliasAndAnotherKey() throws Exception {
+        assertRejected("aliasOtherKey");
+    }
+
+    @Test
+    void testProducerWithAnAliasAndAnotherKeyAcceptingUnknownHosts() throws Exception {
+        assertRejected("aliasOtherKeyAcceptingUnknownHosts");
+    }
+
+    /*
+     * Each route uses its own user name, which the test server records when it receives credentials.
+     */
+    private void assertDelivered(String route) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("test");
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
-        template.sendBody(endpoint, "test");
+        template.sendBody("direct:" + route, "test");
 
         MockEndpoint.assertIsSatisfied(context);
+        assertTrue(authenticatedUsers.contains(route), "the server should receive the credentials");
     }
 
-    private void assertRejected(String endpoint) throws Exception {
+    private void assertRejected(String route) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
-        template.sendBody(endpoint, "test");
+        template.sendBody("direct:" + route, "test");
 
         MockEndpoint.assertIsSatisfied(context);
+        assertFalse(authenticatedUsers.contains(route), "the server should not receive any credentials");
     }
 
     private boolean isIPv6LoopbackAvailable() {
@@ -106,27 +138,28 @@ class SshComponentKnownHostIPv6Test extends SshComponentTestSupport {
             public void configure() {
                 onException(Exception.class).handled(true).to("mock:error");
 
-                from("direct:serverKey")
-                        .to(ipv6Endpoint(knownHostsServerKey, true))
-                        .to("mock:result");
-                from("direct:serverKeyAcceptingUnknownHosts")
-                        .to(ipv6Endpoint(knownHostsServerKey, false))
-                        .to("mock:result");
-                from("direct:otherKey")
-                        .to(ipv6Endpoint(knownHostsOtherKey, true))
-                        .to("mock:result");
-                from("direct:otherKeyAcceptingUnknownHosts")
-                        .to(ipv6Endpoint(knownHostsOtherKey, false))
-                        .to("mock:result");
+                route("serverKey", "::1", knownHostsServerKey, true);
+                route("serverKeyAcceptingUnknownHosts", "::1", knownHostsServerKey, false);
+                route("otherKey", "::1", knownHostsOtherKey, true);
+                route("otherKeyAcceptingUnknownHosts", "::1", knownHostsOtherKey, false);
+                route("aliasServerKey", ALIAS, knownHostsServerKey, true);
+                route("aliasServerKeyAcceptingUnknownHosts", ALIAS, knownHostsServerKey, false);
+                route("aliasOtherKey", ALIAS, knownHostsOtherKey, true);
+                route("aliasOtherKeyAcceptingUnknownHosts", ALIAS, knownHostsOtherKey, false);
+            }
+
+            private void route(String name, String host, String knownHosts, boolean failOnUnknownHost) {
+                SshEndpoint endpoint = context.getEndpoint("ssh://" + name + ":secret@localhost:" + port
+                                                           + "?timeout=3000&knownHostsResource=" + knownHosts
+                                                           + "&failOnUnknownHost=" + failOnUnknownHost,
+                        SshEndpoint.class);
+                endpoint.setHost(host);
+                // the host configuration of the client, as ~/.ssh/config would give it: Host review-ipv6, HostName ::1
+                endpoint.getConfiguration().setClientBuilder(ClientBuilder.builder().hostConfigEntryResolver(
+                        (alias, aliasPort, localAddress, username, proxyJump, attributes) -> ALIAS.equals(alias)
+                                ? new HostConfigEntry(alias, "::1", aliasPort, username) : null));
+                from("direct:" + name).to(endpoint).to("mock:result");
             }
         };
-    }
-
-    private SshEndpoint ipv6Endpoint(String knownHosts, boolean failOnUnknownHost) {
-        SshEndpoint endpoint = context.getEndpoint("ssh://smx:smx@localhost:" + port + "?timeout=3000&knownHostsResource="
-                                                   + knownHosts + "&failOnUnknownHost=" + failOnUnknownHost,
-                SshEndpoint.class);
-        endpoint.setHost("::1");
-        return endpoint;
     }
 }

@@ -33,6 +33,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.sshd.client.ClientFactoryManager;
+import org.apache.sshd.client.config.hosts.HostConfigEntry;
+import org.apache.sshd.client.config.hosts.HostConfigEntryResolver;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.config.keys.KeyUtils;
@@ -48,9 +51,9 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The resource uses the OpenSSH known_hosts format, and its entries are matched as OpenSSH matches them. Each host
  * pattern of an entry is compared, ignoring case, with the host name or address the client connects to (the host
- * configured on the endpoint, or the {@code HostName} that {@code ~/.ssh/config} gives for it, never resolved through
- * DNS; an IPv6 address configured on the endpoint is used as it is written), written {@code host} for port 22 and
- * {@code [host]:port} for another port: {@code *} and {@code ?} are wildcards, a pattern starting with {@code !}
+ * configured on the endpoint, or the {@code HostName} that {@code ~/.ssh/config} gives for it, as it is written and
+ * never resolved through DNS, so an IPv6 address such as {@code ::1} is not expanded), written {@code host} for port 22
+ * and {@code [host]:port} for another port: {@code *} and {@code ?} are wildcards, a pattern starting with {@code !}
  * excludes the hosts it matches, and hashed entries are supported. The server is accepted when an entry of its host
  * lists the key it presents. It is rejected when that key is listed in a matching {@code @revoked} entry, or when its
  * host has entries without a marker but none of them lists that key. {@code failOnUnknownHost} only decides for a host
@@ -82,10 +85,11 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     }
 
     /**
-     * @param host the host name or address configured on the endpoint. The entries are matched against the host name or
-     *             address the client connects to, as SSHD resolved it from the endpoint and {@code ~/.ssh/config},
-     *             which writes an IPv6 address in its full form. When the configured host is an IPv6 address (it may be
-     *             enclosed in brackets), it is used as it is written instead. May be null.
+     * @param host the host name or address configured on the endpoint. The entries are matched against the
+     *             {@code HostName} that the host configuration of the client (by default {@code ~/.ssh/config}) gives
+     *             for it, or else against the configured host, as it is written: an IPv6 address such as {@code ::1} is
+     *             not expanded. When null, the address the client connected to is used, which writes an IPv6 address in
+     *             its full form.
      */
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
                                        boolean failOnUnknownHost, String host) {
@@ -107,7 +111,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
             return false;
         }
 
-        String server = toKnownHostsName(host, remoteAddress);
+        String server = toKnownHostsName(sshClientSession, remoteAddress);
         boolean hostListed = false;
         boolean keyListed = false;
         int lineNumber = 0;
@@ -170,28 +174,42 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     }
 
     /*
-     * The name OpenSSH looks the server up by: the host name or address the client connected to, as SSHD resolved it
-     * from the endpoint and ~/.ssh/config (the HostName there), never resolved through DNS, with the port the client
-     * connected to, written host for port 22 and [host]:port for another port. The connected address writes an IPv6
-     * address in its full form, so an IPv6 address configured on the endpoint is used as it is written.
+     * The name OpenSSH looks the server up by: the host name or address the client connected to, never resolved through
+     * DNS, with the port the client connected to, written host for port 22 and [host]:port for another port.
      */
-    private static String toKnownHostsName(String configuredHost, SocketAddress remoteAddress) {
+    private String toKnownHostsName(ClientSession session, SocketAddress remoteAddress) {
         if (!(remoteAddress instanceof InetSocketAddress) && !(remoteAddress instanceof SshdSocketAddress)) {
             return null;
         }
         SshdSocketAddress address = SshdSocketAddress.toSshdSocketAddress(remoteAddress);
-        String name = address.getHostName();
-        if (configuredHost != null) {
-            String configured = configuredHost;
-            if (configured.length() > 1 && configured.charAt(0) == '[' && configured.charAt(configured.length() - 1) == ']') {
-                configured = configured.substring(1, configured.length() - 1);
-            }
-            if (configured.indexOf(':') >= 0) {
-                name = configured;
-            }
+        String name = host != null ? effectiveHostName(session, address.getPort()) : address.getHostName();
+        if (name.length() > 1 && name.charAt(0) == '[' && name.charAt(name.length() - 1) == ']') {
+            // an IPv6 address in brackets
+            name = name.substring(1, name.length() - 1);
         }
         name = name.toLowerCase(Locale.ROOT);
         return address.getPort() == DEFAULT_PORT ? name : "[" + name + "]:" + address.getPort();
+    }
+
+    /*
+     * The host name or address the client connected to, as it is written: the HostName that the host config resolver
+     * of the client (by default ~/.ssh/config) gives for the configured host, or else the configured host. The connected
+     * address cannot be used for this, as it writes an IPv6 address such as ::1 in its full form.
+     */
+    private String effectiveHostName(ClientSession session, int port) {
+        ClientFactoryManager client = session != null ? session.getFactoryManager() : null;
+        HostConfigEntryResolver resolver = client != null ? client.getHostConfigEntryResolver() : null;
+        if (resolver != null) {
+            try {
+                HostConfigEntry entry = resolver.resolveEffectiveHost(host, port, null, session.getUsername(), null, null);
+                if (entry != null && entry.getHostName() != null && !entry.getHostName().isEmpty()) {
+                    return entry.getHostName();
+                }
+            } catch (IOException | RuntimeException e) {
+                log.warn("Could not resolve the host {} with the host configuration of the client", host, e);
+            }
+        }
+        return host;
     }
 
     /*
