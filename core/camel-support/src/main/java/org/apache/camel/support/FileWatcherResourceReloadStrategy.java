@@ -127,6 +127,11 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         return folder;
     }
 
+    @ManagedAttribute(description = "How often the folder is scanned for changed files, in millis")
+    public long getPollTimeout() {
+        return pollTimeout;
+    }
+
     @ManagedAttribute(description = "Whether the reload strategy watches directory recursively")
     public boolean isRecursive() {
         return isRecursive;
