@@ -53,6 +53,9 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     private final SlackEndpoint slackEndpoint;
     private Slack slack;
     private String timestamp;
+    // messages of a previous poll, the most recent first, that were not routed because the batch ended early. The
+    // timestamp is already past them, so they are routed with the messages of the next poll
+    private final List<Message> notRouted = new ArrayList<>();
     private String channelId;
 
     public SlackConsumer(SlackEndpoint endpoint, Processor processor) {
@@ -120,6 +123,18 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             }
         }
 
+        if (ObjectHelper.isNotEmpty(messages)) {
+            // the most recent message comes first
+            timestamp = messages.get(0).getTs();
+        }
+        if (!notRouted.isEmpty()) {
+            // they are older than the messages of this poll
+            List<Message> all = messages != null ? new ArrayList<>(messages) : new ArrayList<>();
+            all.addAll(notRouted);
+            notRouted.clear();
+            messages = all;
+        }
+
         Queue<Exchange> exchanges = createExchanges(messages);
         return processBatch(CastUtils.cast(exchanges));
     }
@@ -148,18 +163,12 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             if (slackEndpoint.isNaturalOrder()) {
                 for (int i = list.size() - 1; i >= 0; i--) {
                     Message message = list.get(i);
-                    if (i == 0) {
-                        timestamp = message.getTs();
-                    }
                     Exchange exchange = createExchange(message);
                     answer.add(exchange);
                 }
             } else {
                 for (int i = 0; i < list.size(); i++) {
                     Message message = list.get(i);
-                    if (i == 0) {
-                        timestamp = message.getTs();
-                    }
                     Exchange exchange = createExchange(message);
                     answer.add(exchange);
                 }
@@ -171,6 +180,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
+        int answer = 0;
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
@@ -186,9 +196,23 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             // use default consumer callback
             AsyncCallback cb = defaultConsumerCallback(exchange, true);
             getAsyncProcessor().process(exchange, cb);
+            answer++;
         }
 
-        return total;
+        // the batch ended early as the consumer is suspending or stopping: the following polls do not read these
+        // messages again, so keep them for the next poll. Their exchanges are never routed, and nothing else gives
+        // them back to the exchange factory
+        Exchange notRoutedExchange;
+        while ((notRoutedExchange = (Exchange) exchanges.poll()) != null) {
+            notRouted.add(notRoutedExchange.getIn().getBody(Message.class));
+            releaseExchange(notRoutedExchange, true);
+        }
+        if (slackEndpoint.isNaturalOrder()) {
+            // kept the most recent first
+            Collections.reverse(notRouted);
+        }
+
+        return answer;
     }
 
     private String getChannelId(final String channel, final String cursor) {
