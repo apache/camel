@@ -118,7 +118,9 @@ cycles backward.
 A route diagram of many routes becomes spaghetti quickly, above all when the routes have no
 `description`. `/overview` asks the model to explain the project of the selected integration (or the
 folder the TUI runs in): an overview of what it does, the business capabilities its routes implement,
-and a description of each route that has none. The facts come from the route sources, the same ones
+and a description of each route that has none. The folder the TUI runs in is explained only when it is a
+project: not your home folder, nor a folder that holds several projects, such as a workspace with a
+checkout of each repository. There the panel says so, and selecting an integration explains its project. The facts come from the route sources, the same ones
 `camel overview` prints (see xref:camel-jbang-ai.adoc#_project_overview[Project overview]): routes,
 entry points, how routes connect, external systems and findings. The model gets them with excerpts of
 the routes (values of passwords, tokens and other sensitive options masked) in one request without
