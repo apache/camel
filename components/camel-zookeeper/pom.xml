@@ -84,6 +84,20 @@
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- the ZooKeeper server that ZooKeeperConsumerSessionExpiryTest runs in the test JVM needs these two
+             (both are "provided" dependencies of zookeeper) -->
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${metrics-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>${snappy-java-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring-junit6</artifactId>
