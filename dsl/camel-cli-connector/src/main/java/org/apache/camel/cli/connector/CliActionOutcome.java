@@ -16,6 +16,8 @@
  */
 package org.apache.camel.cli.connector;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -39,19 +41,21 @@ final class CliActionOutcome {
     private final String error;
     private final String reason;
     private final Throwable failure;
+    private final boolean failedResult;
 
-    private CliActionOutcome(JsonObject result, String error, String reason, Throwable failure) {
+    private CliActionOutcome(JsonObject result, String error, String reason, Throwable failure, boolean failedResult) {
         this.result = result;
         this.error = error;
         this.reason = reason;
         this.failure = failure;
+        this.failedResult = failedResult;
     }
 
     /**
      * An action that could not be dispatched, such as an action file that is not valid JSON.
      */
     static CliActionOutcome failed(String error) {
-        return new CliActionOutcome(null, error, null, null);
+        return new CliActionOutcome(null, error, null, null, false);
     }
 
     /**
@@ -83,25 +87,25 @@ final class CliActionOutcome {
                 cause = cause.getCause();
             }
             String message = cause.getMessage() != null ? cause.getMessage() : cause.getClass().getSimpleName();
-            return new CliActionOutcome(output.result, message, null, cause);
+            return new CliActionOutcome(output.result, message, null, cause, false);
         }
         if (Boolean.FALSE.equals(known)) {
             String name = action.getString("action");
             return new CliActionOutcome(
-                    output.result, name != null ? "Unknown action: " + name : "Missing action", null,
-                    null);
+                    output.result, name != null ? "Unknown action: " + name : "Missing action", null, null, false);
         }
-        if (output.error != null) {
-            return new CliActionOutcome(output.result, output.error, output.reason, null);
+        String reported = output.error();
+        if (reported != null) {
+            return new CliActionOutcome(output.result, reported, output.reason(), null, false);
         }
         if (output.result != null) {
             // many actions report failures inside their result, as the file transport had no other way to do it
             String status = output.result.getString("status");
             if ("error".equals(status) || "failed".equals(status)) {
-                return new CliActionOutcome(output.result, messageOf(output.result), null, null);
+                return new CliActionOutcome(output.result, messageOf(output.result), null, null, true);
             }
         }
-        return new CliActionOutcome(output.result, null, null, null);
+        return new CliActionOutcome(output.result, null, null, null, false);
     }
 
     private static String messageOf(JsonObject result) {
@@ -146,8 +150,16 @@ final class CliActionOutcome {
     }
 
     /**
+     * Whether the error comes from the result itself, which reports a failure of its own (status <tt>error</tt> or
+     * <tt>failed</tt>), rather than from an exception, an unknown action or a reported error.
+     */
+    boolean failedResult() {
+        return failedResult;
+    }
+
+    /**
      * The error as a reply for the file transport: <tt>{"status":"failed","error":"..."}</tt>, the shape the CLI has
-     * read since Camel 4.23.
+     * read since Camel 4.23, with the result the action wrote before it failed, if any.
      */
     JsonObject errorReply() {
         JsonObject reply = new JsonObject();
@@ -156,13 +168,17 @@ final class CliActionOutcome {
         if (reason != null) {
             reply.put("reason", reason);
         }
+        if (result != null) {
+            reply.put("result", result);
+        }
         return reply;
     }
 
     private static final class Collector implements CliActionOutput {
         private volatile JsonObject result;
-        private volatile String error;
-        private volatile String reason;
+        // an action can report several problems, such as one per route it fails to stop
+        private final List<String> errors = new ArrayList<>();
+        private boolean onlyNotFound = true;
 
         @Override
         public void write(JsonObject result) {
@@ -170,14 +186,22 @@ final class CliActionOutcome {
         }
 
         @Override
-        public void error(String message) {
-            this.error = message;
+        public synchronized void error(String message) {
+            errors.add(message);
+            onlyNotFound = false;
         }
 
         @Override
-        public void notFound(String message) {
-            this.error = message;
-            this.reason = NOT_FOUND;
+        public synchronized void notFound(String message) {
+            errors.add(message);
+        }
+
+        synchronized String error() {
+            return errors.isEmpty() ? null : String.join("; ", errors);
+        }
+
+        synchronized String reason() {
+            return !errors.isEmpty() && onlyNotFound ? NOT_FOUND : null;
         }
     }
 }

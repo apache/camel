@@ -45,11 +45,12 @@ import org.slf4j.LoggerFactory;
  * Deleting the <tt>{pid}</tt> lock file shuts down the integration.
  * <p/>
  * An action with a request id (<tt>{pid}-action-{requestId}.json</tt>) always gets a reply in
- * <tt>{pid}-output-{requestId}.json</tt>: its result, <tt>{"status":"failed","error":"..."}</tt> when it failed (with
- * <tt>"reason":"not-found"</tt> when what it was asked to work on does not exist), or <tt>{"status":"success"}</tt>
- * when it has no result. An action in the shared <tt>{pid}-action.json</tt> only gets its result, or the error when it
- * threw an exception, as a Camel CLI before 4.24 never reads the other replies, and the next command could read them
- * instead of its own result.
+ * <tt>{pid}-output-{requestId}.json</tt>: <tt>{"status":"failed","error":"..."}</tt> when it is unknown, throws or
+ * reports an error (with <tt>"reason":"not-found"</tt> when what it was asked to work on does not exist, and the result
+ * it wrote before it failed under <tt>"result"</tt>), its result, or <tt>{"status":"success"}</tt> when it has no
+ * result. A result that reports a failure of its own is written as it is. An action in the shared
+ * <tt>{pid}-action.json</tt> only gets its result, or the error when it threw an exception, as a Camel CLI before 4.24
+ * never reads the other replies, and the next command could read them instead of its own result.
  */
 public class FileCliConnectorTransport extends ServiceSupport implements CliConnectorTransport {
 
@@ -265,15 +266,20 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     }
 
     /**
-     * The reply to an action: its result, the error, or an ack. The shared output file only gets the result, or the
+     * The reply to an action: the error, its result, or an ack. The shared output file only gets the result, or the
      * error of an exception (as before 4.24), so the next command does not read a reply meant for another command.
      */
     private static JsonObject reply(CliActionOutcome outcome, boolean replyAlways) {
-        if (outcome.result() != null) {
+        if (outcome.error() != null && !outcome.failedResult()) {
+            // an exception, an unknown action or a reported error wins over a (partial) result
+            if (replyAlways || outcome.failure() != null) {
+                return outcome.errorReply();
+            }
             return outcome.result();
         }
-        if (outcome.error() != null && (replyAlways || outcome.failure() != null)) {
-            return outcome.errorReply();
+        if (outcome.result() != null) {
+            // also a result that reports a failure of its own: the CLI reads it as it is
+            return outcome.result();
         }
         if (replyAlways) {
             JsonObject ack = new JsonObject();

@@ -132,6 +132,34 @@ class FileCliConnectorTransportTest {
     }
 
     @Test
+    void exceptionWinsOverAPartialResult() {
+        writeAction(action("partial"), "r1");
+
+        JsonObject reply = awaitJson(file(PID + "-output-r1.json"));
+        assertThat(reply).containsEntry("status", "failed").containsEntry("error", "Boom");
+        JsonObject partial = reply.getMap("result");
+        assertThat(partial).containsEntry("value", "42");
+    }
+
+    @Test
+    void reportedErrorWinsOverAResult() {
+        writeAction(action("partial-error"), "r1");
+
+        JsonObject reply = awaitJson(file(PID + "-output-r1.json"));
+        assertThat(reply).containsEntry("status", "failed").containsEntry("error", "Half done");
+        JsonObject partial = reply.getMap("result");
+        assertThat(partial).containsEntry("value", "42");
+    }
+
+    @Test
+    void resultWithAFailureOfItsOwnIsWrittenAsItIs() {
+        writeAction(action("failed-result"), "r1");
+
+        assertThat(awaitJson(file(PID + "-output-r1.json")).toJson())
+                .isEqualTo("{\"status\":\"error\",\"message\":\"No such datasource\"}");
+    }
+
+    @Test
     void invalidActionGetsAnErrorOnceItIsNotBeingWritten() throws Exception {
         File action = writeText("{\"action\":\"res", "r1");
 
@@ -170,6 +198,11 @@ class FileCliConnectorTransportTest {
         assertThat(awaitJson(output)).containsEntry("status", "failed").containsEntry("error", "Boom");
         Files.writeString(output.toPath(), "");
 
+        // as before 4.24: a reported error is not written, but the result is
+        writeAction(action("partial-error"), null);
+        assertThat(awaitJson(output).toJson()).isEqualTo("{\"status\":\"success\",\"value\":\"42\"}");
+        Files.writeString(output.toPath(), "");
+
         // no reply that a Camel CLI before 4.24 would not read, and the next command could read instead of its own
         for (String name : new String[] { "nothing", "error", "missing", "does-not-exist" }) {
             writeAction(action(name), null);
@@ -197,13 +230,22 @@ class FileCliConnectorTransportTest {
             return false;
         }
         switch (name) {
-            case "result" -> {
-                JsonObject result = new JsonObject();
-                result.put("status", "success");
-                result.put("value", "42");
-                output.write(result);
-            }
+            case "result" -> output.write(result());
             case "boom" -> throw new IllegalStateException("Boom");
+            case "partial" -> {
+                output.write(result());
+                throw new IllegalStateException("Boom");
+            }
+            case "partial-error" -> {
+                output.write(result());
+                output.error("Half done");
+            }
+            case "failed-result" -> {
+                JsonObject failed = new JsonObject();
+                failed.put("status", "error");
+                failed.put("message", "No such datasource");
+                output.write(failed);
+            }
             case "error" -> output.error("Broken");
             case "missing" -> output.notFound("No route matching: nope");
             case "nothing" -> {
@@ -214,6 +256,13 @@ class FileCliConnectorTransportTest {
             }
         }
         return true;
+    }
+
+    private static JsonObject result() {
+        JsonObject result = new JsonObject();
+        result.put("status", "success");
+        result.put("value", "42");
+        return result;
     }
 
     private File file(String name) {

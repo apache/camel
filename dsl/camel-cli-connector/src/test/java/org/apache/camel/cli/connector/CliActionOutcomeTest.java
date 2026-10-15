@@ -78,6 +78,56 @@ class CliActionOutcomeTest {
     }
 
     @Test
+    void severalProblemsAreJoined() {
+        CliActionOutcome outcome = join(CliActionOutcome.dispatch((action, output) -> {
+            output.error("Error stop route: a due to: x");
+            output.error("Error stop route: b due to: y");
+            return true;
+        }, action("route")));
+
+        assertThat(outcome.error()).isEqualTo("Error stop route: a due to: x; Error stop route: b due to: y");
+        assertThat(outcome.reason()).isNull();
+    }
+
+    @Test
+    void notFoundOnlyWhenEveryProblemIsNotFound() {
+        CliActionOutcome mixed = join(CliActionOutcome.dispatch((action, output) -> {
+            output.notFound("No route matching: a");
+            output.error("Error stop route: b due to: y");
+            return true;
+        }, action("route")));
+        assertThat(mixed.reason()).isNull();
+
+        CliActionOutcome notFound = join(CliActionOutcome.dispatch((action, output) -> {
+            output.notFound("No route matching: a");
+            output.notFound("No route matching: b");
+            return true;
+        }, action("route")));
+        assertThat(notFound.reason()).isEqualTo(CliActionOutcome.NOT_FOUND);
+        assertThat(notFound.error()).isEqualTo("No route matching: a; No route matching: b");
+    }
+
+    @Test
+    void exceptionAfterAPartialResultKeepsBoth() {
+        CliActionOutcome outcome = join(CliActionOutcome.dispatch((action, output) -> {
+            output.write(result("{\"status\":\"success\",\"value\":1}"));
+            throw new IllegalStateException("Boom");
+        }, action("partial")));
+
+        assertThat(outcome.error()).isEqualTo("Boom");
+        assertThat(outcome.failedResult()).isFalse();
+        assertThat(outcome.errorReply()).containsEntry("status", "failed").containsEntry("error", "Boom");
+        JsonObject partial = outcome.errorReply().getMap("result");
+        assertThat(partial.getInteger("value")).isEqualTo(1);
+    }
+
+    @Test
+    void failedResultIsMarked() {
+        assertThat(outcome(result("{\"status\":\"error\",\"message\":\"x\"}")).failedResult()).isTrue();
+        assertThat(outcome(result("{\"status\":\"success\"}")).failedResult()).isFalse();
+    }
+
+    @Test
     void cancellingTheOutcomeCancelsTheAction() {
         CompletableFuture<Boolean> running = new CompletableFuture<>();
         CliActionDispatcher dispatcher = new CliActionDispatcher() {
