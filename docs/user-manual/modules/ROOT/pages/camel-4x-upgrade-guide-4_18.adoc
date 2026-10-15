@@ -81,6 +81,53 @@ A `BasicMessageFilter` created in application code applies a `SpringWebserviceHe
 created with another strategy. A route that relies on the previous behaviour can supply a custom
 `headerFilterStrategy` on the `spring-ws` endpoint.
 
+=== camel-mina - the host name of the server is verified over SSL
+
+When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the
+producer, and the consumer with `clientMode=true`, now check that the certificate of the server matches the `host` of
+the endpoint, with the same rules as an HTTPS client. Before, any certificate trusted by the trust store was accepted,
+whatever host the certificate was issued for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the SSL handshake; an IP
+address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
+endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+MINA does not pass a failed handshake on as an error: the producer fails with a timeout (after `writeTimeout`, or
+`timeout` while waiting for a reply), and the handshake error is logged at `ERROR` level by
+`org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
+certificate that does not list the host.
+
+=== camel-mllp - the producer verifies the host name of the server over TLS
+
+When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the
+MLLP producer now checks that the certificate of the server matches the host it connects to, with the same rules as an
+HTTPS client. Before, it accepted any certificate trusted by the trust store, whatever host the certificate was issued
+for.
+
+A producer that connects with a host name or an IP address that the certificate does not list now fails the TLS
+handshake; an IP address must be listed as a subject alternative name of the certificate, and a producer URI without a
+host name (such as `mllp://8888`) cannot pass the check. Use a certificate that matches the host of the endpoint, or set
+the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+=== camel-smpp - the host name of the SMSC is verified over SSL
+
+With `smpps` (or `usingSSL=true`), directly or through an HTTP proxy, the connection now checks that the certificate of
+the SMSC matches the host it connects to, with the same rules as an HTTPS client. Before, any certificate trusted by the
+JVM was accepted, whatever host it was issued for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the SSL handshake; an IP
+address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
+endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+A mismatch shows as the producer or consumer failing to start, with an `IOException` whose cause names the host that
+was checked:
+
+[source]
+----
+java.io.IOException: No subject alternative names matching IP address 127.0.0.1 found
+    Caused by: javax.net.ssl.SSLHandshakeException: No subject alternative names matching IP address 127.0.0.1 found
+----
+
 === camel-pqc - a configured KeyGenerator is used by one exchange at a time
 
 When Camel creates the instance itself, the KEM operations of the `pqc` component and the PQC data format now use a
