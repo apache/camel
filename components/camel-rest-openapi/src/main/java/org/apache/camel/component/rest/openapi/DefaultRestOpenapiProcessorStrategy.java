@@ -269,7 +269,8 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
         });
     }
 
-    private void loadMockData(Operation operation, String verb, String path, Exchange exchange) {
+    // package-private for testing (CAMEL-25663)
+    void loadMockData(Operation operation, String verb, String path, Exchange exchange) {
         final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         final String[] includes = mockIncludePattern != null ? mockIncludePattern.split(",") : null;
 
@@ -333,8 +334,11 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
                 String contentType = ExchangeHelper.getContentType(exchange);
                 String accept = exchange.getMessage().getHeader("Accept", String.class);
                 if (operation.getResponses() != null) {
+                    // CAMEL-25663: an operation whose responses have no 200 (for example only 201, 204, default or
+                    // 2XX) has a null ApiResponse here; treat it like a response without content so the mock returns
+                    // an empty 204 body instead of throwing a NullPointerException
                     ApiResponse a = operation.getResponses().get("200");
-                    Content c = a.getContent();
+                    Content c = a != null ? a.getContent() : null;
                     if (c != null && !c.isEmpty()) {
                         // prefer media-type that is the same as the incoming content-type
                         // if none found, then find first matching content-type from the HTTP Accept header
