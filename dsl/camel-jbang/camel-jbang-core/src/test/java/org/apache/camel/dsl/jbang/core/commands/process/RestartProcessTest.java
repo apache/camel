@@ -16,17 +16,27 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 // TODO: add tests for the successful restart path once ProcessBuilder/Runtime.exec can be mocked
 //       or an integration-test harness is available. The current tests only cover early-exit guards.
@@ -43,10 +53,10 @@ class RestartProcessTest extends ProcessCommandTestSupport {
             mocked.when(ProcessHandle::current).thenReturn(current);
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.empty());
 
-            int exit = command.doCall();
+            CliException e = assertThrows(CliException.class, command::doCall);
 
-            assertEquals(3, exit, "Should return not found when no process matches");
-            assertTrue(printer.getStderr().contains("No matching"), "Should print no-match message on stderr");
+            assertEquals(CliExitCode.NOT_FOUND, e.getExitCode(), "Should return not found when no process matches");
+            assertEquals("No running Camel integration matches: nonExistentApp", e.getMessage());
         }
     }
 
@@ -66,10 +76,44 @@ class RestartProcessTest extends ProcessCommandTestSupport {
             mocked.when(ProcessHandle::current).thenReturn(current);
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph1, ph2));
 
-            int exit = command.doCall();
+            CliException e = assertThrows(CliException.class, command::doCall);
 
-            assertEquals(3, exit, "Should return not found when multiple processes match");
-            assertTrue(printer.getStderr().contains("Multiple"), "Should print ambiguity message on stderr");
+            assertEquals(CliExitCode.NOT_FOUND, e.getExitCode(), "Should return not found when multiple processes match");
+            assertTrue(e.getMessage().contains("matches 2 running Camel integrations"), e.getMessage());
         }
+    }
+
+    @Test
+    void testCommandLineNotAvailableIsAFailure() throws Exception {
+        writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
+
+        RestartProcess command = new RestartProcess(new CamelJBangMain().withPrinter(printer));
+        command.name = "myApp";
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle current = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(current);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+            mocked.when(() -> ProcessHandle.of(TEST_PID)).thenReturn(Optional.of(ph));
+            when(ph.info().command()).thenReturn(Optional.empty());
+            when(ph.info().arguments()).thenReturn(Optional.empty());
+
+            CliException e = assertThrows(CliException.class, command::doCall);
+
+            assertEquals(CliExitCode.FAILURE, e.getExitCode());
+            assertEquals("Cannot restart: command line not available for PID " + TEST_PID, e.getMessage());
+            // the integration is not stopped
+            verify(ph, never()).destroy();
+        }
+    }
+
+    @Test
+    void testTailOfTheLog(@TempDir Path dir) throws Exception {
+        Path log = dir.resolve("restart.log");
+        Files.writeString(log, "one\ntwo\nthree\n");
+
+        assertEquals("two" + System.lineSeparator() + "three", RestartProcess.tail(log, 2));
+        assertEquals("", RestartProcess.tail(dir.resolve("missing.log"), 2));
     }
 }

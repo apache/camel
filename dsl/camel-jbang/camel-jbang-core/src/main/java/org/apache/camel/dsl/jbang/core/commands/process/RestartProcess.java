@@ -17,18 +17,22 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -42,8 +46,18 @@ import picocli.CommandLine.Command;
                  "  camel restart 12345" })
 public class RestartProcess extends ProcessBaseCommand {
 
+    /**
+     * The phase of a Camel that has started (see the status file).
+     */
+    private static final int STARTED = 5;
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
     String name;
+
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "60000", converter = TimeoutConverter.class,
+                        description = "How long to wait for the integration to stop, and again to start, in millis or as a"
+                                      + " duration such as 30s")
+    long timeout = 60000;
 
     public RestartProcess(CamelJBangMain main) {
         super(main);
@@ -51,29 +65,11 @@ public class RestartProcess extends ProcessBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            printer().printErr("No matching Camel integration found: " + name);
-            return CliExitCode.NOT_FOUND;
-        }
-        if (pids.size() > 1) {
-            printer().printErr("Multiple integrations match '" + name + "'. Please be more specific.");
-            return CliExitCode.NOT_FOUND;
-        }
-
-        long pid = pids.get(0);
-        ProcessHandle ph = ProcessHandle.of(pid).orElse(null);
-        if (ph == null) {
-            printer().printErr("Process not found: " + pid);
-            return CliExitCode.NOT_FOUND;
-        }
-
-        // resolve name for display
-        String displayName = name;
-        JsonObject root = loadStatus(pid);
-        if (root != null) {
-            displayName = ProcessHelper.extractName(root, ph);
-        }
+        CamelProcess process = ProcessFinder.requireOne(name);
+        long pid = process.pid();
+        ProcessHandle ph = ProcessHandle.of(pid)
+                .orElseThrow(() -> CliException.notFound("No running Camel integration matches: " + name));
+        String displayName = process.name();
 
         // capture command line before stopping
         Optional<String> cmdOpt = ph.info().command();
@@ -82,11 +78,9 @@ public class RestartProcess extends ProcessBaseCommand {
 
         // get working directory from status file
         String directory = null;
-        if (root != null) {
-            JsonObject runtime = (JsonObject) root.get("runtime");
-            if (runtime != null) {
-                directory = runtime.getString("directory");
-            }
+        JsonObject runtime = (JsonObject) process.status().get("runtime");
+        if (runtime != null) {
+            directory = runtime.getString("directory");
         }
 
         // build the command to re-launch
@@ -99,38 +93,91 @@ public class RestartProcess extends ProcessBaseCommand {
         }
 
         if (cmd.isEmpty()) {
-            printer().println("Cannot restart: command line not available for PID " + pid);
-            return 1;
+            throw CliException.failure("Cannot restart: command line not available for PID " + pid);
         }
 
-        // stop the process gracefully
-        printer().println("Stopping Camel integration: " + displayName + " (PID: " + pid + ")");
-        ph.destroy();
+        stop(ph, displayName);
 
-        // wait for termination
-        CompletableFuture<ProcessHandle> exitFuture = ph.onExit().toCompletableFuture();
-        try {
-            exitFuture.get(10, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            printer().println("Graceful shutdown timed out, force killing...");
-            ph.destroyForcibly();
-            Thread.sleep(500);
-        }
-
-        // re-launch
+        // re-launch, with its output in a log file that stays (the path is printed)
         ProcessBuilder pb = new ProcessBuilder(cmd);
         if (directory != null) {
             pb.directory(new File(directory));
         }
         pb.redirectErrorStream(true);
-        Path outputFile = Files.createTempFile("camel-restart-", ".log");
-        outputFile.toFile().deleteOnExit();
-        pb.redirectOutput(outputFile.toFile());
-        Process process = pb.start();
+        Path log = Files.createTempFile(CommandLineHelper.getCamelDir(), "restart-" + pid + "-", ".log");
+        pb.redirectOutput(log.toFile());
+        Process started = pb.start();
 
-        printer().println("Restarted Camel integration: " + displayName + " (PID: " + process.pid() + ")");
-
+        awaitStarted(started, displayName, log);
+        printer().println("Restarted Camel integration: " + displayName + " (PID: " + started.pid() + ")");
+        printer().println("Log: " + log);
         return 0;
+    }
+
+    /**
+     * Stops the integration like camel stop does, and terminates it when it does not stop in time: the old one must be
+     * gone before the new one starts.
+     */
+    private void stop(ProcessHandle ph, String displayName) {
+        long pid = ph.pid();
+        printer().println("Stopping Camel integration: " + displayName + " (PID: " + pid + ")");
+        Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(pid));
+        if (Files.exists(pidFile)) {
+            PathUtils.deleteFile(pidFile);
+        } else {
+            ph.destroy();
+        }
+        if (StopProcess.awaitExit(pid, System.currentTimeMillis() + timeout)) {
+            return;
+        }
+        printer().printWarn("Camel integration (PID: " + pid + ") did not stop within "
+                            + TimeUtils.printDuration(timeout) + "; terminating it");
+        ph.destroy();
+        if (StopProcess.awaitExit(pid, System.currentTimeMillis() + 10000)) {
+            return;
+        }
+        ph.destroyForcibly();
+        if (!StopProcess.awaitExit(pid, System.currentTimeMillis() + 5000)) {
+            throw CliException.timeout("Camel integration (PID: " + pid + ") did not stop, so it is not restarted");
+        }
+    }
+
+    /**
+     * Waits until the new integration has started.
+     *
+     * @throws CliException with exit code 1 when it stopped right away, or 124 when it did not start in time (it is
+     *                      left running)
+     */
+    private void awaitStarted(Process started, String displayName, Path log) throws Exception {
+        long deadline = System.currentTimeMillis() + timeout;
+        while (System.currentTimeMillis() < deadline) {
+            if (!started.isAlive()) {
+                printer().printDiagnostic(tail(log, 20));
+                throw CliException.failure("Camel integration " + displayName + " stopped right after the restart (exit code "
+                                           + started.exitValue() + "); the log is in " + log);
+            }
+            JsonObject status = loadStatus(started.pid());
+            if (status != null && status.get("context") instanceof JsonObject context
+                    && context.getIntegerOrDefault("phase", 0) == STARTED) {
+                return;
+            }
+            Thread.sleep(200);
+        }
+        throw CliException.timeout("Camel integration " + displayName + " (PID: " + started.pid() + ") did not start within "
+                                   + TimeUtils.printDuration(timeout) + "; it is still starting, the log is in "
+                                   + log);
+    }
+
+    /**
+     * The last lines of the log.
+     */
+    static String tail(Path log, int lines) {
+        try {
+            List<String> all = Files.readAllLines(log);
+            return String.join(System.lineSeparator(), all.subList(Math.max(0, all.size() - lines), all.size()));
+        } catch (IOException e) {
+            return "";
+        }
     }
 
     static List<String> parseCommandLine(String commandLine) {
