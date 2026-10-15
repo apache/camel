@@ -875,3 +875,17 @@ The consumer now sets the `CamelMiloNodeId` header on every exchange, including 
 Stopping a consumer now deletes its monitored items. Previously they stayed on the server while another endpoint kept
 the shared connection open, so a restarted consumer received each value twice. While the server is unreachable, the
 stop waits until the client's next attempt to reconnect has failed.
+
+=== camel-toon - the lengthMarker option is removed
+
+`camel-toon` now uses JToon 2.0.7, which follows a newer version of the TOON specification.
+
+The `lengthMarker` option of the TOON data format is removed, because the TOON specification no longer has the `[#N]`
+array length marker. Remove the option from the data format in Java, XML and YAML routes. TOON text with a `[#N]` array
+header, such as the output of a data format with `lengthMarker=true`, now fails to unmarshal in both strict and
+non-strict mode; in Camel 4.23 it already failed in strict mode (the default). To read such data, remove the `#` from
+its array headers (`tags[#2]:` becomes `tags[2]:`).
+
+With `strict=false`, unmarshalling no longer returns `null` or a partial result for malformed TOON. Only the non-strict
+recoveries of the TOON specification apply, such as accepting an array whose length differs from the declared length;
+other malformed TOON fails with `IllegalArgumentException`, as in strict mode.

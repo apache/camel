@@ -2759,7 +2759,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "indent", def.getIndent(), "2");
         doWriteAttribute(jo, "delimiter", def.getDelimiter(), "COMMA");
-        doWriteAttribute(jo, "lengthMarker", def.getLengthMarker(), "false");
         doWriteAttribute(jo, "strict", def.getStrict(), "true");
         doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
         return jo;

@@ -19343,8 +19343,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "delimiter", type = "enum:COMMA,TAB,PIPE", defaultValue = "COMMA", description = "Delimiter used for tabular array rows and inline primitive arrays.", displayName = "Delimiter"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "indent", type = "number", defaultValue = "2", description = "Number of spaces per indentation level.", displayName = "Indent"),
-                    @YamlProperty(name = "lengthMarker", type = "boolean", defaultValue = "false", description = "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.", displayName = "Length Marker"),
-                    @YamlProperty(name = "strict", type = "boolean", defaultValue = "true", description = "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.", displayName = "Strict")
+                    @YamlProperty(name = "strict", type = "boolean", defaultValue = "true", description = "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict recoveries of the TOON specification, such as accepting an array whose length differs from the declared length; other malformed TOON still fails.", displayName = "Strict")
             }
     )
     public static class ToonDataFormatDeserializer extends YamlDeserializerBase<ToonDataFormat> {
@@ -19380,11 +19379,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "indent": {
                     String val = asText(node);
                     target.setIndent(val);
-                    break;
-                }
-                case "lengthMarker": {
-                    String val = asText(node);
-                    target.setLengthMarker(val);
                     break;
                 }
                 case "strict": {

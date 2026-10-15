@@ -59,10 +59,9 @@ public class ToonDataFormat extends ServiceSupport
     @Metadata(description = "Delimiter used for tabular array rows and inline primitive arrays.",
               defaultValue = "COMMA", enums = "COMMA,TAB,PIPE")
     private String delimiter = Delimiter.COMMA.name();
-    @Metadata(description = "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
-              defaultValue = "false", javaType = "java.lang.Boolean")
-    private boolean lengthMarker = EncodeOptions.DEFAULT.lengthMarker();
-    @Metadata(description = "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+    @Metadata(description = "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict"
+                            + " recoveries of the TOON specification, such as accepting an array whose length differs from the"
+                            + " declared length; other malformed TOON still fails.",
               defaultValue = "true", javaType = "java.lang.Boolean")
     private boolean strict = DecodeOptions.DEFAULT.strict();
     @Metadata(description = "Whether the data format should set the Content-Type header to text/toon when marshalling.",
@@ -129,7 +128,7 @@ public class ToonDataFormat extends ServiceSupport
     }
 
     private EncodeOptions encodeOptions() {
-        return new EncodeOptions(indent, resolveDelimiter(), lengthMarker, KeyFolding.OFF, Integer.MAX_VALUE);
+        return new EncodeOptions(indent, resolveDelimiter(), KeyFolding.OFF, Integer.MAX_VALUE);
     }
 
     private DecodeOptions decodeOptions() {
@@ -159,14 +158,6 @@ public class ToonDataFormat extends ServiceSupport
 
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
-    }
-
-    public boolean isLengthMarker() {
-        return lengthMarker;
-    }
-
-    public void setLengthMarker(boolean lengthMarker) {
-        this.lengthMarker = lengthMarker;
     }
 
     public boolean isStrict() {

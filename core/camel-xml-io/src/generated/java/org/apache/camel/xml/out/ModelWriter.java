@@ -2758,7 +2758,6 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("indent", def.getIndent(), "2");
         doWriteAttribute("delimiter", def.getDelimiter(), "COMMA");
-        doWriteAttribute("lengthMarker", def.getLengthMarker(), "false");
         doWriteAttribute("strict", def.getStrict(), "true");
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         endElement(name);
