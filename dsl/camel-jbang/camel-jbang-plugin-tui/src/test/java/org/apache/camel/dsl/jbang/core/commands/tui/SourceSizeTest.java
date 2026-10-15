@@ -71,7 +71,7 @@ class SourceSizeTest {
             LogTab.render 173
             MemoryLeakTab.java 2033
             NetworkTab.renderContent 162
-            OllamaMonitor.toJson 206
+            OllamaMonitor.toJson 200
             OverviewTab.buildOverviewTable 185
             OverviewTab.renderThroughputChart 158
             RoutesTab.renderProcessors 179

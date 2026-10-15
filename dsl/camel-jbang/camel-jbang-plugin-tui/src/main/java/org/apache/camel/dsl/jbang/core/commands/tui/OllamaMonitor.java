@@ -450,11 +450,15 @@ final class OllamaMonitor {
         }
     }
 
-    /** Immutable view for rendering and for the MCP tool. */
+    /**
+     * Immutable view for rendering and for the MCP tool. {@code runnerWithoutSlots} is set when the runner has no slot
+     * state to read (Ollama's MLX runner), so the live figures stay empty and the requests carry the numbers.
+     */
     record Snapshot(ServerInfo server, List<LoadedModel> models, List<String> installed, SlotState slot,
-            RunnerInfo runner, HostStats host, List<RequestEntry> requests, double liveDecodeRate,
-            double livePrefillRate, long[] decodeHistory, SessionTotals totals, String lastError, Instant lastPoll,
-            String probedUrl, int panelWindow, int panelBudget, ActiveQuestion activeQuestion) {
+            RunnerInfo runner, boolean runnerWithoutSlots, HostStats host, List<RequestEntry> requests,
+            double liveDecodeRate, double livePrefillRate, long[] decodeHistory, SessionTotals totals,
+            String lastError, Instant lastPoll, String probedUrl, int panelWindow, int panelBudget,
+            ActiveQuestion activeQuestion) {
 
         boolean connected() {
             return server != null;
@@ -483,6 +487,7 @@ final class OllamaMonitor {
     private final Set<String> shapeAttempted = new HashSet<>();
     private SlotState slot;
     private RunnerInfo runner;
+    private boolean runnerWithoutSlots;
     private long serverPid;
     private HostStats host;
     private final Deque<RequestEntry> requests = new ArrayDeque<>();
@@ -558,6 +563,7 @@ final class OllamaMonitor {
                 server = null;
                 lastVersion = 0;
                 runner = null;
+                runnerWithoutSlots = false;
                 slot = null;
             }
         }
@@ -778,9 +784,22 @@ final class OllamaMonitor {
     void updateRunner(RunnerInfo info) {
         synchronized (lock) {
             runner = info;
+            runnerWithoutSlots = false;
             if (info == null) {
                 slot = null;
             }
+        }
+    }
+
+    /**
+     * The runner answered {@code /slots} with 404 or 501: it has no slot state (Ollama runs MLX models in its own
+     * runner, not in llama-server). It stays the known runner, for the header and the host panel, until the process
+     * scan no longer finds it, and is not asked again.
+     */
+    void runnerHasNoSlots() {
+        synchronized (lock) {
+            runnerWithoutSlots = true;
+            slot = null;
         }
     }
 
@@ -823,7 +842,7 @@ final class OllamaMonitor {
         synchronized (lock) {
             long now = MonotonicClock.millis();
             return new Snapshot(
-                    server, models, installed, slot, runner, host, List.copyOf(requests),
+                    server, models, installed, slot, runner, runnerWithoutSlots, host, List.copyOf(requests),
                     decodeWindow.ratePerSecond(now), prefillWindow.ratePerSecond(now),
                     decodeHistory.clone(), totals, lastError, lastPoll, baseUrl, panelWindow, panelBudget,
                     activeQuestion);
@@ -942,29 +961,46 @@ final class OllamaMonitor {
                 current = found;
             }
         }
-        if (current != null) {
-            // llama-server logs every request at the verbosity Ollama starts it with, so the slot is read only as
-            // often as the live view needs: fast while it generates, slowly while idle
-            boolean busy;
-            synchronized (lock) {
-                busy = slot != null && slot.processing();
-            }
-            long slotInterval = busy ? SLOT_BUSY_INTERVAL_MS : SLOT_IDLE_INTERVAL_MS;
-            if (now - lastSlotPoll >= slotInterval) {
-                lastSlotPoll = now;
-                JsonArray slots = getJsonArray("http://127.0.0.1:" + current.port() + "/slots");
-                if (slots != null) {
-                    updateSlot(OllamaParsers.parseSlots(slots, Instant.now()));
-                } else {
-                    updateRunner(null);
-                    current = null;
-                }
-            }
-        }
+        current = pollSlots(now, current);
         if (now - lastHost >= HOST_INTERVAL_MS) {
             lastHost = now;
             updateHost(probeHost(now, current));
         }
+    }
+
+    /**
+     * Reads the runner's slot state when it is due and returns the runner still known. llama-server logs every request
+     * at the verbosity Ollama starts it with, so the slot is read only as often as the live view needs: fast while it
+     * generates, slowly while idle, and never again from a runner without slots. A runner that does not answer is
+     * dropped only once its process is gone: dropping it on any failed read made the process scan find it again a
+     * second later, and the panels flicker between the live and the per-request view.
+     */
+    RunnerInfo pollSlots(long now, RunnerInfo current) {
+        if (current == null) {
+            return null;
+        }
+        boolean busy;
+        boolean noSlots;
+        synchronized (lock) {
+            busy = slot != null && slot.processing();
+            noSlots = runnerWithoutSlots;
+        }
+        long slotInterval = busy ? SLOT_BUSY_INTERVAL_MS : SLOT_IDLE_INTERVAL_MS;
+        if (noSlots || now - lastSlotPoll < slotInterval) {
+            return current;
+        }
+        lastSlotPoll = now;
+        HttpResponse<String> response = send("http://127.0.0.1:" + current.port() + "/slots", null);
+        if (parseJson(response) instanceof JsonArray slots) {
+            updateSlot(OllamaParsers.parseSlots(slots, Instant.now()));
+        } else if (response != null && (response.statusCode() == 404 || response.statusCode() == 501)) {
+            // 404 from Ollama's MLX runner, 501 from a llama-server started without the endpoint
+            runnerHasNoSlots();
+        } else if (!ProcessHandle.of(current.pid()).map(ProcessHandle::isAlive).orElse(false)) {
+            updateRunner(null);
+            return null;
+        }
+        return current;
     }
 
     private ModelShape shapeFor(String base, String name) {
@@ -1136,17 +1172,17 @@ final class OllamaMonitor {
         return parsed instanceof JsonObject jo ? jo : null;
     }
 
-    private JsonArray getJsonArray(String url) {
-        Object parsed = getJson(url, null);
-        return parsed instanceof JsonArray ja ? ja : null;
-    }
-
     private JsonObject postJsonObject(String url, String body) {
         Object parsed = getJson(url, body);
         return parsed instanceof JsonObject jo ? jo : null;
     }
 
     private Object getJson(String url, String postBody) {
+        return parseJson(send(url, postBody));
+    }
+
+    /** The response to a GET, or to a POST of the JSON body; null when nothing answered in time. */
+    private HttpResponse<String> send(String url, String postBody) {
         try {
             HttpRequest.Builder b = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofMillis(2500));
             if (postBody != null) {
@@ -1154,10 +1190,22 @@ final class OllamaMonitor {
             } else {
                 b.GET();
             }
-            HttpResponse<String> response = http.send(b.build(), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() / 100 != 2 || response.body() == null || response.body().isBlank()) {
-                return null;
-            }
+            return http.send(b.build(), HttpResponse.BodyHandlers.ofString());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** The JSON body of a successful response, null for anything else. */
+    private static Object parseJson(HttpResponse<String> response) {
+        if (response == null || response.statusCode() / 100 != 2 || response.body() == null
+                || response.body().isBlank()) {
+            return null;
+        }
+        try {
             return Jsoner.deserialize(response.body());
         } catch (Exception e) {
             return null;
@@ -1262,13 +1310,7 @@ final class OllamaMonitor {
         root.put("live", live);
 
         if (s.runner() != null) {
-            JsonObject runner = new JsonObject();
-            runner.put("pid", s.runner().pid());
-            runner.put("port", s.runner().port());
-            runner.put("executable", s.runner().executable());
-            runner.put("contextSize", s.runner().contextSize());
-            runner.put("parallel", s.runner().parallel());
-            root.put("runner", runner);
+            root.put("runner", runnerJson(s));
         }
         if (s.host() != null) {
             JsonObject hostJson = new JsonObject();
@@ -1438,6 +1480,18 @@ final class OllamaMonitor {
         j.put("label", p.label());
         j.put("cpuPercent", round1(p.cpuPercent()));
         j.put("rssBytes", p.rssBytes());
+        return j;
+    }
+
+    private static JsonObject runnerJson(Snapshot s) {
+        JsonObject j = new JsonObject();
+        j.put("pid", s.runner().pid());
+        j.put("port", s.runner().port());
+        j.put("executable", s.runner().executable());
+        j.put("contextSize", s.runner().contextSize());
+        j.put("parallel", s.runner().parallel());
+        // false for a runner without slot state (Ollama's MLX runner): "live" then stays empty
+        j.put("liveState", !s.runnerWithoutSlots());
         return j;
     }
 
