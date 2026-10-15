@@ -261,7 +261,7 @@ template.sendBodyAndHeader("direct:start", "{\"event\": \"deleted\"}", "action",
 citrus.assertIsSatisfied();
 ----
 
-You can also use `validate(index)` to target a specific exchange by its 0-based position.
+You can also use `validate(index)` to target a specific exchange by its 1-based position.
 
 When both `validate(index)` and `validateAll()` are configured, the indexed spec takes priority —
 it replaces `validateAll()` for that exchange entirely (the two are never combined). The
@@ -274,11 +274,11 @@ failure is thrown immediately as an exception.
 
 [source,java]
 ----
-citrus.validate(0).body("{\"event\": \"start\"}");
+citrus.validate(1).body("{\"event\": \"start\"}");
 citrus.validateAll().body("{\"event\": \"progress\"}").header("type", "status");
 
-// Exchange 0 → validated against validate(0) only (validateAll() is NOT applied)
-// Exchange 1, 2, ... → validated against validateAll() (body + header)
+// Exchange 1 → validated against validate(1) only (validateAll() is NOT applied)
+// Exchange 2, 3, ... → validated against validateAll() (body + header)
 ----
 
 === Receive operation (request/response simulation)
@@ -294,9 +294,9 @@ should respond with (`then`). This is useful for simulating backend services in 
 CitrusEndpoint citrus = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
 // Define expected request and simulated response
-citrus.when().allMessages().receive()
-    .body("{\"action\": \"greet\"}");
-citrus.then().allMessages().respond()
+citrus.when().receiveAll()
+    .body("{\"action\": \"greet\"}")
+    .then().respond()
     .body("{\"greeting\": \"Hello!\"}");
 citrus.expectedMessageCount(1);
 
@@ -311,15 +311,14 @@ assertThat(result.getIn().getBody(String.class)).isEqualTo("{\"greeting\": \"Hel
 
 ==== Gherkin-style API
 
-The `when()` and `then()` methods provide a natural-language-like syntax:
+The `when()` method returns a `WhenSpec` that provides a chained fluent syntax:
 
-* `when().message(index).receive()` — define validation expectations for a specific exchange
-* `when().allMessages().receive()` — define default validation for all exchanges
-* `then().message(index).respond()` — define the response for a specific exchange
-* `then().allMessages().respond()` — define the default response for all exchanges
-* `then().message(index).send()` — alias for `respond()`
+* `when().receive(index).body(...).then().respond()` — define validation and response for a specific exchange (1-based index)
+* `when().receive().body(...).then().respond()` — auto-incrementing index for sequential exchanges
+* `when().receiveAll().body(...).then().respond()` — define default validation and response for all exchanges
+* `then().send()` — alias for `respond()`
 
-Both the `receive()` spec and the `respond()` spec support `body()` and `header()` methods.
+Both the `receive()` / `receiveAll()` spec and the `respond()` / `send()` spec support `body()` and `header()` methods.
 
 ==== Per-exchange request/response
 
@@ -329,24 +328,26 @@ You can define different request expectations and responses for each exchange in
 ----
 CitrusEndpoint citrus = context.getEndpoint("citrus:receive/service?messageType=json", CitrusEndpoint.class);
 
-citrus.when().message(0).receive().body("{\"action\": \"create\"}");
-citrus.then().message(0).respond().body("{\"id\": \"1\", \"status\": \"created\"}");
+citrus.when().receive(1).body("{\"action\": \"create\"}")
+    .then().respond().body("{\"id\": \"1\", \"status\": \"created\"}");
 
-citrus.when().message(1).receive().body("{\"action\": \"update\"}");
-citrus.then().message(1).respond().body("{\"id\": \"1\", \"status\": \"updated\"}");
+citrus.when().receive(2).body("{\"action\": \"update\"}")
+    .then().respond().body("{\"id\": \"1\", \"status\": \"updated\"}");
 
 citrus.expectedMessageCount(2);
 ----
 
-Indexed specs take priority over `allMessages()` for both request validation and response
-simulation. When a specific exchange has no indexed spec, the `allMessages()` spec is used as
+Indexed specs take priority over `receiveAll()` for both request validation and response
+simulation. When a specific exchange has no indexed spec, the `receiveAll()` spec is used as
 a fallback.
 
 ==== Response with headers
 
 [source,java]
 ----
-citrus.then().allMessages().respond()
+citrus.when().receiveAll()
+    .body("{\"action\": \"greet\"}")
+    .then().respond()
     .body("{\"greeting\": \"Hello!\"}")
     .header("Content-Type", "application/json")
     .header("X-Status", "ok");
@@ -354,25 +355,27 @@ citrus.then().allMessages().respond()
 
 ==== Citrus variables in responses
 
-Exchange properties are available as Citrus test variables in response templates. This enables
-dynamic response generation based on the incoming request context:
+Exchange properties and exchange variables are available as Citrus test variables in response
+templates. This enables dynamic response generation based on the incoming request context:
 
 [source,java]
 ----
-citrus.then().allMessages().respond()
+citrus.when().receiveAll()
+    .body("{\"action\": \"greet\", \"name\": \"@ignore@\"}")
+    .then().respond()
     .body("{\"greeting\": \"Hello ${userName}!\"}")
     .header("X-Correlation-Id", "${correlationId}");
 ----
 
 ==== Response-only mode
 
-When you only need response simulation without request validation, omit the `when()` specification:
+When you only need response simulation without request validation, omit the body on `receive()`:
 
 [source,java]
 ----
 CitrusEndpoint citrus = context.getEndpoint("citrus:receive/responder", CitrusEndpoint.class);
 
-citrus.then().allMessages().respond()
+citrus.when().receive().then().respond()
     .body("OK")
     .header("status", "200");
 citrus.expectedMessageCount(1);

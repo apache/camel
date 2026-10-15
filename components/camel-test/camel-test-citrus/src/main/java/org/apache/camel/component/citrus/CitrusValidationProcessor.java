@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.StreamCache;
 import org.citrusframework.CitrusContext;
 import org.citrusframework.context.TestContext;
 import org.citrusframework.message.DefaultMessage;
@@ -90,6 +91,10 @@ class CitrusValidationProcessor implements Processor {
 
     private DefaultMessage buildReceivedMessage(Exchange exchange) {
         Object body = exchange.getIn().getBody();
+        if (body instanceof StreamCache sc) {
+            body = exchange.getIn().getBody(String.class);
+            sc.reset();
+        }
         Map<String, Object> headers = new LinkedHashMap<>(exchange.getIn().getHeaders());
         return new DefaultMessage(body, headers);
     }
@@ -207,6 +212,9 @@ class CitrusValidationProcessor implements Processor {
     private void writeBackExtractedVariables(Exchange exchange, TestContext testContext) {
         for (Map.Entry<String, Object> entry : testContext.getVariables().entrySet()) {
             String key = entry.getKey();
+            if (key.startsWith("citrus.") || key.startsWith("CITRUS_")) {
+                continue;
+            }
             if (!exchange.getProperties().containsKey(key) && !exchange.getVariables().containsKey(key)) {
                 exchange.setVariable(key, entry.getValue());
             }
