@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link InfraLog}.
@@ -40,9 +39,8 @@ class InfraLogTest extends InfraCommandTestSupport {
         InfraLog command = new InfraLog(new CamelJBangMain().withPrinter(printer));
         int exit = command.doCall();
 
-        assertEquals(-1, exit);
-        assertTrue(printer.getOutput().contains("There are no running services"),
-                "was: " + printer.getOutput());
+        assertEquals(3, exit);
+        assertEquals("ERROR: There are no running services", printer.getStderr());
     }
 
     @Test
@@ -54,9 +52,8 @@ class InfraLogTest extends InfraCommandTestSupport {
         command.serviceName = List.of("kafka");
         int exit = command.doCall();
 
-        assertEquals(-1, exit);
-        assertTrue(printer.getOutput().contains("Log not found for service kafka"),
-                "was: " + printer.getOutput());
+        assertEquals(3, exit);
+        assertEquals("ERROR: Log not found for service kafka", printer.getStderr());
     }
 
     @Test
@@ -69,9 +66,8 @@ class InfraLogTest extends InfraCommandTestSupport {
         command.aliveCheck = pid -> false;
         int exit = command.doCall();
 
-        assertEquals(-1, exit);
-        assertTrue(printer.getOutput().contains("There are no running services"),
-                "was: " + printer.getOutput());
+        assertEquals(3, exit);
+        assertEquals("ERROR: There are no running services", printer.getStderr());
         assertFalse(Files.exists(pidFile("ftp", 1234)), "the dead instance's pid file should be pruned");
         assertFalse(Files.exists(logFile("ftp", 1234)), "the dead instance's log file should be pruned");
     }

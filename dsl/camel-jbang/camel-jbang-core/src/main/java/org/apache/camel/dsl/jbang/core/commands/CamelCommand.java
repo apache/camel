@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
@@ -94,6 +95,28 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     public abstract Integer doCall() throws Exception;
+
+    /**
+     * Prints the help of this command, which lists its sub-commands.
+     *
+     * @return the exit code
+     */
+    protected int printHelp() {
+        CommandLine cl = spec != null ? spec.commandLine() : new CommandLine(this);
+        printer().print(cl.getUsageMessage());
+        return CliExitCode.OK;
+    }
+
+    /**
+     * Runs the given command as the default sub-command of this command, with the error handling of the CLI.
+     *
+     * @param  command the command to run
+     * @param  args    the arguments for the command
+     * @return         the exit code of the command
+     */
+    protected int runDefault(CamelCommand command, String... args) {
+        return getMain().withErrorHandling(new CommandLine(command)).execute(args);
+    }
 
     protected static String getScheme(String name) {
         int pos = name.indexOf(":");

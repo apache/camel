@@ -39,6 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -146,6 +147,7 @@ public class Debug extends Run {
     private MessageTableHelper tableHelper;
 
     // state from spawned debugging process
+    private Process spawnProcess;
     private InputStream spawnOutput;
     private InputStream spawnError;
     private final List<String> logBuffer = new ArrayList<>(100);
@@ -217,22 +219,31 @@ public class Debug extends Run {
                         // ignore
                     }
                 }
-                return -1;
+                return debugExitCode();
             }
         } while (exit == 0 && !quit.get());
 
         return 0;
     }
 
+    // the debugged integration has ended: its exit code when it was spawned by this command
+    private int debugExitCode() {
+        if (spawnProcess != null && !spawnProcess.isAlive()) {
+            return spawnProcess.exitValue();
+        }
+        return spawnPid == 0 ? CliExitCode.FAILURE : CliExitCode.OK;
+    }
+
     private Integer runRemoteAttach() {
         // find PID of running apps (if there are multiple then filter by name)
         List<Long> pids = findPids(name);
         if (pids.isEmpty()) {
-            return -1;
+            printer().printErr("No running Camel integration matches: " + name);
+            return CliExitCode.NOT_FOUND;
         } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return -1;
+            printer().printErr("Name or pid " + name + " matches " + pids.size()
+                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            return CliExitCode.NOT_FOUND;
         }
         long pid = pids.get(0);
 
@@ -249,7 +260,8 @@ public class Debug extends Run {
             Path f = getActionFile(Long.toString(pid));
             Files.writeString(f, root.toJson());
         } catch (Exception e) {
-            return -1;
+            printer().printErr("Cannot attach the debugger to PID " + pid + ": " + e.getMessage());
+            return CliExitCode.FAILURE;
         }
 
         // attach to this pid
@@ -436,13 +448,14 @@ public class Debug extends Run {
                 this.spawnOutput = p.getInputStream();
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
+                this.spawnProcess = p;
                 printer().println("Debugging Camel Spring Boot integration: " + name + " with PID: " + p.pid());
             } else {
                 printer().printErr("Timed out preparing Camel Spring Boot for debugging");
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
                 p.destroy();
-                return -1;
+                return CliExitCode.TIMEOUT;
             }
         }
 
@@ -560,13 +573,14 @@ public class Debug extends Run {
                 this.spawnOutput = p.getInputStream();
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
+                this.spawnProcess = p;
                 printer().println("Debugging Camel Quarkus integration: " + name + " with PID: " + p.pid());
             } else {
                 printer().printErr("Timed out preparing Camel Quarkus for debugging");
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
                 p.destroy();
-                return -1;
+                return CliExitCode.TIMEOUT;
             }
         }
 
@@ -608,6 +622,7 @@ public class Debug extends Run {
         this.spawnOutput = p.getInputStream();
         this.spawnError = p.getErrorStream();
         this.spawnPid = p.pid();
+        this.spawnProcess = p;
         printer().println("Debugging Camel integration: " + name + " with PID: " + p.pid());
         return 0;
     }

@@ -239,11 +239,12 @@ public class Harden extends CamelCommand {
 
     private void printUsageHelp() {
         printer().printErr("LLM service is not running or not reachable.");
-        printer().printErr("");
-        printer().printErr("Options:");
-        printer().printErr("  1. camel infra run ollama");
-        printer().printErr("  2. camel harden my-route.yaml --url=http://localhost:11434");
-        printer().printErr("  3. camel harden my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...");
+        printer().printDiagnostic("");
+        printer().printDiagnostic("Options:");
+        printer().printDiagnostic("  1. camel infra run ollama");
+        printer().printDiagnostic("  2. camel harden my-route.yaml --url=http://localhost:11434");
+        printer().printDiagnostic(
+                "  3. camel harden my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...");
     }
 
     private String detectEndpoint() {

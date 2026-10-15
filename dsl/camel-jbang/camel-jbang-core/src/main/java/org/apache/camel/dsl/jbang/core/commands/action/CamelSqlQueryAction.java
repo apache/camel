@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -89,14 +90,14 @@ public class CamelSqlQueryAction extends ActionBaseCommand {
         JsonObject jo = getJsonObject(outputFile, (queryTimeout + 10) * 1000L);
         try {
             if (jo == null) {
-                printer().println("Timeout waiting for SQL query response");
-                return 1;
+                printer().printErr("Timeout waiting for SQL query response");
+                return CliExitCode.TIMEOUT;
             }
 
             String status = jo.getString("status");
             if ("error".equals(status)) {
-                printer().println("Error: " + jo.getString("message"));
-                return 1;
+                printer().printErr(jo.getString("message"));
+                return CliExitCode.FAILURE;
             }
 
             if (jo.containsKey("updateCount")) {

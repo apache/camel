@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -64,10 +65,10 @@ public class UpdateRun extends CamelCommand {
         try (Stream<Path> files = Files.list(Path.of("."))) {
             // Check if the current directory contains a Maven project (i.e., a pom.xml file)
             if (files.noneMatch(f -> f.getFileName().toString().equals("pom.xml"))) {
-                printer().println("No Maven Project found in the current directory, " +
-                                  "please execute camel upgrade run command in the directory containing the Maven project to update");
+                printer().printErr("No Maven Project found in the current directory, " +
+                                   "please execute camel upgrade run command in the directory containing the Maven project to update");
 
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
         }
 
@@ -90,12 +91,12 @@ public class UpdateRun extends CamelCommand {
             } catch (CamelUpdateException ex) {
                 printer().printErr(ex.getMessage());
 
-                return -1;
+                return CliExitCode.FAILURE;
             } catch (DownloadException e) {
                 printer().printErr(String.format("Cannot find Camel Upgrade Recipes %s:%s:%s",
                         "org.apache.camel.upgrade", update.getArtifactCoordinates(), updateMixin.version));
 
-                return -1;
+                return CliExitCode.FAILURE;
             }
         }
 
@@ -125,9 +126,9 @@ public class UpdateRun extends CamelCommand {
 
             if (!p.waitFor(updateMixin.upgradeTimeout, TimeUnit.SECONDS)) {
                 p.destroyForcibly();
-                printer().println("Update execution timed out");
+                printer().printErr("Update execution timed out");
 
-                return -1;
+                return CliExitCode.TIMEOUT;
             }
 
             int exitCode = p.exitValue();

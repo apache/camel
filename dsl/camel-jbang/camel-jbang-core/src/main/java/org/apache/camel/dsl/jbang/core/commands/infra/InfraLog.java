@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.io.input.Tailer;
@@ -89,9 +90,9 @@ public class InfraLog extends InfraBaseCommand {
             if (name != null) {
                 printer().printErr("Log not found for service " + name);
             } else {
-                printer().println("There are no running services");
+                printer().printErr("There are no running services");
             }
-            return -1;
+            return CliExitCode.NOT_FOUND;
         }
 
         for (Future<?> future : futures) {

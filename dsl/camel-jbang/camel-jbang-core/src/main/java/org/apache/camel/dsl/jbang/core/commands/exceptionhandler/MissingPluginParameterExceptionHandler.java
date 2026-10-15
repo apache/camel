@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 import java.io.PrintWriter;
 import java.util.Optional;
 
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import picocli.CommandLine;
@@ -41,13 +42,14 @@ public class MissingPluginParameterExceptionHandler implements IParameterExcepti
         }
 
         if (ex.getMessage().startsWith("Unmatched argument at index 0") && args.length > 0) {
+            // the CLI installs a known plugin before it runs the command, so this is only reached when plugins are
+            // not discovered: the command did not run
             Optional<PluginType> pluginType = PluginType.findByName(args[0]);
             if (pluginType.isPresent()) {
                 PluginHelper.enable(pluginType.get());
-                PrintWriter out = cmd.getOut();
-                out.printf("Installed plugin: %s%n", pluginType.get().getName());
-                out.println("Please re-run the command.");
-                return 0;
+                err.printf("Installed plugin: %s%n", pluginType.get().getName());
+                err.println("Run the command again to use it.");
+                return CliExitCode.FAILURE;
             }
         }
 

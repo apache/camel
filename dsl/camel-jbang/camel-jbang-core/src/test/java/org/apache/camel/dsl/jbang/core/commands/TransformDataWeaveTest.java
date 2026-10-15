@@ -58,11 +58,10 @@ class TransformDataWeaveTest {
         int exit = cmd.doCall();
 
         assertThat(exit).isEqualTo(1);
-        String out = printer.getOutput();
-        // the bad file's name should be reported
-        assertThat(out).contains("bad.dwl");
+        // the bad file's name should be reported as an error (stderr)
+        assertThat(printer.getStderr()).contains("ERROR: bad.dwl");
         // the good file should still have been processed — multi-file header proves it was converted
-        assertThat(out).contains("// === good.dwl ===");
+        assertThat(printer.getStdout()).contains("// === good.dwl ===").doesNotContain("bad.dwl");
     }
 
     /**
@@ -77,6 +76,50 @@ class TransformDataWeaveTest {
         int exit = cmd.doCall();
 
         assertThat(exit).isEqualTo(1);
-        assertThat(printer.getOutput()).contains("Error:");
+        assertThat(printer.getStderr()).startsWith("ERROR:");
+        assertThat(printer.getStdout()).isEmpty();
+    }
+
+    /**
+     * Without --input or --expression the command was called wrong: a usage error.
+     */
+    @Test
+    void missingInputIsUsageError() throws Exception {
+        StringPrinter printer = new StringPrinter();
+        TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(cmd);
+        int exit = cmd.doCall();
+
+        assertThat(exit).isEqualTo(2);
+        assertThat(printer.getStderr()).isEqualTo("ERROR: Either --input or --expression must be specified");
+    }
+
+    /**
+     * An input path that does not exist is not found.
+     */
+    @Test
+    void missingInputPathIsNotFound() throws Exception {
+        StringPrinter printer = new StringPrinter();
+        TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(cmd, "--input=" + dir.resolve("missing.dwl"));
+        int exit = cmd.doCall();
+
+        assertThat(exit).isEqualTo(3);
+        assertThat(printer.getStderr()).startsWith("ERROR: Input path does not exist:");
+    }
+
+    /**
+     * The summary is a report on stderr, so the converted expression on stdout can be redirected to a file.
+     */
+    @Test
+    void summaryIsNotPartOfTheOutput() throws Exception {
+        StringPrinter printer = new StringPrinter();
+        TransformDataWeave cmd = new TransformDataWeave(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(cmd, "--expression=payload.name");
+        int exit = cmd.doCall();
+
+        assertThat(exit).isZero();
+        assertThat(printer.getStdout()).doesNotContain("Converted:").doesNotContain("ERROR");
+        assertThat(printer.getStderr()).matches("Converted: \\d+ expressions");
     }
 }

@@ -107,7 +107,7 @@ public class KubernetesDelete extends KubernetesBaseCommand {
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause();
             }
-            printer().println("Error trying to delete the app: " + rootCause);
+            printer().printErr("Error trying to delete the app: " + rootCause);
             return 1;
         }
         return 0;

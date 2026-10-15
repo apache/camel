@@ -48,6 +48,7 @@ import jdk.jfr.Recording;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
@@ -816,7 +817,7 @@ public class Run extends CamelCommand {
             try {
                 Files.createDirectories(work);
             } catch (IOException e) {
-                printer().println("WARN: Failed to create working directory: " + work.toAbsolutePath());
+                printer().printWarn("Failed to create working directory: " + work.toAbsolutePath());
             }
         }
 
@@ -1440,10 +1441,10 @@ public class Run extends CamelCommand {
         // Block --camel-version when running from camel-launcher
         if (camelVersion != null && LauncherHelper.isRunningFromLauncher()) {
             printer().printErr("The --camel-version option is not supported when running from camel-launcher.");
-            printer().printErr("To use a different Camel version, either:");
-            printer().printErr("  1. Use a different camel-launcher JAR version");
-            printer().printErr("  2. Install Camel CLI via JBang: jbang app install camel@apache/camel");
-            return 1;
+            printer().printDiagnostic("To use a different Camel version, either:");
+            printer().printDiagnostic("  1. Use a different camel-launcher JAR version");
+            printer().printDiagnostic("  2. Install Camel CLI via JBang: jbang app install camel@apache/camel");
+            return CliExitCode.USAGE;
         }
 
         // if we have a specific camel version then make sure we really need to switch
@@ -1585,9 +1586,9 @@ public class Run extends CamelCommand {
         StringBuilder arg = new StringBuilder();
         if (jvmArgs != null && jvmArgs.contains("-XX:StartFlightRecording")) {
             // the explicit JVM argument wins, as two recordings would otherwise compete for the same file
-            printer().printErr(
-                    "WARN: --jvm-args already starts a flight recording, skipping -XX:StartFlightRecording from --jfr"
-                               + " (Camel runtime instrumentation is still enabled)");
+            printer().printWarn(
+                    "--jvm-args already starts a flight recording, skipping -XX:StartFlightRecording from --jfr"
+                                + " (Camel runtime instrumentation is still enabled)");
         } else {
             arg.append("-XX:StartFlightRecording=filename=").append(jfrFileName());
             if (debugOptions.jfrProfile != null) {
@@ -2113,8 +2114,8 @@ public class Run extends CamelCommand {
         if (dataDir != null && spec != null && spec.commandLine() != null
                 && spec.commandLine().getParseResult() != null
                 && spec.commandLine().getParseResult().hasMatchedOption("--data-dir")) {
-            printer().printErr("WARN: --data-dir=" + dataDir + " has no effect without --source-dir: dev mode then only"
-                               + " watches the given files");
+            printer().printWarn("--data-dir=" + dataDir + " has no effect without --source-dir: dev mode then only"
+                                + " watches the given files");
         }
     }
 
@@ -2471,7 +2472,7 @@ public class Run extends CamelCommand {
         eq.exportBaseDir = this.exportBaseDir;
         // the code reload is not supported, since we use symlink, spring-boot devtools doesn't support symlink
         if (this.dev) {
-            printer().println("WARN: Code reload is not supported with Spring Boot.");
+            printer().printWarn("Code reload is not supported with Spring Boot.");
         }
         eq.javaLiveReload = false;
         eq.symbolicLink = this.dev;
@@ -3173,7 +3174,9 @@ public class Run extends CamelCommand {
                 FileUtil.deleteFile(logFile);
             }
         }
-        return main.getExitCode();
+        int code = main.getExitCode();
+        // no exit code is set when Camel is stopped from outside (such as camel stop)
+        return code == Integer.MIN_VALUE ? CliExitCode.OK : code;
     }
 
     /**
@@ -3205,7 +3208,7 @@ public class Run extends CamelCommand {
             printer().println("Java Flight Recorder recording to " + jfrFileName());
             return recording;
         } catch (Exception e) {
-            printer().printErr("WARN: Failed to start Java Flight Recorder: " + e.getMessage());
+            printer().printWarn("Failed to start Java Flight Recorder: " + e.getMessage());
             return null;
         }
     }
@@ -3218,7 +3221,7 @@ public class Run extends CamelCommand {
             recording.stop();
             recording.close();
         } catch (Exception e) {
-            printer().printErr("WARN: Failed to stop Java Flight Recorder: " + e.getMessage());
+            printer().printWarn("Failed to stop Java Flight Recorder: " + e.getMessage());
         }
     }
 

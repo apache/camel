@@ -384,9 +384,9 @@ class SemanticCommandTest {
     void timeoutCleansRequestAndIgnoresLegacyReply() throws Exception {
         Files.writeString(CommandLineHelper.getCamelDir().resolve(pid + "-output.json"),
                 "{\"status\":\"success\",\"value\":true}");
-        assertEquals(4, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe",
+        assertEquals(124, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe",
                 "--timeout=150", "--json"));
-        assertError(4, "No reply");
+        assertError(124, "No reply");
         assertTrue(actionFiles().isEmpty());
     }
 

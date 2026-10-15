@@ -135,7 +135,7 @@ public class CamelLogAction extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         if (follow && EnvironmentHelper.isEmbedded()) {
             follow = false;
-            printer().println("Tip: press F3 to switch to the Log tab for live log streaming");
+            printer().printTip("press F3 to switch to the Log tab for live log streaming");
         }
 
         Map<Long, Row> rows = new LinkedHashMap<>();

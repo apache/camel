@@ -35,6 +35,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.SemanticAuditFilters;
 import org.apache.camel.dsl.jbang.core.common.SemanticImagePreview;
 import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
@@ -210,13 +211,14 @@ public class SemanticAudit extends SemanticActionCommand {
     @Override
     protected int printResponse(JsonObject response) {
         if (response.containsKey("error")) {
-            return error(1, "Audit query failed", response);
+            return error(CliExitCode.FAILURE, "Audit query failed", response);
         }
         if (Boolean.TRUE.equals(response.get("unavailable")) || eventId != null && response.get("record") == null) {
-            return error(3, "Audit event is unavailable: " + (caseEventId != null ? caseEventId : eventId), response);
+            return error(CliExitCode.NOT_FOUND, "Audit event is unavailable: " + (caseEventId != null ? caseEventId : eventId),
+                    response);
         }
         if (Boolean.TRUE.equals(response.get("cursorExpired"))) {
-            return error(1, "Audit cursor expired; start again without --cursor", response);
+            return error(CliExitCode.FAILURE, "Audit cursor expired; start again without --cursor", response);
         }
         if (output != null) {
             try {
@@ -229,7 +231,7 @@ public class SemanticAudit extends SemanticActionCommand {
                         : e instanceof FileSystemException failure && failure.getReason() != null
                                 ? displayText(failure.getReason())
                         : "I/O failure (" + e.getClass().getSimpleName() + ")";
-                return error(1, "Cannot create audit export file: " + reason, null);
+                return error(CliExitCode.FAILURE, "Cannot create audit export file: " + reason, null);
             }
         }
         return super.printResponse(json ? (JsonObject) SemanticMediaInput.withoutImageData(response) : response);

@@ -98,7 +98,7 @@ public class YamlValidateCommand extends CamelCommand {
                 }
                 reports.put(n, report);
             } else {
-                printer().println("WARN: Skipping non-YAML file: " + n);
+                printer().printWarn("Skipping non-YAML file: " + n);
             }
         }
 

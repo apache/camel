@@ -51,7 +51,7 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
         int exit;
         final AtomicBoolean running = new AtomicBoolean(true);
         if (watch && EnvironmentHelper.isEmbedded()) {
-            printer().println("Tip: use the TUI tabs for live monitoring");
+            printer().printTip("use the TUI tabs for live monitoring");
             exit = doProcessWatchCall();
         } else if (watch) {
             Thread t = new Thread(() -> {

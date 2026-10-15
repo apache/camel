@@ -29,6 +29,7 @@ import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -104,8 +105,8 @@ public class CodeRestGenerator extends CamelCommand {
         // validate that the input file exists
         File f = new File(input);
         if (!f.exists() && !f.isFile()) {
-            printer().println("Error: Input file " + input + " does not exist");
-            return 1;
+            printer().printErr("Input file " + input + " does not exist");
+            return CliExitCode.NOT_FOUND;
         }
 
         OpenAPI doc;
@@ -114,8 +115,8 @@ public class CodeRestGenerator extends CamelCommand {
         doc = parser.read(input);
 
         if (doc == null) {
-            printer().println("Error: Failed to parse OpenAPI specification: " + input);
-            return 1;
+            printer().printErr("Failed to parse OpenAPI specification: " + input);
+            return CliExitCode.FAILURE;
         }
 
         Configurator.setRootLevel(Level.OFF);
@@ -130,8 +131,8 @@ public class CodeRestGenerator extends CamelCommand {
                         .withDtoPackageName(generateDataObjects ? packageName : null)
                         .generate(context);
             } else {
-                printer().println("Error: Unknown type: " + type + " (supported: yaml, xml)");
-                return 1;
+                printer().printErr("Unknown type: " + type + " (supported: yaml, xml)");
+                return CliExitCode.USAGE;
             }
             if (text != null) {
                 if (output == null) {
@@ -174,7 +175,7 @@ public class CodeRestGenerator extends CamelCommand {
         String packageDir = packageName.replace('.', File.separatorChar);
         File generated = Paths.get(output.getAbsolutePath(), code, packageDir).toFile();
         if (generated.exists() && !generated.renameTo(new File(packageDir))) {
-            printer().println("Error: Failed to move generated DTOs to " + packageDir);
+            printer().printErr("Failed to move generated DTOs to " + packageDir);
         }
     }
 }

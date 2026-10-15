@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -49,7 +50,7 @@ public class SemanticMonitoring extends SemanticActionCommand {
     @Override
     protected int printResponse(JsonObject response) {
         if (response.containsKey("error") || !response.containsKey("snapshots")) {
-            return error(1, "Semantic monitoring is unavailable", response);
+            return error(CliExitCode.FAILURE, "Semantic monitoring is unavailable", response);
         }
         return super.printResponse(response);
     }

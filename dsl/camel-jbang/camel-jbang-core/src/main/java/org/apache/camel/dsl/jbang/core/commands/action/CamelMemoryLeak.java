@@ -139,7 +139,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
         printer().printf("Recording 1 of 2 (%ds)...%n", dur1);
         JsonObject startResp = sendAction(pid, "start", dur1);
         if (startResp == null || !"recording".equals(startResp.getString("status"))) {
-            printer().println("Error: Failed to start recording 1");
+            printer().printErr("Failed to start recording 1");
             return 1;
         }
 
@@ -147,7 +147,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
 
         JsonObject stopResp = sendAction(pid, "stop", 0);
         if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
-            printer().println("Error: Recording 1 did not complete");
+            printer().printErr("Recording 1 did not complete");
             return 1;
         }
 
@@ -155,7 +155,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
         printer().printf("Recording 2 of 2 (%ds)...%n", dur2);
         startResp = sendAction(pid, "start", dur2);
         if (startResp == null || !"recording".equals(startResp.getString("status"))) {
-            printer().println("Error: Failed to start recording 2");
+            printer().printErr("Failed to start recording 2");
             return 1;
         }
 
@@ -163,14 +163,14 @@ public class CamelMemoryLeak extends ActionBaseCommand {
 
         stopResp = sendAction(pid, "stop", 0);
         if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
-            printer().println("Error: Recording 2 did not complete");
+            printer().printErr("Recording 2 did not complete");
             return 1;
         }
 
         // compare
         JsonObject cmpResp = sendAction(pid, "compare", 0);
         if (cmpResp == null) {
-            printer().println("Error: Failed to get comparison data");
+            printer().printErr("Failed to get comparison data");
             return 1;
         }
 
@@ -223,7 +223,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
         String responseStatus = jo.getString("status");
 
         if ("error".equals(responseStatus)) {
-            printer().println("Error: " + jo.getString("error"));
+            printer().printErr(jo.getString("error"));
             return 1;
         }
 
@@ -275,7 +275,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
                 printTable(rows);
             } else {
                 printer().println("No old object samples captured.");
-                printer().println("Tip: Try a longer recording duration or ensure GC occurs during recording.");
+                printer().printTip("Try a longer recording duration or ensure GC occurs during recording.");
             }
             return 0;
         }
