@@ -462,7 +462,9 @@ request now always goes to `httpUri`, as it did before. For the same reason the 
 
 A text field of a `multipart/form-data` request that occurs several times (for example a group of checkboxes) is now
 mapped to a header whose value is the list of all its values, as a repeated query or form-urlencoded parameter already
-is. Before, the header had only the first value and the others were lost.
+is. Before, the header had only the first value and the others were lost. Jetty also returns the query string values
+of the same name, so a name that is in both the query string and a multipart text field is mapped to a list of all
+these values too, as it already is for a form-urlencoded request.
 
 === camel-servlet and camel-jetty - gzip request body that arrives after the headers
 
