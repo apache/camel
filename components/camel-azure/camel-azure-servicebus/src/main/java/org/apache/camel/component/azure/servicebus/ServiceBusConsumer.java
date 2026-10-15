@@ -39,6 +39,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ShutdownAware;
@@ -55,11 +56,12 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
     private static final Logger LOG = LoggerFactory.getLogger(ServiceBusConsumer.class);
     private static final int LOCK_RENEW_INTERVAL_SECONDS = 10;
     // Azure recommends putting the exception type in the dead-letter reason and its stack trace in the description,
-    // but warns that doing so "might result in some messages exceeding the 256 KB quota limit for the Standard tier".
-    // A rejected dead-letter request leaves the message locked, so cap both rather than risk the quota: the head of a
-    // stack trace carries the cause, the tail is error-handler frames.
-    private static final int MAX_DEAD_LETTER_REASON_LENGTH = 1024;
-    private static final int MAX_DEAD_LETTER_DESCRIPTION_LENGTH = 8192;
+    // but both are length-limited: the .NET and JavaScript SDKs cap them at 4096 (MaxDeadLetterReasonLength, applied
+    // to the description as well), and Azure separately warns that a stack trace here can push a message past the
+    // 256 KB quota of the Standard tier. The Java SDK does not check, so an over-long value only fails at the broker -
+    // which leaves the message locked. Cap it here instead: the head of a stack trace carries the cause, the tail is
+    // error-handler frames.
+    private static final int MAX_DEAD_LETTER_TEXT_LENGTH = 4096;
     // so that whoever reads the dead-letter queue can see the text was cut rather than the trace having ended
     private static final String TRUNCATED_SUFFIX = "...";
 
@@ -395,12 +397,13 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                     if (getConfiguration().isEnableDeadLettering() && (ObjectHelper.isEmpty(getConfiguration().getSubQueue())
                             || ObjectHelper.equal(getConfiguration().getSubQueue(), SubQueue.NONE))) {
                         if (cause != null) {
-                            deadLetter(exchange, deadLetterOptions(cause));
+                            DeadLetterOptions options = deadLetterOptions(cause);
+                            settle(exchange, "dead-letter", () -> messageContext.deadLetter(options));
                         } else {
-                            deadLetter(exchange, null);
+                            settle(exchange, "dead-letter", messageContext::deadLetter);
                         }
                     } else {
-                        messageContext.abandon();
+                        settle(exchange, "abandon", messageContext::abandon);
                     }
                 }
             } finally {
@@ -418,31 +421,35 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                     .collect(Collectors.joining("\n"));
 
             return new DeadLetterOptions()
-                    .setDeadLetterReason(StringHelper.limitLength(
-                            String.format("%s: %s", cause.getClass().getName(), cause.getMessage()),
-                            MAX_DEAD_LETTER_REASON_LENGTH, TRUNCATED_SUFFIX))
-                    .setDeadLetterErrorDescription(StringHelper.limitLength(
-                            stackTrace, MAX_DEAD_LETTER_DESCRIPTION_LENGTH, TRUNCATED_SUFFIX));
+                    .setDeadLetterReason(
+                            limitToDeadLetterLength(String.format("%s: %s", cause.getClass().getName(),
+                                    cause.getMessage())))
+                    .setDeadLetterErrorDescription(limitToDeadLetterLength(stackTrace));
         }
 
         /**
-         * Dead-letters the message, reporting a rejected request instead of letting it leave this synchronization.
-         * <p/>
-         * Nothing else would report it: the exception would surface inside the Azure SDK's processor callback, the
-         * message would stay locked until the lock expired, and Service Bus would redeliver it until
-         * {@code maxDeliveryCount} was reached - dead-lettering it with its own reason, which is the opposite of what
-         * {@code enableDeadLettering} is for.
+         * Caps a dead-letter field, leaving room for the suffix so the result still fits.
          */
-        private void deadLetter(Exchange exchange, DeadLetterOptions options) {
+        private String limitToDeadLetterLength(String value) {
+            return StringHelper.limitLength(value, MAX_DEAD_LETTER_TEXT_LENGTH - TRUNCATED_SUFFIX.length(),
+                    TRUNCATED_SUFFIX);
+        }
+
+        /**
+         * Settles the message, reporting a rejected request through the consumer's {@link ExceptionHandler}.
+         * <p/>
+         * Without this the exception only reaches {@code UnitOfWorkHelper.doneSynchronization}, which logs it as
+         * "Exception occurred during onCompletion. This exception will be ignored." - so the operator sees a generic
+         * core warning rather than a message from this consumer, and nothing routable. Either way the message is not
+         * settled: it stays locked until the lock expires, Service Bus redelivers it, and it ends up dead-lettered with
+         * {@code MaxDeliveryCountExceeded} instead of the reason collected here.
+         */
+        private void settle(Exchange exchange, String operation, Runnable settlement) {
             try {
-                if (options != null) {
-                    messageContext.deadLetter(options);
-                } else {
-                    messageContext.deadLetter();
-                }
+                settlement.run();
             } catch (Exception e) {
                 getExceptionHandler().handleException(
-                        "Cannot dead-letter the message. It stays locked and will be redelivered.", exchange, e);
+                        "Cannot " + operation + " the message. It stays locked and will be redelivered.", exchange, e);
             }
         }
     }
