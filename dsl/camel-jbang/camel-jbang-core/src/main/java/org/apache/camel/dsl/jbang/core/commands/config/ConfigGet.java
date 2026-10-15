@@ -20,8 +20,10 @@ import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
@@ -29,7 +31,8 @@ import picocli.CommandLine;
                      footer = {
                              "%nExamples:",
                              "  camel config get camel-version",
-                             "  camel config get runtime" })
+                             "  camel config get runtime",
+                             "  camel config get runtime --json" })
 public class ConfigGet extends CamelCommand {
 
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
@@ -38,23 +41,30 @@ public class ConfigGet extends CamelCommand {
     @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
     boolean global = true;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
     public ConfigGet(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        int[] exitCode = { 0 };
-        CommandLineHelper.loadProperties(properties -> {
-            Optional<Object> maybeProperty = Optional.ofNullable(properties.get(key));
-            if (maybeProperty.isPresent()) {
-                printer().println(String.valueOf(maybeProperty.get()));
-            } else {
-                printer().printErr(key + " key not found");
-                exitCode[0] = CliExitCode.NOT_FOUND;
-            }
-        }, !global);
+        Object[] value = { null };
+        CommandLineHelper.loadProperties(properties -> value[0] = properties.get(key), !global);
 
-        return exitCode[0];
+        Optional<Object> maybeProperty = Optional.ofNullable(value[0]);
+        if (maybeProperty.isEmpty()) {
+            throw CliException.notFound(key + " key not found");
+        }
+        if (jsonOutput) {
+            JsonObject jo = new JsonObject();
+            jo.put("key", key);
+            jo.put("value", String.valueOf(maybeProperty.get()));
+            JsonOutput.print(printer(), jo);
+        } else {
+            printer().println(String.valueOf(maybeProperty.get()));
+        }
+        return 0;
     }
 }

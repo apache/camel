@@ -25,6 +25,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Top performing routes",
@@ -41,6 +42,10 @@ public class CamelRouteTop extends CamelRouteStatus {
 
     @Override
     protected void printTable(List<Row> rows, boolean remoteVisible) {
+        if (jsonOutput) {
+            super.printTable(rows, remoteVisible);
+            return;
+        }
         // Flexible column: FROM (40)
         // Fixed columns: PID(8)+NAME(30)+GROUP(20)+ID(25)+REMOTE(6)+STATUS(8)+AGE(8)+LOAD(12)+TOTAL(5)+FAIL(4)+INFLIGHT(8)+MEAN(4)+MIN(3)+MAX(3)+SINCE-LAST(10) ~= 154
         int tw = terminalWidth();
@@ -71,6 +76,16 @@ public class CamelRouteTop extends CamelRouteStatus {
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
+    }
+
+    @Override
+    protected JsonObject toJson(Row r) {
+        JsonObject jo = super.toJson(r);
+        // the load averages of the last 1, 5 and 15 minutes
+        jo.put("load01", r.load01);
+        jo.put("load05", r.load05);
+        jo.put("load15", r.load15);
+        return jo;
     }
 
     private String getLoad(Row r) {

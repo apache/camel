@@ -204,7 +204,7 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
             rows.subList(limit, rows.size()).clear();
         }
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 
@@ -213,27 +213,7 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
 
     protected void printTable(List<Row> rows) {
         if (jsonOutput) {
-            printer().println(Jsoner.serialize(rows.stream().map(r -> {
-                JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
-                jo.put("name", r.name);
-                jo.put("group", getGroup(r));
-                jo.put("routes", r.size);
-                jo.put("status", r.state);
-                jo.put("age", r.age);
-                jo.put("coverage", getCoverage(r));
-                jo.put("throughput", getThroughput(r));
-                jo.put("total", r.total);
-                jo.put("failed", r.failed);
-                jo.put("inflight", r.inflight);
-                jo.put("mean", r.mean);
-                jo.put("min", r.min);
-                jo.put("max", r.max);
-                jo.put("last", r.last);
-                jo.put("delta", getDelta(r));
-                jo.put("sinceLast", getSinceLast(r));
-                return jo;
-            }).collect(Collectors.toList())));
+            printer().println(Jsoner.serialize(rows.stream().map(this::toJson).collect(Collectors.toList())));
             return;
         }
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
@@ -259,6 +239,31 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
                 new Column().header("LAST").with(r -> r.last),
                 new Column().header("DELTA").with(this::getDelta),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
+    }
+
+    /**
+     * A row in JSON mode.
+     */
+    protected JsonObject toJson(Row r) {
+        JsonObject jo = new JsonObject();
+        jo.put("pid", r.pid);
+        jo.put("name", r.name);
+        jo.put("group", getGroup(r));
+        jo.put("routes", r.size);
+        jo.put("status", r.state);
+        jo.put("age", r.age);
+        jo.put("coverage", getCoverage(r));
+        jo.put("throughput", getThroughput(r));
+        jo.put("total", r.total);
+        jo.put("failed", r.failed);
+        jo.put("inflight", r.inflight);
+        jo.put("mean", r.mean);
+        jo.put("min", r.min);
+        jo.put("max", r.max);
+        jo.put("last", r.last);
+        jo.put("delta", getDelta(r));
+        jo.put("sinceLast", getSinceLast(r));
+        return jo;
     }
 
     protected int sortRow(Row o1, Row o2) {

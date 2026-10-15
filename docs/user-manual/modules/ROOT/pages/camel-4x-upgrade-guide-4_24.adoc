@@ -250,6 +250,36 @@ older Camel CLI versions is unchanged. A tool built on the file transport that r
 writing nothing, or that waited for a timeout, sees these answers now. The Camel MCP route tools, for example, now
 report a route stop as done instead of a timeout.
 
+=== camel-jbang - JSON output
+
+With `--json`, stdout is exactly one JSON document, also when the command fails, so a script or an AI agent can parse
+it (see xref:camel-jbang-exit-codes.adoc#_json_output[JSON output]):
+
+* An error prints `{"status":"error","code":3,"message":"..."}` on stdout, with the exit code of the command in `code`,
+  and the `ERROR:` line on stderr as before. Before, stdout was empty or had text.
+* A list with nothing in it prints `[]` instead of nothing, such as `camel ps`, `camel get ...` and `camel top ...` when
+  no integration is running, and `camel catalog ...` when the filter matches nothing. The message about a filter that
+  matches nothing is printed on stderr.
+* `camel top route --json` and `camel top group --json` print JSON instead of a table, with the load averages in
+  `load01`, `load05` and `load15`.
+* `camel get route --error --json` prints the routes with an error, and their `lastError`, as JSON instead of tables.
+  `camel get health --trace --json` puts the `stackTrace` and `metadata` of a check in the JSON, instead of printing
+  them as text after it.
+* `camel get count --total --json` and `camel get count --fail --json` print JSON instead of the comma separated counts.
+* `camel infra get --json` and `camel infra stop --json` print JSON instead of text, `camel infra run --background --json`
+  prints the pid as JSON, and `camel infra run --json` only prints the properties of the service. `camel infra get` and
+  `camel infra stop` only see services that are running, and exit with `3` when a name matches none.
+* `camel overview --format=json` only prints the JSON on stdout: the `Saved` message of `--save` and `--ai`, and the
+  progress and the prompts of `--ai`, go to stderr, and `--ai` no longer prints the summary before the JSON.
+  `camel overview --apply-descriptions --format=json` prints the changed files as JSON.
+* `camel doctor` exits with `1` when a check fails (Maven cannot resolve artifacts, or more than one installation of the
+  Camel CLI is found). A missing container runtime or Ollama, and ports in use, are warnings, which do not fail it.
+
+New `--json` options: `camel doctor` (the status `OK`, `WARN` or `FAIL` of each check), `camel validate yaml`,
+`camel validate properties` and `camel validate source` (`valid`, `file` and `errors` of each file, as the MCP tool
+`camel_validate_source` answers), `camel doc` (the documentation the MCP tool `camel_catalog_doc` gives),
+`camel config get`, `camel config list`, `camel plugin get` and `camel plugin list`.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

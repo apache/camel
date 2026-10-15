@@ -168,7 +168,7 @@ public class ListActivity extends ProcessWatchCommand {
             rows.subList(limit, rows.size()).clear();
         }
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 
