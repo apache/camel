@@ -217,7 +217,7 @@ public final class ProcessFinder {
     private static JsonObject readStatus(Path file) {
         try {
             String text = Files.readString(file);
-            return text.isBlank() ? null : (JsonObject) Jsoner.deserialize(text);
+            return text.isBlank() ? null : Jsoner.deserialize(text, (JsonObject) null);
         } catch (Exception e) {
             // being written, or gone
             return null;
