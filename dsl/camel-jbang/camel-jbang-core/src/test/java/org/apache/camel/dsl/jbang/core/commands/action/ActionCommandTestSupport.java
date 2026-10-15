@@ -147,7 +147,7 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
             Path dir = CommandLineHelper.getCamelDir();
             while (running.get()) {
                 // the integration polls for actions
-                await().pollInterval(Duration.ofMillis(10)).atMost(1, TimeUnit.HOURS)
+                await().pollInterval(Duration.ofMillis(10)).atMost(30, TimeUnit.SECONDS)
                         .until(() -> !running.get() || nextRequest(dir).isPresent());
                 Optional<Path> request = nextRequest(dir);
                 if (request.isPresent()) {
