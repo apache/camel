@@ -148,8 +148,7 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
 
     @Test
     void notGoodStatusWithNullValueIsDeliveredByDefault() throws Exception {
-        // a null value with a Good status, like the initial value at startup, is omitted; a Bad or Uncertain status
-        // with a null value is delivered
+        // a null value with a Good status is omitted; a Bad or Uncertain status with a null value is delivered
         template.sendBody("milo-server:node1", new DataValue(Variant.NULL_VALUE, StatusCode.GOOD, null));
         template.sendBody("milo-server:node2", new DataValue(new StatusCode(StatusCodes.Uncertain_LastUsableValue)));
 

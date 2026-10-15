@@ -91,8 +91,8 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     private boolean defaultAwaitWrites;
 
     /**
-     * Omit a data change whose value is null and whose status is Good, for example the initial value at startup. A data
-     * change with a Bad or Uncertain status is always delivered.
+     * Omit a data change whose value is null and whose status is Good. A data change with a Bad or Uncertain status is
+     * always delivered.
      */
     @UriParam(defaultValue = "true")
     private boolean omitNullValues = true;

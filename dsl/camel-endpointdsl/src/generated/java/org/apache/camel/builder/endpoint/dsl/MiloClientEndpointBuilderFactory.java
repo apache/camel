@@ -271,9 +271,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit a data change whose value is null and whose status is Good, for
-         * example the initial value at startup. A data change with a Bad or
-         * Uncertain status is always delivered.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -288,9 +287,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit a data change whose value is null and whose status is Good, for
-         * example the initial value at startup. A data change with a Bad or
-         * Uncertain status is always delivered.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1157,9 +1155,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit a data change whose value is null and whose status is Good, for
-         * example the initial value at startup. A data change with a Bad or
-         * Uncertain status is always delivered.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1174,9 +1171,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit a data change whose value is null and whose status is Good, for
-         * example the initial value at startup. A data change with a Bad or
-         * Uncertain status is always delivered.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1957,9 +1953,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit a data change whose value is null and whose status is Good, for
-         * example the initial value at startup. A data change with a Bad or
-         * Uncertain status is always delivered.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1974,9 +1969,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit a data change whose value is null and whose status is Good, for
-         * example the initial value at startup. A data change with a Bad or
-         * Uncertain status is always delivered.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

@@ -132,8 +132,8 @@ public class MiloClientConsumer extends DefaultConsumer {
     }
 
     /**
-     * A null value with a Good status is the initial value at startup, which omitNullValues hides. A null value with a
-     * Bad or Uncertain status carries the quality of the node and is delivered.
+     * The data change that omitNullValues omits: a null value with a Good status. A data change with a Bad or Uncertain
+     * status is delivered even when its value is null.
      */
     private static boolean isNullValueWithGoodStatus(final DataValue value) {
         return value == null
