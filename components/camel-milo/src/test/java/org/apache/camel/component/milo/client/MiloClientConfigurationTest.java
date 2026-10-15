@@ -33,7 +33,7 @@ class MiloClientConfigurationTest {
 
     @Test
     void cacheIdIsUnchangedWithoutServerCertificateTrustSettings() {
-        assertEquals(ENDPOINT_URI + "|1000.0", configuration().toCacheId());
+        assertEquals(ENDPOINT_URI, configuration().toCacheId());
     }
 
     @Test

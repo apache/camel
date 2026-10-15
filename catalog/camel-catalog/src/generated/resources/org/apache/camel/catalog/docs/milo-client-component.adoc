@@ -224,8 +224,9 @@ With `trustListDirectory`, the client refuses a server certificate that:
 
 * does not chain up to a certificate in `trusted/certs`, possibly through the certificates in `issuer/certs`,
 * is outside its validity period,
-* is revoked by a certificate revocation list in `trusted/crl` or `issuer/crl`. When the trust list has no revocation
-list for an issuer, the revocation status of the certificates it issued is not checked,
+* is revoked by a certificate revocation list in `trusted/crl` or `issuer/crl`. A certificate issued by a CA is also
+refused, with `Bad_CertificateRevocationUnknown`, when the trust list holds no revocation list of that CA. An empty
+CRL signed by the CA is enough. A self-signed certificate in `trusted/certs` is not checked for revocation,
 * or holds an application URI that differs from the one the server announces in its endpoint description.
 
 A failed host name, key usage or extended key usage check is only logged. A certificate that does not chain up to a
