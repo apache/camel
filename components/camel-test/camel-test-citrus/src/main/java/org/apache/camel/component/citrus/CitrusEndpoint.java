@@ -191,7 +191,7 @@ public class CitrusEndpoint extends MockEndpoint {
         }
 
         @Override
-        public MessageValidationSpec validate(ValidationContext.Builder<?, ?>... validationContexts) {
+        public WhenMessageValidationSpec validate(ValidationContext.Builder<?, ?>... validationContexts) {
             super.validate(validationContexts);
             return this;
         }
