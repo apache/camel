@@ -142,69 +142,63 @@ public class ListError extends ProcessWatchCommand {
             showSet = Set.of();
         }
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            String pName = context.getString("name");
+            if ("CamelJBang".equals(pName)) {
+                pName = ProcessHelper.extractName(root, ph);
+            }
+            String pid = Long.toString(ph.pid());
+
+            JsonObject errorRoot = loadErrorFile(ph.pid());
+            if (errorRoot != null) {
+                JsonArray arr = (JsonArray) errorRoot.get("errors");
+                if (arr != null) {
+                    for (Object o : arr) {
+                        JsonObject jo = (JsonObject) o;
+                        Row row = new Row();
+                        row.pid = pid;
+                        row.name = pName;
+                        row.routeId = jo.getString("routeId");
+                        row.nodeId = jo.getString("nodeId");
+                        row.exchangeId = jo.getString("exchangeId");
+                        row.handled = jo.getBoolean("handled") != null && jo.getBoolean("handled");
+                        Long ts = jo.getLong("timestamp");
+                        if (ts != null) {
+                            row.timestamp = ts;
                         }
-                        String pName = context.getString("name");
-                        if ("CamelJBang".equals(pName)) {
-                            pName = ProcessHelper.extractName(root, ph);
+                        Long rc = jo.getLong("repeatCount");
+                        row.repeatCount = rc != null ? rc : 1;
+                        row.location = jo.getString("location");
+                        row.rawJson = jo;
+
+                        // extract exception info
+                        JsonObject ex = (JsonObject) jo.get("exception");
+                        if (ex != null) {
+                            row.exceptionType = ex.getString("type");
+                            row.exceptionMessage = ex.getString("message");
                         }
-                        String pid = Long.toString(ph.pid());
 
-                        JsonObject errorRoot = loadErrorFile(ph.pid());
-                        if (errorRoot != null) {
-                            JsonArray arr = (JsonArray) errorRoot.get("errors");
-                            if (arr != null) {
-                                for (Object o : arr) {
-                                    JsonObject jo = (JsonObject) o;
-                                    Row row = new Row();
-                                    row.pid = pid;
-                                    row.name = pName;
-                                    row.routeId = jo.getString("routeId");
-                                    row.nodeId = jo.getString("nodeId");
-                                    row.exchangeId = jo.getString("exchangeId");
-                                    row.handled = jo.getBoolean("handled") != null && jo.getBoolean("handled");
-                                    Long ts = jo.getLong("timestamp");
-                                    if (ts != null) {
-                                        row.timestamp = ts;
-                                    }
-                                    Long rc = jo.getLong("repeatCount");
-                                    row.repeatCount = rc != null ? rc : 1;
-                                    row.location = jo.getString("location");
-                                    row.rawJson = jo;
-
-                                    // extract exception info
-                                    JsonObject ex = (JsonObject) jo.get("exception");
-                                    if (ex != null) {
-                                        row.exceptionType = ex.getString("type");
-                                        row.exceptionMessage = ex.getString("message");
-                                    }
-
-                                    // message history
-                                    Object mhObj = jo.get("messageHistory");
-                                    if (mhObj instanceof JsonArray mhArr) {
-                                        row.messageHistory = new String[mhArr.size()];
-                                        for (int i = 0; i < mhArr.size(); i++) {
-                                            row.messageHistory[i] = mhArr.get(i).toString();
-                                        }
-                                    }
-
-                                    // apply client-side filters
-                                    if (matchesFilters(row)) {
-                                        rows.add(row);
-                                    }
-                                }
+                        // message history
+                        Object mhObj = jo.get("messageHistory");
+                        if (mhObj instanceof JsonArray mhArr) {
+                            row.messageHistory = new String[mhArr.size()];
+                            for (int i = 0; i < mhArr.size(); i++) {
+                                row.messageHistory[i] = mhArr.get(i).toString();
                             }
                         }
+
+                        // apply client-side filters
+                        if (matchesFilters(row)) {
+                            rows.add(row);
+                        }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);

@@ -59,93 +59,87 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
-                        Row baseRow = row.copy();
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
+            Row baseRow = row.copy();
 
-                        JsonObject mo = (JsonObject) root.get("resilience4j");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "resilience4j";
-                                    row.id = jo.getString("id");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    row.bufferedCalls = jo.getInteger("bufferedCalls");
-                                    row.successfulCalls = jo.getInteger("successfulCalls");
-                                    row.failedCalls = jo.getInteger("failedCalls");
-                                    row.notPermittedCalls = jo.getLong("notPermittedCalls");
-                                    row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
-                                    row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
-                                    row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
-                                    row.bulkheadEnabled = isBulkheadEnabled(jo);
-                                    row.failureRate = jo.getDouble("failureRate");
-                                    rows.add(row);
-                                }
-                            }
-                        }
-                        mo = (JsonObject) root.get("fault-tolerance");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "fault-tolerance";
-                                    row.id = jo.getString("id");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    row.successfulCalls = jo.getLongOrDefault("successfulCalls", 0).intValue();
-                                    row.failedCalls = jo.getLongOrDefault("failedCalls", 0).intValue();
-                                    row.notPermittedCalls = jo.getLongOrDefault("notPermittedCalls", 0);
-                                    row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
-                                    row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
-                                    row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
-                                    row.bulkheadEnabled = isBulkheadEnabled(jo);
-                                    row.failureRate = -1;
-                                    rows.add(row);
-                                }
-                            }
-                        }
-                        mo = (JsonObject) root.get("circuit-breaker");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "core";
-                                    row.id = jo.getString("routeId");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    row.successfulCalls = jo.getInteger("successfulCalls");
-                                    row.failedCalls = jo.getInteger("failedCalls");
-                                    rows.add(row);
-                                }
-                            }
-                        }
+            JsonObject mo = (JsonObject) root.get("resilience4j");
+            if (mo != null) {
+                JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.component = "resilience4j";
+                        row.id = jo.getString("id");
+                        row.routeId = jo.getString("routeId");
+                        row.state = jo.getString("state");
+                        row.bufferedCalls = jo.getInteger("bufferedCalls");
+                        row.successfulCalls = jo.getInteger("successfulCalls");
+                        row.failedCalls = jo.getInteger("failedCalls");
+                        row.notPermittedCalls = jo.getLong("notPermittedCalls");
+                        row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
+                        row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
+                        row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
+                        row.bulkheadEnabled = isBulkheadEnabled(jo);
+                        row.failureRate = jo.getDouble("failureRate");
+                        rows.add(row);
                     }
-                });
+                }
+            }
+            mo = (JsonObject) root.get("fault-tolerance");
+            if (mo != null) {
+                JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.component = "fault-tolerance";
+                        row.id = jo.getString("id");
+                        row.routeId = jo.getString("routeId");
+                        row.state = jo.getString("state");
+                        row.successfulCalls = jo.getLongOrDefault("successfulCalls", 0).intValue();
+                        row.failedCalls = jo.getLongOrDefault("failedCalls", 0).intValue();
+                        row.notPermittedCalls = jo.getLongOrDefault("notPermittedCalls", 0);
+                        row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
+                        row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
+                        row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
+                        row.bulkheadEnabled = isBulkheadEnabled(jo);
+                        row.failureRate = -1;
+                        rows.add(row);
+                    }
+                }
+            }
+            mo = (JsonObject) root.get("circuit-breaker");
+            if (mo != null) {
+                JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.component = "core";
+                        row.id = jo.getString("routeId");
+                        row.routeId = jo.getString("routeId");
+                        row.state = jo.getString("state");
+                        row.successfulCalls = jo.getInteger("successfulCalls");
+                        row.failedCalls = jo.getInteger("failedCalls");
+                        rows.add(row);
+                    }
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -154,12 +148,12 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("component", r.component);
-                    jo.put("route", r.routeId);
+                    jo.put("routeId", r.routeId);
                     jo.put("id", r.id);
-                    jo.put("state", r.state);
+                    jo.put("status", r.state);
                     jo.put("bufferedCalls", r.bufferedCalls);
                     jo.put("successfulCalls", r.successfulCalls);
                     jo.put("failedCalls", r.failedCalls);

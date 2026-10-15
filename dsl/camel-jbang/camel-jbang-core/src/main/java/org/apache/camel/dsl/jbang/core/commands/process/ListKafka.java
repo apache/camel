@@ -82,101 +82,95 @@ public class ListKafka extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row copy = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        copy.name = context.getString("name");
-                        if ("CamelJBang".equals(copy.name)) {
-                            copy.name = ProcessHelper.extractName(root, ph);
-                        }
-                        copy.pid = Long.toString(ph.pid());
-                        copy.uptime = extractSince(ph);
-                        copy.age = TimeUtils.printSince(copy.uptime);
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row copy = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            copy.name = context.getString("name");
+            if ("CamelJBang".equals(copy.name)) {
+                copy.name = ProcessHelper.extractName(root, ph);
+            }
+            copy.pid = Long.toString(ph.pid());
+            copy.uptime = extractSince(ph);
+            copy.age = TimeUtils.printSince(copy.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("kafka");
-                        if (jo != null) {
-                            if (committed) {
-                                // we ask for committed so need to do an action on-demand to get data
-                                JsonObject request = new JsonObject();
-                                request.put("action", "kafka");
-                                try {
-                                    ActionResult result = ActionClient.execute(ph.pid(), request,
-                                            ActionClient.DEFAULT_TIMEOUT);
-                                    if (!result.isOk()) {
-                                        printer().printWarn("No committed offsets from " + copy.name + " (pid "
-                                                            + ph.pid() + "): " + result.error());
-                                    }
-                                    jo = result.reply();
-                                } catch (IOException e) {
-                                    printer().printWarn("Cannot ask " + copy.name + " (pid " + ph.pid()
-                                                        + ") for committed offsets: " + e.getMessage());
-                                    jo = null;
-                                }
-                            }
-                            JsonArray arr = jo != null ? (JsonArray) jo.get("kafkaConsumers") : null;
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    Row row = copy.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.routeId = jo.getString("routeId");
-                                    row.uri = jo.getString("uri");
-                                    row.state = jo.getString("state");
+            JsonObject jo = (JsonObject) root.get("kafka");
+            if (jo != null) {
+                if (committed) {
+                    // we ask for committed so need to do an action on-demand to get data
+                    JsonObject request = new JsonObject();
+                    request.put("action", "kafka");
+                    try {
+                        ActionResult result = ActionClient.execute(ph.pid(), request,
+                                ActionClient.DEFAULT_TIMEOUT);
+                        if (!result.isOk()) {
+                            printer().printWarn("No committed offsets from " + copy.name + " (pid "
+                                                + ph.pid() + "): " + result.error());
+                        }
+                        jo = result.reply();
+                    } catch (IOException e) {
+                        printer().printWarn("Cannot ask " + copy.name + " (pid " + ph.pid()
+                                            + ") for committed offsets: " + e.getMessage());
+                        jo = null;
+                    }
+                }
+                JsonArray arr = jo != null ? (JsonArray) jo.get("kafkaConsumers") : null;
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        Row row = copy.copy();
+                        jo = (JsonObject) arr.get(i);
+                        row.routeId = jo.getString("routeId");
+                        row.uri = jo.getString("uri");
+                        row.state = jo.getString("state");
 
-                                    JsonArray wa = (JsonArray) jo.get("workers");
-                                    if (wa != null) {
-                                        for (int j = 0; j < wa.size(); j++) {
-                                            JsonObject wo = (JsonObject) wa.get(j);
-                                            row.threadId = wo.getString("threadId");
-                                            row.state = wo.getString("state");
-                                            row.lastError = wo.getString("lastError");
-                                            row.groupId = wo.getString("groupId");
-                                            row.groupInstanceId = wo.getString("groupInstanceId");
-                                            row.memberId = wo.getString("memberId");
-                                            row.generationId = wo.getIntegerOrDefault("generationId", 0);
-                                            row.lastTopic = wo.getString("lastTopic");
-                                            row.lastPartition = wo.getIntegerOrDefault("lastPartition", 0);
-                                            row.lastOffset = wo.getLongOrDefault("lastOffset", 0);
-                                            if (committed) {
-                                                JsonArray ca = (JsonArray) wo.get("committed");
-                                                if (ca != null) {
-                                                    JsonObject found = null;
-                                                    for (int k = 0; k < ca.size(); k++) {
-                                                        JsonObject co = (JsonObject) ca.get(k);
-                                                        if (row.lastTopic == null
-                                                                || (row.lastTopic.equals(co.getString("topic"))
-                                                                        && row.lastPartition == co.getInteger("partition"))) {
-                                                            found = co;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (found != null) {
-                                                        row.lastTopic = found.getString("topic");
-                                                        row.lastPartition = found.getIntegerOrDefault("partition", 0);
-                                                        row.committedOffset = found.getLongOrDefault("offset", 0);
-                                                        row.committedEpoch = found.getLongOrDefault("epoch", 0);
-                                                    }
-                                                }
+                        JsonArray wa = (JsonArray) jo.get("workers");
+                        if (wa != null) {
+                            for (int j = 0; j < wa.size(); j++) {
+                                JsonObject wo = (JsonObject) wa.get(j);
+                                row.threadId = wo.getString("threadId");
+                                row.state = wo.getString("state");
+                                row.lastError = wo.getString("lastError");
+                                row.groupId = wo.getString("groupId");
+                                row.groupInstanceId = wo.getString("groupInstanceId");
+                                row.memberId = wo.getString("memberId");
+                                row.generationId = wo.getIntegerOrDefault("generationId", 0);
+                                row.lastTopic = wo.getString("lastTopic");
+                                row.lastPartition = wo.getIntegerOrDefault("lastPartition", 0);
+                                row.lastOffset = wo.getLongOrDefault("lastOffset", 0);
+                                if (committed) {
+                                    JsonArray ca = (JsonArray) wo.get("committed");
+                                    if (ca != null) {
+                                        JsonObject found = null;
+                                        for (int k = 0; k < ca.size(); k++) {
+                                            JsonObject co = (JsonObject) ca.get(k);
+                                            if (row.lastTopic == null
+                                                    || (row.lastTopic.equals(co.getString("topic"))
+                                                            && row.lastPartition == co.getInteger("partition"))) {
+                                                found = co;
+                                                break;
                                             }
-                                            rows.add(row);
-                                            row = row.copy();
                                         }
-                                    } else {
-                                        rows.add(row);
+                                        if (found != null) {
+                                            row.lastTopic = found.getString("topic");
+                                            row.lastPartition = found.getIntegerOrDefault("partition", 0);
+                                            row.committedOffset = found.getLongOrDefault("offset", 0);
+                                            row.committedEpoch = found.getLongOrDefault("epoch", 0);
+                                        }
                                     }
                                 }
+                                rows.add(row);
+                                row = row.copy();
                             }
+                        } else {
+                            rows.add(row);
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -190,9 +184,9 @@ public class ListKafka extends ProcessWatchCommand {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
-                    jo.put("route", getRouteId(r));
+                    jo.put("routeId", getRouteId(r));
                     jo.put("status", getState(r));
                     jo.put("groupId", r.groupId);
                     jo.put("topic", r.lastTopic);

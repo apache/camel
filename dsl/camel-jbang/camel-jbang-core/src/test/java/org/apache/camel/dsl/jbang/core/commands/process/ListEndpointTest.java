@@ -109,6 +109,35 @@ class ListEndpointTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void testLimitKeepsTheFirstRowsAfterSorting() throws Exception {
+        JsonObject root = buildEndpointStatus("myApp",
+                endpoint("timer:tick", "in", "1"),
+                endpoint("kafka:orders", "out", "30"),
+                endpoint("log:info", "out", "5"));
+        writeStatusFile(TEST_PID, root);
+
+        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        command.sort = "-total";
+        command.limit = 1;
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            String output = printer.getOutput();
+            // the busiest endpoint, not the first one found
+            assertTrue(output.contains("kafka:orders"), "Should keep the endpoint with the most exchanges: " + output);
+            assertFalse(output.contains("timer:tick"), "Should not keep the first endpoint found: " + output);
+        }
+    }
+
+    @Test
     void testJsonOutput() throws Exception {
         JsonObject root = buildEndpointStatus("myApp",
                 endpoint("timer:tick", "in", "1"));

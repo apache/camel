@@ -86,86 +86,82 @@ public class ListConsumer extends ProcessWatchCommand {
             filter += "*";
         }
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject jo = (JsonObject) root.get("consumers");
-                        if (context != null && jo != null) {
-                            JsonArray array = (JsonArray) jo.get("consumers");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                row.name = context.getString("name");
-                                if ("CamelJBang".equals(row.name)) {
-                                    row.name = ProcessHelper.extractName(root, ph);
-                                }
-                                row.pid = Long.toString(ph.pid());
-                                row.id = o.getString("id");
-                                row.uri = o.getString("uri");
-                                row.state = o.getString("state");
-                                row.className = o.getString("class");
-                                row.hostedService = o.getBooleanOrDefault("hostedService", false);
-                                row.scheduled = o.getBoolean("scheduled");
-                                row.inflight = o.getInteger("inflight");
-                                row.polling = o.getBoolean("polling");
-                                row.totalCounter = o.getLong("totalCounter");
-                                row.delay = o.getLong("delay");
-                                row.period = o.getLong("period");
-                                row.uptime = extractSince(ph);
-                                row.age = TimeUtils.printSince(row.uptime);
-                                Map<String, ?> stats = o.getMap("statistics");
-                                if (stats != null) {
-                                    Object last = stats.get("lastCreatedExchangeTimestamp");
-                                    if (last != null) {
-                                        long time = Long.parseLong(last.toString());
-                                        row.sinceLastStarted = TimeUtils.printSince(time);
-                                    }
-                                    last = stats.get("lastCompletedExchangeTimestamp");
-                                    if (last != null) {
-                                        long time = Long.parseLong(last.toString());
-                                        row.sinceLastCompleted = TimeUtils.printSince(time);
-                                    }
-                                    last = stats.get("lastFailedExchangeTimestamp");
-                                    if (last != null) {
-                                        long time = Long.parseLong(last.toString());
-                                        row.sinceLastFailed = TimeUtils.printSince(time);
-                                    }
-                                }
-                                boolean add = true;
-                                if (filter != null) {
-                                    String f = filter;
-                                    boolean negate = filter.startsWith("-");
-                                    if (negate) {
-                                        f = f.substring(1);
-                                    }
-                                    boolean match = PatternHelper.matchPattern(row.uri, f);
-                                    if (negate) {
-                                        match = !match;
-                                    }
-                                    if (!match) {
-                                        add = false;
-                                    }
-                                }
-                                if (scheduled && !row.scheduled) {
-                                    add = false;
-                                }
-                                if (limit > 0 && rows.size() >= limit) {
-                                    add = false;
-                                }
-                                if (add) {
-                                    rows.add(row);
-                                }
-                            }
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            JsonObject jo = (JsonObject) root.get("consumers");
+            if (context != null && jo != null) {
+                JsonArray array = (JsonArray) jo.get("consumers");
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject o = (JsonObject) array.get(i);
+                    Row row = new Row();
+                    row.name = context.getString("name");
+                    if ("CamelJBang".equals(row.name)) {
+                        row.name = ProcessHelper.extractName(root, ph);
+                    }
+                    row.pid = Long.toString(ph.pid());
+                    row.id = o.getString("id");
+                    row.uri = o.getString("uri");
+                    row.state = o.getString("state");
+                    row.className = o.getString("class");
+                    row.hostedService = o.getBooleanOrDefault("hostedService", false);
+                    row.scheduled = o.getBoolean("scheduled");
+                    row.inflight = o.getInteger("inflight");
+                    row.polling = o.getBoolean("polling");
+                    row.totalCounter = o.getLong("totalCounter");
+                    row.delay = o.getLong("delay");
+                    row.period = o.getLong("period");
+                    row.uptime = extractSince(ph);
+                    row.age = TimeUtils.printSince(row.uptime);
+                    Map<String, ?> stats = o.getMap("statistics");
+                    if (stats != null) {
+                        Object last = stats.get("lastCreatedExchangeTimestamp");
+                        if (last != null) {
+                            long time = Long.parseLong(last.toString());
+                            row.sinceLastStarted = TimeUtils.printSince(time);
+                        }
+                        last = stats.get("lastCompletedExchangeTimestamp");
+                        if (last != null) {
+                            long time = Long.parseLong(last.toString());
+                            row.sinceLastCompleted = TimeUtils.printSince(time);
+                        }
+                        last = stats.get("lastFailedExchangeTimestamp");
+                        if (last != null) {
+                            long time = Long.parseLong(last.toString());
+                            row.sinceLastFailed = TimeUtils.printSince(time);
                         }
                     }
-                });
+                    boolean add = true;
+                    if (filter != null) {
+                        String f = filter;
+                        boolean negate = filter.startsWith("-");
+                        if (negate) {
+                            f = f.substring(1);
+                        }
+                        boolean match = PatternHelper.matchPattern(row.uri, f);
+                        if (negate) {
+                            match = !match;
+                        }
+                        if (!match) {
+                            add = false;
+                        }
+                    }
+                    if (scheduled && !row.scheduled) {
+                        add = false;
+                    }
+                    if (add) {
+                        rows.add(row);
+                    }
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
+
+        // the first rows after sorting
+        if (limit > 0 && rows.size() > limit) {
+            rows.subList(limit, rows.size()).clear();
+        }
 
         if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
@@ -178,15 +174,18 @@ public class ListConsumer extends ProcessWatchCommand {
         if (jsonOutput) {
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
+                jo.put("uptime", r.uptime);
                 jo.put("id", r.id);
                 jo.put("status", getState(r));
                 jo.put("type", getType(r));
                 jo.put("inflight", r.inflight);
-                jo.put("poll", getTotal(r));
-                jo.put("sinceLast", getSinceLast(r));
+                jo.put("total", r.totalCounter);
+                jo.put("sinceLastStarted", JsonValues.text(r.sinceLastStarted));
+                jo.put("sinceLastCompleted", JsonValues.text(r.sinceLastCompleted));
+                jo.put("sinceLastFailed", JsonValues.text(r.sinceLastFailed));
                 jo.put("uri", r.uri);
                 return jo;
             }).collect(Collectors.toList())));

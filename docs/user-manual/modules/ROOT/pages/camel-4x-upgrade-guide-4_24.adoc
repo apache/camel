@@ -330,6 +330,39 @@ option: `camel cmd thread-dump`, `heap-histogram`, `heap-dump`, `browse`, `span`
 `camel trace` (the status of tracing). `camel get history --json` prints one JSON array instead of one document per
 line.
 
+=== camel-jbang - camel get, top and ps: not found, unreadable status, and the JSON of the listings
+
+* `camel get ...`, `camel top ...` and `camel ps` with a name or pid that matches no running integration exit with `3`,
+  instead of printing nothing and exiting with `0`. Without a name and with nothing running, they exit with `0` and print
+  `No running Camel integrations` on stderr (and `[]` with `--json`).
+* An integration whose status file a listing cannot read, such as one of an older Camel version without a value the
+  listing needs, is skipped with a `WARN:` on stderr, instead of failing the listing of every integration.
+* `camel get health` takes a name or pid, like the other listings.
+* `camel get endpoint`, `consumer` and `producer --limit` keep the first rows after sorting (they kept the first rows
+  found), and `camel get processor --limit` counts routes, as its description says.
+* `camel get activity` shows how long ago an exchange happened (it showed decades), and `camel dirty` no longer keeps
+  the files of another pid that starts with the same digits (pid `12` kept `123-status.json`), nor removes the files of a
+  process that is alive.
+
+The JSON of the listings (`--json`) changes, so that a script can use the values without parsing text:
+
+* `pid` and the counters are numbers instead of text: `total`, `failed`, `inflight`, `mean`, `min`, `max`, `last`,
+  `delta` and `throughput`. A value that is not there is `null`, instead of an empty or `-` text.
+* Values that combined several numbers are split: `sinceLast` (`1s/2s/-`) into `sinceLastStarted`, `sinceLastCompleted`
+  and `sinceLastFailed`; the `route` of `camel get context` (`3/4`) into `routesStarted` and `routesTotal`; its `reload`
+  into `reloaded` and `reloadFailed`; and in `camel top context` the `load` into `load01`, `load05` and `load15`, `heap`
+  into `heapUsed`, `heapCommitted` and `heapMax` (bytes), `nonHeap` into `nonHeapUsed` and `nonHeapCommitted`, `gc` into
+  `gcCount` and `gcTime` (millis), and `threads` into `threads` and `peakThreads`. In `camel get health`, `rl` becomes
+  `readiness` and `liveness`, `rate` becomes `total`, `success` and `failure`, and `since` becomes `sinceLast`,
+  `sinceStartSuccess` and `sinceStartFailure`.
+* `ready` is a boolean (`camel ps`, `camel get context`), and `camel ps` has `failed` instead of `fail`.
+* Next to `age` (such as `5m3s`), the listings have `uptime` in millis. Durations are millis: `duration` and `elapsed` of
+  `camel get blocked`, `inflight` and `internal-task`, and `time` of `camel get groovy`, which lists its `classes` as an
+  array.
+* The id of a route is `routeId` (it was `route` in `camel get blocked`, `circuit-breaker`, `inflight` and `kafka`), and
+  the state is `status` (it was `state` in `camel get circuit-breaker`). `camel get consumer` has `total` instead of
+  `poll`. Every row of `camel get processor` has the `name` of its integration.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
