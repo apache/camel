@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -97,13 +98,13 @@ public class EvalExpressionCommand extends ActionWatchCommand {
     public Integer doCall() throws Exception {
         if (template == null || template.isBlank()) {
             printer().printErr("Template is required");
-            return -1;
+            return CliExitCode.USAGE;
         }
         if (template.startsWith("file:")) {
             Path f = Path.of(template.substring(5));
             if (!Files.exists(f)) {
                 printer().printErr("Template file does not exist: " + f);
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
         }
 
@@ -120,7 +121,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                 // requires camel 4.3 onwards
                 if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
                     printer().printErr("This requires Camel version 4.3 or newer");
-                    return -1;
+                    return CliExitCode.USAGE;
                 }
                 exit = run.runTransformMessage(camelVersion, mavenResolver);
                 this.pid = run.spawnPid;

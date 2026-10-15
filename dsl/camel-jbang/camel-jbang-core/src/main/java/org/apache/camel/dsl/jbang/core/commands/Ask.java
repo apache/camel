@@ -331,11 +331,11 @@ public class Ask extends CamelCommand {
         if (nameOrPid != null && !nameOrPid.isBlank()) {
             if (processes.isEmpty()) {
                 printer().printErr("No running Camel processes found.");
-                printer().printErr("Start a Camel application first: camel run myRoute.yaml");
+                printer().printTip("Start a Camel application first: camel run myRoute.yaml");
             } else if (processes.size() > 1) {
                 printer().printErr("No unique Camel process found matching: " + nameOrPid);
-                processes.forEach(p -> printer().printErr("  " + p.name() + " (PID " + p.pid() + ")"));
-                printer().printErr("Specify a more specific name or PID with --name");
+                processes.forEach(p -> printer().printDiagnostic("  " + p.name() + " (PID " + p.pid() + ")"));
+                printer().printDiagnostic("Specify a more specific name or PID with --name");
             } else {
                 printer().printErr("No Camel process found matching: " + nameOrPid);
             }

@@ -1,0 +1,134 @@
+= Camel CLI - Exit Codes and Output
+
+The Camel CLI tells how a command went in two ways: its exit code, and its two output streams.
+Scripts, CI pipelines and AI agents can rely on both, so they do not have to parse the text of a message
+to find out whether a command worked.
+
+The exit codes and streams on this page apply from Camel 4.24 onwards.
+
+== Exit codes
+
+[cols="1,2,4",options="header"]
+|===
+| Code | Meaning | When
+
+| `0`
+| Success
+| The command did what it was asked to do.
+
+| `1`
+| Failed
+| The command ran, but the outcome is negative: validation found errors, a check failed,
+  or the integration rejected the action.
+
+| `2`
+| Usage error
+| An unknown option, an invalid or missing argument, options that cannot be used together,
+  or a command that needs an interactive terminal.
+
+| `3`
+| Not found
+| A file, integration, route, component or service named on the command line does not exist,
+  or a name matches more than one running integration.
+
+| `70`
+| Internal error
+| An unexpected exception, which is most often a bug in Camel. The error is printed with its stack trace.
+
+| `124`
+| Timed out
+| The integration did not reply in time, is still starting, or did not stop in time.
+|===
+
+Each code is the one that most tools already use for that meaning: `2` for a usage error is what picocli and other
+command line parsers use, `3` follows the LSB convention that a service is not running, `70` is `EX_SOFTWARE` from
+`sysexits.h`, and `124` is what the GNU `timeout` command returns. So a script or an AI agent can understand a code
+without this page.
+
+`camel --help` lists the exit codes as well.
+
+A command that runs another process exits with the exit code of that process. For example `camel run`
+with `--runtime=spring-boot` returns the exit code of Maven, and `camel run` returns the exit code of the integration,
+which you can set with `camel.main.durationHitExitCode` for an integration that stops after a number of messages
+or seconds.
+
+=== Codes from the shell and from signals
+
+Exit codes from `126` up are not set by the Camel CLI:
+
+[cols="1,4",options="header"]
+|===
+| Code | Meaning
+
+| `126`, `127`
+| The shell could not run `camel` (not executable, or not found on the `PATH`).
+
+| `130`
+| Stopped with Ctrl+C (`SIGINT`).
+
+| `137`
+| Killed (`SIGKILL`), for example by `camel stop --kill` or by the out-of-memory killer of the operating system.
+
+| `143`
+| Stopped with `SIGTERM`, for example by `kill`, Docker, Kubernetes or the task manager of an AI agent.
+|===
+
+TIP: `camel stop` stops an integration gracefully, and the `camel run` that ran it then exits with `0`.
+A `143` means that something else sent a `SIGTERM` to the process.
+
+== Output and errors
+
+The Camel CLI follows the Unix convention for its two output streams:
+
+stdout:: The output of the command, such as a table, the converted source, or JSON.
+You can pipe it into another tool or redirect it to a file.
+
+stderr:: Errors, warnings, tips and progress. An error is one line that starts with `ERROR:`,
+a warning starts with `WARN:`, and a tip starts with `Tip:`.
+
+For example, the converted expression goes to stdout and the summary goes to stderr,
+so only the expression ends up in the file:
+
+[source,bash]
+----
+camel transform dataweave --expression="payload.name" > expression.txt
+----
+
+=== Stack traces
+
+An error is one line that says what went wrong, without a stack trace,
+unless it is an internal error (exit code `70`).
+To print the stack trace of every error, add `--verbose` (on the commands that have it),
+or set the environment variable `CAMEL_CLI_DEBUG` to `true`:
+
+[source,bash]
+----
+CAMEL_CLI_DEBUG=true camel run hello.yaml
+----
+
+== Using the exit codes
+
+The exit code tells a script or an AI agent what to do next:
+
+[cols="1,4",options="header"]
+|===
+| Code | Next step
+
+| `1` | Fix the route, the configuration or the input, then run the command again.
+| `2` | Fix the command line; `camel <command> --help` shows the options.
+| `3` | Check the name or the path; `camel ps` lists the running integrations.
+| `70` | Do not retry: read the stack trace, and report the error to the Camel project when it is a bug.
+| `124` | Wait, or run the command again with a longer timeout.
+|===
+
+[source,bash]
+----
+camel transform dataweave --input=mapping.dwl --output=mapping.ds
+case $? in
+  0) echo "converted" ;;
+  1) echo "the script could not be converted" ;;
+  2) echo "check the options" ;;
+  3) echo "mapping.dwl does not exist" ;;
+  *) echo "unexpected failure" ;;
+esac
+----

@@ -32,6 +32,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -121,7 +122,7 @@ public class InfraRun extends InfraBaseCommand {
             } else {
                 printer().printErr("service " + testService + " not found" + message);
             }
-            return 1;
+            return CliExitCode.NOT_FOUND;
         }
 
         Map<String, String> parsedProperties;
@@ -131,7 +132,7 @@ public class InfraRun extends InfraBaseCommand {
             // before the background branch, so that a run in the background fails here and not in a process
             // whose only trace is its pid
             printer().printErr(e.getMessage());
-            return 1;
+            return CliExitCode.USAGE;
         }
 
         if (background) {

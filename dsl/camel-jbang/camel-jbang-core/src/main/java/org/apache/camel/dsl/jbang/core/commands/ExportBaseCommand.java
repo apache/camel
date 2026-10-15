@@ -1250,7 +1250,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 for (String s : props) {
                     String[] kv = s.split("=", 2);
                     if (kv.length < 2) {
-                        printer().println("WARN: property '" + s + "' has a bad format (should be 'key=value'), skipping.");
+                        printer().printWarn("property '" + s + "' has a bad format (should be 'key=value'), skipping.");
                     } else {
                         result.put(kv[0], kv[1]);
                     }

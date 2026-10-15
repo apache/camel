@@ -25,6 +25,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -66,7 +67,7 @@ public class CamelSemantic extends SemanticActionCommand {
         if (expert != null) {
             JsonArray operations = response.getCollection("operations");
             if (operations == null || operations.isEmpty()) {
-                return error(3, "No operations available for semantic expert: " + expert, null);
+                return error(CliExitCode.NOT_FOUND, "No operations available for semantic expert: " + expert, null);
             }
         }
         return super.printResponse(response);

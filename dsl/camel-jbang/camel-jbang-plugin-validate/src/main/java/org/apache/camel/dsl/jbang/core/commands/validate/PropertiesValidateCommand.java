@@ -60,7 +60,7 @@ public class PropertiesValidateCommand extends CamelCommand {
                 String content = Files.readString(new File(n).toPath());
                 reports.put(n, SourceValidator.validateProperties(content, catalog, null));
             } else {
-                printer().println("WARN: Skipping non-properties file: " + n);
+                printer().printWarn("Skipping non-properties file: " + n);
             }
         }
 

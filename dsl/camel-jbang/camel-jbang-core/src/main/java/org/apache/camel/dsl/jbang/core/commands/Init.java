@@ -33,6 +33,7 @@ import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
@@ -112,8 +113,8 @@ public class Init extends CamelCommand {
                 return interactivePicker();
             }
             printer().printErr("Missing required parameter: <file>");
-            printer().printErr("Run 'camel init --list' to see available templates, or run interactively in a terminal.");
-            return 1;
+            printer().printTip("Run 'camel init --list' to see available templates, or run interactively in a terminal.");
+            return CliExitCode.USAGE;
         }
         int code = execute();
         if (code == 0) {
@@ -139,8 +140,8 @@ public class Init extends CamelCommand {
         }
 
         if (fromKamelet != null && !"kamelet.yaml".equals(ext)) {
-            printer().println("When extending from an existing Kamelet then file must have extension .kamelet.yaml");
-            return 1;
+            printer().printErr("When extending from an existing Kamelet then file must have extension .kamelet.yaml");
+            return CliExitCode.USAGE;
         }
 
         String name = FileUtil.onlyName(file, false);
@@ -174,10 +175,11 @@ public class Init extends CamelCommand {
         if (is == null) {
             if (fromKamelet != null) {
                 printer().printErr("Existing Kamelet does not exist: " + fromKamelet);
+                return CliExitCode.NOT_FOUND;
             } else {
                 printer().printErr("Unsupported file type: " + ext);
+                return CliExitCode.USAGE;
             }
-            return 1;
         }
         String content = IOHelper.loadText(is);
         IOHelper.close(is);

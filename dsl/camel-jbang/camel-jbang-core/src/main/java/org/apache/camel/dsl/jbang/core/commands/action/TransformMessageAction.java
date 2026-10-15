@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -136,11 +137,11 @@ public class TransformMessageAction extends ActionWatchCommand {
             // either source or language/template is required
             if (source == null && template == null && language == null && component == null) {
                 printer().printErr("Either source or template and one of language/component must be configured");
-                return -1;
+                return CliExitCode.USAGE;
             }
             if (source == null && (template == null || language == null && component == null)) {
                 printer().printErr("Both template and one of language/component must be configured");
-                return -1;
+                return CliExitCode.USAGE;
             }
         }
 
@@ -151,14 +152,14 @@ public class TransformMessageAction extends ActionWatchCommand {
             Path f = Path.of(s);
             if (!Files.exists(f)) {
                 printer().printErr("Source file does not exist: " + f);
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
         }
         if (template != null && template.startsWith("file:")) {
             Path f = Path.of(template.substring(5));
             if (!Files.exists(f)) {
                 printer().printErr("Template file does not exist: " + f);
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
         }
 
@@ -169,7 +170,7 @@ public class TransformMessageAction extends ActionWatchCommand {
             // requires camel 4.3 onwards
             if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
                 printer().printErr("This requires Camel version 4.3 or newer");
-                return -1;
+                return CliExitCode.USAGE;
             }
             exit = run.runTransformMessage(camelVersion, mavenResolver);
             this.pid = run.spawnPid;

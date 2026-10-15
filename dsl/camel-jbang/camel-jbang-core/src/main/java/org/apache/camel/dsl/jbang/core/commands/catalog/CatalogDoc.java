@@ -36,6 +36,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -238,7 +239,7 @@ public class CatalogDoc extends CamelCommand {
                 printer().printErr("Camel %s: %s not found.".formatted(prefix, name));
             }
         }
-        return 1;
+        return CliExitCode.NOT_FOUND;
     }
 
     private void printExample(ComponentModel cm) {

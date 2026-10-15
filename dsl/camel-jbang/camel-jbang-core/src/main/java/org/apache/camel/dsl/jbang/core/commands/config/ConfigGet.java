@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
@@ -50,7 +51,7 @@ public class ConfigGet extends CamelCommand {
                 printer().println(String.valueOf(maybeProperty.get()));
             } else {
                 printer().printErr(key + " key not found");
-                exitCode[0] = 1;
+                exitCode[0] = CliExitCode.NOT_FOUND;
             }
         }, !global);
 

@@ -61,8 +61,8 @@ public class InfraRunPropertyTest extends CamelCommandBaseTestSupport {
         infraRun.setServiceName(List.of("ollama"));
         infraRun.background = true;
 
-        assertThat(infraRun.doCall()).isEqualTo(1);
-        assertThat(printer.getOutput()).contains("key=value");
+        assertThat(infraRun.doCall()).isEqualTo(2);
+        assertThat(printer.getStderr()).startsWith("ERROR: ").contains("key=value");
     }
 
     @Test

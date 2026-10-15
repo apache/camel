@@ -62,7 +62,7 @@ public class SourceValidateCommand extends CamelCommand {
         for (String n : files) {
             File f = new File(n);
             if (!SourceValidator.isValidatableFile(n)) {
-                printer().println("WARN: Skipping file: " + n);
+                printer().printWarn("Skipping file: " + n);
                 continue;
             }
             String content = Files.readString(f.toPath());

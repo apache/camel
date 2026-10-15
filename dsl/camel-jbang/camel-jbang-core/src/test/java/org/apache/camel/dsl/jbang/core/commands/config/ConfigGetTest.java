@@ -30,8 +30,9 @@ class ConfigGetTest extends BaseConfigTestSupport {
 
         ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
         command.key = "foo";
-        command.doCall();
+        int exit = command.doCall();
 
+        Assertions.assertEquals(0, exit);
         Assertions.assertEquals("bar", printer.getOutput());
     }
 
@@ -41,9 +42,11 @@ class ConfigGetTest extends BaseConfigTestSupport {
 
         ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
         command.key = "foo";
-        command.doCall();
+        int exit = command.doCall();
 
-        Assertions.assertEquals("ERROR: foo key not found", printer.getOutput());
+        Assertions.assertEquals(3, exit);
+        Assertions.assertEquals("ERROR: foo key not found", printer.getStderr());
+        Assertions.assertEquals("", printer.getStdout());
     }
 
     @Test

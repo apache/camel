@@ -24,13 +24,21 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A printer that keeps what a command prints, such as for tests and for tools that run commands in-process.
+ * <p/>
+ * {@link #getOutput()} has everything in the order it was printed, as a terminal shows it. {@link #getStdout()} and
+ * {@link #getStderr()} have the output of the command and the diagnostics channel (errors, warnings and tips) apart.
+ */
 public class StringPrinter implements Printer {
 
     private final StringWriter writer = new StringWriter();
+    private final StringWriter stdout = new StringWriter();
+    private final StringWriter stderr = new StringWriter();
 
     @Override
     public void println() {
-        writer.write(System.lineSeparator());
+        print(System.lineSeparator());
     }
 
     @Override
@@ -41,20 +49,43 @@ public class StringPrinter implements Printer {
     @Override
     public void print(String output) {
         writer.write(output);
+        stdout.write(output);
     }
 
     @Override
     public void printf(String format, Object... args) {
-        writer.write(format.formatted(args));
+        print(format.formatted(args));
+    }
+
+    @Override
+    public void printDiagnostic(String line) {
+        String text = line + System.lineSeparator();
+        writer.write(text);
+        stderr.write(text);
     }
 
     /**
-     * Provides access to the cached output.
+     * Provides access to the cached output: the output of the command and the diagnostics, in the order they were
+     * printed.
      *
      * @return
      */
     public String getOutput() {
         return writer.toString().trim();
+    }
+
+    /**
+     * The output of the command only (what the CLI prints on stdout).
+     */
+    public String getStdout() {
+        return stdout.toString().trim();
+    }
+
+    /**
+     * The errors, warnings and tips only (what the CLI prints on stderr).
+     */
+    public String getStderr() {
+        return stderr.toString().trim();
     }
 
     /**

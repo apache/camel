@@ -130,3 +130,7 @@ List them, and remove the ones no longer in use:
 camel dirty
 camel dirty --clean
 ----
+
+An error is printed as one line that starts with `ERROR:`. To see the stack trace of every error, set the
+environment variable `CAMEL_CLI_DEBUG` to `true`. See xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]
+for what each exit code means.

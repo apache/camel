@@ -204,7 +204,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
             } else {
                 printer().println("No results for filter: " + filterName);
             }
-            printer().println("Tip: use 'camel doc " + filterName + "' for detailed documentation.");
+            printer().printTip("use 'camel doc " + filterName + "' for detailed documentation.");
         }
 
         return 0;

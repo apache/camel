@@ -44,7 +44,7 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         int exit;
         if (watch && EnvironmentHelper.isEmbedded()) {
-            printer().println("Tip: use the TUI tabs for live monitoring");
+            printer().printTip("use the TUI tabs for live monitoring");
             exit = doWatchCall();
         } else if (watch) {
             Thread t = new Thread(() -> {

@@ -1929,10 +1929,10 @@ public class LlmClient {
             handleErrorStatus(response.statusCode(), response.body());
             return null;
         } catch (HttpTimeoutException e) {
-            printer.println("Request timed out after " + timeout + " seconds.");
+            printer.printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer.println("Error calling LLM: " + e.getMessage());
+            printer.printErr("Calling the LLM failed: " + e.getMessage());
             return null;
         }
     }
@@ -1967,10 +1967,10 @@ public class LlmClient {
             handleErrorStatus(response.statusCode(), response.body());
             return null;
         } catch (HttpTimeoutException e) {
-            printer.println("Request timed out after " + timeout + " seconds.");
+            printer.printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer.println("Error calling LLM: " + e.getMessage());
+            printer.printErr("Calling the LLM failed: " + e.getMessage());
             return null;
         }
     }
@@ -2603,24 +2603,24 @@ public class LlmClient {
     // ---- Error handling ----
 
     private void handleErrorStatus(int statusCode, String body) {
-        printer.println("LLM returned status: " + statusCode);
+        printer.printErr("LLM returned status: " + statusCode);
         switch (statusCode) {
-            case 401 -> printer.println("Authentication failed. Check your API key.");
+            case 401 -> printer.printDiagnostic("Authentication failed. Check your API key.");
             case 404 -> {
                 if (isVertexAi()) {
-                    printer.println("Model not found. Check that the model identifier is valid for Vertex AI.");
+                    printer.printDiagnostic("Model not found. Check that the model identifier is valid for Vertex AI.");
                 } else {
-                    printer.println("Endpoint not found.");
+                    printer.printDiagnostic("Endpoint not found.");
                 }
             }
-            case 429 -> printer.println("Rate limit exceeded.");
+            case 429 -> printer.printDiagnostic("Rate limit exceeded.");
             default -> {
             }
         }
         if (body != null && !body.isBlank()) {
             String errorMessage = extractErrorMessage(body);
             if (errorMessage != null) {
-                printer.println(errorMessage);
+                printer.printDiagnostic(errorMessage);
             }
         }
     }
