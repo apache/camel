@@ -263,6 +263,8 @@ citrus.assertIsSatisfied();
 
 You can also use `validate(index)` to target a specific exchange by its 1-based position.
 
+Indexed specs (`validate()`, `validate(index)`, `when().receive()`) imply a minimum message count equal to the highest index, unless the test sets `expectedMessageCount(...)` or a larger `expectedMinimumMessageCount(...)`. So `assertIsSatisfied()` fails when fewer exchanges arrive.
+
 When both `validate(index)` and `validateAll()` are configured, the indexed spec takes priority —
 it replaces `validateAll()` for that exchange entirely (the two are never combined). The
 `validateAll()` spec acts as a fallback for exchanges that have no matching indexed spec.
@@ -380,6 +382,17 @@ citrus.when().receive().then().respond()
     .header("status", "200");
 citrus.expectedMessageCount(1);
 ----
+
+=== Error handling and redelivery
+
+The two operations handle validation failures differently with respect to Camel's error handling:
+
+* **`validate` operation** — validation failures are captured internally and the exception is
+  cleared from the exchange. Camel's `onException` handlers and redelivery policies do *not*
+  trigger. Failures surface only when `assertIsSatisfied()` is called.
+* **`receive` operation** — validation failures remain on the exchange as an exception. Camel's
+  `onException` handlers and redelivery policies *do* trigger, which matches the expected
+  behavior for a request/response endpoint where callers need to see errors.
 
 === Exchange properties and variables as Citrus variables
 

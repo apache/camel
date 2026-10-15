@@ -40,6 +40,10 @@ public class CitrusEndpoint extends MockEndpoint {
     @Metadata(required = true)
     private String operation;
 
+    @UriPath(description = "A unique name to identify this endpoint. Allows multiple Citrus endpoints"
+                           + " with different validation expectations in the same route.")
+    private String name;
+
     @UriParam(description = "The message type for validation. Determines which Citrus validation module is used."
                             + " Supported values: json, xml, yaml, plaintext.")
     private String messageType;
@@ -146,6 +150,17 @@ public class CitrusEndpoint extends MockEndpoint {
 
     // --- Getters and setters ---
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+        super.setName(name);
+    }
+
     public String getOperation() {
         return operation;
     }
@@ -171,6 +186,8 @@ public class CitrusEndpoint extends MockEndpoint {
         }
 
         public WhenMessageValidationSpec receive(int index) {
+            // registers a validation-only processor now so receive() without respond() still validates;
+            // ThenSpec.respond() overwrites this registration with a validation+response processor
             WhenMessageValidationSpec messageValidationSpec = new WhenMessageValidationSpec(index);
             whenExchangeReceived(index, createProcessor(messageValidationSpec));
             applyImpliedMinimumCount(index);
@@ -245,9 +262,5 @@ public class CitrusEndpoint extends MockEndpoint {
             return respond();
         }
     }
-
-    // --- Validation spec for expected messages ---
-
-    // --- Response spec for simulated responses ---
 
 }
