@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -103,7 +104,20 @@ public class SubscriptionManager {
 
         @Override
         public void onStatusChanged(final OpcUaSubscription subscription, final StatusCode status) {
-            LOG.info("Subscription status changed {} : {}", subscription.getSubscriptionId(), status);
+            if (status.getValue() == StatusCodes.Bad_Timeout) {
+                final Optional<UInteger> id = subscription.getSubscriptionId();
+                LOG.warn("Subscription timed out on the server, recreating it");
+                executor.execute(() -> recreateSubscription(subscription, id));
+            } else {
+                LOG.info("Subscription status changed {} : {}", subscription.getSubscriptionId(), status);
+            }
+        }
+
+        @Override
+        public void onWatchdogTimerElapsed(final OpcUaSubscription subscription) {
+            final Optional<UInteger> id = subscription.getSubscriptionId();
+            LOG.warn("Subscription {} stopped publishing, recreating it", id.orElse(null));
+            executor.execute(() -> recreateSubscription(subscription, id));
         }
 
         @Override
@@ -671,6 +685,42 @@ public class SubscriptionManager {
         lock.lock();
         try {
             return this.connected != null ? this.connected.client : null;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Deletes and creates the subscription of the current connection again, inside the existing session, and creates
+     * its monitored items again. Does nothing if the subscription no longer belongs to the current connection or has
+     * already been recreated since the given id was observed. Falls back to rebuilding the connection if this fails.
+     * <p>
+     * The service calls run while holding {@code lock}, like {@link #registerItems} and {@link #unregisterItems} do,
+     * because the {@link OpcUaSubscription} is shared with them and is not thread-safe. A request the server does not
+     * answer fails after the client's request timeout ({@code requestTimeout}, 60 s by default), so the lock is held
+     * for at most one timeout per call before the fallback runs.
+     */
+    private void recreateSubscription(final OpcUaSubscription subscription, final Optional<UInteger> id) {
+        lock.lock();
+        try {
+            if (this.disposed || this.connected == null || this.connected.manager != subscription
+                    || !subscription.getSubscriptionId().equals(id)) {
+                LOG.debug("Subscription {} is stale or already recreated", id.orElse(null));
+                return;
+            }
+            try {
+                subscription.delete();
+            } catch (final UaException e) {
+                LOG.debug("Failed to delete subscription {}", id.orElse(null), e);
+                subscription.reset();
+            }
+            subscription.create();
+            if (!subscription.createMonitoredItems().stream().allMatch(MonitoredItemServiceOperationResult::isGood)) {
+                throw new UaException(StatusCodes.Bad_UnexpectedError, "Failed to create the monitored items again");
+            }
+            LOG.info("Subscription recreated as {}", subscription.getSubscriptionId().orElse(null));
+        } catch (final Exception e) {
+            handleConnectionFailure(e);
         } finally {
             lock.unlock();
         }

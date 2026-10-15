@@ -165,6 +165,14 @@ The default `omitNullValues=true` also omits a null value with a Good status tha
 does not learn that the node recovered. Set `omitNullValues=false` for a node whose value can be null, such as a
 `String`.
 
+=== Subscriptions that stop publishing
+
+The consumers of a connection share one subscription on the server. When the server stops publishing for it (no
+notification or keep-alive within about one and a half keep-alive intervals) or reports that it timed out
+(`Bad_Timeout`), Camel deletes and creates the subscription again in the existing session; if that fails, it rebuilds
+the connection to the server. After the subscription is recreated, every monitored item delivers its current value
+again, and value changes in between are not delivered.
+
 === Method ID
 
 It is possible to perform methods calls on OPC UA nodes. If the parameter `method` is set to the Node ID of a method call (the node ID must be set to the parent object in this case),
