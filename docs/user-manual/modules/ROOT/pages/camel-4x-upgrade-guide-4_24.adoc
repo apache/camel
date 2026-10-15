@@ -350,6 +350,14 @@ with `OAuthHelper.validateOAuthToken` from camel-support instead.
 For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
 a value that also appears in the query string of the request.
 
+=== camel-platform-http-vertx - the charset parameter of the request Content-Type in any case
+
+The consumer now reads the charset parameter of the request `Content-Type` whatever the case of its name, as
+camel-undertow and camel-netty-http do: a body sent with `Content-Type: text/plain; Charset=ISO-8859-1` is decoded as
+ISO-8859-1 and `CamelCharsetName` is set. Before, only `charset=` in lower case was read and such a body was decoded
+as UTF-8. An empty charset parameter (`charset=` or `charset=""`) now counts as no charset, as in camel-undertow,
+camel-netty-http and camel-http-common (CAMEL-25355); before, converting the body to a String failed with 500.
+
 === camel-report-maven-plugin - Java routes are read with the Java DSL parser
 
 The `validate` and `route-coverage` goals read Java routes with the Java DSL parser of camel-java-io instead of
