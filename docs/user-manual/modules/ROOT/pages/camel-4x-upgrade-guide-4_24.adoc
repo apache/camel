@@ -866,9 +866,13 @@ with `--include-input` for case/bulk requests that need captured input. Existing
 === camel-milo - creating and deleting the monitored items of a consumer
 
 Since 4.16, a `milo-client` consumer whose monitored item could not be created, for example because the node does not
-exist, received nothing. Now it receives one `DataValue` with the bad status code (when `omitNullValues=false`). The
+exist, received nothing. Now it receives one `DataValue` with the bad status code. The
 monitored item is created again when the route is restarted or when Camel rebuilds the connection to the server; unlike
 Camel 3.x, it is not retried every 10 seconds.
+
+A data change with a Bad or Uncertain status is now delivered by default, even when its value is null; previously the
+default `omitNullValues=true` dropped it, so the route did not learn that a node went bad. `omitNullValues` now only
+omits a data change whose value is null and whose status is Good, for example the initial value at startup.
 
 The consumer now sets the `CamelMiloNodeId` header on every exchange, including a consumer with a single `node`.
 

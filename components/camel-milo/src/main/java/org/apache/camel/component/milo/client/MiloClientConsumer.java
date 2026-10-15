@@ -30,6 +30,7 @@ import org.apache.camel.component.milo.client.MiloClientConnection.MonitorHandle
 import org.apache.camel.support.DefaultConsumer;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,8 +117,8 @@ public class MiloClientConsumer extends DefaultConsumer {
     private void handleValueUpdate(final String node, final DataValue value) {
         LOG.debug("Handle item update - {} = {}", node, value);
 
-        if (omitNullValues && (value == null || value.getValue() == null || value.getValue().getValue() == null)) {
-            LOG.debug("Handle item update omitted due to null values (see omitNullValues parameter)");
+        if (omitNullValues && isNullValueWithGoodStatus(value)) {
+            LOG.debug("Handle item update omitted due to a null value with a Good status (see omitNullValues parameter)");
             return;
         }
 
@@ -129,6 +130,19 @@ public class MiloClientConsumer extends DefaultConsumer {
         } catch (final Exception e) {
             getExceptionHandler().handleException("Error processing exchange", e);
         }
+    }
+
+    /**
+     * A null value with a Good status is the initial value at startup, which omitNullValues hides. A null value with a
+     * Bad or Uncertain status carries the quality of the node and is delivered.
+     */
+    private static boolean isNullValueWithGoodStatus(final DataValue value) {
+        if (value == null) {
+            return true;
+        }
+        final boolean nullValue = value.getValue() == null || value.getValue().getValue() == null;
+        final StatusCode status = value.getStatusCode();
+        return nullValue && (status == null || status.isGood());
     }
 
     private void mapToMessage(final DataValue value, final Message message) {

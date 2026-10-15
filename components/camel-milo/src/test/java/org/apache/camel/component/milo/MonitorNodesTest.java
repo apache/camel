@@ -34,9 +34,11 @@ import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -61,7 +63,7 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
     private static final String MILO_CLIENT_NODES = MILO_CLIENT + "&nodes=RAW(" + NODE_1 + "," + NODE_2 + ")";
 
     private static final String MILO_CLIENT_UNKNOWN_NODE
-            = MILO_CLIENT + "&omitNullValues=false&nodes=RAW(" + NODE_1 + "," + UNKNOWN_NODE + "," + NODE_2 + ")";
+            = MILO_CLIENT + "&nodes=RAW(" + NODE_1 + "," + UNKNOWN_NODE + "," + NODE_2 + ")";
 
     private static final String MILO_CLIENT_DUPLICATES
             = MILO_CLIENT + "&nodes=RAW( " + NODE_1 + " ,, " + NODE_2 + " ," + NODE_1 + ")";
@@ -135,6 +137,32 @@ public class MonitorNodesTest extends AbstractMiloServerTest {
         assertEquals(new StatusCode(StatusCodes.Bad_NodeIdUnknown), values.get(UNKNOWN_NODE).getStatusCode());
         assertGoodValue("Foo").accept(values.get(NODE_1));
         assertGoodValue("Bar").accept(values.get(NODE_2));
+
+        unknownNodeEndpoint.reset();
+        unknownNodeEndpoint.expectedMessageCount(1);
+        unknownNodeEndpoint.expectedHeaderReceived(MiloConstants.HEADER_NODE_ID, NODE_1);
+        testBody(unknownNodeEndpoint.message(0), assertGoodValue("Baz"));
+        template.sendBody("milo-server:node1", "Baz");
+        unknownNodeEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    void notGoodStatusWithNullValueIsDeliveredByDefault() throws Exception {
+        // a null value with a Good status, like the initial value at startup, is omitted; a Bad or Uncertain status
+        // with a null value is delivered
+        template.sendBody("milo-server:node1", new DataValue(Variant.NULL_VALUE, StatusCode.GOOD, null));
+        template.sendBody("milo-server:node2", new DataValue(new StatusCode(StatusCodes.Uncertain_LastUsableValue)));
+
+        unknownNodeEndpoint.expectedMessageCount(2);
+        unknownNodeEndpoint.setAssertPeriod(1000);
+        context.getRouteController().startRoute("unknownNode");
+        unknownNodeEndpoint.assertIsSatisfied();
+
+        final Map<String, DataValue> values = valuesByNode(unknownNodeEndpoint);
+        assertEquals(Set.of(UNKNOWN_NODE, NODE_2), values.keySet());
+        assertEquals(new StatusCode(StatusCodes.Bad_NodeIdUnknown), values.get(UNKNOWN_NODE).getStatusCode());
+        assertEquals(new StatusCode(StatusCodes.Uncertain_LastUsableValue), values.get(NODE_2).getStatusCode());
+        assertNull(values.get(NODE_2).getValue().getValue());
 
         unknownNodeEndpoint.reset();
         unknownNodeEndpoint.expectedMessageCount(1);

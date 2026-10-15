@@ -77,15 +77,13 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
             = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem2");
 
     private static final String MILO_CLIENT_UNKNOWN_ITEM
-            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItem")
-              + "&omitNullValues=false";
+            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItem");
 
     private static final String MILO_CLIENT_UNKNOWN_ITEM_WRITE_BACK
-            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItemWriteBack")
-              + "&omitNullValues=false";
+            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItemWriteBack");
 
     private static final String MILO_CLIENT_ITEMS_1_2
-            = MILO_CLIENT_BASE + "&omitNullValues=false&nodes=RAW(" + NODE_ITEM_1 + "," + NODE_ITEM_2 + ")";
+            = MILO_CLIENT_BASE + "&nodes=RAW(" + NODE_ITEM_1 + "," + NODE_ITEM_2 + ")";
 
     private static final String MOCK_ITEM_1 = "mock:item1";
 
