@@ -146,6 +146,30 @@ class NettyChannelBufferStreamCacheTest {
         }
     }
 
+    @Test
+    void availableIsTheNumberOfBytesLeft() throws IOException {
+        // the capacity (16) is larger than the content (5 bytes)
+        ByteBuf buffer = Unpooled.buffer(16);
+        buffer.writeBytes(new byte[] { 1, 2, 3, 4, 5 });
+        NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(buffer);
+        try {
+            assertEquals(5, cache.available());
+            cache.read();
+            assertEquals(4, cache.available());
+            cache.read(new byte[3]);
+            assertEquals(1, cache.available());
+            cache.read();
+            assertEquals(0, cache.available());
+            assertEquals(-1, cache.read());
+            assertEquals(0, cache.available());
+
+            cache.reset();
+            assertEquals(5, cache.available());
+        } finally {
+            release(cache);
+        }
+    }
+
     private static void release(NettyChannelBufferStreamCache cache) {
         // once for the buffer that the test created and once for the retain of the cache
         cache.release();
