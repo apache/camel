@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-caffeine",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "properties": { "maximumSize": { "index": 0, "kind": "property", "displayName": "Maximum Size", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 0, "description": "Maximum number of entries in the cache. 0 or negative means unbounded." } }
   }
 }

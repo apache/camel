@@ -84,7 +84,7 @@ public class CatalogService {
         boolean hasVersion = camelVersion != null && !camelVersion.isBlank() && !camelVersion.isEmpty()
                 && Character.isDigit(camelVersion.trim().charAt(0));
         if (hasVersion && sameAsDefault(camelVersion)) {
-            // the version in use (4.23.0 for a 4.23.0-SNAPSHOT build): nothing to download
+            // the version in use (4.23.0 for a 4.24.0-SNAPSHOT build): nothing to download
             hasVersion = false;
         }
         boolean hasBom = platformBom != null && !platformBom.isBlank();

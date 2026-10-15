@@ -545,7 +545,7 @@ class SemanticCommandTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "4.23.0", "4.23.0-SNAPSHOT", "4.23.0.redhat-00001", "4.24.0", "5.0.0", "unknown" })
+    @ValueSource(strings = { "4.23.0", "4.24.0-SNAPSHOT", "4.23.0.redhat-00001", "4.24.0", "5.0.0", "unknown" })
     void acceptsSupportedOrUnknownRuntimeVersions(String version) throws Exception {
         writeVersion(version);
         assertEquals(0, respond(new CamelSemantic(main()), r -> jsonUnchecked("{\"evaluations\":[]}"), "--json"));

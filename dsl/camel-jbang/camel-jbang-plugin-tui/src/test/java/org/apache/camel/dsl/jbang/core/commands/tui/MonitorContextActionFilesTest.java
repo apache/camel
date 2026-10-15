@@ -58,7 +58,7 @@ class MonitorContextActionFilesTest {
         CommandLineHelper.useHomeDir(home.toString());
         camelDir = Files.createDirectories(CommandLineHelper.getCamelDir());
         info.pid = "123";
-        info.camelVersion = "4.23.0-SNAPSHOT";
+        info.camelVersion = "4.24.0-SNAPSHOT";
         context = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
     }
 
@@ -71,7 +71,7 @@ class MonitorContextActionFilesTest {
 
     @Test
     void theRequestFilesCameWithCamel421() {
-        assertThat(MonitorContext.isCamelVersionAtLeast("4.23.0-SNAPSHOT", 4, 21)).isTrue();
+        assertThat(MonitorContext.isCamelVersionAtLeast("4.24.0-SNAPSHOT", 4, 21)).isTrue();
         assertThat(MonitorContext.isCamelVersionAtLeast("4.21.0", 4, 21)).isTrue();
         assertThat(MonitorContext.isCamelVersionAtLeast("5.0.0", 4, 21)).isTrue();
         assertThat(MonitorContext.isCamelVersionAtLeast("4.18.3", 4, 21)).isFalse();

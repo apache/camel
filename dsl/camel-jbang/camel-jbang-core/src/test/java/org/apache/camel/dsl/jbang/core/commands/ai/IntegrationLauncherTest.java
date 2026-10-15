@@ -71,7 +71,7 @@ class IntegrationLauncherTest {
     void failureOutputKeepsTheCauseNotTheFrames(@TempDir Path dir) throws Exception {
         StringBuilder out = new StringBuilder();
         out.append("2026-10-06 01:12:03.101  INFO 81990 --- [           main] org.apache.camel.main.MainSupport  :"
-                   + " Apache Camel (JBang) 4.23.0-SNAPSHOT is starting\n");
+                   + " Apache Camel (JBang) 4.24.0-SNAPSHOT is starting\n");
         out.append("2026-10-06 01:12:04.552 ERROR 81990 --- [           main] org.apache.camel.main.MainSupport  :"
                    + " Failed to create route: order-generator at: >>> Bean[ref:orderNumber method:next] <<<\n");
         out.append("org.apache.camel.FailedToCreateRouteException: Failed to create route: order-generator\n");
