@@ -47,7 +47,8 @@ public class HibernateComponent extends DefaultComponent {
 
     private Class<?>[] entityClasses;
 
-    @Metadata(description = "Schema generation action: none, validate, update, create.", defaultValue = "none")
+    @Metadata(description = "Schema generation action: none, validate, update, create, create-drop, create-only, drop.",
+              defaultValue = "none")
     private String schemaAction = "none";
 
     @Metadata(description = "Arbitrary Hibernate configuration properties passthrough map.")
