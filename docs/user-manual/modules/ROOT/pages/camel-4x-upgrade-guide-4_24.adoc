@@ -25,6 +25,40 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-report-maven-plugin:validate / configuration-validate
+
+The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
+(previously only 7 of the 36 groups were recognized, besides `camel.component.*`, `camel.dataformat.*`
+and `camel.language.*`). As a result,
+`camel-report-maven-plugin:validate` and the camel-jbang MCP `camel_configuration_validate` tool
+now validate 29 additional `camel.*` groups (including `camel.server.*`,
+`camel.management.*`, `camel.vault.*`, `camel.ssl.*`, and others).
+
+If your project uses Spring Boot and has options such as `camel.metrics.uriTagEnabled` (from a
+Camel starter) that are not in the camel-main schema, `camel-report-maven-plugin:validate` may
+report them as "Unknown option", which fails the build when `failOnError=true`. The
+`camel_configuration_validate` MCP tool with `runtime=spring-boot` reports such keys as
+`checked=false` instead.
+
+Group names are now matched with dash- and case-insensitive normalisation, matching how
+camel-main binds keys at runtime. For example, `camel.error-registry.enabled` and
+`camel.ai-observability.enabled` are now accepted alongside their camel-case equivalents.
+
+If your project uses `camel-report-maven-plugin:validate` with `failOnError=true`,
+a key that was silently ignored before (e.g. a misspelled option under one of the newly accepted
+groups) may now cause the build to fail. Review the validation output and correct any misspelled keys.
+
+The `camel_configuration_validate` MCP tool response format has changed:
+
+* `PropertyValidationInfo.accepted` is renamed to `checked`.
+* `ConfigurationValidateSummary` gains a new `unchecked` integer field counting lines whose
+  namespace is not recognized as a Camel property (e.g. `server.port=8080` or `quarkus.*` keys).
+  Before, such lines were returned with `accepted=false` and `valid=true`; they are now
+  `checked=false` and are left out of `summary.valid` and `summary.errors`.
+
+If you call `camel_configuration_validate` programmatically and read the JSON response, update
+field references from `accepted` to `checked` and handle the new `summary.unchecked` field.
+
 === camel-semantic - expert artifacts
 
 TypeSafe AI Semantic applications must add `org.apache.camel:camel-semantic-typesafe-ai`.
