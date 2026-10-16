@@ -932,6 +932,14 @@ failed (for example a 404 for a deleted account, or a server error). Such a comm
 for it. Its `CamelGitHubCommitAuthor` and `CamelGitHubCommitCommitter` headers then have the name that git recorded in
 the commit instead of the name of the GitHub profile, and are not set when the commit has no name either.
 
+=== camel-slack - consumer and a suspended route
+
+When a route is suspended (`RouteController.suspendRoute`, also from a route policy that suspends the route such as
+`DurationRoutePolicy`, or `CamelContext.suspend()`) while the `slack` consumer routes the messages of a poll, the
+consumer stops after the message that is being routed. The other messages of that poll were skipped when the route
+was resumed. They are now kept and routed by the first poll after the resume, together with the messages posted in
+the meantime. They are kept in memory only: a route that is stopped and started again does not route them.
+
 === camel-smpp - the host name of the SMSC is verified over SSL
 
 With `smpps` (or `usingSSL=true`), directly or through an HTTP proxy, the connection now checks that the certificate of
