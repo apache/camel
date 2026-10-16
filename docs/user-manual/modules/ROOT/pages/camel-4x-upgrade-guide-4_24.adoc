@@ -13,6 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== Java
+
+*Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
+Java 17 is no longer supported. Upgrade your JDK to 21 or later before upgrading to Camel 4.24.
+
 === camel-semantic - expert artifacts
 
 TypeSafe AI Semantic applications must add `org.apache.camel:camel-semantic-typesafe-ai`.
@@ -1159,3 +1164,4 @@ The consumer now sets the `CamelMiloNodeId` header on every exchange, including 
 Stopping a consumer now deletes its monitored items. Previously they stayed on the server while another endpoint kept
 the shared connection open, so a restarted consumer received each value twice. While the server is unreachable, the
 stop waits until the client's next attempt to reconnect has failed.
+

@@ -37,7 +37,7 @@ ldap:ldapServerBean[?options]
 ----
 
 The _ldapServerBean_ portion of the URI refers to a
-https://docs.oracle.com/en/java/javase/17/docs/api/java.naming/javax/naming/directory/DirContext.html[DirContext]
+https://docs.oracle.com/en/java/javase/21/docs/api/java.naming/javax/naming/directory/DirContext.html[DirContext]
 bean in the registry. The LDAP component only supports producer
 endpoints, which means that an `ldap` URI cannot appear in the `from` at
 the start of a route.

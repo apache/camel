@@ -64,7 +64,7 @@ public class SecureRandomParameters extends JsseParameters {
      * Sets the Random Number Generator (RNG) algorithm identifier for the {@link SecureRandom} factory method used to
      * create the {@link SecureRandom} represented by this object's configuration.
      *
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      *
      * @param value the algorithm identifier
      */
