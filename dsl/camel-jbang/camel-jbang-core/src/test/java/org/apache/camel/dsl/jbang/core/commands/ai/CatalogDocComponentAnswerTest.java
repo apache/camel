@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,8 @@ class CatalogDocComponentAnswerTest {
         JsonObject answer = (JsonObject) Jsoner.deserialize(json);
         assertThat(answer.getBoolean("truncated")).isTrue();
         assertThat(answer.getInteger("listedOptions")).isEqualTo(CatalogDocs.DEFAULT_OPTIONS_LIMIT);
-        assertThat(answer.getInteger("matchedOptions")).isGreaterThan(80);
+        // counted by name: 88 before an option of both the endpoint and the component was listed once
+        assertThat(answer.getInteger("matchedOptions")).isGreaterThan(40);
         // the required option first, the rest by name, and how to get one of them in full
         assertThat(names(answer, "options").get(0)).isEqualTo("destinationName");
         assertThat(strings(answer, "moreOptions")).contains("brokerURL");
@@ -145,22 +147,95 @@ class CatalogDocComponentAnswerTest {
 
         // the port of platform-http is not an option of the component
         JsonObject http = catalogDoc(Map.of("name", "platform-http", "optionsFilter", "port"));
-        assertThat(http.getString("mainConfig")).contains("camel.server.enabled=true", "camel.server.port");
+        // camel run starts the server on its own, Camel Main needs it enabled
+        assertThat(http.getString("mainConfig")).contains("with camel run it starts when a route uses platform-http",
+                "with Camel Main set camel.server.enabled=true", "camel.server.port");
         assertThat(names(http, "mainOptions")).contains("camel.server.port");
         // and the start of its page says so, where the excerpt carries it
-        assertThat(http.getString("documentation")).contains("camel.server.enabled=true");
+        assertThat(http.getString("documentation")).contains("starts", "camel.server.enabled=true");
     }
 
     @Test
     void aComponentOptionCarriesItsApplicationPropertiesKey() throws Exception {
+        // an option of both the endpoint and the component is listed once, with both scopes and its key (the filter
+        // names it, so its advanced endpoint scope is listed too)
         JsonObject answer = catalogDoc(Map.of("name", "timer", "optionsFilter", "bridgeErrorHandler"));
-        List<JsonObject> options = ((JsonArray) answer.get("options")).stream().map(JsonObject.class::cast)
+        List<JsonObject> options = options(answer).stream()
                 .filter(o -> "bridgeErrorHandler".equals(o.getString("name"))).toList();
-        assertThat(options).extracting(o -> o.getString("scope")).containsExactlyInAnyOrder("endpoint", "component");
-        for (JsonObject option : options) {
-            // only a component option is a camel.component.* key
-            assertThat(option.getString("configKey")).isEqualTo(
-                    "component".equals(option.getString("scope")) ? "camel.component.timer.bridgeErrorHandler" : null);
+        assertThat(options).singleElement().satisfies(o -> {
+            assertThat(o.getString("scope")).isEqualTo("endpoint,component");
+            assertThat(o.getString("configKey")).isEqualTo("camel.component.timer.bridgeErrorHandler");
+        });
+        // an endpoint option only is not a camel.component.* key
+        JsonObject period = catalogDoc(Map.of("name", "timer", "optionsFilter", "period"));
+        assertThat(options(period)).filteredOn(o -> "period".equals(o.getString("name"))).singleElement()
+                .satisfies(o -> {
+                    assertThat(o.getString("scope")).isEqualTo("endpoint");
+                    assertThat(o.getString("configKey")).isNull();
+                });
+    }
+
+    @Test
+    void theDefaultAnswerCarriesTheKeyOfAnOptionOfBothScopesAndCountsNames() throws Exception {
+        // the kafka options listed in full were endpoint options, and their component twins past the limit
+        JsonObject answer = catalogDoc(Map.of("name", "kafka"));
+        assertThat(options(answer)).filteredOn(o -> "brokers".equals(o.getString("name"))).singleElement()
+                .satisfies(o -> {
+                    assertThat(o.getString("scope")).isEqualTo("endpoint,component");
+                    assertThat(o.getString("configKey")).isEqualTo("camel.component.kafka.brokers");
+                });
+        // matchedOptions counts each name once: the listed and the named ones, without repeats
+        List<String> all = new ArrayList<>(names(answer, "options"));
+        all.addAll(strings(answer, "moreOptions"));
+        assertThat(all).doesNotHaveDuplicates().hasSize(answer.getInteger("matchedOptions"));
+        assertThat(answer.getString("optionsHint"))
+                .startsWith(answer.getInteger("listedOptions") + " of " + answer.getInteger("matchedOptions") + " ");
+    }
+
+    @Test
+    void theSectionsOfAPageSkipTheBlocksTheyContain() {
+        String adoc = String.join("\n",
+                "== Usage",
+                "----",
+                "....",
+                "== not a heading inside a listing",
+                "....",
+                "----",
+                "////",
+                "== not a heading inside a comment",
+                "////",
+                "=== Sub section",
+                "text");
+        assertThat(CatalogDocs.docSections(adoc)).extracting(CatalogDocs.DocSection::title)
+                .containsExactly("Usage", "Sub section");
+    }
+
+    @Test
+    void aCutAnswerStaysWithinTheMaximumAndItsHintMatchesTheListedOptions() {
+        // no list with more than one entry left: the longest text is cut
+        JsonObject text = new JsonObject();
+        text.put("documentation", "x".repeat(CatalogDocs.MAX_ANSWER_LENGTH * 2));
+        text.put("options", new JsonArray(List.of(new JsonObject(Map.of("name", "a")))));
+        assertThat(CatalogDocs.capAnswer(text).toJson()).hasSizeLessThanOrEqualTo(CatalogDocs.MAX_ANSWER_LENGTH);
+
+        // options cut from the list are named in moreOptions, and the hint says how many are left
+        JsonArray options = new JsonArray();
+        for (int i = 0; i < 40; i++) {
+            options.add(new JsonObject(Map.of("name", "option" + i, "description", "y".repeat(1000))));
         }
+        JsonObject answer = new JsonObject();
+        answer.put("options", options);
+        answer.put("listedOptions", 40);
+        answer.put("moreOptions", new JsonArray(List.of("other")));
+        answer.put("optionsHint", "40 of 41 options listed in full");
+        CatalogDocs.capAnswer(answer);
+        int listed = answer.getInteger("listedOptions");
+        assertThat(listed).isLessThan(40);
+        assertThat(answer.getString("optionsHint")).isEqualTo(listed + " of 41 options listed in full");
+        assertThat(strings(answer, "moreOptions")).hasSize(41 - listed).endsWith("other");
+    }
+
+    private static List<JsonObject> options(JsonObject answer) {
+        return ((JsonArray) answer.get("options")).stream().map(JsonObject.class::cast).toList();
     }
 }

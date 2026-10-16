@@ -123,7 +123,10 @@ class CatalogDocsTest {
         }
         assertEquals("path", byName.get("timerName/endpoint").getString("kind"));
         assertEquals("parameter", byName.get("period/endpoint").getString("kind"));
+        // bridgeErrorHandler is advanced on the endpoint, so the common options list it as a component option
         assertNull(byName.get("bridgeErrorHandler/component").get("kind"), "component options are neither");
+        // an option of both scopes is listed once, as the URI parameter it also is
+        assertEquals("parameter", byName.get("includeMetadata/endpoint,component").getString("kind"));
 
         // a component whose syntax has no path options says so
         JsonObject direct = catalogDoc(Map.of("name", "direct", "kind", "component", "includeOptions", false));

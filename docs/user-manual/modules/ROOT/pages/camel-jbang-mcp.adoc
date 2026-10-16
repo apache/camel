@@ -311,7 +311,8 @@ project `directory` as an argument, the runtime tools take the integration `name
   (`kafka-component`, `wireTap-eip`) and a name in another case are found too; a retry or redelivery word points
   at the error handler. Without `optionsFilter` a component lists the required options and the first 20 others
   in full (`limit` changes it) and the rest by name in `moreOptions`; each component option carries its
-  `application.properties` key (`configKey`), and the multi-value options that take any parameter with a prefix
+  `application.properties` key (`configKey`), an option of both the endpoint and the component is listed once
+  (`scope` is `endpoint,component`), and the multi-value options that take any parameter with a prefix
   (`mail.*` of smtp) are listed in `prefixOptions`. A filter that matches no option says so, with the closest
   option names. The answer lists the `sections` of the component page, those that contain the filter first, and
   `docPage=<section title>` returns one. A full key (`camel.server.port`, `camel.jbang.dependencies`) answers

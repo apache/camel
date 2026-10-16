@@ -91,7 +91,7 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI. A full key (camel.server.port, camel.jbang.dependencies) lists its application.properties group.")
+                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI. A full key such as camel.server.port lists its application.properties group.")
                 .param("name", "string",
                         "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                         false)
