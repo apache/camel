@@ -40,15 +40,19 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
 
     @Override
     public void run() {
-        if (processedEvents.get() > 0) {
-            LOG.debug("checkpointing offset after reaching timeout, with a batch of {}", processedEvents.get());
+        // take the count when the checkpoint is started: an event that completes while it is being stored is counted
+        // for the next window from 0, and a checkpoint by batch size in the meantime cannot be confused with this one
+        final int processed = processedEvents.getAndSet(0);
+        if (processed > 0) {
+            LOG.debug("checkpointing offset after reaching timeout, with a batch of {}", processed);
             eventContext.updateCheckpointAsync()
                     .subscribe(unused -> LOG.debug("Processed one event..."),
-                            error -> LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error),
-                            () -> {
-                                LOG.debug("Checkpoint updated.");
-                                processedEvents.set(0);
-                            });
+                            error -> {
+                                LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error);
+                                // these events are not checkpointed: count them again for the next checkpoint
+                                processedEvents.addAndGet(processed);
+                            },
+                            () -> LOG.debug("Checkpoint updated."));
         } else {
             LOG.debug("skip checkpointing offset even if timeout is reached. No events processed");
         }
