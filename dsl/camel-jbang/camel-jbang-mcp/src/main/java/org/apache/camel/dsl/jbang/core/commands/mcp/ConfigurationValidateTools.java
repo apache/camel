@@ -148,16 +148,20 @@ public class ConfigurationValidateTools {
         boolean springBootDowngraded = false;
         if (isSpringBoot && checked && !valid) {
             String propertyKey = text != null && text.contains("=") ? text.substring(0, text.indexOf('=')).trim() : text;
-            boolean isOriginalGroup = propertyKey != null && (propertyKey.startsWith("camel.component.")
-                    || propertyKey.startsWith("camel.dataformat.")
-                    || propertyKey.startsWith("camel.language.")
-                    || propertyKey.startsWith("camel.main.")
-                    || propertyKey.startsWith("camel.resilience4j.")
-                    || propertyKey.startsWith("camel.faulttolerance.")
-                    || propertyKey.startsWith("camel.threadpool.")
-                    || propertyKey.startsWith("camel.health.")
-                    || propertyKey.startsWith("camel.lra.")
-                    || propertyKey.startsWith("camel.rest."));
+            // Normalize to dash-free lowercase so that Spring Boot relaxed-binding forms
+            // (e.g. camel.fault-tolerance.*, camel.thread-pool.*) match the original group
+            // prefixes the same way the catalog normalises them internally.
+            String normKey = propertyKey != null ? propertyKey.replace("-", "").toLowerCase(java.util.Locale.ENGLISH) : null;
+            boolean isOriginalGroup = normKey != null && (normKey.startsWith("camel.component.")
+                    || normKey.startsWith("camel.dataformat.")
+                    || normKey.startsWith("camel.language.")
+                    || normKey.startsWith("camel.main.")
+                    || normKey.startsWith("camel.resilience4j.")
+                    || normKey.startsWith("camel.faulttolerance.")
+                    || normKey.startsWith("camel.threadpool.")
+                    || normKey.startsWith("camel.health.")
+                    || normKey.startsWith("camel.lra.")
+                    || normKey.startsWith("camel.rest."));
             if (!isOriginalGroup) {
                 Set<String> unknownKeys = result.getUnknown() != null ? result.getUnknown() : Collections.emptySet();
                 boolean onlyUnknownOptionErrors = !unknownKeys.isEmpty()
