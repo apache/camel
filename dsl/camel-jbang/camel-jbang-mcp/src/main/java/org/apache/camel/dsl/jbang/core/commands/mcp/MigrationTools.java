@@ -116,7 +116,7 @@ public class MigrationTools {
             @ToolArg(description = "Current Camel version (e.g., 3.20.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
             @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
-            @ToolArg(description = "Current Java version (e.g., 11, 17, 21)", required = false) String javaVersion) {
+            @ToolArg(description = "Current Java version (e.g., 21, 25)", required = false) String javaVersion) {
 
         if (camelComponents == null || camelComponents.isBlank()) {
             throw new ToolCallException("camelComponents is required", null);
@@ -144,7 +144,13 @@ public class MigrationTools {
 
             if (targetMajor >= 4) {
                 int targetMinor = parseMinorVersion(targetVersion);
-                if (targetMajor > 4 || targetMinor >= 19) {
+                if (targetMajor > 4 || targetMinor >= 24) {
+                    requiredVersion = "21";
+                    if (javaVer < 21) {
+                        javaCompatible = false;
+                        blockers.add("Camel 4.24+ requires Java 21+. Current Java version is " + javaVersion + ".");
+                    }
+                } else if (targetMinor >= 19) {
                     requiredVersion = "21";
                     if (javaVer < 21) {
                         javaCompatible = false;
@@ -216,7 +222,7 @@ public class MigrationTools {
             @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
             @ToolArg(description = "Current Camel version (e.g., 4.4.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
-            @ToolArg(description = "Current Java version (e.g., 11, 17)", required = false) String javaVersion,
+            @ToolArg(description = "Current Java version (e.g., 21, 25)", required = false) String javaVersion,
             @ToolArg(description = "If true, perform a dry run without making changes (default: true)",
                      required = false) Boolean dryRun) {
 
