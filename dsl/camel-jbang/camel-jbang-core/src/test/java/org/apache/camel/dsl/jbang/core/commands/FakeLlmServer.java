@@ -36,7 +36,7 @@ import org.apache.camel.util.json.Jsoner;
 final class FakeLlmServer implements AutoCloseable {
 
     private final HttpServer server;
-    private volatile String answer;
+    private final String answer;
     private volatile JsonObject lastRequest;
 
     FakeLlmServer(String answer) throws IOException {
