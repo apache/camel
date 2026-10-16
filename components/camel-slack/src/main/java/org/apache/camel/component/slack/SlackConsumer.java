@@ -211,6 +211,12 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             // kept the most recent first
             Collections.reverse(notRouted);
         }
+        if (!notRouted.isEmpty()) {
+            LOG.debug("The batch of channel {} ended early, {} messages are kept for the next poll",
+                    slackEndpoint.getChannel(), notRouted.size());
+        }
+        // nothing of this batch is pending anymore: the messages that were not routed are kept for the next poll
+        pendingExchanges = 0;
 
         return answer;
     }
