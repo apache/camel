@@ -16,15 +16,18 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -181,7 +184,7 @@ class ToolRegistryTest {
     }
 
     @Test
-    void theHttpToolsAreInternal() {
+    void theHttpToolsAreInternal(@TempDir Path home) {
         // CAMEL-25307: reached through camel_runtime_http_endpoints and camel_runtime_http_request
         ToolDescriptor endpoints = ToolRegistry.findTool("get_http_endpoints");
         ToolDescriptor request = ToolRegistry.findTool("http_request");
@@ -192,8 +195,16 @@ class ToolRegistryTest {
         assertFalse(request.isDestructive());
         assertFalse(ToolRegistry.authoringTools().contains(endpoints));
         assertFalse(ToolRegistry.authoringTools().contains(request));
-        assertThrows(ToolExecutionException.class,
-                () -> ToolRegistry.execute("http_request", new ToolContext(), Map.of("path", "/hello")));
+        // without a running integration: a home of its own, as the one of the machine may have one, which the tool
+        // would select
+        Path previous = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            assertThrows(ToolExecutionException.class,
+                    () -> ToolRegistry.execute("http_request", new ToolContext(), Map.of("path", "/hello")));
+        } finally {
+            CommandLineHelper.useHomeDir(previous.toString());
+        }
     }
 
     @Test
