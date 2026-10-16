@@ -180,6 +180,15 @@ class ActionClientTest {
     }
 
     @Test
+    void errorOfAnExceptionWithoutMessage() {
+        // camel cmd send --reply: the exchange failed with a NullPointerException, and the answer has the reply message
+        JsonObject answer = json("{\"status\":\"error\",\"exception\":{\"type\":\"java.lang.NullPointerException\"},"
+                                 + "\"message\":{\"body\":{\"type\":\"java.lang.String\",\"value\":\"hello\"}}}");
+
+        assertThat(ActionClient.result(answer).error()).isEqualTo("java.lang.NullPointerException");
+    }
+
+    @Test
     void versions() {
         assertThat(ActionClient.isAtLeast("4.24.0-SNAPSHOT", 4, 24)).isTrue();
         assertThat(ActionClient.isAtLeast("4.24.1", 4, 21)).isTrue();

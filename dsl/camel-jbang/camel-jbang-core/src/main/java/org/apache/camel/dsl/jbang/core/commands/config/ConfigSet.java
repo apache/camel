@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
@@ -48,12 +49,11 @@ public class ConfigSet extends CamelCommand {
     }
 
     private int setConfiguration(boolean local) throws IOException {
-        CommandLineHelper.createPropertyFile(local);
-
-        if (configuration.split("=").length == 1) {
-            printer().println("Configuration parameter not in key=value format");
-            return 1;
+        String name = StringHelper.before(configuration, "=");
+        if (name == null || name.isBlank() || configuration.split("=").length == 1) {
+            throw CliException.usage("Configuration parameter not in key=value format: " + configuration);
         }
+        CommandLineHelper.createPropertyFile(local);
 
         CommandLineHelper.loadProperties(properties -> {
             String key = StringHelper.before(configuration, "=").trim();

@@ -28,6 +28,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -96,6 +97,8 @@ public class CamelMemoryLeak extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // a --min-size that is not a size is a usage error, before the integration is asked anything
+        parseSize(minSize);
         long pid = findOne(name).pid();
 
         if (start && "dual".equalsIgnoreCase(mode)) {
@@ -437,26 +440,30 @@ public class CamelMemoryLeak extends ActionBaseCommand {
         }
     }
 
+    /**
+     * The number of bytes of a size such as 1024, 10B, 10KB, 1.5MB or 2G.
+     *
+     * @throws CliException (exit code 2) when the value is not a size
+     */
     static long parseSize(String value) {
-        if (value == null || value.isEmpty() || "0".equals(value)) {
+        if (value == null || value.isBlank()) {
             return 0;
         }
         String v = value.trim().toUpperCase(Locale.US);
         long multiplier = 1;
         if (v.endsWith("GB") || v.endsWith("G")) {
             multiplier = 1024L * 1024 * 1024;
-            v = v.replaceAll("[GMK]B?$", "");
         } else if (v.endsWith("MB") || v.endsWith("M")) {
             multiplier = 1024L * 1024;
-            v = v.replaceAll("[GMK]B?$", "");
         } else if (v.endsWith("KB") || v.endsWith("K")) {
             multiplier = 1024;
-            v = v.replaceAll("[GMK]B?$", "");
         }
+        // without the unit, which can also be B for bytes
+        v = v.replaceAll("[GMK]?B?$", "");
         try {
             return (long) (Double.parseDouble(v) * multiplier);
         } catch (NumberFormatException e) {
-            return 0;
+            throw CliException.usage("--min-size must be a size such as 1024, 10KB or 1MB, was: " + value);
         }
     }
 

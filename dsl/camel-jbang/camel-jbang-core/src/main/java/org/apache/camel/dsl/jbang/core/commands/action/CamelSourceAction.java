@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -72,7 +73,7 @@ public class CamelSourceAction extends ActionBaseCommand {
         JsonObject jo = executeAction(process, "source", root -> {
             root.put("filter", "*");
         });
-        JsonArray arr = (JsonArray) jo.get("routes");
+        JsonArray arr = jo.get("routes") instanceof JsonArray routes ? routes : new JsonArray();
         for (int i = 0; i < arr.size(); i++) {
             JsonObject o = (JsonObject) arr.get(i);
             Row row = new Row();
@@ -129,7 +130,9 @@ public class CamelSourceAction extends ActionBaseCommand {
         }
         switch (s) {
             case "name":
-                return o1.location.compareToIgnoreCase(o2.location) * negate;
+                // a route without a source location sorts first
+                return (o1.location != null ? o1.location : "").compareToIgnoreCase(o2.location != null ? o2.location : "")
+                       * negate;
             default:
                 return 0;
         }
@@ -177,12 +180,12 @@ public class CamelSourceAction extends ActionBaseCommand {
 
             Row row = (Row) o;
 
-            return location.equals(row.location);
+            return Objects.equals(location, row.location);
         }
 
         @Override
         public int hashCode() {
-            return location.hashCode();
+            return Objects.hashCode(location);
         }
     }
 
