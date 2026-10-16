@@ -364,6 +364,18 @@ class OpenApiToolsTest {
     }
 
     @Test
+    void scaffoldNamesTheRootPathMockFileVisibly() {
+        OpenApiTools.ScaffoldResult result
+                = tools.camel_openapi_scaffold(MINIMAL_SPEC.replace("\"/pets\":", "\"/\":"), null, "mock");
+
+        assertThat(result.mockFiles()).singleElement().satisfies(f -> {
+            assertThat(f.filePath()).isEqualTo("camel-mock/index.json");
+            assertThat(f.requestPath()).isEqualTo("/");
+            assertThat(f.note()).contains("any mock file");
+        });
+    }
+
+    @Test
     void scaffoldListsNoMockFileOutsideMockMode() {
         OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(MINIMAL_SPEC, null, "ignore");
 

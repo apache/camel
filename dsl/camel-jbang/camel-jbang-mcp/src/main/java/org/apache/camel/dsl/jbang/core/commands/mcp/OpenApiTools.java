@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -373,7 +374,14 @@ public class OpenApiTools {
             note.setLength(note.length() - 2);
             note.append('.');
 
-            files.add(new MockFileInfo("camel-mock" + path + ext, path, operationIds, example, note.toString()));
+            // the component matches a resource whose location without extension ends with the request path without its
+            // leading slash; for the root path that is the empty string, so any mock file matches
+            String fileName = "/".equals(path) ? "camel-mock/index" + ext : "camel-mock" + path + ext;
+            if ("/".equals(path)) {
+                note.append(" Camel matches the root path to any mock file (the first one found), so with more than"
+                            + " one file the one that answers / is not predictable.");
+            }
+            files.add(new MockFileInfo(fileName, path, operationIds, example, note.toString()));
         }
         return files;
     }
@@ -420,8 +428,8 @@ public class OpenApiTools {
             return;
         }
         String kind = switch (scheme.getType()) {
-            case APIKEY -> "apiKey in " + scheme.getIn();
-            case HTTP -> "HTTP " + scheme.getScheme();
+            case APIKEY -> "apiKey in " + Objects.requireNonNullElse(scheme.getIn(), "<unset>");
+            case HTTP -> "HTTP " + Objects.requireNonNullElse(scheme.getScheme(), "<unset>");
             case OAUTH2 -> "OAuth2";
             case OPENIDCONNECT -> "OpenID Connect";
             case MUTUALTLS -> "Mutual TLS";
