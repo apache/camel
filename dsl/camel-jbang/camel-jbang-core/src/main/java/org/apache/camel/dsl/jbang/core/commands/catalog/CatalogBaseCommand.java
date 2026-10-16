@@ -233,7 +233,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     }
 
     // a missing value sorts first
-    private static int compareIgnoreCase(String s1, String s2) {
+    static int compareIgnoreCase(String s1, String s2) {
         return (s1 != null ? s1 : "").compareToIgnoreCase(s2 != null ? s2 : "");
     }
 

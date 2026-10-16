@@ -128,21 +128,17 @@ public class CatalogKamelet extends CamelCommand {
         switch (s) {
             case "name":
                 return o1.name.compareToIgnoreCase(o2.name) * negate;
+            // a Kamelet without the value sorts first
             case "type":
-                return compareIgnoreCase(o1.type, o2.type) * negate;
+                return CatalogBaseCommand.compareIgnoreCase(o1.type, o2.type) * negate;
             case "level":
             case "support-level":
-                return compareIgnoreCase(o1.supportLevel, o2.supportLevel) * negate;
+                return CatalogBaseCommand.compareIgnoreCase(o1.supportLevel, o2.supportLevel) * negate;
             case "description":
-                return compareIgnoreCase(o1.description, o2.description) * negate;
+                return CatalogBaseCommand.compareIgnoreCase(o1.description, o2.description) * negate;
             default:
                 return 0;
         }
-    }
-
-    // a Kamelet without the value sorts first
-    private static int compareIgnoreCase(String s1, String s2) {
-        return (s1 != null ? s1 : "").compareToIgnoreCase(s2 != null ? s2 : "");
     }
 
     private String getDescription(KameletModel r) {

@@ -203,6 +203,10 @@ public final class CommandLineHelper {
      *
      * @return the user home directory.
      */
+    public static Path getHomeDir() {
+        return homeDir;
+    }
+
     /**
      * The arguments of a command line typed as one text, such as <tt>--jvm-args</tt>: split at whitespace outside
      * double or single quotes, which are removed, and a backslash escapes the next character (outside single quotes).
@@ -235,10 +239,6 @@ public final class CommandLineHelper {
             answer.add(current.toString());
         }
         return answer;
-    }
-
-    public static Path getHomeDir() {
-        return homeDir;
     }
 
     /**

@@ -727,16 +727,19 @@ public class KubernetesRun extends KubernetesBaseCommand {
         pb.command(args.toArray(String[]::new));
 
         Path log = mavenOutput(pb);
-        Process p = pb.start();
-        // wait for that process to exit as we run in foreground
-        int exit = p.waitFor();
-        if (exit != 0) {
-            printer().printErr("Build failed!");
-            printMavenOutput(log);
-            return exit;
+        try {
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            int exit = p.waitFor();
+            if (exit != 0) {
+                printer().printErr("Build failed!");
+                printMavenOutput(log);
+                return exit;
+            }
+            return 0;
+        } finally {
+            removeMavenOutput(log);
         }
-
-        return 0;
     }
 
     private Integer deployProject(String workingDir, boolean reload) throws Exception {
@@ -804,16 +807,19 @@ public class KubernetesRun extends KubernetesBaseCommand {
         pb.command(args.toArray(String[]::new));
 
         Path log = mavenOutput(pb);
-        Process p = pb.start();
-        // wait for that process to exit as we run in foreground
-        int exit = p.waitFor();
-        if (exit != 0) {
-            printer().printErr("Deployment to %s failed!".formatted(clusterType));
-            printMavenOutput(log);
-            return exit;
+        try {
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            int exit = p.waitFor();
+            if (exit != 0) {
+                printer().printErr("Deployment to %s failed!".formatted(clusterType));
+                printMavenOutput(log);
+                return exit;
+            }
+            return 0;
+        } finally {
+            removeMavenOutput(log);
         }
-
-        return 0;
     }
 
     /**
@@ -831,6 +837,19 @@ public class KubernetesRun extends KubernetesBaseCommand {
         pb.redirectErrorStream(true);
         pb.redirectOutput(log.toFile());
         return log;
+    }
+
+    /**
+     * Removes the log of Maven once it has ended: camel kubernetes run --dev builds and deploys again on every change.
+     */
+    private static void removeMavenOutput(Path log) {
+        if (log != null) {
+            try {
+                Files.deleteIfExists(log);
+            } catch (IOException e) {
+                // removed when the JVM exits
+            }
+        }
     }
 
     /**
