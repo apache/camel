@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -151,7 +152,7 @@ public class ConfigurationValidateTools {
             // Normalize to dash-free lowercase so that Spring Boot relaxed-binding forms
             // (e.g. camel.fault-tolerance.*, camel.thread-pool.*) match the original group
             // prefixes the same way the catalog normalises them internally.
-            String normKey = propertyKey != null ? propertyKey.replace("-", "").toLowerCase(java.util.Locale.ENGLISH) : null;
+            String normKey = propertyKey != null ? propertyKey.replace("-", "").toLowerCase(Locale.ENGLISH) : null;
             boolean isOriginalGroup = normKey != null && (normKey.startsWith("camel.component.")
                     || normKey.startsWith("camel.dataformat.")
                     || normKey.startsWith("camel.language.")

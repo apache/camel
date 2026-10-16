@@ -312,6 +312,7 @@ class ConfigurationValidateToolsTest {
         assertThat(info.valid()).isFalse();
         assertThat(result.summary().unchecked()).isEqualTo(1);
         assertThat(result.summary().errors()).isZero();
+        assertThat(info.issues()).anyMatch(i -> "unknown".equals(i.kind()));
 
         // Counterpart: without the spring-boot flag, camel.metrics.uriTagEnabled IS checked
         // (camel.metrics is a known main-model group) but flagged as unknown option.
@@ -323,6 +324,31 @@ class ConfigurationValidateToolsTest {
         ConfigurationValidateTools.PropertyValidationInfo nonSbInfo = nonSbResult.properties().get(0);
         assertThat(nonSbInfo.checked()).isTrue();  // camel.metrics group is known
         assertThat(nonSbInfo.valid()).isFalse();   // but uriTagEnabled is not in main metadata
+    }
+
+    @Test
+    void springBootKeepsValidationForOriginalGroups() {
+        // Original groups (camel.component.*, camel.fault-tolerance.*, etc.) must remain fully
+        // validated under Spring Boot — only newly-accepted dynamic groups are downgraded.
+        ConfigurationValidateTools tools = createTools();
+
+        // camel.component.kafka.brokerz is a typo — must still be checked and invalid with a suggestion
+        ConfigurationValidateTools.ConfigurationValidateResult componentResult
+                = tools.camel_configuration_validate(
+                        "camel.component.kafka.brokerz=localhost:9092", "spring-boot", null, null);
+        ConfigurationValidateTools.PropertyValidationInfo componentInfo = componentResult.properties().get(0);
+        assertThat(componentInfo.checked()).isTrue();
+        assertThat(componentInfo.valid()).isFalse();
+        assertThat(componentInfo.issues()).anyMatch(i -> "unknown".equals(i.kind()));
+
+        // camel.fault-tolerance.* (dashed form of camel.faulttolerance.*) must also stay validated
+        ConfigurationValidateTools.ConfigurationValidateResult ftResult
+                = tools.camel_configuration_validate(
+                        "camel.fault-tolerance.timeoutEnabledz=true", "spring-boot", null, null);
+        ConfigurationValidateTools.PropertyValidationInfo ftInfo = ftResult.properties().get(0);
+        assertThat(ftInfo.checked()).isTrue();
+        assertThat(ftInfo.valid()).isFalse();
+        assertThat(ftInfo.issues()).anyMatch(i -> "unknown".equals(i.kind()));
     }
 
     @Test
