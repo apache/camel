@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Timeout;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -77,15 +78,13 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
             = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem2");
 
     private static final String MILO_CLIENT_UNKNOWN_ITEM
-            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItem")
-              + "&omitNullValues=false";
+            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItem");
 
     private static final String MILO_CLIENT_UNKNOWN_ITEM_WRITE_BACK
-            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItemWriteBack")
-              + "&omitNullValues=false";
+            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItemWriteBack");
 
     private static final String MILO_CLIENT_ITEMS_1_2
-            = MILO_CLIENT_BASE + "&omitNullValues=false&nodes=RAW(" + NODE_ITEM_1 + "," + NODE_ITEM_2 + ")";
+            = MILO_CLIENT_BASE + "&nodes=RAW(" + NODE_ITEM_1 + "," + NODE_ITEM_2 + ")";
 
     private static final String MOCK_ITEM_1 = "mock:item1";
 
@@ -126,10 +125,10 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
                 from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
                 from(DIRECT_START_2).to(MILO_SERVER_ITEM_2);
 
-                from(resolve(MILO_CLIENT_ITEM_1)).routeId("item1").to(MOCK_ITEM_1);
                 from(resolve(MILO_CLIENT_UNKNOWN_ITEM)).routeId("unknownItem").to(MOCK_UNKNOWN_ITEM);
 
                 // the consumers deliver the current values while they start, so the tests start these routes
+                from(resolve(MILO_CLIENT_ITEM_1)).routeId("item1").autoStartup(false).to(MOCK_ITEM_1);
                 from(resolve(MILO_CLIENT_ITEM_2)).routeId("item2").autoStartup(false).to(MOCK_ITEM_2);
                 from(resolve(MILO_CLIENT_ITEMS_1_2)).routeId("items12").autoStartup(false).to(MOCK_ITEMS_1_2);
 
@@ -145,9 +144,11 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
 
     @Test
     void restartedConsumerReceivesEachValueOnce() throws Exception {
+        producer1.sendBody("Foo");
+
         item1Endpoint.expectedMessageCount(1);
         testBody(item1Endpoint.message(0), assertGoodValue("Foo"));
-        producer1.sendBody("Foo");
+        context.getRouteController().startRoute("item1");
         item1Endpoint.assertIsSatisfied();
 
         // the other consumers keep the shared connection open
@@ -180,10 +181,32 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
         unknownItemEndpoint.assertIsSatisfied();
 
         // the other consumers of the connection are not affected
+        producer1.sendBody("Foo");
+
         item1Endpoint.expectedMessageCount(1);
         testBody(item1Endpoint.message(0), assertGoodValue("Foo"));
-        producer1.sendBody("Foo");
+        context.getRouteController().startRoute("item1");
         item1Endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    void itemThatWasNotWrittenYetReportsABadStatusAtStartup() throws Exception {
+        // the first notification carries the current value of the item, which is a Bad status without a value until
+        // the item is written; the consumer delivers it like any other Bad status
+        item2Endpoint.expectedMessageCount(1);
+        item2Endpoint.expectedHeaderReceived(MiloConstants.HEADER_NODE_ID, NODE_ITEM_2);
+        testBody(item2Endpoint.message(0), value -> {
+            assertTrue(value.getStatusCode().isBad(), value.getStatusCode().toString());
+            assertNull(value.getValue().getValue());
+        });
+        context.getRouteController().startRoute("item2");
+        item2Endpoint.assertIsSatisfied();
+
+        item2Endpoint.reset();
+        item2Endpoint.expectedMessageCount(1);
+        testBody(item2Endpoint.message(0), assertGoodValue("Bar"));
+        producer2.sendBody("Bar");
+        item2Endpoint.assertIsSatisfied();
     }
 
     @Test

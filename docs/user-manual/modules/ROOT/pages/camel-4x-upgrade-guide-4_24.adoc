@@ -1188,10 +1188,21 @@ support it keep their existing projection. The `camel semantic audit --json` dis
 base64 and reports metadata instead. Use `--output=<new-file>` to export the full returned JSON,
 with `--include-input` for case/bulk requests that need captured input. Existing files are not overwritten.
 
+=== camel-milo - a Bad or Uncertain status is delivered by default
+
+A `milo-client` consumer now delivers a data change with a Bad or Uncertain status by default, even when its value is
+null; previously the default `omitNullValues=true` dropped it. `omitNullValues` now only omits a null value with a Good
+status. A route may therefore receive a Bad status with a null value, also as the first notification of a monitored
+item at startup and after a reconnect, for example `Bad_WaitingForInitialData` or the status of a `milo-server` item
+that was not written yet. A route that uses the value must check `getStatusCode()` of the `DataValue` body first:
+Camel's type converter returns `0` or `false` for a null value that is converted to a primitive type such as `double`
+or `boolean`. To skip the startup notification, filter on its status code; a filter on `isGood()` would also drop the
+Bad status of a failed sensor.
+
 === camel-milo - creating and deleting the monitored items of a consumer
 
 Since 4.16, a `milo-client` consumer whose monitored item could not be created, for example because the node does not
-exist, received nothing. Now it receives one `DataValue` with the bad status code (when `omitNullValues=false`). The
+exist, received nothing. Now it receives one `DataValue` with the bad status code. The
 monitored item is created again when the route is restarted or when Camel rebuilds the connection to the server; unlike
 Camel 3.x, it is not retried every 10 seconds.
 

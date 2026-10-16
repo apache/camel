@@ -149,8 +149,20 @@ need a consumer of their own.
 
 A node that does not exist on the server does not affect the other nodes. A node that cannot be monitored is
 reported once with its status code and is not retried; restarting the route or a rebuilt connection to the server creates the monitored items again.
-To see such nodes, set `omitNullValues=false`: the consumer then delivers one exchange with the bad status code for that
-node, and the `CamelMiloNodeId` header names it.
+The consumer delivers one exchange with the bad status code for such a node, and the `CamelMiloNodeId` header names it.
+
+=== Status codes and null values
+
+A data change with a Bad or Uncertain status is always delivered, even when its value is null; `omitNullValues` only
+omits a null value with a Good status. This includes the first notification of a monitored item: it carries the current
+value of the node, at startup and again after a reconnect, so it can be a Bad status such as `Bad_WaitingForInitialData`
+or the status of a `milo-server` item that was not written yet. To skip such a notification, a route filters on its
+status code (`getStatusCode()` of the `DataValue` body); a filter on `isGood()` would also drop the Bad status of a
+failed sensor.
+
+The default `omitNullValues=true` also omits a null value with a Good status that follows a Bad status, so the route
+does not learn that the node recovered. Set `omitNullValues=false` for a node whose value can be null, such as a
+`String`.
 
 === Method ID
 
