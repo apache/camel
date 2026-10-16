@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -39,6 +40,9 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
                  "  camel get source --filter=myRoute",
                  "  camel get source --json" })
 public class CamelSourceAction extends ActionBaseCommand {
+
+    // a route without a source location sorts first
+    private static final RowSort<Row> ORDER = new RowSort<Row>().text("name", r -> r.location);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -100,7 +104,7 @@ public class CamelSourceAction extends ActionBaseCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
@@ -119,23 +123,6 @@ public class CamelSourceAction extends ActionBaseCommand {
         }
 
         return 0;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                // a route without a source location sorts first
-                return (o1.location != null ? o1.location : "").compareToIgnoreCase(o2.location != null ? o2.location : "")
-                       * negate;
-            default:
-                return 0;
-        }
     }
 
     protected void printSource(List<Row> rows) {

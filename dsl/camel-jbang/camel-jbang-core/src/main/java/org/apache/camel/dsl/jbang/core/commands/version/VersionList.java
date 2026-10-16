@@ -55,6 +55,7 @@ import org.apache.camel.dsl.jbang.core.commands.QuarkusExtensionRegistryMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -80,6 +81,12 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_IN
                              "  camel version list --runtime=spring-boot",
                              "  camel version list --lts" })
 public class VersionList extends CamelCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .by("version", (o1, o2) -> VersionHelper.compare(o1.camelVersion, o2.camelVersion))
+            .by("date", Comparator.comparing((Row r) -> r.releaseDate != null ? r.releaseDate : ""))
+            // the most days since the release first
+            .by("days", Comparator.comparingLong((Row r) -> r.daysSince).reversed());
 
     private static final String VERSION_LIST_CHECKER = ".camel-jbang-version-list.json";
 
@@ -227,7 +234,7 @@ public class VersionList extends CamelCommand {
         }
 
         // sort rows
-        rows = rows.sorted(sortRows());
+        rows = rows.sorted(ORDER.comparator(sort));
 
         List<Row> rowsList = rows.toList();
         if (tail > 0) {
@@ -482,31 +489,6 @@ public class VersionList extends CamelCommand {
             // ignore
         }
         return true;
-    }
-
-    protected Comparator<Row> sortRows() {
-        String s = sort;
-        final int negate;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        } else {
-            negate = 1;
-        }
-        switch (s) {
-            case "version":
-                return (o1, o2) -> VersionHelper.compare(o1.camelVersion, o2.camelVersion) * negate;
-            case "date":
-                return (o1, o2) -> {
-                    String d1 = o1.releaseDate != null ? o1.releaseDate : "";
-                    String d2 = o2.releaseDate != null ? o2.releaseDate : "";
-                    return d1.compareTo(d2) * negate;
-                };
-            case "days":
-                return (o1, o2) -> Long.compare(o2.daysSince, o1.daysSince) * negate;
-            default:
-                return (o1, o2) -> 0;
-        }
     }
 
     private String jdkVersion(Row r) {

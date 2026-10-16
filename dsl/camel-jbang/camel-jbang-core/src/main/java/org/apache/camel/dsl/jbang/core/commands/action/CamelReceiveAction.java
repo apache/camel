@@ -51,6 +51,8 @@ import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -940,14 +942,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
     }
 
     protected String getEndpointUri(StatusRow r) {
-        String u = r.uri;
-        if (shortUri) {
-            int pos = u.indexOf('?');
-            if (pos > 0) {
-                u = u.substring(0, pos);
-            }
-        }
-        return u;
+        return ListingFormat.uri(r.uri, shortUri);
     }
 
     protected String getMessageAgo(StatusRow r) {
@@ -981,7 +976,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     }
 
-    private static class StatusRow implements Cloneable {
+    private static class StatusRow extends CopyableRow<StatusRow> {
         String pid;
         String name;
         String age;
@@ -991,14 +986,6 @@ public class CamelReceiveAction extends ActionBaseCommand {
         long firstTimestamp;
         long lastTimestamp;
         String uri;
-
-        StatusRow copy() {
-            try {
-                return (StatusRow) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }

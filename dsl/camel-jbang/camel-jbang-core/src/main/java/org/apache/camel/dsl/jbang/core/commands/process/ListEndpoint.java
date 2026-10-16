@@ -30,6 +30,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
@@ -46,6 +47,10 @@ import picocli.CommandLine.Command;
                  "  camel get endpoint --filter=kafka*",
                  "  camel get endpoint --watch" })
 public class ListEndpoint extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime)
+            .number("total", r -> r.total)
+            .numeric("size", r -> r.meanBodySize);
 
     public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {
 
@@ -163,7 +168,7 @@ public class ListEndpoint extends ProcessWatchCommand {
         });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         // the first rows after sorting
         if (limit > 0 && rows.size() > limit) {
@@ -271,29 +276,6 @@ public class ListEndpoint extends ProcessWatchCommand {
             return String.format(Locale.US, "%.1f KB", size / 1024.0);
         } else {
             return String.format(Locale.US, "%.1f MB", size / (1024.0 * 1024.0));
-        }
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            case "total":
-                return Long.compare(Long.parseLong(o1.total), Long.parseLong(o2.total)) * negate;
-            case "size":
-                return Long.compare(o1.meanBodySize, o2.meanBodySize) * negate;
-            default:
-                return 0;
         }
     }
 

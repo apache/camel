@@ -29,6 +29,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StringHelper;
@@ -45,6 +46,11 @@ import picocli.CommandLine.Command;
                  "  camel cmd thread-dump --trace",
                  "  camel cmd thread-dump --json" })
 public class CamelThreadDump extends ActionWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .numeric("id", r -> r.id)
+            .text("name", r -> r.name)
+            .text("state", r -> r.state);
 
     public static class IdNameStateCompletionCandidates implements Iterable<String> {
 
@@ -156,7 +162,7 @@ public class CamelThreadDump extends ActionWatchCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         int total = jo.getIntegerOrDefault("threadCount", 0);
         int peak = jo.getIntegerOrDefault("peakThreadCount", 0);
@@ -241,25 +247,6 @@ public class CamelThreadDump extends ActionWatchCommand {
             for (int i = 0; i < depth && i < row.stackTrace.size(); i++) {
                 printer().println("\t" + row.stackTrace.get(i));
             }
-        }
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "id":
-                return Long.compare(o1.id, o2.id) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "state":
-                return o1.state.compareToIgnoreCase(o2.state) * negate;
-            default:
-                return 0;
         }
     }
 

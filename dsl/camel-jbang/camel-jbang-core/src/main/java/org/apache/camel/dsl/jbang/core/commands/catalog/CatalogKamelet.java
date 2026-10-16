@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.StringHelper;
@@ -43,6 +45,13 @@ import picocli.CommandLine;
                              "  camel catalog kamelet --type=source",
                              "  camel catalog kamelet --filter=kafka" })
 public class CatalogKamelet extends CamelCommand {
+
+    private static final RowSort<KameletModel> ORDER = new RowSort<KameletModel>()
+            .text("name", r -> r.name)
+            .text("type", r -> r.type)
+            .text("level", r -> r.supportLevel)
+            .alias("support-level", "level")
+            .text("description", r -> r.description);
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by name, type, support-level, or description", defaultValue = "name")
@@ -99,7 +108,7 @@ public class CatalogKamelet extends CamelCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(order());
 
         if (!rows.isEmpty()) {
             // Size the DESCRIPTION column to fill the terminal from the measured width of the other columns.
@@ -118,27 +127,11 @@ public class CatalogKamelet extends CamelCommand {
         return 0;
     }
 
-    protected int sortRow(KameletModel o1, KameletModel o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            // a Kamelet without the value sorts first
-            case "type":
-                return CatalogBaseCommand.compareIgnoreCase(o1.type, o2.type) * negate;
-            case "level":
-            case "support-level":
-                return CatalogBaseCommand.compareIgnoreCase(o1.supportLevel, o2.supportLevel) * negate;
-            case "description":
-                return CatalogBaseCommand.compareIgnoreCase(o1.description, o2.description) * negate;
-            default:
-                return 0;
-        }
+    /**
+     * The order of the Kamelets by the --sort option.
+     */
+    Comparator<KameletModel> order() {
+        return ORDER.comparator(sort);
     }
 
     private String getDescription(KameletModel r) {

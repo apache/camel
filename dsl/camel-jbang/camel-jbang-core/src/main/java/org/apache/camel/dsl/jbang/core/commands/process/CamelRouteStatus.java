@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,8 +29,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.Strings;
@@ -49,6 +52,8 @@ import picocli.CommandLine.Command;
                  "  camel get route hello",
                  "  camel get route --watch" })
 public class CamelRouteStatus extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -237,7 +242,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(order());
 
         if (limit > 0 && rows.size() > limit) {
             rows.subList(limit, rows.size()).clear();
@@ -412,23 +417,11 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         }
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
+    /**
+     * The order of the rows by the --sort option.
+     */
+    protected Comparator<Row> order() {
+        return ORDER.comparator(sort);
     }
 
     protected String getErrorAgo(Row r) {
@@ -450,10 +443,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     }
 
     protected String getSinceLast(Row r) {
-        String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
-        String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
-        String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
-        return s1 + "/" + s2 + "/" + s3;
+        return ListingFormat.sinceLast(r.sinceLastStarted, r.sinceLastCompleted, r.sinceLastFailed);
     }
 
     protected String getThroughput(Row r) {
@@ -515,15 +505,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     }
 
     protected String getDelta(Row r) {
-        if (r.delta != null) {
-            if (r.delta.startsWith("-")) {
-                return r.delta;
-            } else if (!"0".equals(r.delta)) {
-                // use plus sign to denote slower when positive
-                return "+" + r.delta;
-            }
-        }
-        return r.delta;
+        return ListingFormat.delta(r.delta);
     }
 
     protected String getTotal(Row r) {
