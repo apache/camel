@@ -133,23 +133,26 @@ public class UndertowProducer extends DefaultAsyncProducer {
 
         final HeaderMap requestHeaders = request.getRequestHeaders();
 
-        // Set the Host header
-        final Message message = camelExchange.getIn();
-        final String host = message.getHeader(UndertowConstants.HOST_STRING, String.class);
-        if (endpoint.isPreserveHostHeader()) {
-            requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(uri::getAuthority));
-        } else {
-            requestHeaders.put(Headers.HOST, uri.getAuthority());
-        }
-        cookieHeaders.forEach((key, values) -> {
-            requestHeaders.putAll(HttpString.tryFromString(key), values);
-        });
-
         final Object body;
         try {
+            // Set the Host header. When preserveHostHeader is set this is the caller's Host header, which the client
+            // writes verbatim, so it is validated like any other header value.
+            final Message message = camelExchange.getIn();
+            final String host = message.getHeader(UndertowConstants.HOST_STRING, String.class);
+            if (endpoint.isPreserveHostHeader()) {
+                final String hostHeader = Optional.ofNullable(host).orElseGet(uri::getAuthority);
+                UndertowHelper.checkWriteable("Host header", hostHeader);
+                requestHeaders.put(Headers.HOST, hostHeader);
+            } else {
+                requestHeaders.put(Headers.HOST, uri.getAuthority());
+            }
+            cookieHeaders.forEach((key, values) -> {
+                requestHeaders.putAll(HttpString.tryFromString(key), values);
+            });
+
             body = undertowHttpBinding.toHttpRequest(request, camelExchange.getIn());
         } catch (final IllegalArgumentException e) {
-            // a header value that cannot be written to a header line (see UndertowHelper.checkWriteable)
+            // a Host or other header value that cannot be written to a header line (see UndertowHelper.checkWriteable)
             camelExchange.setException(e);
             callback.done(true);
             return true;

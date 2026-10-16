@@ -407,7 +407,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
-            // set content-type
+            // set content-type (written verbatim by the client, so validate it like any other header value)
+            UndertowHelper.checkWriteable("Content-Type header", contentType);
             requestHeaders.put(Headers.CONTENT_TYPE, contentType);
             LOG.trace("Content-Type: {}", contentType);
         }
