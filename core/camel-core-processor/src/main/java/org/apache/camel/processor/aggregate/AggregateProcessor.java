@@ -1580,6 +1580,24 @@ public class AggregateProcessor extends BaseProcessorSupport
             if (type != Listener.Type.Evict) {
                 return;
             }
+            try {
+                doOnEviction(key, exchangeId);
+            } catch (Exception e) {
+                // the entry is no longer in the timeout map, and the timeout map ignores errors of its listeners, so
+                // without a new entry a group the repository could not read or remove would never time out (an entry
+                // that a new message for the key has put in the meantime is kept)
+                long delay = getCompletionTimeoutCheckerInterval();
+                LOG.warn("Error completing the group with correlation key: {} by its completion timeout,"
+                         + " will try again in {} ms. Caused by: {}",
+                        key, delay, e.getMessage());
+                LOG.debug("Error completing the group with correlation key: {} by its completion timeout", key, e);
+                if (isRunAllowed()) {
+                    putIfAbsent(key, exchangeId, delay);
+                }
+            }
+        }
+
+        private void doOnEviction(String key, String exchangeId) {
             log.debug("Completion timeout triggered for correlation key: {}", key);
 
             // with optimistic locking the exchange id in the entry can belong to a group that has been completed
