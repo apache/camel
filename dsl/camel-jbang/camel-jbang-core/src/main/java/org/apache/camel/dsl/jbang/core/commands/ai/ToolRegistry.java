@@ -690,6 +690,12 @@ public final class ToolRegistry {
                 entry.put("failedCalls", bj.get("failedCalls"));
                 entry.put("notPermittedCalls", bj.get("notPermittedCalls"));
                 entry.put("failureRate", bj.get("failureRate"));
+                // as camel get circuit-breaker shows them, when the breaker counts them
+                for (String key : new String[] { "fallbackCalls", "timedOutCalls", "bulkheadRejectedCalls" }) {
+                    if (bj.get(key) != null) {
+                        entry.put(key, bj.get(key));
+                    }
+                }
                 target.add(entry);
             }
         }
@@ -715,8 +721,8 @@ public final class ToolRegistry {
                         root.put("format", "yaml");
                     });
                     JsonObject response = new JsonObject();
-                    response.put("routeStructure", structureJson);
-                    response.put("routeDump", dumpJson);
+                    response.put("routeStructure", json(structureJson));
+                    response.put("routeDump", json(dumpJson));
                     response.put("analysisHints", buildAnalysisHints());
                     return response.toJson();
                 }));
@@ -733,8 +739,8 @@ public final class ToolRegistry {
                     String structureJson = ctx.executeAction("route-structure",
                             root -> root.put("id", "*"));
                     JsonObject response = new JsonObject();
-                    response.put("processorStats", topJson);
-                    response.put("routeStructures", structureJson);
+                    response.put("processorStats", json(topJson));
+                    response.put("routeStructures", json(structureJson));
                     return response.toJson();
                 }));
 
@@ -759,8 +765,8 @@ public final class ToolRegistry {
                     String sourceFiles = ctx.executeAction("source",
                             root -> root.put("filter", "*"));
                     JsonObject response = new JsonObject();
-                    response.put("runningRoutes", runningRoutes);
-                    response.put("sourceFiles", sourceFiles);
+                    response.put("runningRoutes", json(runningRoutes));
+                    response.put("sourceFiles", json(sourceFiles));
                     response.put("format", dumpFormat);
                     response.put("hint",
                             "Compare the running route definitions with the source files to identify any differences. "
@@ -768,6 +774,14 @@ public final class ToolRegistry {
                                          + "and hot-reloading changes.");
                     return response.toJson();
                 }));
+    }
+
+    /**
+     * The answer of the integration in an answer of a tool: as JSON when it is, not as JSON text in the JSON.
+     */
+    private static Object json(String answer) {
+        Object parsed = Jsoner.deserialize(answer, (JsonObject) null);
+        return parsed != null ? parsed : answer;
     }
 
     private static JsonObject buildAnalysisHints() {
@@ -1374,7 +1388,7 @@ public final class ToolRegistry {
         }
         JsonArray steps = new JsonArray();
         Object traces = history.get("traces");
-        if (traces instanceof java.util.List<?> list) {
+        if (traces instanceof List<?> list) {
             for (Object o : list) {
                 if (!(o instanceof JsonObject t)) {
                     continue;
