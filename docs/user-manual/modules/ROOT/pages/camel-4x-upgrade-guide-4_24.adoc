@@ -452,6 +452,13 @@ again. With `transacted=true` the SQL and MyBatis consumers break out of the bat
 `markRollbackOnlyLast()` reaches the consumer only when no `transacted()` EIP has consumed the flag, so the
 consumer's own transaction is the last one.
 
+=== camel-jta - an exchange marked rollback only last rolls back its transaction
+
+In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the
+transaction of that `transacted()` block, as it already did with the camel-spring transaction error handler. Before,
+the transaction was committed, and the marker was then cleared, so nothing showed that the rollback was skipped.
+The marker is still cleared afterwards, so an outer `transacted()` block does not see it.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the

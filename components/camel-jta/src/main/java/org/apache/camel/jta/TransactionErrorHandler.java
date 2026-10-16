@@ -211,8 +211,8 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
                 }
 
                 // after handling and still an exception or marked as rollback
-                // only then rollback
-                if (exchange.getException() != null || exchange.isRollbackOnly()) {
+                // only (or rollback only last, this transaction) then rollback
+                if (exchange.getException() != null || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
 
                     // wrap exception in transacted exception
                     if (exchange.getException() != null) {
