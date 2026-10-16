@@ -59,7 +59,7 @@ Replay one seed with `-Ddst.seed=48`, or `@DstSeed(48)` on the test method.
 - Replaying a seed gives a byte-identical trace, also across JVMs and inside a 5000-seed run.
 - It found something the review only suspected: with the first version of #27922, 31 of the 33 failing seeds lost
   the last events of a partition through the corner case raised in review (the timer's `compareAndSet` wiping a later
-  window). The PR is being updated to close that case too.
+  window). The PR was then updated to close that case too (commit aaccfdf9fc45, taking the count with `getAndSet(0)` when the timer checkpoint starts).
 
 ## How it works (prototype)
 
