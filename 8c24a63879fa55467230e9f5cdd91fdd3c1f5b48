@@ -1,0 +1,1 @@
+{"id":"9bfc588f-0931-42a3-bab0-adf77b72f272","fileUri":"file:///home/apupier/git/camel/components/camel-zookeeper/src/test/java/org/apache/camel/component/zookeeper/integration/ConsumeChildrenIT.java","repoName":"apupier/camel/","branchName":"CAMEL-25666-stabilizeConsumeChildrenIT","toolName":"apply_diff","startLine":76,"endLine":84,"taskId":null,"createdAt":1792132575330}
