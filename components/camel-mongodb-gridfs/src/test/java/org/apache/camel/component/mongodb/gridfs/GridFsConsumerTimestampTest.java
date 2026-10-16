@@ -25,8 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -72,6 +74,10 @@ class GridFsConsumerTimestampTest {
     private final List<Date> persisted = new CopyOnWriteArrayList<>();
     // the ids of the files that the consumer has marked with its file attribute
     private final Set<BsonValue> marked = ConcurrentHashMap.newKeySet();
+    // the number of polls (queries of the bucket) that fail, as when MongoDB cannot be reached
+    private final AtomicInteger failingPolls = new AtomicInteger();
+    // the number of reads of the persistent timestamp that fail
+    private final AtomicInteger failingTimestampReads = new AtomicInteger();
     private final GridFSBucket bucket = mock(GridFSBucket.class);
     private final MongoDatabase database = mock(MongoDatabase.class);
     @SuppressWarnings("unchecked")
@@ -87,6 +93,10 @@ class GridFsConsumerTimestampTest {
         context.start();
 
         when(bucket.find(any(Bson.class))).thenAnswer(invocation -> {
+            if (failingPolls.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
+                polls.countDown();
+                throw new MongoTimeoutException("Timed out while waiting for a server (test)");
+            }
             List<GridFSFile> found = filesUploadedAfter(invocation.getArgument(0));
             polls.countDown();
             return iterableOf(found);
@@ -180,6 +190,32 @@ class GridFsConsumerTimestampTest {
                 "the file attribute makes sure a file is routed once, the query keeps the start date");
     }
 
+    @ParameterizedTest
+    @EnumSource(QueryStrategy.class)
+    void consumerKeepsPollingAfterAFailedPoll(QueryStrategy strategy) throws Exception {
+        failingPolls.set(2);
+        startConsumer(strategy);
+
+        // the two failing polls, then one that sees no file
+        awaitFullPolls(2);
+        stored.add(file("first", 60));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("first"), routed, "a failed poll (MongoDB not reachable) must not end the consumer");
+    }
+
+    @Test
+    void persistentTimestampStrategyKeepsPollingWhenTheTimestampCannotBeReadAtStart() throws Exception {
+        failingTimestampReads.set(1);
+        startConsumer(QueryStrategy.PersistentTimestamp);
+
+        stored.add(file("first", 60));
+        awaitFullPolls(2);
+
+        assertEquals(List.of("first"), routed,
+                "the timestamp could not be read when the consumer started, the next poll must read it");
+    }
+
     private void startConsumer(QueryStrategy strategy) {
         GridFsComponent component = new GridFsComponent();
         component.setCamelContext(context);
@@ -229,12 +265,14 @@ class GridFsConsumerTimestampTest {
     }
 
     /**
-     * Evaluates the query of the consumer on the stored files: <tt>{uploadDate: {$gt: date}}</tt>, and with a file
-     * attribute also <tt>{camel-processed: null}</tt>.
+     * Evaluates the query of the consumer on the stored files: <tt>{uploadDate: {$gt: date}}</tt> (not with the
+     * FileAttribute strategy), and with a file attribute also <tt>{camel-processed: null}</tt>.
      */
     private List<GridFSFile> filesUploadedAfter(Bson query) {
         BsonDocument document = toDocument(query);
-        long after = find(document, GridFsConstants.GRIDFS_FILE_KEY_UPLOAD_DATE).asDocument().getDateTime("$gt").getValue();
+        // the FileAttribute strategy asks for the file attribute only
+        BsonValue uploadDate = find(document, GridFsConstants.GRIDFS_FILE_KEY_UPLOAD_DATE);
+        long after = uploadDate != null ? uploadDate.asDocument().getDateTime("$gt").getValue() : Long.MIN_VALUE;
         boolean notMarkedOnly = find(document, "camel-processed") != null;
         List<GridFSFile> found = new ArrayList<>();
         for (GridFSFile file : stored) {
@@ -283,6 +321,12 @@ class GridFsConsumerTimestampTest {
     @SuppressWarnings("unchecked")
     private MongoCollection<Document> timestampCollection() {
         MongoCollection<Document> timestamps = mock(MongoCollection.class);
+        when(timestamps.countDocuments()).thenAnswer(invocation -> {
+            if (failingTimestampReads.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
+                throw new MongoTimeoutException("Timed out while waiting for a server (test)");
+            }
+            return 0L;
+        });
         FindIterable<Document> none = mock(FindIterable.class);
         when(timestamps.find(any(Bson.class))).thenReturn(none);
         when(timestamps.findOneAndUpdate(any(Bson.class), any(Bson.class))).thenAnswer(invocation -> {
