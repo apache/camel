@@ -13,6 +13,11 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== Java
+
+*Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
+Java 17 is no longer supported. Upgrade your JDK to 21 or later before upgrading to Camel 4.24.
+
 === camel-core - Route.clearRouteModel() is deprecated
 
 The `Route.clearRouteModel()` method is deprecated and is now a no-op. It will be removed in a later release.

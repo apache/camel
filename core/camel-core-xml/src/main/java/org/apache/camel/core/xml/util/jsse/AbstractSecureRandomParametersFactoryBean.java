@@ -30,7 +30,7 @@ public abstract class AbstractSecureRandomParametersFactoryBean extends Abstract
 
     @XmlAttribute(required = true)
     @Metadata(description = "The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom represented by this object's configuration."
-                            + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                            + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     protected String algorithm;
 
     @XmlAttribute
