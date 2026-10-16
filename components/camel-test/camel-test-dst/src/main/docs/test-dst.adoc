@@ -1,0 +1,35 @@
+= Test DST Component
+:doctitle: Test DST
+:shortname: test-dst
+:artifactid: camel-test-dst
+:description: Deterministic simulation testing for Camel (prototype): seeded virtual-time scheduler, fault injection, invariants and seed replay
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The `camel-test-dst` module (a prototype) runs Camel code under a deterministic, seeded, virtual-time scheduler.
+
+* Every thread pool created through the `ExecutorServiceManager` is backed by one event loop (`DstThreadPoolFactory`).
+  Tasks run one at a time; virtual time jumps to the next due task; when several tasks are runnable the seed picks one.
+* Fakes of the external system inject faults chosen by the seed: delayed or failing answers, bursts and quiet periods,
+  suspend and resume of the consumer between two exchanges.
+* Invariants (`Invariants`) are checked at the end of each run.
+* `@DstTest(seeds = 2000)` runs a test method once per seed; a failing seed is reported with its step trace and is
+  replayed exactly with `@DstSeed(4711)` or `-Ddst.seed=4711`.
+* `@DstInstrument("org.apache.camel.component.foo")` rewrites `System.currentTimeMillis()` and `System.nanoTime()` in
+  the code under test to read virtual time, and reports the other escape points (own threads, sleeps, wall clock reads
+  through `java.time`, Reactor schedulers, blocking waits).
+
+[source,java]
+----
+@DstInstrument("org.apache.camel.component.azure.eventhubs")
+class EventHubsCheckpointDstTest {
+
+    @DstTest(seeds = 2000)
+    void everyCompletedEventIsCheckpointedWhenThePartitionGoesQuiet(Dst dst) throws Exception {
+        new EventHubsWorld(dst).run();
+    }
+}
+----
