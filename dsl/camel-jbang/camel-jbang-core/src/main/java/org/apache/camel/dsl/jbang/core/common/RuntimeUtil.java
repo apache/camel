@@ -57,7 +57,7 @@ public final class RuntimeUtil {
             throws Exception {
         String location;
         if (loggingConfigPath != null) {
-            // ust custom logging configuration as-is
+            // use custom logging configuration as-is
             location = Path.of(loggingConfigPath).toAbsolutePath().toUri().toString();
         } else if (mcpStdio) {
             location = "log4j2-mcp-stdio.properties";
