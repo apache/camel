@@ -115,18 +115,20 @@ public class HibernateComponent extends DefaultComponent {
     }
 
     private void validateSchemaAction(String action) {
-        if (action == null) {
-            return;
-        }
+
         switch (action.toLowerCase()) {
             case "none":
             case "validate":
             case "update":
             case "create":
+            case "create-drop":
+            case "create-only":
+            case "drop":
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Invalid schemaAction: '" + action + "'. Supported values are: none, validate, update, create.");
+                        "Invalid schemaAction: '" + action
+                                                   + "'. Supported values are: none, validate, update, create, create-drop, create-only, drop.");
         }
     }
 
