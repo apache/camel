@@ -312,6 +312,17 @@ class ConfigurationValidateToolsTest {
         assertThat(info.valid()).isFalse();
         assertThat(result.summary().unchecked()).isEqualTo(1);
         assertThat(result.summary().errors()).isZero();
+
+        // Counterpart: without the spring-boot flag, camel.metrics.uriTagEnabled IS checked
+        // (camel.metrics is a known main-model group) but flagged as unknown option.
+        // This assertion FAILS on the old code (camel.metrics not in hardcoded prefix list)
+        // and confirms the dynamic group-matching path is exercised, not just the old fallback.
+        ConfigurationValidateTools.ConfigurationValidateResult nonSbResult
+                = tools.camel_configuration_validate(
+                        "camel.metrics.uriTagEnabled=true", null, null, null);
+        ConfigurationValidateTools.PropertyValidationInfo nonSbInfo = nonSbResult.properties().get(0);
+        assertThat(nonSbInfo.checked()).isTrue();  // camel.metrics group is known
+        assertThat(nonSbInfo.valid()).isFalse();   // but uriTagEnabled is not in main metadata
     }
 
     @Test
