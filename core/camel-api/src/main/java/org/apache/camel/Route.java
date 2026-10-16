@@ -386,7 +386,7 @@ public interface Route extends RuntimeConfiguration {
     NamedNode getRoute();
 
     /**
-     * Clears the route model when its no longer needed.
+     * Previously cleared the route model after the route was created. This method is now a no-op.
      *
      * @deprecated since 4.24.0 - the route model is retained at runtime; this method is a no-op and will be removed in
      *             a later release.
