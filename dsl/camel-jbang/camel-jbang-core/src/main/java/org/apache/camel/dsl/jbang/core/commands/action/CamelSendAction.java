@@ -53,7 +53,6 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.jline.jansi.Ansi;
-import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "send",
@@ -232,6 +231,10 @@ public class CamelSendAction extends ActionBaseCommand {
         String exchangeId = jo.getString("exchangeId");
         JsonObject message = jo.getMap("message");
         JsonObject cause = jo.getMap("exception");
+        if (!result.isOk() && message == null && cause == null) {
+            // the integration failed the action itself, so there is no exchange to show
+            printer().printErr(result.error());
+        }
         if (message != null || cause != null) {
             if (replyFile != null) {
                 Path target = Path.of(replyFile);
@@ -342,7 +345,7 @@ public class CamelSendAction extends ActionBaseCommand {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String ts = sdf.format(new Date(jo.getLongOrDefault("timestamp", System.currentTimeMillis())));
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+            printColored(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
         } else {
             printer().print(ts);
         }
@@ -350,8 +353,8 @@ public class CamelSendAction extends ActionBaseCommand {
         printer().print("  ");
         String p = String.format("%5.5s", this.pid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+            printColored(Ansi.ansi().fgMagenta().a(p).reset());
+            printColored(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
         } else {
             printer().print(p);
             printer().print(" --- ");
@@ -364,7 +367,7 @@ public class CamelSendAction extends ActionBaseCommand {
             }
             ids = String.format("%40.40s", ids);
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
+                printColored(Ansi.ansi().fgCyan().a(ids).reset());
             } else {
                 printer().print(ids);
             }
@@ -373,11 +376,12 @@ public class CamelSendAction extends ActionBaseCommand {
         // status
         printer().print(getStatus(jo));
         // elapsed
-        String e = TimeUtils.printDuration(jo.getLong("elapsed"), true);
+        // an action the integration failed has no elapsed time
+        String e = TimeUtils.printDuration(jo.getLongOrDefault("elapsed", 0), true);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+            printColored(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
         } else {
-            printer().print("(" + e + ")");
+            printer().print(" (" + e + ")");
         }
         printer().println();
     }
