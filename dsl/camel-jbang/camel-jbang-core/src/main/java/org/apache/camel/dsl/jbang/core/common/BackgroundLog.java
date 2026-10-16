@@ -111,6 +111,18 @@ public final class BackgroundLog {
     }
 
     /**
+     * The log, or an empty text when there is no log.
+     */
+    public static String read(Path log) {
+        try {
+            // leniently, as the output of a process may not be UTF-8
+            return new String(Files.readAllBytes(log), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    /**
      * The last lines of the log, or an empty text when there is no log.
      */
     public static String tail(Path log, int lines) {
@@ -119,7 +131,7 @@ public final class BackgroundLog {
         }
         // line by line, as the log of an integration that ran for long can be large, and leniently, as the output of a
         // process may not be UTF-8
-        Deque<String> last = new ArrayDeque<>(lines);
+        Deque<String> last = new ArrayDeque<>();
         try (BufferedReader reader
                 = new BufferedReader(new InputStreamReader(Files.newInputStream(log), StandardCharsets.UTF_8))) {
             String line;

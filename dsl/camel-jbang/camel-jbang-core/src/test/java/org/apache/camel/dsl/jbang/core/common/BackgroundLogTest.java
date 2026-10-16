@@ -96,6 +96,17 @@ class BackgroundLogTest {
     }
 
     @Test
+    void logThatIsNotUtf8() throws Exception {
+        Path log = home.resolve("latin1.log");
+        Files.write(log, new byte[] { 'c', 'a', 'f', (byte) 0xE9, '\n' });
+
+        // as the output of a process may not be UTF-8, the bytes that are not are replaced
+        assertThat(BackgroundLog.read(log)).isEqualTo("caf\uFFFD\n");
+        assertThat(BackgroundLog.tail(log, Integer.MAX_VALUE)).isEqualTo("caf\uFFFD");
+        assertThat(BackgroundLog.read(home.resolve("missing.log"))).isEmpty();
+    }
+
+    @Test
     void tailOfTheLog() throws Exception {
         Path log = home.resolve("some.log");
         Files.writeString(log, "one\ntwo\nthree\n");

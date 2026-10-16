@@ -3077,7 +3077,7 @@ public class Run extends CamelCommand {
                 if (ec != 0) {
                     printer().printErr(kind + ": " + name + " startup failure");
                     printer().println("");
-                    printer().print(Files.readString(logPath));
+                    printer().print(BackgroundLog.read(logPath));
                 }
                 return ec;
             }
