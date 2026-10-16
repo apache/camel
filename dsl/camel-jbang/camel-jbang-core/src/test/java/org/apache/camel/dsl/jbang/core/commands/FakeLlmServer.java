@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -40,8 +42,8 @@ final class FakeLlmServer implements AutoCloseable {
 
     private final HttpServer server;
     private final String answer;
-    // the replies a test gave, by path
-    private final Map<String, Reply> replies = new ConcurrentHashMap<>();
+    // the replies a test gave, by path: one for each request, and the last one for the rest
+    private final Map<String, Deque<Reply>> replies = new ConcurrentHashMap<>();
     private volatile JsonObject lastRequest;
     private volatile Headers lastHeaders;
 
@@ -60,10 +62,15 @@ final class FakeLlmServer implements AutoCloseable {
     }
 
     /**
-     * Replies to the requests to the path with the status and body, instead of the reply of the server.
+     * Replies to the requests to the path with the status and a body for each request, instead of the reply of the
+     * server: the first request gets the first body, and the last body answers the requests after it.
      */
-    FakeLlmServer reply(String path, int status, String body) {
-        replies.put(path, new Reply(status, body));
+    FakeLlmServer reply(String path, int status, String... bodies) {
+        Deque<Reply> list = new ConcurrentLinkedDeque<>();
+        for (String body : bodies) {
+            list.add(new Reply(status, body));
+        }
+        replies.put(path, list);
         return this;
     }
 
@@ -88,10 +95,11 @@ final class FakeLlmServer implements AutoCloseable {
 
     private void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
-        Reply given = replies.get(path);
+        Deque<Reply> given = replies.get(path);
         if (given != null) {
             read(exchange);
-            reply(exchange, given.status(), given.body());
+            Reply next = given.size() > 1 ? given.poll() : given.peek();
+            reply(exchange, next.status(), next.body());
             return;
         }
         switch (path) {

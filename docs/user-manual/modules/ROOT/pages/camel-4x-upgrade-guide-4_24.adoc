@@ -506,6 +506,13 @@ or follows, like Enter does.
 * `camel ask` with an OpenAI-compatible server that gives the arguments of a tool call as a JSON object, instead of JSON
   text, calls the tool with these arguments (it called it without arguments).
 
+=== camel-jbang - camel ask: the exit code and the output of a question
+
+* `camel ask` exits with `1` when the call of the LLM fails, such as with an error of the model or a refused connection:
+  it exited with `0` without an answer.
+* `camel ask` with a question prints only the answer on stdout. The model it uses, the integration it asks about, the
+  note about a small model, and the output of `--show-tools` and `--show-stats` go to stderr.
+
 === camel-jbang - exit codes and errors of more commands
 
 * `camel export` does not clean the export directory when it is the current directory, or one that contains it, unless

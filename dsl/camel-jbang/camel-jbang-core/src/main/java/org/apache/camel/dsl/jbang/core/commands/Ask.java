@@ -189,12 +189,12 @@ public class Ask extends CamelCommand {
         }
 
         String userQuestion = String.join(" ", question);
-        printer().println("Using " + client.model + " (" + client.apiType + ", " + (core ? "core" : "full")
-                          + " tools) to answer your question...");
+        // on stderr, so stdout has the answer only
+        printer().printDiagnostic("Using " + client.model + " (" + client.apiType + ", " + (core ? "core" : "full")
+                                  + " tools) to answer your question...");
         if (process != null) {
-            printer().println("Target: " + process.name() + " (PID " + process.pid() + ")");
+            printer().printDiagnostic("Target: " + process.name() + " (PID " + process.pid() + ")");
         }
-        printer().println();
 
         List<LlmClient.Message> messages = new ArrayList<>();
         return runAgentLoop(client, systemPrompt, toolDefs, messages, userQuestion);
@@ -252,7 +252,8 @@ public class Ask extends CamelCommand {
         boolean corrected = false;
         for (int i = 0; i < maxIterations; i++) {
             LlmClient.ChatResponse response = client.chatWithTools(systemPrompt, messages, tools);
-            if (response == null) {
+            if (response == null || isFailed(response)) {
+                // the client printed why
                 printer().printErr("Failed to get response from LLM");
                 return 1;
             }
@@ -264,11 +265,12 @@ public class Ask extends CamelCommand {
                 List<LlmClient.ToolResult> results = new ArrayList<>();
                 for (LlmClient.ToolCall toolCall : response.toolCalls()) {
                     if (showTools) {
-                        printer().println("[tool] " + toolCall.name() + "(" + toolCall.arguments().toJson() + ")");
+                        printer().printDiagnostic(
+                                "[tool] " + toolCall.name() + "(" + toolCall.arguments().toJson() + ")");
                     }
                     String result = askTools.executeTool(toolCall.name(), toolCall.arguments());
                     if (showTools) {
-                        printer().println("[result] " + truncate(result, 200));
+                        printer().printDiagnostic("[result] " + truncate(result, 200));
                     }
                     results.add(new LlmClient.ToolResult(toolCall.id(), result));
                 }
@@ -284,9 +286,8 @@ public class Ask extends CamelCommand {
                     corrected = true;
                     messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
                     messages.add(LlmClient.Message.user(AnswerChecks.correctionRequest(problems)));
-                    printer().println();
-                    printer().println("(the answer has an invalid simple expression: asking for a corrected answer)");
-                    printer().println();
+                    printer().printDiagnostic(
+                            "(the answer has an invalid simple expression: asking for a corrected answer)");
                     continue;
                 }
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
@@ -313,8 +314,15 @@ public class Ask extends CamelCommand {
                     .append(LlmClient.formatTokens(usage.totalTokens())).append(" total tokens");
         }
         sb.append(")");
-        printer().println();
-        printer().println(sb.toString());
+        printer().printDiagnostic(sb.toString());
+    }
+
+    /**
+     * Whether the call of the LLM failed: the client answers with the error stop reason, and nothing else.
+     */
+    static boolean isFailed(LlmClient.ChatResponse response) {
+        return "error".equals(response.stopReason()) && response.text() == null
+                && (response.toolCalls() == null || response.toolCalls().isEmpty());
     }
 
     // ---- Process discovery (delegates to RuntimeHelper) ----
@@ -364,7 +372,7 @@ public class Ask extends CamelCommand {
     private void warnSmallModel(String name, double billions) {
         String note = smallModelNote(name, billions);
         if (note != null) {
-            printer().println(note);
+            printer().printDiagnostic(note);
         }
     }
 
