@@ -182,7 +182,7 @@ public class HibernateBootstrapTest extends CamelTestSupport {
 
     @Test
     public void testSchemaActionsAcceptedValues() {
-        String[] actions = { "none", "validate", "update", "create" };
+        String[] actions = { "none", "validate", "update", "create", "create-drop", "create-only", "drop" };
         for (String action : actions) {
             HibernateComponent comp = new HibernateComponent();
             comp.setSchemaAction(action);
