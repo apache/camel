@@ -462,6 +462,15 @@ or follows, like Enter does.
   printed. Files together with `--source-dir`, and `--background` with a runtime that does not support it, exit with
   `2`.
 
+=== camel-jbang - camel explain and camel harden
+
+* The LLM configuration, the progress and the prompts of `--show-prompt` are printed on stderr, so stdout has only the
+  answer of the LLM (with a header per file), such as for `camel explain route.yaml > explanation.md`.
+* An unknown `--format` exits with `2` (it was ignored).
+* `camel harden --api-type=openai` prints the suggestions (it printed only the header): the OpenAI-compatible service
+  answers in one go, also with `--stream`.
+* An API key of eight characters or fewer is not shown in the configuration (the last four characters of a key were).
+
 === camel-jbang - the AI tools report failures as errors
 
 * `camel ask` runs a `camel` command for the model with a timeout of 60 seconds, and gives it the exit code, stdout and
