@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -59,7 +60,11 @@ public class ConfigurationValidateTools {
                         +
                         "are reported with checked=false and are excluded from summary.valid and summary.errors; "
                         +
-                        "they are counted in summary.unchecked instead.")
+                        "they are counted in summary.unchecked instead. "
+                        +
+                        "For runtime=spring-boot, starter-specific options (e.g. camel.metrics.uriTagEnabled) "
+                        +
+                        "are not present in the camel-main metadata and are also reported as checked=false.")
     public ConfigurationValidateResult camel_configuration_validate(
             @ToolArg(description = "Configuration property lines to validate. Can be a single line "
                                    + "(e.g. \"camel.main.streamCaching=true\") or multiple lines separated by newlines.") String properties,
@@ -80,6 +85,13 @@ public class ConfigurationValidateTools {
             int validCount = 0;
             int uncheckedCount = 0;
 
+            // For spring-boot, starter-specific options (e.g. camel.metrics.uriTagEnabled from
+            // camel-micrometer-starter) are not present in the camel-main metadata that the catalog
+            // uses. The catalog accepts the group (camel.metrics is a valid main-model group) but
+            // then reports "Unknown option" for starter-only properties. Treat such lines as
+            // unchecked (not inspected) rather than invalid, to avoid false positives.
+            boolean isSpringBoot = "spring-boot".equalsIgnoreCase(runtime);
+
             String[] lines = properties.split("\\r?\\n");
             for (int i = 0; i < lines.length; i++) {
                 String line = lines[i];
@@ -89,7 +101,7 @@ public class ConfigurationValidateTools {
                 }
 
                 ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
-                PropertyValidationInfo info = toPropertyValidationInfo(i + 1, line, result);
+                PropertyValidationInfo info = toPropertyValidationInfo(i + 1, line, result, isSpringBoot);
                 results.add(info);
                 if (!info.checked()) {
                     uncheckedCount++;
@@ -118,12 +130,34 @@ public class ConfigurationValidateTools {
     }
 
     private PropertyValidationInfo toPropertyValidationInfo(
-            int lineNumber, String text, ConfigurationPropertiesValidationResult result) {
+            int lineNumber, String text, ConfigurationPropertiesValidationResult result, boolean isSpringBoot) {
         boolean checked = result.isAccepted();
         // A checked line is valid when the catalog found no errors; an unchecked line
         // (not recognised as a Camel property) is neither valid nor invalid — it is simply
         // not inspected by this catalog.
         boolean valid = checked && result.isSuccess();
+
+        // For Spring Boot, the catalog uses camel-main metadata which does not include
+        // starter-specific options (e.g. camel.metrics.uriTagEnabled from camel-micrometer-starter).
+        // When the only issues are "unknown option" errors, downgrade to unchecked to avoid
+        // false positives — the starter may legitimately bind options outside the main schema.
+        if (isSpringBoot && checked && !valid) {
+            Set<String> unknownKeys = result.getUnknown() != null ? result.getUnknown() : Collections.emptySet();
+            boolean onlyUnknownOptionErrors = !unknownKeys.isEmpty()
+                    && result.getNumberOfErrors() == unknownKeys.size()
+                    && result.getSyntaxError() == null
+                    && result.getIncapable() == null
+                    && result.getInvalidBoolean() == null
+                    && result.getInvalidEnum() == null
+                    && result.getInvalidInteger() == null
+                    && result.getInvalidNumber() == null
+                    && result.getInvalidDuration() == null;
+            if (onlyUnknownOptionErrors) {
+                checked = false;
+                valid = false;
+            }
+        }
+
         int errors = checked ? result.getNumberOfErrors() : 0;
         int warnings = checked ? result.getNumberOfWarnings() : 0;
 

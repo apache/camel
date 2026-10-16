@@ -1438,7 +1438,7 @@ public abstract class AbstractCamelCatalog {
         // startsWithIgnoreCase), so we compare normalised forms to match e.g.
         // camel.error-registry.* against the group name "camel.errorRegistry".
         String normKey = key.replace("-", "").toLowerCase(Locale.ENGLISH);
-        MainModel model = cachedModel != null ? cachedModel : mainModel();
+        MainModel model = cachedModel;
         if (model != null) {
             for (MainModel.MainGroupModel group : model.getGroups()) {
                 String normGroup = group.getName().replace("-", "").toLowerCase(Locale.ENGLISH) + ".";
