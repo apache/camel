@@ -99,7 +99,8 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     public void run() {
         stoppedLatch = new CountDownLatch(1);
         try {
-            while (keepRunning) {
+            // an interrupt ends the thread, as it did before the cursor was reopened inside the try
+            while (keepRunning && !Thread.currentThread().isInterrupted()) {
                 try {
                     if (cursor == null) {
                         // a new cursor after the previous one ended. It is opened here, inside the try, so that a

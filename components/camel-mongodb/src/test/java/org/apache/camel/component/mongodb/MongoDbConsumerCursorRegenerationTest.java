@@ -185,6 +185,50 @@ class MongoDbConsumerCursorRegenerationTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    void interruptEndsTheThreadWhileTheCursorCannotBeOpened() throws Exception {
+        context.start();
+        MongoDbEndpoint endpoint = context.getEndpoint(
+                "mongodb:myDb?database=test&collection=events&tailTrackIncreasingField=increasing"
+                                                       + "&cursorRegenerationDelay=100",
+                MongoDbEndpoint.class);
+        MongoDbTailableCursorConsumer consumer
+                = (MongoDbTailableCursorConsumer) endpoint.createConsumer(exchange -> {
+                });
+        MongoDbTailingThread tailingThread = new MongoDbTailingThread(endpoint, consumer, consumer.initTailTracking());
+
+        // the first cursor breaks, then the server cannot be reached: every attempt to open a new cursor fails
+        MongoCursor<Document> broken = mock(MongoCursor.class);
+        when(broken.hasNext()).thenThrow(new MongoSocketReadException("Prematurely reached end of stream", SERVER));
+        CountDownLatch attempts = new CountDownLatch(2);
+        FindIterable<Document> find = mock(FindIterable.class);
+        when(collection.find()).thenReturn(find);
+        when(find.cursorType(CursorType.TailableAwait)).thenReturn(find);
+        when(find.iterator())
+                .thenReturn(broken)
+                .thenAnswer(i -> {
+                    attempts.countDown();
+                    throw new MongoTimeoutException("Timed out while waiting for a server");
+                });
+
+        tailingThread.init();
+        Thread thread = new Thread(tailingThread, "tailing");
+        thread.start();
+        assertTrue(attempts.await(10, TimeUnit.SECONDS), "the consumer did not try to open a cursor again");
+        try {
+            thread.interrupt();
+            thread.join(TimeUnit.SECONDS.toMillis(5));
+            assertFalse(thread.isAlive(), "an interrupt ends the thread of the consumer");
+            assertTrue(tailingThread.keepRunning,
+                    "the thread ended because of the interrupt, not because it was stopped");
+        } finally {
+            // without the guard the thread keeps looping: end it so it does not outlive the test
+            tailingThread.keepRunning = false;
+            thread.join(TimeUnit.SECONDS.toMillis(5));
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     void changeStreamsConsumerOpensANewCursorAfterAFailedRegeneration() throws Exception {
         MongoChangeStreamCursor<ChangeStreamDocument<Document>> broken = mock(MongoChangeStreamCursor.class);
         when(broken.hasNext()).thenThrow(new MongoSocketReadException("Prematurely reached end of stream", SERVER));
