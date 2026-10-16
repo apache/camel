@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Windows equivalent of {@link CamelShDiscoveryTest}: verifies camel.bat implements the same shared Java 17+ discovery
+ * Windows equivalent of {@link CamelShDiscoveryTest}: verifies camel.bat implements the same shared Java 21+ discovery
  * contract with observably equivalent behavior.
  */
 @EnabledOnOs(OS.WINDOWS)
@@ -48,11 +48,12 @@ class CamelBatDiscoveryTest {
 
     private static final Path SCRIPT = Paths.get("src/main/resources/bin/camel.bat");
 
-    private static final String JAVA17 = "openjdk version \"17.0.2\" 2022-01-18";
     private static final String JAVA21 = "openjdk version \"21.0.3\" 2024-04-16";
+    private static final String JAVA25 = "openjdk version \"25\" 2025-09-16";
+    private static final String JAVA17 = "openjdk version \"17.0.2\" 2022-01-18";
+    private static final String JAVA17_EA = "openjdk version \"17-ea\"";
     private static final String JAVA11 = "openjdk version \"11.0.20\" 2023-07-18";
     private static final String JAVA8 = "java version \"1.8.0_202\"";
-    private static final String JAVA17_EA = "openjdk version \"17-ea\"";
     private static final String GARBAGE = "totally not a java banner";
 
     private Path home(Path base) throws Exception {
@@ -83,7 +84,7 @@ class CamelBatDiscoveryTest {
         Files.writeString(h.resolve("camel-launcher-zzz-sources.jar"), "sources");
         Files.writeString(h.resolve("camel-launcher-9.9.9-javadoc.jar"), "javadoc");
         Files.writeString(h.resolve("camel-launcher-zzz-javadoc.jar"), "javadoc");
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVACMD");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());
 
@@ -96,9 +97,9 @@ class CamelBatDiscoveryTest {
     }
 
     @Test
-    void acceptsJava17ViaJavacmd(@TempDir Path base) throws Exception {
+    void acceptsJava21ViaJavacmd(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVACMD");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());
 
@@ -111,22 +112,9 @@ class CamelBatDiscoveryTest {
     }
 
     @Test
-    void acceptsJava21ViaJavacmd(@TempDir Path base) throws Exception {
-        Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVA21");
-        Map<String, String> env = isolatedEnvironment();
-        env.put("JAVACMD", java.toString());
-
-        FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
-
-        assertEquals(0, r.exitCode(), r.stderr());
-        assertTrue(r.stdout().contains("RAN=JAVA21"), r.stdout());
-    }
-
-    @Test
     void precedenceJavacmdBeatsJavaHome(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD-FIRST");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVACMD-FIRST");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());
         env.put("JAVA_HOME", currentJavaHome().toString());
@@ -216,7 +204,7 @@ class CamelBatDiscoveryTest {
     void precedenceNativePathBeatsCamelFallbackJava(@TempDir Path base) throws Exception {
         Path h = home(base);
         writeRealJavaMarkerJar(h);
-        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA17, 0, "FALLBACK");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
         Map<String, String> env = isolatedEnvironment();
         env.put("PATH", currentJavaHome().resolve("bin") + ";" + env.get("PATH"));
         env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
@@ -232,7 +220,7 @@ class CamelBatDiscoveryTest {
     void skipsOldJavacmdFallsBackToFallback(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path old = FakeJava.writeFakeJava(base.resolve("old"), "java", JAVA11, 0, "OLD");
-        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA17, 0, "FALLBACK");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", old.toString());
         env.put("JAVA_HOME", base.resolve("invalid-java-home").toString());
@@ -255,7 +243,7 @@ class CamelBatDiscoveryTest {
         FakeJava.Result r = FakeJava.run(h.resolve("camel.bat"), env, "version");
 
         assertEquals(1, r.exitCode());
-        assertTrue(r.stderr().contains("17"), "diagnostic must state the Java 17 minimum: " + r.stderr());
+        assertTrue(r.stderr().contains("21"), "diagnostic must state the Java 21 minimum: " + r.stderr());
         assertTrue(r.stderr().toLowerCase().contains("java"), r.stderr());
     }
 
@@ -275,7 +263,7 @@ class CamelBatDiscoveryTest {
     void rejectsNonnumericMajorAndContinuesToFallback(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path earlyAccess = FakeJava.writeFakeJava(base.resolve("early-access"), "java", JAVA17_EA, 0, "EARLY");
-        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA17, 0, "FALLBACK");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", earlyAccess.toString());
         env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
@@ -290,7 +278,7 @@ class CamelBatDiscoveryTest {
     @Test
     void handlesSpacesAndUnicodeInJavaPath(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base.resolve("spa ce/über"), "java", JAVA17, 0, "UNICODE");
+        Path java = FakeJava.writeFakeJava(base.resolve("spa ce/über"), "java", JAVA21, 0, "UNICODE");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());
 
@@ -303,7 +291,7 @@ class CamelBatDiscoveryTest {
     @Test
     void defaultsHeapWhenJavaOptsUnset(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "HEAP");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "HEAP");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());
 
@@ -316,7 +304,7 @@ class CamelBatDiscoveryTest {
     @Test
     void preservesJavaOptsWhenSet(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "OPTS");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "OPTS");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", java.toString());
         env.put("JAVA_OPTS", "-Dcamel.test=1 -Xmx256m");
@@ -334,7 +322,7 @@ class CamelBatDiscoveryTest {
         Path h = home(base);
         Path wrapper = writeBatch(base.resolve("wrapper"), "java",
                 "if \"%~1\"==\"-version\" (",
-                "  echo " + JAVA17 + " 1>&2",
+                "  echo " + JAVA21 + " 1>&2",
                 "  exit /b 0",
                 ")",
                 "set ARG_COUNT=0",
@@ -371,7 +359,7 @@ class CamelBatDiscoveryTest {
     void finalBatchWrapperReturnsToLauncherStatementAfterCall(@TempDir Path base) throws Exception {
         Path sentinel = base.resolve("launcher-resumed.txt");
         Path h = instrumentBatchLaunchReturn(home(base), sentinel);
-        Path wrapper = FakeJava.writeFakeJava(base.resolve("wrapper"), "java", JAVA17, 41, "RETURN");
+        Path wrapper = FakeJava.writeFakeJava(base.resolve("wrapper"), "java", JAVA21, 41, "RETURN");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", wrapper.toString());
 
@@ -386,7 +374,7 @@ class CamelBatDiscoveryTest {
     void fallbackBatchWrapperIsReachedAfterInvalidCandidatesAndPropagatesExit(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path old = FakeJava.writeFakeJava(base.resolve("old"), "java", JAVA11, 0, "OLD");
-        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA17, 29, "FALLBACK-WRAPPER");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 29, "FALLBACK-WRAPPER");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", old.toString());
         env.put("JAVA_HOME", base.resolve("missing-home").toString());
@@ -405,7 +393,7 @@ class CamelBatDiscoveryTest {
         Path java = writeBatch(base.resolve("wrapper"), "java",
                 "if \"%~1\"==\"-version\" (",
                 "  echo %_PROBE% >\"" + probePathMarker + "\"",
-                "  echo " + JAVA17 + " 1>&2",
+                "  echo " + JAVA21 + " 1>&2",
                 "  exit /b 0",
                 ")",
                 "echo RAN=BASEDIR-PROBE",
@@ -431,11 +419,11 @@ class CamelBatDiscoveryTest {
         Path h = home(base);
         Path rejected = writeBatch(base.resolve("rejected"), "java",
                 "if \"%~1\"==\"-version\" (",
-                "  echo " + JAVA17 + " 1>&2",
+                "  echo " + JAVA21 + " 1>&2",
                 "  exit /b 7",
                 ")",
                 "echo RAN=REJECTED");
-        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA17, 0, "FALLBACK");
+        Path fallback = FakeJava.writeFakeJava(base.resolve("fallback"), "java", JAVA21, 0, "FALLBACK");
         Map<String, String> env = isolatedEnvironment();
         env.put("JAVACMD", rejected.toString());
         env.put("CAMEL_FALLBACK_JAVA", fallback.toString());
@@ -453,7 +441,7 @@ class CamelBatDiscoveryTest {
         Path java = writeBatch(base.resolve("banner"), "java",
                 "if \"%~1\"==\"-version\" (",
                 "  echo wrapper version metadata 1>&2",
-                "  echo " + JAVA17 + " 1>&2",
+                "  echo " + JAVA21 + " 1>&2",
                 "  exit /b 0",
                 ")",
                 "echo RAN=VALID-BANNER",
@@ -475,7 +463,7 @@ class CamelBatDiscoveryTest {
         Path java = writeBatch(base.resolve("stdin"), "java",
                 "if \"%~1\"==\"-version\" (",
                 "  set /p \"ignored=\"",
-                "  echo " + JAVA17 + " 1>&2",
+                "  echo " + JAVA21 + " 1>&2",
                 "  exit /b 0",
                 ")",
                 "echo RAN=PROBE-STDIN",
