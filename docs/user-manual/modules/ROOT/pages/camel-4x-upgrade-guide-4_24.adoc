@@ -1179,6 +1179,15 @@ consumer stops after the message that is being routed. The other messages of tha
 was resumed. They are now kept and routed by the first poll after the resume, together with the messages posted in
 the meantime. They are kept in memory only: a route that is stopped and started again does not route them.
 
+=== camel-mail - mails of a poll that were not routed, with an idempotentRepository
+
+With an `idempotentRepository`, the mail consumer now removes the keys of the mails that a poll retrieved but did not
+route (the consumer was stopped in the middle of the batch, or the poll failed on a later mail), so that a later poll
+routes them. Before, they were skipped as duplicates by every later poll. As a consequence, a mail that the consumer
+cannot read (with the default `skipFailedMessage=false` and `handleFailedMessage=false`) now fails every poll until it
+is removed, as it does without an `idempotentRepository`. Before, it failed only the first poll and was then skipped,
+together with the mails retrieved before it. Set `skipFailedMessage` or `handleFailedMessage` to skip such a mail.
+
 === camel-smpp - the host name of the SMSC is verified over SSL
 
 With `smpps` (or `usingSSL=true`), directly or through an HTTP proxy, the connection now checks that the certificate of

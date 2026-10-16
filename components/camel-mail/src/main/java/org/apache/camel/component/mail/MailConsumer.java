@@ -266,8 +266,30 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // process the exchange
             processExchange(exchange);
         }
+        // the remaining exchanges are not routed as the consumer is stopping: their mails must be consumed by a
+        // later poll (or by another consumer sharing the idempotent repository)
+        releaseNotRouted(CastUtils.cast(exchanges));
 
         return total;
+    }
+
+    /**
+     * Gives back exchanges that are not routed: removes the key of each mail from the idempotent repository (where
+     * {@link #isValidMessage(String, Message)} added it when the mail was retrieved), so the mail is not skipped as a
+     * duplicate later, and releases the exchange.
+     */
+    private void releaseNotRouted(Queue<Exchange> notRouted) {
+        Exchange exchange;
+        while ((exchange = notRouted.poll()) != null) {
+            removeIdempotentKey(exchange.getProperty(MAIL_MESSAGE_UID, String.class));
+            releaseExchange(exchange, true);
+        }
+    }
+
+    private void removeIdempotentKey(String key) {
+        if (key != null && getEndpoint().getIdempotentRepository() != null) {
+            getEndpoint().getIdempotentRepository().remove(key);
+        }
     }
 
     private void peekMessage(Message mail) {
@@ -330,7 +352,15 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 if (getEndpoint().getConfiguration().isPeek()) {
                     peekMessage(message);
                 }
-                Exchange exchange = createExchange(new KeyValueHolder<>(key, message));
+                Exchange exchange;
+                try {
+                    exchange = createExchange(new KeyValueHolder<>(key, message));
+                } catch (Exception e) {
+                    // the poll fails and none of the mails retrieved so far is routed
+                    removeIdempotentKey(key);
+                    releaseNotRouted(answer);
+                    throw e;
+                }
                 if (exchange != null) {
                     answer.add(exchange);
                 }
