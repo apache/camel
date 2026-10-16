@@ -715,7 +715,7 @@ The `camel_openapi_mock_guidance` MCP tool is removed. Call `camel_openapi_scaff
 `missingOperation=mock` instead: its answer explains the mode and lists the `camel-mock/` files, one per path
 of the spec. The scaffold and `camel_openapi_validate` now follow the rules of camel-rest-openapi: an operation
 without `operationId` is routed to `direct:GENOPID_<METHOD><path>` with `/` replaced by `.` and the braces of
-path parameters by `_` (`direct:GENOPID_GET.pets._petId_` for `GET /pets/{petId}`), and a mock file has the
+path parameters by `_` (`direct:GENOPID_GET.pets._petId_` for `+GET /pets/{petId}+`), and a mock file has the
 request path as its name, without the HTTP method (`camel-mock/pets/42.json` for `GET /pets/42`). The
 security scheme diagnostics of `camel_openapi_validate` are now all warnings with a `SECURITY_<type>` code
 (`SECURITY_APIKEY`, `SECURITY_HTTP`, ...), as camel-rest-openapi enforces none of them, and `OPENAPI_31` is
