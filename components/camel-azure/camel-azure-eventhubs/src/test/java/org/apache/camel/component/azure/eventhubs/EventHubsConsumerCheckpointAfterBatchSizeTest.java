@@ -38,6 +38,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doAnswer;
@@ -178,6 +179,39 @@ class EventHubsConsumerCheckpointAfterBatchSizeTest {
         // the last event of the burst must still be checkpointed, by batch size or by the next timeout
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> verify(fourth, times(1)).updateCheckpointAsync());
+    }
+
+    @Test
+    void batchSizeCheckpointStillWorksAfterFailedTimeoutCheckpoint() throws Exception {
+        configuration.setCheckpointBatchSize(3);
+        // the checkpoint of the first window fails only when the test says so
+        Sinks.Empty<Void> stored = Sinks.empty();
+        AtomicLong checkpointedAt = new AtomicLong();
+        EventContext first = eventContext("0");
+        EventContext second = eventContext("0");
+        doAnswer(invocation -> {
+            checkpointedAt.set(System.currentTimeMillis());
+            return stored.asMono();
+        }).when(second).updateCheckpointAsync();
+        EventContext third = eventContext("0");
+        EventContext fourth = eventContext("0");
+
+        complete(first);
+        complete(second);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(second, times(1)).updateCheckpointAsync());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> System.currentTimeMillis() > checkpointedAt.get());
+
+        // one event completes while the timeout checkpoint of two events is stored, then storing fails: the two
+        // events are counted again, so the count is 3, and the next event takes it past the batch size
+        complete(third);
+        stored.tryEmitError(new IllegalStateException("store failed"));
+
+        Exchange exchange = DefaultExchange.newFromEndpoint(endpoint);
+        processCommit.invoke(consumer, exchange, fourth);
+
+        verify(fourth, times(1)).updateCheckpointAsync();
+        assertEquals(EventHubsConstants.COMPLETED_BY_SIZE,
+                exchange.getIn().getHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY));
     }
 
     private void complete(EventContext eventContext) throws Exception {

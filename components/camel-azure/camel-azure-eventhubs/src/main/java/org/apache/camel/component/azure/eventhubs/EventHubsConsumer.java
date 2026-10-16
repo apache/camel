@@ -246,7 +246,8 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
 
             try {
                 var cnt = processedEvents.incrementAndGet();
-                if (cnt == getConfiguration().getCheckpointBatchSize()) {
+                // >= and not ==: a failed timeout checkpoint adds its count back, so the count can pass the batch size
+                if (cnt >= getConfiguration().getCheckpointBatchSize()) {
                     processedEvents.set(0);
                     exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
                     LOG.debug("eventhub consumer batch size of reached for partition {}", partitionId);
