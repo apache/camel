@@ -34,6 +34,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.XmlHelper;
@@ -86,8 +87,7 @@ public class DependencyList extends Export {
     @Override
     protected Integer export() throws Exception {
         if (!"gav".equals(output) && !"maven".equals(output) && !"jbang".equals(output)) {
-            printer().printErr("--output must be either gav or maven, was: " + output);
-            return 1;
+            throw CliException.usage("--output must be gav, maven or jbang, was: " + output);
         }
 
         exportBaseDir = Path.of(".");

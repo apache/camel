@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.util.Locale;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -85,13 +87,13 @@ public class CamelHeapDump extends ActionBaseCommand {
         return 0;
     }
 
-    private static String formatSize(long bytes) {
+    static String formatSize(long bytes) {
         if (bytes >= 1024 * 1024 * 1024) {
-            return String.format("%.1f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+            return String.format(Locale.ROOT, "%.1f GB", bytes / (1024.0 * 1024.0 * 1024.0));
         } else if (bytes >= 1024 * 1024) {
-            return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
+            return String.format(Locale.ROOT, "%.1f MB", bytes / (1024.0 * 1024.0));
         } else if (bytes >= 1024) {
-            return String.format("%.1f KB", bytes / 1024.0);
+            return String.format(Locale.ROOT, "%.1f KB", bytes / 1024.0);
         } else {
             return bytes + " bytes";
         }

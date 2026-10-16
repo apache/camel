@@ -454,6 +454,23 @@ or follows, like Enter does.
 * A plugin that cannot be loaded ends the command with exit code `1` and the error, as before, but no longer exits the
   JVM while the plugins load, which ended a program that embeds the CLI.
 
+=== camel-jbang - exit codes of config set, dependency list, jolokia and cmd memory-leak
+
+* `camel jolokia` with a name or pid that matches no running integration, or more than one, exits with `3`, as
+  `camel hawtio` does (it exited with `1`, and printed the second case on stdout).
+* `camel config set` without a key (`=value` stored a value with an empty key) or without a value exits with `2`, and
+  prints the error on stderr.
+* `camel dependency list` with an unknown `--output` exits with `2`.
+* `camel cmd memory-leak --min-size` takes a size in bytes such as `10B`, and a value that is not a size exits with `2`
+  (both turned the filter off).
+* `camel cmd send --reply` to a route that fails with an exception without a message, such as a `NullPointerException`,
+  prints the failed exchange and exits with `1`, instead of failing with a `ClassCastException`.
+* `camel get source` of an integration with routes without a source location, such as routes added by a
+  `RouteBuilder`, no longer fails.
+* Versions with four parts, such as the Quarkus platform version `3.27.3.1`, compare as versions in the version checks
+  of the CLI (`3.27.3.1` came after `3.27.4`), and a `-SNAPSHOT` always comes before its release, as in Maven
+  (`4.24.10-SNAPSHOT` came after `4.24.10`).
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

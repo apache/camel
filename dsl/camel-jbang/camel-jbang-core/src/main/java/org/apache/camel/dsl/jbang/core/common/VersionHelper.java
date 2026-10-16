@@ -19,10 +19,15 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.apache.camel.util.StringHelper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class VersionHelper {
+
+    private static final Pattern LEADING_NUMBER = Pattern.compile("^\\d{1,18}");
 
     private VersionHelper() {
     }
@@ -61,73 +66,54 @@ public final class VersionHelper {
         return compare(source, inclusive) >= 0 && compare(source, exclusive) < 0;
     }
 
+    /**
+     * Compares two versions part by part as numbers, such as 3.27.3.1 before 3.27.4, and 4.100 after 4.99. With the
+     * same numbers, a version with a qualifier (such as 4.24.0-SNAPSHOT) comes before the release, as in Maven.
+     *
+     * @return a negative number, zero or a positive number as the source is before, the same as, or after the target
+     *         (zero when one of them is missing)
+     */
     public static int compare(String source, String target) {
         if (source == null || target == null || source.isBlank() || target.isBlank()) {
             return 0;
         }
-        String s1 = StringHelper.before(source, ".");
-        String s2 = StringHelper.after(source, ".");
-        if (s1 == null) {
-            s1 = StringHelper.before(source, ",");
-            s2 = StringHelper.after(source, ",");
+        List<Long> s = new ArrayList<>();
+        String sq = parse(source, s);
+        List<Long> t = new ArrayList<>();
+        String tq = parse(target, t);
+        for (int i = 0; i < Math.max(s.size(), t.size()); i++) {
+            long a = i < s.size() ? s.get(i) : 0;
+            long b = i < t.size() ? t.get(i) : 0;
+            if (a != b) {
+                return Long.compare(a, b);
+            }
         }
-        String t1 = StringHelper.before(target, ".");
-        String t2 = StringHelper.after(target, ".");
-        if (t1 == null) {
-            t1 = StringHelper.before(target, ",");
-            t2 = StringHelper.after(target, ",");
+        if (sq.isEmpty() != tq.isEmpty()) {
+            // the release comes after its snapshot
+            return sq.isEmpty() ? 1 : -1;
         }
-        String s3 = StringHelper.after(s2, ".");
-        if (s3 != null) {
-            s2 = StringHelper.before(s2, ".");
-        } else {
-            s3 = "";
-        }
-        String t3 = StringHelper.after(t2, ".");
-        if (t3 != null) {
-            t2 = StringHelper.before(t2, ".");
-        } else {
-            t3 = "";
-        }
-        // avoid NPE
-        if (s1 == null) {
-            s1 = source;
-        }
-        if (s2 == null) {
-            s2 = "";
-        }
-        if (t1 == null) {
-            t1 = target;
-        }
-        if (t2 == null) {
-            t2 = "";
-        }
-        // convert to 2-digit numbers
-        if (s1.length() < 2) {
-            s1 = "0" + s1;
-        }
-        if (s2.length() < 2) {
-            s2 = "0" + s2;
-        }
-        if (s2.length() < 2) {
-            s2 = "0" + s2;
-        }
-        if (s3.length() < 2) {
-            s3 = "0" + s3;
-        }
-        if (t1.length() < 2) {
-            t1 = "0" + t1;
-        }
-        if (t2.length() < 2) {
-            t2 = "0" + t2;
-        }
-        if (t3.length() < 2) {
-            t3 = "0" + t3;
-        }
+        return sq.compareTo(tq);
+    }
 
-        String s = s1 + s2 + s3;
-        String t = t1 + t2 + t3;
-        return s.compareTo(t);
+    /**
+     * The numbers of the version (separated by dots or commas), and what follows them, such as -SNAPSHOT.
+     */
+    private static String parse(String version, List<Long> numbers) {
+        String[] parts = version.trim().split("[.,]");
+        for (int i = 0; i < parts.length; i++) {
+            Matcher m = LEADING_NUMBER.matcher(parts[i]);
+            if (!m.find()) {
+                return String.join(".", Arrays.copyOfRange(parts, i, parts.length));
+            }
+            numbers.add(Long.parseLong(m.group()));
+            if (m.end() < parts[i].length()) {
+                // such as 0-SNAPSHOT
+                String rest = parts[i].substring(m.end());
+                return i + 1 < parts.length
+                        ? rest + "." + String.join(".", Arrays.copyOfRange(parts, i + 1, parts.length)) : rest;
+            }
+        }
+        return "";
     }
 
     public static String getMajorMinorVersion(String version) {

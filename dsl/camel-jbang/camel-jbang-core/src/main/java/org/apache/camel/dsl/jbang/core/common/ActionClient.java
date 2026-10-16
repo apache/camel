@@ -289,14 +289,22 @@ public final class ActionClient {
     }
 
     private static String messageOf(JsonObject reply) {
-        if (reply.get("exception") instanceof JsonObject exception && exception.getString("message") != null) {
-            return exception.getString("message");
+        if (reply.get("exception") instanceof JsonObject exception) {
+            // an exception without a message, such as a NullPointerException, is known by its type
+            String message
+                    = exception.getString("message") != null ? exception.getString("message") : exception.getString("type");
+            if (message != null) {
+                return message;
+            }
         }
         if (reply.get("error") instanceof String error && !error.isBlank()) {
             return error;
         }
-        String message = reply.getString("message");
-        return message != null && !message.isBlank() ? message : "Action failed";
+        // the message of the answer of camel cmd send is the reply message (a JSON object), not an error
+        if (reply.get("message") instanceof String message && !message.isBlank()) {
+            return message;
+        }
+        return "Action failed";
     }
 
     private static JsonObject request(String action, Consumer<JsonObject> options) {
