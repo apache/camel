@@ -21,6 +21,8 @@ import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * camel validate with --json: one JSON array on stdout with valid, file and errors of each file, as the MCP tool
@@ -100,10 +103,22 @@ class ValidateJsonTest {
         Path text = dir.resolve("notes.txt");
         Files.writeString(text, "not a route");
 
-        assertThat(run(new YamlValidateCommand(main()), "--json", text.toString())).isZero();
-
-        assertThat(printer.getStdout()).isEqualTo("[]");
+        // nothing is left to validate, which is not found (the error document is printed by the error handler)
+        CliException e = assertThrows(CliException.class,
+                () -> run(new YamlValidateCommand(main()), "--json", text.toString()));
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
         assertThat(printer.getStderr()).startsWith("WARN: Skipping non-YAML file");
+    }
+
+    @Test
+    void nothingToValidateIsNotFound() throws Exception {
+        Path text = Files.writeString(dir.resolve("notes.txt"), "not a route");
+
+        CliException e = assertThrows(CliException.class, () -> run(new YamlValidateCommand(main()), text.toString()));
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND);
+        assertThat(e.getMessage()).isEqualTo("No YAML files to validate");
+        e = assertThrows(CliException.class, () -> run(new PropertiesValidateCommand(main()), text.toString()));
+        assertThat(e.getMessage()).isEqualTo("No properties files to validate");
     }
 
     private CamelJBangMain main() {

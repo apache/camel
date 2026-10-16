@@ -2010,7 +2010,7 @@ public class Run extends CamelCommand {
         javaCmd.add(Paths.get(System.getProperty("java.home"), "bin", "java").toString());
         String runJvmArgs = mergeJvmArgs(jvmArgs, buildJfrJvmArgs());
         if (runJvmArgs != null && !runJvmArgs.isBlank()) {
-            javaCmd.addAll(Arrays.asList(runJvmArgs.trim().split("\\s+")));
+            javaCmd.addAll(CommandLineHelper.splitArguments(runJvmArgs));
         }
         if (jvmDebugPort > 0) {
             javaCmd.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:" + jvmDebugPort);

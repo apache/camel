@@ -174,6 +174,36 @@ class CommandInputErrorsTest {
     }
 
     @Test
+    void sbomWithAnUnknownFormat() throws Exception {
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+
+        assertThatThrownBy(() -> call(new SBOMGenerator(main), file.toString(), "--sbom-format=bogus"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Unknown SBOM format: bogus (use cyclonedx or spdx)")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
+    @Test
+    void hardenWithAnLlmThatCannotBeReached() throws Exception {
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+
+        // the route is not sent to another LLM, such as a local Ollama
+        assertThat(call(new Harden(main), file.toString(), "--url=http://127.0.0.1:9")).isEqualTo(CliExitCode.FAILURE);
+        assertThat(printer.getStderr()).startsWith("ERROR: Cannot connect to LLM service at: http://127.0.0.1:9");
+        assertThat(printer.getStdout()).doesNotContain("LLM Configuration");
+    }
+
+    @Test
+    void exportDoesNotCleanTheCurrentDirectory() {
+        assertThat(ExportBaseCommand.isCurrentDirOrParent(".")).isTrue();
+        assertThat(ExportBaseCommand.isCurrentDirOrParent("./")).isTrue();
+        assertThat(ExportBaseCommand.isCurrentDirOrParent(Path.of("").toAbsolutePath().toString())).isTrue();
+        assertThat(ExportBaseCommand.isCurrentDirOrParent("..")).isTrue();
+        assertThat(ExportBaseCommand.isCurrentDirOrParent("out")).isFalse();
+        assertThat(ExportBaseCommand.isCurrentDirOrParent(dir.resolve("out").toString())).isFalse();
+    }
+
+    @Test
     void runQuarkusInTheBackground() throws Exception {
         Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
 

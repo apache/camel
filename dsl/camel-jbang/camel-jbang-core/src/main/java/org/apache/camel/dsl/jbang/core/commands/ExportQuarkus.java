@@ -187,7 +187,7 @@ class ExportQuarkus extends Export {
             copyCamelWrapper();
         }
 
-        if (cleanExportDir || !exportDir.equals(".")) {
+        if (cleanExportDir || !isCurrentDirOrParent(exportDir)) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data
             if (cleanExportDir) {

@@ -224,12 +224,17 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                 return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "level":
             case "support-level":
-                return o1.level.compareToIgnoreCase(o2.level) * negate;
+                return compareIgnoreCase(o1.level, o2.level) * negate;
             case "description":
-                return o1.description.compareToIgnoreCase(o2.description) * negate;
+                return compareIgnoreCase(o1.description, o2.description) * negate;
             default:
                 return 0;
         }
+    }
+
+    // a missing value sorts first
+    static int compareIgnoreCase(String s1, String s2) {
+        return (s1 != null ? s1 : "").compareToIgnoreCase(s2 != null ? s2 : "");
     }
 
     String shortGav(Row r) {

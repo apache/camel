@@ -400,7 +400,12 @@ public class Debug extends Run {
             pb.inheritIO();
             Process p = pb.start();
 
-            if (p.waitFor(120, TimeUnit.SECONDS)) {
+            boolean built = p.waitFor(120, TimeUnit.SECONDS);
+            if (built && p.exitValue() != 0) {
+                printer().printErr("Building Camel Spring Boot for debugging failed (exit code " + p.exitValue() + ")");
+                return CliExitCode.FAILURE;
+            }
+            if (built) {
                 AtomicReference<Process> processRef = new AtomicReference<>();
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {
@@ -526,7 +531,12 @@ public class Debug extends Run {
             pb.inheritIO();
             Process p = pb.start();
 
-            if (p.waitFor(120, TimeUnit.SECONDS)) {
+            boolean built = p.waitFor(120, TimeUnit.SECONDS);
+            if (built && p.exitValue() != 0) {
+                printer().printErr("Building Camel Quarkus for debugging failed (exit code " + p.exitValue() + ")");
+                return CliExitCode.FAILURE;
+            }
+            if (built) {
                 AtomicReference<Process> processRef = new AtomicReference<>();
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {

@@ -29,6 +29,18 @@ import org.junit.jupiter.api.Test;
 class CatalogDocTest extends CamelCommandBaseTestSupport {
 
     @Test
+    public void shouldDocumentAComponentWithoutTheKameletCatalog() throws Exception {
+        CatalogDoc command = createCommand("timer", false);
+        // a Kamelet catalog that cannot be downloaded: the component is found before it is needed
+        command.kameletsVersion = "0.0.0-no-such-version";
+
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Assertions.assertTrue(printer.getOutput().contains("timer"), "Should document the timer component");
+    }
+
+    @Test
     public void shouldPrintExampleForConsumerComponent() throws Exception {
         CatalogDoc command = createCommand("timer", true);
 

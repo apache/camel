@@ -32,6 +32,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.util.FileUtil;
@@ -109,6 +110,9 @@ public class YamlValidateCommand extends CamelCommand {
             }
         }
 
+        if (reports.isEmpty()) {
+            throw CliException.notFound("No YAML files to validate");
+        }
         int count = errorCounts(reports);
         if (jsonOutput) {
             List<JsonObject> rows = new ArrayList<>();
