@@ -1185,7 +1185,10 @@ public abstract class AbstractCamelCatalog {
         }
 
         ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult();
-        boolean accept = acceptConfigurationPropertyKey(key);
+        // Load the main model once here to avoid repeated JSON parsing in acceptConfigurationPropertyKey
+        // and matchMainModelGroup (both called for camel.* keys that are not component/dataformat/language).
+        MainModel cachedMainModel = key != null && key.startsWith("camel.") ? mainModel() : null;
+        boolean accept = acceptConfigurationPropertyKey(key, cachedMainModel);
         if (!accept) {
             result.setAccepted(false);
             return result;
@@ -1234,11 +1237,14 @@ public abstract class AbstractCamelCatalog {
             }
         } else {
             // Check if the key matches a main-model group (dynamic — replaces the hardcoded list)
-            MainModel.MainGroupModel matchedGroup = matchMainModelGroup(key);
+            MainModel.MainGroupModel matchedGroup = matchMainModelGroup(key, cachedMainModel);
             if (matchedGroup != null) {
                 String name = StringHelper.before(key, ".");
                 if (value != null) {
-                    MainModel model = mainModel();
+                    // cachedMainModel is guaranteed non-null here: acceptConfigurationPropertyKey returned true
+                    // for a camel.* key that is not component/dataformat/language, which means matchMainModelGroup
+                    // already found a match — so the model must have been available.
+                    MainModel model = cachedMainModel;
                     if (model == null) {
                         result.addIncapable("camel-main not detected on classpath");
                         return result;
@@ -1414,8 +1420,12 @@ public abstract class AbstractCamelCatalog {
         return suffix == null || suffix.isEmpty() || suffix.equals(".");
     }
 
-    private boolean acceptConfigurationPropertyKey(String key) {
+    private boolean acceptConfigurationPropertyKey(String key, MainModel cachedModel) {
         if (key == null) {
+            return false;
+        }
+        // Keys outside the camel.* namespace are never checked by this catalog
+        if (!key.startsWith("camel.")) {
             return false;
         }
         // Always-accepted static prefixes (component/dataformat/language have their own models)
@@ -1424,12 +1434,16 @@ public abstract class AbstractCamelCatalog {
                 || key.startsWith("camel.language.")) {
             return true;
         }
-        // Dynamic: accept any prefix that matches a group in the main-model metadata
-        MainModel model = mainModel();
+        // Dynamic: accept any prefix that matches a group in the main-model metadata.
+        // camel-main binds keys after normalising dashes and case (MainHelper.optionKey /
+        // startsWithIgnoreCase), so we compare normalised forms to match e.g.
+        // camel.error-registry.* against the group name "camel.errorRegistry".
+        String normKey = key.replace("-", "").toLowerCase(Locale.ENGLISH);
+        MainModel model = cachedModel != null ? cachedModel : mainModel();
         if (model != null) {
             for (MainModel.MainGroupModel group : model.getGroups()) {
-                String groupPrefix = group.getName() + ".";
-                if (key.startsWith(groupPrefix)) {
+                String normGroup = group.getName().replace("-", "").toLowerCase(Locale.ENGLISH) + ".";
+                if (normKey.startsWith(normGroup)) {
                     return true;
                 }
             }
@@ -1440,16 +1454,22 @@ public abstract class AbstractCamelCatalog {
     /**
      * Returns the matched group from the main-model metadata when the key (with the leading {@code camel.} stripped)
      * corresponds to one of the registered groups, or {@code null} if no group matches.
+     * <p>
+     * Comparison is normalised (dashes removed, lower-cased) to mirror how camel-main binds keys at runtime via
+     * {@code MainHelper.optionKey} and {@code startsWithIgnoreCase}.
      */
-    private MainModel.MainGroupModel matchMainModelGroup(String key) {
-        MainModel model = mainModel();
+    private MainModel.MainGroupModel matchMainModelGroup(String key, MainModel cachedModel) {
+        MainModel model = cachedModel != null ? cachedModel : mainModel();
         if (model == null) {
             return null;
         }
+        // Normalise the incoming key once
+        String normKey = key.replace("-", "").toLowerCase(Locale.ENGLISH);
         for (MainModel.MainGroupModel group : model.getGroups()) {
             // group name is e.g. "camel.server" — strip the leading "camel." to get "server"
             String groupName = group.getName().substring("camel.".length());
-            if (key.startsWith(groupName + ".")) {
+            String normGroupName = groupName.replace("-", "").toLowerCase(Locale.ENGLISH);
+            if (normKey.startsWith(normGroupName + ".")) {
                 return group;
             }
         }

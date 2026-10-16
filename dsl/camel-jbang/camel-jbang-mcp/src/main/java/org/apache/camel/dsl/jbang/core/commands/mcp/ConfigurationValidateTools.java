@@ -53,7 +53,13 @@ public class ConfigurationValidateTools {
                         +
                         "returns suggestions when available. The input can be a single line or a multi-line string with "
                         +
-                        "one property per line; blank lines and comments (starting with # or !) are skipped.")
+                        "one property per line; blank lines and comments (starting with # or !) are skipped. "
+                        +
+                        "Lines that are not recognised as Camel properties (e.g. server.port, quarkus.* or camel.beans.*) "
+                        +
+                        "are reported with checked=false and are excluded from summary.valid and summary.errors; "
+                        +
+                        "they are counted in summary.unchecked instead.")
     public ConfigurationValidateResult camel_configuration_validate(
             @ToolArg(description = "Configuration property lines to validate. Can be a single line "
                                    + "(e.g. \"camel.main.streamCaching=true\") or multiple lines separated by newlines.") String properties,
@@ -72,6 +78,7 @@ public class ConfigurationValidateTools {
             int totalErrors = 0;
             int totalWarnings = 0;
             int validCount = 0;
+            int uncheckedCount = 0;
 
             String[] lines = properties.split("\\r?\\n");
             for (int i = 0; i < lines.length; i++) {
@@ -84,15 +91,20 @@ public class ConfigurationValidateTools {
                 ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(line);
                 PropertyValidationInfo info = toPropertyValidationInfo(i + 1, line, result);
                 results.add(info);
-                totalErrors += info.errors();
-                totalWarnings += info.warnings();
-                if (info.valid()) {
-                    validCount++;
+                if (!info.checked()) {
+                    uncheckedCount++;
+                } else {
+                    totalErrors += info.errors();
+                    totalWarnings += info.warnings();
+                    if (info.valid()) {
+                        validCount++;
+                    }
                 }
             }
 
             ConfigurationValidateSummary summary
-                    = new ConfigurationValidateSummary(results.size(), validCount, totalErrors, totalWarnings);
+                    = new ConfigurationValidateSummary(results.size(), validCount, totalErrors, totalWarnings,
+                            uncheckedCount);
 
             return new ConfigurationValidateResult(catalog.getCatalogVersion(), summary, results);
         } catch (ToolCallException e) {
@@ -106,19 +118,18 @@ public class ConfigurationValidateTools {
 
     private PropertyValidationInfo toPropertyValidationInfo(
             int lineNumber, String text, ConfigurationPropertiesValidationResult result) {
-        boolean accepted = result.isAccepted();
-        // A key that is not accepted by the catalog is by definition not valid: the catalog
-        // returned no errors (because it returned early without checking anything), but the
-        // property is outside the set of known camel.* groups, so reporting valid=true would
-        // be misleading to the caller.
-        boolean valid = accepted && result.isSuccess();
-        int errors = result.getNumberOfErrors();
-        int warnings = result.getNumberOfWarnings();
+        boolean checked = result.isAccepted();
+        // A checked line is valid when the catalog found no errors; an unchecked line
+        // (not recognised as a Camel property) is neither valid nor invalid — it is simply
+        // not inspected by this catalog.
+        boolean valid = checked && result.isSuccess();
+        int errors = checked ? result.getNumberOfErrors() : 0;
+        int warnings = checked ? result.getNumberOfWarnings() : 0;
 
-        List<PropertyIssue> issues = collectIssues(result);
-        String summary = result.summaryErrorMessage(false, true, true);
+        List<PropertyIssue> issues = checked ? collectIssues(result) : Collections.emptyList();
+        String summary = checked ? result.summaryErrorMessage(false, true, true) : null;
 
-        return new PropertyValidationInfo(lineNumber, text, accepted, valid, errors, warnings, summary, issues);
+        return new PropertyValidationInfo(lineNumber, text, checked, valid, errors, warnings, summary, issues);
     }
 
     private List<PropertyIssue> collectIssues(ConfigurationPropertiesValidationResult result) {
@@ -207,10 +218,10 @@ public class ConfigurationValidateTools {
             List<PropertyValidationInfo> properties) {
     }
 
-    public record ConfigurationValidateSummary(int total, int valid, int errors, int warnings) {
+    public record ConfigurationValidateSummary(int total, int valid, int errors, int warnings, int unchecked) {
     }
 
-    public record PropertyValidationInfo(int lineNumber, String text, boolean accepted, boolean valid, int errors,
+    public record PropertyValidationInfo(int lineNumber, String text, boolean checked, boolean valid, int errors,
             int warnings, String summary, List<PropertyIssue> issues) {
     }
 

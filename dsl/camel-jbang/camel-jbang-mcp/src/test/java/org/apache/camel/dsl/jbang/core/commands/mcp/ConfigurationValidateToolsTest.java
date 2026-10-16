@@ -51,7 +51,7 @@ class ConfigurationValidateToolsTest {
 
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
         assertThat(info.lineNumber()).isEqualTo(1);
-        assertThat(info.accepted()).isTrue();
+        assertThat(info.checked()).isTrue();
         assertThat(info.valid()).isTrue();
         assertThat(info.errors()).isZero();
         assertThat(info.issues()).isEmpty();
@@ -113,7 +113,7 @@ class ConfigurationValidateToolsTest {
         assertThat(result.summary().errors()).isZero();
         assertThat(result.properties())
                 .allSatisfy(info -> {
-                    assertThat(info.accepted()).isTrue();
+                    assertThat(info.checked()).isTrue();
                     assertThat(info.valid()).isTrue();
                     assertThat(info.errors()).isZero();
                     assertThat(info.issues()).isEmpty();
@@ -130,7 +130,7 @@ class ConfigurationValidateToolsTest {
                         null);
 
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
-        assertThat(info.accepted()).isTrue();
+        assertThat(info.checked()).isTrue();
         assertThat(info.valid()).isTrue();
         assertThat(info.errors()).isZero();
         assertThat(info.issues()).isEmpty();
@@ -172,16 +172,20 @@ class ConfigurationValidateToolsTest {
     }
 
     @Test
-    void nonCamelKeyMarkedNotAccepted() {
+    void nonCamelKeyMarkedNotChecked() {
+        // Non-Camel keys (e.g. server.port) are not checked by this catalog: checked=false,
+        // valid=false, and counted in summary.unchecked (not in summary.errors or summary.valid).
         ConfigurationValidateTools tools = createTools();
 
         ConfigurationValidateTools.ConfigurationValidateResult result
                 = tools.camel_configuration_validate("server.port=8080", null, null, null);
 
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
-        assertThat(info.accepted()).isFalse();
-        // accepted=false must imply valid=false (regression guard for CAMEL-25538 bug #2)
+        assertThat(info.checked()).isFalse();
         assertThat(info.valid()).isFalse();
+        assertThat(result.summary().unchecked()).isEqualTo(1);
+        assertThat(result.summary().errors()).isZero();
+        assertThat(result.summary().valid()).isZero();
     }
 
     // --- CAMEL-25538 regression tests ---
@@ -197,14 +201,14 @@ class ConfigurationValidateToolsTest {
 
         assertThat(result.summary().total()).isEqualTo(1);
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
-        assertThat(info.accepted()).isTrue();
+        assertThat(info.checked()).isTrue();
         assertThat(info.valid()).isTrue();
         assertThat(info.errors()).isZero();
         assertThat(info.issues()).isEmpty();
     }
 
     @Test
-    void camelServerInventedKeyIsAcceptedButNotValid() {
+    void camelServerInventedKeyIsCheckedButNotValid() {
         // An invented key under an accepted camel.server.* group must be reported as unknown,
         // not silently passed as valid.
         ConfigurationValidateTools tools = createTools();
@@ -213,29 +217,32 @@ class ConfigurationValidateToolsTest {
                 = tools.camel_configuration_validate("camel.server.bindPort=9999", null, null, null);
 
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
-        assertThat(info.accepted()).isTrue();
+        assertThat(info.checked()).isTrue();
         assertThat(info.valid()).isFalse();
         assertThat(info.issues()).anyMatch(i -> "unknown".equals(i.kind()));
     }
 
     @Test
-    void acceptedFalseImpliesValidFalseForNonCamelKey() {
-        // Invented key outside any known camel.* group: accepted=false AND valid=false.
+    void uncheckedKeyImpliesValidFalseAndNotCountedInErrors() {
+        // Invented key outside any known camel.* group: checked=false AND valid=false.
         // Before the fix, valid was true despite accepted=false (CAMEL-25538 bug #2).
+        // The key must not appear in summary.errors — it is unchecked, not rejected.
         ConfigurationValidateTools tools = createTools();
 
         ConfigurationValidateTools.ConfigurationValidateResult result
                 = tools.camel_configuration_validate("camel.invented.completely.unknown=foo", null, null, null);
 
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
-        assertThat(info.accepted()).isFalse();
+        assertThat(info.checked()).isFalse();
         assertThat(info.valid()).isFalse();
-        // The summary must not count unaccepted keys as valid
+        // The summary must not count unchecked keys as valid or as errors
         assertThat(result.summary().valid()).isZero();
+        assertThat(result.summary().errors()).isZero();
+        assertThat(result.summary().unchecked()).isEqualTo(1);
     }
 
     @Test
-    void camelManagementKeyIsAccepted() {
+    void camelManagementKeyIsCheckedAndValid() {
         // camel.management.* was also missing from the old hardcoded list.
         ConfigurationValidateTools tools = createTools();
 
@@ -243,20 +250,36 @@ class ConfigurationValidateToolsTest {
                 = tools.camel_configuration_validate("camel.management.enabled=true", null, null, null);
 
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
-        assertThat(info.accepted()).isTrue();
+        assertThat(info.checked()).isTrue();
         assertThat(info.valid()).isTrue();
     }
 
     @Test
-    void camelVaultAwsKeyIsAccepted() {
+    void camelVaultAwsKeyIsCheckedAndValid() {
         // camel.vault.aws.* is a nested group (3-segment name) — must also be accepted.
+        // The dot-offset logic that skips the group prefix is exercised here.
         ConfigurationValidateTools tools = createTools();
 
         ConfigurationValidateTools.ConfigurationValidateResult result
                 = tools.camel_configuration_validate("camel.vault.aws.accessKey=AKIA1234", null, null, null);
 
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
-        assertThat(info.accepted()).isTrue();
+        assertThat(info.checked()).isTrue();
+        assertThat(info.valid()).isTrue();
+    }
+
+    @Test
+    void camelVaultAwsInventedKeyIsCheckedButNotValid() {
+        // An invented option under a nested group (camel.vault.aws.*) exercises the dot-offset
+        // logic: the option name starts after the 3rd dot and must be checked against the model.
+        ConfigurationValidateTools tools = createTools();
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.vault.aws.inventedOption=foo", null, null, null);
+
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.checked()).isTrue();
+        assertThat(info.valid()).isFalse();
     }
 
     @Test
