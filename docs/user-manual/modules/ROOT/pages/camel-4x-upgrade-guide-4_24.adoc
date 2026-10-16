@@ -440,6 +440,14 @@ Without an interactive terminal, such as in a script, a CI job (the `CI` environ
 it off (use `--follow=false` to turn it off). In a terminal, the end of the input (Ctrl+D) stops a command that watches
 or follows, like Enter does.
 
+=== camel-jbang - camel cmd route-diagram and camel cmd span
+
+* `camel cmd route-diagram --highlight` with node ids that no route has exits with `3` (it drew the diagram with
+  nothing highlighted). Its errors are printed on stderr, and a graphical `--theme` in a terminal without graphics exits
+  with `2`.
+* `camel cmd span --trace` with a trace id that matches no trace exits with `3` (it printed a message and exited with
+  `0`), and an unknown `--sort` key of the traces exits with `2` (it sorted the newest first).
+
 === camel-jbang - camel run: startup in the background, and input errors
 
 * `camel run --background` waits up to 60 seconds for the integration to start (it was 20 seconds), and
