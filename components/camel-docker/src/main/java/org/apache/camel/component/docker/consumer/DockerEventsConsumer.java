@@ -61,7 +61,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
      * to this callback: closing the command does not close it.
      */
     private volatile EventsCallback callback;
-    private ScheduledExecutorService executor;
+    private volatile ScheduledExecutorService executor;
 
     public DockerEventsConsumer(DockerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -164,7 +164,8 @@ public class DockerEventsConsumer extends DefaultConsumer {
                     subscribe(null, nextDelay);
                 } catch (Exception e) {
                     LOG.warn("Failed to subscribe again to the Docker events of {}, trying again in {} ms: {}",
-                            endpoint, nextDelay, e.getMessage(), e);
+                            endpoint, nextDelay, e.getMessage());
+                    LOG.debug("Failed to subscribe again to the Docker events of {}", endpoint, e);
                     subscribeAgain(nextDelay);
                 }
             }, delayMillis, TimeUnit.MILLISECONDS);
