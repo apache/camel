@@ -44,6 +44,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.json.JsonArray;
@@ -255,7 +256,7 @@ class EndpointsTab extends AbstractTableTab {
                 cells.add(rightCell(FlowHelper.sizeToString(ep.meanHeadersSize), 10));
             }
             cells.add(centerCell(ep.stub ? TuiIcons.CHECK : "", 6));
-            cells.add(centerCell(ep.remote ? TuiIcons.CHECK : "", 8));
+            cells.add(scopeCell(ep.scope));
             cells.add(Cell.from(ep.uri != null ? TuiHelper.displayUri(ep.uri) : ""));
             rows.add(Row.from(cells));
         }
@@ -275,7 +276,7 @@ class EndpointsTab extends AbstractTableTab {
             headerCells.add(rightCell(sortLabel("HDR", "hdr"), 10, sortStyle("hdr")));
         }
         headerCells.add(centerCell("STUB", 6, Style.EMPTY.bold()));
-        headerCells.add(centerCell("REMOTE", 8, Style.EMPTY.bold()));
+        headerCells.add(Cell.from(Span.styled("SCOPE", Style.EMPTY.bold())));
         headerCells.add(Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri"))));
 
         List<Constraint> widths = new ArrayList<>();
@@ -747,6 +748,19 @@ class EndpointsTab extends AbstractTableTab {
         return DocHelper.loadHelpText("endpoints");
     }
 
+    /** The scope of an endpoint: remote in the colour the diagrams draw the edges of the integration in. */
+    private static Cell scopeCell(String scope) {
+        if (scope == null) {
+            return Cell.from("");
+        }
+        Style style = switch (scope) {
+            case EndpointScope.REMOTE -> Style.EMPTY.fg(Theme.diagramExternal());
+            case EndpointScope.INTERNAL -> Theme.muted();
+            default -> Style.EMPTY;
+        };
+        return Cell.from(Span.styled(scope, style));
+    }
+
     @Override
     public JsonObject getTableDataAsJson() {
         IntegrationInfo info = ctx.findSelectedIntegration();
@@ -764,6 +778,7 @@ class EndpointsTab extends AbstractTableTab {
             row.put("routeId", ei.routeId);
             row.put("hits", ei.hits);
             row.put("remote", ei.remote);
+            row.put("scope", ei.scope);
             row.put("stub", ei.stub);
             if (ei.meanBodySize >= 0) {
                 row.put("meanBodySize", ei.meanBodySize);

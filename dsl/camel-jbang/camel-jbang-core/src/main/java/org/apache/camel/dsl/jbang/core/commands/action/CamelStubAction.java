@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,8 +29,8 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.support.PatternHelper;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -102,6 +100,12 @@ public class CamelStubAction extends ActionWatchCommand {
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
     String findAnsi;
     Pattern[] grepPatterns;
@@ -133,116 +137,89 @@ public class CamelStubAction extends ActionWatchCommand {
             }
             return color;
         });
-        if (find != null) {
+        // once, as the patterns are quoted in place, and --watch calls this again
+        if (find != null && findPatterns == null) {
             findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
             findPatterns = quoteAndCompilePatterns(find);
         }
-        if (grep != null) {
+        if (grep != null && grepPatterns == null) {
             findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
             grepPatterns = quoteAndCompilePatterns(grep);
         }
 
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
-
-        this.pid = pids.get(0);
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
         if (filter == null) {
             filter = "*";
         }
 
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
+        JsonObject jo = executeAction(process, "stub", root -> {
+            root.put("format", "json");
+            root.put("browse", browse);
+            root.put("filter", "*");
+            root.put("limit", limit);
+        });
+        String integration = process.name();
 
-        JsonObject root = new JsonObject();
-        root.put("action", "stub");
-        root.put("format", "json");
-        root.put("browse", browse);
-        root.put("filter", "*");
-        root.put("limit", limit);
-        Path file = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(file, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            JsonObject me = loadStatus(pid);
-            if (me != null) {
-                me = (JsonObject) me.get("context");
-            }
-
-            JsonArray arr = (JsonArray) jo.get("queues");
-            if (arr != null) {
-                for (int i = 0; i < arr.size(); i++) {
-                    JsonObject o = (JsonObject) arr.get(i);
-                    Row row = new Row();
-                    row.pid = pid;
-                    row.name = me != null ? me.getString("name") : null;
-                    row.queue = o.getString("name");
-                    row.max = o.getInteger("max");
-                    row.size = o.getInteger("size");
-                    String uri = o.getString("endpointUri");
-                    if (uri != null) {
-                        row.endpoint = new JsonObject();
-                        if (mask) {
-                            uri = URISupport.sanitizeUri(uri);
-                        }
-                        row.endpoint.put("endpoint", uri);
+        JsonArray arr = (JsonArray) jo.get("queues");
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject o = (JsonObject) arr.get(i);
+                Row row = new Row();
+                row.pid = pid;
+                row.name = integration;
+                row.queue = o.getString("name");
+                row.max = o.getInteger("max");
+                row.size = o.getInteger("size");
+                String uri = o.getString("endpointUri");
+                if (uri != null) {
+                    row.endpoint = new JsonObject();
+                    if (mask) {
+                        uri = URISupport.sanitizeUri(uri);
                     }
-                    row.messages = o.getCollection("messages");
-                    boolean add = true;
-                    if (filter != null) {
-                        String f = filter;
-                        boolean negate = filter.startsWith("-");
-                        if (negate) {
-                            f = f.substring(1);
-                        }
-                        // make filtering easier
-                        if (!f.endsWith("*")) {
-                            f += "*";
-                        }
-                        boolean match = PatternHelper.matchPattern(row.queue, f);
-                        if (negate) {
-                            match = !match;
-                        }
-                        if (!match) {
-                            add = false;
-                        }
-                    }
-                    if (add) {
-                        rows.add(row);
-                    }
+                    row.endpoint.put("endpoint", uri);
+                }
+                row.messages = o.getCollection("messages");
+                boolean add = true;
+                if (filter != null && !matchesFilter(filter, row.queue)) {
+                    add = false;
+                }
+                if (add) {
+                    rows.add(row);
                 }
             }
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
         }
 
         // sort rows
         rows.sort(this::sortRow);
 
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows.stream().map(r -> {
+                JsonObject queue = new JsonObject();
+                queue.put("pid", r.pid);
+                queue.put("name", r.name);
+                queue.put("queue", r.queue);
+                queue.put("max", r.max);
+                queue.put("size", r.size);
+                if (r.endpoint != null) {
+                    queue.put("endpointUri", r.endpoint.getString("endpoint"));
+                }
+                if (r.messages != null) {
+                    queue.put("messages", r.messages);
+                }
+                return queue;
+            }).toList());
+            return 0;
+        }
         if (watch) {
             clearScreen();
         }
         if (!rows.isEmpty()) {
             printStub(rows);
         }
-
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -351,10 +328,6 @@ public class CamelStubAction extends ActionWatchCommand {
                     new Column().header("MAX").dataAlign(HorizontalAlign.RIGHT).with(r -> Integer.toString(r.max)),
                     new Column().header("TOTAL").dataAlign(HorizontalAlign.RIGHT).with(r -> Integer.toString(r.size)))));
         }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     private static class Row {

@@ -54,6 +54,8 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "exchangePattern": getOrCreateConfiguration(target).setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "hl7headers":
         case "hl7Headers": getOrCreateConfiguration(target).setHl7Headers(property(camelContext, boolean.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": getOrCreateConfiguration(target).setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "idletimeout":
         case "idleTimeout": getOrCreateConfiguration(target).setIdleTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "idletimeoutstrategy":
@@ -127,6 +129,8 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "hl7headers":
         case "hl7Headers": return boolean.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "idletimeout":
         case "idleTimeout": return java.lang.Integer.class;
         case "idletimeoutstrategy":
@@ -201,6 +205,8 @@ public class MllpComponentConfigurer extends PropertyConfigurerSupport implement
         case "exchangePattern": return getOrCreateConfiguration(target).getExchangePattern();
         case "hl7headers":
         case "hl7Headers": return getOrCreateConfiguration(target).isHl7Headers();
+        case "hostnameverification":
+        case "hostnameVerification": return getOrCreateConfiguration(target).isHostnameVerification();
         case "idletimeout":
         case "idleTimeout": return getOrCreateConfiguration(target).getIdleTimeout();
         case "idletimeoutstrategy":

@@ -55,6 +55,12 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     private String node;
 
     /**
+     * Comma-separated node definitions to monitor with one consumer, instead of node (see Node ID)
+     */
+    @UriParam(label = "consumer")
+    private String nodes;
+
+    /**
      * The method definition (see Method ID)
      */
     @UriParam
@@ -168,6 +174,14 @@ public class MiloClientEndpoint extends DefaultEndpoint {
         } else {
             return null;
         }
+    }
+
+    public void setNodes(final String nodes) {
+        this.nodes = nodes;
+    }
+
+    public String getNodes() {
+        return nodes;
     }
 
     ExpandedNodeId getMethodId() {

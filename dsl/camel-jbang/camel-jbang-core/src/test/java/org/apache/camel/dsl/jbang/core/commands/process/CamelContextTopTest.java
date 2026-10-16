@@ -140,7 +140,8 @@ class CamelContextTopTest extends ProcessCommandTestSupport {
             int exit = command.doCall();
 
             assertEquals(0, exit);
-            assertEquals("", printer.getOutput().trim());
+            assertEquals("", printer.getStdout());
+            assertEquals("No running Camel integrations", printer.getStderr());
         }
     }
 

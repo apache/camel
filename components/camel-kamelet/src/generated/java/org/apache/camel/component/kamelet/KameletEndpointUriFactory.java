@@ -24,7 +24,8 @@ public class KameletEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(12);
+        props.add("advancedOptions");
         props.add("block");
         props.add("bridgeErrorHandler");
         props.add("exceptionHandler");

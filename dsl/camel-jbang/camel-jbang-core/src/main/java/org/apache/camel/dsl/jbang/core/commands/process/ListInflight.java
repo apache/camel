@@ -60,67 +60,61 @@ public class ListInflight extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         AtomicBoolean remoteVisible = new AtomicBoolean();
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("inflight");
-                        if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("exchanges");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.exchangeId = jo.getString("exchangeId");
-                                    row.fromRouteId = jo.getString("fromRouteId");
-                                    Boolean bool = jo.getBoolean("fromRemoteEndpoint");
-                                    if (bool != null) {
-                                        // older camel versions does not include this information
-                                        remoteVisible.set(true);
-                                        row.fromRemoteEndpoint = bool;
-                                    }
-                                    row.atRouteId = jo.getString("atRouteId");
-                                    row.nodeId = jo.getString("nodeId");
-                                    row.elapsed = jo.getLong("elapsed");
-                                    row.duration = jo.getLong("duration");
-                                    rows.add(row);
-                                }
-                            }
+            JsonObject jo = (JsonObject) root.get("inflight");
+            if (jo != null) {
+                JsonArray arr = (JsonArray) jo.get("exchanges");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = row.copy();
+                        jo = (JsonObject) arr.get(i);
+                        row.exchangeId = jo.getString("exchangeId");
+                        row.fromRouteId = jo.getString("fromRouteId");
+                        Boolean bool = jo.getBoolean("fromRemoteEndpoint");
+                        if (bool != null) {
+                            // older camel versions does not include this information
+                            remoteVisible.set(true);
+                            row.fromRemoteEndpoint = bool;
                         }
+                        row.atRouteId = jo.getString("atRouteId");
+                        row.nodeId = jo.getString("nodeId");
+                        row.elapsed = jo.getLong("elapsed");
+                        row.duration = jo.getLong("duration");
+                        rows.add(row);
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("exchangeId", r.exchangeId);
                     jo.put("remote", r.fromRemoteEndpoint);
-                    jo.put("route", r.atRouteId);
+                    jo.put("routeId", r.atRouteId);
                     jo.put("id", r.nodeId);
-                    jo.put("elapsed", getElapsed(r));
-                    jo.put("duration", getDuration(r));
+                    jo.put("elapsed", r.elapsed);
+                    jo.put("duration", r.duration);
                     return jo;
                 }).collect(Collectors.toList())));
             } else {

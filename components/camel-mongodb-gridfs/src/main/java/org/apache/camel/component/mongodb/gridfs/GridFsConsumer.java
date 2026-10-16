@@ -51,6 +51,13 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     private final GridFsEndpoint endpoint;
     private volatile ScheduledExecutorService taskExecutor;
     private volatile ExecutorService executor;
+    // the polls ask for the files uploaded after this date. With the TimeStamp and PersistentTimestamp strategies it
+    // is the upload date of the newest file that was routed, kept between the polls. The strategies with a file
+    // attribute keep the start date, because the attribute already makes sure that a file is routed once, and a file
+    // whose upload date is older than one that was routed already (another uploader, clock skew) is still found.
+    // Two threads use it: run() sets the start value on the thread of the executor, before it schedules the polls;
+    // the polls then read and move it on the thread of the taskExecutor.
+    private volatile Date fromDate;
 
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -82,7 +89,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     public void run() {
-        Date fromDate = null;
+        fromDate = null;
 
         QueryStrategy queryStrategy = endpoint.getQueryStrategy();
         boolean usesTimestamp = queryStrategy != QueryStrategy.FileAttribute;
@@ -126,22 +133,22 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 .build();
 
         MongoCollection<Document> finalPtsCollection = ptsCollection;
-        Date finalFromDate = fromDate;
         Document finalPersistentTimestamp = persistentTimestamp;
         task.run(endpoint.getCamelContext(),
-                () -> processCollection(finalFromDate, usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
+                () -> processCollection(usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
                         finalPersistentTimestamp));
     }
 
     private boolean processCollection(
-            Date fromDate, boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute,
+            boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute,
             final MongoCollection<Document> ptsCollection, final Document persistentTimestamp) {
 
         if (!isStarted()) {
             return false;
         }
 
-        try (MongoCursor<GridFSFile> cursor = getGridFSFileMongoCursor(fromDate, usesTimestamp, usesAttribute)) {
+        Date pollFromDate = fromDate;
+        try (MongoCursor<GridFSFile> cursor = getGridFSFileMongoCursor(pollFromDate, usesTimestamp, usesAttribute)) {
             boolean dateModified = false;
 
             while (cursor.hasNext() && isStarted()) {
@@ -177,9 +184,12 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                             Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_DONE);
                             endpoint.getFilesCollection().findOneAndUpdate(eq("_id", fOrig.getId()), update);
                         }
-                        if (usesTimestamp && file.getUploadDate().compareTo(fromDate) > 0) {
-                            fromDate = file.getUploadDate();
+                        if (usesTimestamp && file.getUploadDate().compareTo(pollFromDate) > 0) {
+                            pollFromDate = file.getUploadDate();
                             dateModified = true;
+                            if (!usesAttribute) {
+                                fromDate = pollFromDate;
+                            }
                         }
                     } catch (Exception e) {
                         // ignore
@@ -188,7 +198,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
             }
 
             if (persistsTimestamp && dateModified) {
-                Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, fromDate);
+                Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, pollFromDate);
                 ptsCollection.findOneAndUpdate(eq("_id", persistentTimestamp.getObjectId("_id")), update);
             }
         }

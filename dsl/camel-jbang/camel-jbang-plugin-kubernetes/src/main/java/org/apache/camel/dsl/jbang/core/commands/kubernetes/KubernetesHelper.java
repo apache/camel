@@ -28,12 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.fabric8.kubernetes.api.model.APIGroup;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
@@ -46,6 +40,12 @@ import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.yaml.snakeyaml.Yaml;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Helper class provides access to cached Kubernetes client. Also provides access to generic Json and Yaml mappers.
@@ -60,17 +60,19 @@ public final class KubernetesHelper {
     private static final ObjectMapper OBJECT_MAPPER;
 
     static {
-        OBJECT_MAPPER = JsonMapper.builder()
+        // Jackson 3 to match the Kubernetes client, so that the model's own serializers (IntOrString, Quantity, etc.) are used.
+        // MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES no longer exists in Jackson 3, and this mapper does not use
+        // polymorphic typing (no default typing, no @JsonTypeInfo on the trait model).
+        OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+                .enable(EnumFeature.READ_ENUMS_USING_TO_STRING)
                 .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE)
-                .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
+                .enable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                .disable(StreamReadFeature.AUTO_CLOSE_SOURCE)
                 .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
-                .build()
-                .setDefaultPropertyInclusion(
-                        JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY));
+                .changeDefaultPropertyInclusion(
+                        incl -> JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY))
+                .build();
     }
 
     private KubernetesHelper() {

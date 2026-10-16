@@ -31,6 +31,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
@@ -96,13 +97,13 @@ public class CodeSchemaGenerator extends CamelCommand {
 
             // Validate inputs
             if (camelComponent == null || camelComponent.trim().isEmpty()) {
-                printer().printErr("Error: Camel component name cannot be empty");
-                return 4;
+                printer().printErr("Camel component name cannot be empty");
+                return CliExitCode.USAGE;
             }
 
             if (fullyQualifiedName == null || fullyQualifiedName.trim().isEmpty()) {
-                printer().printErr("Error: Fully qualified class name cannot be empty");
-                return 4;
+                printer().printErr("Fully qualified class name cannot be empty");
+                return CliExitCode.USAGE;
             }
 
             // Configure JSON Schema generator
@@ -116,20 +117,20 @@ public class CodeSchemaGenerator extends CamelCommand {
             try (DependencyDownloaderClassLoader cl
                     = getDependencyDownloaderClassLoader(camelComponent, camelVersion, verbose)) {
                 if (cl == null) {
-                    return 1; // Error already reported
+                    return CliExitCode.FAILURE; // Error already reported
                 }
                 Thread.currentThread().setContextClassLoader(cl);
 
                 // Load the target class
                 Class<?> targetClass = loadTargetClass(cl, fullyQualifiedName);
                 if (targetClass == null) {
-                    return 2; // Error already reported
+                    return CliExitCode.NOT_FOUND; // Error already reported
                 }
 
                 // Generate schema
                 JsonNode schema = generateSchema(generator, targetClass);
                 if (schema == null) {
-                    return 3; // Error already reported
+                    return CliExitCode.FAILURE; // Error already reported
                 }
 
                 // Output schema
@@ -150,7 +151,7 @@ public class CodeSchemaGenerator extends CamelCommand {
             if (verbose) {
                 e.printStackTrace();
             }
-            return 4;
+            return CliExitCode.INTERNAL;
         }
     }
 
@@ -231,15 +232,15 @@ public class CodeSchemaGenerator extends CamelCommand {
 
         } catch (Exception e) {
             printer().printErr("Error downloading dependencies for component 'camel-" + camelComponent + "':");
-            printer().printErr("  " + e.getMessage());
-            printer().printErr(System.lineSeparator());
-            printer().printErr("Possible causes:");
-            printer().printErr("  - Component name is incorrect (check spelling)");
-            printer().printErr("  - Version '" + version + "' does not exist");
-            printer().printErr("  - Network connectivity issues");
-            printer().printErr("  - Maven repository is unavailable");
-            printer().printErr(System.lineSeparator());
-            printer().printErr("You can find available components at: https://camel.apache.org/components/");
+            printer().printDiagnostic("  " + e.getMessage());
+            printer().printDiagnostic("");
+            printer().printDiagnostic("Possible causes:");
+            printer().printDiagnostic("  - Component name is incorrect (check spelling)");
+            printer().printDiagnostic("  - Version '" + version + "' does not exist");
+            printer().printDiagnostic("  - Network connectivity issues");
+            printer().printDiagnostic("  - Maven repository is unavailable");
+            printer().printDiagnostic("");
+            printer().printDiagnostic("You can find available components at: https://camel.apache.org/components/");
 
             if (verbose) {
                 e.printStackTrace();
@@ -265,7 +266,7 @@ public class CodeSchemaGenerator extends CamelCommand {
 
         } catch (ClassNotFoundException e) {
 
-            printer().printErr("Error: Class '" + className + "' not found in component dependencies");
+            printer().printErr("Class '" + className + "' not found in component dependencies");
             printer().printErr(System.lineSeparator());
             printer().printErr("Possible causes:");
             printer().printErr("  - Class name is incorrect (check spelling and package)");

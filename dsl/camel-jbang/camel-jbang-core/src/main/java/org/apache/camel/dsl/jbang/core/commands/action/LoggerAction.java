@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +26,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -41,6 +40,7 @@ import picocli.CommandLine;
                      footer = {
                              "%nExamples:",
                              "  camel cmd logger",
+                             "  camel cmd logger --json",
                              "  camel cmd logger --logging-level=DEBUG --logger=org.apache.camel" })
 public class LoggerAction extends ActionBaseCommand {
 
@@ -59,6 +59,12 @@ public class LoggerAction extends ActionBaseCommand {
                         description = "The logger name", defaultValue = "root")
     String logger;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output the logging levels in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     public LoggerAction(CamelJBangMain main) {
         super(main);
     }
@@ -75,60 +81,50 @@ public class LoggerAction extends ActionBaseCommand {
     }
 
     protected Integer callChangeLoggingLevel() throws Exception {
-        List<Long> pids = findPids(name);
-
-        for (long pid : pids) {
-            JsonObject root = new JsonObject();
-            root.put("action", "logger");
-            Path f = getActionFile(Long.toString(pid));
+        return sendAction(findProcesses(name), "logger", root -> {
             root.put("command", "set-logging-level");
             root.put("logger-name", logger);
             root.put("logging-level", loggingLevel);
-            Files.writeString(f, root.toJson());
-        }
-
-        return 0;
+        });
     }
 
     protected Integer callList() {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        Row row = new Row();
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.ago = TimeUtils.printSince(row.uptime);
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        JsonObject jo = (JsonObject) root.get("logger");
-                        if (jo != null) {
-                            Map<String, String> levels = jo.getMap("levels");
-                            levels.forEach((k, v) -> {
-                                // create a copy for 2+ levels
-                                Row cp = row.copy();
-                                cp.logger = k;
-                                cp.level = v;
-                                rows.add(cp);
-                            });
-                        }
-                    }
+        for (CamelProcess process : findProcesses(name)) {
+            JsonObject root = process.status();
+            Row row = new Row();
+            row.pid = Long.toString(process.pid());
+            row.uptime = extractSince(ProcessHandle.of(process.pid()).orElse(null));
+            row.ago = TimeUtils.printSince(row.uptime);
+            row.name = process.name();
+            JsonObject jo = (JsonObject) root.get("logger");
+            if (jo != null) {
+                Map<String, String> levels = jo.getMap("levels");
+                levels.forEach((k, v) -> {
+                    // create a copy for 2+ levels
+                    Row cp = row.copy();
+                    cp.logger = k;
+                    cp.level = v;
+                    rows.add(cp);
                 });
+            }
+        }
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows.stream().map(r -> {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", r.pid);
+                jo.put("name", r.name);
+                jo.put("age", r.ago);
+                jo.put("logger", r.logger);
+                jo.put("level", r.level);
+                return jo;
+            }).toList());
+        } else if (!rows.isEmpty()) {
             int tw = terminalWidth();
             int fixedWidth = 10 + 10 + 10; // PID + AGE + LEVEL (approx)
             int borderOverhead = TerminalWidthHelper.noBorderOverhead(5);

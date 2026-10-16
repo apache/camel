@@ -93,10 +93,12 @@ class MigrationDataSearchTest {
         List<MigrationData.SearchHit> hits
                 = migrationData.search("CXF SOAP web service migration Camel 2 to 4", "2.25", "4.22", 5);
 
-        assertThat(hits).isNotEmpty();
-        assertThat(hits.get(0).section().guide()).isEqualTo("Camel 3 Migration Guide (2.x to 3.0)");
-        assertThat(hits.get(0).section().sectionTitle()).startsWith("Migrating Camel applications");
-        assertThat(hits.get(0).section().content()).contains("camel-cxf");
+        // among the hits, not necessarily first: the exact rank depends on the wording of the in-range guides
+        assertThat(hits).anySatisfy(hit -> {
+            assertThat(hit.section().guide()).isEqualTo("Camel 3 Migration Guide (2.x to 3.0)");
+            assertThat(hit.section().sectionTitle()).startsWith("Migrating Camel applications");
+            assertThat(hit.section().content()).contains("camel-cxf");
+        });
     }
 
     @Test

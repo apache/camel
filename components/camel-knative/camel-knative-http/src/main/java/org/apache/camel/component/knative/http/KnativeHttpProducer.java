@@ -26,7 +26,6 @@ import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
-import io.vertx.ext.web.client.impl.WebClientBase;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
@@ -184,7 +183,7 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
 
         if (clientOptions instanceof KnativeOidcClientOptions oidcClientOptions) {
             if (oidcClientOptions.isOidcEnabled()) {
-                ((WebClientBase) this.client).addInterceptor(new KnativeOidcInterceptor(oidcClientOptions));
+                this.client.addInterceptor(new KnativeOidcInterceptor(oidcClientOptions));
             }
         }
     }

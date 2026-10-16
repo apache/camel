@@ -16,18 +16,21 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get", description = "Displays running service(s) information", sortOptions = false,
                      showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel infra get kafka" })
+                             "  camel infra get kafka",
+                             "  camel infra get kafka --json" })
 public class InfraGet extends InfraBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")
@@ -39,18 +42,38 @@ public class InfraGet extends InfraBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        Map<Long, Path> pids = findPids(name);
+        List<RunningService> services = findRunningServices(name);
+        if (services.isEmpty() && !"*".equals(name)) {
+            throw CliException.notFound("No running infra service matches: " + name);
+        }
 
-        int i = 0;
-        for (var e : pids.entrySet()) {
-            Path pidFile = e.getValue();
-            String sn = serviceNameFromPidFile(pidFile.getFileName().toString());
-            if (i > 0) {
-                printer().println("");
+        List<JsonObject> rows = new ArrayList<>();
+        int printed = 0;
+        for (RunningService service : services) {
+            String data = readServiceData(service.pidFile());
+            if (data == null) {
+                // stopped meanwhile
+                continue;
             }
-            printer().println("Service " + sn + " (PID: " + e.getKey() + ")");
-            printer().println(Files.readString(pidFile));
-            i++;
+            if (jsonOutput) {
+                JsonObject jo = new JsonObject();
+                jo.put("pid", service.pid());
+                jo.put("alias", service.alias());
+                Object serviceData = parseServiceData(data);
+                if (serviceData != null) {
+                    jo.put("serviceData", serviceData);
+                }
+                rows.add(jo);
+            } else {
+                if (printed++ > 0) {
+                    printer().println("");
+                }
+                printer().println("Service " + service.alias() + " (PID: " + service.pid() + ")");
+                printer().println(data);
+            }
+        }
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows);
         }
 
         return 0;

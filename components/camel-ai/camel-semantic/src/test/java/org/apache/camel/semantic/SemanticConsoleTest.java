@@ -46,15 +46,14 @@ class SemanticConsoleTest {
             var expert = new Scorer();
             context.getRegistry().bind("risk", expert);
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert("risk");
             var registry = SemanticEvaluations.get(context);
-            registry.replace("route.yaml", Map.of("screen", definition(null, null)));
+            registry.replace("route.yaml", Map.of("screen", definition("risk", null)));
             context.start();
             int startupValidations = expert.validations.get();
             DevConsole console = console(context, "semantic-metadata");
             assertThat(console.isReadOnly()).isTrue();
             JsonObject response = call(console, Map.of("overview", true));
-            assertThat(response).containsEntry("defaultExpert", "risk");
+            assertThat(response).doesNotContainKeys("defaultExpert", "defaultError", "defaultErrorCode");
             List<JsonObject> experts = response.getCollection("experts");
             assertThat(experts).singleElement().satisfies(row -> {
                 assertThat(row).containsEntry("reference", "risk").containsEntry("provider", "test");

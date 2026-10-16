@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -81,7 +81,7 @@
         <apache-drill-version>1.22.0</apache-drill-version>
         <arangodb-java-version>7.28.0</arangodb-java-version>
         <ascii-table-version>1.13.0</ascii-table-version>
-        <asm-version>9.10.1</asm-version>
+        <asm-version>9.11</asm-version>
         <asn1bean-version>1.14.0</asn1bean-version>
         <assertj-version>3.27.7</assertj-version>
         <asterisk-java-version>3.42.2</asterisk-java-version>
@@ -91,9 +91,9 @@
         <avro-ipc-jetty-version>1.12.2</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.2</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.55.11</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.55.14</aws-java-sdk2-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
-        <azure-storage-blob-changefeed-version>12.0.0-beta.39</azure-storage-blob-changefeed-version>
+        <azure-storage-blob-changefeed-version>12.0.0-beta.40</azure-storage-blob-changefeed-version>
         <beanio-version>3.2.1</beanio-version>
         <bouncycastle-version>1.86</bouncycastle-version>
         <box-java-sdk-version>4.16.4</box-java-sdk-version>
@@ -108,13 +108,13 @@
         <camel-lsp-version>1.34.0</camel-lsp-version>
         <camel-kamelets-catalog-version>4.22.1</camel-kamelets-catalog-version>
         <camunda-version>7.24.0</camunda-version>
-        <camunda-client-java-version>8.9.21</camunda-client-java-version>
-        <cassandra-driver-version>4.19.3</cassandra-driver-version>
+        <camunda-client-java-version>8.10.2</camunda-client-java-version>
+        <cassandra-driver-version>4.19.4</cassandra-driver-version>
         <clickhouse-client-version>0.10.0</clickhouse-client-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>5.0.2</citrus-version>
-        <classgraph-version>4.8.196</classgraph-version>
+        <classgraph-version>4.8.198</classgraph-version>
         <cloudant-version>0.10.22</cloudant-version>
         <com-ibm-mq-jakarta-client-version>10.0.0.5</com-ibm-mq-jakarta-client-version>
         <cometd-java-client-version>9.0.1</cometd-java-client-version>
@@ -179,7 +179,7 @@
         <rewrite-maven-plugin-version>6.46.1</rewrite-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
         <freemarker-version>2.3.35</freemarker-version>
-        <fory-version>1.7.6</fory-version>
+        <fory-version>1.7.7</fory-version>
         <ph-ubl-version>10.2.0</ph-ubl-version>
         <j8583-version>3.0.1</j8583-version>
         <jtoon-version>2.0.5</jtoon-version>
@@ -219,7 +219,7 @@
         <graphql-java-version>26.1</graphql-java-version>
         <greenmail-version>2.1.14</greenmail-version>
         <groovy-version>5.1.2</groovy-version>
-        <grpc-version>1.84.0</grpc-version>
+        <grpc-version>1.84.2</grpc-version>
         <grpc-java-jwt-version>4.6.1</grpc-java-jwt-version>
         <gson-version>2.14.0</gson-version>
         <guava-version>33.7.2-jre</guava-version>
@@ -237,7 +237,7 @@
         <hazelcast-version>5.4.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
         <hibernate-validator-version>9.1.4.Final</hibernate-validator-version>
-        <hibernate-version>7.4.12.Final</hibernate-version>
+        <hibernate-version>7.4.13.Final</hibernate-version>
         <hivemq-mqtt-client-version>1.4.0</hivemq-mqtt-client-version>
         <hsqldb-version>2.7.4</hsqldb-version>
         <mariadb-version>3.5.10</mariadb-version>
@@ -248,7 +248,7 @@
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.26.6</huaweicloud-obs-version>
-        <huaweicloud-sdk-version>3.1.218</huaweicloud-sdk-version>
+        <huaweicloud-sdk-version>3.1.219</huaweicloud-sdk-version>
         <ibm-cos-sdk-version>2.15.1</ibm-cos-sdk-version>
         <ibm-secrets-manager-version>2.0.28</ibm-secrets-manager-version>
         <ibm-watson-sdk-version>16.2.0</ibm-watson-sdk-version>
@@ -301,7 +301,7 @@
         <jcache-version>1.1.1</jcache-version>
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
-        <jedis-client-version>8.0.1</jedis-client-version>
+        <jedis-client-version>8.0.2</jedis-client-version>
         <jetty-version>12.1.14</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -311,7 +311,7 @@
         <jgroups-raft-version>1.1.4.Final</jgroups-raft-version>
         <jira-rest-client-api-version>6.0.4</jira-rest-client-api-version>
         <jira-sal-api-version>7.2.1</jira-sal-api-version>
-        <jline-version>4.4.7</jline-version>
+        <jline-version>4.4.8</jline-version>
         <libthrift-version>0.25.0</libthrift-version>
         <jodatime2-version>2.15.0</jodatime2-version>
         <jolokia-version>2.6.3</jolokia-version>
@@ -349,16 +349,16 @@
         <kafka-version>4.3.1</kafka-version>
         <keycloak-client-version>26.0.12</keycloak-client-version>
         <keycloak-version>26.8.0</keycloak-version>
-        <kubernetes-client-version>7.9.0</kubernetes-client-version>
+        <kubernetes-client-version>8.0.0</kubernetes-client-version>
         <kudu-version>1.18.1</kudu-version>
         <langchain4j-version>1.22.0</langchain4j-version>
         <!-- remove this one when all langchain4j artifacts are made final -->
         <langchain4j-beta-version>1.22.0-beta32</langchain4j-beta-version> <!-- dependencies in beta version are still in tech preview mode in the Langchain4j project -->
-        <langchain4j-community-version>1.21.0-beta31</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
+        <langchain4j-community-version>1.22.0-beta32</langchain4j-community-version> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community--> <!-- version for Langchain4j community dependencies : https://github.com/langchain4j/langchain4j-community-->
         <leveldbjni-version>1.8</leveldbjni-version>
         <leveldb-api-version>0.12</leveldb-api-version>
         <leveldb-version>0.12</leveldb-version>
-        <libphonenumber-version>9.0.40</libphonenumber-version>
+        <libphonenumber-version>9.0.41</libphonenumber-version>
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.5</log4j2-version>
@@ -413,7 +413,7 @@
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.15</ognl-version>
-        <onnxruntime-version>1.30.0</onnxruntime-version>
+        <onnxruntime-version>1.31.0</onnxruntime-version>
         <opa-version>2.1.1</opa-version>
         <opa-wasm-version>1.1.0</opa-wasm-version>
         <openfeature-sdk-version>1.23.0</openfeature-sdk-version>
@@ -424,8 +424,8 @@
         <mcp-java-sdk-version>2.0.1</mcp-java-sdk-version>
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
-        <openai-java-version>4.76.0</openai-java-version>
-        <openapi-generator-version>7.25.0</openapi-generator-version>
+        <openai-java-version>4.78.0</openai-java-version>
+        <openapi-generator-version>7.26.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.9.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.10.0</opensearch-java-client-version>
@@ -442,10 +442,10 @@
         <parquet-common-version>1.18.1</parquet-common-version>
         <parquet-avro-version>1.18.1</parquet-avro-version>
         <pdfbox-version>3.0.8</pdfbox-version>
-        <pgjdbc-driver-version>42.7.13</pgjdbc-driver-version>
+        <pgjdbc-driver-version>42.7.14</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <pgvector-version>0.1.6</pgvector-version>
-        <phase2-lib-version>6.2.1</phase2-lib-version>
+        <phase2-lib-version>6.2.2</phase2-lib-version>
         <picocli-version>4.7.7</picocli-version>
         <pinecone-client-version>3.1.0</pinecone-client-version>
         <plc4x-version>0.13.1</plc4x-version>
@@ -467,7 +467,7 @@
         <qpid-proton-j-version>0.35.0</qpid-proton-j-version>
         <qpid-jms-client-version>2.11.0</qpid-jms-client-version>
         <quarkus-extension-registry-base-url>https://registry.quarkus.io</quarkus-extension-registry-base-url>
-        <quarkus-mcp-server-version>2.0.2</quarkus-mcp-server-version>
+        <quarkus-mcp-server-version>2.0.3</quarkus-mcp-server-version>
         <quarkus-version>3.40.1</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>3.0.2</quickfixj-version>
@@ -496,11 +496,12 @@
         <smack-version>4.4.8</smack-version>
         <smallrye-config-version>4.0.0</smallrye-config-version>
         <smallrye-health-version>4.3.0</smallrye-health-version>
-        <smallrye-fault-tolerance-version>6.11.4</smallrye-fault-tolerance-version>
+        <smallrye-fault-tolerance-version>7.0.0</smallrye-fault-tolerance-version>
         <smbj-version>0.15.0</smbj-version>
         <smooks-version>2.2.1</smooks-version>
         <snakeyaml-version>2.7</snakeyaml-version>
         <snakeyaml-engine-version>3.2</snakeyaml-engine-version>
+        <snappy-java-version>1.1.10.8</snappy-java-version>
         <snmp4j-version>3.13.1</snmp4j-version>
         <solr-version>10.0.0</solr-version>
         <splunk-version>1.9.5_1</splunk-version>
@@ -541,7 +542,7 @@
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.4.1</velocity-version>
-        <vertx-version>4.5.35</vertx-version>
+        <vertx-version>5.2.1</vertx-version>
         <weaviate-client-version>6.3.1</weaviate-client-version>
         <web3j-version>5.0.0</web3j-version>
         <web3j-quorum-version>4.10.0</web3j-quorum-version>
@@ -2705,6 +2706,21 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-semantic-openai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-semantic-typesafe-ai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-semantic-wolf-defender</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-servicenow</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2945,6 +2961,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-test-citrus</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-test-junit5</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3101,11 +3122,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-whatsapp</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-wolf-defender</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

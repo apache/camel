@@ -74,39 +74,33 @@ public class ListTransformer extends ProcessBaseCommand {
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject jo = (JsonObject) root.get("transformers");
-                        if (context != null && jo != null) {
-                            JsonArray array = (JsonArray) jo.get("transformers");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                row.name = context.getString("name");
-                                if ("CamelJBang".equals(row.name)) {
-                                    row.name = ProcessHelper.extractName(root, ph);
-                                }
-                                row.pid = Long.toString(ph.pid());
-                                row.dataTypeName = o.getString("name");
-                                row.dataTypeFrom = o.getString("from");
-                                row.dataTypeTo = o.getString("to");
-                                row.uptime = extractSince(ph);
-                                row.age = TimeUtils.printSince(row.uptime);
-                                rows.add(row);
-                            }
-                        }
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            JsonObject jo = (JsonObject) root.get("transformers");
+            if (context != null && jo != null) {
+                JsonArray array = (JsonArray) jo.get("transformers");
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject o = (JsonObject) array.get(i);
+                    Row row = new Row();
+                    row.name = context.getString("name");
+                    if ("CamelJBang".equals(row.name)) {
+                        row.name = ProcessHelper.extractName(root, ph);
                     }
-                });
+                    row.pid = Long.toString(ph.pid());
+                    row.dataTypeName = o.getString("name");
+                    row.dataTypeFrom = o.getString("from");
+                    row.dataTypeTo = o.getString("to");
+                    row.uptime = extractSince(ph);
+                    row.age = TimeUtils.printSince(row.uptime);
+                    rows.add(row);
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 
@@ -117,9 +111,10 @@ public class ListTransformer extends ProcessBaseCommand {
         if (jsonOutput) {
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
+                jo.put("uptime", r.uptime);
                 jo.put("dataType", r.dataTypeName);
                 jo.put("from", r.dataTypeFrom);
                 jo.put("to", r.dataTypeTo);

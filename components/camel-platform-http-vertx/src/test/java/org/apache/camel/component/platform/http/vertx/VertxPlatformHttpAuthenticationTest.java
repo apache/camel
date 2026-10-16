@@ -17,10 +17,9 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import io.restassured.RestAssured;
-import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.ext.auth.User;
-import io.vertx.ext.auth.authentication.AuthenticationProvider;
-import io.vertx.ext.auth.impl.UserImpl;
+import io.vertx.ext.auth.authentication.UsernamePasswordCredentials;
 import io.vertx.ext.auth.properties.PropertyFileAuthentication;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import org.apache.camel.CamelContext;
@@ -254,37 +253,12 @@ public class VertxPlatformHttpAuthenticationTest {
     }
 
     private AuthenticationProviderFactory createCustomProvider(String username, String pass) {
-        return vertx -> (AuthenticationProvider) (credentials, resultHandler) -> {
-            boolean usernameMatched = credentials.getString("username").equals(username);
-            boolean passwordMatched = credentials.getString("password").equals(pass);
-            if (usernameMatched && passwordMatched) {
-                AsyncResult<User> result = getUser();
-                resultHandler.handle(result);
+        return vertx -> credentials -> {
+            UsernamePasswordCredentials usernamePassword = (UsernamePasswordCredentials) credentials;
+            if (usernamePassword.getUsername().equals(username) && usernamePassword.getPassword().equals(pass)) {
+                return Future.succeededFuture(User.fromName(username));
             }
-        };
-    }
-
-    private AsyncResult<User> getUser() {
-        return new AsyncResult<>() {
-            @Override
-            public User result() {
-                return new UserImpl();
-            }
-
-            @Override
-            public Throwable cause() {
-                return null;
-            }
-
-            @Override
-            public boolean succeeded() {
-                return true;
-            }
-
-            @Override
-            public boolean failed() {
-                return false;
-            }
+            return Future.failedFuture("Invalid username or password");
         };
     }
 

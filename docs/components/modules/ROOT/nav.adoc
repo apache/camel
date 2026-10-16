@@ -109,6 +109,7 @@
 ** xref:camunda-component.adoc[Camunda]
 ** xref:cql-component.adoc[Cassandra CQL]
 ** xref:chunk-component.adoc[Chunk]
+** xref:citrus-component.adoc[Citrus]
 ** xref:class-component.adoc[Class]
 ** xref:clickhouse-component.adoc[ClickHouse]
 ** xref:clickup-component.adoc[ClickUp]

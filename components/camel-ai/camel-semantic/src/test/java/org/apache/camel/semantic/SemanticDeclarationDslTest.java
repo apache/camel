@@ -71,7 +71,6 @@ class SemanticDeclarationDslTest {
                 });
             }
         });
-        ((SemanticLanguage) context.resolveLanguage("semantic")).setAdapter("adapter");
         context.start();
     }
 
@@ -81,12 +80,12 @@ class SemanticDeclarationDslTest {
     }
 
     private static void evaluations(SemanticEvaluationsBuilder semantic) {
-        semantic.evaluation("urgent").type("boolean").instructions("Is this urgent?")
+        semantic.evaluation("urgent").expert("adapter").type("boolean").instructions("Is this urgent?")
                 .state("${header.myState}").threshold(0.8).uncertainty(0.1).uncertaintyPolicy("non-match");
-        semantic.evaluation("department").type("choice").instructions("Which department?")
+        semantic.evaluation("department").expert("adapter").type("choice").instructions("Which department?")
                 .state("${header.myState}").criterion("billing", "Invoices and refunds")
                 .criterion("technical", "Bugs and outages");
-        semantic.evaluation("priority").type("score").instructions("How urgent?")
+        semantic.evaluation("priority").expert("adapter").type("score").instructions("How urgent?")
                 .state("${header.myState}").level("Routine").level("Urgent").level("Critical");
         semantic.register();
     }
@@ -94,16 +93,16 @@ class SemanticDeclarationDslTest {
     private static String xmlEvaluations() {
         return """
                 <semantic>
-                  <evaluation name="urgent" type="boolean" state="${header.myState}"
+                  <evaluation expert="adapter" name="urgent" type="boolean" state="${header.myState}"
                             threshold="0.8" uncertainty="0.1" uncertaintyPolicy="non-match">
                     <instructions>Is this urgent?</instructions>
                   </evaluation>
-                  <evaluation name="department" type="choice" state="${header.myState}">
+                  <evaluation expert="adapter" name="department" type="choice" state="${header.myState}">
                     <instructions>Which department?</instructions>
                     <criterion key="billing" value="Invoices and refunds"/>
                     <criterion key="technical" value="Bugs and outages"/>
                   </evaluation>
-                  <evaluation name="priority" type="score" state="${header.myState}">
+                  <evaluation expert="adapter" name="priority" type="score" state="${header.myState}">
                     <instructions>How urgent?</instructions>
                     <level>Routine</level><level>Urgent</level><level>Critical</level>
                   </evaluation>
@@ -198,7 +197,8 @@ class SemanticDeclarationDslTest {
     }
 
     static Stream<Arguments> invalidXml() {
-        String evaluation = "<evaluation name=\"q\" type=\"boolean\"><instructions>Valid?</instructions></evaluation>";
+        String evaluation
+                = "<evaluation expert=\"adapter\" name=\"q\" type=\"boolean\"><instructions>Valid?</instructions></evaluation>";
         return Stream.of(
                 Arguments.of(evaluation + evaluation, "Duplicate semantic evaluation"),
                 Arguments.of(evaluation.replace("name=\"q\"", "name=\" \""), "nonblank name"),
@@ -236,7 +236,8 @@ class SemanticDeclarationDslTest {
             @Override
             public void configure() {
                 if (name != null) {
-                    semanticEvaluations(this).evaluation(name).type("boolean").instructions("Valid?").register();
+                    semanticEvaluations(this).evaluation(name).expert("adapter").type("boolean").instructions("Valid?")
+                            .register();
                 }
             }
         }
@@ -261,7 +262,8 @@ class SemanticDeclarationDslTest {
             @Override
             public void configure() {
                 if (name != null) {
-                    semanticEvaluations(this).evaluation(name).type("boolean").instructions("Valid?").register();
+                    semanticEvaluations(this).evaluation(name).expert("adapter").type("boolean").instructions("Valid?")
+                            .register();
                 }
             }
         }
@@ -280,7 +282,8 @@ class SemanticDeclarationDslTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                semanticEvaluations(this).evaluation("urgent").type("BOOLEAN").instructions("Urgent?").uncertaintyPolicy(policy)
+                semanticEvaluations(this).evaluation("urgent").expert("adapter").type("BOOLEAN").instructions("Urgent?")
+                        .uncertaintyPolicy(policy)
                         .register();
             }
         });
@@ -308,7 +311,7 @@ class SemanticDeclarationDslTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticEvaluations(this).evaluation("urgent").type("boolean").instructions("Urgent?")
+                    semanticEvaluations(this).evaluation("urgent").expert("adapter").type("boolean").instructions("Urgent?")
                             .threshold("{{threshold:0.8}}").uncertainty("{{uncertainty:0.1}}").register();
                 }
             });
@@ -320,7 +323,7 @@ class SemanticDeclarationDslTest {
         assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("threshold")).isEqualTo(0.8);
         assertThat(SemanticEvaluations.get(context).get("urgent").getParameters().get("uncertainty")).isEqualTo(0.1);
         assertThatThrownBy(() -> load("invalid.xml", document("routes", """
-                <semantic><evaluation name="invalid" type="boolean" threshold="{{threshold:abc}}">
+                <semantic><evaluation expert="adapter" name="invalid" type="boolean" threshold="{{threshold:abc}}">
                   <instructions>Urgent?</instructions>
                 </evaluation></semantic>
                 """)))
@@ -330,7 +333,7 @@ class SemanticDeclarationDslTest {
 
     @Test
     void failedResourceBatchDoesNotReuseEarlierCachedDeclarationsOnRetry() throws Exception {
-        String second = "<semantic><evaluation name=\"second\" type=\"boolean\">"
+        String second = "<semantic><evaluation expert=\"adapter\" name=\"second\" type=\"boolean\">"
                         + "<instructions>Valid?</instructions></evaluation></semantic>";
         var loader = PluginHelper.getRoutesLoader(context);
         assertThatThrownBy(() -> loader.loadRoutes(List.of(
@@ -431,8 +434,9 @@ class SemanticDeclarationDslTest {
 
             @Override
             public void configure() {
-                semanticEvaluations(this).evaluation("urgent").type("boolean").instructions(instructions).end()
-                        .evaluation("other").type("boolean").instructions("Other?").register();
+                semanticEvaluations(this).evaluation("urgent").expert("adapter").type("boolean").instructions(instructions)
+                        .end()
+                        .evaluation("other").expert("adapter").type("boolean").instructions("Other?").register();
             }
         }
         context.addRoutes(new Evaluations("Urgent?"));
@@ -447,9 +451,9 @@ class SemanticDeclarationDslTest {
     @ValueSource(strings = {
             "<routes><semantic/><semantic/></routes>",
             "<routes><semantic xmlns='urn:unexpected'/></routes>",
-            "<semantic><evaluation name='q' type='boolean'><instructions>Hi</instructions><unexpected/></evaluation></semantic>",
+            "<semantic><evaluation expert='adapter' name='q' type='boolean'><instructions>Hi</instructions><unexpected/></evaluation></semantic>",
             "<!DOCTYPE semantic [<!ENTITY external SYSTEM 'file:///nonexistent'>]><semantic>&external;</semantic>",
-            "<routes><semantic><evaluation name='q' type='boolean'><instructions>Hi</instructions></evaluation></semantic><route><wrong/></route></routes>"
+            "<routes><semantic><evaluation expert='adapter' name='q' type='boolean'><instructions>Hi</instructions></evaluation></semantic><route><wrong/></route></routes>"
     })
     void malformedXmlDoesNotReplacePreviousDefinitions(String xml) throws Exception {
         load("evaluations.xml", xmlEvaluations());
@@ -468,7 +472,8 @@ class SemanticDeclarationDslTest {
             RouteBuilder builder = new RouteBuilder() {
                 @Override
                 public void configure() {
-                    semanticEvaluations(this).evaluation("urgent").type("boolean").instructions("Urgent?").register();
+                    semanticEvaluations(this).evaluation("urgent").expert("adapter").type("boolean").instructions("Urgent?")
+                            .register();
                 }
             };
             builder.setResource(resource);

@@ -19,6 +19,7 @@ package org.apache.camel.component.vertx.websocket;
 import java.net.URI;
 import java.util.Map;
 
+import io.vertx.core.http.HttpClosedException;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -26,6 +27,15 @@ public final class VertxWebsocketHelper {
 
     private VertxWebsocketHelper() {
         // Utility class
+    }
+
+    /**
+     * Whether the given exception reports a WebSocket connection that was closed without a close frame. Such a close is
+     * reported by the close handler, so the exception carries no further information. A close caused by an HTTP/2
+     * GOAWAY is not included, as its error code is worth reporting.
+     */
+    public static boolean isConnectionClosed(Throwable exception) {
+        return exception instanceof HttpClosedException closed && closed.goAway() == null;
     }
 
     /**

@@ -469,17 +469,16 @@ class SourceTab extends AbstractTab {
         }
         if (focusOnViewer && sourceViewer.isVisible()) {
             sourceViewer.renderFooter(spans);
-            if (!sourceViewer.isEditMode()) {
+            // also after a jump, which moves the focus to the viewer; not while a term is typed into find or
+            // highlight, as the footer is then that field with its keys
+            if (!sourceViewer.isEditMode() && !sourceViewer.isTextInputActive()) {
                 TuiHelper.hint(spans, "Tab", "files");
-                // also after a jump, which moves the focus to the viewer; not while g is typed into search
-                if (!sourceViewer.isTextInputActive()) {
-                    if (!routeIndex.isEmpty()) {
-                        TuiHelper.hint(spans, "g", "go to route");
-                    }
-                    TuiHelper.hint(spans, "Ctrl+G", "go to");
-                    if (endpointOnSelectedLine() != null) {
-                        TuiHelper.hint(spans, "u", "usages");
-                    }
+                if (!routeIndex.isEmpty()) {
+                    TuiHelper.hint(spans, "g", "go to route");
+                }
+                TuiHelper.hint(spans, "Ctrl+G", "go to");
+                if (endpointOnSelectedLine() != null) {
+                    TuiHelper.hint(spans, "u", "usages");
                 }
             }
         } else {

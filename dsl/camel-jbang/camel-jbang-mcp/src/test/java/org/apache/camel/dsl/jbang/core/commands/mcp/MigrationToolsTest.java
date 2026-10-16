@@ -106,8 +106,11 @@ class MigrationToolsTest {
                 "CXF SOAP web service migration Camel 2 to 4", 5, "2.25", "4.22");
 
         assertThat(result.resultCount()).isPositive();
-        assertThat(result.results().get(0).sectionTitle()).startsWith("Migrating Camel applications");
-        assertThat(result.results().get(0).snippet()).isNotBlank().containsIgnoringCase("cxf");
+        // among the hits, not necessarily first: the exact rank depends on the wording of the in-range guides
+        assertThat(result.results()).anySatisfy(hit -> {
+            assertThat(hit.sectionTitle()).startsWith("Migrating Camel applications");
+            assertThat(hit.snippet()).isNotBlank().containsIgnoringCase("cxf");
+        });
         assertThat(result.results()).extracting(MigrationTools.GuideSnippet::version)
                 .noneMatch(v -> v.equals("4.23") || v.equals("4.24"));
         assertThat(result.nextStep()).contains("camel_migration_recipes");

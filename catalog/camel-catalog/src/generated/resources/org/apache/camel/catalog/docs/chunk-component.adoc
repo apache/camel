@@ -261,3 +261,30 @@ Thanks for the order of {$headers.item}.
 Regards Camel Riders Bookstore
 {$body}
 ----------------------------------------------
+
+== Security
+
+The Chunk engine renders the template provided by the route author. Message data (the body, headers and
+variables) that is printed with a direct tag such as `{$body}` or `{$headers.name}` is rendered literally, so
+template tags that appear inside that data are printed verbatim and not evaluated.
+
+Chunk does, however, re-parse any string it produces while rendering. The output of a filter (`{$body|trim}`),
+a string property of a bean body (`{$body.name}`, `{$exception.message}`) and string items bound by a
+`{% loop %}` are parsed as template code. Do not pass untrusted message data through Chunk filters, bean
+properties or loops, and do not enable `allowTemplateFromHeader` for messages from untrusted senders.
+
+Chunk has no escape for tags that appear inside data, so if untrusted data must go through one of those paths,
+remove the `{` and `}` characters from it in the route before the `chunk` endpoint, for example:
+
+[source,java]
+----
+from("direct:start")
+    // strip Chunk tag delimiters from the untrusted body before templating
+    .process(e -> {
+        String body = e.getMessage().getBody(String.class);
+        if (body != null) {
+            e.getMessage().setBody(body.replace("{", "").replace("}", ""));
+        }
+    })
+    .to("chunk:mytemplate");
+----

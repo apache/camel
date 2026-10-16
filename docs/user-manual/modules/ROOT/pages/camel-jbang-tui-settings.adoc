@@ -80,7 +80,8 @@ so on -- without leaving the dashboard, and the tabs keep updating while the com
 and *↑*/*↓* to recall earlier commands (see <<_input_history>>).
 
 The shell and the AI prompt panel (*F8*) share the same space: opening one closes the other. Both
-open at the bottom by default; see *Panel Position* in <<_settings>>.
+open at the bottom by default; see *Panel Position* in <<_settings>>, and <<_panel_theme>> to draw
+them in a theme of their own.
 
 == Theme
 
@@ -118,6 +119,23 @@ the bright glow, comments in the darker half intensity green.
 
 Your choice is remembered: it is saved as `camel.tui.theme` in `.camel-cli.properties`
 and restored the next time you open the TUI.
+
+=== Panel theme
+
+The shell (*F6*) and AI (*F8*) panels can be drawn in a theme of their own, so they stand apart
+from the tab underneath. Set *Panel Theme* in <<_settings>>, which previews each theme as you cycle
+through them, or pass `--panel-theme=<name>` on the command line. Everything inside the panel takes
+that theme: its frame, the text, the AI answers and their code blocks. The tabs, the footer and the
+dialogs that open over the screen keep the main theme, and programs run in the shell keep their own
+colors.
+
+A light panel on a dark theme stands out the most, for example Dark with a Light panel. Two dark
+themes are calmer: the panel then differs by its accent color and background, as with Dark and Tokyo
+Night. The choice is saved as `camel.tui.panelTheme`; `--panel-theme=same` draws the panels in the
+main theme for one session.
+
+.Dark with a Light panel theme: the AI panel stands apart from the *Overview* tab
+image::jbang/camel-tui-panel-theme.png[The Overview tab in the Dark theme with the AI panel below it in the Light theme]
 
 === Theme examples
 
@@ -172,6 +190,11 @@ setting can also be written there by hand:
 | Whether those panels push the tab content aside (`move`) or are drawn on top of it (`overlay`),
   so the tab keeps its full height underneath.
 | `move`
+
+| Panel Theme | `camel.tui.panelTheme`
+| The theme those panels are drawn with, so they stand apart from the tabs: any of the 21 themes,
+  or the main theme. See <<_panel_theme>>.
+| same as Theme
 
 | Confirm Actions | `camel.tui.confirmActions`
 | Whether destructive actions (quit, stop, restart, stop/start routes) show a confirmation dialog

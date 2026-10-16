@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -69,6 +70,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     private final Lock consumerLock = new ReentrantLock();
     private Set<MessageConsumer> consumers;
     private Set<Session> sessions;
+    // the number of onException calls: a connection recovery compares it before and after its attempt, as an
+    // onException that comes before the consumers of the new connection are created finds none to drop
+    private final AtomicLong connectionFailures = new AtomicLong();
     private ScheduledExecutorService recoverPool;
     private BackgroundTask recoverTask;
     private Future<?> recoverFuture;
@@ -180,6 +184,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     @Override
     public void onException(JMSException exception) {
+        connectionFailures.incrementAndGet();
         if (exceptionListener != null) {
             try {
                 exceptionListener.onException(exception);
@@ -208,13 +213,17 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     protected boolean recoverConnection(BackgroundTask task) {
         LOG.debug("Recovering from JMS Connection exception (attempt: {})", task.iteration());
         try {
-            refreshConnection();
+            long failures = refreshConnectionAndCountFailures();
             initConsumers();
             connectionLock.lock();
             try {
-                if (consumers == null) {
-                    // the new connection failed while its consumers were created: onException dropped them, and
-                    // did not schedule another recovery as this one is running. So this one has to try again
+                if (consumers == null || connectionFailures.get() != failures) {
+                    // the new connection failed during this attempt: onException dropped its consumers while they
+                    // were created, or it came before and found none to drop (then the consumers on the failed
+                    // connection are dropped here). onException did not schedule another recovery as this one is
+                    // running. So this one has to try again
+                    this.sessions = null;
+                    this.consumers = null;
                     LOG.debug("JMS Connection failed again during recovery (attempt: {}). Will try again in {} millis",
                             task.iteration(), endpoint.getRecoveryInterval());
                     return false;
@@ -455,14 +464,27 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     }
 
     protected final void refreshConnection() throws Exception {
+        refreshConnectionAndCountFailures();
+    }
+
+    /**
+     * Closes the connection and creates a new one, which is started if the container is started.
+     *
+     * @return the number of connection failures (onException calls) before the new connection was created, so a failure
+     *         that is counted later may be one of the new connection
+     */
+    private long refreshConnectionAndCountFailures() throws Exception {
         connectionLock.lock();
         try {
             closeConnection(connection);
             this.connection = null;
+            // read after the old connection is closed and before the new one has this container as exception listener
+            long failures = connectionFailures.get();
             createConnection();
             if (this.connectionStarted) {
                 startConnection();
             }
+            return failures;
         } finally {
             connectionLock.unlock();
         }

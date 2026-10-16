@@ -24,7 +24,8 @@ import picocli.CommandLine;
                      description = "Stop Camel routes", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd stop-route myRoute" })
+                             "  camel cmd stop-route --id=myRoute",
+                             "  camel cmd stop-route myApp --id=myRoute" })
 public class CamelRouteStopAction extends CamelRouteAction {
 
     public CamelRouteStopAction(CamelJBangMain main) {

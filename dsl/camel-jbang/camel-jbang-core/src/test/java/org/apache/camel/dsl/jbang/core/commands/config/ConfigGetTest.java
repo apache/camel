@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.config;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,8 +32,9 @@ class ConfigGetTest extends BaseConfigTestSupport {
 
         ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
         command.key = "foo";
-        command.doCall();
+        int exit = command.doCall();
 
+        Assertions.assertEquals(0, exit);
         Assertions.assertEquals("bar", printer.getOutput());
     }
 
@@ -41,9 +44,24 @@ class ConfigGetTest extends BaseConfigTestSupport {
 
         ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
         command.key = "foo";
-        command.doCall();
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
 
-        Assertions.assertEquals("ERROR: foo key not found", printer.getOutput());
+        Assertions.assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        Assertions.assertEquals("foo key not found", e.getMessage());
+        Assertions.assertEquals("", printer.getOutput());
+    }
+
+    @Test
+    public void shouldGetConfigAsJson() throws Exception {
+        UserConfigHelper.createUserConfig("foo=bar");
+
+        ConfigGet command = new ConfigGet(new CamelJBangMain().withPrinter(printer));
+        command.key = "foo";
+        command.jsonOutput = true;
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Assertions.assertEquals("{\"key\":\"foo\",\"value\":\"bar\"}", printer.getOutput());
     }
 
     @Test

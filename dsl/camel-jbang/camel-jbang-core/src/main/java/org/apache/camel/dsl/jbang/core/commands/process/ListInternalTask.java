@@ -59,64 +59,61 @@ public class ListInternalTask extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("internal-tasks");
-                        if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("tasks");
-                            for (int i = 0; i < arr.size(); i++) {
-                                jo = (JsonObject) arr.get(i);
-                                row = row.copy();
-                                row.task = jo.getString("name");
-                                row.status = jo.getString("status");
-                                row.attempts = jo.getLong("attempts");
-                                row.delay = jo.getLong("delay");
-                                row.elapsed = jo.getLong("elapsed");
-                                row.firstTime = jo.getLong("firstTime");
-                                row.lastTime = jo.getLong("lastTime");
-                                row.nextTime = jo.getLong("nextTime");
-                                row.error = jo.getString("error");
-                                rows.add(row);
-                            }
-                        }
-                    }
-                });
+            JsonObject jo = (JsonObject) root.get("internal-tasks");
+            if (jo != null) {
+                JsonArray arr = (JsonArray) jo.get("tasks");
+                for (int i = 0; i < arr.size(); i++) {
+                    jo = (JsonObject) arr.get(i);
+                    row = row.copy();
+                    row.task = jo.getString("name");
+                    row.status = jo.getString("status");
+                    row.attempts = jo.getLong("attempts");
+                    row.delay = jo.getLong("delay");
+                    row.elapsed = jo.getLong("elapsed");
+                    row.firstTime = jo.getLong("firstTime");
+                    row.lastTime = jo.getLong("lastTime");
+                    row.nextTime = jo.getLong("nextTime");
+                    row.error = jo.getString("error");
+                    rows.add(row);
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("task", r.task);
                     jo.put("status", r.status);
                     jo.put("attempts", r.attempts);
                     jo.put("delay", r.delay);
-                    jo.put("elapsed", getElapsed(r));
+                    jo.put("elapsed", r.elapsed);
                     jo.put("first", getFirst(r));
+                    jo.put("firstTimestamp", r.firstTime > 0 ? r.firstTime : null);
                     jo.put("last", getLast(r));
+                    jo.put("lastTimestamp", r.lastTime > 0 ? r.lastTime : null);
                     jo.put("next", getNext(r));
+                    jo.put("nextTimestamp", r.nextTime > 0 ? r.nextTime : null);
                     jo.put("failure", r.error);
                     return jo;
                 }).collect(Collectors.toList())));

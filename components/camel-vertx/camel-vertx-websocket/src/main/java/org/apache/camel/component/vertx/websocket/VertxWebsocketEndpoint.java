@@ -191,6 +191,19 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         this.handlerOwner = consumer;
     }
 
+    /**
+     * Closes the given WebSocket, and makes the next {@link #getWebSocket()} connect again instead of returning it. A
+     * WebSocket only reports itself as closed once the closing handshake with the server is done. The caller must hold
+     * {@link #clientConsumerConnectLock}.
+     */
+    void discardWebSocket(WebSocket discarded) {
+        if (webSocket == discarded) {
+            webSocket = null;
+            handlerOwner = null;
+        }
+        discarded.close();
+    }
+
     protected WebSocket getWebSocket() throws Exception {
         return getWebSocket((java.util.function.Consumer<WebSocket>) null);
     }
@@ -276,7 +289,13 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
     }
 
     protected WebSocket getWebSocket(Exchange exchange) throws Exception {
-        return getWebSocket().exceptionHandler(event -> exchange.setException(event.getCause()));
+        // The handler stays on the WebSocket after the exchange is done. A lost connection is not set on the exchange: a
+        // closed WebSocket is replaced by a new connection on the next send, and a write in flight fails through its result
+        return getWebSocket().exceptionHandler(exception -> {
+            if (!VertxWebsocketHelper.isConnectionClosed(exception)) {
+                exchange.setException(exception);
+            }
+        });
     }
 
     protected WebSocketConnectOptions getWebSocketConnectOptions(WebSocketClientOptions options) {

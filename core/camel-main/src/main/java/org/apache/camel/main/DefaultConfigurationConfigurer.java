@@ -306,6 +306,9 @@ public final class DefaultConfigurationConfigurer {
                     config.getRoutesReloadDirectory(), config.isRoutesReloadDirectoryRecursive());
             reloader.setPattern(config.getRoutesReloadPattern());
             reloader.setRemoveAllRoutes(config.isRoutesReloadRemoveAllRoutes());
+            if (config.getRoutesReloadInterval() > 0) {
+                reloader.setPollTimeout(config.getRoutesReloadInterval());
+            }
             // the files that declare beans, so a bean is created again when its Java class changes
             reloader.setBeanResources(() -> {
                 Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);

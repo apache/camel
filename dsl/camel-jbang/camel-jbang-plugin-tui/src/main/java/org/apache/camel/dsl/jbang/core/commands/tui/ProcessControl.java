@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.io.File;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +52,7 @@ class ProcessControl {
     /**
      * @param tuiRunner     the runner of the TUI while it runs, which a restart tells how it went; null before and
      *                      after
-     * @param launchManager where a restarted Spring Boot or Quarkus integration is shown while it starts
+     * @param launchManager where a restarted integration is watched while it starts
      * @param notification  shows a notification: the message, and whether it is an error
      */
     ProcessControl(MonitorContext ctx, DataRefreshService dataService, Supplier<TuiRunner> tuiRunner,
@@ -269,10 +268,12 @@ class ProcessControl {
                         pb.directory(new File(directory));
                     }
                     pb.redirectErrorStream(true);
-                    Path outputFile = Files.createTempFile("camel-restart-", ".log");
+                    Path outputFile = LaunchManager.createSecureTempFile("camel-restart-", ".log");
                     outputFile.toFile().deleteOnExit();
                     pb.redirectOutput(outputFile.toFile());
-                    pb.start();
+                    Process process = pb.start();
+                    // watched like a launch: a restart that fails to start shows why, and quitting the TUI stops it
+                    launchManager.addPendingLaunch(name, process, outputFile);
 
                     runner.runOnRenderThread(() -> notification.accept("Restarted: " + name, false));
                 } catch (Exception e) {

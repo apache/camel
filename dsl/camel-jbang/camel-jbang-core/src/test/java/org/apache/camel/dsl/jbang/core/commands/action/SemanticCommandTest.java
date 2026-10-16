@@ -29,6 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -58,6 +59,108 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SemanticCommandTest {
+    @Test
+    void imageFileBodyIsSentAsExplicitMedia() throws Exception {
+        Path image = home.resolve("input.png");
+        Files.write(image, new byte[] { 1, 2, 3 });
+        assertEquals(0, respondImage(new SemanticEvaluate(main()), request -> {
+            assertEquals(Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID"))),
+                    request.get("body"));
+            return jsonUnchecked("{\"status\":\"success\",\"value\":true}");
+        }, 10_000_000, "--evaluation=inspect", "--body=image:" + image));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void expertImageLimitRejectsBeforeSendingAnEvaluation(boolean named) throws Exception {
+        Path image = home.resolve("large.png");
+        Files.write(image, new byte[] { 1, 2, 3 });
+        String[] args = named
+                ? new String[] { "--evaluation=inspect", "--body=image:" + image, "--json" }
+                : new String[] { "--expert=inspector", "--operation=boolean", "--input=image:" + image, "--json" };
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Oversized image must not reach evaluation");
+        }, 2, args));
+        assertError(2, "expert maxImageBytes limit of 2 bytes");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "data:image/png;base64,AQID", "AQID",
+            "json:{\"$semanticInput\":[{\"type\":\"image\",\"data\":\"data:image/png;base64,AQID\"}]}" })
+    void expertLimitAlsoRejectsInlineImageBodies(String body) throws Exception {
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Oversized image must not reach evaluation");
+        }, 2, "--evaluation=inspect", "--body=" + body, "--header=content-type=image/png", "--json"));
+        assertError(2, "expert maxImageBytes limit of 2 bytes");
+    }
+
+    @Test
+    void missingExpertImageLimitRejectsWithoutOpeningTheFile() throws Exception {
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Unbounded image must not reach evaluation");
+        }, 0, "--expert=inspector", "--operation=boolean", "--input=image:" + home.resolve("missing.png"), "--json"));
+        assertError(2, "positive maxImageBytes");
+    }
+
+    private int respondImage(
+            SemanticActionCommand command, Function<JsonObject, JsonObject> response, int maxBytes,
+            String... options)
+            throws Exception {
+        return respond(command, request -> {
+            if ("semantic-metadata".equals(request.getString("action"))) {
+                return new JsonObject(
+                        Map.of("experts", List.of(Map.of("reference", "inspector", "operations", List.of(
+                                Map.of("name", "boolean", "contract",
+                                        Map.of("inputTypes", List.of("image"), "maxImageBytes", maxBytes))))),
+                                "evaluations",
+                                List.of(Map.of("name", "inspect", "expert", "inspector", "operation", "boolean"))));
+            }
+            return response.apply(request);
+        }, options);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void imageAuditDisplaysTypeWithoutPrintingPayload(boolean json) throws Exception {
+        var response = new JsonObject(
+                Map.of("record", new JsonObject(
+                        Map.of("eventId", "image-event", "inputType", "image",
+                                "input", Map.of("$semanticInput",
+                                        List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")))))));
+        assertEquals(0, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--json=" + json));
+        if (json) {
+            Map<?, ?> input = (Map<?, ?>) json(printer.getOutput()).getMap("record").get("input");
+            List<?> parts = (List<?>) input.get("$semanticInput");
+            assertEquals("image/png", ((Map<?, ?>) parts.get(0)).get("mediaType"));
+        } else {
+            assertTrue(printer.getOutput().contains("image/png"));
+        }
+        assertFalse(printer.getOutput().contains("base64"));
+        if (!json) {
+            assertTrue(printer.getOutput().contains("Input type: Image"));
+            assertTrue(printer.getOutput().contains("preview unavailable"));
+        }
+    }
+
+    @Test
+    void explicitFileExportPreservesCapturedImageAndNeverOverwrites() throws Exception {
+        Path target = home.resolve("audit.json");
+        var response = new JsonObject(
+                Map.of("record", new JsonObject(
+                        Map.of("eventId", "image-event", "inputType", "image",
+                                "input", Map.of("$semanticInput",
+                                        List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")))))));
+        assertEquals(0, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--output=" + target));
+        assertEquals(response, json(Files.readString(target)));
+        assertFalse(printer.getOutput().contains("base64"));
+        assertEquals(1, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--output=" + target));
+        assertTrue(errors.toString().contains("file already exists"));
+        assertEquals(response, json(Files.readString(target)));
+    }
 
     @TempDir
     Path home;
@@ -90,8 +193,7 @@ class SemanticCommandTest {
                 {"evaluations":[{"name":"safe","expert":"guard","operation":"detect",
                 "state":"${body}","resultType":"boolean","error":"definition error"}],
                 "experts":[{"reference":"guard","name":"Safety guard","error":"expert error"},
-                {"reference":"classifier","name":"Classifier"}],
-                "defaultError":"Semantic language requires exactly one eligible expert"}
+                {"reference":"classifier","name":"Classifier"}]}
                 """);
         AtomicReference<JsonObject> request = new AtomicReference<>();
         assertEquals(0, respond(new CamelSemantic(main()), r -> {
@@ -107,52 +209,13 @@ class SemanticCommandTest {
         assertTrue(printer.getOutput().contains("Safety guard"));
         assertTrue(printer.getOutput().contains("expert error"));
         assertTrue(printer.getOutput().contains("Classifier"));
-        assertTrue(printer.getOutput().contains("Default expert: none"));
-        assertFalse(printer.getOutput().contains("Default expert error:"));
-        assertFalse(printer.getOutput().contains("requires exactly one eligible expert"));
-        assertEquals("", errors.toString());
-    }
-
-    @Test
-    void listsExpertsUsingTheStructuredDefaultSelectionCode() throws Exception {
-        JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
-        response.put("defaultErrorCode", "no_unique_expert");
-        response.put("defaultError", "Automatic expert selection is unavailable");
-        assertEquals(0, respond(new CamelSemantic(main()), r -> response));
-        assertTrue(printer.getOutput().contains("Default expert: none"));
-        assertFalse(printer.getOutput().contains("Default expert error:"), printer.getOutput());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "default_expert_error", "future_error_code" })
-    void structuredDefaultErrorsTakePrecedenceOverLegacyMessageMatching(String code) throws Exception {
-        JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
-        String message = "Semantic language requires exactly one eligible expert";
-        response.put("defaultErrorCode", code);
-        response.put("defaultError", message);
-        assertEquals(0, respond(new CamelSemantic(main()), r -> response));
-        assertTrue(printer.getOutput().contains("Default expert error: " + message), printer.getOutput());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "Unknown expert or bean does not implement SemanticAdapter: missing",
-            "Semantic expert must declare operations",
-            "Cannot read the semantic adapter descriptor" })
-    void listsExpertsWithoutHidingDefaultConfigurationOrContractErrors(String defaultError) throws Exception {
-        JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
-        response.put("defaultError", defaultError);
-        assertEquals(0, respond(new CamelSemantic(main()), r -> response));
-        assertTrue(printer.getOutput().contains("Experts:"));
-        assertTrue(printer.getOutput().contains("Default expert error: " + defaultError), printer.getOutput());
+        assertFalse(printer.getOutput().contains("Default expert"));
         assertEquals("", errors.toString());
     }
 
     @Test
     void emitsMetadataAsOneJsonDocumentIncludingEmptyLists() throws Exception {
         JsonObject response = json("{\"evaluations\":[],\"experts\":[]}");
-        response.put("defaultErrorCode", "default_expert_error");
-        response.put("defaultError", "Unknown expert or bean does not implement SemanticAdapter: missing");
         assertEquals(0, respond(new CamelSemantic(main()), r -> response, "--json"));
         assertEquals(response, json(printer.getOutput()));
         assertEquals("", errors.toString());
@@ -321,9 +384,9 @@ class SemanticCommandTest {
     void timeoutCleansRequestAndIgnoresLegacyReply() throws Exception {
         Files.writeString(CommandLineHelper.getCamelDir().resolve(pid + "-output.json"),
                 "{\"status\":\"success\",\"value\":true}");
-        assertEquals(4, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe",
+        assertEquals(124, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe",
                 "--timeout=150", "--json"));
-        assertError(4, "No reply");
+        assertError(124, "No reply");
         assertTrue(actionFiles().isEmpty());
     }
 
@@ -482,7 +545,7 @@ class SemanticCommandTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "4.23.0", "4.23.0-SNAPSHOT", "4.23.0.redhat-00001", "4.24.0", "5.0.0", "unknown" })
+    @ValueSource(strings = { "4.23.0", "4.24.0-SNAPSHOT", "4.23.0.redhat-00001", "4.24.0", "5.0.0", "unknown" })
     void acceptsSupportedOrUnknownRuntimeVersions(String version) throws Exception {
         writeVersion(version);
         assertEquals(0, respond(new CamelSemantic(main()), r -> jsonUnchecked("{\"evaluations\":[]}"), "--json"));
@@ -535,25 +598,69 @@ class SemanticCommandTest {
     }
 
     @Test
-    void auditTableIncludesEventIdentityAndKeepsDecisionsSeparateFromEvaluationStatus() throws Exception {
+    void monitoringPreservesProducerOwnedValuesAndOnlySendsReadOptions() throws Exception {
+        assertEquals(0, respond(new SemanticMonitoring(main()), request -> {
+            assertEquals("semantic-monitoring", request.get("action"));
+            assertFalse(request.containsKey("history"));
+            assertEquals("domainMetrics", request.get("source"));
+            return jsonUnchecked("""
+                    {"scope":"latest runtime measurements","snapshots":[{"name":"Case volume","source":"domain",
+                    "meaning":"Supplied population","unit":"requests","kind":"counter","values":{"count":9}}]}
+                    """);
+        }, "--source=domainMetrics"));
+        for (String value : List.of("Case volume", "Supplied population", "requests", "9")) {
+            assertTrue(printer.getOutput().contains(value), printer.getOutput());
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void monitoringRejectsRemovedTimeFilterAsAUsageErrorWithoutSendingARequest(boolean jsonOutput) throws Exception {
+        assertEquals(2, command(new SemanticMonitoring(main())).execute(Long.toString(pid), "--since=yesterday",
+                "--json=" + jsonOutput));
+        assertTrue(errors.toString().contains("--since"), errors.toString());
+        assertFalse(errors.toString().contains("DateTimeParseException"), errors.toString());
+        assertFalse(errors.toString().contains("\tat "), errors.toString());
+        assertTrue(actionFiles().isEmpty());
+        if (jsonOutput) {
+            assertError(2, "--since");
+        } else {
+            assertEquals("", printer.getOutput());
+        }
+    }
+
+    @Test
+    void caseAndBulkExportAreBoundedWithoutChangingInputPolicy() throws Exception {
+        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+            assertEquals("anchor", request.get("caseEventId"));
+            assertEquals(150L, request.getLong("maxRecords"));
+            assertEquals(false, request.get("includeInput"));
+            return jsonUnchecked("{\"records\":[],\"relationshipCompleteness\":\"unknown\",\"retrievalLimited\":true}");
+        }, "--case-event-id=anchor", "--max-records=150"));
+    }
+
+    @Test
+    void auditTableKeepsTypedResultsSeparateFromExecution() throws Exception {
         assertEquals(0, respond(new SemanticAudit(main()), request -> {
             assertEquals("semantic-audit", request.get("action"));
             assertEquals(50L, request.getLong("limit"));
             assertEquals(2, request.size());
-            return jsonUnchecked("""
-                    {"audit":{"reader":"memory","enabled":false,"decisionsEnabled":true,
-                      "retained":9,"capacity":1000,"dropped":2,"sinkErrors":{"memory":0,"log":3},"observerErrors":1},
-                     "records":[{"eventId":"decision-1","timestamp":"2026-10-10T08:00:00Z",
-                       "category":"decision","action":"block","operation":"tools/call","target":"support-request",
-                       "namespace":"test","reasonCode":"policy_denied","correlationId":"application-request",
-                       "breadcrumbId":"breadcrumb-123"},
-                       {"eventId":"evaluation-1","timestamp":"2026-10-10T07:59:59Z","category":"evaluation",
-                        "expert":"guard","status":"success","result":{"value":false}}],
-                     "nextCursor":"opaque:cursor","evicted":7,"cursorExpired":false}
-                    """);
+            return jsonUnchecked(
+                    """
+                            {"audit":{"reader":"memory","enabled":false,"capturing":true,
+                              "retained":9,"capacity":1000,"dropped":2,"sinkErrors":{"memory":0,"log":3},"observerErrors":1},
+                             "records":[{"eventId":"decision-1","timestamp":"2026-10-10T08:00:00Z",
+                               "category":"evaluation","definition":"classify","operation":"choice","executingRouteId":"support-request",
+                               "semantics":{"resultType":"CHOICE"},"result":{"value":"billing"},
+                               "breadcrumbId":"breadcrumb-123"},
+                               {"eventId":"evaluation-1","timestamp":"2026-10-10T07:59:59Z","category":"evaluation",
+                                "expert":"guard","status":"success","result":{"value":false}}],
+                             "nextCursor":"opaque:cursor","evicted":7,"cursorExpired":false}
+                            """);
         }));
-        for (String value : List.of("EVENT ID", "TIMESTAMP", "ACTION", "STATUS", "BREADCRUMB ID", "decision-1", "evaluation-1",
-                "block", "success", "guard", "tools/call", "support-request", "policy_denied", "breadcrumb-123",
+        for (String value : List.of("EVENT ID", "TIMESTAMP", "RESULT", "EXECUTION", "BREADCRUMB ID", "decision-1",
+                "evaluation-1",
+                "billing", "success", "guard", "classify", "support-request", "breadcrumb-123",
                 "Next cursor: opaque:cursor", "Evicted: 7", "Audit: enabled | Reader: memory | Retained: 9/1000 | Dropped: 2",
                 "Sink errors (log): 3", "Observer errors: 1")) {
             assertTrue(printer.getOutput().contains(value), printer.getOutput());
@@ -573,28 +680,53 @@ class SemanticCommandTest {
                 """);
         assertEquals(0, respond(new SemanticAudit(main()), request -> {
             assertEquals("semantic-audit", request.get("action"));
-            assertEquals("block", request.get("auditAction"));
-            assertEquals("decision", request.get("category"));
+            assertEquals("evaluation", request.get("category"));
             assertEquals("guard", request.get("expert"));
             assertEquals("route-1", request.get("routeId"));
-            assertEquals("test", request.get("namespace"));
-            assertEquals("correlation=123", request.get("correlationId"));
             assertEquals("breadcrumb=123", request.get("breadcrumbId"));
             assertEquals("2026-10-10T08:00:00Z", request.get("since"));
             assertEquals("opaque=cursor", request.get("cursor"));
             assertEquals(20L, request.getLong("limit"));
             return page;
-        }, "--category=decision", "--action=block", "--expert=guard", "--route-id=route-1", "--namespace=test",
-                "--correlation-id=correlation=123", "--breadcrumb-id=breadcrumb=123",
+        }, "--category=evaluation", "--expert=guard", "--route-id=route-1", "--breadcrumb-id=breadcrumb=123",
                 "--since=2026-10-10T10:00:00+02:00", "--cursor=opaque=cursor",
                 "--limit=20", "--json"));
         assertEquals(page, json(printer.getOutput()));
         assertEquals("", errors.toString());
     }
 
+    @Test
+    void auditForwardsBoundedTypedResultQueries() throws Exception {
+        assertEquals(0, respond(new SemanticAudit(main()), request -> {
+            assertEquals("2026-10-10T08:00:00Z", request.get("since"));
+            assertEquals("2026-10-10T09:00:00Z", request.get("until"));
+            assertEquals("routeRequest", request.get("definition"));
+            assertEquals("choice", request.get("operation"));
+            assertEquals("CHOICE", request.get("resultType"));
+            assertEquals("none of these", request.get("resultValue"));
+            return new JsonObject(Map.of("records", List.of()));
+        }, "--since=2026-10-10T10:00:00+02:00", "--until=2026-10-10T11:00:00+02:00",
+                "--definition=routeRequest", "--operation=choice", "--result-type=CHOICE", "--result-value=none of these"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "--since=2026-10-10T10:00:00Z --until=2026-10-10T09:00:00Z",
+            "--result-type=BOOLEAN --result-value=FALSE", "--result-type=CLASSIFICATION --result-value=billing",
+            "--result-type=CHOICE --result-label=billing", "--result-type=SCORE --score-min=NaN",
+            "--result-type=SCORE --score-min=2 --score-max=1" })
+    void auditRejectsInvalidTypedPredicatesBeforeSending(String options) throws Exception {
+        var args = new ArrayList<String>();
+        args.add(Long.toString(pid));
+        args.addAll(List.of(options.split(" ")));
+        args.add("--json");
+        assertEquals(2, command(new SemanticAudit(main())).execute(args.toArray(String[]::new)));
+        assertTrue(actionFiles().isEmpty());
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void auditEventIncludesHistoricalEvidenceAndUnavailableReferences(boolean jsonOutput) throws Exception {
+    void auditEventPreservesLegacyRecordExportWithoutEvidenceWorkflow(boolean jsonOutput) throws Exception {
         JsonObject response = json("""
                 {"audit":{"reader":"memory","enabled":false},
                  "record":{"eventId":"decision-1","category":"decision","action":"block",
@@ -613,9 +745,7 @@ class SemanticCommandTest {
         if (jsonOutput) {
             assertEquals(response, json(printer.getOutput()));
         } else {
-            for (String value : List.of("decision-1", "Evidence:", "evaluation-1", "safety-provider", "guard-v1",
-                    "Injection detected", "Input:", "prompt: stored prompt", "Input Redacted: true", "evicted-1",
-                    "Unavailable: true")) {
+            for (String value : List.of("decision-1", "evaluation-1", "evicted-1")) {
                 assertTrue(printer.getOutput().contains(value), printer.getOutput());
             }
         }
@@ -656,7 +786,9 @@ class SemanticCommandTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "--limit=0", "--limit=201", "--limit=not-a-number", "--since=yesterday", "--expert=",
+            "--limit=0", "--limit=201", "--limit=not-a-number", "--since=yesterday", "--until=yesterday", "--expert=",
+            "--definition=", "--operation=", "--result-type=unknown", "--result-value=false", "--result-label=billing",
+            "--score-min=1",
             "--category=", "--action=", "--namespace=", "--correlation-id=", "--breadcrumb-id=", "--route-id=", "--cursor=",
             "--event-id=" })
     void auditRejectsInvalidArgumentsBeforeSendingARequest(String option) throws Exception {
@@ -676,8 +808,9 @@ class SemanticCommandTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "--expert=guard", "--action=block", "--since=2026-10-10T08:00:00Z", "--cursor=older",
-            "--limit=50", "--breadcrumb-id=breadcrumb-123" })
+            "--expert=guard", "--executing-route-id=nested", "--since=2026-10-10T08:00:00Z", "--cursor=older",
+            "--limit=50", "--breadcrumb-id=breadcrumb-123", "--until=2026-10-10T09:00:00Z", "--definition=routeRequest",
+            "--operation=choice", "--result-type=CHOICE" })
     void auditEventLookupRejectsIgnoredQueryOptions(String option) throws Exception {
         assertEquals(2, command(new SemanticAudit(main())).execute(Long.toString(pid), "--event-id=decision-1",
                 option, "--json"));
@@ -703,6 +836,21 @@ class SemanticCommandTest {
         assertError(3, "missing-event");
         assertTrue(json(printer.getOutput()).containsKey("record"));
         assertTrue(json(printer.getOutput()).getCollection("evidence").isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void auditUnavailableCaseReportsTheRequestedAnchor(boolean jsonOutput) throws Exception {
+        assertEquals(3, respond(new SemanticAudit(main()), request -> {
+            assertEquals("missing-anchor", request.get("caseEventId"));
+            return jsonUnchecked("{\"audit\":{\"reader\":\"memory\"},\"records\":[],\"unavailable\":true}");
+        }, "--case-event-id=missing-anchor", "--json=" + jsonOutput));
+        assertTrue(errors.toString().contains("missing-anchor"), errors.toString());
+        assertFalse(errors.toString().contains("null"), errors.toString());
+        if (jsonOutput) {
+            assertError(3, "missing-anchor");
+            assertEquals(true, json(printer.getOutput()).get("unavailable"));
+        }
     }
 
     @Test
@@ -737,17 +885,29 @@ class SemanticCommandTest {
     }
 
     private int respond(IntSupplier call, Function<JsonObject, JsonObject> response) throws Exception {
+        var completed = new AtomicBoolean();
         var responder = CompletableFuture.runAsync(() -> {
             try {
-                await().atMost(5, TimeUnit.SECONDS).until(() -> !actionFiles().isEmpty());
-                Path request = actionFiles().get(0);
-                await().atMost(5, TimeUnit.SECONDS).until(() -> Files.size(request) > 0);
-                reply(request, response.apply(json(Files.readString(request))));
+                while (!completed.get()) {
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> completed.get() || !actionFiles().isEmpty());
+                    if (completed.get()) {
+                        break;
+                    }
+                    Path request = actionFiles().get(0);
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> Files.size(request) > 0);
+                    reply(request, response.apply(json(Files.readString(request))));
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> !Files.exists(request));
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }, executor);
-        int result = call.getAsInt();
+        int result;
+        try {
+            result = call.getAsInt();
+        } finally {
+            completed.set(true);
+        }
         responder.get(5, TimeUnit.SECONDS);
         assertTrue(actionFiles().isEmpty());
         return result;

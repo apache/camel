@@ -114,6 +114,9 @@ public class MllpConfiguration implements Cloneable {
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
+    @UriParam(label = "producer,security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
+    boolean hostnameVerification = true;
+
     public MllpConfiguration() {
     }
 
@@ -150,6 +153,7 @@ public class MllpConfiguration implements Cloneable {
             target.charsetName = source.charsetName;
             target.maxConcurrentConsumers = source.maxConcurrentConsumers;
             target.sslContextParameters = source.sslContextParameters;
+            target.hostnameVerification = source.hostnameVerification;
         }
     }
 
@@ -586,6 +590,18 @@ public class MllpConfiguration implements Cloneable {
         this.sslContextParameters = sslContextParameters;
     }
 
+    public boolean isHostnameVerification() {
+        return hostnameVerification;
+    }
+
+    /**
+     * Whether the producer checks that the certificate of the server matches the host it connects to, when SSL/TLS is
+     * used. When disabled, any certificate accepted by the trust store is accepted, whatever host it was issued for.
+     */
+    public void setHostnameVerification(boolean hostnameVerification) {
+        this.hostnameVerification = hostnameVerification;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(bridgeErrorHandler,
@@ -613,7 +629,8 @@ public class MllpConfiguration implements Cloneable {
                 charsetName,
                 minBufferSize,
                 maxBufferSize,
-                sslContextParameters);
+                sslContextParameters,
+                hostnameVerification);
     }
 
     @Override
@@ -644,6 +661,7 @@ public class MllpConfiguration implements Cloneable {
                 && idleTimeoutStrategy == rhs.idleTimeoutStrategy
                 && minBufferSize == rhs.minBufferSize
                 && maxBufferSize == rhs.maxBufferSize
+                && hostnameVerification == rhs.hostnameVerification
                 && Objects.equals(backlog, rhs.backlog)
                 && Objects.equals(maxConcurrentConsumers, rhs.maxConcurrentConsumers)
                 && Objects.equals(idleTimeout, rhs.idleTimeout)
@@ -685,6 +703,7 @@ public class MllpConfiguration implements Cloneable {
                + ", maxBufferSize=" + maxBufferSize
                + ", charsetName='" + charsetName + '\''
                + ", sslContextParameters=" + sslContextParameters
+               + ", hostnameVerification=" + hostnameVerification
                + '}';
     }
 }

@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
 @UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM",
-             remote = false, syntax = "disruptor:name", category = { Category.MESSAGING })
+             remote = false, internal = true, syntax = "disruptor:name", category = { Category.MESSAGING })
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     /**
      * Property on the exchange published by a producer that waits for the reply. Its value is set to true when the

@@ -116,98 +116,93 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        JsonArray array = (JsonArray) root.get("routes");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
-                            Row row = new Row();
-                            row.name = context.getString("name");
-                            if ("CamelJBang".equals(row.name)) {
-                                row.name = ProcessHelper.extractName(root, ph);
-                            }
-                            row.pid = Long.toString(ph.pid());
-                            row.routeId = o.getString("routeId");
-                            row.group = o.getString("group");
-                            row.description = o.getString("description");
-                            row.note = o.getString("note");
-                            row.nodePrefixId = o.getString("nodePrefixId");
-                            row.processor = o.getString("from");
-                            row.source = o.getString("source");
-                            row.state = o.getString("state");
-                            Map<String, ?> stats = o.getMap("statistics");
-                            if (stats != null) {
-                                row.total = stats.get("exchangesTotal").toString();
-                                Object num = stats.get("remoteExchangesTotal");
-                                if (num != null) {
-                                    row.totalRemote = num.toString();
-                                }
-                                row.inflight = stats.get("exchangesInflight").toString();
-                                num = stats.get("remoteExchangesInflight");
-                                if (num != null) {
-                                    row.inflightRemote = num.toString();
-                                }
-                                row.failed = stats.get("exchangesFailed").toString();
-                                num = stats.get("remoteExchangesFailed");
-                                if (num != null) {
-                                    row.failedRemote = num.toString();
-                                }
-                                row.mean = stats.get("meanProcessingTime").toString();
-                                if ("-1".equals(row.mean)) {
-                                    row.mean = null;
-                                }
-                                row.max = stats.get("maxProcessingTime").toString();
-                                row.min = stats.get("minProcessingTime").toString();
-                                Object last = stats.get("lastProcessingTime");
-                                if (last != null) {
-                                    row.last = last.toString();
-                                }
-                                last = stats.get("deltaProcessingTime");
-                                if (last != null) {
-                                    row.delta = last.toString();
-                                }
-                                last = stats.get("lastCreatedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastStarted = TimeUtils.printSince(time);
-                                }
-                                last = stats.get("lastCompletedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastCompleted = TimeUtils.printSince(time);
-                                }
-                                last = stats.get("lastFailedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastFailed = TimeUtils.printSince(time);
-                                }
-                            }
-
-                            boolean add = true;
-                            if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
-                                add = false;
-                            }
-                            if (limit > 0 && rows.size() >= limit) {
-                                add = false;
-                            }
-                            if (add) {
-                                rows.add(row);
-                                List<JsonObject> list = o.getCollection("processors");
-                                if (list != null) {
-                                    addProcessors(row, rows, list);
-                                }
-                            }
-                        }
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            JsonArray array = (JsonArray) root.get("routes");
+            for (int i = 0; i < array.size(); i++) {
+                JsonObject o = (JsonObject) array.get(i);
+                Row row = new Row();
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
+                row.routeId = o.getString("routeId");
+                row.group = o.getString("group");
+                row.description = o.getString("description");
+                row.note = o.getString("note");
+                row.nodePrefixId = o.getString("nodePrefixId");
+                row.processor = o.getString("from");
+                row.source = o.getString("source");
+                row.state = o.getString("state");
+                Map<String, ?> stats = o.getMap("statistics");
+                if (stats != null) {
+                    row.total = stats.get("exchangesTotal").toString();
+                    Object num = stats.get("remoteExchangesTotal");
+                    if (num != null) {
+                        row.totalRemote = num.toString();
                     }
-                });
+                    row.inflight = stats.get("exchangesInflight").toString();
+                    num = stats.get("remoteExchangesInflight");
+                    if (num != null) {
+                        row.inflightRemote = num.toString();
+                    }
+                    row.failed = stats.get("exchangesFailed").toString();
+                    num = stats.get("remoteExchangesFailed");
+                    if (num != null) {
+                        row.failedRemote = num.toString();
+                    }
+                    row.mean = stats.get("meanProcessingTime").toString();
+                    if ("-1".equals(row.mean)) {
+                        row.mean = null;
+                    }
+                    row.max = stats.get("maxProcessingTime").toString();
+                    row.min = stats.get("minProcessingTime").toString();
+                    Object last = stats.get("lastProcessingTime");
+                    if (last != null) {
+                        row.last = last.toString();
+                    }
+                    last = stats.get("deltaProcessingTime");
+                    if (last != null) {
+                        row.delta = last.toString();
+                    }
+                    last = stats.get("lastCreatedExchangeTimestamp");
+                    if (last != null) {
+                        long time = Long.parseLong(last.toString());
+                        row.sinceLastStarted = TimeUtils.printSince(time);
+                    }
+                    last = stats.get("lastCompletedExchangeTimestamp");
+                    if (last != null) {
+                        long time = Long.parseLong(last.toString());
+                        row.sinceLastCompleted = TimeUtils.printSince(time);
+                    }
+                    last = stats.get("lastFailedExchangeTimestamp");
+                    if (last != null) {
+                        long time = Long.parseLong(last.toString());
+                        row.sinceLastFailed = TimeUtils.printSince(time);
+                    }
+                }
+
+                boolean add = true;
+                if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
+                    add = false;
+                }
+                // the limit is a number of routes, and the rows have the processors of the routes too
+                if (limit > 0 && rows.stream().filter(r -> r.processorId == null).count() >= limit) {
+                    add = false;
+                }
+                if (add) {
+                    rows.add(row);
+                    List<JsonObject> list = o.getCollection("processors");
+                    if (list != null) {
+                        addProcessors(row, rows, list);
+                    }
+                }
+            }
+        });
 
         // filter rows
         if (running || filter != null || group != null) {
@@ -238,7 +233,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 
@@ -312,22 +307,25 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         if (jsonOutput) {
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
-                jo.put("name", getName(r));
+                jo.put("pid", JsonValues.pid(r.pid));
+                jo.put("name", r.name);
                 jo.put("routeId", r.routeId);
                 jo.put("group", r.group);
                 jo.put("id", getId(r));
                 jo.put("processor", r.processor);
                 jo.put("status", getStatus(r));
-                jo.put("total", r.total);
-                jo.put("failed", r.failed);
-                jo.put("inflight", r.inflight);
-                jo.put("mean", r.mean);
-                jo.put("min", r.min);
-                jo.put("max", r.max);
-                jo.put("last", r.last);
-                jo.put("delta", getDelta(r));
-                jo.put("sinceLast", getSinceLast(r));
+                jo.put("total", JsonValues.number(r.total));
+                jo.put("failed", JsonValues.number(r.failed));
+                jo.put("inflight", JsonValues.number(r.inflight));
+                // processing times in millis
+                jo.put("mean", JsonValues.number(r.mean));
+                jo.put("min", JsonValues.number(r.min));
+                jo.put("max", JsonValues.number(r.max));
+                jo.put("last", JsonValues.number(r.last));
+                jo.put("delta", JsonValues.number(r.delta));
+                jo.put("sinceLastStarted", JsonValues.text(r.sinceLastStarted));
+                jo.put("sinceLastCompleted", JsonValues.text(r.sinceLastCompleted));
+                jo.put("sinceLastFailed", JsonValues.text(r.sinceLastFailed));
                 return jo;
             }).collect(Collectors.toList())));
             return;

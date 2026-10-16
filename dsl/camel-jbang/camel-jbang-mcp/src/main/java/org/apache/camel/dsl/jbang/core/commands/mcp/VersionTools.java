@@ -64,10 +64,13 @@ public class VersionTools {
 
             int exitCode = versionList.doCall();
             if (exitCode != 0) {
-                throw new ToolCallException("Failed to list versions, exit code: " + exitCode, null);
+                String reason = printer.getStderr();
+                throw new ToolCallException(
+                        "Failed to list versions, exit code: " + exitCode + (reason.isEmpty() ? "" : ": " + reason), null);
             }
 
-            String jsonOutput = printer.getOutput();
+            // only the output: a warning on the diagnostics channel must not break the JSON
+            String jsonOutput = printer.getStdout();
             JsonArray versions = (JsonArray) Jsoner.deserialize(jsonOutput);
 
             List<VersionInfo> versionInfos = new ArrayList<>();

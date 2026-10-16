@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -65,6 +67,7 @@ public final class CommandLineHelper {
         migrateLegacyUserConfig(Paths.get(LEGACY_LOCAL_USER_CONFIG), Paths.get(LOCAL_USER_CONFIG), printer);
     }
 
+    // the notices go to the diagnostics channel, as this runs before any command and stdout may be JSON
     private static void migrateLegacyUserConfig(Path legacy, Path current, Printer printer) {
         try {
             if (!Files.isRegularFile(legacy)) {
@@ -72,16 +75,16 @@ public final class CommandLineHelper {
             }
             if (!Files.exists(current)) {
                 Files.move(legacy, current);
-                printer.println("Migrated legacy settings: " + legacy.getFileName() + " -> " + current.getFileName());
+                printer.printDiagnostic("Migrated legacy settings: " + legacy.getFileName() + " -> " + current.getFileName());
                 return;
             }
 
             long legacyModified = Files.getLastModifiedTime(legacy).toMillis();
             long currentModified = Files.getLastModifiedTime(current).toMillis();
             if (currentModified < legacyModified) {
-                printer.println("Note: legacy settings file " + legacy.getFileName()
-                                + " is newer than " + current.getFileName()
-                                + ". Both files left unchanged. Remove the legacy file manually if no longer needed.");
+                printer.printDiagnostic("Note: legacy settings file " + legacy.getFileName()
+                                        + " is newer than " + current.getFileName()
+                                        + ". Both files left unchanged. Remove the legacy file manually if no longer needed.");
                 return;
             }
 
@@ -104,10 +107,11 @@ public final class CommandLineHelper {
                 try (OutputStream os = Files.newOutputStream(current)) {
                     currentProps.store(os, null);
                 }
-                printer.println("Merged legacy settings from " + legacy.getFileName() + " into " + current.getFileName());
+                printer.printDiagnostic(
+                        "Merged legacy settings from " + legacy.getFileName() + " into " + current.getFileName());
             }
             Files.delete(legacy);
-            printer.println("Removed legacy settings file: " + legacy.getFileName());
+            printer.printDiagnostic("Removed legacy settings file: " + legacy.getFileName());
         } catch (IOException e) {
             // best-effort: a migration hiccup must never block the CLI
         }
@@ -179,7 +183,7 @@ public final class CommandLineHelper {
                 throw new RuntimeException(ex);
             }
         } else {
-            printer.println(file.getFileName() + " does not exist");
+            printer.printErr(file.getFileName() + " does not exist");
         }
     }
 
@@ -201,6 +205,40 @@ public final class CommandLineHelper {
      */
     public static Path getHomeDir() {
         return homeDir;
+    }
+
+    /**
+     * The arguments of a command line typed as one text, such as <tt>--jvm-args</tt>: split at whitespace outside
+     * double or single quotes, which are removed, and a backslash escapes the next character (outside single quotes).
+     */
+    public static List<String> splitArguments(String line) {
+        List<String> answer = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean token = false;
+        char quote = 0;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (quote == 0 && Character.isWhitespace(c)) {
+                if (token) {
+                    answer.add(current.toString());
+                    current.setLength(0);
+                    token = false;
+                }
+            } else if (c == '\\' && quote != '\'' && i + 1 < line.length()) {
+                current.append(line.charAt(++i));
+                token = true;
+            } else if ((c == '"' || c == '\'') && (quote == 0 || quote == c)) {
+                quote = quote == 0 ? c : 0;
+                token = true;
+            } else {
+                current.append(c);
+                token = true;
+            }
+        }
+        if (token) {
+            answer.add(current.toString());
+        }
+        return answer;
     }
 
     /**

@@ -1,0 +1,1 @@
+../../../../../components/camel-test/camel-test-citrus/src/main/docs/citrus-component.adoc

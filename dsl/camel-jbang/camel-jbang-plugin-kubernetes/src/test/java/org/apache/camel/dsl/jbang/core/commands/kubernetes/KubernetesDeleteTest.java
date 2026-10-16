@@ -57,6 +57,16 @@ class KubernetesDeleteTest {
     }
 
     @Test
+    public void shouldRequireName() throws Exception {
+        KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
+        command.withClient(client);
+        int exit = command.doCall();
+
+        Assertions.assertEquals(2, exit, printer.getOutput());
+        Assertions.assertEquals("ERROR: Missing required --name option or integration name", printer.getStderr());
+    }
+
+    @Test
     public void shouldDeleteNonExistentApp() throws Exception {
         KubernetesDelete command = new KubernetesDelete(new CamelJBangMain().withPrinter(printer));
         command.withClient(client);

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -27,13 +26,19 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
@@ -92,6 +97,12 @@ public class CamelSpanAction extends ActionBaseCommand {
                         description = "Use colored logging")
     boolean loggingColor = true;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output the spans in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
 
     public CamelSpanAction(CamelJBangMain main) {
@@ -100,119 +111,99 @@ public class CamelSpanAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
+
+        JsonObject jo = executeAction(process, "span", root -> {
+            root.put("dump", "true");
+            root.put("limit", Integer.toString(limit));
+        });
+        Boolean enabled = jo.getBoolean("enabled");
+        if (enabled == null || !enabled) {
+            throw CliException.failure(
+                    "OpenTelemetry in-memory exporter is not enabled. Use --observe flag when running the integration.");
         }
 
-        this.pid = pids.get(0);
-
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "span");
-        root.put("dump", "true");
-        root.put("limit", Integer.toString(limit));
-
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            PathUtils.writeTextSafely(root.toJson(), f);
-        } catch (Exception e) {
-            // ignore
-        }
-
-        JsonObject jo = getJsonObject(outputFile);
-        if (jo != null) {
-            Boolean enabled = jo.getBoolean("enabled");
-            if (enabled == null || !enabled) {
-                printer().println(
-                        "OpenTelemetry in-memory exporter is not enabled. Use --observe flag when running the integration.");
-                PathUtils.deleteFile(outputFile);
-                return 0;
-            }
-
-            JsonArray arr = jo.getCollection("spans");
-            if (arr == null || arr.isEmpty()) {
-                printer().println("No spans captured yet.");
-                PathUtils.deleteFile(outputFile);
-                return 0;
-            }
-
-            List<Row> rows = new ArrayList<>();
-            root = loadStatus(this.pid);
-            String integrationName = null;
-            String ago = null;
-            if (root != null) {
-                JsonObject context = (JsonObject) root.get("context");
-                if (context != null) {
-                    integrationName = context.getString("name");
-                    if ("CamelJBang".equals(integrationName)) {
-                        ProcessHandle ph = ProcessHandle.of(this.pid).orElse(null);
-                        integrationName = ProcessHelper.extractName(root, ph);
-                    }
-                }
-                ProcessHandle ph = ProcessHandle.of(this.pid).orElse(null);
-                long uptime = extractSince(ph);
-                ago = TimeUtils.printSince(uptime);
-            }
-
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject span = (JsonObject) arr.get(i);
-                Row row = new Row();
-                row.pid = Long.toString(this.pid);
-                row.name = integrationName;
-                row.ago = ago;
-                row.traceId = span.getString("traceId");
-                row.spanId = span.getString("spanId");
-                row.parentSpanId = span.getString("parentSpanId");
-                row.spanName = span.getString("name");
-                row.kind = span.getString("kind");
-                row.status = span.getString("status");
-                Long durationMs = span.getLong("durationMs");
-                row.durationMs = durationMs != null ? durationMs : 0;
-                row.routeId = span.getString("routeId");
-                row.processorId = span.getString("processorId");
-                row.startEpochNanos = span.getLongOrDefault("startEpochNanos", 0);
-                row.endEpochNanos = span.getLongOrDefault("endEpochNanos", 0);
-                JsonObject attrsObj = span.getMap("attributes");
-                if (attrsObj != null && !attrsObj.isEmpty()) {
-                    row.attributes = attrsObj;
-                }
-
-                rows.add(row);
-            }
-
+        JsonArray arr = jo.getCollection("spans");
+        if (jsonOutput) {
+            List<Object> spans = arr != null ? new ArrayList<>(arr) : new ArrayList<>();
             if (trace != null) {
-                printWaterfall(rows, trace);
-            } else if (flat) {
-                if (filter != null) {
-                    rows.removeIf(r -> !matchesFilter(r.spanName, filter));
-                }
-                if (sort != null) {
-                    rows.sort(this::sortRow);
-                }
-                tableSpans(rows);
-            } else {
-                List<TraceSummary> summaries = buildTraceSummaries(rows);
-                if (filter != null) {
-                    summaries.removeIf(ts -> !ts.searchText.contains(filter.toLowerCase()));
-                }
-                if (sort != null) {
-                    summaries.sort((a, b) -> sortTraceSummary(a, b, rows));
-                }
-                tableTraces(summaries);
+                spans.removeIf(o -> o instanceof JsonObject span && (span.getString("traceId") == null
+                        || !span.getString("traceId").contains(trace)));
             }
-        } else {
-            printer().printErr("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
+            JsonOutput.printList(printer(), spans);
+            return 0;
+        }
+        if (arr == null || arr.isEmpty()) {
+            printer().printDiagnostic("No spans captured yet.");
+            return 0;
         }
 
-        PathUtils.deleteFile(outputFile);
+        List<Row> rows = new ArrayList<>();
+        JsonObject root = loadStatus(this.pid);
+        String integrationName = null;
+        String ago = null;
+        if (root != null) {
+            JsonObject context = (JsonObject) root.get("context");
+            if (context != null) {
+                integrationName = context.getString("name");
+                if ("CamelJBang".equals(integrationName)) {
+                    ProcessHandle ph = ProcessHandle.of(this.pid).orElse(null);
+                    integrationName = ProcessHelper.extractName(root, ph);
+                }
+            }
+            ProcessHandle ph = ProcessHandle.of(this.pid).orElse(null);
+            long uptime = extractSince(ph);
+            ago = TimeUtils.printSince(uptime);
+        }
+
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject span = (JsonObject) arr.get(i);
+            Row row = new Row();
+            row.pid = Long.toString(this.pid);
+            row.name = integrationName;
+            row.ago = ago;
+            row.traceId = span.getString("traceId");
+            row.spanId = span.getString("spanId");
+            row.parentSpanId = span.getString("parentSpanId");
+            row.spanName = span.getString("name");
+            row.kind = span.getString("kind");
+            row.status = span.getString("status");
+            Long durationMs = span.getLong("durationMs");
+            row.durationMs = durationMs != null ? durationMs : 0;
+            row.routeId = span.getString("routeId");
+            row.processorId = span.getString("processorId");
+            row.startEpochNanos = span.getLongOrDefault("startEpochNanos", 0);
+            row.endEpochNanos = span.getLongOrDefault("endEpochNanos", 0);
+            JsonObject attrsObj = span.getMap("attributes");
+            if (attrsObj != null && !attrsObj.isEmpty()) {
+                row.attributes = attrsObj;
+            }
+
+            rows.add(row);
+        }
+
+        if (trace != null) {
+            printWaterfall(rows, trace);
+        } else if (flat) {
+            if (filter != null) {
+                rows.removeIf(r -> !matchesFilter(r.spanName, filter));
+            }
+            if (sort != null) {
+                rows.sort(this::sortRow);
+            }
+            tableSpans(rows);
+        } else {
+            List<TraceSummary> summaries = buildTraceSummaries(rows);
+            if (filter != null) {
+                summaries.removeIf(ts -> !ts.searchText.contains(filter.toLowerCase()));
+            }
+            if (sort != null) {
+                summaries.sort((a, b) -> sortTraceSummary(a, b, rows));
+            }
+            tableTraces(summaries);
+        }
+
         return 0;
     }
 
@@ -663,11 +654,17 @@ public class CamelSpanAction extends ActionBaseCommand {
         return row.attributes != null && "EVENT_RECEIVED".equals(row.attributes.get("op"));
     }
 
-    private static boolean isRemoteScheme(String scheme) {
-        return scheme != null
-                && !"direct".equals(scheme) && !"seda".equals(scheme)
-                && !"mock".equals(scheme) && !"log".equals(scheme)
-                && !"bean".equals(scheme) && !"class".equals(scheme);
+    // whether the component of a span talks to a remote system, as the catalog says (a scheme it does not know counts as
+    // remote); remembered per scheme, as watch builds the trace summaries again and again
+    private static final Map<String, Boolean> REMOTE_SCHEMES = new ConcurrentHashMap<>();
+
+    static boolean isRemoteScheme(String scheme) {
+        return scheme != null && REMOTE_SCHEMES.computeIfAbsent(scheme, s -> ProjectOverview.isRemote(s, OwnCatalog.CATALOG));
+    }
+
+    /** The catalog of the CLI's own Camel version, created on first use. */
+    private static final class OwnCatalog {
+        static final CamelCatalog CATALOG = new DefaultCamelCatalog();
     }
 
     private static String spanLabel(Row row) {

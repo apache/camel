@@ -114,133 +114,127 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         List<Row> rows = new ArrayList<>();
 
         AtomicBoolean remoteVisible = new AtomicBoolean();
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        JsonArray array = (JsonArray) root.get("routes");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
-                            Row row = new Row();
-                            row.name = context.getString("name");
-                            if ("CamelJBang".equals(row.name)) {
-                                row.name = ProcessHelper.extractName(root, ph);
-                            }
-                            row.pid = Long.toString(ph.pid());
-                            row.routeId = o.getString("routeId");
-                            row.group = o.getString("group");
-                            row.description = o.getString("description");
-                            row.note = o.getString("note");
-                            row.from = o.getString("from");
-                            Boolean bool = o.getBoolean("remote");
-                            if (bool != null) {
-                                // older camel versions does not include this information
-                                remoteVisible.set(true);
-                                row.remote = bool;
-                            }
-                            row.source = o.getString("source");
-                            row.state = o.getString("state");
-                            row.age = o.getString("uptime");
-                            row.uptime = row.age != null ? TimeUtils.toMilliSeconds(row.age) : 0;
-                            JsonObject eo = (JsonObject) o.get("lastError");
-                            if (eo != null) {
-                                row.lastErrorPhase = eo.getString("phase");
-                                row.lastErrorTimestamp = eo.getLongOrDefault("timestamp", 0);
-                                row.lastErrorMessage = eo.getString("message");
-                                row.stackTrace = eo.getCollection("stackTrace");
-                            }
-                            Map<String, ?> stats = o.getMap("statistics");
-                            if (stats != null) {
-                                Object load = stats.get("load01");
-                                if (load != null) {
-                                    row.load01 = load.toString();
-                                }
-                                load = stats.get("load05");
-                                if (load != null) {
-                                    row.load05 = load.toString();
-                                }
-                                load = stats.get("load15");
-                                if (load != null) {
-                                    row.load15 = load.toString();
-                                }
-                                Object thp = stats.get("exchangesThroughput");
-                                if (thp != null) {
-                                    row.throughput = thp.toString();
-                                }
-                                Object coverage = stats.get("coverage");
-                                if (coverage != null) {
-                                    row.coverage = coverage.toString();
-                                }
-                                row.total = stats.get("exchangesTotal").toString();
-                                row.inflight = stats.get("exchangesInflight").toString();
-                                row.failed = stats.get("exchangesFailed").toString();
-                                row.mean = stats.get("meanProcessingTime").toString();
-                                if ("-1".equals(row.mean)) {
-                                    row.mean = null;
-                                }
-                                row.max = stats.get("maxProcessingTime").toString();
-                                row.min = stats.get("minProcessingTime").toString();
-                                Object last = stats.get("lastProcessingTime");
-                                if (last != null) {
-                                    row.last = last.toString();
-                                }
-                                last = stats.get("deltaProcessingTime");
-                                if (last != null) {
-                                    row.delta = last.toString();
-                                }
-                                last = stats.get("lastCreatedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastStarted = TimeUtils.printSince(time);
-                                }
-                                last = stats.get("lastCompletedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastCompleted = TimeUtils.printSince(time);
-                                }
-                                last = stats.get("lastFailedExchangeTimestamp");
-                                if (last != null) {
-                                    long time = Long.parseLong(last.toString());
-                                    row.sinceLastFailed = TimeUtils.printSince(time);
-                                }
-                            }
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            JsonArray array = (JsonArray) root.get("routes");
+            for (int i = 0; i < array.size(); i++) {
+                JsonObject o = (JsonObject) array.get(i);
+                Row row = new Row();
+                row.name = context.getString("name");
+                if ("CamelJBang".equals(row.name)) {
+                    row.name = ProcessHelper.extractName(root, ph);
+                }
+                row.pid = Long.toString(ph.pid());
+                row.routeId = o.getString("routeId");
+                row.group = o.getString("group");
+                row.description = o.getString("description");
+                row.note = o.getString("note");
+                row.from = o.getString("from");
+                Boolean bool = o.getBoolean("remote");
+                if (bool != null) {
+                    // older camel versions does not include this information
+                    remoteVisible.set(true);
+                    row.remote = bool;
+                }
+                row.source = o.getString("source");
+                row.state = o.getString("state");
+                row.age = o.getString("uptime");
+                row.uptime = row.age != null ? TimeUtils.toMilliSeconds(row.age) : 0;
+                JsonObject eo = (JsonObject) o.get("lastError");
+                if (eo != null) {
+                    row.lastErrorPhase = eo.getString("phase");
+                    row.lastErrorTimestamp = eo.getLongOrDefault("timestamp", 0);
+                    row.lastErrorMessage = eo.getString("message");
+                    row.stackTrace = eo.getCollection("stackTrace");
+                }
+                Map<String, ?> stats = o.getMap("statistics");
+                if (stats != null) {
+                    Object load = stats.get("load01");
+                    if (load != null) {
+                        row.load01 = load.toString();
+                    }
+                    load = stats.get("load05");
+                    if (load != null) {
+                        row.load05 = load.toString();
+                    }
+                    load = stats.get("load15");
+                    if (load != null) {
+                        row.load15 = load.toString();
+                    }
+                    Object thp = stats.get("exchangesThroughput");
+                    if (thp != null) {
+                        row.throughput = thp.toString();
+                    }
+                    Object coverage = stats.get("coverage");
+                    if (coverage != null) {
+                        row.coverage = coverage.toString();
+                    }
+                    row.total = stats.get("exchangesTotal").toString();
+                    row.inflight = stats.get("exchangesInflight").toString();
+                    row.failed = stats.get("exchangesFailed").toString();
+                    row.mean = stats.get("meanProcessingTime").toString();
+                    if ("-1".equals(row.mean)) {
+                        row.mean = null;
+                    }
+                    row.max = stats.get("maxProcessingTime").toString();
+                    row.min = stats.get("minProcessingTime").toString();
+                    Object last = stats.get("lastProcessingTime");
+                    if (last != null) {
+                        row.last = last.toString();
+                    }
+                    last = stats.get("deltaProcessingTime");
+                    if (last != null) {
+                        row.delta = last.toString();
+                    }
+                    last = stats.get("lastCreatedExchangeTimestamp");
+                    if (last != null) {
+                        long time = Long.parseLong(last.toString());
+                        row.sinceLastStarted = TimeUtils.printSince(time);
+                    }
+                    last = stats.get("lastCompletedExchangeTimestamp");
+                    if (last != null) {
+                        long time = Long.parseLong(last.toString());
+                        row.sinceLastCompleted = TimeUtils.printSince(time);
+                    }
+                    last = stats.get("lastFailedExchangeTimestamp");
+                    if (last != null) {
+                        long time = Long.parseLong(last.toString());
+                        row.sinceLastFailed = TimeUtils.printSince(time);
+                    }
+                }
 
-                            boolean add = true;
-                            if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
-                                add = false;
-                            }
-                            if (add && filter != null) {
-                                boolean match = false;
-                                for (String f : filter) {
-                                    if (!match) {
-                                        String from = StringHelper.before(row.from, "?", row.from);
-                                        String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching url
-                                        match = PatternHelper.matchPattern(row.routeId, f)
-                                                || PatternHelper.matchPattern(from, w);
-                                    }
-                                }
-                                if (!match) {
-                                    add = false;
-                                }
-                            }
-                            if (add && group != null) {
-                                add = PatternHelper.matchPatterns(row.group, group);
-                            }
-                            if (add && running) {
-                                add = "Started".equals(row.state);
-                            }
-                            if (add) {
-                                rows.add(row);
-                            }
+                boolean add = true;
+                if (mean > 0 && (row.mean == null || Long.parseLong(row.mean) < mean)) {
+                    add = false;
+                }
+                if (add && filter != null) {
+                    boolean match = false;
+                    for (String f : filter) {
+                        if (!match) {
+                            String from = StringHelper.before(row.from, "?", row.from);
+                            String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching url
+                            match = PatternHelper.matchPattern(row.routeId, f)
+                                    || PatternHelper.matchPattern(from, w);
                         }
                     }
-                });
+                    if (!match) {
+                        add = false;
+                    }
+                }
+                if (add && group != null) {
+                    add = PatternHelper.matchPatterns(row.group, group);
+                }
+                if (add && running) {
+                    add = "Started".equals(row.state);
+                }
+                if (add) {
+                    rows.add(row);
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -249,11 +243,13 @@ public class CamelRouteStatus extends ProcessWatchCommand {
             rows.subList(limit, rows.size()).clear();
         }
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (error) {
-                for (Row r : rows) {
-                    boolean error = r.lastErrorPhase != null;
-                    if (error) {
+                List<Row> failed = rows.stream().filter(r -> r.lastErrorPhase != null).toList();
+                if (jsonOutput) {
+                    printer().println(Jsoner.serialize(failed.stream().map(this::toErrorJson).collect(Collectors.toList())));
+                } else {
+                    for (Row r : failed) {
                         printErrorTable(r, remoteVisible.get());
                     }
                 }
@@ -267,29 +263,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
 
     protected void printTable(List<Row> rows, boolean remoteVisible) {
         if (jsonOutput) {
-            printer().println(Jsoner.serialize(rows.stream().map(r -> {
-                JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
-                jo.put("name", r.name);
-                jo.put("routeId", r.routeId);
-                jo.put("group", r.group);
-                jo.put("from", r.from);
-                jo.put("remote", r.remote);
-                jo.put("status", getStatus(r));
-                jo.put("age", r.age);
-                jo.put("coverage", r.coverage);
-                jo.put("throughput", getThroughput(r));
-                jo.put("total", r.total);
-                jo.put("failed", r.failed);
-                jo.put("inflight", r.inflight);
-                jo.put("mean", r.mean);
-                jo.put("min", r.min);
-                jo.put("max", r.max);
-                jo.put("last", r.last);
-                jo.put("delta", getDelta(r));
-                jo.put("sinceLast", getSinceLast(r));
-                return jo;
-            }).collect(Collectors.toList())));
+            printer().println(Jsoner.serialize(rows.stream().map(this::toJson).collect(Collectors.toList())));
             return;
         }
         // Flexible columns: FROM (45/140), ID with description (45)
@@ -334,6 +308,62 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("LAST").with(r -> r.last),
                 new Column().header("DELTA").with(this::getDelta),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
+    }
+
+    /**
+     * A row in JSON mode.
+     */
+    protected JsonObject toJson(Row r) {
+        JsonObject jo = new JsonObject();
+        jo.put("pid", JsonValues.pid(r.pid));
+        jo.put("name", r.name);
+        jo.put("routeId", r.routeId);
+        jo.put("group", r.group);
+        jo.put("from", r.from);
+        jo.put("remote", r.remote);
+        jo.put("status", getStatus(r));
+        jo.put("age", r.age);
+        jo.put("uptime", r.uptime);
+        jo.put("coverage", JsonValues.text(r.coverage));
+        jo.put("throughput", JsonValues.decimal(r.throughput));
+        jo.put("total", JsonValues.number(r.total));
+        jo.put("failed", JsonValues.number(r.failed));
+        jo.put("inflight", JsonValues.number(r.inflight));
+        // processing times in millis
+        jo.put("mean", JsonValues.number(r.mean));
+        jo.put("min", JsonValues.number(r.min));
+        jo.put("max", JsonValues.number(r.max));
+        jo.put("last", JsonValues.number(r.last));
+        jo.put("delta", JsonValues.number(r.delta));
+        jo.put("sinceLastStarted", JsonValues.text(r.sinceLastStarted));
+        jo.put("sinceLastCompleted", JsonValues.text(r.sinceLastCompleted));
+        jo.put("sinceLastFailed", JsonValues.text(r.sinceLastFailed));
+        return jo;
+    }
+
+    /**
+     * A route with an error in JSON mode ({@code --error}): the route and its last error.
+     */
+    protected JsonObject toErrorJson(Row r) {
+        JsonObject jo = new JsonObject();
+        jo.put("pid", JsonValues.pid(r.pid));
+        jo.put("name", r.name);
+        jo.put("routeId", r.routeId);
+        jo.put("group", r.group);
+        jo.put("from", r.from);
+        jo.put("status", getStatus(r));
+        JsonObject error = new JsonObject();
+        error.put("phase", r.lastErrorPhase);
+        if (r.lastErrorTimestamp > 0) {
+            error.put("timestamp", r.lastErrorTimestamp);
+            error.put("ago", getErrorAgo(r));
+        }
+        error.put("message", r.lastErrorMessage);
+        if (r.stackTrace != null && !r.stackTrace.isEmpty()) {
+            error.put("stackTrace", r.stackTrace);
+        }
+        jo.put("lastError", error);
+        return jo;
     }
 
     protected void printErrorTable(Row er, boolean remoteVisible) {

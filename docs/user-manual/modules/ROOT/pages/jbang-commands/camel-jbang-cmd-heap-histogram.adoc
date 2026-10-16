@@ -19,8 +19,11 @@ camel cmd heap-histogram [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--filter` | Filter class names (use all to include all classes) | all | String
+| `--json` | Output in JSON Format |  | boolean
 | `--sort` | Sort by bytes, instances, or className | bytes | String
+| `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
 | `--top` | Show only the top N classes | 50 | int
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

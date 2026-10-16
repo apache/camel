@@ -20,11 +20,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
@@ -43,7 +46,7 @@ public class SemanticEvaluate extends SemanticActionCommand {
     @CommandLine.Option(names = "--evaluation", description = "Named semantic definition to evaluate")
     String evaluation;
 
-    @CommandLine.Option(names = "--body", description = "Sample message body (text, file:path or json:value)")
+    @CommandLine.Option(names = "--body", description = "Sample body (text, file:path, image:path or json:value)")
     String body;
 
     @CommandLine.Option(names = "--header", description = "Sample header (key=value; use json: for a typed value)")
@@ -59,7 +62,7 @@ public class SemanticEvaluate extends SemanticActionCommand {
     @CommandLine.Option(names = "--operation", description = "Expert operation to call directly")
     String operation;
 
-    @CommandLine.Option(names = "--input", description = "Direct expert input (text, file:path or json:value)")
+    @CommandLine.Option(names = "--input", description = "Direct input (text, file:path, image:path or json:value)")
     String input;
 
     @CommandLine.Option(names = "--parameter", description = "Expert parameter (key=value; use json: for a typed value)")
@@ -121,6 +124,49 @@ public class SemanticEvaluate extends SemanticActionCommand {
             }
         }
         return request;
+    }
+
+    @Override
+    protected void prepareRequest(long pid, JsonObject request) throws Exception {
+        String selected = evaluation == null ? input : body;
+        String inputKey = evaluation == null ? "input" : "body";
+        Object value = request.get(inputKey);
+        Object messageHeaders = evaluation == null ? null : request.get("headers");
+        boolean localImage = selected != null && selected.startsWith("image:");
+        if (!localImage && !SemanticMediaInput.hasImages(value, messageHeaders)) {
+            return;
+        }
+        JsonObject metadata = RuntimeHelper.executeAction(pid,
+                new JsonObject(Map.of("action", "semantic-metadata", "overview", true)), timeout);
+        if (metadata == null || metadata.isEmpty()) {
+            throw new IllegalArgumentException("Cannot read the selected expert's image limit from runtime metadata");
+        }
+        String reference = expert;
+        String operationName = operation;
+        if (evaluation != null) {
+            JsonObject definition = named(metadata, "evaluations", "name", evaluation);
+            reference = definition.getString("expert");
+            operationName = definition.getString("operation");
+        }
+        JsonObject selectedExpert = named(metadata, "experts", "reference", reference);
+        JsonObject selectedOperation = named(selectedExpert, "operations", "name", operationName);
+        int maxBytes = SemanticMediaInput.imageMaxBytes(selectedOperation);
+        if (localImage) {
+            value = SemanticMediaInput.readImage(selected, maxBytes);
+            request.put(inputKey, value);
+        }
+        SemanticMediaInput.validateImageSize(value, messageHeaders, maxBytes);
+    }
+
+    private static JsonObject named(JsonObject metadata, String collection, String key, String name) {
+        if (name != null && metadata.getCollection(collection) != null) {
+            for (Object item : metadata.getCollection(collection)) {
+                if (item instanceof JsonObject value && name.equals(value.getString(key))) {
+                    return value;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Selected semantic " + collection + " unavailable in runtime metadata");
     }
 
     private static void requireText(String value, String option) {

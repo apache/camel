@@ -16,10 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.util.StopWatch;
 import org.jline.jansi.Ansi;
@@ -40,7 +39,8 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
-    private CommandHelper.ReadConsoleTask waitUserTask;
+    @CommandLine.Mixin
+    DurationMixin durationOption = new DurationMixin();
 
     protected ProcessWatchCommand(CamelJBangMain main) {
         super(main);
@@ -49,16 +49,16 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
     @Override
     public Integer doCall() throws Exception {
         int exit;
-        final AtomicBoolean running = new AtomicBoolean(true);
+        long duration = durationOption.getDuration();
         if (watch && EnvironmentHelper.isEmbedded()) {
-            printer().println("Tip: use the TUI tabs for live monitoring");
+            printer().printTip("use the TUI tabs for live monitoring");
+            exit = doProcessWatchCall();
+        } else if (watch && duration <= 0 && !EnvironmentHelper.isInteractiveTerminal()) {
+            // nobody can press Enter to stop watching
+            printer().printWarn("--watch needs an interactive terminal or --duration, so the output is shown once");
             exit = doProcessWatchCall();
         } else if (watch) {
-            Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
-                waitUserTask.run();
-            }, "WaitForUser");
-            t.start();
+            CommandHelper.RunUntil until = CommandHelper.RunUntil.start(duration);
             do {
                 autoClearScreen();
                 exit = doProcessWatchCall();
@@ -66,14 +66,15 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
                     // use 2-sec delay in watch mode
                     try {
                         StopWatch watch = new StopWatch();
-                        while (running.get() && watch.taken() < 2000) {
+                        while (until.isRunning() && watch.taken() < 2000) {
                             Thread.sleep(100);
                         }
-                    } catch (Exception e) {
-                        running.set(false);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        until.stop();
                     }
                 }
-            } while (exit == 0 && running.get());
+            } while (exit == 0 && until.isRunning());
         } else {
             exit = doProcessWatchCall();
         }
@@ -81,7 +82,10 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
     }
 
     protected void autoClearScreen() {
-        clearScreen();
+        if (!jsonOutput) {
+            // in JSON mode every refresh prints one more document, and the escape codes would break it
+            clearScreen();
+        }
     }
 
     protected void clearScreen() {
@@ -89,7 +93,8 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
         if (t != null) {
             t.writer().print("\033[2J\033[H");
             t.writer().flush();
-        } else {
+        } else if (EnvironmentHelper.hasTerminal()) {
+            // the escape codes would end up in a file or a pipe
             AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
         }
     }

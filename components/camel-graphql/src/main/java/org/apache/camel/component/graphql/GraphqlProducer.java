@@ -45,9 +45,14 @@ public class GraphqlProducer extends DefaultAsyncProducer {
         Registry registry = getEndpoint().getCamelContext().getRegistry();
         String hash = Integer.toHexString(getEndpoint().getEndpointUri().hashCode());
 
-        StringBuilder sb = new StringBuilder(getEndpoint().getServiceUrl());
-        sb.append("?httpMethod=POST");
+        String serviceUrl = getEndpoint().getServiceUrl();
+        StringBuilder sb = new StringBuilder(serviceUrl);
+        // httpUri has a query of its own when the endpoint has lenient parameters (such as an api key)
+        sb.append(serviceUrl.indexOf('?') < 0 ? '?' : '&').append("httpMethod=POST");
         sb.append("&throwExceptionOnFailure=").append(getEndpoint().isThrowExceptionOnFailure());
+        // the request always goes to httpUri: CamelHttpUri, CamelHttpPath and the other camel-http control headers
+        // of the message must not change it
+        sb.append("&skipControlHeaders=true");
 
         String clientConfigurerName = "graphqlHttpClientConfigurer-" + hash;
         registry.bind(clientConfigurerName, getEndpoint().createHttpClientConfigurer());
@@ -86,6 +91,7 @@ public class GraphqlProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
 
         Exchange httpExchange = getEndpoint().createExchange();
+        // not read by camel-http (skipControlHeaders=true): the httpMethod option of the internal endpoint decides
         httpExchange.getIn().setHeader(HttpConstants.HTTP_METHOD, "post");
         httpExchange.getIn().setHeader("Content-Type", "application/json");
         httpExchange.getIn().setHeader("Accept", "application/json");

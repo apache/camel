@@ -28,11 +28,13 @@ import org.apache.camel.component.pulsar.PulsarMessageReceiptFactory;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -49,16 +51,13 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarCustomMessageReceiptIT.class);
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic-PulsarCustomMessageReceiptIT";
-    private static final String PRODUCER = "camel-producer-1";
+    private static final String TOPIC_URI_PREFIX = "persistent://public/default/camel-custom-receipt-topic-";
+    private static int topicId;
 
     public PulsarMessageReceiptFactory mockPulsarMessageReceiptFactory = mock(PulsarMessageReceiptFactory.class);
 
     public PulsarMessageReceipt mockPulsarMessageReceipt = mock(PulsarMessageReceipt.class);
 
-    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
-                    + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
-                    + "&allowManualAcknowledgement=true" + "&ackTimeoutMillis=1000")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -68,7 +67,35 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
 
     @BeforeEach
     public void setup() throws Exception {
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        context.removeRoute("myRoute");
+        String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
+
+        String topicUri = TOPIC_URI_PREFIX + ++topicId;
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(topicUri).create();
+
+        from = context.getEndpoint("pulsar:" + topicUri + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                                   + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+                                   + "&allowManualAcknowledgement=true&ackTimeoutMillis=1000");
+        to = context.getEndpoint("mock:result", MockEndpoint.class);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        try {
+            if (from != null) {
+                from.close();
+            }
+            if (producer != null) {
+                producer.close();
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to close resources: {}", e.getMessage(), e);
+        }
+        try {
+            context.removeRoute("myRoute");
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     @Override
@@ -102,13 +129,13 @@ public class PulsarCustomMessageReceiptIT extends PulsarITSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(from).routeId("myRoute").to(to).process(exchange -> {
+                from(from).routeId("myRoute").process(exchange -> {
                     LOGGER.info("Processing message {}", exchange.getIn().getBody());
 
                     PulsarMessageReceipt receipt
                             = (PulsarMessageReceipt) exchange.getIn().getHeader(PulsarMessageHeaders.MESSAGE_RECEIPT);
                     receipt.acknowledge();
-                });
+                }).to(to);
             }
         });
 

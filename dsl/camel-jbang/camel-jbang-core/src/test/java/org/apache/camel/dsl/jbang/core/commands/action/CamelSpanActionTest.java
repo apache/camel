@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -24,7 +26,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,9 +62,10 @@ class CamelSpanActionTest extends ActionCommandTestSupport {
         CamelSpanAction command = new CamelSpanAction(new CamelJBangMain().withPrinter(printer));
         command.name = "doesNotExist";
 
-        int exit = callWithSingleProcess(command);
+        CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
-        assertEquals(1, exit);
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("No running Camel integration matches: doesNotExist", e.getMessage());
         assertTrue(printer.getOutput().isEmpty(), "nothing should be rendered when no process matches");
     }
 
@@ -85,5 +90,18 @@ class CamelSpanActionTest extends ActionCommandTestSupport {
         response.put("enabled", true);
         response.put("spans", spans);
         return response;
+    }
+
+    @Test
+    void remoteComponentsComeFromTheCatalog() {
+        // as the catalog marks them; a scheme it does not know counts as remote
+        assertTrue(CamelSpanAction.isRemoteScheme("kafka"));
+        assertTrue(CamelSpanAction.isRemoteScheme("acme"));
+        assertFalse(CamelSpanAction.isRemoteScheme("direct"));
+        assertFalse(CamelSpanAction.isRemoteScheme("bean"));
+        // not in the list the check used to keep: a timer or an xslt step is not a remote call
+        assertFalse(CamelSpanAction.isRemoteScheme("timer"));
+        assertFalse(CamelSpanAction.isRemoteScheme("xslt"));
+        assertFalse(CamelSpanAction.isRemoteScheme(null));
     }
 }

@@ -200,6 +200,7 @@ public class LlmClient {
     String url;
     String apiKey;
     String model;
+    private boolean explicitModel;
     int timeout;
     double temperature;
     boolean stream;
@@ -297,6 +298,16 @@ public class LlmClient {
         return this;
     }
 
+    /**
+     * The model the user named: Ollama uses it as named, also when it is the {@code llama3.2} the CLI commands pass as
+     * a placeholder, which is otherwise upgraded to an installed model with better tool calling (CAMEL-25676).
+     */
+    public LlmClient withExplicitModel(String model) {
+        this.model = model;
+        this.explicitModel = model != null && !model.isBlank();
+        return this;
+    }
+
     public LlmClient withTimeout(int timeout) {
         this.timeout = timeout;
         return this;
@@ -391,7 +402,7 @@ public class LlmClient {
             case ollama -> {
                 if (model == null || model.isBlank()) {
                     model = resolveDefaultOllamaModel();
-                } else if (DEFAULT_OLLAMA_MODEL.equals(model)) {
+                } else if (DEFAULT_OLLAMA_MODEL.equals(model) && !explicitModel) {
                     resolveOllamaModel();
                 }
             }
@@ -1143,6 +1154,41 @@ public class LlmClient {
     }
 
     /**
+     * The size of the current Ollama model in billions of parameters, as {@code /api/show} reports it (3.2B, 35.1B,
+     * 494.03M), or -1 when unknown: {@code camel ask} warns about a small model (CAMEL-25676).
+     */
+    double ollamaParameterBillions() {
+        if (apiType != ApiType.ollama || model == null) {
+            return -1;
+        }
+        JsonObject body = new JsonObject();
+        body.put("model", model);
+        JsonObject show = postJsonQuietly(url + "/api/show", body);
+        Object details = show != null ? show.get("details") : null;
+        String size = details instanceof JsonObject d ? d.getString("parameter_size") : null;
+        return parseParameterSize(size);
+    }
+
+    /** 3.2B is 3.2, 494.03M is 0.494, anything else -1. */
+    static double parseParameterSize(String size) {
+        if (size == null || size.length() < 2) {
+            return -1;
+        }
+        char unit = Character.toUpperCase(size.charAt(size.length() - 1));
+        try {
+            double value = Double.parseDouble(size.substring(0, size.length() - 1).strip());
+            return switch (unit) {
+                case 'B' -> value;
+                case 'M' -> value / 1000;
+                case 'T' -> value * 1000;
+                default -> -1;
+            };
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    /**
      * Whether the current model's weights plus the KV cache of a {@code contextTokens} window fit in
      * {@code totalMemoryBytes}: weights from {@code /api/tags}, the KV cost per token from the architecture facts in
      * {@code /api/show}. Unknown facts count as "does not fit".
@@ -1883,10 +1929,10 @@ public class LlmClient {
             handleErrorStatus(response.statusCode(), response.body());
             return null;
         } catch (HttpTimeoutException e) {
-            printer.println("Request timed out after " + timeout + " seconds.");
+            printer.printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer.println("Error calling LLM: " + e.getMessage());
+            printer.printErr("Calling the LLM failed: " + e.getMessage());
             return null;
         }
     }
@@ -1921,10 +1967,10 @@ public class LlmClient {
             handleErrorStatus(response.statusCode(), response.body());
             return null;
         } catch (HttpTimeoutException e) {
-            printer.println("Request timed out after " + timeout + " seconds.");
+            printer.printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer.println("Error calling LLM: " + e.getMessage());
+            printer.printErr("Calling the LLM failed: " + e.getMessage());
             return null;
         }
     }
@@ -2557,24 +2603,24 @@ public class LlmClient {
     // ---- Error handling ----
 
     private void handleErrorStatus(int statusCode, String body) {
-        printer.println("LLM returned status: " + statusCode);
+        printer.printErr("LLM returned status: " + statusCode);
         switch (statusCode) {
-            case 401 -> printer.println("Authentication failed. Check your API key.");
+            case 401 -> printer.printDiagnostic("Authentication failed. Check your API key.");
             case 404 -> {
                 if (isVertexAi()) {
-                    printer.println("Model not found. Check that the model identifier is valid for Vertex AI.");
+                    printer.printDiagnostic("Model not found. Check that the model identifier is valid for Vertex AI.");
                 } else {
-                    printer.println("Endpoint not found.");
+                    printer.printDiagnostic("Endpoint not found.");
                 }
             }
-            case 429 -> printer.println("Rate limit exceeded.");
+            case 429 -> printer.printDiagnostic("Rate limit exceeded.");
             default -> {
             }
         }
         if (body != null && !body.isBlank()) {
             String errorMessage = extractErrorMessage(body);
             if (errorMessage != null) {
-                printer.println(errorMessage);
+                printer.printDiagnostic(errorMessage);
             }
         }
     }

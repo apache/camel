@@ -127,6 +127,11 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
         return folder;
     }
 
+    @ManagedAttribute(description = "How often the folder is scanned for changed files, in millis")
+    public long getPollTimeout() {
+        return pollTimeout;
+    }
+
     @ManagedAttribute(description = "Whether the reload strategy watches directory recursively")
     public boolean isRecursive() {
         return isRecursive;
@@ -227,6 +232,10 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         // .idea are not ours either, and walking them every scan costs for nothing (CAMEL-25042)
                         return FileVisitResult.SKIP_SUBTREE;
                     }
+                    if (!dir.equals(root) && isExcludedDirectory(dir)) {
+                        // a folder of data the routes read and write, not sources (CAMEL-25670)
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
                     if (!isRecursive && !dir.equals(root)) {
                         return FileVisitResult.SKIP_SUBTREE;
                     }
@@ -294,6 +303,15 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
      */
     protected boolean isCompileWorkDir(Path dir) {
         return compileWorkDir != null && dir.toAbsolutePath().normalize().startsWith(compileWorkDir);
+    }
+
+    /**
+     * Whether the directory is left out of the scan, with all it holds: a folder of data the routes read and write, not
+     * sources, whose files would otherwise reload the routes every time the routes write there (CAMEL-25670). By
+     * default no directory is left out.
+     */
+    protected boolean isExcludedDirectory(Path dir) {
+        return false;
     }
 
     private Path resolveCompileWorkDir() {

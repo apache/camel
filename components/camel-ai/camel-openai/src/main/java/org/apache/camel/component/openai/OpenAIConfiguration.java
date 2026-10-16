@@ -104,7 +104,7 @@ public class OpenAIConfiguration implements Cloneable {
     private Map<String, Object> additionalHeader;
 
     @UriParam
-    @Metadata(description = "The model to use for chat completion")
+    @Metadata(description = "The model to use for the selected operation")
     private String model;
 
     @UriParam

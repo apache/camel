@@ -70,131 +70,130 @@ public class CamelContextStatus extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
-                        JsonObject runtime = (JsonObject) root.get("runtime");
-                        row.platform = extractPlatform(ph, runtime);
-                        row.platformVersion = extractPlatformVersion(row.platform,
-                                runtime != null ? runtime.getString("platformVersion") : null);
-                        row.state = context.getInteger("phase");
-                        row.camelVersion = context.getString("version");
-                        row.profile = context.getString("profile");
-                        Map<String, ?> stats = context.getMap("statistics");
-                        if (stats != null) {
-                            Object thp = stats.get("exchangesThroughput");
-                            if (thp != null) {
-                                row.throughput = thp.toString();
-                            }
-                            row.total = stats.get("exchangesTotal").toString();
-                            Object num = stats.get("remoteExchangesTotal");
-                            if (num != null) {
-                                row.totalRemote = num.toString();
-                            }
-                            row.failed = stats.get("exchangesFailed").toString();
-                            num = stats.get("remoteExchangesFailed");
-                            if (num != null) {
-                                row.failedRemote = num.toString();
-                            }
-                            row.inflight = stats.get("exchangesInflight").toString();
-                            num = stats.get("remoteExchangesInflight");
-                            if (num != null) {
-                                row.inflightRemote = num.toString();
-                            }
-                            Object last = stats.get("lastProcessingTime");
-                            if (last != null) {
-                                row.last = last.toString();
-                            }
-                            last = stats.get("deltaProcessingTime");
-                            if (last != null) {
-                                row.delta = last.toString();
-                            }
-                            last = stats.get("lastCreatedExchangeTimestamp");
-                            if (last != null) {
-                                long time = Long.parseLong(last.toString());
-                                row.sinceLastStarted = TimeUtils.printSince(time);
-                            }
-                            last = stats.get("lastCompletedExchangeTimestamp");
-                            if (last != null) {
-                                long time = Long.parseLong(last.toString());
-                                row.sinceLastCompleted = TimeUtils.printSince(time);
-                            }
-                            last = stats.get("lastFailedExchangeTimestamp");
-                            if (last != null) {
-                                long time = Long.parseLong(last.toString());
-                                row.sinceLastFailed = TimeUtils.printSince(time);
-                            }
-                            row.reloaded = (String) stats.get("reloaded"); // backwards compatible
-                            stats = (Map<String, ?>) stats.get("reload");
-                            if (stats != null) {
-                                row.reloaded = stats.get("reloaded").toString();
-                                row.reloadedFailed = stats.get("failed").toString();
-                                stats = (Map<String, ?>) stats.get("lastError");
-                                if (stats != null) {
-                                    row.reloadedError = Objects.toString(stats.get("message"), "");
-                                }
-                            }
-                        }
-                        JsonArray array = (JsonArray) root.get("routes");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
-                            String state = o.getString("state");
-                            row.routeTotal++;
-                            if ("Started".equals(state)) {
-                                row.routeStarted++;
-                            }
-                        }
-
-                        JsonObject hc = (JsonObject) root.get("healthChecks");
-                        boolean rdy = hc != null && hc.getBoolean("ready");
-                        if (rdy) {
-                            row.ready = "1/1";
-                        } else {
-                            row.ready = "0/1";
-                        }
-                        rows.add(row);
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
+            JsonObject runtime = (JsonObject) root.get("runtime");
+            row.platform = extractPlatform(ph, runtime);
+            row.platformVersion = extractPlatformVersion(row.platform,
+                    runtime != null ? runtime.getString("platformVersion") : null);
+            row.state = context.getInteger("phase");
+            row.camelVersion = context.getString("version");
+            row.profile = context.getString("profile");
+            Map<String, ?> stats = context.getMap("statistics");
+            if (stats != null) {
+                Object thp = stats.get("exchangesThroughput");
+                if (thp != null) {
+                    row.throughput = thp.toString();
+                }
+                row.total = stats.get("exchangesTotal").toString();
+                Object num = stats.get("remoteExchangesTotal");
+                if (num != null) {
+                    row.totalRemote = num.toString();
+                }
+                row.failed = stats.get("exchangesFailed").toString();
+                num = stats.get("remoteExchangesFailed");
+                if (num != null) {
+                    row.failedRemote = num.toString();
+                }
+                row.inflight = stats.get("exchangesInflight").toString();
+                num = stats.get("remoteExchangesInflight");
+                if (num != null) {
+                    row.inflightRemote = num.toString();
+                }
+                Object last = stats.get("lastProcessingTime");
+                if (last != null) {
+                    row.last = last.toString();
+                }
+                last = stats.get("deltaProcessingTime");
+                if (last != null) {
+                    row.delta = last.toString();
+                }
+                last = stats.get("lastCreatedExchangeTimestamp");
+                if (last != null) {
+                    long time = Long.parseLong(last.toString());
+                    row.sinceLastStarted = TimeUtils.printSince(time);
+                }
+                last = stats.get("lastCompletedExchangeTimestamp");
+                if (last != null) {
+                    long time = Long.parseLong(last.toString());
+                    row.sinceLastCompleted = TimeUtils.printSince(time);
+                }
+                last = stats.get("lastFailedExchangeTimestamp");
+                if (last != null) {
+                    long time = Long.parseLong(last.toString());
+                    row.sinceLastFailed = TimeUtils.printSince(time);
+                }
+                row.reloaded = (String) stats.get("reloaded"); // backwards compatible
+                stats = (Map<String, ?>) stats.get("reload");
+                if (stats != null) {
+                    row.reloaded = stats.get("reloaded").toString();
+                    row.reloadedFailed = stats.get("failed").toString();
+                    stats = (Map<String, ?>) stats.get("lastError");
+                    if (stats != null) {
+                        row.reloadedError = Objects.toString(stats.get("message"), "");
                     }
-                });
+                }
+            }
+            JsonArray array = (JsonArray) root.get("routes");
+            for (int i = 0; i < array.size(); i++) {
+                JsonObject o = (JsonObject) array.get(i);
+                String state = o.getString("state");
+                row.routeTotal++;
+                if ("Started".equals(state)) {
+                    row.routeStarted++;
+                }
+            }
+
+            JsonObject hc = (JsonObject) root.get("healthChecks");
+            boolean rdy = hc != null && hc.getBoolean("ready");
+            if (rdy) {
+                row.ready = "1/1";
+            } else {
+                row.ready = "0/1";
+            }
+            rows.add(row);
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("camelVersion", r.camelVersion);
                     jo.put("platform", getPlatform(r));
                     jo.put("profile", getProfile(r));
-                    jo.put("ready", r.ready);
+                    jo.put("ready", "1/1".equals(r.ready));
                     jo.put("status", getStatus(r));
-                    jo.put("reload", getReloaded(r));
+                    jo.put("reloaded", JsonValues.number(r.reloaded));
+                    jo.put("reloadFailed", JsonValues.number(r.reloadedFailed));
                     jo.put("age", r.age);
-                    jo.put("route", getRoutes(r));
-                    jo.put("throughput", getThroughput(r));
-                    jo.put("total", r.total);
-                    jo.put("failed", r.failed);
-                    jo.put("inflight", r.inflight);
-                    jo.put("last", r.last);
-                    jo.put("sinceLast", getSinceLast(r));
+                    jo.put("uptime", r.uptime);
+                    jo.put("routesStarted", r.routeStarted);
+                    jo.put("routesTotal", r.routeTotal);
+                    jo.put("throughput", JsonValues.decimal(r.throughput));
+                    jo.put("total", JsonValues.number(r.total));
+                    jo.put("failed", JsonValues.number(r.failed));
+                    jo.put("inflight", JsonValues.number(r.inflight));
+                    jo.put("last", JsonValues.number(r.last));
+                    jo.put("sinceLastStarted", JsonValues.text(r.sinceLastStarted));
+                    jo.put("sinceLastCompleted", JsonValues.text(r.sinceLastCompleted));
+                    jo.put("sinceLastFailed", JsonValues.text(r.sinceLastFailed));
                     return jo;
                 }).collect(Collectors.toList())));
             } else {

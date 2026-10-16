@@ -50,12 +50,11 @@ public class Dirty extends ProcessBaseCommand {
         }
 
         List<File> dirty = new ArrayList<>();
-        List<Long> pids = findPids("*");
-        pids.add(ProcessHandle.current().pid()); // include ourselves
         for (File f : files) {
-            // skip running Camel integrations and ourselves
-            String n = f.getName();
-            boolean running = pids.stream().anyMatch(p -> n.startsWith("" + p));
+            // the files of a process that is alive are in use (such as the launcher of an integration that runs in a
+            // child process, whose Camel has stopped), and so are the files of ourselves
+            Long pid = pidOf(f.getName());
+            boolean running = pid != null && ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
             if (!running) {
                 dirty.add(f);
             }
@@ -74,6 +73,30 @@ public class Dirty extends ProcessBaseCommand {
         }
 
         return 0;
+    }
+
+    /**
+     * The pid a file in the Camel directory belongs to, such as 123 for {@code 123-status.json}, {@code 123} and the
+     * infra service file {@code infra-kafka-123.json}, or <tt>null</tt> for a file that belongs to no process.
+     */
+    static Long pidOf(String fileName) {
+        if (fileName.startsWith("infra-") && fileName.lastIndexOf('-') > 5) {
+            // infra-<service>-<pid>.json and .log
+            fileName = fileName.substring(fileName.lastIndexOf('-') + 1);
+        }
+        int end = 0;
+        while (end < fileName.length() && Character.isDigit(fileName.charAt(end))) {
+            end++;
+        }
+        boolean separated = end == fileName.length() || fileName.charAt(end) == '-' || fileName.charAt(end) == '.';
+        if (end == 0 || !separated) {
+            return null;
+        }
+        try {
+            return Long.parseLong(fileName.substring(0, end));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 }

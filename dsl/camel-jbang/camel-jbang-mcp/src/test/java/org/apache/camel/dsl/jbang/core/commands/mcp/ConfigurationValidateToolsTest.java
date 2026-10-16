@@ -59,7 +59,7 @@ class ConfigurationValidateToolsTest {
 
     @Test
     void theRunningVersionWithoutSnapshotIsTheDefaultCatalog() {
-        // an assistant that reads "4.23.0-SNAPSHOT" from the server asks for 4.23.0, which is not on Maven Central
+        // an assistant that reads "4.24.0-SNAPSHOT" from the server asks for 4.23.0, which is not on Maven Central
         ConfigurationValidateTools tools = createTools();
         String mine = tools.catalogService.getDefaultCatalog().getCatalogVersion().replace("-SNAPSHOT", "");
 

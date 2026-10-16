@@ -59,7 +59,8 @@ class SemanticTab extends AbstractTableTab {
         DEFINITIONS("Definitions"),
         EXPERTS("Experts"),
         RELATIONSHIPS("Relationships"),
-        AUDIT("Audit");
+        AUDIT("Audit"),
+        MONITORING("Monitoring");
 
         final String label;
 
@@ -76,6 +77,8 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private final SemanticAuditView audit;
+    private final SemanticMonitoringView monitoring;
+    private JsonObject auditDraft;
     private JsonObject data;
     private CompletableFuture<JsonObject> pending;
     private String pid;
@@ -108,6 +111,7 @@ class SemanticTab extends AbstractTableTab {
     SemanticTab(MonitorContext ctx) {
         super(ctx);
         audit = new SemanticAuditView(ctx);
+        monitoring = new SemanticMonitoringView(ctx);
     }
 
     @Override
@@ -118,6 +122,8 @@ class SemanticTab extends AbstractTableTab {
     @Override
     public void onIntegrationChanged() {
         audit.reset();
+        monitoring.reset();
+        auditDraft = null;
         data = null;
         pending = null;
         pid = null;
@@ -142,6 +148,10 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private void load() {
+        if (view == View.MONITORING) {
+            monitoring.load();
+            return;
+        }
         if (view == View.AUDIT) {
             audit.load();
             return;
@@ -191,6 +201,21 @@ class SemanticTab extends AbstractTableTab {
             } else {
                 data = response;
                 error = null;
+                if (auditDraft != null) {
+                    JsonObject expert = objects(data, "experts").stream()
+                            .filter(row -> Objects.equals(row.get("reference"), auditDraft.get("expert"))).findFirst()
+                            .orElse(null);
+                    if (expert == null || objects(expert, "operations").stream()
+                            .noneMatch(operation -> Objects.equals(operation.get("name"), auditDraft.get("operation")))) {
+                        auditDraft = null;
+                        view = View.AUDIT;
+                        audit.draftError("Original expert/operation is unavailable; no draft was created.");
+                        return;
+                    }
+                    expertReference = auditDraft.getString("expert");
+                    operationName = auditDraft.getString("operation");
+                    operationExplicit = true;
+                }
             }
             restoreSelection();
         }
@@ -198,6 +223,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean ensureDataLoaded() {
+        if (view == View.MONITORING) {
+            return monitoring.ensureLoaded();
+        }
         if (view == View.AUDIT) {
             return audit.ensureLoaded();
         }
@@ -210,6 +238,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public String dataLoadError() {
+        if (view == View.MONITORING) {
+            return monitoring.error();
+        }
         if (view == View.AUDIT) {
             return audit.error();
         }
@@ -343,6 +374,21 @@ class SemanticTab extends AbstractTableTab {
         return operations.stream().filter(op -> Objects.equals(operationName, op.get("name"))).findFirst().orElse(null);
     }
 
+    private void openAuditDraft() {
+        JsonObject draft = audit.takeDraft();
+        if (draft == null) {
+            return;
+        }
+        auditDraft = draft;
+        expertReference = draft.getString("expert");
+        operationName = draft.getString("operation");
+        operationExplicit = true;
+        playground = null;
+        view = View.EXPERTS;
+        filter = "";
+        load();
+    }
+
     private void syncPlayground() {
         JsonObject operation = selectedOperation();
         if (operation != null) {
@@ -358,10 +404,34 @@ class SemanticTab extends AbstractTableTab {
                 playgrounds.put(key, playground);
             }
         }
+        if (auditDraft != null && pending == null && playground != null
+                && Objects.equals(expertReference, auditDraft.get("expert"))
+                && Objects.equals(operationName, auditDraft.get("operation"))) {
+            SemanticPlayground next = new SemanticPlayground(ctx, pid, expertReference, operation);
+            try {
+                next.loadAuditInput(auditDraft);
+                playground = next;
+                playgrounds.put(new ExpertOperation(expertReference, operationName), playground);
+                focus = Focus.PLAYGROUND;
+            } catch (IllegalArgumentException incompatible) {
+                view = View.AUDIT;
+                audit.draftError("Captured input is incompatible with the current contract; no draft was created.");
+            }
+            auditDraft = null;
+        }
+        if (playground != null) {
+            playground.setDefinition(selectedDefinition());
+        }
     }
 
     private void view(View selected) {
         view = selected;
+        if (view == View.MONITORING) {
+            sample = null;
+            filterInput = null;
+            monitoring.ensureLoaded();
+            return;
+        }
         if (view == View.AUDIT) {
             sample = null;
             filterInput = null;
@@ -386,7 +456,8 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean isTextInputActive() {
-        return view == View.AUDIT ? audit.inputActive() : filterInput != null || sample != null || focus == Focus.PLAYGROUND;
+        return view == View.MONITORING ? false : view == View.AUDIT ? audit.inputActive()
+                : filterInput != null || sample != null || focus == Focus.PLAYGROUND;
     }
 
     @Override
@@ -416,12 +487,21 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent key) {
-        if (view == View.AUDIT) {
-            if (!audit.inputActive() && key.isChar('v')) {
+        if (view == View.MONITORING) {
+            if (key.isChar('v')) {
                 view(View.DEFINITIONS);
                 return true;
             }
-            return audit.key(key);
+            return monitoring.key(key);
+        }
+        if (view == View.AUDIT) {
+            if (!audit.inputActive() && key.isChar('v')) {
+                view(View.MONITORING);
+                return true;
+            }
+            boolean handled = audit.key(key);
+            openAuditDraft();
+            return handled;
         }
         refresh();
         if (sample != null) {
@@ -437,6 +517,12 @@ class SemanticTab extends AbstractTableTab {
             } else {
                 FormHelper.handleTextInput(key, filterInput);
             }
+            return true;
+        }
+        if (view == View.EXPERTS && playground != null && key.hasCtrl()
+                && (key.isCharIgnoreCase('p') || key.isCharIgnoreCase('k'))) {
+            playground.handleKeyEvent(key);
+            focus = Focus.PLAYGROUND;
             return true;
         }
         if (focus == Focus.PLAYGROUND && playground != null) {
@@ -492,12 +578,8 @@ class SemanticTab extends AbstractTableTab {
             return true;
         }
         if (key.isChar('p') && view == View.EXPERTS) {
-            JsonObject definition = selectedDefinition();
-            if (playground != null && definition != null && definition.get("error") == null
-                    && Objects.equals(operationName, definition.get("operation"))
-                    && playground.loadParameters(definition)) {
+            if (playground != null && playground.loadParameters()) {
                 focus = Focus.PLAYGROUND;
-                playground.focusFirstField();
             }
             return true;
         }
@@ -540,6 +622,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleEscape() {
+        if (view == View.MONITORING) {
+            return monitoring.escape();
+        }
         if (view == View.AUDIT) {
             return audit.escape();
         }
@@ -573,6 +658,10 @@ class SemanticTab extends AbstractTableTab {
     }
 
     private void navigate(int delta) {
+        if (view == View.MONITORING) {
+            monitoring.navigate(delta);
+            return;
+        }
         if (view == View.AUDIT) {
             audit.navigate(delta);
             return;
@@ -603,8 +692,11 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent event, Rect area) {
+        if (view == View.MONITORING) {
+            return monitoring.mouse(event);
+        }
         if (view == View.AUDIT) {
-            return false;
+            return audit.mouse(event);
         }
         if (sample != null) {
             sample.handleMouseEvent(event);
@@ -671,6 +763,10 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        if (view == View.MONITORING) {
+            monitoring.render(frame, area);
+            return;
+        }
         if (view == View.AUDIT) {
             audit.render(frame, area);
             return;
@@ -707,7 +803,7 @@ class SemanticTab extends AbstractTableTab {
             List<Rect> panels
                     = Layout.horizontal().constraints(Constraint.percentage(36), Constraint.length(1), Constraint.fill())
                             .split(area);
-            int expertsHeight = Math.min(rows().size() * 2 + 3 + defaultLines(panels.get(0).width() - 4).size(),
+            int expertsHeight = Math.min(rows().size() * 2 + 3,
                     Math.max(7, area.height() / 3));
             List<Rect> left = Layout.vertical().constraints(Constraint.length(expertsHeight), Constraint.length(0),
                     Constraint.fill()).split(panels.get(0));
@@ -761,15 +857,6 @@ class SemanticTab extends AbstractTableTab {
         operationBar.render(frame, area, new SubViewBar.Spec("[ ]", views, List.of(), false));
     }
 
-    private List<Line> defaultLines(int width) {
-        String value = data != null && data.get("defaultExpert") != null ? text(data, "defaultExpert") : "none";
-        if (data != null && data.get("defaultError") != null) {
-            value += " · " + text(data, "defaultError");
-        }
-        return hangingWrap(List.of(Line.from(Span.styled("Default: ", Theme.label()), Span.raw(value))), Math.max(1, width))
-                .stream().limit(3).toList();
-    }
-
     private String filterLabel() {
         return filter.isEmpty() ? "" : " / " + filter;
     }
@@ -799,10 +886,9 @@ class SemanticTab extends AbstractTableTab {
         if (content.isEmpty()) {
             content.add(Row.from(emptyMessage()));
         }
-        List<Line> footer = defaultLines(inner.width() - 2);
         lastTableArea = new Rect(
                 inner.x() + 1, inner.y(), Math.max(0, inner.width() - 2),
-                Math.max(0, inner.height() - footer.size()));
+                inner.height());
         Table table = Table.builder().rows(content).header(Row.from("EXPERT").style(Theme.label()))
                 .widths(Constraint.fill()).highlightSymbol("› ").highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS).build();
@@ -812,9 +898,6 @@ class SemanticTab extends AbstractTableTab {
             frame.renderStatefulWidget(table, lastTableArea, tableState);
             renderScrollbar(frame, table, content.size());
         }
-        SemanticDetails.paragraph(frame, new Rect(
-                inner.x() + 1, inner.bottom() - footer.size(),
-                Math.max(0, inner.width() - 2), footer.size()), footer, 0);
     }
 
     private void renderTable(Frame frame, Rect area, List<JsonObject> rows, boolean linked) {
@@ -876,6 +959,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean setFilter(String value) {
+        if (view == View.MONITORING) {
+            return monitoring.setInput("monitoring.source", value);
+        }
         if (view == View.AUDIT) {
             return audit.setFilter(value);
         }
@@ -887,6 +973,10 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
+        if (view == View.MONITORING) {
+            monitoring.footer(spans);
+            return;
+        }
         if (view == View.AUDIT) {
             audit.footer(spans);
             return;
@@ -936,6 +1026,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public SelectionContext getSelectionContext() {
+        if (view == View.MONITORING) {
+            return null;
+        }
         if (view == View.AUDIT) {
             return audit.selectionContext();
         }
@@ -949,6 +1042,9 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
+        if (view == View.MONITORING) {
+            return monitoring.snapshot();
+        }
         if (view == View.AUDIT) {
             return audit.snapshot();
         }
@@ -977,12 +1073,21 @@ class SemanticTab extends AbstractTableTab {
 
     @Override
     public boolean setInputValue(String field, String value) {
+        if ("monitoring.view".equals(field)) {
+            view(View.MONITORING);
+            return true;
+        }
+        if (view == View.MONITORING) {
+            return monitoring.setInput(field, value);
+        }
         if ("audit.view".equals(field)) {
             view(View.AUDIT);
             return true;
         }
         if (view == View.AUDIT) {
-            return audit.setInput(field, value);
+            boolean handled = audit.setInput(field, value);
+            openAuditDraft();
+            return handled;
         }
         refresh();
         if (sample != null) {

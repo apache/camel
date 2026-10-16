@@ -16,18 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Shared execution context for AI tools. Wraps {@link RuntimeHelper} (process IPC) and {@link CamelCatalog} (component
@@ -36,12 +40,16 @@ import org.apache.camel.util.json.JsonObject;
  */
 public class ToolContext {
 
+    /** How long an action on the integration may take, in millis. */
+    private static final long ACTION_TIMEOUT = 10000;
+
     private volatile long pid = -1;
     private volatile CamelCatalog catalog;
     private volatile String camelVersion;
     private volatile Path defaultDirectory;
     private volatile Function<String, String> propertyLineValidator;
     private volatile boolean autoSelectSingleProcess = true;
+    private volatile Predicate<ToolConfirms.Call> confirmer;
 
     public long pid() {
         return pid;
@@ -125,6 +133,25 @@ public class ToolContext {
     }
 
     /**
+     * Who the shared tools ask before a call that the user confirms first ({@link ToolConfirms}), such as a file write:
+     * {@code camel ask} asks on the terminal (CAMEL-25676). Null, the default, asks nobody: an MCP server leaves that
+     * to its client, and the TUI confirms in its own tools.
+     */
+    public Predicate<ToolConfirms.Call> confirmer() {
+        return confirmer;
+    }
+
+    public void setConfirmer(Predicate<ToolConfirms.Call> confirmer) {
+        this.confirmer = confirmer;
+    }
+
+    /** Whether a call goes ahead: there is nothing to confirm, nobody to ask, or the user confirmed it. */
+    public boolean confirm(ToolConfirms.Call call) {
+        Predicate<ToolConfirms.Call> c = confirmer;
+        return call == null || c == null || c.test(call);
+    }
+
+    /**
      * Resolves the directory of a file tool call: the {@code directory} argument, else the default directory.
      *
      * @throws ToolExecutionException when neither is given or the directory does not exist
@@ -171,6 +198,14 @@ public class ToolContext {
         return result;
     }
 
+    /**
+     * Sets the catalog to use for this context, bypassing the lazy-load. Use this to inject a pre-built, shared catalog
+     * instance (e.g. from {@code CatalogService}) so the tool does not create or download one per call.
+     */
+    public synchronized void setCatalog(CamelCatalog catalog) {
+        this.catalog = catalog;
+    }
+
     private CamelCatalog loadCatalog() {
         String version = camelVersion;
         if (version == null || version.isBlank()) {
@@ -212,9 +247,64 @@ public class ToolContext {
         return RuntimeHelper.readStatus(pid);
     }
 
+    /**
+     * Sends an action without a result, such as stopping the routes, to the selected integration, and waits until it
+     * confirms the action (an integration before Camel 4.24 takes the action without confirming it).
+     *
+     * @throws ToolExecutionException when the integration answers that the action failed, or does not take it in time
+     */
+    public void sendAction(String action, Consumer<JsonObject> configure) {
+        requireProcess();
+        JsonObject request = new JsonObject();
+        request.put("action", action);
+        if (configure != null) {
+            configure.accept(request);
+        }
+        ActionClient.ActionResult result;
+        try {
+            result = ActionClient.send(pid, request, ACTION_TIMEOUT);
+        } catch (IOException e) {
+            throw new ToolExecutionException(
+                    "Cannot send the action " + action + " to the integration with pid " + pid + ": " + e.getMessage());
+        }
+        if (!result.isOk()) {
+            throw new ToolExecutionException(result.error());
+        }
+    }
+
+    /**
+     * Runs an action on the selected integration, and returns the answer as the integration wrote it.
+     *
+     * @throws ToolExecutionException when the integration answers that the action failed, or does not answer in time
+     */
     public String executeAction(String action, Consumer<JsonObject> configure) {
         requireProcess();
-        return RuntimeHelper.executeAction(pid, action, configure);
+        JsonObject request = new JsonObject();
+        request.put("action", action);
+        if (configure != null) {
+            configure.accept(request);
+        }
+        String answer;
+        try {
+            answer = ActionClient.executeText(pid, request, ACTION_TIMEOUT);
+        } catch (IOException e) {
+            throw new ToolExecutionException(
+                    "Cannot send the action " + action + " to the integration with pid " + pid + ": " + e.getMessage());
+        }
+        if (answer == null) {
+            throw new ToolExecutionException(
+                    "No answer from the integration with pid " + pid + " to the action " + action + " within "
+                                             + ACTION_TIMEOUT / 1000 + " seconds");
+        }
+        // an integration of Camel 4.24 or later answers a failed action with the error
+        JsonObject json = Jsoner.deserialize(answer, (JsonObject) null);
+        if (json != null) {
+            ActionClient.ActionResult result = ActionClient.result(json);
+            if (!result.isOk()) {
+                throw new ToolExecutionException(result.error());
+            }
+        }
+        return answer;
     }
 
     public JsonObject readErrorFile() {

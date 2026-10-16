@@ -133,7 +133,7 @@ class CamelMonitorTest {
         assertEquals(-1, CamelMonitor.footerRegionAt(null, endX, 3), "no captured geometry yet");
     }
 
-    // applyThemeBaseColors patches unset terminal cells with the active theme canvas colors while
+    // Theme.applyBaseColors patches unset terminal cells with the active theme canvas colors while
     // preserving widget-specific foreground and background styles.
 
     @Test
@@ -141,7 +141,7 @@ class CamelMonitorTest {
         Rect area = new Rect(0, 0, 4, 2);
         Buffer buffer = Buffer.empty(area);
 
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(0, 0);
         assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "unset cells receive the theme background");
@@ -155,7 +155,7 @@ class CamelMonitorTest {
         Style selection = Theme.selectionBg();
         buffer.setString(1, 0, "X", selection);
 
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(1, 0);
         assertEquals(selection.bg().orElse(null), cell.style().bg().orElse(null), "selection background is preserved");
@@ -169,7 +169,7 @@ class CamelMonitorTest {
         Color explicitFg = Color.rgb(0xFF, 0x00, 0x00);
         buffer.setString(2, 0, "Y", Style.EMPTY.fg(explicitFg));
 
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(2, 0);
         assertEquals(explicitFg, cell.style().fg().orElse(null), "explicit foreground is preserved");
@@ -183,7 +183,7 @@ class CamelMonitorTest {
         Color explicitBg = Color.rgb(0x00, 0x00, 0xFF);
         buffer.setString(3, 0, "Z", Style.EMPTY.bg(explicitBg));
 
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(3, 0);
         assertEquals(explicitBg, cell.style().bg().orElse(null), "explicit background is preserved");
@@ -198,7 +198,7 @@ class CamelMonitorTest {
         Color darkBg = Theme.baseBg();
 
         Theme.setMode("light");
-        CamelMonitor.applyThemeBaseColors(buffer, area);
+        Theme.applyBaseColors(buffer, area);
 
         Cell cell = buffer.get(0, 0);
         assertEquals(Theme.baseBg(), cell.style().bg().orElse(null), "light palette background is applied");

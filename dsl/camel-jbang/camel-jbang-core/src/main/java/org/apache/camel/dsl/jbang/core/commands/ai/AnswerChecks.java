@@ -60,6 +60,22 @@ public final class AnswerChecks {
     private AnswerChecks() {
     }
 
+    /**
+     * What the model is asked, once, when its answer has invalid simple expressions: the answer is what the user copies
+     * (CAMEL-24805), in the AI panel and in {@code camel ask} alike.
+     */
+    public static String correctionRequest(List<Problem> problems) {
+        StringBuilder sb = new StringBuilder("Your answer contains ");
+        sb.append(problems.size() == 1 ? "an invalid simple expression" : "invalid simple expressions").append(":\n");
+        for (Problem p : problems) {
+            sb.append("- ").append(p.message()).append('\n');
+        }
+        sb.append("Rule: functions and values go inside ${...}, operators go between placeholders with spaces:")
+                .append(" ${header.user} ?: 'Guest', ${header.a} == 'b', ${body} != null.")
+                .append(" Send the whole answer again with the expressions fixed; do not call a tool.");
+        return sb.toString();
+    }
+
     /** The problems of the simple expressions of an answer, checked against the default catalog. */
     public static List<Problem> checkSimple(String markdown) {
         return checkSimple(markdown, defaultCatalog());

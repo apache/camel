@@ -59,6 +59,24 @@ public @interface SemanticOperation {
      */
     String scoreLevelsParameter() default "";
 
+    /** Optional Map&lt;String, String&gt; parameter describing labels in the ordered score levels parameter. */
+    String scoreDescriptionsParameter() default "";
+
+    /** Map&lt;String, String&gt; parameter declaring choice keys and their descriptions. */
+    String choiceLabelsParameter() default "";
+
+    /** Map&lt;String, String&gt; parameter describing the exact Boolean keys "true" and "false". */
+    String booleanLabelsParameter() default "";
+
+    /** Whether the expert explicitly declares its no-match designation, including that there is none. */
+    boolean noMatchDeclared() default false;
+
+    /** The declared no-match choice key; empty with noMatchDeclared=true means there is no special key. */
+    String noMatchLabel() default "";
+
+    /** Whether a returned probability map covers the complete declared candidate domain. */
+    boolean completeProbabilities() default false;
+
     /** Inclusive minimum for a score result. */
     double minimum() default Double.NEGATIVE_INFINITY;
 

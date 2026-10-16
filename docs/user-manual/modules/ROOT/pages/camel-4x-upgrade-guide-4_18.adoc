@@ -44,6 +44,15 @@ user is now accepted only when one of their roles is equal to one of those names
 whitespace around each name and blank entries are ignored, and a value of `*` still accepts any role. A roles value
 that uses another separator, such as `admin;guest` or `admin guest`, must be changed to `admin,guest`.
 
+=== camel-graphql - the credentials are only sent to the authority of httpUri
+
+The `accessToken` (with its `jwtAuthorizationType`) is now added to a request only when the request goes to the
+scheme, host and port of `httpUri`, and the `username` and `password` are registered for that authority only.
+Previously neither was bound to the authority of `httpUri`. A request to another authority, including the same host
+with another scheme or port, is now sent without them. A route that needs to authenticate to another authority must
+address it in `httpUri`. When `proxyHost` is set, the `username` and `password` are no longer offered to the proxy when
+it asks for authentication.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
@@ -69,6 +78,27 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-oauth - the bearer token processor is stateless and reads the HTTP request headers
+
+`OAuthBearerTokenProcessor` no longer creates or updates the OAuth session, and no longer sets the
+`camel.oauth.session` cookie nor the `CamelOAuthSessionId` header: a bearer token authenticates the request that
+carries it, and nothing else. The authenticated `UserProfile` is available in the `CamelOAuthUserProfile` exchange
+property (`OAuth.CAMEL_OAUTH_USER_PROFILE`). A route that read the profile from the OAuth session after
+`OAuthBearerTokenProcessor` must read it from that exchange property instead.
+
+When the message comes from platform-http (on Vert.x or on Spring Boot), from a servlet based HTTP consumer
+(camel-servlet, camel-jetty) or from camel-netty-http, the bearer token and the session cookie are now read from the
+`Authorization` and `Cookie` headers of the HTTP request only. A query or form parameter of the same name, which these
+consumers also map into the message headers, is no longer used for them, and neither is an `Authorization` or `Cookie`
+message header that the route sets itself. For example
+`+.setHeader("Authorization", simple("Bearer ${header.X-Forwarded-Access-Token}"))+` before
+`OAuthBearerTokenProcessor` now results in a 401 response. A route that takes the token from elsewhere can
+authenticate it itself, with `authenticate(new TokenCredentials(token))` on the `OAuth` instance that
+`OAuthFactory.lookupFactory(context).findOAuth()` returns.
+
+For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
+a value that also appears in the query string of the request.
+
 === camel-spring-ws - internal Camel headers are no longer written into SOAP headers
 
 The default `messageFilter` of the `spring-ws` component, `BasicMessageFilter`, now applies the endpoint's
@@ -80,6 +110,18 @@ header. Other message headers are written as before.
 A `BasicMessageFilter` created in application code applies a `SpringWebserviceHeaderFilterStrategy` unless it is
 created with another strategy. A route that relies on the previous behaviour can supply a custom
 `headerFilterStrategy` on the `spring-ws` endpoint.
+
+=== camel-pqc - a configured KeyGenerator is used by one exchange at a time
+
+When Camel creates the instance itself, the KEM operations of the `pqc` component and the PQC data format now use a
+new `KeyGenerator` for every operation. A configured instance is still shared: a registry bean, which is autowired into
+every `pqc` endpoint, a `KeyGenerator` set on the data format, or the default material used when no key material is
+configured. Each operation now holds its lock from `init` until the result is returned, so concurrent exchanges that
+use it run one at a time.
+
+A started PQC data format no longer keeps a `KeyGenerator` of its own: `getKeyGenerator()` returns only a configured
+instance and, unless one is configured, the `CamelPQCKemAlgorithm` header now selects the KEM algorithm of each
+operation.
 
 === camel-undertow - WebSocket endpoints apply the security provider, allowed roles and handlers
 
