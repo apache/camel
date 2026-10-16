@@ -126,6 +126,117 @@ class InitTest {
     }
 
     @Test
+    void initJavaInTheSourceFolderHasNoPackage() throws Exception {
+        Path sourceFolder = Files.createDirectories(workingDir.resolve("src/main/java"));
+
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLine.populateCommand(initCommand, "MyRoute.java", "--dir=" + sourceFolder);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        List<String> lines = Files.readAllLines(sourceFolder.resolve("MyRoute.java"));
+        assertEquals("import org.apache.camel.builder.RouteBuilder;", lines.get(0));
+    }
+
+    @Test
+    void initJavaInAFolderThatOnlyStartsLikeTheSourceFolderHasNoPackage() throws Exception {
+        Path folder = Files.createDirectories(workingDir.resolve("src/main/javafx/demo"));
+
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLine.populateCommand(initCommand, "MyRoute.java", "--dir=" + folder);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        List<String> lines = Files.readAllLines(folder.resolve("MyRoute.java"));
+        assertEquals("import org.apache.camel.builder.RouteBuilder;", lines.get(0));
+    }
+
+    @Test
+    void initXml() throws Exception {
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLine.populateCommand(initCommand, "my.camel.xml", "--dir=" + workingDir);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        String content = Files.readString(workingDir.resolve("my.camel.xml"));
+        assertTrue(content.contains("<route"), content);
+    }
+
+    @Test
+    void initKamelets() throws Exception {
+        for (String name : List.of("my-source.kamelet.yaml", "my-sink.kamelet.yaml", "my-action.kamelet.yaml")) {
+            Init initCommand = new Init(new CamelJBangMain());
+            CommandLine.populateCommand(initCommand, name, "--dir=" + workingDir);
+
+            int exit = initCommand.doCall();
+
+            assertEquals(0, exit);
+            String content = Files.readString(workingDir.resolve(name));
+            assertTrue(content.contains("kind: Kamelet"), content);
+            // named after the file
+            assertTrue(content.contains("name: " + name.substring(0, name.indexOf('.'))), content);
+        }
+        assertTrue(Files.readString(workingDir.resolve("my-source.kamelet.yaml"))
+                .contains("camel.apache.org/kamelet.type: \"source\""));
+        assertTrue(Files.readString(workingDir.resolve("my-sink.kamelet.yaml"))
+                .contains("camel.apache.org/kamelet.type: \"sink\""));
+    }
+
+    @Test
+    void initPipe() throws Exception {
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLine.populateCommand(initCommand, "my.yaml", "--pipe", "--dir=" + workingDir);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        assertTrue(Files.readString(workingDir.resolve("my.yaml")).contains("kind: Pipe"));
+    }
+
+    @Test
+    void initCleansTheDirectoryFirst() throws Exception {
+        Path dir = Files.createDirectories(workingDir.resolve("project"));
+        Path old = Files.writeString(dir.resolve("old.yaml"), "- route: {}");
+
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + dir, "--clean-dir");
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        assertFalse(Files.exists(old), "the directory is cleaned first");
+        assertTrue(Files.exists(dir.resolve("my.camel.yaml")));
+    }
+
+    @Test
+    void initUnsupportedFileTypeIsAUsageError() throws Exception {
+        StringPrinter printer = new StringPrinter();
+        Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(initCommand, "notes.txt", "--dir=" + workingDir);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(2, exit);
+        assertTrue(printer.getStderr().contains("Unsupported file type: txt"), printer.getStderr());
+        assertFalse(Files.exists(workingDir.resolve("notes.txt")));
+    }
+
+    @Test
+    void initFromKameletNeedsAKameletFile() throws Exception {
+        StringPrinter printer = new StringPrinter();
+        Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(initCommand, "my.yaml", "--from-kamelet=timer-source", "--dir=" + workingDir);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(2, exit);
+        assertTrue(printer.getStderr().contains("file must have extension .kamelet.yaml"), printer.getStderr());
+    }
+
+    @Test
     void initListTemplates() throws Exception {
         StringPrinter printer = new StringPrinter();
         Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
