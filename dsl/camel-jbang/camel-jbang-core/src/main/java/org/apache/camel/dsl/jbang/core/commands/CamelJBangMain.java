@@ -63,6 +63,7 @@ import org.apache.camel.dsl.jbang.core.commands.version.VersionCommand;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionGet;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -259,8 +260,15 @@ public class CamelJBangMain implements Callable<Integer> {
         postAddCommands(commandLine, args);
 
         if (discoverPlugins && PluginHelper.shouldDiscoverPlugins(commandLine, args)) {
-            PluginHelper.addPlugins(commandLine, this, args);
-            PluginHelper.installOnFirstUse(commandLine, this, args);
+            try {
+                PluginHelper.addPlugins(commandLine, this, args);
+                PluginHelper.installOnFirstUse(commandLine, this, args);
+            } catch (CliException e) {
+                // a plugin that cannot be loaded
+                out.printErr(e.getMessage());
+                quit(e.getExitCode());
+                return;
+            }
         }
         withErrorHandling(commandLine);
 

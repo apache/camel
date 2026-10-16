@@ -40,9 +40,11 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
+import org.apache.camel.dsl.jbang.core.common.ChildProcess;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
@@ -387,13 +389,7 @@ public class Debug extends Run {
             printer().println("Preparing Camel Spring Boot for debugging ...");
 
             // use maven wrapper if present
-            String mvnw = "mvnw";
-            if (FileUtil.isWindows()) {
-                mvnw = "mvnw.cmd";
-            }
-            if (!new File(mvnw).exists()) {
-                mvnw = "mvn";
-            }
+            String mvnw = MavenCommand.of(Path.of("."));
             // use maven to build the JAR and then run the JAR after-wards
             ProcessBuilder pb = new ProcessBuilder();
             pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "spring-boot:repackage");
@@ -407,30 +403,12 @@ public class Debug extends Run {
             }
             if (built) {
                 AtomicReference<Process> processRef = new AtomicReference<>();
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                    try {
-                        // We need to wait for the process to exit before doing any cleanup
-                        Process process = processRef.get();
-                        if (process != null) {
-                            process.destroy();
-                            for (int i = 0; i < 30; i++) {
-                                if (!process.isAlive()) {
-                                    break;
-                                }
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                }
-                            }
-                        }
-                        removeDir(Paths.get(RUN_PLATFORM_DIR));
-                        removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
-                        Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
-                    } catch (Exception e) {
-                        // Ignore
-                    }
-                }));
+                // the process (and those it started) stops with this JVM, then the files of the run are removed
+                ChildProcess.stopOnExit(processRef::get, () -> {
+                    removeDir(Paths.get(RUN_PLATFORM_DIR));
+                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
+                });
 
                 // okay build is complete then run java
                 pb = new ProcessBuilder();
@@ -518,13 +496,7 @@ public class Debug extends Run {
             printer().println("Preparing Camel Quarkus for debugging ...");
 
             // use maven wrapper if present
-            String mvnw = "mvnw";
-            if (FileUtil.isWindows()) {
-                mvnw = "mvnw.cmd";
-            }
-            if (!new File(mvnw).exists()) {
-                mvnw = "mvn";
-            }
+            String mvnw = MavenCommand.of(Path.of("."));
             // use maven to build the JAR and then run the JAR after-wards
             ProcessBuilder pb = new ProcessBuilder();
             pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "quarkus:build");
@@ -538,30 +510,12 @@ public class Debug extends Run {
             }
             if (built) {
                 AtomicReference<Process> processRef = new AtomicReference<>();
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                    try {
-                        // We need to wait for the process to exit before doing any cleanup
-                        Process process = processRef.get();
-                        if (process != null) {
-                            process.destroy();
-                            for (int i = 0; i < 30; i++) {
-                                if (!process.isAlive()) {
-                                    break;
-                                }
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                }
-                            }
-                        }
-                        removeDir(Paths.get(RUN_PLATFORM_DIR));
-                        removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
-                        Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
-                    } catch (Exception e) {
-                        // Ignore
-                    }
-                }));
+                // the process (and those it started) stops with this JVM, then the files of the run are removed
+                ChildProcess.stopOnExit(processRef::get, () -> {
+                    removeDir(Paths.get(RUN_PLATFORM_DIR));
+                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
+                });
 
                 // okay build is complete then run java
                 pb = new ProcessBuilder();

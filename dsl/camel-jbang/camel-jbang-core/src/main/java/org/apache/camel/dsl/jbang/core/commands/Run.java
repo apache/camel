@@ -51,6 +51,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
+import org.apache.camel.dsl.jbang.core.common.ChildProcess;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -60,6 +61,7 @@ import org.apache.camel.dsl.jbang.core.common.GenAiDependencyHelper;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
@@ -1699,36 +1701,15 @@ public class Run extends CamelCommand {
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
             // Mark for deletion on exit
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    // We need to wait for the process to exit before doing any cleanup
-                    Process process = processRef.get();
-                    if (process != null) {
-                        process.destroy();
-
-                        for (int i = 0; i < 30; i++) {
-                            if (!process.isAlive()) {
-                                break;
-                            }
-
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                        }
-                    }
-
-                    removeDir(runDirPath);
-                    // cleanup log file
-                    String appName = appNameRef.get();
-                    if (appName != null) {
-                        Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
-                    }
-                } catch (Exception e) {
-                    // Ignore
+            // the process (and those it started) stops with this JVM, then the files of the run are removed
+            ChildProcess.stopOnExit(processRef::get, () -> {
+                removeDir(runDirPath);
+                // cleanup log file
+                String appName = appNameRef.get();
+                if (appName != null) {
+                    Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
                 }
-            }));
+            });
         }
         Files.createDirectories(runDirPath);
 
@@ -1804,13 +1785,9 @@ public class Run extends CamelCommand {
         }
 
         // run quarkus via maven
-        String mvnw = "/mvnw";
-        if (FileUtil.isWindows()) {
-            mvnw = "/mvnw.cmd";
-        }
         ProcessBuilder pb = new ProcessBuilder();
         List<String> mvnCmd = new ArrayList<>();
-        mvnCmd.add(runDirPath + mvnw);
+        mvnCmd.add(MavenCommand.wrapper(runDirPath).toString());
         mvnCmd.add("--quiet");
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
@@ -1884,36 +1861,15 @@ public class Run extends CamelCommand {
         // create temp run dir
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         // Mark for deletion on exit
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                // We need to wait for the process to exit before doing any cleanup
-                Process process = processRef.get();
-                if (process != null) {
-                    process.destroy();
-
-                    for (int i = 0; i < 30; i++) {
-                        if (!process.isAlive()) {
-                            break;
-                        }
-
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-
-                removeDir(runDirPath);
-                // cleanup log file
-                String appName = appNameRef.get();
-                if (appName != null) {
-                    Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
-                }
-            } catch (Exception e) {
-                // Ignore
+        // the process (and those it started) stops with this JVM, then the files of the run are removed
+        ChildProcess.stopOnExit(processRef::get, () -> {
+            removeDir(runDirPath);
+            // cleanup log file
+            String appName = appNameRef.get();
+            if (appName != null) {
+                Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
             }
-        }));
+        });
         Files.createDirectories(runDirPath);
 
         // export to hidden folder
@@ -1976,12 +1932,8 @@ public class Run extends CamelCommand {
         writeCamelMainRunLogConfig(runDirPath, appName);
 
         // package via maven (the runner JAR contains all dependencies)
-        String mvnw = "/mvnw";
-        if (FileUtil.isWindows()) {
-            mvnw = "/mvnw.cmd";
-        }
         List<String> mvnCmd = new ArrayList<>();
-        mvnCmd.add(runDirPath + mvnw);
+        mvnCmd.add(MavenCommand.wrapper(runDirPath).toString());
         mvnCmd.add("--quiet");
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
@@ -2272,33 +2224,14 @@ public class Run extends CamelCommand {
         writeCamelMainRunLogConfig(logConfig, appName, loggingOptions.loggingLevel);
 
         // shutdown hook to clean up temp files
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                Process process = processRef.get();
-                if (process != null) {
-                    process.destroy();
-                    for (int i = 0; i < 30; i++) {
-                        if (!process.isAlive()) {
-                            break;
-                        }
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-                Files.deleteIfExists(tempPom);
-                Files.deleteIfExists(logConfig);
-            } catch (Exception e) {
-                // ignore
-            }
-        }));
+        // the process (and those it started) stops with this JVM, then the files of the run are removed
+        ChildProcess.stopOnExit(processRef::get, () -> {
+            Files.deleteIfExists(tempPom);
+            Files.deleteIfExists(logConfig);
+        });
 
         // find mvnw or fall back to mvn
-        String mvnw = FileUtil.isWindows() ? "mvnw.cmd" : "mvnw";
-        Path mvnwPath = projectDir.resolve(mvnw);
-        String mvnCmd = Files.isExecutable(mvnwPath) ? mvnwPath.toString() : "mvn";
+        String mvnCmd = MavenCommand.of(projectDir);
 
         List<String> cmd = new ArrayList<>();
         cmd.add(mvnCmd);
@@ -2382,32 +2315,13 @@ public class Run extends CamelCommand {
         }
 
         // shutdown hook to clean up temp files
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                Process process = processRef.get();
-                if (process != null) {
-                    process.destroy();
-                    for (int i = 0; i < 30; i++) {
-                        if (!process.isAlive()) {
-                            break;
-                        }
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-                Files.deleteIfExists(tempPom);
-            } catch (Exception e) {
-                // ignore
-            }
-        }));
+        // the process (and those it started) stops with this JVM, then the files of the run are removed
+        ChildProcess.stopOnExit(processRef::get, () -> {
+            Files.deleteIfExists(tempPom);
+        });
 
         // find mvnw or fall back to mvn
-        String mvnw = FileUtil.isWindows() ? "mvnw.cmd" : "mvnw";
-        Path mvnwPath = projectDir.resolve(mvnw);
-        String mvnCmd = Files.isExecutable(mvnwPath) ? mvnwPath.toString() : "mvn";
+        String mvnCmd = MavenCommand.of(projectDir);
 
         // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
         String appName = resolveExistingProjectAppName(projectDir, model);
@@ -2472,31 +2386,10 @@ public class Run extends CamelCommand {
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
             // Mark for deletion on exit
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    // We need to wait for the process to exit before doing any cleanup
-                    Process process = processRef.get();
-                    if (process != null) {
-                        process.destroy();
-
-                        for (int i = 0; i < 30; i++) {
-                            if (!process.isAlive()) {
-                                break;
-                            }
-
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                        }
-                    }
-
-                    removeDir(runDirPath);
-                } catch (Exception e) {
-                    // Ignore
-                }
-            }));
+            // the process (and those it started) stops with this JVM, then the files of the run are removed
+            ChildProcess.stopOnExit(processRef::get, () -> {
+                removeDir(runDirPath);
+            });
         }
         Files.createDirectories(runDirPath);
 
@@ -2574,12 +2467,8 @@ public class Run extends CamelCommand {
 
         // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
-        String mvnw = "/mvnw";
-        if (FileUtil.isWindows()) {
-            mvnw = "/mvnw.cmd";
-        }
         List<String> mvnCmd = new ArrayList<>();
-        mvnCmd.add(runDirPath + mvnw);
+        mvnCmd.add(MavenCommand.wrapper(runDirPath).toString());
         mvnCmd.add("--quiet");
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
@@ -2684,35 +2573,16 @@ public class Run extends CamelCommand {
         }
 
         // shutdown hook to clean up temp files
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                Process process = processRef.get();
-                if (process != null) {
-                    process.destroy();
-                    for (int i = 0; i < 30; i++) {
-                        if (!process.isAlive()) {
-                            break;
-                        }
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-                Files.deleteIfExists(tempPom);
-                if (springBootLogback != null) {
-                    Files.deleteIfExists(springBootLogback);
-                }
-            } catch (Exception e) {
-                // ignore
+        // the process (and those it started) stops with this JVM, then the files of the run are removed
+        ChildProcess.stopOnExit(processRef::get, () -> {
+            Files.deleteIfExists(tempPom);
+            if (springBootLogback != null) {
+                Files.deleteIfExists(springBootLogback);
             }
-        }));
+        });
 
         // find mvnw or fall back to mvn
-        String mvnw = FileUtil.isWindows() ? "mvnw.cmd" : "mvnw";
-        Path mvnwPath = projectDir.resolve(mvnw);
-        String mvnCmd = Files.isExecutable(mvnwPath) ? mvnwPath.toString() : "mvn";
+        String mvnCmd = MavenCommand.of(projectDir);
 
         List<String> cmd = new ArrayList<>();
         cmd.add(mvnCmd);

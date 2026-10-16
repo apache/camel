@@ -217,9 +217,10 @@ public final class PluginHelper {
      * Gets the active plugins according to the local plugin configuration file. Performs version check to make sure
      * that the current Camel CLI version is able to execute the plugin.
      *
-     * @param  main  to exit the CLI process in case of error
-     * @param  repos custom maven repositories
-     * @return       map of plugins where key represents the plugin command and value the plugin instance.
+     * @param  main         the Camel CLI
+     * @param  repos        custom maven repositories
+     * @return              map of plugins where key represents the plugin command and value the plugin instance.
+     * @throws CliException (exit code 1) when a plugin is not found, or needs a newer Camel CLI
      */
     public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos) {
         return getActivePlugins(main, repos, null);
@@ -230,10 +231,11 @@ public final class PluginHelper {
      * When a target command is specified (and is not "shell"), only the plugin matching that command is downloaded and
      * instantiated — other plugins are skipped entirely, avoiding expensive Maven resolution.
      *
-     * @param  main   to exit the CLI process in case of error
-     * @param  repos  custom maven repositories
-     * @param  target the target command name to filter by, or null to load all plugins
-     * @return        map of plugins where key represents the plugin command and value the plugin instance.
+     * @param  main         the Camel CLI
+     * @param  repos        custom maven repositories
+     * @param  target       the target command name to filter by, or null to load all plugins
+     * @return              map of plugins where key represents the plugin command and value the plugin instance.
+     * @throws CliException (exit code 1) when a plugin is not found, or needs a newer Camel CLI
      */
     public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos, String target) {
         Map<String, Plugin> activePlugins = new HashMap<>();
@@ -269,8 +271,7 @@ public final class PluginHelper {
                         configDirty = true;
                     }
                 } else {
-                    main.getOut().printErr("camel-jbang-plugin-" + command + " not found. Exit");
-                    main.quit(CliExitCode.FAILURE);
+                    throw CliException.failure("camel-jbang-plugin-" + command + " not found");
                 }
             }
             if (configDirty) {
@@ -522,9 +523,8 @@ public final class PluginHelper {
         }
         boolean accept = VersionHelper.isGE(source, first);
         if (!accept) {
-            main.getOut().printErr("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
-                                   + " because plugin has first version: " + firstVersion + ". Exit");
-            main.quit(CliExitCode.FAILURE);
+            throw CliException.failure("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                                       + " because plugin has first version: " + firstVersion);
         }
     }
 

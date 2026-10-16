@@ -446,6 +446,14 @@ or follows, like Enter does.
   `--verbose`), and exits with `124` when the pod is not running after 10 minutes.
 * `--jvm-args` keeps a quoted value with spaces as one argument.
 
+=== camel-jbang - processes started by the CLI stop with it
+
+* When `camel run` of a Spring Boot or Quarkus project (and `camel debug`) ends, such as on Ctrl+C, the processes
+  started by Maven stop too: the app could outlive Maven, as it runs in a JVM of its own. A process that does not stop
+  within 30 seconds is killed (it was left running).
+* A plugin that cannot be loaded ends the command with exit code `1` and the error, as before, but no longer exits the
+  JVM while the plugins load, which ended a program that embeds the CLI.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
