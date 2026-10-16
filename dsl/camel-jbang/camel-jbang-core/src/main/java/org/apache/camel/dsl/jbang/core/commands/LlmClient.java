@@ -1739,12 +1739,14 @@ public class LlmClient {
                 Object argsObj = function.get("arguments");
                 if (argsObj instanceof JsonObject jo) {
                     args = jo;
-                } else {
+                } else if (argsObj instanceof String s) {
                     try {
-                        args = (JsonObject) Jsoner.deserialize((String) argsObj);
+                        args = (JsonObject) Jsoner.deserialize(s);
                     } catch (Exception e) {
                         args = new JsonObject();
                     }
+                } else {
+                    args = new JsonObject();
                 }
                 toolCalls.add(new ToolCall(id, name, args));
             }
