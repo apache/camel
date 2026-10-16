@@ -58,7 +58,8 @@ class TuiMcpServerToolErrorTest {
         JsonObject result = call("camel_eval_expression", Map.of("language", "simple"));
 
         assertThat(result.getBoolean("isError")).isTrue();
-        assertThat(text(result)).isEqualTo("Error: expression is required");
+        // the error as the tool wrote it, so an error in JSON stays JSON
+        assertThat(text(result)).isEqualTo("expression is required");
     }
 
     @Test

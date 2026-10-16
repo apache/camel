@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -41,6 +42,12 @@ public final class CliRunner {
      * The lock of the commands that run in this JVM.
      */
     public static final Object LOCK = CamelJBangMain.class;
+
+    /**
+     * How long a command that did not finish in time gets to stop after the interrupt, before the result says it has
+     * not.
+     */
+    private static final long STOP_GRACE_MILLIS = 2000;
 
     private CliRunner() {
     }
@@ -103,11 +110,13 @@ public final class CliRunner {
         Output output = new Output();
         long start = System.nanoTime();
         if (timeoutMillis <= 0) {
-            int code = execute(commandLine, args, output);
+            int code = execute(commandLine, args, output, new AtomicBoolean());
             return output.result(code, elapsed(start), false);
         }
 
-        FutureTask<Integer> task = new FutureTask<>(() -> execute(commandLine, args, output));
+        // set when the caller gives up, so a command still waiting for another one to end does not run afterwards
+        AtomicBoolean abandoned = new AtomicBoolean();
+        FutureTask<Integer> task = new FutureTask<>(() -> execute(commandLine, args, output, abandoned));
         Thread thread = new Thread(task, "camel-cli-runner");
         thread.setDaemon(true);
         thread.start();
@@ -115,11 +124,14 @@ public final class CliRunner {
             int code = task.get(timeoutMillis, TimeUnit.MILLISECONDS);
             return output.result(code, elapsed(start), false);
         } catch (TimeoutException e) {
+            abandoned.set(true);
             task.cancel(true);
-            output.timedOut("camel " + String.join(" ", args) + " did not finish within " + timeoutMillis + " millis");
+            output.timedOut("camel " + String.join(" ", args) + " did not finish within " + timeoutMillis + " millis"
+                            + stillRunning(thread));
             return output.result(CliExitCode.TIMEOUT, elapsed(start), true);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            abandoned.set(true);
             task.cancel(true);
             output.timedOut("camel " + String.join(" ", args) + " was interrupted");
             return output.result(CliExitCode.TIMEOUT, elapsed(start), true);
@@ -130,9 +142,31 @@ public final class CliRunner {
         }
     }
 
-    private static int execute(CommandLine commandLine, List<String> args, Output output) {
+    /**
+     * What keeps a command that did not finish in time: a command that ignores the interrupt (such as one blocked in
+     * I/O) holds the lock, so the next command waits until it has ended.
+     */
+    private static String stillRunning(Thread thread) {
+        try {
+            thread.join(STOP_GRACE_MILLIS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        if (thread.getState() == Thread.State.BLOCKED) {
+            return "; it waited for another command that is still running, and does not run";
+        } else if (thread.isAlive()) {
+            return "; it has not stopped yet, and the next command waits until it has";
+        }
+        return "";
+    }
+
+    private static int execute(CommandLine commandLine, List<String> args, Output output, AtomicBoolean abandoned) {
         CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
         synchronized (LOCK) {
+            if (abandoned.get()) {
+                // the caller gave up while another command held the lock
+                return CliExitCode.TIMEOUT;
+            }
             Printer printer = main.getOut();
             PrintWriter out = commandLine.getOut();
             PrintWriter err = commandLine.getErr();

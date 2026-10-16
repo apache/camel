@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * A command run in this JVM gives what a script running camel gets: the exit code, stdout and stderr apart, and a
@@ -107,7 +109,34 @@ class CliRunnerTest {
 
         assertThat(result.timedOut()).isTrue();
         assertThat(result.exitCode()).isEqualTo(CliExitCode.TIMEOUT);
-        assertThat(result.stderr()).startsWith("ERROR: camel cmd gc " + PID + " --timeout=2000 did not finish within 300");
+        // after what the interrupted command printed
+        assertThat(result.stderr())
+                .endsWith("ERROR: camel cmd gc " + PID + " --timeout=2000 did not finish within 300 millis");
+    }
+
+    @Test
+    void commandThatIgnoresTheInterruptIsReported() {
+        CliRunner.CliResult result = CliRunner.run(List.of("busy"), 300);
+
+        assertThat(result.exitCode()).isEqualTo(CliExitCode.TIMEOUT);
+        assertThat(result.stderr()).endsWith("it has not stopped yet, and the next command waits until it has");
+    }
+
+    @Test
+    void commandThatWaitedForAnotherOneDoesNotRunAfterItsTimeout() throws Exception {
+        Path config = CommandLineHelper.getHomeDir().resolve(CommandLineHelper.USER_CONFIG);
+        CliRunner.CliResult result;
+        // another command runs meanwhile
+        synchronized (CliRunner.LOCK) {
+            result = CliRunner.run(List.of("config", "set", "foo=bar"), 300);
+        }
+
+        assertThat(result.exitCode()).isEqualTo(CliExitCode.TIMEOUT);
+        assertThat(result.stderr()).endsWith("it waited for another command that is still running, and does not run");
+        // the lock is free: the abandoned command ends without setting anything
+        await().atMost(10, TimeUnit.SECONDS).until(() -> Thread.getAllStackTraces().keySet().stream()
+                .noneMatch(t -> "camel-cli-runner".equals(t.getName())));
+        assertThat(config).doesNotExist();
     }
 
     @Test
@@ -124,12 +153,42 @@ class CliRunnerTest {
     private static class TestMain extends CamelJBangMain {
         @Override
         public void postAddCommands(CommandLine commandLine, String[] args) {
-            // the commands of the CLI only
+            // the commands of the CLI, and one that ignores the interrupt
+            commandLine.addSubcommand("busy", new CommandLine(new BusyCommand(this)));
         }
 
         @Override
         public void quit(int exitCode) {
             // in the test
+        }
+    }
+
+    /**
+     * A command that runs for 3 seconds whatever happens, as one blocked in I/O does.
+     */
+    @CommandLine.Command(name = "busy")
+    static class BusyCommand extends CamelCommand {
+
+        BusyCommand(CamelJBangMain main) {
+            super(main);
+        }
+
+        @Override
+        protected boolean disarrangeLogging() {
+            return false;
+        }
+
+        @Override
+        public Integer doCall() {
+            long end = System.currentTimeMillis() + 3000;
+            while (System.currentTimeMillis() < end) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(end - System.currentTimeMillis());
+                } catch (InterruptedException e) {
+                    // ignores it
+                }
+            }
+            return 0;
         }
     }
 }

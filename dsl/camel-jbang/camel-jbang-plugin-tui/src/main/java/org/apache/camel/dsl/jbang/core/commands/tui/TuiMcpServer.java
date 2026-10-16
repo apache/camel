@@ -33,6 +33,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.dsl.jbang.core.commands.ai.RepeatedToolCalls;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -549,6 +550,11 @@ class TuiMcpServer {
             text = "Unknown tool: " + toolName;
             isError = true;
             log(LogLevel.ERROR, "Unknown tool: " + toolName);
+        } catch (ToolExecutionException e) {
+            // the error as the tool wrote it, which can be JSON (a failed tui_run_example has the log that tells why)
+            text = e.getMessage();
+            isError = true;
+            log(LogLevel.ERROR, "Tool error: " + toolName + " - " + e.getMessage());
         } catch (Exception e) {
             text = "Error: " + e.getMessage();
             isError = true;
