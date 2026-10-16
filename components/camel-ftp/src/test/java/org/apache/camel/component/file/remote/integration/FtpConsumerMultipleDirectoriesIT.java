@@ -30,7 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FtpConsumerMultipleDirectoriesIT extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/multidir/?password=admin&recursive=true&delay=5000&sortBy=file:path";
+        return "ftp://admin@localhost:{{ftp.server.port}}/multidir/?password=admin&recursive=true&delay=5000&sortBy=file:path&noop=true";
+    }
+
+    private String getFtpProducerUrl() {
+        return "ftp://admin@localhost:{{ftp.server.port}}/multidir/?password=admin";
     }
 
     @Override
@@ -70,9 +74,9 @@ public class FtpConsumerMultipleDirectoriesIT extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() {
-        sendFile(getFtpUrl(), "Bye World", "bye.txt");
-        sendFile(getFtpUrl(), "Hello World", "sub/hello.txt");
-        sendFile(getFtpUrl(), "Goodday World", "sub/sub2/godday.txt");
+        sendFile(getFtpProducerUrl(), "Bye World", "bye.txt");
+        sendFile(getFtpProducerUrl(), "Hello World", "sub/hello.txt");
+        sendFile(getFtpProducerUrl(), "Goodday World", "sub/sub2/godday.txt");
     }
 
     @Override

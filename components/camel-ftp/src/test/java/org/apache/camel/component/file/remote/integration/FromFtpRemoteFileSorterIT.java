@@ -33,12 +33,17 @@ public class FromFtpRemoteFileSorterIT extends FtpServerTestSupport {
     private final MyRemoteFileSorter sorter = new MyRemoteFileSorter();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:{{ftp.server.port}}/sorter?password=admin&sorter=#mySorter";
+        return "ftp://admin@localhost:{{ftp.server.port}}/sorter?password=admin&sorter=#mySorter&noop=true";
+    }
+
+    private String getFtpProducerUrl() {
+        return "ftp://admin@localhost:{{ftp.server.port}}/sorter?password=admin";
     }
 
     @Override
     public void doPostSetup() throws Exception {
         prepareFtpServer();
+        context.getRouteController().startRoute("ftp-sorter");
     }
 
     @Test
@@ -53,16 +58,16 @@ public class FromFtpRemoteFileSorterIT extends FtpServerTestSupport {
         // prepares the FTP Server by creating files on the server that we want
         // to unit
         // test that we can pool
-        sendFile(getFtpUrl(), "Hello Paris", "paris.txt");
-        sendFile(getFtpUrl(), "Hello London", "london.txt");
-        sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.txt");
+        sendFile(getFtpProducerUrl(), "Hello Paris", "paris.txt");
+        sendFile(getFtpProducerUrl(), "Hello London", "london.txt");
+        sendFile(getFtpProducerUrl(), "Hello Copenhagen", "copenhagen.txt");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).to("mock:result");
+                from(getFtpUrl()).routeId("ftp-sorter").autoStartup(false).to("mock:result");
             }
         };
     }
