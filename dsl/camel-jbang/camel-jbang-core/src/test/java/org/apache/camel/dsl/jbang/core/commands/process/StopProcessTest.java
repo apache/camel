@@ -19,9 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,9 +33,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class StopProcessTest extends ProcessCommandTestSupport {
@@ -74,12 +79,83 @@ class StopProcessTest extends ProcessCommandTestSupport {
             mocked.when(ProcessHandle::current).thenReturn(current);
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
             mocked.when(() -> ProcessHandle.of(TEST_PID)).thenReturn(Optional.of(ph));
+            when(ph.onExit()).thenReturn(CompletableFuture.completedFuture(ph));
 
             int exit = command.doCall();
 
             assertEquals(0, exit);
             verify(ph).destroyForcibly();
             assertTrue(printer.getOutput().contains("Killing"), "Should print kill message");
+        }
+    }
+
+    @Test
+    void testStopWaitsUntilTheProcessHasExited() throws Exception {
+        writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
+        Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(TEST_PID));
+        Files.writeString(pidFile, "");
+
+        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        command.timeout = 300;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle current = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(current);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+            mocked.when(() -> ProcessHandle.of(TEST_PID)).thenReturn(Optional.of(ph));
+            // the integration does not stop
+            when(ph.onExit()).thenReturn(new CompletableFuture<>());
+
+            CliException e = assertThrows(CliException.class, command::doCall);
+
+            assertEquals(CliExitCode.TIMEOUT, e.getExitCode());
+            assertTrue(e.getMessage().contains("did not stop within") && e.getMessage().endsWith("use --kill"),
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    void testStopWithoutWaiting() throws Exception {
+        writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
+        Path pidFile = CommandLineHelper.getCamelDir().resolve(Long.toString(TEST_PID));
+        Files.writeString(pidFile, "");
+
+        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+        command.noWait = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle current = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(current);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertFalse(Files.exists(pidFile), "Pid file should be deleted to signal graceful stop");
+        }
+    }
+
+    @Test
+    void testStopWithoutPidFileSendsSigterm() throws Exception {
+        writeStatusFile(TEST_PID, buildContextStatus("myApp", 5));
+
+        StopProcess command = new StopProcess(new CamelJBangMain().withPrinter(printer));
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle current = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(current);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+            mocked.when(() -> ProcessHandle.of(TEST_PID)).thenReturn(Optional.of(ph));
+            when(ph.onExit()).thenReturn(CompletableFuture.completedFuture(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            verify(ph).destroy();
+            assertTrue(printer.getOutput().contains("with SIGTERM"), printer.getOutput());
         }
     }
 
@@ -93,9 +169,10 @@ class StopProcessTest extends ProcessCommandTestSupport {
             mocked.when(ProcessHandle::current).thenReturn(current);
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.empty());
 
-            int exit = command.doCall();
+            CliException e = assertThrows(CliException.class, command::doCall);
 
-            assertEquals(0, exit);
+            assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+            assertEquals("No running Camel integration matches: nonExistentApp", e.getMessage());
             assertEquals("", printer.getOutput().trim(), "No output expected when no processes match");
         }
     }

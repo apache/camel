@@ -27,8 +27,11 @@ Stop by name or PID:
 [source,bash]
 ----
 camel stop dude
-Stopping running Camel integration (pid: 62506)
+Shutting down Camel integration (PID: 62506)
 ----
+
+`camel stop` waits until the integration has stopped, up to `--timeout` (60 seconds by default). When it has not
+stopped in time, it exits with code `124`, and `--kill` stops it at once. Use `--no-wait` to return without waiting.
 
 NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_.
 To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`.
@@ -40,15 +43,22 @@ Restart an integration (stop + re-launch):
 [source,bash]
 ----
 camel restart dude
+Stopping Camel integration: dude (PID: 62506)
+Restarted Camel integration: dude (PID: 63010)
+Log: ~/.camel/restart-62506-1234.log
 ----
+
+`camel restart` waits until the integration has stopped, and until the new one has started, and keeps the output of
+the new integration in the log file it prints. When the new integration stops right away, it prints the end of the log
+and exits with code `1`; when it is still starting after `--timeout`, it exits with code `124` and leaves it running.
 
 Stop all integrations (omit the name):
 
 [source,bash]
 ----
 camel stop
-Stopping running Camel integration (pid: 61818)
-Stopping running Camel integration (pid: 62506)
+Shutting down Camel integration (PID: 61818)
+Shutting down Camel integration (PID: 62506)
 ----
 
 === Watch mode
