@@ -46,7 +46,7 @@ echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
 maxNumberOfTestableProjects=50
 
 # Modules excluded from targeted testing (generated code, meta-modules, etc.)
-EXCLUSION_LIST="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel,!:coverage,!:camel-salesforce-maven-plugin"
+EXCLUSION_LIST="!:camel-allcomponents,!:dummy-component,!:camel-catalog,!:camel-catalog-console,!:camel-catalog-maven,!:camel-catalog-suggest,!:camel-route-parser,!:camel-report-maven-plugin,!:camel-endpointdsl,!:camel-componentdsl,!:camel-endpointdsl-support,!:camel-yaml-dsl,!:camel-kamelet-main,!:camel-yaml-dsl-deserializers,!:camel-yaml-dsl-maven-plugin,!:camel-jbang-core,!:camel-jbang-main,!:camel-jbang-plugin-generate,!:camel-jbang-plugin-edit,!:camel-jbang-plugin-kubernetes,!:camel-jbang-plugin-test,!:camel-launcher,!:camel-jbang-it,!:camel-itest,!:docs,!:apache-camel,!:coverage"
 
 
 # Allow projects to override the exclusion list
@@ -59,13 +59,14 @@ fi
 # ── Utility functions ──────────────────────────────────────────────────
 
 # Walk up from a file path to find the nearest directory containing a pom.xml
+# that is a real reactor module. A pom.xml located under a module's src/ directory
+# (src/it, src/main/resources, src/test/resources, ...) is a test fixture or a
+# template, not a reactor module, so keep walking up to the owning module.
 findProjectRoot() {
   local path=${1}
   while [[ "$path" != "." ]]; do
-    if [[ ! -e "$path/pom.xml" ]]; then
+    if [[ ! -e "$path/pom.xml" || "$path" == */src/* ]]; then
       path=$(dirname "$path")
-    elif [[ $(dirname "$path") == */src/it ]]; then
-      path=$(dirname "$(dirname "$path")")
     else
       break
     fi
@@ -312,6 +313,13 @@ runScalpelDetection() {
     echo "  Scalpel: Full build triggered by change to $trigger_file"
     scalpel_failure_reason="Scalpel triggered a full build (changed file: $trigger_file)"
     return
+  fi
+
+  # Ignore pom.xml fixtures/templates located under a module's src/ directory
+  # (e.g. src/it, src/main/resources): they are not part of the reactor.
+  local filtered_report="target/scalpel-report-filtered.json"
+  if jq '.affectedModules |= map(select((.path // "") | test("/src/(main|test|it)/") | not))' "$report" > "$filtered_report" 2>/dev/null; then
+    report="$filtered_report"
   fi
 
   # Extract affected module artifactIds (colon-prefixed for Maven -pl compatibility)
@@ -762,7 +770,7 @@ main() {
   local pom_files=""
 
   for project in ${projects}; do
-    if [[ ${project} == */archetype-resources ]]; then
+    if [[ ${project} == */archetype-resources || ${project} == */archetype-resources/* ]]; then
       continue
     elif [[ ${project} != .* ]]; then
       local projectRoot
