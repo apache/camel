@@ -744,7 +744,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testNamedGroups() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
@@ -816,7 +815,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testNamedGroupsFilter() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
@@ -899,7 +897,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testNamedGroupsDoNotAffectCipherSuitesOrProtocols() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
@@ -921,7 +918,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testSignatureSchemes() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
@@ -984,7 +980,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21, max = JRE.JAVA_25)
+    @EnabledForJreRange(max = JRE.JAVA_25)
     public void testSignatureSchemesFilter() throws Exception {
         // Note: SSLParameters.getSignatureSchemes() returns null by default (unlike getNamedGroups()),
         // so filters operate on explicitly provided schemes rather than JDK defaults.
@@ -1114,7 +1110,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testSignatureSchemesDoNotAffectOtherSettings() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
@@ -1230,7 +1225,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testPqcNamedGroupsAutoConfigured() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLSv1.3");
         controlContext.init(null, null, null);
@@ -1259,7 +1253,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testPqcNamedGroupsUserConfigOverrides() throws Exception {
         // User-configured named groups should NOT be overridden by PQC auto-config
         SSLContextParameters scp = new SSLContextParameters();
@@ -1275,7 +1268,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testPqcNamedGroupsFilterOverrides() throws Exception {
         // User-configured named groups filter should NOT be overridden by PQC auto-config
         SSLContextParameters scp = new SSLContextParameters();
