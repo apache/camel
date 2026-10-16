@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -188,10 +189,24 @@ public abstract class CamelCommand implements Callable<Integer> {
         return CommandLineHelper.getCamelDir().resolve(pid + "-status.json");
     }
 
+    /**
+     * The action file that all the clients of the integration share.
+     *
+     * @deprecated use {@link ActionClient}, which sends each action in a file of its own, and uses this file only for
+     *             an integration before Camel 4.21
+     */
+    @Deprecated(since = "4.24")
     public Path getActionFile(String pid) {
         return CommandLineHelper.getCamelDir().resolve(pid + "-action.json");
     }
 
+    /**
+     * The output file that all the clients of the integration share.
+     *
+     * @deprecated use {@link ActionClient}, which reads the answer to each action from a file of its own, and uses this
+     *             file only for an integration before Camel 4.21
+     */
+    @Deprecated(since = "4.24")
     public Path getOutputFile(String pid) {
         return CommandLineHelper.getCamelDir().resolve(pid + "-output.json");
     }

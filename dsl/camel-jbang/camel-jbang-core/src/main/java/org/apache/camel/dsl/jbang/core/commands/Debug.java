@@ -39,6 +39,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.ChildProcess;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -85,6 +87,9 @@ import static org.apache.camel.util.IOHelper.buffered;
                  "  camel debug hello.yaml --breakpoint=myBreakpoint",
                  "  camel debug hello.java --stop-on-exit=false" })
 public class Debug extends Run {
+
+    // how long a command to the debugger in the integration may wait until the integration took it
+    private static final long DEBUG_COMMAND_TIMEOUT = 5000;
 
     @CommandLine.Option(names = { "--remote-attach" },
                         description = "Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger)")
@@ -245,21 +250,22 @@ public class Debug extends Run {
         // the running integration to attach to (exactly one, or exit 3)
         long pid = ProcessFinder.requireOne(name).pid();
 
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
+        JsonObject root = new JsonObject();
+        root.put("action", "cli-debug");
+        root.put("command", "attach");
+        if (breakpoint != null) {
+            root.put("breakpoint", breakpoint);
+        }
+        ActionResult result;
         try {
-            JsonObject root = new JsonObject();
-            root.put("action", "cli-debug");
-            root.put("command", "attach");
-            if (breakpoint != null) {
-                root.put("breakpoint", breakpoint);
-            }
-            Path f = getActionFile(Long.toString(pid));
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
+            result = ActionClient.send(pid, root, DEBUG_COMMAND_TIMEOUT);
+        } catch (IOException e) {
             printer().printErr("Cannot attach the debugger to PID " + pid + ": " + e.getMessage());
             return CliExitCode.FAILURE;
+        }
+        if (!result.isOk()) {
+            printer().printErr("Cannot attach the debugger to PID " + pid + ": " + result.error());
+            return result.exitCode();
         }
 
         // attach to this pid
@@ -628,11 +634,14 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void sendDebugCommand(long pid, String command, String breakpoint, int position) {
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
+    /**
+     * Sends a command, such as step, to the debugger in the integration, and waits until the integration took it. The
+     * command goes in a file of its own (Camel 4.21 or later), so that another client of the integration cannot
+     * overwrite it before the integration read it.
+     *
+     * @return whether the integration took the command
+     */
+    static boolean sendDebugCommand(long pid, String command, String breakpoint, int position) {
         JsonObject root = new JsonObject();
         root.put("action", "debug");
         if (command != null) {
@@ -644,12 +653,10 @@ public class Debug extends Run {
         if (position > 0) {
             root.put("position", position);
         }
-        Path f = getActionFile(Long.toString(pid));
         try {
-            String text = root.toJson();
-            Files.writeString(f, text);
-        } catch (Exception e) {
-            // ignore
+            return ActionClient.send(pid, root, DEBUG_COMMAND_TIMEOUT).isOk();
+        } catch (IOException e) {
+            return false;
         }
     }
 
