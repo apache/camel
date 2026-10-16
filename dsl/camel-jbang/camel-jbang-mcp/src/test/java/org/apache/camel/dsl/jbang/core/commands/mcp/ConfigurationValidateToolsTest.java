@@ -283,6 +283,19 @@ class ConfigurationValidateToolsTest {
     }
 
     @Test
+    void dashedGroupNameIsCheckedAndValid() {
+        // camel-main binds camel.error-registry.* to the camel.errorRegistry group
+        ConfigurationValidateTools tools = createTools();
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate("camel.error-registry.enabled=true", null, null, null);
+
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.checked()).isTrue();
+        assertThat(info.valid()).isTrue();
+    }
+
+    @Test
     void blankInputThrows() {
         ConfigurationValidateTools tools = createTools();
 

@@ -1186,8 +1186,13 @@ public abstract class AbstractCamelCatalog {
 
         ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult();
         // Load the main model once here to avoid repeated JSON parsing in acceptConfigurationPropertyKey
-        // and matchMainModelGroup (both called for camel.* keys that are not component/dataformat/language).
-        MainModel cachedMainModel = key != null && key.startsWith("camel.") ? mainModel() : null;
+        // and matchMainModelGroup. Only load it for keys that may reach the main-group branch:
+        // component/dataformat/language are accepted by a static prefix check and never use the model.
+        MainModel cachedMainModel = key != null && key.startsWith("camel.")
+                && !key.startsWith("camel.component.")
+                && !key.startsWith("camel.dataformat.")
+                && !key.startsWith("camel.language.")
+                        ? mainModel() : null;
         boolean accept = acceptConfigurationPropertyKey(key, cachedMainModel);
         if (!accept) {
             result.setAccepted(false);
@@ -1241,16 +1246,10 @@ public abstract class AbstractCamelCatalog {
             if (matchedGroup != null) {
                 String name = StringHelper.before(key, ".");
                 if (value != null) {
-                    // cachedMainModel is guaranteed non-null here: acceptConfigurationPropertyKey returned true
-                    // for a camel.* key that is not component/dataformat/language, which means matchMainModelGroup
-                    // already found a match — so the model must have been available.
-                    MainModel model = cachedMainModel;
-                    if (model == null) {
-                        result.addIncapable("camel-main not detected on classpath");
-                        return result;
-                    }
+                    // cachedMainModel is guaranteed non-null here: a match in matchMainModelGroup
+                    // implies the model was available (the groups come from the model itself).
                     Map<String, BaseOptionModel> rows = new HashMap<>();
-                    model.getOptions().forEach(o -> rows.put(dashToCamelCase(o.getName()), o));
+                    cachedMainModel.getOptions().forEach(o -> rows.put(dashToCamelCase(o.getName()), o));
 
                     // lower case option and remove dash
                     String nOption = longKey.replace("-", "").toLowerCase(Locale.ENGLISH);
