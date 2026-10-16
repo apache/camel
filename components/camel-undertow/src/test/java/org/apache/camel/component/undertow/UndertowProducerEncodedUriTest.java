@@ -46,10 +46,26 @@ class UndertowProducerEncodedUriTest extends BaseUndertowTest {
     }
 
     @Test
+    void rejectsNarrowingCharacterInQuery() {
+        // U+010A is above 0xFF; the client would narrow it to the single byte 0x0A (LF). It is refused before that.
+        Exchange out = template.request("undertow:http://localhost:{{port}}/echo",
+                e -> e.getIn().setHeader(Exchange.HTTP_QUERY, "q=Ċ"));
+        assertRejected(out, "request target");
+    }
+
+    @Test
     void rejectsHeaderValueWithCrlf() {
         Exchange out = template.request("undertow:http://localhost:{{port}}/echo",
                 e -> e.getIn().setHeader("MyHeader", "value\r\nX-Injected: 1"));
         assertRejected(out, "HTTP header");
+    }
+
+    @Test
+    void rejectsCrlfInPreservedHostHeader() {
+        // with preserveHostHeader the caller's Host header is written verbatim, so it is validated too
+        Exchange out = template.request("undertow:http://localhost:{{port}}/echo?preserveHostHeader=true",
+                e -> e.getIn().setHeader("Host", "localhost\r\nX-Injected: 1"));
+        assertRejected(out, "Host header");
     }
 
     @Test
