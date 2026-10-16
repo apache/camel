@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -27,8 +28,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -45,6 +48,12 @@ import picocli.CommandLine.Command;
                  "  camel get metric --filter=timer*",
                  "  camel get metric --watch" })
 public class ListMetric extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
+    // the metrics of an integration by name and id
+    private static final Comparator<Row> BY_METRIC
+            = Comparator.comparing((Row r) -> r.metricName, Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER))
+                    .thenComparing(r -> r.metricId, Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER));
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration",
                             arity = "0..1")
@@ -205,7 +214,8 @@ public class ListMetric extends ProcessWatchCommand {
         });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort).thenComparing(
+                sort != null && sort.startsWith("-") ? BY_METRIC.reversed() : BY_METRIC));
 
         if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
@@ -261,38 +271,6 @@ public class ListMetric extends ProcessWatchCommand {
         return 0;
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-
-        int answer;
-        switch (s) {
-            case "pid":
-                answer = Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-                break;
-            case "name":
-                answer = o1.name.compareToIgnoreCase(o2.name) * negate;
-                break;
-            case "age":
-                answer = Long.compare(o1.uptime, o2.uptime) * negate;
-                break;
-            default:
-                answer = 0;
-        }
-        if (answer == 0) {
-            // sort by metric/route
-            answer = o1.metricName.compareToIgnoreCase(o2.metricName) * negate;
-            if (answer == 0) {
-                answer = o1.metricId.compareToIgnoreCase(o2.metricId) * negate;
-            }
-        }
-        return answer;
-    }
-
     private String getNumber(double d) {
         String s = Double.toString(d);
         if (s.equals("0.0") || s.equals("0,0")) {
@@ -340,7 +318,7 @@ public class ListMetric extends ProcessWatchCommand {
         return sj.toString();
     }
 
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         String age;
@@ -354,14 +332,6 @@ public class ListMetric extends ProcessWatchCommand {
         double mean;
         double max;
         double total;
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -24,6 +25,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine.Command;
@@ -89,43 +91,13 @@ public class CamelRouteTop extends CamelRouteStatus {
     }
 
     private String getLoad(Row r) {
-        String s1 = r.load01 != null ? r.load01 : "-";
-        String s2 = r.load05 != null ? r.load05 : "-";
-        String s3 = r.load15 != null ? r.load15 : "-";
-        if ("0.00".equals(s1)) {
-            s1 = "-";
-        }
-        if ("0.00".equals(s2)) {
-            s2 = "-";
-        }
-        if ("0.00".equals(s3)) {
-            s3 = "-";
-        }
-        if (s1.equals("-") && s2.equals("-") && s3.equals("-")) {
-            return "0/0/0";
-        }
-        return s1 + "/" + s2 + "/" + s3;
+        return ListingFormat.load(r.load01, r.load05, r.load15);
     }
 
     @Override
-    protected int sortRow(Row o1, Row o2) {
-        // use super to group by first
-        int answer = super.sortRow(o1, o2);
-        if (answer == 0) {
-            int negate = 1;
-            if (sort.startsWith("-")) {
-                negate = -1;
-            }
-            // sort for highest mean value as we want the slowest in the top
-            long m1 = o1.mean != null ? Long.parseLong(o1.mean) : 0;
-            long m2 = o2.mean != null ? Long.parseLong(o2.mean) : 0;
-            if (m1 < m2) {
-                answer = negate;
-            } else if (m1 > m2) {
-                answer = -1 * negate;
-            }
-        }
-        return answer;
+    protected Comparator<Row> order() {
+        // then the slowest first, as the top shows the slowest
+        return super.order().thenComparing(ListingFormat.<Row> slowestFirst(sort, r -> r.mean));
     }
 
 }

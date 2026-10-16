@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
@@ -47,6 +49,10 @@ import picocli.CommandLine.Command;
                  "  camel get activity --filter=route1",
                  "  camel get activity --watch" })
 public class ListActivity extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime)
+            .numeric("elapsed", r -> r.elapsed)
+            .by("since", Comparator.comparingLong((Row r) -> r.timestamp).reversed());
 
     public static class PidNameAgeElapsedSinceCandidates implements Iterable<String> {
 
@@ -156,7 +162,7 @@ public class ListActivity extends ProcessWatchCommand {
         });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (limit > 0 && rows.size() > limit) {
             rows.subList(limit, rows.size()).clear();
@@ -250,29 +256,6 @@ public class ListActivity extends ProcessWatchCommand {
             }
         }
         return u;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            case "elapsed":
-                return Long.compare(o1.elapsed, o2.elapsed) * negate;
-            case "since":
-                return Long.compare(o2.timestamp, o1.timestamp) * negate;
-            default:
-                return 0;
-        }
     }
 
     static class Row {

@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -58,6 +59,11 @@ import picocli.CommandLine;
                              "  camel cmd span --flat",
                              "  camel cmd span --filter=kafka" })
 public class CamelSpanAction extends ActionBaseCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.spanName)
+            .numeric("duration", r -> r.durationMs)
+            .text("status", r -> r.status);
 
     public static class SortCompletionCandidates implements Iterable<String> {
 
@@ -190,7 +196,7 @@ public class CamelSpanAction extends ActionBaseCommand {
                 rows.removeIf(r -> !matchesFilter(r.spanName, filter));
             }
             if (sort != null) {
-                rows.sort(this::sortRow);
+                rows.sort(ORDER.comparator(sort));
             }
             tableSpans(rows);
         } else {
@@ -581,25 +587,6 @@ public class CamelSpanAction extends ActionBaseCommand {
     }
 
     // --- Sort ---
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return compareNullSafe(o1.spanName, o2.spanName) * negate;
-            case "duration":
-                return Long.compare(o1.durationMs, o2.durationMs) * negate;
-            case "status":
-                return compareNullSafe(o1.status, o2.status) * negate;
-            default:
-                return 0;
-        }
-    }
 
     private int sortTraceSummary(TraceSummary a, TraceSummary b, List<Row> rows) {
         String s = sort;

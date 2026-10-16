@@ -31,6 +31,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -44,6 +45,10 @@ import picocli.CommandLine.Command;
                  "  camel cmd stub",
                  "  camel cmd stub --browse" })
 public class CamelStubAction extends ActionWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.queue)
+            .numeric("total", r -> r.size);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -195,7 +200,7 @@ public class CamelStubAction extends ActionWatchCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
@@ -223,25 +228,6 @@ public class CamelStubAction extends ActionWatchCommand {
         }
 
         return 0;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                String q1 = o1.queue != null ? o1.queue : "";
-                String q2 = o2.queue != null ? o2.queue : "";
-                return q1.compareToIgnoreCase(q2) * negate;
-            case "total":
-                return Integer.compare(o1.size, o2.size) * negate;
-            default:
-                return 0;
-        }
     }
 
     private boolean isValidGrep(String line) {

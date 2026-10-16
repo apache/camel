@@ -29,6 +29,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -44,6 +45,10 @@ import picocli.CommandLine.Command;
                  "  camel get bean --scope=user",
                  "  camel get bean --json" })
 public class CamelBeanDump extends ActionBaseCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.name)
+            .text("type", r -> r.type);
 
     public static class NameTypeCompletionCandidates implements Iterable<String> {
 
@@ -171,7 +176,7 @@ public class CamelBeanDump extends ActionBaseCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(this::toJson).toList());
         } else if (properties) {
@@ -292,21 +297,6 @@ public class CamelBeanDump extends ActionBaseCommand {
             return true;
         }
         return r.type != null && r.type.startsWith("io.quarkus");
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            default:
-                return 0;
-        }
     }
 
     private static class Row {

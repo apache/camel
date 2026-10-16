@@ -30,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -45,6 +46,10 @@ import picocli.CommandLine.Command;
                  "  camel get route-controller",
                  "  camel get route-controller --json" })
 public class RouteControllerAction extends ActionWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("id", r -> r.routeId)
+            .text("state", r -> r.status);
 
     public static class IdStateCompletionCandidates implements Iterable<String> {
 
@@ -147,7 +152,7 @@ public class RouteControllerAction extends ActionWatchCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (watch) {
             clearScreen();
@@ -228,23 +233,6 @@ public class RouteControllerAction extends ActionWatchCommand {
                     printer().println(String.valueOf(sb));
                 }
             }
-        }
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "id":
-                return o1.routeId.compareToIgnoreCase(o2.routeId) * negate;
-            case "state":
-                return o1.status.compareToIgnoreCase(o2.status) * negate;
-            default:
-                return 0;
         }
     }
 

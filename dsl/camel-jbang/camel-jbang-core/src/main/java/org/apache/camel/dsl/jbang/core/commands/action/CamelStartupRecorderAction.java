@@ -28,6 +28,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -41,6 +42,10 @@ import picocli.CommandLine;
                              "  camel get startup-recorder",
                              "  camel get startup-recorder --json" })
 public class CamelStartupRecorderAction extends ActionWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .numeric("duration", r -> r.duration)
+            .text("type", r -> r.type);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -84,7 +89,7 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
@@ -129,23 +134,6 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
             return Long.toString(r.duration);
         }
         return "";
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort != null ? sort : "";
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "duration":
-                return Long.compare(o1.duration, o2.duration) * negate;
-            case "type":
-                return o1.type.compareToIgnoreCase(o2.type) * negate;
-            default:
-                return 0;
-        }
     }
 
     private static class Row {

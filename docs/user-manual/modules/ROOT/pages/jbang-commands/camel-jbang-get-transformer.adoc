@@ -20,7 +20,7 @@ camel get transformer [options]
 |===
 | Option | Description | Default | Type
 | `--json` | Output in JSON Format |  | boolean
-| `--sort` | Sort by pid, name, age or total | pid | String
+| `--sort` | Sort by pid, name or age | pid | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

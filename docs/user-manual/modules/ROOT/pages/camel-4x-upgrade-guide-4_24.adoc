@@ -474,6 +474,12 @@ configuration, `camel cmd receive --show-body` shows the body, and `camel kubern
 deployment when it stops. Such a flag turned the option off before (picocli sets a flag to the opposite of its default).
 Turn the option off with `=false`, such as `--maven-wrapper=false`, which works as before.
 
+=== camel-jbang - an unknown sort key is a usage error
+
+The commands that sort their rows by `--sort`, such as `camel ps`, `camel get route`, `camel cmd thread-dump` or
+`camel catalog component`, exit with `2` and list their keys when the key is unknown: `camel ps --sort=nmae` printed
+the integrations unsorted. A row without the value of the key now comes first, instead of failing the command.
+
 === camel-jbang - exit codes of config set, dependency list, jolokia and cmd memory-leak
 
 * `camel jolokia` with a name or pid that matches no running integration, or more than one, exits with `3`, as
