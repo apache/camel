@@ -535,6 +535,12 @@ The commands that sort their rows by `--sort`, such as `camel ps`, `camel get ro
 `camel catalog component`, exit with `2` and list their keys when the key is unknown: `camel ps --sort=nmae` printed
 the integrations unsorted. A row without the value of the key now comes first, instead of failing the command.
 
+=== camel-jbang - camel catalog kamelet
+
+`camel catalog kamelet --filter` no longer fails with an internal error (`70`) when a Kamelet has no description. An
+unknown `--type` exits with `2` (it showed nothing), a `--filter` that matches nothing says so on stderr, and `--json`
+prints the Kamelets as JSON, as the other `camel catalog` commands do.
+
 === camel-jbang - camel get history
 
 * `camel get history --diagram` and `--it` exit with `2` when several integrations have a message history, and ask for
