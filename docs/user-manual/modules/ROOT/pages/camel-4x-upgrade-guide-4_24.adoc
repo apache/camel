@@ -483,6 +483,13 @@ or follows, like Enter does.
   of the CLI (`3.27.3.1` came after `3.27.4`), and a `-SNAPSHOT` always comes before its release, as in Maven
   (`4.24.10-SNAPSHOT` came after `4.24.10`).
 
+=== camel-jbang - the shared action file is deprecated for plugin commands
+
+`CamelCommand.getActionFile` and `CamelCommand.getOutputFile`, the action and output files that all the clients of an
+integration share, are deprecated. A plugin command sends an action with `ActionClient` instead, which gives each action
+a file of its own, so that two clients cannot overwrite each other's action or answer, and uses the shared files only
+for an integration before Camel 4.21. `camel debug` sends its commands this way too.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
