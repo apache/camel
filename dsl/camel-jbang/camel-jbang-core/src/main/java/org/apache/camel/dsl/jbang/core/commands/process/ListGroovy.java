@@ -58,44 +58,38 @@ public class ListGroovy extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
 
-                        JsonObject jo = (JsonObject) root.get("groovy");
-                        if (jo != null) {
-                            jo = (JsonObject) jo.get("compiler");
-                        }
-                        if (jo != null) {
-                            row = row.copy();
-                            row.compiledCounter = jo.getInteger("compiledCounter");
-                            row.preloaddCounter = jo.getInteger("preloadedCounter");
-                            row.classesSize = jo.getInteger("classesSize");
-                            row.time = jo.getLong("compiledTime");
-                            row.last = jo.getLong("lastCompilationTimestamp");
-                            row.compiledClasses.clear();
-                            JsonArray arr = jo.getCollection("classes");
-                            for (int i = 0; arr != null && i < arr.size(); i++) {
-                                row.compiledClasses.add(arr.getString(i));
-                            }
-                            rows.add(row);
-                        }
-                    }
-                });
+            JsonObject jo = (JsonObject) root.get("groovy");
+            if (jo != null) {
+                jo = (JsonObject) jo.get("compiler");
+            }
+            if (jo != null) {
+                row = row.copy();
+                row.compiledCounter = jo.getInteger("compiledCounter");
+                row.preloaddCounter = jo.getInteger("preloadedCounter");
+                row.classesSize = jo.getInteger("classesSize");
+                row.time = jo.getLong("compiledTime");
+                row.last = jo.getLong("lastCompilationTimestamp");
+                row.compiledClasses.clear();
+                JsonArray arr = jo.getCollection("classes");
+                for (int i = 0; arr != null && i < arr.size(); i++) {
+                    row.compiledClasses.add(arr.getString(i));
+                }
+                rows.add(row);
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -104,13 +98,14 @@ public class ListGroovy extends ProcessWatchCommand {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("preload", r.preloaddCounter);
                     jo.put("compile", r.compiledCounter);
-                    jo.put("time", getTime(r));
+                    jo.put("time", r.time);
                     jo.put("since", getLast(r));
-                    jo.put("classes", getClasses(r));
+                    jo.put("lastTimestamp", r.last > 0 ? r.last : null);
+                    jo.put("classes", r.compiledClasses);
                     return jo;
                 }).collect(Collectors.toList())));
             } else {

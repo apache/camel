@@ -67,33 +67,27 @@ public class CamelCount extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
-                        Map<String, ?> stats = context.getMap("statistics");
-                        if (stats != null) {
-                            row.total = stats.get("exchangesTotal").toString();
-                            row.failed = stats.get("exchangesFailed").toString();
-                        }
-                        rows.add(row);
-                    }
-                });
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
+            Map<String, ?> stats = context.getMap("statistics");
+            if (stats != null) {
+                row.total = stats.get("exchangesTotal").toString();
+                row.failed = stats.get("exchangesFailed").toString();
+            }
+            rows.add(row);
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -102,11 +96,12 @@ public class CamelCount extends ProcessWatchCommand {
             // also with --total or --fail, as the rows have both counters
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
-                jo.put("total", r.total);
-                jo.put("failed", r.failed);
+                jo.put("uptime", r.uptime);
+                jo.put("total", JsonValues.number(r.total));
+                jo.put("failed", JsonValues.number(r.failed));
                 return jo;
             }).collect(Collectors.toList())));
         } else if (!total && !fail) {

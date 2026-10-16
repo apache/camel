@@ -74,77 +74,71 @@ public class CamelContextTop extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.ago = TimeUtils.printSince(row.uptime);
-                        JsonObject runtime = (JsonObject) root.get("runtime");
-                        row.platform = extractPlatform(ph, runtime);
-                        row.platformVersion = extractPlatformVersion(row.platform,
-                                runtime != null ? runtime.getString("platformVersion") : null);
-                        row.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
-                        row.state = context.getInteger("phase");
-                        row.camelVersion = context.getString("version");
-                        Map<String, ?> stats = context.getMap("statistics");
-                        if (stats != null) {
-                            Object thp = stats.get("exchangesThroughput");
-                            if (thp != null) {
-                                row.throughput = thp.toString();
-                            }
-                            Object load = stats.get("load01");
-                            if (load != null) {
-                                row.load01 = load.toString();
-                            }
-                            load = stats.get("load05");
-                            if (load != null) {
-                                row.load05 = load.toString();
-                            }
-                            load = stats.get("load15");
-                            if (load != null) {
-                                row.load15 = load.toString();
-                            }
-                        }
-                        JsonObject mem = (JsonObject) root.get("memory");
-                        if (mem != null) {
-                            row.heapMemUsed = mem.getLong("heapMemoryUsed");
-                            row.heapMemCommitted = mem.getLong("heapMemoryCommitted");
-                            row.heapMemMax = mem.getLong("heapMemoryMax");
-                            row.nonHeapMemUsed = mem.getLong("nonHeapMemoryUsed");
-                            row.nonHeapMemCommitted = mem.getLong("nonHeapMemoryCommitted");
-                        }
-                        JsonObject threads = (JsonObject) root.get("threads");
-                        if (threads != null) {
-                            row.threadCount = threads.getInteger("threadCount");
-                            row.peakThreadCount = threads.getInteger("peakThreadCount");
-                        }
-                        JsonObject cl = (JsonObject) root.get("classLoading");
-                        if (cl != null) {
-                            row.loadedClassCount = cl.getInteger("loadedClassCount");
-                            row.totalLoadedClassCount = cl.getLong("totalLoadedClassCount");
-                        }
-                        JsonObject gc = (JsonObject) root.get("gc");
-                        if (gc != null) {
-                            row.gcCount = gc.getLong("collectionCount");
-                            row.gcTime = gc.getLong("collectionTime");
-                        }
-                        rows.add(row);
-                    }
-                });
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.ago = TimeUtils.printSince(row.uptime);
+            JsonObject runtime = (JsonObject) root.get("runtime");
+            row.platform = extractPlatform(ph, runtime);
+            row.platformVersion = extractPlatformVersion(row.platform,
+                    runtime != null ? runtime.getString("platformVersion") : null);
+            row.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
+            row.state = context.getInteger("phase");
+            row.camelVersion = context.getString("version");
+            Map<String, ?> stats = context.getMap("statistics");
+            if (stats != null) {
+                Object thp = stats.get("exchangesThroughput");
+                if (thp != null) {
+                    row.throughput = thp.toString();
+                }
+                Object load = stats.get("load01");
+                if (load != null) {
+                    row.load01 = load.toString();
+                }
+                load = stats.get("load05");
+                if (load != null) {
+                    row.load05 = load.toString();
+                }
+                load = stats.get("load15");
+                if (load != null) {
+                    row.load15 = load.toString();
+                }
+            }
+            JsonObject mem = (JsonObject) root.get("memory");
+            if (mem != null) {
+                row.heapMemUsed = mem.getLong("heapMemoryUsed");
+                row.heapMemCommitted = mem.getLong("heapMemoryCommitted");
+                row.heapMemMax = mem.getLong("heapMemoryMax");
+                row.nonHeapMemUsed = mem.getLong("nonHeapMemoryUsed");
+                row.nonHeapMemCommitted = mem.getLong("nonHeapMemoryCommitted");
+            }
+            JsonObject threads = (JsonObject) root.get("threads");
+            if (threads != null) {
+                row.threadCount = threads.getInteger("threadCount");
+                row.peakThreadCount = threads.getInteger("peakThreadCount");
+            }
+            JsonObject cl = (JsonObject) root.get("classLoading");
+            if (cl != null) {
+                row.loadedClassCount = cl.getInteger("loadedClassCount");
+                row.totalLoadedClassCount = cl.getLong("totalLoadedClassCount");
+            }
+            JsonObject gc = (JsonObject) root.get("gc");
+            if (gc != null) {
+                row.gcCount = gc.getLong("collectionCount");
+                row.gcTime = gc.getLong("collectionTime");
+            }
+            rows.add(row);
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -153,18 +147,28 @@ public class CamelContextTop extends ProcessWatchCommand {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("javaVersion", getJavaVersion(r));
                     jo.put("camelVersion", r.camelVersion);
                     jo.put("platform", getPlatform(r));
                     jo.put("status", extractState(r.state));
                     jo.put("age", r.ago);
-                    jo.put("load", getLoad(r));
-                    jo.put("heap", getHeapMemory(r));
-                    jo.put("nonHeap", getNonHeapMemory(r));
-                    jo.put("gc", getGC(r));
-                    jo.put("threads", getThreads(r));
+                    jo.put("uptime", r.uptime);
+                    // the load averages of the last 1, 5 and 15 minutes
+                    jo.put("load01", JsonValues.decimal(r.load01));
+                    jo.put("load05", JsonValues.decimal(r.load05));
+                    jo.put("load15", JsonValues.decimal(r.load15));
+                    // memory in bytes
+                    jo.put("heapUsed", r.heapMemUsed);
+                    jo.put("heapCommitted", r.heapMemCommitted);
+                    jo.put("heapMax", r.heapMemMax);
+                    jo.put("nonHeapUsed", r.nonHeapMemUsed);
+                    jo.put("nonHeapCommitted", r.nonHeapMemCommitted);
+                    jo.put("gcCount", r.gcCount);
+                    jo.put("gcTime", r.gcTime);
+                    jo.put("threads", r.threadCount);
+                    jo.put("peakThreads", r.peakThreadCount);
                     return jo;
                 }).collect(Collectors.toList())));
             } else {

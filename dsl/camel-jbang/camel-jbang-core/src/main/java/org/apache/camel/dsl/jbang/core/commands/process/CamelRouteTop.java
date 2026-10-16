@@ -82,9 +82,9 @@ public class CamelRouteTop extends CamelRouteStatus {
     protected JsonObject toJson(Row r) {
         JsonObject jo = super.toJson(r);
         // the load averages of the last 1, 5 and 15 minutes
-        jo.put("load01", r.load01);
-        jo.put("load05", r.load05);
-        jo.put("load15", r.load15);
+        jo.put("load01", JsonValues.decimal(r.load01));
+        jo.put("load05", JsonValues.decimal(r.load05));
+        jo.put("load15", JsonValues.decimal(r.load15));
         return jo;
     }
 

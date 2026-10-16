@@ -78,137 +78,131 @@ public class ListMetric extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
+            Row baseRow = row.copy();
+
+            JsonObject mo = (JsonObject) root.get("micrometer");
+            if (mo != null) {
+                JsonArray arr = (JsonArray) mo.get("counters");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.type = "counter";
+                        row.metricName = jo.getString("name");
+                        row.metricDescription = jo.getString("description");
+                        row.metricId = extractId(jo);
+                        row.tags = extractTags(jo);
+                        row.count = jo.getDouble("count");
+
+                        if (custom && row.metricName.startsWith("Camel")) {
+                            continue; // skip internal camel metrics
                         }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
+                        if (!all && getNumber(row.count).isEmpty()) {
+                            continue;
                         }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
-                        Row baseRow = row.copy();
-
-                        JsonObject mo = (JsonObject) root.get("micrometer");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("counters");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.type = "counter";
-                                    row.metricName = jo.getString("name");
-                                    row.metricDescription = jo.getString("description");
-                                    row.metricId = extractId(jo);
-                                    row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("count");
-
-                                    if (custom && row.metricName.startsWith("Camel")) {
-                                        continue; // skip internal camel metrics
-                                    }
-                                    if (!all && getNumber(row.count).isEmpty()) {
-                                        continue;
-                                    }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                            || row.tags.contains(filter)) {
-                                        rows.add(row);
-                                    }
-                                }
-                            }
-                            arr = (JsonArray) mo.get("timers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.type = "timer";
-                                    row.metricName = jo.getString("name");
-                                    row.metricDescription = jo.getString("description");
-                                    row.metricId = extractId(jo);
-                                    row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("count");
-                                    row.mean = jo.getDouble("mean");
-                                    row.max = jo.getDouble("max");
-                                    row.total = jo.getDouble("total");
-
-                                    if (custom && row.metricName.startsWith("Camel")) {
-                                        continue; // skip internal camel metrics
-                                    }
-                                    if (!all && getNumber(row.count).isEmpty()) {
-                                        continue;
-                                    }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                            || row.tags.contains(filter)) {
-                                        rows.add(row);
-                                    }
-                                }
-                            }
-                            arr = (JsonArray) mo.get("gauges");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.type = "gauge";
-                                    row.metricName = jo.getString("name");
-                                    if ("app.info".equals(row.metricName)) {
-                                        continue; // special camel info that hides in the metrics
-                                    }
-                                    row.metricDescription = jo.getString("description");
-                                    row.metricId = extractId(jo);
-                                    row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("value");
-
-                                    if (custom && row.metricName.startsWith("Camel")) {
-                                        continue; // skip internal camel metrics
-                                    }
-                                    if (!all && getNumber(row.count).isEmpty()) {
-                                        continue;
-                                    }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                            || row.tags.contains(filter)) {
-                                        rows.add(row);
-                                    }
-                                }
-                            }
-                            arr = (JsonArray) mo.get("distribution");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.type = "distribution";
-                                    row.metricName = jo.getString("name");
-                                    row.metricDescription = jo.getString("description");
-                                    row.metricId = extractId(jo);
-                                    row.tags = extractTags(jo);
-                                    row.count = jo.getDouble("value");
-                                    row.mean = jo.getDouble("mean");
-                                    row.max = jo.getDouble("max");
-                                    row.total = jo.getDouble("totalAmount");
-
-                                    if (custom && row.metricName.startsWith("Camel")) {
-                                        continue; // skip internal camel metrics
-                                    }
-                                    if (!all && getNumber(row.count).isEmpty()) {
-                                        continue;
-                                    }
-                                    if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                            || row.tags.contains(filter)) {
-                                        rows.add(row);
-                                    }
-                                }
-                            }
+                        if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
+                                || row.tags.contains(filter)) {
+                            rows.add(row);
                         }
                     }
-                });
+                }
+                arr = (JsonArray) mo.get("timers");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.type = "timer";
+                        row.metricName = jo.getString("name");
+                        row.metricDescription = jo.getString("description");
+                        row.metricId = extractId(jo);
+                        row.tags = extractTags(jo);
+                        row.count = jo.getDouble("count");
+                        row.mean = jo.getDouble("mean");
+                        row.max = jo.getDouble("max");
+                        row.total = jo.getDouble("total");
+
+                        if (custom && row.metricName.startsWith("Camel")) {
+                            continue; // skip internal camel metrics
+                        }
+                        if (!all && getNumber(row.count).isEmpty()) {
+                            continue;
+                        }
+                        if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
+                                || row.tags.contains(filter)) {
+                            rows.add(row);
+                        }
+                    }
+                }
+                arr = (JsonArray) mo.get("gauges");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.type = "gauge";
+                        row.metricName = jo.getString("name");
+                        if ("app.info".equals(row.metricName)) {
+                            continue; // special camel info that hides in the metrics
+                        }
+                        row.metricDescription = jo.getString("description");
+                        row.metricId = extractId(jo);
+                        row.tags = extractTags(jo);
+                        row.count = jo.getDouble("value");
+
+                        if (custom && row.metricName.startsWith("Camel")) {
+                            continue; // skip internal camel metrics
+                        }
+                        if (!all && getNumber(row.count).isEmpty()) {
+                            continue;
+                        }
+                        if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
+                                || row.tags.contains(filter)) {
+                            rows.add(row);
+                        }
+                    }
+                }
+                arr = (JsonArray) mo.get("distribution");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.type = "distribution";
+                        row.metricName = jo.getString("name");
+                        row.metricDescription = jo.getString("description");
+                        row.metricId = extractId(jo);
+                        row.tags = extractTags(jo);
+                        row.count = jo.getDouble("value");
+                        row.mean = jo.getDouble("mean");
+                        row.max = jo.getDouble("max");
+                        row.total = jo.getDouble("totalAmount");
+
+                        if (custom && row.metricName.startsWith("Camel")) {
+                            continue; // skip internal camel metrics
+                        }
+                        if (!all && getNumber(row.count).isEmpty()) {
+                            continue;
+                        }
+                        if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
+                                || row.tags.contains(filter)) {
+                            rows.add(row);
+                        }
+                    }
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -217,7 +211,7 @@ public class ListMetric extends ProcessWatchCommand {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("type", r.type);
                     jo.put("metric", r.metricName);

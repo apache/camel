@@ -94,72 +94,66 @@ public class ListActivity extends ProcessWatchCommand {
             filter += "*";
         }
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context != null) {
-                            String integrationName = context.getString("name");
-                            if ("CamelJBang".equals(integrationName)) {
-                                integrationName = ProcessHelper.extractName(root, ph);
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            if (context != null) {
+                String integrationName = context.getString("name");
+                if ("CamelJBang".equals(integrationName)) {
+                    integrationName = ProcessHelper.extractName(root, ph);
+                }
+                long uptime = extractSince(ph);
+                String age = TimeUtils.printSince(uptime);
+
+                JsonObject activity = loadActivityFile(ph.pid());
+                if (activity != null) {
+                    JsonArray array = (JsonArray) activity.get("activity");
+                    if (array != null) {
+                        for (int i = 0; i < array.size(); i++) {
+                            JsonObject o = (JsonObject) array.get(i);
+                            Row row = new Row();
+                            row.pid = Long.toString(ph.pid());
+                            row.name = integrationName;
+                            row.uptime = uptime;
+                            row.age = age;
+                            row.exchangeId = o.getString("exchangeId");
+                            row.routeId = o.getString("routeId");
+                            row.failed = o.getBooleanOrDefault("failed", false);
+                            row.status = row.failed ? "FAILED" : "OK";
+                            row.elapsed = o.getLongOrDefault("elapsed", 0);
+                            row.timestamp = o.getLongOrDefault("timestamp", 0);
+                            row.endpointUri = o.getString("fromEndpointUri");
+                            JsonArray sends = (JsonArray) o.get("endpointSends");
+                            row.sends = sends != null ? sends.size() : 0;
+                            if (row.timestamp > 0) {
+                                // the time since the exchange happened
+                                row.since = TimeUtils.printSince(row.timestamp);
+                            } else {
+                                row.since = "";
                             }
-                            long uptime = extractSince(ph);
-                            String age = TimeUtils.printSince(uptime);
 
-                            JsonObject activity = loadActivityFile(ph.pid());
-                            if (activity != null) {
-                                JsonArray array = (JsonArray) activity.get("activity");
-                                if (array != null) {
-                                    for (int i = 0; i < array.size(); i++) {
-                                        JsonObject o = (JsonObject) array.get(i);
-                                        Row row = new Row();
-                                        row.pid = Long.toString(ph.pid());
-                                        row.name = integrationName;
-                                        row.uptime = uptime;
-                                        row.age = age;
-                                        row.exchangeId = o.getString("exchangeId");
-                                        row.routeId = o.getString("routeId");
-                                        row.failed = o.getBooleanOrDefault("failed", false);
-                                        row.status = row.failed ? "FAILED" : "OK";
-                                        row.elapsed = o.getLongOrDefault("elapsed", 0);
-                                        row.timestamp = o.getLongOrDefault("timestamp", 0);
-                                        row.endpointUri = o.getString("fromEndpointUri");
-                                        JsonArray sends = (JsonArray) o.get("endpointSends");
-                                        row.sends = sends != null ? sends.size() : 0;
-                                        if (row.timestamp > 0) {
-                                            long ago = System.currentTimeMillis() - row.timestamp;
-                                            row.since = TimeUtils.printSince(ago);
-                                        } else {
-                                            row.since = "";
-                                        }
-
-                                        boolean add = true;
-                                        if (filter != null) {
-                                            String f = filter;
-                                            boolean negate = filter.startsWith("-");
-                                            if (negate) {
-                                                f = f.substring(1);
-                                            }
-                                            boolean match = PatternHelper.matchPattern(row.routeId, f);
-                                            if (negate) {
-                                                match = !match;
-                                            }
-                                            if (!match) {
-                                                add = false;
-                                            }
-                                        }
-                                        if (add) {
-                                            rows.add(row);
-                                        }
-                                    }
+                            boolean add = true;
+                            if (filter != null) {
+                                String f = filter;
+                                boolean negate = filter.startsWith("-");
+                                if (negate) {
+                                    f = f.substring(1);
                                 }
+                                boolean match = PatternHelper.matchPattern(row.routeId, f);
+                                if (negate) {
+                                    match = !match;
+                                }
+                                if (!match) {
+                                    add = false;
+                                }
+                            }
+                            if (add) {
+                                rows.add(row);
                             }
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -194,9 +188,10 @@ public class ListActivity extends ProcessWatchCommand {
         if (jsonOutput) {
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
+                jo.put("uptime", r.uptime);
                 jo.put("exchangeId", r.exchangeId);
                 jo.put("routeId", r.routeId);
                 jo.put("status", r.status);

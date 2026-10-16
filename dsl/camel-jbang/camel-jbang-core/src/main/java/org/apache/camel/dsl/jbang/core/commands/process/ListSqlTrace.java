@@ -64,43 +64,37 @@ public class ListSqlTrace extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject sqlTrace = (JsonObject) root.get("sqlTrace");
-                        if (context != null && sqlTrace != null) {
-                            JsonArray array = (JsonArray) sqlTrace.get("statements");
-                            if (array != null) {
-                                for (int i = 0; i < array.size(); i++) {
-                                    JsonObject o = (JsonObject) array.get(i);
-                                    Row row = new Row();
-                                    row.name = context.getString("name");
-                                    if ("CamelJBang".equals(row.name)) {
-                                        row.name = ProcessHelper.extractName(root, ph);
-                                    }
-                                    row.pid = Long.toString(ph.pid());
-                                    row.uptime = extractSince(ph);
-                                    row.age = TimeUtils.printSince(row.uptime);
-                                    row.timestamp = o.getLongOrDefault("timestamp", 0);
-                                    row.exchangeId = o.getString("exchangeId");
-                                    row.routeId = o.getString("routeId");
-                                    row.query = o.getString("query");
-                                    row.category = o.getString("category");
-                                    row.endpoint = o.getString("endpoint");
-                                    row.duration = o.getLongOrDefault("duration", 0);
-                                    row.rowCount = o.getIntegerOrDefault("rowCount", 0);
-                                    row.updateCount = o.getIntegerOrDefault("updateCount", 0);
-                                    row.failed = o.getBooleanOrDefault("failed", false);
-                                    rows.add(row);
-                                }
-                            }
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            JsonObject sqlTrace = (JsonObject) root.get("sqlTrace");
+            if (context != null && sqlTrace != null) {
+                JsonArray array = (JsonArray) sqlTrace.get("statements");
+                if (array != null) {
+                    for (int i = 0; i < array.size(); i++) {
+                        JsonObject o = (JsonObject) array.get(i);
+                        Row row = new Row();
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = ProcessHelper.extractName(root, ph);
                         }
+                        row.pid = Long.toString(ph.pid());
+                        row.uptime = extractSince(ph);
+                        row.age = TimeUtils.printSince(row.uptime);
+                        row.timestamp = o.getLongOrDefault("timestamp", 0);
+                        row.exchangeId = o.getString("exchangeId");
+                        row.routeId = o.getString("routeId");
+                        row.query = o.getString("query");
+                        row.category = o.getString("category");
+                        row.endpoint = o.getString("endpoint");
+                        row.duration = o.getLongOrDefault("duration", 0);
+                        row.rowCount = o.getIntegerOrDefault("rowCount", 0);
+                        row.updateCount = o.getIntegerOrDefault("updateCount", 0);
+                        row.failed = o.getBooleanOrDefault("failed", false);
+                        rows.add(row);
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -116,9 +110,10 @@ public class ListSqlTrace extends ProcessWatchCommand {
         if (jsonOutput) {
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
+                jo.put("uptime", r.uptime);
                 jo.put("timestamp", r.timestamp);
                 jo.put("exchangeId", r.exchangeId);
                 jo.put("routeId", r.routeId);

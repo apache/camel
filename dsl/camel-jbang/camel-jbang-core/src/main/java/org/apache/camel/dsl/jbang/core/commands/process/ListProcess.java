@@ -66,61 +66,55 @@ public class ListProcess extends ProcessWatchCommand {
     protected Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids("*");
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        Row row = new Row();
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.ago = TimeUtils.printSince(row.uptime);
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.state = context.getInteger("phase");
-                        JsonObject hc = (JsonObject) root.get("healthChecks");
-                        boolean rdy = hc != null && hc.getBoolean("ready");
-                        if (rdy) {
-                            row.ready = "1/1";
-                        } else {
-                            row.ready = "0/1";
-                        }
-                        Map<String, ?> stats = context.getMap("statistics");
-                        if (stats != null) {
-                            row.total = stats.get("exchangesTotal").toString();
-                            Object num = stats.get("remoteExchangesTotal");
-                            if (num != null) {
-                                row.totalRemote = num.toString();
-                            }
-                            row.failed = stats.get("exchangesFailed").toString();
-                            num = stats.get("remoteExchangesFailed");
-                            if (num != null) {
-                                row.failedRemote = num.toString();
-                            }
-                            row.inflight = stats.get("exchangesInflight").toString();
-                            num = stats.get("remoteExchangesInflight");
-                            if (num != null) {
-                                row.inflightRemote = num.toString();
-                            }
-                            stats = (Map<String, ?>) stats.get("reload");
-                            if (stats != null) {
-                                stats = (Map<String, ?>) stats.get("lastError");
-                            }
-                            if (stats != null) {
-                                row.reloadError = (String) stats.get("message");
-                            }
-                        }
+        forEachIntegration("*", (ph, root) -> {
+            Row row = new Row();
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.ago = TimeUtils.printSince(row.uptime);
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.state = context.getInteger("phase");
+            JsonObject hc = (JsonObject) root.get("healthChecks");
+            boolean rdy = hc != null && hc.getBoolean("ready");
+            if (rdy) {
+                row.ready = "1/1";
+            } else {
+                row.ready = "0/1";
+            }
+            Map<String, ?> stats = context.getMap("statistics");
+            if (stats != null) {
+                row.total = stats.get("exchangesTotal").toString();
+                Object num = stats.get("remoteExchangesTotal");
+                if (num != null) {
+                    row.totalRemote = num.toString();
+                }
+                row.failed = stats.get("exchangesFailed").toString();
+                num = stats.get("remoteExchangesFailed");
+                if (num != null) {
+                    row.failedRemote = num.toString();
+                }
+                row.inflight = stats.get("exchangesInflight").toString();
+                num = stats.get("remoteExchangesInflight");
+                if (num != null) {
+                    row.inflightRemote = num.toString();
+                }
+                stats = (Map<String, ?>) stats.get("reload");
+                if (stats != null) {
+                    stats = (Map<String, ?>) stats.get("lastError");
+                }
+                if (stats != null) {
+                    row.reloadError = (String) stats.get("message");
+                }
+            }
 
-                        rows.add(row);
-                    }
-                });
+            rows.add(row);
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -131,7 +125,7 @@ public class ListProcess extends ProcessWatchCommand {
                 if (jsonOutput) {
                     printer().println(
                             Jsoner.serialize(
-                                    rows.stream().map(row -> row.pid).collect(Collectors.toList())));
+                                    rows.stream().map(row -> JsonValues.pid(row.pid)).collect(Collectors.toList())));
                 } else {
                     rows.forEach(r -> printer().println(r.pid));
                 }
@@ -140,10 +134,13 @@ public class ListProcess extends ProcessWatchCommand {
                     printer().println(
                             Jsoner.serialize(
                                     rows.stream()
-                                            .map(row -> new ListProcessDTO(
-                                                    row.pid, row.name, row.ready, getStatus(row), row.ago, row.total,
-                                                    row.failed, row.inflight))
-                                            .map(ListProcessDTO::toMap)
+                                            .map(row -> {
+                                                Map<String, Object> jo = new ListProcessDTO(
+                                                        row.pid, row.name, row.ready, getStatus(row), row.ago, row.total,
+                                                        row.failed, row.inflight).toMap();
+                                                jo.put("uptime", row.uptime);
+                                                return jo;
+                                            })
                                             .collect(Collectors.toList())));
                 } else {
                     // Fixed columns: PID(~8) + NAME(up to nameW) + READY(5) + STATUS(8) + AGE(8) + TOTAL(6) + FAIL(5) + INFLIGHT(10)
