@@ -48,7 +48,8 @@ public class HibernateComponent extends DefaultComponent {
     private Class<?>[] entityClasses;
 
     @Metadata(description = "Schema generation action: none, validate, update, create, create-drop, create-only, drop.",
-              defaultValue = "none")
+              defaultValue = "none",
+              enums = "none,validate,update,create,create-drop,create-only,drop")
     private String schemaAction = "none";
 
     @Metadata(description = "Arbitrary Hibernate configuration properties passthrough map.")
@@ -116,6 +117,9 @@ public class HibernateComponent extends DefaultComponent {
     }
 
     private void validateSchemaAction(String action) {
+        if (action == null) {
+            return;
+        }
 
         switch (action.toLowerCase()) {
             case "none":

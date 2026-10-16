@@ -135,7 +135,8 @@ public class HibernateProducer extends DefaultProducer {
             Map<String, Object> parameters = exchange.getMessage().getHeader(
                     HibernateConstants.HIBERNATE_PARAMETERS, Map.class);
 
-            if (endpoint.getNaturalIdParameters() != null) {
+            if (endpoint.getNaturalIdParameters() != null
+                    && !endpoint.getNaturalIdParameters().isEmpty()) {
                 Object entity = activeSession.find(
                         endpoint.getEntityType(),
                         resolveNaturalIdParameters(exchange, parameters),
