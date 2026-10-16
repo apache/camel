@@ -4,7 +4,7 @@ Three commands. That is all it takes to go from zero to a running integration.
 
 == Install
 
-Install the Camel CLI with the installer script, which needs only Java 17 or later:
+Install the Camel CLI with the installer script, which needs only Java 21 or later:
 
 [source,bash]
 ----

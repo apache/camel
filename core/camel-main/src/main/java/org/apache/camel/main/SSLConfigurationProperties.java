@@ -130,7 +130,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * The protocol for the secure sockets created by the SSLContext.
      * <p>
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public void setSecureSocketProtocol(String secureSocketProtocol) {
         this.secureSocketProtocol = secureSocketProtocol;
@@ -317,7 +317,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * The type of the key store to load.
      * <p>
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public void setKeyStoreType(String keyStoreType) {
         this.keyStoreType = keyStoreType;
@@ -422,7 +422,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * Algorithm name used for creating the KeyManagerFactory.
      * <p>
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public void setKeyManagerAlgorithm(String keyManagerAlgorithm) {
         this.keyManagerAlgorithm = keyManagerAlgorithm;
@@ -449,7 +449,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * Algorithm name used for creating the SecureRandom.
      * <p>
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public void setSecureRandomAlgorithm(String secureRandomAlgorithm) {
         this.secureRandomAlgorithm = secureRandomAlgorithm;
@@ -502,7 +502,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * The optional protocol for the secure sockets created by the SSLContext.
      * <p>
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public SSLConfigurationProperties withSecureSocketProtocol(String secureSocketProtocol) {
         this.secureSocketProtocol = secureSocketProtocol;
@@ -650,7 +650,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * The type of the key store to load.
      * <p>
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public SSLConfigurationProperties withKeyStoreType(String keyStoreType) {
         this.keyStoreType = keyStoreType;
@@ -731,7 +731,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * Algorithm name used for creating the KeyManagerFactory.
      * <p>
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public SSLConfigurationProperties withKeyManagerAlgorithm(String keyManagerAlgorithm) {
         this.keyManagerAlgorithm = keyManagerAlgorithm;
@@ -752,7 +752,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * Algorithm name used for creating the SecureRandom.
      * <p>
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public SSLConfigurationProperties withSecureRandomAlgorithm(String secureRandomAlgorithm) {
         this.secureRandomAlgorithm = secureRandomAlgorithm;
