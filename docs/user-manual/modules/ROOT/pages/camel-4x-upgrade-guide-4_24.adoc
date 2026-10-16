@@ -777,6 +777,20 @@ The `route-parser` plugin (`camel route-parser`) and its `camel-jbang-plugin-rou
 without compiling it, and of YAML and XML sources too. If you installed the plugin, remove it with
 `camel plugin delete route-parser`.
 
+=== camel-jbang-mcp - the camel_component_properties tool is removed
+
+The `camel_component_properties` MCP tool is removed. It listed the endpoint options of a component as
+`camel.component.<scheme>.<option>` keys, which `camel run` and `camel_configuration_validate` reject: only the
+component options can be set that way. Use `camel_catalog_doc` instead: each component option in its answer carries
+its `application.properties` key as `configKey`.
+
+`camel_catalog_doc` without `optionsFilter` now lists the required options and the first 20 other options of a
+component in full, and the rest by name in `moreOptions` (`limit` lists more in full), and an answer is cut at
+16 000 characters with a marker. An option of both the endpoint and the component is listed once, with `scope`
+set to `endpoint,component` and its `configKey`, instead of twice, and `matchedOptions` counts option names. A name
+that only matches a word of an EIP title (such as `retry`) no longer returns that EIP: the answer is a not-found with
+suggestions.
+
 === camel-wasm - the endpoint runs WASI command modules (Breaking change)
 
 The `wasm` endpoint now runs WASI Preview 1 command modules (the body is standard input, standard output becomes the
