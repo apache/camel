@@ -1977,6 +1977,64 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateConfigurationPropertyNestedGroup() {
+        // camel.vault.aws.* is a nested group (3-segment prefix) — the catalog
+        // must recognise the group and validate the option name after the third dot.
+        String text = "camel.vault.aws.accessKey=AKIA1234";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        text = "camel.vault.aws.region=us-east-1";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        // invented option under the nested group must be accepted (group is known) but invalid
+        text = "camel.vault.aws.inventedOption=foo";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.isAccepted());
+        assertTrue(result.getUnknown().contains("camel.vault.aws.inventedOption"));
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyDashedGroupName() {
+        // The metadata group is "camel.errorRegistry" — the dashed form
+        // "camel.error-registry" must be accepted and validated.
+        String text = "camel.error-registry.enabled=true";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        text = "camel.error-registry.maximumEntries=100";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        text = "camel.ai-observability.enabled=true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyServerInventedOption() {
+        // camel.server.* is a known group — a real option must pass,
+        // and an invented option must fail validation.
+        String text = "camel.server.port=9999";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        text = "camel.server.inventedOption=foo";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.isAccepted());
+        assertTrue(result.getUnknown().contains("camel.server.inventedOption"));
+    }
+
+    @Test
     public void validateEnvVariableInSyntax() {
         EndpointValidationResult result
                 = catalog.validateEndpointProperties("netty-http:http://foo-bar.{{env:NAMESPACE}}.svc.cluster.local/samples");
