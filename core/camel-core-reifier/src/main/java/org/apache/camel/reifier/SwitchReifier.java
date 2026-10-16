@@ -48,7 +48,7 @@ public class SwitchReifier extends ProcessorReifier<SwitchDefinition> {
         List<String> caseKeys = new ArrayList<>();
         List<String> uris = new ArrayList<>();
         for (SwitchCaseDefinition c : definition.getCases()) {
-            // resolve property placeholders (also route template parameters), as for the uri
+            // resolve property placeholders (also route template parameters), as is already done for the uri
             String value = parseString(c.getValue());
             if (value == null) {
                 throw new IllegalArgumentException("Switch cases require value");
