@@ -534,6 +534,16 @@ or follows, like Enter does.
   nothing), and a route that cannot be read, such as invalid YAML, exits with `1` and the error of the parser (it failed
   with an internal error, `70`, and a stack trace).
 
+=== camel-jbang - camel get bean, get route-controller and top source
+
+* `camel get bean --dsl` shows the configuration of each property next to that property: it paired them by position,
+  which showed the configuration of another property, or failed with an internal error (`70`) with `--nulls=false`.
+  An unknown `--scope` exits with `2` (it showed every bean).
+* `camel get route-controller` shows back-off times and attempts that do not fit in an int (it showed other numbers),
+  and no longer shows `Starting Routes: false` for the default route controller, which does not tell.
+* `camel top source --json` has the counters `total`, `mean`, `min`, `max` and `last` as numbers instead of text, as
+  the other listings.
+
 === camel-jbang - a boolean option given without a value is on
 
 A boolean option that is on by default is now on when it is given without a value, like any other boolean option:

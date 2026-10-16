@@ -164,14 +164,15 @@ public class RouteControllerAction extends ActionWatchCommand {
                     printer().printf("\tInitial Starting Routes: %b%n", jo.getBoolean("startingRoutes"));
                     printer().printf("\tUnhealthy Routes: %b%n", jo.getBoolean("unhealthyRoutes"));
                     printer().printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
-                    printer().printf("\tRoutes Started: %d%n", jo.getInteger("startedRoutes"));
+                    printer().printf("\tRoutes Started: %d%n", jo.getLong("startedRoutes"));
                     printer().printf("\tRoutes Restarting: %d%n", jo.getInteger("restartingRoutes"));
                     printer().printf("\tRoutes Exhausted: %d%n", jo.getInteger("exhaustedRoutes"));
-                    printer().printf("\tInitial Delay: %d%n", jo.getInteger("initialDelay"));
-                    printer().printf("\tBackoff Delay: %d%n", jo.getInteger("backoffDelay"));
-                    printer().printf("\tBackoff Max Delay: %d%n", jo.getInteger("backoffMaxDelay"));
-                    printer().printf("\tBackoff Max Elapsed Time: %d%n", jo.getInteger("backoffMaxElapsedTime"));
-                    printer().printf("\tBackoff Max Attempts: %d%n", jo.getInteger("backoffMaxAttempts"));
+                    // the delays and times in millis, and the attempts, are longs
+                    printer().printf("\tInitial Delay: %d%n", jo.getLong("initialDelay"));
+                    printer().printf("\tBackoff Delay: %d%n", jo.getLong("backoffDelay"));
+                    printer().printf("\tBackoff Max Delay: %d%n", jo.getLong("backoffMaxDelay"));
+                    printer().printf("\tBackoff Max Elapsed Time: %d%n", jo.getLong("backoffMaxElapsedTime"));
+                    printer().printf("\tBackoff Max Attempts: %d%n", jo.getLong("backoffMaxAttempts"));
                     printer().printf("\tThread Pool Size: %d%n", jo.getInteger("threadPoolSize"));
                     printer().printf("\tUnhealthy On Restarting: %b%n", jo.getBoolean("unhealthyOnRestarting"));
                     printer().printf("\tUnhealthy On Exhaust: %b%n", jo.getBoolean("unhealthyOnExhausted"));
@@ -181,7 +182,10 @@ public class RouteControllerAction extends ActionWatchCommand {
             } else {
                 if (header) {
                     printer().println("Default Route Controller");
-                    printer().printf("\tStarting Routes: %b%n", jo.getBoolean("startingRoutes"));
+                    // only the supervising route controller tells
+                    if (jo.containsKey("startingRoutes")) {
+                        printer().printf("\tStarting Routes: %b%n", jo.getBoolean("startingRoutes"));
+                    }
                     printer().printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
                     printer().println("\n");
                 }
