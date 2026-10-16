@@ -156,6 +156,11 @@ class RestartProcessTest extends ProcessCommandTestSupport {
         assertEquals(List.of("C:\\Program Files\\Java\\bin\\java.exe", "-jar", "C:\\work\\app.jar"),
                 RestartProcess.parseCommandLine(
                         "\"C:\\Program Files\\Java\\bin\\java.exe\" -jar C:\\work\\app.jar"));
+        // and a quoted path that ends with a backslash: two backslashes in front of the closing quote are one
+        assertEquals(List.of("\\\\server\\share\\", "-x"),
+                RestartProcess.parseCommandLine("\"\\\\server\\share\\\\\" -x"));
+        // three are one and a quote character
+        assertEquals(List.of("say \\\"hi"), RestartProcess.parseCommandLine("\"say \\\\\\\"hi\""));
     }
 
     // restarts myApp, which runs the given command

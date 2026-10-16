@@ -168,20 +168,38 @@ public class RestartProcess extends ProcessBaseCommand {
                                    + log);
     }
 
+    /**
+     * The arguments of a command line in one text (as Windows has it): a space separates them, except between quotes,
+     * and a backslash is a character, except in front of a quote, where 2n backslashes are n backslashes and the quote
+     * starts or ends a quoted part, and 2n + 1 backslashes are n backslashes and a quote character.
+     */
     static List<String> parseCommandLine(String commandLine) {
         List<String> tokens = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean inQuotes = false;
-        boolean escaped = false;
+        int length = commandLine.length();
 
-        for (int i = 0; i < commandLine.length(); i++) {
+        for (int i = 0; i < length; i++) {
             char c = commandLine.charAt(i);
-            if (escaped) {
-                current.append(c);
-                escaped = false;
-            } else if (c == '\\' && i + 1 < commandLine.length() && commandLine.charAt(i + 1) == '"') {
-                // an escaped quote: any other backslash is part of the text, such as in a Windows path
-                escaped = true;
+            if (c == '\\') {
+                int backslashes = 1;
+                while (i + backslashes < length && commandLine.charAt(i + backslashes) == '\\') {
+                    backslashes++;
+                }
+                if (i + backslashes < length && commandLine.charAt(i + backslashes) == '"') {
+                    current.append("\\".repeat(backslashes / 2));
+                    if (backslashes % 2 == 1) {
+                        current.append('"');
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                    // the quote too
+                    i += backslashes;
+                } else {
+                    // such as in a Windows path
+                    current.append("\\".repeat(backslashes));
+                    i += backslashes - 1;
+                }
             } else if (c == '"') {
                 inQuotes = !inQuotes;
             } else if (c == ' ' && !inQuotes) {
