@@ -376,6 +376,30 @@ are unaffected. Routes that set the header by its literal string name, or that u
 `allowTemplateFromHeader=true` with the old header names, must switch to the new `Camel`-prefixed
 names.
 
+=== camel-chunk - message data printed with a direct tag is rendered literally
+
+Previously the `chunk` component bound the message body, headers and variables into the Chunk engine so that
+Chunk re-parsed those values as template source: a value that itself contained Chunk tags (such as a body of
+`{$headers.name}`) had those tags expanded instead of being printed verbatim.
+
+Message data bound to the engine is now neutralised so that a direct `{$tag}` printing the body, a header, a
+variable, or an element of a nested map, list or array renders the value literally instead of evaluating the
+tags inside it. Tag-free data is unchanged and Chunk's string filters (for example `slice`, `get`, `join`)
+keep their existing behaviour. Routes that relied on message data being evaluated as Chunk template code must
+move that markup into the template itself.
+
+As part of this, a non-`List` `Collection` value (such as a `Set`) is now bound as a `List`, so a direct
+`{$body}` prints Chunk's list placeholder instead of the collection's `toString()`, and a filter such as
+`|join` operates on its elements.
+
+This does not cover every path: Chunk re-parses any string it produces while rendering, so the output of a
+filter (`{$body|trim}`), a string property of a bean body (`{$body.name}`, `{$exception.message}`) and string
+items bound by a `{% loop %}` are still parsed as template code. Keep untrusted data to direct `{$tag}`
+output; do not pass untrusted values through Chunk filters, bean properties or loops. If untrusted data must
+go through one of those paths, remove the `{` and `}` characters from it in the route before the `chunk`
+endpoint (Chunk has no escape for tags inside data), for example with a processor that rewrites the body or
+header.
+
 === camel-debezium - a failed embedded engine is now reported
 
 The Debezium consumers now register a `CompletionCallback` on the embedded engine. When the engine stops
