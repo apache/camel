@@ -723,6 +723,13 @@ the old single header can set the header to a String, for example with `String.v
 
 This also applies to camel-graphql, which sends its requests with camel-http.
 
+=== camel-core - Switch case values and the Dynamic Router uriDelimiter resolve property placeholders
+
+The `value` of a Switch case and the `uriDelimiter` of the Dynamic Router EIP were used as written, so a property
+placeholder or a route template parameter in them never matched (Switch) or did not split the slip (Dynamic Router).
+They are now resolved at startup like the other EIP options; a placeholder of a property that does not exist now
+fails the route at startup.
+
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 
 The `saveBulk` and `executeTransaction` operations of `dapr:state` built their request but never sent it to Dapr, so

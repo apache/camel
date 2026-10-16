@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.TemplatedRouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.language.HeaderExpression;
@@ -73,15 +74,43 @@ class SwitchEndpointTest extends ContextTestSupport {
         assertEquals(2, attempts.get());
     }
 
+    @Test
+    void caseValueResolvesPropertyPlaceholder() throws Exception {
+        getMockEndpoint("mock:gold").expectedBodiesReceived("first", "second");
+        getMockEndpoint("mock:other").expectedBodiesReceived("third");
+        template.sendBodyAndHeader("direct:placeholderValue", "first", "tier", "gold");
+        template.sendBodyAndHeader("direct:placeholderValue", "second", "tier", "GOLD");
+        // the unresolved placeholder text is not a case value
+        template.sendBodyAndHeader("direct:placeholderValue", "third", "tier", "{{switch.tier}}");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    void caseValueResolvesRouteTemplateParameter() throws Exception {
+        TemplatedRouteBuilder.builder(context, "tierSwitch").routeId("templated")
+                .parameter("in", "direct:templated").parameter("tier", "silver").add();
+        getMockEndpoint("mock:gold").expectedBodiesReceived("first");
+        getMockEndpoint("mock:other").expectedBodiesReceived("second");
+        template.sendBodyAndHeader("direct:templated", "first", "tier", "silver");
+        template.sendBodyAndHeader("direct:templated", "second", "tier", "{{tier}}");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         Properties properties = new Properties();
         properties.setProperty("switch.destination", "mock:destination");
+        properties.setProperty("switch.tier", "gold");
         context.getPropertiesComponent().setInitialProperties(properties);
         return new RouteBuilder() {
             @Override
             public void configure() {
                 interceptSendToEndpoint("mock:destination").to("mock:intercepted");
+                from("direct:placeholderValue").doSwitch(header("tier"))
+                        .doCase("{{switch.tier}}", "mock:gold").otherwise("mock:other");
+                routeTemplate("tierSwitch").templateParameter("in").templateParameter("tier")
+                        .from("{{in}}").doSwitch(header("tier"))
+                        .doCase("{{tier}}", "mock:gold").otherwise("mock:other");
                 from("direct:intercepted").routeId("intercepted").doSwitch(constant("match"))
                         .doCase("match", "{{switch.destination}}").otherwise("mock:fallback");
                 from("direct:redelivery")
