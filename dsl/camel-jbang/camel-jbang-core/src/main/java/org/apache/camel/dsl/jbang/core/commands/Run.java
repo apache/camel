@@ -3039,10 +3039,10 @@ public class Run extends CamelCommand {
 
     protected int runBackgroundProcess(ProcessBuilder pb, String kind) throws Exception {
         // the output goes to ~/.camel/<pid>-run.log, as nobody reads the output of a process in the background
-        Path logPath = BackgroundLog.redirect(pb);
-        Process p = pb.start();
+        BackgroundLog.Started started = BackgroundLog.start(pb);
+        Process p = started.process();
         this.spawnPid = p.pid();
-        logPath = BackgroundLog.started(logPath, p.pid());
+        Path logPath = started.log();
 
         // the commands that run Camel for themselves (export, transform) keep quiet, and need no log afterwards
         boolean internal = exportRun || transformRun || transformMessageRun;

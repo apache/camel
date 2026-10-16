@@ -16,12 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * The output of an integration that runs in the background (camel run --background, camel restart): the file
@@ -41,12 +44,40 @@ public final class BackgroundLog {
     }
 
     /**
+     * Starts the process with its output in its log, named after its pid.
+     *
+     * @return the process and its log
+     */
+    public static Started start(ProcessBuilder pb) throws IOException {
+        Path log = redirect(pb);
+        Process process;
+        try {
+            process = pb.start();
+        } catch (IOException | RuntimeException e) {
+            // such as a command that cannot be run: no process writes to the log
+            try {
+                Files.deleteIfExists(log);
+            } catch (IOException suppressed) {
+                e.addSuppressed(suppressed);
+            }
+            throw e;
+        }
+        return new Started(process, started(log, process.pid()));
+    }
+
+    /**
+     * A process that runs in the background, and its log.
+     */
+    public record Started(Process process, Path log) {
+    }
+
+    /**
      * Sends the output of the process to a new log file, which is named after the pid once the process has started (see
      * {@link #started(Path, long)}).
      *
      * @return the log file
      */
-    public static Path redirect(ProcessBuilder pb) throws IOException {
+    static Path redirect(ProcessBuilder pb) throws IOException {
         Path dir = CommandLineHelper.getCamelDir();
         Files.createDirectories(dir);
         Path log = Files.createTempFile(dir, "run-", ".log");
@@ -60,7 +91,7 @@ public final class BackgroundLog {
      *
      * @return the log, which keeps its first name when it cannot be renamed while the process writes to it (Windows)
      */
-    public static Path started(Path log, long pid) {
+    static Path started(Path log, long pid) {
         try {
             return Files.move(log, of(pid), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
@@ -83,12 +114,24 @@ public final class BackgroundLog {
      * The last lines of the log, or an empty text when there is no log.
      */
     public static String tail(Path log, int lines) {
-        try {
-            // leniently, as the output of a process may not be UTF-8
-            List<String> all = new String(Files.readAllBytes(log), StandardCharsets.UTF_8).lines().toList();
-            return String.join(System.lineSeparator(), all.subList(Math.max(0, all.size() - lines), all.size()));
+        if (lines <= 0) {
+            return "";
+        }
+        // line by line, as the log of an integration that ran for long can be large, and leniently, as the output of a
+        // process may not be UTF-8
+        Deque<String> last = new ArrayDeque<>(lines);
+        try (BufferedReader reader
+                = new BufferedReader(new InputStreamReader(Files.newInputStream(log), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (last.size() == lines) {
+                    last.removeFirst();
+                }
+                last.addLast(line);
+            }
         } catch (IOException e) {
             return "";
         }
+        return String.join(System.lineSeparator(), last);
     }
 }

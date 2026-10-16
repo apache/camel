@@ -16,10 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The output of an integration that runs in the background goes to ~/.camel/&lt;pid&gt;-run.log.
@@ -69,6 +73,26 @@ class BackgroundLogTest {
 
         BackgroundLog.remove(process.pid());
         assertThat(named).doesNotExist();
+    }
+
+    @Test
+    void commandThatCannotRunLeavesNoLog() throws Exception {
+        ProcessBuilder pb = new ProcessBuilder(home.resolve("no-such-command").toString());
+
+        assertThatThrownBy(() -> BackgroundLog.start(pb)).isInstanceOf(IOException.class);
+
+        try (Stream<Path> files = Files.list(CommandLineHelper.getCamelDir())) {
+            assertThat(files).isEmpty();
+        }
+    }
+
+    @Test
+    void tailOfALongLog() throws Exception {
+        Path log = home.resolve("long.log");
+        Files.write(log, IntStream.rangeClosed(1, 100_000).mapToObj(i -> "line " + i).toList());
+
+        assertThat(BackgroundLog.tail(log, 2)).isEqualTo("line 99999" + System.lineSeparator() + "line 100000");
+        assertThat(BackgroundLog.tail(log, 0)).isEmpty();
     }
 
     @Test

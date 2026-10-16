@@ -104,9 +104,9 @@ public class RestartProcess extends ProcessBaseCommand {
         if (directory != null) {
             pb.directory(new File(directory));
         }
-        Path log = BackgroundLog.redirect(pb);
-        Process started = pb.start();
-        log = BackgroundLog.started(log, started.pid());
+        BackgroundLog.Started run = BackgroundLog.start(pb);
+        Process started = run.process();
+        Path log = run.log();
 
         awaitStarted(started, displayName, log);
         printer().println("Restarted Camel integration: " + displayName + " (PID: " + started.pid() + ")");
