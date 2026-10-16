@@ -1142,3 +1142,10 @@ The consumer now sets the `CamelMiloNodeId` header on every exchange, including 
 Stopping a consumer now deletes its monitored items. Previously they stayed on the server while another endpoint kept
 the shared connection open, so a restarted consumer received each value twice. While the server is unreachable, the
 stop waits until the client's next attempt to reconnect has failed.
+
+=== camel-protobuf - a bytes field in a Map
+
+When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
+a `bytes` field is now a `byte[]` with the content of the field. Previously it was the `String` that
+`ByteString.toString()` returns, a description such as `<ByteString@1b6d3586 size=4 contents="...">`, which does not
+contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepted for a `bytes` field.
