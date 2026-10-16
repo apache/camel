@@ -28,6 +28,10 @@ import java.util.regex.Pattern;
 public final class VersionHelper {
 
     private static final Pattern LEADING_NUMBER = Pattern.compile("^\\d{1,18}");
+    // the qualifiers of a version before its release, as in Maven: 4.24.0-SNAPSHOT, -RC1, -M2, -beta1
+    private static final Pattern PRE_RELEASE
+            = Pattern.compile("^[-.]?(snapshot|alpha|beta|milestone|preview|rc|cr|ea|m|a|b)(?=\\d|[-.]|$)",
+                    Pattern.CASE_INSENSITIVE);
 
     private VersionHelper() {
     }
@@ -68,7 +72,8 @@ public final class VersionHelper {
 
     /**
      * Compares two versions part by part as numbers, such as 3.27.3.1 before 3.27.4, and 4.100 after 4.99. With the
-     * same numbers, a version with a qualifier (such as 4.24.0-SNAPSHOT) comes before the release, as in Maven.
+     * same numbers, a pre-release (such as 4.24.0-SNAPSHOT, -RC1 or -M2) comes before the release, and another
+     * qualifier (such as a build number) after it, as in Maven.
      *
      * @return a negative number, zero or a positive number as the source is before, the same as, or after the target
      *         (zero when one of them is missing)
@@ -88,11 +93,18 @@ public final class VersionHelper {
                 return Long.compare(a, b);
             }
         }
-        if (sq.isEmpty() != tq.isEmpty()) {
-            // the release comes after its snapshot
-            return sq.isEmpty() ? 1 : -1;
+        int rank = Integer.compare(qualifierRank(sq), qualifierRank(tq));
+        return rank != 0 ? rank : sq.compareToIgnoreCase(tq);
+    }
+
+    /**
+     * Where a qualifier sorts: a pre-release before the release, and any other qualifier after it.
+     */
+    private static int qualifierRank(String qualifier) {
+        if (qualifier.isEmpty()) {
+            return 1;
         }
-        return sq.compareTo(tq);
+        return PRE_RELEASE.matcher(qualifier).lookingAt() ? 0 : 2;
     }
 
     /**

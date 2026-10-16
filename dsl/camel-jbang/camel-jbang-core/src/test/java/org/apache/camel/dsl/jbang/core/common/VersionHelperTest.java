@@ -43,6 +43,12 @@ class VersionHelperTest {
             "4.24.0-SNAPSHOT, 4.23.0, 1",
             "4.24.0-SNAPSHOT, 4.24.0-SNAPSHOT, 0",
             "4.24.0-RC1, 4.24.0-RC2, -1",
+            "4.24.0-RC1, 4.24.0, -1",
+            "4.24.0-M2, 4.24.0-RC1, -1",
+            // a build of a release comes after it
+            "4.24.0.build-2, 4.24.0, 1",
+            "4.24.0.build-2, 4.24.0-SNAPSHOT, 1",
+            "4.24.0-beta-1, 4.24.0, -1",
             "'4,10', '4,9', 1" })
     void compare(String source, String target, int expected) {
         assertThat(Integer.signum(VersionHelper.compare(source, target))).isEqualTo(expected);
