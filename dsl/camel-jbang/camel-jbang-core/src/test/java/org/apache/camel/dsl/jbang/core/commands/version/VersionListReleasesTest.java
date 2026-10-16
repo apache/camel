@@ -116,7 +116,7 @@ class VersionListReleasesTest extends CamelCommandBaseTestSupport {
 
     @Test
     void withoutTheReleasesAtTheirEndOfLife() throws Exception {
-        // the 4.10 releases are supported until February 2026; the others have no end of life
+        // the 4.10 releases were supported until February 2026; the others have no end of life
         assertThat(command("--eol=false").doCall()).isZero();
 
         assertThat(versions()).containsExactly("4.11.0", "4.12.0");

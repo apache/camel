@@ -574,8 +574,9 @@ the integrations unsorted. A row without the value of the key now comes first, i
 === camel-jbang - camel version list
 
 * `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.
-* A `--date-format` that is not a date pattern, and a `--from-date` or `--to-date` that is not a date such as
-  `2025-01-31`, exit with `2`: the first showed the dates unformatted, and the others were ignored.
+* A `--date-format` that is not a date pattern, and a `--from-date` or `--to-date` that is not a date in the
+  `yyyy-MM-dd` format (such as `2025-01-31`), exit with `2`: the first showed the dates unformatted, and the others were
+  ignored.
 
 === camel-jbang - the shared action file is deprecated for plugin commands
 
