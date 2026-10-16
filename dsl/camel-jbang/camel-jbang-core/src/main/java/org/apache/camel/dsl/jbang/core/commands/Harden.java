@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -193,6 +194,9 @@ public class Harden extends CamelCommand {
             defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean stream = true;
 
+    // whether the answer was printed as it came
+    private boolean streamed;
+
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
             .build();
@@ -203,6 +207,9 @@ public class Harden extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (!"text".equals(format) && !"markdown".equals(format)) {
+            throw CliException.usage("--format must be text or markdown, was: " + format);
+        }
         // check the input before reaching out to an LLM
         for (String file : files) {
             if (!Files.exists(Path.of(file))) {
@@ -230,20 +237,21 @@ public class Harden extends CamelCommand {
     }
 
     private void printConfiguration(String endpoint, String resolvedApiKey) {
-        printer().println("LLM Configuration:");
-        printer().println("  URL: " + endpoint);
-        printer().println("  API Type: " + apiType);
-        printer().println("  Model: " + model);
+        printer().printDiagnostic("LLM Configuration:");
+        printer().printDiagnostic("  URL: " + endpoint);
+        printer().printDiagnostic("  API Type: " + apiType);
+        printer().printDiagnostic("  Model: " + model);
         printMaskedApiKey(resolvedApiKey);
-        printer().println();
+        printer().printDiagnostic("");
     }
 
     private void printMaskedApiKey(String key) {
         if (key == null || key.isBlank()) {
             return;
         }
-        String masked = "****" + key.substring(Math.max(0, key.length() - 4));
-        printer().println("  API Key: " + masked);
+        // the last characters of a long key only: a short one would be shown whole
+        String masked = key.length() > 8 ? "****" + key.substring(key.length() - 4) : "****";
+        printer().printDiagnostic("  API Key: " + masked);
     }
 
     private void printUsageHelp() {
@@ -397,12 +405,12 @@ public class Harden extends CamelCommand {
         if (!showPrompt) {
             return;
         }
-        printer().println("--- SYSTEM PROMPT ---");
-        printer().println(sysPrompt);
-        printer().println("--- USER PROMPT ---");
-        printer().println(userPrompt);
-        printer().println("--- END PROMPTS ---");
-        printer().println();
+        printer().printDiagnostic("--- SYSTEM PROMPT ---");
+        printer().printDiagnostic(sysPrompt);
+        printer().printDiagnostic("--- USER PROMPT ---");
+        printer().printDiagnostic(userPrompt);
+        printer().printDiagnostic("--- END PROMPTS ---");
+        printer().printDiagnostic("");
     }
 
     private int handleHardeningResult(String suggestions) {
@@ -410,9 +418,8 @@ public class Harden extends CamelCommand {
             printer().printErr("Failed to get security hardening suggestions from LLM");
             return 1;
         }
-        // With streaming, response was already printed during generation
-        // Without streaming, we need to print it now
-        if (!stream) {
+        // a streamed answer is printed as it comes; the OpenAI-compatible service answers in one go, also with --stream
+        if (!streamed) {
             printer().println(suggestions);
         }
         printer().println();
@@ -555,8 +562,7 @@ public class Harden extends CamelCommand {
         options.put("temperature", temperature);
         request.put("options", options);
 
-        printer().println("Performing security analysis with " + model + " (Ollama)...");
-        printer().println();
+        printer().printDiagnostic("Performing security analysis with " + model + " (Ollama)...");
 
         if (stream) {
             return sendStreamingRequest(endpoint + "/api/generate", request);
@@ -577,8 +583,7 @@ public class Harden extends CamelCommand {
 
         String apiUrl = normalizeOpenAiUrl(endpoint);
 
-        printer().println("Performing security analysis with " + model + " (OpenAI-compatible)...");
-        printer().println();
+        printer().printDiagnostic("Performing security analysis with " + model + " (OpenAI-compatible)...");
 
         JsonObject response = sendRequest(apiUrl, request, resolvedApiKey);
         return extractOpenAiContent(response);
@@ -631,6 +636,7 @@ public class Harden extends CamelCommand {
             }
 
             StringBuilder fullResponse = new StringBuilder();
+            streamed = true;
             response.body().forEach(line -> {
                 if (line.isBlank()) {
                     return;
