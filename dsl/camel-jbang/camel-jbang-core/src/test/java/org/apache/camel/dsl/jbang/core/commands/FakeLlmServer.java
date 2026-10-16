@@ -95,7 +95,6 @@ final class FakeLlmServer implements AutoCloseable {
     }
 
     private static void reply(HttpExchange exchange, String body) throws IOException {
-        exchange.getRequestBody().readAllBytes();
         byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         exchange.sendResponseHeaders(200, bytes.length);

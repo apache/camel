@@ -89,6 +89,28 @@ class HardenTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void suggestionsForEachFile() throws Exception {
+        Path other = Files.writeString(dir.resolve("other.camel.yaml"), ROUTE.replace("upload", "other"));
+
+        assertThat(command(route.toString(), other.toString(), "--api-type=openai").doCall()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("Security Hardening Analysis: " + route, "Security Hardening Analysis: " + other);
+        // the answer of each file, also after a file before it
+        assertThat(out.indexOf(SUGGESTIONS)).isNotEqualTo(out.lastIndexOf(SUGGESTIONS));
+    }
+
+    @Test
+    void streamedSuggestionsForEachFile() throws Exception {
+        Path other = Files.writeString(dir.resolve("other.camel.yaml"), ROUTE.replace("upload", "other"));
+
+        assertThat(command(route.toString(), other.toString()).doCall()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out.indexOf(SUGGESTIONS)).isNotEqualTo(-1).isNotEqualTo(out.lastIndexOf(SUGGESTIONS));
+    }
+
+    @Test
     void thePromptsAreOnStderr() throws Exception {
         assertThat(command(route.toString(), "--show-prompt", "--stream=false").doCall()).isZero();
 

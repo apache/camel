@@ -194,7 +194,7 @@ public class Harden extends CamelCommand {
             defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean stream = true;
 
-    // whether the answer was printed as it came
+    // whether the answer for the current file was printed as it came (reset per file)
     private boolean streamed;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
@@ -378,6 +378,7 @@ public class Harden extends CamelCommand {
     }
 
     private int hardenRoute(String file, String endpoint, String resolvedApiKey) throws Exception {
+        streamed = false;
         Path path = Path.of(file);
         String routeContent = Files.readString(path);
         String ext = Optional.ofNullable(FileUtil.onlyExt(file, false)).orElse("yaml");
