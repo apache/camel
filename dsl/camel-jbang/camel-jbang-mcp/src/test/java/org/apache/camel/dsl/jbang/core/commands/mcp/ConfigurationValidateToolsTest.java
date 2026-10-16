@@ -297,6 +297,24 @@ class ConfigurationValidateToolsTest {
     }
 
     @Test
+    void springBootStarterOnlyOptionIsUnchecked() {
+        // camel.metrics.uriTagEnabled exists in camel-micrometer-starter but not in the
+        // camel-main metadata the catalog uses — it must not be reported as an error for
+        // runtime=spring-boot.
+        ConfigurationValidateTools tools = createTools();
+
+        ConfigurationValidateTools.ConfigurationValidateResult result
+                = tools.camel_configuration_validate(
+                        "camel.metrics.uriTagEnabled=true", "spring-boot", null, null);
+
+        ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
+        assertThat(info.checked()).isFalse();
+        assertThat(info.valid()).isFalse();
+        assertThat(result.summary().unchecked()).isEqualTo(1);
+        assertThat(result.summary().errors()).isZero();
+    }
+
+    @Test
     void blankInputThrows() {
         ConfigurationValidateTools tools = createTools();
 
