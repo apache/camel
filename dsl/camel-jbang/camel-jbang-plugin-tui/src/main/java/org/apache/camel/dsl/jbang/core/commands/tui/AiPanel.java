@@ -2690,7 +2690,7 @@ class AiPanel {
         }
         try {
             return toolRegistry.execute(name, args);
-        } catch (IllegalArgumentException e) {
+        } catch (TuiToolRegistry.UnknownToolException e) {
             return "Unknown TUI tool: " + name;
         } catch (Exception e) {
             return "Error executing " + name + ": " + e.getMessage();

@@ -16,12 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayDeque;
@@ -37,11 +35,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.component.ai.observability.GenAiAttributes;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
+import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -1213,27 +1211,8 @@ final class OllamaMonitor {
     }
 
     private static String runCommand(List<String> command) {
-        Process process = null;
-        try {
-            process = new ProcessBuilder(command).redirectErrorStream(true).start();
-            byte[] out;
-            try (InputStream in = process.getInputStream()) {
-                out = in.readAllBytes();
-            }
-            if (!process.waitFor(2, TimeUnit.SECONDS)) {
-                process.destroyForcibly();
-                return null;
-            }
-            if (process.exitValue() != 0) {
-                return null;
-            }
-            return new String(out, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            if (process != null) {
-                process.destroyForcibly();
-            }
-            return null;
-        }
+        // the output is read while the command runs, so the timeout holds
+        return ExternalCommand.output(2000, command);
     }
 
     // ---- JSON for the MCP tool ----

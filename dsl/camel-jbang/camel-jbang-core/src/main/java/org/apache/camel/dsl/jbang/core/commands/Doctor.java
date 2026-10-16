@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import java.util.Set;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
@@ -189,19 +189,10 @@ public class Doctor extends CamelCommand {
     private void checkContainerRuntime() {
         // check docker first, then podman as fallback
         for (String cmd : new String[] { "docker", "podman" }) {
-            try {
-                Process p = new ProcessBuilder(cmd, "info")
-                        .redirectErrorStream(true)
-                        .start();
-                // drain output to prevent blocking
-                p.getInputStream().transferTo(OutputStream.nullOutputStream());
-                int exit = p.waitFor();
-                if (exit == 0) {
-                    report("container", "Container", OK, "%s running (OK, optional)".formatted(StringHelper.capitalize(cmd)));
-                    return;
-                }
-            } catch (Exception e) {
-                // not found, try next
+            // a docker info that hangs (such as a stopped Docker Desktop) does not hang camel doctor
+            if (ExternalCommand.succeeds(10000, cmd, "info")) {
+                report("container", "Container", OK, "%s running (OK, optional)".formatted(StringHelper.capitalize(cmd)));
+                return;
             }
         }
         report("container", "Container", WARN, "Not found (optional — needed for running external infra services)");

@@ -1674,6 +1674,36 @@ class McpFacade {
     }
 
     /**
+     * Waits until the restarted integration has started, or failed to start: the restart is watched as a launch.
+     *
+     * @throws ToolExecutionException when it failed to start, with the end of its log
+     */
+    static String awaitRestart(LaunchManager lm, String name) {
+        if (lm == null) {
+            return "Restarting " + name;
+        }
+        long deadline = MonotonicClock.millis() + TuiToolRegistry.RUN_EXAMPLE_WAIT_MS;
+        LaunchManager.LaunchOutcome outcome;
+        while ((outcome = lm.outcome(name)) == null && MonotonicClock.millis() < deadline) {
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return "Restarting " + name;
+            }
+        }
+        if (outcome == null) {
+            return "Restarting " + name + " (still starting)";
+        }
+        if (outcome.ok()) {
+            return "Restarted " + name;
+        }
+        throw new ToolExecutionException(
+                "Restart of " + name + " failed: it stopped while starting"
+                                         + (outcome.log() != null ? "\n" + outcome.log() : ""));
+    }
+
+    /**
      * Controls the integration with the given name or pid, which becomes the selected one, so the screen shows what the
      * agent acts on (CAMEL-25424). Without a name: the selected integration, or the only one running.
      */
@@ -1749,8 +1779,12 @@ class McpFacade {
                 if (ctx.isInfraSelected()) {
                     yield "Error: cannot restart infra service";
                 }
+                LaunchManager lm = launchManager;
+                if (lm != null) {
+                    lm.clearOutcome(name);
+                }
                 bridge.restartProcess();
-                yield "Restarting " + name;
+                yield awaitRestart(lm, name);
             }
             case "stop" -> {
                 bridge.stopProcess(false);

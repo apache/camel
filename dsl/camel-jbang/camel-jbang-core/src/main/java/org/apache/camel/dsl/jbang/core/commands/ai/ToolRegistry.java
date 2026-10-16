@@ -582,10 +582,12 @@ public final class ToolRegistry {
                     if (routeId == null || routeId.isBlank()) {
                         throw new ToolExecutionException("routeId is required");
                     }
-                    return ctx.executeAction("route", root -> {
+                    // a route that does not exist, or fails to stop or start, is an error of the tool
+                    ctx.sendAction("route", root -> {
                         root.put("id", routeId);
                         root.put("command", command);
                     });
+                    return "Route " + routeId + ": " + command + " done";
                 }));
     }
 

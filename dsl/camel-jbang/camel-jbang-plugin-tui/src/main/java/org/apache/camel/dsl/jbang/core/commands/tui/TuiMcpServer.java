@@ -539,13 +539,13 @@ class TuiMcpServer {
                 text = repeat.toJson();
             } else {
                 text = toolRegistry.execute(toolName, args);
-                // executeShared catches ToolExecutionException and returns "Error: ..." as normal text; only
-                // record the answer when the call actually succeeded so failed calls do not use the retry budget
+                // some TUI tools still answer a failure as "Error: ..." text; only record the answer when the call
+                // succeeded, so failed calls do not use the retry budget
                 if (!text.startsWith("Error:")) {
                     repeatedCalls.recordSuccessfulAnswer(tool, args);
                 }
             }
-        } catch (IllegalArgumentException e) {
+        } catch (TuiToolRegistry.UnknownToolException e) {
             text = "Unknown tool: " + toolName;
             isError = true;
             log(LogLevel.ERROR, "Unknown tool: " + toolName);

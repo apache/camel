@@ -156,6 +156,16 @@ public final class ActionClient {
         return run(pid, versionOf(pid), request, timeout, true);
     }
 
+    /**
+     * Sends an action without a result, for an integration known by its pid only, and waits until the integration
+     * confirms it.
+     *
+     * @throws IOException when the action cannot be written
+     */
+    public static ActionResult send(long pid, JsonObject request, long timeout) throws IOException {
+        return run(pid, versionOf(pid), request, timeout, false);
+    }
+
     private static ActionResult execute(
             long pid, String camelVersion, JsonObject request, long timeout, boolean hasResult) {
         try {
@@ -270,7 +280,7 @@ public final class ActionClient {
      * The result of an answer: an error when its status is <tt>failed</tt> or <tt>error</tt>, the same as the connector
      * does for its WebSocket transport.
      */
-    static ActionResult result(JsonObject reply) {
+    public static ActionResult result(JsonObject reply) {
         String status = reply.getString("status");
         if ("failed".equals(status) || "error".equals(status)) {
             return new ActionResult(Status.ERROR, reply, messageOf(reply), reply.getString("reason"));

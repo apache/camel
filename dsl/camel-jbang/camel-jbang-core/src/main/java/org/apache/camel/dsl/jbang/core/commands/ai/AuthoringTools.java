@@ -290,6 +290,10 @@ public final class AuthoringTools {
                     }
                     JsonObject result = IntegrationLauncher.run(dir, files, args.get("name"), bool(args, "dev", true),
                             List.of());
+                    if ("failed".equals(result.getString("status"))) {
+                        // a tool error (MCP isError), which still has the exit code and the output that tell why
+                        throw new ToolExecutionException(result.toJson());
+                    }
                     if (result.get("pid") instanceof Long pid) {
                         ctx.selectProcess(pid);
                     }

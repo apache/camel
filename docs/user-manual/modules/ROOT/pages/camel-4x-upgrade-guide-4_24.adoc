@@ -411,6 +411,20 @@ or follows, like Enter does.
   printed. Files together with `--source-dir`, and `--background` with a runtime that does not support it, exit with
   `2`.
 
+=== camel-jbang - the AI tools report failures as errors
+
+* `camel ask` runs a `camel` command for the model with a timeout of 60 seconds, and gives it the exit code, stdout and
+  stderr as JSON (it gave the output only, and the exit code only when there was no output). A command that runs until
+  it is stopped is not run, and the model is told the form that returns, such as `camel run --background`.
+* The MCP tools of `camel mcp` and `camel tui --mcp` answer a failure with `isError`, instead of a normal answer that
+  says what went wrong: `camel_run` of an integration that stops while it starts (`status` is `failed`), a restart that
+  fails (`camel_control`), an action the integration answers with an error or does not answer (such as stopping a route
+  that does not exist), and `camel_runtime_ai_trace` when the integration does not answer. The text of the error has
+  what the answer had, such as the output of the integration.
+* `camel_control restart` in `camel tui --mcp` waits until the integration has started again, or failed to start (it
+  answered at once), and `camel_control stop-routes` and `start-routes` answer with what was done instead of the
+  answer of the integration.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

@@ -139,6 +139,29 @@ class AskToolsTest {
     }
 
     @Test
+    void aCommandThatRunsUntilItIsStoppedIsRefusedWithTheFormThatReturns() {
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("run hello.yaml"))).contains("add --background");
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("run hello.yaml --background"))).isNull();
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("run hello.yaml --max-seconds=10"))).isNull();
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("log orders"))).contains("add --follow=false");
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("log orders --follow=false"))).isNull();
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("log orders --duration=5s"))).isNull();
+        // trace and receive follow when they dump
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("trace orders"))).isNull();
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("trace orders --action=dump"))).contains("--follow=false");
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("cmd receive --action dump"))).contains("--follow=false");
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("get route --watch"))).contains("--duration");
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("infra run kafka"))).contains("add --background");
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("shell"))).contains("needs a terminal of its own");
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("export --clean-dir --dir=out"))).contains("add --yes");
+        assertThat(AskTools.blockingHint(Ask.tokenizeCommand("get route --json"))).isNull();
+
+        String answer = tools(false).executeTool("cli_exec", new JsonObject(Map.of("command", "camel log orders")));
+        assertThat(answer).contains("\"status\":\"refused\"").contains("--follow=false");
+        assertThat(asked).isEmpty();
+    }
+
+    @Test
     void codeSqlThatChangesDataAndStoppingTheIntegrationAreAsked() {
         AskTools tools = tools(false);
 
