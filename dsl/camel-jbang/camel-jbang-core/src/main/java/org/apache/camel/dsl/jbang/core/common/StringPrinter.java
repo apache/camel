@@ -71,21 +71,22 @@ public class StringPrinter implements Printer {
      * @return
      */
     public String getOutput() {
-        return writer.toString().trim();
+        // strip and not trim, which also removes the escape character that starts a colored line
+        return writer.toString().strip();
     }
 
     /**
      * The output of the command only (what the CLI prints on stdout).
      */
     public String getStdout() {
-        return stdout.toString().trim();
+        return stdout.toString().strip();
     }
 
     /**
      * The errors, warnings and tips only (what the CLI prints on stderr).
      */
     public String getStderr() {
-        return stderr.toString().trim();
+        return stderr.toString().strip();
     }
 
     /**
@@ -99,7 +100,7 @@ public class StringPrinter implements Printer {
         List<String> lines = new ArrayList<>();
         String line;
         while ((line = buf.readLine()) != null) {
-            lines.add(line.trim());
+            lines.add(line.strip());
         }
 
         return lines;

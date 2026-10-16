@@ -102,6 +102,30 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void coloredStatusLineIsKeptByThePrinter() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        CamelSendAction command = command("orders", "--endpoint=direct:start");
+        command.loggingColor = true;
+
+        assertThat(callWithResponse(command, answer("success"))).isEqualTo(CliExitCode.OK);
+
+        // the colored parts of the status line too, so a CLI that runs the command in its JVM has all of it
+        String out = printer.getStdout().replaceAll("\u001B\\[[;\\d]*m", "");
+        assertThat(out).contains(Long.toString(TEST_PID), "direct://start", "Reply received (success)", " (5ms)");
+    }
+
+    @Test
+    void anActionTheIntegrationFailsIsReported() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        // the answer of the camel-cli-connector when the action throws an exception: no exchange, no elapsed time
+        JsonObject failed = new JsonObject(Map.of("status", "failed", "error", "No endpoint could be found for: foo:bar"));
+
+        assertThat(callWithResponse(command("orders", "--endpoint=foo:bar"), failed)).isEqualTo(CliExitCode.FAILURE);
+
+        assertThat(printer.getStderr()).contains("No endpoint could be found for: foo:bar");
+    }
+
+    @Test
     void headerWithoutValueIsAUsageError() {
         assertThatThrownBy(() -> command("orders", "--endpoint=direct:start", "--header=id").doCall())
                 .isInstanceOf(CliException.class)

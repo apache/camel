@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * camel log: the lines of the log of an integration, without following it.
@@ -135,6 +138,32 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         assertThat(callWithSingleProcess(command())).isZero();
 
         assertThat(lines()).hasSize(1);
+    }
+
+    @Test
+    void nameThatMatchesNoIntegrationIsNotFound() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(command, "payments", "--follow=false");
+
+        assertThatThrownBy(() -> callWithSingleProcess(command))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND))
+                .hasMessage("No running Camel integration matches: payments");
+    }
+
+    @Test
+    void coloredLinesAreKeptByThePrinterOfTheCommand() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        writeLog(TEST_PID + ".log", line(-300, "Starting"), line(-1, "Failed"));
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(command, "orders", "--follow=false", "--prefix=true");
+
+        assertThat(callWithSingleProcess(command)).isZero();
+
+        // a CLI that runs the command in its JVM keeps the colored lines (not printed on the console)
+        assertThat(lines()).hasSize(2);
+        assertThat(lines().get(1)).startsWith("orders").endsWith(": Failed");
     }
 
     private CamelLogAction command(String... args) throws Exception {

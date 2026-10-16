@@ -504,6 +504,24 @@ integration share, are deprecated. A plugin command sends an action with `Action
 a file of its own, so that two clients cannot overwrite each other's action or answer, and uses the shared files only
 for an integration before Camel 4.21. `camel debug` sends its commands this way too.
 
+=== camel-jbang - camel log, trace, cmd receive, cmd send, transform message and cmd memory-leak
+
+* `camel log`, `camel trace --action=dump` and `camel cmd receive --action=dump` exit with `3` when the name or pid
+  matches no running integration, and they do not follow (in a script or an AI agent, or with `--follow=false`): they
+  printed nothing and exited with `0`.
+* `camel cmd receive --action=dump` without a name shows the messages of the running integrations (it showed nothing).
+  With `--output=json` it prints each received message once, as one JSON document per line with its `exchangeId`: it
+  printed the batch of messages a line of the received file holds once for each message in it. `--since`, `--grep` and
+  `--mask` apply to the JSON too.
+* `camel trace` and `camel cmd receive` exit with `2` for an unknown `--sort` key, as the other listings do.
+* `camel trace --tail` shows the end of the last exchange as completed, not as returning from its route.
+* `camel cmd send` and `camel transform message` print the error and exit with `1` when the integration fails the action
+  itself (they failed with an internal error, `70`).
+* `camel cmd memory-leak` exits with `1` when the integration fails the action, such as when it cannot record, or has no
+  `jfr-memory-leak` dev console: it printed nothing and exited with `0`. `--status` shows the progress of a recording
+  (it said the recording started), and after a recording that its results can be queried (it said that no samples were
+  captured).
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
