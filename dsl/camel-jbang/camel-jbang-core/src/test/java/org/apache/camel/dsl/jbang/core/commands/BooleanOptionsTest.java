@@ -67,6 +67,17 @@ class BooleanOptionsTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void optionThatIsOnByDefaultDependingOnTheEnvironment() {
+        // the colors of camel run are on in a terminal with colors and off in CI, so the check of the defaults above
+        // sees this option only where its default is on
+        for (String command : List.of("run", "dev", "debug")) {
+            OptionSpec option = commandLine.getSubcommands().get(command).getCommandSpec().findOption("--logging-color");
+            assertThat(option.arity().min()).as(command).isZero();
+            assertThat(option.fallbackValue()).as(command).isEqualTo("true");
+        }
+    }
+
+    @Test
     void flagWithoutValue() {
         assertThat(option("--maven-wrapper", "export", "--maven-wrapper")).isEqualTo(true);
         assertThat(option("--maven-wrapper", "export", "--maven-wrapper=false")).isEqualTo(false);
