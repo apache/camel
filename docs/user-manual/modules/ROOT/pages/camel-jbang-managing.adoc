@@ -824,6 +824,9 @@ $ camel get metric
  11562  MyCoolCamel  gauge  system.load.average.1m                        3.58935546875
 ----
 
+Use `--filter` for the metrics of a type, or with a name or tags that contain the text or match a pattern such as
+`timer*`, `--custom` to leave out the metrics of Camel itself, and `--all` to include the metrics that are still `0`.
+
 == Circuit breaker status
 
 View the state of xref:components:eips:circuitBreaker-eip.adoc[Circuit Breakers]:

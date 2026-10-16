@@ -409,6 +409,19 @@ The JSON of the listings (`--json`) changes, so that a script can use the values
   the state is `status` (it was `state` in `camel get circuit-breaker`). `camel get consumer` has `total` instead of
   `poll`. Every row of `camel get processor` has the `name` of its integration.
 
+=== camel-jbang - camel get route, processor, metric and health
+
+* `camel get route --error --limit` shows that number of routes with an error (it limited the routes first, and then
+  showed the ones with an error among them), and `--note` shows the notes of the routes with an error too.
+* `camel get processor --filter` shows the matching processors with their route, and so with the name and pid of their
+  integration (it showed the processors alone). `--filter-mean` leaves out the faster processors too, as its
+  description says (it left out the faster routes only).
+* `camel get metric` shows the distribution summaries: an integration that has one was skipped with a warning.
+  `--filter` takes a pattern such as `timer*`, as in its help (it showed nothing), and `--custom` leaves out the metrics
+  of Camel in the default naming of Micrometer, such as `camel.exchanges.total`, not only in the classic naming
+  (`CamelExchangesTotal`).
+* `camel get health --level` other than `full` or `default` exits with `2` (it showed every check, as `full` does).
+
 === camel-jbang - camel stop and camel restart wait for the integration
 
 * `camel stop` waits until the integration has stopped, up to `--timeout` (60 seconds by default), and exits with `124`

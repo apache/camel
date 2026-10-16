@@ -33,6 +33,7 @@ import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -117,14 +118,7 @@ public class ListMetric extends ProcessWatchCommand {
                         row.tags = extractTags(jo);
                         row.count = jo.getDouble("count");
 
-                        if (custom && row.metricName.startsWith("Camel")) {
-                            continue; // skip internal camel metrics
-                        }
-                        if (!all && getNumber(row.count).isEmpty()) {
-                            continue;
-                        }
-                        if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                || row.tags.contains(filter)) {
+                        if (accept(row)) {
                             rows.add(row);
                         }
                     }
@@ -144,14 +138,7 @@ public class ListMetric extends ProcessWatchCommand {
                         row.max = jo.getDouble("max");
                         row.total = jo.getDouble("total");
 
-                        if (custom && row.metricName.startsWith("Camel")) {
-                            continue; // skip internal camel metrics
-                        }
-                        if (!all && getNumber(row.count).isEmpty()) {
-                            continue;
-                        }
-                        if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                || row.tags.contains(filter)) {
+                        if (accept(row)) {
                             rows.add(row);
                         }
                     }
@@ -171,14 +158,7 @@ public class ListMetric extends ProcessWatchCommand {
                         row.tags = extractTags(jo);
                         row.count = jo.getDouble("value");
 
-                        if (custom && row.metricName.startsWith("Camel")) {
-                            continue; // skip internal camel metrics
-                        }
-                        if (!all && getNumber(row.count).isEmpty()) {
-                            continue;
-                        }
-                        if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                || row.tags.contains(filter)) {
+                        if (accept(row)) {
                             rows.add(row);
                         }
                     }
@@ -193,19 +173,12 @@ public class ListMetric extends ProcessWatchCommand {
                         row.metricDescription = jo.getString("description");
                         row.metricId = extractId(jo);
                         row.tags = extractTags(jo);
-                        row.count = jo.getDouble("value");
+                        row.count = jo.getDouble("count");
                         row.mean = jo.getDouble("mean");
                         row.max = jo.getDouble("max");
                         row.total = jo.getDouble("totalAmount");
 
-                        if (custom && row.metricName.startsWith("Camel")) {
-                            continue; // skip internal camel metrics
-                        }
-                        if (!all && getNumber(row.count).isEmpty()) {
-                            continue;
-                        }
-                        if (filter == null || row.type.equals(filter) || row.metricName.contains(filter)
-                                || row.tags.contains(filter)) {
+                        if (accept(row)) {
                             rows.add(row);
                         }
                     }
@@ -269,6 +242,23 @@ public class ListMetric extends ProcessWatchCommand {
         }
 
         return 0;
+    }
+
+    // whether the metric is listed
+    private boolean accept(Row row) {
+        if (custom && (row.metricName.startsWith("Camel") || row.metricName.startsWith("camel."))) {
+            return false; // skip internal camel metrics (in the classic and the micrometer naming)
+        }
+        if (!all && getNumber(row.count).isEmpty()) {
+            return false;
+        }
+        return filter == null || PatternHelper.matchPattern(row.type, filter) || matches(row.metricName)
+                || matches(row.tags);
+    }
+
+    // the filter is a part of the text, or a pattern such as timer*
+    private boolean matches(String text) {
+        return text.contains(filter) || PatternHelper.matchPattern(text, filter);
     }
 
     private String getNumber(double d) {
