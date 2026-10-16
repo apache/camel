@@ -1241,8 +1241,10 @@ public abstract class AbstractCamelCatalog {
                 validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
             }
         } else {
-            // Check if the key matches a main-model group (dynamic — replaces the hardcoded list)
-            MainModel.MainGroupModel matchedGroup = matchMainModelGroup(key, cachedMainModel);
+            // Check if the key matches a main-model group (dynamic — replaces the hardcoded list).
+            // Must use longKey (the full camel.* key) because matchMainModelGroup compares against
+            // the full group names (e.g. "camel.server"), and key has already had "camel." stripped.
+            MainModel.MainGroupModel matchedGroup = matchMainModelGroup(longKey, cachedMainModel);
             if (matchedGroup != null) {
                 String name = StringHelper.before(key, ".");
                 if (value != null) {
