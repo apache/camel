@@ -370,7 +370,8 @@ public final class ToolRegistry {
                     return ctx.executeAction("eval", root -> {
                         root.put("language", language);
                         root.put("predicate", "false");
-                        root.put("template", Jsoner.escape(expression));
+                        // as it is: the action file is JSON, and the integration does not unescape it
+                        root.put("template", expression);
                     });
                 }));
 

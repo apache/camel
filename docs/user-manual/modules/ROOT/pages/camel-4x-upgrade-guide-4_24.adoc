@@ -640,6 +640,13 @@ for an integration before Camel 4.21. `camel debug` sends its commands this way 
   (it said the recording started), and after a recording that its results can be queried (it said that no samples were
   captured).
 
+=== camel-jbang - camel cmd eval with quotes and slashes
+
+`camel cmd eval`, and the tools that evaluate an expression in a running integration (`camel ask`, and
+`camel_eval_expression` of `camel mcp` and `camel tui --mcp` with an integration selected), send the expression and the
+body as they are. They escaped them, which the integration does not undo: an expression with a double quote failed,
+such as `+${body} == "hello"+`, and a slash (as in every XPath) or a quote in the body became part of the text.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

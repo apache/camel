@@ -91,9 +91,10 @@ public final class ExpressionEvaluator {
         String raw = ctx.executeAction("eval", root -> {
             root.put("language", lang);
             root.put("predicate", String.valueOf(predicate));
-            root.put("template", Jsoner.escape(expression));
+            // as they are: the action file is JSON, and the integration does not unescape them
+            root.put("template", expression);
             if (body != null) {
-                root.put("body", Jsoner.escape(body));
+                root.put("body", body);
             }
         });
         JsonObject out = null;
