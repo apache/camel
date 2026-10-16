@@ -244,17 +244,20 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         // sort rows
         rows.sort(order());
 
+        if (error) {
+            // the limit is a number of routes with an error
+            rows.removeIf(r -> r.lastErrorPhase == null);
+        }
         if (limit > 0 && rows.size() > limit) {
             rows.subList(limit, rows.size()).clear();
         }
 
         if (!rows.isEmpty() || jsonOutput) {
             if (error) {
-                List<Row> failed = rows.stream().filter(r -> r.lastErrorPhase != null).toList();
                 if (jsonOutput) {
-                    printer().println(Jsoner.serialize(failed.stream().map(this::toErrorJson).collect(Collectors.toList())));
+                    printer().println(Jsoner.serialize(rows.stream().map(this::toErrorJson).collect(Collectors.toList())));
                 } else {
-                    for (Row r : failed) {
+                    for (Row r : rows) {
                         printErrorTable(r, remoteVisible.get());
                     }
                 }
@@ -382,10 +385,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
-                new Column().header("ID").visible(!description).dataAlign(HorizontalAlign.LEFT)
+                new Column().header("ID").visible(!description && !note).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getId),
-                new Column().header("ID").visible(description).dataAlign(HorizontalAlign.LEFT)
+                new Column().header("ID").visible(description || note).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(errIdDescW, OverflowBehaviour.NEWLINE)
                         .with(this::getIdAndNoteDescription),
                 new Column().header("FROM").visible(!wideUri).dataAlign(HorizontalAlign.LEFT)

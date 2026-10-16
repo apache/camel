@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -211,28 +212,13 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
 
         // filter rows
         if (running || filter != null || group != null) {
-            rows.removeIf(r -> {
-                boolean keep = true;
-                if (filter != null) {
-                    keep = PatternHelper.matchPatterns(r.processorId, filter);
-                }
-                if (!keep && filter != null) {
-                    for (String f : filter) {
-                        if (!keep) {
-                            String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching processor
-                            keep = PatternHelper.matchPattern(r.processor, w);
-                        }
-                    }
-                }
-                // group take precedence
-                if (keep && group != null) {
-                    keep = PatternHelper.matchPatterns(r.group, group);
-                }
-                if (keep && running) {
-                    keep = "Started".equals(r.state);
-                }
-                return !keep;
-            });
+            // a route stays with its processors that are kept, so they are shown with their integration and route
+            Set<String> routesOfProcessors = rows.stream()
+                    .filter(r -> r.processorId != null && accept(r))
+                    .map(r -> r.pid + "/" + r.routeId)
+                    .collect(Collectors.toSet());
+            rows.removeIf(r -> !accept(r)
+                    && (r.processorId != null || !routesOfProcessors.contains(r.pid + "/" + r.routeId)));
         }
 
         // sort rows
@@ -245,6 +231,29 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
         return 0;
     }
 
+    private boolean accept(Row r) {
+        boolean keep = true;
+        if (filter != null) {
+            keep = PatternHelper.matchPatterns(r.processorId, filter);
+        }
+        if (!keep && filter != null) {
+            for (String f : filter) {
+                if (!keep) {
+                    String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching processor
+                    keep = PatternHelper.matchPattern(r.processor, w);
+                }
+            }
+        }
+        // group take precedence
+        if (keep && group != null) {
+            keep = PatternHelper.matchPatterns(r.group, group);
+        }
+        if (keep && running) {
+            keep = "Started".equals(r.state);
+        }
+        return keep;
+    }
+
     private void addProcessors(Row route, List<Row> rows, List<JsonObject> processors) {
         for (JsonObject o : processors) {
             Row row = new Row();
@@ -252,7 +261,6 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             row.name = route.name;
             row.routeId = route.routeId;
             row.group = route.group;
-            rows.add(row);
             row.processorId = o.getString("id");
             row.nodePrefixId = o.getString("nodePrefixId");
             row.processor = o.getString("processor");
@@ -304,6 +312,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                         row.code.add(code);
                     }
                 }
+            }
+            // with --filter-mean only the slower processors, as for the routes
+            if (mean <= 0 || (row.mean != null && Long.parseLong(row.mean) >= mean)) {
+                rows.add(row);
             }
         }
     }

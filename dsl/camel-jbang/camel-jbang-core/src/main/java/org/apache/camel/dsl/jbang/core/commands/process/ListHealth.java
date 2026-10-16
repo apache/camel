@@ -20,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,6 +31,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -92,6 +94,12 @@ public class ListHealth extends ProcessWatchCommand {
     @Override
     public Integer doProcessWatchCall() throws Exception {
         final List<Row> rows = new ArrayList<>();
+
+        // the options are wrong for every integration, so before reading them
+        Comparator<Row> order = ORDER.comparator(sort);
+        if (level != null && !"default".equals(level) && !"full".equals(level)) {
+            throw CliException.usage("--level must be full or default, was: " + level);
+        }
 
         // include stack-traces
         if (trace && depth <= 1) {
@@ -193,7 +201,7 @@ public class ListHealth extends ProcessWatchCommand {
         });
 
         // sort rows
-        rows.sort(ORDER.comparator(sort));
+        rows.sort(order);
 
         if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
