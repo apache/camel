@@ -811,6 +811,14 @@ older entry was updated after newer ones were published.
 Routes using `sortEntries=true` with `idempotent=false` get the entries in this order too: the entry that was updated
 first is routed first, where the entry that was published last was routed first before.
 
+=== camel-opensearch - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Every node of a
+multi-host cluster still receives them. Previously they were registered for any host. A request to another host,
+including the host of a node with another scheme or port, is now sent without them. A client set with the `client` or
+`openSearchClient` option is not changed.
+
 === camel-aws2-s3 - a listed object that cannot be fetched is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (or to download its content) no longer
