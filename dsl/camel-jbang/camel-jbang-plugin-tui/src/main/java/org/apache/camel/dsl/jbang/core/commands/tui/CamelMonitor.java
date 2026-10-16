@@ -385,9 +385,14 @@ public class CamelMonitor extends CamelCommand {
     public Integer doCall() throws Exception {
         System.setProperty("java.awt.headless", "true");
 
-        String openDir = resolveOpenDirectory();
+        String openDir = MonitorStartup.openDirectory(name);
+        if (openDir != null) {
+            // the directory is a project to open, not a name filter
+            name = "*";
+        }
         applyThemeOption();
         configureRecording();
+        MonitorStartup.requireTerminal(webBackend != null, record != null);
         recordingManager.init(record != null);
 
         // to make ServiceLoader work with tamboui for downloaded JARs
@@ -419,22 +424,6 @@ public class CamelMonitor extends CamelCommand {
 
         runTui();
         return 0;
-    }
-
-    /**
-     * If the name argument is a directory, returns it (and resets the name filter) so it can be opened as a project.
-     */
-    private String resolveOpenDirectory() {
-        // Detect if name arg is a directory path — open it as a project instead of using it as a name/PID filter
-        String openDir = null;
-        if (!"*".equals(name)) {
-            Path p = Path.of(name).toAbsolutePath().normalize();
-            if (Files.isDirectory(p)) {
-                openDir = p.toString();
-                name = "*";
-            }
-        }
-        return openDir;
     }
 
     /**

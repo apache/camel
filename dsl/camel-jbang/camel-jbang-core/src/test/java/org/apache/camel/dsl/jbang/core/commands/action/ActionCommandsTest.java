@@ -207,6 +207,23 @@ class ActionCommandsTest {
     }
 
     @Test
+    void followWithoutValueFollows() {
+        // not the opposite of the default, as picocli has it for a boolean option
+        CamelLogAction log = new CamelLogAction(main);
+        new CommandLine(log).parseArgs("--follow", "orders");
+        assertThat(log.follow).isTrue();
+        assertThat(log.name).isEqualTo("orders");
+
+        CamelTraceAction trace = new CamelTraceAction(main);
+        new CommandLine(trace).parseArgs("--follow=false");
+        assertThat(trace.follow).isFalse();
+
+        CamelReceiveAction receive = new CamelReceiveAction(main);
+        new CommandLine(receive).parseArgs("--follow");
+        assertThat(receive.follow).isTrue();
+    }
+
+    @Test
     void filterMatching() {
         assertThat(ActionBaseCommand.matchesFilter("ord", "orders")).isTrue();
         assertThat(ActionBaseCommand.matchesFilter("orders,billing", "billing")).isTrue();

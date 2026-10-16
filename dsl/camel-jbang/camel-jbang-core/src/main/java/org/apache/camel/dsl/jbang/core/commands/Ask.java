@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -140,6 +139,10 @@ public class Ask extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (question == null || question.isEmpty()) {
+            // the chat reads the questions from the terminal
+            requireInteractiveTerminal("camel ask without a question");
+        }
         LlmClient client = LlmClient.create()
                 .withUrl(url)
                 .withApiType(apiType)
@@ -421,7 +424,7 @@ public class Ask extends CamelCommand {
     }
 
     private LineReader confirmReader() {
-        if (confirmReader == null && hasTerminal()) {
+        if (confirmReader == null && EnvironmentHelper.hasTerminal()) {
             try {
                 Terminal terminal = EnvironmentHelper.getActiveTerminal();
                 if (terminal == null) {
@@ -433,25 +436,6 @@ public class Ask extends CamelCommand {
             }
         }
         return confirmReader;
-    }
-
-    /** Whether there is a terminal to ask on: the one camel ask runs in (the camel shell), or a console. */
-    static boolean hasTerminal() {
-        if (EnvironmentHelper.getActiveTerminal() != null) {
-            return true;
-        }
-        Console console = System.console();
-        if (console == null) {
-            return false;
-        }
-        try {
-            // from Java 22 there is a console also when the input is redirected; isTerminal tells
-            return (Boolean) Console.class.getMethod("isTerminal").invoke(console);
-        } catch (NoSuchMethodException e) {
-            return true;
-        } catch (ReflectiveOperationException e) {
-            return false;
-        }
     }
 
     // ---- CLI helper methods (used by AskTools) ----

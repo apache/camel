@@ -162,6 +162,8 @@ public class Debug extends Run {
 
     @Override
     public Integer doCall() throws Exception {
+        // the debugger reads its commands from the terminal
+        requireInteractiveTerminal("camel debug");
         if (!exportRun) {
             printConfigurationValues("Debugging integration with the following configuration:");
         }
@@ -235,17 +237,8 @@ public class Debug extends Run {
     }
 
     private Integer runRemoteAttach() {
-        // find PID of running apps (if there are multiple then filter by name)
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            printer().printErr("No running Camel integration matches: " + name);
-            return CliExitCode.NOT_FOUND;
-        } else if (pids.size() > 1) {
-            printer().printErr("Name or pid " + name + " matches " + pids.size()
-                               + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return CliExitCode.NOT_FOUND;
-        }
-        long pid = pids.get(0);
+        // the running integration to attach to (exactly one, or exit 3)
+        long pid = ProcessFinder.requireOne(name).pid();
 
         Path outputFile = getOutputFile(Long.toString(pid));
         PathUtils.deleteFile(outputFile);

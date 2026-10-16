@@ -20,8 +20,10 @@ import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
 import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +32,8 @@ import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * A command called wrong exits with 2 (usage error), and a file or name that does not exist exits with 3 (not found).
@@ -134,10 +138,15 @@ class CommandInputErrorsTest {
     }
 
     @Test
-    void debugAttachWithoutAMatchingIntegration() throws Exception {
-        assertThat(call(new Debug(main), "--remote-attach", "--name=no-such-integration"))
-                .isEqualTo(CliExitCode.NOT_FOUND);
-        assertThat(printer.getStderr()).isEqualTo("ERROR: No running Camel integration matches: no-such-integration");
+    void debugNeedsATerminalBeforeAttaching() {
+        // nothing is attached to (or spawned) when the debugger cannot read its commands; finding the integration to
+        // attach to is ProcessFinder.requireOne
+        assumeFalse(EnvironmentHelper.isInteractiveTerminal(), "runs without an interactive terminal");
+
+        assertThatThrownBy(() -> call(new Debug(main), "--remote-attach", "--name=no-such-integration"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("camel debug requires an interactive terminal")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 
     private static int call(CamelCommand command, String... args) throws Exception {

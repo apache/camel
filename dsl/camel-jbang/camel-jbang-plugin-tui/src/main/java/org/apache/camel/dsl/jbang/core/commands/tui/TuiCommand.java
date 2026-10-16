@@ -92,6 +92,10 @@ public class TuiCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (record == null) {
+            // a recording plays a tape headless
+            requireInteractiveTerminal("camel tui");
+        }
         CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
         return new CommandLine(cmd).execute(buildArgs().toArray(String[]::new));
     }

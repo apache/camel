@@ -25,8 +25,10 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
@@ -118,6 +120,38 @@ public abstract class CamelCommand implements Callable<Integer> {
     protected Object optionValue(String name) {
         CommandLine.Model.OptionSpec option = spec != null ? spec.findOption(name) : null;
         return option != null ? option.getValue() : null;
+    }
+
+    /**
+     * Whether an option was given on the command line, rather than having its default value.
+     */
+    protected boolean isOptionGiven(String name) {
+        CommandLine.ParseResult result = spec != null ? spec.commandLine().getParseResult() : null;
+        return result != null && result.hasMatchedOption(name);
+    }
+
+    /**
+     * Whether a command that follows, such as camel log, keeps following. Without an interactive terminal nobody can
+     * press Enter to stop it, so then it only follows when --follow or --duration is given.
+     *
+     * @param follow   the --follow option
+     * @param duration the --duration option, in millis
+     */
+    protected boolean isFollowing(boolean follow, long duration) {
+        return follow && (duration > 0 || isOptionGiven("--follow") || EnvironmentHelper.isInteractiveTerminal());
+    }
+
+    /**
+     * Fails a command that needs an interactive terminal when there is none, instead of waiting for input that never
+     * comes.
+     *
+     * @param  what         what needs the terminal, such as camel debug
+     * @throws CliException with exit code 2 without an interactive terminal
+     */
+    protected void requireInteractiveTerminal(String what) {
+        if (!EnvironmentHelper.isInteractiveTerminal()) {
+            throw CliException.usage(what + " requires an interactive terminal");
+        }
     }
 
     /**

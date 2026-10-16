@@ -59,7 +59,7 @@ class SourceSizeTest {
             AiPanel.java 3180
             AiPanel.runAgentLoop 159
             AiUsageStats.render 166
-            CamelMonitor.java 2772
+            CamelMonitor.java 2761
             DiagramDetailSupport.renderEipInfoPanel 159
             DiagramDetailSupport.renderRouteInfoPanel 154
             DiagramSupport.java 2460

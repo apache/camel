@@ -24,6 +24,7 @@ camel transform message [options]
 | `--component` | The component to use for message transformation |  | String
 | `--dataformat` | The dataformat to use for message transformation |  | String
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--language` | The language to use for message transformation |  | String

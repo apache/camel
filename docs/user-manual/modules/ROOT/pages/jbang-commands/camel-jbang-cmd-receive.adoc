@@ -22,9 +22,10 @@ camel cmd receive [options]
 | `--action` | Action to start, stop, clear, status, or dump messages | status | String
 | `--compact` | Compact output (no empty line separating messages) | true | boolean
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--endpoint,--uri` | Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint) |  | String
 | `--find` | Find and highlight matching text (ignore case). |  | String
-| `--follow` | Keep following and outputting new messages (press enter to exit). | true | boolean
+| `--follow` | Keep following and outputting new messages (press enter to exit). Without an interactive terminal the default is false, unless --duration is given. | true | boolean
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--grep` | Filter messages to only output matching text (ignore case). |  | String
 | `--logging-color` | Use colored logging | true | boolean
