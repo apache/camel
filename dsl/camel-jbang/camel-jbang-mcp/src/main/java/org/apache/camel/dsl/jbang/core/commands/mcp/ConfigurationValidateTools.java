@@ -103,7 +103,8 @@ public class ConfigurationValidateTools {
             }
 
             ConfigurationValidateSummary summary
-                    = new ConfigurationValidateSummary(results.size(), validCount, totalErrors, totalWarnings,
+                    = new ConfigurationValidateSummary(
+                            results.size(), validCount, totalErrors, totalWarnings,
                             uncheckedCount);
 
             return new ConfigurationValidateResult(catalog.getCatalogVersion(), summary, results);
