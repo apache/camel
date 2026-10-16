@@ -96,17 +96,20 @@ public class UndertowProducer extends DefaultAsyncProducer {
         /* not a WebSocket */
         final URI uri;
         final HttpString method;
+        final String pathAndQuery;
         try {
             final String exchangeUri = UndertowHelper.createURL(camelExchange, getEndpoint());
             uri = UndertowHelper.createURI(camelExchange, exchangeUri, getEndpoint());
             method = UndertowHelper.createMethod(camelExchange, endpoint, camelExchange.getIn().getBody() != null);
-        } catch (final URISyntaxException e) {
+            pathAndQuery = URISupport.pathAndQueryOf(uri);
+            // the client writes the request target byte by byte with no validation, so a CR or LF (for example from a
+            // percent-encoded control character in a header) would break the request line; refuse it instead
+            UndertowHelper.checkWriteable("HTTP request target", pathAndQuery);
+        } catch (final URISyntaxException | IllegalArgumentException e) {
             camelExchange.setException(e);
             callback.done(true);
             return true;
         }
-
-        final String pathAndQuery = URISupport.pathAndQueryOf(uri);
 
         final UndertowHttpBinding undertowHttpBinding = endpoint.getUndertowHttpBinding();
 
@@ -142,7 +145,15 @@ public class UndertowProducer extends DefaultAsyncProducer {
             requestHeaders.putAll(HttpString.tryFromString(key), values);
         });
 
-        final Object body = undertowHttpBinding.toHttpRequest(request, camelExchange.getIn());
+        final Object body;
+        try {
+            body = undertowHttpBinding.toHttpRequest(request, camelExchange.getIn());
+        } catch (final IllegalArgumentException e) {
+            // a header value that cannot be written to a header line (see UndertowHelper.checkWriteable)
+            camelExchange.setException(e);
+            callback.done(true);
+            return true;
+        }
         final UndertowClientCallback clientCallback;
         final boolean streaming = getEndpoint().isUseStreaming();
         if (streaming && body instanceof InputStream) {
