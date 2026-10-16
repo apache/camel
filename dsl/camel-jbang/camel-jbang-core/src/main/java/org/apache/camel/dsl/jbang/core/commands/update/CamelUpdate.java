@@ -53,6 +53,11 @@ public final class CamelUpdate implements Update {
         List<Recipe> recipes;
         MavenArtifact mavenArtifact
                 = downloader.downloadArtifact("org.apache.camel.upgrade", getArtifactCoordinates(), updateMixin.version);
+        if (mavenArtifact == null) {
+            throw new CamelUpdateException(
+                    "Cannot find the Camel upgrade recipes org.apache.camel.upgrade:" + getArtifactCoordinates() + ":"
+                                           + updateMixin.version);
+        }
 
         try {
             recipes = getRecipesInJar(mavenArtifact.getFile().toPath());

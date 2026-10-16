@@ -48,6 +48,7 @@ import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
@@ -59,7 +60,8 @@ import picocli.CommandLine;
 import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
 
 @CommandLine.Command(name = "doc",
-                     description = "Shows documentation for kamelet, component, and other Camel resources", sortOptions = false,
+                     description = "Shows documentation for kamelet, component, EIP, and other Camel resources",
+                     sortOptions = false,
                      showDefaultValues = true,
                      footer = {
                              "%nExamples:",
@@ -67,10 +69,12 @@ import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseComman
                              "  camel doc timer",
                              "  camel doc aws-s3-source",
                              "  camel doc jsonpath",
+                             "  camel doc split",
                              "  camel doc kafka --example" })
 public class CatalogDoc extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
+    @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, language, EIP, or other Camel resource"
+                                          + " (prefix with eip: for an EIP with the name of a component, such as eip:log)",
                             arity = "1")
     String name;
 
@@ -192,6 +196,13 @@ public class CatalogDoc extends CamelCommand {
                 return 0;
             }
         }
+        if (prefix == null || "eip".equals(prefix)) {
+            EipModel em = catalog.eipModel(name);
+            if (em != null) {
+                docEip(em);
+                return 0;
+            }
+        }
         // last, as the Kamelet catalog is downloaded (a component is documented also offline)
         if (prefix == null || "kamelet".equals(prefix)) {
             KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
@@ -230,6 +241,7 @@ public class CatalogDoc extends CamelCommand {
                 case "dataformat" -> SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
                 case "language" -> SuggestSimilarHelper.didYouMean(catalog.findLanguageNames(), name);
                 case "other" -> SuggestSimilarHelper.didYouMean(catalog.findOtherNames(), name);
+                case "eip" -> SuggestSimilarHelper.didYouMean(catalog.findModelNames(), name);
                 default -> List.of();
             };
             if (!suggestions.isEmpty()) {
@@ -709,6 +721,48 @@ public class CatalogDoc extends CamelCommand {
         }
     }
 
+    private void docEip(EipModel em) throws Exception {
+        String link = websiteLink("eip", em.getName(), catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
+        if (url) {
+            if (link != null) {
+                printer().println(link);
+            }
+            return;
+        }
+
+        if (em.isDeprecated()) {
+            printer().printf("EIP Name: %s (deprecated)%n", em.getName());
+        } else {
+            printer().printf("EIP Name: %s%n", em.getName());
+        }
+        printer().printf("Since: %s%n", fixQuarkusSince(em.getFirstVersionShort()));
+        printer().println("");
+        printer().printf("%s%n", em.getDescription());
+        printer().println("");
+        var filtered = filter(filter, em.getOptions());
+        var total1 = em.getOptions().size();
+        var total2 = filtered.size();
+        if (total1 == total2) {
+            printer().printf("The %s EIP supports (total: %s) options, which are listed below.%n%n", em.getName(), total1);
+        } else {
+            printer().printf("The %s EIP supports (total: %s match-filter: %s) options, which are listed below.%n%n",
+                    em.getName(), total1, total2);
+        }
+        printer().println(optionTable(filtered));
+        printer().println("");
+
+        if (link != null) {
+            printer().println(link);
+            printer().println("");
+        }
+    }
+
     private int[] docColumnWidths(int nameMax, int descMax, int defaultMax, int typeMax) {
         int tw = terminalWidth();
         int borders = TerminalWidthHelper.fancyBorderOverhead(4);
@@ -825,6 +879,8 @@ public class CatalogDoc extends CamelCommand {
             return String.format("https://camel.apache.org/components/%s/others/%s.html", v, name);
         } else if ("kamelet".equals(prefix)) {
             return String.format("https://camel.apache.org/camel-kamelets/%s/%s.html", v, name);
+        } else if ("eip".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/eips/%s-eip.html", v, name);
         }
 
         return null;

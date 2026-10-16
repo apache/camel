@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -240,19 +239,19 @@ public class Init extends CamelCommand {
     /**
      * @return The package declaration lines to insert at the beginning of the file or empty string if no package found
      */
-    private String computeJavaPackageDeclaration(Path targetPath) throws IOException {
-        String packageDeclaration = "";
-        String canonicalPath = targetPath.getParent().toAbsolutePath().normalize().toString();
-        String srcMainJavaPath = Paths.get("src", "main", "java").toString();
-        int index = canonicalPath.indexOf(srcMainJavaPath);
-        if (index != -1) {
-            String packagePath = canonicalPath.substring(index + srcMainJavaPath.length() + 1);
-            String packageName = packagePath.replace(File.separatorChar, '.');
-            if (!packageName.isEmpty()) {
-                packageDeclaration = "package " + packageName + ";\n\n";
+    private String computeJavaPackageDeclaration(Path targetPath) {
+        // the directories after src/main/java (as whole names: not src/main/javafx, and none for src/main/java itself)
+        List<String> names = new ArrayList<>();
+        for (Path name : targetPath.toAbsolutePath().normalize().getParent()) {
+            names.add(name.toString());
+        }
+        for (int i = names.size() - 3; i >= 0; i--) {
+            if ("src".equals(names.get(i)) && "main".equals(names.get(i + 1)) && "java".equals(names.get(i + 2))) {
+                String packageName = String.join(".", names.subList(i + 3, names.size()));
+                return packageName.isEmpty() ? "" : "package " + packageName + ";\n\n";
             }
         }
-        return packageDeclaration;
+        return "";
     }
 
     private int listTemplates() {

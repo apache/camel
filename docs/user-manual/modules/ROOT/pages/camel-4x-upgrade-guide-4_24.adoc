@@ -531,6 +531,18 @@ the integrations unsorted. A row without the value of the key now comes first, i
   of the CLI (`3.27.3.1` came after `3.27.4`), and a `-SNAPSHOT` always comes before its release, as in Maven
   (`4.24.10-SNAPSHOT` came after `4.24.10`).
 
+=== camel-jbang - camel dependency copy, update run and get error
+
+* `camel dependency copy` deletes the JAR files an earlier copy left in `--output-directory`, and keeps its other files:
+  it deleted the whole directory (with `--output-directory=.` the project). It exits with `1` when a dependency cannot
+  be resolved or copied (it printed the error and exited with `0`), and with `2` when `--output-directory` is a file.
+* `camel update run --runtime=quarkus --download=false` without `--quarkusMavenPluginVersion` exits with `2`, and a
+  version without upgrade recipes exits with `1`: both failed with an internal error (`70`).
+* `camel get error --last` shows the newest error of all the integrations (it showed the newest error of the integration
+  with the lowest pid). An `--ago` that is not a duration, and a `--handled` that is not `true` or `false`, exit with
+  `2`: the first showed every error, the second none. The errors of `--diagram` are printed on stderr, and a graphical
+  `--theme` in a terminal without graphics exits with `2`.
+
 === camel-jbang - the shared action file is deprecated for plugin commands
 
 `CamelCommand.getActionFile` and `CamelCommand.getOutputFile`, the action and output files that all the clients of an
