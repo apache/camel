@@ -30,6 +30,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
@@ -70,6 +71,9 @@ public class PropertiesValidateCommand extends CamelCommand {
             }
         }
 
+        if (reports.isEmpty()) {
+            throw CliException.notFound("No properties files to validate");
+        }
         int count = reports.values().stream().mapToInt(List::size).sum();
         if (jsonOutput) {
             JsonOutput.printList(printer(),

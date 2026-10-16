@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -201,6 +203,40 @@ public final class CommandLineHelper {
      *
      * @return the user home directory.
      */
+    /**
+     * The arguments of a command line typed as one text, such as <tt>--jvm-args</tt>: split at whitespace outside
+     * double or single quotes, which are removed, and a backslash escapes the next character (outside single quotes).
+     */
+    public static List<String> splitArguments(String line) {
+        List<String> answer = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean token = false;
+        char quote = 0;
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            if (quote == 0 && Character.isWhitespace(c)) {
+                if (token) {
+                    answer.add(current.toString());
+                    current.setLength(0);
+                    token = false;
+                }
+            } else if (c == '\\' && quote != '\'' && i + 1 < line.length()) {
+                current.append(line.charAt(++i));
+                token = true;
+            } else if ((c == '"' || c == '\'') && (quote == 0 || quote == c)) {
+                quote = quote == 0 ? c : 0;
+                token = true;
+            } else {
+                current.append(c);
+                token = true;
+            }
+        }
+        if (token) {
+            answer.add(current.toString());
+        }
+        return answer;
+    }
+
     public static Path getHomeDir() {
         return homeDir;
     }

@@ -257,8 +257,11 @@ public class Harden extends CamelCommand {
     }
 
     private String detectEndpoint() {
-        return tryExplicitUrl()
-                .or(this::tryInfraOllama)
+        if (url != null && !url.isBlank()) {
+            // the LLM asked for, or none: the route is not sent to another one
+            return tryExplicitUrl().orElse(null);
+        }
+        return tryInfraOllama()
                 .or(this::tryDefaultOllama)
                 .orElse(null);
     }

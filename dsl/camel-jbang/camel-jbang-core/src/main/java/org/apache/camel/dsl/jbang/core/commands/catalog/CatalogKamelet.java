@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,12 +28,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.main.download.DependencyDownloaderClassLoader;
-import org.apache.camel.main.download.MavenDependencyDownloader;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
@@ -63,6 +60,9 @@ public class CatalogKamelet extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     String kameletsVersion;
 
+    @CommandLine.Mixin
+    MavenResolverMixin mavenResolver = new MavenResolverMixin();
+
     public CatalogKamelet(CamelJBangMain main) {
         super(main);
     }
@@ -76,23 +76,11 @@ public class CatalogKamelet extends CamelCommand {
         }
 
         Map<String, Object> kamelets;
-        var tccLoader = Thread.currentThread().getContextClassLoader();
-        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
-            ClassLoader cl = createClassLoader();
-            downloader.setClassLoader(cl);
-            downloader.start();
-            downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", kameletsVersion);
-
-            Thread.currentThread().setContextClassLoader(cl);
-            Class<?> clazz = cl.loadClass("org.apache.camel.kamelets.catalog.KameletsCatalog");
-            Object catalog = clazz.getDeclaredConstructor().newInstance();
-            Method m = clazz.getMethod("getKamelets");
-            kamelets = (Map<String, Object>) ObjectHelper.invokeMethod(m, catalog);
+        try {
+            kamelets = KameletCatalogHelper.loadKamelets(kameletsVersion, mavenResolver.repos());
         } catch (Exception e) {
             printer().printErr("Cannot download camel-kamelets-catalog due to " + e.getMessage());
             return 1;
-        } finally {
-            Thread.currentThread().setContextClassLoader(tccLoader);
         }
 
         for (Object o : kamelets.values()) {
@@ -141,20 +129,20 @@ public class CatalogKamelet extends CamelCommand {
             case "name":
                 return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "type":
-                return o1.type.compareToIgnoreCase(o2.type) * negate;
+                return compareIgnoreCase(o1.type, o2.type) * negate;
             case "level":
             case "support-level":
-                return o1.supportLevel.compareToIgnoreCase(o2.supportLevel) * negate;
+                return compareIgnoreCase(o1.supportLevel, o2.supportLevel) * negate;
             case "description":
-                return o1.description.compareToIgnoreCase(o2.description) * negate;
+                return compareIgnoreCase(o1.description, o2.description) * negate;
             default:
                 return 0;
         }
     }
 
-    private ClassLoader createClassLoader() {
-        ClassLoader parentCL = CatalogKamelet.class.getClassLoader();
-        return new DependencyDownloaderClassLoader(parentCL);
+    // a Kamelet without the value sorts first
+    private static int compareIgnoreCase(String s1, String s2) {
+        return (s1 != null ? s1 : "").compareToIgnoreCase(s2 != null ? s2 : "");
     }
 
     private String getDescription(KameletModel r) {

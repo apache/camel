@@ -52,6 +52,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusExtensionRegistryMixin;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -403,10 +404,8 @@ public class VersionList extends CamelCommand {
             return versions;
 
         } catch (Exception e) {
-            printer().printErr("Error downloading available Camel versions due to: " + e.getMessage());
+            throw CliException.failure("Error downloading available Camel versions due to: " + e.getMessage());
         }
-
-        return Stream.of();
     }
 
     private Stream<Row> filterVersions(Stream<CamelAndRuntimeVersions> versions, List<ReleaseModel> releases) throws Exception {

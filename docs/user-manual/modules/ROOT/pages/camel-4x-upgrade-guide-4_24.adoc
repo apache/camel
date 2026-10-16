@@ -425,6 +425,27 @@ or follows, like Enter does.
   answered at once), and `camel_control stop-routes` and `start-routes` answer with what was done instead of the
   answer of the integration.
 
+=== camel-jbang - exit codes and errors of more commands
+
+* `camel export` does not clean the export directory when it is the current directory, or one that contains it, unless
+  `--clean-dir` is given: `--dir=./`, `--dir=$PWD` and `--dir=..` deleted the files of the project, as only `--dir=.`
+  was recognized.
+* `camel harden --url` with an LLM that cannot be reached exits with `1`, instead of sending the route to a local
+  Ollama.
+* `camel sbom` with an unknown `--sbom-format` or `--sbom-output-format` exits with `2` (it exited with `0` without
+  doing anything), and exits with `124` when Maven does not finish in time.
+* `camel update run --upgradeTimeout` applies (the output was read to the end before the wait), and exits with `124`
+  when it is reached.
+* `camel version list` exits with `1` when the versions cannot be downloaded. `camel version set --reset` removes the
+  Kamelets version too, and `camel version get` shows a configuration with only the Kamelets version.
+* `camel validate yaml` and `camel validate properties` with no file to validate exit with `3`.
+* `camel doc` looks a name up in the catalog of Camel before it downloads the Kamelet catalog, so a component is
+  documented also offline. `camel catalog kamelet` has `--repos`.
+* `camel kubernetes logs` exits with `3` when no pod with the label shows up, and with `1` when reading the log fails.
+  `camel kubernetes run` prints the end of the Maven output when the build or deployment fails (it was hidden without
+  `--verbose`), and exits with `124` when the pod is not running after 10 minutes.
+* `--jvm-args` keeps a quoted value with spaces as one argument.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

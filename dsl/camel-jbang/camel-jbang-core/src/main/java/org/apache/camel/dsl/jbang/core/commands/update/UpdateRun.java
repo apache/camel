@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.main.download.DownloadException;
@@ -116,25 +117,25 @@ public class UpdateRun extends CamelCommand {
         Process p = pb.redirectErrorStream(true)
                 .start();
 
-        try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
-
-            String line;
-            while ((line = stdInput.readLine()) != null || (line = stdError.readLine()) != null) {
-                printer().println(line);
+        // print the output while the command runs, so the timeout applies to the command
+        Thread reader = new Thread(() -> {
+            try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                String line;
+                while ((line = stdInput.readLine()) != null) {
+                    printer().println(line);
+                }
+            } catch (IOException e) {
+                // the command was destroyed
             }
+        }, "camel-update-output");
+        reader.setDaemon(true);
+        reader.start();
 
-            if (!p.waitFor(updateMixin.upgradeTimeout, TimeUnit.SECONDS)) {
-                p.destroyForcibly();
-                printer().printErr("Update execution timed out");
-
-                return CliExitCode.TIMEOUT;
-            }
-
-            int exitCode = p.exitValue();
-
-            return exitCode;
-
+        if (!p.waitFor(updateMixin.upgradeTimeout, TimeUnit.SECONDS)) {
+            p.destroyForcibly();
+            throw CliException.timeout("Update did not finish within " + updateMixin.upgradeTimeout + " seconds");
         }
+        reader.join(TimeUnit.SECONDS.toMillis(5));
+        return p.exitValue();
     }
 }

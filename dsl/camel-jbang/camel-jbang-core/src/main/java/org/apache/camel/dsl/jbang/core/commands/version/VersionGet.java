@@ -54,7 +54,7 @@ public class VersionGet extends CamelCommand {
             String kv = properties.getProperty("kamelets-version");
             String repos = properties.getProperty("repos");
             String runtime = properties.getProperty("runtime");
-            if (uv != null || repos != null || runtime != null) {
+            if (uv != null || kv != null || repos != null || runtime != null) {
                 printer().println("User configuration:");
                 if (uv != null) {
                     printer().println("    camel-version = " + uv);

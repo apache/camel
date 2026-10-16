@@ -580,6 +580,16 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected abstract Integer export() throws Exception;
 
+    /**
+     * Whether the directory is the current directory, or one that contains it, such as <tt>./</tt>, <tt>$PWD</tt> or
+     * <tt>..</tt>: cleaning it before the export deletes the files of the project, so it is only cleaned with
+     * --clean-dir.
+     */
+    static boolean isCurrentDirOrParent(String dir) {
+        Path path = Path.of(dir).toAbsolutePath().normalize();
+        return Path.of("").toAbsolutePath().normalize().startsWith(path);
+    }
+
     protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean, boolean verbose) throws Exception {
         if (kameletsVersion == null) {
             kameletsVersion = VersionHelper.extractKameletsVersion();

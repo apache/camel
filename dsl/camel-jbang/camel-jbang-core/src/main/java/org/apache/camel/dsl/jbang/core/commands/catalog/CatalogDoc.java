@@ -179,13 +179,6 @@ public class CatalogDoc extends CamelCommand {
             }
         }
 
-        if (prefix == null || "kamelet".equals(prefix)) {
-            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
-            if (km != null) {
-                docKamelet(km);
-                return 0;
-            }
-        }
         if (prefix == null || "component".equals(prefix)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
@@ -215,6 +208,14 @@ public class CatalogDoc extends CamelCommand {
             OtherModel om = catalog.otherModel(name);
             if (om != null) {
                 docOther(om);
+                return 0;
+            }
+        }
+        // last, as the Kamelet catalog is downloaded (a component is documented also offline)
+        if (prefix == null || "kamelet".equals(prefix)) {
+            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
+            if (km != null) {
+                docKamelet(km);
                 return 0;
             }
         }
@@ -267,13 +268,6 @@ public class CatalogDoc extends CamelCommand {
         if ("main".equals(name) && catalog.mainModel() != null) {
             return CatalogDocs.catalogDoc(catalog, name, null, null, filter, "all", false, false, null);
         }
-        if (prefix == null || "kamelet".equals(prefix)) {
-            // the Kamelets of the version and repositories asked for, not only the ones of the CLI
-            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
-            if (km != null) {
-                return CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + kameletsVersion));
-            }
-        }
         if (prefix == null || !"kamelet".equals(prefix) && !"other".equals(prefix)) {
             JsonObject doc = CatalogDocs.catalogDoc(catalog, name, null, prefix, filter, "all", headers, false, null);
             if (doc.get("error") == null) {
@@ -287,6 +281,13 @@ public class CatalogDoc extends CamelCommand {
                 doc.put("kind", "other");
                 doc.putAll(other);
                 return doc;
+            }
+        }
+        if (prefix == null || "kamelet".equals(prefix)) {
+            // the Kamelets of the version and repositories asked for, not only the ones of the CLI
+            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
+            if (km != null) {
+                return CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + kameletsVersion));
             }
         }
         return null;

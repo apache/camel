@@ -25,6 +25,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.dsl.jbang.core.common.*;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
@@ -79,6 +81,12 @@ public class SBOMGenerator extends Export {
 
     @Override
     public Integer doCall() throws Exception {
+        if (!CYCLONEDX_FORMAT.equalsIgnoreCase(sbomFormat) && !SPDX_FORMAT.equalsIgnoreCase(sbomFormat)) {
+            throw CliException.usage("Unknown SBOM format: " + sbomFormat + " (use cyclonedx or spdx)");
+        }
+        if (!SBOM_JSON_FORMAT.equalsIgnoreCase(sbomOutputFormat) && !SBOM_XML_FORMAT.equalsIgnoreCase(sbomOutputFormat)) {
+            throw CliException.usage("Unknown SBOM output format: " + sbomOutputFormat + " (use json or xml)");
+        }
         this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date
         return super.doCall();
     }
@@ -127,7 +135,8 @@ public class SBOMGenerator extends Export {
                 done = p.waitFor(60, TimeUnit.SECONDS);
                 if (!done) {
                     p.destroyForcibly();
-                    answer = 1;
+                    printer().printErr("Maven did not generate the SBOM within 60 seconds");
+                    answer = CliExitCode.TIMEOUT;
                 } else if (p.exitValue() != 0) {
                     answer = p.exitValue();
                 }
@@ -156,7 +165,8 @@ public class SBOMGenerator extends Export {
                 done = p.waitFor(60, TimeUnit.SECONDS);
                 if (!done) {
                     p.destroyForcibly();
-                    answer = 1;
+                    printer().printErr("Maven did not generate the SBOM within 60 seconds");
+                    answer = CliExitCode.TIMEOUT;
                 } else if (p.exitValue() != 0) {
                     answer = p.exitValue();
                 }
