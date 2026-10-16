@@ -218,7 +218,11 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     }
 
     private String extractTarget(URI uri) {
-        String target = uri.getPath();
+        // resolve any . and .. segments first, so the security constraint is evaluated against the
+        // effective resolved resource path and not the raw request path. Without this a request such
+        // as /foo/../admin/x (or its percent-encoded /foo/%2e%2e/admin/x form) is matched against the
+        // inclusions in its unresolved form and can evade a constraint that guards /admin/* (CAMEL-25705)
+        String target = removeDotSegments(uri.getPath());
 
         // strip the starting endpoint path so the target is relative to the endpoint uri.
         // the comparison must ignore case on the context-path, the same way consumer dispatch does
@@ -229,6 +233,64 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             target = target.substring(path.length());
         }
         return target;
+    }
+
+    /**
+     * Removes {@code .} and {@code ..} segments from the given path, as specified by the {@code remove_dot_segments}
+     * algorithm in RFC 3986 section 5.2.4. This resolves the path to the effective resource it points at, so the
+     * security constraint is evaluated against the same path the request ultimately resolves to rather than the raw
+     * request path. Excess {@code ..} segments cannot climb above the root, so the returned path never contains a
+     * {@code ..} segment.
+     */
+    static String removeDotSegments(String path) {
+        // fast path: nothing to resolve unless there is a dot segment to begin with
+        if (path == null || path.isEmpty() || path.indexOf('.') == -1) {
+            return path;
+        }
+
+        String in = path;
+        StringBuilder out = new StringBuilder(path.length());
+        while (!in.isEmpty()) {
+            if (in.startsWith("../")) {
+                in = in.substring(3);
+            } else if (in.startsWith("./")) {
+                in = in.substring(2);
+            } else if (in.startsWith("/./")) {
+                in = in.substring(2);
+            } else if (in.equals("/.")) {
+                in = "/";
+            } else if (in.startsWith("/../")) {
+                in = in.substring(3);
+                removeLastSegment(out);
+            } else if (in.equals("/..")) {
+                in = "/";
+                removeLastSegment(out);
+            } else if (in.equals(".") || in.equals("..")) {
+                in = "";
+            } else {
+                // move the first path segment (including any leading slash, up to but not including the
+                // next slash) from the input to the output
+                int start = in.charAt(0) == '/' ? 1 : 0;
+                int next = in.indexOf('/', start);
+                if (next < 0) {
+                    out.append(in);
+                    in = "";
+                } else {
+                    out.append(in, 0, next);
+                    in = in.substring(next);
+                }
+            }
+        }
+        return out.toString();
+    }
+
+    private static void removeLastSegment(StringBuilder out) {
+        int lastSlash = out.lastIndexOf("/");
+        if (lastSlash >= 0) {
+            out.setLength(lastSlash);
+        } else {
+            out.setLength(0);
+        }
     }
 
     protected boolean matchesRoles(String roles, String userRoles) {
