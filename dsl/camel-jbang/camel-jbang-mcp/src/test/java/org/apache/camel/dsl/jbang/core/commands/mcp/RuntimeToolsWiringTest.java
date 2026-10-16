@@ -31,7 +31,6 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -54,6 +53,7 @@ class RuntimeToolsWiringTest {
         final Map<String, JsonObject> answers = new HashMap<>();
         JsonObject receiveState = new JsonObject();
         final List<JsonObject> inbox = new ArrayList<>();
+        RuntimeException stopFailure;
 
         @Override
         public ProcessInfo findSingleProcess(String nameOrPid) {
@@ -83,6 +83,9 @@ class RuntimeToolsWiringTest {
                 configure.accept(request);
             }
             actions.add(request);
+            if (configure == null && stopFailure != null) {
+                throw stopFailure;
+            }
             JsonObject answer = request.containsKey("endpoint") ? answers.get("receive-start") : null;
             return answer != null ? answer : new JsonObject();
         }
@@ -110,7 +113,7 @@ class RuntimeToolsWiringTest {
         message.put("endpointUri", "seda://orders");
         runtime.inbox.add(message);
 
-        JsonObject answer = tools.receive(PID, "seda:orders", 5000);
+        JsonObject answer = tools.receive(PID, "seda:orders", 5000, 1);
 
         assertThat(answer.getString("endpoint")).isEqualTo("seda://orders");
         assertThat(answer.getInteger("received")).isEqualTo(1);
@@ -121,10 +124,65 @@ class RuntimeToolsWiringTest {
     }
 
     @Test
+    void receiveReturnsTheFirstMessagesUpToTheLimitAndCountsTheOthers() {
+        endpointMatches("seda://orders");
+        for (long uid = 1; uid <= 4; uid++) {
+            runtime.inbox.add(message(uid));
+        }
+
+        JsonObject one = tools.receive(PID, "seda:orders", 5000, 1);
+        assertThat(one.getInteger("received")).isEqualTo(4);
+        assertThat(one.<List<JsonObject>> getCollection("messages")).extracting(m -> m.getLong("uid")).containsExactly(1L);
+        assertThat(one.getInteger("notReturned")).isEqualTo(3);
+        assertThat(one.getString("note")).contains("3 more", "taken from the endpoint");
+
+        JsonObject all = tools.receive(PID, "seda:orders", 5000, 10);
+        assertThat(all.<List<JsonObject>> getCollection("messages")).hasSize(4);
+        assertThat(all).doesNotContainKeys("notReturned", "note");
+    }
+
+    @Test
+    void receiveRefusesALimitBelowOne() {
+        assertThatThrownBy(() -> tools.camel_runtime_receive(null, "seda:orders", null, 0))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining("limit must be at least 1");
+        assertThat(runtime.actions).isEmpty();
+    }
+
+    @Test
+    void receiveReturnsTheMessageWithAWarningWhenTheConsumerCannotBeStopped() {
+        endpointMatches("seda://orders");
+        runtime.inbox.add(message(1));
+        runtime.stopFailure = new ToolCallException("Timeout waiting for response", null);
+
+        JsonObject answer = tools.receive(PID, "seda:orders", 5000, 1);
+
+        assertThat(answer.<List<Object>> getCollection("messages")).hasSize(1);
+        assertThat(answer.getString("warning")).contains("Timeout waiting", "camel cmd receive --action=stop");
+    }
+
+    @Test
+    void receiveNamesTheStopCommandWhenItFailsAndCannotStopTheConsumer() {
+        runtime.answers.put("receive-start", new JsonObject());
+        runtime.stopFailure = new ToolCallException("Timeout waiting for response", null);
+
+        assertThatThrownBy(() -> tools.receive(PID, "kafka*", 300, 1))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageContaining("No endpoint matches kafka*")
+                .hasMessageContaining("camel cmd receive --action=stop");
+    }
+
+    private static JsonObject message(long uid) {
+        JsonObject message = new JsonObject();
+        message.put("uid", uid);
+        return message;
+    }
+
+    @Test
     void receiveStopsTheConsumerWhenNoMessageArrives() {
         endpointMatches("seda://orders");
 
-        JsonObject answer = tools.receive(PID, "seda:orders", 300);
+        JsonObject answer = tools.receive(PID, "seda:orders", 300, 1);
 
         assertThat(answer.getInteger("received")).isZero();
         assertThat(answer.getString("note")).contains("No message arrived");
@@ -135,7 +193,7 @@ class RuntimeToolsWiringTest {
     void receiveReportsAnEndpointNoneMatchesAndStops() {
         runtime.answers.put("receive-start", new JsonObject());
 
-        assertThatThrownBy(() -> tools.receive(PID, "kafka*", 300))
+        assertThatThrownBy(() -> tools.receive(PID, "kafka*", 300, 1))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("No endpoint matches kafka*");
         assertThat(runtime.actions).hasSize(2);
@@ -146,7 +204,7 @@ class RuntimeToolsWiringTest {
         runtime.receiveState.put("enabled", true);
         runtime.receiveState.put("endpoints", new JsonArray(List.of(Map.of("uri", "seda://audit"))));
 
-        assertThatThrownBy(() -> tools.receive(PID, "seda:orders", 300))
+        assertThatThrownBy(() -> tools.receive(PID, "seda:orders", 300, 1))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("already receiving");
         assertThat(runtime.actions).isEmpty();
@@ -170,6 +228,11 @@ class RuntimeToolsWiringTest {
             assertThat(service.readReceivedMessages(PID, offset)).extracting(m -> m.getLong("uid"))
                     .as("the half written last line is read on the next poll")
                     .containsExactly(2L, 3L);
+
+            // camel cmd receive --action=clear rewrites the file shorter than the offset: read it from the start
+            Files.writeString(file, "{\"messages\":[{\"uid\":5}]}\n");
+            assertThat(service.readReceivedMessages(PID, offset + 100)).extracting(m -> m.getLong("uid"))
+                    .containsExactly(5L);
         } finally {
             CommandLineHelper.useHomeDir(previous.toString());
         }
@@ -197,13 +260,6 @@ class RuntimeToolsWiringTest {
     }
 
     @Test
-    void aTimeoutIsAnError() {
-        assertThatThrownBy(() -> RuntimeTools.failOnTimeout(RuntimeHelper.TIMEOUT_PREFIX + PID + " for action: top"))
-                .isInstanceOf(ToolCallException.class)
-                .hasMessageContaining("Timeout");
-    }
-
-    @Test
     void aiTraceReportsAFailedQueryAsAnError() {
         // no process selected: the registry refuses, which must not read as "no AI components"
         assertThatThrownBy(() -> new AiTraceTools().executeRegistryTool("get_history", new ToolContext(), Map.of()))
@@ -213,7 +269,7 @@ class RuntimeToolsWiringTest {
 
     @Test
     void theHintsMatchWhatTheToolsDo() throws Exception {
-        assertThat(hints("camel_runtime_receive", String.class, String.class, Integer.class))
+        assertThat(hints("camel_runtime_receive", String.class, String.class, Integer.class, Integer.class))
                 .as("receive takes the message from the routes").containsExactly(false, true);
         assertThat(hints("camel_runtime_send", String.class, String.class, String.class, String.class))
                 .containsExactly(false, true);

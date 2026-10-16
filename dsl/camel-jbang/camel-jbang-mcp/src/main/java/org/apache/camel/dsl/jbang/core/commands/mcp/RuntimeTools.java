@@ -33,7 +33,6 @@ import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
-import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -83,20 +82,9 @@ public class RuntimeTools {
         ctx.selectProcess(p.pid());
         try {
             Object result = ToolRegistry.execute(registryToolName, ctx, args);
-            failOnTimeout(result);
             return toJsonObject(result);
         } catch (ToolExecutionException e) {
             throw new ToolCallException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * The registry answers an action the process did not answer in time (a dead or hung process) with a text, not an
-     * exception: report it as the failure it is rather than as a result.
-     */
-    static void failOnTimeout(Object result) {
-        if (result instanceof String s && s.startsWith(RuntimeHelper.TIMEOUT_PREFIX)) {
-            throw new ToolCallException(s, null);
         }
     }
 
@@ -756,7 +744,7 @@ public class RuntimeTools {
                   Get the message history trace of the last completed exchange, with its route path, processors \
                   visited, headers, body, and timing. Recorded when message history is on and the tracer is \
                   enabled or on standby: the default of camel run (dev profile); otherwise set \
-                  camel.main.message-history=true and camel.main.tracing-standby=true.""")
+                  camel.main.message-history=true and camel.trace.standby=true.""")
     public JsonObject camel_runtime_history(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_history", nameOrPid, Map.of());
@@ -766,36 +754,43 @@ public class RuntimeTools {
           description = """
                   Receive (consume) a message from an endpoint of the running application, the complement of \
                   camel_runtime_send: starts a consumer on the endpoint, waits for a message, returns it and stops \
-                  the consumer again. The consumer competes with the routes that consume the endpoint, so the \
-                  message it takes does not reach them (a queue or topic message is gone). \
-                  To look at queued messages without taking them use camel_runtime_browse.""")
+                  the consumer again. Receives one message by default; limit returns up to that many of the messages \
+                  that arrived together, and the answer says how many more were taken and not returned. The consumer \
+                  competes with the routes that consume the endpoint, so the messages it takes do not reach them (a \
+                  queue or topic message is gone). To look at queued messages without taking them use \
+                  camel_runtime_browse.""")
     public JsonObject camel_runtime_receive(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to receive from, or a pattern matching an endpoint the application "
                                    + "sends to, e.g. seda:orders or kafka*") String endpoint,
             @ToolArg(description = "How long to wait for a message in seconds (default 10, at most 60)",
-                     required = false) Integer timeoutSeconds) {
+                     required = false) Integer timeoutSeconds,
+            @ToolArg(description = "How many of the messages that arrived together to return (default 1, at least 1)",
+                     required = false) Integer limit) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
+        }
+        if (limit != null && limit < 1) {
+            throw new ToolCallException("limit must be at least 1: " + limit, null);
         }
         int timeout = timeoutSeconds == null || timeoutSeconds <= 0
                 ? RECEIVE_DEFAULT_TIMEOUT : Math.min(timeoutSeconds, RECEIVE_MAX_TIMEOUT);
         RuntimeService.ProcessInfo p = runtimeService.findSingleProcess(nameOrPid);
-        return receive(p.pid(), endpoint, timeout * 1000L);
+        return receive(p.pid(), endpoint, timeout * 1000L, limit != null ? limit : 1);
     }
 
     /**
      * Enables the receive console of the process for the endpoint, waits for the messages the CLI connector writes to
      * the receive file, and disables it again whatever happens.
      */
-    JsonObject receive(long pid, String endpoint, long timeoutMs) {
+    JsonObject receive(long pid, String endpoint, long timeoutMs, int limit) {
         JsonObject state = runtimeService.readStatusSection(pid, "receive");
         Collection<?> active = state.getCollection("endpoints");
         if (Boolean.TRUE.equals(state.getBoolean("enabled")) && active != null && !active.isEmpty()) {
             // disabling would stop those consumers too
             throw new ToolCallException(
                     "The process is already receiving from " + active
-                                        + " (camel receive); stop that first with: camel receive --action=stop",
+                                        + " (camel cmd receive); stop that first with: camel cmd receive --action=stop",
                     null);
         }
         long offset = runtimeService.receiveFileSize(pid);
@@ -803,44 +798,78 @@ public class RuntimeTools {
             root.put("enabled", "true");
             root.put("endpoint", endpoint);
         });
+        JsonObject answer;
         try {
-            if (started.getString("error") != null) {
-                throw new ToolCallException("Cannot receive from " + endpoint + ": " + started.getString("error"), null);
-            }
-            String uri = started.getString("url");
-            if (uri == null) {
+            answer = awaitMessages(pid, endpoint, started, offset, timeoutMs, limit);
+        } catch (RuntimeException e) {
+            try {
+                stopReceiving(pid);
+            } catch (RuntimeException stop) {
                 throw new ToolCallException(
-                        "No endpoint matches " + endpoint
-                                            + " (a pattern matches the endpoints the application sends to; "
-                                            + "camel_runtime_endpoints lists them)",
-                        null);
+                        e.getMessage() + ". The consumer could not be stopped (" + stop.getMessage()
+                                            + "): stop it with: camel cmd receive --action=stop",
+                        e);
             }
-            JsonObject answer = new JsonObject();
-            answer.put("endpoint", uri);
-            StopWatch watch = new StopWatch();
-            while (true) {
-                List<JsonObject> messages = runtimeService.readReceivedMessages(pid, offset);
-                if (!messages.isEmpty()) {
-                    answer.put("received", messages.size());
-                    answer.put("messages", messages);
-                    return answer;
-                }
-                if (watch.taken() >= timeoutMs) {
-                    answer.put("received", 0);
-                    answer.put("note", "No message arrived within " + (timeoutMs / 1000) + " seconds");
-                    return answer;
-                }
-                try {
-                    TimeUnit.MILLISECONDS.sleep(RECEIVE_POLL_MS);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new ToolCallException("Interrupted while waiting for a message", null);
-                }
-            }
-        } finally {
-            // an action without an endpoint stops the consumers of the receive console
-            runtimeService.executeAction(pid, "receive", null);
+            throw e;
         }
+        try {
+            stopReceiving(pid);
+        } catch (RuntimeException e) {
+            // the messages are taken from the endpoint already: return them, and say the consumer may still run
+            answer.put("warning", "The consumer could not be stopped (" + e.getMessage()
+                                  + ") and may still take messages from the endpoint: stop it with: "
+                                  + "camel cmd receive --action=stop");
+        }
+        return answer;
+    }
+
+    private JsonObject awaitMessages(
+            long pid, String endpoint, JsonObject started, long offset, long timeoutMs, int limit) {
+        if (started.getString("error") != null) {
+            throw new ToolCallException("Cannot receive from " + endpoint + ": " + started.getString("error"), null);
+        }
+        String uri = started.getString("url");
+        if (uri == null) {
+            throw new ToolCallException(
+                    "No endpoint matches " + endpoint
+                                        + " (a pattern matches the endpoints the application sends to; "
+                                        + "camel_runtime_endpoints lists them)",
+                    null);
+        }
+        JsonObject answer = new JsonObject();
+        answer.put("endpoint", uri);
+        StopWatch watch = new StopWatch();
+        while (true) {
+            List<JsonObject> messages = runtimeService.readReceivedMessages(pid, offset);
+            if (!messages.isEmpty()) {
+                int returned = Math.min(limit, messages.size());
+                int notReturned = messages.size() - returned;
+                answer.put("received", messages.size());
+                answer.put("messages", messages.subList(0, returned));
+                if (notReturned > 0) {
+                    answer.put("notReturned", notReturned);
+                    answer.put("note", notReturned + " more message(s) arrived in the same poll and are not returned"
+                                       + " (raise limit to see them); they were taken from the endpoint all the same");
+                }
+                return answer;
+            }
+            if (watch.taken() >= timeoutMs) {
+                answer.put("received", 0);
+                answer.put("note", "No message arrived within " + (timeoutMs / 1000) + " seconds");
+                return answer;
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(RECEIVE_POLL_MS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new ToolCallException("Interrupted while waiting for a message", null);
+            }
+        }
+    }
+
+    /** An action without an endpoint stops the consumers of the receive console. */
+    private void stopReceiving(long pid) {
+        runtimeService.executeAction(pid, "receive", null);
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),

@@ -17,9 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -131,7 +134,7 @@ public class RuntimeService {
 
     /**
      * The size of the file the CLI connector appends the messages of the receive console to
-     * ({@code {pid}-receive.json}, read by {@code camel receive} too), to read only what arrives after this point.
+     * ({@code {pid}-receive.json}, read by {@code camel cmd receive} too), to read only what arrives after this point.
      */
     public long receiveFileSize(long pid) {
         try {
@@ -144,7 +147,8 @@ public class RuntimeService {
 
     /**
      * The messages the CLI connector appended to the receive file after the given offset: each complete line is a
-     * {@code {"messages": [...]}} dump of the receive console.
+     * {@code {"messages": [...]}} dump of the receive console. Only what was appended after the offset is read, as the
+     * file is append-only and kept across sessions.
      */
     public List<JsonObject> readReceivedMessages(long pid, long offset) {
         List<JsonObject> messages = new ArrayList<>();
@@ -153,10 +157,19 @@ public class RuntimeService {
             if (!Files.exists(file)) {
                 return messages;
             }
-            byte[] data = Files.readAllBytes(file);
-            // camel receive --action=clear rewrites the file: read it from the start then
-            int from = offset <= data.length ? (int) offset : 0;
-            String text = new String(data, from, data.length - from, StandardCharsets.UTF_8);
+            String text;
+            try (SeekableByteChannel channel = Files.newByteChannel(file, StandardOpenOption.READ)) {
+                long size = channel.size();
+                // camel cmd receive --action=clear rewrites the file: read it from the start then
+                long from = offset <= size ? offset : 0;
+                ByteBuffer buffer = ByteBuffer.allocate(Math.toIntExact(size - from));
+                channel.position(from);
+                int read = 0;
+                while (buffer.hasRemaining() && read >= 0) {
+                    read = channel.read(buffer);
+                }
+                text = new String(buffer.array(), 0, buffer.position(), StandardCharsets.UTF_8);
+            }
             int end = text.lastIndexOf('\n');
             if (end < 0) {
                 return messages;

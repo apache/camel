@@ -1531,11 +1531,11 @@ contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepte
 Some runtime tools of the Camel MCP server now do what their description says, which changes what a client sees:
 
 * `camel_runtime_receive` receives a message in one call: it starts a consumer on the endpoint, waits up to
-  `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer. Before, it started a
-  consumer that kept running, took the messages from the routes, and returned none of them. It is now marked
-  destructive, so the `read-write` access level (`camel.mcp.security.access-level`) no longer offers it, only
-  `admin` does. It refuses to run while
-  `camel receive` is receiving from the same process.
+  `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer. It returns one message
+  by default; `limit` returns more of the messages that arrived together, and the answer counts the ones it does not
+  return. Before, it started a consumer that kept running, took the messages from the routes, and returned none of
+  them. It is now marked destructive, so the `read-write` access level (`camel.mcp.security.access-level`) no longer
+  offers it, only `admin` does. It refuses to run while `camel cmd receive` is receiving from the same process.
 * `camel_runtime_memory_leak` with `command=start` and no `mode` makes one recording (60 seconds by default) and
   returns at once; get the results with `query` once it is done. Before, it made two recordings and blocked for about
   90 seconds, longer than many MCP clients wait. Pass `mode=dual` for the previous behaviour, or make the two
@@ -1543,5 +1543,3 @@ Some runtime tools of the Camel MCP server now do what their description says, w
   refused.
 * `camel_runtime_route_dump`, `camel_runtime_route_structure` and `camel_runtime_route_analysis` return the routes
   that `routeId` names; they returned every route whatever `routeId` was.
-* A process that does not answer in time (a hung or stopped process) is reported as an error by every runtime tool.
-  `camel_runtime_ai_trace` reported it as a successful answer with no AI components.

@@ -884,7 +884,7 @@ process is running).
 | Get the message history trace of the last completed exchange. Shows the route path, processors visited,
   headers, body, and timing. It is recorded when message history is on and the tracer is enabled or on standby,
   which is the default of `camel run` (dev profile); elsewhere set `camel.main.message-history=true` and
-  `camel.main.tracing-standby=true`.
+  `camel.trace.standby=true`.
 
 | `camel_runtime_thread_dump`
 | Get a JVM thread dump showing thread names, states, and stack traces.
@@ -1032,9 +1032,11 @@ xref:camel-jbang-tui-local-models.adoc#_tool_groups_from_the_selected_integratio
 | Receive a message from an endpoint of the running application, the complement of `camel_runtime_send`, in one
   call: it starts a consumer on the endpoint (an endpoint uri, or a pattern matching an endpoint the application
   sends to), waits up to `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer.
-  The consumer competes with the routes that consume the endpoint, so the message it takes does not reach them:
-  the tool is marked destructive. Use `camel_runtime_browse` to look at queued messages without taking them. It
-  refuses to run while `camel receive` is receiving from the same process.
+  It receives one message by default: when several messages arrive together, `limit` (default 1, at least 1)
+  returns up to that many of them, and the answer counts the others (`notReturned`), which were taken from the
+  endpoint all the same. The consumer competes with the routes that consume the endpoint, so the messages it takes
+  do not reach them: the tool is marked destructive. Use `camel_runtime_browse` to look at queued messages without
+  taking them. It refuses to run while `camel cmd receive` is receiving from the same process.
 |===
 
 == Available Prompts

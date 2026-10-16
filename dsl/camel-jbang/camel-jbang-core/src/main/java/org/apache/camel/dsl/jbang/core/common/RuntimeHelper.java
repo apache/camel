@@ -40,12 +40,6 @@ import org.apache.camel.util.json.Jsoner;
  */
 public final class RuntimeHelper {
 
-    /**
-     * How the text answer of {@link #executeAction(long, String, Consumer)} starts when the process did not answer in
-     * time.
-     */
-    public static final String TIMEOUT_PREFIX = "Timeout waiting for response from PID ";
-
     private static final long ACTION_TIMEOUT_MS = 10_000;
     private static final long POLL_INTERVAL_MS = 100;
 
@@ -153,7 +147,7 @@ public final class RuntimeHelper {
         } catch (IOException e) {
             // Preserve the existing text API's diagnostic when the request cannot be exchanged.
         }
-        return TIMEOUT_PREFIX + pid + " for action: " + action;
+        return "Timeout waiting for response from PID " + pid + " for action: " + action;
     }
 
     /**
