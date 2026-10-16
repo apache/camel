@@ -422,6 +422,11 @@ The JSON of the listings (`--json`) changes, so that a script can use the values
   integration that stops right away prints the end of its log and exits with `1`; one that is still starting after
   `--timeout` exits with `124` and is left running.
 
+=== camel-jbang - camel cmd browse of an endpoint that cannot be browsed
+
+`camel cmd browse --endpoint` with an endpoint that the integration cannot browse, or that it does not have, exits with
+`3` (it printed an empty table and exited with `0`).
+
 === camel-jbang - no command waits for a terminal that is not there
 
 Without an interactive terminal, such as in a script, a CI job (the `CI` environment variable is set) or an AI agent:
