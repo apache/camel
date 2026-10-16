@@ -521,6 +521,14 @@ now resolves to no value, as it already did without a field, so its default valu
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
 
+=== camel-bindy - a number field without precision keeps all its decimals when marshalled
+
+A `BigDecimal`, `Double` or `Float` field whose `@DataField` (or `@KeyValuePairField`) has no `precision` and no
+`pattern` was marshalled with at most three decimals, rounded: `1.23456` was written as `1.235` and `0.000123` as `0`.
+It is now written with all its decimals, so a record that is unmarshalled and marshalled again is the same text. A
+`Double` that is the result of a calculation is written with all its digits too (`0.1 + 0.2` as `0.30000000000000004`,
+before `0.3`). Set `precision` to get a fixed number of decimals, as before.
+
 === camel-ical - each unmarshal parses with its own calendar builder
 
 The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at
