@@ -739,6 +739,13 @@ Each exchange is now one write request, where the client used to collect the poi
 request, and the client no longer retries a write in the background. Routes with a high message rate can send a
 `Points`, `Measurements` or `Records` body (for example from an aggregator) to write many points with one request.
 
+=== camel-elasticsearch-rest-client - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddressesList` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
+registered for any host. A request to another host, including the host of a node with another scheme or port, is now
+sent without them. A client set with the `restClient` option is not changed.
+
 === camel-jira - the producers wait for the answer of Jira
 
 The `addComment`, `addIssueLink`, `addWorkLog`, `attach`, `deleteIssue`, `transitionIssue` and `watchers` producers
