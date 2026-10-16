@@ -49,7 +49,7 @@ public class YamlValidateCommand extends CamelCommand {
                                       + " implicit expressions) with the canonical form to write")
     boolean canonical;
 
-    @CommandLine.Option(names = { "--catalog" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--catalog" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Also check endpoint URIs and simple expressions against the Camel catalog"
                                       + " (use --catalog=false for the schema only)")
     boolean catalog = true;

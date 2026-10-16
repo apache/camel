@@ -141,7 +141,7 @@ public class Explain extends CamelCommand {
 
     @Option(names = { "--stream" },
             description = "Stream the response as it's generated (shows progress)",
-            defaultValue = "true")
+            defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean stream = true;
 
     public Explain(CamelJBangMain main) {

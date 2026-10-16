@@ -91,7 +91,8 @@ public class ListError extends ProcessWatchCommand {
                         description = "Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace, or 'all' for all sections")
     String show;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--detail" },

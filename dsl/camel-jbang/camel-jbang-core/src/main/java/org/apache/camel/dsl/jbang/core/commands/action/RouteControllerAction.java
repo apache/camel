@@ -66,11 +66,13 @@ public class RouteControllerAction extends ActionWatchCommand {
     String sort;
 
     @CommandLine.Option(names = { "--header" },
-                        description = "Include controller configuration details", defaultValue = "true")
+                        description = "Include controller configuration details", defaultValue = "true", arity = "0..1",
+                        fallbackValue = "true")
     boolean header;
 
     @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack-traces in error messages", defaultValue = "true")
+                        description = "Include stack-traces in error messages", defaultValue = "true", arity = "0..1",
+                        fallbackValue = "true")
     boolean trace;
 
     @CommandLine.Option(names = { "--depth" },

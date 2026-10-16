@@ -269,11 +269,11 @@ public class Run extends CamelCommand {
             description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
-    @Option(names = { "--maven-central-enabled" }, defaultValue = "true",
+    @Option(names = { "--maven-central-enabled" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
             description = "Whether downloading JARs from Maven Central repository is enabled")
     boolean mavenCentralEnabled = true;
 
-    @Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true",
+    @Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
             description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     boolean mavenApacheSnapshotEnabled = true;
 
@@ -343,7 +343,7 @@ public class Run extends CamelCommand {
 
     // port, managementPort, console, health, metrics, observe options are in ServerOptions @ArgGroup
 
-    @Option(names = { "--modeline" }, defaultValue = "true",
+    @Option(names = { "--modeline" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
             description = "Whether to support JBang style //DEPS to specify additional dependencies")
     boolean modeline = true;
 
@@ -3636,14 +3636,15 @@ public class Run extends CamelCommand {
     }
 
     static class LoggingOptions {
-        @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
+        @Option(names = { "--logging" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                description = "Can be used to turn off logging")
         boolean logging = true;
 
         @Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
                 defaultValue = "info", description = "Logging level (${COMPLETION-CANDIDATES})")
         String loggingLevel;
 
-        @Option(names = { "--logging-color" },
+        @Option(names = { "--logging-color" }, arity = "0..1", fallbackValue = "true",
                 description = "Use colored logging. Default is auto-detected based on NO_COLOR, CI, FORCE_COLOR environment variables and terminal capabilities")
         boolean loggingColor = EnvironmentHelper.isColorEnabled();
 

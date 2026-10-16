@@ -49,7 +49,7 @@ public class TransformDataWeave extends CamelCommand {
                         description = "Inline DataWeave expression to convert")
     private String expression;
 
-    @CommandLine.Option(names = { "--include-comments" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--include-comments" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Include conversion notes as comments in output")
     private boolean includeComments = true;
 

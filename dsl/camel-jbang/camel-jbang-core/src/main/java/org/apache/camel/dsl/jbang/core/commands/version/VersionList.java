@@ -129,16 +129,19 @@ public class VersionList extends CamelCommand {
     @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
     public boolean lts;
 
-    @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true")
+    @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true",
+                        arity = "0..1", fallbackValue = "true")
     public boolean eol = true;
 
-    @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true")
+    @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true",
+                        arity = "0..1", fallbackValue = "true")
     public boolean patch = true;
 
     @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
     public boolean rc;
 
-    @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true")
+    @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true",
+                        arity = "0..1", fallbackValue = "true")
     public boolean days;
 
     @CommandLine.Option(names = { "--date-format" }, description = "The format to show the date (such as dd-MM-yyyy)",

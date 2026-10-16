@@ -119,7 +119,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                         defaultValue = "both")
     String nodeLabel;
 
-    @CommandLine.Option(names = { "--metric" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--metric" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to include live metrics (only possible for running Camel application)")
     boolean metric;
 

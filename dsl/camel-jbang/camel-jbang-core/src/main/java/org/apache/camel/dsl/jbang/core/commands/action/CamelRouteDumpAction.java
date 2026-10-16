@@ -80,7 +80,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
                         description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
-                        defaultValue = "true")
+                        defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean uriAsParameters;
 
     @CommandLine.Option(names = { "--filter" },

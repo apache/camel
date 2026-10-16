@@ -96,11 +96,11 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "Sort by uri, or size", defaultValue = "uri")
     String sort;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in browsed messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in browsed messages")
     boolean showBody = true;
 
@@ -112,7 +112,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "Maximum size of the message body to include in the dump")
     int bodyMaxChars;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--pretty" },

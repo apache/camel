@@ -60,7 +60,7 @@ public class CamelStubAction extends ActionWatchCommand {
                         description = "Whether to browse messages queued in the stub endpoints")
     boolean browse;
 
-    @CommandLine.Option(names = { "--top" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--top" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to browse top (latest) messages queued in the stub endpoints")
     boolean top = true;
 
@@ -77,15 +77,15 @@ public class CamelStubAction extends ActionWatchCommand {
                         arity = "0..*")
     String[] grep;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in traced messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in traced messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--compact" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Compact output (no empty line separating browsed messages)")
     boolean compact = true;
 
@@ -97,7 +97,8 @@ public class CamelStubAction extends ActionWatchCommand {
                         description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")

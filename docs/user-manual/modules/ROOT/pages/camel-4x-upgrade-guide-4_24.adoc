@@ -454,6 +454,14 @@ or follows, like Enter does.
 * A plugin that cannot be loaded ends the command with exit code `1` and the error, as before, but no longer exits the
   JVM while the plugins load, which ended a program that embeds the CLI.
 
+=== camel-jbang - a boolean option given without a value is on
+
+A boolean option that is on by default is now on when it is given without a value, like any other boolean option:
+`camel export --maven-wrapper` exports the Maven wrapper, `camel config set --global key=value` writes the global
+configuration, `camel cmd receive --show-body` shows the body, and `camel kubernetes run --dev --cleanup` removes the
+deployment when it stops. Such a flag turned the option off before (picocli sets a flag to the opposite of its default).
+Turn the option off with `=false`, such as `--maven-wrapper=false`, which works as before.
+
 === camel-jbang - exit codes of config set, dependency list, jolokia and cmd memory-leak
 
 * `camel jolokia` with a name or pid that matches no running integration, or more than one, exits with `3`, as

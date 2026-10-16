@@ -29,7 +29,7 @@ import picocli.CommandLine;
  */
 public class MavenResolverMixin implements MavenResolverMixinSpec {
     @CommandLine.Option(names = {
-            "--download" }, defaultValue = "true",
+            "--download" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
     boolean download = true;
 
