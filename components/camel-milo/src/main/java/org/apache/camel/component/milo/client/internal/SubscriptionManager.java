@@ -1542,13 +1542,12 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.call(nodeId, methodId, inputArguments).handleAsync((status, e) -> {
+            return this.connected.call(nodeId, methodId, inputArguments).whenCompleteAsync((status, e) -> {
                 // handle outside the lock, running using
-                // handleAsync
+                // whenCompleteAsync (preserves the original exceptional completion)
                 if (e != null) {
                     handleConnectionFailure(e);
                 }
-                return null;
             }, this.executor);
         } finally {
             lock.unlock();
@@ -1562,13 +1561,12 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.write(nodeId, value).handleAsync((status, e) -> {
+            return this.connected.write(nodeId, value).whenCompleteAsync((status, e) -> {
                 // handle outside the lock, running using
-                // handleAsync
+                // whenCompleteAsync (preserves the original exceptional completion)
                 if (e != null) {
                     handleConnectionFailure(e);
                 }
-                return status;
             }, this.executor);
         } finally {
             lock.unlock();
@@ -1582,13 +1580,12 @@ public class SubscriptionManager {
                 return newNotConnectedResult();
             }
 
-            return this.connected.readValues(nodeIds).handleAsync((nodes, e) -> {
+            return this.connected.readValues(nodeIds).whenCompleteAsync((nodes, e) -> {
                 // handle outside the lock, running using
-                // handleAsync
+                // whenCompleteAsync (preserves the original exceptional completion)
                 if (e != null) {
                     handleConnectionFailure(e);
                 }
-                return nodes;
             }, this.executor);
         } finally {
             lock.unlock();
@@ -1606,13 +1603,12 @@ public class SubscriptionManager {
 
             return this.connected.browse(expandedNodeIds, direction, nodeClasses, 1, maxDepth,
                     null != filter ? Pattern.compile(filter) : null, includeSubTypes, maxNodesPerRequest)
-                    .handleAsync((browseResult, e) -> {
+                    .whenCompleteAsync((browseResult, e) -> {
                         // handle outside the lock, running using
-                        // handleAsync
+                        // whenCompleteAsync (preserves the original exceptional completion)
                         if (e != null) {
                             handleConnectionFailure(e);
                         }
-                        return browseResult;
                     }, this.executor);
         } finally {
             lock.unlock();
