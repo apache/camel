@@ -226,17 +226,17 @@ function Test-ArchiveEntry {
     }
 }
 
-# Runs the freshly staged upstream launcher; a nonzero exit (e.g. no Java 17+ available) aborts the
+# Runs the freshly staged upstream launcher; a nonzero exit (e.g. no Java 21+ available) aborts the
 # install and leaves the previously active installation untouched.
 function Test-StagedLauncher {
     param([string] $LauncherPath)
     try {
         & $LauncherPath 'version' *> $null
     } catch {
-        Fail "staged launcher failed verification (Java 17+ required)"
+        Fail "staged launcher failed verification (Java 21+ required)"
     }
     if ($LASTEXITCODE -ne 0) {
-        Fail "staged launcher failed verification (Java 17+ required)"
+        Fail "staged launcher failed verification (Java 21+ required)"
     }
 }
 
