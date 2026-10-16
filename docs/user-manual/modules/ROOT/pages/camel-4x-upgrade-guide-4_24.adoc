@@ -654,6 +654,16 @@ for an integration before Camel 4.21. `camel debug` sends its commands this way 
 body as they are. They escaped them, which the integration does not undo: an expression with a double quote failed,
 such as `+${body} == "hello"+`, and a slash (as in every XPath) or a quote in the body became part of the text.
 
+=== camel-jbang - the runtime tools of camel ask and the MCP servers
+
+* `send_message` of `camel ask`, and `tui_send_message` of `camel tui --mcp`, send the headers given as `key=value`
+  lines, as their description says: the integration got the lines as one text, which it could not read as headers, and
+  failed the message. A line that is not `key=value` is an error of the tool.
+* `get_circuit_breakers` has the calls of the fallback, the calls that timed out and the calls a full bulkhead
+  rejected, as `camel get circuit-breaker` shows them.
+* `get_route_analysis`, `get_eip_stats` and `detect_config_drift` have the answers of the integration as JSON, instead
+  of as JSON text inside their JSON.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
