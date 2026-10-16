@@ -261,6 +261,9 @@ public class HibernateProducer extends DefaultProducer {
                     case UPSERT:
                         session.upsert(body);
                         break;
+                    default:
+                        throw new UnsupportedOperationException(
+                                "Unsupported stateless operation: " + endpoint.getStatelessOperation());
                 }
 
                 transaction.commit();
