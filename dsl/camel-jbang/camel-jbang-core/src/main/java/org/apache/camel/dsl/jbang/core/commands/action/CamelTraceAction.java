@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -43,6 +42,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -72,8 +72,6 @@ public class CamelTraceAction extends ActionBaseCommand {
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
     private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-
-    private CommandHelper.ReadConsoleTask waitUserTask;
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
@@ -123,9 +121,13 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
     boolean ago;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new traces (press enter to exit).")
+    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Keep following and outputting new traces (press enter to exit)."
+                                      + " Without an interactive terminal the default is false, unless --duration is given.")
     boolean follow = true;
+
+    @CommandLine.Mixin
+    DurationMixin durationOption = new DurationMixin();
 
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto", completionCandidates = PrefixCompletionCandidates.class,
                         description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
@@ -316,6 +318,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     }
 
     protected Integer doDumpCall() throws Exception {
+        follow = isFollowing(follow, durationOption.getDuration());
         // setup table helper
         tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
@@ -381,13 +384,9 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         if (follow) {
             boolean waitMessage = true;
-            final AtomicBoolean running = new AtomicBoolean(true);
+            // until Enter is pressed, or the --duration has passed
+            CommandHelper.RunUntil running = CommandHelper.RunUntil.start(durationOption.getDuration());
             StopWatch watch = new StopWatch();
-            Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
-                waitUserTask.run();
-            }, "WaitForUser");
-            t.start();
             boolean more = true;
             do {
                 if (pids.isEmpty()) {
@@ -413,7 +412,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                         break;
                     }
                 }
-            } while (more && running.get());
+            } while (more && running.isRunning());
         }
 
         return 0;

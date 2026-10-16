@@ -385,6 +385,10 @@ public class Run extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (prompt) {
+            // asks for the missing properties on the terminal
+            requireInteractiveTerminal("camel run --prompt");
+        }
         // handle --example
         if (example != null && example.isEmpty()) {
             return listExamples(null);

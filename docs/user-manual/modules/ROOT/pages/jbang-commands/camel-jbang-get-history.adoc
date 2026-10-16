@@ -22,6 +22,7 @@ camel get history [options]
 | `--ago` | Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp. |  | boolean
 | `--depth` | Depth of tracing. 0=Created Completed. 1=All events on 1st route, 2=All events on 1st 2nd depth, and so on. 9 = all events on every depth. | 9 | int
 | `--diagram` | Display a route diagram with the message path highlighted |  | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--it` | Interactive mode for enhanced history information |  | boolean
 | `--json` | Output in JSON Format |  | boolean
 | `--limit-split` | Limit Split to a maximum number of entries to be displayed |  | int

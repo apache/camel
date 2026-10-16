@@ -21,6 +21,7 @@ camel cmd route-diagram [options]
 | Option | Description | Default | Type
 | `--box-width` | Node box width in logical pixels | 180 | int
 | `--compile` | Whether to compile Java source files and load their routes. By default Java routes are read by the Java DSL parser, without compiling them | false | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--errors` | Draw the error handling of each route in a frame below its steps: its onException clauses, where its failures go and where it is reached on error from. Without it only the steps of the route are drawn |  | boolean
 | `--filter` | Filter route by filename or route id |  | String
 | `--font-size` | Font size in logical pixels for node text | 12 | int

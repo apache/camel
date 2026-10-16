@@ -21,6 +21,7 @@ camel cmd stub [options]
 | Option | Description | Default | Type
 | `--browse` | Whether to browse messages queued in the stub endpoints |  | boolean
 | `--compact` | Compact output (no empty line separating browsed messages) | true | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--filter` | Filter endpoints by queue name |  | String
 | `--find` | Find and highlight matching text (ignore case). |  | String
 | `--grep` | Filter browsing messages to only output trace matching text (ignore case). |  | String

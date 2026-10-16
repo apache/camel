@@ -23,8 +23,9 @@ camel trace [options]
 | `--ago` | Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp. |  | boolean
 | `--compact` | Compact output (no empty line separating traced messages) | true | boolean
 | `--depth` | Depth of tracing. 0=Created Completed. 1=All events on 1st route, 2=All events on 1st 2nd depth, and so on. 9 = all events on every depth. | 9 | int
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--find` | Find and highlight matching text (ignore case). |  | String
-| `--follow` | Keep following and outputting new traces (press enter to exit). | true | boolean
+| `--follow` | Keep following and outputting new traces (press enter to exit). Without an interactive terminal the default is false, unless --duration is given. | true | boolean
 | `--grep` | Filter traces to only output trace matching text (ignore case). |  | String
 | `--json` | Output the status of tracing in JSON Format |  | boolean
 | `--latest` | Only output traces from the latest (follow if necessary until complete and exit) |  | boolean

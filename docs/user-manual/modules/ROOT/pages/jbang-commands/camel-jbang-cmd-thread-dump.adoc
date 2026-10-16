@@ -20,6 +20,7 @@ camel cmd thread-dump [options]
 |===
 | Option | Description | Default | Type
 | `--depth` | Max depth of stack-trace | 1 | int
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--filter` | Filter thread names/ids (use all to include all threads) | Camel | String
 | `--json` | Output in JSON Format |  | boolean
 | `--sort` | Sort by id, name or state | id | String

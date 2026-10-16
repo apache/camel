@@ -22,6 +22,7 @@ camel eval expression [options]
 | `--body` | Message body (prefix with file: to refer to loading message body from file) |  | String
 | `--camel-version` | To run using a different Camel version than the default version. |  | String
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--isolated` | Whether to run evaluation isolated in local process | false | boolean

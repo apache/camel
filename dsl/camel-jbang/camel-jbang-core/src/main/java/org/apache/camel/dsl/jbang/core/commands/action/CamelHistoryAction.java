@@ -166,6 +166,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
         if (it) {
             // cannot run in watch mode for interactive
             watch = false;
+            if (!jsonOutput) {
+                requireInteractiveTerminal("camel get history --it");
+            }
         }
         return super.doCall();
     }

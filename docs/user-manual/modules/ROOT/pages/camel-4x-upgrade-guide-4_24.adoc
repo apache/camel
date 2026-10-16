@@ -376,6 +376,24 @@ The JSON of the listings (`--json`) changes, so that a script can use the values
   integration that stops right away prints the end of its log and exits with `1`; one that is still starting after
   `--timeout` exits with `124` and is left running.
 
+=== camel-jbang - no command waits for a terminal that is not there
+
+Without an interactive terminal, such as in a script, a CI job (the `CI` environment variable is set) or an AI agent:
+
+* `--watch` without `--duration` shows the output once, with a `WARN:` on stderr, instead of repeating until Enter is
+  pressed. The new `--duration` option (such as `--duration=30s`) keeps watching for that long, and then exits with `0`.
+* `camel log`, `camel trace` and `camel cmd receive` do not follow, unless `--follow` or `--duration` is given.
+  `camel infra log` prints the end of the logs and exits, and has `--follow` and `--duration` too.
+* `camel hawtio` does not open a web browser, and prints the URL of the web console instead. `--openUrl` is now named
+  `--open-url` (the old name still works).
+* `camel debug`, `camel nano`, `camel shell`, `camel edit`, `camel tui` (except with `--record`), `camel ask` without a
+  question, `camel run --prompt` and `camel get history --it` exit with `2` and `requires an interactive terminal` on
+  stderr. `camel debug` used to wait at 100% CPU.
+
+`--follow` and `--open-url` without a value turn the option on. As boolean options that are on by default, they turned
+it off (use `--follow=false` to turn it off). In a terminal, the end of the input (Ctrl+D) stops a command that watches
+or follows, like Enter does.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
