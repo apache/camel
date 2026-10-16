@@ -93,6 +93,9 @@ Supported values for `schemaAction` are:
 * `validate`
 * `update`
 * `create`
+* `create-drop`
+* `create-only`
+* `drop`
 
 When the component creates the `SessionFactory`, it owns the resulting `SessionFactory` and closes it when the component stops.
 
