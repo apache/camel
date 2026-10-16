@@ -29,6 +29,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.Exchange;
@@ -527,6 +529,12 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
             // NOTE: the socket must be closed by the client of this factory method.
             newSocket = sslSocketFactory.createSocket(); // NOSONAR
+            if (getConfiguration().isHostnameVerification() && newSocket instanceof SSLSocket sslSocket) {
+                // check that the certificate of the server matches the host we connect to
+                SSLParameters sslParameters = sslSocket.getSSLParameters();
+                sslParameters.setEndpointIdentificationAlgorithm("HTTPS");
+                sslSocket.setSSLParameters(sslParameters);
+            }
         } else {
             log.debug("Creating plain socket without SSLContextParameters");
             // NOTE: the socket must be closed by the client of this factory method.

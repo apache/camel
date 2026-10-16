@@ -415,6 +415,40 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * The password for connecting to SMSC server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1648,6 +1682,40 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * The password for connecting to SMSC server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2348,6 +2416,40 @@ public interface SmppEndpointBuilderFactory {
          */
         default SmppEndpointBuilder proxyHeaders(String proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**
