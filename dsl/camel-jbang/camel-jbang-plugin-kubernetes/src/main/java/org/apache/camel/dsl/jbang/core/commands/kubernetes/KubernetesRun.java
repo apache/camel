@@ -52,6 +52,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.MountTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -687,14 +688,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         printer().println("Building Camel application ...");
 
         // Run build via Maven
-        String mvnw = "/mvnw";
-        if (FileUtil.isWindows()) {
-            mvnw = "/mvnw.cmd";
-        }
         ProcessBuilder pb = new ProcessBuilder();
         List<String> args = new ArrayList<>();
 
-        args.add(workingDir + mvnw);
+        args.add(MavenCommand.wrapper(Path.of(workingDir)).toString());
         if (quiet || !verbose) {
             args.add("--quiet");
         }
@@ -747,14 +744,10 @@ public class KubernetesRun extends KubernetesBaseCommand {
         printer().println("Deploying to %s ...".formatted(clusterType));
 
         // Run build via Maven
-        String mvnw = "/mvnw";
-        if (FileUtil.isWindows()) {
-            mvnw = "/mvnw.cmd";
-        }
         ProcessBuilder pb = new ProcessBuilder();
         List<String> args = new ArrayList<>();
 
-        args.add(workingDir + mvnw);
+        args.add(MavenCommand.wrapper(Path.of(workingDir)).toString());
         if (quiet || !verbose) {
             args.add("--quiet");
         }

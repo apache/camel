@@ -269,8 +269,7 @@ public final class PluginHelper {
                         configDirty = true;
                     }
                 } else {
-                    main.getOut().printErr("camel-jbang-plugin-" + command + " not found. Exit");
-                    main.quit(CliExitCode.FAILURE);
+                    throw CliException.failure("camel-jbang-plugin-" + command + " not found");
                 }
             }
             if (configDirty) {
@@ -522,9 +521,8 @@ public final class PluginHelper {
         }
         boolean accept = VersionHelper.isGE(source, first);
         if (!accept) {
-            main.getOut().printErr("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
-                                   + " because plugin has first version: " + firstVersion + ". Exit");
-            main.quit(CliExitCode.FAILURE);
+            throw CliException.failure("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                                       + " because plugin has first version: " + firstVersion);
         }
     }
 
