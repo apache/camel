@@ -614,7 +614,7 @@ for an integration before Camel 4.21. `camel debug` sends its commands this way 
 `camel cmd eval`, and the tools that evaluate an expression in a running integration (`camel ask`, and
 `camel_eval_expression` of `camel mcp` and `camel tui --mcp` with an integration selected), send the expression and the
 body as they are. They escaped them, which the integration does not undo: an expression with a double quote failed,
-such as `${body} == "hello"`, and a slash (as in every XPath) or a quote in the body became part of the text.
+such as `+${body} == "hello"+`, and a slash (as in every XPath) or a quote in the body became part of the text.
 
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
