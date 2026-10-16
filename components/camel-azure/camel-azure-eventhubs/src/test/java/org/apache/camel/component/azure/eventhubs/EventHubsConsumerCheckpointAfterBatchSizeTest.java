@@ -149,6 +149,37 @@ class EventHubsConsumerCheckpointAfterBatchSizeTest {
                 .untilAsserted(() -> verify(second, times(1)).updateCheckpointAsync());
     }
 
+    @Test
+    void eventAfterBatchSizeCheckpointDuringTimeoutCheckpointIsCheckpointed() throws Exception {
+        configuration.setCheckpointBatchSize(3);
+        // the checkpoint of the first window is stored only when the test says so
+        Sinks.Empty<Void> stored = Sinks.empty();
+        AtomicLong checkpointedAt = new AtomicLong();
+        EventContext first = eventContext("0");
+        doAnswer(invocation -> {
+            checkpointedAt.set(System.currentTimeMillis());
+            return stored.asMono();
+        }).when(first).updateCheckpointAsync();
+        EventContext second = eventContext("0");
+        EventContext third = eventContext("0");
+        EventContext fourth = eventContext("0");
+
+        complete(first);
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(first, times(1)).updateCheckpointAsync());
+        await().atMost(10, TimeUnit.SECONDS).until(() -> System.currentTimeMillis() > checkpointedAt.get());
+
+        // while the timeout checkpoint of the first event is stored, more events complete, and the count climbs back
+        // to the value that checkpoint started with
+        complete(second);
+        complete(third);
+        complete(fourth);
+        stored.tryEmitEmpty();
+
+        // the last event of the burst must still be checkpointed, by batch size or by the next timeout
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> verify(fourth, times(1)).updateCheckpointAsync());
+    }
+
     private void complete(EventContext eventContext) throws Exception {
         processCommit.invoke(consumer, DefaultExchange.newFromEndpoint(endpoint), eventContext);
     }
