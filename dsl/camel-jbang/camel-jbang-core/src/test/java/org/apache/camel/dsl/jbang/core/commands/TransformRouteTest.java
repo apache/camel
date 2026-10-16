@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExceptionHandler;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 /**
  * camel transform route: a route in another DSL, printed or written to a file or directory.
@@ -118,8 +120,11 @@ class TransformRouteTest extends CamelCommandBaseTestSupport {
     void aFileThatDoesNotExistIsNotFound() {
         TransformRoute command = command(List.of(dir.resolve("nope.camel.yaml").toString()), "--format=java");
 
-        // the CLI exits with 3 for it
-        assertThatThrownBy(command::doCall).isInstanceOf(NoSuchFileException.class);
+        Throwable e = catchThrowable(command::doCall);
+
+        assertThat(e).isInstanceOf(NoSuchFileException.class);
+        // which the CLI ends with exit code 3
+        assertThat(new CliExecutionExceptionHandler(new CamelJBangMain()).getExitCode(e)).isEqualTo(CliExitCode.NOT_FOUND);
     }
 
     @Test
