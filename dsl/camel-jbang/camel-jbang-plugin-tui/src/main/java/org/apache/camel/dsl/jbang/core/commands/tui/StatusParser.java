@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
@@ -562,6 +563,8 @@ final class StatusParser {
                         int idx = ep.uri.indexOf(':');
                         ep.component = idx > 0 ? ep.uri.substring(0, idx) : ep.uri;
                     }
+                    // here on the refresh thread, as the first look at the catalog loads it
+                    ep.scope = EndpointScope.of(ep.uri, ep.remote);
                     info.endpoints.add(ep);
                 }
             }

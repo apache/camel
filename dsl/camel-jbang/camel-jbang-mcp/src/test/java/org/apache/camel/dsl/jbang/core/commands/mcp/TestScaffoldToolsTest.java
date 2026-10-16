@@ -265,6 +265,28 @@ class TestScaffoldToolsTest {
         assertThat(mocks).isEmpty();
     }
 
+    @Test
+    void mocksWhatLeavesTheCamelContextButNotInternalComponents() throws Exception {
+        String route = """
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - to: caffeine-cache:orders
+                        - to: disruptor:work
+                        - to: controlbus:route?routeId=other&action=stop
+                        - to: kafka:orders
+                """;
+
+        String json = tools.camel_route_test_scaffold(route, "yaml", "main", null, null);
+        JsonObject result = (JsonObject) Jsoner.deserialize(json);
+
+        // the components the catalog marks internal stay real; controlbus is not internal, it can evaluate an expression
+        JsonArray mocks = result.getCollection("mockEndpoints");
+        assertThat(mocks).extracting(m -> ((JsonObject) m).getString("originalUri"))
+                .containsExactly("controlbus:route?routeId=other&action=stop", "kafka:orders");
+    }
+
     // ---- Spring Boot runtime test generation ----
 
     @Test

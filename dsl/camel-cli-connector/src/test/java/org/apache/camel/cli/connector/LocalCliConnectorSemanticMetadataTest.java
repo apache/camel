@@ -121,7 +121,7 @@ class LocalCliConnectorSemanticMetadataTest {
     }
 
     @Test
-    void forwardsBreadcrumbIdAndActionToTheAuditConsole() throws Exception {
+    void forwardsAutomaticAuditProvenanceToTheAuditConsole() throws Exception {
         try (var context = new DefaultCamelContext()) {
             var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
             connector.setCamelContext(context);
@@ -138,13 +138,53 @@ class LocalCliConnectorSemanticMetadataTest {
             });
             var answer = new AtomicReference<JsonObject>();
             var request = new JsonObject(
-                    Map.of("action", "semantic-audit", "auditAction", "block",
-                            "breadcrumbId", "camel-breadcrumb", "correlationId", "application-request", "ignored",
+                    Map.of("action", "semantic-audit", "executingRouteId", "nested-route",
+                            "breadcrumbId", "camel-breadcrumb", "exchangeId", "exchange-1", "ignored",
                             "not an option"));
             assertThat(connector.dispatch(request, answer::set)).isTrue();
-            assertThat(answer.get()).containsOnlyKeys("action", "breadcrumbId", "correlationId")
-                    .containsEntry("action", "block").containsEntry("breadcrumbId", "camel-breadcrumb")
-                    .containsEntry("correlationId", "application-request");
+            assertThat(answer.get()).containsOnlyKeys("executingRouteId", "breadcrumbId", "exchangeId")
+                    .containsEntry("executingRouteId", "nested-route").containsEntry("breadcrumbId", "camel-breadcrumb")
+                    .containsEntry("exchangeId", "exchange-1");
+            var filters = Map.of("since", "2026-10-14T12:00:00Z", "until", "2026-10-14T13:00:00Z",
+                    "definition", "routeRequest", "operation", "score", "resultType", "SCORE",
+                    "resultValue", "1.644", "scoreMin", "1.2", "scoreMax", "1.8", "resultLabel", "test-forwarding");
+            var typed = new JsonObject(filters);
+            typed.put("action", "semantic-audit");
+            assertThat(connector.dispatch(typed, answer::set)).isTrue();
+            assertThat(answer.get()).containsExactlyInAnyOrderEntriesOf(filters);
+        }
+    }
+
+    @Test
+    void forwardsMonitoringOptionsAndRejectsRemovedAuditFilters() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+            connector.setCamelContext(context);
+            DevConsoleRegistry.get(context).register(new AbstractDevConsole("camel", "semantic-monitoring", "Test", "Test") {
+                @Override
+                protected String doCallText(Map<String, Object> options) {
+                    return "";
+                }
+
+                @Override
+                protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                    return new JsonObject(options);
+                }
+            });
+            var answer = new AtomicReference<JsonObject>();
+            assertThat(connector.dispatch(new JsonObject(
+                    Map.of("action", "semantic-monitoring", "source", "metrics")),
+                    answer::set)).isTrue();
+            assertThat(answer.get()).containsOnlyKeys("source").containsEntry("source", "metrics");
+            for (String removed : List.of("history", "since")) {
+                assertThat(connector.dispatch(new JsonObject(Map.of("action", "semantic-monitoring", removed, "value")),
+                        answer::set)).isTrue();
+                assertThat(answer.get()).containsEntry("error", "monitoring_query_invalid");
+            }
+            assertThat(
+                    connector.dispatch(new JsonObject(Map.of("action", "semantic-audit", "auditAction", "block")), answer::set))
+                    .isTrue();
+            assertThat(answer.get()).containsEntry("error", "audit_filter_removed");
         }
     }
 

@@ -20,6 +20,8 @@ camel stop [options]
 |===
 | Option | Description | Default | Type
 | `--kill` | To force killing the process (SIGKILL) |  | boolean
+| `--no-wait` | Do not wait for the integration to stop |  | boolean
+| `--timeout` | How long to wait for the integration to stop, in millis or as a duration such as 30s | 60000 | long
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

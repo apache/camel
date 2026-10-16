@@ -191,6 +191,26 @@ public interface KameletComponentBuilderFactory {
     
         
         /**
+         * Whether to forward extra URI parameters to the endpoint wrapped by
+         * the Kamelet. When enabled, parameters that are not Kamelet template
+         * properties or reserved Kamelet options are appended to the wrapped
+         * source or sink endpoint. Disabled by default.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param advancedOptions the value to set
+         * @return the dsl builder
+         */
+        default KameletComponentBuilder advancedOptions(boolean advancedOptions) {
+            doSetProperty("advancedOptions", advancedOptions);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -273,6 +293,7 @@ public interface KameletComponentBuilderFactory {
             case "block": ((KameletComponent) component).setBlock((boolean) value); return true;
             case "lazyStartProducer": ((KameletComponent) component).setLazyStartProducer((boolean) value); return true;
             case "timeout": ((KameletComponent) component).setTimeout((long) value); return true;
+            case "advancedOptions": ((KameletComponent) component).setAdvancedOptions((boolean) value); return true;
             case "autowiredEnabled": ((KameletComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "noErrorHandler": ((KameletComponent) component).setNoErrorHandler((boolean) value); return true;
             case "routeTemplateLoaderListener": ((KameletComponent) component).setRouteTemplateLoaderListener((org.apache.camel.spi.RouteTemplateLoaderListener) value); return true;

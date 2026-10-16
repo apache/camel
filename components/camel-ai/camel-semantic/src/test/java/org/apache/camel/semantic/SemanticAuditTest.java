@@ -116,10 +116,10 @@ class SemanticAuditTest {
             context.getRegistry().bind("recorded", expert);
             context.getRegistry().bind("excluded", expert);
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert("excluded");
             var audit = SemanticAuditService.get(context);
             audit.configure("test", configuration(true, Map.of("excluded", false, "recorded", true)));
-            SemanticEvaluations.get(context).replace("definitions", Map.of("a", evaluation("recorded"), "b", evaluation(null)));
+            SemanticEvaluations.get(context).replace("definitions",
+                    Map.of("a", evaluation("recorded"), "b", evaluation("excluded")));
             context.start();
             var exchange = new DefaultExchange(context);
             exchange.getMessage().setBody("text");
@@ -133,7 +133,7 @@ class SemanticAuditTest {
     }
 
     @Test
-    void namedBatchKeepsProviderBatchingAndExplicitDecisionLinks() throws Exception {
+    void namedBatchKeepsProviderBatchingAndMemberIdentities() throws Exception {
         try (var context = new DefaultCamelContext()) {
             FixedSemanticExpert expert = new FixedSemanticExpert();
             context.getRegistry().bind("security", expert);
@@ -146,28 +146,22 @@ class SemanticAuditTest {
             exchange.getMessage().setBody("private");
             context.resolveLanguage("semantic").createExpression("refs:first,second").evaluate(exchange, Map.class);
             assertThat(expert.batches).containsExactly(List.of("first", "second"));
-            SemanticAuditDecision decision = new SemanticAuditDecision();
-            decision.setFields(Map.of("action", "block", "reasonCode", "prompt_injection", "operation", "tools/call", "target",
-                    "support-request"));
-            decision.process(exchange);
             audit.stop();
             List<SemanticAuditRecord> records = records(audit);
-            assertThat(records).hasSize(3);
+            assertThat(records).hasSize(2);
             assertThat(records).allSatisfy(record -> assertThat(record.text("exchangeId")).isEqualTo(exchange.getExchangeId()));
             assertThat(records).filteredOn(r -> r.getCategory().equals("evaluation")).allSatisfy(r -> {
                 assertThat(r.toMap()).doesNotContainKey("action");
                 assertThat(r.getStatus()).isEqualTo("success");
             });
-            assertThat(records.get(0).toMap().get("evidence")).isEqualTo(exchange.getProperty(SemanticAuditService.REFERENCES));
-            assertThat(records.get(0).text("action")).isEqualTo("block");
-            assertThat(records.get(1).text("batchId")).isEqualTo(records.get(2).text("batchId"));
-            assertThat(records.get(1).getInvocationId()).isNotEqualTo(records.get(2).getInvocationId());
+            assertThat(records.get(0).text("batchId")).isNotBlank().isEqualTo(records.get(1).text("batchId"));
+            assertThat(records.get(0).getInvocationId()).isNotEqualTo(records.get(1).getInvocationId());
         }
     }
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void splitEvaluationsAndDecisionsShareTheCamelGeneratedBreadcrumb(boolean enabled) throws Exception {
+    void splitEvaluationsShareTheCamelGeneratedBreadcrumb(boolean enabled) throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.setUseBreadcrumb(enabled);
             context.getRegistry().bind("security", new FixedSemanticExpert());
@@ -175,15 +169,12 @@ class SemanticAuditTest {
             audit.configure("audit", configuration(true, Map.of()));
             SemanticEvaluations.get(context).replace("definitions", Map.of("check", evaluation("security")));
             var expression = context.resolveLanguage("semantic").createExpression("ref:check");
-            var decision = new SemanticAuditDecision();
-            decision.setFields(Map.of("action", "allow", "correlationId", "application-request"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
                     from("direct:audit").routeId("audited-route")
                             .split(body())
-                            .process(exchange -> expression.evaluate(exchange, Boolean.class))
-                            .process(decision);
+                            .process(exchange -> expression.evaluate(exchange, Boolean.class));
                 }
             });
             context.start();
@@ -194,22 +185,15 @@ class SemanticAuditTest {
                 assertThat(breadcrumb).isEqualTo(enabled ? exchange.getExchangeId() : null);
                 audit.stop();
                 List<SemanticAuditRecord> records = records(audit);
-                assertThat(records).hasSize(4).allSatisfy(record -> {
+                assertThat(records).hasSize(2).allSatisfy(record -> {
                     assertThat(record.text("breadcrumbId")).isEqualTo(breadcrumb);
                     assertThat(record.text("exchangeId")).isNotBlank().isNotEqualTo(exchange.getExchangeId());
                     assertThat(record.text("routeId")).isEqualTo("audited-route");
                 });
                 assertThat(records.stream().map(record -> record.text("exchangeId")).distinct()).hasSize(2);
-                assertThat(records).filteredOn(record -> "decision".equals(record.getCategory())).allSatisfy(record -> {
-                    assertThat(record.text("correlationId")).isEqualTo("application-request");
-                    assertThat(record.getEvidence()).hasSize(1);
-                    var evidence = audit.getReader().get(record.getEvidence().get(0)).orElseThrow();
-                    assertThat(evidence.text("exchangeId")).isEqualTo(record.text("exchangeId"));
-                    assertThat(evidence.text("breadcrumbId")).isEqualTo(breadcrumb);
-                });
                 assertThat(audit.getReader().query(new SemanticAuditQuery(
                         Map.of("breadcrumbId", exchange.getExchangeId()), null, null, 10)).getRecords())
-                        .hasSize(enabled ? 4 : 0);
+                        .hasSize(enabled ? 2 : 0);
             }
         }
     }
@@ -235,10 +219,9 @@ class SemanticAuditTest {
                 exchange.getMessage().setBody("sample");
                 exchange.getMessage().setHeader(Exchange.BREADCRUMB_ID, breadcrumb);
                 assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
-                SemanticAudit.get(context).decision(exchange, Map.of("action", "allow"), List.of());
             }
             audit.stop();
-            assertThat(records(audit)).hasSize(invalid.size() * 2)
+            assertThat(records(audit)).hasSize(invalid.size())
                     .allSatisfy(record -> assertThat(record.toMap()).doesNotContainKey("breadcrumbId"));
         }
     }
@@ -406,8 +389,7 @@ class SemanticAuditTest {
 
     @ParameterizedTest
     @CsvSource({
-            "true,security", "false,security", "true,{{expert.name}}", "false,{{expert.name}}", "true,default",
-            "false,default" })
+            "true,security", "false,security", "true,{{expert.name}}", "false,{{expert.name}}" })
     void invalidDeclarationsResolveExpertPlaceholdersBeforeAuditFiltering(boolean enabled, String expert) throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedSemanticExpert());
@@ -418,9 +400,8 @@ class SemanticAuditTest {
             audit.configure("test", configuration(true, Map.of("security", enabled)));
             context.start();
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert("security");
             assertThatThrownBy(() -> language.evaluate(
-                    new SemanticEvaluation("unknown", "default".equals(expert) ? null : expert, null, Map.of()), "text"))
+                    new SemanticEvaluation("unknown", expert, null, Map.of()), "text"))
                     .isInstanceOf(IllegalArgumentException.class);
             audit.stop();
             assertThat(records(audit)).hasSize(enabled ? 1 : 0);
@@ -472,7 +453,7 @@ class SemanticAuditTest {
     }
 
     @Test
-    void removedDefinitionIsNotAttributedToTheDefaultExpert() throws Exception {
+    void removedDefinitionIsNotAttributedToAnUnrelatedExpert() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedSemanticExpert());
             var audit = SemanticAuditService.get(context);
@@ -481,7 +462,6 @@ class SemanticAuditTest {
             definitions.replace("definitions", Map.of("check", evaluation("security")));
             context.start();
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setDefaultExpert("security");
             var expression = language.createExpression("ref:check");
             definitions.replace("definitions", Map.of());
             var exchange = new DefaultExchange(context);
@@ -494,7 +474,7 @@ class SemanticAuditTest {
     }
 
     @Test
-    void disabledCaptureDoesNotStartSinksOrCreateEvidence() throws Exception {
+    void disabledCaptureDoesNotStartSinksOrRetainRecords() throws Exception {
         try (var context = new DefaultCamelContext()) {
             var sink = new BrokenSink();
             context.getRegistry().bind("unused", sink);
@@ -508,7 +488,7 @@ class SemanticAuditTest {
             exchange.getMessage().setBody("text");
             assertThat(context.resolveLanguage("semantic").createExpression("ref:check").evaluate(exchange, Boolean.class))
                     .isTrue();
-            assertThat(exchange.getProperty(SemanticAuditService.REFERENCES)).isNull();
+            assertThat(records(audit)).isEmpty();
             assertThat(sink.isStarted()).isFalse();
             assertThat(audit.status()).containsEntry("dropped", 0L);
         }

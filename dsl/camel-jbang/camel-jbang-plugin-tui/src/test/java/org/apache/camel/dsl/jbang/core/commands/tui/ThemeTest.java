@@ -18,7 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -28,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -372,5 +378,79 @@ class ThemeTest {
         assertNotNull(Theme.zebra());
         assertNotNull(Theme.baseBg());
         assertNotNull(Theme.baseFg());
+    }
+
+    @Test
+    void panelThemeAppliesOnlyWhileAPanelDraws() {
+        Theme.setMode("dark");
+        Theme.setPanelTheme("light");
+        assertThat(Theme.panelTheme()).isEqualTo("light");
+        // resolved outside first, so a cached main token must not leak into the panel or the other way round
+        Style mainSuccess = Theme.success();
+
+        Color[] colors = new Color[2];
+        Style[] styles = new Style[1];
+        boolean[] dark = new boolean[1];
+        Theme.inPanel(() -> {
+            colors[0] = Theme.baseBg();
+            colors[1] = Theme.accent();
+            styles[0] = Theme.success();
+            dark[0] = Theme.isDark();
+        });
+
+        assertThat(colors[0]).isEqualTo(Color.rgb(0xFF, 0xFF, 0xFF));
+        assertThat(colors[1]).isEqualTo(Color.rgb(0xD9, 0x77, 0x06));
+        assertThat(styles[0]).isEqualTo(Style.EMPTY.fg(Color.rgb(0x22, 0x86, 0x3A)));
+        assertThat(dark[0]).isFalse();
+        // and the main theme is untouched around it
+        assertThat(Theme.baseBg()).isEqualTo(Color.rgb(0x1E, 0x1E, 0x1E));
+        assertThat(Theme.accent()).isEqualTo(Theme.ACCENT);
+        assertThat(Theme.success()).isEqualTo(mainSuccess);
+        assertThat(Theme.isDark()).isTrue();
+        assertThat(Theme.mode()).isEqualTo("dark");
+    }
+
+    @Test
+    void otherThreadsKeepTheMainThemeWhileAPanelDraws() {
+        Theme.setMode("dark");
+        Theme.setPanelTheme("light");
+        // a thread of its own: CompletableFuture.join() may run a queued task on the joining thread itself
+        ExecutorService otherThread = Executors.newSingleThreadExecutor();
+        try {
+            Theme.inPanel(() -> assertThat(otherThread.submit(Theme::baseBg))
+                    .succeedsWithin(Duration.ofSeconds(10))
+                    .isEqualTo(Color.rgb(0x1E, 0x1E, 0x1E)));
+        } finally {
+            otherThread.shutdownNow();
+        }
+    }
+
+    @Test
+    void sameOrUnknownPanelThemeDrawsThePanelsWithTheMainTheme() {
+        Theme.setMode("dark");
+        for (String id : new String[] { null, Theme.PANEL_THEME_SAME, "no-such-theme" }) {
+            Theme.setPanelTheme("light");
+            Theme.setPanelTheme(id);
+            assertThat(Theme.panelTheme()).as("panel theme after %s", id).isNull();
+            Color[] inside = new Color[1];
+            Theme.inPanel(() -> inside[0] = Theme.baseBg());
+            assertThat(inside[0]).as("panel background after %s", id).isEqualTo(Color.rgb(0x1E, 0x1E, 0x1E));
+        }
+    }
+
+    @Test
+    void thePanelAreaTakesThePanelThemeBackground() {
+        // the order CamelMonitor fills a frame in: the panel's area inside the panel scope, then the whole frame
+        Theme.setMode("dark");
+        Theme.setPanelTheme("light");
+        Rect frame = new Rect(0, 0, 10, 4);
+        Buffer buffer = Buffer.empty(frame);
+        Rect panel = new Rect(0, 2, 10, 2);
+        Theme.inPanel(() -> Theme.applyBaseColors(buffer, panel));
+        Theme.applyBaseColors(buffer, frame);
+
+        assertThat(buffer.get(0, 1).style().bg()).contains(Color.rgb(0x1E, 0x1E, 0x1E));
+        assertThat(buffer.get(0, 2).style().bg()).contains(Color.rgb(0xFF, 0xFF, 0xFF));
+        assertThat(buffer.get(9, 3).style().bg()).contains(Color.rgb(0xFF, 0xFF, 0xFF));
     }
 }

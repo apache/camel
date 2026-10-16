@@ -17,12 +17,10 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
@@ -40,6 +38,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
 import org.apache.camel.dsl.jbang.core.common.OllamaDoctorSupport;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
@@ -257,27 +256,14 @@ class DoctorPopup {
 
     private void checkContainerRuntime(List<Line> result) {
         for (String cmd : new String[] { "docker", "podman" }) {
-            try {
-                Process p = new ProcessBuilder(cmd, "info")
-                        .redirectErrorStream(true)
-                        .start();
-                p.getInputStream().transferTo(OutputStream.nullOutputStream());
-                boolean done = p.waitFor(5, TimeUnit.SECONDS);
-                if (!done) {
-                    p.destroyForcibly();
-                    continue;
-                }
-                if (p.exitValue() == 0) {
-                    String name = Character.toUpperCase(cmd.charAt(0)) + cmd.substring(1);
-                    result.add(Line.from(
-                            Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),
-                            Span.styled(String.format("%-14s", "Container"), Theme.muted()),
-                            Span.raw(String.format("%-30s", name + " running")),
-                            Span.raw(" " + TuiIcons.OK)));
-                    return;
-                }
-            } catch (Exception e) {
-                // not found, try next
+            if (ExternalCommand.succeeds(5000, cmd, "info")) {
+                String name = Character.toUpperCase(cmd.charAt(0)) + cmd.substring(1);
+                result.add(Line.from(
+                        Span.raw(TuiIcons.indent(TuiIcons.DOCKER)),
+                        Span.styled(String.format("%-14s", "Container"), Theme.muted()),
+                        Span.raw(String.format("%-30s", name + " running")),
+                        Span.raw(" " + TuiIcons.OK)));
+                return;
             }
         }
         result.add(Line.from(

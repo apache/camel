@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -120,10 +121,52 @@ public final class CommandHelper {
 
         @Override
         public void run() {
-            String line = EnvironmentHelper.readLine();
-            if (line != null) {
-                listener.run();
+            // a line (Enter), or the end of the input, stops the command
+            EnvironmentHelper.readLine();
+            listener.run();
+        }
+    }
+
+    /**
+     * Tells a command that watches or follows whether to keep going: until the user presses Enter in an interactive
+     * terminal, or until the duration has passed.
+     */
+    public static final class RunUntil {
+
+        private final AtomicBoolean running = new AtomicBoolean(true);
+        private final long deadline;
+
+        private RunUntil(long duration) {
+            this.deadline = duration > 0 ? System.currentTimeMillis() + duration : 0;
+        }
+
+        /**
+         * Starts watching for Enter (in an interactive terminal only).
+         *
+         * @param duration how long to keep going, in millis, or 0 to keep going until Enter is pressed
+         */
+        public static RunUntil start(long duration) {
+            RunUntil answer = new RunUntil(duration);
+            if (EnvironmentHelper.isInteractiveTerminal()) {
+                Thread t = new Thread(new ReadConsoleTask(answer::stop), "WaitForUser");
+                t.setDaemon(true);
+                t.start();
             }
+            return answer;
+        }
+
+        /**
+         * Whether to keep going.
+         */
+        public boolean isRunning() {
+            return running.get() && (deadline == 0 || System.currentTimeMillis() < deadline);
+        }
+
+        /**
+         * Stops the command.
+         */
+        public void stop() {
+            running.set(false);
         }
     }
 }

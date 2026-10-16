@@ -57,6 +57,26 @@ class CamelShDiscoveryTest {
     }
 
     @Test
+    void skipsSourcesAndJavadocJars(@TempDir Path base) throws Exception {
+        Path h = home(Files.createDirectories(base.resolve("launcher with spaces")));
+        Files.writeString(h.resolve("camel-launcher-9.9.9-sources.jar"), "sources");
+        Files.writeString(h.resolve("camel-launcher-zzz-sources.jar"), "sources");
+        Files.writeString(h.resolve("camel-launcher-9.9.9-javadoc.jar"), "javadoc");
+        Files.writeString(h.resolve("camel-launcher-zzz-javadoc.jar"), "javadoc");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD");
+        Map<String, String> env = new HashMap<>();
+        env.put("LC_ALL", "C");
+        env.put("JAVACMD", java.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "hawtio");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains(h.resolve("camel-launcher-9.9.9.jar").toString()), r.stdout());
+        assertFalse(r.stdout().contains("-sources.jar"), r.stdout());
+        assertFalse(r.stdout().contains("-javadoc.jar"), r.stdout());
+    }
+
+    @Test
     void acceptsJava17ViaJavacmd(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD");

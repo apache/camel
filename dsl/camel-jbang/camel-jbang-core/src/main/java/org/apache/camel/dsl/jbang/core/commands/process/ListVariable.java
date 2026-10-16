@@ -69,57 +69,51 @@ public class ListVariable extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
 
-                        JsonObject jv = (JsonObject) root.get("variables");
-                        if (jv != null) {
-                            JsonArray repositories = jv.getCollection("repositories");
-                            if (repositories != null) {
-                                for (Object r : repositories) {
-                                    JsonObject repo = (JsonObject) r;
-                                    String id = repo.getString("id");
-                                    JsonArray arr = repo.getCollection("variables");
-                                    if (arr != null) {
-                                        for (int i = 0; i < arr.size(); i++) {
-                                            row = row.copy();
-                                            JsonObject jo = (JsonObject) arr.get(i);
-                                            row.id = id;
-                                            row.key = jo.getString("key");
-                                            row.type = jo.getString("type");
-                                            row.value = jo.get("value");
-                                            rows.add(row);
-                                        }
-                                    }
-                                }
+            JsonObject jv = (JsonObject) root.get("variables");
+            if (jv != null) {
+                JsonArray repositories = jv.getCollection("repositories");
+                if (repositories != null) {
+                    for (Object r : repositories) {
+                        JsonObject repo = (JsonObject) r;
+                        String id = repo.getString("id");
+                        JsonArray arr = repo.getCollection("variables");
+                        if (arr != null) {
+                            for (int i = 0; i < arr.size(); i++) {
+                                row = row.copy();
+                                JsonObject jo = (JsonObject) arr.get(i);
+                                row.id = id;
+                                row.key = jo.getString("key");
+                                row.type = jo.getString("type");
+                                row.value = jo.get("value");
+                                rows.add(row);
                             }
                         }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("repo", r.id);
                     jo.put("type", r.type);

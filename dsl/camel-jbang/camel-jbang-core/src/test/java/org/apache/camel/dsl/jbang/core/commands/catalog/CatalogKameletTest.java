@@ -72,6 +72,18 @@ class CatalogKameletTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void shouldSortAKameletWithoutDescriptionFirst() {
+        CatalogKamelet cmd = command();
+        cmd.sort = "description";
+
+        List<KameletModel> rows = sampleRows();
+        rows.add(model("no-description-sink", "sink", null, null));
+        rows.sort(cmd::sortRow);
+
+        assertEquals(List.of("no-description-sink", "timer-source", "kafka-source", "Aws-S3-sink"), names(rows));
+    }
+
+    @Test
     void shouldReverseOrderWhenSortKeyHasLeadingMinus() {
         CatalogKamelet cmd = command();
         cmd.sort = "-name";

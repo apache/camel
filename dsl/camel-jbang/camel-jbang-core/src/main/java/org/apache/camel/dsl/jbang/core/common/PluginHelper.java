@@ -132,29 +132,7 @@ public final class PluginHelper {
             // Ignore errors in embedded plugin loading
         }
 
-        // allow to download plugins from 3rd party maven repositories by --repos argument
-        String repos = null;
-        try {
-            for (String a : args) {
-                if (a.startsWith("--repos=")) {
-                    repos = a.substring(8).trim();
-                } else if (a.startsWith("--repo=")) {
-                    repos = a.substring(7).trim();
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-
-        if (repos == null) {
-            // fallback to load user configuration
-            Properties configProperties = new Properties();
-            CommandLineHelper.loadProperties(configProperties::putAll);
-            repos = configProperties.getProperty("repos");
-            if (repos == null) {
-                repos = configProperties.getProperty("repo");
-            }
-        }
+        String repos = resolveRepos(args);
 
         // If we found embedded plugins, and we're looking for a specific target,
         // check if it was satisfied by embedded plugins
@@ -178,6 +156,61 @@ public final class PluginHelper {
 
             plugin.getValue().customize(commandLine, main);
         }
+    }
+
+    /**
+     * Installs a known Camel plugin the first time its command is used, and adds its commands to the command line, so
+     * the command runs right away.
+     *
+     * @param  commandLine the command line, after {@link #addPlugins(CommandLine, CamelJBangMain, String...)}
+     * @param  main        the current Camel CLI main
+     * @param  args        the raw CLI args; only args[0] is inspected
+     * @return             true if a plugin was installed
+     */
+    public static boolean installOnFirstUse(CommandLine commandLine, CamelJBangMain main, String... args) {
+        String target = args != null && args.length > 0 ? args[0] : null;
+        if (target == null || target.startsWith("-") || commandLine.getSubcommands().containsKey(target)) {
+            return false;
+        }
+        Optional<PluginType> pluginType = PluginType.findByName(target);
+        if (pluginType.isEmpty()) {
+            return false;
+        }
+        enable(pluginType.get());
+        main.getOut().printDiagnostic("Installed plugin: " + pluginType.get().getName());
+        for (Map.Entry<String, Plugin> plugin : getActivePlugins(main, resolveRepos(args), target).entrySet()) {
+            if (!commandLine.getSubcommands().containsKey(plugin.getKey())) {
+                plugin.getValue().customize(commandLine, main);
+            }
+        }
+        return true;
+    }
+
+    // allow to download plugins from 3rd party maven repositories by --repos argument, or the user configuration
+    private static String resolveRepos(String... args) {
+        String repos = null;
+        try {
+            for (String a : args) {
+                if (a.startsWith("--repos=")) {
+                    repos = a.substring(8).trim();
+                } else if (a.startsWith("--repo=")) {
+                    repos = a.substring(7).trim();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        if (repos == null) {
+            // fallback to load user configuration
+            Properties configProperties = new Properties();
+            CommandLineHelper.loadProperties(configProperties::putAll);
+            repos = configProperties.getProperty("repos");
+            if (repos == null) {
+                repos = configProperties.getProperty("repo");
+            }
+        }
+        return repos;
     }
 
     /**
@@ -236,8 +269,8 @@ public final class PluginHelper {
                         configDirty = true;
                     }
                 } else {
-                    main.getOut().println("camel-jbang-plugin-" + command + " not found. Exit");
-                    main.quit(1);
+                    main.getOut().printErr("camel-jbang-plugin-" + command + " not found. Exit");
+                    main.quit(CliExitCode.FAILURE);
                 }
             }
             if (configDirty) {
@@ -489,9 +522,9 @@ public final class PluginHelper {
         }
         boolean accept = VersionHelper.isGE(source, first);
         if (!accept) {
-            main.getOut().println("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
-                                  + " because plugin has first version: " + firstVersion + ". Exit");
-            main.quit(1);
+            main.getOut().printErr("Cannot load plugin camel-jbang-plugin-" + command + " with version: " + version
+                                   + " because plugin has first version: " + firstVersion + ". Exit");
+            main.quit(CliExitCode.FAILURE);
         }
     }
 
@@ -526,7 +559,7 @@ public final class PluginHelper {
                 instance.ifPresent(plugin -> plugin.setClassLoader(ddlcl));
             } else {
                 String gav = String.join(":", group, "camel-jbang-plugin-" + command, version);
-                printer.printf(String.format("ERROR: Failed to read file %s in dependency %s%n", path, gav));
+                printer.printErr(String.format("Failed to read file %s in dependency %s", path, gav));
             }
         } catch (IOException e) {
             throw new RuntimeCamelException(String.format("Failed to read the file %s.", path), e);

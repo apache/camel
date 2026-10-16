@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -108,6 +109,35 @@ class ListEndpointTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void testLimitKeepsTheFirstRowsAfterSorting() throws Exception {
+        JsonObject root = buildEndpointStatus("myApp",
+                endpoint("timer:tick", "in", "1"),
+                endpoint("kafka:orders", "out", "30"),
+                endpoint("log:info", "out", "5"));
+        writeStatusFile(TEST_PID, root);
+
+        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        command.sort = "-total";
+        command.limit = 1;
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            String output = printer.getOutput();
+            // the busiest endpoint, not the first one found
+            assertTrue(output.contains("kafka:orders"), "Should keep the endpoint with the most exchanges: " + output);
+            assertFalse(output.contains("timer:tick"), "Should not keep the first endpoint found: " + output);
+        }
+    }
+
+    @Test
     void testJsonOutput() throws Exception {
         JsonObject root = buildEndpointStatus("myApp",
                 endpoint("timer:tick", "in", "1"));
@@ -130,6 +160,71 @@ class ListEndpointTest extends ProcessCommandTestSupport {
             assertTrue(output.startsWith("["), "JSON output should be an array");
             assertTrue(output.contains("timer:tick"));
         }
+    }
+
+    @Test
+    void testScopeTellsRemoteInternalAndLocalApart() throws Exception {
+        JsonObject root = buildEndpointStatus("myApp",
+                endpoint("kafka:orders", "in", "3", true),
+                endpoint("log:payment", "out", "3", false),
+                endpoint("exec:wc", "out", "1", false));
+        writeStatusFile(TEST_PID, root);
+
+        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            String output = printer.getOutput();
+            assertTrue(output.contains("SCOPE"), output);
+            assertFalse(output.contains("REMOTE"), output);
+            assertTrue(lineOf(output, "kafka:orders").contains("remote"), output);
+            assertTrue(lineOf(output, "log:payment").contains("internal"), output);
+            assertTrue(lineOf(output, "exec:wc").contains("local"), output);
+        }
+    }
+
+    @Test
+    void testJsonOutputKeepsRemoteAndAddsInternal() throws Exception {
+        JsonObject root = buildEndpointStatus("myApp",
+                endpoint("log:payment", "out", "3", false),
+                endpoint("exec:wc", "out", "1", false));
+        writeStatusFile(TEST_PID, root);
+
+        ListEndpoint command = new ListEndpoint(new CamelJBangMain().withPrinter(printer));
+        command.sort = "pid";
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+            JsonArray rows = (JsonArray) Jsoner.deserialize(printer.getOutput().trim());
+            JsonObject log = (JsonObject) rows.get(0);
+            JsonObject exec = (JsonObject) rows.get(1);
+            assertEquals("log:payment", log.getString("uri"));
+            assertEquals(false, log.get("remote"));
+            assertEquals(true, log.get("internal"));
+            assertEquals(false, exec.get("internal"));
+        }
+    }
+
+    private static String lineOf(String output, String uri) {
+        return output.lines().filter(l -> l.contains(uri)).findFirst().orElse("");
+    }
+
+    private static JsonObject endpoint(String uri, String direction, String hits, boolean remote) {
+        JsonObject ep = endpoint(uri, direction, hits);
+        ep.put("remote", remote);
+        return ep;
     }
 
     private static JsonObject buildEndpointStatus(String contextName, JsonObject... endpoints) {

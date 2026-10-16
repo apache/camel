@@ -107,6 +107,23 @@ class AiPanelToolGroupsTest {
     }
 
     @Test
+    void monitoringToolRequiresItsOwnRuntimeCapability() {
+        for (String mode : List.of(AiPanel.TOOL_MODE_CORE, AiPanel.TOOL_MODE_FULL)) {
+            FakeApp app = new FakeApp();
+            app.features = AppFeatures.fromStatus(new JsonObject(Map.of("devConsoles", List.of("semantic-audit"))));
+            AiPanel panel = panel(mode, app);
+            panel.refreshToolGroupsForTesting();
+            assertFalse(toolNames(panel).contains("tui_get_monitoring"));
+            app.pid = "200";
+            app.features = AppFeatures.fromStatus(new JsonObject(Map.of("devConsoles", List.of("semantic-monitoring"))));
+            app.reloads++;
+            panel.refreshToolGroupsForTesting();
+            assertTrue(toolNames(panel).contains("tui_get_monitoring"));
+            assertFalse(toolNames(panel).contains("tui_get_audit"));
+        }
+    }
+
+    @Test
     void theSqlGroupAddsTheSqlTools() {
         AiPanel panel = panel(AiPanel.TOOL_MODE_CORE, new FakeApp());
         assertFalse(toolNames(panel).contains("tui_execute_sql"), "no group before the first question");

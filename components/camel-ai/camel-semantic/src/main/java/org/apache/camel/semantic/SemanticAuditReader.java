@@ -20,25 +20,32 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /** Read-only browsing, independent of the destination's append capability. */
-public interface SemanticAuditReader {
+public interface SemanticAuditReader extends SemanticAuditCapabilities {
+    /**
+     * Query fields implemented by this reader. New filters are opt-in for existing backends. Include {@code until} only
+     * when the exclusive upper time bound is supported; {@code since} is part of the original query contract.
+     * Advertised typed result filters must implement the predicates documented by {@link SemanticAuditQuery}.
+     */
+    default Set<String> getSupportedFilters() {
+        return Set.of("category", "expert", "routeId", "breadcrumbId");
+    }
+
     SemanticAuditPage query(SemanticAuditQuery query) throws Exception;
 
     Optional<SemanticAuditRecord> get(String eventId) throws Exception;
 
     /**
-     * Resolve up to 100 linked event IDs. Missing records are absent; remote backends should override with one query.
+     * Retrieve records by ID. Missing records are absent; retrieval failures must propagate to the caller. Callers
+     * bound requests and responses. Backends may split retrieval into storage-specific batches, but must not silently
+     * truncate requested IDs. This contract has no evidence-specific limit.
      */
     default Map<String, SemanticAuditRecord> getAll(List<String> eventIds) throws Exception {
-        if (eventIds.size() > 100) {
-            throw new IllegalArgumentException("Too many audit evidence references");
-        }
         Map<String, SemanticAuditRecord> records = new LinkedHashMap<>();
-        for (String id : eventIds) {
-            if (!records.containsKey(id)) {
-                get(id).ifPresent(record -> records.put(id, record));
-            }
+        for (String id : eventIds.stream().distinct().toList()) {
+            get(id).ifPresent(record -> records.put(id, record));
         }
         return Map.copyOf(records);
     }

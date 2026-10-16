@@ -105,11 +105,13 @@ public final class StubMcpClient implements McpClient {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void subscribeToResource(String uri) {
         throw new UnsupportedOperationException("Not needed for filter tests");
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void unsubscribeFromResource(String uri) {
         throw new UnsupportedOperationException("Not needed for filter tests");
     }
@@ -130,6 +132,7 @@ public final class StubMcpClient implements McpClient {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void setRoots(List<McpRoot> roots) {
         // no-op
     }

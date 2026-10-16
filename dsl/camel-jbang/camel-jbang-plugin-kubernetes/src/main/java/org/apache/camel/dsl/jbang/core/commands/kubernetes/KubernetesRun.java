@@ -36,7 +36,8 @@ import java.util.concurrent.TimeUnit;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
-import io.fabric8.kubernetes.client.vertx.VertxHttpClientFactory;
+import io.fabric8.kubernetes.client.KubernetesClientTimeoutException;
+import io.fabric8.kubernetes.client.vertx5.Vertx5HttpClientFactory;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.file.FileSystemOptions;
@@ -50,6 +51,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.MountTrait;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -627,8 +629,13 @@ public class KubernetesRun extends KubernetesBaseCommand {
             }
             printer().println("Run: " + kubectlCmd);
         }
-        var pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
-                .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
+        Pod pod;
+        try {
+            pod = client(Pod.class).withLabel(BaseTrait.KUBERNETES_LABEL_NAME, projectName)
+                    .waitUntilCondition(it -> "Running".equals(getPodPhase(it)), 10, TimeUnit.MINUTES);
+        } catch (KubernetesClientTimeoutException e) {
+            throw CliException.timeout("The pod of " + projectName + " is not running after 10 minutes");
+        }
         printer().println(String.format("Pod '%s' in phase %s", pod.getMetadata().getName(), getPodPhase(pod)));
     }
 
@@ -637,12 +644,21 @@ public class KubernetesRun extends KubernetesBaseCommand {
             KubernetesDelete deleteCommand = new KubernetesDelete(getMain());
             deleteCommand.name = projectName;
             deleteCommand.namespace = namespace;
-            try (var client = createKubernetesClientForShutdownHook()) {
+            // the client does not close a Vertx instance that is passed to it
+            var vertx = createVertxForShutdownHook();
+            try (var client = createKubernetesClientForShutdownHook(vertx)) {
                 KubernetesHelper.setKubernetesClient(client);
                 deleteCommand.doCall();
                 CommandHelper.cleanExportDir(workingDir, false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            } finally {
+                // close() returns before Vert.x is closed, and its daemon threads would not keep the JVM running
+                try {
+                    vertx.close().await(5, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    printer().printErr("Failed to close Vert.x - %s".formatted(e.getMessage()));
+                }
             }
         });
         devModeShutdownTask.setName(ThreadHelper.resolveThreadName(null, "CamelShutdownInterceptor"));
@@ -651,17 +667,19 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
     // KubernetesClientVertx can no longer be used in ShutdownHook
     // https://issues.apache.org/jira/browse/CAMEL-21621
-    private KubernetesClient createKubernetesClientForShutdownHook() {
+    private Vertx createVertxForShutdownHook() {
         System.setProperty("vertx.disableDnsResolver", "true");
-        var vertx = Vertx.vertx((new VertxOptions())
+        return Vertx.vertx((new VertxOptions())
                 .setFileSystemOptions((new FileSystemOptions())
                         .setFileCachingEnabled(false)
                         .setClassPathResolvingEnabled(false))
                 .setUseDaemonThread(true));
-        var client = new KubernetesClientBuilder()
-                .withHttpClientFactory(new VertxHttpClientFactory(vertx))
+    }
+
+    private KubernetesClient createKubernetesClientForShutdownHook(Vertx vertx) {
+        return new KubernetesClientBuilder()
+                .withHttpClientFactory(new Vertx5HttpClientFactory(vertx))
                 .build();
-        return client;
     }
 
     // build the project locally to generate the artifacts in the target directory, but don't deploy it.
@@ -708,22 +726,20 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         pb.command(args.toArray(String[]::new));
 
-        if (quiet || !verbose) {
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+        Path log = mavenOutput(pb);
+        try {
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            int exit = p.waitFor();
+            if (exit != 0) {
+                printer().printErr("Build failed!");
+                printMavenOutput(log);
+                return exit;
+            }
+            return 0;
+        } finally {
+            removeMavenOutput(log);
         }
-
-        Process p = pb.start();
-        // wait for that process to exit as we run in foreground
-        int exit = p.waitFor();
-        if (exit != 0) {
-            printer().printErr("Build failed!");
-            return exit;
-        }
-
-        return 0;
     }
 
     private Integer deployProject(String workingDir, boolean reload) throws Exception {
@@ -790,26 +806,66 @@ public class KubernetesRun extends KubernetesBaseCommand {
 
         pb.command(args.toArray(String[]::new));
 
-        if (quiet || !verbose) {
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
-        } else {
-            pb.inheritIO(); // run in foreground (with IO so logs are visible)
-        }
-
-        Process p = pb.start();
-        // wait for that process to exit as we run in foreground
-        int exit = p.waitFor();
-        if (exit != 0) {
-            String msg = "Deployment to %s failed!";
-            if (!verbose) {
-                msg += " (use --verbose for more details)";
+        Path log = mavenOutput(pb);
+        try {
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            int exit = p.waitFor();
+            if (exit != 0) {
+                printer().printErr("Deployment to %s failed!".formatted(clusterType));
+                printMavenOutput(log);
+                return exit;
             }
-            printer().printErr(msg.formatted(clusterType));
-            return exit;
+            return 0;
+        } finally {
+            removeMavenOutput(log);
         }
+    }
 
-        return 0;
+    /**
+     * Shows the output of Maven with --verbose, and keeps it in a log file otherwise, for when it fails.
+     *
+     * @return the log file, or <tt>null</tt> with --verbose
+     */
+    private Path mavenOutput(ProcessBuilder pb) throws IOException {
+        if (!quiet && verbose) {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            return null;
+        }
+        Path log = Files.createTempFile("camel-kubernetes-", ".log");
+        log.toFile().deleteOnExit();
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(log.toFile());
+        return log;
+    }
+
+    /**
+     * Removes the log of Maven once it has ended: camel kubernetes run --dev builds and deploys again on every change.
+     */
+    private static void removeMavenOutput(Path log) {
+        if (log != null) {
+            try {
+                Files.deleteIfExists(log);
+            } catch (IOException e) {
+                // removed when the JVM exits
+            }
+        }
+    }
+
+    /**
+     * Prints the end of the output of Maven when it failed (it was hidden, as no --verbose was given).
+     */
+    private void printMavenOutput(Path log) {
+        if (log == null) {
+            return;
+        }
+        try {
+            List<String> lines = Files.readAllLines(log);
+            printer().printDiagnostic(String.join(System.lineSeparator(),
+                    lines.subList(Math.max(0, lines.size() - 30), lines.size())));
+        } catch (IOException e) {
+            // no output to show
+        }
     }
 
     void detectCluster() {

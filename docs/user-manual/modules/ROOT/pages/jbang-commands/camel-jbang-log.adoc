@@ -19,8 +19,9 @@ camel log [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--find` | Find and highlight matching text (ignore case). |  | String
-| `--follow` | Keep following and outputting new log lines (press enter to exit). | true | boolean
+| `--follow` | Keep following and outputting new log lines (press enter to exit). Without an interactive terminal the default is false, unless --duration is given. | true | boolean
 | `--grep` | Filter logs to only output lines matching text (ignore case). |  | String
 | `--logging-color` | Use colored logging | true | boolean
 | `--prefix` | Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off. | auto | String

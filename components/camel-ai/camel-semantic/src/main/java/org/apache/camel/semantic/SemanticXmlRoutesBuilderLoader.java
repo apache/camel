@@ -145,10 +145,7 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
     }
 
     private void declarations(Element semantic, SemanticEvaluationsBuilder evaluations) {
-        attributes(semantic, Set.of("expert", "state"));
-        if (semantic.hasAttribute("expert")) {
-            evaluations.expert(semantic.getAttribute("expert"));
-        }
+        attributes(semantic, Set.of("state"));
         if (semantic.hasAttribute("state")) {
             evaluations.state(semantic.getAttribute("state"));
         }
@@ -168,8 +165,9 @@ public class SemanticXmlRoutesBuilderLoader extends RoutesBuilderLoaderSupport {
             try {
                 evaluation(element, evaluations);
             } catch (IllegalArgumentException e) {
-                String expert = element.hasAttribute("expert") ? element.getAttribute("expert")
-                        : evaluations.getExpert() != null ? evaluations.getExpert() : "default/automatic";
+                String expert = element.hasAttribute("expert")
+                        ? element.getAttribute("expert")
+                        : "not provided";
                 throw new IllegalArgumentException(
                         "Invalid semantic evaluation '" + element.getAttribute("name") + "': " + e.getMessage()
                                                    + " (expert '" + expert + "')",

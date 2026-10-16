@@ -16,8 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +27,8 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -96,16 +96,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
-
-        long pid = pids.get(0);
+        long pid = findOne(name).pid();
 
         if (start && "dual".equalsIgnoreCase(mode)) {
             return doDualRecording(pid);
@@ -122,10 +113,10 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             command = "status";
         }
 
-        JsonObject jo = sendAction(pid, command, start ? duration : 0);
+        JsonObject jo = jfrAction(pid, command, start ? duration : 0);
         if (jo == null) {
-            printer().println("Response from running Camel with PID " + pid + " not received within timeout");
-            return 1;
+            printer().printErr("Response from running Camel with PID " + pid + " not received within timeout");
+            return CliExitCode.TIMEOUT;
         }
 
         return handleResponse(pid, jo);
@@ -137,61 +128,75 @@ public class CamelMemoryLeak extends ActionBaseCommand {
 
         // run 1
         printer().printf("Recording 1 of 2 (%ds)...%n", dur1);
-        JsonObject startResp = sendAction(pid, "start", dur1);
-        if (startResp == null || !"recording".equals(startResp.getString("status"))) {
-            printer().println("Error: Failed to start recording 1");
-            return 1;
+        JsonObject startResp = jfrAction(pid, "start", dur1);
+        if (startResp == null) {
+            return noReply(pid, "Failed to start recording 1");
+        } else if (!"recording".equals(startResp.getString("status"))) {
+            printer().printErr("Failed to start recording 1");
+            return CliExitCode.FAILURE;
         }
 
         waitForRecordingComplete(pid, dur1);
 
-        JsonObject stopResp = sendAction(pid, "stop", 0);
-        if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
-            printer().println("Error: Recording 1 did not complete");
-            return 1;
+        JsonObject stopResp = jfrAction(pid, "stop", 0);
+        if (stopResp == null) {
+            return noReply(pid, "Recording 1 did not complete");
+        } else if (!"completed".equals(stopResp.getString("status"))) {
+            printer().printErr("Recording 1 did not complete");
+            return CliExitCode.FAILURE;
         }
 
         // run 2
         printer().printf("Recording 2 of 2 (%ds)...%n", dur2);
-        startResp = sendAction(pid, "start", dur2);
-        if (startResp == null || !"recording".equals(startResp.getString("status"))) {
-            printer().println("Error: Failed to start recording 2");
-            return 1;
+        startResp = jfrAction(pid, "start", dur2);
+        if (startResp == null) {
+            return noReply(pid, "Failed to start recording 2");
+        } else if (!"recording".equals(startResp.getString("status"))) {
+            printer().printErr("Failed to start recording 2");
+            return CliExitCode.FAILURE;
         }
 
         waitForRecordingComplete(pid, dur2);
 
-        stopResp = sendAction(pid, "stop", 0);
-        if (stopResp == null || !"completed".equals(stopResp.getString("status"))) {
-            printer().println("Error: Recording 2 did not complete");
-            return 1;
+        stopResp = jfrAction(pid, "stop", 0);
+        if (stopResp == null) {
+            return noReply(pid, "Recording 2 did not complete");
+        } else if (!"completed".equals(stopResp.getString("status"))) {
+            printer().printErr("Recording 2 did not complete");
+            return CliExitCode.FAILURE;
         }
 
         // compare
-        JsonObject cmpResp = sendAction(pid, "compare", 0);
+        JsonObject cmpResp = jfrAction(pid, "compare", 0);
         if (cmpResp == null) {
-            printer().println("Error: Failed to get comparison data");
-            return 1;
+            return noReply(pid, "Failed to get comparison data");
         }
 
         return handleResponse(pid, cmpResp);
+    }
+
+    // the integration did not reply to a step in time
+    private int noReply(long pid, String message) {
+        printer().printErr(message + ": no response from running Camel with PID " + pid + " within timeout");
+        return CliExitCode.TIMEOUT;
     }
 
     private void waitForRecordingComplete(long pid, int dur) throws Exception {
         long deadline = System.currentTimeMillis() + (dur + 30) * 1000L;
         while (System.currentTimeMillis() < deadline) {
             Thread.sleep(3000);
-            JsonObject status = sendAction(pid, "status", 0);
+            JsonObject status = jfrAction(pid, "status", 0);
             if (status != null && !"recording".equals(status.getString("status"))) {
                 break;
             }
         }
     }
 
-    private JsonObject sendAction(long pid, String command, int dur) {
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
+    /**
+     * Sends a command of the JFR memory leak action, and returns the answer, or <tt>null</tt> when there is none in
+     * time.
+     */
+    private JsonObject jfrAction(long pid, String command, int dur) throws IOException {
         JsonObject root = new JsonObject();
         root.put("action", "jfr-memory-leak");
         root.put("command", command);
@@ -206,25 +211,16 @@ public class CamelMemoryLeak extends ActionBaseCommand {
             root.put("minSize", String.valueOf(minBytes));
         }
 
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-
         int timeout = "start".equals(command) ? 15000 : 30000;
-        JsonObject jo = getJsonObject(outputFile, timeout);
-        PathUtils.deleteFile(outputFile);
-        return jo;
+        return ActionClient.execute(pid, root, timeout).reply();
     }
 
     private int handleResponse(long pid, JsonObject jo) {
         String responseStatus = jo.getString("status");
 
         if ("error".equals(responseStatus)) {
-            printer().println("Error: " + jo.getString("error"));
-            return 1;
+            printer().printErr(jo.getString("error"));
+            return CliExitCode.FAILURE;
         }
 
         if ("recording".equals(responseStatus)) {
@@ -275,7 +271,7 @@ public class CamelMemoryLeak extends ActionBaseCommand {
                 printTable(rows);
             } else {
                 printer().println("No old object samples captured.");
-                printer().println("Tip: Try a longer recording duration or ensure GC occurs during recording.");
+                printer().printTip("Try a longer recording duration or ensure GC occurs during recording.");
             }
             return 0;
         }

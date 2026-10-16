@@ -24,7 +24,8 @@ import picocli.CommandLine;
                      description = "Enable Camel processor", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd enable-processor myId" })
+                             "  camel cmd enable-processor --id=myId",
+                             "  camel cmd enable-processor myApp --id=myId" })
 public class CamelProcessorEnableAction extends CamelProcessorAction {
 
     public CamelProcessorEnableAction(CamelJBangMain main) {

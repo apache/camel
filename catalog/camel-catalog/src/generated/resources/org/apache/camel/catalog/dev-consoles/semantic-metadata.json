@@ -10,7 +10,7 @@
     "javaType": "org.apache.camel.semantic.SemanticMetadataConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-semantic",
-    "version": "4.23.0-SNAPSHOT"
+    "version": "4.24.0-SNAPSHOT"
   },
   "options": {
     "expert": {
@@ -25,7 +25,7 @@
       "deprecated": false,
       "autowired": false,
       "secret": false,
-      "description": "Expert registry name; omitted uses the language's default selection"
+      "description": "Expert registry name, required for operation inspection"
     },
     "overview": {
       "index": 1,
@@ -79,7 +79,7 @@
           "properties": {
             "reference": {
               "type": "string",
-              "description": "Registry reference or adapter class"
+              "description": "Registry reference"
             },
             "name": {
               "type": "string",
@@ -168,18 +168,6 @@
           }
         },
         "description": "Published definitions, when overview is requested"
-      },
-      "defaultExpert": {
-        "type": "string",
-        "description": "Resolved default expert"
-      },
-      "defaultError": {
-        "type": "string",
-        "description": "Default selection error, if any"
-      },
-      "defaultErrorCode": {
-        "type": "string",
-        "description": "Default selection error code: no_unique_expert or default_expert_error"
       }
     }
   }

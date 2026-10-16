@@ -383,7 +383,7 @@ public class LocalCliConnector extends ServiceSupport
             } else if ("cli-debug".equals(action)) {
                 doActionCliDebug(root);
             } else if ("semantic-metadata".equals(action) || "semantic-evaluate".equals(action)
-                    || "semantic-audit".equals(action)) {
+                    || "semantic-audit".equals(action) || "semantic-monitoring".equals(action)) {
                 doActionSemanticTask(root);
             } else if ("spring-boot-configuration".equals(action)) {
                 doActionSpringBootConfigurationTask(root);
@@ -408,6 +408,10 @@ public class LocalCliConnector extends ServiceSupport
 
     private void reportError(String message) {
         actionOutput.error(message);
+    }
+
+    private void reportNotFound(String message) {
+        actionOutput.notFound(message);
     }
 
     private void doActionReadmeTask(JsonObject root) throws Exception {
@@ -917,21 +921,28 @@ public class LocalCliConnector extends ServiceSupport
         String action = root.getString("action");
         DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
                 .resolveById(action);
+        if ("semantic-audit".equals(action)
+                && (root.containsKey("auditAction") || root.containsKey("namespace") || root.containsKey("correlationId"))) {
+            return new JsonObject(Map.of("error", "audit_filter_removed"));
+        }
+        if ("semantic-monitoring".equals(action) && (root.containsKey("history") || root.containsKey("since"))) {
+            return new JsonObject(Map.of("error", "monitoring_query_invalid"));
+        }
         Map<String, Object> options = new HashMap<>();
-        List<String> keys = "semantic-metadata".equals(action)
-                ? List.of("expert", "overview")
+        List<String> keys = "semantic-monitoring".equals(action) ? List.of("source")
+                : "semantic-metadata".equals(action)
+                        ? List.of("expert", "overview")
                 : "semantic-audit".equals(action)
-                        ? List.of("eventId", "cursor", "limit", "since", "category", "expert", "routeId", "namespace",
-                                "correlationId", "breadcrumbId")
+                        ? List.of("eventId", "eventIds", "caseEventId", "maxRecords", "includeInput", "cursor", "limit",
+                                "since", "category", "expert", "routeId",
+                                "executingRouteId", "exchangeId", "breadcrumbId", "until", "definition", "operation",
+                                "resultType", "resultValue", "resultLabel", "scoreMin", "scoreMax")
                 : List.of("evaluation", "body", "headers", "variables", "expert", "operation", "input", "parameters",
                         "timeout");
         for (String key : keys) {
             if (root.containsKey(key)) {
                 options.put(key, root.get(key));
             }
-        }
-        if ("semantic-audit".equals(action) && root.containsKey("auditAction")) {
-            options.put("action", root.get("auditAction"));
         }
         return dc == null ? new JsonObject() : (JsonObject) dc.call(DevConsole.MediaType.JSON, options);
     }
@@ -1401,7 +1412,7 @@ public class LocalCliConnector extends ServiceSupport
             }
         }
         if (ids.isEmpty()) {
-            reportError("No route matching: " + root.getString("id"));
+            reportNotFound("No route matching: " + root.getString("id"));
         }
     }
 
@@ -1454,7 +1465,11 @@ public class LocalCliConnector extends ServiceSupport
             } catch (Exception e) {
                 LOG.warn("Error {} processor: {} due to: {}. This exception is ignored.", command, mp.getProcessorId(),
                         e.getMessage(), e);
+                reportError("Error " + command + " processor: " + mp.getProcessorId() + " due to: " + e.getMessage());
             }
+        }
+        if (mps.isEmpty()) {
+            reportNotFound("No processor matching: " + root.getString("id"));
         }
     }
 
@@ -1690,12 +1705,17 @@ public class LocalCliConnector extends ServiceSupport
             }
             // Discover the optional console immediately, then retry misses without scanning on every status poll.
             // Keep retrying so consoles registered after startup are still advertised.
-            if (dcr.getConsole("semantic-metadata").isEmpty()) {
+            List<String> semanticConsoles = List.of("semantic-metadata", "semantic-audit", "semantic-monitoring");
+            if (semanticConsoles.stream().anyMatch(id -> dcr.getConsole(id).isEmpty())) {
                 long previous = semanticConsoleLookup.get();
                 long now = System.nanoTime();
                 if (now - previous >= SEMANTIC_CONSOLE_RETRY_NANOS
                         && semanticConsoleLookup.compareAndSet(previous, now)) {
-                    dcr.resolveById("semantic-metadata");
+                    for (String id : semanticConsoles) {
+                        if (dcr.getConsole(id).isEmpty()) {
+                            dcr.resolveById(id);
+                        }
+                    }
                 }
             }
             JsonArray consoleIds = new JsonArray();

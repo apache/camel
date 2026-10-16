@@ -25,10 +25,14 @@ import java.util.List;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -43,7 +47,7 @@ import picocli.CommandLine;
                      sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd message --body='Hello World'" })
+                             "  camel transform message --body='Hello World' --language=simple --template='Bye ${body}'" })
 public class TransformMessageAction extends ActionWatchCommand {
 
     @CommandLine.Option(names = { "--camel-version" },
@@ -108,8 +112,8 @@ public class TransformMessageAction extends ActionWatchCommand {
                         description = "Show exception and stacktrace for failed transformation")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be transformed")
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for message to be transformed, in millis or as a duration such as 30s")
     long timeout = 20000;
 
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
@@ -136,11 +140,11 @@ public class TransformMessageAction extends ActionWatchCommand {
             // either source or language/template is required
             if (source == null && template == null && language == null && component == null) {
                 printer().printErr("Either source or template and one of language/component must be configured");
-                return -1;
+                return CliExitCode.USAGE;
             }
             if (source == null && (template == null || language == null && component == null)) {
                 printer().printErr("Both template and one of language/component must be configured");
-                return -1;
+                return CliExitCode.USAGE;
             }
         }
 
@@ -151,14 +155,14 @@ public class TransformMessageAction extends ActionWatchCommand {
             Path f = Path.of(s);
             if (!Files.exists(f)) {
                 printer().printErr("Source file does not exist: " + f);
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
         }
         if (template != null && template.startsWith("file:")) {
             Path f = Path.of(template.substring(5));
             if (!Files.exists(f)) {
                 printer().printErr("Template file does not exist: " + f);
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
         }
 
@@ -169,7 +173,7 @@ public class TransformMessageAction extends ActionWatchCommand {
             // requires camel 4.3 onwards
             if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
                 printer().printErr("This requires Camel version 4.3 or newer");
-                return -1;
+                return CliExitCode.USAGE;
             }
             exit = run.runTransformMessage(camelVersion, mavenResolver);
             this.pid = run.spawnPid;
@@ -178,9 +182,6 @@ public class TransformMessageAction extends ActionWatchCommand {
             }
         } finally {
             if (pid > 0) {
-                // cleanup output file
-                Path outputFile = getOutputFile(Long.toString(pid));
-                PathUtils.deleteFile(outputFile);
                 // stop running camel as we are done
                 Path parent = CommandLineHelper.getCamelDir();
                 Path pidFile = parent.resolve(Long.toString(pid));
@@ -195,10 +196,6 @@ public class TransformMessageAction extends ActionWatchCommand {
 
     @Override
     protected Integer doWatchCall() throws Exception {
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
         JsonObject root = new JsonObject();
         root.put("action", "transform");
         if (source != null) {
@@ -222,8 +219,7 @@ public class TransformMessageAction extends ActionWatchCommand {
             for (String h : headers) {
                 JsonObject jo = new JsonObject();
                 if (!h.contains("=")) {
-                    printer().printErr("Header must be in key=value format, was: " + h);
-                    return 1;
+                    throw CliException.usage("Header must be in key=value format, was: " + h);
                 }
                 jo.put("key", StringHelper.before(h, "="));
                 jo.put("value", StringHelper.after(h, "="));
@@ -236,8 +232,7 @@ public class TransformMessageAction extends ActionWatchCommand {
             for (String h : options) {
                 JsonObject jo = new JsonObject();
                 if (!h.contains("=")) {
-                    printer().printErr("Option must be in key=value format, was: " + h);
-                    return 1;
+                    throw CliException.usage("Option must be in key=value format, was: " + h);
                 }
                 jo.put("key", StringHelper.before(h, "="));
                 jo.put("value", StringHelper.after(h, "="));
@@ -245,58 +240,52 @@ public class TransformMessageAction extends ActionWatchCommand {
             }
             root.put("options", arr);
         }
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            PathUtils.writeTextSafely(root.toJson(), f);
-        } catch (Exception e) {
-            // ignore
+        // the Camel this command started
+        ActionResult result = ActionClient.execute(pid, root, timeout);
+        JsonObject jo = result.reply();
+        if (jo == null) {
+            throw new CliException(result.exitCode(), "Transform timeout: " + result.error());
         }
-
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            printStatusLine(jo);
-            String exchangeId = jo.getString("exchangeId");
-            JsonObject message = jo.getMap("message");
-            JsonObject cause = jo.getMap("exception");
-            if (message != null || cause != null) {
-                if (output != null) {
-                    Path target = Path.of(output);
-                    String json = jo.toJson();
-                    if (pretty) {
-                        json = Jsoner.prettyPrint(json, 2);
-                    }
-                    Files.writeString(target, json);
+        printStatusLine(jo);
+        String exchangeId = jo.getString("exchangeId");
+        JsonObject message = jo.getMap("message");
+        JsonObject cause = jo.getMap("exception");
+        if (message != null || cause != null) {
+            if (output != null) {
+                Path target = Path.of(output);
+                String json = jo.toJson();
+                if (pretty) {
+                    json = Jsoner.prettyPrint(json, 2);
                 }
-                if (!showExchangeProperties && message != null) {
-                    message.remove("exchangeProperties");
+                Files.writeString(target, json);
+            }
+            if (!showExchangeProperties && message != null) {
+                message.remove("exchangeProperties");
+            }
+            if (!showHeaders && message != null) {
+                message.remove("headers");
+            }
+            if (!showBody && message != null) {
+                message.remove("body");
+            }
+            if (!showException && cause != null) {
+                cause = null;
+            }
+            if (output == null) {
+                if (watch) {
+                    clearScreen();
                 }
-                if (!showHeaders && message != null) {
-                    message.remove("headers");
-                }
-                if (!showBody && message != null) {
-                    message.remove("body");
-                }
-                if (!showException && cause != null) {
-                    cause = null;
-                }
-                if (output == null) {
-                    if (watch) {
-                        clearScreen();
-                    }
-                    tableHelper = new MessageTableHelper();
-                    tableHelper.setPretty(pretty);
-                    tableHelper.setLoggingColor(loggingColor);
-                    tableHelper.setShowExchangeProperties(showExchangeProperties);
-                    String table = tableHelper.getDataAsTable(exchangeId, "InOut", null, null, null, message, cause);
-                    printer().println(table);
-                }
+                tableHelper = new MessageTableHelper();
+                tableHelper.setPretty(pretty);
+                tableHelper.setLoggingColor(loggingColor);
+                tableHelper.setShowExchangeProperties(showExchangeProperties);
+                String table = tableHelper.getDataAsTable(exchangeId, "InOut", null, null, null, message, cause);
+                printer().println(table);
             }
         }
 
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
-
-        return 0;
+        String status = jo.getString("status");
+        return "failed".equals(status) || "error".equals(status) ? CliExitCode.FAILURE : CliExitCode.OK;
     }
 
     private void printStatusLine(JsonObject jo) {
@@ -347,23 +336,4 @@ public class TransformMessageAction extends ActionWatchCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        StopWatch watch = new StopWatch();
-        while (watch.taken() < timeout) {
-            try {
-                // give time for response to be ready
-                Thread.sleep(20);
-
-                if (Files.exists(outputFile)) {
-                    String text = Files.readString(outputFile);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return null;
-    }
 }

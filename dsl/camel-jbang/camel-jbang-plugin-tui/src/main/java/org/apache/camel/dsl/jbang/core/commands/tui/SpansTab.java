@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.layout.Constraint;
@@ -49,6 +50,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -905,11 +907,13 @@ class SpansTab extends AbstractTab {
         return span.name();
     }
 
-    private static boolean isRemoteScheme(String scheme) {
+    // whether the component of a span talks to a remote system, as the catalog says (a scheme it does not know counts as
+    // remote); remembered per scheme, as the trace summaries are built on every refresh
+    private static final Map<String, Boolean> REMOTE_SCHEMES = new ConcurrentHashMap<>();
+
+    static boolean isRemoteScheme(String scheme) {
         return scheme != null
-                && !"direct".equals(scheme) && !"seda".equals(scheme)
-                && !"mock".equals(scheme) && !"log".equals(scheme)
-                && !"bean".equals(scheme) && !"class".equals(scheme);
+                && REMOTE_SCHEMES.computeIfAbsent(scheme, s -> ProjectOverview.isRemote(s, ProjectOverviewAssist.catalog()));
     }
 
     private static int compareNullable(String a, String b) {

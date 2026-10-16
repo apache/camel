@@ -156,7 +156,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(
                         Jsoner.serialize(
@@ -190,8 +190,9 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         CamelTableColumns.since().with(r -> r.since),
                         CamelTableColumns.lastText("DESCRIPTION", descWidth).with(this::shortDescription))));
             }
-        } else if (filterName != null) {
-            // suggest similar names when filter returns no results
+        }
+        if (rows.isEmpty() && filterName != null) {
+            // suggest similar names when filter returns no results (not part of the output, which can be JSON)
             List<String> allNames = collectRows().stream().map(r -> r.name).collect(Collectors.toList());
             List<String> suggestions = new ArrayList<>(suggestNames(filterName));
             for (String similar : SuggestSimilarHelper.didYouMean(allNames, filterName)) {
@@ -200,11 +201,12 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                 }
             }
             if (!suggestions.isEmpty()) {
-                printer().println("No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
+                printer().printDiagnostic(
+                        "No results for filter: " + filterName + ". Did you mean? " + String.join(", ", suggestions));
             } else {
-                printer().println("No results for filter: " + filterName);
+                printer().printDiagnostic("No results for filter: " + filterName);
             }
-            printer().println("Tip: use 'camel doc " + filterName + "' for detailed documentation.");
+            printer().printTip("use 'camel doc " + filterName + "' for detailed documentation.");
         }
 
         return 0;
@@ -222,12 +224,17 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                 return o1.name.compareToIgnoreCase(o2.name) * negate;
             case "level":
             case "support-level":
-                return o1.level.compareToIgnoreCase(o2.level) * negate;
+                return compareIgnoreCase(o1.level, o2.level) * negate;
             case "description":
-                return o1.description.compareToIgnoreCase(o2.description) * negate;
+                return compareIgnoreCase(o1.description, o2.description) * negate;
             default:
                 return 0;
         }
+    }
+
+    // a missing value sorts first
+    static int compareIgnoreCase(String s1, String s2) {
+        return (s1 != null ? s1 : "").compareToIgnoreCase(s2 != null ? s2 : "");
     }
 
     String shortGav(Row r) {

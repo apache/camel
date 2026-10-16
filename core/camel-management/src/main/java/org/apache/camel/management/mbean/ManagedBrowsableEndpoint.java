@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.api.management.ManagedResource;
@@ -45,6 +43,14 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         return getEndpoint();
     }
 
+    /**
+     * The exchanges of the endpoint as one snapshot, as the list can change between size() and get(index) (such as a
+     * browse limit removing the oldest exchange).
+     */
+    private Exchange[] snapshot() {
+        return getEndpoint().getExchanges().toArray(new Exchange[0]);
+    }
+
     @Override
     public int getBrowseLimit() {
         return getEndpoint().getBrowseLimit();
@@ -57,12 +63,12 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
 
     @Override
     public String browseExchange(Integer index) {
-        List<Exchange> exchanges = getEndpoint().getExchanges();
+        Exchange[] exchanges = snapshot();
 
-        if (index >= exchanges.size()) {
+        if (index >= exchanges.length) {
             return null;
         }
-        Exchange exchange = exchanges.get(index);
+        Exchange exchange = exchanges[index];
         if (exchange == null) {
             return null;
         }
@@ -72,12 +78,12 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
 
     @Override
     public String browseMessageBody(Integer index) {
-        List<Exchange> exchanges = getEndpoint().getExchanges();
+        Exchange[] exchanges = snapshot();
 
-        if (index >= exchanges.size()) {
+        if (index >= exchanges.length) {
             return null;
         }
-        Exchange exchange = exchanges.get(index);
+        Exchange exchange = exchanges[index];
         if (exchange == null) {
             return null;
         }
@@ -88,12 +94,12 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
 
     @Override
     public String browseMessageAsXml(Integer index, Boolean includeBody) {
-        List<Exchange> exchanges = getEndpoint().getExchanges();
+        Exchange[] exchanges = snapshot();
 
-        if (index >= exchanges.size()) {
+        if (index >= exchanges.length) {
             return null;
         }
-        Exchange exchange = exchanges.get(index);
+        Exchange exchange = exchanges[index];
         if (exchange == null) {
             return null;
         }
@@ -120,15 +126,15 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
                     "From index cannot be larger than to index, was: " + fromIndex + " > " + toIndex);
         }
 
-        List<Exchange> exchanges = getEndpoint().getExchanges();
-        if (exchanges.isEmpty()) {
+        Exchange[] exchanges = snapshot();
+        if (exchanges.length == 0) {
             return null;
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append("<messages>");
-        for (int i = fromIndex; i < exchanges.size() && i <= toIndex; i++) {
-            Exchange exchange = exchanges.get(i);
+        for (int i = fromIndex; i < exchanges.length && i <= toIndex; i++) {
+            Exchange exchange = exchanges[i];
             Message msg = exchange.getMessage();
             String xml = MessageHelper.dumpAsXml(msg, includeBody);
             sb.append("\n").append(xml);
@@ -139,12 +145,12 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
 
     @Override
     public String browseMessageAsJSon(Integer index, Boolean includeBody) {
-        List<Exchange> exchanges = getEndpoint().getExchanges();
+        Exchange[] exchanges = snapshot();
 
-        if (index >= exchanges.size()) {
+        if (index >= exchanges.length) {
             return null;
         }
-        Exchange exchange = exchanges.get(index);
+        Exchange exchange = exchanges[index];
         if (exchange == null) {
             return null;
         }
@@ -171,14 +177,14 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
                     "From index cannot be larger than to index, was: " + fromIndex + " > " + toIndex);
         }
 
-        List<Exchange> exchanges = getEndpoint().getExchanges();
-        if (exchanges.isEmpty()) {
+        Exchange[] exchanges = snapshot();
+        if (exchanges.length == 0) {
             return null;
         }
 
         JsonArray arr = new JsonArray();
-        for (int i = fromIndex; i < exchanges.size() && i <= toIndex; i++) {
-            Exchange exchange = exchanges.get(i);
+        for (int i = fromIndex; i < exchanges.length && i <= toIndex; i++) {
+            Exchange exchange = exchanges[i];
             Message msg = exchange.getMessage();
             JsonObject jo = MessageHelper.dumpAsJSonObject(msg, false, false, includeBody, true, true, true, 128 * 1024);
             arr.add(jo);

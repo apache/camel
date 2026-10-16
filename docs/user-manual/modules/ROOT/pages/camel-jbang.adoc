@@ -145,6 +145,9 @@ camel run hello.yaml --dev
 | xref:camel-jbang-configuration.adoc[Configuration]
 | CLI configuration options, config commands, configuration precedence, troubleshooting.
 
+| xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]
+| The exit codes of the commands, stdout and stderr, and stack traces, for scripts, CI and AI agents.
+
 | xref:jbang-commands/camel-jbang-commands.adoc[Command Reference]
 | Complete reference for all CLI commands and their options.
 |===

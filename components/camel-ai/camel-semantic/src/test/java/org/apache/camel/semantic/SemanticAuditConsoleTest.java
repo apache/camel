@@ -55,8 +55,9 @@ class SemanticAuditConsoleTest {
     @Test
     void consoleFiltersSinceInclusivelyAndPagesThroughRetainedRecords() throws Exception {
         try (var fixture = new Fixture()) {
-            var filters = Map.of("category", "decision", "action", "block", "expert", "security", "routeId", "route1",
-                    "namespace", "tenant1", "correlationId", "request1", "breadcrumbId", "breadcrumb1");
+            var filters = Map.of("category", "evaluation", "expert", "security", "routeId", "route1",
+                    "executingRouteId", "nested-route", "exchangeId", "exchange1", "breadcrumbId", "breadcrumb1", "definition",
+                    "screenPrompt", "operation", "injection");
             fixture.store.append(record("old", Map.of("timestamp", "2026-10-09T11:00:00Z")));
             fixture.store.append(record("matching", filters));
             fixture.store.append(record("newest", Map.of("timestamp", "2026-10-09T13:00:00Z")));
@@ -77,10 +78,58 @@ class SemanticAuditConsoleTest {
     }
 
     @Test
-    void consoleUsesBulkEvidenceLookupAndPreservesMissingRecords() throws Exception {
+    void filtersTypedResultsWithinAnExclusiveUpperBound() throws Exception {
+        try (var fixture = new Fixture()) {
+            var fields = Map.of("definition", "routeRequest", "operation", "choice",
+                    "semantics", Map.of("resultType", "CHOICE"), "result", Map.of("value", "none_of_these"));
+            fixture.store.append(record("matching", fields));
+            fixture.store.append(record("different", Map.of("semantics", Map.of("resultType", "CHOICE"),
+                    "result", Map.of("value", "billing"))));
+            var after = new HashMap<String, Object>(fields);
+            after.put("timestamp", "2026-10-09T13:00:00Z");
+            fixture.store.append(record("upper-bound", after));
+            assertThat(rows(fixture.call(Map.of("definition", "routeRequest", "operation", "choice",
+                    "resultType", "CHOICE", "resultValue", "none_of_these", "since", TIME,
+                    "until", "2026-10-09T13:00:00Z")))).extracting(row -> row.get("eventId")).containsExactly("matching");
+            assertThat(fixture.call(Map.of("since", TIME, "until", TIME))).containsEntry("error", "audit_query_failed");
+            assertThat(fixture.call(Map.of("resultValue", "none_of_these"))).containsEntry("error", "audit_query_failed");
+        }
+    }
+
+    @Test
+    void olderReaderRejectsUnsupportedFiltersWithoutRunningItsQuery() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            context.getRegistry().bind("legacy", new SemanticAuditReader() {
+                public SemanticAuditPage query(SemanticAuditQuery query) {
+                    throw new AssertionError("unsupported queries must not reach the reader");
+                }
+
+                public Optional<SemanticAuditRecord> get(String id) {
+                    return Optional.empty();
+                }
+            });
+            SemanticAuditService.get(context).configure("test",
+                    new SemanticAuditConfiguration(false, Map.of(), List.of("memory"), "legacy", 10, 10));
+            context.start();
+            var console = new SemanticAuditConsole();
+            console.setCamelContext(context);
+            try {
+                for (var options : List.of(Map.of("definition", "routeRequest"), Map.of("operation", "choice"),
+                        Map.of("until", TIME), Map.of("resultType", "CHOICE", "resultValue", "none_of_these"))) {
+                    var result = (JsonObject) console.call(DevConsole.MediaType.JSON, new HashMap<>(options));
+                    assertThat(result).containsEntry("error", "audit_filter_unsupported").doesNotContainKey("records");
+                }
+            } finally {
+                console.stop();
+            }
+        }
+    }
+
+    @Test
+    void exportsLegacyRecordWithoutRestoringEvidenceWorkflow() throws Exception {
         try (var context = new DefaultCamelContext()) {
             var evaluation = record("evaluation", Map.of("category", "evaluation"));
-            var decision = record("decision", Map.of("evidence", List.of("evaluation", "missing")));
+            var decision = record("decision", Map.of("category", "decision", "evidence", List.of("evaluation", "missing")));
             AtomicInteger gets = new AtomicInteger();
             AtomicInteger bulkGets = new AtomicInteger();
             context.getRegistry().bind("remote", new SemanticAuditReader() {
@@ -106,17 +155,17 @@ class SemanticAuditConsoleTest {
             var console = new SemanticAuditConsole();
             console.setCamelContext(context);
             var result = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("eventId", "decision"));
-            assertThat(result.get("evidence"))
-                    .isEqualTo(List.of(evaluation.toMap(), Map.of("eventId", "missing", "unavailable", true)));
+            assertThat(result).containsEntry("record", decision.toMap()).containsEntry("legacy", true)
+                    .doesNotContainKey("evidence");
             assertThat(gets).hasValue(1);
-            assertThat(bulkGets).hasValue(1);
+            assertThat(bulkGets).hasValue(0);
             console.stop();
         }
     }
 
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void listsOmitCapturedInputWithoutChangingStoredDetailsOrEvidence(boolean redacted) throws Exception {
+    void listsOmitInputAndLegacyDecisionsButExplicitDetailsRemainReadable(boolean redacted) throws Exception {
         try (var fixture = new Fixture()) {
             Object input = redacted ? Map.of("prompt", "captured input") : "captured input";
             Map<String, Object> fields = new HashMap<>(Map.of("category", "evaluation", "input", input));
@@ -124,16 +173,16 @@ class SemanticAuditConsoleTest {
                 fields.put("inputRedacted", true);
             }
             var evaluation = record("evaluation", fields);
-            var decision = record("decision", Map.of("evidence", List.of("evaluation")));
+            var decision = record("decision", Map.of("category", "decision", "evidence", List.of("evaluation")));
             fixture.store.append(evaluation);
             fixture.store.append(decision);
 
             var page = fixture.call(Map.of());
-            assertThat(rows(page)).hasSize(2).allSatisfy(row -> assertThat(row)
+            assertThat(rows(page)).hasSize(1).allSatisfy(row -> assertThat(row)
                     .doesNotContainKeys("input", "inputRedacted"));
             assertThat(page.toJson()).doesNotContain("captured input");
             assertThat(fixture.call(Map.of("eventId", "evaluation"))).containsEntry("record", evaluation.toMap());
-            assertThat(fixture.call(Map.of("eventId", "decision"))).containsEntry("evidence", List.of(evaluation.toMap()));
+            assertThat(fixture.call(Map.of("eventId", "decision"))).containsEntry("record", decision.toMap());
             assertThat(fixture.store.get("evaluation").orElseThrow().toMap()).containsEntry("input", input);
         }
     }
@@ -141,8 +190,7 @@ class SemanticAuditConsoleTest {
     @Test
     void consoleReportsAnUnavailableSelectedEvent() throws Exception {
         try (var fixture = new Fixture()) {
-            assertThat(fixture.call(Map.of("eventId", "absent"))).containsEntry("record", null).containsEntry("evidence",
-                    List.of());
+            assertThat(fixture.call(Map.of("eventId", "absent"))).containsEntry("record", null);
         }
     }
 
@@ -158,9 +206,9 @@ class SemanticAuditConsoleTest {
     @Test
     void consoleSanitizesInvalidQueriesAndBackendFailures() throws Exception {
         try (var fixture = new Fixture()) {
-            for (String field : List.of("since", "cursor")) {
+            for (String field : List.of("since", "until", "cursor")) {
                 var result = fixture.call(Map.of(field, "private-invalid-value"));
-                assertThat(result).containsEntry("error", "audit_query_failed");
+                assertThat(result).containsEntry("error", "audit_query_failed").containsEntry("viewVersion", 2);
                 assertThat(result.toJson()).doesNotContain("private-invalid-value");
             }
         }
@@ -181,7 +229,7 @@ class SemanticAuditConsoleTest {
             console.setCamelContext(context);
             for (Map<String, Object> options : List.of(Map.<String, Object> of(), Map.<String, Object> of("eventId", "a"))) {
                 var result = (JsonObject) console.call(DevConsole.MediaType.JSON, options);
-                assertThat(result).containsEntry("error", "audit_query_failed");
+                assertThat(result).containsEntry("error", "audit_query_failed").containsEntry("viewVersion", 2);
                 assertThat(result.toJson()).doesNotContain("secret", "credentials");
             }
             console.stop();
@@ -225,7 +273,7 @@ class SemanticAuditConsoleTest {
 
     private static SemanticAuditRecord record(String id, Map<String, ?> fields) {
         Map<String, Object> data
-                = new HashMap<>(Map.of("schemaVersion", 1, "eventId", id, "category", "decision", "timestamp", TIME));
+                = new HashMap<>(Map.of("schemaVersion", 1, "eventId", id, "category", "evaluation", "timestamp", TIME));
         data.putAll(fields);
         return SemanticAuditRecord.fromMap(data);
     }

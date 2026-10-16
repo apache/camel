@@ -806,6 +806,25 @@ public interface SmppsComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to check that the certificate of the SMSC matches the host
+         * Camel connects to, when SSL is used. When disabled, any certificate
+         * trusted by the JVM is accepted, whatever host it was issued for.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default SmppsComponentBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+    
         /**
          * The password for connecting to SMSC server.
          * 
@@ -915,6 +934,7 @@ public interface SmppsComponentBuilderFactory {
             case "httpProxyPort": getOrCreateConfiguration((SmppComponent) component).setHttpProxyPort((java.lang.Integer) value); return true;
             case "httpProxyUsername": getOrCreateConfiguration((SmppComponent) component).setHttpProxyUsername((java.lang.String) value); return true;
             case "proxyHeaders": getOrCreateConfiguration((SmppComponent) component).setProxyHeaders((java.util.Map) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((SmppComponent) component).setHostnameVerification((boolean) value); return true;
             case "password": getOrCreateConfiguration((SmppComponent) component).setPassword((java.lang.String) value); return true;
             case "systemId": getOrCreateConfiguration((SmppComponent) component).setSystemId((java.lang.String) value); return true;
             case "usingSSL": getOrCreateConfiguration((SmppComponent) component).setUsingSSL((boolean) value); return true;

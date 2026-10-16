@@ -16,19 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CliRunner;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import picocli.CommandLine;
 
 final class AiCliCommandExecutor {
 
@@ -110,7 +107,7 @@ final class AiCliCommandExecutor {
         int exitCode = 1;
         boolean interrupted = false;
         try {
-            synchronized (CamelJBangMain.class) {
+            synchronized (CliRunner.LOCK) {
                 exitCode = invoker.execute(command.request.argv(), new CapturePrinter(output));
             }
             interrupted = command.cancelled.get() || Thread.currentThread().isInterrupted();
@@ -132,33 +129,23 @@ final class AiCliCommandExecutor {
         }
     }
 
-    private static int invoke(List<String> argv, Printer printer) throws Exception {
-        CommandLine commandLine = CamelJBangMain.getCommandLine();
-        CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
-        Printer originalPrinter = main.getOut();
-        PrintWriter originalErr = commandLine.getErr();
-        StringWriter errCapture = new StringWriter();
-        PrintWriter errWriter = new PrintWriter(errCapture);
+    private static int invoke(List<String> argv, Printer printer) {
         String originalProcess = EnvironmentHelper.getSelectedProcess();
         String selectedProcess = selectedProcess(argv);
         try {
-            main.setOut(printer);
-            // picocli's default execution strategy catches exceptions thrown by a sub-command and
-            // prints them to CommandLine.getErr() instead of rethrowing, so without redirecting it
-            // here that output would go to the real System.err and never reach the TUI.
-            commandLine.setErr(errWriter);
             if (selectedProcess != null) {
                 EnvironmentHelper.setSelectedProcess(selectedProcess);
             }
-            return commandLine.execute(argv.toArray(String[]::new));
-        } finally {
-            main.setOut(originalPrinter);
-            commandLine.setErr(originalErr);
-            errWriter.flush();
-            String errOutput = errCapture.toString();
-            if (!errOutput.isBlank()) {
-                printer.print(errOutput);
+            // the output of the command, then its errors, warnings and tips
+            CliRunner.CliResult result = CliRunner.run(argv);
+            if (!result.stdout().isEmpty()) {
+                printer.println(result.stdout());
             }
+            if (!result.stderr().isEmpty()) {
+                printer.println(result.stderr());
+            }
+            return result.exitCode();
+        } finally {
             if (selectedProcess != null) {
                 EnvironmentHelper.setSelectedProcess(originalProcess);
             }

@@ -26,6 +26,7 @@ import com.box.sdk.BoxAPIRequest;
 import com.box.sdk.BoxAPIResponse;
 import com.box.sdk.BoxEvent;
 import com.box.sdk.BoxJSONResponse;
+import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import org.apache.camel.component.box.api.BoxEventLogsManager;
@@ -33,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * The Box connection answers the enterprise events request from memory, as the service does: at most {@link #MAX_CHUNK}
@@ -49,6 +51,7 @@ class BoxEventLogsManagerPagingTest {
     private final List<String> positions = new ArrayList<>();
     private int events;
     private boolean samePositionAgain;
+    private boolean noNextPosition;
     private BoxEventLogsManager manager;
 
     @BeforeEach
@@ -72,6 +75,12 @@ class BoxEventLogsManagerPagingTest {
         if (positions.size() > MAX_REQUESTS) {
             throw new IllegalStateException("The manager sent more than " + MAX_REQUESTS + " requests");
         }
+        if ("null".equals(position)) {
+            // not a position this service hands out: answer with an empty chunk, the test looks at the request
+            return new BoxJSONResponse(
+                    200, request.getMethod(), request.getUrl().toString(), Map.of(),
+                    new JsonObject().add("chunk_size", 0).add("next_stream_position", "0").add("entries", new JsonArray()));
+        }
         int from = position == null ? 0 : Integer.parseInt(position);
         int to = Math.min(from + limit, events);
         JsonArray entries = new JsonArray();
@@ -79,10 +88,13 @@ class BoxEventLogsManagerPagingTest {
             entries.add(new JsonObject().add("type", "event").add("event_id", "event-" + i)
                     .add("event_type", "LOGIN").add("created_at", "2026-01-01T00:00:00-00:00"));
         }
-        JsonObject body = new JsonObject()
-                .add("chunk_size", entries.size())
-                .add("next_stream_position", samePositionAgain ? String.valueOf(from) : String.valueOf(to))
-                .add("entries", entries);
+        JsonObject body = new JsonObject().add("chunk_size", entries.size());
+        if (noNextPosition) {
+            body.add("next_stream_position", Json.NULL);
+        } else {
+            body.add("next_stream_position", samePositionAgain ? String.valueOf(from) : String.valueOf(to));
+        }
+        body.add("entries", entries);
         return new BoxJSONResponse(200, request.getMethod(), request.getUrl().toString(), Map.of(), body);
     }
 
@@ -136,5 +148,18 @@ class BoxEventLogsManagerPagingTest {
 
         assertEquals(expectedIds(0, 2), ids(result), "the two events once, although both responses contain them");
         assertEquals(2, positions.size());
+    }
+
+    @Test
+    void stopsWhenTheServiceReturnsNoNextPosition() {
+        // the SDK turns a JSON null position into the text "null", which must not be sent as the next position
+        events = 2;
+        noNextPosition = true;
+
+        List<BoxEvent> result = manager.getEnterpriseEvents(null, AFTER, BEFORE);
+
+        assertEquals(expectedIds(0, 2), ids(result));
+        assertFalse(positions.contains("null"), "a request was sent at the position \"null\"");
+        assertEquals(1, positions.size(), "requests sent");
     }
 }

@@ -106,7 +106,7 @@ class SemanticXmlLoaderTest {
                 </routes>
                 """.formatted(declarations ? """
                 <semantic>
-                  <evaluation name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation>
+                  <evaluation expert="fixture" name="urgent" type="boolean"><instructions>Urgent?</instructions></evaluation>
                 </semantic>
                 """ : "");
         try (var context = new DefaultCamelContext()) {

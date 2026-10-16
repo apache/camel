@@ -8,7 +8,7 @@
     "javaType": "org.apache.camel.AggregationStrategy",
     "groupId": "org.apache.camel",
     "artifactId": "camel-api",
-    "version": "4.23.0-SNAPSHOT",
+    "version": "4.24.0-SNAPSHOT",
     "methods": { "aggregate": { "index": 0, "signatures": [ "Exchange aggregate(Exchange oldExchange, Exchange newExchange)", "Exchange aggregate(Exchange oldExchange, Exchange newExchange, Exchange inputExchange)" ], "javaType": "org.apache.camel.Exchange", "important": true, "description": "The aggregated exchange: when oldExchange is null (first message) return newExchange, else merge newExchange into oldExchange and return oldExchange. A failed newExchange has its error in newExchange.getException().", "examples": [ "if (oldExchange == null) { return newExchange; } oldExchange.getMessage().setBody(oldExchange.getMessage().getBody(String.class) + newExchange.getMessage().getBody(String.class)); return oldExchange;" ] } }
   }
 }

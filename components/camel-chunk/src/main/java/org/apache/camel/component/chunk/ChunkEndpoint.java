@@ -22,15 +22,21 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.x5.template.Chunk;
+import com.x5.template.Snippet;
 import com.x5.template.Theme;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
@@ -117,21 +123,88 @@ public class ChunkEndpoint extends ResourceEndpoint {
                 exchange.getIn().removeHeader(CHUNK_TEMPLATE);
             }
 
-            // Execute Chunk
+            // Execute Chunk. Bind the message data as literal values so that the Chunk engine renders
+            // the body, headers and variables as-is and does not re-parse (and expand) any template tags
+            // that may be present inside the data itself. Only the route author's template is parsed as
+            // template code.
             Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
+            HeadersMapFactory factory = getCamelContext().getCamelContextExtension().getHeadersMapFactory();
+            variableMap.replaceAll((key, value) -> toLiteralValue(value, factory));
             StringWriter writer = new StringWriter();
             newChunk.putAll(variableMap);
             newChunk.render(writer);
             writer.flush();
 
             // Fill out message
-            ExchangeHelper.setInOutBodyPatternAware(exchange, newChunk.toString());
+            ExchangeHelper.setInOutBodyPatternAware(exchange, writer.toString());
         } else {
             exchange.getIn().removeHeader(ChunkConstants.CHUNK_RESOURCE_URI);
             ChunkEndpoint newEndpoint
                     = getCamelContext().getEndpoint(CHUNK_ENDPOINT_URI_PREFIX + newResourceUri, ChunkEndpoint.class);
             newEndpoint.onExchange(exchange);
         }
+    }
+
+    /**
+     * Neutralizes message data so the Chunk engine does not parse and expand template tags present inside the data
+     * itself when it is printed with a direct {@code {$tag}}. A String (or other {@link CharSequence}) value is wrapped
+     * as a literal Chunk snippet only when it actually contains Chunk tags (as reported by Chunk's own parser via
+     * {@link Snippet#isSimple()}); tag-free values are left as-is so Chunk's string filters (for example {@code slice},
+     * {@code get}, {@code join}) keep their existing behaviour. Nested {@link Map}, {@link Collection} and array values
+     * (message headers, variables, multi-value headers, unmarshalled JSON, ...) are copied and processed recursively,
+     * preserving a case-insensitive headers map. Other value types are left unchanged.
+     * <p/>
+     * This does not cover every case: Chunk re-parses any string it produces while rendering, so the output of a filter
+     * ({@code {$body|trim}}), a string property of a bean body ({@code {$body.name}}, {@code {$exception.message}}) and
+     * string items produced inside a {@code {% loop %}} are still parsed as template code. Untrusted data must not be
+     * passed through Chunk filters, bean properties or loops.
+     */
+    @SuppressWarnings("unchecked")
+    private static Object toLiteralValue(Object value, HeadersMapFactory factory) {
+        if (value instanceof String) {
+            return toLiteralString((String) value);
+        }
+        if (value instanceof CharSequence) {
+            // StringBuilder/StringBuffer and other CharSequences are otherwise stringified and re-parsed by Chunk
+            return toLiteralString(value.toString());
+        }
+        if (value instanceof Map) {
+            Map<?, ?> map = (Map<?, ?>) value;
+            Map<String, Object> copy = factory.isInstanceOf((Map<String, Object>) value)
+                    ? factory.newMap() : new LinkedHashMap<>();
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                copy.put(String.valueOf(entry.getKey()), toLiteralValue(entry.getValue(), factory));
+            }
+            return copy;
+        }
+        if (value instanceof Collection) {
+            Collection<?> collection = (Collection<?>) value;
+            List<Object> copy = new ArrayList<>(collection.size());
+            for (Object item : collection) {
+                copy.add(toLiteralValue(item, factory));
+            }
+            return copy;
+        }
+        if (value instanceof Object[]) {
+            Object[] array = (Object[]) value;
+            List<Object> copy = new ArrayList<>(array.length);
+            for (Object item : array) {
+                copy.add(toLiteralValue(item, factory));
+            }
+            return copy;
+        }
+        return value;
+    }
+
+    /**
+     * Wraps the given string as a literal Chunk snippet when it contains Chunk tags, otherwise returns it unchanged so
+     * tag-free data keeps its normal (filter-aware) behaviour.
+     */
+    private static Object toLiteralString(String str) {
+        if (!Snippet.getSnippet(str).isSimple()) {
+            return Snippet.makeLiteralSnippet(str);
+        }
+        return str;
     }
 
     /**

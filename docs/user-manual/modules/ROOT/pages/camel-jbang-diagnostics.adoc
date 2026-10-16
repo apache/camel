@@ -180,7 +180,8 @@ camel cmd route-structure myApp --filter=myRoute --brief
 camel cmd route-structure myApp --description
 ----
 
-Give a source file instead of a running integration to see the structure without running it.
+Give a source file instead of a running integration to see the structure without running it. A Java source file is read
+by the Java DSL parser, without compiling it; use `--compile` to compile it instead.
 `--brief` shortens each node, and `--description` shows the description of each node instead of its code.
 
 === Route dump

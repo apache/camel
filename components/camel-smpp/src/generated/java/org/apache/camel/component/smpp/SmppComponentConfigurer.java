@@ -49,6 +49,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "encoding": getOrCreateConfiguration(target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "enquirelinktimer":
         case "enquireLinkTimer": getOrCreateConfiguration(target).setEnquireLinkTimer(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": getOrCreateConfiguration(target).setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "httpproxyhost":
         case "httpProxyHost": getOrCreateConfiguration(target).setHttpProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "httpproxypassword":
@@ -138,6 +140,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "encoding": return java.lang.String.class;
         case "enquirelinktimer":
         case "enquireLinkTimer": return java.lang.Integer.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "httpproxyhost":
         case "httpProxyHost": return java.lang.String.class;
         case "httpproxypassword":
@@ -228,6 +232,8 @@ public class SmppComponentConfigurer extends PropertyConfigurerSupport implement
         case "encoding": return getOrCreateConfiguration(target).getEncoding();
         case "enquirelinktimer":
         case "enquireLinkTimer": return getOrCreateConfiguration(target).getEnquireLinkTimer();
+        case "hostnameverification":
+        case "hostnameVerification": return getOrCreateConfiguration(target).isHostnameVerification();
         case "httpproxyhost":
         case "httpProxyHost": return getOrCreateConfiguration(target).getHttpProxyHost();
         case "httpproxypassword":

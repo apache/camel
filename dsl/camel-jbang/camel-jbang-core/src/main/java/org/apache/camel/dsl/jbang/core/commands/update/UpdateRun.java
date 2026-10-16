@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -64,10 +66,10 @@ public class UpdateRun extends CamelCommand {
         try (Stream<Path> files = Files.list(Path.of("."))) {
             // Check if the current directory contains a Maven project (i.e., a pom.xml file)
             if (files.noneMatch(f -> f.getFileName().toString().equals("pom.xml"))) {
-                printer().println("No Maven Project found in the current directory, " +
-                                  "please execute camel upgrade run command in the directory containing the Maven project to update");
+                printer().printErr("No Maven Project found in the current directory, " +
+                                   "please execute camel upgrade run command in the directory containing the Maven project to update");
 
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
         }
 
@@ -90,12 +92,12 @@ public class UpdateRun extends CamelCommand {
             } catch (CamelUpdateException ex) {
                 printer().printErr(ex.getMessage());
 
-                return -1;
+                return CliExitCode.FAILURE;
             } catch (DownloadException e) {
                 printer().printErr(String.format("Cannot find Camel Upgrade Recipes %s:%s:%s",
                         "org.apache.camel.upgrade", update.getArtifactCoordinates(), updateMixin.version));
 
-                return -1;
+                return CliExitCode.FAILURE;
             }
         }
 
@@ -115,25 +117,25 @@ public class UpdateRun extends CamelCommand {
         Process p = pb.redirectErrorStream(true)
                 .start();
 
-        try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
-             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
-
-            String line;
-            while ((line = stdInput.readLine()) != null || (line = stdError.readLine()) != null) {
-                printer().println(line);
+        // print the output while the command runs, so the timeout applies to the command
+        Thread reader = new Thread(() -> {
+            try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                String line;
+                while ((line = stdInput.readLine()) != null) {
+                    printer().println(line);
+                }
+            } catch (IOException e) {
+                // the command was destroyed
             }
+        }, "camel-update-output");
+        reader.setDaemon(true);
+        reader.start();
 
-            if (!p.waitFor(updateMixin.upgradeTimeout, TimeUnit.SECONDS)) {
-                p.destroyForcibly();
-                printer().println("Update execution timed out");
-
-                return -1;
-            }
-
-            int exitCode = p.exitValue();
-
-            return exitCode;
-
+        if (!p.waitFor(updateMixin.upgradeTimeout, TimeUnit.SECONDS)) {
+            p.destroyForcibly();
+            throw CliException.timeout("Update did not finish within " + updateMixin.upgradeTimeout + " seconds");
         }
+        reader.join(TimeUnit.SECONDS.toMillis(5));
+        return p.exitValue();
     }
 }

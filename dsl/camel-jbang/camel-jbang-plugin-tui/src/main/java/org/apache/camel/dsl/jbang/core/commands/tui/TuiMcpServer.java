@@ -33,6 +33,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.dsl.jbang.core.commands.ai.RepeatedToolCalls;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -532,14 +533,28 @@ class TuiMcpServer {
 
         String text;
         boolean isError = false;
+        ToolDescriptor tool = toolName != null ? ToolRegistry.findTool(toolName) : null;
         try {
-            JsonObject repeat = toolName != null
-                    ? repeatedCalls.repeatOf(ToolRegistry.findTool(toolName), args) : null;
-            text = repeat != null ? repeat.toJson() : toolRegistry.execute(toolName, args);
-        } catch (IllegalArgumentException e) {
+            JsonObject repeat = repeatedCalls.repeatOf(tool, args);
+            if (repeat != null) {
+                text = repeat.toJson();
+            } else {
+                text = toolRegistry.execute(toolName, args);
+                // some TUI tools still answer a failure as "Error: ..." text; only record the answer when the call
+                // succeeded, so failed calls do not use the retry budget
+                if (!text.startsWith("Error:")) {
+                    repeatedCalls.recordSuccessfulAnswer(tool, args);
+                }
+            }
+        } catch (TuiToolRegistry.UnknownToolException e) {
             text = "Unknown tool: " + toolName;
             isError = true;
             log(LogLevel.ERROR, "Unknown tool: " + toolName);
+        } catch (ToolExecutionException e) {
+            // the error as the tool wrote it, which can be JSON (a failed tui_run_example has the log that tells why)
+            text = e.getMessage();
+            isError = true;
+            log(LogLevel.ERROR, "Tool error: " + toolName + " - " + e.getMessage());
         } catch (Exception e) {
             text = "Error: " + e.getMessage();
             isError = true;

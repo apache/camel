@@ -42,6 +42,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -134,6 +135,26 @@ class OllamaTabRenderTest {
         String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 180, 40);
         assertTrue(rendered.contains("cache hit 36%"), rendered);
         assertTrue(rendered.contains("working"), rendered);
+    }
+
+    @Test
+    void aRunnerWithoutSlotsShowsTheRequestsInsteadOfLiveState() {
+        // a model on MLX: Ollama serves it from its own runner, which has no slot state
+        localServerWithModel();
+        monitor.updateRunner(new RunnerInfo(36380, 52162, 0, 0, "qwen3.6:35b-mlx", "ollama"));
+        monitor.runnerHasNoSlots();
+        monitor.recordRequest("qwen3.6:35b-mlx", new LlmClient.TokenUsage(
+                5_900, 445, 6_345, 4_300, 1_900, 7_100, 10,
+                9_000), 0, "stop", 1, "why is the rate about 10 msg/m");
+
+        String rendered = TuiTestHelper.renderToString(new OllamaTab(ctx, monitor), 200, 40);
+        assertThat(rendered)
+                .contains("runner ollama :52162")
+                .contains("last request")
+                .contains("decode tok/s per request")
+                .doesNotContain("last 60s")
+                .contains("the ollama runner has no live state")
+                .doesNotContain("once the runner is found");
     }
 
     @Test

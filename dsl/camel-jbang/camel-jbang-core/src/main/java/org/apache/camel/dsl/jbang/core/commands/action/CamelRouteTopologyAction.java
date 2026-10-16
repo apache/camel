@@ -36,7 +36,10 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -115,6 +118,14 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
+    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
+                        description = "Whether to compile Java source files and load their routes. By default Java "
+                                      + "routes are read by the Java DSL parser, without compiling them")
+    boolean compile;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private long pid;
 
     public CamelRouteTopologyAction(CamelJBangMain main) {
@@ -125,42 +136,28 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         // only attempt to resolve a running integration when a single token is given (or none, defaulting to "*"):
         // multiple tokens can only be a set of source files
-        List<Long> pids = files.size() <= 1 ? findPids(files.isEmpty() ? "*" : files.get(0)) : List.of();
+        String nameOrPid = files.isEmpty() ? "*" : files.get(0);
+        List<CamelProcess> processes = files.size() <= 1 ? ProcessFinder.find(nameOrPid) : List.of();
 
-        if (pids.isEmpty()) {
+        if (processes.isEmpty()) {
             if (files.isEmpty()) {
-                printer().println("No running Camel integration found");
-                return 1;
+                throw CliException.notFound("No running Camel integration found");
             }
             return doCallSource(files);
         }
-        if (pids.size() > 1) {
-            printer().println("Name or pid " + files.get(0) + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
-
-        long pid = pids.get(0);
-        this.pid = pid;
-        Path outputFile = prepareAction(Long.toString(pid), "route-topology", root -> {
+        // more than one match is an error that says which integrations match
+        CamelProcess process = processes.size() > 1 ? ProcessFinder.requireOne(nameOrPid) : processes.get(0);
+        this.pid = process.pid();
+        JsonObject jo = executeAction(process, "route-topology", root -> {
             root.put("metric", String.valueOf(metric));
             root.put("external", String.valueOf(external));
             root.put("kamelets", String.valueOf(kamelets));
         });
-
-        JsonObject jo = getJsonObject(outputFile);
-        if (jo == null) {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
-        }
-
-        int exit = renderTopology(jo);
-        PathUtils.deleteFile(outputFile);
-        return exit;
+        return renderTopology(jo);
     }
 
     private int doCallSource(List<String> sourceFiles) throws Exception {
-        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-topology-source-", ignoreLoadingError);
+        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-topology-source-", ignoreLoadingError, compile);
         if (dump == null) {
             return 1;
         }
@@ -172,10 +169,9 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                 // DefaultDumpRoutesStrategy always writes route-topology.json once the source is loaded, even when
                 // there are no routes, so reaching this means the dump never completed within the timeout: either
                 // the source failed to load, or it took longer than the timeout allows.
-                printer().println("No routes found in: " + sourceFiles
-                                  + " (if this is unexpected, the source may have failed to fully load within the "
-                                  + "timeout; try --ignore-loading-error or check the logs)");
-                return 1;
+                throw CliException.failure("No routes found in: " + sourceFiles
+                                           + " (if this is unexpected, the source may have failed to fully load within"
+                                           + " the timeout; try --ignore-loading-error or check the logs)");
             }
 
             return renderTopology(jo);
@@ -193,6 +189,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
      */
     int renderTopology(JsonObject jo) throws Exception {
         if (jsonOutput) {
+            addUnreadSourceParts(jo);
             String dump = Jsoner.prettyPrint(jo.toJson(), 2);
             printer().println(dump);
         } else if (theme != null) {
@@ -368,5 +365,4 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
             cmd.files.add(arg);
         }
     }
-
 }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
@@ -29,7 +30,8 @@ import picocli.CommandLine;
                      description = "List all available plugins", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel plugin list" })
+                             "  camel plugin list",
+                             "  camel plugin list --json" })
 public class PluginList extends PluginGet {
 
     public PluginList(CamelJBangMain main) {
@@ -38,28 +40,35 @@ public class PluginList extends PluginGet {
 
     @Override
     public Integer doCall() throws Exception {
-        super.doCall();
+        List<Row> installed = installedRows();
+        if (!jsonOutput) {
+            if (!installed.isEmpty()) {
+                printer().println("Installed plugins:");
+                printer().println();
+            }
+            printRows(installed);
+        }
 
         JsonObject plugins = loadConfig().getMap("plugins");
 
-        List<Row> rows = new ArrayList<>();
+        List<Row> bundled = new ArrayList<>();
         for (PluginType camelPlugin : PluginType.values()) {
             if (plugins.get(camelPlugin.getName()) == null) {
                 String dependency = "org.apache.camel:camel-jbang-plugin-%s".formatted(camelPlugin.getCommand());
-                rows.add(new Row(
+                bundled.add(new Row(
                         camelPlugin.getName(), camelPlugin.getCommand(), dependency,
                         camelPlugin.getDescription(), camelPlugin.getRepos(), camelPlugin.getVendor()));
             }
         }
 
-        if (!rows.isEmpty()) {
+        if (!jsonOutput && !bundled.isEmpty()) {
             printer().println();
             printer().println("Bundled plugins:");
             printer().println();
-            printRows(rows);
+            printRows(bundled);
         }
 
-        rows.clear();
+        List<Row> known = new ArrayList<>();
         List<JsonObject> knownPlugins = PluginHelper.loadKnownPlugins();
         for (JsonObject kp : knownPlugins) {
             String kpName = kp.getString("name");
@@ -67,18 +76,25 @@ public class PluginList extends PluginGet {
                 String dep = kp.getString("groupId") != null && kp.getString("artifactId") != null
                         ? "%s:%s".formatted(kp.getString("groupId"), kp.getString("artifactId"))
                         : kp.getStringOrDefault("dependency", "");
-                rows.add(new Row(
+                known.add(new Row(
                         kpName, kp.getString("command"), dep,
                         kp.getString("description"), kp.getString("repos"),
                         kp.getStringOrDefault("vendor", "Community")));
             }
         }
 
-        if (!rows.isEmpty()) {
+        if (jsonOutput) {
+            // one document: the installed plugins, then the ones that can be installed
+            List<JsonObject> rows = new ArrayList<>();
+            installed.forEach(r -> rows.add(toJson(r, "installed")));
+            bundled.forEach(r -> rows.add(toJson(r, "available")));
+            known.forEach(r -> rows.add(toJson(r, "available")));
+            JsonOutput.printList(printer(), rows);
+        } else if (!known.isEmpty()) {
             printer().println();
             printer().println("Known 3rd party plugins:");
             printer().println();
-            printRows(rows);
+            printRows(known);
         }
 
         return 0;

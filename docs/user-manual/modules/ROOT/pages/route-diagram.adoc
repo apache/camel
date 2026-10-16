@@ -27,6 +27,11 @@ It also works with Java source files:
 camel cmd route-diagram MyRoute.java
 ----
 
+Java routes are read by the Java DSL parser, without compiling them, so the diagram is ready in milliseconds and the
+source does not need its dependencies. A step the parser cannot work out, such as a lambda or a processor, is shown as a
+placeholder, and the parts it could not read are listed. Use `--compile` to compile the source and load its routes
+instead. The same applies to `camel cmd route-topology` and `camel cmd route-structure`.
+
 And you can include multiple files:
 
 [source,bash]

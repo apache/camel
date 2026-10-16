@@ -51,6 +51,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "encoderMaxLineLength": getOrCreateConfiguration(target).setEncoderMaxLineLength(property(camelContext, int.class, value)); return true;
         case "encoding": getOrCreateConfiguration(target).setEncoding(property(camelContext, java.lang.String.class, value)); return true;
         case "filters": getOrCreateConfiguration(target).setFilters(property(camelContext, java.util.List.class, value)); return true;
+        case "hostnameverification":
+        case "hostnameVerification": getOrCreateConfiguration(target).setHostnameVerification(property(camelContext, boolean.class, value)); return true;
         case "lazysessioncreation":
         case "lazySessionCreation": getOrCreateConfiguration(target).setLazySessionCreation(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -108,6 +110,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "encoderMaxLineLength": return int.class;
         case "encoding": return java.lang.String.class;
         case "filters": return java.util.List.class;
+        case "hostnameverification":
+        case "hostnameVerification": return boolean.class;
         case "lazysessioncreation":
         case "lazySessionCreation": return boolean.class;
         case "lazystartproducer":
@@ -166,6 +170,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "encoderMaxLineLength": return getOrCreateConfiguration(target).getEncoderMaxLineLength();
         case "encoding": return getOrCreateConfiguration(target).getEncoding();
         case "filters": return getOrCreateConfiguration(target).getFilters();
+        case "hostnameverification":
+        case "hostnameVerification": return getOrCreateConfiguration(target).isHostnameVerification();
         case "lazysessioncreation":
         case "lazySessionCreation": return getOrCreateConfiguration(target).isLazySessionCreation();
         case "lazystartproducer":

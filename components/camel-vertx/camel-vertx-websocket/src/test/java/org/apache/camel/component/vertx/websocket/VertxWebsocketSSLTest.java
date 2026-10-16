@@ -19,6 +19,7 @@ package org.apache.camel.component.vertx.websocket;
 import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
@@ -237,6 +238,7 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
 
         context.start();
         Vertx vertx = Vertx.vertx();
+        HttpClient client = null;
         try {
             // The JDK does not indicate a server name for localhost, so make the client do it
             HttpClientOptions clientOptions = new HttpClientOptions().setForceSni(true);
@@ -244,7 +246,8 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
 
             // A request that is not a WebSocket upgrade is rejected, which can only happen once the TLS handshake
             // has succeeded with the key material of the SSLContextParameters on both sides
-            int statusCode = vertx.createHttpClient(clientOptions)
+            client = vertx.createHttpClient(clientOptions);
+            int statusCode = client
                     .request(HttpMethod.GET, port.getPort(), "localhost", "/echo")
                     .compose(HttpClientRequest::send)
                     .map(HttpClientResponse::statusCode)
@@ -254,6 +257,10 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
 
             assertEquals(400, statusCode);
         } finally {
+            // the client is closed explicitly, as one that is garbage collected closes its connections
+            if (client != null) {
+                client.close();
+            }
             vertx.close();
             context.stop();
         }

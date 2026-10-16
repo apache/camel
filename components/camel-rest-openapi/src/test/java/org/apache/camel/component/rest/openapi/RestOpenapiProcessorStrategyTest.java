@@ -18,12 +18,16 @@ package org.apache.camel.component.rest.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -86,6 +90,27 @@ class RestOpenapiProcessorStrategyTest extends ManagedCamelTestSupport {
 
         Operation userByIdOp = openAPI.getPaths().get("/user/{id}").getGet();
         assertEquals("GENOPID_GET.user._id_", userByIdOp.getOperationId());
+    }
+
+    @Test
+    void testMockModeWithoutOkResponseReturnsEmpty204() {
+        // CAMEL-25663: an operation whose responses have no 200 (only default, 201, 204, ...) must not throw a
+        // NullPointerException in mock mode; with no mock data it returns an empty 204.
+        DefaultRestOpenapiProcessorStrategy strategy = new DefaultRestOpenapiProcessorStrategy();
+        strategy.setCamelContext(camelContext);
+
+        Operation onlyDefault = new Operation()
+                .responses(new ApiResponses().addApiResponse("default", new ApiResponse()));
+        Exchange exchange = new DefaultExchange(camelContext);
+        assertDoesNotThrow(() -> strategy.loadMockData(onlyDefault, "GET", "/x", exchange));
+        assertEquals(204, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, int.class));
+        assertEquals("", exchange.getMessage().getBody());
+
+        Operation only201 = new Operation()
+                .responses(new ApiResponses().addApiResponse("201", new ApiResponse()));
+        Exchange exchange201 = new DefaultExchange(camelContext);
+        assertDoesNotThrow(() -> strategy.loadMockData(only201, "GET", "/x", exchange201));
+        assertEquals(204, exchange201.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, int.class));
     }
 
     private OpenAPI getOpenApi() {

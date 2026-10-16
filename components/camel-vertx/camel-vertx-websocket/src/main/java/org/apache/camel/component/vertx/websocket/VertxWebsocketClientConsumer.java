@@ -24,7 +24,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.WebSocket;
-import io.vertx.core.net.impl.ConnectionBase;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -88,7 +87,7 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
             if (reconnect && mine != null && !isStarted()) {
                 // Stopped while connecting. Not for a WebSocket that was already open: it belongs to the endpoint.
                 discarded = mine;
-                mine.close();
+                getEndpoint().discardWebSocket(mine);
                 return null;
             }
             return webSocket;
@@ -123,13 +122,12 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
             }
         });
         webSocket.exceptionHandler(exception -> {
-            Throwable cause = exception.getCause();
-            if (cause == ConnectionBase.CLOSED_EXCEPTION) {
+            if (VertxWebsocketHelper.isConnectionClosed(exception)) {
                 // Ignore as there's already a close handler registered
                 return;
             }
             Exchange exchange = createExchange(false);
-            getExceptionHandler().handleException("Error processing exchange", exchange, cause);
+            getExceptionHandler().handleException("Error processing exchange", exchange, exception);
             releaseExchange(exchange, false);
         });
     }

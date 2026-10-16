@@ -181,7 +181,8 @@ class WebSocketCliConnectorTransportTest extends CamelTestSupport {
         tool.send(action("r1", "route", "command", "start", "id", "does-not-exist"));
         JsonObject result = tool.awaitResult("r1");
         assertThat(result.getBoolean("ok")).isFalse();
-        assertThat(result.getString("error")).contains("does-not-exist");
+        assertThat(result.getString("error")).isEqualTo("No route matching: does-not-exist");
+        assertThat(result.getString("reason")).isEqualTo("not-found");
 
         tool.send(action("r2", "does-not-exist"));
         result = tool.awaitResult("r2");

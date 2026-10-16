@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import io.vertx.core.Handler;
-import io.vertx.core.http.impl.MimeMapping;
+import io.vertx.core.http.MimeMapping;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
@@ -295,7 +295,7 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
                     }
                 }
                 if (is != null) {
-                    String mime = MimeMapping.getMimeTypeForFilename(u);
+                    String mime = MimeMapping.mimeTypeForFilename(u);
                     if (mime != null) {
                         ctx.response().putHeader("content-type", mime);
                     }

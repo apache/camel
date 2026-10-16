@@ -81,7 +81,7 @@ The *More* menu (key *0*) opens a popup with tabs organized into groups:
 
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
 * *Observability* -- Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
-* *AI* -- Semantic (definitions, expert contracts, relationships and sample evaluation), Ollama (listed when an Ollama server is detected)
+* *AI* -- Semantic (definitions, expert contracts, relationships, sample evaluation, Audit and Monitoring), Ollama (listed when an Ollama server is detected)
 * *Data* -- JDBC DataSource, Kafka, Secrets, SQL Query, SQL Trace
 * *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads
 * *Project* -- Beans, Catalog, Configuration, CVE Audit, Maven Dependencies, Type Converters, Data Type Transformers
@@ -182,6 +182,10 @@ See the xref:camel-jbang-tui-source-editor.adoc#_keyboard_shortcuts[keyboard sho
 
 | `--theme`
 | Color theme for this session (e.g., `dark`, `tokyo-night`, `dracula`). See xref:camel-jbang-tui-settings.adoc#_theme[Theme] for the full list of 21 themes. Overrides the persisted `camel.tui.theme` preference when set.
+|
+
+| `--panel-theme`
+| Color theme of the shell (*F6*) and AI (*F8*) panels for this session, or `same` for the main theme. See xref:camel-jbang-tui-settings.adoc#_panel_theme[Panel Theme]. Overrides the persisted `camel.tui.panelTheme` preference when set.
 |
 
 | `--record`

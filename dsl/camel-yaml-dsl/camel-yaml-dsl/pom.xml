@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yaml-dsl-parent</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-yaml-dsl</artifactId>
@@ -240,6 +240,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-typesafe-ai</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-semantic-typesafe-ai</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

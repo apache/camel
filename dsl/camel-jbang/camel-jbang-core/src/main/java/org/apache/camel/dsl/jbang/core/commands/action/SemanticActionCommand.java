@@ -24,7 +24,9 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.UsageErrorHandler;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -37,8 +39,8 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
     @CommandLine.Option(names = "--json", description = "Output a single JSON document")
     boolean json;
 
-    @CommandLine.Option(names = "--timeout", defaultValue = "60000",
-                        description = "Timeout in milliseconds waiting for the integration")
+    @CommandLine.Option(names = "--timeout", defaultValue = "60000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for the integration, in millis or as a duration such as 30s")
     long timeout = 60000;
 
     @CommandLine.Spec
@@ -52,36 +54,43 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
     public Integer doCall() {
         try {
             if (timeout <= 0) {
-                return error(2, "--timeout must be greater than zero", null);
+                return error(CliExitCode.USAGE, "--timeout must be greater than zero", null);
             }
             JsonObject request;
             try {
                 request = request();
             } catch (IllegalArgumentException e) {
-                return error(2, e.getMessage(), null);
+                return error(CliExitCode.USAGE, e.getMessage(), null);
             }
             List<Long> pids = findPids(name).stream().filter(this::isRunningIntegration).toList();
             if (pids.isEmpty()) {
-                return error(3, "No running Camel integration matches: " + name, null);
+                return error(CliExitCode.NOT_FOUND, "No running Camel integration matches: " + name, null);
             }
             if (pids.size() != 1) {
-                return error(3, "Multiple Camel integrations match " + name + ": " + pids + ". Specify a pid.", null);
+                return error(CliExitCode.NOT_FOUND,
+                        "Multiple Camel integrations match " + name + ": " + pids + ". Specify a pid.", null);
             }
             long pid = pids.get(0);
             JsonObject status = loadStatus(pid);
             JsonObject context = status == null ? null : status.getMap("context");
             String version = context == null ? null : context.getString("version");
             if (version != null && version.matches("\\d+\\.\\d+(?:\\..*)?") && !VersionHelper.isGE(version, "4.23")) {
-                return error(3, "Semantic tooling requires Camel 4.23 or newer; integration " + pid
-                                + " runs Camel " + version,
+                return error(CliExitCode.NOT_FOUND, "Semantic tooling requires Camel 4.23 or newer; integration " + pid
+                                                    + " runs Camel " + version,
                         null);
+            }
+            try {
+                prepareRequest(pid, request);
+            } catch (IllegalArgumentException e) {
+                return error(CliExitCode.USAGE, e.getMessage(), null);
             }
             JsonObject response = RuntimeHelper.executeAction(pid, request, timeout);
             if (response == null) {
-                return error(4, "No reply from integration within " + timeout + " milliseconds", null);
+                return error(CliExitCode.TIMEOUT, "No reply from integration within " + timeout + " milliseconds", null);
             }
             if (response.isEmpty()) {
-                return error(3, "Semantic tooling is unavailable; the integration needs a matching camel-semantic version",
+                return error(CliExitCode.NOT_FOUND,
+                        "Semantic tooling is unavailable; the integration needs a matching camel-semantic version",
                         null);
             }
             if ("failed".equals(response.getString("status"))) {
@@ -89,12 +98,12 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
                 if (message == null || message.isBlank()) {
                     message = "Semantic action failed";
                 }
-                return error(1, message, response);
+                return error(CliExitCode.FAILURE, message, response);
             }
             return printResponse(response);
         } catch (Exception e) {
             e.printStackTrace(commandSpec.commandLine().getErr());
-            return error(70, e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName(), null);
+            return error(CliExitCode.INTERNAL, e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName(), null);
         }
     }
 
@@ -109,7 +118,7 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
     public Integer usageError(String message, String[] args) {
         json = Arrays.stream(args).takeWhile(arg -> !"--".equals(arg))
                 .anyMatch(arg -> "--json".equals(arg) || "--json=true".equals(arg));
-        return json ? error(2, message, null) : null;
+        return json ? error(CliExitCode.USAGE, message, null) : null;
     }
 
     protected int error(int code, String message, JsonObject result) {
@@ -176,6 +185,10 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
         }
         String label = key.replaceAll("([a-z0-9])([A-Z])", "$1 $2");
         return Character.toUpperCase(label.charAt(0)) + label.substring(1).replace(" Id", " ID");
+    }
+
+    /** Prepare input requiring the selected runtime's metadata before submitting an action. */
+    protected void prepareRequest(long pid, JsonObject request) throws Exception {
     }
 
     protected abstract JsonObject request();

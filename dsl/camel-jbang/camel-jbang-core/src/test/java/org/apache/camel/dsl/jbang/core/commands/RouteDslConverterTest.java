@@ -167,7 +167,7 @@ class RouteDslConverterTest {
                 import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
                 public class SemanticRoute extends RouteBuilder {
                     public void configure() {
-                        semanticEvaluations(this).evaluation("urgent").type("boolean").register();
+                        semanticEvaluations(this).evaluation("urgent").expert("decisions").type("boolean").register();
                         from("direct:input").log("Hello");
                     }
                 }

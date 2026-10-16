@@ -35,19 +35,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticScoreMetadataTest {
     @Test
-    void discoversAndPublishesScoreLevelsWithoutConstructingAnExpert() throws Exception {
+    void publishesScoreLevelsWithoutInvokingTheExpert() throws Exception {
         var operation = SemanticCapabilities.from(OrderedExpert.class).operation("rate");
         assertThat(operation.getScoreLevelsParameter()).isEqualTo("rubric");
         try (var context = new DefaultCamelContext()) {
             var language = (SemanticLanguage) context.resolveLanguage("semantic");
-            language.setAdapter(OrderedExpert.class.getName());
+            context.getRegistry().bind("ordered", new OrderedExpert());
             context.start();
             DevConsole console = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("semantic-metadata");
-            JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of());
+            JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of("expert", "ordered"));
             List<JsonObject> operations = response.getCollection("operations");
             assertThat(operations).hasSize(1);
             assertThat(operations.get(0).getJsonObject("contract")).containsEntry("scoreLevelsParameter", "rubric");
-            assertThat(context.getRegistry().lookupByName(SemanticLanguage.ADAPTER_NAME)).isNull();
         }
     }
 
@@ -67,10 +66,6 @@ class SemanticScoreMetadataTest {
                                                                                     type = List.class, itemType = String.class,
                                                                                     required = true, minSize = 1)))
     public static class OrderedExpert implements SemanticAdapter {
-        public OrderedExpert() {
-            throw new AssertionError("Metadata must not construct the expert");
-        }
-
         @Override
         public void validate(SemanticEvaluation evaluation) {
             throw new AssertionError("Metadata must not validate an evaluation");

@@ -152,11 +152,13 @@ deliberately few, and they are the contract:
   unless the developer chose `/write auto`.
 * The developer confirms a call that reaches beyond the integration, may
   destroy data or runs code: a message to an endpoint the integration does not
-  have (a route, an internal endpoint such as `direct:`, `seda:` or `log:`,
-  and the integration's own endpoints are inside it), a SQL statement other
-  than a single `SELECT`, `SHOW` or `DESCRIBE`, a row update, and an
-  expression in a language that runs code, such as Groovy. An HTTP request
-  goes only to the integration's own server on `localhost`.
+  have (a route, an endpoint of a component the Camel catalog marks internal,
+  such as `direct:`, `seda:` or `log:`, and the integration's own endpoints are
+  inside it), a message whose body the integration reads from a file outside
+  the project folder, a SQL statement other than a single `SELECT`, `SHOW` or
+  `DESCRIBE`, a row update, and an expression in a language that runs code,
+  such as Groovy. An HTTP request goes only to the integration's own server on
+  `localhost`.
 * A coding agent's own tools - its shell commands, its file changes, its
   network fetches - are put in front of the developer in the TUI.
 * Keys sent over MCP never answer a dialog that asks the developer to confirm
@@ -164,14 +166,29 @@ deliberately few, and they are the contract:
 * While the developer records a tape, or plays one with `--record`, nothing
   asks: the developer chose to let the model, the agent or the tape act alone.
 
+`camel ask` is the AI assistant of the Camel CLI, with a local or a hosted
+LLM. It keeps the same contract in a terminal:
+
+* Before each write it shows the change as a diff, and the developer
+  confirms it.
+* The developer confirms the same calls as in the TUI, and the calls that
+  `camel ask` makes without a screen of the integration in front of the
+  developer: stopping, killing or restarting the integration or its routes,
+  running an integration, browsing an endpoint the integration does not have,
+  writing a heap dump, and a `camel` command that changes something. The
+  commands that only read, such as `camel get` and `camel ps`, run without
+  asking.
+* Without a terminal to ask on, such a call does not run, unless the
+  developer passed `--yes`.
+
 A tool that breaks this contract is in scope: for example a file written
 outside the source directory, a message sent to an endpoint the integration
 does not have without the developer's confirmation, a key sent over MCP that
 answers a confirmation, or text from an integration that acts on the
 terminal. An assistant doing what the tools allow is the
-trusted developer's case, also when untrusted data shown in the TUI - a
-message body, a log line, an example's README - steered the model to it
-(prompt injection); see _Out of scope_.
+trusted developer's case, also when untrusted data shown in the TUI or read by
+`camel ask` - a message body, a log line, an example's README - steered the
+model to it (prompt injection); see _Out of scope_.
 
 === Adversary model
 

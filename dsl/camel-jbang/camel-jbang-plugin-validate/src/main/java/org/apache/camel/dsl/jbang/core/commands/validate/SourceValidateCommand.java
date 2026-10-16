@@ -28,6 +28,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import picocli.CommandLine;
 
@@ -48,6 +49,11 @@ public class SourceValidateCommand extends CamelCommand {
     @CommandLine.Mixin
     CatalogVersionMixin catalogVersion;
 
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
+                                      + " camel_validate_source answers")
+    boolean jsonOutput;
+
     public SourceValidateCommand(CamelJBangMain main) {
         super(main);
     }
@@ -62,7 +68,7 @@ public class SourceValidateCommand extends CamelCommand {
         for (String n : files) {
             File f = new File(n);
             if (!SourceValidator.isValidatableFile(n)) {
-                printer().println("WARN: Skipping file: " + n);
+                printer().printWarn("Skipping file: " + n);
                 continue;
             }
             String content = Files.readString(f.toPath());
@@ -71,6 +77,11 @@ public class SourceValidateCommand extends CamelCommand {
                     parent != null ? parent.toPath() : null, schemaValidator));
         }
         int count = reports.values().stream().mapToInt(List::size).sum();
+        if (jsonOutput) {
+            JsonOutput.printList(printer(),
+                    reports.entrySet().stream().map(e -> ValidateJson.file(e.getKey(), e.getValue())).toList());
+            return count > 0 ? 1 : 0;
+        }
         if (count > 0) {
             StringBuilder sb = new StringBuilder();
             sb.append("Validation error detected (errors:").append(count).append(")\n\n");

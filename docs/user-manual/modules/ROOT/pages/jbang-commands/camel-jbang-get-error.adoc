@@ -22,6 +22,7 @@ camel get error [options]
 | `--ago` | Filter by time window, e.g. 60s, 5m, 1h |  | String
 | `--detail` | Show full details of each error entry |  | boolean
 | `--diagram` | Display a route diagram with the error path highlighted |  | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--exception` | Filter by exception type (substring match) |  | String
 | `--handled` | Filter by handled status (true or false) |  | String
 | `--id` | Filter by exchange ID |  | String

@@ -127,6 +127,31 @@ However Camel allows to wrap the actual value inside `RAW(…)`, which makes esc
 milo-client:opc.tcp://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
 ----
 
+=== Monitoring several nodes
+
+A consumer can monitor several nodes with the `nodes` option instead of `node` (the two options cannot be combined).
+The consumer creates the monitored items of all nodes together and deletes them together when it stops. Every value
+arrives in its own exchange, and the `CamelMiloNodeId` header holds the node ID as it was configured.
+
+The `nodes` option takes a comma-separated list of <<nodeid, Node IDs>>. The entries are trimmed, empty entries are
+skipped and a node that is listed twice is monitored once:
+
+----
+milo-client:opc.tcp://localhost:12345?nodes=RAW(ns=2;s=line1/temperature,ns=2;s=line1/pressure)
+----
+
+A string node ID that contains a comma cannot be used in `nodes`; monitor it with the `node` option instead. Long lists
+can come from a property placeholder, for example `+nodes=RAW({{tags}})+`.
+
+All nodes of the list share the `samplingInterval`, `queueSize` and `omitNullValues` options of the consumer and its
+monitor filter (`monitorFilterType`, `dataChangeFilter*`). Tags that need a different sampling interval or deadband
+need a consumer of their own.
+
+A node that does not exist on the server does not affect the other nodes. A node that cannot be monitored is
+reported once with its status code and is not retried; restarting the route or a rebuilt connection to the server creates the monitored items again.
+To see such nodes, set `omitNullValues=false`: the consumer then delivers one exchange with the bad status code for that
+node, and the `CamelMiloNodeId` header names it.
+
 === Method ID
 
 It is possible to perform methods calls on OPC UA nodes. If the parameter `method` is set to the Node ID of a method call (the node ID must be set to the parent object in this case),
