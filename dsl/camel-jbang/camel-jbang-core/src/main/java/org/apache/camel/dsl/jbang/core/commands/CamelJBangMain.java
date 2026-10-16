@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -67,6 +68,7 @@ import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -90,6 +92,9 @@ public class CamelJBangMain implements Callable<Integer> {
 
     private boolean discoverPlugins = true;
 
+    // the plugins whose commands were added, to add them to a new command line too
+    private final List<Plugin> plugins = new CopyOnWriteArrayList<>();
+
     public static void run(String... args) {
         run(new CamelJBangMain(), args);
     }
@@ -107,7 +112,51 @@ public class CamelJBangMain implements Callable<Integer> {
             // ignore
         }
 
-        commandLine = new CommandLine(this)
+        commandLine = createCommandLine();
+
+        postAddCommands(commandLine, args);
+
+        if (discoverPlugins && PluginHelper.shouldDiscoverPlugins(commandLine, args)) {
+            try {
+                PluginHelper.addPlugins(commandLine, this, args);
+                PluginHelper.installOnFirstUse(commandLine, this, args);
+            } catch (CliException e) {
+                // a plugin that cannot be loaded
+                out.printErr(e.getMessage());
+                quit(e.getExitCode());
+                return;
+            }
+        }
+        withErrorHandling(commandLine);
+
+        commandLine.getCommandSpec().versionProvider(() -> {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            String v = catalog.getCatalogVersion();
+            return new String[] { v };
+        });
+
+        CommandLineHelper.migrateLegacyUserConfig(out);
+        CommandLineHelper.augmentWithUserConfiguration(commandLine);
+        preExecute(commandLine, args);
+        int exitCode;
+        try {
+            exitCode = commandLine.execute(args);
+        } catch (Error e) {
+            // picocli hands exceptions to the handler, but an error (such as a class missing at runtime) escapes it
+            exitCode = new CliExecutionExceptionHandler(this).handle(e, commandLine.getParseResult());
+        }
+        if (isHelpRequest(args) && EnvironmentHelper.isInteractiveTerminal()) {
+            printAvailablePlugins();
+        }
+        postExecute(commandLine, args, exitCode);
+        quit(exitCode);
+    }
+
+    /**
+     * The command line with the commands of the CLI.
+     */
+    private CommandLine createCommandLine() {
+        CommandLine commandLine = new CommandLine(this)
                 .addSubcommand("bind", new CommandLine(new Bind(this)))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(this))
                         .addSubcommand("component", new CommandLine(new CatalogComponent(this)))
@@ -256,43 +305,34 @@ public class CamelJBangMain implements Callable<Integer> {
         commandLine.getHelpSectionMap().put(
                 CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST,
                 new GroupedCommandHelpRenderer());
+        return commandLine;
+    }
 
-        postAddCommands(commandLine, args);
-
-        if (discoverPlugins && PluginHelper.shouldDiscoverPlugins(commandLine, args)) {
-            try {
-                PluginHelper.addPlugins(commandLine, this, args);
-                PluginHelper.installOnFirstUse(commandLine, this, args);
-            } catch (CliException e) {
-                // a plugin that cannot be loaded
-                out.printErr(e.getMessage());
-                quit(e.getExitCode());
-                return;
-            }
+    /**
+     * A new command line with new instances of the commands of the CLI, and of the commands of the plugins this main
+     * has loaded. A command that runs on it starts from its defaults, not from what a run before left in its fields:
+     * {@link CliRunner} runs each command on a new command line.
+     */
+    public CommandLine newCommandLine() {
+        CommandLine answer = createCommandLine();
+        postAddCommands(answer, new String[0]);
+        for (Plugin plugin : plugins) {
+            plugin.customize(answer, this);
         }
-        withErrorHandling(commandLine);
+        withErrorHandling(answer);
+        answer.getCommandSpec().versionProvider(() -> new String[] { new DefaultCamelCatalog().getCatalogVersion() });
+        CommandLineHelper.augmentWithUserConfiguration(answer);
+        return answer;
+    }
 
-        commandLine.getCommandSpec().versionProvider(() -> {
-            CamelCatalog catalog = new DefaultCamelCatalog();
-            String v = catalog.getCatalogVersion();
-            return new String[] { v };
-        });
-
-        CommandLineHelper.migrateLegacyUserConfig(out);
-        CommandLineHelper.augmentWithUserConfiguration(commandLine);
-        preExecute(commandLine, args);
-        int exitCode;
-        try {
-            exitCode = commandLine.execute(args);
-        } catch (Error e) {
-            // picocli hands exceptions to the handler, but an error (such as a class missing at runtime) escapes it
-            exitCode = new CliExecutionExceptionHandler(this).handle(e, commandLine.getParseResult());
+    /**
+     * Remembers a plugin whose commands were added to the command line, to add them to a new command line too (see
+     * {@link #newCommandLine()}).
+     */
+    public void addPlugin(Plugin plugin) {
+        if (!plugins.contains(plugin)) {
+            plugins.add(plugin);
         }
-        if (isHelpRequest(args) && EnvironmentHelper.isInteractiveTerminal()) {
-            printAvailablePlugins();
-        }
-        postExecute(commandLine, args, exitCode);
-        quit(exitCode);
     }
 
     /**

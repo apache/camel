@@ -30,14 +30,12 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -129,24 +127,7 @@ public class CatalogDoc extends CamelCommand {
     }
 
     CamelCatalog loadCatalog() throws Exception {
-        if (RuntimeType.springBoot == runtime) {
-            return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
-        } else if (RuntimeType.quarkus == runtime) {
-            final MavenGav quarkusCamelBom
-                    = quarkusPlatform
-                            .resolve(
-                                    camelVersion,
-                                    mavenResolver.downloader()::resolveArtifact,
-                                    mavenResolver.download(),
-                                    mavenResolver.fresh())
-                            .quarkusCamelBom();
-            return CatalogLoader.loadQuarkusCatalog(quarkusCamelBom, mavenResolver.downloader()::resolveArtifact);
-        }
-        if (camelVersion == null) {
-            return new DefaultCamelCatalog(true);
-        } else {
-            return CatalogLoader.loadCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
-        }
+        return CatalogBaseCommand.loadCatalog(runtime, camelVersion, quarkusPlatform, mavenResolver);
     }
 
     @Override

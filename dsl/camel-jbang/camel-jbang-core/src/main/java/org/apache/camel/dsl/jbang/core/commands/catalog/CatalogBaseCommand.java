@@ -115,6 +115,15 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     }
 
     CamelCatalog loadCatalog() throws Exception {
+        return loadCatalog(runtime, camelVersion, quarkusPlatform, mavenResolver);
+    }
+
+    /**
+     * The catalog of the runtime and Camel version: of Spring Boot, of the Quarkus platform, or of Camel.
+     */
+    static CamelCatalog loadCatalog(
+            RuntimeType runtime, String camelVersion, QuarkusPlatformMixin quarkusPlatform, MavenResolverMixin mavenResolver)
+            throws Exception {
         if (RuntimeType.springBoot == runtime) {
             return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         } else if (RuntimeType.quarkus == runtime) {

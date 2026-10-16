@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.Completer;
 import org.jline.shell.Command;
@@ -121,6 +122,7 @@ public class CamelShellCommandRegistry extends PicocliCommandRegistry {
             @Override
             public Object execute(org.jline.shell.CommandSession session, String[] args) throws Exception {
                 synchronized (CliRunner.LOCK) {
+                    RuntimeUtil.newCommand();
                     return command.execute(session, args);
                 }
             }
