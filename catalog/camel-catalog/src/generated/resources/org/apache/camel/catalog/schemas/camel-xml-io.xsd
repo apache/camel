@@ -2144,15 +2144,6 @@ Gets a variable
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="wasm" type="tns:wasmExpression">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Call a wasm (web assembly) function
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="weightedLoadBalancer" type="tns:weightedLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -2793,7 +2784,6 @@ ensuring the aggregation repository is empty before shutdown. Default value: fal
       <xs:element ref="tns:spel"/>
       <xs:element ref="tns:tokenize"/>
       <xs:element ref="tns:variable"/>
-      <xs:element ref="tns:wasm"/>
       <xs:element ref="tns:xtokenize"/>
       <xs:element ref="tns:xpath"/>
       <xs:element ref="tns:xquery"/>
@@ -3117,7 +3107,6 @@ Whether the script should support using Camel property placeholder syntax {{ }}.
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
             <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -3351,7 +3340,6 @@ The exception class names (fully qualified) to catch.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -3408,7 +3396,6 @@ placeholders or simple expressions using only property placeholders are supporte
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
             <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -4469,7 +4456,6 @@ To use a specific charset when converting.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -4532,7 +4518,6 @@ To use a custom thread pool if asyncDelay has been enabled.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -4608,7 +4593,6 @@ restriction, useful for low-code / Kamelet deployments; by default (unset) any s
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -5230,7 +5214,6 @@ The logging level to use for logging transactional rollback. Default is WARN. De
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
             <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -5487,7 +5470,6 @@ Global option value.
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
             <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -6287,7 +6269,6 @@ The language to use for evaluating the log message, such as simple, groovy, or o
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
             <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -10906,7 +10887,6 @@ Timeout in millis when polling from the external service. The default value is 2
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -11092,7 +11072,6 @@ The property value.
       <xs:element ref="tns:spel"/>
       <xs:element ref="tns:tokenize"/>
       <xs:element ref="tns:variable"/>
-      <xs:element ref="tns:wasm"/>
       <xs:element ref="tns:xtokenize"/>
       <xs:element ref="tns:xpath"/>
       <xs:element ref="tns:xquery"/>
@@ -11135,7 +11114,6 @@ The property key.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -11438,7 +11416,6 @@ Name of the variable to remove.
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
             <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -12141,7 +12118,6 @@ Description of the template parameter for documentation purposes.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12397,7 +12373,6 @@ The frequency of samples as a message count, using a message-frequency approach.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12449,7 +12424,6 @@ The uri of the endpoint to send to.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12501,7 +12475,6 @@ The new exchange pattern to use from this point forward.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12556,7 +12529,6 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12602,7 +12574,6 @@ name. Otherwise a constant name will be used.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12657,7 +12628,6 @@ Otherwise a constant name will be used.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -12703,7 +12673,6 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
             <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -13435,7 +13404,6 @@ handler. Default value: true
             <xs:element ref="tns:spel"/>
             <xs:element ref="tns:tokenize"/>
             <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
             <xs:element ref="tns:xtokenize"/>
             <xs:element ref="tns:xpath"/>
             <xs:element ref="tns:xquery"/>
@@ -13920,7 +13888,6 @@ into.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -14128,7 +14095,6 @@ Indicates whether null is allowed as value of a body to unmarshall. Default valu
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
@@ -15940,22 +15906,6 @@ To skip the very first element. Default value: false
       <xs:extension base="tns:expression"/>
     </xs:simpleContent>
   </xs:complexType>
-  <xs:complexType name="wasmExpression">
-    <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition">
-        <xs:attribute name="module" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the
-expression function.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
   <xs:complexType name="xmlTokenizerExpression">
     <xs:simpleContent>
       <xs:extension base="tns:namespaceAwareExpression">
@@ -16519,7 +16469,6 @@ URI of the Endpoint used for validation.
           <xs:element ref="tns:spel"/>
           <xs:element ref="tns:tokenize"/>
           <xs:element ref="tns:variable"/>
-          <xs:element ref="tns:wasm"/>
           <xs:element ref="tns:xtokenize"/>
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>

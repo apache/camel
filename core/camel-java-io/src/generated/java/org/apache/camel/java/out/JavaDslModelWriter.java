@@ -1419,13 +1419,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteVariableExpression(sb, def);
         return sb.toString();
     }
-    public String writeWasmExpression(WasmExpression def) {
-        resetState();
-        StringBuilder sb = new StringBuilder();
-        beginStep(sb, "wasm", def);
-        doWriteWasmExpression(sb, def);
-        return sb.toString();
-    }
     public String writeXMLTokenizerExpression(XMLTokenizerExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -3675,11 +3668,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteVariableExpression(StringBuilder sb, VariableExpression def) {
         doWriteExpressionDefinitionAttributes(sb, def);
-        doWriteValue(sb, def.getExpression());
-    }
-    protected void doWriteWasmExpression(StringBuilder sb, WasmExpression def) {
-        doWriteTypedExpressionDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "module", def.getModule(), null);
         doWriteValue(sb, def.getExpression());
     }
     protected void doWriteXMLTokenizerExpression(StringBuilder sb, XMLTokenizerExpression def) {
@@ -6580,11 +6568,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "variable", v);
                     doWriteVariableExpression(sb, (VariableExpression) v);
                     endStep(sb, "variable", v);
-                }
-                case "WasmExpression" -> {
-                    beginStep(sb, "wasm", v);
-                    doWriteWasmExpression(sb, (WasmExpression) v);
-                    endStep(sb, "wasm", v);
                 }
                 case "XMLTokenizerExpression" -> {
                     beginStep(sb, "xtokenize", v);

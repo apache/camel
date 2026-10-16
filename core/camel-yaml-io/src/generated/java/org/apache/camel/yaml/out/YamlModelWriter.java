@@ -637,9 +637,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeVariableExpression(VariableExpression def) {
         return wrapNode("variable", doWriteVariableExpression(def));
     }
-    public JsonObject writeWasmExpression(WasmExpression def) {
-        return wrapNode("wasm", doWriteWasmExpression(def));
-    }
     public JsonObject writeXMLTokenizerExpression(XMLTokenizerExpression def) {
         return wrapNode("xtokenize", doWriteXMLTokenizerExpression(def));
     }
@@ -3153,13 +3150,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
-    protected JsonObject doWriteWasmExpression(WasmExpression def) {
-        JsonObject jo = new JsonObject();
-        doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "module", def.getModule(), null);
-        doWriteValue(jo, def.getExpression());
-        return jo;
-    }
     protected JsonObject doWriteXMLTokenizerExpression(XMLTokenizerExpression def) {
         JsonObject jo = new JsonObject();
         doWriteNamespaceAwareExpressionAttributes(jo, def);
@@ -4006,7 +3996,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SpELExpression" -> wrapNode("spel", doWriteSpELExpression((SpELExpression) v));
                 case "TokenizerExpression" -> wrapNode("tokenize", doWriteTokenizerExpression((TokenizerExpression) v));
                 case "VariableExpression" -> wrapNode("variable", doWriteVariableExpression((VariableExpression) v));
-                case "WasmExpression" -> wrapNode("wasm", doWriteWasmExpression((WasmExpression) v));
                 case "XMLTokenizerExpression" -> wrapNode("xtokenize", doWriteXMLTokenizerExpression((XMLTokenizerExpression) v));
                 case "XPathExpression" -> wrapNode("xpath", doWriteXPathExpression((XPathExpression) v));
                 case "XQueryExpression" -> wrapNode("xquery", doWriteXQueryExpression((XQueryExpression) v));

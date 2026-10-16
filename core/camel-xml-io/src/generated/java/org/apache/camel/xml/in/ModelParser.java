@@ -2395,12 +2395,6 @@ public class ModelParser extends BaseParser {
     protected VariableExpression doParseVariableExpression() throws IOException, XmlPullParserException {
         return doParse(new VariableExpression(), expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
-    protected WasmExpression doParseWasmExpression() throws IOException, XmlPullParserException {
-        return doParse(new WasmExpression(), (def, key, val) -> switch (key) {
-                case "module": def.setModule(val); yield true;
-                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
-            }, noElementHandler(), expressionDefinitionValueHandler());
-    }
     protected XMLTokenizerExpression doParseXMLTokenizerExpression() throws IOException, XmlPullParserException {
         return doParse(new XMLTokenizerExpression(), (def, key, val) -> switch (key) {
                 case "group": def.setGroup(val); yield true;
@@ -2902,7 +2896,6 @@ public class ModelParser extends BaseParser {
             case "spel": return doParseSpELExpression();
             case "tokenize": return doParseTokenizerExpression();
             case "variable": return doParseVariableExpression();
-            case "wasm": return doParseWasmExpression();
             case "xtokenize": return doParseXMLTokenizerExpression();
             case "xpath": return doParseXPathExpression();
             case "xquery": return doParseXQueryExpression();
