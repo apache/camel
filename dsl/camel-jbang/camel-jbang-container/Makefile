@@ -29,14 +29,14 @@ endif
 # Use any other for staging or test purposes
 IMAGE_NAME ?= docker.io/apache/camel-jbang
 BASE_IMAGE_NAME := eclipse-temurin
-BASE_IMAGE_VERSION := 17-jdk
+BASE_IMAGE_VERSION := 21-jdk
 OFFICIAL_IMAGE_VERSION := 21-jdk
 BASE_IMAGE := $(BASE_IMAGE_NAME):$(BASE_IMAGE_VERSION)
 
 IMAGE_ARCH ?= $(if $(filter arm64 aarch64,$(shell uname -m)),arm64,amd64)
 OFFICIAL_IMAGE_ARCH := amd64
 
-JDK_VERSIONS = 17-jdk 21-jdk
+JDK_VERSIONS = 21-jdk
 ARCH_VERSIONS = amd64 arm64
 
 DOCKER_TAG := $(IMAGE_NAME):$(CAMEL_VERSION)-$(BASE_IMAGE_VERSION)-$(IMAGE_ARCH)
