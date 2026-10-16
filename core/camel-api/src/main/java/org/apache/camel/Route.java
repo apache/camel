@@ -378,9 +378,9 @@ public interface Route extends RuntimeConfiguration {
     String getRouteNote();
 
     /**
-     * Get the route type.
+     * Gets the route model (such as the route definition) this route was created from.
      *
-     * @return the route type, no longer null after the route has been created.
+     * @return the route model, or null if this route was not created from a model
      */
     @Nullable
     NamedNode getRoute();
@@ -392,7 +392,9 @@ public interface Route extends RuntimeConfiguration {
      *             a later release.
      */
     @Deprecated(since = "4.24.0", forRemoval = true)
-    void clearRouteModel();
+    default void clearRouteModel() {
+        // no-op: the route model is now retained at runtime
+    }
 
     //
     // CREATION TIME

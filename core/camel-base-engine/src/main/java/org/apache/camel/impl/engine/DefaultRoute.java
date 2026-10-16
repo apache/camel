@@ -74,7 +74,7 @@ import org.apache.camel.util.TimeUtils;
 public class DefaultRoute extends ServiceSupport implements Route {
 
     private final CamelContext camelContext;
-    private NamedNode route;
+    private final NamedNode route;
     private final String routeId;
     private final String routeDescription;
     private final String routeNote;
@@ -373,12 +373,6 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public NamedNode getRoute() {
         return route;
-    }
-
-    @Override
-    @Deprecated(since = "4.24.0", forRemoval = true)
-    public void clearRouteModel() {
-        // no-op: the route model is now retained at runtime
     }
 
     @Override
