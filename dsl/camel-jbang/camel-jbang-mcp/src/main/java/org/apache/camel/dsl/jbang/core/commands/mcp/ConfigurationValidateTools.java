@@ -148,8 +148,7 @@ public class ConfigurationValidateTools {
         boolean springBootDowngraded = false;
         if (isSpringBoot && checked && !valid) {
             String propertyKey = text != null && text.contains("=") ? text.substring(0, text.indexOf('=')).trim() : text;
-            boolean isOriginalGroup = propertyKey != null && (
-                    propertyKey.startsWith("camel.component.")
+            boolean isOriginalGroup = propertyKey != null && (propertyKey.startsWith("camel.component.")
                     || propertyKey.startsWith("camel.dataformat.")
                     || propertyKey.startsWith("camel.language.")
                     || propertyKey.startsWith("camel.main.")
