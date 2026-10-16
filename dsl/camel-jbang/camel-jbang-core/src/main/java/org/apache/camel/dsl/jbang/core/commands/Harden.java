@@ -658,10 +658,10 @@ public class Harden extends CamelCommand {
             return fullResponse.toString();
 
         } catch (HttpTimeoutException e) {
-            printer().printErr("\nRequest timed out after " + timeout + " seconds.");
+            printer().printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer().printErr("\nError during streaming: " + e.getMessage());
+            printer().printErr("Error during streaming: " + LlmClient.failure(e));
             return null;
         }
     }
@@ -691,7 +691,7 @@ public class Harden extends CamelCommand {
             printer().printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer().printErr("Error calling LLM: " + e.getMessage());
+            printer().printErr("Error calling LLM: " + LlmClient.failure(e));
             return null;
         }
     }

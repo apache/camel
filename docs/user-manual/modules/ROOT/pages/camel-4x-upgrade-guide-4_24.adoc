@@ -498,6 +498,14 @@ or follows, like Enter does.
   answered at once), and `camel_control stop-routes` and `start-routes` answer with what was done instead of the
   answer of the integration.
 
+=== camel-jbang - the errors of a streamed answer of an LLM
+
+* When the streamed answer of an LLM fails, as with `camel explain`, `camel ask` or `camel overview --ai` against
+  Ollama, the error is printed on stderr: it was printed on stdout after the answer so far. A failure without a message
+  of its own, such as a refused connection, has the message of its cause instead of `null`.
+* `camel ask` with an OpenAI-compatible server that gives the arguments of a tool call as a JSON object, instead of JSON
+  text, calls the tool with these arguments (it called it without arguments).
+
 === camel-jbang - exit codes and errors of more commands
 
 * `camel export` does not clean the export directory when it is the current directory, or one that contains it, unless
