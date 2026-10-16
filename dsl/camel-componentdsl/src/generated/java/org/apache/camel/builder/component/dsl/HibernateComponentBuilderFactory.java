@@ -84,7 +84,8 @@ public interface HibernateComponentBuilderFactory {
     
         
         /**
-         * Schema generation action: none, validate, update, create.
+         * Schema generation action: none, validate, update, create,
+         * create-drop, create-only, drop.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
