@@ -62,4 +62,8 @@ public interface ManagedEventNotifierMBean {
 
     void setIgnoreStepEvents(boolean ignoreStepEvents);
 
+    boolean isIgnoreAiEvents();
+
+    void setIgnoreAiEvents(boolean ignoreAiEvents);
+
 }

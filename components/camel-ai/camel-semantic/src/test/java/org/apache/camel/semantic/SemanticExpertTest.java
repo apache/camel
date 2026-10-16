@@ -16,13 +16,11 @@
  */
 package org.apache.camel.semantic;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.semantic.SemanticLanguage;
@@ -68,28 +66,25 @@ class SemanticExpertTest {
         context.close();
     }
 
-    @Test
-    void explicitDefaultAndSoleExpertSelection() {
-        define("security", "other", 0.5);
-        language.setDefaultExpert("missing-default");
-        var expression = language.createExpression("ref:first");
-        assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
-        assertThatThrownBy(() -> define(null, null, 0.5)).hasMessageContaining("missing-default");
-        language.setDefaultExpert("other");
-        define(null, null, 0.5);
-        assertThat(language.createExpression("ref:first").evaluate(exchange, Boolean.class)).isFalse();
-        language.setDefaultExpert(null);
-        assertThatThrownBy(() -> language.createExpression("ref:first"))
-                .hasMessageContaining("first").hasMessageContaining("security").hasMessageContaining("other")
-                .hasMessageContaining("Specify expert");
-        context.getRegistry().unbind("other");
-        context.getRegistry().bind("alias", security);
-        assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 1, 2 })
+    void everyEvaluationRequiresAnExpertEvenWithASoleRegisteredExpert(int expertCount) {
+        if (expertCount < 2) {
+            context.getRegistry().unbind("other");
+        }
+        if (expertCount == 0) {
+            context.getRegistry().unbind("security");
+        }
+        assertThatThrownBy(() -> define(null, null, 0.5)).hasMessage("Evaluation expert is required");
+        assertThatThrownBy(() -> define(" ", "security", 0.5)).hasMessage("Evaluation expert is required");
+        assertThatThrownBy(() -> language.describeExpert(null)).hasMessage("Evaluation expert is required");
+        assertThat(security.calls).isZero();
+        assertThat(other.calls).isZero();
     }
 
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
-    void automaticExpertErrorsRetainAStableRegistryName(boolean aliases) {
+    void explicitExpertErrorsRetainTheSelectedRegistryName(boolean aliases) {
         context.getRegistry().unbind("other");
         var registered = new FixedSemanticExpert() {
         };
@@ -100,10 +95,10 @@ class SemanticExpertTest {
         }
         String name = aliases ? "a-security" : "security";
         assertThatThrownBy(() -> SemanticEvaluations.get(context).replace("test", Map.of("first",
-                evaluation(null, "Unsupported", Map.of(), "boolean", 0.5))))
+                evaluation(name, "Unsupported", Map.of(), "boolean", 0.5))))
                 .hasMessageContaining("evaluation 'first', expert '" + name + "'")
                 .hasMessageContaining("Unknown parameter 'instructions'");
-        define(null, null, 0.5);
+        define(name, name, 0.5);
         var expression = language.createExpression("ref:first");
         exchange.getMessage().setBody(Map.of("text", "input"));
         assertThatThrownBy(() -> expression.evaluate(exchange, Boolean.class))
@@ -113,8 +108,7 @@ class SemanticExpertTest {
     }
 
     @Test
-    void unknownExplicitExpertNeverFallsBackToDefaultOrClassLoading() {
-        language.setDefaultExpert("security");
+    void unknownExplicitExpertNeverFallsBackOrLoadsAClass() {
         for (String name : List.of("missing", FixedSemanticExpert.class.getName(), "#security")) {
             assertThatThrownBy(() -> define(name, "security", 0.5))
                     .hasMessageContaining("first").hasMessageContaining(name);
@@ -123,9 +117,8 @@ class SemanticExpertTest {
         assertThat(other.calls).isZero();
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void adaptersMustDeclareTheirStaticContract(boolean automatic) {
+    @Test
+    void adaptersMustDeclareTheirStaticContract() {
         SemanticAdapter legacy = new SemanticAdapter() {
             @Override
             public void validate(SemanticEvaluation evaluation) {
@@ -138,11 +131,7 @@ class SemanticExpertTest {
         };
         assertThatThrownBy(() -> SemanticCapabilities.from(legacy.getClass())).hasMessageContaining("@SemanticExpert");
         context.getRegistry().bind("legacy", legacy);
-        if (automatic) {
-            context.getRegistry().unbind("security");
-            context.getRegistry().unbind("other");
-        }
-        String reference = automatic ? null : "legacy";
+        String reference = "legacy";
         assertThatThrownBy(() -> SemanticEvaluations.get(context).replace("test",
                 Map.of("first", evaluation(reference, null, Map.of(), "boolean", 0.5))))
                 .hasMessageContaining("first").hasMessageContaining("expert 'legacy'")
@@ -211,13 +200,9 @@ class SemanticExpertTest {
         assertThat(expression.evaluate(exchange, Boolean.class)).isFalse();
     }
 
-    @ParameterizedTest
-    @ValueSource(booleans = { false, true })
-    void rebindingNamedExpertRequiresNewExpressionOrDeclarationReplacement(boolean useDefault) {
-        if (useDefault) {
-            language.setDefaultExpert("security");
-        }
-        String expert = useDefault ? null : "security";
+    @Test
+    void rebindingNamedExpertRequiresNewExpressionOrDeclarationReplacement() {
+        String expert = "security";
         define(expert, "other", 0.5);
         var expression = language.createExpression("ref:first");
         assertThat(expression.evaluate(exchange, Boolean.class)).isTrue();
@@ -342,6 +327,34 @@ class SemanticExpertTest {
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = { "java", "xml" })
+    void missingExpertsAreRejectedBeforeAnyInference(String dsl) {
+        context.getRegistry().unbind("other");
+        assertThatThrownBy(() -> {
+            if (dsl.equals("java")) {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        semanticEvaluations(this).evaluation("missingExpert").operation("boolean").register();
+                    }
+                });
+            } else {
+                PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("missing-expert.xml",
+                        "<semantic><evaluation name='missingExpert' operation='boolean'/></semantic>"));
+            }
+        }).hasStackTraceContaining("missingExpert").hasStackTraceContaining("Evaluation expert is required");
+        assertThat(security.calls).isZero();
+        assertThat(SemanticEvaluations.get(context).snapshot()).isEmpty();
+    }
+
+    @Test
+    void xmlBlockExpertIsRejected() {
+        assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("block.xml",
+                "<semantic expert='security'><evaluation name='check' expert='security' operation='boolean'/></semantic>")))
+                .hasStackTraceContaining("expert").hasStackTraceContaining("Unexpected attribute");
+    }
+
     @Test
     void invalidXmlAttributesNameTheirExpert() {
         assertThatThrownBy(() -> PluginHelper.getRoutesLoader(context).loadRoutes(ResourceHelper.fromString("invalid.xml",
@@ -355,19 +368,19 @@ class SemanticExpertTest {
     }
 
     @Test
-    void validationDoesNotInitializeOrStartOwnedProviderResources() {
+    void validationAndEvaluationDoNotTakeOverTheRegisteredExpertsLifecycle() {
         ManagedExpert.initialized = 0;
         ManagedExpert.started = 0;
-        language.setAdapter(ManagedExpert.class.getName());
+        context.getRegistry().bind("managed", new ManagedExpert());
         assertThatThrownBy(() -> SemanticEvaluations.get(context).replace("test", Map.of("first",
-                evaluation(null, "Unsupported", Map.of(), "boolean", 0.5))))
+                evaluation("managed", "Unsupported", Map.of(), "boolean", 0.5))))
                 .hasMessageContaining("Unknown parameter 'instructions'");
         assertThat(ManagedExpert.initialized).isZero();
         assertThat(ManagedExpert.started).isZero();
-        define(null, null, 0.5);
-        language.createExpression("ref:first");
-        assertThat(ManagedExpert.initialized).isOne();
-        assertThat(ManagedExpert.started).isOne();
+        define("managed", "managed", 0.5);
+        assertThat(language.createExpression("ref:first").evaluate(exchange, Boolean.class)).isTrue();
+        assertThat(ManagedExpert.initialized).isZero();
+        assertThat(ManagedExpert.started).isZero();
     }
 
     @SemanticExpert(name = "fixed", description = "Fixed detection", provider = "test", artifactId = "test",
@@ -396,35 +409,6 @@ class SemanticExpertTest {
         @Override
         public SemanticResult evaluate(SemanticEvaluation evaluation, Object state) {
             return new SemanticResult(true, null, null, null, null);
-        }
-    }
-
-    @Test
-    void directServiceImplementationIsInitializedBeforeStartup() {
-        DirectService.events.clear();
-        language.setAdapter(DirectService.class.getName());
-        define(null, null, 0.5);
-        language.createExpression("ref:first");
-        language.createExpression("ref:second");
-        assertThat(DirectService.events).containsExactly("init", "start");
-    }
-
-    public static class DirectService extends FixedSemanticExpert implements Service {
-        static final List<String> events = new ArrayList<>();
-
-        @Override
-        public void init() {
-            events.add("init");
-        }
-
-        @Override
-        public void start() {
-            events.add("start");
-        }
-
-        @Override
-        public void stop() {
-            events.add("stop");
         }
     }
 

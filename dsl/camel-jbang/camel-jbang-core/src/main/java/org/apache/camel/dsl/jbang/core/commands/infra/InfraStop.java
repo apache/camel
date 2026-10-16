@@ -17,11 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "stop",
@@ -44,24 +47,38 @@ public class InfraStop extends InfraBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        List<RunningService> services = findRunningServices(name);
+        if (services.isEmpty() && !"*".equals(name)) {
+            throw CliException.notFound("No running infra service matches: " + name);
+        }
 
-        Map<Long, Path> pids = findPids(name);
-
+        List<JsonObject> rows = new ArrayList<>();
         // stop by deleting the pid file
-        for (var entry : pids.entrySet()) {
-            Path pidFile = entry.getValue();
-            if (Files.exists(pidFile)) {
-                printer().println("Shutting down external services (PID: " + entry.getKey() + ")");
-                PathUtils.deleteFile(pidFile);
+        for (RunningService service : services) {
+            if (Files.exists(service.pidFile())) {
+                if (!jsonOutput) {
+                    printer().println("Shutting down external services (PID: " + service.pid() + ")");
+                }
+                PathUtils.deleteFile(service.pidFile());
             }
+            JsonObject jo = new JsonObject();
+            jo.put("pid", service.pid());
+            jo.put("alias", service.alias());
+            jo.put("status", kill ? "killed" : "stopping");
+            rows.add(jo);
         }
         if (kill) {
-            for (Long pid : pids.keySet()) {
-                ProcessHandle.of(pid).ifPresent(ph -> {
-                    printer().println("Killing external service (PID: " + pid + ")");
+            for (RunningService service : services) {
+                ProcessHandle.of(service.pidNumber()).ifPresent(ph -> {
+                    if (!jsonOutput) {
+                        printer().println("Killing external service (PID: " + service.pid() + ")");
+                    }
                     ph.destroyForcibly();
                 });
             }
+        }
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows);
         }
 
         return 0;

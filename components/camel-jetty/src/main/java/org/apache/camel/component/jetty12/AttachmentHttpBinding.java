@@ -125,14 +125,19 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                 String name = (String) names.nextElement();
                 if (am.getAttachment(name) != null) {
                     DataHandler dh = am.getAttachment(name);
-                    Object value = dh;
+                    Object[] values = { dh };
                     if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
+                        // a text field can occur several times, so map each of its values
+                        String[] texts = request.getParameterValues(name);
                         // prevent potential injections
-                        value = HttpHelper.sanitizeLog(request.getParameter(name));
+                        values = texts != null ? HttpHelper.sanitizeLog(texts) : new Object[] { null };
                     }
-                    if (getHeaderFilterStrategy() != null
-                            && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                        HttpHelper.appendHeader(headers, name, value);
+                    for (Object value : values) {
+                        if (getHeaderFilterStrategy() != null
+                                && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value,
+                                        message.getExchange())) {
+                            HttpHelper.appendHeader(headers, name, value);
+                        }
                     }
                     continue;
                 }

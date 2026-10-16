@@ -28,24 +28,30 @@ import io.quarkiverse.mcp.server.MetaField;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.jboss.logging.Logger;
 
 /**
  * The neutral Camel authoring tools shared with {@code camel tui --mcp} (CAMEL-24695): thin MCP wrappers over the
  * {@link ToolRegistry}, so an AI agent gets the same tools, names and answers through either server. The logic lives in
- * camel-jbang-core ({@code AuthoringTools} there); these methods only carry the MCP annotations the security
- * interceptor and access filter work on, and pass the arguments through.
+ * camel-jbang-core ({@code AuthoringTools} there); these methods only carry the MCP annotations the access filter works
+ * on and pass the arguments through. The class is {@link McpSecured}, so every call goes through the security
+ * interceptor (audit, argument sanitisation, secret redaction of the answer).
  * <p>
  * Writing a file is validated first and refused when the content is invalid, but nobody is asked before the write: the
  * MCP client (Claude Code, Cursor, and the others ask before a non read-only tool runs) is where the human sits. The
  * {@code read-only} access level hides the tools that write, run and control.
  */
+@McpSecured
 @ApplicationScoped
 public class AuthoringTools {
+
+    private static final Logger LOG = Logger.getLogger(AuthoringTools.class);
 
     private static final String NAME_DESC = "Integration name or pid (default: the only one running)";
     private static final String VERSION_DESC = "Camel version to answer for (default: the CLI's own)";
@@ -53,6 +59,12 @@ public class AuthoringTools {
 
     @Inject
     RepeatedCallSessions repeatedCalls;
+
+    @Inject
+    McpSecurityConfig securityConfig;
+
+    @Inject
+    CatalogService catalogService;
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Camel catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the "
@@ -168,6 +180,7 @@ public class AuthoringTools {
                      required = true) String file,
             @ToolArg(description = "The complete new content", required = true) String content,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        refuseRedacted(content);
         return call("camel_write_file", args("directory", directory, "file", file, "content", content,
                 "camelVersion", camelVersion));
     }
@@ -187,8 +200,36 @@ public class AuthoringTools {
             @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EDITS_DESC,
                      required = false) List<FileEdit> edits,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
+        refuseRedacted(find, replace);
+        if (edits != null) {
+            for (FileEdit edit : edits) {
+                if (edit != null) {
+                    refuseRedacted(edit.find(), edit.replace());
+                }
+            }
+        }
         return call("camel_edit_file", args("directory", directory, "file", file, "find", find, "replace", replace,
                 "edits", editsJson(edits), "camelVersion", camelVersion));
+    }
+
+    /**
+     * With secret redaction on, camel_get_files answers a secret as the redaction mask; written back, the mask would
+     * replace the real secret in the file. So a write or an edit that carries the mask is refused.
+     */
+    private void refuseRedacted(String... texts) {
+        if (securityConfig == null || !securityConfig.isEnabled() || !securityConfig.isRedactionEnabled()) {
+            return;
+        }
+        for (String text : texts) {
+            if (text != null && text.contains(McpSecretRedactor.REDACTED)) {
+                throw new ToolCallException(
+                        "The content contains " + McpSecretRedactor.REDACTED + ", the mask secret redaction "
+                                            + "(camel.mcp.security.redaction.enabled) shows in place of a secret; "
+                                            + "written back it would replace the real secret, so nothing was "
+                                            + "written. Change only the lines without the mask with "
+                                            + "camel_edit_file, and leave the secret itself to a human.");
+            }
+        }
     }
 
     /** One change of camel_edit_file's edits: the text to find as it stands in the file, and what to put there. */
@@ -333,18 +374,52 @@ public class AuthoringTools {
     }
 
     /**
-     * As {@link #call(String, Map)} for a deterministic tool: from the third identical call of the connection the
-     * answer is a short note that it was already answered (CAMEL-25075).
+     * As {@link #call(String, Map, CatalogService)} for a deterministic tool: from the third identical call of the
+     * connection the answer is a short note that it was already answered (CAMEL-25075). Only successful answers count
+     * against the repeat budget; a call that throws does not (CAMEL-25640).
      */
     JsonObject callDeterministic(McpConnection connection, String tool, Map<String, String> args) {
         JsonObject repeat = repeatedCalls != null ? repeatedCalls.repeatOf(connection, tool, args) : null;
-        return repeat != null ? repeat : call(tool, args);
+        if (repeat != null) {
+            return repeat;
+        }
+        JsonObject result = call(tool, args, catalogService);
+        if (repeatedCalls != null) {
+            repeatedCalls.recordSuccessfulAnswer(connection, tool, args);
+        }
+        return result;
     }
 
     /** Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. */
     static JsonObject call(String tool, Map<String, String> args) {
+        return call(tool, args, null);
+    }
+
+    /**
+     * Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. When
+     * {@code catalogService} is provided, the {@link ToolContext} reuses the shared catalog cache instead of creating a
+     * new one per call (CAMEL-25640).
+     */
+    static JsonObject call(String tool, Map<String, String> args, CatalogService catalogService) {
         try {
-            return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, new ToolContext(), args));
+            ToolContext ctx = new ToolContext();
+            if (catalogService != null) {
+                String camelVersion = args != null ? args.get("camelVersion") : null;
+                try {
+                    // Set the version first: setCamelVersion() on a fresh context nulls out any previously set catalog,
+                    // so the catalog must be set after (or the version set before, so it is a no-op when they match).
+                    if (camelVersion != null && !camelVersion.isBlank()) {
+                        ctx.setCamelVersion(camelVersion.trim());
+                    }
+                    CamelCatalog catalog = catalogService.loadCatalog(null, camelVersion, null);
+                    ctx.setCatalog(catalog);
+                } catch (Exception e) {
+                    // catalog load failed: fall through to ToolContext's own lazy-load, which handles the error
+                    LOG.debugf("CatalogService.loadCatalog() failed (%s), falling back to ToolContext lazy-load",
+                            e.getMessage());
+                }
+            }
+            return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args));
         } catch (ToolExecutionException e) {
             throw new ToolCallException(e.getMessage(), e);
         }

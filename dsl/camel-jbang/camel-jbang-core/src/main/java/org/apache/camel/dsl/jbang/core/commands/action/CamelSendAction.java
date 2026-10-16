@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,8 +39,13 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -97,8 +103,9 @@ public class CamelSendAction extends ActionBaseCommand {
                         description = "Message header (key=value)")
     List<String> headers;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be sent (and reply message if InOut messaging)")
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for message to be sent (and reply message if InOut messaging),"
+                                      + " in millis or as a duration such as 30s")
     long timeout = 20000;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
@@ -150,10 +157,13 @@ public class CamelSendAction extends ActionBaseCommand {
         if (headers != null) {
             for (String h : headers) {
                 if (!h.contains("=")) {
-                    printer().printErr("Header must be in key=value format, was: " + h);
-                    return 1;
+                    throw CliException.usage("Header must be in key=value format, was: " + h);
                 }
             }
+        }
+        // timeout cannot be too low
+        if (timeout < 5000) {
+            timeout = 5000;
         }
 
         if (infra != null) {
@@ -165,19 +175,12 @@ public class CamelSendAction extends ActionBaseCommand {
         }
     }
 
-    protected Path writeSendData() {
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "send");
+    /**
+     * The options of the send action.
+     */
+    protected void sendOptions(JsonObject root) {
         root.put("endpoint", endpoint);
         root.put("poll", poll);
-        // timeout cannot be too low
-        if (timeout < 5000) {
-            timeout = 5000;
-        }
         root.put("pollTimeout", timeout);
         String mep = (reply || replyFile != null) ? "InOut" : "InOnly";
         root.put("exchangePattern", mep);
@@ -202,92 +205,78 @@ public class CamelSendAction extends ActionBaseCommand {
             }
             root.put("headers", arr);
         }
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            String text = root.toJson();
-            Files.writeString(f, text);
-        } catch (Exception e) {
-            // ignore
-        }
-
-        return outputFile;
     }
 
     public Integer doCall(String name) throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.size() != 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
-        this.pid = pids.get(0);
-
-        Path outputFile = writeSendData();
-        return showStatus(outputFile);
+        // wait longer than the timeout of sending
+        return showStatus(ActionClient.execute(process, "send", this::sendOptions, timeout + 10000));
     }
 
-    protected int showStatus(Path outputFile) throws Exception {
-        try {
-            // wait longer than timeout
-            JsonObject jo = getJsonObject(outputFile, timeout + 10000);
-            if (jo != null) {
-                printStatusLine(jo);
-                String exchangeId = jo.getString("exchangeId");
-                JsonObject message = jo.getMap("message");
-                JsonObject cause = jo.getMap("exception");
-                if (message != null || cause != null) {
-                    if (replyFile != null) {
-                        Path target = Path.of(replyFile);
-                        String json = jo.toJson();
-                        if (pretty) {
-                            json = Jsoner.prettyPrint(json, 2);
-                        }
-                        try {
-                            Files.writeString(target, json);
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                    if (!showExchangeProperties && message != null) {
-                        message.remove("exchangeProperties");
-                    }
-                    if (!showExchangeVariables && message != null) {
-                        message.remove("exchangeVariables");
-                    }
-                    if (!showHeaders && message != null) {
-                        message.remove("headers");
-                    }
-                    if (!showBody && message != null) {
-                        message.remove("body");
-                    }
-                    if (!showException && cause != null) {
-                        cause = null;
-                    }
-                    if (replyFile == null) {
-                        tableHelper = new MessageTableHelper();
-                        tableHelper.setPretty(pretty);
-                        tableHelper.setLoggingColor(loggingColor);
-                        tableHelper.setShowExchangeProperties(showExchangeProperties);
-                        tableHelper.setShowExchangeVariables(showExchangeVariables);
-                        String mep = (reply || replyFile != null) ? "InOut" : "InOnly";
-                        String table = tableHelper.getDataAsTable(exchangeId, mep, null, jo, null, message, cause);
-                        printer().println(table);
-                    }
-                }
-                String status = jo.getString("status");
-                if ("failed".equals(status) || "error".equals(status) || "timeout".equals(status)) {
-                    return 1;
-                }
-                return 0;
-            } else {
-                printer().println("Send timeout");
-                return 1;
-            }
-        } finally {
-            // delete output file after use
-            PathUtils.deleteFile(outputFile);
+    /**
+     * Prints the outcome of sending the message.
+     *
+     * @return the exit code: 1 when the exchange failed, 124 when the endpoint or the integration did not answer in
+     *         time
+     */
+    protected int showStatus(ActionResult result) throws Exception {
+        JsonObject jo = result.reply();
+        if (jo == null) {
+            // no answer from the integration at all
+            throw new CliException(result.exitCode(), "Send timeout: " + result.error());
         }
+        printStatusLine(jo);
+        String exchangeId = jo.getString("exchangeId");
+        JsonObject message = jo.getMap("message");
+        JsonObject cause = jo.getMap("exception");
+        if (message != null || cause != null) {
+            if (replyFile != null) {
+                Path target = Path.of(replyFile);
+                String json = jo.toJson();
+                if (pretty) {
+                    json = Jsoner.prettyPrint(json, 2);
+                }
+                try {
+                    Files.writeString(target, json);
+                } catch (IOException e) {
+                    throw CliException.failure("Cannot write the reply to " + replyFile + ": " + e.getMessage());
+                }
+            }
+            if (!showExchangeProperties && message != null) {
+                message.remove("exchangeProperties");
+            }
+            if (!showExchangeVariables && message != null) {
+                message.remove("exchangeVariables");
+            }
+            if (!showHeaders && message != null) {
+                message.remove("headers");
+            }
+            if (!showBody && message != null) {
+                message.remove("body");
+            }
+            if (!showException && cause != null) {
+                cause = null;
+            }
+            if (replyFile == null) {
+                tableHelper = new MessageTableHelper();
+                tableHelper.setPretty(pretty);
+                tableHelper.setLoggingColor(loggingColor);
+                tableHelper.setShowExchangeProperties(showExchangeProperties);
+                tableHelper.setShowExchangeVariables(showExchangeVariables);
+                String mep = (reply || replyFile != null) ? "InOut" : "InOnly";
+                String table = tableHelper.getDataAsTable(exchangeId, mep, null, jo, null, message, cause);
+                printer().println(table);
+            }
+        }
+        String status = jo.getString("status");
+        if ("timeout".equals(status)) {
+            return CliExitCode.TIMEOUT;
+        } else if ("failed".equals(status) || "error".equals(status)) {
+            return CliExitCode.FAILURE;
+        }
+        return CliExitCode.OK;
     }
 
     private Integer doCallLocal() throws Exception {
@@ -304,17 +293,23 @@ public class CamelSendAction extends ActionBaseCommand {
         run.property = property;
         run.mavenResolver = mavenResolver;
 
-        // spawn thread that waits for response file
+        // spawn thread that sends the message to the Camel of this process, once it has started
         final CountDownLatch latch = new CountDownLatch(1);
         this.pid = ProcessHandle.current().pid();
-        Path outputFile = writeSendData();
+        JsonObject request = new JsonObject();
+        request.put("action", "send");
+        sendOptions(request);
+        AtomicInteger status = new AtomicInteger(CliExitCode.TIMEOUT);
+        AtomicReference<CliException> failure = new AtomicReference<>();
         Thread t = new Thread("CamelJBangSendStatus") {
             @Override
             public void run() {
                 try {
-                    showStatus(outputFile);
+                    status.set(showStatus(ActionClient.execute(pid, request, timeout + 10000)));
+                } catch (CliException e) {
+                    failure.set(e);
                 } catch (Exception e) {
-                    // ignore
+                    failure.set(CliException.failure("Cannot send the message: " + e.getMessage()));
                 } finally {
                     latch.countDown();
                     // signal to main we are complete
@@ -329,9 +324,16 @@ public class CamelSendAction extends ActionBaseCommand {
         t.start();
 
         Integer exit = run.call();
-        latch.await(timeout + 10000, TimeUnit.MILLISECONDS);
-
-        return exit;
+        if (!latch.await(timeout + 10000, TimeUnit.MILLISECONDS)) {
+            throw CliException.timeout("Send timeout: no answer within " + (timeout + 10000) + " millis");
+        }
+        if (exit != null && exit != 0) {
+            return exit;
+        }
+        if (failure.get() != null) {
+            throw failure.get();
+        }
+        return status.get();
     }
 
     private void printStatusLine(JsonObject jo) {
@@ -419,14 +421,12 @@ public class CamelSendAction extends ActionBaseCommand {
         Map<Long, Path> infraPids = findInfraPids(infraService);
 
         if (infraPids.isEmpty()) {
-            printer().println("No running infrastructure service found for: " + infraService);
-            return 1;
+            throw CliException.notFound("No running infrastructure service found for: " + infraService);
         }
 
         if (infraPids.size() > 1) {
-            printer().println("Multiple running infrastructure services found for: " + infraService +
-                              ". Found " + infraPids.size() + " services.");
-            return 1;
+            throw CliException.notFound("Multiple running infrastructure services found for: " + infraService
+                                        + ". Found " + infraPids.size() + " services.");
         }
 
         Map.Entry<Long, Path> entry = infraPids.entrySet().iterator().next();
@@ -435,8 +435,7 @@ public class CamelSendAction extends ActionBaseCommand {
         JsonObject connectionDetails = readConnectionDetails(jsonFile);
 
         if (connectionDetails == null) {
-            printer().printErr("Could not read connection details from: " + jsonFile);
-            return 1;
+            throw CliException.failure("Could not read connection details from: " + jsonFile);
         }
 
         String scheme = extractScheme(endpoint, infraService);

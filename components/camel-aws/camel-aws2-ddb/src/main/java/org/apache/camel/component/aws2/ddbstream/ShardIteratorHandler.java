@@ -114,6 +114,15 @@ class ShardIteratorHandler {
         return shardIterator;
     }
 
+    /**
+     * Requests a shard iterator that starts at the record with the given sequence number (and not after it).
+     */
+    String requestFreshShardIteratorAt(String shardId, String sequenceNumber) {
+        String shardIterator = getShardIterator(shardId, ShardIteratorType.AT_SEQUENCE_NUMBER, sequenceNumber);
+        currentShardIterators.put(shardId, shardIterator);
+        return shardIterator;
+    }
+
     Ddb2StreamEndpoint getEndpoint() {
         return endpoint;
     }

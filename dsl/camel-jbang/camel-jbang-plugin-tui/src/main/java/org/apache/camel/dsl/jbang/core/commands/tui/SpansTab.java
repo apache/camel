@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.layout.Constraint;
@@ -42,7 +43,6 @@ import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
-import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
@@ -50,6 +50,7 @@ import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
 import dev.tamboui.widgets.table.Table;
 import dev.tamboui.widgets.table.TableState;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -77,11 +78,9 @@ class SpansTab extends AbstractTab {
     private String sortColumn = "trace-id";
     private int sortIndex;
     private boolean sortReversed;
-    private boolean filterInputActive;
-    private TextInputState filterInputState = new TextInputState("");
-    private String filterTerm;
+    private final FilterField filter = new FilterField(this::filterChanged);
 
-    boolean spanRefreshRequested;
+    private volatile boolean spanRefreshRequested;
 
     SpansTab(MonitorContext ctx, AtomicReference<List<SpanEntry>> spans) {
         super(ctx);
@@ -91,6 +90,15 @@ class SpansTab extends AbstractTab {
     @Override
     public void onTabSelected() {
         spanRefreshRequested = true;
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        DataRefreshService data = ctx.dataService;
+        if (data != null && ctx.selectedPid != null && spanRefreshRequested) {
+            spanRefreshRequested = false;
+            data.refreshSpanData();
+        }
     }
 
     @Override
@@ -105,8 +113,8 @@ class SpansTab extends AbstractTab {
         if (waterfallView) {
             return handleWaterfallKeys(ke);
         }
-        if (filterInputActive) {
-            return handleFilterInput(ke);
+        if (filter.handleKey(ke)) {
+            return true;
         }
         if (ke.isConfirm()) {
             Integer sel = traceListState.selected();
@@ -123,11 +131,6 @@ class SpansTab extends AbstractTab {
             spanRefreshRequested = true;
             return true;
         }
-        if (ke.isChar('/')) {
-            filterInputActive = true;
-            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
-            return true;
-        }
         if (ke.isChar('s')) {
             sortIndex = (sortIndex + 1) % SORT_COLUMNS.length;
             sortColumn = SORT_COLUMNS[sortIndex];
@@ -141,25 +144,19 @@ class SpansTab extends AbstractTab {
         return false;
     }
 
-    private boolean handleFilterInput(KeyEvent ke) {
-        if (ke.isKey(KeyCode.ESCAPE)) {
-            filterInputActive = false;
-            return true;
-        }
-        if (ke.isConfirm()) {
-            String text = filterInputState.text().trim();
-            filterTerm = text.isEmpty() ? null : text;
-            filterInputActive = false;
-            selectedListTraceId = null;
-            traceListState.select(0);
-            return true;
-        }
-        FormHelper.handleTextInput(ke, filterInputState);
-        return true;
+    private void filterChanged() {
+        selectedListTraceId = null;
+        traceListState.select(0);
     }
 
-    boolean isFilterInputActive() {
-        return filterInputActive;
+    @Override
+    public boolean isTextInputActive() {
+        return filter.isEditing();
+    }
+
+    @Override
+    public boolean handlePaste(String text) {
+        return filter.handlePaste(text);
     }
 
     private boolean handleWaterfallKeys(KeyEvent ke) {
@@ -231,30 +228,20 @@ class SpansTab extends AbstractTab {
 
     @Override
     public boolean handleEscape() {
-        if (filterInputActive) {
-            filterInputActive = false;
-            return true;
+        if (filter.isEditing()) {
+            return filter.handleEscape();
         }
         if (waterfallView) {
             waterfallView = false;
             selectedTraceId = null;
             return true;
         }
-        if (filterTerm != null) {
-            filterTerm = null;
-            selectedListTraceId = null;
-            traceListState.select(0);
-            return true;
-        }
-        return false;
+        return filter.handleEscape();
     }
 
     @Override
-    public boolean setFilter(String filter) {
-        filterTerm = (filter != null && !filter.isEmpty()) ? filter : null;
-        filterInputActive = false;
-        selectedListTraceId = null;
-        traceListState.select(0);
+    public boolean setFilter(String term) {
+        filter.setTerm(term);
         return true;
     }
 
@@ -323,13 +310,13 @@ class SpansTab extends AbstractTab {
 
     private List<TraceSummary> buildFilteredTraceSummaries() {
         List<TraceSummary> all = buildTraceSummaries();
-        if (filterTerm == null) {
+        if (filter.term() == null) {
             return all;
         }
-        String filter = filterTerm.toLowerCase();
+        String term = filter.term().toLowerCase();
         List<TraceSummary> filtered = new ArrayList<>();
         for (TraceSummary ts : all) {
-            if (ts.searchText.contains(filter)) {
+            if (ts.searchText.contains(term)) {
                 filtered.add(ts);
             }
         }
@@ -338,7 +325,7 @@ class SpansTab extends AbstractTab {
 
     private void renderTraceList(Frame frame, Rect area) {
         List<TraceSummary> allSummaries = buildTraceSummaries();
-        List<TraceSummary> summaries = filterTerm != null ? buildFilteredTraceSummaries() : allSummaries;
+        List<TraceSummary> summaries = filter.term() != null ? buildFilteredTraceSummaries() : allSummaries;
 
         // Restore selection by traceId (survives data refresh/eviction)
         if (!summaries.isEmpty()) {
@@ -384,9 +371,9 @@ class SpansTab extends AbstractTab {
         }
 
         String title;
-        if (filterTerm != null) {
+        if (filter.term() != null) {
             title = String.format(" OTel Traces [%d/%d, %s] ",
-                    summaries.size(), allSummaries.size(), filterTerm);
+                    summaries.size(), allSummaries.size(), filter.term());
         } else {
             title = String.format(" OTel Traces [%d traces, %d spans] ", allSummaries.size(), spans.get().size());
         }
@@ -647,23 +634,15 @@ class SpansTab extends AbstractTab {
             hint(spans, "c", camelOnly ? "camel-only [on]" : "camel-only [off]");
             hint(spans, "p", showProcessors ? "processors [on]" : "processors [off]");
             hintLast(spans, "PgUp/Dn", "page");
-        } else if (filterInputActive) {
-            spans.add(Span.styled(" /", Theme.label().bold()));
-            FormHelper.addCaretField(spans, filterInputState);
-            spans.add(Span.raw("  "));
-            hint(spans, "Enter", "filter");
-            hintLast(spans, "Esc", "cancel");
-        } else {
-            hint(spans, "Esc", filterTerm != null ? "clear" : "back");
-            hint(spans, "F5", "refresh");
-            hint(spans, "Enter", "waterfall");
-            if (filterTerm != null) {
-                spans.add(Span.styled("  /", Theme.label().bold()));
-                spans.add(Span.raw("\"" + filterTerm + "\"  "));
-            } else {
-                hint(spans, "/", "filter");
-            }
+            return;
         }
+        if (filter.renderEditingFooter(spans)) {
+            return;
+        }
+        hint(spans, "Esc", filter.escapeLabel());
+        hint(spans, "F5", "refresh");
+        hint(spans, "Enter", "waterfall");
+        filter.renderHint(spans);
     }
 
     private List<TraceSummary> buildTraceSummaries() {
@@ -928,11 +907,13 @@ class SpansTab extends AbstractTab {
         return span.name();
     }
 
-    private static boolean isRemoteScheme(String scheme) {
+    // whether the component of a span talks to a remote system, as the catalog says (a scheme it does not know counts as
+    // remote); remembered per scheme, as the trace summaries are built on every refresh
+    private static final Map<String, Boolean> REMOTE_SCHEMES = new ConcurrentHashMap<>();
+
+    static boolean isRemoteScheme(String scheme) {
         return scheme != null
-                && !"direct".equals(scheme) && !"seda".equals(scheme)
-                && !"mock".equals(scheme) && !"log".equals(scheme)
-                && !"bean".equals(scheme) && !"class".equals(scheme);
+                && REMOTE_SCHEMES.computeIfAbsent(scheme, s -> ProjectOverview.isRemote(s, ProjectOverviewAssist.catalog()));
     }
 
     private static int compareNullable(String a, String b) {

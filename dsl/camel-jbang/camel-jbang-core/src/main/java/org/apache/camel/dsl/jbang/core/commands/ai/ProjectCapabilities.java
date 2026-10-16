@@ -51,6 +51,10 @@ public final class ProjectCapabilities {
     public static final String SHARED = "shared";
     public static final String UTILITY = "utility";
     public static final String OTHER = "other";
+    /** The box of the routes reached only on error, when the error handling is shown (CAMEL-25466). */
+    public static final String ERRORS = "errors";
+    /** The kind of a link from a group whose failures go to the routes of the error handling box. */
+    public static final String ON_FAILURE = "on failure";
 
     private static final List<String> LINK_RANK = List.of("call", "async", "event", "shared");
 
@@ -208,6 +212,72 @@ public final class ProjectCapabilities {
     }
 
     /**
+     * The groups with the error handling shown (CAMEL-25466): the routes reached only on error, which are utility
+     * otherwise, in a box of their own, linked from the groups whose failures go there. A group's failures go there
+     * when a route of it sends there while it handles a failure, or uses an error handler of its file that does (a
+     * route with noErrorHandler leaves its failures to its caller). Routes of a group from the source stay in their
+     * group.
+     */
+    public static Capabilities withErrorHandling(Overview overview, Capabilities caps) {
+        Set<String> moved = new LinkedHashSet<>();
+        for (Route r : overview.flows()) {
+            if (UTILITY.equals(caps.groupOf().get(r.key())) && reachedOnlyOnError(r, overview)) {
+                moved.add(r.key());
+            }
+        }
+        if (moved.isEmpty()) {
+            return caps;
+        }
+        Map<String, String> groupOf = new LinkedHashMap<>(caps.groupOf());
+        moved.forEach(k -> groupOf.put(k, ERRORS));
+        List<Group> groups = new ArrayList<>();
+        for (Group g : caps.groups()) {
+            List<String> left = g.routes().stream().filter(r -> !moved.contains(r)).toList();
+            if (left.size() == g.routes().size()) {
+                groups.add(g);
+            } else if (!left.isEmpty()) {
+                Set<String> byAi = new LinkedHashSet<>(g.aiRoutes());
+                byAi.retainAll(left);
+                groups.add(new Group(
+                        g.id(), g.name(), g.kind(), g.ai() && (!UTILITY.equals(g.kind()) || !byAi.isEmpty()), g.text(),
+                        left, byAi, entryPoints(overview, left), systems(overview, left), warnings(overview, left)));
+            }
+        }
+        List<String> routes = List.copyOf(moved);
+        groups.add(new Group(
+                ERRORS, "Error handling", ERRORS, false, null, routes, Set.of(), entryPoints(overview, routes),
+                systems(overview, routes), warnings(overview, routes)));
+        List<GroupLink> links = new ArrayList<>(
+                links(overview, groupOf).stream().filter(l -> !ERRORS.equals(l.to())).toList());
+        Set<String> senders = new LinkedHashSet<>();
+        for (Link l : overview.links()) {
+            Route from = overview.route(l.from());
+            if (!moved.contains(l.to()) || from == null) {
+                continue;
+            }
+            if (ProjectOverview.isErrorHandler(from)) {
+                for (Route r : overview.flows()) {
+                    if (!moved.contains(r.key()) && ProjectOverview.usesHandler(r, from)) {
+                        senders.add(groupOf.get(r.key()));
+                    }
+                }
+            } else if (!moved.contains(from.key())) {
+                senders.add(groupOf.get(from.key()));
+            }
+        }
+        senders.remove(null);
+        senders.remove(ERRORS);
+        senders.forEach(g -> links.add(new GroupLink(g, ERRORS, ON_FAILURE)));
+        return new Capabilities(groups, links, groupOf);
+    }
+
+    /** Whether only error handling reaches a route: a doCatch, an onException or a dead letter channel sends to it. */
+    static boolean reachedOnlyOnError(Route r, Overview overview) {
+        List<Link> incoming = overview.links().stream().filter(l -> l.to().equals(r.key())).toList();
+        return !incoming.isEmpty() && incoming.stream().allMatch(Link::onError);
+    }
+
+    /**
      * Whether a route starts a flow: it is an entry point (work comes in from outside) and passes the work on to
      * another route of the project. Such a route is business intake, never plumbing, whatever a model says.
      */
@@ -222,8 +292,7 @@ public final class ProjectCapabilities {
      * every step of it only logs and it is not where messages enter.
      */
     static boolean isUtility(Route r, Overview overview) {
-        List<Link> incoming = overview.links().stream().filter(l -> l.to().equals(r.key())).toList();
-        if (!incoming.isEmpty() && incoming.stream().allMatch(Link::onError)) {
+        if (reachedOnlyOnError(r, overview)) {
             return true;
         }
         boolean entry = overview.entryPoints().stream().anyMatch(e -> r.key().equals(e.route()));

@@ -235,6 +235,8 @@ public class RouteDiagramLayoutEngine {
         public int maxX;
         public int maxY;
         public final List<LayoutNode> nodes = new ArrayList<>();
+        /** The error handling of the route, in a frame below its steps, when shown ({@link RouteErrorFrame#add}). */
+        public RouteErrorFrame errorFrame;
     }
 
     public static TreeNode buildTree(List<NodeInfo> nodes) {

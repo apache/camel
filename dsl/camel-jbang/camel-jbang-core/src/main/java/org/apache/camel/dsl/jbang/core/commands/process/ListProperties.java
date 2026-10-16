@@ -85,65 +85,59 @@ public class ListProperties extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
 
-                        JsonArray arr;
-                        if (startup) {
-                            JsonObject jv = (JsonObject) root.get("main-configuration");
-                            arr = jv.getCollectionOrDefault("configurations", null);
-                        } else {
-                            JsonObject jv = (JsonObject) root.get("properties");
-                            arr = jv.getCollectionOrDefault("properties", null);
-                        }
-                        for (int i = 0; arr != null && i < arr.size(); i++) {
-                            row = row.copy();
-                            JsonObject jo = (JsonObject) arr.get(i);
-                            row.key = jo.getString("key");
-                            String value = jo.getString("value");
-                            if (mask && SensitiveUtils.containsSensitive(row.key)) {
-                                value = "xxxxxx";
-                            }
-                            row.value = value;
-                            value = jo.getString("originalValue");
-                            if (mask && SensitiveUtils.containsSensitive(row.key)) {
-                                value = "xxxxxx";
-                            }
-                            row.originalValue = value;
-                            row.internalLoc = jo.getBooleanOrDefault("internal", false);
-                            row.source = jo.getString("source");
-                            row.loc = sanitizeLocation(jo.getString("location"));
-                            boolean accept = internal || !row.internalLoc;
-                            if (accept) {
-                                rows.add(row);
-                            }
-                        }
-                    }
-                });
+            JsonArray arr;
+            if (startup) {
+                JsonObject jv = (JsonObject) root.get("main-configuration");
+                arr = jv.getCollectionOrDefault("configurations", null);
+            } else {
+                JsonObject jv = (JsonObject) root.get("properties");
+                arr = jv.getCollectionOrDefault("properties", null);
+            }
+            for (int i = 0; arr != null && i < arr.size(); i++) {
+                row = row.copy();
+                JsonObject jo = (JsonObject) arr.get(i);
+                row.key = jo.getString("key");
+                String value = jo.getString("value");
+                if (mask && SensitiveUtils.containsSensitive(row.key)) {
+                    value = "xxxxxx";
+                }
+                row.value = value;
+                value = jo.getString("originalValue");
+                if (mask && SensitiveUtils.containsSensitive(row.key)) {
+                    value = "xxxxxx";
+                }
+                row.originalValue = value;
+                row.internalLoc = jo.getBooleanOrDefault("internal", false);
+                row.source = jo.getString("source");
+                row.loc = sanitizeLocation(jo.getString("location"));
+                boolean accept = internal || !row.internalLoc;
+                if (accept) {
+                    rows.add(row);
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("location", r.loc);
                     jo.put("key", r.key);

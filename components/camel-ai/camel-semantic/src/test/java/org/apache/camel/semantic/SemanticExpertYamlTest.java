@@ -41,6 +41,27 @@ class SemanticExpertYamlTest {
             """;
 
     @Test
+    void missingExpertIsRejectedEvenWithASoleRegisteredExpert() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var expert = new FixedExpert();
+            context.getRegistry().bind("security", expert);
+            String yaml = "- semantic:\n    evaluation:\n      missingExpert:\n        type: boolean\n";
+            assertThatThrownBy(() -> preParse(context, yaml))
+                    .hasStackTraceContaining("missingExpert").hasStackTraceContaining("Evaluation expert is required");
+            assertThat(expert.calls).isZero();
+        }
+    }
+
+    @Test
+    void blockExpertIsRejected() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            assertThatThrownBy(() -> preParse(context, DECLARATIONS.replace("    evaluation:",
+                    "    expert: security\n    evaluation:")))
+                    .hasStackTraceContaining("Unknown property 'expert' in semantic declaration");
+        }
+    }
+
+    @Test
     void initialPreParseAcceptsAnExpertRegisteredBeforeExpressionInitialization() throws Exception {
         try (var context = new DefaultCamelContext()) {
             preParse(context, DECLARATIONS);
@@ -127,10 +148,10 @@ class SemanticExpertYamlTest {
     }
 
     @Test
-    void malformedBlockExpertAndUnknownKeysHaveUsefulContext() throws Exception {
+    void malformedEvaluationExpertAndUnknownKeysHaveUsefulContext() throws Exception {
         try (var context = new DefaultCamelContext()) {
             assertThatThrownBy(() -> preParse(context,
-                    "- semantic: {expert: [invalid], evaluation: {q: {operation: detect}}}"))
+                    "- semantic: {evaluation: {q: {expert: [invalid], operation: detect}}}"))
                     .isInstanceOf(YamlDeserializationException.class).hasMessageContaining("'q'")
                     .hasMessageContaining("invalid expert reference");
             assertThatThrownBy(() -> preParse(context,
@@ -140,14 +161,13 @@ class SemanticExpertYamlTest {
     }
 
     @Test
-    void unusedAmbiguousDeclarationsFailAtStartup() throws Exception {
+    void unusedDeclarationsRequireExpertsBeforePublication() throws Exception {
         try (var context = new DefaultCamelContext()) {
             context.getRegistry().bind("security", new FixedExpert());
             context.getRegistry().bind("other", new FixedExpert());
             String declarations = DECLARATIONS + "      draft: {type: boolean}\n";
-            preParse(context, declarations);
-            assertThatThrownBy(context::start).hasMessageContaining("draft")
-                    .hasMessageContaining("exactly one eligible expert");
+            assertThatThrownBy(() -> preParse(context, declarations)).hasMessageContaining("draft")
+                    .hasMessageContaining("Evaluation expert is required");
         }
     }
 

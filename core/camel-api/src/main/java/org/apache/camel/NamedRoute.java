@@ -77,4 +77,27 @@ public interface NamedRoute {
      */
     Resource getResource();
 
+    /**
+     * Gets the id of the route template (or Kamelet) this route was created from.
+     *
+     * @return the route template id, or null if this route was not created from a route template
+     * @since  4.24
+     */
+    @Nullable
+    default String getRouteTemplateId() {
+        return null;
+    }
+
+    /**
+     * Gets the {@link Resource} that declares the templated route this route was created from. The route itself (and
+     * its source location) is in the resource with the route template, see {@link #getResource()}.
+     *
+     * @return the resource, or null if this route was not created from a templated route loaded from a resource
+     * @since  4.24
+     */
+    @Nullable
+    default Resource getTemplatedRouteResource() {
+        return null;
+    }
+
 }

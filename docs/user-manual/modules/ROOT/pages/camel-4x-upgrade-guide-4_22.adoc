@@ -13,6 +13,30 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.1 to 4.22.2
 
+=== camel-lra - only an LRA hosted by the configured coordinator is joined
+
+The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
+coordinator (`coordinatorUrl` followed by `coordinatorContextPath`). A message whose `Long-Running-Action` header holds
+the URL of another coordinator now fails, instead of the saga service calling that URL.
+
+If your participants reach the same coordinator under different URLs, for example with different host names, list the
+other coordinator URLs, including the context path, in the new `allowedCoordinatorUrls` option
+(`camel.lra.allowedCoordinatorUrls`).
+
+This also applies to the LRAs the service starts itself, which a nested saga route looks up again: when the
+coordinator returns LRA URLs under another base URL than `coordinatorUrl`, for example behind a proxy, add that
+base URL to `allowedCoordinatorUrls` as well.
+
+=== camel-lra - warning for unsigned participant callbacks, and reserved saga option names
+
+The LRA saga service now logs a warning at startup when no `callbackSecret` is configured: the callbacks that the LRA
+coordinator sends to the participant endpoints are then not verified, so these endpoints must only be reachable by the
+coordinator. The Saga EIP documentation describes how to sign them.
+
+A saga option named like a parameter of the participant callback URLs, in any case (`Camel-Saga-Compensate`,
+`Camel-Saga-Complete`, `Camel-Saga-Signature` or `Camel-Saga-Lra`), now fails the creation of its route, with or
+without a callback secret. The value of such an option could not be read back from the callback before.
+
 === camel-management - Route group exchange counters count once per entry into the group again
 
 In 4.22.1, the route group MBean (`ManagedRouteGroupMBean`) exchange counters and processing times
@@ -66,12 +90,64 @@ Code that creates key material itself has to follow the same move: the `CMCEPara
 `CMCEParameterSpec`, `FrodoKEMParameterSpec`, `MLKEMParameterSpec`, `MLDSAParameterSpec` and
 `SLHDSAParameterSpec` of `org.bouncycastle.jcajce.spec` with the `BC` provider instead.
 
+=== camel-pqc - a configured KeyGenerator or KeyAgreement is used by one exchange at a time
+
+When Camel creates the instance itself, the KEM operations of the `pqc` component (including the hybrid KEM
+operations) and the PQC data format now use a new `KeyGenerator`, and for the hybrid operations a new `KeyAgreement`,
+for every operation. A configured instance is still shared: a registry bean, which is autowired into every `pqc`
+endpoint, a `KeyGenerator` set on the data format, or the default material used when no key material is configured.
+Each operation now holds its lock from `init` until the result is returned, so concurrent exchanges that use it run
+one at a time.
+
+A started PQC data format no longer keeps a `KeyGenerator` of its own: `getKeyGenerator()` returns only a configured
+instance and, unless one is configured, the `CamelPQCKemAlgorithm` header now selects the KEM algorithm of each
+operation.
+
 === camel-netty-http - the roles of a security constraint are matched by role name
 
 The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
 user is now accepted only when one of their roles is equal to one of those names. The comparison is case-sensitive,
 whitespace around each name and blank entries are ignored, and a value of `*` still accepts any role. A roles value
 that uses another separator, such as `admin;guest` or `admin guest`, must be changed to `admin,guest`.
+
+=== camel-graphql - the credentials are only sent to the authority of httpUri
+
+The `accessToken` (with its `jwtAuthorizationType`) is now added to a request only when the request goes to the
+scheme, host and port of `httpUri`, and the `username` and `password` are registered for that authority only.
+Previously neither was bound to the authority of `httpUri`. A request to another authority, including the same host
+with another scheme or port, is now sent without them. A route that needs to authenticate to another authority must
+address it in `httpUri`. When `proxyHost` is set, the `username` and `password` are no longer offered to the proxy when
+it asks for authentication.
+
+The producer also no longer takes the request URL from the `CamelHttpUri`, `CamelHttpPath`, `CamelHttpQuery` and other
+camel-http control headers of the message. It did so since Camel 4.19, when the component moved onto camel-http; the
+request now always goes to `httpUri`, as it did before. For the same reason the `CamelHttpMethod` and
+`CamelHttpProtocolVersion` headers no longer apply, and the request is always a POST.
+
+=== camel-telegram - webhook requests are verified with a secret token
+
+In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
+`X-Telegram-Bot-Api-Secret-Token` header of every webhook request, and rejects a webhook request that does not carry
+the token with HTTP 403. The token is the value of the new `webhookSecretToken` option or, when that option is not
+set, a value derived from the authorization token. A client that calls the webhook endpoint directly, for example in
+a test, must send the header too.
+
+When Camel registers the webhook at startup (`webhookAutoRegister=true`, the default), nothing needs to change: each
+upgraded instance registers the webhook with the token, and the instances that are not upgraded yet ignore the header.
+
+When the webhook is registered in another way, through the `WebhookRoutePolicy` or outside Camel, the registration
+made with the previous version has no secret token, and the upgraded instances reject every update until the webhook
+is registered again with it. Register the webhook again first, then upgrade the instances that receive the updates:
+instances of the previous version ignore the header. With the `WebhookRoutePolicy`, run the registration with the new
+version. Outside Camel, set `webhookSecretToken`, and pass the same value as the `secret_token` parameter of
+`setWebhook`.
+
+The default webhook path is a hash of the endpoint URI, so adding an option to the URI, such as `webhookSecretToken`,
+changes the path. When the webhook is not registered by Camel at startup, set `webhookPath` to keep the path that is
+registered.
+
+To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
+secret token, and webhook requests are not verified.
 
 === camel-azure-eventhubs
 
@@ -106,6 +182,53 @@ Custom implicit converters that intentionally select the document element as the
 may observe different template selection. To retain element-context semantics, provide an explicit
 `DOMSource(element)` as the body or through the endpoint's `source` expression.
 
+=== camel-mina - the host name of the server is verified over SSL
+
+When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the
+producer, and the consumer with `clientMode=true`, now check that the certificate of the server matches the `host` of
+the endpoint, with the same rules as an HTTPS client. Before, any certificate trusted by the trust store was accepted,
+whatever host the certificate was issued for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the SSL handshake; an IP
+address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
+endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+MINA does not pass a failed handshake on as an error: the producer fails with a timeout (after `writeTimeout`, or
+`timeout` while waiting for a reply), and the handshake error is logged at `ERROR` level by
+`org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
+certificate that does not list the host.
+
+=== camel-mllp - the producer verifies the host name of the server over TLS
+
+When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the
+MLLP producer now checks that the certificate of the server matches the host it connects to, with the same rules as an
+HTTPS client. Before, it accepted any certificate trusted by the trust store, whatever host the certificate was issued
+for.
+
+A producer that connects with a host name or an IP address that the certificate does not list now fails the TLS
+handshake; an IP address must be listed as a subject alternative name of the certificate, and a producer URI without a
+host name (such as `mllp://8888`) cannot pass the check. Use a certificate that matches the host of the endpoint, or set
+the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+=== camel-smpp - the host name of the SMSC is verified over SSL
+
+With `smpps` (or `usingSSL=true`), directly or through an HTTP proxy, the connection now checks that the certificate of
+the SMSC matches the host it connects to, with the same rules as an HTTPS client. Before, any certificate trusted by the
+JVM was accepted, whatever host it was issued for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the SSL handshake; an IP
+address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
+endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+A mismatch shows as the producer or consumer failing to start, with an `IOException` whose cause names the host that
+was checked:
+
+[source]
+----
+java.io.IOException: No subject alternative names matching IP address 127.0.0.1 found
+    Caused by: javax.net.ssl.SSLHandshakeException: No subject alternative names matching IP address 127.0.0.1 found
+----
+
 === camel-zipfile, camel-tarfile - a maxDecompressedSize of 2 GiB or more is now enforced
 
 The `maxDecompressedSize` option of the Zip File and Tar File data formats (and of `ZipSplitter`) was not
@@ -116,6 +239,26 @@ than the configured `maxDecompressedSize` fails with an `IOException`, as docume
 
 `IOHelper.copy(InputStream, OutputStream, int, boolean, long)` now returns `Integer.MAX_VALUE`, instead of a
 negative number, when it copies more than `Integer.MAX_VALUE` bytes.
+
+=== camel-oauth - the bearer token processor is stateless and reads the HTTP request headers
+
+`OAuthBearerTokenProcessor` no longer creates or updates the OAuth session, and no longer sets the
+`camel.oauth.session` cookie nor the `CamelOAuthSessionId` header: a bearer token authenticates the request that
+carries it, and nothing else. The authenticated `UserProfile` is available in the `CamelOAuthUserProfile` exchange
+property (`OAuth.CAMEL_OAUTH_USER_PROFILE`). A route that read the profile from the OAuth session after
+`OAuthBearerTokenProcessor` must read it from that exchange property instead.
+
+When the message comes from platform-http (on Vert.x or on Spring Boot), from a servlet based HTTP consumer
+(camel-servlet, camel-jetty) or from camel-netty-http, the bearer token and the session cookie are now read from the
+`Authorization` and `Cookie` headers of the HTTP request only. A query or form parameter of the same name, which these
+consumers also map into the message headers, is no longer used for them, and neither is an `Authorization` or `Cookie`
+message header that the route sets itself. For example
+`+.setHeader("Authorization", simple("Bearer ${header.X-Forwarded-Access-Token}"))+` before
+`OAuthBearerTokenProcessor` now results in a 401 response. A route that takes the token from elsewhere can validate it
+with `OAuthHelper.validateOAuthToken` from camel-support instead.
+
+For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
+a value that also appears in the query string of the request.
 
 === camel-oauth - the post login url is confined to the configured redirect uri origin
 
@@ -128,6 +271,13 @@ Route still redirects to its externally reachable address, because `camel.oauth.
 the identity provider sends the browser back to. Deployments whose external address differs from that
 property must set it to the address the browser actually reaches; a request announcing another origin is now
 redirected to the configured one and a warning is logged.
+
+=== camel-oauth - client credentials tokens are cached per client secret and requested scope
+
+OAuth client credentials token caching now distinguishes profiles by client secret and requested scope, in
+addition to token endpoint and client ID. Profiles with different credentials or scopes request separate tokens
+instead of reusing the same cached token. Applications using such profiles may make additional token requests
+after upgrading.
 
 === camel-spring-ws - internal Camel headers are now filtered when mapping SOAP response headers
 
@@ -324,6 +474,24 @@ allocation; a declared length outside 0–1024 is now rejected instead of attemp
 Not changed: the HMAC key is still derived from the same key material as the cipher. Separating them
 would change the MAC written into the message and so could not be read by earlier versions; that is
 tracked separately.
+
+=== camel-aws2-s3 - a listed object that cannot be fetched is skipped
+
+When the consumer lists the bucket, a failure to get one of the listed objects (or to download its content) no longer
+fails the poll, as long as another object of that listing could be got: the object is skipped, the other listed
+objects are consumed in that poll, and the skipped object is tried again by a later poll. An object that no longer
+exists (for example deleted by another consumer after the listing) is skipped with a log line at `DEBUG`. Any other
+failure is given to the exception handler of the consumer, with the key in the message: by default that is a `WARN`
+with the stack trace, and with `bridgeErrorHandler=true` the route's error handler gets it. This happens at every poll
+that lists an object that can never be read (for example archived, or access denied), until it can be read or is
+removed from the bucket. Such a poll is a successful poll, so it does not count for `backoffErrorThreshold`.
+
+The poll still fails, as before, when none of the listed objects could be got and at least one get failed with an
+error other than that the object no longer exists (for example expired credentials, no permission to get objects,
+throttling): the failure of the first object is then the failure of the poll, and `backoffErrorThreshold` applies.
+In both cases the objects are no longer kept in the `inProgressRepository`; before, the object (or a new object with
+the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
+get still fails the poll.
 
 == Upgrading from 4.22.0 to 4.22.1
 

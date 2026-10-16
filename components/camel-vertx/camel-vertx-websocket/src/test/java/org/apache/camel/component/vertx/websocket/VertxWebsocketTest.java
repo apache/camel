@@ -357,7 +357,10 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             results.add("/test-other should not have been called");
         });
 
-        template.sendBody("vertx-websocket:localhost:" + port + "/test?sendToAll=true", "Hello World");
+        String uri = "vertx-websocket:localhost:" + port + "/test?sendToAll=true";
+        awaitConnectedPeers(context.getEndpoint(uri, VertxWebsocketEndpoint.class), expectedResultCount);
+
+        template.sendBody(uri, "Hello World");
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -399,7 +402,10 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             results.add("/test-other should not have been called");
         });
 
-        template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
+        String uri = "vertx-websocket:localhost:" + port + "/test";
+        awaitConnectedPeers(context.getEndpoint(uri, VertxWebsocketEndpoint.class), expectedResultCount);
+
+        template.sendBodyAndHeader(uri, "Hello World",
                 VertxWebsocketConstants.SEND_TO_ALL, true);
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -435,8 +441,10 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        template.sendBody("vertx-websocket:localhost:" + port + "/test/firstParam/other/secondParam?sendToAll=true",
-                "Hello World");
+        String uri = "vertx-websocket:localhost:" + port + "/test/firstParam/other/secondParam?sendToAll=true";
+        awaitConnectedPeers(context.getEndpoint(uri, VertxWebsocketEndpoint.class), expectedResultCount);
+
+        template.sendBody(uri, "Hello World");
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -468,7 +476,10 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        template.sendBody("vertx-websocket:localhost:" + port + "/test/{paramA}/other/{paramB}?sendToAll=true", "Hello World");
+        String uri = "vertx-websocket:localhost:" + port + "/test/{paramA}/other/{paramB}?sendToAll=true";
+        awaitConnectedPeers(context.getEndpoint(uri, VertxWebsocketEndpoint.class), expectedResultCount);
+
+        template.sendBody(uri, "Hello World");
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -501,7 +512,10 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        template.sendBody("vertx-websocket:localhost:" + port + "/test/wildcarded/path?sendToAll=true", "Hello World");
+        String uri = "vertx-websocket:localhost:" + port + "/test/wildcarded/path?sendToAll=true";
+        awaitConnectedPeers(context.getEndpoint(uri, VertxWebsocketEndpoint.class), expectedResultCount);
+
+        template.sendBody(uri, "Hello World");
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());
@@ -533,7 +547,10 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
-        template.sendBody("vertx-websocket:localhost:" + port + "/test/wildcarded/*?sendToAll=true", "Hello World");
+        String uri = "vertx-websocket:localhost:" + port + "/test/wildcarded/*?sendToAll=true";
+        awaitConnectedPeers(context.getEndpoint(uri, VertxWebsocketEndpoint.class), expectedResultCount);
+
+        template.sendBody(uri, "Hello World");
 
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(expectedResultCount, results.size());

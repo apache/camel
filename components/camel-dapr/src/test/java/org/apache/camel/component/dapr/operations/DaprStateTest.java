@@ -17,6 +17,7 @@
 package org.apache.camel.component.dapr.operations;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.dapr.client.DaprClient;
@@ -46,6 +47,7 @@ import reactor.core.publisher.Mono;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -132,6 +134,51 @@ public class DaprStateTest extends CamelTestSupport {
 
         assertNotNull(operationResponse);
         assertEquals(states, saveStateRequest.getStates());
+    }
+
+    @Test
+    void testSaveBulkSendsTheStates() {
+        // as the Dapr client, the Mono sends the request only when it is subscribed to
+        List<State<?>> saved = new ArrayList<>();
+        when(endpoint.getClient()).thenReturn(client);
+        when(client.saveBulkState(any())).thenAnswer(invocation -> {
+            SaveStateRequest request = invocation.getArgument(0);
+            return Mono.fromRunnable(() -> saved.addAll(request.getStates()));
+        });
+
+        DaprConfiguration configuration = new DaprConfiguration();
+        configuration.setOperation(DaprOperation.state);
+        configuration.setStateOperation(StateOperation.saveBulk);
+        configuration.setStateStore("myStateStore");
+        DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+
+        final Exchange exchange = new DefaultExchange(context);
+        List<State<?>> states = List.of(new State<>("k1"), new State<>("k2"));
+        exchange.getMessage().setHeader(DaprConstants.STATES, states);
+
+        new DaprStateHandler(configurationOptionsProxy, endpoint).handle(exchange);
+
+        assertEquals(states, saved);
+    }
+
+    @Test
+    void testSaveBulkFailure() {
+        IllegalStateException failure = new IllegalStateException("the state store rejected the request");
+        when(endpoint.getClient()).thenReturn(client);
+        when(client.saveBulkState(any())).thenReturn(Mono.error(failure));
+
+        DaprConfiguration configuration = new DaprConfiguration();
+        configuration.setOperation(DaprOperation.state);
+        configuration.setStateOperation(StateOperation.saveBulk);
+        configuration.setStateStore("myStateStore");
+        DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(DaprConstants.STATES, List.of(new State<>("k1")));
+
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
+        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> operation.handle(exchange));
+        assertSame(failure, thrown);
     }
 
     @Test
@@ -321,6 +368,55 @@ public class DaprStateTest extends CamelTestSupport {
         assertNotNull(operationResponse);
         assertEquals("myStateStore", executeRequest.getStateStoreName());
         assertEquals(transactions, executeRequest.getOperations());
+    }
+
+    @Test
+    void testExecuteTransactionSendsTheOperations() {
+        // as the Dapr client, the Mono sends the request only when it is subscribed to
+        List<TransactionalStateOperation<?>> executed = new ArrayList<>();
+        when(endpoint.getClient()).thenReturn(client);
+        when(client.executeStateTransaction(any(ExecuteStateTransactionRequest.class))).thenAnswer(invocation -> {
+            ExecuteStateTransactionRequest request = invocation.getArgument(0);
+            return Mono.fromRunnable(() -> executed.addAll(request.getOperations()));
+        });
+
+        DaprConfiguration configuration = new DaprConfiguration();
+        configuration.setOperation(DaprOperation.state);
+        configuration.setStateOperation(StateOperation.executeTransaction);
+        configuration.setStateStore("myStateStore");
+        DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+
+        final Exchange exchange = new DefaultExchange(context);
+        TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
+        List<TransactionalStateOperation<?>> transactions
+                = List.of(new TransactionalStateOperation<>(op, new State<>("myKey")));
+        exchange.getIn().setHeader(DaprConstants.TRANSACTIONS, transactions);
+
+        new DaprStateHandler(configurationOptionsProxy, endpoint).handle(exchange);
+
+        assertEquals(transactions, executed);
+    }
+
+    @Test
+    void testExecuteTransactionFailure() {
+        IllegalStateException failure = new IllegalStateException("the state store rejected the transaction");
+        when(endpoint.getClient()).thenReturn(client);
+        when(client.executeStateTransaction(any(ExecuteStateTransactionRequest.class))).thenReturn(Mono.error(failure));
+
+        DaprConfiguration configuration = new DaprConfiguration();
+        configuration.setOperation(DaprOperation.state);
+        configuration.setStateOperation(StateOperation.executeTransaction);
+        configuration.setStateStore("myStateStore");
+        DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+
+        final Exchange exchange = new DefaultExchange(context);
+        TransactionalStateOperation.OperationType op = TransactionalStateOperation.OperationType.UPSERT;
+        exchange.getIn().setHeader(DaprConstants.TRANSACTIONS,
+                List.<TransactionalStateOperation<?>> of(new TransactionalStateOperation<>(op, new State<>("myKey"))));
+
+        final DaprStateHandler operation = new DaprStateHandler(configurationOptionsProxy, endpoint);
+        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> operation.handle(exchange));
+        assertSame(failure, thrown);
     }
 
     @Test

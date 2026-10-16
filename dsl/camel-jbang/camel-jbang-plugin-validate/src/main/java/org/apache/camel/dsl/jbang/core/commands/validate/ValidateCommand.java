@@ -30,7 +30,6 @@ public class ValidateCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        new CommandLine(this).usage(System.out);
-        return 0;
+        return printHelp();
     }
 }

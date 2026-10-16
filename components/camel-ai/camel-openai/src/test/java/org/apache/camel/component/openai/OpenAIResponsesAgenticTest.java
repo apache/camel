@@ -109,14 +109,14 @@ class OpenAIResponsesAgenticTest extends CamelTestSupport {
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             @Override
             public void notify(CamelEvent event) {
-                if (event.getType() == CamelEvent.Type.Custom) {
+                if (event.getType() == CamelEvent.Type.Ai) {
                     events.add(event);
                 }
             }
 
             @Override
             public boolean isEnabled(CamelEvent event) {
-                return event.getType() == CamelEvent.Type.Custom;
+                return event.getType() == CamelEvent.Type.Ai;
             }
         });
     }

@@ -17,8 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +29,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import dev.tamboui.style.Style;
 import dev.tamboui.tui.TuiRunner;
@@ -42,12 +48,19 @@ class MonitorContext {
 
     final AtomicReference<List<IntegrationInfo>> data;
     final AtomicReference<List<InfraInfo>> infraData;
+    /**
+     * Reads the integrations and the data tabs show on demand (errors, activity, history, traces, spans); set by
+     * CamelMonitor at startup, before the tabs are created. Null in a test that builds a context by hand.
+     */
+    DataRefreshService dataService;
     TuiRunner runner;
     final ExecutorService backgroundExecutor = Executors.newCachedThreadPool(r -> {
         Thread t = new Thread(r, "camel-tui-bg");
         t.setDaemon(true);
         return t;
     });
+    /** The structure of the routes the diagrams draw, asked of an integration again only when its routes change. */
+    final DiagramTopology diagramTopology = new DiagramTopology();
 
     volatile String selectedPid;
     volatile String lastSelectedName;
@@ -59,6 +72,11 @@ class MonitorContext {
     boolean logPinVisible;
     boolean ratePerMinute;
     boolean confirmActions;
+    /**
+     * Whether a tape drives the monitor: a model records one (tui_tape_start), or {@code --record} plays one. Nothing
+     * asks the user to confirm then (see {@link Confirmations}).
+     */
+    BooleanSupplier tapeDriven = () -> false;
     boolean validateOnSave = true;
     // whether the source editor shows the route tree at first (the Route Tree setting)
     boolean routeTree;
@@ -137,6 +155,15 @@ class MonitorContext {
         return focused && !bottomPanelFocused ? Style.EMPTY.fg(Theme.accent()) : unfocused;
     }
 
+    /**
+     * Whether to ask the user before an action such as quitting or stopping an integration (the Confirm actions
+     * setting). While a tape drives the monitor nothing asks: the model or the tape does everything itself, and the
+     * keys it sends would not answer the dialog anyway (CAMEL-25444).
+     */
+    boolean confirmFirst() {
+        return confirmActions && !tapeDriven.getAsBoolean();
+    }
+
     String selectedName() {
         IntegrationInfo info = findSelectedIntegration();
         if (info != null) {
@@ -178,13 +205,92 @@ class MonitorContext {
 
     private final ConcurrentHashMap<String, Object> actionLocks = new ConcurrentHashMap<>();
 
+    /**
+     * Sends a request no one waits for an answer to: a route command, reset stats, a logging level. The connector of
+     * Camel 4.21 or later gets a file of its own for it (see {@link #takesRequestFiles(String)}), which the next
+     * request of a tab cannot overwrite before the connector read it.
+     */
     void fireAction(String pid, JsonObject request) {
+        if (takesRequestFiles(pid)) {
+            fireRequest(pid, request);
+            return;
+        }
         Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
         synchronized (lock) {
             Path actionFile = getActionFile(pid);
             PathUtils.writeTextSafely(request.toJson(), actionFile);
         }
     }
+
+    /** How long a request sent with fireAction may wait for the connector, which runs it within a second or so. */
+    static final long FIRED_REQUEST_TIMEOUT_MS = 60_000;
+
+    /**
+     * Writes the request in a file of its own, which the connector deletes once it ran it. An answer it writes for it
+     * (one that acknowledges the action) is removed, and so is a request still there after a minute (the integration
+     * stopped).
+     */
+    private void fireRequest(String pid, JsonObject request) {
+        String requestId = UUID.randomUUID().toString();
+        Path dir = CommandLineHelper.getCamelDir();
+        Path actionFile = dir.resolve(pid + "-action-" + requestId + ".json");
+        Path outputFile = dir.resolve(pid + "-output-" + requestId + ".json");
+        Path temporary = dir.resolve(pid + "-" + requestId + ".tmp");
+        try {
+            Files.writeString(temporary, request.toJson());
+            // the connector must never read half a request
+            Files.move(temporary, actionFile, StandardCopyOption.ATOMIC_MOVE);
+        } catch (IOException e) {
+            PathUtils.deleteFile(temporary);
+            return;
+        }
+        backgroundExecutor.execute(() -> {
+            long deadline = MonotonicClock.millis() + FIRED_REQUEST_TIMEOUT_MS;
+            try {
+                while (Files.exists(actionFile) && MonotonicClock.millis() < deadline) {
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } finally {
+                PathUtils.deleteFile(actionFile);
+                PathUtils.deleteFile(outputFile);
+            }
+        });
+    }
+
+    /**
+     * Whether the connector of the integration takes a file per request ({@code <pid>-action-<id>.json}, answered in
+     * {@code <pid>-output-<id>.json}), which it does since Camel 4.21 (CAMEL-25448). The tabs, and other clients such
+     * as camel ask, then do not overwrite or take each other's requests and answers. An older connector only reads the
+     * shared {@code <pid>-action.json}, one request at a time.
+     */
+    boolean takesRequestFiles(String pid) {
+        List<IntegrationInfo> infos = data.get();
+        if (pid == null || infos == null || pid.isEmpty() || !pid.chars().allMatch(Character::isDigit)) {
+            // a phantom project has no process to ask
+            return false;
+        }
+        for (IntegrationInfo info : infos) {
+            if (pid.equals(info.pid)) {
+                return isCamelVersionAtLeast(info.camelVersion, 4, 21);
+            }
+        }
+        return false;
+    }
+
+    /** Whether a Camel version such as 4.24.0-SNAPSHOT is the given major.minor or later; false when unknown. */
+    static boolean isCamelVersionAtLeast(String version, int major, int minor) {
+        Matcher m = version != null ? VERSION.matcher(version) : null;
+        if (m == null || !m.find()) {
+            return false;
+        }
+        int actualMajor = Integer.parseInt(m.group(1));
+        int actualMinor = Integer.parseInt(m.group(2));
+        return actualMajor > major || actualMajor == major && actualMinor >= minor;
+    }
+
+    private static final Pattern VERSION = Pattern.compile("^(\\d+)\\.(\\d+)");
 
     /** How long the jvm answer of an integration is kept for the tabs that need its classpath. */
     static final long JVM_INFO_TTL_MS = 30_000;
@@ -216,7 +322,14 @@ class MonitorContext {
         }
     }
 
+    /**
+     * Sends a request and waits for its answer; null when none came in time. The connector of Camel 4.21 or later gets
+     * files of its own for it, so the requests of several tabs are answered together, and no lock is needed.
+     */
     JsonObject executeAction(String pid, JsonObject request, long timeoutMs) {
+        if (takesRequestFiles(pid)) {
+            return executeIndependentAction(pid, request, timeoutMs);
+        }
         Object lock = actionLocks.computeIfAbsent(pid, k -> new Object());
         synchronized (lock) {
             Path outputFile = getOutputFile(pid);

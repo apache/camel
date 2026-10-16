@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
         <relativePath>../../tooling/maven</relativePath>
     </parent>
 
@@ -117,7 +117,14 @@
             </exclusions>
         </dependency>
 
-        <!-- camel route parser -->
+        <!-- the Java DSL parser, which reads Java routes into the Camel model without compiling them -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-java-io</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- camel route parser (XML routes) -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-route-parser</artifactId>

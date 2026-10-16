@@ -72,57 +72,51 @@ public class ListService extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("services");
-                        if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("services");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.component = jo.getString("component");
-                                    row.direction = jo.getString("direction");
-                                    row.hosted = jo.getBooleanOrDefault("hosted", false);
-                                    row.protocol = jo.getString("protocol");
-                                    row.serviceUrl = jo.getString("serviceUrl");
-                                    row.endpointUri = jo.getString("endpointUri");
-                                    row.hits = jo.getLongOrDefault("hits", 0);
-                                    row.routeId = jo.getString("routeId");
-                                    row.metadata = jo.getMap("metadata");
-                                    rows.add(row);
-                                }
-                            }
-                        }
+            JsonObject jo = (JsonObject) root.get("services");
+            if (jo != null) {
+                JsonArray arr = (JsonArray) jo.get("services");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = row.copy();
+                        jo = (JsonObject) arr.get(i);
+                        row.component = jo.getString("component");
+                        row.direction = jo.getString("direction");
+                        row.hosted = jo.getBooleanOrDefault("hosted", false);
+                        row.protocol = jo.getString("protocol");
+                        row.serviceUrl = jo.getString("serviceUrl");
+                        row.endpointUri = jo.getString("endpointUri");
+                        row.hits = jo.getLongOrDefault("hits", 0);
+                        row.routeId = jo.getString("routeId");
+                        row.metadata = jo.getMap("metadata");
+                        rows.add(row);
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("component", r.component);
                     jo.put("direction", r.direction);

@@ -32,13 +32,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.logging.log4j.core.config.Configurator;
 import picocli.CommandLine;
 
@@ -116,12 +119,11 @@ public class InfraRun extends InfraBaseCommand {
         if (testInfraService == null) {
             String message = ", use the list command for the available services";
             if (testServiceImplementation != null) {
-                printer().printErr("service " + testService + " with implementation " + testServiceImplementation + " not found"
-                                   + message);
+                throw CliException.notFound("service " + testService + " with implementation " + testServiceImplementation
+                                            + " not found" + message);
             } else {
-                printer().printErr("service " + testService + " not found" + message);
+                throw CliException.notFound("service " + testService + " not found" + message);
             }
-            return 1;
         }
 
         Map<String, String> parsedProperties;
@@ -130,8 +132,7 @@ public class InfraRun extends InfraBaseCommand {
         } catch (IllegalArgumentException e) {
             // before the background branch, so that a run in the background fails here and not in a process
             // whose only trace is its pid
-            printer().printErr(e.getMessage());
-            return 1;
+            throw CliException.usage(e.getMessage());
         }
 
         if (background) {
@@ -176,8 +177,15 @@ public class InfraRun extends InfraBaseCommand {
         pb.command(cmds);
 
         Process p = pb.start();
-        printer().println(
-                "Running " + testService + " in background with PID: " + p.pid());
+        if (jsonOutput) {
+            JsonObject jo = new JsonObject();
+            jo.put("pid", String.valueOf(p.pid()));
+            jo.put("alias", testService);
+            JsonOutput.print(printer(), jo);
+        } else {
+            printer().println(
+                    "Running " + testService + " in background with PID: " + p.pid());
+        }
         return 0;
     }
 
@@ -234,8 +242,7 @@ public class InfraRun extends InfraBaseCommand {
         }
 
         if (!actualServiceIsAnInfrastructureService) {
-            printer().println("Service " + serviceImpl + " is not an InfrastructureService");
-            return 1;
+            throw CliException.failure("Service " + serviceImpl + " is not an InfrastructureService");
         }
 
         if (!jsonOutput) {
@@ -321,7 +328,7 @@ public class InfraRun extends InfraBaseCommand {
                 } while (!quit);
             }, "WaitEnter");
             t.start();
-        } else {
+        } else if (!jsonOutput) {
             // wait for this process to be stopped
             printer().println("Running (use camel infra stop "
                               + testService + (testServiceImplementation != null ? " " + testServiceImplementation : "")

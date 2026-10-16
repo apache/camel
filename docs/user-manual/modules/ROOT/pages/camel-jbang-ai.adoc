@@ -42,7 +42,7 @@ The agent has access to tools that let it:
 * Search the Camel component catalog and read component documentation
 * List and read built-in CLI examples
 * Discover and run any CLI command
-* Read and write files in the current directory
+* Read and change the integration's files, each change validated first
 
 Use `--show-tools` to see tool calls and results as they happen:
 
@@ -50,6 +50,47 @@ Use `--show-tools` to see tool calls and results as they happen:
 ----
 camel ask "show me the route structure" --show-tools
 ----
+
+=== What asks first
+
+Most tools only read, and run without asking. A call that changes the project,
+reaches beyond the integration, may destroy data or runs code asks you first,
+on the terminal:
+
+* A file write: `camel ask` shows the change as a diff.
+* A message to an endpoint the integration does not have, or with a body read
+  from a file outside the project folder.
+* A SQL statement other than a single `SELECT`, `SHOW` or `DESCRIBE`.
+* An expression in a language that runs code, such as Groovy.
+* Stopping, killing or restarting the integration or its routes, running an
+  integration, browsing an endpoint the integration does not have, and
+  writing a heap dump.
+* A `camel` command that changes something. The commands that only read, such
+  as `camel get` and `camel ps`, run without asking.
+
+Answer `y` to let the call run. A call you do not confirm does not run, and the
+model is told so. Without a terminal to ask on, as in a script, such a call
+does not run; `--yes` lets all of them run without asking.
+
+A `camel` command the model runs gives it the exit code, the output and the
+errors apart, as a script gets them (see xref:manual::camel-jbang-exit-codes.adoc[Exit Codes and Output]),
+and stops after 60 seconds. A command that runs until it is stopped is not run,
+and the model is told the form that returns: `camel run` without `--background`,
+`--watch` without `--duration`, `camel log` that follows, or `camel shell`.
+
+=== Local and hosted models
+
+A local model gets a core set of tools: the project's files, the catalog, the
+integration's log, errors, state and control, the tools for what the
+integration uses (SQL, tracing, circuit breakers, HTTP), and `cli_exec` for
+the other commands. Every tool definition goes with every request, and a local
+model pays for it in time. A hosted model gets the full set. `--tools=core`,
+`--tools=full` or `--tools=auto` (the default) chooses.
+
+Without `--model`, Ollama uses the installed model best at tool calling, such
+as `qwen3.6`. `camel ask` notes when the model is small (under 8 billion
+parameters): the answers of such a model about a running integration are often
+wrong.
 
 === Connecting to a specific process
 
@@ -97,11 +138,18 @@ a project directory, read from the route sources (no running integration needed)
 * the *routes*, with their description, where they consume from and the file and line they are written at;
 * the *flows between routes*: a route *calls* another over `direct`, *hands off* over `seda`, *publishes events*
   over a broker (Kafka, JMS, ...), or *shares data* over the same folder or table;
+* the *error handling*, apart from the flows: each `errorHandler` and `onException` written outside routes
+  (with the file and line) and where it sends failures, the routes with error handling of their own (such as
+  a dead letter channel) and where it sends failures, and the routes with `noErrorHandler`, whose failures go
+  back to their caller, or to their own consumer when no route calls them;
 * the *external systems* grouped by category (AI, databases, messaging, files, email, HTTP, cloud), taken
   from the component labels of the Camel catalog;
 * *findings*: a `direct`, `seda` or `disruptor` endpoint that no route consumes (by the same rules as
-  `camel validate`), routes that call each other in a cycle,
-  duplicate route ids, routes without a description;
+  `camel validate`), also when a dead letter channel or an `onException` sends there, routes that call each
+  other in a cycle, duplicate route ids, routes without a description, and mistakes in the error handling:
+  a route that receives the failures of an error handler and uses that error handler too (a failure in it
+  goes back to it), and a route with `noErrorHandler` that no route calls (its failures go back to its own
+  consumer, and no error handler acts on them);
 * the *architecture*: the routes grouped by what they do. Routes that set `group` in the source keep
   it. Routes that routes of two or more groups call are *shared services*. Routes reached only while
   handling a failure (from a `doCatch`, an `onException` or a dead letter channel), or that only log,

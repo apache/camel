@@ -63,7 +63,8 @@ public final class MinaHelper {
         WriteFuture future = session.write(body);
         // must use a timeout as in some very high performance scenarios a write can cause thread hanging forever
         LOG.trace("Waiting for write to complete for body: {} using session: {}", body, session);
-        if (!future.awaitUninterruptibly(writeTimeout)) {
+        if (!future.awaitUninterruptibly(writeTimeout) || !future.isWritten()) {
+            // write timed out, or completed within the timeout but failed (e.g. codec error or channel closed)
             String message = "Cannot write body: " + body.getClass().getCanonicalName() + " using session: " + session;
             if (future.getException() != null) {
                 throw new CamelExchangeException(message, exchange, future.getException());

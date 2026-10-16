@@ -80,7 +80,7 @@ class PackageLanguageMojoTest {
         MavenProject project = new MavenProject();
         project.setGroupId("org.apache.camel");
         project.setArtifactId("camel-custom");
-        project.setVersion("4.23.0-SNAPSHOT");
+        project.setVersion("4.24.0-SNAPSHOT");
         PackageLanguageMojo mojo = new PackageLanguageMojo(new SystemStreamLog(), project, null, null, null, null, null) {
             @Override
             protected Class<?> loadClass(String name) {

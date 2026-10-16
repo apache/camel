@@ -45,7 +45,9 @@ public class RepeatedCallSessions {
 
     /**
      * The short note to answer with instead of running the tool, or null to run it: the tool is not deterministic, the
-     * call is one of the first identical ones, or there is no connection to tell the sessions apart.
+     * call is one of the first identical ones, or there is no connection to tell the sessions apart. When null is
+     * returned and the tool answers successfully, {@link #recordSuccessfulAnswer(McpConnection, String, Map)} must be
+     * called so that only successful answers count against the repeat budget.
      */
     JsonObject repeatOf(McpConnection connection, String tool, Map<String, String> args) {
         if (connection == null || connection.id() == null) {
@@ -56,5 +58,22 @@ public class RepeatedCallSessions {
             calls = sessions.computeIfAbsent(connection.id(), id -> new RepeatedToolCalls());
         }
         return calls.repeatOf(ToolRegistry.findTool(tool), args);
+    }
+
+    /**
+     * Records that the tool answered this call in full without throwing. Failed calls must not count against the retry
+     * budget (CAMEL-25640).
+     */
+    void recordSuccessfulAnswer(McpConnection connection, String tool, Map<String, String> args) {
+        if (connection == null || connection.id() == null) {
+            return;
+        }
+        RepeatedToolCalls calls;
+        synchronized (sessions) {
+            calls = sessions.get(connection.id());
+        }
+        if (calls != null) {
+            calls.recordSuccessfulAnswer(ToolRegistry.findTool(tool), args);
+        }
     }
 }

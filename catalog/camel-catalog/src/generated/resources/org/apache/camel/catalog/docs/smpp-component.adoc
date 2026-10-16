@@ -166,8 +166,19 @@ If no *username* is provided, then Camel will provide the default value
 `smppclient`. +
  If no *port* number is provided, then Camel will provide the default
 value `2775`. +
-If the protocol name is "smpps", camel-smpp with try to
-use SSLSocket to init a connection to the server.
+If the protocol name is "smpps", camel-smpp will try to
+use SSLSocket to init a connection to the server. The certificate of the
+server must be trusted by the JVM, and it must match the host Camel connects
+to, with the same rules as an HTTPS client: a connection to an IP address
+needs a certificate that lists that address as a subject alternative name.
+Set `hostnameVerification=false` to turn the host check off.
+
+The handshake runs while the connection is being created, so a certificate that does not match makes the producer or
+consumer fail to start with an `IOException` caused by an
+`SSLHandshakeException: No subject alternative names matching IP address ... found` (or
+`No subject alternative DNS name matching ... found` for a host name). An IP address has to be listed as a subject
+alternative name of the certificate; a certificate issued for the host name alone does not match a connection made to
+its address.
 
 
 // component options: START

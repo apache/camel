@@ -91,12 +91,53 @@ class RouteReloadTemplatedRouteTest extends YamlTestSupport {
             assertThat(context.getRouteController().getRouteStatus("plain")).isEqualTo(ServiceStatus.Started);
             assertThat(context.createFluentProducerTemplate().to("direct:plain").request(String.class))
                     .isEqualTo("plain Hi");
+            // the templated route is created again with the changed parameter (CAMEL-25554)
+            assertThat(context.createFluentProducerTemplate().to("direct:greet").request(String.class))
+                    .isEqualTo("Hi");
+        } finally {
+            strategy.doStop();
+        }
+    }
+
+    @Test
+    void reloadKeepingTheOtherRoutesTemplatedRouteWithoutId() throws Exception {
+        // a templated route without a route id cannot replace its existing route, so it is left as it is (CAMEL-25616)
+        Files.writeString(file, routesWithoutTemplatedRouteId("Hello"));
+        context.getRouteController().removeAllRoutes();
+        context.removeRouteTemplates("*");
+        loadRoutes(ResourceHelper.resolveResource(context, "file:" + file));
+        assertThat(context.getRoutes()).hasSize(2);
+
+        TestableStrategy strategy = new TestableStrategy(dir.toString());
+        strategy.setCamelContext(context);
+        strategy.setPattern("*.yaml");
+        strategy.setRemoveAllRoutes(false);
+        strategy.doStart();
+        try {
+            for (int i = 0; i < 3; i++) {
+                Files.writeString(file, routesWithoutTemplatedRouteId("Hi" + i));
+                strategy.getResourceReload().onReload(file.toString(),
+                        ResourceHelper.resolveResource(context, "file:" + file));
+
+                assertThat(strategy.getFailedCounter()).isZero();
+                assertThat(context.getRoutes()).hasSize(2);
+                assertThat(context.createFluentProducerTemplate().to("direct:plain").request(String.class))
+                        .isEqualTo("plain Hi" + i);
+            }
         } finally {
             strategy.doStop();
         }
     }
 
     private static String routes(String greeting) {
+        return routes(greeting, true);
+    }
+
+    private static String routesWithoutTemplatedRouteId(String greeting) {
+        return routes(greeting, false);
+    }
+
+    private static String routes(String greeting, boolean templatedRouteId) {
         return """
                 - routeTemplate:
                     id: "greeting"
@@ -109,8 +150,7 @@ class RouteReloadTemplatedRouteTest extends YamlTestSupport {
                             constant: "{{greeting}}"
                 - templatedRoute:
                     routeTemplateRef: "greeting"
-                    routeId: "greet"
-                    parameters:
+                %s    parameters:
                       - name: "greeting"
                         value: "%s"
                 - route:
@@ -120,7 +160,7 @@ class RouteReloadTemplatedRouteTest extends YamlTestSupport {
                       steps:
                         - setBody:
                             constant: "plain %s"
-                """.formatted(greeting, greeting);
+                """.formatted(templatedRouteId ? "    routeId: \"greet\"\n" : "", greeting, greeting);
     }
 
     private static void deleteRecursively(Path path) throws IOException {

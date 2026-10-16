@@ -29,7 +29,6 @@ public class KubernetesCommand extends KubernetesBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        new CommandLine(this).usage(System.out);
-        return 0;
+        return printHelp();
     }
 }

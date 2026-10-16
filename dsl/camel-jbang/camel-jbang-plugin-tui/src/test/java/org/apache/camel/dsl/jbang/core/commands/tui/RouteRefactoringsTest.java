@@ -190,7 +190,7 @@ class RouteRefactoringsTest {
     private SourceViewer viewer(Path file, String src, String dsl) throws Exception {
         Files.writeString(file, src, StandardCharsets.UTF_8);
         SourceViewer viewer = new SourceViewer();
-        viewer.setUriCompletion(dsl);
+        viewer.completion().setUriCompletion(dsl);
         viewer.loadFile(file);
         viewer.enterEditMode();
         return viewer;

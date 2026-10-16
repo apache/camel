@@ -31,7 +31,6 @@ public class UpdateCommand extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         // defaults to list
-        new CommandLine(new UpdateList(getMain())).execute();
-        return 0;
+        return runDefault(new UpdateList(getMain()));
     }
 }

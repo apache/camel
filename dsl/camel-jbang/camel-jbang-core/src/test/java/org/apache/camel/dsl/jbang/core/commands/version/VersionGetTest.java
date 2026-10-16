@@ -65,6 +65,21 @@ class VersionGetTest extends CamelCommandBaseTestSupport {
         Assertions.assertEquals("kamelets-version = greatest", lines.get(4));
     }
 
+    @Test
+    public void shouldPrintOnlyTheKameletsVersion() throws Exception {
+        UserConfigHelper.createUserConfig("""
+                kamelets-version=4.18.0
+                """);
+        createJBangVersionFile("0.101");
+
+        VersionGet command = createCommand();
+        command.doCall();
+
+        List<String> lines = printer.getLines();
+        Assertions.assertEquals("User configuration:", lines.get(2));
+        Assertions.assertEquals("kamelets-version = 4.18.0", lines.get(3));
+    }
+
     private void createJBangVersionFile(String version) throws IOException {
         Path jBangDir = Paths.get("target", ".jbang", "cache");
         if (!jBangDir.toFile().exists()) {

@@ -517,6 +517,8 @@ public final class ProjectRoutes {
             if (from != null) {
                 consumes.add(0, from);
             }
+            // where the route's own error handler sends its failures, such as the uri of its dead letter channel
+            walk(child(m, "errorHandler"), produces, new ArrayList<>(), new int[] { 0 }, 0, true);
             if ("routeTemplate".equals(kind) && id != null) {
                 consumes.add(endpoint("kamelet:" + id, null, false, catalog));
             }

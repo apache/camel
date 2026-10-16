@@ -24,6 +24,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine.Command;
 
 @Command(name = "group", description = "Top performing route groups",
@@ -40,6 +41,10 @@ public class CamelRouteGroupTop extends CamelRouteGroupStatus {
 
     @Override
     protected void printTable(List<Row> rows) {
+        if (jsonOutput) {
+            super.printTable(rows);
+            return;
+        }
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -61,6 +66,16 @@ public class CamelRouteGroupTop extends CamelRouteGroupStatus {
                 new Column().header("MIN").with(r -> r.min),
                 new Column().header("MAX").with(r -> r.max),
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
+    }
+
+    @Override
+    protected JsonObject toJson(Row r) {
+        JsonObject jo = super.toJson(r);
+        // the load averages of the last 1, 5 and 15 minutes
+        jo.put("load01", JsonValues.decimal(r.load01));
+        jo.put("load05", JsonValues.decimal(r.load05));
+        jo.put("load15", JsonValues.decimal(r.load15));
+        return jo;
     }
 
     private String getLoad(Row r) {

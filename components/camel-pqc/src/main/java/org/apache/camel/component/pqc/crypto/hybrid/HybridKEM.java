@@ -47,6 +47,10 @@ import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
  * </ul>
  * The shared secrets from both algorithms are combined using HKDF to produce the final shared secret.
  * <p>
+ * The {@link KeyAgreement} and {@link KeyGenerator} passed in may be shared by concurrent callers. Both keep state from
+ * their {@code init()} call to the call that returns the result and are not thread-safe, so each of those sequences
+ * runs while holding the instance's monitor.
+ * <p>
  * Wire format: [4 bytes: classical encap length][classical encap][pqc encap]
  */
 public final class HybridKEM {
@@ -87,18 +91,24 @@ public final class HybridKEM {
         KeyPair ephemeralKeyPair = generateEphemeralKeyPair(classicalPublicKey.getAlgorithm());
 
         // Perform classical key agreement
-        classicalKA.init(ephemeralKeyPair.getPrivate());
-        classicalKA.doPhase(classicalPublicKey, true);
-        byte[] classicalSharedSecret = classicalKA.generateSecret();
+        byte[] classicalSharedSecret;
+        synchronized (classicalKA) {
+            classicalKA.init(ephemeralKeyPair.getPrivate());
+            classicalKA.doPhase(classicalPublicKey, true);
+            classicalSharedSecret = classicalKA.generateSecret();
+        }
 
         // The classical "encapsulation" is the ephemeral public key
         byte[] classicalEncapsulation = ephemeralKeyPair.getPublic().getEncoded();
 
         // Perform PQC KEM encapsulation
-        pqcKemGenerator.init(
-                new KEMGenerateSpec(pqcPublicKey, symmetricAlgorithm, keyLength),
-                SecureRandomHelper.getSecureRandom());
-        SecretKeyWithEncapsulation pqcResult = (SecretKeyWithEncapsulation) pqcKemGenerator.generateKey();
+        SecretKeyWithEncapsulation pqcResult;
+        synchronized (pqcKemGenerator) {
+            pqcKemGenerator.init(
+                    new KEMGenerateSpec(pqcPublicKey, symmetricAlgorithm, keyLength),
+                    SecureRandomHelper.getSecureRandom());
+            pqcResult = (SecretKeyWithEncapsulation) pqcKemGenerator.generateKey();
+        }
         byte[] pqcSharedSecret = pqcResult.getEncoded();
         byte[] pqcEncapsulation = pqcResult.getEncapsulation();
 
@@ -161,15 +171,21 @@ public final class HybridKEM {
                 classicalPrivateKey.getAlgorithm());
 
         // Perform classical key agreement
-        classicalKA.init(classicalPrivateKey);
-        classicalKA.doPhase(ephemeralPublicKey, true);
-        byte[] classicalSharedSecret = classicalKA.generateSecret();
+        byte[] classicalSharedSecret;
+        synchronized (classicalKA) {
+            classicalKA.init(classicalPrivateKey);
+            classicalKA.doPhase(ephemeralPublicKey, true);
+            classicalSharedSecret = classicalKA.generateSecret();
+        }
 
         // Perform PQC KEM extraction
-        pqcKemGenerator.init(
-                new KEMExtractSpec(pqcPrivateKey, components.pqcEncapsulation(), symmetricAlgorithm, keyLength),
-                SecureRandomHelper.getSecureRandom());
-        SecretKeyWithEncapsulation pqcResult = (SecretKeyWithEncapsulation) pqcKemGenerator.generateKey();
+        SecretKeyWithEncapsulation pqcResult;
+        synchronized (pqcKemGenerator) {
+            pqcKemGenerator.init(
+                    new KEMExtractSpec(pqcPrivateKey, components.pqcEncapsulation(), symmetricAlgorithm, keyLength),
+                    SecureRandomHelper.getSecureRandom());
+            pqcResult = (SecretKeyWithEncapsulation) pqcKemGenerator.generateKey();
+        }
         byte[] pqcSharedSecret = pqcResult.getEncoded();
 
         // Combine shared secrets using HKDF

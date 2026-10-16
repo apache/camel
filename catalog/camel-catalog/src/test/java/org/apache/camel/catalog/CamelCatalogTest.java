@@ -122,6 +122,14 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testSemanticExpertArtifacts() {
+        assertEquals("camel-semantic-typesafe-ai", catalog.otherModel("semantic-typesafe-ai").getArtifactId());
+        assertEquals("camel-semantic-wolf-defender", catalog.otherModel("semantic-wolf-defender").getArtifactId());
+        assertEquals("camel-typesafe-ai", catalog.componentModel("typesafe-ai").getArtifactId());
+        assertFalse(catalog.findOtherNames().contains("wolf-defender"));
+    }
+
+    @Test
     public void testFindDataFormatNames() {
         List<String> names = catalog.findDataFormatNames();
         assertNotNull(names);
@@ -204,6 +212,20 @@ public class CamelCatalogTest {
         assertTrue(mail.getAliases().contains("mail"));
         assertTrue(mail.getAliases().contains("email"));
         assertTrue(catalog.componentModel("activemq").getAliases().contains("amq"));
+    }
+
+    @Test
+    public void testComponentInternal() {
+        // internal: stays inside the CamelContext, set with @UriEndpoint(internal = true)
+        assertTrue(catalog.componentModel("direct").isInternal());
+        assertTrue(catalog.componentModel("log").isInternal());
+        assertTrue(catalog.componentModel("disruptor-vm").isInternal());
+        assertFalse(catalog.componentModel("kafka").isInternal());
+        // not remote, but not internal either: exec runs a process, dataset-test polls the endpoint in its URI
+        for (String name : List.of("exec", "dataset-test")) {
+            assertFalse(catalog.componentModel(name).isRemote(), name);
+            assertFalse(catalog.componentModel(name).isInternal(), name);
+        }
     }
 
     @Test

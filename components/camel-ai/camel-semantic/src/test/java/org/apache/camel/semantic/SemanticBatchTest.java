@@ -49,7 +49,6 @@ class SemanticBatchTest {
         context = new DefaultCamelContext();
         language = new SemanticLanguage();
         language.setCamelContext(context);
-        language.setAdapter("adapter");
         adapter = new RecordingAdapter();
         context.getRegistry().bind("adapter", adapter);
         context.start();
@@ -69,7 +68,7 @@ class SemanticBatchTest {
     private static SemanticEvaluation evaluation(
             String type, String state, double threshold,
             double uncertainty, String policy) {
-        return new SemanticEvaluation(type, null, state, switch (type) {
+        return new SemanticEvaluation(type, "adapter", state, switch (type) {
             case "boolean" -> Map.of("instructions", "Classify", "threshold", threshold,
                     "uncertainty", uncertainty, "uncertaintyPolicy", policy);
             case "choice" -> Map.of("instructions", "Classify", "criteria", Map.of("billing", "Payments", "technical", "Bugs"));
@@ -196,7 +195,6 @@ class SemanticBatchTest {
         // Use a fresh language because adapter selection is cached for the context lifetime.
         SemanticLanguage other = new SemanticLanguage();
         other.setCamelContext(context);
-        other.setAdapter("adapter");
         assertThatThrownBy(() -> other.createExpression("refs:urgent,priority")).hasMessageContaining("Unsupported score");
         assertThat(adapter.calls).isEmpty();
     }

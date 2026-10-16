@@ -65,54 +65,48 @@ public class ListRest extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
 
-                        JsonObject jo = (JsonObject) root.get("rests");
-                        if (jo != null) {
-                            JsonArray arr = (JsonArray) jo.get("rests");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
-                                    row.url = jo.getString("url");
-                                    row.method = jo.getString("method").toUpperCase(Locale.ROOT);
-                                    row.consumes = jo.getString("consumes");
-                                    row.produces = jo.getString("produces");
-                                    row.description = jo.getString("description");
-                                    row.contractFirst = jo.getBooleanOrDefault("contractFirst", false);
-                                    rows.add(row);
-                                }
-                            }
-                        }
+            JsonObject jo = (JsonObject) root.get("rests");
+            if (jo != null) {
+                JsonArray arr = (JsonArray) jo.get("rests");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = row.copy();
+                        jo = (JsonObject) arr.get(i);
+                        row.url = jo.getString("url");
+                        row.method = jo.getString("method").toUpperCase(Locale.ROOT);
+                        row.consumes = jo.getString("consumes");
+                        row.produces = jo.getString("produces");
+                        row.description = jo.getString("description");
+                        row.contractFirst = jo.getBooleanOrDefault("contractFirst", false);
+                        rows.add(row);
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("url", r.url);
                     jo.put("method", r.method);

@@ -1061,6 +1061,19 @@ public interface ComponentsBuilderFactory {
         return ChunkComponentBuilderFactory.chunk();
     }
     /**
+     * Citrus (camel-test-citrus)
+     * Citrus message validation component for testing
+     * 
+     * Category: testing
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-test-citrus
+     * 
+     * @return the dsl builder
+     */
+    static CitrusComponentBuilderFactory.CitrusComponentBuilder citrus() {
+        return CitrusComponentBuilderFactory.citrus();
+    }
+    /**
      * Class (camel-bean)
      * Invoke methods of Java beans specified by class name.
      * 
@@ -5275,7 +5288,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Wasm (camel-wasm)
-     * Invoke Wasm functions.
+     * Run Wasm programs (WASI Preview 1 command modules) with the message body
+     * as standard input.
      * 
      * Category: core,script
      * Since: 4.4

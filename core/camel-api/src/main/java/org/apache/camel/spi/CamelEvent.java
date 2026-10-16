@@ -81,7 +81,14 @@ public interface CamelEvent {
         StepStarted,
         StepCompleted,
         StepFailed,
-        Custom
+        Custom,
+        /**
+         * Events fired by Camel AI components (tool calls, agentic loops, ...); see
+         * {@link org.apache.camel.ai.AiEvent}. Appended last so the ordinals of the pre-existing values are unchanged.
+         *
+         * @since 4.24
+         */
+        Ai
     }
 
     /** Returns the type of this event. */

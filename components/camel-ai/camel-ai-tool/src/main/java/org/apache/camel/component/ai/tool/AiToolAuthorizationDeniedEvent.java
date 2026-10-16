@@ -21,7 +21,7 @@ import java.util.EventObject;
 
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.ai.AiEvent;
 
 /**
  * Fired when an {@code ai-tool} route's {@code authorizationPolicy} denies a tool call.
@@ -32,14 +32,14 @@ import org.apache.camel.spi.CamelEvent;
  * alert on authorization denials, without changing what the model sees — the call is still relayed back to the model as
  * a short refusal.
  * <p>
- * It is a {@link CamelEvent.Type#Custom} event and deliberately not a {@link CamelEvent.ExchangeEvent}, so it does not
- * pollute generic exchange lifecycle metrics; {@link #getExchange()} is public so listeners can still correlate it with
- * the tool exchange (route id, exchange id). It is a {@link CamelEvent.FailureEvent}, so {@link #getCause()} returns
- * the {@link CamelAuthorizationException} the policy raised.
+ * It is an {@link AiEvent.ToolCallDeniedEvent} (of {@link org.apache.camel.spi.CamelEvent.Type#Ai}), so a notifier can
+ * recognise it as AI activity without depending on this component; {@link #getExchange()} correlates it with the tool
+ * exchange (route id, exchange id), and {@link #getCause()} returns the {@link CamelAuthorizationException} the policy
+ * raised.
  *
  * @since 4.23
  */
-public final class AiToolAuthorizationDeniedEvent extends EventObject implements CamelEvent.FailureEvent {
+public final class AiToolAuthorizationDeniedEvent extends EventObject implements AiEvent.ToolCallDeniedEvent {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -56,9 +56,15 @@ public final class AiToolAuthorizationDeniedEvent extends EventObject implements
         this.cause = cause;
     }
 
+    @Override
+    public String getProvider() {
+        return "ai-tool";
+    }
+
     /**
      * The tool exchange whose call was denied (for correlation, e.g. route id or exchange id).
      */
+    @Override
     public Exchange getExchange() {
         return exchange;
     }
@@ -66,6 +72,7 @@ public final class AiToolAuthorizationDeniedEvent extends EventObject implements
     /**
      * The name (route id) of the tool whose call was denied.
      */
+    @Override
     public String getToolName() {
         return toolName;
     }
@@ -73,11 +80,6 @@ public final class AiToolAuthorizationDeniedEvent extends EventObject implements
     @Override
     public CamelAuthorizationException getCause() {
         return cause;
-    }
-
-    @Override
-    public Type getType() {
-        return Type.Custom;
     }
 
     @Override

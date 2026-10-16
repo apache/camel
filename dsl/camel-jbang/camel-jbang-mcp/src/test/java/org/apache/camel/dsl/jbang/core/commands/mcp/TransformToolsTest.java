@@ -108,12 +108,13 @@ class TransformToolsTest {
                     import static org.apache.camel.semantic.SemanticEvaluationsBuilder.semanticEvaluations;
                     public class SemanticRoute extends RouteBuilder {
                         public void configure() {
-                            semanticEvaluations(this).evaluation("urgent").type("boolean").instructions("Urgent?")
+                            semanticEvaluations(this).evaluation("urgent").expert("decisions").type("boolean").instructions("Urgent?")
                                 .threshold("%s").uncertainty(0).uncertaintyPolicy("fail").register();
                             from("direct:input").setBody().language("semantic", "ref:urgent");
                         }
                     }
-                    """.formatted(threshold);
+                    """
+                    .formatted(threshold);
         }
         return """
                 - semantic:

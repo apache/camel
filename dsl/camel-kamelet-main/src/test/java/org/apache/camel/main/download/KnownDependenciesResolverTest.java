@@ -31,11 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class KnownDependenciesResolverTest {
 
     @Test
-    void semanticExpertDiscoveryDoesNotDownloadAnArbitraryProvider() {
+    void factoryFinderDependenciesUseRegisteredServices() {
         KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
         resolver.loadKnownFactoryFinderDependencies();
 
-        assertNull(resolver.mavenGavForClass("META-INF/services/org/apache/camel/semantic-adapter"));
         assertGav(resolver, "META-INF/services/org/apache/camel/bean-processor-factory", "org.apache.camel", "camel-bean");
     }
 
@@ -104,8 +103,6 @@ public class KnownDependenciesResolverTest {
         assertGav(resolver, "org.apache.activemq.ActiveMQConnectionFactory", "org.apache.activemq", "activemq-client");
         assertGav(resolver, "org.apache.qpid.jms.JmsConnectionFactory", "org.apache.qpid", "qpid-jms-client");
         assertGav(resolver, "com.fasterxml.jackson.databind.ObjectMapper", "com.fasterxml.jackson.core", "jackson-databind");
-        assertGav(resolver, "com.fasterxml.jackson.annotation.JsonProperty", "com.fasterxml.jackson.core",
-                "jackson-annotations");
         assertGav(resolver, "com.fasterxml.jackson.dataformat.xml.XmlMapper", "com.fasterxml.jackson.dataformat",
                 "jackson-dataformat-xml");
         assertGav(resolver, "org.apache.commons.csv.CSVFormat", "org.apache.commons", "commons-csv");
@@ -160,6 +157,21 @@ public class KnownDependenciesResolverTest {
         // a class looked up at runtime (often only probed for) still needs the component class itself
         assertNull(resolver.mavenGavForClass("org.apache.camel.component.aws2.s3.AWS2S3Constants"));
         assertGav(resolver, "org.apache.camel.component.aws2.s3.AWS2S3Component", "org.apache.camel", "camel-aws2-s3");
+    }
+
+    @Test
+    void semanticExpertBeansAndImportsResolveTheirOwnArtifacts() {
+        KnownDependenciesResolver resolver = new KnownDependenciesResolver(new SimpleCamelContext(), null, null);
+        resolver.loadKnownDependencies();
+
+        assertGav(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter", "org.apache.camel",
+                "camel-semantic-typesafe-ai");
+        assertImport(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiSemanticAdapter", "camel-semantic-typesafe-ai");
+        assertGav(resolver, "org.apache.camel.component.wolfdefender.WolfDefenderSemanticAdapter", "org.apache.camel",
+                "camel-semantic-wolf-defender");
+        assertImport(resolver, "org.apache.camel.component.wolfdefender.WolfDefenderSemanticAdapter",
+                "camel-semantic-wolf-defender");
+        assertImport(resolver, "org.apache.camel.component.typesafeai.TypeSafeAiEndpoint", "camel-typesafe-ai");
     }
 
     private static void assertImport(KnownDependenciesResolver resolver, String className, String artifactId) {

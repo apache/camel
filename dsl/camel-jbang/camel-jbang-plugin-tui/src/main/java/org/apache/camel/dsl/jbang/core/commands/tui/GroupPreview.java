@@ -59,6 +59,16 @@ final class GroupPreview {
     static List<Line> lines(
             Group group, Capabilities caps, ProjectOverview.Overview overview, int width, int maxLines,
             Function<String, String> name, Predicate<String> remote) {
+        return lines(group, caps, overview, width, maxLines, name, remote, false);
+    }
+
+    /**
+     * @param errors whether the error handling is shown: a route also lists where the error handlers of its file send
+     *               its failures (a route's own doCatch and onException are listed anyway)
+     */
+    static List<Line> lines(
+            Group group, Capabilities caps, ProjectOverview.Overview overview, int width, int maxLines,
+            Function<String, String> name, Predicate<String> remote, boolean errors) {
         List<Line> lines = new ArrayList<>();
         for (String route : flowOrder(group, overview)) {
             for (ProjectOverview.EntryPoint e : overview.entryPoints()) {
@@ -68,6 +78,9 @@ final class GroupPreview {
             }
             lines.add(line(width, Span.styled(" " + name.apply(route), Style.EMPTY.fg(Theme.baseFg()).bold())));
             List<Child> out = children(route, overview, remote);
+            if (errors) {
+                out.addAll(failureTargets(route, overview, out));
+            }
             for (int i = 0; i < out.size(); i++) {
                 lines.add(childLine(out.get(i), i == out.size() - 1, group, caps, width, name));
             }
@@ -148,6 +161,31 @@ final class GroupPreview {
         for (ProjectOverview.Link l : overview.links()) {
             if (route.equals(l.from()) && !route.equals(l.to()) && targets.add(l.to())) {
                 answer.add(new Child(l, null));
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Where the error handlers of the route's file (an errorHandler, an onException outside routes) send its failures,
+     * as on error links of the route; none for a route with noErrorHandler.
+     */
+    private static List<Child> failureTargets(String route, ProjectOverview.Overview overview, List<Child> known) {
+        ProjectRoutes.Route r = overview.route(route);
+        if (r == null) {
+            return List.of();
+        }
+        Set<String> targets = new HashSet<>();
+        known.stream().filter(c -> c.link() != null).forEach(c -> targets.add(c.link().to()));
+        List<Child> answer = new ArrayList<>();
+        for (ProjectRoutes.Route handler : overview.routes()) {
+            if (!ProjectOverview.isErrorHandler(handler) || !ProjectOverview.usesHandler(r, handler)) {
+                continue;
+            }
+            for (ProjectOverview.Link l : overview.links()) {
+                if (handler.key().equals(l.from()) && !route.equals(l.to()) && targets.add(l.to())) {
+                    answer.add(new Child(new ProjectOverview.Link(route, l.to(), l.endpoint(), l.kind(), true), null));
+                }
             }
         }
         return answer;

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dev.tamboui.widgets.input.TextAreaState;
 
 /**
@@ -24,6 +27,15 @@ import dev.tamboui.widgets.input.TextAreaState;
 final class SourceEditorNavigation {
 
     private SourceEditorNavigation() {
+    }
+
+    /** The lines of the edit buffer, a copy. */
+    static List<String> lines(TextAreaState state) {
+        List<String> answer = new ArrayList<>(state.lineCount());
+        for (int i = 0; i < state.lineCount(); i++) {
+            answer.add(state.getLine(i));
+        }
+        return answer;
     }
 
     static boolean isWordChar(char ch) {

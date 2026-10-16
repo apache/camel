@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.smpp.integration;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -38,11 +37,11 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jsmpp.examples.SMPPServerSimulator;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -52,17 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
     @RegisterExtension
     static AvailablePortFinder.Port PORT = AvailablePortFinder.find();
-    private static final CountDownLatch LATCH = new CountDownLatch(1);
-    private static final Thread SMPP_SERVER_SIMULATOR = new Thread(() -> {
-        try {
-            // timeout after 3 sec
-            LATCH.await(3, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            // ignore
-        }
-        System.setProperty("jsmpp.simulator.port", "" + PORT.getPort());
-        SMPPServerSimulator.main(null);
-    });
+    private static Thread smppServerSimulator;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
@@ -82,7 +71,7 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
         src.setInitialDelay(100);
         src.setThreadPoolSize(2);
 
-        events = new ArrayList<>();
+        events = new CopyOnWriteArrayList<>();
         context.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
             @Override
             public void notify(CamelEvent event) throws Exception {
@@ -95,18 +84,32 @@ class SmppTRXProducerSupervisingRouteControllerIT extends CamelTestSupport {
         return context;
     }
 
-    @BeforeAll
-    public static void runSMPPServerSimulator() {
-        SMPP_SERVER_SIMULATOR.start();
+    private static void runSMPPServerSimulator() {
+        // a new thread is created each time, as the test class can be re-run in the same JVM
+        smppServerSimulator = new Thread(() -> {
+            System.setProperty("jsmpp.simulator.port", "" + PORT.getPort());
+            SMPPServerSimulator.main(null);
+        });
+        smppServerSimulator.setDaemon(true);
+        smppServerSimulator.start();
     }
 
     @AfterAll
     public static void stopSMPPServerSimulator() {
-        SMPP_SERVER_SIMULATOR.interrupt();
+        if (smppServerSimulator != null) {
+            smppServerSimulator.interrupt();
+        }
     }
 
     @Test
     void sendSubmitSMInOnly() throws Exception {
+        // the SMPP server is not available yet, so the supervising route controller must be restarting the route
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(events.size() >= 3,
+                        "There should be restarting events, size: " + events.size()));
+
+        runSMPPServerSimulator();
+
         result.expectedMessageCount(1);
 
         Exchange exchange = start.createExchange(ExchangePattern.InOnly);

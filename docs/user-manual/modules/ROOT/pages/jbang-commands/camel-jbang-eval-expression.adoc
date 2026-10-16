@@ -22,6 +22,7 @@ camel eval expression [options]
 | `--body` | Message body (prefix with file: to refer to loading message body from file) |  | String
 | `--camel-version` | To run using a different Camel version than the default version. |  | String
 | `--download` | Whether to allow automatic downloading JAR dependencies (over the internet) | true | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--isolated` | Whether to run evaluation isolated in local process | false | boolean
@@ -29,7 +30,7 @@ camel eval expression [options]
 | `--predicate` | Whether to force evaluating as predicate | false | boolean
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--template` | The template to use for evaluating (prefix with file: to refer to loading template from file) |  | String
-| `--timeout` | Timeout in millis waiting for evaluation to be done | 10000 | long
+| `--timeout` | Timeout waiting for evaluation to be done, in millis or as a duration such as 30s | 10000 | long
 | `--variable` | Exchange variable (key=value) |  | List
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

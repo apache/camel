@@ -187,7 +187,7 @@ class ExportQuarkus extends Export {
             copyCamelWrapper();
         }
 
-        if (cleanExportDir || !exportDir.equals(".")) {
+        if (cleanExportDir || !isCurrentDirOrParent(exportDir)) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data
             if (cleanExportDir) {
@@ -332,12 +332,47 @@ class ExportQuarkus extends Export {
             // skip "camel.server." or "camel.management." as this is for camel-main only
             return null;
         }
-        // quarkus use dash cased properties and lets turn camel into dash as well (skip hawtio)
-        boolean dash = key.startsWith("camel.") || (key.startsWith("quarkus.") && !key.startsWith("quarkus.hawtio."));
-        if (dash) {
+        if (key.startsWith("camel.")) {
+            // quarkus use dash cased properties and lets turn camel into dash as well
             key = StringHelper.camelCaseToDash(key);
+        } else if (key.startsWith("quarkus.") && !key.startsWith("quarkus.hawtio.")) {
+            // only the option names, not the names chosen by the user (skip hawtio)
+            key = dashQuarkusOptionNames(key);
         }
         return super.applicationPropertyLine(key, value);
+    }
+
+    /**
+     * Turns the camel cased option names in a quarkus property key into dash case. A segment of the key is an option
+     * name in camel case when it starts with a lower-case letter and has an upper-case letter. Quoted segments and
+     * segments that start with an upper-case letter are names chosen by the user, such as log categories, datasource
+     * names or map keys, which quarkus takes as they are.
+     */
+    static String dashQuarkusOptionNames(String key) {
+        StringBuilder answer = new StringBuilder(key.length() + 8);
+        StringBuilder segment = new StringBuilder();
+        boolean quoted = false;
+        for (char ch : key.toCharArray()) {
+            if (ch == '"') {
+                quoted = !quoted;
+            }
+            if (ch == '.' && !quoted) {
+                answer.append(dashOptionName(segment.toString())).append(ch);
+                segment.setLength(0);
+            } else {
+                segment.append(ch);
+            }
+        }
+        answer.append(dashOptionName(segment.toString()));
+        return answer.toString();
+    }
+
+    private static String dashOptionName(String segment) {
+        if (!segment.isEmpty() && Character.isLowerCase(segment.charAt(0))
+                && segment.chars().anyMatch(Character::isUpperCase)) {
+            return StringHelper.camelCaseToDash(segment);
+        }
+        return segment;
     }
 
     @Override

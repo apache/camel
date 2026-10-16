@@ -28,6 +28,7 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
 import dev.tamboui.widget.Widget;
+import org.apache.camel.diagram.TopologyErrorFrame;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutEdge;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
@@ -42,6 +43,11 @@ public class TopologyDiagramWidget implements Widget {
     private static final int X_DIVISOR = 15;
     private static final int MAX_WRAP_LINES = 3;
     private static final String AI_MARK = "\u2726 ";
+    /**
+     * The node type of the box of the error handling in the architecture view (CAMEL-25466): drawn dashed, as are the
+     * links into it, which carry failures.
+     */
+    public static final String ERROR_HANDLING = "error-handling";
 
     private final TopologyLayoutResult layout;
     private final int nodeWidth;
@@ -60,7 +66,7 @@ public class TopologyDiagramWidget implements Widget {
     private Map<String, NodeLine> groupTags = Map.of();
     private Map<String, Color> groupColors = Map.of();
     private Style aiStyle = Style.EMPTY.italic();
-    private ErrorLayer errorLayer;
+    private TopologyErrorFrame errorLayer;
     private Set<String> errorMarks = Set.of();
     private Map<TopologyLayoutNode, List<String>> errorLabels;
 
@@ -241,7 +247,7 @@ public class TopologyDiagramWidget implements Widget {
      * each one where its failures come from (no arrows: with a global error handler every route would have one). A
      * route that sends to the frame has a mark on its box.
      */
-    public TopologyDiagramWidget withErrorLayer(ErrorLayer layer) {
+    public TopologyDiagramWidget withErrorLayer(TopologyErrorFrame layer) {
         this.errorLayer = layer;
         this.errorLabels = null;
         return this;
@@ -307,7 +313,7 @@ public class TopologyDiagramWidget implements Widget {
 
     /** The frame of the error handling: from its top to the bottom of the diagram, as wide as the diagram. */
     private void drawErrorFrame(Buffer buffer, Rect area) {
-        int top = toRow(errorLayer.frameTopY());
+        int top = toRow(errorLayer.topY());
         int bottom = toRow(layout.totalHeight) - 1;
         int right = getTotalCols() - 2;
         Style s = errorStyle().dim();
@@ -323,7 +329,7 @@ public class TopologyDiagramWidget implements Widget {
         setChar(buffer, area, top, right, '\u256e', s);
         setChar(buffer, area, bottom, 0, '\u2570', s);
         setChar(buffer, area, bottom, right, '\u256f', s);
-        writeText(buffer, area, top, 2, " Error handling ", errorStyle().bold());
+        writeText(buffer, area, top, 2, " " + TopologyErrorFrame.TITLE + " ", errorStyle().bold());
     }
 
     /**
@@ -344,20 +350,7 @@ public class TopologyDiagramWidget implements Widget {
             if (!inFrame(node)) {
                 continue;
             }
-            Map<String, List<String>> bySource = new java.util.LinkedHashMap<>();
-            for (ErrorLayer.ErrorPath p : errorLayer.paths()) {
-                if (node.routeId.equals(p.toRouteId())) {
-                    bySource.computeIfAbsent(p.fromRouteId(), k -> new ArrayList<>()).add(p.label());
-                }
-            }
-            List<String> lines = new ArrayList<>();
-            for (Map.Entry<String, List<String>> e : bySource.entrySet()) {
-                String how = String.join(" \u00b7 ", e.getValue());
-                lines.add(e.getKey().equals(node.routeId)
-                        ? "\u26a0 own failures: " + how
-                        : "\u25c2 " + e.getKey() + ": " + how);
-            }
-            answer.put(node, lines);
+            answer.put(node, errorLayer.lines(node.routeId, TopologyErrorFrame.LineStyle.UNICODE));
         }
         return answer;
     }
@@ -396,6 +389,7 @@ public class TopologyDiagramWidget implements Widget {
         int row = toRow(node.y);
 
         boolean ext = isExternal(node);
+        boolean dashedBox = ext || ERROR_HANDLING.equals(node.nodeType);
         List<NodeLine> own = ownLines(node);
 
         TextLines text = textLines(node, ext);
@@ -415,8 +409,9 @@ public class TopologyDiagramWidget implements Widget {
 
         boolean highlighted = !ext && node.routeId != null && highlightRouteIds.contains(node.routeId);
 
-        char hChar = ext ? DASH_H : H;
-        char vChar = ext ? DASH_V : V;
+        // a selected box has a solid frame like any other: dashes on the selection colour break up, the vertical ones most
+        char hChar = dashedBox && !selected ? DASH_H : H;
+        char vChar = dashedBox && !selected ? DASH_V : V;
         Style borderStyle;
         if (highlighted) {
             Color hlColor = highlightFailed ? highlightFailColor() : highlightOkColor();
@@ -425,7 +420,7 @@ public class TopologyDiagramWidget implements Widget {
             // the colour of the route's group, when groups are shown
             borderStyle = Style.EMPTY.fg(groupColors.get(node.routeId));
         } else {
-            borderStyle = ext ? dashedBorderStyle() : borderStyle();
+            borderStyle = dashedBox ? dashedBorderStyle() : borderStyle();
         }
         if (selected) {
             borderStyle = borderStyle.patch(selectionStyle());
@@ -519,7 +514,7 @@ public class TopologyDiagramWidget implements Widget {
             return;
         }
 
-        boolean dashed = isExternal(edge.from) || isExternal(edge.to);
+        boolean dashed = isExternal(edge.from) || isExternal(edge.to) || ERROR_HANDLING.equals(edge.to.nodeType);
         char vChar = dashed ? DASH_V : V;
         char hChar = dashed ? DASH_H : H;
         boolean edgeHighlighted = !dashed

@@ -15,6 +15,11 @@ For validating the source code for mis-configured Camel:
 - seda/direct endpoint pairs
 - configuration in properties files
 
+Java routes are read with the Java DSL parser of camel-java-io, and XML routes with camel-route-parser, without
+compiling or running them. In a Java route, a value only known at runtime, such as a port held in a field, is
+validated as a property placeholder (`+http://localhost:{{port}}/orders+`); an endpoint injected into a field with
+`@EndpointInject`, and a field with a string initializer, are read as well.
+
 Then you can run the `validate` goal from the command line or from within your Java editor such as IDEA or Eclipse.
 
 [source,bash]

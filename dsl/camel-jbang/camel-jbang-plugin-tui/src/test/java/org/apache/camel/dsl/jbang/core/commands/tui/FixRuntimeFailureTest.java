@@ -83,10 +83,10 @@ class FixRuntimeFailureTest {
                 failure.set(f.getFileName() + ":" + line + ": " + fail + " | " + text.strip());
             }
         });
-        viewer.setLiveRunData(path -> Map.of(TO_LINE, new SourceViewer.LiveLine(5, failed, 2)));
-        viewer.setLineFailures((path, line) -> line == TO_LINE ? EXCEPTION : null);
+        viewer.liveColumn().setLiveRunData(path -> Map.of(TO_LINE, new SourceLiveColumn.LiveLine(5, failed, 2)));
+        viewer.liveColumn().setLineFailures((path, line) -> line == TO_LINE ? EXCEPTION : null);
         viewer.loadFile(file);
-        viewer.refreshLiveLinesForTesting();
+        viewer.liveColumn().refreshLiveLinesForTesting();
         return viewer;
     }
 
@@ -162,7 +162,7 @@ class FixRuntimeFailureTest {
         }
 
         // the live run data is of the saved file, so an unsaved edit does not use it
-        assertThat(viewer.runtimeFailure(TO_LINE)).isNull();
+        assertThat(viewer.liveColumn().runtimeFailure(TO_LINE)).isNull();
     }
 
     @Test

@@ -57,6 +57,7 @@ public class Shell extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        requireInteractiveTerminal("camel shell");
         PicocliCommandRegistry registry = new CamelShellCommandRegistry(CamelJBangMain.getCommandLine());
 
         String homeDir = HomeHelper.resolveHomeDir();

@@ -36,6 +36,8 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.FileUtil;
@@ -201,6 +203,14 @@ public class Harden extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // check the input before reaching out to an LLM
+        for (String file : files) {
+            if (!Files.exists(Path.of(file))) {
+                printer().printErr("File not found: " + file);
+                return CliExitCode.NOT_FOUND;
+            }
+        }
+
         String endpoint = detectEndpoint();
         if (endpoint == null) {
             printUsageHelp();
@@ -238,16 +248,20 @@ public class Harden extends CamelCommand {
 
     private void printUsageHelp() {
         printer().printErr("LLM service is not running or not reachable.");
-        printer().printErr("");
-        printer().printErr("Options:");
-        printer().printErr("  1. camel infra run ollama");
-        printer().printErr("  2. camel harden my-route.yaml --url=http://localhost:11434");
-        printer().printErr("  3. camel harden my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...");
+        printer().printDiagnostic("");
+        printer().printDiagnostic("Options:");
+        printer().printDiagnostic("  1. camel infra run ollama");
+        printer().printDiagnostic("  2. camel harden my-route.yaml --url=http://localhost:11434");
+        printer().printDiagnostic(
+                "  3. camel harden my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...");
     }
 
     private String detectEndpoint() {
-        return tryExplicitUrl()
-                .or(this::tryInfraOllama)
+        if (url != null && !url.isBlank()) {
+            // the LLM asked for, or none: the route is not sent to another one
+            return tryExplicitUrl().orElse(null);
+        }
+        return tryInfraOllama()
                 .or(this::tryDefaultOllama)
                 .orElse(null);
     }
@@ -357,11 +371,6 @@ public class Harden extends CamelCommand {
 
     private int hardenRoute(String file, String endpoint, String resolvedApiKey) throws Exception {
         Path path = Path.of(file);
-        if (!Files.exists(path)) {
-            printer().printErr("File not found: " + file);
-            return 1;
-        }
-
         String routeContent = Files.readString(path);
         String ext = Optional.ofNullable(FileUtil.onlyExt(file, false)).orElse("yaml");
 
@@ -472,7 +481,7 @@ public class Harden extends CamelCommand {
         StringBuilder prompt = new StringBuilder();
 
         if (catalogContext) {
-            appendCatalogContext(prompt, routeContent);
+            appendCatalogContext(prompt, routeContent, fileExtension);
         }
 
         prompt.append("File: ").append(fileName).append("\n");
@@ -484,21 +493,20 @@ public class Harden extends CamelCommand {
         return prompt.toString();
     }
 
-    private void appendCatalogContext(StringBuilder prompt, String routeContent) {
-        String catalogInfo = buildCatalogContext(routeContent);
+    private void appendCatalogContext(StringBuilder prompt, String routeContent, String fileExtension) {
+        String catalogInfo = buildCatalogContext(routeContent, fileExtension);
         if (catalogInfo.isEmpty()) {
             return;
         }
         prompt.append("Security-relevant component information:\n").append(catalogInfo).append("\n");
     }
 
-    private String buildCatalogContext(String routeContent) {
+    private String buildCatalogContext(String routeContent, String fileExtension) {
         StringBuilder context = new StringBuilder();
         CamelCatalog catalog = new DefaultCamelCatalog();
-        String lowerContent = routeContent.toLowerCase();
 
-        SECURITY_SENSITIVE_COMPONENTS.stream()
-                .filter(comp -> containsComponent(lowerContent, comp))
+        // the components of the route's endpoints, not every name in the text (CAMEL-25586)
+        RouteComponents.of(routeContent, fileExtension, catalog, SECURITY_SENSITIVE_COMPONENTS)
                 .forEach(comp -> {
                     ComponentModel model = catalog.componentModel(comp);
                     if (model != null) {
@@ -534,12 +542,6 @@ public class Harden extends CamelCommand {
             case "smtp", "imap" -> "Use TLS (SMTPS/IMAPS); authenticate securely";
             default -> null;
         };
-    }
-
-    private boolean containsComponent(String content, String comp) {
-        return content.contains(comp + ":")
-                || content.contains("\"" + comp + "\"")
-                || content.contains("'" + comp + "'");
     }
 
     String callOllama(String endpoint, String sysPrompt, String userPrompt) {

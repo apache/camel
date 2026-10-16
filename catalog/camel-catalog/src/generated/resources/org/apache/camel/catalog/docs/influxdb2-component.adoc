@@ -85,3 +85,14 @@ YAML::
               bucket: myBucket
 ----
 ====
+
+== Writes are synchronous
+
+The producer writes with the synchronous write API of the InfluxDB client (`WriteApiBlocking`): the exchange
+continues when InfluxDB has answered the write request.
+A write that InfluxDB rejects (for example, a line it cannot parse, an unknown bucket or a token that is not
+authorized), or a request that cannot be sent, fails the exchange with a `CamelInfluxDb2Exception` whose cause is the
+`InfluxException` of the client, so the error handler of the route can redeliver it or move it to a dead letter channel.
+
+Each exchange is one write request. To write many points with one request, send a `Points`, `Measurements` or
+`Records` body, for example, from an xref:eips:aggregate-eip.adoc[Aggregate] EIP.

@@ -66,10 +66,12 @@ public class AttachFileProducer extends DefaultProducer {
         IssueRestClient issueClient = client.getIssueClient();
         Issue issue = issueClient.getIssue(issueKey).claim();
         URI attachmentsUri = issue.getAttachmentsUri();
+        // wait for the result, so that the body is read before the exchange continues (it may be closed or deleted
+        // when the exchange is done), and a request that Jira rejects fails the exchange
         if (file != null) {
-            issueClient.addAttachments(attachmentsUri, file);
+            issueClient.addAttachments(attachmentsUri, file).claim();
         } else {
-            issueClient.addAttachment(attachmentsUri, is, name);
+            issueClient.addAttachment(attachmentsUri, is, name).claim();
         }
     }
 }

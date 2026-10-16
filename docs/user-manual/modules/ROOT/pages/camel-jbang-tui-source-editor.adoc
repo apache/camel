@@ -189,8 +189,8 @@ image::jbang/camel-tui-source-java-argument-completion.png[In the argument of a 
 
 In YAML `semantic.evaluation` declarations, *Tab* on `operation:` or `type:` suggests the operations declared by
 the selected expert in the running integration. Completion uses the `expert` in the current editor buffer,
-including unsaved edits: an evaluation's expert overrides the enclosing semantic block's expert. Without either,
-it uses the runtime's configured default or automatically selected expert.
+including unsaved edits. Every evaluation must declare its own `expert`. If it is missing,
+completion offers property placeholders only.
 
 Suggestions show the operation's description and result type. For example, an expert declaring only `injection`
 with a boolean result offers `injection`; returning a boolean does not imply an operation named `boolean`.

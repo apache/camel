@@ -6,7 +6,7 @@ Guidelines for AI agents working on this codebase.
 
 Apache Camel is an integration framework supporting routing rules in Java, XML and YAML DSLs.
 
-- Version: 4.23.0-SNAPSHOT
+- Version: 4.24.0-SNAPSHOT
 - Java: 17+
 - Build: Maven 3.9.12+
 
@@ -131,7 +131,7 @@ When merging a PR, an agent MUST perform the following steps **in order**:
 1. **Derive the milestone from the target branch**:
    - Read the `<version>` from the root `pom.xml` on the PR's **target branch** (e.g., `main`,
      `camel-4.18.x`).
-   - Strip the `-SNAPSHOT` suffix to get the milestone name (e.g., `4.23.0-SNAPSHOT` → `4.23.0`).
+   - Strip the `-SNAPSHOT` suffix to get the milestone name (e.g., `4.24.0-SNAPSHOT` → `4.23.0`).
 
 2. **Assign the milestone**:
    - Set the GitHub milestone on the PR: `gh pr edit <PR> --milestone <version>`.
@@ -454,6 +454,13 @@ The following are explicitly **not** framework vulnerabilities and will be close
 - Third-party transitive dependency CVEs that are not reachable through any Camel-exposed code
   path.
 - Automated scanner reports without a PoC demonstrating an actual trust-boundary breach.
+- An **AI assistant in Camel TUI** (the AI panel's model, an ACP agent, an MCP client) using the
+  TUI's tools without asking, even after a prompt injection. Camel CLI and Camel TUI are developer
+  tools on the developer's own machine; the TUI asks first only before a file write (its write
+  mode), a message to an endpoint the integration does not have or with a body read from a file
+  outside the project, SQL that is not a `SELECT`, and a code-running expression language such as
+  Groovy. A tool breaking that contract is in scope. See
+  "Developer tools" in the security model.
 
 ### Operator hardening checklist
 

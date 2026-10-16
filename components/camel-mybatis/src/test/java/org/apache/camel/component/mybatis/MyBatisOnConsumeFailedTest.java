@@ -66,6 +66,17 @@ class MyBatisOnConsumeFailedTest extends MyBatisTestSupport {
     }
 
     @Test
+    void testRollbackOnlyLastExchangeIsNotConsumed() throws Exception {
+        insertAccounts(account(1, "ok"), account(2, "rollbackLast"));
+
+        MyBatisConsumer consumer = (MyBatisConsumer) context.getRoute("on-consume").getConsumer();
+        assertEquals(2, consumer.poll());
+
+        assertEquals(List.of(2), unprocessedAccountIds(),
+                "an account whose exchange was marked rollback only last must not be consumed");
+    }
+
+    @Test
     void testTransactedRollbackOnlyExchangeBreaksOutOfBatch() throws Exception {
         insertAccounts(account(1, "ok"), account(2, "rollback"), account(3, "ok"));
 
@@ -78,6 +89,21 @@ class MyBatisOnConsumeFailedTest extends MyBatisTestSupport {
 
         assertEquals(List.of(2, 3), unprocessedAccountIds(),
                 "neither the rollback only account nor the accounts after it must be consumed");
+        assertEquals(1, getMockEndpoint("mock:processed").getReceivedCounter());
+    }
+
+    @Test
+    void testTransactedRollbackOnlyLastExchangeBreaksOutOfBatch() throws Exception {
+        insertAccounts(account(1, "ok"), account(2, "rollbackLast"), account(3, "ok"));
+
+        MyBatisConsumer consumer = (MyBatisConsumer) context.getRoute("transacted").getConsumer();
+        RollbackExchangeException e = assertThrows(RollbackExchangeException.class, consumer::poll,
+                "a rollback only last exchange must break out of a transacted batch, as a failed exchange does");
+        assertTrue(e.getMessage().startsWith("Rollback transaction as the exchange was marked as rollback only"),
+                e.getMessage());
+
+        assertEquals(List.of(2, 3), unprocessedAccountIds(),
+                "neither the rollback only last account nor the accounts after it must be consumed");
         assertEquals(1, getMockEndpoint("mock:processed").getReceivedCounter());
     }
 
@@ -115,7 +141,10 @@ class MyBatisOnConsumeFailedTest extends MyBatisTestSupport {
 
             private void consume(String uri, String routeId) {
                 from(uri).routeId(routeId)
-                        .choice().when(simple("${body.lastName} == 'rollback'")).markRollbackOnly().end()
+                        .choice()
+                        .when(simple("${body.lastName} == 'rollback'")).markRollbackOnly()
+                        .when(simple("${body.lastName} == 'rollbackLast'")).markRollbackOnlyLast()
+                        .end()
                         .process(exchange -> {
                             Account account = exchange.getIn().getBody(Account.class);
                             if ("fail".equals(account.getLastName())) {

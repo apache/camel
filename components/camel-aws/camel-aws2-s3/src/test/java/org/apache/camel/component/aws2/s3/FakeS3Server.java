@@ -21,9 +21,12 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +37,8 @@ import com.sun.net.httpserver.HttpServer;
 /**
  * A minimal in-process fake of the S3 API calls the consumer makes for a single bucket (path-style requests): head
  * bucket, list objects (v2, paginated with max-keys and start-after/continuation-token), head, get and delete object.
+ * An object can be removed right after it was listed, the gets of an object can be refused, and the body of an object
+ * can be cut short.
  */
 final class FakeS3Server {
 
@@ -41,6 +46,10 @@ final class FakeS3Server {
     private final HttpServer server;
     private final NavigableMap<String, byte[]> objects = new ConcurrentSkipListMap<>();
     private final Map<String, AtomicInteger> gets = new ConcurrentHashMap<>();
+    private final Set<String> removedWhenListed = ConcurrentHashMap.newKeySet();
+    private final Set<String> refused = ConcurrentHashMap.newKeySet();
+    private final Map<String, AtomicInteger> refusedGets = new ConcurrentHashMap<>();
+    private final Set<String> cutBodies = ConcurrentHashMap.newKeySet();
 
     FakeS3Server(String bucket) throws IOException {
         this.bucket = bucket;
@@ -62,6 +71,40 @@ final class FakeS3Server {
 
     void put(String key, String content) {
         objects.put(key, content.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * The object is removed as soon as a listing has returned it (once), as another consumer or a lifecycle rule does.
+     */
+    void removeWhenListed(String key) {
+        removedWhenListed.add(key);
+    }
+
+    /**
+     * Every get of the object is refused with 403 (AccessDenied), which the client does not retry, until
+     * {@link #allowGets(String)}.
+     */
+    void refuseGets(String key) {
+        refused.add(key);
+    }
+
+    void allowGets(String key) {
+        refused.remove(key);
+    }
+
+    /**
+     * The number of gets of the object that were refused.
+     */
+    int refusedGets(String key) {
+        AtomicInteger n = refusedGets.get(key);
+        return n != null ? n.get() : 0;
+    }
+
+    /**
+     * The connection is closed before the whole body of the object was sent (once), so its download fails.
+     */
+    void cutBodyOfNextGet(String key) {
+        cutBodies.add(key);
     }
 
     int gets(String key) {
@@ -94,11 +137,22 @@ final class FakeS3Server {
                 }
             }
             case "GET" -> {
-                if (data == null) {
+                if (refused.contains(key)) {
+                    refusedGets.computeIfAbsent(key, k -> new AtomicInteger()).incrementAndGet();
+                    error(http, 403, "AccessDenied", "Access Denied", key);
+                } else if (data == null) {
                     noSuchKey(http, key);
                 } else {
                     gets.computeIfAbsent(key, k -> new AtomicInteger()).incrementAndGet();
                     objectHeaders(http, data);
+                    if (cutBodies.remove(key)) {
+                        // announces more than is sent, and closes the connection
+                        http.sendResponseHeaders(200, data.length + 100L);
+                        http.getResponseBody().write(data);
+                        http.getResponseBody().flush();
+                        http.close();
+                        return;
+                    }
                     http.sendResponseHeaders(200, data.length);
                     try (OutputStream os = http.getResponseBody()) {
                         os.write(data);
@@ -124,6 +178,7 @@ final class FakeS3Server {
         StringBuilder contents = new StringBuilder();
         int count = 0;
         String last = null;
+        List<String> listed = new ArrayList<>();
         for (Map.Entry<String, byte[]> e : view.entrySet()) {
             if (count == maxKeys) {
                 break;
@@ -134,6 +189,7 @@ final class FakeS3Server {
                     .append("<Size>").append(e.getValue().length).append("</Size>")
                     .append("<StorageClass>STANDARD</StorageClass></Contents>");
             last = e.getKey();
+            listed.add(last);
             count++;
         }
         boolean truncated = last != null && objects.higherKey(last) != null;
@@ -145,6 +201,11 @@ final class FakeS3Server {
                      + (truncated ? "<NextContinuationToken>" + last + "</NextContinuationToken>" : "")
                      + contents + "</ListBucketResult>";
         respond(http, 200, "application/xml", xml);
+        for (String key : listed) {
+            if (removedWhenListed.remove(key)) {
+                objects.remove(key);
+            }
+        }
     }
 
     private static void objectHeaders(HttpExchange http, byte[] data) {
@@ -155,11 +216,15 @@ final class FakeS3Server {
     }
 
     private void noSuchKey(HttpExchange http, String key) throws IOException {
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error><Code>NoSuchKey</Code>"
-                     + "<Message>The specified key does not exist.</Message><Key>" + key + "</Key>"
+        error(http, 404, "NoSuchKey", "The specified key does not exist.", key);
+    }
+
+    private void error(HttpExchange http, int status, String code, String message, String key) throws IOException {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error><Code>" + code + "</Code>"
+                     + "<Message>" + message + "</Message><Key>" + key + "</Key>"
                      + "<BucketName>" + bucket + "</BucketName><Resource>/" + bucket + "/" + key + "</Resource>"
                      + "<RequestId>1</RequestId><HostId>1</HostId></Error>";
-        respond(http, 404, "application/xml", xml);
+        respond(http, status, "application/xml", xml);
     }
 
     private static void respond(HttpExchange http, int status, String contentType, String body) throws IOException {

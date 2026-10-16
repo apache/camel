@@ -442,16 +442,45 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
-    void aTimerExchangePropertyUsedAsAHeaderIsNamed() {
-        // TimerConsumer sets the counter, name, period and time as exchange properties; only the fired time is a header
+    void aTimerExchangePropertyIsSetOnlyWithIncludeMetadata() {
+        // TimerConsumer sets the counter, name, period and time as exchange properties, and only with includeMetadata
         List<String> msgs = SourceValidator.validateKnownHeaders("""
                 - from:
                     uri: "timer:tick?period=1000"
                     steps:
                       - log: "${header.CamelTimerCounter} ${header.CamelTimerFiredTime} ${exchangeProperty.CamelTimerName}"
                 """, catalog);
-        assertThat(msgs).hasSize(1);
-        assertThat(msgs.get(0)).contains("CamelTimerCounter is an exchange property set by timer, not a header")
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 4:")
+                .contains("timer sets CamelTimerCounter only with includeMetadata=true")
+                .contains("${exchangeProperty.CamelTimerCounter}");
+        assertThat(msgs.get(1)).startsWith("Line 4:").contains("timer sets CamelTimerName only with includeMetadata=true");
+    }
+
+    @Test
+    void withIncludeMetadataAHeaderLookupFindsTheExchangeProperty() {
+        // Simple's ${header.x} falls back to the exchange properties, so it reads the counter
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: "timer:tick?period=1000&includeMetadata=true"
+                    steps:
+                      - log: "${header.CamelTimerCounter} ${exchangeProperty.CamelTimerName}"
+                """, catalog);
+        assertThat(msgs).isEmpty();
+    }
+
+    @Test
+    void withIncludeMetadataTheHeadersMapStillHasNoSuchHeader() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:tick
+                    parameters:
+                      includeMetadata: true
+                    steps:
+                      - log: "${headers.CamelTimerCounter}"
+                """, catalog);
+        assertThat(msgs).singleElement().asString()
+                .contains("CamelTimerCounter is an exchange property set by timer, not a header")
                 .contains("${exchangeProperty.CamelTimerCounter}");
     }
 

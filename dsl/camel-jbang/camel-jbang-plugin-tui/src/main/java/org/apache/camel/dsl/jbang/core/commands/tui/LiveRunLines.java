@@ -35,7 +35,7 @@ final class LiveRunLines {
      * @param  filePath the file shown
      * @return          per 0-based line of the file, the exchanges, failures and mean time of the processors on it
      */
-    static Map<Integer, SourceViewer.LiveLine> of(List<RouteInfo> routes, String filePath) {
+    static Map<Integer, SourceLiveColumn.LiveLine> of(List<RouteInfo> routes, String filePath) {
         Map<Integer, long[]> sums = new HashMap<>();
         String name = nameOf(filePath);
         if (routes == null || name == null) {
@@ -48,8 +48,8 @@ final class LiveRunLines {
                 add(sums, name, p.source, p.total, p.failed, p.meanTime);
             }
         }
-        Map<Integer, SourceViewer.LiveLine> answer = new HashMap<>();
-        sums.forEach((line, s) -> answer.put(line, new SourceViewer.LiveLine(s[0], s[1], s[0] > 0 ? s[2] / s[0] : 0)));
+        Map<Integer, SourceLiveColumn.LiveLine> answer = new HashMap<>();
+        sums.forEach((line, s) -> answer.put(line, new SourceLiveColumn.LiveLine(s[0], s[1], s[0] > 0 ? s[2] / s[0] : 0)));
         return answer;
     }
 

@@ -34,7 +34,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -44,12 +44,19 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -74,8 +81,6 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
-
-    private CommandHelper.ReadConsoleTask waitUserTask;
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
@@ -137,9 +142,13 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Sort by pid, name or age for showing status of messages", defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new messages (press enter to exit).")
+    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Keep following and outputting new messages (press enter to exit)."
+                                      + " Without an interactive terminal the default is false, unless --duration is given.")
     boolean follow = true;
+
+    @CommandLine.Mixin
+    DurationMixin durationOption = new DurationMixin();
 
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto",
                         completionCandidates = PrefixCompletionCandidates.class,
@@ -162,8 +171,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Filter messages to only output matching text (ignore case).", arity = "0..*")
     String[] grep;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000",
-                        description = "Timeout in millis waiting for message to be received")
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for message to be received, in millis or as a duration such as 30s")
     long timeout = 20000;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
@@ -243,61 +252,47 @@ public class CamelReceiveAction extends ActionBaseCommand {
             return doDumpCall();
         } else if ("status".equals(action)) {
             return doStatusCall();
+        } else if (!"start".equals(action) && !"stop".equals(action) && !"clear".equals(action)) {
+            throw CliException.usage("Unknown action: " + action + " (use dump, start, stop, status or clear)");
         }
 
         if (name != null) {
-            return doCall(name, autoDump);
+            return doCall(findProcesses(name), autoDump);
         } else {
             // are there only 1 pid running then use that
-            List<Long> pids = findPids("*");
-            if (pids.size() == 1) {
-                return doCall(pids.get(0), autoDump);
+            List<CamelProcess> processes = ProcessFinder.find("*");
+            if (processes.size() == 1) {
+                this.pid = processes.get(0).pid();
+                return doCall(processes, autoDump);
             }
         }
         // okay fallback and run camel locally to connect to external system
         return doCallLocal(autoDump);
     }
 
-    private Integer doCall(String name, boolean autoDump) throws Exception {
-        List<Long> pids = findPids(name);
-        for (long pid : pids) {
+    private Integer doCall(List<CamelProcess> processes, boolean autoDump) throws Exception {
+        int exit = 0;
+        for (CamelProcess process : processes) {
             if ("clear".equals(action)) {
-                Path f = getReceiveFile("" + pid);
+                Path f = getReceiveFile(Long.toString(process.pid()));
                 if (Files.exists(f)) {
                     Files.writeString(f, "{}");
                 }
             } else {
-                Path outputFile = writeReceiveData(pid);
-                printer().println("Starting to receive messages from existing Camel: " + name + " (pid: " + pid + ")");
-                showStatus(outputFile);
+                printer().println("Starting to receive messages from existing Camel: " + process.name() + " (pid: "
+                                  + process.pid() + ")");
+                int code = showStatus(ActionClient.execute(process, "receive", this::receiveOptions, timeout + 10000));
+                if (exit == 0) {
+                    exit = code;
+                }
             }
         }
 
-        if (autoDump) {
+        if (exit == 0 && autoDump) {
             return doDumpCall();
         }
 
-        return 0;
-    }
-
-    private Integer doCall(long pid, boolean autoDump) throws Exception {
-        this.pid = pid;
-        if ("clear".equals(action)) {
-            Path f = getReceiveFile("" + pid);
-            if (Files.exists(f)) {
-                Files.writeString(f, "{}");
-            }
-        } else {
-            Path outputFile = writeReceiveData(pid);
-            printer().println("Starting to receive messages from existing Camel (pid: " + pid + ")");
-            showStatus(outputFile);
-        }
-
-        if (autoDump) {
-            return doDumpCall();
-        }
-
-        return 0;
+        return exit;
     }
 
     private Integer doCallLocal(boolean autoDump) throws Exception {
@@ -314,15 +309,19 @@ public class CamelReceiveAction extends ActionBaseCommand {
         run.property = property;
         run.mavenResolver = mavenResolver;
 
-        // spawn thread that waits for response file
+        // spawn thread that starts receiving, once the Camel of this process has started
         final CountDownLatch latch = new CountDownLatch(1);
         this.pid = ProcessHandle.current().pid();
-        Path outputFile = writeReceiveData(this.pid);
+        JsonObject request = new JsonObject();
+        request.put("action", "receive");
+        receiveOptions(request);
+        AtomicInteger status = new AtomicInteger();
         Thread t = new Thread("CamelJBangSendStatus") {
             @Override
             public void run() {
                 try {
-                    if (!showStatus(outputFile)) {
+                    status.set(showStatus(ActionClient.execute(pid, request, timeout + 10000)));
+                    if (status.get() != 0) {
                         // some kind of error so exit
                         return;
                     }
@@ -330,7 +329,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         doDumpCall();
                     }
                 } catch (Exception e) {
-                    // ignore
+                    printer().printErr("Cannot receive messages: " + e.getMessage());
+                    status.set(CliExitCode.FAILURE);
                 } finally {
                     latch.countDown();
                     // signal to main we are complete
@@ -349,16 +349,16 @@ public class CamelReceiveAction extends ActionBaseCommand {
         Integer exit = run.call();
         latch.await();
 
-        return exit;
+        if (exit != null && exit != 0) {
+            return exit;
+        }
+        return status.get();
     }
 
-    protected Path writeReceiveData(long pid) {
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "receive");
+    /**
+     * The options of the receive action.
+     */
+    protected void receiveOptions(JsonObject root) {
         if ("start".equals(action)) {
             root.put("enabled", "true");
             if (endpoint != null) {
@@ -369,44 +369,42 @@ public class CamelReceiveAction extends ActionBaseCommand {
         } else if ("stop".equals(action)) {
             root.put("enabled", "false");
         }
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            String text = root.toJson();
-            Files.writeString(f, text);
-        } catch (Exception e) {
-            // ignore
-        }
-
-        return outputFile;
     }
 
-    protected boolean showStatus(Path outputFile) throws Exception {
-        // wait longer than timeout
-        JsonObject jo = getJsonObject(outputFile, timeout + 10000);
-        if (jo != null) {
-            String error = jo.getString("error");
-            if (error != null) {
-                error = Jsoner.unescape(error);
-                String url = jo.getString("url");
-                List<String> stackTrace = jo.getCollection("stackTrace");
-                if (url != null) {
-                    printer().printErr("Error starting to receive messages from: " + url + " due to: " + error);
-
-                } else {
-                    printer().printErr("Error starting to receive messages due to: " + error);
-                }
-                printer().println(StringHelper.fillChars('-', 120));
-                printer().println(StringHelper.padString(1, 55) + "STACK-TRACE");
-                printer().println(StringHelper.fillChars('-', 120));
+    /**
+     * Reports how starting (or stopping) to receive went.
+     *
+     * @return the exit code: 1 when the integration failed to receive, 124 when it did not answer in time
+     */
+    protected int showStatus(ActionResult result) {
+        if (!result.isOk()) {
+            printer().printErr("Error starting to receive messages due to: " + result.error());
+            return result.exitCode();
+        }
+        JsonObject jo = result.reply();
+        String error = jo != null ? jo.getString("error") : null;
+        if (error != null) {
+            error = Jsoner.unescape(error);
+            String url = jo.getString("url");
+            List<String> stackTrace = jo.getCollection("stackTrace");
+            if (url != null) {
+                printer().printErr("Error starting to receive messages from: " + url + " due to: " + error);
+            } else {
+                printer().printErr("Error starting to receive messages due to: " + error);
+            }
+            if (stackTrace != null && !stackTrace.isEmpty()) {
+                printer().printDiagnostic(StringHelper.fillChars('-', 120));
+                printer().printDiagnostic(StringHelper.padString(1, 55) + "STACK-TRACE");
+                printer().printDiagnostic(StringHelper.fillChars('-', 120));
                 StringBuilder sb = new StringBuilder();
                 for (String s : stackTrace) {
                     sb.append(String.format("\t%s%n", s));
                 }
-                printer().println(String.valueOf(sb));
-                return false;
+                printer().printDiagnostic(String.valueOf(sb));
             }
+            return CliExitCode.FAILURE;
         }
-        return true;
+        return CliExitCode.OK;
     }
 
     protected Integer doStatusCall() {
@@ -415,10 +413,9 @@ public class CamelReceiveAction extends ActionBaseCommand {
         List<Long> pids;
         if (pid != 0) {
             pids = List.of(pid);
-        } else if (name != null) {
-            pids = findPids(name);
         } else {
-            pids = findPids("*");
+            // a name that matches no running integration is not found
+            pids = findProcesses(name).stream().map(CamelProcess::pid).toList();
         }
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
@@ -517,6 +514,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
     }
 
     protected Integer doDumpCall() throws Exception {
+        follow = isFollowing(follow, durationOption.getDuration());
         // setup table helper
         tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
@@ -524,18 +522,20 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
         Map<Long, Pid> pids = new LinkedHashMap<>();
 
+        // before reading, as an integration that starts later is read with them too (once, as they quote in place)
+        if (find != null && findPatterns == null) {
+            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+            findPatterns = quoteAndCompilePatterns(find);
+        }
+        if (grep != null && grepPatterns == null) {
+            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+            grepPatterns = quoteAndCompilePatterns(grep);
+        }
+
         // find new pids
         updatePids(pids);
         if (!pids.isEmpty()) {
             // read existing received files (skip by tail/since)
-            if (find != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                findPatterns = quoteAndCompilePatterns(find);
-            }
-            if (grep != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                grepPatterns = quoteAndCompilePatterns(grep);
-            }
             Date limit = null;
             if (since != null) {
                 long millis;
@@ -556,12 +556,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
         if (follow) {
             boolean waitMessage = true;
-            final AtomicBoolean running = new AtomicBoolean(true);
-            Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
-                waitUserTask.run();
-            }, "WaitForUser");
-            t.start();
+            // until Enter is pressed, or the --duration has passed
+            CommandHelper.RunUntil running = CommandHelper.RunUntil.start(durationOption.getDuration());
             boolean more = true;
             boolean init = true;
             StopWatch watch = new StopWatch();
@@ -598,7 +594,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         break;
                     }
                 }
-            } while (more && running.get());
+            } while (more && running.isRunning());
         }
 
         return 0;

@@ -1171,9 +1171,15 @@ class ActionsPopup {
     }
 
     void openStopAll() {
-        stopAllPopup.setConfirmActions(ctx != null && ctx.confirmActions);
+        stopAllPopup.setConfirmActions(ctx != null && ctx.confirmFirst());
+        stopAllPopup.setUnattended(ctx != null && ctx.tapeDriven.getAsBoolean());
         stopAllPopup.open();
         checkStopAllNotification();
+    }
+
+    /** Whether the Stop All dialog asks what to stop. */
+    boolean isStopAllVisible() {
+        return stopAllPopup.isVisible();
     }
 
     boolean hasRunningProcesses() {

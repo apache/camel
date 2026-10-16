@@ -241,7 +241,6 @@ The plugins of the Apache Camel project:
 | tui | `camel tui`: the xref:camel-jbang-tui.adoc[Camel TUI]
 | mcp | `camel mcp`: the xref:camel-jbang-mcp.adoc[Camel MCP Server]
 | edit | `camel edit`: edit a Camel file in the terminal with suggestions and diagnostics
-| route-parser | `camel route-parser`: parse Java routes and dump their structure
 |===
 
 Plugins bundled with the CLI, such as `tui`, are installed on first use.

@@ -106,7 +106,7 @@ public class WatcherProducerTest extends CamelTestSupport {
             backendIssue = createIssue(backendIssue.getId(), backendIssue.getSummary(), backendIssue.getKey(),
                     backendIssue.getIssueType(), backendIssue.getDescription(),
                     backendIssue.getPriority(), backendIssue.getAssignee(), null, basicWatchers);
-            return null;
+            return Promises.promise(null);
         });
         lenient().when(issueRestClient.removeWatcher(any(URI.class), anyString())).then(inv -> {
             String username = inv.getArgument(1);
@@ -115,7 +115,7 @@ public class WatcherProducerTest extends CamelTestSupport {
             backendIssue = createIssue(backendIssue.getId(), backendIssue.getSummary(), backendIssue.getKey(),
                     backendIssue.getIssueType(), backendIssue.getDescription(),
                     backendIssue.getPriority(), backendIssue.getAssignee(), null, basicWatchers);
-            return null;
+            return Promises.promise(null);
         });
         lenient().when(issueRestClient.getIssue(anyString())).then(inv -> Promises.promise(backendIssue));
         lenient().when(issueRestClient.getWatchers(any(URI.class))).then(inv -> {

@@ -137,7 +137,7 @@ class HistoryTab extends AbstractTab {
     private boolean historyWordWrap = true;
     private int historyDetailScroll;
     private int historyDetailHScroll;
-    volatile boolean historyRefreshRequested;
+    private volatile boolean historyRefreshRequested;
 
     HistoryTab(MonitorContext ctx,
                AtomicReference<List<TraceEntry>> traces,
@@ -705,6 +705,16 @@ class HistoryTab extends AbstractTab {
 
     @Override
     public void onTabSelected() {
+        if (ctx.selectedPid == null) {
+            return;
+        }
+        // the history is read when the tab opens; while it stays open only when F5 asks for it
+        DataRefreshService data = ctx.dataService;
+        List<Long> pids = data != null ? data.selectedPidAsList() : List.of();
+        if (!pids.isEmpty()) {
+            historyEntries = data.loadHistoryData(pids);
+            data.refreshTraceData(pids);
+        }
         if (!historyEntries.isEmpty()) {
             historyTableState.select(0);
         }
@@ -713,6 +723,20 @@ class HistoryTab extends AbstractTab {
         if (!traces.get().isEmpty()) {
             traceTableState.select(0);
         }
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        DataRefreshService data = ctx.dataService;
+        List<Long> pids = data != null ? data.selectedPidAsList() : List.of();
+        if (pids.isEmpty()) {
+            return;
+        }
+        if (historyRefreshRequested) {
+            historyRefreshRequested = false;
+            historyEntries = data.loadHistoryData(pids);
+        }
+        data.refreshTraceData(pids);
     }
 
     boolean isTraceDetailView() {

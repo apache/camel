@@ -81,7 +81,7 @@ public class DeleteIssueProducerTest extends CamelTestSupport {
         when(issueRestClient.getIssue(any())).then(inv -> Promises.promise(issue));
         when(issueRestClient.deleteIssue(anyString(), anyBoolean())).then(inv -> {
             issue = null;
-            return null;
+            return Promises.promise(null);
         });
     }
 

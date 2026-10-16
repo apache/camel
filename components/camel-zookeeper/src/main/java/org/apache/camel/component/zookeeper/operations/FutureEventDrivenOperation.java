@@ -22,9 +22,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
+import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper;
 
 import static java.lang.String.format;
@@ -42,6 +44,8 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
 
     private WatchedEvent event;
 
+    private volatile ExecutionException failure;
+
     protected FutureEventDrivenOperation(ZooKeeper connection, String node, EventType... awaitedTypes) {
         super(connection, node);
         this.awaitedTypes = awaitedTypes;
@@ -53,6 +57,16 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         EventType received = event.getType();
         if (LOG.isDebugEnabled()) {
             LOG.debug(format("Received event of type %s for node '%s'", received, event.getPath()));
+        }
+
+        // When the session expires, ZooKeeper tells every watcher with an event of type None and state Expired. The
+        // awaited event can no longer come (the handle is closed for good), so stop waiting and fail.
+        if (received == EventType.None && event.getState() == KeeperState.Expired) {
+            failure = new ExecutionException(
+                    "The ZooKeeper session expired while waiting for an event on node '" + getNode() + "'",
+                    new KeeperException.SessionExpiredException());
+            waitForAnyWatchedType.countDown();
+            return;
         }
 
         for (EventType watched : awaitedTypes) {
@@ -74,6 +88,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         installWatch();
         waitingThreads.add(Thread.currentThread());
         waitForAnyWatchedType.await();
+        throwIfFailed();
         return result;
     }
 
@@ -83,13 +98,39 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         installWatch();
         waitingThreads.add(Thread.currentThread());
         waitForAnyWatchedType.await(timeout, unit);
+        throwIfFailed();
         return result;
+    }
+
+    private void throwIfFailed() throws ExecutionException {
+        ExecutionException e = failure;
+        if (e != null) {
+            throw e;
+        }
+    }
+
+    /**
+     * To be called from the asynchronous callback of the request made by {@link #installWatch()}, with its result code.
+     * When the request failed (for example with SESSIONEXPIRED on a handle whose session expired, or CONNECTIONLOSS),
+     * ZooKeeper did not register the watch, so the awaited event will never come: the operation stops waiting and fails
+     * with the {@link KeeperException} of that result code.
+     *
+     * @param rc the result code of the request
+     */
+    protected void watchRequestCompleted(int rc) {
+        if (rc != KeeperException.Code.OK.intValue()) {
+            failure = new ExecutionException(
+                    "Could not watch node '" + getNode() + "'",
+                    KeeperException.create(KeeperException.Code.get(rc), getNode()));
+            waitForAnyWatchedType.countDown();
+        }
     }
 
     /**
      * Install the watcher to receive {@link WatchedEvent}s. It should use the appropriate asynchronous ZooKeeper call
      * to do this so as not to block the route from starting. Once one of the watched for types of event is received a
-     * call is made to getResult, which can use the appropriate synchronous call to retrieve the actual data.
+     * call is made to getResult, which can use the appropriate synchronous call to retrieve the actual data. The
+     * callback of the asynchronous call must pass its result code to {@link #watchRequestCompleted(int)}.
      */
     protected abstract void installWatch();
 

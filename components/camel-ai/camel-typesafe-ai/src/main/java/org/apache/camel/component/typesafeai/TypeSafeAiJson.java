@@ -19,6 +19,7 @@ package org.apache.camel.component.typesafeai;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ final class TypeSafeAiJson {
         Map<String, Object> request = new LinkedHashMap<>(input);
         request.putIfAbsent("model", model);
         text(request.get("model"));
-        content(request.get("state"));
+        validateState(request.get("state"));
         validateQuestions(request.get("questions"));
         jsonValue(request);
         // Detach nested criteria so later caller mutations cannot change response validation.
@@ -66,7 +67,7 @@ final class TypeSafeAiJson {
 
     private static void question(Map<?, ?> question) {
         if (question.get("instructions") != null) {
-            content(question.get("instructions"));
+            validateState(question.get("instructions"));
         }
         Object type = question.get("type");
         if ("noul".equals(type)) {
@@ -74,7 +75,7 @@ final class TypeSafeAiJson {
                 object(question.get("criteria")).forEach((key, value) -> {
                     require("true".equals(key) || "false".equals(key), "Noul criteria keys must be true or false");
                     if (value != null) {
-                        content(value);
+                        validateState(value);
                     }
                 });
             }
@@ -84,14 +85,14 @@ final class TypeSafeAiJson {
             criteria.forEach((key, value) -> {
                 text(key);
                 if (value != null) {
-                    content(value);
+                    validateState(value);
                 }
             });
         } else if ("score".equals(type)) {
             require(question.get("criteria") instanceof List<?>, "Score criteria must be a list");
             List<?> criteria = (List<?>) question.get("criteria");
             require(!criteria.isEmpty() && criteria.size() <= 10, "Score requires 1 to 10 levels");
-            criteria.forEach(TypeSafeAiJson::content);
+            criteria.forEach(TypeSafeAiJson::validateState);
         } else {
             throw new IllegalArgumentException("Question type must be noul, choice or score");
         }
@@ -140,7 +141,7 @@ final class TypeSafeAiJson {
             require(probabilities.keySet().equals(levels), "Score probabilities must cover the requested levels");
             Map<?, ?> legend = object(answer.get("legend"));
             require(legend.keySet().equals(levels), "Score legend must cover the requested levels");
-            legend.values().forEach(TypeSafeAiJson::content);
+            legend.values().forEach(TypeSafeAiJson::validateState);
         }
     }
 
@@ -165,7 +166,7 @@ final class TypeSafeAiJson {
         require(value instanceof String text && !text.isBlank(), "Expected a nonblank string");
     }
 
-    private static void content(Object value) {
+    static void validateState(Object value) {
         require(value instanceof String || value instanceof Map<?, ?> || value instanceof List<?>,
                 "Content must be a string, map or list");
         jsonValue(value);
@@ -173,6 +174,8 @@ final class TypeSafeAiJson {
 
     private static void jsonValue(Object value) {
         if (value instanceof Map<?, ?> map) {
+            require(!map.containsKey("$semanticInput"), "TypeSafe AI does not support media input envelopes");
+            require(!mediaPart(map), "TypeSafe AI does not support image, audio, video or binary media parts");
             map.forEach((key, child) -> {
                 require(key instanceof String, "JSON object keys must be strings");
                 jsonValue(child);
@@ -184,6 +187,47 @@ final class TypeSafeAiJson {
         } else {
             require(value == null || value instanceof String || value instanceof Boolean, "Unsupported JSON value");
         }
+    }
+
+    private static boolean mediaPart(Map<?, ?> map) {
+        // Generic type and URL/source/data fields can describe ordinary application records.
+        if (map.get("type") instanceof String type) {
+            boolean media = switch (type.toLowerCase(Locale.ROOT)) {
+                case "image_url", "input_image", "audio_url", "input_audio", "video_url", "input_video", "input_file" ->
+                    true;
+                case "image", "audio", "video", "binary" -> map.containsKey("image_url") || map.containsKey("input_audio")
+                        || map.containsKey("audio_url") || map.containsKey("video_url") || map.containsKey("bytes")
+                        || mediaSource(map.get("source"));
+                case "file", "document" -> map.containsKey("file_id") || map.containsKey("file_data")
+                        || map.containsKey("file_url") || map.containsKey("file") || map.containsKey("bytes")
+                        || mediaSource(map.get("source"));
+                default -> false;
+            };
+            if (media && (map.containsKey("source") || map.containsKey("data") || map.containsKey("url")
+                    || map.containsKey("image_url") || map.containsKey("input_audio") || map.containsKey("audio_url")
+                    || map.containsKey("video_url") || map.containsKey("file_id") || map.containsKey("file_data")
+                    || map.containsKey("file_url") || map.containsKey("file") || map.containsKey("bytes"))) {
+                return true;
+            }
+        }
+        for (String key : List.of("mimeType", "mime_type", "mediaType", "media_type")) {
+            if (map.get(key) instanceof String mimeType) {
+                String mime = mimeType.split(";", 2)[0].strip().toLowerCase(Locale.ROOT);
+                if ((mime.startsWith("image/") || mime.startsWith("audio/") || mime.startsWith("video/")
+                        || mime.equals("application/octet-stream") || mime.equals("application/pdf")
+                        || mime.equals("application/zip") || mime.equals("application/gzip"))
+                        && (map.containsKey("data") || map.containsKey("bytes"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean mediaSource(Object value) {
+        return value instanceof Map<?, ?> source
+                && ("base64".equals(source.get("type")) && source.containsKey("data")
+                        || "url".equals(source.get("type")) && source.containsKey("url"));
     }
 
     private static double number(Object value) {

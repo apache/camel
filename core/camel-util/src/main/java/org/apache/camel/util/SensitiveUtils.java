@@ -64,6 +64,7 @@ public final class SensitiveUtils {
                     "bearertoken",
                     "blobaccesskey",
                     "blobstoragesharedkeycredential",
+                    "callbacksecret",
                     "certresourcepassword",
                     "clientid",
                     "clientsecret",
@@ -174,6 +175,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qbearertoken\\E"
                                                     + "|\\Qblobaccesskey\\E"
                                                     + "|\\Qblobstoragesharedkeycredential\\E"
+                                                    + "|\\Qcallbacksecret\\E"
                                                     + "|\\Qcertresourcepassword\\E"
                                                     + "|\\Qclientid\\E"
                                                     + "|\\Qclientsecret\\E"

@@ -36,7 +36,6 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.block.Title;
-import dev.tamboui.widgets.input.TextInputState;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import dev.tamboui.widgets.table.Cell;
 import dev.tamboui.widgets.table.Row;
@@ -51,9 +50,7 @@ class BeansTab extends AbstractTableTab {
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
     private int filterIndex;
-    private boolean filterInputActive;
-    private TextInputState filterInputState = new TextInputState("");
-    private String filterTerm;
+    private final FilterField filter = new FilterField(this::filterChanged);
     private List<BeanData> allBeans = Collections.emptyList();
     private int detailScroll;
     private boolean detailFocused;
@@ -89,47 +86,30 @@ class BeansTab extends AbstractTableTab {
 
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
-        if (filterInputActive) {
-            return handleFilterInput(ke);
-        }
-        if (ke.isChar('/')) {
-            filterInputActive = true;
-            filterInputState = new TextInputState(filterTerm != null ? filterTerm : "");
+        if (filter.handleKey(ke)) {
             return true;
         }
         return super.handleKeyEvent(ke);
     }
 
-    private boolean handleFilterInput(KeyEvent ke) {
-        if (ke.isKey(KeyCode.ESCAPE)) {
-            filterInputActive = false;
-            return true;
-        }
-        if (ke.isConfirm()) {
-            String text = filterInputState.text().trim();
-            filterTerm = text.isEmpty() ? null : text;
-            filterInputActive = false;
-            tableState.select(0);
-            detailScroll = 0;
-            return true;
-        }
-        FormHelper.handleTextInput(ke, filterInputState);
-        return true;
+    private void filterChanged() {
+        tableState.select(0);
+        detailScroll = 0;
     }
 
-    boolean isFilterInputActive() {
-        return filterInputActive;
+    @Override
+    public boolean isTextInputActive() {
+        return filter.isEditing();
+    }
+
+    @Override
+    public boolean handlePaste(String text) {
+        return filter.handlePaste(text);
     }
 
     @Override
     public boolean handleEscape() {
-        if (filterTerm != null) {
-            filterTerm = null;
-            tableState.select(0);
-            detailScroll = 0;
-            return true;
-        }
-        return false;
+        return filter.handleEscape();
     }
 
     @Override
@@ -223,8 +203,8 @@ class BeansTab extends AbstractTableTab {
         }
 
         String mode = filterModes()[filterIndex];
-        String title = filterTerm != null
-                ? String.format(" Beans [%d] scope:%s filter:\"%s\" ", visible.size(), mode, filterTerm)
+        String title = filter.term() != null
+                ? String.format(" Beans [%d] scope:%s filter:\"%s\" ", visible.size(), mode, filter.term())
                 : String.format(" Beans [%d] scope:%s ", visible.size(), mode);
 
         Style tableBorderStyle = ctx.paneBorder(!detailFocused);
@@ -330,22 +310,12 @@ class BeansTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        if (filterInputActive) {
-            spans.add(Span.styled(" /", Theme.label().bold()));
-            FormHelper.addCaretField(spans, filterInputState);
-            spans.add(Span.raw("  "));
-            hint(spans, "Enter", "filter");
-            hintLast(spans, "Esc", "cancel");
+        if (filter.renderEditingFooter(spans)) {
             return;
         }
-        hint(spans, "Esc", filterTerm != null ? "clear" : "back");
+        hint(spans, "Esc", filter.escapeLabel());
         hint(spans, "f", "scope [" + filterModes()[filterIndex] + "]");
-        if (filterTerm != null) {
-            spans.add(Span.styled("  /", Theme.label().bold()));
-            spans.add(Span.raw("\"" + filterTerm + "\"  "));
-        } else {
-            hint(spans, "/", "filter");
-        }
+        filter.renderHint(spans);
         hint(spans, "Tab", detailFocused ? "table" : "detail");
         hintLast(spans, "PgUp/Dn", "scroll");
     }
@@ -383,7 +353,7 @@ class BeansTab extends AbstractTableTab {
             filterIndex = 0;
         }
         String mode = modes[filterIndex];
-        String ft = filterTerm != null ? filterTerm.toLowerCase() : null;
+        String ft = filter.term() != null ? filter.term().toLowerCase() : null;
         List<BeanData> result = new ArrayList<>();
         for (BeanData b : allBeans) {
             if ("user".equals(mode) && isFrameworkBean(b)) {

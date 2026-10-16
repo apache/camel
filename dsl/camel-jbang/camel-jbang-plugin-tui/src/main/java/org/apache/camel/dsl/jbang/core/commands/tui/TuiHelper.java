@@ -34,6 +34,7 @@ import dev.tamboui.style.Modifier;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.CharWidth;
+import dev.tamboui.text.GraphemeClusters;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.widgets.scrollbar.Scrollbar;
@@ -1230,6 +1231,88 @@ final class TuiHelper {
             lines.add(line.toString());
         }
         return lines;
+    }
+
+    /**
+     * The rows a line takes in a paragraph with word wrap ({@code Overflow.WRAP_WORD}), counted the way TamboUI 0.6
+     * wraps it: at the last whitespace that fits, else after the last '-', '/' or '\', else at the width. A line that
+     * starts with spaces continues under its first non-blank character (hanging indent). Callers count the rows to
+     * scroll, so a count lower than the paragraph's hides the last rows. Replace with
+     * {@code Paragraph.lineCount(width)} once TamboUI has it (tamboui/tamboui#545).
+     */
+    static int wrappedRows(String text, int width) {
+        if (width <= 0 || text == null || CharWidth.of(text) <= width) {
+            return 1;
+        }
+        int indent = 0;
+        while (indent < text.length() && text.charAt(indent) == ' ') {
+            indent++;
+        }
+        if (indent == 0 || indent == text.length() || indent >= width) {
+            return wordWrapRows(text, width);
+        }
+        // the first row as usual, the rest of the line under its first non-blank character
+        int rest = wrapRowEnd(text, 0, width);
+        while (rest < text.length() && Character.isWhitespace(text.charAt(rest))) {
+            rest++;
+        }
+        String continuation = text.substring(rest);
+        int continuationWidth = CharWidth.of(continuation);
+        if (continuationWidth == 0) {
+            return 1;
+        }
+        return 1 + (continuationWidth <= width - indent ? 1 : wordWrapRows(continuation, width - indent));
+    }
+
+    /** The rows a line takes in a paragraph with word wrap; see {@link #wrappedRows(String, int)}. */
+    static int wrappedRows(Line line, int width) {
+        StringBuilder text = new StringBuilder();
+        for (Span span : line.spans()) {
+            text.append(span.content());
+        }
+        return wrappedRows(text.toString(), width);
+    }
+
+    private static int wordWrapRows(String text, int width) {
+        int rows = 0;
+        int pos = 0;
+        while (pos < text.length()) {
+            int end = wrapRowEnd(text, pos, width);
+            rows++;
+            pos = end;
+            // a row that ends at whitespace: the next row starts after all of it
+            if (end < text.length() && Character.isWhitespace(text.codePointBefore(end))) {
+                while (pos < text.length() && Character.isWhitespace(text.codePointAt(pos))) {
+                    pos += Character.charCount(text.codePointAt(pos));
+                }
+            }
+        }
+        return rows;
+    }
+
+    /** The index just past the row that starts at {@code start}, when the text wraps at word boundaries. */
+    private static int wrapRowEnd(String text, int start, int width) {
+        String remaining = text.substring(start);
+        int maxEnd = start + CharWidth.substringByWidth(remaining, width).length();
+        if (maxEnd >= text.length()) {
+            return text.length();
+        }
+        if (maxEnd == start) {
+            // a character wider than the row still takes a row of its own
+            return start + GraphemeClusters.clusterEnd(remaining, 0);
+        }
+        for (int i = text.offsetByCodePoints(maxEnd, -1); i > start; i = text.offsetByCodePoints(i, -1)) {
+            if (Character.isWhitespace(text.codePointAt(i))) {
+                return i + 1;
+            }
+        }
+        for (int i = text.offsetByCodePoints(maxEnd, -1); i > start; i = text.offsetByCodePoints(i, -1)) {
+            char ch = text.charAt(i);
+            if (ch == '-' || ch == '/' || ch == '\\') {
+                return i + 1;
+            }
+        }
+        return maxEnd;
     }
 
     static String capitalize(String s) {

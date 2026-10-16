@@ -40,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.commands.config.ConfigGet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigList;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigSet;
 import org.apache.camel.dsl.jbang.core.commands.config.ConfigUnset;
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExceptionHandler;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.MissingPluginParameterExceptionHandler;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraCommand;
 import org.apache.camel.dsl.jbang.core.commands.infra.InfraGet;
@@ -62,7 +63,10 @@ import org.apache.camel.dsl.jbang.core.commands.version.VersionCommand;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionGet;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.core.common.Printer;
@@ -70,7 +74,15 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true)
+@Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true,
+         exitCodeListHeading = "%nExit Codes:%n",
+         exitCodeList = {
+                 "  0:Success",
+                 "  1:Failed: the command ran, but the outcome is negative",
+                 "  2:Usage error: invalid option or argument",
+                 "  3:Not found: no such file, integration, route or service",
+                 " 70:Internal error: an unexpected exception",
+                 "124:Timed out: no reply from the integration in time" })
 public class CamelJBangMain implements Callable<Integer> {
     private static CommandLine commandLine;
 
@@ -216,7 +228,8 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("semantic", new CommandLine(new CamelSemantic(this))
                         .addSubcommand("get", new CommandLine(new SemanticGet(this)))
                         .addSubcommand("eval", new CommandLine(new SemanticEvaluate(this)))
-                        .addSubcommand("audit", new CommandLine(new SemanticAudit(this))))
+                        .addSubcommand("audit", new CommandLine(new SemanticAudit(this)))
+                        .addSubcommand("monitoring", new CommandLine(new SemanticMonitoring(this))))
                 .addSubcommand("shell", new CommandLine(new Shell(this)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(this)))
                 .addSubcommand("top", new CommandLine(new CamelTop(this))
@@ -238,7 +251,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("list", new CommandLine(new VersionList(this)))
                         .addSubcommand("set", new CommandLine(new VersionSet(this))))
                 .addSubcommand("wrapper", new CommandLine(new WrapperCommand(this)))
-                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
+                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler(this));
 
         commandLine.getHelpSectionMap().put(
                 CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST,
@@ -247,8 +260,17 @@ public class CamelJBangMain implements Callable<Integer> {
         postAddCommands(commandLine, args);
 
         if (discoverPlugins && PluginHelper.shouldDiscoverPlugins(commandLine, args)) {
-            PluginHelper.addPlugins(commandLine, this, args);
+            try {
+                PluginHelper.addPlugins(commandLine, this, args);
+                PluginHelper.installOnFirstUse(commandLine, this, args);
+            } catch (CliException e) {
+                // a plugin that cannot be loaded
+                out.printErr(e.getMessage());
+                quit(e.getExitCode());
+                return;
+            }
         }
+        withErrorHandling(commandLine);
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();
@@ -259,12 +281,32 @@ public class CamelJBangMain implements Callable<Integer> {
         CommandLineHelper.migrateLegacyUserConfig(out);
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
         preExecute(commandLine, args);
-        int exitCode = commandLine.execute(args);
-        if (isHelpRequest(args)) {
+        int exitCode;
+        try {
+            exitCode = commandLine.execute(args);
+        } catch (Error e) {
+            // picocli hands exceptions to the handler, but an error (such as a class missing at runtime) escapes it
+            exitCode = new CliExecutionExceptionHandler(this).handle(e, commandLine.getParseResult());
+        }
+        if (isHelpRequest(args) && EnvironmentHelper.isInteractiveTerminal()) {
             printAvailablePlugins();
         }
         postExecute(commandLine, args, exitCode);
         quit(exitCode);
+    }
+
+    /**
+     * Installs the error handling of the Camel CLI on the command line and its sub-commands: an exception ends the
+     * command with an {@code ERROR:} line on stderr, and an exit code from {@link CliExitCode}.
+     *
+     * @param  commandLine the command line
+     * @return             the same command line
+     */
+    public CommandLine withErrorHandling(CommandLine commandLine) {
+        CliExecutionExceptionHandler handler = new CliExecutionExceptionHandler(this);
+        return commandLine.setExecutionExceptionHandler(handler)
+                .setExitCodeExceptionMapper(handler)
+                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler(this));
     }
 
     /**
@@ -354,16 +396,17 @@ public class CamelJBangMain implements Callable<Integer> {
         }
 
         if (!rows.isEmpty()) {
+            // not part of the help: the diagnostics channel (stderr) keeps it out of a captured help text
             int maxCmd = rows.stream().mapToInt(r -> r[0].length()).max().orElse(0);
-            out.println();
-            out.println("Plugins (not installed):");
+            out.printDiagnostic("");
+            out.printDiagnostic("Plugins (not installed):");
             for (String[] row : rows) {
-                out.printf("  %-" + maxCmd + "s   %s%n", row[0], row[1]);
+                out.printDiagnostic(String.format("  %-" + maxCmd + "s   %s", row[0], row[1]));
             }
-            out.println();
-            out.println("Tip: Install with: camel plugin add <name>");
-            out.println("     Bundled plugins are auto-installed on first use.");
-            out.println("     Turn off: camel config set camel.jbang.plugin.banner=false");
+            out.printDiagnostic("");
+            out.printDiagnostic("Tip: Install with: camel plugin add <name>");
+            out.printDiagnostic("     Bundled plugins are auto-installed on first use.");
+            out.printDiagnostic("     Turn off: camel config set camel.jbang.plugin.banner=false");
         }
     }
 

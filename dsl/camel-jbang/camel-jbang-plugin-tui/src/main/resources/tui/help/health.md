@@ -74,3 +74,4 @@ when to restart it.
 - `Up/Down` — select health check
 - `s` — cycle sort column
 - `S` — reverse sort order
+- `d` — show only the checks that are DOWN, or all of them again

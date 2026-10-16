@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
@@ -259,6 +260,7 @@ final class StatusParser {
                 ri.uptime = rj.getString("uptime");
 
                 Map<String, ?> rs = rj.getMap("statistics");
+                ri.statistics = rs;
                 if (rs != null) {
                     ri.coverage = objToString(rs.get("coverage"));
                     ri.throughput = objToString(rs.get("exchangesThroughput"));
@@ -300,8 +302,10 @@ final class StatusParser {
                         pi.processor = pj.getString("processor");
                         pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);
+                        pi.uri = pj.getString("uri");
 
                         Map<String, ?> ps = pj.getMap("statistics");
+                        pi.statistics = ps;
                         if (ps != null) {
                             pi.total = objToLong(ps.get("exchangesTotal"));
                             pi.failed = objToLong(ps.get("exchangesFailed"));
@@ -559,6 +563,8 @@ final class StatusParser {
                         int idx = ep.uri.indexOf(':');
                         ep.component = idx > 0 ? ep.uri.substring(0, idx) : ep.uri;
                     }
+                    // here on the refresh thread, as the first look at the catalog loads it
+                    ep.scope = EndpointScope.of(ep.uri, ep.remote);
                     info.endpoints.add(ep);
                 }
             }

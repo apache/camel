@@ -242,6 +242,70 @@ class IntegrationSummaryTest {
     }
 
     @Test
+    void errorHandlingNamesWhatNoRouteConsumesAndTheConsumersOfUncalledRoutes() {
+        // a dead letter queue on a broker, and a route with no error handler that no route calls (CAMEL-25467)
+        String yaml = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: kafka:dlq
+                - route:
+                    id: lonely
+                    errorHandler:
+                      noErrorHandler: {}
+                    from:
+                      uri: timer:lonely
+                      steps:
+                        - to:
+                            uri: kafka:out
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("shop"), Map.of("app.camel.yaml", yaml), ProjectOverviewTest.CATALOG);
+        String md = IntegrationSummary.render(o, null, null, null, "2026-10-13");
+
+        assertThat(md).contains("- dead letter channel (global, app.camel.yaml:1): failures to `kafka:dlq`")
+                .contains("- no error handler in `lonely`, and no route calls it: failures go back to the consumer of"
+                          + " `timer:lonely`")
+                .doesNotContain("failures go back to the caller");
+    }
+
+    @Test
+    void errorHandlingNamesTheErrorHandlerOfARoute() {
+        // fail-well/error-handling: the parked route has a file and a dead letter channel of its own
+        String parked = """
+                - route:
+                    id: parked
+                    errorHandler:
+                      deadLetterChannel:
+                        deadLetterUri: "log:parking-failed?level=ERROR"
+                    from:
+                      uri: direct:parked
+                      steps:
+                        - to:
+                            uri: file:parked
+                """;
+        String java = """
+                import org.apache.camel.builder.RouteBuilder;
+
+                public class Audit extends RouteBuilder {
+                    public void configure() {
+                        from("direct:audit").routeId("audit").errorHandler(deadLetterChannel("log:audit-failed"))
+                            .to("file:audit");
+                    }
+                }
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("shop"),
+                Map.of("parked.camel.yaml", parked, "src/main/java/Audit.java", java), ProjectOverviewTest.CATALOG);
+        String md = IntegrationSummary.render(o, null, null, null, "2026-10-14");
+
+        assertThat(md).contains("- dead letter channel of `parked` (parked.camel.yaml:1): failures to `log:parking-failed`")
+                .contains("- dead letter channel of `audit` (src/main/java/Audit.java:")
+                .contains("failures to `log:audit-failed`")
+                // a route's own is not the error handling of its file
+                .doesNotContain("(global")
+                // what a route sends while it is not handling a failure is not its error handling
+                .doesNotContain("failures to `file:parked`");
+    }
+
+    @Test
     void errorHandlingIsNotAFlowInJava() {
         String java = """
                 import org.apache.camel.builder.RouteBuilder;

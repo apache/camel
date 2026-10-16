@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import com.sun.security.auth.module.UnixSystem;
 import org.apache.camel.spi.annotations.InfraService;
@@ -30,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.Container;
+import org.testcontainers.containers.ContainerLaunchException;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.SelinuxContext;
@@ -44,12 +47,16 @@ import org.testcontainers.utility.MountableFile;
  * is ~108 bytes, so a socket under a deep temp tree would fail to connect from the host). The agent runs in the host
  * PID namespace because the {@code unix} workload attestor resolves the calling process through {@code /proc}, which a
  * container cannot see otherwise; a single registration entry is created for {@code unix:uid:<the test process uid>} so
- * the test JVM is issued {@code spiffe://<trustDomain>/workload}.
+ * the test JVM is issued {@code spiffe://<trustDomain>/workload}. That uid is the one the agent sees, translated
+ * through the user namespace of the agent container, so rootless Podman and rootless Docker work as well.
  * <p>
- * This assumes a Linux Docker host: the host PID namespace, the Unix-socket bind mount and the {@code unix:uid}
+ * The service is only handed over once the agent holds that entry. The SPIRE server passes a new entry on to its agents
+ * when it next rebuilds its entry cache (every 5 seconds by default), and the agent picks it up on its next sync; until
+ * then the Workload API is up and healthy but answers {@code PERMISSION_DENIED: no identity issued}.
+ * <p>
+ * This assumes a Linux container host: the host PID namespace, the Unix-socket bind mount and the {@code unix:uid}
  * selector all rely on the test JVM and the containers sharing one Linux kernel. It is not expected to work on Docker
- * Desktop (macOS/Windows, where the daemon runs in a separate VM) or on rootless Podman (uid remapping) - which is also
- * why the component gates these integration tests off non-amd64 CI. It targets a Linux CI/development Docker.
+ * Desktop (macOS/Windows, where the daemon runs in a separate VM).
  */
 @InfraService(service = SpiffeInfraService.class,
               description = "SPIFFE/SPIRE server and agent exposing the Workload API",
@@ -124,7 +131,6 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
         waitForServerHealthy();
 
         String joinToken = generateJoinToken();
-        createWorkloadEntry();
 
         // the agent needs the host PID namespace so the unix workload attestor can resolve the host test process, and
         // the socket directory bind-mounted (SELinux-shared) so the host can reach the Workload API socket it creates
@@ -138,6 +144,11 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
         LOG.info("Starting the SPIRE agent container");
         agent.start();
         waitForSocket();
+
+        // the entry is only created now that the agent runs, as its selector needs the uid the agent sees, which
+        // depends on the user namespace of the agent container
+        createWorkloadEntry(workloadUid());
+        waitForWorkloadEntry();
 
         socketPath = "unix://" + hostSocketDir.resolve(SOCKET_FILE);
         registerProperties();
@@ -191,10 +202,66 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
         throw new RuntimeException("Could not parse a join token from: " + result.getStdout());
     }
 
-    private void createWorkloadEntry() {
-        long uid = new UnixSystem().getUid();
+    private void createWorkloadEntry(long uid) {
+        LOG.info("Registering {} for the selector unix:uid:{}", WORKLOAD_SPIFFE_ID, uid);
         exec(server, SERVER_BIN, "entry", "create", "-parentID", AGENT_SPIFFE_ID, "-spiffeID", WORKLOAD_SPIFFE_ID,
                 "-selector", "unix:uid:" + uid);
+    }
+
+    /**
+     * Returns the uid of this JVM as the agent's unix workload attestor sees it. The attestor reads the uid from
+     * {@code /proc/<pid>/status} inside the agent container's user namespace, so the kernel translates it through the
+     * {@code uid_map} of that namespace (see {@link #uidInNamespace(long, List, long)}).
+     */
+    private long workloadUid() {
+        long uid = new UnixSystem().getUid();
+        Path uidMap = Path.of("/proc", String.valueOf(agent.getContainerInfo().getState().getPidLong()), "uid_map");
+        try {
+            long overflowUid = Long.parseLong(Files.readString(Path.of("/proc/sys/kernel/overflowuid")).trim());
+            return uidInNamespace(uid, Files.readAllLines(uidMap), overflowUid);
+        } catch (IOException | NumberFormatException e) {
+            // no mapping to read (for example the engine is not on this host): use the uid as is, as a rootful engine does
+            LOG.warn("Could not read the user namespace mapping of the SPIRE agent from {}, using uid {} unchanged", uidMap,
+                    uid, e);
+            return uid;
+        }
+    }
+
+    /**
+     * Translates a uid of this host into a user namespace, given the {@code uid_map} of the namespace as read from this
+     * host. Each line maps the {@code <count>} uids starting at {@code <outside>} onto the uids starting at
+     * {@code <inside>}, and a uid outside every range is seen as the kernel overflow uid. So the uid is unchanged under
+     * a rootful engine, becomes 0 for the engine owner under rootless Podman or Docker, and becomes the overflow uid
+     * when the namespace does not map it.
+     */
+    static long uidInNamespace(long uid, List<String> uidMap, long overflowUid) {
+        for (String line : uidMap) {
+            // <inside> <outside> <count>
+            String[] range = line.trim().split("\\s+");
+            long inside = Long.parseLong(range[0]);
+            long outside = Long.parseLong(range[1]);
+            long count = Long.parseLong(range[2]);
+            if (uid >= outside && uid - outside < count) {
+                return inside + uid - outside;
+            }
+        }
+        return overflowUid;
+    }
+
+    private void waitForWorkloadEntry() {
+        // the agent logs the creation of the workload X509-SVID once the entry is in its cache, which is when a fetch
+        // for this workload stops being answered with PERMISSION_DENIED "no identity issued"
+        try {
+            Wait.forLogMessage(".*Creating X509-SVID.*" + Pattern.quote(WORKLOAD_SPIFFE_ID) + ".*", 1)
+                    .withStartupTimeout(Duration.ofSeconds(60))
+                    .waitUntilReady(agent);
+        } catch (ContainerLaunchException e) {
+            throw new RuntimeException(
+                    "The SPIRE agent did not receive the registration entry for " + WORKLOAD_SPIFFE_ID
+                                       + " in time, agent log:\n"
+                                       + agent.getLogs(),
+                    e);
+        }
     }
 
     private void waitForSocket() {

@@ -38,6 +38,8 @@ detail panel shows:
 
 - `Up/Down` — select property
 - `Enter` — view property detail / documentation
+- `Tab` — switch focus between the table and the detail panel
+- `PgUp/PgDn` — scroll the detail panel
 - `s` — cycle sort column
 - `S` — reverse sort order
 - `Esc` — close detail / back

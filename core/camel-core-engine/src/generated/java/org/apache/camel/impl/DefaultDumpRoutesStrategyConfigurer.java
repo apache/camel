@@ -25,6 +25,7 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
+        case "errors": target.setErrors(property(camelContext, boolean.class, value)); return true;
         case "generatedids":
         case "generatedIds": target.setGeneratedIds(property(camelContext, boolean.class, value)); return true;
         case "include": target.setInclude(property(camelContext, java.lang.String.class, value)); return true;
@@ -46,6 +47,7 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
         case "camelContext": return org.apache.camel.CamelContext.class;
+        case "errors": return boolean.class;
         case "generatedids":
         case "generatedIds": return boolean.class;
         case "include": return java.lang.String.class;
@@ -68,6 +70,7 @@ public class DefaultDumpRoutesStrategyConfigurer extends org.apache.camel.suppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "camelcontext":
         case "camelContext": return target.getCamelContext();
+        case "errors": return target.isErrors();
         case "generatedids":
         case "generatedIds": return target.isGeneratedIds();
         case "include": return target.getInclude();

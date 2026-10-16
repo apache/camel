@@ -80,6 +80,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport implements N
         this.actionName = action;
         this.action = Action.toAction(action);
         this.doneMessages = new LongAdder();
+        setIgnoreAiEvents(true);
 
         if (maxMessages == 0 && maxIdleSeconds == 0) {
             // we do not need exchange events

@@ -74,7 +74,7 @@ class GotoSourceNodePopupTest {
         popup.handleKeyEvent(KeyEvent.ofChar('f', KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofChar('k', KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
-        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        // the processor that matches is selected, not its route shown above it as context
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
         YamlRouteNodeScanner.NodeEntry selected = popup.consumeSelection();
@@ -111,13 +111,40 @@ class GotoSourceNodePopupTest {
         popup.handleKeyEvent(KeyEvent.ofChar('p', KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofChar('h', KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofChar('a', KeyModifiers.NONE));
-        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
 
         YamlRouteNodeScanner.NodeEntry selected = popup.consumeSelection();
         assertThat(selected).isNotNull();
         assertThat(selected.label()).isEqualTo("alpha");
         assertThat(selected.routeFromLine()).isEqualTo(0);
+    }
+
+    @Test
+    void theNodeThatContainsTheTypedTextIsSelectedBeforeAFuzzyMatch() {
+        // "log" matches the when fuzzily (l in simple, o in Counter, g in regex) and the log as it is
+        var entries = List.of(
+                new YamlRouteNodeScanner.NodeEntry(
+                        YamlRouteNodeScanner.EntryKind.ROUTE,
+                        "process", "direct:process", "route", "direct:process",
+                        "/tmp/routes.yaml", 0, 0, 0),
+                new YamlRouteNodeScanner.NodeEntry(
+                        YamlRouteNodeScanner.EntryKind.PROCESSOR,
+                        "process", null, "when", "simple{${header.CamelTimerCounter} regex '.*[05]$'}",
+                        "/tmp/routes.yaml", 5, 2, 0),
+                new YamlRouteNodeScanner.NodeEntry(
+                        YamlRouteNodeScanner.EntryKind.PROCESSOR,
+                        "process", null, "log", "${body}",
+                        "/tmp/routes.yaml", 12, 3, 0));
+        var popup = new GotoSourceNodePopup();
+        popup.open(entries, 100);
+
+        popup.handleKeyEvent(KeyEvent.ofChar('l', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('o', KeyModifiers.NONE));
+        popup.handleKeyEvent(KeyEvent.ofChar('g', KeyModifiers.NONE));
+        assertThat(popup.shown()).hasSize(3);
+        popup.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        assertThat(popup.consumeSelection().type()).isEqualTo("log");
     }
 
     @Test

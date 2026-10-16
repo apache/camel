@@ -875,6 +875,37 @@ class ExportTest {
         Assertions.assertEquals(1, nrCamelProps, "Duplicated property camel.main.foo in application.properties");
     }
 
+    @Test
+    public void shouldDashOnlyQuarkusOptionNames() throws Exception {
+        LOG.info("shouldDashOnlyQuarkusOptionNames");
+        Export command = createCommand(RuntimeType.quarkus, new String[] { "src/test/resources/route.yaml" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                "--property", "quarkus.http.rootPath=/api",
+                "--property", "quarkus.swagger-ui.urls.Camel=../openapi.json",
+                "--property", "quarkus.log.category.\"com.example.MyRoute\".level=DEBUG",
+                "--property", "quarkus.datasource.Orders.db-kind=postgresql",
+                "--property", "quarkus.datasource.\"myOrders\".db-kind=mysql",
+                "--property", "quarkus.datasource.order_history.db-kind=h2",
+                "--property", "quarkus.hawtio.authenticationEnabled=false",
+                "--property", "camel.main.streamCachingEnabled=false");
+        int exit = command.doCall();
+
+        assertThat(exit).isZero();
+        Properties props = loadExportedProperties("application.properties");
+        // camel keys are dashed as a whole
+        assertThat(props.getProperty("camel.main.stream-caching-enabled")).isEqualTo("false");
+        // hawtio takes its options in camel case
+        assertThat(props.getProperty("quarkus.hawtio.authenticationEnabled")).isEqualTo("false");
+        // option names in camel case are dashed
+        assertThat(props.getProperty("quarkus.http.root-path")).isEqualTo("/api");
+        // names chosen by the user are kept as they are
+        assertThat(props.getProperty("quarkus.swagger-ui.urls.Camel")).isEqualTo("../openapi.json");
+        assertThat(props.getProperty("quarkus.log.category.\"com.example.MyRoute\".level")).isEqualTo("DEBUG");
+        assertThat(props.getProperty("quarkus.datasource.Orders.db-kind")).isEqualTo("postgresql");
+        assertThat(props.getProperty("quarkus.datasource.\"myOrders\".db-kind")).isEqualTo("mysql");
+        assertThat(props.getProperty("quarkus.datasource.order_history.db-kind")).isEqualTo("h2");
+    }
+
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldExportGroovy(RuntimeType rt) throws Exception {

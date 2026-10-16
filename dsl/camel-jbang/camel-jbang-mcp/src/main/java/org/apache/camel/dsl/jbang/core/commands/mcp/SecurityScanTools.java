@@ -39,6 +39,7 @@ import org.apache.camel.util.SecurityUtils;
  * Distinct from {@link HardenTools} which provides general security context and CVE advisories — this tool performs
  * line-by-line static analysis to find specific violations.
  */
+@McpSecured
 @ApplicationScoped
 public class SecurityScanTools {
 

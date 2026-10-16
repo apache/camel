@@ -27,26 +27,38 @@ Stop by name or PID:
 [source,bash]
 ----
 camel stop dude
-Stopping running Camel integration (pid: 62506)
+Shutting down Camel integration (PID: 62506)
 ----
 
+`camel stop` waits until the integration has stopped, up to `--timeout` (60 seconds by default). When it has not
+stopped in time, it exits with code `124`, and `--kill` stops it at once. Use `--no-wait` to return without waiting.
+
 NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_.
-To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`
+To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`.
+A PID must be a running Camel integration, and a name or PID that matches nothing exits with code `3`
+(see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]).
 
 Restart an integration (stop + re-launch):
 
 [source,bash]
 ----
 camel restart dude
+Stopping Camel integration: dude (PID: 62506)
+Restarted Camel integration: dude (PID: 63010)
+Log: ~/.camel/restart-62506-1234.log
 ----
+
+`camel restart` waits until the integration has stopped, and until the new one has started, and keeps the output of
+the new integration in the log file it prints. When the new integration stops right away, it prints the end of the log
+and exits with code `1`; when it is still starting after `--timeout`, it exits with code `124` and leaves it running.
 
 Stop all integrations (omit the name):
 
 [source,bash]
 ----
 camel stop
-Stopping running Camel integration (pid: 61818)
-Stopping running Camel integration (pid: 62506)
+Shutting down Camel integration (PID: 61818)
+Shutting down Camel integration (PID: 62506)
 ----
 
 === Watch mode
@@ -93,13 +105,19 @@ Use `--background` to run an integration as a background process (Camel Main onl
 [source,bash]
 ----
 $ camel run chuck.yaml --background
-Running Camel integration: chuck in background with PID: 80093
+Running Camel Main: chuck in background with PID: 80093 (waiting to startup)
+Log: /home/user/.camel/80093-run.log
+Camel Main: chuck (state: Running)
 ----
 
 Use `camel ps` to list, `camel log` to tail output, and `camel stop` to shut down.
 
-Since Camel 4.10, the command waits for startup to complete and reports any errors
-before returning. Disable with `--background-wait=false`.
+The command waits up to 60 seconds for the integration to start, and reports any errors before returning.
+Set how long with `--background-wait`, such as `--background-wait=2m`, or do not wait with `--background-wait=false`.
+An integration that fails to start prints its log and exits with `1`.
+One that is still starting after the wait exits with `124`, and is left running.
+
+The output of the integration goes to `~/.camel/<pid>-run.log`, which `camel stop` removes.
 
 == Getting status
 
@@ -171,6 +189,8 @@ camel cmd route-diagram myApp
 
 This prints a Unicode route diagram in the terminal. Use `--theme=ascii` for plain text,
 or `--output=diagram.png --theme=light` to save as an image.
+A route diagram draws the steps of each route. With `--errors`, its `onException` clauses are drawn as well, in a
+frame of their own below its steps, with where its failures go.
 
 You can also render diagrams directly from source files (no running process needed):
 
@@ -188,6 +208,9 @@ camel cmd route-topology myApp --external
 ----
 
 The `--external` flag includes external systems (Kafka, databases, etc.) as nodes in the graph.
+With a `--theme`, the `--errors` flag also draws the error handling: the routes reached only while a failure is
+handled (such as the target of a dead letter channel), in a frame of their own below the routes, with where their
+failures come from. With `--external` as well, the external systems only they use are in the frame too.
 Routes created by Kamelets are hidden, as they are an implementation detail of the Kamelet; use `--kamelets` to include them.
 Both commands include live metrics by default — use `--metric=false` to disable.
 
@@ -298,12 +321,9 @@ camel semantic get my-app --expert=guard
 
 `camel semantic` defaults to `camel semantic get`. The text output uses tables listing
 definition names, experts, operations, state selectors, result types and resolution
-errors, followed by the known experts and default expert. Listing does not require a
-default expert: the text output shows `Default expert: none` when automatic selection has
-no eligible expert or is ambiguous. Configuration and contract-resolution errors still appear
-as `Default expert error`. `--json` retains all default-selection diagnostics, including
-`defaultErrorCode` when provided by the runtime. The CLI uses that code to identify an
-absent or ambiguous automatic default and supports older runtimes that return only a message. `--expert`
+errors, followed by the registered experts. Each evaluation declares its own expert;
+there is no default expert. Configuration and contract-resolution errors appear alongside
+the affected definition or expert. `--expert`
 shows one expert's operations, input and result semantics, and parameter contract.
 Inspection does not perform inference. Use `--json` for machine-readable output.
 
@@ -341,6 +361,15 @@ example `--parameter=threshold=json:0.7`, `--variable=enabled=json:true`, or
 with `json:` or `file:`. `--body=file:sample.txt` and `--input=file:sample.txt` read the
 file as UTF-8 text.
 
+For an expert accepting images, `--body=image:/path/picture.png` or
+`--input=image:/path/picture.png` reads a local PNG, JPEG, GIF or WebP file. Before reading,
+the CLI queries the selected expert's runtime metadata for its `maxImageBytes` limit.
+It checks both the file size and the actual read, and checks inline images before submitting
+an evaluation. Configure the limit on the expert bean; the OpenAI Decisions expert defaults
+to 10 MB (10,000,000 bytes) per image before base64 encoding. Both the CLI and TUI use that
+same configuration. Missing image support or limit metadata prevents local image loading;
+no evaluation is submitted. Use a JSON string to pass a literal `image:` prefix.
+
 Evaluation prints the value, available probability or probabilities, confidence,
 provider metadata, elapsed milliseconds and any error. It invokes the configured
 provider and may incur charges. `--evaluation-timeout` bounds runtime evaluation
@@ -350,7 +379,7 @@ connector to cancel unfinished work. Provider interruption is cooperative; remot
 native inference may continue. Configure provider-specific request timeouts as well.
 
 Semantic commands use readable text by default: expert operations include a parameter table,
-evaluation results use labelled fields, and audit events show the record and linked evidence
+evaluation results use labelled fields, and audit events show the record and captured interpretation
 in separate sections. Add `--json` to any semantic command to receive the complete JSON response
 for scripts.
 
@@ -363,53 +392,58 @@ other's results.
 
 === Semantic audit history
 
-Use `camel semantic audit` to retrieve retained history from the application's configured
-audit reader. It uses the local connector and performs no inference. Capture settings
-remain in the semantic DSL; querying does not enable auditing or change its configuration.
-
-Stored input appears in event details and linked evaluation evidence when the expert's
-semantic audit configuration explicitly enables `input.enabled`. Capture is disabled by
-default, bounded by `maxChars`, and can use a redactor. Human-readable output preserves
-multiline text; with `--event-id`, `--json` returns the stored structure and any omission
-reason. List queries omit input, including when `--json` is selected.
+`camel semantic audit` reads retained evaluations and request outcomes from the configured reader.
+Querying performs no inference and does not change capture configuration.
 
 [source,bash]
 ----
 camel semantic audit my-app
-camel semantic audit my-app --category=decision --action=block --limit=20
-camel semantic audit my-app --expert=guard --since=2026-10-10T08:00:00Z --json
+camel semantic audit my-app --category=evaluation --executing-route-id=assess --limit=20
+camel semantic audit my-app --expert="team expert" --since=2026-10-10T08:00:00Z --json
 camel semantic audit my-app --event-id=EVENT_ID --json
+camel semantic audit my-app --case-event-id=EVENT_ID --max-records=200 --json
+camel semantic audit my-app --event-ids=EVENT_1,EVENT_2 --max-records=200 --json
 ----
 
-The default output is a table of event IDs, timestamps, categories, explicit route actions,
-evaluation statuses, experts, operations, targets, namespaces, reason codes and Camel breadcrumb
-IDs. A compact text summary reports whether capture is enabled, the reader, memory
-retention and dropped records. Sink or observer failures appear as separate error counts;
-evictions are shown below the table. An evaluation status is separate from an application's
-allow/block decision. The full audit configuration and health fields are available with `--json`.
+Tables separate typed Result from Execution and show captured route provenance and breadcrumb association.
+Detail retains fractional Score values, captured labels and declared meanings. Missing interpretation is
+shown explicitly; current definitions do not reconstruct old results. Stored input is available only when
+capture was explicitly enabled. Detail responses label it as untrusted data. Lists omit input; case/export
+output requires `--include-input` to include it. The full response is available with `--json`.
 
-`--json` returns the complete runtime response as one JSON document. `--event-id` selects
-one historical record and its linked evaluation evidence, including any retained provider,
-model, revision and result semantics. Missing linked records carry `unavailable: true`.
-A missing selected event returns exit code 3. Event lookup cannot be combined with list
-filters, `--cursor` or `--limit`.
+Pages are newest first, default 50 and maximum 200. Exact filters are `--category` (`evaluation` or `request`),
+`--expert`, `--definition`, `--operation`, entry `--route-id`, `--executing-route-id`, `--exchange-id` and `--breadcrumb-id`.
+`--since` is inclusive and `--until` is exclusive, using ISO-8601 event/completion timestamps with a UTC offset.
+Together they select `[since, until)`; the lower bound must precede the upper bound.
+`--result-type` selects `BOOLEAN`, `CHOICE`, `SCORE` or `CLASSIFICATION`. With that explicit type,
+`--result-value` matches a Boolean (`true`/`false`), an exact Choice label or numeric Score equality;
+`--result-label` tests Classification membership; `--score-min`/`--score-max` specify inclusive finite Score bounds.
+Missing or omitted values do not match value predicates. These filters apply before pagination, to retained
+records only. Use the returned `nextCursor` with the same filters and both time bounds.
+Unsupported filters produce an error. `--event-id` is an exclusive detail selector and returns exit code 3
+when the record is absent. Persisted legacy decision records remain retrievable by ID and bulk export.
 
-Pages are newest first, with a default limit of 50 and a maximum of 200. The exact-match
-filters are `--category`, `--action`, `--expert`, `--route-id`, `--breadcrumb-id`, `--namespace` and
-`--correlation-id`. `--since` is inclusive and accepts an ISO-8601 timestamp with a UTC
-offset. Supply a returned `nextCursor` using `--cursor` to retrieve an older page, retaining
-the same filters. Cursors are opaque and belong to the configured backend.
+Cases associate records within one reader by breadcrumb, exchange, invocation and supported batch/request
+relationships. Association is not proven causality; completeness remains unknown. `--max-records` bounds
+case and bulk responses to 1..1000 (default 200), with a 4 MiB response budget. Missing IDs, bounded retrieval,
+cursor expiry and backend failures remain distinct. Backend failures return exit code 1 without partial success.
 
-`--breadcrumb-id` selects evaluations and route decisions with the same Camel breadcrumb.
-Enable `camel.main.use-breadcrumb=true` in the application to let Camel generate missing
-breadcrumbs on route exchanges. Audit uses this existing ID; records without one have an
-empty breadcrumb column.
+=== Semantic monitoring
 
-An expired cursor returns exit code 1 and `cursorExpired: true`; start a new query without
-`--cursor`. Backend query failures also return exit code 1 and retain the stable
-`audit_query_failed` error code. An empty history is a successful query: capture may be
-disabled, no events may match, or records may have been evicted. Retained records remain
-readable even when their expert or definition is no longer available.
+`camel semantic monitoring` reads current cached measurements supplied by semantic metric producers.
+It works independently of audit retention and JMX. It performs no inference or backend query.
+
+[source,bash]
+----
+camel semantic monitoring my-app --json
+camel semantic monitoring my-app --source=departmentMetrics
+----
+
+Producers supply meaning, units, bounded dimensions, observation times, counts, distributions and durations.
+The response includes collection health, omitted sources and evicted series. The cache contains the latest
+values only and is cleared on restart. Historical queries, comparisons, alerting and dashboards belong in
+external monitoring systems. See xref:next@components:languages:semantic-language.adoc[Semantic evaluation]
+for the measurement contract and Micrometer follow-up scope.
 
 === Semantic command output and exit codes
 

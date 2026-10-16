@@ -49,6 +49,16 @@ public final class IntegrationLauncher {
     /** The last log records of a failed start that are returned. */
     static final int FAILURE_RECORDS = 15;
 
+    /**
+     * How often an integration started in dev mode scans for changed files (CAMEL-25661). A write tool waits for the
+     * reload of the file it wrote, and dev mode finds the change at its next scan: at the default of 2000 ms that is
+     * about a second per write. Each write tool call writes one file and waits for its reload, so a shorter interval
+     * does not split one change into two reloads. The key is optional (the ? before the name): the camel command can be
+     * older than these tools (the MCP server run as LATEST, an older camel on the PATH), and a Camel without the option
+     * logs a warning and starts, where an unknown key would stop it from starting.
+     */
+    static final String DEV_RELOAD_INTERVAL = "--prop=camel.main.?routesReloadInterval=500";
+
     /** A stack frame, or the count of the frames a cause shares with the exception it caused. */
     private static final Pattern FRAME = Pattern.compile("^\\s*(at \\S.*|\\.\\.\\. \\d+ (more|common frames omitted))$");
 
@@ -214,6 +224,7 @@ public final class IntegrationLauncher {
         cmd.add("--source-dir=.");
         if (dev) {
             cmd.add("--dev");
+            cmd.add(DEV_RELOAD_INTERVAL);
         }
         if (name != null && !name.isBlank()) {
             cmd.add("--name=" + name);
@@ -240,6 +251,7 @@ public final class IntegrationLauncher {
         cmd.addAll(files);
         if (dev) {
             cmd.add("--dev");
+            cmd.add(DEV_RELOAD_INTERVAL);
         }
         if (name != null && !name.isBlank()) {
             cmd.add("--name=" + name);
@@ -462,28 +474,34 @@ public final class IntegrationLauncher {
             case "kill" -> {
                 Optional<ProcessHandle> ph = ProcessHandle.of(pid);
                 if (ph.isEmpty()) {
-                    yield "No process with pid " + pid;
+                    throw new ToolExecutionException("No process with pid " + pid);
                 }
                 ph.get().destroyForcibly();
                 yield "Killed pid " + pid;
             }
             case "restart" -> restart(pid);
-            case "stop-routes", "pause" -> ctx.executeAction("route", root -> {
-                root.put("id", "*");
-                root.put("command", "stop");
-            });
-            case "start-routes", "resume" -> ctx.executeAction("route", root -> {
-                root.put("id", "*");
-                root.put("command", "start");
-            });
+            case "stop-routes", "pause" -> {
+                ctx.sendAction("route", root -> {
+                    root.put("id", "*");
+                    root.put("command", "stop");
+                });
+                yield "Stopped the routes of pid " + pid;
+            }
+            case "start-routes", "resume" -> {
+                ctx.sendAction("route", root -> {
+                    root.put("id", "*");
+                    root.put("command", "start");
+                });
+                yield "Started the routes of pid " + pid;
+            }
             case "reset-stats" -> {
-                ctx.executeAction("reset-stats", null);
+                ctx.sendAction("reset-stats", null);
                 yield "Statistics reset for pid " + pid;
             }
             case "reload" -> {
                 // what camel cmd reload does: the routes are loaded again from their files without a restart, so
                 // a changed stylesheet or a dropped data file takes effect, and a file consumed once is read again
-                ctx.executeAction("reload", null);
+                ctx.sendAction("reload", null);
                 yield "Reload triggered for pid " + pid + "; camel_get_log shows the routes reloaded summary";
             }
             default -> throw new ToolExecutionException(
@@ -495,11 +513,13 @@ public final class IntegrationLauncher {
     /**
      * Stops the process and starts it again with its own command line and working directory, so a route file edited
      * without dev mode is picked up. Returns the new pid once its status file appears.
+     *
+     * @throws ToolExecutionException when the integration cannot be restarted, or stops right after the restart
      */
     static String restart(long pid) {
         Optional<ProcessHandle> handle = ProcessHandle.of(pid);
         if (handle.isEmpty()) {
-            return "No process with pid " + pid;
+            throw new ToolExecutionException("No process with pid " + pid);
         }
         ProcessHandle ph = handle.get();
         ProcessHandle.Info info = ph.info();
@@ -509,7 +529,8 @@ public final class IntegrationLauncher {
             Collections.addAll(cmd, info.arguments().get());
         }
         if (cmd.isEmpty()) {
-            return "Cannot restart pid " + pid + ": its command line is not available; stop it and run it again";
+            throw new ToolExecutionException(
+                    "Cannot restart pid " + pid + ": its command line is not available; stop it and run it again");
         }
         RuntimeHelper.ProcessInfo pi = findByPid(pid);
         String name = pi != null ? pi.name() : null;
@@ -544,18 +565,20 @@ public final class IntegrationLauncher {
             }
             if (!p.isAlive()) {
                 boolean kept = stoppedByRestart(directory, name);
-                return "Restart of " + (name != null ? name : "pid " + pid) + " failed with exit code "
-                       + p.exitValue() + ", so it is stopped now: fix the cause below, then camel_run starts it again"
-                       + (kept ? " (directory " + directory + ") under the same name, " + name : "") + ".\n"
-                       + failureOutput(output);
+                throw new ToolExecutionException(
+                        "Restart of " + (name != null ? name : "pid " + pid) + " failed with exit code "
+                                                 + p.exitValue()
+                                                 + ", so it is stopped now: fix the cause below, then camel_run starts it again"
+                                                 + (kept ? " (directory " + directory + ") under the same name, " + name : "")
+                                                 + ".\n" + failureOutput(output));
             }
             return "Restarting " + (name != null ? name : "pid " + pid) + " as pid " + p.pid()
                    + " (still starting)";
         } catch (IOException e) {
-            return "Restart failed: " + e.getMessage();
+            throw new ToolExecutionException("Restart failed: " + e.getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return "Restart interrupted";
+            throw new ToolExecutionException("Restart interrupted");
         }
     }
 

@@ -29,6 +29,9 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.io.input.Tailer;
@@ -49,6 +52,14 @@ public class InfraLog extends InfraBaseCommand {
     @CommandLine.Option(names = { "--lines" }, defaultValue = "50",
                         description = "The number of lines from the end of the log to use as starting offset")
     private int logLines = 50;
+
+    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Keep following and outputting new log lines (press enter to exit)."
+                                      + " Without an interactive terminal the default is false, unless --duration is given.")
+    boolean follow = true;
+
+    @CommandLine.Mixin
+    DurationMixin durationOption = new DurationMixin();
 
     private ExecutorService executorService;
 
@@ -73,7 +84,10 @@ public class InfraLog extends InfraBaseCommand {
         Map<String, Long> instancesPerAlias = instances.stream()
                 .collect(Collectors.groupingBy(RunningService::alias, Collectors.counting()));
 
+        follow = isFollowing(follow, durationOption.getDuration());
+
         List<Future<?>> futures = new ArrayList<>();
+        int printed = 0;
         for (RunningService instance : instances) {
             Path logFile = CommandLineHelper.getCamelDir().resolve(getLogFileName(instance.alias(), instance.pid()));
             if (!Files.isRegularFile(logFile)) {
@@ -82,26 +96,55 @@ public class InfraLog extends InfraBaseCommand {
             }
             String prefix = instancesPerAlias.get(instance.alias()) > 1
                     ? instance.alias() + "-" + instance.pid() : instance.alias();
-            createTailer(logFile.toFile(), prefix, futures);
+            if (follow) {
+                createTailer(logFile.toFile(), prefix, futures);
+            } else {
+                // the end of the log
+                for (String line : lastLines(logFile.toFile())) {
+                    printer().println("[" + prefix + "] " + line);
+                }
+                printed++;
+            }
+        }
+        if (!follow && printed > 0) {
+            return 0;
         }
 
         if (futures.isEmpty()) {
             if (name != null) {
                 printer().printErr("Log not found for service " + name);
             } else {
-                printer().println("There are no running services");
+                printer().printErr("There are no running services");
             }
-            return -1;
+            return CliExitCode.NOT_FOUND;
         }
 
-        for (Future<?> future : futures) {
-            // The future is done when the service is stopped/log file in .camel deleted
-            while (!future.isDone()) {
+        // until the services have stopped (their log file is gone), Enter is pressed, or the --duration has passed
+        CommandHelper.RunUntil until = CommandHelper.RunUntil.start(durationOption.getDuration());
+        try {
+            while (until.isRunning() && futures.stream().anyMatch(f -> !f.isDone())) {
                 Thread.sleep(100);
             }
+        } finally {
+            // stop tailing
+            futures.forEach(f -> f.cancel(true));
         }
 
         return 0;
+    }
+
+    private List<String> lastLines(File logFile) throws IOException {
+        try (ReversedLinesFileReader fileReader = ReversedLinesFileReader.builder().setFile(logFile).get()) {
+            List<String> lines = new ArrayList<>(logLines);
+            for (int i = 0; i < logLines; i++) {
+                String line = fileReader.readLine();
+                if (line == null) {
+                    break;
+                }
+                lines.add(0, line);
+            }
+            return lines;
+        }
     }
 
     private void createTailer(File logFile, String alias, List<Future<?>> futures) {
@@ -109,11 +152,11 @@ public class InfraLog extends InfraBaseCommand {
                 .setFile(logFile)
                 .setTailFromEnd(true)
                 .setTailerListener(new StdoutTailerListener(alias))
+                // tailed by the executor service below, which tells when it is done
+                .setStartThread(false)
                 .get();
 
-        Thread thread = new Thread(tailer);
-        thread.setDaemon(true);
-        futures.add(executorService.submit(thread));
+        futures.add(executorService.submit(tailer));
     }
 
     class StdoutTailerListener implements TailerListener {
@@ -135,7 +178,10 @@ public class InfraLog extends InfraBaseCommand {
 
         @Override
         public void handle(Exception ex) {
-            printer().println("The service " + suffix + " was stopped");
+            if (!(ex instanceof InterruptedException)) {
+                // the log file is gone (interrupted is when the command stops tailing)
+                printer().println("The service " + suffix + " was stopped");
+            }
             this.self.close();
             Thread.currentThread().interrupt();
         }
@@ -148,16 +194,8 @@ public class InfraLog extends InfraBaseCommand {
         @Override
         public void init(Tailer tailer) {
             this.self = tailer;
-            try (ReversedLinesFileReader fileReader = ReversedLinesFileReader.builder().setFile(tailer.getFile()).get()) {
-                List<String> lines = new ArrayList<>(logLines);
-                for (int i = 0; i < logLines; i++) {
-                    String line = fileReader.readLine();
-                    if (line == null) {
-                        break;
-                    }
-                    lines.add(0, line);
-                }
-                lines.forEach(this::handle);
+            try {
+                lastLines(tailer.getFile()).forEach(this::handle);
             } catch (IOException e) {
                 printer().printErr("Error initializing logs", e);
             }

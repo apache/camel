@@ -40,8 +40,17 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeLabelMode;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
+import org.apache.camel.diagram.RouteErrorFrame;
+import org.apache.camel.diagram.TopologyErrorFrame;
+import org.apache.camel.diagram.TopologyHelper;
+import org.apache.camel.diagram.TopologyLayoutEngine.TopologyEdgeInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
@@ -126,6 +135,26 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
+    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
+                        description = "Whether to compile Java source files and load their routes. By default Java "
+                                      + "routes are read by the Java DSL parser, without compiling them")
+    boolean compile;
+
+    @CommandLine.Option(names = { "--errors" },
+                        description = "Draw the error handling of each route in a frame below its steps: its onException clauses,"
+                                      + " where its failures go and where it is reached on error from. Without it only the steps"
+                                      + " of the route are drawn")
+    boolean errors;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
+    /**
+     * The error paths of the topology, for the lines of the error frames (Camel 4.23 or newer). Package visible for
+     * testing.
+     */
+    List<TopologyErrorFrame.ErrorPath> errorPaths = List.of();
+
     private long pid;
 
     private DiagramColors colors;
@@ -176,51 +205,42 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
     protected Integer doWatchCall() throws Exception {
         // only attempt to resolve a running integration when a single token is given (or none, defaulting to "*"):
         // multiple tokens can only be a set of source files
-        List<Long> pids = files.size() <= 1 ? findPids(files.isEmpty() ? "*" : files.get(0)) : List.of();
+        String nameOrPid = files.isEmpty() ? "*" : files.get(0);
+        List<CamelProcess> processes = files.size() <= 1 ? ProcessFinder.find(nameOrPid) : List.of();
 
-        boolean sourceMode = pids.isEmpty() && !files.isEmpty();
+        boolean sourceMode = processes.isEmpty() && !files.isEmpty();
 
         List<RouteInfo> routes;
-        if (pids.isEmpty()) {
+        if (processes.isEmpty()) {
             if (files.isEmpty()) {
-                printer().println("No running Camel integration found");
-                return 1;
+                throw CliException.notFound("No running Camel integration found");
             }
             routes = doCallSource(files);
             if (routes == null) {
                 return 1;
             }
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + files.get(0) + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
         } else {
-            // ensure output file is deleted before executing action
-            this.pid = pids.get(0);
-            Path outputFile = getOutputFile(Long.toString(this.pid));
-            PathUtils.deleteFile(outputFile);
-            doCallPid(this.pid);
-            try {
-                JsonObject jo = getJsonObject(outputFile);
-                if (jo == null) {
-                    printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-                    return 1;
-                }
-                routes = parseRoutes(jo);
-            } finally {
-                PathUtils.deleteFile(outputFile);
+            // more than one match is an error that says which integrations match
+            CamelProcess process = processes.size() > 1 ? ProcessFinder.requireOne(nameOrPid) : processes.get(0);
+            this.pid = process.pid();
+            JsonObject jo = executeAction(process, "route-structure", root -> {
+                root.put("filter", "*");
+                root.put("brief", false);
+                root.put("metric", metric);
+            });
+            routes = parseRoutes(jo);
+            if (errors) {
+                errorPaths = requestErrorPaths(process);
             }
         }
 
         if (routes.isEmpty()) {
             if (sourceMode) {
-                printer().println("No routes found in: " + files
-                                  + " (if this is unexpected, the source may have failed to fully load within the "
-                                  + "timeout; try --ignore-loading-error or check the logs)");
-            } else {
-                printer().println("No routes found");
+                throw CliException.failure("No routes found in: " + files
+                                           + " (if this is unexpected, the source may have failed to fully load within"
+                                           + " the timeout; try --ignore-loading-error or check the logs)");
             }
-            return 1;
+            throw CliException.failure("No routes found");
         }
 
         if (filter != null) {
@@ -231,8 +251,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         }
 
         if (routes.isEmpty()) {
-            printer().println("No routes match filter: " + filter);
-            return 1;
+            throw CliException.notFound("No route matching: " + filter);
         }
 
         // parse highlight info
@@ -257,8 +276,14 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
         List<LayoutRoute> layoutRoutes = new ArrayList<>();
         int currentY = RouteDiagramLayoutEngine.PADDING;
+        int rowHeight = isTextTheme() ? RouteDiagramAsciiRenderer.ROW_HEIGHT : RouteDiagramRenderer.rowHeight(fontSize);
+        TopologyErrorFrame.LineStyle lineStyle = isUnicodeTheme() ? TopologyErrorFrame.LineStyle.UNICODE
+                : isTextTheme() ? TopologyErrorFrame.LineStyle.ASCII : TopologyErrorFrame.LineStyle.TEXT;
         for (RouteInfo route : routes) {
-            LayoutRoute lr = engine.layoutRoute(route, currentY);
+            // the steps of the route; its error handling in a frame below them with --errors, or when the highlighted
+            // path steps into one of its onException clauses
+            LayoutRoute lr = RouteErrorFrame.layout(
+                    engine, route, currentY, errors, highlightedNodeIds, errorPaths, lineStyle, rowHeight);
             layoutRoutes.add(lr);
             currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
         }
@@ -354,30 +379,13 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         terminal.flush();
     }
 
-    private void doCallPid(Long pid) {
-        this.pid = pid;
-
-        JsonObject root = new JsonObject();
-        root.put("action", "route-structure");
-        root.put("filter", "*");
-        root.put("brief", false);
-        root.put("metric", metric);
-        Path file = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(file, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-    }
-
     /**
-     * Loads the given source files via a transient Camel boot (see
-     * {@link #dumpRoutesFromSource(List, String, boolean)}) and returns the merged route structure across all of them,
-     * or {@code null} if a file does not exist or loading failed (an error is already printed to the user in that
-     * case). Package visible for testing.
+     * Loads the given source files (see {@link #dumpRoutesFromSource(List, String, boolean, boolean)}) and returns the
+     * merged route structure across all of them, or {@code null} if a file does not exist or loading failed (an error
+     * is already printed to the user in that case). Package visible for testing.
      */
     List<RouteInfo> doCallSource(List<String> sourceFiles) throws Exception {
-        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-diagram-source-", ignoreLoadingError);
+        SourceDump dump = dumpRoutesFromSource(sourceFiles, "route-diagram-source-", ignoreLoadingError, compile);
         if (dump == null) {
             return null;
         }
@@ -432,7 +440,22 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             JsonObject jo = (JsonObject) Jsoner.deserialize(Files.readString(p));
             all.addAll(parseRoutes(jo));
         }
+        if (errors) {
+            // the error paths come from the topology of the same dump
+            errorPaths = errorPaths((JsonObject) Jsoner.deserialize(Files.readString(topologyMarker)));
+        }
         return all;
+    }
+
+    /** Asks the running integration for its topology, for the error paths; none when it does not answer. */
+    private List<TopologyErrorFrame.ErrorPath> requestErrorPaths(CamelProcess process) {
+        ActionResult result = ActionClient.execute(process, "route-topology", null, timeout());
+        return result.isOk() && result.reply() != null ? errorPaths(result.reply()) : List.of();
+    }
+
+    private static List<TopologyErrorFrame.ErrorPath> errorPaths(JsonObject topology) {
+        return TopologyErrorFrame.paths(
+                TopologyHelper.parseEdges(topology, true).stream().filter(TopologyEdgeInfo::isErrorPath).toList());
     }
 
     private static boolean isFreshFile(Path file, Instant notBefore) throws IOException {

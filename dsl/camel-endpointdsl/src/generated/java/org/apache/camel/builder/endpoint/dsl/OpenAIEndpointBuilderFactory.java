@@ -1443,7 +1443,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * The model to use for chat completion.
+         * The model to use for the selected operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3875,7 +3875,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * The model to use for chat completion.
+         * The model to use for the selected operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -6156,7 +6156,7 @@ public interface OpenAIEndpointBuilderFactory {
             return this;
         }
         /**
-         * The model to use for chat completion.
+         * The model to use for the selected operation.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -7014,14 +7014,14 @@ public interface OpenAIEndpointBuilderFactory {
          * Syntax: <code>openai:operation</code>
          * 
          * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
-         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
-         * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
-         * consumer)
-         * There are 17 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, batch,
+         * The operation to perform: 'chat-completion', 'decisions',
+         * 'responses', 'responses-retrieve', 'responses-cancel', 'batch',
+         * 'batch-retrieve', 'batch-cancel', 'batch-results', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', 'image-edit', or
+         * 'webhook' (a consumer)
+         * There are 18 enums and the value can be one of: chat-completion,
+         * decisions, responses, responses-retrieve, responses-cancel, batch,
          * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
          * moderation, image-generation, image-edit, webhook
@@ -7045,14 +7045,14 @@ public interface OpenAIEndpointBuilderFactory {
          * Syntax: <code>openai:operation</code>
          * 
          * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
-         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
-         * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
-         * consumer)
-         * There are 17 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, batch,
+         * The operation to perform: 'chat-completion', 'decisions',
+         * 'responses', 'responses-retrieve', 'responses-cancel', 'batch',
+         * 'batch-retrieve', 'batch-cancel', 'batch-results', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', 'image-edit', or
+         * 'webhook' (a consumer)
+         * There are 18 enums and the value can be one of: chat-completion,
+         * decisions, responses, responses-retrieve, responses-cancel, batch,
          * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
          * moderation, image-generation, image-edit, webhook
@@ -7078,14 +7078,14 @@ public interface OpenAIEndpointBuilderFactory {
          * Syntax: <code>llm:operation</code>
          * 
          * Path parameter: operation (required)
-         * The operation to perform: 'chat-completion', 'responses',
-         * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
-         * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
-         * 'audio-transcription', 'audio-translation', 'audio-speech',
-         * 'moderation', 'image-generation', 'image-edit', or 'webhook' (a
-         * consumer)
-         * There are 17 enums and the value can be one of: chat-completion,
-         * responses, responses-retrieve, responses-cancel, batch,
+         * The operation to perform: 'chat-completion', 'decisions',
+         * 'responses', 'responses-retrieve', 'responses-cancel', 'batch',
+         * 'batch-retrieve', 'batch-cancel', 'batch-results', 'embeddings',
+         * 'tool-execution', 'audio-transcription', 'audio-translation',
+         * 'audio-speech', 'moderation', 'image-generation', 'image-edit', or
+         * 'webhook' (a consumer)
+         * There are 18 enums and the value can be one of: chat-completion,
+         * decisions, responses, responses-retrieve, responses-cancel, batch,
          * batch-retrieve, batch-cancel, batch-results, embeddings,
          * tool-execution, audio-transcription, audio-translation, audio-speech,
          * moderation, image-generation, image-edit, webhook

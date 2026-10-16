@@ -24,22 +24,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 abstract class ActionBaseCommand extends CamelCommand {
+
+    /** The parts of Java sources the parser could not read, when the routes were read from Java sources. */
+    private List<String> unreadSourceParts;
 
     protected ActionBaseCommand(CamelJBangMain main) {
         super(main);
@@ -72,56 +82,82 @@ abstract class ActionBaseCommand extends CamelCommand {
     }
 
     List<Long> findPids(String name) {
-        List<Long> pids = new ArrayList<>();
+        // the running integrations that match the name or pid (see ProcessFinder)
+        return ProcessFinder.find(name).stream().map(ProcessFinder.CamelProcess::pid)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
 
-        // we need to know the pids of the running camel integrations
-        if (name.matches("\\d+")) {
-            return List.of(Long.parseLong(name));
-        } else {
-            if (name.endsWith("!")) {
-                // exclusive this name only
-                name = name.substring(0, name.length() - 1);
-            } else if (!name.endsWith("*")) {
-                // lets be open and match all that starts with this pattern
-                name = name + "*";
+    /**
+     * How long to wait for the integration to answer: the {@code --timeout} of the command (see
+     * {@link ActionTimeoutMixin}), else 10 seconds.
+     */
+    protected long timeout() {
+        return optionValue("--timeout") instanceof Number n && n.longValue() > 0
+                ? n.longValue() : ActionClient.DEFAULT_TIMEOUT;
+    }
+
+    /**
+     * The running integrations that match the name or pid, all of them with the default name {@code *}.
+     *
+     * @throws CliException with exit code 3 when a name or pid given on the command line matches none
+     */
+    protected List<CamelProcess> findProcesses(String name) {
+        if (name == null || name.isBlank() || "*".equals(name)) {
+            List<CamelProcess> answer = ProcessFinder.find("*");
+            if (answer.isEmpty()) {
+                printer().printDiagnostic("No running Camel integrations");
+            }
+            return answer;
+        }
+        return ProcessFinder.requireAny(name);
+    }
+
+    /**
+     * The one running integration that matches the name or pid.
+     *
+     * @throws CliException with exit code 3 when no running integration, or more than one, matches
+     */
+    protected CamelProcess findOne(String name) {
+        return ProcessFinder.requireOne(name);
+    }
+
+    /**
+     * Sends an action without a result, such as a route stop, to each integration, and waits until each confirms it. An
+     * integration that fails the action, or does not answer in time, is reported on stderr.
+     *
+     * @param  processes the integrations
+     * @param  action    the action
+     * @param  options   sets the options of the action, or <tt>null</tt>
+     * @return           the exit code: 0 when every integration took the action, else the code of the first one that
+     *                   did not (see {@link ActionResult#exitCode()})
+     */
+    protected int sendAction(List<CamelProcess> processes, String action, Consumer<JsonObject> options) {
+        int exit = CliExitCode.OK;
+        for (CamelProcess process : processes) {
+            ActionResult result = ActionClient.send(process, action, options, timeout());
+            if (!result.isOk()) {
+                printer().printErr(processes.size() > 1
+                        ? process.name() + " (pid " + process.pid() + "): " + result.error() : result.error());
+                if (exit == CliExitCode.OK) {
+                    exit = result.exitCode();
+                }
             }
         }
+        return exit;
+    }
 
-        final long cur = ProcessHandle.current().pid();
-        final String pattern = name;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        // skip terminated processes (e.g. launcher process for spring-boot/quarkus runtimes)
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context != null) {
-                            int phase = context.getIntegerOrDefault("phase", 0);
-                            if (phase >= 9) {
-                                return;
-                            }
-                        }
-                        String pName = ProcessHelper.extractName(root, ph);
-                        // ignore file extension, so it is easier to match by name
-                        pName = FileUtil.onlyName(pName);
-                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                            pids.add(ph.pid());
-                        } else if (context != null) {
-                            // try camel context name
-                            pName = context.getString("name");
-                            if ("CamelJBang".equals(pName)) {
-                                pName = null;
-                            }
-                            if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                                pids.add(ph.pid());
-                            }
-                        }
-                    }
-                });
-
-        return pids;
+    /**
+     * Runs an action with a result on the integration, such as a thread dump, and returns the result.
+     *
+     * @param  process      the integration
+     * @param  action       the action
+     * @param  options      sets the options of the action, or <tt>null</tt>
+     * @return              the answer of the integration
+     * @throws CliException when the integration answers with an error (exit code 1, or 3 when what the action works on
+     *                      does not exist), or does not answer in time (exit code 124)
+     */
+    protected JsonObject executeAction(CamelProcess process, String action, Consumer<JsonObject> options) {
+        return ActionClient.execute(process, action, options, timeout()).orThrow();
     }
 
     static long extractSince(ProcessHandle ph) {
@@ -146,6 +182,45 @@ abstract class ActionBaseCommand extends CamelCommand {
     }
 
     /**
+     * Whether a value matches the {@code --filter} of a command: names or patterns separated by comma, each matched as
+     * a prefix (wildcards and regular expressions work too). A name that starts with {@code -} excludes what it
+     * matches.
+     *
+     * @param  filter the filter
+     * @param  values the values to match, such as the route id and the source file; a <tt>null</tt> value never matches
+     * @return        whether one of the values matches a name of the filter, and none matches an excluding name
+     */
+    static boolean matchesFilter(String filter, String... values) {
+        boolean included = false;
+        boolean includes = false;
+        for (String part : filter.split(",")) {
+            String f = part.trim();
+            if (f.isEmpty()) {
+                continue;
+            }
+            boolean negate = f.startsWith("-");
+            if (negate) {
+                f = f.substring(1);
+            }
+            // make filtering easier
+            if (!f.endsWith("*")) {
+                f += "*";
+            }
+            boolean match = false;
+            for (String value : values) {
+                match |= value != null && PatternHelper.matchPattern(value, f);
+            }
+            if (negate && match) {
+                return false;
+            } else if (!negate) {
+                includes = true;
+                included |= match;
+            }
+        }
+        return !includes || included;
+    }
+
+    /**
      * Quotes each element in the given array with {@link Pattern#quote} and compiles a case-insensitive pattern for it.
      * The array is modified in place (elements are replaced with their quoted form).
      *
@@ -162,51 +237,28 @@ abstract class ActionBaseCommand extends CamelCommand {
     }
 
     /**
-     * Prepares and writes an action to the action file.
-     *
-     * @param  pid             the process ID
-     * @param  action          the action name
-     * @param  configureAction a function to configure the action JSON object
-     * @return                 the output file path
-     */
-    protected Path prepareAction(String pid, String action, Consumer<JsonObject> configureAction) {
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(pid);
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", action);
-
-        // Allow caller to configure the action
-        if (configureAction != null) {
-            configureAction.accept(root);
-        }
-
-        Path file = getActionFile(pid);
-        PathUtils.writeTextSafely(root.toJson(), file);
-
-        return outputFile;
-    }
-
-    /**
-     * Boots the given source files through a transient Camel run (see {@link Run#runTransform(boolean)}) that dumps the
-     * route structure as JSON into a temporary work directory, so route-diagram / route-topology can render from source
-     * files without a running integration. The caller reads the dumped JSON from {@link SourceDump#workDir()} and is
-     * responsible for deleting that directory when done.
+     * Dumps the route structure of the given source files as JSON into a temporary work directory, so route-diagram /
+     * route-topology can render from source files without a running integration. Java sources are read by the Java DSL
+     * parser (see {@link TransformJavaRoutes#dumpStructure(List, String)}) without compiling them, unless
+     * {@code compile} is set; other sources, or Java sources with {@code compile}, are booted through a transient Camel
+     * run (see {@link Run#runTransform(boolean)}). The caller reads the dumped JSON from {@link SourceDump#workDir()}
+     * and is responsible for deleting that directory when done.
      *
      * @param  sourceFiles        the source files to load
      * @param  workDirPrefix      prefix for the (pid-suffixed) temporary work directory name
      * @param  ignoreLoadingError whether to ignore route loading and compilation errors
-     * @return                    the dump location and the instant the boot started, or {@code null} if a file does not
-     *                            exist or the boot failed (an error is already printed to the user in that case)
+     * @param  compile            whether to compile Java sources and boot them, instead of reading them with the parser
+     * @return                    the dump location and the instant the dump started, or {@code null} if the dump failed
+     *                            (an error is already printed to the user in that case)
+     * @throws CliException       when a source file does not exist (exit code 3)
      */
-    protected SourceDump dumpRoutesFromSource(List<String> sourceFiles, String workDirPrefix, boolean ignoreLoadingError)
+    protected SourceDump dumpRoutesFromSource(
+            List<String> sourceFiles, String workDirPrefix, boolean ignoreLoadingError, boolean compile)
             throws Exception {
         for (String name : sourceFiles) {
             File f = new File(name);
             if (!f.isFile() || !f.exists()) {
-                printer().printErr("File does not exist: " + name);
-                return null;
+                throw CliException.notFound("File does not exist: " + name);
             }
         }
 
@@ -216,6 +268,10 @@ abstract class ActionBaseCommand extends CamelCommand {
         // anything this boot dumps must be newer than this: guards readers against a stale dump left over from a
         // previous --watch iteration whose cleanup above raced with (or lost against) a slow filesystem
         Instant bootStart = Instant.now();
+
+        if (!compile && TransformJavaRoutes.applies(sourceFiles)) {
+            return dumpJavaRoutes(sourceFiles, target) ? new SourceDump(workDir, bootStart) : null;
+        }
 
         Run run = new Run(getMain()) {
             @Override
@@ -240,6 +296,39 @@ abstract class ActionBaseCommand extends CamelCommand {
             return null;
         }
         return new SourceDump(workDir, bootStart);
+    }
+
+    /**
+     * Dumps the route structure and topology JSON of Java sources read by the Java DSL parser, and prints what the
+     * parser could not read.
+     *
+     * @return whether the routes were dumped (else an error is already printed)
+     */
+    protected boolean dumpJavaRoutes(List<String> sourceFiles, String target) throws Exception {
+        TransformJavaRoutes.Result result = TransformJavaRoutes.dumpStructure(sourceFiles, target);
+        if (!result.transformed()) {
+            printer().printErr("No routes found: " + result.reason()
+                               + " (use --compile to compile the source and load its routes)");
+            return false;
+        }
+        unreadSourceParts = result.unread();
+        if (!unreadSourceParts.isEmpty()) {
+            // a warning on stderr: the JSON output stays one document, and lists them too (see addUnreadSourceParts)
+            printer().printWarn("Routes read without compiling them; the parser could not work out these parts "
+                                + "(use --compile to compile the source instead):");
+            unreadSourceParts.forEach(u -> printer().printDiagnostic("  " + u));
+        }
+        return true;
+    }
+
+    /**
+     * Adds the parts of Java sources the parser could not read to the JSON output, as an {@code unread} array, so a
+     * tool reading the JSON can tell that routes may be missing from it.
+     */
+    protected void addUnreadSourceParts(JsonObject jo) {
+        if (unreadSourceParts != null && !unreadSourceParts.isEmpty()) {
+            jo.put("unread", new JsonArray(unreadSourceParts));
+        }
     }
 
     /**

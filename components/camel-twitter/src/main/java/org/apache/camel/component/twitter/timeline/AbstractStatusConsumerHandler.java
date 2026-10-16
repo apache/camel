@@ -36,8 +36,9 @@ abstract class AbstractStatusConsumerHandler extends AbstractTwitterConsumerHand
 
     @Override
     public List<Exchange> pollConsume() throws TwitterException {
+        // one request per poll: the last id must come from the statuses that are routed
         List<Status> statusList = doPoll();
-        for (Status status : doPoll()) {
+        for (Status status : statusList) {
             setLastIdIfGreater(status.getId());
         }
 

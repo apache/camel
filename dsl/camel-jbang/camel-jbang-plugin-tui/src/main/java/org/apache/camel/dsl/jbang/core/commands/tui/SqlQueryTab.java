@@ -99,11 +99,16 @@ class SqlQueryTab extends AbstractTab {
         super(ctx);
     }
 
-    boolean isInputActive() {
+    @Override
+    public boolean isTextInputActive() {
         return !dsNames.isEmpty() && (editMode || focusOnInput);
     }
 
-    void handlePaste(String text) {
+    @Override
+    public boolean handlePaste(String text) {
+        if (!isTextInputActive()) {
+            return false;
+        }
         if (editMode) {
             if (editInputs != null && editField >= 0 && editField < editInputs.length
                     && !columnIsPk[editField]) {
@@ -112,6 +117,7 @@ class SqlQueryTab extends AbstractTab {
         } else if (focusOnInput) {
             sqlInput.insert(text);
         }
+        return true;
     }
 
     @Override

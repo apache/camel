@@ -99,7 +99,7 @@ class EndpointUriCompletionTest {
                     </route>
                 </routes>
                 """);
-        viewer.setUriCompletion("xml");
+        viewer.completion().setUriCompletion("xml");
         cursorAt(viewer, 3, "\"/>");
         viewer.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
         type(viewer, "a");
@@ -127,9 +127,9 @@ class EndpointUriCompletionTest {
         AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
         SourceEditAssist assist = new SourceEditAssist(new MonitorContext(data, infraData));
         SourceViewer viewer = new SourceViewer();
-        viewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-        viewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
-        viewer.setUriCompletion("java");
+        viewer.completion().setAutocompleteProvider(assist::provideYamlKeyCompletions);
+        viewer.completion().setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+        viewer.completion().setUriCompletion("java");
         viewer.loadFile(file);
         viewer.enterEditMode();
         return viewer;

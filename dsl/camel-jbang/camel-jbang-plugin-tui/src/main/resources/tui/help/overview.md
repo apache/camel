@@ -132,8 +132,9 @@ Two panels can be opened on top of any tab. Opening one closes the other.
   `Ctrl+S` saves or `Esc` discards). Type `/help` for the slash commands
 
 Where the panels open (bottom or top) is configured in Settings
-(`F2` → `Settings...` → `Panel Position`). The tool calls and answers of the AI panel
-are recorded in `F2` → `AI & MCP` → `AI Log`.
+(`F2` → `Settings...` → `Panel Position`), and `Panel Theme` draws them in a
+theme of their own, so they stand apart from the tabs. The tool calls and
+answers of the AI panel are recorded in `F2` → `AI & MCP` → `AI Log`.
 
 ## Keys
 
@@ -143,6 +144,8 @@ are recorded in `F2` → `AI & MCP` → `AI Log`.
 - `Enter` — view routes for selected integration
 - `s` — cycle sort column (for the focused panel)
 - `S` — reverse sort order
+- `t` — toggle top mode: the processing times of each integration (mean, max, min, last, delta and percentiles)
+- `a` — cycle the sparkline chart: all integrations, the selected one, off
 - `F2` — actions menu (includes theme toggle, go to tab, etc.)
 - `F3` — switch integration
 - `Ctrl+F` — browse the selected integration's files (plain `f` on the Overview tab)

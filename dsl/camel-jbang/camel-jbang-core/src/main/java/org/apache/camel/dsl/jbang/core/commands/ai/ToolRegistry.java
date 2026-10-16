@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,9 +42,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
 
 /**
- * Central registry of all shared AI tool descriptors. Tools registered here are available to both the Agent REPL
- * ({@code AskTools}) and the MCP server. CLI-specific and file-system tools that depend on {@code CamelJBangMain} or
- * direct filesystem access remain in {@code AskTools}.
+ * Central registry of all shared AI tool descriptors. Tools registered here are available to {@code camel ask}
+ * ({@code AskTools}) and the MCP servers. The CLI tools that depend on {@code CamelJBangMain} remain in
+ * {@code AskTools}.
  */
 public final class ToolRegistry {
 
@@ -100,6 +101,7 @@ public final class ToolRegistry {
     private static void registerProcessTools() {
         register(tool("list_processes",
                 "List all running Camel processes with their PID and name. Use this to discover available processes before selecting one.")
+                .core(true)
                 .executor((ctx, args) -> {
                     List<RuntimeHelper.ProcessInfo> processes = ctx.discoverProcesses();
                     if (processes.isEmpty()) {
@@ -125,6 +127,7 @@ public final class ToolRegistry {
         register(tool("select_process",
                 "Select a running Camel process by name or PID to inspect. Required when multiple processes are running.")
                 .param("name", "string", "Name or PID of the Camel process to connect to", true)
+                .core(true)
                 .executor((ctx, args) -> {
                     String name = args.get("name");
                     if (name == null || name.isBlank()) {
@@ -151,13 +154,13 @@ public final class ToolRegistry {
     // ---- Runtime status (simple read-section) tools ----
 
     private static void registerRuntimeStatusTools() {
-        registerStatusTool("get_context", "context",
+        registerCoreStatusTool("get_context", "context",
                 "Get Camel context info: name, version, state, uptime, route count, exchange statistics.");
-        registerStatusTool("get_routes", "routes",
+        registerCoreStatusTool("get_routes", "routes",
                 "List all routes with their state, uptime, messages processed, last error, and throughput.");
-        registerStatusTool("get_health", "healthChecks",
+        registerCoreStatusTool("get_health", "healthChecks",
                 "Get health check status for the Camel application.");
-        registerStatusTool("get_endpoints", "endpoints",
+        registerCoreStatusTool("get_endpoints", "endpoints",
                 "List all endpoints registered in the Camel context with URIs and usage stats.");
         registerStatusTool("get_inflight", "inflight",
                 "Show currently in-flight exchanges (messages being processed).");
@@ -165,7 +168,7 @@ public final class ToolRegistry {
                 "Show blocked exchanges that are stuck or waiting.");
         registerStatusTool("get_consumers", "consumers",
                 "Show consumer statistics (polling and event-driven consumers).");
-        registerStatusTool("get_properties", "properties",
+        registerCoreStatusTool("get_properties", "properties",
                 "Show configuration properties of the running Camel application.");
         // get_memory combines memory, gc, and threads sections for a complete JVM resource view
         register(tool("get_memory",
@@ -202,6 +205,16 @@ public final class ToolRegistry {
                 .executor((ctx, args) -> ctx.readStatus(section)));
     }
 
+    /**
+     * A status tool of the core subset: {@code camel ask} gives a local model these and the other core runtime tools
+     * (the integration's context, routes, health, endpoints and properties), not the rest (CAMEL-25676).
+     */
+    private static void registerCoreStatusTool(String name, String section, String description) {
+        register(tool(name, description)
+                .core(true)
+                .executor((ctx, args) -> ctx.readStatus(section)));
+    }
+
     // ---- Runtime action tools (with parameters) ----
 
     private static void registerRuntimeActionTools() {
@@ -218,6 +231,7 @@ public final class ToolRegistry {
                                      + " body's type and size as it reached the step (what to read to see where the body"
                                      + " changed from text into a Map or bytes).")
                 .param("summary", "boolean", "Only the steps with route, node, elapsed, body type and size", false)
+                .core(true)
                 .executor((ctx, args) -> {
                     JsonObject history = ctx.readHistoryFile();
                     if (history == null) {
@@ -269,6 +283,7 @@ public final class ToolRegistry {
                 .param("routeId", "string", "Route ID to inspect (use * for all routes)", false)
                 .param("includeDocs", "boolean",
                         "If true, enrich each processor's options with documentation from the Camel catalog", false)
+                .core(true)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
                     String result = ctx.executeAction("processor-detail",
@@ -296,6 +311,7 @@ public final class ToolRegistry {
                 "Get the inter-route topology showing how routes connect to each other and to external endpoints.")
                 .param("metric", "string", "Include live metrics on nodes and edges (default: true)", false)
                 .param("external", "string", "Include external systems as nodes (default: true)", false)
+                .core(true)
                 .executor((ctx, args) -> ctx.executeAction("route-topology", root -> {
                     root.put("metric", args.getOrDefault("metric", "true"));
                     root.put("external", args.getOrDefault("external", "true"));
@@ -328,6 +344,7 @@ public final class ToolRegistry {
                 .param("headers", "string",
                         "Message headers as key=value pairs separated by newlines", false)
                 .readOnly(false).destructive(false)
+                .core(true)
                 .executor((ctx, args) -> {
                     String endpoint = args.get("endpoint");
                     if (endpoint == null || endpoint.isBlank()) {
@@ -565,10 +582,12 @@ public final class ToolRegistry {
                     if (routeId == null || routeId.isBlank()) {
                         throw new ToolExecutionException("routeId is required");
                     }
-                    return ctx.executeAction("route", root -> {
+                    // a route that does not exist, or fails to stop or start, is an error of the tool
+                    ctx.sendAction("route", root -> {
                         root.put("id", routeId);
                         root.put("command", command);
                     });
+                    return "Route " + routeId + ": " + command + " done";
                 }));
     }
 
@@ -1051,6 +1070,17 @@ public final class ToolRegistry {
 
     // ---- Example tools ----
 
+    /** Argument descriptions of the example tools, shared with the MCP server (CAMEL-25535). */
+    public static final String EXAMPLE_LEVEL_DESC
+            = "Only the examples of one group (level): quick-start, run, transform, route, fail-well, connect, "
+              + "connect-service, contracts, ai, cloud or showcase";
+    public static final String EXAMPLE_NAME_DESC
+            = "Example name as listed, e.g. quick-start/timer-log or fail-well/circuit-breaker (the short name without "
+              + "the group, such as timer-log, works too)";
+    public static final String EXAMPLE_FILE_DESC
+            = "File name within the example, as in its files, e.g. timer-log.camel.yaml or application.properties "
+              + "for quick-start/timer-log";
+
     private static void registerExampleTools() {
         register(tool("list_examples",
                 "List the Camel CLI examples, grouped as the ladder of the examples (quick-start, run, transform, "
@@ -1061,10 +1091,7 @@ public final class ToolRegistry {
                                        + "Call it without arguments for the whole ladder, with level for one group.")
                 .param("filter", "string",
                         "Filter by name, description, or tag (case-insensitive)", false)
-                .param("level", "string",
-                        "Only the examples of one group: quick-start, run, transform, route, fail-well, connect, "
-                                          + "connect-service, contracts, ai, cloud or showcase",
-                        false)
+                .param("level", "string", EXAMPLE_LEVEL_DESC, false)
                 .param("limit", "integer", "Maximum number of examples to return (default: 50)", false)
                 .executor((ctx, args) -> {
                     String filter = args.get("filter");
@@ -1082,6 +1109,16 @@ public final class ToolRegistry {
                         }
                     }
                     List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
+                    if (level != null && !level.isBlank()) {
+                        List<String> levels = new ArrayList<>(ExampleHelper.groupByLevel(catalog2).keySet());
+                        String wanted = level.trim();
+                        if (levels.stream().noneMatch(wanted::equalsIgnoreCase)) {
+                            // an old level such as beginner answered 0 examples otherwise (CAMEL-25535)
+                            throw new ToolExecutionException(
+                                    "No example at level " + wanted + "; the levels are: " + String.join(", ", levels));
+                        }
+                        level = wanted;
+                    }
                     List<JsonObject> filtered = ExampleHelper.filterExamples(catalog2, filter);
                     List<JsonObject> groups = new ArrayList<>();
                     List<JsonObject> results = new ArrayList<>();
@@ -1117,6 +1154,7 @@ public final class ToolRegistry {
                                 jo.put("needs", needs);
                             }
                             jo.put("bundled", ExampleHelper.isBundled(entry));
+                            jo.put("requiresDocker", ExampleHelper.requiresDocker(entry));
                             jo.put("files", ExampleHelper.getFiles(entry));
                             results.add(jo);
                         }
@@ -1130,45 +1168,77 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_example_file",
-                "Get the content of a file from a bundled Camel CLI example.")
-                .param("example", "string",
-                        "Example name (e.g., timer-log, rest-api, circuit-breaker)", true)
-                .param("file", "string",
-                        "File name within the example (e.g., route.camel.yaml)", true)
-                .executor((ctx, args) -> {
-                    String example = args.get("example");
-                    String file = args.get("file");
-                    if (example == null || example.isBlank()) {
-                        throw new ToolExecutionException("example name is required");
-                    }
-                    if (file == null || file.isBlank()) {
-                        throw new ToolExecutionException("file name is required");
-                    }
-                    List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
-                    JsonObject entry = ExampleHelper.findExample(catalog2, example);
-                    if (entry == null) {
-                        return "Example not found: " + example;
-                    }
-                    List<String> files = ExampleHelper.getFiles(entry);
-                    if (!files.contains(file)) {
-                        return "File '" + file + "' not found in example '" + example + "'. Available: " + files;
-                    }
-                    if (ExampleHelper.isBundled(entry)) {
-                        String resourcePath = "examples/" + example + "/" + file;
-                        try (InputStream is
-                                = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
-                            if (is != null) {
-                                return IOHelper.loadText(is);
-                            }
-                        } catch (Exception e) {
-                            return "Error reading file: " + e.getMessage();
-                        }
-                        return "Could not read bundled file: " + resourcePath;
-                    } else {
-                        return "This example is not bundled. View it on GitHub: "
-                               + ExampleHelper.getGithubUrl(entry) + "/" + file;
-                    }
-                }));
+                "Get the content of a file from a Camel CLI example: the content of a bundled example, the GitHub "
+                                          + "URL of the file for the others. Returns the full name of the example.")
+                .param("example", "string", EXAMPLE_NAME_DESC, true)
+                .param("file", "string", EXAMPLE_FILE_DESC, true)
+                .executor((ctx, args) -> exampleFile(args.get("example"), args.get("file")).toJson()));
+    }
+
+    /**
+     * A file of an example: the catalog entry is found by its full or short name and the bundled resource is read from
+     * the entry's name, so a short name reads the file as well (CAMEL-25535).
+     */
+    static JsonObject exampleFile(String example, String file) {
+        if (example == null || example.isBlank()) {
+            throw new ToolExecutionException("example name is required");
+        }
+        if (file == null || file.isBlank()) {
+            throw new ToolExecutionException("file name is required");
+        }
+        String wanted = example.trim();
+        String fileName = file.trim();
+        JsonObject entry = resolveExample(ExampleHelper.loadCatalog(), wanted);
+        String name = entry.getString("name");
+        List<String> files = ExampleHelper.getFiles(entry);
+        if (!files.contains(fileName)) {
+            throw new ToolExecutionException(
+                    "File '" + fileName + "' not found in example '" + name + "'. Available files: " + files);
+        }
+        JsonObject answer = new JsonObject();
+        answer.put("example", name);
+        answer.put("file", fileName);
+        if (ExampleHelper.isBundled(entry)) {
+            // the resource path comes from the catalog entry, not from the name the caller gave
+            String resourcePath = "examples/" + name + "/" + fileName;
+            try (InputStream is = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
+                if (is == null) {
+                    throw new ToolExecutionException("Could not read bundled file: " + resourcePath);
+                }
+                answer.put("content", IOHelper.loadText(is));
+            } catch (IOException e) {
+                throw new ToolExecutionException("Could not read bundled file: " + resourcePath + ": " + e.getMessage());
+            }
+        } else {
+            answer.put("githubUrl", ExampleHelper.getGithubUrl(entry) + "/" + fileName);
+        }
+        return answer;
+    }
+
+    /**
+     * The catalog entry of an example by its full name, or by its short name when only one example has it, as camel run
+     * resolves it; an ambiguous short name answers with the candidates, an unknown one with the closest names.
+     */
+    static JsonObject resolveExample(List<JsonObject> catalog, String example) {
+        if (!example.contains("/")) {
+            List<JsonObject> same = ExampleHelper.findExamplesByShortName(catalog, example);
+            if (same.size() > 1) {
+                throw new ToolExecutionException(
+                        "Ambiguous example: " + example + ". Use one of: "
+                                                 + same.stream().map(e -> e.getString("name"))
+                                                         .collect(Collectors.joining(", ")));
+            }
+        }
+        JsonObject entry = ExampleHelper.findExample(catalog, example);
+        if (entry == null) {
+            List<String> similar = ExampleHelper.suggestExamples(catalog, example);
+            throw new ToolExecutionException(
+                    "Example not found: " + example
+                                             + (similar.isEmpty()
+                                                     ? ". Use list_examples to see the examples."
+                                                     : ". Did you mean: " + String.join(", ", similar) + "?"));
+        }
+        return entry;
     }
 
     // ---- Processor detail enrichment ----

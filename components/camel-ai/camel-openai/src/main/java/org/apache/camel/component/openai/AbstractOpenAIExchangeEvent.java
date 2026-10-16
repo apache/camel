@@ -20,16 +20,16 @@ import java.io.Serial;
 import java.util.EventObject;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.ai.AiEvent;
 
 /**
- * Base class for OpenAI agentic loop {@link CamelEvent} notifications.
+ * Base class for OpenAI agentic loop {@link AiEvent} notifications.
  * <p>
- * These are {@link CamelEvent.Type#Custom} events and are not {@link CamelEvent.ExchangeEvent} instances so they do not
- * pollute generic exchange lifecycle metrics. {@link #getExchange()} is public so {@code EventNotifier} listeners can
- * correlate events with the exchange (for example route id or exchange id) without implementing {@code ExchangeEvent}.
+ * These are {@link org.apache.camel.spi.CamelEvent.Type#Ai} events carrying the exchange they relate to, so an
+ * {@code EventNotifier} can recognise them as AI activity and correlate them (route id, exchange id) without depending
+ * on this component.
  */
-abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelEvent {
+abstract class AbstractOpenAIExchangeEvent extends EventObject implements AiEvent.ExchangeAiEvent {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -42,6 +42,12 @@ abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelE
         this.exchange = exchange;
     }
 
+    @Override
+    public String getProvider() {
+        return "openai";
+    }
+
+    @Override
     public Exchange getExchange() {
         return exchange;
     }
@@ -54,10 +60,5 @@ abstract class AbstractOpenAIExchangeEvent extends EventObject implements CamelE
     @Override
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
-    }
-
-    @Override
-    public Type getType() {
-        return Type.Custom;
     }
 }

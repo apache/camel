@@ -17,8 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.awt.image.BufferedImage;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -40,10 +38,9 @@ import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -145,69 +142,63 @@ public class ListError extends ProcessWatchCommand {
             showSet = Set.of();
         }
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            String pName = context.getString("name");
+            if ("CamelJBang".equals(pName)) {
+                pName = ProcessHelper.extractName(root, ph);
+            }
+            String pid = Long.toString(ph.pid());
+
+            JsonObject errorRoot = loadErrorFile(ph.pid());
+            if (errorRoot != null) {
+                JsonArray arr = (JsonArray) errorRoot.get("errors");
+                if (arr != null) {
+                    for (Object o : arr) {
+                        JsonObject jo = (JsonObject) o;
+                        Row row = new Row();
+                        row.pid = pid;
+                        row.name = pName;
+                        row.routeId = jo.getString("routeId");
+                        row.nodeId = jo.getString("nodeId");
+                        row.exchangeId = jo.getString("exchangeId");
+                        row.handled = jo.getBoolean("handled") != null && jo.getBoolean("handled");
+                        Long ts = jo.getLong("timestamp");
+                        if (ts != null) {
+                            row.timestamp = ts;
                         }
-                        String pName = context.getString("name");
-                        if ("CamelJBang".equals(pName)) {
-                            pName = ProcessHelper.extractName(root, ph);
+                        Long rc = jo.getLong("repeatCount");
+                        row.repeatCount = rc != null ? rc : 1;
+                        row.location = jo.getString("location");
+                        row.rawJson = jo;
+
+                        // extract exception info
+                        JsonObject ex = (JsonObject) jo.get("exception");
+                        if (ex != null) {
+                            row.exceptionType = ex.getString("type");
+                            row.exceptionMessage = ex.getString("message");
                         }
-                        String pid = Long.toString(ph.pid());
 
-                        JsonObject errorRoot = loadErrorFile(ph.pid());
-                        if (errorRoot != null) {
-                            JsonArray arr = (JsonArray) errorRoot.get("errors");
-                            if (arr != null) {
-                                for (Object o : arr) {
-                                    JsonObject jo = (JsonObject) o;
-                                    Row row = new Row();
-                                    row.pid = pid;
-                                    row.name = pName;
-                                    row.routeId = jo.getString("routeId");
-                                    row.nodeId = jo.getString("nodeId");
-                                    row.exchangeId = jo.getString("exchangeId");
-                                    row.handled = jo.getBoolean("handled") != null && jo.getBoolean("handled");
-                                    Long ts = jo.getLong("timestamp");
-                                    if (ts != null) {
-                                        row.timestamp = ts;
-                                    }
-                                    Long rc = jo.getLong("repeatCount");
-                                    row.repeatCount = rc != null ? rc : 1;
-                                    row.location = jo.getString("location");
-                                    row.rawJson = jo;
-
-                                    // extract exception info
-                                    JsonObject ex = (JsonObject) jo.get("exception");
-                                    if (ex != null) {
-                                        row.exceptionType = ex.getString("type");
-                                        row.exceptionMessage = ex.getString("message");
-                                    }
-
-                                    // message history
-                                    Object mhObj = jo.get("messageHistory");
-                                    if (mhObj instanceof JsonArray mhArr) {
-                                        row.messageHistory = new String[mhArr.size()];
-                                        for (int i = 0; i < mhArr.size(); i++) {
-                                            row.messageHistory[i] = mhArr.get(i).toString();
-                                        }
-                                    }
-
-                                    // apply client-side filters
-                                    if (matchesFilters(row)) {
-                                        rows.add(row);
-                                    }
-                                }
+                        // message history
+                        Object mhObj = jo.get("messageHistory");
+                        if (mhObj instanceof JsonArray mhArr) {
+                            row.messageHistory = new String[mhArr.size()];
+                            for (int i = 0; i < mhArr.size(); i++) {
+                                row.messageHistory[i] = mhArr.get(i).toString();
                             }
                         }
+
+                        // apply client-side filters
+                        if (matchesFilters(row)) {
+                            rows.add(row);
+                        }
                     }
-                });
+                }
+            }
+        });
 
         // sort rows
         rows.sort(this::sortRow);
@@ -302,6 +293,8 @@ public class ListError extends ProcessWatchCommand {
                     }
                 }
             }
+        } else if (jsonOutput && !diagram) {
+            printer().println("[]");
         }
 
         return 0;
@@ -335,100 +328,81 @@ public class ListError extends ProcessWatchCommand {
         RouteDiagramHelper.HighlightStyle hlStyle = RouteDiagramHelper.HighlightStyle.FAIL;
 
         // request route structure from the running process
-        String pidStr = Long.toString(pid);
-        Path outputFile = getOutputFile(pidStr);
-        PathUtils.deleteFile(outputFile);
-
         JsonObject action = new JsonObject();
         action.put("action", "route-structure");
         action.put("filter", "*");
         action.put("brief", false);
         action.put("metric", false);
-        Path actionFile = getActionFile(pidStr);
-        try {
-            Files.writeString(actionFile, action.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
+        JsonObject structureJson = ActionClient.execute(pid, action, ActionClient.DEFAULT_TIMEOUT).orThrow();
 
-        JsonObject structureJson = waitForJsonResponse(outputFile);
-        if (structureJson == null) {
-            printer().println("Response from running Camel with PID " + pid + " not received within 5 seconds");
+        List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(structureJson);
+        if (routes.isEmpty()) {
+            printer().println("No routes found");
             return 1;
         }
 
-        try {
-            List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(structureJson);
-            if (routes.isEmpty()) {
-                printer().println("No routes found");
+        // add structural parent node IDs for each route that has highlighted nodes
+        for (RouteInfo ri : routes) {
+            boolean routeHasHighlight = ri.nodes.stream().anyMatch(n -> n.id != null && nodeIds.contains(n.id));
+            if (routeHasHighlight) {
+                addParentNodes(ri.nodes, nodeIds);
+            }
+        }
+
+        // filter and order routes by highlighted path
+        RouteDiagramHelper.HighlightInfo highlightInfo
+                = new RouteDiagramHelper.HighlightInfo(nodeIds, new ArrayList<>(routeOrderSet), hlStyle);
+        routes = RouteDiagramHelper.filterAndOrderRoutes(routes, highlightInfo);
+        if (routes.isEmpty()) {
+            printer().println("No routes contain highlighted nodes from error history");
+            return 1;
+        }
+
+        // layout
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
+
+        List<LayoutRoute> layoutRoutes = new ArrayList<>();
+        int currentY = RouteDiagramLayoutEngine.PADDING;
+        for (RouteInfo ri : routes) {
+            LayoutRoute lr = engine.layoutRoute(ri, currentY);
+            layoutRoutes.add(lr);
+            currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+        }
+
+        boolean textMode = isTextTheme();
+        if (textMode) {
+            RouteDiagramAsciiRenderer asciiRenderer
+                    = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme());
+            String ascii = asciiRenderer.renderDiagramAnsi(layoutRoutes, currentY, nodeIds, hlStyle);
+            printer().println(ascii);
+        } else {
+            DiagramColors colors = DiagramColors.parse(theme);
+            RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                    engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(), false);
+
+            BufferedImage image;
+            try {
+                image = renderer.renderDiagram(layoutRoutes, currentY, colors, nodeIds, hlStyle);
+            } catch (IllegalStateException e) {
+                printer().println(e.getMessage());
                 return 1;
             }
 
-            // add structural parent node IDs for each route that has highlighted nodes
-            for (RouteInfo ri : routes) {
-                boolean routeHasHighlight = ri.nodes.stream().anyMatch(n -> n.id != null && nodeIds.contains(n.id));
-                if (routeHasHighlight) {
-                    addParentNodes(ri.nodes, nodeIds);
-                }
-            }
-
-            // filter and order routes by highlighted path
-            RouteDiagramHelper.HighlightInfo highlightInfo
-                    = new RouteDiagramHelper.HighlightInfo(nodeIds, new ArrayList<>(routeOrderSet), hlStyle);
-            routes = RouteDiagramHelper.filterAndOrderRoutes(routes, highlightInfo);
-            if (routes.isEmpty()) {
-                printer().println("No routes contain highlighted nodes from error history");
-                return 1;
-            }
-
-            // layout
-            RouteDiagramLayoutEngine engine
-                    = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
-
-            List<LayoutRoute> layoutRoutes = new ArrayList<>();
-            int currentY = RouteDiagramLayoutEngine.PADDING;
-            for (RouteInfo ri : routes) {
-                LayoutRoute lr = engine.layoutRoute(ri, currentY);
-                layoutRoutes.add(lr);
-                currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
-            }
-
-            boolean textMode = isTextTheme();
-            if (textMode) {
-                RouteDiagramAsciiRenderer asciiRenderer
-                        = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme());
-                String ascii = asciiRenderer.renderDiagramAnsi(layoutRoutes, currentY, nodeIds, hlStyle);
-                printer().println(ascii);
-            } else {
-                DiagramColors colors = DiagramColors.parse(theme);
-                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                        engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(), false);
-
-                BufferedImage image;
-                try {
-                    image = renderer.renderDiagram(layoutRoutes, currentY, colors, nodeIds, hlStyle);
-                } catch (IllegalStateException e) {
-                    printer().println(e.getMessage());
+            try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
+                TerminalGraphics tg = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
+                if (tg == null) {
+                    printer().println(
+                            "Terminal does not support graphics. Use --theme=ascii or --theme=unicode for text output.");
                     return 1;
                 }
-
-                try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
-                    TerminalGraphics tg = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
-                    if (tg == null) {
-                        printer().println(
-                                "Terminal does not support graphics. Use --theme=ascii or --theme=unicode for text output.");
-                        return 1;
-                    }
-                    TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions().preserveAspectRatio(true);
-                    tg.displayImage(terminal, image, opts);
-                    terminal.writer().println();
-                    terminal.flush();
-                }
+                TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions().preserveAspectRatio(true);
+                tg.displayImage(terminal, image, opts);
+                terminal.writer().println();
+                terminal.flush();
             }
-            return 0;
-        } finally {
-            PathUtils.deleteFile(outputFile);
         }
+        return 0;
     }
 
     private static void addParentNodes(List<RouteDiagramLayoutEngine.NodeInfo> nodes, Set<String> nodeIds) {
@@ -452,24 +426,6 @@ public class ListError extends ProcessWatchCommand {
                 nodeIds.add(node.id);
             }
         }
-    }
-
-    private static JsonObject waitForJsonResponse(Path outputFile) {
-        StopWatch watch = new StopWatch();
-        while (watch.taken() < 5000) {
-            try {
-                Thread.sleep(100);
-                if (Files.exists(outputFile) && outputFile.toFile().length() > 0) {
-                    String text = Files.readString(outputFile);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return null;
     }
 
     private boolean matchesFilters(Row row) {

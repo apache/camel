@@ -306,24 +306,7 @@ class FolderInputPopup {
         if (inputState == null) {
             return;
         }
-        if (ke.isDeleteBackward()) {
-            inputState.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            inputState.deleteForward();
-        } else if (ke.isLeft()) {
-            inputState.moveCursorLeft();
-        } else if (ke.isRight()) {
-            inputState.moveCursorRight();
-        } else if (ke.isHome()) {
-            inputState.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            inputState.moveCursorToEnd();
-        } else {
-            String typed = FormHelper.typedText(ke);
-            if (typed != null) {
-                inputState.insert(typed);
-            }
-        }
+        FormHelper.handleTextInput(ke, inputState);
     }
 
     private void renderInput(Frame frame, Rect area) {

@@ -51,8 +51,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * handshake.
  * <p>
  * Linux only: the SPIRE agent is run in the host PID namespace with the Workload API socket bind-mounted, which works
- * against a Linux Docker daemon but not Docker Desktop's VM or rootless Podman, so the test is skipped off Linux rather
- * than left to fail on a developer machine.
+ * against a Linux Docker or Podman engine (rootful or rootless) but not Docker Desktop's VM, so the test is skipped off
+ * Linux rather than left to fail on a developer machine.
  */
 @EnabledOnOs(OS.LINUX)
 class SpiffeMutualTlsIT extends CamelTestSupport {

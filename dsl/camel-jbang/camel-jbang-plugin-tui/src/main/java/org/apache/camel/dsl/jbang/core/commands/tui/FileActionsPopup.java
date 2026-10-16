@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 import dev.tamboui.layout.Padding;
 import dev.tamboui.layout.Rect;
@@ -90,6 +91,8 @@ class FileActionsPopup {
 
     private Rect popupRect;
     private Request result;
+    // no one to ask, as a tape drives the monitor: delete or convert at once
+    private BooleanSupplier unattended = () -> false;
 
     void open(String selectedName, boolean hasTarget) {
         open(selectedName, hasTarget, false);
@@ -118,6 +121,15 @@ class FileActionsPopup {
 
     boolean isVisible() {
         return visible;
+    }
+
+    /** Whether it asks the user to confirm deleting or converting the file (see {@link Confirmations}). */
+    boolean isConfirming() {
+        return visible && phase == Phase.CONFIRM;
+    }
+
+    void setUnattended(BooleanSupplier unattended) {
+        this.unattended = unattended;
     }
 
     Request consumeResult() {
@@ -195,14 +207,16 @@ class FileActionsPopup {
             case NEW_FOLDER -> startInput(action, "New folder", "");
             case RENAME -> startInput(action, "Rename", targetName);
             case DUPLICATE -> startInput(action, "Duplicate", SourceFileOps.suggestDuplicateName(targetName));
-            case DELETE -> {
-                confirmAction = action;
-                phase = Phase.CONFIRM;
-            }
-            // the converted file has the same routes: replace the original, or keep both (and rename one later)
-            case CONVERT_YAML, CONVERT_XML, CONVERT_JAVA -> {
-                confirmAction = action;
-                phase = Phase.CONFIRM;
+            // asks first: delete, or replace the original with the converted file, which has the same routes (or keep
+            // both, and rename one later); while a tape drives the monitor no one is there to ask
+            case DELETE, CONVERT_YAML, CONVERT_XML, CONVERT_JAVA -> {
+                if (unattended.getAsBoolean()) {
+                    result = new Request(action, action == Action.DELETE ? null : REPLACE);
+                    close();
+                } else {
+                    confirmAction = action;
+                    phase = Phase.CONFIRM;
+                }
             }
             case COPY_PATH -> {
                 result = new Request(action, null);
@@ -234,24 +248,7 @@ class FileActionsPopup {
             }
             return true;
         }
-        if (ke.isDeleteBackward()) {
-            inputState.deleteBackward();
-        } else if (ke.isDeleteForward()) {
-            inputState.deleteForward();
-        } else if (ke.isLeft()) {
-            inputState.moveCursorLeft();
-        } else if (ke.isRight()) {
-            inputState.moveCursorRight();
-        } else if (ke.isHome()) {
-            inputState.moveCursorToStart();
-        } else if (ke.isEnd()) {
-            inputState.moveCursorToEnd();
-        } else {
-            String typed = FormHelper.typedText(ke);
-            if (typed != null) {
-                inputState.insert(typed);
-            }
-        }
+        FormHelper.handleTextInput(ke, inputState);
         return true;
     }
 

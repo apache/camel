@@ -228,6 +228,7 @@ public class CamelEventConsumer extends DefaultConsumer {
         eventNotifier.setIgnoreExchangeSendingEvents(true);
         eventNotifier.setIgnoreExchangeSentEvents(true);
         eventNotifier.setIgnoreStepEvents(true);
+        eventNotifier.setIgnoreAiEvents(true);
 
         // Enable only the categories that contain the requested event types
         for (CamelEvent.Type type : types) {
@@ -308,6 +309,10 @@ public class CamelEventConsumer extends DefaultConsumer {
                 case Custom:
                     // Custom events are CamelContextEvents, so we need to enable context events
                     eventNotifier.setIgnoreCamelContextEvents(false);
+                    break;
+                case Ai:
+                    // AI events are their own category (see org.apache.camel.ai.AiEvent)
+                    eventNotifier.setIgnoreAiEvents(false);
                     break;
                 default:
                     break;

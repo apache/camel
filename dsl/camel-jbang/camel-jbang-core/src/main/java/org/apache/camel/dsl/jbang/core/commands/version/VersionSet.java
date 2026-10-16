@@ -64,6 +64,7 @@ public class VersionSet extends CamelCommand {
         CommandLineHelper.loadProperties(properties -> {
             if (reset) {
                 properties.remove("camel-version");
+                properties.remove("kamelets-version");
                 properties.remove("repos");
                 properties.remove("runtime");
             } else {

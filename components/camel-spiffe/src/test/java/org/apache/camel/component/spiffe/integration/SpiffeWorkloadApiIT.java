@@ -37,8 +37,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * validating a JWT-SVID (accepting the configured audience, rejecting another).
  * <p>
  * Linux only: the SPIRE agent is run in the host PID namespace with the Workload API socket bind-mounted, which works
- * against a Linux Docker daemon but not Docker Desktop's VM or rootless Podman, so the test is skipped off Linux rather
- * than left to fail on a developer machine.
+ * against a Linux Docker or Podman engine (rootful or rootless) but not Docker Desktop's VM, so the test is skipped off
+ * Linux rather than left to fail on a developer machine.
  */
 @EnabledOnOs(OS.LINUX)
 class SpiffeWorkloadApiIT extends CamelTestSupport {

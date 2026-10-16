@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.Map;
+
 class ProcessorInfo {
     String id;
     String processor;
@@ -37,4 +39,8 @@ class ProcessorInfo {
     String sinceLastStarted;
     String sinceLastCompleted;
     String sinceLastFailed;
+    /** The endpoint the step sends to (to, toD, wireTap, enrich, poll), as the status file has it. */
+    String uri;
+    /** The statistics as the status file has them, for the route diagram (DiagramTopology). */
+    Map<String, ?> statistics;
 }

@@ -18,7 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -29,8 +29,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DirtyTest extends ProcessCommandTestSupport {
@@ -53,11 +56,7 @@ class DirtyTest extends ProcessCommandTestSupport {
         Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
-            ProcessHandle current = mockCurrentHandle();
-            mocked.when(ProcessHandle::current).thenReturn(current);
-            // no running processes -> orphan file is not matched
-            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.empty());
-
+            // no process has the pid (ProcessHandle.of answers empty)
             int exit = command.doCall();
 
             assertEquals(0, exit);
@@ -73,10 +72,9 @@ class DirtyTest extends ProcessCommandTestSupport {
         Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
-            ProcessHandle ph = mockProcessHandle(TEST_PID);
-            ProcessHandle current = mockCurrentHandle();
-            mocked.when(ProcessHandle::current).thenReturn(current);
-            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+            ProcessHandle ph = mock(ProcessHandle.class);
+            when(ph.isAlive()).thenReturn(true);
+            mocked.when(() -> ProcessHandle.of(TEST_PID)).thenReturn(Optional.of(ph));
 
             int exit = command.doCall();
 
@@ -95,15 +93,23 @@ class DirtyTest extends ProcessCommandTestSupport {
         command.clean = true;
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
-            ProcessHandle current = mockCurrentHandle();
-            mocked.when(ProcessHandle::current).thenReturn(current);
-            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.empty());
-
+            // no process has the pid (ProcessHandle.of answers empty)
             int exit = command.doCall();
 
             assertEquals(0, exit);
             assertFalse(Files.exists(orphan), "Orphan file should be deleted by --clean");
             assertTrue(printer.getOutput().contains("Cleaned"), "Should print cleaned confirmation");
         }
+    }
+
+    @Test
+    void testFileBelongsToTheWholePid() {
+        // pid 12 does not own the files of pid 123
+        assertEquals(123L, Dirty.pidOf("123-status.json"));
+        assertEquals(123L, Dirty.pidOf("123"));
+        assertEquals(123L, Dirty.pidOf("123-action-5b1c.json"));
+        assertEquals(4567L, Dirty.pidOf("infra-hive-mq-4567.json"));
+        assertNull(Dirty.pidOf("camel-export.log"));
+        assertNull(Dirty.pidOf("123abc.json"));
     }
 }

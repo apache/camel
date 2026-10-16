@@ -75,6 +75,18 @@ class McpServerMainAuthenticationTest {
                             e.getMessage().setBody(principal != null ? "principal-present" : "no-principal");
                         });
 
+                from("ai-tool:whoami_name?tags=secured&description=Report the runtime-neutral caller name")
+                        .process(e -> {
+                            Object name = e.getProperty(McpToolCallContext.SECURITY_PRINCIPAL_NAME_PROPERTY);
+                            e.getMessage().setBody(name != null ? "name=" + name : "no-name");
+                        });
+
+                from("ai-tool:whoami_roles?tags=secured&description=Report the runtime-neutral caller roles")
+                        .process(e -> {
+                            Object roles = e.getProperty(McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY);
+                            e.getMessage().setBody(roles != null ? "roles=" + roles : "no-roles");
+                        });
+
                 from("ai-tool:blocked?tags=secured&description=Always denied&authorizationPolicy=#deny")
                         .setBody(constant("SHOULD-NOT-RUN"));
             }
@@ -164,6 +176,65 @@ class McpServerMainAuthenticationTest {
                     = client.callTool(new McpSchema.CallToolRequest("whoami", Map.of()));
             assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
             assertThat(result.content().toString()).contains("principal-present");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    @Test
+    void testMcpToolCallCarriesRuntimeNeutralPrincipalNameToTheToolRoute() {
+        // CAMEL-25405: alongside the raw principal, the runtime-neutral caller name must reach the tool route over MCP
+        // as the CamelMcpSecurityPrincipalName exchange property, so a policy can authorize on a stable name without
+        // depending on the Vert.x user type. For the basic-auth user the name is the username "camel".
+        String credentials = Base64.getEncoder().encodeToString("camel:mcpPass".getBytes(UTF_8));
+        McpSyncClient client = null;
+        try {
+            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + PORT)
+                    .httpRequestCustomizer((builder, method, uri, body, context) -> builder
+                            .header("Authorization", "Basic " + credentials))
+                    .build())
+                    .requestTimeout(Duration.ofSeconds(10))
+                    .initializationTimeout(Duration.ofSeconds(10))
+                    .build();
+
+            client.initialize();
+
+            McpSchema.CallToolResult result
+                    = client.callTool(new McpSchema.CallToolRequest("whoami_name", Map.of()));
+            assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
+            assertThat(result.content().toString()).contains("name=camel");
+        } finally {
+            if (client != null) {
+                client.closeGracefully();
+            }
+        }
+    }
+
+    @Test
+    void testMcpBasicAuthCallerHasNoRuntimeNeutralRoles() {
+        // CAMEL-25405: roles are read from the authenticated token's claims. The camel-main basic-auth user carries
+        // no roles in its principal (property-file roles live in the Vert.x authorizations, not principal()), so the
+        // CamelMcpSecurityPrincipalRoles property is not stamped for a basic-auth caller. This locks in the documented
+        // limitation; positive role extraction from token claims is covered by VertxMcpPrincipalTest.
+        String credentials = Base64.getEncoder().encodeToString("camel:mcpPass".getBytes(UTF_8));
+        McpSyncClient client = null;
+        try {
+            client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + PORT)
+                    .httpRequestCustomizer((builder, method, uri, body, context) -> builder
+                            .header("Authorization", "Basic " + credentials))
+                    .build())
+                    .requestTimeout(Duration.ofSeconds(10))
+                    .initializationTimeout(Duration.ofSeconds(10))
+                    .build();
+
+            client.initialize();
+
+            McpSchema.CallToolResult result
+                    = client.callTool(new McpSchema.CallToolRequest("whoami_roles", Map.of()));
+            assertThat(result.isError()).isNotEqualTo(Boolean.TRUE);
+            assertThat(result.content().toString()).contains("no-roles");
         } finally {
             if (client != null) {
                 client.closeGracefully();

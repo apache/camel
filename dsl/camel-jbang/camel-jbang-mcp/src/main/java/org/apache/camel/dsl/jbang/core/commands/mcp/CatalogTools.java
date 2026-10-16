@@ -53,7 +53,7 @@ public class CatalogTools {
             @ToolArg(description = "Maximum number of results to return (default: 50)", required = false) Integer limit,
             @ToolArg(description = ToolArgDocs.CAMEL_VERSION, required = false) String camelVersion) {
 
-        int maxResults = limit != null ? limit : 50;
+        int maxResults = limit != null && limit > 0 ? limit : 50;
 
         try {
             CamelCatalog cat = catalogService.loadCatalog(null, camelVersion, null);

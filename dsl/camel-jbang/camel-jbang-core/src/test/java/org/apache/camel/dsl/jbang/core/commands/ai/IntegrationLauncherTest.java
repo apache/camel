@@ -42,7 +42,7 @@ class IntegrationLauncherTest {
                 .containsExactly("a.camel.yaml", "application.properties", "b.camel.yaml");
         assertThat(IntegrationLauncher.runArguments(IntegrationLauncher.sourceFiles(dir), null, true, null))
                 .containsExactly("run", "a.camel.yaml", "application.properties", "b.camel.yaml", "--dev",
-                        "--logging-color=false");
+                        "--prop=camel.main.?routesReloadInterval=500", "--logging-color=false");
         assertThat(IntegrationLauncher.sourceFiles(dir.resolve("nope"))).isEmpty();
     }
 
@@ -50,7 +50,8 @@ class IntegrationLauncherTest {
     @Test
     void noFilesRunsTheDirectoryAsTheApp() {
         assertThat(IntegrationLauncher.sourceDirArguments(null, true, null))
-                .containsExactly("run", "--source-dir=.", "--dev", "--logging-color=false");
+                .containsExactly("run", "--source-dir=.", "--dev", "--prop=camel.main.?routesReloadInterval=500",
+                        "--logging-color=false");
         assertThat(IntegrationLauncher.sourceDirArguments("demo", false, List.of("--port=9000")))
                 .containsExactly("run", "--source-dir=.", "--name=demo", "--logging-color=false", "--port=9000");
     }
@@ -59,8 +60,9 @@ class IntegrationLauncherTest {
     void filesNameAndExtraArgumentsArePassedThrough() {
         assertThat(IntegrationLauncher.runArguments(List.of("a.camel.yaml", "application.properties"), "demo", true,
                 List.of("--port=9000")))
-                .containsExactly("run", "a.camel.yaml", "application.properties", "--dev", "--name=demo",
-                        "--logging-color=false", "--port=9000");
+                .containsExactly("run", "a.camel.yaml", "application.properties", "--dev",
+                        "--prop=camel.main.?routesReloadInterval=500", "--name=demo", "--logging-color=false",
+                        "--port=9000");
     }
 
     /**
@@ -71,7 +73,7 @@ class IntegrationLauncherTest {
     void failureOutputKeepsTheCauseNotTheFrames(@TempDir Path dir) throws Exception {
         StringBuilder out = new StringBuilder();
         out.append("2026-10-06 01:12:03.101  INFO 81990 --- [           main] org.apache.camel.main.MainSupport  :"
-                   + " Apache Camel (JBang) 4.23.0-SNAPSHOT is starting\n");
+                   + " Apache Camel (JBang) 4.24.0-SNAPSHOT is starting\n");
         out.append("2026-10-06 01:12:04.552 ERROR 81990 --- [           main] org.apache.camel.main.MainSupport  :"
                    + " Failed to create route: order-generator at: >>> Bean[ref:orderNumber method:next] <<<\n");
         out.append("org.apache.camel.FailedToCreateRouteException: Failed to create route: order-generator\n");

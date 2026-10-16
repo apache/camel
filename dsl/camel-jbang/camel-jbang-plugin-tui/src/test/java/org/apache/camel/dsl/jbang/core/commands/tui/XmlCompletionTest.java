@@ -251,11 +251,11 @@ class XmlCompletionTest {
         AtomicReference<List<InfraInfo>> infraData = new AtomicReference<>(List.of());
         SourceEditAssist assist = new SourceEditAssist(new MonitorContext(data, infraData));
         SourceViewer viewer = new SourceViewer();
-        viewer.setAutocompleteProvider(assist::provideYamlKeyCompletions);
-        viewer.setAutocompleteValueProvider(assist::provideYamlValueCompletions);
-        viewer.setUriCompletion("xml");
-        viewer.setSimpleCompletion(assist::provideSimpleCompletions);
-        viewer.setXmlCompletion((c, lines) -> XmlCompletions.provide(catalog, c, List::of));
+        viewer.completion().setAutocompleteProvider(assist::provideYamlKeyCompletions);
+        viewer.completion().setAutocompleteValueProvider(assist::provideYamlValueCompletions);
+        viewer.completion().setUriCompletion("xml");
+        viewer.completion().setSimpleCompletion(assist::provideSimpleCompletions);
+        viewer.completion().setXmlCompletion((c, lines) -> XmlCompletions.provide(catalog, c, List::of));
         viewer.loadFile(file);
         viewer.enterEditMode();
         return viewer;

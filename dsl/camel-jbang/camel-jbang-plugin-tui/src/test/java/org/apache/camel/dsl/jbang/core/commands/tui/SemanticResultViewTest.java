@@ -37,12 +37,12 @@ class SemanticResultViewTest {
                 """);
         String text = SemanticResultView.lines(response, operation, List.of()).stream()
                 .flatMap(line -> line.spans().stream()).map(span -> span.content()).collect(Collectors.joining("\n"));
-        assertThat(text).contains("billing", "The selected department", "7.875E-9", "0.4914")
+        assertThat(text).contains("billing", "The selected department", "7.874509E-9", "0.4914")
                 .doesNotContain("\"billing\"", "elapsedMillis", "Probabilities");
     }
 
     @Test
-    void orderedScoreResultsShowTheEffectiveRangeAndLevelDescriptions() throws Exception {
+    void orderedScoreResultsShowTheCapturedScaleAndLevelDescriptions() throws Exception {
         JsonObject operation = (JsonObject) Jsoner.deserialize("""
                 {"resultType":"score","contract":{"scoreLevelsParameter":"rubric","minimum":0,"maximum":9}}
                 """);
@@ -55,17 +55,17 @@ class SemanticResultViewTest {
                  "probabilities":{"2":0.644,"1":0.356,"unexpected":0}}
                 """);
         String text = text(response, operation, levels);
-        assertThat(text).contains("1.644", "Effective range", "0 … 2 · 3 levels",
+        assertThat(text).contains("1.644", "Captured scale: 0..2",
                 "Between [1] Needs attention soon and [2] Critical outage", "[2] Critical outage", "unexpected");
         response.put("value", 2);
         assertThat(text(response, operation, levels)).contains("[2] Critical outage").doesNotContain("Between");
         response.put("value", 0);
-        assertThat(text(response, operation, List.of("Only level"))).contains("0 … 0 · 1 level", "[0] Only level");
+        assertThat(text(response, operation, List.of("Only level"))).contains("Captured scale: 0..0", "[0] Only level");
         response.put("value", 8);
         assertThat(text(response, operation, levels)).doesNotContain("Between");
         operation.getJsonObject("contract").remove("scoreLevelsParameter");
         assertThat(SemanticDetails.scoreLevels(operation, parameters)).isEmpty();
-        assertThat(text(response, operation, List.of())).doesNotContain("Effective range", "Critical outage");
+        assertThat(text(response, operation, List.of())).doesNotContain("Captured scale", "Critical outage");
     }
 
     @Test

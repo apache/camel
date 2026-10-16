@@ -146,7 +146,31 @@ public final class EnvironmentHelper {
      * @return true if the terminal supports interactive prompts
      */
     public static boolean isInteractiveTerminal() {
-        return (activeTerminal != null || System.console() != null) && !isCIEnvironment();
+        return hasTerminal() && !isCIEnvironment();
+    }
+
+    /**
+     * Whether there is a terminal to read from and write to: the one of the camel shell, or a console. Unlike
+     * {@link #isInteractiveTerminal()}, a CI environment does not matter.
+     *
+     * @return true if there is a terminal
+     */
+    public static boolean hasTerminal() {
+        if (activeTerminal != null) {
+            return true;
+        }
+        Console console = System.console();
+        if (console == null) {
+            return false;
+        }
+        try {
+            // from Java 22 there is a console also when the input is redirected; isTerminal tells
+            return (Boolean) Console.class.getMethod("isTerminal").invoke(console);
+        } catch (NoSuchMethodException e) {
+            return true;
+        } catch (ReflectiveOperationException e) {
+            return false;
+        }
     }
 
     // Visible for testing - allows overriding in tests

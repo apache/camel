@@ -18,12 +18,17 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
 import dev.tamboui.style.AnsiColor;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Modifier;
+import dev.tamboui.style.Overflow;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
+import dev.tamboui.text.Text;
+import dev.tamboui.widgets.paragraph.Paragraph;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -273,6 +278,51 @@ class TuiHelperTest {
         // each CJK character takes two columns: "日本語 日本語" is 13 columns, not 7
         assertEquals(List.of("日本語", "日本語 a"), TuiHelper.wrapWords("日本語 日本語 a", 8));
         assertEquals(List.of("one two", "three"), TuiHelper.wrapWords("one two three", 8));
+    }
+
+    @Test
+    void wrappedRowsAreTheRowsTheParagraphDraws() {
+        List<String> lines = List.of(
+                "",
+                "short line",
+                "one two three four five six seven eight nine ten",
+                "x".repeat(70),
+                // stack trace lines, their tab expanded: the paragraph continues them under the "at"
+                "        at org.apache.camel.processor.errorhandler.RedeliveryErrorHandler$RedeliveryTask.run("
+                                + "RedeliveryErrorHandler.java:1234) ~[camel-core-processor-4.23.0.jar:4.23.0]",
+                "        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[?:?]",
+                "    Started route1 (timer://hello) with a description that goes on and on and on and on and on",
+                // an indent that leaves no room for text is not kept
+                " ".repeat(40) + "word ".repeat(20),
+                " ".repeat(90),
+                "a" + " ".repeat(90) + "b",
+                "/usr/local/a/long/path/to/a/file/that/is/deeply/nested/in/the/tree/route.camel.yaml",
+                "C:\\Users\\camel\\a\\long\\path\\to\\a\\file\\that\\is\\deeply\\nested\\route.camel.yaml",
+                "a-long-kebab-case-name-that-breaks-after-its-dashes-when-it-does-not-fit-on-a-row",
+                // wide characters: CJK, an emoji, and a family emoji joined with ZWJ
+                "日本語のテキストはとても長いので折り返されます。日本語のテキストはとても長いので折り返されます。",
+                "  emoji " + "😀".repeat(30) + " end",
+                "  " + "👩\u200D👩\u200D👧".repeat(12));
+        for (int width : new int[] { 1, 2, 7, 10, 33, 60, 80 }) {
+            for (String line : lines) {
+                assertEquals(paragraphRows(line, width), TuiHelper.wrappedRows(line, width),
+                        "width " + width + ": " + line);
+            }
+        }
+    }
+
+    /** The rows the paragraph draws the line on: the row of a marker line drawn after it. */
+    private static int paragraphRows(String line, int width) {
+        Rect area = new Rect(0, 0, width, 1000);
+        Buffer buffer = Buffer.empty(area);
+        Paragraph.builder().text(Text.from(Line.from(line), Line.from("#"))).overflow(Overflow.WRAP_WORD).build()
+                .render(area, buffer);
+        for (int y = 0; y < area.height(); y++) {
+            if ("#".equals(buffer.get(0, y).symbol())) {
+                return y;
+            }
+        }
+        throw new AssertionError("the marker line is not drawn");
     }
 
     // ---- shortTypeName tests ----

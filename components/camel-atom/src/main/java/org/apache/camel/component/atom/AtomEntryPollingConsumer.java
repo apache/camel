@@ -17,10 +17,12 @@
 package org.apache.camel.component.atom;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.apptasticsoftware.rssreader.Item;
 import com.apptasticsoftware.rssreader.RssReader;
+import com.apptasticsoftware.rssreader.util.ItemComparator;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 
@@ -65,8 +67,15 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer<Item> {
 
     private List<Item> readItems() throws IOException {
         if (items == null) {
-            items = AtomUtils.readItems(getEndpoint().getCamelContext(), getEndpoint().getFeedUri(), rssReader,
-                    getEndpoint().isSortEntries());
+            // without sortEntries the entries are in the natural order of the feed reader (the newest published first)
+            items = AtomUtils.readItems(getEndpoint().getCamelContext(), getEndpoint().getFeedUri(), rssReader, false);
+            if (getEndpoint().isSortEntries()) {
+                // sort by the updated date, and by the published date when an entry has no updated date, as
+                // ItemUpdatedIdempotentStrategy compares the entries. The entries are routed from the end of the list,
+                // so the newest entry is first and the oldest entry is routed first
+                items = new ArrayList<>(items);
+                items.sort(ItemComparator.newestUpdatedItemFirst());
+            }
             list = items;
             entryIndex = list.size() - 1;
         }

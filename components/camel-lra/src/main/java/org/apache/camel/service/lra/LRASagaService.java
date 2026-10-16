@@ -16,10 +16,15 @@
  */
 package org.apache.camel.service.lra;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +43,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Camel saga service based on Microprofile LRA (https://github.com/eclipse/microprofile-lra).
@@ -46,6 +54,11 @@ import org.apache.camel.support.service.ServiceSupport;
 @Configurer
 @ManagedResource(description = "Managed LRASagaService")
 public class LRASagaService extends ServiceSupport implements StaticService, CamelSagaService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LRASagaService.class);
+    private static final List<String> RESERVED_OPTION_NAMES = List.of(
+            LRAConstants.URL_COMPENSATION_KEY, LRAConstants.URL_COMPLETION_KEY, LRAConstants.URL_SIGNATURE_KEY,
+            LRAConstants.URL_LRA_KEY);
 
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
@@ -65,6 +78,11 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
     private String localParticipantUrl;
     @Metadata
     private String localParticipantContextPath = LRAConstants.DEFAULT_LOCAL_PARTICIPANT_CONTEXT_PATH;
+    @Metadata(label = "security")
+    private String allowedCoordinatorUrls;
+    @Metadata(label = "security", security = "secret")
+    private String callbackSecret;
+    private LRACallbackSigner callbackSigner;
 
     public LRASagaService() {
     }
@@ -84,23 +102,133 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
         return true;
     }
 
+    /**
+     * Returns the coordinator of an LRA, which is joined, completed or compensated by calling its URL. Only an LRA
+     * hosted by the configured coordinator, or by one of the allowed coordinator URLs, is accepted.
+     */
     @Override
     public CompletableFuture<CamelSagaCoordinator> getSaga(String id) {
         CompletableFuture<CamelSagaCoordinator> coordinator;
         try {
-            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, URI.create(id).toURL()));
+            URI lra = URI.create(id);
+            if (!isHostedByAllowedCoordinator(lra)) {
+                throw new IllegalArgumentException(
+                        "The Long-Running-Action " + id + " is not hosted by the LRA coordinator configured on the LRA"
+                                                   + " saga service. If it is a trusted coordinator, add its URL to"
+                                                   + " allowedCoordinatorUrls.");
+            }
+            coordinator = CompletableFuture.completedFuture(new LRASagaCoordinator(this, lra.toURL()));
         } catch (Exception ex) {
             coordinator = CompletableFuture.failedFuture(ex);
         }
         return coordinator;
     }
 
+    private boolean isHostedByAllowedCoordinator(URI lra) {
+        for (URI coordinator : allowedCoordinators()) {
+            if (isHostedBy(lra, coordinator)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * The URLs of the coordinators whose LRAs are accepted: the configured coordinator, and the allowed coordinator
+     * URLs.
+     */
+    private List<URI> allowedCoordinators() {
+        List<URI> coordinators = new ArrayList<>();
+        coordinators.add(URI.create(new LRAUrlBuilder().host(coordinatorUrl).path(coordinatorContextPath).build()));
+        coordinators.addAll(additionalCoordinators());
+        return coordinators;
+    }
+
+    private List<URI> additionalCoordinators() {
+        List<URI> coordinators = new ArrayList<>();
+        if (ObjectHelper.isNotEmpty(allowedCoordinatorUrls)) {
+            for (String url : allowedCoordinatorUrls.split(",")) {
+                if (!url.isBlank()) {
+                    coordinators.add(URI.create(url.trim()));
+                }
+            }
+        }
+        return coordinators;
+    }
+
+    /**
+     * Whether the LRA URL is under the coordinator URL: same scheme, host and port, no user info, and a path under the
+     * path of the coordinator.
+     */
+    private static boolean isHostedBy(URI lra, URI coordinator) {
+        // host and port are read through URL, which also takes host names that URI does not, such as lra_coordinator
+        URL lraUrl = toUrl(lra);
+        URL coordinatorUrl = toUrl(coordinator);
+        if (lraUrl == null || coordinatorUrl == null || lraUrl.getUserInfo() != null || lraUrl.getHost().isEmpty()) {
+            return false;
+        }
+        String rawPath = lra.getRawPath();
+        if (rawPath == null || hasEncodedOrParameterSegment(rawPath)) {
+            return false;
+        }
+        String lraPath = lra.normalize().getRawPath();
+        String coordinatorPath = Objects.toString(coordinator.normalize().getRawPath(), "");
+        if (!coordinatorPath.endsWith("/")) {
+            coordinatorPath += "/";
+        }
+        return lraUrl.getProtocol().equalsIgnoreCase(coordinatorUrl.getProtocol())
+                && lraUrl.getHost().equalsIgnoreCase(coordinatorUrl.getHost())
+                && port(lraUrl) == port(coordinatorUrl)
+                && lraPath.startsWith(coordinatorPath);
+    }
+
+    /**
+     * Whether the path holds a path parameter, or an encoded dot, slash or backslash. A server may resolve them as dot
+     * segments after this check, so such a path could leave the path of the coordinator.
+     */
+    private static boolean hasEncodedOrParameterSegment(String rawPath) {
+        String path = rawPath.toLowerCase(Locale.ROOT);
+        return path.contains(";") || path.contains("%2e") || path.contains("%2f") || path.contains("%5c");
+    }
+
+    private static URL toUrl(URI uri) {
+        try {
+            return uri.isAbsolute() ? uri.toURL() : null;
+        } catch (MalformedURLException | IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private static int port(URL url) {
+        return url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
+    }
+
     @Override
     public void registerStep(CamelSagaStep step) {
+        checkOptionNames(step);
         step.getCompensation().map(Endpoint::getEndpointUri).ifPresent(compensationURIs::add);
         step.getCompletion().map(Endpoint::getEndpointUri).ifPresent(completionURIs::add);
         if (step.getRouteId() != null) {
             stepsByRouteId.computeIfAbsent(step.getRouteId(), k -> new CopyOnWriteArrayList<>()).add(step);
+        }
+    }
+
+    /**
+     * The saga options travel in the query of the participant callback URLs, next to the parameters of the saga
+     * service, so an option cannot use one of their names. Header names are case-insensitive, so neither can it use
+     * them in another case.
+     */
+    private static void checkOptionNames(CamelSagaStep step) {
+        if (step.getOptions() == null) {
+            return;
+        }
+        for (String name : step.getOptions().keySet()) {
+            for (String reserved : RESERVED_OPTION_NAMES) {
+                if (reserved.equalsIgnoreCase(name)) {
+                    throw new IllegalArgumentException(
+                            "The saga option " + name + " uses a name reserved by the LRA saga service");
+                }
+            }
         }
     }
 
@@ -138,6 +266,25 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
         }
         if (localParticipantUrl == null) {
             throw new IllegalStateException("localParticipantUrl must be configured on the LRA saga service");
+        }
+        for (URI coordinator : additionalCoordinators()) {
+            URL url = toUrl(coordinator);
+            if (url == null || url.getHost().isEmpty()
+                    || !("http".equals(url.getProtocol()) || "https".equals(url.getProtocol()))) {
+                throw new IllegalArgumentException(
+                        "allowedCoordinatorUrls must hold http or https coordinator URLs with a host name, but no such"
+                                                   + " URL could be read from: " + coordinator);
+            }
+        }
+        if (callbackSecret != null && callbackSecret.isBlank()) {
+            // for example an empty environment variable, which would otherwise switch the verification off
+            throw new IllegalArgumentException(
+                    "callbackSecret is set on the LRA saga service but blank: set a secret, or remove the option");
+        }
+        if (callbackSigner == null) {
+            LOG.warn("Callbacks to the LRA participant endpoints under {} are not signed. Configure a callbackSecret"
+                     + " on the LRA saga service, or make sure that only the LRA coordinator can reach these endpoints.",
+                    localParticipantContextPath);
         }
 
         if (this.executorService == null) {
@@ -251,6 +398,38 @@ public class LRASagaService extends ServiceSupport implements StaticService, Cam
 
     public void setLocalParticipantContextPath(String localParticipantContextPath) {
         this.localParticipantContextPath = localParticipantContextPath;
+    }
+
+    @ManagedAttribute(description = "Allowed coordinator URLs")
+    public String getAllowedCoordinatorUrls() {
+        return allowedCoordinatorUrls;
+    }
+
+    /**
+     * Comma-separated URLs, including the context path, of further LRA coordinators whose LRAs may be joined, completed
+     * or compensated. By default, only an LRA hosted by the configured coordinator is accepted. Use it when
+     * participants reach the same coordinator under different URLs, for example with different host names.
+     */
+    public void setAllowedCoordinatorUrls(String allowedCoordinatorUrls) {
+        this.allowedCoordinatorUrls = allowedCoordinatorUrls;
+    }
+
+    public String getCallbackSecret() {
+        return callbackSecret;
+    }
+
+    /**
+     * Secret used to sign the participant callback URLs that are enlisted with the LRA coordinator, and to verify them
+     * when the coordinator calls back. When set, a compensation or completion callback with a missing or invalid
+     * signature is rejected with HTTP 403. All the instances of a participant must use the same secret.
+     */
+    public void setCallbackSecret(String callbackSecret) {
+        this.callbackSecret = callbackSecret;
+        this.callbackSigner = ObjectHelper.isNotEmpty(callbackSecret) ? new LRACallbackSigner(callbackSecret) : null;
+    }
+
+    LRACallbackSigner getCallbackSigner() {
+        return callbackSigner;
     }
 
     public Set<String> getRegisteredCompensationURIs() {

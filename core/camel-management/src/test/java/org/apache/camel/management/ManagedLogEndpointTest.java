@@ -52,6 +52,9 @@ public class ManagedLogEndpointTest extends ManagementTestSupport {
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");
         assertEquals(10, total.intValue());
 
+        String destination = (String) mbeanServer.getAttribute(name, "Destination");
+        assertEquals("log://foo?groupSize=10", destination);
+
         Long received = (Long) mbeanServer.getAttribute(name, "ReceivedCounter");
         assertEquals(10, received.intValue());
 

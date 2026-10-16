@@ -43,4 +43,5 @@ Press `f` to cycle through filter modes:
 - `s` — cycle sort column
 - `S` — reverse sort order
 - `f` — cycle filter
-- `Esc` — back
+- `/` — open filter (bean name or type)
+- `Esc` — clear filter or back

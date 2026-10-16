@@ -110,14 +110,13 @@ required. *F2* -> _MCP Info_ shows the port and the tool calls the agent makes. 
 `--mcp`, it is bound to `127.0.0.1` with no authentication, and it rejects requests that carry an `Origin`
 header (so a web page cannot reach it) or that are not JSON.
 
-Permissions: calls to the TUI's read-only tools (the `tui_get_*` tools, catalog documentation, expression
-evaluation, locate, validate) are approved without asking. So is `camel_write_file` while the write mode is
-`confirm` or `live`, because the TUI itself asks before the file is touched (the diff dialog or the live replay
-in the Source editor); with `/write auto` the permission popup is the only question and stays. A tool that
-changes anything else, such as `camel_control`, `tui_send_message` or `tui_execute_sql`, opens the same popup as
-any other request; answering "Always allow" makes it a one-time question per tool. For anything else the agent
-wants to do, such as editing a file with its own tools or running a command, a popup shows the agent's options;
-*Enter* selects, *Esc* rejects that one call and lets the turn continue, and *Ctrl+C* cancels the whole turn.
+Permissions: calls to the TUI's own tools are approved without asking, as for the AI panel's own model. The
+TUI asks you itself before the few calls that need it, such as a file write, a message to an endpoint the
+integration does not have, SQL that is not a `SELECT`, or a Groovy expression (see
+xref:camel-jbang-tui-ai.adoc#_what_asks_first[What asks first]). For anything the agent wants to do with its own
+tools, such as editing a file or running a command, a popup shows the agent's options; *Enter* selects, *Esc*
+rejects that one call and lets the turn continue, and *Ctrl+C* cancels the whole turn. While a tape records, or
+`--record` plays one, nothing asks.
 The preamble tells the agent to edit route sources through `camel_write_file` rather than its own file tools, so
 that you see the diff or watch the edit; when it still asks to edit a file directly, the popup says so and *Esc*
 sends it back to `camel_write_file`.
@@ -175,7 +174,10 @@ by purpose:
 * *Observe* -- read the screen, get structured state, query tables/logs/errors/traces/topology/diagram/files,
   list the running infra services (brokers, databases) and read their logs, read the performance of the
   local Ollama server (`tui_get_ollama`: loaded model, tokens per second, context fill, host load, request log)
-* *Navigate* -- switch tabs, select integrations, select routes, send keystrokes, apply filters
+* *Navigate* -- switch tabs, select integrations, select routes, send keystrokes, apply filters. Keystrokes
+  never answer a dialog that asks the user to confirm an action (quitting, stopping an integration, a file write
+  or another call of an AI tool, discarding changes): `tui_send_keys` says so while one is open, and keys already sent are dropped. Only the user
+  answers it
 * *Act* -- send test messages to endpoints, start/stop/restart routes, change log levels,
   list and launch the bundled examples, start/stop/restart infra services, run any entry of
   the *F2* actions menu by its label

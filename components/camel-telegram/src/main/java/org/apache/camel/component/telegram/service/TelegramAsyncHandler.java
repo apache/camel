@@ -22,11 +22,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.model.MessageResult;
@@ -38,19 +38,17 @@ import org.slf4j.LoggerFactory;
 public class TelegramAsyncHandler {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramAsyncHandler.class);
 
-    private final String uri;
+    // describes the request without its URI, which contains the authorization token
+    private final String request;
     private final Class<? extends MessageResult> resultClass;
     private final ObjectMapper mapper;
     private final Exchange exchange;
-    private final AsyncCallback callback;
 
-    TelegramAsyncHandler(String uri, Class<? extends MessageResult> resultClass, ObjectMapper mapper, Exchange exchange,
-                         AsyncCallback callback) {
-        this.uri = uri;
+    TelegramAsyncHandler(String uri, Class<? extends MessageResult> resultClass, ObjectMapper mapper, Exchange exchange) {
+        this.request = TelegramServiceRestBotAPIAdapter.describe("POST", URI.create(uri));
         this.resultClass = resultClass;
         this.mapper = mapper;
         this.exchange = exchange;
-        this.callback = callback;
     }
 
     public static String extractCharset(String line, String defaultValue) {
@@ -78,6 +76,10 @@ public class TelegramAsyncHandler {
 
     }
 
+    /**
+     * Sets the result of a successful response as the message body. Throws for a response with an error status and for
+     * a body that cannot be read; the caller fails the exchange with that exception and completes it.
+     */
     public Object handleCompressedResponse(HttpResponse<InputStream> response) {
         Object result;
         final boolean success = response.statusCode() >= 200 && response.statusCode() < 300;
@@ -97,7 +99,7 @@ public class TelegramAsyncHandler {
             if (success) {
                 if (LOG.isTraceEnabled()) {
                     final String body = IOHelper.toString(r);
-                    LOG.trace("Received body for {}: {}", uri, body);
+                    LOG.trace("Received body for {}: {}", request, body);
                     result = mapper.readValue(body, resultClass);
                 } else {
                     result = mapper.readValue(r, resultClass);
@@ -106,14 +108,12 @@ public class TelegramAsyncHandler {
                 exchange.getMessage().setBody(result);
             } else {
                 throw new RuntimeCamelException(
-                        uri + " responded: " + response.statusCode() + IOHelper.toString(r));
+                        request + " responded: " + response.statusCode() + IOHelper.toString(r));
             }
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException(ex);
         } catch (IOException ex) {
-            throw new RuntimeCamelException("Could not parse the response from " + uri, ex);
-        } finally {
-            callback.done(false);
+            throw new RuntimeCamelException("Could not parse the response from " + request, ex);
         }
 
         return exchange;
