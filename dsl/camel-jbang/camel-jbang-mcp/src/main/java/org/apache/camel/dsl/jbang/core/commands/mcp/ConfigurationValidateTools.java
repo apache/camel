@@ -139,29 +139,51 @@ public class ConfigurationValidateTools {
 
         // For Spring Boot, the catalog uses camel-main metadata which does not include
         // starter-specific options (e.g. camel.metrics.uriTagEnabled from camel-micrometer-starter).
-        // When the only issues are "unknown option" errors, downgrade to unchecked to avoid
-        // false positives — the starter may legitimately bind options outside the main schema.
+        // When the only issues are "unknown option" errors AND the key belongs to a group that is
+        // newly accepted by this fix (not one of the original 10 hardcoded prefixes), downgrade to
+        // unchecked to avoid false positives — the starter may legitimately bind options outside the
+        // main schema. Keys under the original 10 groups (component, dataformat, language, main,
+        // resilience4j, faulttolerance, threadpool, health, lra, rest) retain full validation since
+        // the catalog has always covered them.
+        boolean springBootDowngraded = false;
         if (isSpringBoot && checked && !valid) {
-            Set<String> unknownKeys = result.getUnknown() != null ? result.getUnknown() : Collections.emptySet();
-            boolean onlyUnknownOptionErrors = !unknownKeys.isEmpty()
-                    && result.getNumberOfErrors() == unknownKeys.size()
-                    && result.getSyntaxError() == null
-                    && result.getIncapable() == null
-                    && result.getInvalidBoolean() == null
-                    && result.getInvalidEnum() == null
-                    && result.getInvalidInteger() == null
-                    && result.getInvalidNumber() == null
-                    && result.getInvalidDuration() == null;
-            if (onlyUnknownOptionErrors) {
-                checked = false;
-                valid = false;
+            String propertyKey = text != null && text.contains("=") ? text.substring(0, text.indexOf('=')).trim() : text;
+            boolean isOriginalGroup = propertyKey != null && (
+                    propertyKey.startsWith("camel.component.")
+                    || propertyKey.startsWith("camel.dataformat.")
+                    || propertyKey.startsWith("camel.language.")
+                    || propertyKey.startsWith("camel.main.")
+                    || propertyKey.startsWith("camel.resilience4j.")
+                    || propertyKey.startsWith("camel.faulttolerance.")
+                    || propertyKey.startsWith("camel.threadpool.")
+                    || propertyKey.startsWith("camel.health.")
+                    || propertyKey.startsWith("camel.lra.")
+                    || propertyKey.startsWith("camel.rest."));
+            if (!isOriginalGroup) {
+                Set<String> unknownKeys = result.getUnknown() != null ? result.getUnknown() : Collections.emptySet();
+                boolean onlyUnknownOptionErrors = !unknownKeys.isEmpty()
+                        && result.getNumberOfErrors() == unknownKeys.size()
+                        && result.getSyntaxError() == null
+                        && result.getIncapable() == null
+                        && result.getInvalidBoolean() == null
+                        && result.getInvalidEnum() == null
+                        && result.getInvalidInteger() == null
+                        && result.getInvalidNumber() == null
+                        && result.getInvalidDuration() == null;
+                if (onlyUnknownOptionErrors) {
+                    checked = false;
+                    valid = false;
+                    springBootDowngraded = true;
+                }
             }
         }
 
         int errors = checked ? result.getNumberOfErrors() : 0;
         int warnings = checked ? result.getNumberOfWarnings() : 0;
 
-        List<PropertyIssue> issues = checked ? collectIssues(result) : Collections.emptyList();
+        // On a Spring Boot downgrade, still surface suggestions so the user can act on them
+        // even though the line is classified as unchecked (the count is excluded from summary.errors).
+        List<PropertyIssue> issues = (checked || springBootDowngraded) ? collectIssues(result) : Collections.emptyList();
         String summary = checked ? result.summaryErrorMessage(false, true, true) : null;
 
         return new PropertyValidationInfo(lineNumber, text, checked, valid, errors, warnings, summary, issues);

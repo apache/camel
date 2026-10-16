@@ -18,8 +18,12 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
 (previously only 10 groups out of 36 were recognized). As a result,
 `camel-report-maven-plugin:validate` and the camel-jbang MCP `camel_configuration_validate` tool
-now validate approximately 26 additional `camel.*` groups (including `camel.server.*`,
+now validate approximately 29 additional `camel.*` groups (including `camel.server.*`,
 `camel.management.*`, `camel.vault.*`, `camel.ssl.*`, and others).
+
+If your project uses Spring Boot and has options such as `camel.metrics.uriTagEnabled` (from a
+Camel starter) that are not in the camel-main schema, `camel-report-maven-plugin:validate` may
+report them as "Unknown option". See below for details.
 
 Group names are now matched with dash- and case-insensitive normalisation, matching how
 camel-main binds keys at runtime. For example, `camel.error-registry.enabled` and
@@ -34,8 +38,8 @@ The `camel_configuration_validate` MCP tool response format has changed:
 * `PropertyValidationInfo.accepted` is renamed to `checked`.
 * `ConfigurationValidateSummary` gains a new `unchecked` integer field counting lines whose
   namespace is not recognized as a Camel property (e.g. `server.port=8080` or `quarkus.*` keys).
-  Such lines had no `accepted` flag before; they are now explicitly classified as `checked=false`
-  and excluded from `summary.valid` and `summary.errors`.
+  Before, such lines were returned with `accepted=false` and `valid=true`; they are now
+  `checked=false` and are left out of `summary.valid` and `summary.errors`.
 
 If you call `camel_configuration_validate` programmatically and read the JSON response, update
 field references from `accepted` to `checked` and handle the new `summary.unchecked` field.
