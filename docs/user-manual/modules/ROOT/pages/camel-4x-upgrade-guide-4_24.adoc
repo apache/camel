@@ -500,6 +500,13 @@ or follows, like Enter does.
 * A plugin that cannot be loaded ends the command with exit code `1` and the error, as before, but no longer exits the
   JVM while the plugins load, which ended a program that embeds the CLI.
 
+=== camel-jbang - camel overview and camel transform route
+
+* `camel overview --format` other than `markdown` or `json` exits with `2` (it printed the markdown).
+* `camel transform route --format` other than `xml`, `yaml` or `java` exits with `2` (it ran the routes and printed
+  nothing), and a route that cannot be read, such as invalid YAML, exits with `1` and the error of the parser (it failed
+  with an internal error, `70`, and a stack trace).
+
 === camel-jbang - a boolean option given without a value is on
 
 A boolean option that is on by default is now on when it is given without a value, like any other boolean option:
