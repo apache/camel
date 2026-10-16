@@ -1451,28 +1451,27 @@ public abstract class AbstractCamelCatalog {
     }
 
     /**
-     * Returns the matched group from the main-model metadata when the key (with the leading {@code camel.} stripped)
-     * corresponds to one of the registered groups, or {@code null} if no group matches.
+     * Returns the matched group from the main-model metadata when the key (full {@code camel.*} key) corresponds to one
+     * of the registered groups, or {@code null} if no group matches.
      * <p>
      * Comparison is normalised (dashes removed, lower-cased) to mirror how camel-main binds keys at runtime via
      * {@code MainHelper.optionKey} and {@code startsWithIgnoreCase}.
      * <p>
      * Note: {@link #acceptConfigurationPropertyKey} also iterates the groups with the same normalisation, but it
-     * receives the full {@code camel.*} key (not the stripped form) and returns a boolean rather than the matched
-     * group. A direct delegation is awkward because the two callers need different key conventions, so both methods are
-     * kept separate and share the normalisation comment above.
+     * returns a boolean rather than the matched group. Both methods receive the full {@code camel.*} key and compare it
+     * against the full group name (including the {@code camel.} prefix).
      */
     private MainModel.MainGroupModel matchMainModelGroup(String key, MainModel cachedModel) {
         MainModel model = cachedModel;
         if (model == null) {
             return null;
         }
-        // Normalise the incoming key once
+        // Normalise the incoming key once (full key, e.g. "camel.errorregistry.enabled")
         String normKey = key.replace("-", "").toLowerCase(Locale.ENGLISH);
         for (MainModel.MainGroupModel group : model.getGroups()) {
-            // group name is e.g. "camel.server" — strip the leading "camel." to get "server"
-            String groupName = group.getName().substring("camel.".length());
-            String normGroupName = groupName.replace("-", "").toLowerCase(Locale.ENGLISH);
+            // group name is e.g. "camel.errorRegistry" — normalise the whole name (including "camel." prefix)
+            // to match the full key; do NOT strip "camel." here, because normKey still carries it.
+            String normGroupName = group.getName().replace("-", "").toLowerCase(Locale.ENGLISH);
             if (normKey.startsWith(normGroupName + ".")) {
                 return group;
             }
