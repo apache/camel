@@ -394,7 +394,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     @Test
     public void testGetPropertyLocaleIndependent() throws Exception {
         Locale oldLocale = Locale.getDefault();
-        Locale.setDefault(new Locale("tr", "TR"));
+        Locale.setDefault(Locale.of("tr", "TR"));
 
         try {
             ExampleBean bean = new ExampleBean();
