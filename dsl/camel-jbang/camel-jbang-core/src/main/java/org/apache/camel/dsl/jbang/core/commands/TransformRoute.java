@@ -76,7 +76,7 @@ public class TransformRoute extends CamelCommand {
                         description = "Whether to resolve property placeholders in the dumped output")
     boolean resolvePlaceholders;
 
-    @CommandLine.Option(names = { "--uri-as-parameters" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--uri-as-parameters" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
     boolean uriAsParameters = true;
 

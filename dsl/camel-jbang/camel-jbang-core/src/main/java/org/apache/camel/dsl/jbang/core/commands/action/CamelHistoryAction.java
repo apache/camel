@@ -104,7 +104,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Limit Split to a maximum number of entries to be displayed")
     int limitSplit;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Print timestamp.")
     boolean timestamp = true;
 
@@ -116,19 +116,19 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in debug messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
@@ -140,7 +140,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--diagram" },

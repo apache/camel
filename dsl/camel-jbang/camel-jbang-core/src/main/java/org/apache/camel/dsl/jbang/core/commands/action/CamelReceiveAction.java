@@ -183,11 +183,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Show exchange variables in received messages")
     boolean showExchangeVariables;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in received messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in received messages")
     boolean showBody = true;
 
@@ -195,10 +195,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Show only message body in received messages")
     boolean onlyBody;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--compact" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Compact output (no empty line separating messages)")
     boolean compact = true;
 

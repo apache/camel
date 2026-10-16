@@ -79,10 +79,11 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Print timestamp.")
     boolean timestamp = true;
 

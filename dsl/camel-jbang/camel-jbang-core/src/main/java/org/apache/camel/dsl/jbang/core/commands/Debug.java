@@ -98,7 +98,7 @@ public class Debug extends Run {
                         description = "File to store the current message body (will override). This allows for manual inspecting the message later.")
     String output;
 
-    @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to stop the running Camel on exit")
     boolean stopOnExit = true;
 
@@ -106,7 +106,7 @@ public class Debug extends Run {
                         description = "Number of log lines to display on top of screen")
     int logLines = 10;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Print timestamp.")
     boolean timestamp = true;
 
@@ -126,19 +126,19 @@ public class Debug extends Run {
                         description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in debug messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 

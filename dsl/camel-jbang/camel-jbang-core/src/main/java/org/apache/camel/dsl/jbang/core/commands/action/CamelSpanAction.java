@@ -93,7 +93,7 @@ public class CamelSpanAction extends ActionBaseCommand {
                         description = "Show flat list of individual spans instead of grouped traces")
     boolean flat;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Use colored logging")
     boolean loggingColor = true;
 

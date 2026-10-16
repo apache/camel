@@ -113,7 +113,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     @CommandLine.Mixin
     ActionTimeoutMixin timeoutOption;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Print timestamp.")
     boolean timestamp = true;
 
@@ -161,26 +161,27 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Show exchange properties in traced messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exchange variables in traced messages")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in traced messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in traced messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--compact" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Compact output (no empty line separating traced messages)")
     boolean compact = true;
 

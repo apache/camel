@@ -100,15 +100,15 @@ public class TransformMessageAction extends ActionWatchCommand {
                         description = "Show exchange properties from the output message")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers from the output message")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body from the output message")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exception and stacktrace for failed transformation")
     boolean showException = true;
 
@@ -116,7 +116,8 @@ public class TransformMessageAction extends ActionWatchCommand {
                         description = "Timeout waiting for message to be transformed, in millis or as a duration such as 30s")
     long timeout = 20000;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--pretty" },

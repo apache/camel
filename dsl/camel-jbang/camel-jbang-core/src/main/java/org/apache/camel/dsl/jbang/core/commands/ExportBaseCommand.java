@@ -154,11 +154,12 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     protected String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--maven-central-enabled" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether downloading JARs from Maven Central repository is enabled")
     protected boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true", arity = "0..1",
+                        fallbackValue = "true",
                         description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     protected boolean mavenApacheSnapshotEnabled = true;
 
@@ -207,7 +208,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         hidden = true)
     protected String quarkusPackageType = "fast-jar";
 
-    @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Include Maven Wrapper files in exported project")
     protected boolean mavenWrapper = true;
 
@@ -215,7 +216,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Include Camel Wrapper scripts in exported project for version pinning")
     protected boolean camelWrapper;
 
-    @CommandLine.Option(names = { "--docker" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--docker" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Include Docker files in exported project")
     protected boolean docker = true;
 
@@ -299,7 +300,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     protected boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--lazy-bean" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--lazy-bean" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to use lazy bean initialization (can help with complex classloading issues")
     protected boolean lazyBean = true;
 

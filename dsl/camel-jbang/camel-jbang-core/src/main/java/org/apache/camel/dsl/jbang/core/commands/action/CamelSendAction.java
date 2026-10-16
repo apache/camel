@@ -116,15 +116,15 @@ public class CamelSendAction extends ActionBaseCommand {
                         description = "Show exchange variables from response message (InOut)")
     boolean showExchangeVariables;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers from response message (InOut)")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body from response message (InOut)")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
@@ -132,7 +132,8 @@ public class CamelSendAction extends ActionBaseCommand {
                         description = "Pretty print response message body (InOut) when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--infra" },

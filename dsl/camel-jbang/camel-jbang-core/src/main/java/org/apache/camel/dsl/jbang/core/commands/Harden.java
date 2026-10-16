@@ -190,7 +190,7 @@ public class Harden extends CamelCommand {
 
     @Option(names = { "--stream" },
             description = "Stream the response as it's generated (shows progress)",
-            defaultValue = "true")
+            defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean stream = true;
 
     private final HttpClient httpClient = HttpClient.newBuilder()

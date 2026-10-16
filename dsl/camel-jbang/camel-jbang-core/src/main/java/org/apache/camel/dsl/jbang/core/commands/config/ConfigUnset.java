@@ -31,7 +31,8 @@ public class ConfigUnset extends CamelCommand {
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
     String key;
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configurations")
+    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
+                        description = "Use global or local configurations")
     boolean global = true;
 
     public ConfigUnset(CamelJBangMain main) {

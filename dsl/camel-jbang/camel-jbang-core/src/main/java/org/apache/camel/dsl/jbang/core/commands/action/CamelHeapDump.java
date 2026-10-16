@@ -45,7 +45,8 @@ public class CamelHeapDump extends ActionBaseCommand {
     String dumpName;
 
     @CommandLine.Option(names = { "--live" },
-                        description = "Whether to dump only live objects", defaultValue = "true")
+                        description = "Whether to dump only live objects", defaultValue = "true", arity = "0..1",
+                        fallbackValue = "true")
     boolean live = true;
 
     @CommandLine.Option(names = { "--timeout" }, defaultValue = "60000", converter = TimeoutConverter.class,

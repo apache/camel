@@ -81,11 +81,11 @@ public class CamelBeanDump extends ActionBaseCommand {
     String filter = "all";
 
     @CommandLine.Option(names = { "--properties" },
-                        description = "Show bean properties", defaultValue = "true")
+                        description = "Show bean properties", defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean properties;
 
     @CommandLine.Option(names = { "--nulls" },
-                        description = "Include null values", defaultValue = "true")
+                        description = "Include null values", defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean nulls;
 
     @CommandLine.Option(names = { "--scope" }, completionCandidates = ScopeCompletionCandidates.class,
