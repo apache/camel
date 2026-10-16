@@ -204,7 +204,6 @@ import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.VariableExpression;
-import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -20935,91 +20934,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "resolveResource": {
                     String val = asText(node);
                     target.setResolveResource(val);
-                    break;
-                }
-                case "trim": {
-                    String val = asText(node);
-                    target.setTrim(val);
-                    break;
-                }
-                default: {
-                    ExpressionDefinition ed = target.getExpressionType();
-                    if (ed != null) {
-                        throw new org.apache.camel.dsl.yaml.common.exception.DuplicateFieldException(node, propertyName, "as an expression");
-                    }
-                    ed = ExpressionDeserializers.constructExpressionType(propertyKey, node);
-                    if (ed != null) {
-                        target.setExpressionType(ed);
-                        warnCompactNotation(node);
-                    } else {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "wasm",
-            inline = true,
-            types = org.apache.camel.model.language.WasmExpression.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            displayName = "Wasm",
-            description = "Call a wasm (web assembly) function",
-            deprecated = false,
-            properties = {
-                    @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax.", displayName = "Expression"),
-                    @YamlProperty(name = "id", type = "string", description = "The id of this node.", displayName = "Id"),
-                    @YamlProperty(name = "module", type = "string", required = true, description = "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function.", displayName = "Module"),
-                    @YamlProperty(name = "resolveResource", type = "boolean", defaultValue = "false", description = "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.", displayName = "Resolve Resource"),
-                    @YamlProperty(name = "resultType", type = "string", description = "The class of the result type (type from output).", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.", displayName = "Trim")
-            }
-    )
-    public static class WasmExpressionDeserializer extends YamlDeserializerBase<WasmExpression> {
-        public WasmExpressionDeserializer() {
-            super(WasmExpression.class);
-        }
-
-        @Override
-        protected WasmExpression newInstance() {
-            return new WasmExpression();
-        }
-
-        @Override
-        protected WasmExpression newInstance(String value) {
-            return new WasmExpression(value);
-        }
-
-        @Override
-        protected boolean setProperty(WasmExpression target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "expression": {
-                    String val = asText(node);
-                    target.setExpression(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "module": {
-                    String val = asText(node);
-                    target.setModule(val);
-                    break;
-                }
-                case "resolveResource": {
-                    String val = asText(node);
-                    target.setResolveResource(val);
-                    break;
-                }
-                case "resultType": {
-                    String val = asText(node);
-                    target.setResultTypeName(val);
                     break;
                 }
                 case "trim": {

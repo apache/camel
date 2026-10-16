@@ -762,13 +762,6 @@
         "description" : "Gets a variable",
         "label" : "language,core"
       }, {
-        "name" : "wasm",
-        "type" : "object",
-        "ref" : "wasm",
-        "title" : "Wasm",
-        "description" : "Call a wasm (web assembly) function",
-        "label" : "language"
-      }, {
         "name" : "xpath",
         "type" : "object",
         "ref" : "xPath",
@@ -2730,10 +2723,6 @@
         "name" : "variable",
         "type" : "object",
         "ref" : "variable"
-      }, {
-        "name" : "wasm",
-        "type" : "object",
-        "ref" : "wasm"
       }, {
         "name" : "xpath",
         "type" : "object",
@@ -16322,72 +16311,6 @@
         "displayName" : "Resolve Resource",
         "kind" : "attribute",
         "index" : 3,
-        "group" : "advanced",
-        "label" : "advanced"
-      } ]
-    },
-    "wasm" : {
-      "title" : "Wasm",
-      "description" : "Call a wasm (web assembly) function",
-      "label" : "language",
-      "children" : [ {
-        "name" : "id",
-        "type" : "string",
-        "description" : "The id of this node.",
-        "title" : "Id",
-        "displayName" : "Id",
-        "kind" : "attribute",
-        "index" : 0,
-        "group" : "common"
-      }, {
-        "name" : "expression",
-        "type" : "string",
-        "description" : "The expression value in your chosen language syntax.",
-        "title" : "Expression",
-        "required" : true,
-        "displayName" : "Expression",
-        "kind" : "value",
-        "index" : 1,
-        "group" : "common"
-      }, {
-        "name" : "module",
-        "type" : "string",
-        "description" : "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function.",
-        "title" : "Module",
-        "required" : true,
-        "displayName" : "Module",
-        "kind" : "attribute",
-        "index" : 2,
-        "group" : "common"
-      }, {
-        "name" : "resultType",
-        "type" : "string",
-        "description" : "The class of the result type (type from output).",
-        "title" : "Result Type",
-        "displayName" : "Result Type",
-        "kind" : "attribute",
-        "index" : 3,
-        "group" : "common"
-      }, {
-        "name" : "trim",
-        "type" : "boolean",
-        "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-        "title" : "Trim",
-        "default" : "true",
-        "displayName" : "Trim",
-        "kind" : "attribute",
-        "index" : 4,
-        "group" : "advanced",
-        "label" : "advanced"
-      }, {
-        "name" : "resolveResource",
-        "type" : "boolean",
-        "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
-        "title" : "Resolve Resource",
-        "default" : "false",
-        "displayName" : "Resolve Resource",
-        "kind" : "attribute",
-        "index" : 5,
         "group" : "advanced",
         "label" : "advanced"
       } ]

@@ -108,10 +108,11 @@ public class MonitorItemTest extends AbstractMiloServerTest {
             public void configure() {
                 from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
 
-                from(resolve(MILO_CLIENT_ITEM_C1_1)).to(MOCK_TEST_1);
-                from(resolve(MILO_CLIENT_ITEM_C1_2)).to(MOCK_TEST_2);
-                from(resolve(MILO_CLIENT_ITEM_C1_3)).to(MOCK_TEST_3);
-                from(resolve(MILO_CLIENT_ITEM_C2_1)).to(MOCK_TEST_4);
+                // the consumers deliver the current value while they start, so the test starts these routes
+                from(resolve(MILO_CLIENT_ITEM_C1_1)).autoStartup(false).to(MOCK_TEST_1);
+                from(resolve(MILO_CLIENT_ITEM_C1_2)).autoStartup(false).to(MOCK_TEST_2);
+                from(resolve(MILO_CLIENT_ITEM_C1_3)).autoStartup(false).to(MOCK_TEST_3);
+                from(resolve(MILO_CLIENT_ITEM_C2_1)).autoStartup(false).to(MOCK_TEST_4);
             }
         };
     }
@@ -162,13 +163,13 @@ public class MonitorItemTest extends AbstractMiloServerTest {
 
         /*
          * test3Endpoint is related to client C1_3 with: requestedPublishingInterval=2000, samplingInterval=1000 from
-         * default, queueSize=4. It should get 1 (or 2 depending on exact timing) of the first 3 messages because of
-         * samplingInterval and an update pause of 2 seconds after they are sent. From the rest 16 messages, sent in
-         * about 3 seconds, only 3 or 4 should be sampled. So minimum is 4, maximum is
-         * 6 messages
+         * default, queueSize=4. It should get Foo, the value when it starts, and 1 (or 2 depending on exact timing) of
+         * the next 3 messages because of samplingInterval and an update pause of 2 seconds after they are sent. From
+         * the rest 16 messages, sent in about 3 seconds, only 3 or 4 should be sampled. So minimum is 5, maximum is
+         * 7 messages
          */
         test3Endpoint.reset();
-        test3Endpoint.setMinimumExpectedMessageCount(4);    // One or 2 of the first 3, plus 3 or 4 of the remaining 16
+        test3Endpoint.setMinimumExpectedMessageCount(5);    // Foo, one or 2 of the next 3, plus 3 or 4 of the remaining 16
         test3Endpoint.setAssertPeriod(3000);
 
         /*
@@ -183,19 +184,20 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         test4Endpoint.setMinimumExpectedMessageCount(12);    // the first 3, plus at least 3*3 more from rest (if they fall to 3 periods)
         test4Endpoint.setAssertPeriod(3000);
 
+        // Debug: Check if server is configured correctly
+        LOG.info("Server Port: {}", this.getServerPort());
+        LOG.info("Client URI resolved: {}", resolve(MILO_CLIENT_ITEM_C1_1));
+
+        // the first value is written before the consumers start, so it is the first notification of each client
+        this.producer1.sendBody("Foo");
+        context.getRouteController().startAllRoutes();
+
         // Allow time for OPC UA client-server connection to establish
         await().pollDelay(1, TimeUnit.SECONDS).untilAsserted(() -> {
             // Connection should be established
         });
 
-        // Debug: Check if server is configured correctly
-        LOG.info("Server Port: {}", this.getServerPort());
-        LOG.info("Client URI resolved: {}", resolve(MILO_CLIENT_ITEM_C1_1));
-
         // set server values sent faster than requestedPublishingInterval so they must be put to queue
-        this.producer1.sendBody("Foo");
-        await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
-        });
         this.producer1.sendBody("Bar");
         await().pollDelay(time, TimeUnit.MILLISECONDS).untilAsserted(() -> {
         });
@@ -241,9 +243,9 @@ public class MonitorItemTest extends AbstractMiloServerTest {
         Exchange last = receivedExchanges.get(receivedExchanges.size() - 1);
         assertGoodValue("Done").accept((DataValue) last.getIn().getBody());
 
-        // The third client should get no more than 6 messages
+        // The third client should get no more than 7 messages
         int count3 = this.test3Endpoint.getReceivedCounter();
-        assertTrue(count3 <= 6, "Not enough messages have been dropped, but should because of queueSize");
+        assertTrue(count3 <= 7, "Not enough messages have been dropped, but should because of queueSize");
 
         // The fourth client should get no more than 14 messages, because it is very sensitive on the timing we allow 1 more
         int count4 = this.test4Endpoint.getReceivedCounter();

@@ -271,7 +271,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -286,7 +287,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -755,6 +757,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option is a:
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder certificateValidator(org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder certificateValidator(String certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
          * characters (such as {code }, {code /}, {code }, {code &amp;}).
@@ -768,6 +806,67 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder trustAllCertificates(String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * The directory holding the trust list used to validate the certificate
+         * of the OPC UA server, in the layout used by Eclipse Milo: trusted
+         * certificates in trusted/certs, CRLs of trusted certificates in
+         * trusted/crl, certificates of issuing CAs in issuer/certs and their
+         * CRLs in issuer/crl. The directories are created if they do not exist.
+         * Besides the chain of trust, the validity period, the revocation by a
+         * CRL of the trust list and the application URI of the server
+         * certificate are checked. A certificate issued by a CA is refused when
+         * the trust list holds no CRL of that CA; an empty CRL is enough. A
+         * server certificate that does not chain up to a trusted certificate is
+         * written to rejected/certs, from where it can be moved to
+         * trusted/certs once it has been checked.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustListDirectory the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointConsumerBuilder trustListDirectory(String trustListDirectory) {
+            doSetProperty("trustListDirectory", trustListDirectory);
             return this;
         }
         /**
@@ -1153,7 +1252,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1168,7 +1268,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1622,6 +1723,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option is a:
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder certificateValidator(org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder certificateValidator(String certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
          * characters (such as {code }, {code /}, {code }, {code &amp;}).
@@ -1635,6 +1772,67 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder trustAllCertificates(String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * The directory holding the trust list used to validate the certificate
+         * of the OPC UA server, in the layout used by Eclipse Milo: trusted
+         * certificates in trusted/certs, CRLs of trusted certificates in
+         * trusted/crl, certificates of issuing CAs in issuer/certs and their
+         * CRLs in issuer/crl. The directories are created if they do not exist.
+         * Besides the chain of trust, the validity period, the revocation by a
+         * CRL of the trust list and the application URI of the server
+         * certificate are checked. A certificate issued by a CA is refused when
+         * the trust list holds no CRL of that CA; an empty CRL is enough. A
+         * server certificate that does not chain up to a trusted certificate is
+         * written to rejected/certs, from where it can be moved to
+         * trusted/certs once it has been checked.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustListDirectory the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointProducerBuilder trustListDirectory(String trustListDirectory) {
+            doSetProperty("trustListDirectory", trustListDirectory);
             return this;
         }
         /**
@@ -1949,7 +2147,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1964,7 +2163,8 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
-         * Omit notifications in case of null values.
+         * Omit a data change whose value is null and whose status is Good. A
+         * data change with a Bad or Uncertain status is always delivered.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -2418,6 +2618,42 @@ public interface MiloClientEndpointBuilderFactory {
             return this;
         }
         /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option is a:
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder certificateValidator(org.eclipse.milo.opcua.stack.core.security.CertificateValidator certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
+         * A custom validator for the certificate of the OPC UA server. When
+         * set, it is used instead of the trust list configured with
+         * trustListDirectory. Endpoints share a connection only when they use
+         * the same validator instance.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.milo.opcua.stack.core.security.CertificateValidator</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificateValidator the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder certificateValidator(String certificateValidator) {
+            doSetProperty("certificateValidator", certificateValidator);
+            return this;
+        }
+        /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
          * characters (such as {code }, {code /}, {code }, {code &amp;}).
@@ -2431,6 +2667,67 @@ public interface MiloClientEndpointBuilderFactory {
          */
         default MiloClientEndpointBuilder password(String password) {
             doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Whether to accept any certificate presented by the OPC UA server.
+         * This is insecure: the connection is encrypted, but the client does
+         * not authenticate the server it talks to. It only applies when neither
+         * certificateValidator nor trustListDirectory is configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder trustAllCertificates(String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * The directory holding the trust list used to validate the certificate
+         * of the OPC UA server, in the layout used by Eclipse Milo: trusted
+         * certificates in trusted/certs, CRLs of trusted certificates in
+         * trusted/crl, certificates of issuing CAs in issuer/certs and their
+         * CRLs in issuer/crl. The directories are created if they do not exist.
+         * Besides the chain of trust, the validity period, the revocation by a
+         * CRL of the trust list and the application URI of the server
+         * certificate are checked. A certificate issued by a CA is refused when
+         * the trust list holds no CRL of that CA; an empty CRL is enough. A
+         * server certificate that does not chain up to a trusted certificate is
+         * written to rejected/certs, from where it can be moved to
+         * trusted/certs once it has been checked.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustListDirectory the value to set
+         * @return the dsl builder
+         */
+        default MiloClientEndpointBuilder trustListDirectory(String trustListDirectory) {
+            doSetProperty("trustListDirectory", trustListDirectory);
             return this;
         }
         /**

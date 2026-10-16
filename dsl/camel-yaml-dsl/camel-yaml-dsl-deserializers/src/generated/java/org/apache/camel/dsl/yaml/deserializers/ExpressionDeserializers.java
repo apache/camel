@@ -115,9 +115,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
             case "variable": {
                 return asType(node, org.apache.camel.model.language.VariableExpression.class);
             }
-            case "wasm": {
-                return asType(node, org.apache.camel.model.language.WasmExpression.class);
-            }
             case "xpath": {
                 return asType(node, org.apache.camel.model.language.XPathExpression.class);
             }
@@ -167,7 +164,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression", oneOf = "expression"),
                     @YamlProperty(name = "tokenize", type = "object:org.apache.camel.model.language.TokenizerExpression", oneOf = "expression"),
                     @YamlProperty(name = "variable", type = "object:org.apache.camel.model.language.VariableExpression", oneOf = "expression"),
-                    @YamlProperty(name = "wasm", type = "object:org.apache.camel.model.language.WasmExpression", oneOf = "expression"),
                     @YamlProperty(name = "xpath", type = "object:org.apache.camel.model.language.XPathExpression", oneOf = "expression"),
                     @YamlProperty(name = "xquery", type = "object:org.apache.camel.model.language.XQueryExpression", oneOf = "expression"),
                     @YamlProperty(name = "xtokenize", type = "object:org.apache.camel.model.language.XMLTokenizerExpression", oneOf = "expression")
@@ -207,7 +203,6 @@ public final class ExpressionDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "spel", type = "object:org.apache.camel.model.language.SpELExpression", oneOf = "expression"),
                     @YamlProperty(name = "tokenize", type = "object:org.apache.camel.model.language.TokenizerExpression", oneOf = "expression"),
                     @YamlProperty(name = "variable", type = "object:org.apache.camel.model.language.VariableExpression", oneOf = "expression"),
-                    @YamlProperty(name = "wasm", type = "object:org.apache.camel.model.language.WasmExpression", oneOf = "expression"),
                     @YamlProperty(name = "xpath", type = "object:org.apache.camel.model.language.XPathExpression", oneOf = "expression"),
                     @YamlProperty(name = "xquery", type = "object:org.apache.camel.model.language.XQueryExpression", oneOf = "expression"),
                     @YamlProperty(name = "xtokenize", type = "object:org.apache.camel.model.language.XMLTokenizerExpression", oneOf = "expression")

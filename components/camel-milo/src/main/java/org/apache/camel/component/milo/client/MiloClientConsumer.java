@@ -116,8 +116,8 @@ public class MiloClientConsumer extends DefaultConsumer {
     private void handleValueUpdate(final String node, final DataValue value) {
         LOG.debug("Handle item update - {} = {}", node, value);
 
-        if (omitNullValues && (value == null || value.getValue() == null || value.getValue().getValue() == null)) {
-            LOG.debug("Handle item update omitted due to null values (see omitNullValues parameter)");
+        if (omitNullValues && isNullValueWithGoodStatus(value)) {
+            LOG.debug("Handle item update omitted due to a null value with a Good status (see omitNullValues parameter)");
             return;
         }
 
@@ -129,6 +129,15 @@ public class MiloClientConsumer extends DefaultConsumer {
         } catch (final Exception e) {
             getExceptionHandler().handleException("Error processing exchange", e);
         }
+    }
+
+    /**
+     * The data change that omitNullValues omits: a null value with a Good status. A data change with a Bad or Uncertain
+     * status is delivered even when its value is null.
+     */
+    private static boolean isNullValueWithGoodStatus(final DataValue value) {
+        return value == null
+                || (value.getValue().getValue() == null && value.getStatusCode().isGood());
     }
 
     private void mapToMessage(final DataValue value, final Message message) {

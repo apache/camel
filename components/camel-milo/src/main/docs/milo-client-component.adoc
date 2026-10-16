@@ -149,8 +149,20 @@ need a consumer of their own.
 
 A node that does not exist on the server does not affect the other nodes. A node that cannot be monitored is
 reported once with its status code and is not retried; restarting the route or a rebuilt connection to the server creates the monitored items again.
-To see such nodes, set `omitNullValues=false`: the consumer then delivers one exchange with the bad status code for that
-node, and the `CamelMiloNodeId` header names it.
+The consumer delivers one exchange with the bad status code for such a node, and the `CamelMiloNodeId` header names it.
+
+=== Status codes and null values
+
+A data change with a Bad or Uncertain status is always delivered, even when its value is null; `omitNullValues` only
+omits a null value with a Good status. This includes the first notification of a monitored item: it carries the current
+value of the node, at startup and again after a reconnect, so it can be a Bad status such as `Bad_WaitingForInitialData`
+or the status of a `milo-server` item that was not written yet. To skip such a notification, a route filters on its
+status code (`getStatusCode()` of the `DataValue` body); a filter on `isGood()` would also drop the Bad status of a
+failed sensor.
+
+The default `omitNullValues=true` also omits a null value with a Good status that follows a Bad status, so the route
+does not learn that the node recovered. Set `omitNullValues=false` for a node whose value can be null, such as a
+`String`.
 
 === Method ID
 
@@ -229,10 +241,60 @@ The known security policy URIs and enum literals are can be seen here: https://g
 
 NOTE: In any case security policies are considered case sensitive.
 
+When `allowedSecurityPolicies` is not set, the client accepts every security policy the server offers and uses the
+endpoint with the highest security level reported by the server, which can be `None`. To make sure the connection is
+secured, set `allowedSecurityPolicies` to the secured policies you expect the server to offer.
+
+=== Validating the server certificate
+
+When the selected endpoint uses a security policy other than `None`, the client validates the certificate of the
+server when it opens the secure channel and the session. Configure the trusted certificates with one of these options:
+
+* `trustListDirectory`: a directory holding the trust list, in the layout used by Eclipse Milo. Put the certificate of
+the server, or the certificate of the CA that issued it, in `trusted/certs`. Certificates of intermediate CAs that are
+only used to build the chain go in `issuer/certs`, and certificate revocation lists in `trusted/crl` and `issuer/crl`.
+The directories are created if they do not exist.
+* `certificateValidator`: a custom `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`. It is used
+instead of `trustListDirectory` when both are set. Endpoints share a connection only when they use the same validator
+instance.
+
+With `trustListDirectory`, the client refuses a server certificate that:
+
+* does not chain up to a certificate in `trusted/certs`, possibly through the certificates in `issuer/certs`,
+* is outside its validity period,
+* is revoked by a certificate revocation list in `trusted/crl` or `issuer/crl`. A certificate issued by a CA is also
+refused, with `Bad_CertificateRevocationUnknown`, when the trust list holds no revocation list of that CA. An empty
+CRL signed by the CA is enough. A self-signed certificate in `trusted/certs` is not checked for revocation,
+* or holds an application URI that differs from the one the server announces in its endpoint description.
+
+A failed host name, key usage or extended key usage check is only logged. A certificate that does not chain up to a
+trusted certificate is written to `rejected/certs`, from where it can be moved to `trusted/certs` once it has been
+checked. A certificate refused for another reason is not written there. To use other checks, configure a
+`certificateValidator`, for example a `DefaultClientCertificateValidator` created with the `ValidationCheck` set you
+need.
+
+If neither option is configured, the client does not connect to an endpoint that uses a security policy other than
+`None`. Setting `trustAllCertificates` to `true` makes the client accept any server certificate instead. This is
+insecure: the connection is encrypted, but the client does not authenticate the server it talks to.
+
+When the server certificate cannot be validated, the client logs a `WARN` message that starts with `Failed to
+connect`, and tries again every 10 seconds, so a certificate moved to `trusted/certs` is used at the next attempt. A
+producer fails with `IllegalStateException: No connected`, whose cause gives the reason.
+
+The same validator checks the server certificate that the user name and password are encrypted with. With the
+security policy `None`, the server is not authenticated, whatever the configuration.
+
+A secured policy also requires a client certificate and key, configured with `keyStoreUrl` and the related options.
+For example:
+
+----
+milo-client:opc.tcp://localhost:4840?node=RAW(ns=2;s=Temperature)&allowedSecurityPolicies=Basic256Sha256&keyStoreUrl=file:/etc/opcua/client.p12&keyStorePassword=RAW(changeit)&keyAlias=client&keyPassword=RAW(changeit)&trustListDirectory=/etc/opcua/pki
+----
+
 ==== Milo 1.0.5 Migration Notes
 
 With Milo 1.0.5, several security-related API changes were introduced:
 
 * The `ServerCertificateValidator` class has been replaced with `CertificateValidator` in the core security package
 * Certificate validation now uses `org.eclipse.milo.opcua.stack.core.security.CertificateValidator`
-* When configuring custom certificate validators, ensure you're using the updated API
+* A validator configured with the `certificateValidator` option must implement this interface

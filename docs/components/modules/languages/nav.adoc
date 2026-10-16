@@ -32,7 +32,6 @@
 ** xref:tokenize-language.adoc[Tokenize]
 ** xref:typesafe-ai-language.adoc[TypeSafe AI]
 ** xref:variable-language.adoc[Variable]
-** xref:wasm-language.adoc[Wasm]
 ** xref:xtokenize-language.adoc[XML Tokenize]
 ** xref:xpath-language.adoc[XPath]
 ** xref:xquery-language.adoc[XQuery]

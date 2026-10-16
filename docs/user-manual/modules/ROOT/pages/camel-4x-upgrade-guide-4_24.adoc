@@ -13,6 +13,18 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-core - Route.clearRouteModel() is deprecated
+
+The `Route.clearRouteModel()` method is deprecated and is now a no-op. It will be removed in a later release.
+
+This method dropped the references a runtime route held to its model (the route definition, the error handler factory
+and the error handlers) once the route was created at startup. The `CamelContext` already keeps the route definitions
+in its model, so clearing them on the route saved little memory at the cost of making `Route.getRoute()` and
+`Route.getErrorHandlerFactory()` return `null` for routes created at startup (but not for routes added after startup).
+
+Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
+that override `clearRouteModel()` can remove the override.
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
@@ -488,6 +500,23 @@ or follows, like Enter does.
 * A plugin that cannot be loaded ends the command with exit code `1` and the error, as before, but no longer exits the
   JVM while the plugins load, which ended a program that embeds the CLI.
 
+=== camel-jbang - exit codes of config set, dependency list, jolokia and cmd memory-leak
+
+* `camel jolokia` with a name or pid that matches no running integration, or more than one, exits with `3`, as
+  `camel hawtio` does (it exited with `1`, and printed the second case on stdout).
+* `camel config set` without a key (`=value` stored a value with an empty key) or without a value exits with `2`, and
+  prints the error on stderr.
+* `camel dependency list` with an unknown `--output` exits with `2`.
+* `camel cmd memory-leak --min-size` takes a size in bytes such as `10B`, and a value that is not a size exits with `2`
+  (both turned the filter off).
+* `camel cmd send --reply` to a route that fails with an exception without a message, such as a `NullPointerException`,
+  prints the failed exchange and exits with `1`, instead of failing with a `ClassCastException`.
+* `camel get source` of an integration with routes without a source location, such as routes added by a
+  `RouteBuilder`, no longer fails.
+* Versions with four parts, such as the Quarkus platform version `3.27.3.1`, compare as versions in the version checks
+  of the CLI (`3.27.3.1` came after `3.27.4`), and a `-SNAPSHOT` always comes before its release, as in Maven
+  (`4.24.10-SNAPSHOT` came after `4.24.10`).
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)
@@ -566,6 +595,31 @@ unmarshalled after it. A date with a `TZID` that is not a standard time zone and
 now read as a local date-time without a zone (`getDate()` returns a `LocalDateTime`); before, it was read with the
 definition of an earlier message, if there was one. A calendar that defines a `TZID` an earlier message has defined
 differently is now read with its own definition.
+
+=== camel-milo - the OPC UA client validates the server certificate
+
+When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components
+now validate the certificate of the OPC UA server. Before, any server certificate was accepted, and no option allowed
+to validate it.
+
+Configure the trusted certificates with the new `trustListDirectory` option: put the certificate of the server, or of
+the CA that issued it, in the `trusted/certs` directory of the trust list. A server certificate that does not chain up
+to a trusted certificate is written to `rejected/certs`, from where it can be moved to `trusted/certs` once it has been
+checked. The trust list also refuses a server certificate outside its validity period, revoked by a revocation list of
+the trust list, or whose application URI differs from the one of the server. A server certificate issued by a CA is
+refused with `Bad_CertificateRevocationUnknown` when the trust list holds no revocation list of that CA: add the CRL of
+the CA (an empty one is enough) to `trusted/crl` or `issuer/crl`. A custom validator can be configured with the new
+`certificateValidator` option instead.
+
+With neither option, the client does not connect to such an endpoint. It logs a `WARN` message
+`Failed to connect: The certificate of the OPC UA server cannot be validated`, followed by the endpoint and its
+security policy, and tries again every 10 seconds. A producer fails with `IllegalStateException: No connected`, caused
+by the same message. A server certificate refused by the trust list or by a `certificateValidator` is logged at `WARN`
+as `Failed to connect, because a certificate or security check failed`. To restore the previous behaviour, set the new
+`trustAllCertificates` option to `true`. This is insecure: the client then does not authenticate the server.
+
+The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
+use the security policy `None` are not affected.
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
@@ -672,11 +726,15 @@ body, the exit code and standard error are in `CamelWasmExitCode` and `CamelWasm
 custom `alloc`/`dealloc` and JSON message ABI. The URI path is now the module (`wasm:classpath:upper.wasm`); the
 function name and the `module` option are removed, and a header reaches the module only when listed in
 `environmentHeaders`. To migrate, turn the function into a program that reads standard input and writes standard
-output, built for `wasm32-wasip1` (Rust) or with `GOOS=wasip1 GOARCH=wasm` (Go). The `wasm` language is unchanged.
+output, built for `wasm32-wasip1` (Rust) or with `GOOS=wasip1 GOARCH=wasm` (Go).
 
 The endpoint runs every exchange on a new instance of the module, so a module can no longer keep state from one
-message to the next. The 4.23 note that a failed call discards the Wasm instance therefore now only applies to the
-`wasm` expression.
+message to the next. The 4.23 note that a failed call discards the Wasm instance no longer applies.
+
+The `wasm` language is removed: the `wasm` expression of the Java, XML and YAML DSLs, `WasmExpression` of the model,
+and `WasmLanguage`, `WasmFunction`, `WasmSupport`, `Wasm.FN_ALLOC` and `Wasm.FN_DEALLOC` of `camel-wasm`. Call the
+module with the `wasm` endpoint as a route step instead, for example `.to("wasm:classpath:transform.wasm")`, built as a
+WASI command module as described above, and use its output (the new message body) in the next steps.
 
 The following API of `camel-wasm` is removed or changed with the old ABI:
 
@@ -736,6 +794,13 @@ the old single header can set the header to a String, for example with `String.v
 
 This also applies to camel-graphql, which sends its requests with camel-http.
 
+=== camel-core - Switch case values and the Dynamic Router uriDelimiter resolve property placeholders
+
+The `value` of a Switch case and the `uriDelimiter` of the Dynamic Router EIP were used as written, so a property
+placeholder or a route template parameter in them never matched (Switch) or did not split the slip (Dynamic Router).
+They are now resolved at startup like the other EIP options; a placeholder of a property that does not exist now
+fails the route at startup.
+
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 
 The `saveBulk` and `executeTransaction` operations of `dapr:state` built their request but never sent it to Dapr, so
@@ -755,6 +820,13 @@ synchronous write API: the exchange continues when InfluxDB has answered, and a 
 Each exchange is now one write request, where the client used to collect the points of up to one second into one
 request, and the client no longer retries a write in the background. Routes with a high message rate can send a
 `Points`, `Measurements` or `Records` body (for example from an aggregator) to write many points with one request.
+
+=== camel-elasticsearch-rest-client - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddressesList` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
+registered for any host. A request to another host, including the host of a node with another scheme or port, is now
+sent without them. A client set with the `restClient` option is not changed.
 
 === camel-jira - the producers wait for the answer of Jira
 
@@ -821,6 +893,14 @@ older entry was updated after newer ones were published.
 Routes using `sortEntries=true` with `idempotent=false` get the entries in this order too: the entry that was updated
 first is routed first, where the entry that was published last was routed first before.
 
+=== camel-opensearch - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Every node of a
+multi-host cluster still receives them. Previously they were registered for any host. A request to another host,
+including the host of a node with another scheme or port, is now sent without them. A client set with the `client` or
+`openSearchClient` option is not changed.
+
 === camel-aws2-s3 - a listed object that cannot be fetched is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (or to download its content) no longer
@@ -880,6 +960,13 @@ camel-http control headers of the message. It did so since Camel 4.19, when the 
 request now always goes to `httpUri`, as it did before. For the same reason the `CamelHttpMethod` and
 `CamelHttpProtocolVersion` headers no longer apply, and the request is always a POST.
 
+=== camel-elasticsearch - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
+registered for any host. A request to another host, including the host of a node with another scheme or port, is now
+sent without them. A client set with the `client` option is not changed.
+
 === camel-jetty - a multipart text field that occurs several times
 
 A text field of a `multipart/form-data` request that occurs several times (for example a group of checkboxes) is now
@@ -922,6 +1009,14 @@ The `commit` consumer also lost the new commits of a poll in which the GitHub lo
 failed (for example a 404 for a deleted account, or a server error). Such a commit is now routed, and a WARN is logged
 for it. Its `CamelGitHubCommitAuthor` and `CamelGitHubCommitCommitter` headers then have the name that git recorded in
 the commit instead of the name of the GitHub profile, and are not set when the commit has no name either.
+
+=== camel-slack - consumer and a suspended route
+
+When a route is suspended (`RouteController.suspendRoute`, also from a route policy that suspends the route such as
+`DurationRoutePolicy`, or `CamelContext.suspend()`) while the `slack` consumer routes the messages of a poll, the
+consumer stops after the message that is being routed. The other messages of that poll were skipped when the route
+was resumed. They are now kept and routed by the first poll after the resume, together with the messages posted in
+the meantime. They are kept in memory only: a route that is stopped and started again does not route them.
 
 === camel-smpp - the host name of the SMSC is verified over SSL
 
@@ -1164,10 +1259,21 @@ support it keep their existing projection. The `camel semantic audit --json` dis
 base64 and reports metadata instead. Use `--output=<new-file>` to export the full returned JSON,
 with `--include-input` for case/bulk requests that need captured input. Existing files are not overwritten.
 
+=== camel-milo - a Bad or Uncertain status is delivered by default
+
+A `milo-client` consumer now delivers a data change with a Bad or Uncertain status by default, even when its value is
+null; previously the default `omitNullValues=true` dropped it. `omitNullValues` now only omits a null value with a Good
+status. A route may therefore receive a Bad status with a null value, also as the first notification of a monitored
+item at startup and after a reconnect, for example `Bad_WaitingForInitialData` or the status of a `milo-server` item
+that was not written yet. A route that uses the value must check `getStatusCode()` of the `DataValue` body first:
+Camel's type converter returns `0` or `false` for a null value that is converted to a primitive type such as `double`
+or `boolean`. To skip the startup notification, filter on its status code; a filter on `isGood()` would also drop the
+Bad status of a failed sensor.
+
 === camel-milo - creating and deleting the monitored items of a consumer
 
 Since 4.16, a `milo-client` consumer whose monitored item could not be created, for example because the node does not
-exist, received nothing. Now it receives one `DataValue` with the bad status code (when `omitNullValues=false`). The
+exist, received nothing. Now it receives one `DataValue` with the bad status code. The
 monitored item is created again when the route is restarted or when Camel rebuilds the connection to the server; unlike
 Camel 3.x, it is not retried every 10 seconds.
 

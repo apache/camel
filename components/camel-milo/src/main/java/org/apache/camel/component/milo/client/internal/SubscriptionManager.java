@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.milo.client.internal;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.NodeIds;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
@@ -652,9 +654,11 @@ public class SubscriptionManager {
     private final MiloClientConfiguration configuration;
     private final ScheduledExecutorService executor;
     private final long reconnectTimeout;
+    private final ServerCertificateTrust serverCertificateTrust;
     private final Lock lock = new ReentrantLock();
 
     private Connected connected;
+    private volatile Throwable lastConnectFailure;
     private boolean disposed;
     private Future<?> reconnectJob;
     private final Map<UInteger, Subscription> subscriptions = new HashMap<>();
@@ -665,6 +669,7 @@ public class SubscriptionManager {
         this.configuration = configuration;
         this.executor = executor;
         this.reconnectTimeout = reconnectTimeout;
+        this.serverCertificateTrust = new ServerCertificateTrust(configuration);
 
         connect();
     }
@@ -690,6 +695,7 @@ public class SubscriptionManager {
                 this.connected.dispose();
                 this.connected = null;
             }
+            this.lastConnectFailure = e;
 
             // log
 
@@ -740,6 +746,7 @@ public class SubscriptionManager {
                     LOG.debug("Update state : {} -> {}", this.connected, connected);
                     final Connected oldConnected = this.connected;
                     this.connected = connected;
+                    this.lastConnectFailure = null;
 
                     if (oldConnected != null) {
                         LOG.debug("Dispose old state");
@@ -755,12 +762,29 @@ public class SubscriptionManager {
                 lock.unlock();
             }
         } catch (final Exception e) {
-            LOG.info("Failed to connect", e);
+            this.lastConnectFailure = e;
+            logConnectFailure(e);
             triggerReconnect(false);
         }
 
         // deliver outside of the lock, the routes may use the connection
         pendingValues.forEach(PendingValue::deliver);
+    }
+
+    private static void logConnectFailure(final Exception e) {
+        final Throwable certificateFailure = ServerCertificateTrust.findCertificateFailure(e);
+        if (certificateFailure instanceof ServerCertificateTrust.NotConfiguredException) {
+            LOG.warn("Failed to connect: {}", certificateFailure.getMessage());
+            LOG.debug("Failed to connect", e);
+        } else if (certificateFailure != null) {
+            // a certificate rejected by the trust list can be trusted later, so the client keeps retrying
+            // passed as text: SLF4J would log a trailing Throwable as the exception, with its stack trace
+            LOG.warn("Failed to connect, because a certificate or security check failed: {}",
+                    String.valueOf(certificateFailure));
+            LOG.debug("Failed to connect", e);
+        } else {
+            LOG.info("Failed to connect", e);
+        }
     }
 
     private Connected performConnect() throws Exception {
@@ -796,6 +820,9 @@ public class SubscriptionManager {
 
         LOG.debug("Selected endpoint: {}", endpoint);
 
+        // the same validator checks the server certificate for the secure channel, the session and the identity token
+        final CertificateValidator certificateValidator = this.serverCertificateTrust.validatorFor(endpoint);
+
         // set identity providers
         final List<IdentityProvider> providers = new LinkedList<>();
 
@@ -805,7 +832,8 @@ public class SubscriptionManager {
         final String explicitPassword = this.configuration.getPassword();
         if (explicitUsername != null && !explicitUsername.isEmpty()) {
             LOG.debug("Enable username/password provider (explicit parameter): {}", explicitUsername);
-            providers.add(new UsernameProvider(explicitUsername, explicitPassword != null ? explicitPassword : ""));
+            providers.add(new UsernameProvider(
+                    explicitUsername, explicitPassword != null ? explicitPassword : "", certificateValidator));
         } else if (user != null && !user.isEmpty()) {
             final String[] creds = user.split(":", 2);
             if (creds != null) {
@@ -813,7 +841,7 @@ public class SubscriptionManager {
                     LOG.debug("Enable username/password provider: {}", creds[0]);
                 }
 
-                providers.add(new UsernameProvider(creds[0], creds.length == 2 ? creds[1] : ""));
+                providers.add(new UsernameProvider(creds[0], creds.length == 2 ? creds[1] : "", certificateValidator));
             }
         }
 
@@ -822,6 +850,7 @@ public class SubscriptionManager {
         final OpcUaClientConfigBuilder cfg = this.configuration.newBuilder();
         cfg.setIdentityProvider(new CompositeProvider(providers));
         cfg.setEndpoint(endpoint);
+        cfg.setCertificateValidator(certificateValidator);
 
         // create client
         final OpcUaClient client = OpcUaClient.create(
@@ -888,6 +917,12 @@ public class SubscriptionManager {
         if (connected != null) {
             // dispose outside of lock
             connected.dispose();
+        }
+
+        try {
+            this.serverCertificateTrust.close();
+        } catch (final IOException e) {
+            LOG.debug("Failed to close the trust list. This exception is ignored.", e);
         }
     }
 
@@ -1005,9 +1040,10 @@ public class SubscriptionManager {
         }
     }
 
-    private static <T> CompletableFuture<T> newNotConnectedResult() {
+    private <T> CompletableFuture<T> newNotConnectedResult() {
         final CompletableFuture<T> result = new CompletableFuture<>();
-        result.completeExceptionally(new IllegalStateException("No connected"));
+        // the reason of the last failed connection attempt, if any, tells the caller why there is no connection
+        result.completeExceptionally(new IllegalStateException("No connected", this.lastConnectFailure));
         return result;
     }
 
