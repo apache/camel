@@ -179,7 +179,8 @@ public class RestartProcess extends ProcessBaseCommand {
             if (escaped) {
                 current.append(c);
                 escaped = false;
-            } else if (c == '\\') {
+            } else if (c == '\\' && i + 1 < commandLine.length() && commandLine.charAt(i + 1) == '"') {
+                // an escaped quote: any other backslash is part of the text, such as in a Windows path
                 escaped = true;
             } else if (c == '"') {
                 inQuotes = !inQuotes;

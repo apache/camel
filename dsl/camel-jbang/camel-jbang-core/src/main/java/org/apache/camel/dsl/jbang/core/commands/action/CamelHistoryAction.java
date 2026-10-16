@@ -48,6 +48,8 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.diagram.RouteDiagramRenderer;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -201,6 +203,18 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     }
                 }
             }
+            if (mask) {
+                // the endpoints without their secrets, as in the table
+                for (Object entry : entries) {
+                    if (entry instanceof JsonObject jo) {
+                        if (jo.get("traces") instanceof JsonArray traces) {
+                            traces.forEach(CamelHistoryAction::maskTrace);
+                        } else {
+                            maskTrace(jo);
+                        }
+                    }
+                }
+            }
             JsonOutput.printList(printer(), entries);
             return 0;
         }
@@ -210,8 +224,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         if (!pids.isEmpty()) {
             if (diagram) {
                 if (pids.size() > 1) {
-                    printer().println("Diagram mode only operate on a single Camel application");
-                    return 1;
+                    throw CliException.usage("--diagram shows the history of one integration, and " + pids.size()
+                                             + " integrations have one: give the name or pid of the integration");
                 }
                 List<Row> rows = pids.get(0);
                 long pid = rows.get(0).pid;
@@ -219,8 +233,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
             }
             if (it) {
                 if (pids.size() > 1) {
-                    printer().println("Interactive mode only operate on a single Camel application");
-                    return 1;
+                    throw CliException.usage("--it shows the history of one integration, and " + pids.size()
+                                             + " integrations have one: give the name or pid of the integration");
                 }
                 return doInteractiveCall(pids.get(0));
             }
@@ -389,8 +403,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
 
         if (nodeIds.isEmpty()) {
-            printer().println("No node IDs found in message history");
-            return 1;
+            printer().printErr("No node IDs found in message history");
+            return CliExitCode.FAILURE;
         }
 
         // auto-detect style from exchange status
@@ -406,78 +420,85 @@ public class CamelHistoryAction extends ActionWatchCommand {
             action.put("metric", false);
         });
 
-        try {
-            List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(structureJson);
-            if (routes.isEmpty()) {
-                printer().println("No routes found");
-                return 1;
+        List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(structureJson);
+        if (routes.isEmpty()) {
+            printer().printErr("No routes found");
+            return CliExitCode.FAILURE;
+        }
+
+        // add structural parent node IDs for each route that has highlighted nodes
+        // (the history trace only has processor nodeIds, not structural route/from
+        // or scope EIP nodes like circuitBreaker, filter, split, doTry, etc.)
+        for (RouteInfo route : routes) {
+            boolean routeHasHighlight = route.nodes.stream().anyMatch(n -> n.id != null && nodeIds.contains(n.id));
+            if (routeHasHighlight) {
+                addParentNodes(route.nodes, nodeIds);
+            }
+        }
+
+        // filter and order routes by highlighted path
+        RouteDiagramHelper.HighlightInfo highlightInfo
+                = new RouteDiagramHelper.HighlightInfo(nodeIds, new ArrayList<>(routeOrderSet), hlStyle);
+        routes = RouteDiagramHelper.filterAndOrderRoutes(routes, highlightInfo);
+        if (routes.isEmpty()) {
+            printer().printErr("No routes contain highlighted nodes from message history");
+            return CliExitCode.FAILURE;
+        }
+
+        // layout
+        RouteDiagramLayoutEngine engine
+                = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
+
+        List<LayoutRoute> layoutRoutes = new ArrayList<>();
+        int currentY = RouteDiagramLayoutEngine.PADDING;
+        for (RouteInfo route : routes) {
+            LayoutRoute lr = engine.layoutRoute(route, currentY);
+            layoutRoutes.add(lr);
+            currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
+        }
+
+        boolean textMode = isTextTheme();
+        if (textMode) {
+            RouteDiagramAsciiRenderer asciiRenderer
+                    = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme());
+            String ascii = asciiRenderer.renderDiagramAnsi(layoutRoutes, currentY, nodeIds, hlStyle);
+            printer().println(ascii);
+        } else {
+            DiagramColors colors = DiagramColors.parse(theme);
+            RouteDiagramRenderer renderer = new RouteDiagramRenderer(
+                    engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(), false);
+
+            BufferedImage image;
+            try {
+                image = renderer.renderDiagram(layoutRoutes, currentY, colors, nodeIds, hlStyle);
+            } catch (IllegalStateException e) {
+                printer().printErr(e.getMessage());
+                return CliExitCode.FAILURE;
             }
 
-            // add structural parent node IDs for each route that has highlighted nodes
-            // (the history trace only has processor nodeIds, not structural route/from
-            // or scope EIP nodes like circuitBreaker, filter, split, doTry, etc.)
-            for (RouteInfo route : routes) {
-                boolean routeHasHighlight = route.nodes.stream().anyMatch(n -> n.id != null && nodeIds.contains(n.id));
-                if (routeHasHighlight) {
-                    addParentNodes(route.nodes, nodeIds);
+            try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
+                TerminalGraphics tg = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
+                if (tg == null) {
+                    printer().printErr(
+                            "Terminal does not support graphics. Use --theme=ascii or --theme=unicode for text output.");
+                    return CliExitCode.USAGE;
+                }
+                TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions().preserveAspectRatio(true);
+                tg.displayImage(terminal, image, opts);
+                terminal.writer().println();
+                terminal.flush();
+            }
+        }
+        return 0;
+    }
+
+    private static void maskTrace(Object trace) {
+        if (trace instanceof JsonObject jo) {
+            for (String key : List.of("endpointUri", "nodeLabel")) {
+                if (jo.get(key) instanceof String text) {
+                    jo.put(key, URISupport.sanitizeUri(text));
                 }
             }
-
-            // filter and order routes by highlighted path
-            RouteDiagramHelper.HighlightInfo highlightInfo
-                    = new RouteDiagramHelper.HighlightInfo(nodeIds, new ArrayList<>(routeOrderSet), hlStyle);
-            routes = RouteDiagramHelper.filterAndOrderRoutes(routes, highlightInfo);
-            if (routes.isEmpty()) {
-                printer().println("No routes contain highlighted nodes from message history");
-                return 1;
-            }
-
-            // layout
-            RouteDiagramLayoutEngine engine
-                    = new RouteDiagramLayoutEngine(180, 12, NodeLabelMode.BOTH);
-
-            List<LayoutRoute> layoutRoutes = new ArrayList<>();
-            int currentY = RouteDiagramLayoutEngine.PADDING;
-            for (RouteInfo route : routes) {
-                LayoutRoute lr = engine.layoutRoute(route, currentY);
-                layoutRoutes.add(lr);
-                currentY = lr.maxY + RouteDiagramLayoutEngine.V_GAP;
-            }
-
-            boolean textMode = isTextTheme();
-            if (textMode) {
-                RouteDiagramAsciiRenderer asciiRenderer
-                        = new RouteDiagramAsciiRenderer(engine.getNodeWidth(), isUnicodeTheme());
-                String ascii = asciiRenderer.renderDiagramAnsi(layoutRoutes, currentY, nodeIds, hlStyle);
-                printer().println(ascii);
-            } else {
-                DiagramColors colors = DiagramColors.parse(theme);
-                RouteDiagramRenderer renderer = new RouteDiagramRenderer(
-                        engine.getNodeWidth(), 12 * RouteDiagramLayoutEngine.SCALE, engine.getNodeTextPadding(), false);
-
-                BufferedImage image;
-                try {
-                    image = renderer.renderDiagram(layoutRoutes, currentY, colors, nodeIds, hlStyle);
-                } catch (IllegalStateException e) {
-                    printer().println(e.getMessage());
-                    return 1;
-                }
-
-                try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
-                    TerminalGraphics tg = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
-                    if (tg == null) {
-                        printer().println(
-                                "Terminal does not support graphics. Use --theme=ascii or --theme=unicode for text output.");
-                        return 1;
-                    }
-                    TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions().preserveAspectRatio(true);
-                    tg.displayImage(terminal, image, opts);
-                    terminal.writer().println();
-                    terminal.flush();
-                }
-            }
-            return 0;
-        } finally {
         }
     }
 
@@ -888,7 +909,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
     private String getMessage(Row r) {
         boolean original = r.routeId != null && r.routeId.equals(r.fromRouteId);
         if (r.failed && !r.last) {
-            return "Exception: " + r.exception.getString("message");
+            // the exception is left out with --show-exception=false
+            return r.exception != null ? "Exception: " + r.exception.getString("message") : "Failed";
         }
         if (r.last && original) {
             return r.failed ? "Failed" : "Success";
