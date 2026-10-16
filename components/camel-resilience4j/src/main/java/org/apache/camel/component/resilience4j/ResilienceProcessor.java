@@ -888,7 +888,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
         }
 
         /**
-         * Ends the write-back of the task, after {@link #tryClaimForWriteBack()} returned true.
+         * Ends the write-back of the task, after {@link #tryClaimForWriteBack()} returned true. Must be called in a
+         * {@code finally} block, as the lock stays held until then.
          */
         void writeBackDone() {
             lock.unlock();
