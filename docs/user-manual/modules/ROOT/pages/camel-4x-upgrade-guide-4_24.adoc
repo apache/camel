@@ -1120,6 +1120,19 @@ On Jira Cloud the Jira consumers now read the pages of a search with the next pa
 start index: with `maxResults` above 50, a search with more than 50 results failed on the second page with
 `UnsupportedOperationException`.
 
+=== camel-netty-http - a request path with dot-segments is rejected when a security constraint is configured
+
+A `netty-http` consumer configured with a `securityConstraint` now rejects, with HTTP 400, a request whose path
+contains `.` or `..` segments (including their percent-encoded `%2e` form). Such a path is ambiguous: the security
+constraint, the consumer dispatch and the route may each interpret it differently, so with `matchOnUriPrefix=true` and a
+specific inclusion such as `/admin/*`, a request like `/foo/../admin/x` (or its encoded `/foo/%2e%2e/admin/x` form)
+could be matched against the inclusions and exclusions in a different form than the one the route handles. Rejecting
+it up front keeps the constraint decision and the routed path consistent. A well-behaved HTTP client normalizes
+dot-segments before sending, so normal traffic is unaffected.
+
+This applies only when a `securityConstraint` is configured; a consumer without one is unchanged, and continues to
+receive the request path as sent.
+
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
 A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now
