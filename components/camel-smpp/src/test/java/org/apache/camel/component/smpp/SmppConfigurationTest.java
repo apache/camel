@@ -72,6 +72,7 @@ public class SmppConfigurationTest {
         assertEquals(0x00, configuration.getNumberingPlanIndicator());
         assertEquals(0x00, configuration.getTypeOfNumber());
         assertEquals(false, configuration.isUsingSSL());
+        assertEquals(true, configuration.isHostnameVerification());
         assertEquals(5000, configuration.getInitialReconnectDelay());
         assertEquals(5000, configuration.getReconnectDelay());
         assertNull(configuration.getHttpProxyHost());
@@ -112,6 +113,7 @@ public class SmppConfigurationTest {
         assertEquals(0x08, configuration.getNumberingPlanIndicator());
         assertEquals(0x02, configuration.getTypeOfNumber());
         assertEquals(true, configuration.isUsingSSL());
+        assertEquals(false, configuration.isHostnameVerification());
         assertEquals(5001, configuration.getInitialReconnectDelay());
         assertEquals(5002, configuration.getReconnectDelay());
         assertEquals("127.0.0.1", configuration.getHttpProxyHost());
@@ -176,6 +178,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getNumberingPlanIndicator(), configuration.getNumberingPlanIndicator());
         assertEquals(config.getTypeOfNumber(), configuration.getTypeOfNumber());
         assertEquals(config.isUsingSSL(), configuration.isUsingSSL());
+        assertEquals(config.isHostnameVerification(), configuration.isHostnameVerification());
         assertEquals(config.getInitialReconnectDelay(), configuration.getInitialReconnectDelay());
         assertEquals(config.getReconnectDelay(), configuration.getReconnectDelay());
         assertEquals(config.getHttpProxyHost(), configuration.getHttpProxyHost());
@@ -193,6 +196,7 @@ public class SmppConfigurationTest {
     public void toStringShouldListAllInstanceVariables() {
         String expected = "SmppConfiguration["
                           + "usingSSL=false, "
+                          + "hostnameVerification=true, "
                           + "enquireLinkTimer=60000, "
                           + "host=localhost, "
                           + "password=null, "
@@ -259,6 +263,7 @@ public class SmppConfigurationTest {
         config.setNumberingPlanIndicator(NumberingPlanIndicator.NATIONAL.value());
         config.setTypeOfNumber(TypeOfNumber.NATIONAL.value());
         config.setUsingSSL(true);
+        config.setHostnameVerification(false);
         config.setInitialReconnectDelay(5001);
         config.setReconnectDelay(5002);
         config.setHttpProxyHost("127.0.0.1");
