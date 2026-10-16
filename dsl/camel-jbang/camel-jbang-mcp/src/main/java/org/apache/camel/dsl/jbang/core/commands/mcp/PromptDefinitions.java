@@ -133,9 +133,11 @@ public class PromptDefinitions {
                         3. **Compatibility** (based on detected runtime):
                            - **wildfly** or **karaf**: call `camel_migration_wildfly_karaf` with the pom, target runtime, and target version.
                            - **main**, **spring-boot**, or **quarkus**: call `camel_migration_compatibility` \
-                        with components, current/target version, runtime, and Java version.
-                        4. **Recipes**: call `camel_migration_recipes` with runtime, versions, Java version, and `dryRun=true` \
-                        to get the OpenRewrite Maven commands.
+                        with `currentVersion`, `targetVersion`, `runtime`, and `javaVersion`.
+                        4. **Recipes**: call `camel_migration_recipes` with `runtime`, `currentVersion`, `targetVersion`, \
+                        `javaVersion`, and `dryRun=true` to get the OpenRewrite Maven commands. For **quarkus**, also pass \
+                        `quarkusPlatformVersion`: the Quarkus version `camel_version_list` with `runtime=quarkus` reports \
+                        for the target version (otherwise the update goes to the latest Quarkus platform).
                         5. **Breaking changes**: for each detected component, call `camel_migration_guide_search` \
                         with the current and target Camel versions as `currentVersion` and `targetVersion` \
                         to find renames and API changes.

@@ -669,7 +669,8 @@ such as `+${body} == "hello"+`, and a slash (as in every XPath) or a quote in th
 The `camel_migration_compatibility` tool no longer takes the `camelComponents` argument, which it never used. It
 now takes the Java requirement from the JDK versions of the target release in the catalog (the same data as
 `camel_version_list`): Camel 4.19 and later no longer report Java 17 as a blocker, and `javaCompatibility` also
-lists the `supportedVersions`.
+lists the `supportedVersions`. A target version newer than every release in the catalog has no Java requirement: the
+tool says so in `warnings` instead of taking the one of the newest release.
 
 `camel_migration_recipes` returns commands that run: the Spring Boot command activates
 `org.apache.camel.upgrade.CamelSpringBootMigrationRecipe`, the recipes artifact is the `<major>.<minor>.0` release

@@ -99,16 +99,26 @@ public class DependencyData {
     }
 
     /**
+     * Format a BOM dependency management snippet for a given runtime, without a Camel Quarkus version.
+     */
+    public String formatBomSnippet(String runtime, String camelVersion, String quarkusPlatformVersion) {
+        return formatBomSnippet(runtime, camelVersion, quarkusPlatformVersion, null);
+    }
+
+    /**
      * Format a BOM dependency management snippet for a given runtime.
      * <p>
      * The Camel version is the version of the Camel and Camel Spring Boot BOMs only: Camel Quarkus has its own version
      * line, so a Quarkus project imports {@code io.quarkus.platform:quarkus-camel-bom} at the Quarkus platform version
-     * when it is known, else the camel-quarkus-bom with a version to look up.
+     * when it is known, else the camel-quarkus-bom at the Camel Quarkus version when it is known, else the
+     * camel-quarkus-bom with a version to look up.
      *
      * @param camelVersion           the Camel version, or null
      * @param quarkusPlatformVersion the Quarkus platform version, or null
+     * @param camelQuarkusVersion    the Camel Quarkus version, or null
      */
-    public String formatBomSnippet(String runtime, String camelVersion, String quarkusPlatformVersion) {
+    public String formatBomSnippet(
+            String runtime, String camelVersion, String quarkusPlatformVersion, String camelQuarkusVersion) {
         BomTemplate template = getBomTemplate(runtime);
         if (template == null) {
             template = BOM_TEMPLATES.get(0); // default to main
@@ -122,6 +132,8 @@ public class DependencyData {
                 groupId = "io.quarkus.platform";
                 artifactId = "quarkus-camel-bom";
                 ver = quarkusPlatformVersion;
+            } else if (camelQuarkusVersion != null) {
+                ver = camelQuarkusVersion;
             } else {
                 ver = "${camel-quarkus.version}";
                 comment = "            <!-- a Camel Quarkus version, not a Camel version: look it up with "

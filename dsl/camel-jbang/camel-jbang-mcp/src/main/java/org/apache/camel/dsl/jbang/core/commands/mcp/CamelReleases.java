@@ -50,8 +50,9 @@ final class CamelReleases {
 
     /**
      * The release that tells the requirements of a version: the release itself, else the newest release of the same
-     * major.minor, else (a version newer than every release, such as the one in development) the latest release.
-     * Returns null for a version the catalog does not know otherwise.
+     * major.minor (a patch release does not change the JDK baseline). Returns null for any other version, including a
+     * version newer than every release in the catalog (such as the one in development): the catalog only learns a
+     * release once it is out, and a new minor version may drop a JDK version (Camel 4.24 drops Java 17).
      */
     static ReleaseModel forVersion(CamelCatalog catalog, String version) {
         if (version == null || version.isBlank()) {
@@ -62,7 +63,6 @@ final class CamelReleases {
         String minor = parts.length >= 2 ? parts[0] + "." + parts[1] + "." : null;
         ReleaseModel exact = null;
         ReleaseModel sameMinor = null;
-        ReleaseModel newest = null;
         for (ReleaseModel release : releases(catalog)) {
             String v = release.getVersion();
             if (v.equals(plain)) {
@@ -72,20 +72,11 @@ final class CamelReleases {
                     && (sameMinor == null || DependencyCheckTools.compareVersions(v, sameMinor.getVersion()) > 0)) {
                 sameMinor = release;
             }
-            if (newest == null || DependencyCheckTools.compareVersions(v, newest.getVersion()) > 0) {
-                newest = release;
-            }
         }
         if (exact != null) {
             return exact;
         }
-        if (sameMinor != null) {
-            return sameMinor;
-        }
-        if (newest != null && DependencyCheckTools.compareVersions(plain, newest.getVersion()) > 0) {
-            return newest;
-        }
-        return null;
+        return sameMinor;
     }
 
     /** The JDK versions a release supports, oldest first (the catalog writes the old ones as 1.x). */

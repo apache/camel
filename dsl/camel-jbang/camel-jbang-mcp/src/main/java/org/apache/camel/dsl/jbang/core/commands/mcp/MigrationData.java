@@ -233,8 +233,9 @@ public class MigrationData {
                 camelQuarkusVersion = version;
             }
 
-            // Detect Spring Boot
-            if (artifactId.contains("spring-boot")) {
+            // Detect Spring Boot by the group: an artifact name with spring-boot is not enough, such as
+            // io.quarkus:quarkus-spring-boot-properties in a Camel Quarkus project
+            if ("org.springframework.boot".equals(groupId) || "org.apache.camel.springboot".equals(groupId)) {
                 springBoot = true;
             }
             if (springBootVersion == null && fixedVersion

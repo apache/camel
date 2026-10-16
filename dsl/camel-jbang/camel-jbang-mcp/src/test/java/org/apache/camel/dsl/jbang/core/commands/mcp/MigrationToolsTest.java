@@ -184,6 +184,38 @@ class MigrationToolsTest {
         assertThat(tools.camel_migration_analyze(bundle, null).runtimeType()).isEqualTo("karaf");
     }
 
+    @Test
+    void quarkusSpringBootPropertiesIsNotSpringBoot() {
+        // a Camel Quarkus project with the Quarkus extension for Spring Boot properties: Spring Boot is told by the group
+        String pom = """
+                <project>
+                    <dependencyManagement>
+                        <dependencies>
+                            <dependency>
+                                <groupId>io.quarkus.platform</groupId>
+                                <artifactId>quarkus-camel-bom</artifactId>
+                                <version>3.27.1</version>
+                                <type>pom</type>
+                                <scope>import</scope>
+                            </dependency>
+                        </dependencies>
+                    </dependencyManagement>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel.quarkus</groupId>
+                            <artifactId>camel-quarkus-kafka</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>io.quarkus</groupId>
+                            <artifactId>quarkus-spring-boot-properties</artifactId>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """;
+
+        assertThat(tools.camel_migration_analyze(pom, null).runtimeType()).isEqualTo("quarkus");
+    }
+
     // ---- Compatibility and recipes ----
 
     @Test
@@ -197,6 +229,27 @@ class MigrationToolsTest {
         MigrationTools.CompatibilityResult java11 = tools.camel_migration_compatibility("3.20.0", "4.0.0", "main", "11");
         assertThat(java11.compatible()).isFalse();
         assertThat(java11.blockers()).singleElement().asString().contains("requires Java 17+");
+    }
+
+    @Test
+    void compatibilityHasNoJavaRequirementForAVersionNewerThanTheCatalog() {
+        // the catalog only learns a release once it is out: the next minor version may drop a JDK version (as 4.24
+        // drops Java 17), so the newest release must not tell its Java requirement
+        String latest = CamelReleases.latest(tools.catalogService.getDefaultCatalog());
+        String[] parts = latest.split("\\.");
+        String nextMinor = parts[0] + "." + (Integer.parseInt(parts[1]) + 1) + ".0";
+
+        MigrationTools.CompatibilityResult result = tools.camel_migration_compatibility(latest, nextMinor, "main", "17");
+        assertThat(result.javaCompatibility()).isNull();
+        assertThat(result.blockers()).isEmpty();
+        assertThat(result.warnings()).singleElement().asString()
+                .contains("no release data for Camel " + nextMinor).contains("camel_version_list");
+
+        // a patch release of a known minor version takes the Java requirement of that minor version
+        String patch = parts[0] + "." + parts[1] + ".99";
+        MigrationTools.CompatibilityResult samePatch = tools.camel_migration_compatibility(latest, patch, "main", "17");
+        assertThat(samePatch.javaCompatibility()).isNotNull();
+        assertThat(samePatch.warnings()).noneMatch(w -> w.contains("no release data"));
     }
 
     @Test

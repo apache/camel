@@ -367,7 +367,8 @@ public class DependencyCheckTools {
     }
 
     private String formatBomSnippet(MigrationData.PomAnalysis pom) {
-        return dependencyData.formatBomSnippet(pom.runtimeType(), pom.camelVersion(), pom.quarkusVersion());
+        return dependencyData.formatBomSnippet(
+                pom.runtimeType(), pom.camelVersion(), pom.quarkusVersion(), pom.camelQuarkusVersion());
     }
 
     // Result records

@@ -251,6 +251,37 @@ class DependencyCheckToolsTest {
                 .contains("<groupId>io.quarkus.platform</groupId>")
                 .contains("<artifactId>quarkus-camel-bom</artifactId>")
                 .contains("<version>3.27.1</version>");
+        // the Camel Quarkus version of the project (camel-quarkus.version or the camel-quarkus-bom), when known
+        assertThat(data.formatBomSnippet("quarkus", "4.22.0", null, "3.27.0"))
+                .contains("<groupId>org.apache.camel.quarkus</groupId>")
+                .contains("<artifactId>camel-quarkus-bom</artifactId>")
+                .contains("<version>3.27.0</version>")
+                .doesNotContain("camel_version_list");
+    }
+
+    @Test
+    void quarkusBomRecommendationUsesTheCamelQuarkusVersionOfTheProject() {
+        String pom = """
+                <project>
+                    <properties>
+                        <camel.version>4.14.0</camel.version>
+                        <camel-quarkus.version>3.27.0</camel-quarkus.version>
+                    </properties>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel.quarkus</groupId>
+                            <artifactId>camel-quarkus-kafka</artifactId>
+                            <version>${camel-quarkus.version}</version>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """;
+
+        DependencyCheckTools.DependencyCheckResult result = tools.camel_dependency_check(pom, null, null, null, null, null);
+        assertThat(result.recommendations()).filteredOn(r -> r.category().equals("Best Practice"))
+                .singleElement().satisfies(r -> assertThat(r.snippet())
+                        .contains("<artifactId>camel-quarkus-bom</artifactId>")
+                        .contains("<version>3.27.0</version>"));
     }
 
     @Test
