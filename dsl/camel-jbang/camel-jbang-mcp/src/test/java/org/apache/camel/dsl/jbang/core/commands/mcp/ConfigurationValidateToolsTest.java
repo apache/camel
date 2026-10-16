@@ -266,6 +266,7 @@ class ConfigurationValidateToolsTest {
         ConfigurationValidateTools.PropertyValidationInfo info = result.properties().get(0);
         assertThat(info.checked()).isTrue();
         assertThat(info.valid()).isTrue();
+        assertThat(info.issues()).isEmpty();
     }
 
     @Test

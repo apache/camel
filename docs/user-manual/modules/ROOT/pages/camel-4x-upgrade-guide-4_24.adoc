@@ -13,6 +13,33 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-report-maven-plugin:validate / configuration-validate
+
+The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
+(previously only 10 groups out of 36 were recognized). As a result,
+`camel-report-maven-plugin:validate` and the camel-jbang MCP `camel_configuration_validate` tool
+now validate approximately 26 additional `camel.*` groups (including `camel.server.*`,
+`camel.management.*`, `camel.vault.*`, `camel.ssl.*`, and others).
+
+Group names are now matched with dash- and case-insensitive normalisation, matching how
+camel-main binds keys at runtime. For example, `camel.error-registry.enabled` and
+`camel.ai-observability.enabled` are now accepted alongside their camel-case equivalents.
+
+If your project uses `camel-report-maven-plugin:validate` with `failOnError=true`,
+a key that was silently ignored before (e.g. a misspelled option under one of the newly accepted
+groups) may now cause the build to fail. Review the validation output and correct any misspelled keys.
+
+The `camel_configuration_validate` MCP tool response format has changed:
+
+* `PropertyValidationInfo.accepted` is renamed to `checked`.
+* `ConfigurationValidateSummary` gains a new `unchecked` integer field counting lines whose
+  namespace is not recognized as a Camel property (e.g. `server.port=8080` or `quarkus.*` keys).
+  Such lines had no `accepted` flag before; they are now explicitly classified as `checked=false`
+  and excluded from `summary.valid` and `summary.errors`.
+
+If you call `camel_configuration_validate` programmatically and read the JSON response, update
+field references from `accepted` to `checked` and handle the new `summary.unchecked` field.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint

@@ -1456,9 +1456,14 @@ public abstract class AbstractCamelCatalog {
      * <p>
      * Comparison is normalised (dashes removed, lower-cased) to mirror how camel-main binds keys at runtime via
      * {@code MainHelper.optionKey} and {@code startsWithIgnoreCase}.
+     * <p>
+     * Note: {@link #acceptConfigurationPropertyKey} also iterates the groups with the same normalisation, but it
+     * receives the full {@code camel.*} key (not the stripped form) and returns a boolean rather than the matched
+     * group. A direct delegation is awkward because the two callers need different key conventions, so both methods are
+     * kept separate and share the normalisation comment above.
      */
     private MainModel.MainGroupModel matchMainModelGroup(String key, MainModel cachedModel) {
-        MainModel model = cachedModel != null ? cachedModel : mainModel();
+        MainModel model = cachedModel;
         if (model == null) {
             return null;
         }
