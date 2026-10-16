@@ -37,6 +37,14 @@ public class HibernateConsumer extends ScheduledPollConsumer {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        if (endpoint.getSelectionQuery() == null || endpoint.getSelectionQuery().isBlank()) {
+            throw new IllegalArgumentException("Hibernate consumer requires selectionQuery");
+        }
+        super.doStart();
+    }
+
+    @Override
     protected int poll() throws Exception {
         if (endpoint.getSelectionQuery() == null || endpoint.getSelectionQuery().isBlank()) {
             throw new IllegalArgumentException("Hibernate consumer requires selectionQuery");
