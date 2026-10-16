@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -35,14 +34,16 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.ExternalCommand;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
+import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonObject;
 
@@ -334,21 +335,9 @@ class LaunchManager {
 
     static boolean isContainerRuntimeAvailable() {
         for (String cmd : new String[] { "docker", "podman" }) {
-            try {
-                Process p = new ProcessBuilder(cmd, "info")
-                        .redirectErrorStream(true)
-                        .start();
-                p.getInputStream().transferTo(OutputStream.nullOutputStream());
-                boolean done = p.waitFor(5, TimeUnit.SECONDS);
-                if (!done) {
-                    p.destroyForcibly();
-                    continue;
-                }
-                if (p.exitValue() == 0) {
-                    return true;
-                }
-            } catch (Exception e) {
-                // not found, try next
+            // a docker info that hangs does not hang the TUI
+            if (ExternalCommand.succeeds(5000, cmd, "info")) {
+                return true;
             }
         }
         return false;
@@ -448,6 +437,10 @@ class LaunchManager {
                     notify("Started: " + pl.name, false);
                     pl.announced = true;
                 }
+            }
+            if (pl.infraAlias == null && !pl.started && pl.camelStarted()) {
+                // the status file of the integration says Camel has started
+                pl.started = true;
             }
             if (!pl.process.isAlive()) {
                 int exitCode = pl.process.exitValue();
@@ -638,6 +631,22 @@ class LaunchManager {
             this.process = process;
             this.outputFile = outputFile;
             this.startTime = startTime;
+        }
+
+        /**
+         * Whether Camel has started in the process, or in a process it started (the app of a Maven launch): its status
+         * file (written by the CLI connector) says so. The log is read too (see {@link #startFailed()}), for a start
+         * that fails while the JVM lives on, and for an app without the CLI connector.
+         */
+        boolean camelStarted() {
+            return Stream.concat(Stream.of(process.toHandle()), process.descendants())
+                    .anyMatch(ph -> isStarted(RuntimeHelper.readStatus(ph.pid())));
+        }
+
+        static boolean isStarted(JsonObject status) {
+            // phase 5 is started (6 and 7 are suspending and suspended, from 8 it is stopping)
+            return status != null && status.get("context") instanceof JsonObject context
+                    && context.getIntegerOrDefault("phase", 0) >= 5 && context.getIntegerOrDefault("phase", 0) < 8;
         }
 
         /** Whether the output printed since the last look says the start failed. */

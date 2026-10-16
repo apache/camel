@@ -72,6 +72,12 @@ Answer `y` to let the call run. A call you do not confirm does not run, and the
 model is told so. Without a terminal to ask on, as in a script, such a call
 does not run; `--yes` lets all of them run without asking.
 
+A `camel` command the model runs gives it the exit code, the output and the
+errors apart, as a script gets them (see xref:manual::camel-jbang-exit-codes.adoc[Exit Codes and Output]),
+and stops after 60 seconds. A command that runs until it is stopped is not run,
+and the model is told the form that returns: `camel run` without `--background`,
+`--watch` without `--duration`, `camel log` that follows, or `camel shell`.
+
 === Local and hosted models
 
 A local model gets a core set of tools: the project's files, the catalog, the

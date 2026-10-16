@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -26,9 +27,11 @@ import java.util.function.Predicate;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Shared execution context for AI tools. Wraps {@link RuntimeHelper} (process IPC) and {@link CamelCatalog} (component
@@ -36,6 +39,9 @@ import org.apache.camel.util.json.JsonObject;
  * the MCP server.
  */
 public class ToolContext {
+
+    /** How long an action on the integration may take, in millis. */
+    private static final long ACTION_TIMEOUT = 10000;
 
     private volatile long pid = -1;
     private volatile CamelCatalog catalog;
@@ -241,9 +247,64 @@ public class ToolContext {
         return RuntimeHelper.readStatus(pid);
     }
 
+    /**
+     * Sends an action without a result, such as stopping the routes, to the selected integration, and waits until it
+     * confirms the action (an integration before Camel 4.24 takes the action without confirming it).
+     *
+     * @throws ToolExecutionException when the integration answers that the action failed, or does not take it in time
+     */
+    public void sendAction(String action, Consumer<JsonObject> configure) {
+        requireProcess();
+        JsonObject request = new JsonObject();
+        request.put("action", action);
+        if (configure != null) {
+            configure.accept(request);
+        }
+        ActionClient.ActionResult result;
+        try {
+            result = ActionClient.send(pid, request, ACTION_TIMEOUT);
+        } catch (IOException e) {
+            throw new ToolExecutionException(
+                    "Cannot send the action " + action + " to the integration with pid " + pid + ": " + e.getMessage());
+        }
+        if (!result.isOk()) {
+            throw new ToolExecutionException(result.error());
+        }
+    }
+
+    /**
+     * Runs an action on the selected integration, and returns the answer as the integration wrote it.
+     *
+     * @throws ToolExecutionException when the integration answers that the action failed, or does not answer in time
+     */
     public String executeAction(String action, Consumer<JsonObject> configure) {
         requireProcess();
-        return RuntimeHelper.executeAction(pid, action, configure);
+        JsonObject request = new JsonObject();
+        request.put("action", action);
+        if (configure != null) {
+            configure.accept(request);
+        }
+        String answer;
+        try {
+            answer = ActionClient.executeText(pid, request, ACTION_TIMEOUT);
+        } catch (IOException e) {
+            throw new ToolExecutionException(
+                    "Cannot send the action " + action + " to the integration with pid " + pid + ": " + e.getMessage());
+        }
+        if (answer == null) {
+            throw new ToolExecutionException(
+                    "No answer from the integration with pid " + pid + " to the action " + action + " within "
+                                             + ACTION_TIMEOUT / 1000 + " seconds");
+        }
+        // an integration of Camel 4.24 or later answers a failed action with the error
+        JsonObject json = Jsoner.deserialize(answer, (JsonObject) null);
+        if (json != null) {
+            ActionClient.ActionResult result = ActionClient.result(json);
+            if (!result.isOk()) {
+                throw new ToolExecutionException(result.error());
+            }
+        }
+        return answer;
     }
 
     public JsonObject readErrorFile() {

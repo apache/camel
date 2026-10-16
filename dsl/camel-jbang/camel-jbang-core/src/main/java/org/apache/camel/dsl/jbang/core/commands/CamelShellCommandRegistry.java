@@ -20,15 +20,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.jline.picocli.PicocliCommandRegistry;
+import org.jline.reader.Completer;
 import org.jline.shell.Command;
+import org.jline.shell.CommandDescription;
 import picocli.CommandLine;
 
 /**
  * The Camel commands of the shell ({@code camel shell}, and the shell panel of the monitor). The prompt is
  * {@code camel>}, so commands are typed without the prefix, but the docs and the help say {@code camel ps}: a leading
  * {@code camel} is accepted, and the rest of the line runs as the command it names.
+ * <p/>
+ * A command runs while it holds {@link CliRunner#LOCK}, as camel ask and the AI panel of the monitor run commands in
+ * this JVM too, and the commands share the printer of the CLI.
  */
 public class CamelShellCommandRegistry extends PicocliCommandRegistry {
 
@@ -73,14 +79,67 @@ public class CamelShellCommandRegistry extends PicocliCommandRegistry {
 
     @Override
     public Collection<Command> commands() {
-        List<Command> answer = new ArrayList<>(super.commands());
-        answer.add(prefix);
+        List<Command> answer = new ArrayList<>();
+        for (Command command : super.commands()) {
+            answer.add(locked(command));
+        }
+        answer.add(locked(prefix));
         return answer;
     }
 
     @Override
     public Command command(String name) {
-        return PREFIX.equals(name) ? prefix : super.command(name);
+        Command command = PREFIX.equals(name) ? prefix : super.command(name);
+        return command != null ? locked(command) : null;
+    }
+
+    /**
+     * The command, which runs while it holds the lock of the commands in this JVM.
+     */
+    static Command locked(Command command) {
+        return new Command() {
+            @Override
+            public String name() {
+                return command.name();
+            }
+
+            @Override
+            public List<String> aliases() {
+                return command.aliases();
+            }
+
+            @Override
+            public String description() {
+                return command.description();
+            }
+
+            @Override
+            public CommandDescription describe(List<String> args) {
+                return command.describe(args);
+            }
+
+            @Override
+            public Object execute(org.jline.shell.CommandSession session, String[] args) throws Exception {
+                synchronized (CliRunner.LOCK) {
+                    return command.execute(session, args);
+                }
+            }
+
+            @Override
+            public List<Completer> completers() {
+                return command.completers();
+            }
+
+            @Override
+            public Completer completer() {
+                return command.completer();
+            }
+
+            @Override
+            public Map<String, Command> subcommands() {
+                return command.subcommands();
+            }
+        };
     }
 
     @Override
