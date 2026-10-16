@@ -220,10 +220,6 @@ public abstract class CamelCommand implements Callable<Integer> {
         return CommandLineHelper.getCamelDir().resolve(pid + "-activity.json");
     }
 
-    public Path getRunBackgroundLogFile(String uuid) {
-        return CommandLineHelper.getCamelDir().resolve(uuid + "-run.log");
-    }
-
     protected Printer printer() {
         var out = getMain().getOut();
         CommandHelper.setPrinter(out);

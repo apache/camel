@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -97,16 +97,16 @@ public class RestartProcess extends ProcessBaseCommand {
         }
 
         stop(ph, displayName);
+        BackgroundLog.remove(pid);
 
         // re-launch, with its output in a log file that stays (the path is printed)
         ProcessBuilder pb = new ProcessBuilder(cmd);
         if (directory != null) {
             pb.directory(new File(directory));
         }
-        pb.redirectErrorStream(true);
-        Path log = Files.createTempFile(CommandLineHelper.getCamelDir(), "restart-" + pid + "-", ".log");
-        pb.redirectOutput(log.toFile());
-        Process started = pb.start();
+        BackgroundLog.Started run = BackgroundLog.start(pb);
+        Process started = run.process();
+        Path log = run.log();
 
         awaitStarted(started, displayName, log);
         printer().println("Restarted Camel integration: " + displayName + " (PID: " + started.pid() + ")");
@@ -152,7 +152,7 @@ public class RestartProcess extends ProcessBaseCommand {
         long deadline = System.currentTimeMillis() + timeout;
         while (System.currentTimeMillis() < deadline) {
             if (!started.isAlive()) {
-                printer().printDiagnostic(tail(log, 20));
+                printer().printDiagnostic(BackgroundLog.tail(log, 20));
                 throw CliException.failure("Camel integration " + displayName + " stopped right after the restart (exit code "
                                            + started.exitValue() + "); the log is in " + log);
             }
@@ -166,18 +166,6 @@ public class RestartProcess extends ProcessBaseCommand {
         throw CliException.timeout("Camel integration " + displayName + " (PID: " + started.pid() + ") did not start within "
                                    + TimeUtils.printDuration(timeout) + "; it is still starting, the log is in "
                                    + log);
-    }
-
-    /**
-     * The last lines of the log.
-     */
-    static String tail(Path log, int lines) {
-        try {
-            List<String> all = Files.readAllLines(log);
-            return String.join(System.lineSeparator(), all.subList(Math.max(0, all.size() - lines), all.size()));
-        } catch (IOException e) {
-            return "";
-        }
     }
 
     static List<String> parseCommandLine(String commandLine) {

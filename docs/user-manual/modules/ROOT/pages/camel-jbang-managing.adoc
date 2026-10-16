@@ -105,13 +105,19 @@ Use `--background` to run an integration as a background process (Camel Main onl
 [source,bash]
 ----
 $ camel run chuck.yaml --background
-Running Camel integration: chuck in background with PID: 80093
+Running Camel Main: chuck in background with PID: 80093 (waiting to startup)
+Log: /home/user/.camel/80093-run.log
+Camel Main: chuck (state: Running)
 ----
 
 Use `camel ps` to list, `camel log` to tail output, and `camel stop` to shut down.
 
-Since Camel 4.10, the command waits for startup to complete and reports any errors
-before returning. Disable with `--background-wait=false`.
+The command waits up to 60 seconds for the integration to start, and reports any errors before returning.
+Set how long with `--background-wait`, such as `--background-wait=2m`, or do not wait with `--background-wait=false`.
+An integration that fails to start prints its log and exits with `1`.
+One that is still starting after the wait exits with `124`, and is left running.
+
+The output of the integration goes to `~/.camel/<pid>-run.log`, which `camel stop` removes.
 
 == Getting status
 

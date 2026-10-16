@@ -27,6 +27,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
@@ -94,7 +95,10 @@ public class StopProcess extends ProcessBaseCommand {
         long deadline = System.currentTimeMillis() + timeout;
         List<Long> running = new ArrayList<>();
         for (Long pid : pids) {
-            if (!awaitExit(pid, deadline)) {
+            if (awaitExit(pid, deadline)) {
+                // the output of an integration that ran in the background
+                BackgroundLog.remove(pid);
+            } else {
                 running.add(pid);
             }
         }

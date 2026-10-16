@@ -21,7 +21,7 @@ camel debug [options]
 | Option | Description | Default | Type
 | `--ago` | Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp. |  | boolean
 | `--background` | Run in the background | false | boolean
-| `--background-wait` | To wait for run in background to startup successfully, before returning | true | boolean
+| `--background-wait` | How long to wait for the integration in the background to start, before returning, in millis or as a duration such as 2m (true waits 60 seconds, false does not wait) | 60s | long
 | `--backlog-trace` | Enables backlog tracing of the routed messages | false | boolean
 | `--breakpoint` | To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected. |  | String
 | `--camel-spring-boot-version` | To run using a different Camel Spring Boot version than the default version. |  | String
