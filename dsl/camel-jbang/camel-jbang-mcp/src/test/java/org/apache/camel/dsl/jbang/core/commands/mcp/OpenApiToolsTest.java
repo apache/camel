@@ -376,6 +376,32 @@ class OpenApiToolsTest {
     }
 
     @Test
+    void scaffoldNamesThePathParameterMockFileWithASampleValue() {
+        String spec = """
+                {
+                  "openapi": "3.0.0",
+                  "info": { "title": "Pets", "version": "1.0" },
+                  "paths": {
+                    "/pets/{petId}": {
+                      "get": {
+                        "operationId": "showPetById",
+                        "responses": { "201": { "description": "Created" } }
+                      }
+                    }
+                  }
+                }
+                """;
+        OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(spec, null, "mock");
+
+        assertThat(result.mockFiles()).singleElement().satisfies(f -> {
+            assertThat(f.filePath()).isEqualTo("camel-mock/pets/1.json");
+            assertThat(f.requestPath()).isEqualTo("/pets/{petId}");
+            assertThat(f.note()).contains("camel-mock/pets/1.json answers /pets/1",
+                    "GET answers HTTP 204 with an empty body");
+        });
+    }
+
+    @Test
     void scaffoldListsNoMockFileOutsideMockMode() {
         OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(MINIMAL_SPEC, null, "ignore");
 

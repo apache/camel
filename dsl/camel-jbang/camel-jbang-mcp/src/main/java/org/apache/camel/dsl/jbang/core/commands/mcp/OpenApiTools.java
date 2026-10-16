@@ -59,6 +59,8 @@ public class OpenApiTools {
      * The methods that, in mock mode and without a mock file, answer with the request body.
      */
     private static final Set<String> BODY_VERBS = Set.of("DELETE", "PUT", "POST", "PATCH");
+    // the value a path parameter takes in the name of a mock file
+    private static final String SAMPLE_PATH_PARAMETER_VALUE = "1";
 
     private static final String NOT_ENFORCED
             = " is defined, but camel-rest-openapi does not enforce security schemes: requests are not authenticated"
@@ -311,7 +313,7 @@ public class OpenApiTools {
      * One mock file per path of the spec. For an operation without a route, camel-rest-openapi serves the first
      * resource of mockIncludePattern (default classpath:camel-mock/**) whose location without extension ends with the
      * request path, whatever the method: a path parameter is matched by its value, so {@code /pets/{petId}} takes one
-     * file per value, such as {@code camel-mock/pets/1.json}.
+     * file per value, and the listed file carries the sample value {@code 1}, such as {@code camel-mock/pets/1.json}.
      */
     private List<MockFileInfo> collectMockFiles(OpenAPI openAPI) {
         List<MockFileInfo> files = new ArrayList<>();
@@ -348,26 +350,29 @@ public class OpenApiTools {
                 ApiResponse ok = op.getResponses() != null ? op.getResponses().get("200") : null;
                 String opExample = firstExample(ok);
                 if (opExample != null) {
-                    withoutFile.put(method, "answers the example of its '200' response with HTTP 200");
+                    withoutFile.put(method, "answers the example of its '200' response with HTTP 200 when the request's"
+                                            + " Content-Type or Accept header names a media type of that response"
+                                            + " (Accept */* takes application/json, then application/xml), otherwise"
+                                            + " HTTP 204 with an empty body");
                     if (example == null) {
                         example = opExample;
                     }
-                } else if (ok != null || op.getResponses() == null) {
-                    withoutFile.put(method, "answers HTTP 204 with an empty body");
                 } else {
-                    // camel-rest-openapi reads the '200' response of the operation without checking it exists
-                    withoutFile.put(method, "fails with an error, as the operation has no '200' response: add the file");
+                    // no example in the '200' response, or no '200' response at all (CAMEL-25663): an empty answer
+                    withoutFile.put(method, "answers HTTP 204 with an empty body");
                 }
             }
 
             String ext = responseType != null && responseType.contains("xml") ? ".xml" : ".json";
             StringBuilder note = new StringBuilder("Served with HTTP 200 for any method of ").append(path)
                     .append(" without a route.");
+            // the component matches the request path, not the template: a path parameter takes a sample value
+            String sample = path.replaceAll("\\{[^}]+}", SAMPLE_PATH_PARAMETER_VALUE);
             if (path.contains("{")) {
-                String sample = path.replaceAll("\\{[^}]+}", "1");
-                note.append(" Camel matches the request path, so replace each {parameter} with a value:"
-                            + " one file per value (camel-mock")
-                        .append(sample).append(ext).append(" answers ").append(sample).append(").");
+                note.append(" Camel matches the request path, so the file name carries the value the request uses:"
+                            + " camel-mock")
+                        .append(sample).append(ext).append(" answers ").append(sample)
+                        .append(", add one file per value.");
             }
             note.append(" Without the file, ");
             withoutFile.forEach((method, answer) -> note.append(method).append(' ').append(answer).append("; "));
@@ -376,7 +381,7 @@ public class OpenApiTools {
 
             // the component matches a resource whose location without extension ends with the request path without its
             // leading slash; for the root path that is the empty string, so any mock file matches
-            String fileName = "/".equals(path) ? "camel-mock/index" + ext : "camel-mock" + path + ext;
+            String fileName = "/".equals(path) ? "camel-mock/index" + ext : "camel-mock" + sample + ext;
             if ("/".equals(path)) {
                 note.append(" Camel matches the root path to any mock file (the first one found), so with more than"
                             + " one file the one that answers / is not predictable.");
@@ -455,7 +460,10 @@ public class OpenApiTools {
                            + "ends with the request path, whatever the method. When the request has a JSON or XML "
                            + "Content-Type, only a .json or .xml file matches. Without a file, DELETE, PUT, POST "
                            + "and PATCH echo the request body with HTTP 200; the other methods answer the example of "
-                           + "the '200' response of the spec, or HTTP 204 with an empty body.";
+                           + "the '200' response of the spec for the media type matching the request's Content-Type "
+                           + "or Accept header (Accept */* takes application/json, then application/xml), and "
+                           + "otherwise (such as a request without Accept header, or no '200' example) HTTP 204 with "
+                           + "an empty body.";
             default -> "";
         };
     }
@@ -493,6 +501,16 @@ public class OpenApiTools {
             List<MockFileInfo> mockFiles) {
     }
 
+    /**
+     * A mock file for one path of the spec.
+     *
+     * @param filePath       the file to add, named after a request path: each path parameter carries the sample value
+     *                       {@code 1}, such as {@code camel-mock/pets/1.json} for {@code /pets/{petId}}
+     * @param requestPath    the path of the spec, as a template, such as {@code /pets/{petId}}
+     * @param operationIds   the operations of the path
+     * @param exampleContent an example of the spec for the file content, or null
+     * @param note           what Camel answers with and without the file
+     */
     public record MockFileInfo(
             String filePath,
             String requestPath,

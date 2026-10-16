@@ -81,19 +81,19 @@ class OpenApiScaffoldRestOpenApiTest {
 
         assertThat(scaffold.mockFiles())
                 .extracting(OpenApiTools.MockFileInfo::filePath)
-                .containsExactly("camel-mock/pets.json", "camel-mock/pets/{petId}.json");
-        Path file = dir.resolve(scaffold.mockFiles().get(1).filePath().replace("{petId}", "42"));
+                .containsExactly("camel-mock/pets.json", "camel-mock/pets/1.json");
+        Path file = dir.resolve(scaffold.mockFiles().get(1).filePath());
         Files.createDirectories(file.getParent());
-        Files.writeString(file, "{\"id\": 42, \"name\": \"Tom\"}");
+        Files.writeString(file, "{\"id\": 1, \"name\": \"Tom\"}");
 
         // keep only the rest block, so that no operation has a route
         String restOnly = scaffold.yaml().substring(0, scaffold.yaml().indexOf("- route:"));
         try (CamelContext context = start(restOnly, "file:" + dir.toAbsolutePath() + "/camel-mock/**")) {
-            Exchange answer = call(context, "/v1/pets/42");
+            Exchange answer = call(context, "/v1/pets/1");
 
             assertThat(answer.getException()).isNull();
             assertThat(answer.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(200);
-            assertThat(answer.getMessage().getBody(String.class)).isEqualToIgnoringNewLines("{\"id\": 42, \"name\": \"Tom\"}");
+            assertThat(answer.getMessage().getBody(String.class)).isEqualToIgnoringNewLines("{\"id\": 1, \"name\": \"Tom\"}");
         }
     }
 

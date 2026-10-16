@@ -728,8 +728,10 @@ help validate and scaffold that workflow, following the rules of the `rest-opena
   `operationId` gets the id the `rest-openapi` component generates), with `Content-Type` and `CamelHttpResponseCode`
   headers pre-configured from the spec. Supports configuring the `missingOperation` mode (`fail`, `ignore`, or
   `mock`) and explains it. With `mock`, it also lists one `camel-mock/` file per path of the spec, named after the
-  request path (a path parameter is replaced by its value, such as `camel-mock/pets/42.json`), with the example of
-  the spec and what Camel answers without the file.
+  request path: a path parameter carries a sample value, such as `camel-mock/pets/1.json` for `+/pets/{petId}+`,
+  which answers `/pets/1` (one file per value). It gives the example of the spec and what Camel answers without the
+  file: the example of the `200` response for the media type of the request's `Content-Type` or `Accept` header,
+  otherwise HTTP 204 with an empty body.
 |===
 
 === Migration
