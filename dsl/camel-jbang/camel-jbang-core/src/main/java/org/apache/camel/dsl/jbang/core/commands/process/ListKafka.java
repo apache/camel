@@ -16,8 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,11 +28,11 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -107,19 +106,21 @@ public class ListKafka extends ProcessWatchCommand {
                         if (jo != null) {
                             if (committed) {
                                 // we ask for committed so need to do an action on-demand to get data
-                                // ensure output file is deleted before executing action
-                                Path outputFile = getOutputFile(Long.toString(ph.pid()));
-                                PathUtils.deleteFile(outputFile);
-
-                                JsonObject root2 = new JsonObject();
-                                root2.put("action", "kafka");
-                                Path file = getActionFile(Long.toString(ph.pid()));
+                                JsonObject request = new JsonObject();
+                                request.put("action", "kafka");
                                 try {
-                                    PathUtils.writeTextSafely(root2.toJson(), file);
-                                } catch (Exception e) {
-                                    // ignore
+                                    ActionResult result = ActionClient.execute(ph.pid(), request,
+                                            ActionClient.DEFAULT_TIMEOUT);
+                                    if (!result.isOk()) {
+                                        printer().printWarn("No committed offsets from " + copy.name + " (pid "
+                                                            + ph.pid() + "): " + result.error());
+                                    }
+                                    jo = result.reply();
+                                } catch (IOException e) {
+                                    printer().printWarn("Cannot ask " + copy.name + " (pid " + ph.pid()
+                                                        + ") for committed offsets: " + e.getMessage());
+                                    jo = null;
                                 }
-                                jo = waitForOutputFile(outputFile);
                             }
                             JsonArray arr = jo != null ? (JsonArray) jo.get("kafkaConsumers") : null;
                             if (arr != null) {
@@ -323,26 +324,6 @@ public class ListKafka extends ProcessWatchCommand {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    private JsonObject waitForOutputFile(Path outputFile) {
-        JsonObject answer = null;
-
-        StopWatch watch = new StopWatch();
-        while (watch.taken() < 10000 && answer == null) {
-            try {
-                // give time for response to be ready
-                Thread.sleep(100);
-
-                if (Files.exists(outputFile)) {
-                    String text = Files.readString(outputFile);
-                    answer = (JsonObject) Jsoner.deserialize(text);
-                }
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        return answer;
     }
 
 }

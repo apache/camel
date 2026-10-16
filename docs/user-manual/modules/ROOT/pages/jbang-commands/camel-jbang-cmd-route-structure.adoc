@@ -27,6 +27,7 @@ camel cmd route-structure [options]
 | `--json` | Output in JSON Format |  | boolean
 | `--raw` | To output raw without metadata |  | boolean
 | `--sort` | Sort route by name or id | name | String
+| `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

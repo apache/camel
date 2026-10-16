@@ -140,18 +140,20 @@ public class CamelLogAction extends ActionBaseCommand {
 
         Map<Long, Row> rows = new LinkedHashMap<>();
 
+        // before reading, as an integration that starts later is read with them too
+        if (find != null) {
+            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+            findPatterns = quoteAndCompilePatterns(find);
+        }
+        if (grep != null) {
+            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+            grepPatterns = quoteAndCompilePatterns(grep);
+        }
+
         // find new pids
         updatePids(rows);
         if (!rows.isEmpty()) {
             // read existing log files (skip by tail/since)
-            if (find != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                findPatterns = quoteAndCompilePatterns(find);
-            }
-            if (grep != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                grepPatterns = quoteAndCompilePatterns(grep);
-            }
             Date limit = null;
             if (since != null) {
                 long millis;

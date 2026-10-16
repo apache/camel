@@ -16,11 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Path;
-import java.util.List;
-
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
@@ -33,24 +29,19 @@ public abstract class CamelProcessorAction extends ActionBaseCommand {
                         description = "Processor ids (multiple ids can be separated by comma)", defaultValue = "*")
     String id = "*";
 
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     protected CamelProcessorAction(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-
-        for (long pid : pids) {
-            JsonObject root = new JsonObject();
-            root.put("action", "processor");
+        return sendAction(findProcesses(name), "processor", root -> {
             root.put("id", id);
-            Path f = getActionFile(Long.toString(pid));
             onAction(root);
-            PathUtils.writeTextSafely(root.toJson(), f);
-        }
-
-        return 0;
+        });
     }
 
     protected abstract void onAction(JsonObject root);

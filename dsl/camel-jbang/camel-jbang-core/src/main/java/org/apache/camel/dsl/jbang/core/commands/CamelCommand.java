@@ -110,6 +110,17 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     /**
+     * The value of an option of this command, such as {@code --timeout}.
+     *
+     * @param  name the name of the option
+     * @return      the value, or <tt>null</tt> when the command has no such option, or runs without picocli
+     */
+    protected Object optionValue(String name) {
+        CommandLine.Model.OptionSpec option = spec != null ? spec.findOption(name) : null;
+        return option != null ? option.getValue() : null;
+    }
+
+    /**
      * Prints the help of this command, which lists its sub-commands.
      *
      * @return the exit code

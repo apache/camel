@@ -62,11 +62,10 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
         // no status file written, so the mocked process does not match "*" and files stays empty (the default)
         CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
 
-        int exit = callWithSingleProcess(command);
+        CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
-        assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("No running Camel integration found"),
-                "should report no running integration, was: " + printer.getOutput());
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("No running Camel integration found", e.getMessage(), "should report no running integration");
     }
 
     @Test

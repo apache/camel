@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,7 +26,8 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -70,6 +69,12 @@ public class CamelHeapHistogram extends ActionWatchCommand {
                         description = "Filter class names (use all to include all classes)", defaultValue = "all")
     String filter;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
 
     public CamelHeapHistogram(CamelJBangMain main) {
@@ -80,80 +85,69 @@ public class CamelHeapHistogram extends ActionWatchCommand {
     public Integer doWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
-        this.pid = pids.get(0);
+        JsonObject jo = executeAction(process, "heap-histogram", null);
+        long totalInstances = jo.getLongOrDefault("totalInstances", 0);
+        long totalBytes = jo.getLongOrDefault("totalBytes", 0);
 
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
+        JsonArray arr = (JsonArray) jo.get("classes");
+        if (arr != null) {
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject jc = (JsonObject) arr.get(i);
 
-        JsonObject root = new JsonObject();
-        root.put("action", "heap-histogram");
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
+                Row row = new Row();
+                row.num = jc.getIntegerOrDefault("num", 0);
+                row.className = jc.getString("className");
+                row.instances = jc.getLongOrDefault("instances", 0);
+                row.bytes = jc.getLongOrDefault("bytes", 0);
 
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            long totalInstances = jo.getLongOrDefault("totalInstances", 0);
-            long totalBytes = jo.getLongOrDefault("totalBytes", 0);
-
-            JsonArray arr = (JsonArray) jo.get("classes");
-            if (arr != null) {
-                for (int i = 0; i < arr.size(); i++) {
-                    JsonObject jc = (JsonObject) arr.get(i);
-
-                    Row row = new Row();
-                    row.num = jc.getIntegerOrDefault("num", 0);
-                    row.className = jc.getString("className");
-                    row.instances = jc.getLongOrDefault("instances", 0);
-                    row.bytes = jc.getLongOrDefault("bytes", 0);
-
-                    if (!matchesFilter(row)) {
-                        continue;
-                    }
-
-                    rows.add(row);
+                if (!matchesFilter(row)) {
+                    continue;
                 }
-            }
 
-            rows.sort(this::sortRow);
-
-            if (top > 0 && rows.size() > top) {
-                rows = rows.subList(0, top);
+                rows.add(row);
             }
-
-            if (watch) {
-                clearScreen();
-            }
-            if (!rows.isEmpty()) {
-                long visibleInstances = 0;
-                long visibleBytes = 0;
-                for (Row r : rows) {
-                    visibleInstances += r.instances;
-                    visibleBytes += r.bytes;
-                }
-                printer().printf("PID: %s\tClasses: %d\tInstances: %s\tBytes: %s%n",
-                        pid, rows.size(),
-                        formatNumber(visibleInstances), formatBytes(visibleBytes));
-                printTable(rows);
-            }
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
         }
 
-        PathUtils.deleteFile(outputFile);
+        rows.sort(this::sortRow);
+
+        if (top > 0 && rows.size() > top) {
+            rows = rows.subList(0, top);
+        }
+
+        if (jsonOutput) {
+            JsonObject answer = new JsonObject();
+            answer.put("pid", pid);
+            answer.put("totalInstances", totalInstances);
+            answer.put("totalBytes", totalBytes);
+            answer.put("classes", rows.stream().map(r -> {
+                JsonObject jc = new JsonObject();
+                jc.put("num", r.num);
+                jc.put("className", r.className);
+                jc.put("instances", r.instances);
+                jc.put("bytes", r.bytes);
+                return jc;
+            }).toList());
+            JsonOutput.print(printer(), answer);
+            return 0;
+        }
+        if (watch) {
+            clearScreen();
+        }
+        if (!rows.isEmpty()) {
+            long visibleInstances = 0;
+            long visibleBytes = 0;
+            for (Row r : rows) {
+                visibleInstances += r.instances;
+                visibleBytes += r.bytes;
+            }
+            printer().printf("PID: %s\tClasses: %d\tInstances: %s\tBytes: %s%n",
+                    pid, rows.size(),
+                    formatNumber(visibleInstances), formatBytes(visibleBytes));
+            printTable(rows);
+        }
 
         return 0;
     }
@@ -212,10 +206,6 @@ public class CamelHeapHistogram extends ActionWatchCommand {
             default:
                 return Long.compare(o2.bytes, o1.bytes) * negate;
         }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     static String formatBytes(long bytes) {

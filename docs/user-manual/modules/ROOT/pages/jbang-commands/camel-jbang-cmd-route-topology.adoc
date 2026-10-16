@@ -31,6 +31,7 @@ camel cmd route-topology [options]
 | `--metric` | Whether to include live metrics (only possible for a running Camel application) | true | boolean
 | `--output` | Save diagram to a file (PNG for image themes, text for ascii theme) |  | String
 | `--theme` | Color theme preset (dark, light, transparent, ascii, unicode) or custom colors (e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Use ascii/unicode for plain text output. |  | String
+| `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

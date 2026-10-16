@@ -20,7 +20,9 @@ camel top source [options]
 |===
 | Option | Description | Default | Type
 | `--filter-mean` | Filter processors that must be slower than the given time (ms) |  | long
+| `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter processors by limiting to the given number of rows |  | int
+| `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

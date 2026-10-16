@@ -291,6 +291,45 @@ New `--json` options: `camel doctor` (the status `OK`, `WARN` or `FAIL` of each 
 `camel_validate_source` answers), `camel doc` (the documentation the MCP tool `camel_catalog_doc` gives),
 `camel config get`, `camel config list`, `camel plugin get` and `camel plugin list`.
 
+=== camel-jbang - camel cmd actions report failures and timeouts
+
+The commands that act on a running integration now report how the action went in their exit code (see
+xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]):
+
+* An action without a result waits until the integration confirms it, and exits with `1` when it fails, `3` when the
+  route or processor does not exist, and `124` when the integration does not answer within `--timeout` (10 seconds by
+  default; a number is millis, or use a duration such as `30s`): `camel cmd start-route`, `stop-route`,
+  `suspend-route`, `resume-route`, `start-group`, `stop-group`, `enable-processor`, `disable-processor`, `gc`,
+  `reload`, `reset-stats`, `logger --logging-level` and `camel trace --action=start/stop`. Before, they wrote the action
+  and exited with `0`. An integration on an older Camel version takes the action without confirming it.
+* A command that waits for a result exits with `124` when the integration does not answer in time, and with `1` when
+  it answers with an error, instead of a message and `1`, or nothing and `0`: such as `camel cmd thread-dump`,
+  `heap-histogram`, `heap-dump`, `browse`, `span`, `stub`, `sql`, `load`, `memory-leak`, `route-dump`,
+  `route-structure`, `route-diagram`, `route-topology`, `camel get bean`, `source`, `route-controller`,
+  `startup-recorder`, `camel top source`, `camel get error --diagram` and `camel get history --diagram`.
+  When the integration has no data to show (a thread dump, the route controller, top source), or OpenTelemetry is not
+  enabled (`camel cmd span`), the command exits with `1` instead of `0`.
+* A name or pid that matches no running integration exits with `3`, instead of doing nothing and exiting with `0`.
+  Without a name (all integrations) and nothing running, the command exits with `0` and prints
+  `No running Camel integrations` on stderr.
+* `camel eval expression` with a name or pid that matches no running integration exits with `3`, instead of starting
+  a new Camel to evaluate in: only without a name, or with `--isolated`, a new Camel evaluates the expression. An
+  evaluation that fails exits with `1`, and the `Using existing running Camel integration` line is printed on stderr.
+* `camel cmd send` exits with `1` when the exchange failed and `124` when the endpoint did not answer in time, also
+  without a name (sending from a local Camel), which exited with `0` before. `camel transform message` exits with `1`
+  when the transformation fails and `124` when it does not answer in time.
+* `camel cmd load` without `--source`, a header that is not in the `key=value` form (`camel cmd send`,
+  `camel eval expression`, `camel transform message`), and an unknown `--action` (`camel cmd receive`, `camel trace`)
+  exit with `2`.
+* The `--filter` of `camel cmd route-dump`, `camel cmd route-structure` and `camel get source` takes several names
+  separated by comma, as its description says, and a filter that matches no route exits with `3`.
+
+The commands that wait for the integration have a `--timeout` option, and the ones that return data have a `--json`
+option: `camel cmd thread-dump`, `heap-histogram`, `heap-dump`, `browse`, `span`, `stub`, `sql`, `logger`,
+`route-dump`, `camel get bean`, `source`, `route-controller`, `startup-recorder`, `camel top source` and
+`camel trace` (the status of tracing). `camel get history --json` prints one JSON array instead of one document per
+line.
+
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
 When a route marks the exchange rollback only (for example with `markRollbackOnly()` or `markRollbackOnlyLast()`)

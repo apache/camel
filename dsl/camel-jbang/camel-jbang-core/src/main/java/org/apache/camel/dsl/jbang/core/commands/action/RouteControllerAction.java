@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -29,7 +27,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -42,7 +42,8 @@ import picocli.CommandLine.Command;
          sortOptions = false, showDefaultValues = true,
          footer = {
                  "%nExamples:",
-                 "  camel cmd route-controller" })
+                 "  camel get route-controller",
+                 "  camel get route-controller --json" })
 public class RouteControllerAction extends ActionWatchCommand {
 
     public static class IdStateCompletionCandidates implements Iterable<String> {
@@ -76,6 +77,12 @@ public class RouteControllerAction extends ActionWatchCommand {
                         description = "Max depth of stack-trace", defaultValue = "1")
     int depth;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
 
     public RouteControllerAction(CamelJBangMain main) {
@@ -86,78 +93,55 @@ public class RouteControllerAction extends ActionWatchCommand {
     public Integer doWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
 
         // include stack-traces
         if (trace && depth <= 1) {
             depth = Integer.MAX_VALUE;
         }
 
-        this.pid = pids.get(0);
+        this.pid = process.pid();
 
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "route-controller");
-        root.put("stacktrace", trace ? "true" : "false");
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
-            // ignore
+        JsonObject jo = executeAction(process, "route-controller",
+                root -> root.put("stacktrace", trace ? "true" : "false"));
+        boolean supervising = "SupervisingRouteController".equals(jo.getString("controller"));
+        JsonArray arr = (JsonArray) jo.get("routes");
+        if (arr == null) {
+            throw CliException.failure("Route controller data not available from the running integration");
         }
+        if (jsonOutput) {
+            // the controller and its routes, as the integration answers
+            JsonOutput.print(printer(), jo);
+            return 0;
+        }
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject jt = (JsonObject) arr.get(i);
 
-        boolean supervising;
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            supervising = "SupervisingRouteController".equals(jo.getString("controller"));
+            Row row = new Row();
+            row.routeId = jt.getString("routeId");
+            row.uri = jt.getString("uri");
+            row.status = jt.getString("status");
 
-            JsonArray arr = (JsonArray) jo.get("routes");
-            if (arr == null) {
-                printer().printErr("Route controller data not available from the running integration");
-                return 0;
-            }
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jt = (JsonObject) arr.get(i);
-
-                Row row = new Row();
-                row.routeId = jt.getString("routeId");
-                row.uri = jt.getString("uri");
-                row.status = jt.getString("status");
-
-                if (supervising) {
-                    row.attempts = jt.getLong("attempts");
-                    long time = jt.getLong("lastAttempt");
-                    if (time > 0) {
-                        row.lastAttempt = TimeUtils.printSince(time);
-                    }
-                    time = jt.getLong("nextAttempt");
-                    if (time > 0) {
-                        row.nextAttempt = TimeUtils.printDuration(time);
-                    }
-                    time = jt.getLong("elapsed");
-                    if (time > 0) {
-                        row.elapsed = TimeUtils.printDuration(time);
-                    }
-                    row.supervising = jt.getString("supervising");
-                    row.error = jt.getString("error");
-                    row.stackTrace = jt.getCollection("stackTrace");
+            if (supervising) {
+                row.attempts = jt.getLong("attempts");
+                long time = jt.getLong("lastAttempt");
+                if (time > 0) {
+                    row.lastAttempt = TimeUtils.printSince(time);
                 }
-
-                rows.add(row);
+                time = jt.getLong("nextAttempt");
+                if (time > 0) {
+                    row.nextAttempt = TimeUtils.printDuration(time);
+                }
+                time = jt.getLong("elapsed");
+                if (time > 0) {
+                    row.elapsed = TimeUtils.printDuration(time);
+                }
+                row.supervising = jt.getString("supervising");
+                row.error = jt.getString("error");
+                row.stackTrace = jt.getCollection("stackTrace");
             }
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
+
+            rows.add(row);
         }
 
         // sort rows
@@ -197,9 +181,6 @@ public class RouteControllerAction extends ActionWatchCommand {
                 dumpTable(rows, false);
             }
         }
-
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -263,10 +244,6 @@ public class RouteControllerAction extends ActionWatchCommand {
             default:
                 return 0;
         }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     protected String getSupervising(Row r) {
