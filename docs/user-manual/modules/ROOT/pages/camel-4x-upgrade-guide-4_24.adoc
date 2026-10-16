@@ -608,6 +608,13 @@ prints the Kamelets as JSON, as the other `camel catalog` commands do.
   `2`: the first showed every error, the second none. The errors of `--diagram` are printed on stderr, and a graphical
   `--theme` in a terminal without graphics exits with `2`.
 
+=== camel-jbang - camel version list
+
+* `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.
+* A `--date-format` that is not a date pattern, and a `--from-date` or `--to-date` that is not a date in the
+  `yyyy-MM-dd` format (such as `2025-01-31`), exit with `2`: the first showed the dates unformatted, and the others were
+  ignored.
+
 === camel-jbang - the shared action file is deprecated for plugin commands
 
 `CamelCommand.getActionFile` and `CamelCommand.getOutputFile`, the action and output files that all the clients of an
