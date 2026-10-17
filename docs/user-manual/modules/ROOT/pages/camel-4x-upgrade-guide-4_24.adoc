@@ -459,6 +459,12 @@ transaction of that `transacted()` block, as it already did with the camel-sprin
 the transaction was committed, and the marker was then cleared, so nothing showed that the rollback was skipped.
 The marker is still cleared afterwards, so an outer `transacted()` block does not see it.
 
+If the `transacted()` block in which the exchange is marked rollback only last joins the transaction of an outer block
+(for example a `PROPAGATION_MANDATORY` block inside a `PROPAGATION_REQUIRED` block), that shared JTA transaction is now
+marked rollback only, so the commit of the outer block fails (in Camel Quarkus with `CamelException: Unable to commit transaction`) where it used
+to commit, as with camel-spring (`UnexpectedRollbackException`). To roll back only the inner block, use
+`PROPAGATION_REQUIRES_NEW` for it.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
