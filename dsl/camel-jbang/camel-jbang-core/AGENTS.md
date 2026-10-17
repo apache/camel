@@ -26,3 +26,4 @@ reused). So a test must not depend on a fresh JVM, nor share anything with the t
   clear them), static fields, and stop the servers, threads and CamelContexts that it starts.
 - A test that only fails now and then usually shares something with another test: run the module a few times with
   `-Dcamel.surefire.forkCount=8` to find out. `-Dtest=SomeTest` runs one class, whichever execution it belongs to.
+- `NoFixedHomeDirTest` fails on a test that sets a fixed home; its message says what to do.
