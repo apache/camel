@@ -11,8 +11,9 @@ reused). So a test must not depend on a fresh JVM, nor share anything with the t
 - The home of the CLI (`CommandLineHelper.getHomeDir()`: the `.camel` directory, the user configuration and the
   plugins) is a static field. A test that needs a home calls `useTestHomeDir()` of `CamelCommandBaseTestSupport`,
   which gives it an empty temporary home and restores the previous one after the test. Never use a fixed directory
-  such as `target` or `target/test-xxx`, as the other forks use it at the same time. A test that sets the home itself
-  restores the previous one in `@AfterEach`.
+  such as `target` or `target/test-xxx`, as the other forks use it at the same time. A test that needs another home,
+  such as the home of a Camel that runs outside this JVM, calls `useHomeDir(Path)`, which also restores the previous
+  home after the test.
 - Each fork has a `user.home` of its own under `target` (see `pom.xml`), so the tests do not see the `~/.camel` of
   the developer. From an IDE, `user.home` is the real home: `UserConfigHelper` refuses to write the user
   configuration there.

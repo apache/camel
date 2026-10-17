@@ -19,9 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.HomeHelper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,21 +30,14 @@ import picocli.CommandLine;
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Runs only local")
 class EvalSimpleTest extends CamelCommandBaseTestSupport {
 
-    private Path previousHome;
-
     @BeforeEach
     @Override
     public void setup() throws Exception {
         super.setup();
-        // the Camel this test starts is the one installed with JBang: it uses the home of the user, not the home of
-        // this fork, so the test must look there too, or it waits for an answer and leaves that Camel running
-        previousHome = CommandLineHelper.getHomeDir();
-        CommandLineHelper.useHomeDir(System.getProperty("camel.test.user.home", HomeHelper.resolveHomeDir()));
-    }
-
-    @AfterEach
-    public void restoreHome() {
-        CommandLineHelper.useHomeDir(previousHome.toString());
+        // not a home of its own (useTestHomeDir): the Camel this test starts is the one installed with JBang, which
+        // uses the home of the user, so the test must look there too, or it waits for an answer and leaves that Camel
+        // running
+        useHomeDir(Path.of(System.getProperty("camel.test.user.home", HomeHelper.resolveHomeDir())));
     }
 
     @Test

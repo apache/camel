@@ -47,12 +47,27 @@ public class CamelCommandBaseTestSupport {
      * @return the home directory
      */
     protected Path useTestHomeDir() throws IOException {
+        if (testHome != null) {
+            // called again: the home of the earlier call is not used anymore
+            FileUtil.removeDir(testHome.toFile());
+        }
+        testHome = Files.createTempDirectory("camel-cli-test-home");
+        useHomeDir(testHome);
+        return testHome;
+    }
+
+    /**
+     * Uses the given directory as the home of the CLI in the test, and the previous home again after the test. A test
+     * that talks to a Camel which runs outside this JVM uses the home of that Camel; any other test uses
+     * {@link #useTestHomeDir()}.
+     *
+     * @param home the home directory
+     */
+    protected void useHomeDir(Path home) {
         if (previousHome == null) {
             previousHome = CommandLineHelper.getHomeDir();
         }
-        testHome = Files.createTempDirectory("camel-cli-test-home");
-        CommandLineHelper.useHomeDir(testHome.toString());
-        return testHome;
+        CommandLineHelper.useHomeDir(home.toString());
     }
 
     @AfterEach
