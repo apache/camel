@@ -437,7 +437,8 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
             parseOptionsFromClass(className, info.options);
             return info;
         } catch (Exception | LinkageError e) {
-            getLog().debug("Could not read the command of class: " + className + " - " + e.getMessage());
+            // the command is then missing from the documentation
+            getLog().warn("Could not read the command of class: " + className + " - " + e.getMessage());
             return null;
         }
     }
@@ -652,7 +653,8 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                     = (Class<? extends Annotation>) loader.loadClass("picocli.CommandLine$Mixin");
             parseOptionsFromClass(loader.loadClass(className), optionType, mixinType, options);
         } catch (Exception | LinkageError e) {
-            getLog().debug("Could not read the options of class: " + className + " - " + e.getMessage());
+            // the options are then missing from the documentation
+            getLog().warn("Could not read the options of class: " + className + " - " + e.getMessage());
         }
     }
 
