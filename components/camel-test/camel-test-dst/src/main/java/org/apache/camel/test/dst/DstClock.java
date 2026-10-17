@@ -17,6 +17,7 @@
 package org.apache.camel.test.dst;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The target of the rewritten time reads of the code under test (see {@link DstInstrumentation}): the virtual clock of
@@ -36,6 +38,9 @@ import java.time.ZonedDateTime;
  * {@code now(ZoneId)} of {@code LocalDateTime}, {@code ZonedDateTime}, {@code OffsetDateTime}, {@code LocalDate},
  * {@code LocalTime} and {@code OffsetTime}. A {@link Clock} returned here reads the virtual time of whichever run is
  * active when it is read, so a clock kept in a field works across runs.
+ * <p>
+ * Sleeps are rewritten too ({@code Thread.sleep} and {@code TimeUnit.sleep}): on the loop thread a sleep is a virtual
+ * wait ({@link Dst#block(long, String)}), so the sleeping task keeps its thread and the other tasks run meanwhile.
  */
 public final class DstClock {
 
@@ -66,6 +71,73 @@ public final class DstClock {
     public static Instant instantNow() {
         Dst dst = read();
         return dst == null ? Instant.now() : Instant.ofEpochMilli(dst.currentTimeMillis());
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // sleeps: Thread.sleep(long), Thread.sleep(long, int), Thread.sleep(Duration) and TimeUnit.sleep(long), with the
+    // call site added by the rewriting
+
+    public static void sleep(long millis, String where) throws InterruptedException {
+        Dst dst = Dst.active();
+        if (dst == null) {
+            Thread.sleep(millis);
+        } else if (!dst.isLoopThread()) {
+            DstEscapes.recordRuntime("real sleep on a thread outside the harness: " + Thread.currentThread().getName()
+                                     + " at " + where);
+            Thread.sleep(millis);
+        } else {
+            if (millis < 0) {
+                throw new IllegalArgumentException("timeout value is negative");
+            }
+            if (Thread.interrupted()) {
+                throw new InterruptedException("sleep interrupted");
+            }
+            dst.block(millis, "sleep at " + where);
+        }
+    }
+
+    public static void sleep(long millis, int nanos, String where) throws InterruptedException {
+        if (nanos < 0 || nanos > 999_999) {
+            throw new IllegalArgumentException("nanosecond timeout value out of range");
+        }
+        Dst dst = Dst.active();
+        if (dst == null || !dst.isLoopThread()) {
+            if (dst != null) {
+                DstEscapes.recordRuntime("real sleep on a thread outside the harness: "
+                                         + Thread.currentThread().getName() + " at " + where);
+            }
+            Thread.sleep(millis, nanos);
+        } else {
+            sleep(millis, where);
+        }
+    }
+
+    public static void sleep(Duration duration, String where) throws InterruptedException {
+        Dst dst = Dst.active();
+        if (dst == null || !dst.isLoopThread()) {
+            if (dst != null) {
+                DstEscapes.recordRuntime("real sleep on a thread outside the harness: "
+                                         + Thread.currentThread().getName() + " at " + where);
+            }
+            // Thread.sleep(Duration) is Java 19+, this module compiles for 17
+            Thread.sleep(duration.toMillis(), duration.toNanosPart() % 1_000_000);
+        } else {
+            sleep(Math.max(0, duration.toMillis()), where);
+        }
+    }
+
+    public static void sleep(TimeUnit unit, long amount, String where) throws InterruptedException {
+        Dst dst = Dst.active();
+        if (dst == null || !dst.isLoopThread()) {
+            if (dst != null) {
+                DstEscapes.recordRuntime("real sleep on a thread outside the harness: "
+                                         + Thread.currentThread().getName() + " at " + where);
+            }
+            unit.sleep(amount);
+        } else if (amount > 0) {
+            // TimeUnit.sleep does nothing for a timeout <= 0
+            sleep(unit.toMillis(amount), where);
+        }
     }
 
     // ------------------------------------------------------------------------------------------------------------

@@ -56,6 +56,8 @@ import net.bytebuddy.jar.asm.Opcodes;
  * {@code new Date()}, {@code Instant.now()}, {@code Clock.systemUTC()}, {@code Clock.systemDefaultZone()},
  * {@code Clock.system(ZoneId)} and {@code now()} / {@code now(ZoneId)} of the {@code java.time} date and time
  * types;</li>
+ * <li>rewrites the sleeps ({@code Thread.sleep}, {@code TimeUnit.sleep}) to virtual waits of {@link DstClock}: on the
+ * loop thread the sleeping task keeps its thread while the other tasks run, and no real time passes;</li>
  * <li>reports every other escape point it finds in those classes: own threads and executors, sleeps, wall clock reads
  * that are not rewritten, the common fork-join pool, Reactor schedulers, blocking waits.</li>
  * </ul>
@@ -78,7 +80,7 @@ public final class DstInstrumentation {
     /** Escape point categories. */
     public static final String VIRTUALIZED = "time (virtualized)";
     public static final String WALL_CLOCK = "wall clock (not virtualized)";
-    public static final String SLEEP = "sleep";
+    public static final String SLEEP = "sleep (virtual)";
     public static final String OWN_THREAD = "own thread";
     public static final String OWN_EXECUTOR = "own executor/timer";
     public static final String DEFAULT_POOL = "default async pool";
@@ -298,12 +300,15 @@ public final class DstInstrumentation {
                 super.visitMaxs(rewrite ? maxStack + 3 : maxStack, maxLocals);
             }
 
+            private String where() {
+                return className.substring(className.lastIndexOf('/') + 1) + "." + method + ":" + line;
+            }
+
             private void report(String category, String call) {
                 if (!reportEscapes) {
                     return;
                 }
-                String simple = className.substring(className.lastIndexOf('/') + 1);
-                String where = simple + "." + method + ":" + line;
+                String where = where();
                 String entry = String.format("%-28s | %-60s | %s", category, where, call);
                 if (sink != null) {
                     sink.add(entry);
@@ -359,15 +364,29 @@ public final class DstInstrumentation {
                         super.visitMethodInsn(Opcodes.INVOKESPECIAL, owner, name, "(J)V", false);
                         return;
                     }
+                } else if ("java/lang/Thread".equals(owner) && "sleep".equals(name)) {
+                    report(SLEEP, call);
+                    if (rewrite) {
+                        // the call site goes along, for the trace
+                        super.visitLdcInsn(where());
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, "sleep",
+                                descriptor.replace(")V", "Ljava/lang/String;)V"), false);
+                        return;
+                    }
+                } else if ("java/util/concurrent/TimeUnit".equals(owner) && "sleep".equals(name)
+                        && "(J)V".equals(descriptor)) {
+                    report(SLEEP, call);
+                    if (rewrite) {
+                        super.visitLdcInsn(where());
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, "sleep",
+                                "(Ljava/util/concurrent/TimeUnit;JLjava/lang/String;)V", false);
+                        return;
+                    }
                 } else if ("java/lang/Thread".equals(owner)) {
-                    if ("sleep".equals(name)) {
-                        report(SLEEP, call);
-                    } else if (name.startsWith("ofVirtual") || name.startsWith("ofPlatform")
+                    if (name.startsWith("ofVirtual") || name.startsWith("ofPlatform")
                             || "startVirtualThread".equals(name)) {
                         report(OWN_THREAD, call);
                     }
-                } else if ("java/util/concurrent/TimeUnit".equals(owner) && "sleep".equals(name)) {
-                    report(SLEEP, call);
                 } else if ("java/util/concurrent/Executors".equals(owner) && name.startsWith("new")) {
                     report(OWN_EXECUTOR, call);
                 } else if ("java/util/concurrent/ForkJoinPool".equals(owner) && "commonPool".equals(name)) {
