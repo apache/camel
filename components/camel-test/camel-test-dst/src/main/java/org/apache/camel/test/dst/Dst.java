@@ -52,6 +52,8 @@ public final class Dst {
     public static final long EPOCH_MILLIS = 1_700_000_000_000L;
 
     private static final int MAX_NESTING = 64;
+    /** An untimed wait that has not ended after this much virtual time is reported as a hang. */
+    private static final long MAX_WAIT_MILLIS = 24L * 3600 * 1000;
     private static final int MAX_TRACE_LINES = 200_000;
 
     private static volatile Dst active;
@@ -70,6 +72,9 @@ public final class Dst {
     private int nesting;
     private boolean traceTruncated;
     private boolean closed;
+    private volatile long progress;
+    private volatile long watchdogMillis = Long.getLong("dst.watchdogMillis", 10_000);
+    private volatile String stall;
 
     public Dst(long seed) {
         this(seed, 1_000_000);
@@ -82,6 +87,7 @@ public final class Dst {
         this.maxSteps = maxSteps;
         this.wakeups = new DstExecutor(this, "wakeup", Integer.MAX_VALUE);
         active = this;
+        DstWatchdog.ensureStarted();
     }
 
     /**
@@ -124,6 +130,43 @@ public final class Dst {
 
     public boolean isLoopThread() {
         return Thread.currentThread() == loopThread;
+    }
+
+    Thread loopThread() {
+        return loopThread;
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // the watchdog: a wait the harness does not control (in code that is not rewritten) blocks the loop thread
+
+    /**
+     * After how many real milliseconds without progress a loop thread that waits (in a wait the harness does not
+     * control) fails the seed: the watchdog interrupts it and the run reports where it was blocked. Default 10 s, or
+     * the system property {@code dst.watchdogMillis}.
+     */
+    public void watchdog(long millis) {
+        this.watchdogMillis = millis;
+    }
+
+    long watchdogMillis() {
+        return watchdogMillis;
+    }
+
+    long progress() {
+        return progress;
+    }
+
+    boolean isClosed() {
+        return closed;
+    }
+
+    /** Where the watchdog found the loop thread blocked, or null. */
+    public String stall() {
+        return stall;
+    }
+
+    void stalled(String report) {
+        this.stall = report;
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -254,6 +297,10 @@ public final class Dst {
 
     /** Runs one step, or moves the clock to the next due task. Returns false when no task can make progress. */
     private boolean step(long timeLimit) {
+        progress++;
+        if (stall != null) {
+            throw new DstViolation("blocked loop thread", stall);
+        }
         if (steps >= maxSteps) {
             throw new DstViolation(
                     "step budget", "the run did not finish within " + maxSteps + " steps (livelock or endless polling?)");
@@ -403,6 +450,41 @@ public final class Dst {
         return holds;
     }
 
+    /**
+     * An untimed wait on the loop thread: runs the other tasks until the condition holds. When no task of the run can
+     * make it hold (nothing can run any more, or a day of virtual time passed), the seed fails with a
+     * {@link DstViolation} that names the wait, where the real call would block for ever.
+     */
+    public void awaitCondition(BooleanSupplier condition, String what) {
+        checkLoopThread("awaitCondition");
+        if (condition.getAsBoolean()) {
+            return;
+        }
+        if (nesting >= MAX_NESTING) {
+            throw new DstViolation("nesting", "more than " + MAX_NESTING + " nested blocking calls");
+        }
+        trace("wait for " + what);
+        long start = now;
+        nesting++;
+        try {
+            while (!condition.getAsBoolean()) {
+                if (!step(Long.MAX_VALUE)) {
+                    throw new DstViolation(
+                            "blocking wait", "the loop thread waits for " + what
+                                             + ", and no task of the run can end the wait: the real call would block for"
+                                             + " ever (or it waits for a thread outside the harness)");
+                }
+                if (now - start > MAX_WAIT_MILLIS) {
+                    throw new DstViolation(
+                            "blocking wait", "the loop thread waits for " + what + ", and the wait has not ended after "
+                                             + MAX_WAIT_MILLIS + " ms of virtual time");
+                }
+            }
+        } finally {
+            nesting--;
+        }
+    }
+
     /** Waits on the loop thread for a future of this run (used by {@link DstTask#get()}). */
     void await(DstTask<?> task) {
         if (!isLoopThread()) {
@@ -410,12 +492,7 @@ public final class Dst {
                                      + " -> " + task.description());
             throw new IllegalStateException("DST tasks can only be awaited on the loop thread");
         }
-        nesting++;
-        try {
-            runUntil(task::isDone, "result of " + task.description());
-        } finally {
-            nesting--;
-        }
+        awaitCondition(task::isDone, "result of " + task.description());
     }
 
     // ------------------------------------------------------------------------------------------------------------

@@ -58,6 +58,10 @@ import net.bytebuddy.jar.asm.Opcodes;
  * types;</li>
  * <li>rewrites the sleeps ({@code Thread.sleep}, {@code TimeUnit.sleep}) to virtual waits of {@link DstClock}: on the
  * loop thread the sleeping task keeps its thread while the other tasks run, and no real time passes;</li>
+ * <li>rewrites the blocking waits ({@code CompletableFuture.get/join}, {@code Future.get},
+ * {@code CountDownLatch.await}, {@code Semaphore.acquire}, {@code DelayQueue} and {@code BlockingQueue}
+ * {@code take/poll}) to {@link DstWaits}: on the loop thread they run the loop until the wait can end, or fail the seed
+ * when nothing can end it;</li>
  * <li>reports every other escape point it finds in those classes: own threads and executors, sleeps, wall clock reads
  * that are not rewritten, the common fork-join pool, Reactor schedulers, blocking waits.</li>
  * </ul>
@@ -70,6 +74,17 @@ import net.bytebuddy.jar.asm.Opcodes;
 public final class DstInstrumentation {
 
     private static final String CLOCK = "org/apache/camel/test/dst/DstClock";
+    private static final String WAITS = "org/apache/camel/test/dst/DstWaits";
+    private static final String TIME_UNIT = "Ljava/util/concurrent/TimeUnit;";
+    private static final Set<String> FUTURES = Set.of(
+            "java/util/concurrent/Future", "java/util/concurrent/ScheduledFuture", "java/util/concurrent/RunnableFuture",
+            "java/util/concurrent/RunnableScheduledFuture", "java/util/concurrent/FutureTask");
+    private static final Set<String> QUEUES = Set.of(
+            "java/util/concurrent/BlockingQueue", "java/util/concurrent/BlockingDeque",
+            "java/util/concurrent/TransferQueue", "java/util/concurrent/LinkedBlockingQueue",
+            "java/util/concurrent/ArrayBlockingQueue", "java/util/concurrent/LinkedBlockingDeque",
+            "java/util/concurrent/PriorityBlockingQueue", "java/util/concurrent/SynchronousQueue",
+            "java/util/concurrent/LinkedTransferQueue");
     private static final Set<String> PREFIXES = new CopyOnWriteArraySet<>();
     private static final Set<String> ALSO = new CopyOnWriteArraySet<>();
     private static Instrumentation instrumentation;
@@ -86,6 +101,7 @@ public final class DstInstrumentation {
     public static final String DEFAULT_POOL = "default async pool";
     public static final String REACTOR = "reactor scheduler";
     public static final String BLOCKING = "blocking wait";
+    public static final String BLOCKING_LOOP = "blocking wait (runs the loop)";
 
     /**
      * Installs the time rewriting for the classes of these packages (and their sub packages): the code under test.
@@ -337,6 +353,17 @@ public final class DstInstrumentation {
             @Override
             public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean itf) {
                 String call = owner.substring(owner.lastIndexOf('/') + 1) + "." + name;
+                String[] wait = waitTarget(owner, name, descriptor);
+                if (wait != null) {
+                    report(BLOCKING_LOOP, call);
+                    if (rewrite) {
+                        super.visitLdcInsn(where());
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, WAITS, wait[0], wait[1], false);
+                    } else {
+                        super.visitMethodInsn(opcode, owner, name, descriptor, itf);
+                    }
+                    return;
+                }
                 if ("java/lang/System".equals(owner) && ("currentTimeMillis".equals(name) || "nanoTime".equals(name))) {
                     report(VIRTUALIZED, call);
                     if (rewrite) {
@@ -396,8 +423,6 @@ public final class DstInstrumentation {
                         report(DEFAULT_POOL, call);
                     } else if ("delayedExecutor".equals(name)) {
                         report(DEFAULT_POOL, call);
-                    } else if ("get".equals(name) || "join".equals(name)) {
-                        report(BLOCKING, call);
                     }
                 } else if (owner.startsWith("java/time/") && "now".equals(name)
                         && !descriptor.startsWith("(Ljava/time/Clock;")) {
@@ -414,13 +439,47 @@ public final class DstInstrumentation {
                     report(BLOCKING, call);
                 } else if ("java/lang/Object".equals(owner) && "wait".equals(name)
                         || "java/util/concurrent/locks/LockSupport".equals(owner) && name.startsWith("park")
-                        || "java/util/concurrent/CountDownLatch".equals(owner) && "await".equals(name)
-                        || "java/util/concurrent/Future".equals(owner) && "get".equals(name)) {
+                        || "java/util/concurrent/locks/Condition".equals(owner) && name.startsWith("await")) {
                     report(BLOCKING, call);
                 }
                 super.visitMethodInsn(opcode, owner, name, descriptor, itf);
             }
         }
+    }
+
+    /**
+     * The method of {@link DstWaits} (name and descriptor) that replaces this blocking wait, or null. The receiver
+     * becomes the first argument and the call site is added as the last.
+     */
+    static String[] waitTarget(String owner, String name, String descriptor) {
+        boolean untimed = descriptor.startsWith("()");
+        boolean timed = descriptor.startsWith("(J" + TIME_UNIT + ")");
+        if (!untimed && !timed) {
+            return null;
+        }
+        String target = null;
+        String receiver = owner;
+        if ("java/util/concurrent/CompletableFuture".equals(owner)) {
+            target = "get".equals(name) ? "get" : "join".equals(name) && untimed ? "join" : null;
+        } else if (FUTURES.contains(owner) && "get".equals(name)) {
+            target = "futureGet";
+            receiver = "java/util/concurrent/Future";
+        } else if ("java/util/concurrent/CountDownLatch".equals(owner) && "await".equals(name)) {
+            target = "await";
+        } else if ("java/util/concurrent/Semaphore".equals(owner)) {
+            target = "acquire".equals(name) && untimed ? "acquire" : "tryAcquire".equals(name) && timed ? "tryAcquire" : null;
+        } else if ("java/util/concurrent/DelayQueue".equals(owner) || QUEUES.contains(owner)) {
+            target = "take".equals(name) && untimed ? "take" : "poll".equals(name) && timed ? "poll" : null;
+            if (!"java/util/concurrent/DelayQueue".equals(owner)) {
+                receiver = "java/util/concurrent/BlockingQueue";
+            }
+        }
+        if (target == null) {
+            return null;
+        }
+        String args = descriptor.substring(1, descriptor.indexOf(')'));
+        String result = descriptor.substring(descriptor.indexOf(')') + 1);
+        return new String[] { target, "(L" + receiver + ";" + args + "Ljava/lang/String;)" + result };
     }
 
     /**

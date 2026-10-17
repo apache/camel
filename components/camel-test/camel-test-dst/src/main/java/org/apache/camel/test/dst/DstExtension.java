@@ -124,7 +124,7 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         Set<String> started = new TreeSet<>(DstEscapes.liveThreads());
         started.removeAll(before);
         started.removeIf(n -> n.startsWith("surefire") || n.startsWith("junit") || n.startsWith("Attach Listener")
-                || n.startsWith("Common-Cleaner") || n.startsWith("process reaper"));
+                || n.startsWith("Common-Cleaner") || n.startsWith("process reaper") || n.equals("dst-watchdog"));
         sb.append("DST threads started during the runs and still alive: ").append(started).append('\n');
         sb.append("DST runtime escapes: ").append(DstEscapes.runtime().size()).append('\n');
         DstEscapes.runtime().forEach(e -> sb.append("  ").append(e).append('\n'));
@@ -238,6 +238,10 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
             if (dst == null) {
                 throw throwable;
             }
+            if (dst.stall() != null && !(throwable instanceof DstViolation)) {
+                // the watchdog interrupted a wait: report where the loop thread was blocked
+                throwable = new DstViolation("blocked loop thread", dst.stall());
+            }
             dst.trace("FAILED " + throwable);
             written = writeTrace("FAILED " + throwable);
             List<String> lines = dst.traceLines();
@@ -255,7 +259,25 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         }
 
         @Override
-        public void afterTestExecution(ExtensionContext context) {
+        public void afterTestExecution(ExtensionContext context) throws Exception {
+            Throwable pending = null;
+            if (!failed && dst != null && dst.stall() != null) {
+                // the interrupted wait was swallowed by the code under test: the seed still fails
+                try {
+                    handleTestExecutionException(context, new DstViolation("blocked loop thread", dst.stall()));
+                } catch (Throwable e) {
+                    pending = e;
+                }
+            }
+            finish();
+            if (pending instanceof Error error) {
+                throw error;
+            } else if (pending instanceof Exception exception) {
+                throw exception;
+            }
+        }
+
+        private void finish() {
             stats.runs++;
             stats.nanos += System.nanoTime() - start;
             if (dst != null) {
