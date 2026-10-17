@@ -30,8 +30,9 @@ public class DirectProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
 
-    private volatile DirectConsumer consumer;
-    private int stateCounter;
+    // the consumer and the state counter of the component when the consumer was looked up, kept together as several
+    // threads can send with this producer at the same time
+    private volatile CachedConsumer cachedConsumer;
 
     private final DirectEndpoint endpoint;
     private final DirectComponent component;
@@ -50,10 +51,7 @@ public class DirectProducer extends DefaultAsyncProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (consumer == null || stateCounter != component.getStateCounter()) {
-            stateCounter = component.getStateCounter();
-            consumer = component.getConsumer(key, block, timeout);
-        }
+        DirectConsumer consumer = getConsumer();
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
                 throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
@@ -74,10 +72,7 @@ public class DirectProducer extends DefaultAsyncProducer {
                 callback.done(true);
                 return true;
             }
-            if (consumer == null || stateCounter != component.getStateCounter()) {
-                stateCounter = component.getStateCounter();
-                consumer = component.getConsumer(key, block, timeout);
-            }
+            DirectConsumer consumer = getConsumer();
             if (consumer == null) {
                 if (endpoint.isFailIfNoConsumers()) {
                     exchange.setException(new DirectConsumerNotAvailableException(
@@ -116,4 +111,22 @@ public class DirectProducer extends DefaultAsyncProducer {
         }
     }
 
+    /**
+     * Gets the consumer, which is looked up again when it has been added or removed (such as when its route is
+     * suspended or stopped) since it was looked up last.
+     */
+    private DirectConsumer getConsumer() throws InterruptedException {
+        CachedConsumer cached = cachedConsumer;
+        // read the counter before the lookup, so a change during the lookup makes the next exchange look up again
+        int stateCounter = component.getStateCounter();
+        if (cached == null || cached.consumer() == null || cached.stateCounter() != stateCounter) {
+            DirectConsumer consumer = component.getConsumer(key, block, timeout);
+            cachedConsumer = new CachedConsumer(consumer, stateCounter);
+            return consumer;
+        }
+        return cached.consumer();
+    }
+
+    private record CachedConsumer(DirectConsumer consumer, int stateCounter) {
+    }
 }
