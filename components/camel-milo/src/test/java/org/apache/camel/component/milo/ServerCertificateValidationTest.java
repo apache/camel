@@ -126,11 +126,13 @@ class ServerCertificateValidationTest extends AbstractMiloServerTest {
             public void configure() {
                 from(DIRECT_START).to(MILO_SERVER_ITEM);
 
-                from(resolve(trustListClient("trusted"))).to("mock:trustList");
-                from(resolve(trustListClient("empty"))).to("mock:emptyTrustList");
-                from(resolve(MILO_CLIENT)).to("mock:notConfigured");
-                from(resolve(MILO_CLIENT + "&trustAllCertificates=true")).to("mock:trustAll");
-                from(resolve(MILO_CLIENT + "&certificateValidator=#recordingValidator")).to("mock:certificateValidator");
+                // the consumers deliver the current value while they start, so the test starts these routes
+                from(resolve(trustListClient("trusted"))).autoStartup(false).to("mock:trustList");
+                from(resolve(trustListClient("empty"))).autoStartup(false).to("mock:emptyTrustList");
+                from(resolve(MILO_CLIENT)).autoStartup(false).to("mock:notConfigured");
+                from(resolve(MILO_CLIENT + "&trustAllCertificates=true")).autoStartup(false).to("mock:trustAll");
+                from(resolve(MILO_CLIENT + "&certificateValidator=#recordingValidator")).autoStartup(false)
+                        .to("mock:certificateValidator");
             }
         };
     }
@@ -146,7 +148,10 @@ class ServerCertificateValidationTest extends AbstractMiloServerTest {
         this.notConfiguredEndpoint.setExpectedCount(0);
         this.notConfiguredEndpoint.setSleepForEmptyTest(5_000);
 
+        // the value is written before the consumers start, so it is the first notification of each client that
+        // connects (and not the initial Bad value of the item)
         this.producer.sendBody("Foo");
+        context.getRouteController().startAllRoutes();
 
         MockEndpoint.assertIsSatisfied(context);
 
