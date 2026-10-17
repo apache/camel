@@ -149,6 +149,7 @@ need a consumer of their own.
 
 A node that does not exist on the server does not affect the other nodes. A node that cannot be monitored is
 reported once with its status code and is not retried; restarting the route or a rebuilt connection to the server creates the monitored items again.
+A node whose namespace URI (`nsu=`) is not in the namespace table of the server is reported in the same way.
 The consumer delivers one exchange with the bad status code for such a node, and the `CamelMiloNodeId` header names it.
 
 === Status codes and null values
