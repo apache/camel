@@ -933,6 +933,17 @@ new `compile` option of the endpoint (default `false`). The module is now loaded
 every producer, so stopping and starting a route does not read the module again: remove the route and add it
 again, or restart the application, to load a module that has changed.
 
+=== camel-web3j - the consumer subscribes again after an error
+
+When the subscription of a consumer ends with an error (for example a request to the node that fails inside
+`BLOCK_OBSERVABLE` or `TRANSACTION_OBSERVABLE`, or a node that cannot be reached when the route starts), the consumer
+now subscribes again every 15 seconds until it succeeds. The error is routed as before, and logged at `WARN`; the
+failed attempts that follow are logged at `DEBUG`. Previously the consumer received nothing more while the route
+stayed started. A new subscription starts at the latest block, so the blocks between the error and the new
+subscription are not routed. `REPLAY_BLOCKS_OBSERVABLE`, `REPLAY_TRANSACTIONS_OBSERVABLE` and an
+`ETH_LOG_OBSERVABLE` with `fromBlock` set to a block number are not subscribed again, as that would route the same
+blocks or logs again.
+
 === camel-vertx-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the HTTP consumers map a request
