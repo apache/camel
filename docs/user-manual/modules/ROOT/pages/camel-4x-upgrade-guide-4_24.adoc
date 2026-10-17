@@ -587,6 +587,13 @@ the integrations unsorted. A row without the value of the key now comes first, i
 unknown `--type` exits with `2` (it showed nothing), a `--filter` that matches nothing says so on stderr, and `--json`
 prints the Kamelets as JSON, as the other `camel catalog` commands do.
 
+=== camel-jbang - camel init does not overwrite a file
+
+`camel init` exits with `1` when the file it creates exists already, and leaves the file as it is (it overwrote the
+file before). Use `--force` to overwrite it. The same holds for the files `camel init` downloads from GitHub or a gist,
+of which it writes none when one of them exists. When the template is picked in the terminal (`camel init` without a
+file), the command asks there whether to overwrite the file.
+
 === camel-jbang - camel get history
 
 * `camel get history --diagram` and `--it` exit with `2` when several integrations have a message history, and ask for
