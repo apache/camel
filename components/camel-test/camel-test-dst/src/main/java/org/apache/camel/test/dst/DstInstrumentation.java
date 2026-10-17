@@ -51,8 +51,9 @@ import net.bytebuddy.jar.asm.Opcodes;
 /**
  * Byte code level support for the code under test, which the harness does not otherwise control:
  * <ul>
- * <li>rewrites {@code System.currentTimeMillis()} and {@code System.nanoTime()} in the classes of the given packages to
- * {@link DstClock}, so the code under test reads virtual time (no change of the component's source);</li>
+ * <li>rewrites {@code System.currentTimeMillis()}, {@code System.nanoTime()} and {@code Instant.now()} in the classes
+ * of the given packages to {@link DstClock}, so the code under test reads virtual time (no change of the component's
+ * source);</li>
  * <li>reports every other escape point it finds in those classes: own threads and executors, sleeps, wall clock reads
  * through {@code java.time}, the common fork-join pool, Reactor schedulers, blocking waits.</li>
  * </ul>
@@ -268,6 +269,13 @@ public final class DstInstrumentation {
                     report(VIRTUALIZED, call);
                     if (rewrite) {
                         super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, name, descriptor, false);
+                        return;
+                    }
+                } else if ("java/time/Instant".equals(owner) && "now".equals(name)
+                        && "()Ljava/time/Instant;".equals(descriptor)) {
+                    report(VIRTUALIZED, call);
+                    if (rewrite) {
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, "instantNow", descriptor, false);
                         return;
                     }
                 } else if ("java/lang/Thread".equals(owner)) {

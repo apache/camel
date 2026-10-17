@@ -16,9 +16,12 @@
  */
 package org.apache.camel.test.dst;
 
+import java.time.Instant;
+
 /**
- * The target of the rewritten {@code System.currentTimeMillis()} and {@code System.nanoTime()} calls of the code under
- * test (see {@link DstInstrumentation}): the virtual clock of the active run, else the real clock.
+ * The target of the rewritten {@code System.currentTimeMillis()}, {@code System.nanoTime()} and {@code Instant.now()}
+ * calls of the code under test (see {@link DstInstrumentation}): the virtual clock of the active run, else the real
+ * clock.
  */
 public final class DstClock {
 
@@ -49,5 +52,17 @@ public final class DstClock {
                                      + Thread.currentThread().getName());
         }
         return NANO_OFFSET + dst.now() * 1_000_000L;
+    }
+
+    public static Instant instantNow() {
+        Dst dst = Dst.active();
+        if (dst == null) {
+            return Instant.now();
+        }
+        if (!dst.isLoopThread()) {
+            DstEscapes.recordRuntime("virtual clock read from a thread outside the harness: "
+                                     + Thread.currentThread().getName());
+        }
+        return Instant.ofEpochMilli(dst.currentTimeMillis());
     }
 }
