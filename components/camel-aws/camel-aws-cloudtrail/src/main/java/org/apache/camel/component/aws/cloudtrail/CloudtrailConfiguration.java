@@ -54,6 +54,23 @@ public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguratio
     private int maxResults = 50;
     @UriParam(description = "Specify an event source to select events")
     private String eventSource;
+    @UriParam(defaultValue = "600000", javaType = "java.time.Duration",
+              description = "CloudTrail can make an event visible to LookupEvents minutes after its event time (AWS"
+                            + " documents typical delivery within 5 minutes of the API call), after a newer event was"
+                            + " already returned; the normal poll, which looks up from the newest event time seen, then"
+                            + " misses it. Every lookBackInterval the consumer also looks up the events from"
+                            + " lookBackWindow before now up to the newest event time seen, and routes those it has not"
+                            + " routed yet (by event id). Events before the consumer start are not routed. Cost: each"
+                            + " such lookup sends ceil(N / maxResults) LookupEvents requests, at most one per poll, where"
+                            + " N is the number of events (of the eventSource) in that range, and none when the newest"
+                            + " event time seen is older than the window. With the defaults that is one request per"
+                            + " minute while at most 50 events fall in 10 minutes. The normal polls send the same"
+                            + " requests as with 0. Set to 0 to disable the late-event lookup.")
+    private long lookBackWindow = 600000;
+    @UriParam(defaultValue = "60000", javaType = "java.time.Duration",
+              description = "How often the consumer looks up the lookBackWindow again for events that CloudTrail made"
+                            + " visible late. A late event is routed at most this long after it became visible.")
+    private long lookBackInterval = 60000;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the Cloudtrail client")
     private Protocol proxyProtocol = Protocol.HTTPS;
@@ -204,6 +221,22 @@ public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguratio
 
     public void setEventSource(String eventSource) {
         this.eventSource = eventSource;
+    }
+
+    public long getLookBackWindow() {
+        return lookBackWindow;
+    }
+
+    public void setLookBackWindow(long lookBackWindow) {
+        this.lookBackWindow = lookBackWindow;
+    }
+
+    public long getLookBackInterval() {
+        return lookBackInterval;
+    }
+
+    public void setLookBackInterval(long lookBackInterval) {
+        this.lookBackInterval = lookBackInterval;
     }
 
     public boolean isUseProfileCredentialsProvider() {
