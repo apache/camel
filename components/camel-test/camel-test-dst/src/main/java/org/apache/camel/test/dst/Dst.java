@@ -235,6 +235,19 @@ public final class Dst {
         pending.removeIf(t -> t.executor() == executor);
     }
 
+    synchronized void dropPeriodicTasksOf(DstExecutor executor) {
+        pending.removeIf(t -> t.executor() == executor && t.isPeriodic());
+    }
+
+    synchronized boolean hasPendingTasksOf(DstExecutor executor) {
+        for (DstTask<?> t : pending) {
+            if (t.executor() == executor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     synchronized boolean remove(DstTask<?> task) {
         return pending.remove(task);
     }
@@ -352,6 +365,42 @@ public final class Dst {
         } finally {
             nesting--;
         }
+    }
+
+    /**
+     * A timed wait on the loop thread: runs the other tasks until the condition holds or {@code timeoutMillis} virtual
+     * milliseconds have passed, whichever comes first, and returns whether the condition holds. The timeout is a task
+     * of the run, so when it is due at the same time as other tasks the seed picks the order.
+     * <p>
+     * One-stack limit: the condition is checked between tasks of this wait. A task that blocks (nested) above this wait
+     * on the stack returns before the wait sees its timeout, so a timeout can be noticed late (see
+     * {@link DstTask#get(long, java.util.concurrent.TimeUnit)}).
+     */
+    public boolean awaitUntil(BooleanSupplier condition, long timeoutMillis, String what) {
+        checkLoopThread("awaitUntil");
+        if (condition.getAsBoolean()) {
+            return true;
+        }
+        if (timeoutMillis <= 0) {
+            return false;
+        }
+        if (nesting >= MAX_NESTING) {
+            throw new DstViolation("nesting", "more than " + MAX_NESTING + " nested blocking calls");
+        }
+        trace("wait up to " + timeoutMillis + "ms for " + what);
+        DstTask<Object> timeout = schedule(wakeups, timeoutMillis, 0, () -> null, "timeout of " + what);
+        nesting++;
+        try {
+            runUntil(() -> condition.getAsBoolean() || timeout.isDone(), what);
+        } finally {
+            nesting--;
+            remove(timeout);
+        }
+        boolean holds = condition.getAsBoolean();
+        if (!holds) {
+            trace("timed out after " + timeoutMillis + "ms waiting for " + what);
+        }
+        return holds;
     }
 
     /** Waits on the loop thread for a future of this run (used by {@link DstTask#get()}). */

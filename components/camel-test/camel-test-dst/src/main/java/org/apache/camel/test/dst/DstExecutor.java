@@ -27,6 +27,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * An executor whose tasks run on the loop of a {@link Dst} run. {@code threads} is the number of tasks of this executor
@@ -155,7 +156,26 @@ public final class DstExecutor implements ScheduledExecutorService {
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException {
-        return invokeAll(tasks);
+        long deadline = dst.now() + unit.toMillis(timeout);
+        List<Future<T>> answer = new ArrayList<>();
+        for (Callable<T> task : tasks) {
+            answer.add(submit(task));
+        }
+        try {
+            for (Future<T> f : answer) {
+                f.get(Math.max(0, deadline - dst.now()), TimeUnit.MILLISECONDS);
+            }
+        } catch (ExecutionException e) {
+            // reported by the future
+        } catch (TimeoutException e) {
+            // the tasks not done by the deadline are cancelled, as ExecutorService.invokeAll does
+        }
+        for (Future<T> f : answer) {
+            if (!f.isDone()) {
+                f.cancel(true);
+            }
+        }
+        return answer;
     }
 
     @Override
@@ -173,15 +193,33 @@ public final class DstExecutor implements ScheduledExecutorService {
 
     @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException {
-        return invokeAny(tasks);
+            throws InterruptedException, ExecutionException, TimeoutException {
+        long deadline = dst.now() + unit.toMillis(timeout);
+        ExecutionException last = null;
+        for (Callable<T> task : tasks) {
+            Future<T> f = submit(task);
+            try {
+                return f.get(Math.max(0, deadline - dst.now()), TimeUnit.MILLISECONDS);
+            } catch (ExecutionException e) {
+                last = e;
+            } catch (TimeoutException e) {
+                f.cancel(true);
+                throw e;
+            }
+        }
+        throw last != null ? last : new ExecutionException(new IllegalArgumentException("no tasks"));
     }
 
+    /**
+     * Rejects new tasks. Periodic tasks are dropped and delayed one-shot tasks still run, as with the defaults of
+     * {@code ScheduledThreadPoolExecutor}.
+     */
     @Override
     public void shutdown() {
         if (!shutdown) {
             shutdown = true;
             dst.trace("shutdown executor " + label);
+            dst.dropPeriodicTasksOf(this);
         }
     }
 
@@ -199,12 +237,19 @@ public final class DstExecutor implements ScheduledExecutorService {
 
     @Override
     public boolean isTerminated() {
-        return shutdown && busy == 0;
+        return shutdown && busy == 0 && !dst.hasPendingTasksOf(this);
     }
 
+    /**
+     * Waits in virtual time: the loop runs until this executor is shut down with no task running or pending, or the
+     * timeout has passed. Without a shutdown it waits for the whole timeout and returns false, as a real executor does.
+     */
     @Override
     public boolean awaitTermination(long timeout, TimeUnit unit) {
-        return true;
+        if (isTerminated()) {
+            return true;
+        }
+        return dst.awaitUntil(this::isTerminated, unit.toMillis(timeout), "termination of executor " + label);
     }
 
     @Override

@@ -47,6 +47,7 @@ public final class DstTask<V> implements RunnableScheduledFuture<V> {
     private State state = State.PENDING;
     private V result;
     private Throwable failure;
+    private long doneAt = -1;
 
     DstTask(Dst dst, DstExecutor executor, long due, long sequence, long period, Callable<V> callable,
             String description) {
@@ -97,6 +98,9 @@ public final class DstTask<V> implements RunnableScheduledFuture<V> {
             state = State.FAILED;
             dst.trace("task " + description + " failed: " + e);
         }
+        if (isDone() && doneAt < 0) {
+            doneAt = dst.now();
+        }
     }
 
     @Override
@@ -125,6 +129,7 @@ public final class DstTask<V> implements RunnableScheduledFuture<V> {
             return false;
         }
         state = State.CANCELLED;
+        doneAt = dst.now();
         dst.remove(this);
         dst.trace("cancel " + description);
         return true;
@@ -148,10 +153,25 @@ public final class DstTask<V> implements RunnableScheduledFuture<V> {
         return report();
     }
 
+    /**
+     * Waits in virtual time: the loop runs the other tasks until this task is done or the timeout has passed.
+     * <p>
+     * One-stack limit: a task that starts during this wait and blocks runs nested above it on the stack of the loop
+     * thread, so the wait notices its timeout only when that task returns. When this task completes after the deadline
+     * that way, the call still reports a timeout, as a real caller would have seen it, but the side effects of the task
+     * have already happened.
+     */
     @Override
     public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        // virtual time: the timeout does not apply, the loop runs until the task is done or nothing can run
-        return get();
+        long deadline = dst.now() + unit.toMillis(timeout);
+        if (!isDone()) {
+            dst.awaitUntil(this::isDone, unit.toMillis(timeout), "result of " + description);
+        }
+        if (!isDone() || doneAt > deadline) {
+            throw new TimeoutException(
+                    "DST: " + description + " not done within " + unit.toMillis(timeout) + " virtual ms");
+        }
+        return report();
     }
 
     private V report() throws ExecutionException {
