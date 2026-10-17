@@ -16,10 +16,15 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.camel.console.DevConsole;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,5 +44,21 @@ public class ReceiveDevConsoleTest extends AbstractDevConsoleTest {
         JsonObject jsonOut = callJson(console);
         assertNotNull(jsonOut.get("enabled"));
         assertNotNull(jsonOut.get("total"));
+    }
+
+    @Test
+    public void testDumpWithoutMessages() {
+        DevConsole console = assertConsoleExists("receive", "camel");
+        // started, as the dev console registry of an application does
+        ServiceHelper.startService(console);
+
+        // nothing received yet, or since the last dump: the camel cli connector dumps all the time
+        String textOut = callText(console, Map.of("dump", "true"));
+        assertEquals("[]", textOut.trim());
+
+        JsonObject jsonOut = callJson(console, Map.of("dump", "true"));
+        Collection<?> messages = jsonOut.getCollection("messages");
+        assertNotNull(messages);
+        assertTrue(messages.isEmpty());
     }
 }

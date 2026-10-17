@@ -25,6 +25,40 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-report-maven-plugin:validate / configuration-validate
+
+The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
+(previously only 7 of the 36 groups were recognized, besides `camel.component.*`, `camel.dataformat.*`
+and `camel.language.*`). As a result,
+`camel-report-maven-plugin:validate` and the camel-jbang MCP `camel_configuration_validate` tool
+now validate 29 additional `camel.*` groups (including `camel.server.*`,
+`camel.management.*`, `camel.vault.*`, `camel.ssl.*`, and others).
+
+If your project uses Spring Boot and has options such as `camel.metrics.uriTagEnabled` (from a
+Camel starter) that are not in the camel-main schema, `camel-report-maven-plugin:validate` may
+report them as "Unknown option", which fails the build when `failOnError=true`. The
+`camel_configuration_validate` MCP tool with `runtime=spring-boot` reports such keys as
+`checked=false` instead.
+
+Group names are now matched with dash- and case-insensitive normalisation, matching how
+camel-main binds keys at runtime. For example, `camel.error-registry.enabled` and
+`camel.ai-observability.enabled` are now accepted alongside their camel-case equivalents.
+
+If your project uses `camel-report-maven-plugin:validate` with `failOnError=true`,
+a key that was silently ignored before (e.g. a misspelled option under one of the newly accepted
+groups) may now cause the build to fail. Review the validation output and correct any misspelled keys.
+
+The `camel_configuration_validate` MCP tool response format has changed:
+
+* `PropertyValidationInfo.accepted` is renamed to `checked`.
+* `ConfigurationValidateSummary` gains a new `unchecked` integer field counting lines whose
+  namespace is not recognized as a Camel property (e.g. `server.port=8080` or `quarkus.*` keys).
+  Before, such lines were returned with `accepted=false` and `valid=true`; they are now
+  `checked=false` and are left out of `summary.valid` and `summary.errors`.
+
+If you call `camel_configuration_validate` programmatically and read the JSON response, update
+field references from `accepted` to `checked` and handle the new `summary.unchecked` field.
+
 === camel-semantic - expert artifacts
 
 TypeSafe AI Semantic applications must add `org.apache.camel:camel-semantic-typesafe-ai`.
@@ -375,6 +409,19 @@ The JSON of the listings (`--json`) changes, so that a script can use the values
   the state is `status` (it was `state` in `camel get circuit-breaker`). `camel get consumer` has `total` instead of
   `poll`. Every row of `camel get processor` has the `name` of its integration.
 
+=== camel-jbang - camel get route, processor, metric and health
+
+* `camel get route --error --limit` shows that number of routes with an error (it limited the routes first, and then
+  showed the ones with an error among them), and `--note` shows the notes of the routes with an error too.
+* `camel get processor --filter` shows the matching processors with their route, and so with the name and pid of their
+  integration (it showed the processors alone). `--filter-mean` leaves out the faster processors too, as its
+  description says (it left out the faster routes only).
+* `camel get metric` shows the distribution summaries: an integration that has one was skipped with a warning.
+  `--filter` takes a pattern such as `timer*`, as in its help (it showed nothing), and `--custom` leaves out the metrics
+  of Camel in the default naming of Micrometer, such as `camel.exchanges.total`, not only in the classic naming
+  (`CamelExchangesTotal`).
+* `camel get health --level` other than `full` or `default` exits with `2` (it showed every check, as `full` does).
+
 === camel-jbang - camel stop and camel restart wait for the integration
 
 * `camel stop` waits until the integration has stopped, up to `--timeout` (60 seconds by default), and exits with `124`
@@ -387,6 +434,11 @@ The JSON of the listings (`--json`) changes, so that a script can use the values
   and keeps its output in a log file in `~/.camel`, which it prints (the log was removed when the command ended). A new
   integration that stops right away prints the end of its log and exits with `1`; one that is still starting after
   `--timeout` exits with `124` and is left running.
+
+=== camel-jbang - camel cmd browse of an endpoint that cannot be browsed
+
+`camel cmd browse --endpoint` with an endpoint that the integration cannot browse, or that it does not have, exits with
+`3` (it printed an empty table and exited with `0`).
 
 === camel-jbang - no command waits for a terminal that is not there
 
@@ -406,6 +458,14 @@ Without an interactive terminal, such as in a script, a CI job (the `CI` environ
 it off (use `--follow=false` to turn it off). In a terminal, the end of the input (Ctrl+D) stops a command that watches
 or follows, like Enter does.
 
+=== camel-jbang - camel cmd route-diagram and camel cmd span
+
+* `camel cmd route-diagram --highlight` with node ids that no route has exits with `3` (it drew the diagram with
+  nothing highlighted). Its errors are printed on stderr, and a graphical `--theme` in a terminal without graphics exits
+  with `2`.
+* `camel cmd span --trace` with a trace id that matches no trace exits with `3` (it printed a message and exited with
+  `0`), and an unknown `--sort` key of the traces exits with `2` (it sorted the newest first).
+
 === camel-jbang - camel run: startup in the background, and input errors
 
 * `camel run --background` waits up to 60 seconds for the integration to start (it was 20 seconds), and
@@ -423,6 +483,15 @@ or follows, like Enter does.
   printed. Files together with `--source-dir`, and `--background` with a runtime that does not support it, exit with
   `2`.
 
+=== camel-jbang - camel explain and camel harden
+
+* The LLM configuration, the progress and the prompts of `--show-prompt` are printed on stderr, so stdout has only the
+  answer of the LLM (with a header per file), such as for `camel explain route.yaml > explanation.md`.
+* An unknown `--format` exits with `2` (it was ignored).
+* `camel harden --api-type=openai` prints the suggestions (it printed only the header): the OpenAI-compatible service
+  answers in one go, also with `--stream`.
+* An API key of eight characters or fewer is not shown in the configuration (the last four characters of a key were).
+
 === camel-jbang - the AI tools report failures as errors
 
 * `camel ask` runs a `camel` command for the model with a timeout of 60 seconds, and gives it the exit code, stdout and
@@ -436,6 +505,28 @@ or follows, like Enter does.
 * `camel_control restart` in `camel tui --mcp` waits until the integration has started again, or failed to start (it
   answered at once), and `camel_control stop-routes` and `start-routes` answer with what was done instead of the
   answer of the integration.
+
+=== camel-jbang - the errors of a streamed answer of an LLM
+
+* When the streamed answer of an LLM fails, as with `camel explain`, `camel ask` or `camel overview --ai` against
+  Ollama, the error is printed on stderr: it was printed on stdout after the answer so far. A failure without a message
+  of its own, such as a refused connection, has the message of its cause instead of `null`.
+* `camel ask` with an OpenAI-compatible server that gives the arguments of a tool call as a JSON object, instead of JSON
+  text, calls the tool with these arguments (it called it without arguments).
+
+=== camel-jbang - camel ask: the exit code and the output of a question
+
+* `camel ask` exits with `1` when the call of the LLM fails, such as with an error of the model or a refused connection:
+  it exited with `0` without an answer.
+* `camel ask` with a question prints only the answer on stdout. The model it uses, the integration it asks about, the
+  note about a small model, and the output of `--show-tools` and `--show-stats` go to stderr.
+
+=== camel-jbang - an LLM given with --url is the only one used
+
+`camel ask`, `camel explain` and `camel overview --ai` fail when the LLM given with `--url` does not answer: they went
+on to another provider, such as the Ollama of the host, or a hosted provider with an API key in the environment, and
+sent the prompts there. The AI panel of the Camel TUI does the same with the URL of its settings. Without `--url` the
+provider is detected as before.
 
 === camel-jbang - exit codes and errors of more commands
 
@@ -466,6 +557,23 @@ or follows, like Enter does.
 * A plugin that cannot be loaded ends the command with exit code `1` and the error, as before, but no longer exits the
   JVM while the plugins load, which ended a program that embeds the CLI.
 
+=== camel-jbang - camel overview and camel transform route
+
+* `camel overview --format` other than `markdown` or `json` exits with `2` (it printed the markdown).
+* `camel transform route --format` other than `xml`, `yaml` or `java` exits with `2` (it ran the routes and printed
+  nothing), and a route that cannot be read, such as invalid YAML, exits with `1` and the error of the parser (it failed
+  with an internal error, `70`, and a stack trace).
+
+=== camel-jbang - camel get bean, get route-controller and top source
+
+* `camel get bean --dsl` shows the configuration of each property next to that property: it paired them by position,
+  which showed the configuration of another property, or failed with an internal error (`70`) with `--nulls=false`.
+  An unknown `--scope` exits with `2` (it showed every bean).
+* `camel get route-controller` shows back-off times and attempts that do not fit in an int (it showed other numbers),
+  and no longer shows `Starting Routes: false` for the default route controller, which does not tell.
+* `camel top source --json` has the counters `total`, `mean`, `min`, `max` and `last` as numbers instead of text, as
+  the other listings.
+
 === camel-jbang - a boolean option given without a value is on
 
 A boolean option that is on by default is now on when it is given without a value, like any other boolean option:
@@ -479,6 +587,26 @@ Turn the option off with `=false`, such as `--maven-wrapper=false`, which works 
 The commands that sort their rows by `--sort`, such as `camel ps`, `camel get route`, `camel cmd thread-dump` or
 `camel catalog component`, exit with `2` and list their keys when the key is unknown: `camel ps --sort=nmae` printed
 the integrations unsorted. A row without the value of the key now comes first, instead of failing the command.
+
+=== camel-jbang - camel catalog kamelet
+
+`camel catalog kamelet --filter` no longer fails with an internal error (`70`) when a Kamelet has no description. An
+unknown `--type` exits with `2` (it showed nothing), a `--filter` that matches nothing says so on stderr, and `--json`
+prints the Kamelets as JSON, as the other `camel catalog` commands do.
+
+=== camel-jbang - camel init does not overwrite a file
+
+`camel init` exits with `1` when the file it creates exists already, and leaves the file as it is (it overwrote the
+file before). Use `--force` to overwrite it. The same holds for the files `camel init` downloads from GitHub or a gist,
+of which it writes none when one of them exists. When the template is picked in the terminal (`camel init` without a
+file), the command asks there whether to overwrite the file.
+
+=== camel-jbang - camel get history
+
+* `camel get history --diagram` and `--it` exit with `2` when several integrations have a message history, and ask for
+  the name or pid of one (they printed a message on stdout and exited with `1`). The errors of `--diagram` are printed on
+  stderr, and a graphical `--theme` in a terminal without graphics exits with `2`.
+* `camel get history --json --mask` masks the secrets of the endpoints in the JSON too, as in the table.
 
 === camel-jbang - exit codes of config set, dependency list, jolokia and cmd memory-leak
 
@@ -497,12 +625,101 @@ the integrations unsorted. A row without the value of the key now comes first, i
   of the CLI (`3.27.3.1` came after `3.27.4`), and a `-SNAPSHOT` always comes before its release, as in Maven
   (`4.24.10-SNAPSHOT` came after `4.24.10`).
 
+=== camel-jbang - camel dependency copy, update run and get error
+
+* `camel dependency copy` deletes the JAR files an earlier copy left in `--output-directory`, and keeps its other files:
+  it deleted the whole directory (with `--output-directory=.` the project). It exits with `1` when a dependency cannot
+  be resolved or copied (it printed the error and exited with `0`), and with `2` when `--output-directory` is a file.
+* `camel update run --runtime=quarkus --download=false` without `--quarkusMavenPluginVersion` exits with `2`, and a
+  version without upgrade recipes exits with `1`: both failed with an internal error (`70`).
+* `camel get error --last` shows the newest error of all the integrations (it showed the newest error of the integration
+  with the lowest pid). An `--ago` that is not a duration, and a `--handled` that is not `true` or `false`, exit with
+  `2`: the first showed every error, the second none. The errors of `--diagram` are printed on stderr, and a graphical
+  `--theme` in a terminal without graphics exits with `2`.
+
+=== camel-jbang - camel version list
+
+* `camel version list` prints the `Last updated` note on stderr, so stdout has the table only.
+* A `--date-format` that is not a date pattern, and a `--from-date` or `--to-date` that is not a date in the
+  `yyyy-MM-dd` format (such as `2025-01-31`), exit with `2`: the first showed the dates unformatted, and the others were
+  ignored.
+
 === camel-jbang - the shared action file is deprecated for plugin commands
 
 `CamelCommand.getActionFile` and `CamelCommand.getOutputFile`, the action and output files that all the clients of an
 integration share, are deprecated. A plugin command sends an action with `ActionClient` instead, which gives each action
 a file of its own, so that two clients cannot overwrite each other's action or answer, and uses the shared files only
 for an integration before Camel 4.21. `camel debug` sends its commands this way too.
+
+=== camel-jbang - camel log, trace, cmd receive, cmd send, transform message and cmd memory-leak
+
+* `camel log`, `camel trace --action=dump` and `camel cmd receive --action=dump` exit with `3` when the name or pid
+  matches no running integration, and they do not follow (in a script or an AI agent, or with `--follow=false`): they
+  printed nothing and exited with `0`.
+* `camel cmd receive --action=dump` without a name shows the messages of the running integrations (it showed nothing).
+  With `--output=json` it prints each received message once, as one JSON document per line with its `exchangeId`: it
+  printed the batch of messages a line of the received file holds once for each message in it. `--since`, `--grep` and
+  `--mask` apply to the JSON too.
+* `camel trace` and `camel cmd receive` exit with `2` for an unknown `--sort` key, as the other listings do.
+* `camel trace --tail` shows the end of the last exchange as completed, not as returning from its route.
+* `camel cmd send` and `camel transform message` print the error and exit with `1` when the integration fails the action
+  itself (they failed with an internal error, `70`).
+* `camel cmd memory-leak` exits with `1` when the integration fails the action, such as when it cannot record, or has no
+  `jfr-memory-leak` dev console: it printed nothing and exited with `0`. `--status` shows the progress of a recording
+  (it said the recording started), and after a recording that its results can be queried (it said that no samples were
+  captured).
+
+=== camel-jbang - camel cmd eval with quotes and slashes
+
+`camel cmd eval`, and the tools that evaluate an expression in a running integration (`camel ask`, and
+`camel_eval_expression` of `camel mcp` and `camel tui --mcp` with an integration selected), send the expression and the
+body as they are. They escaped them, which the integration does not undo: an expression with a double quote failed,
+such as `+${body} == "hello"+`, and a slash (as in every XPath) or a quote in the body became part of the text.
+
+=== camel-jbang - the runtime tools of camel ask and the MCP servers
+
+* `send_message` of `camel ask`, and `tui_send_message` of `camel tui --mcp`, send the headers given as `key=value`
+  lines, as their description says: the integration got the lines as one text, which it could not read as headers, and
+  failed the message. A line that is not `key=value` is an error of the tool.
+* `get_circuit_breakers` has the calls of the fallback, the calls that timed out and the calls a full bulkhead
+  rejected, as `camel get circuit-breaker` shows them.
+* `get_route_analysis`, `get_eip_stats` and `detect_config_drift` have the answers of the integration as JSON, instead
+  of as JSON text inside their JSON.
+
+=== camel-jbang-mcp - migration and dependency tools
+
+The `camel_migration_compatibility` tool no longer takes the `camelComponents` argument, which it never used. It
+now takes the Java requirement from the JDK versions of the target release in the catalog (the same data as
+`camel_version_list`): Camel 4.19 and later no longer report Java 17 as a blocker, and `javaCompatibility` also
+lists the `supportedVersions`. A target version newer than every release in the catalog has no Java requirement: the
+tool says so in `warnings` instead of taking the one of the newest release.
+
+`camel_migration_recipes` returns commands that run: the Spring Boot command activates
+`org.apache.camel.upgrade.CamelSpringBootMigrationRecipe`, the recipes artifact is the `<major>.<minor>.0` release
+of the target version, the OpenRewrite plugin is no longer pinned to a version, and the Quarkus command runs the
+`quarkus-maven-plugin` at the Quarkus platform version of the new optional `quarkusPlatformVersion` argument (or the
+latest one), with `-Drewrite=true` for a full run.
+
+In `camel_dependency_check` and `camel_dependency_security_audit` the dependencies are the declared ones: a
+component only in `dependencyManagement` or in the dependencies of a plugin no longer counts, and Spring Boot starters
+and Camel Quarkus extensions count as the component they provide. The version status of `camel_dependency_check`
+compares the project with the latest Camel release, added as `latestVersion`, instead of the catalog version of the
+server. The security audit no longer audits the server's catalog version when the `pom.xml` sets no Camel version:
+it audits the `camelVersion` argument, else lists every advisory of the declared components, and says so in
+`warnings`. Its `reachable` is null when no routes are given, advisories without components are returned as
+`uncheckedAdvisories`, and `clean` is true only when none of them apply.
+
+=== camel-jbang-mcp - camel_openapi_mock_guidance is removed
+
+The `camel_openapi_mock_guidance` MCP tool is removed. Call `camel_openapi_scaffold` with
+`missingOperation=mock` instead: its answer explains the mode and lists the `camel-mock/` files, one per path
+of the spec. The scaffold and `camel_openapi_validate` now follow the rules of camel-rest-openapi: an operation
+without `operationId` is routed to `direct:GENOPID_<METHOD><path>` with `/` replaced by `.` and the braces of
+path parameters by `_` (`direct:GENOPID_GET.pets._petId_` for `+GET /pets/{petId}+`), and a mock file has the
+request path as its name, without the HTTP method (`camel-mock/pets/42.json` for `GET /pets/42`). The
+security scheme diagnostics of `camel_openapi_validate` are now all warnings with a `SECURITY_<type>` code
+(`SECURITY_APIKEY`, `SECURITY_HTTP`, ...), as camel-rest-openapi enforces none of them, and `OPENAPI_31` is
+reported as information instead of a warning.
 
 === camel-jpa, camel-hazelcast - an exchange marked rollback only is not consumed
 
@@ -530,6 +747,19 @@ run its `onConsume` statement, and the jOOQ consumer does not delete the entity,
 again. With `transacted=true` the SQL and MyBatis consumers break out of the batch and roll back.
 `markRollbackOnlyLast()` reaches the consumer only when no `transacted()` EIP has consumed the flag, so the
 consumer's own transaction is the last one.
+
+=== camel-jta - an exchange marked rollback only last rolls back its transaction
+
+In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the
+transaction of that `transacted()` block, as it already did with the camel-spring transaction error handler. Before,
+the transaction was committed, and the marker was then cleared, so nothing showed that the rollback was skipped.
+The marker is still cleared afterwards, so an outer `transacted()` block does not see it.
+
+If the `transacted()` block in which the exchange is marked rollback only last joins the transaction of an outer block
+(for example a `PROPAGATION_MANDATORY` block inside a `PROPAGATION_REQUIRED` block), that shared JTA transaction is now
+marked rollback only, so the commit of the outer block fails (in Camel Quarkus with `CamelException: Unable to commit transaction`) where it used
+to commit, as with camel-spring (`UnexpectedRollbackException`). To roll back only the inner block, use
+`PROPAGATION_REQUIRES_NEW` for it.
 
 === camel-telegram - webhook requests are verified with a secret token
 
@@ -570,6 +800,15 @@ A `hashicorp:` property with a field of a secret that does not exist, such as `{
 now resolves to no value, as it already did without a field, so its default value or an optional placeholder
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
+
+=== camel-bindy - a number field without precision keeps all its decimals when marshalled
+
+A `BigDecimal`, `Double` or `Float` field whose `@DataField` (or `@KeyValuePairField`) has no `precision` and no
+`pattern` was marshalled with at most three decimals, rounded: `1.23456` was written as `1.235` and `0.000123` as `0`
+(since Camel 4.22, CAMEL-24168; up to Camel 4.21 the default `precision = 0` wrote these fields without any decimals).
+It is now written with all its decimals, so a record that is unmarshalled and marshalled again is the same text. A
+`Double` that is the result of a calculation is written with all its digits too (`0.1 + 0.2` as `0.30000000000000004`,
+before `0.3`). Set `precision` to get a fixed number of decimals, as before.
 
 === camel-ical - each unmarshal parses with its own calendar builder
 
@@ -706,6 +945,20 @@ The `route-parser` plugin (`camel route-parser`) and its `camel-jbang-plugin-rou
 without compiling it, and of YAML and XML sources too. If you installed the plugin, remove it with
 `camel plugin delete route-parser`.
 
+=== camel-jbang-mcp - the camel_component_properties tool is removed
+
+The `camel_component_properties` MCP tool is removed. It listed the endpoint options of a component as
+`camel.component.<scheme>.<option>` keys, which `camel run` and `camel_configuration_validate` reject: only the
+component options can be set that way. Use `camel_catalog_doc` instead: each component option in its answer carries
+its `application.properties` key as `configKey`.
+
+`camel_catalog_doc` without `optionsFilter` now lists the required options and the first 20 other options of a
+component in full, and the rest by name in `moreOptions` (`limit` lists more in full), and an answer is cut at
+16 000 characters with a marker. An option of both the endpoint and the component is listed once, with `scope`
+set to `endpoint,component` and its `configKey`, instead of twice, and `matchedOptions` counts option names. A name
+that only matches a word of an EIP title (such as `retry`) no longer returns that EIP: the answer is a not-found with
+suggestions.
+
 === camel-wasm - the endpoint runs WASI command modules (Breaking change)
 
 The `wasm` endpoint now runs WASI Preview 1 command modules (the body is standard input, standard output becomes the
@@ -794,6 +1047,14 @@ The `saveBulk` and `executeTransaction` operations of `dapr:state` built their r
 nothing was stored and the exchange completed without an error. The requests are now sent, and the producer waits for
 the answer like the other state operations: the states are stored, and a request that Dapr rejects (or a sidecar that
 cannot be reached) fails the exchange.
+
+=== camel-docker - the events consumer subscribes again when its event stream ends
+
+The `docker:events` consumer subscribes again when its event stream fails or ends (for example when the Docker daemon
+restarts): after 1 second, then with a delay that doubles up to 30 seconds while the daemon cannot be reached. Before,
+it stayed started without receiving any event. The events of the time without a stream are not received. Stopping a
+`docker:events` or `docker:stats` consumer now closes its stream: before, the stream stayed open, and a route that was
+stopped and started again received every event once more for each restart.
 
 === camel-influxdb2 - a write is synchronous and a rejected write fails the exchange
 
@@ -1004,6 +1265,15 @@ When a route is suspended (`RouteController.suspendRoute`, also from a route pol
 consumer stops after the message that is being routed. The other messages of that poll were skipped when the route
 was resumed. They are now kept and routed by the first poll after the resume, together with the messages posted in
 the meantime. They are kept in memory only: a route that is stopped and started again does not route them.
+
+=== camel-mail - mails of a poll that were not routed, with an idempotentRepository
+
+With an `idempotentRepository`, the mail consumer now removes the keys of the mails that a poll retrieved but did not
+route (the consumer was stopped in the middle of the batch, or the poll failed on a later mail), so that a later poll
+routes them. Before, they were skipped as duplicates by every later poll. As a consequence, a mail that the consumer
+cannot read (with the default `skipFailedMessage=false` and `handleFailedMessage=false`) now fails every poll until it
+is removed, as it does without an `idempotentRepository`. Before, it failed only the first poll and was then skipped,
+together with the mails retrieved before it. Set `skipFailedMessage` or `handleFailedMessage` to skip such a mail.
 
 === camel-smpp - the host name of the SMSC is verified over SSL
 
@@ -1273,3 +1543,29 @@ The consumer now sets the `CamelMiloNodeId` header on every exchange, including 
 Stopping a consumer now deletes its monitored items. Previously they stayed on the server while another endpoint kept
 the shared connection open, so a restarted consumer received each value twice. While the server is unreachable, the
 stop waits until the client's next attempt to reconnect has failed.
+
+=== camel-protobuf - a bytes field in a Map
+
+When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
+a `bytes` field is now a `byte[]` with the content of the field. Previously it was the `String` that
+`ByteString.toString()` returns, a description such as `<ByteString@1b6d3586 size=4 contents="...">`, which does not
+contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepted for a `bytes` field.
+
+=== camel-jbang-mcp - runtime tools that changed behaviour
+
+Some runtime tools of the Camel MCP server now do what their description says, which changes what a client sees:
+
+* `camel_runtime_receive` receives a message in one call: it starts a consumer on the endpoint, waits up to
+  `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer. It returns one message
+  by default; `limit` returns up to that many, and `received` counts every message the consumer took, returned or
+  not. Before, it started a consumer that kept running, took the messages from the routes, and returned none of
+  them. It is now marked destructive, so the `read-write` access level (`camel.mcp.security.access-level`) no longer
+  offers it, only `admin` does. It runs one call at a time per process, and refuses to run while `camel cmd receive`
+  is receiving from the same process.
+* `camel_runtime_memory_leak` with `command=start` and no `mode` makes one recording (60 seconds by default) and
+  returns at once; get the results with `query` once it is done. Before, it made two recordings and blocked for about
+  90 seconds, longer than many MCP clients wait. Pass `mode=dual` for the previous behaviour, or make the two
+  recordings yourself and use the new `compare` command. A `duration` that is not a whole number of seconds is
+  refused.
+* `camel_runtime_route_dump`, `camel_runtime_route_structure` and `camel_runtime_route_analysis` return the routes
+  that `routeId` names; they returned every route whatever `routeId` was.

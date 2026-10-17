@@ -65,6 +65,9 @@ public class CamelSpanAction extends ActionBaseCommand {
             .numeric("duration", r -> r.durationMs)
             .text("status", r -> r.status);
 
+    // the keys of the order of the traces (see sortTraceSummary)
+    private static final List<String> TRACE_ORDER = List.of("trace", "route", "from", "spans", "routes", "status", "duration");
+
     public static class SortCompletionCandidates implements Iterable<String> {
 
         public SortCompletionCandidates() {
@@ -200,6 +203,10 @@ public class CamelSpanAction extends ActionBaseCommand {
             }
             tableSpans(rows);
         } else {
+            if (sort != null && !TRACE_ORDER.contains(sort.startsWith("-") ? sort.substring(1) : sort)) {
+                throw CliException.usage("--sort must be one of " + String.join(", ", TRACE_ORDER)
+                                         + " (with - in front for the reverse order), was: " + sort);
+            }
             List<TraceSummary> summaries = buildTraceSummaries(rows);
             if (filter != null) {
                 summaries.removeIf(ts -> !ts.searchText.contains(filter.toLowerCase()));
@@ -341,8 +348,7 @@ public class CamelSpanAction extends ActionBaseCommand {
             }
         }
         if (matchedTraceId == null) {
-            printer().println("No trace found matching '" + traceIdMatch + "'");
-            return;
+            throw CliException.notFound("No trace found matching: " + traceIdMatch);
         }
 
         final String tid = matchedTraceId;

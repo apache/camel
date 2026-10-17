@@ -18,8 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -46,6 +48,8 @@ import picocli.CommandLine.Command;
                  "  camel get bean --json" })
 public class CamelBeanDump extends ActionBaseCommand {
 
+    private static final List<String> SCOPES = List.of("all", "user", "camel", "spring", "quarkus");
+
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .text("name", r -> r.name)
             .text("type", r -> r.type);
@@ -69,7 +73,7 @@ public class CamelBeanDump extends ActionBaseCommand {
 
         @Override
         public Iterator<String> iterator() {
-            return List.of("all", "user", "camel", "spring", "quarkus").iterator();
+            return SCOPES.iterator();
         }
 
     }
@@ -122,6 +126,10 @@ public class CamelBeanDump extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
+        if (!SCOPES.contains(scope)) {
+            throw CliException.usage("--scope must be one of " + String.join(", ", SCOPES) + ", was: " + scope);
+        }
+
         CamelProcess process = findOne(name);
         this.pid = process.pid();
 
@@ -149,7 +157,15 @@ public class CamelBeanDump extends ActionBaseCommand {
             row.name = jt.getString("name");
             row.type = jt.getString("type");
             JsonArray arr = jt.getCollection("properties");
+            // the configuration of the properties in the DSL, by name: the two lists can differ without --nulls
+            Map<String, String> configValues = new HashMap<>();
             JsonArray arr2 = jt.getCollection("modelProperties");
+            if (arr2 != null) {
+                for (Object o : arr2) {
+                    JsonObject p2 = (JsonObject) o;
+                    configValues.put(p2.getString("name"), p2.getString("value"));
+                }
+            }
             if (arr != null) {
                 row.properties = new ArrayList<>();
                 for (int i = 0; i < arr.size(); i++) {
@@ -159,12 +175,7 @@ public class CamelBeanDump extends ActionBaseCommand {
                     pr.name = p.getString("name");
                     pr.type = p.getString("type");
                     pr.value = p.get("value");
-                    if (arr2 != null) {
-                        JsonObject p2 = (JsonObject) arr2.get(i);
-                        if (p2 != null) {
-                            pr.configValue = p2.getString("value");
-                        }
-                    }
+                    pr.configValue = configValues.get(pr.name);
                 }
             }
             rows.add(row);

@@ -154,7 +154,7 @@ public final class PluginHelper {
                 continue;
             }
 
-            plugin.getValue().customize(commandLine, main);
+            apply(plugin.getValue(), commandLine, main);
         }
     }
 
@@ -180,10 +180,16 @@ public final class PluginHelper {
         main.getOut().printDiagnostic("Installed plugin: " + pluginType.get().getName());
         for (Map.Entry<String, Plugin> plugin : getActivePlugins(main, resolveRepos(args), target).entrySet()) {
             if (!commandLine.getSubcommands().containsKey(plugin.getKey())) {
-                plugin.getValue().customize(commandLine, main);
+                apply(plugin.getValue(), commandLine, main);
             }
         }
         return true;
+    }
+
+    // adds the commands of the plugin, and the main remembers the plugin for the command lines it makes later
+    private static void apply(Plugin plugin, CommandLine commandLine, CamelJBangMain main) {
+        plugin.customize(commandLine, main);
+        main.addPlugin(plugin);
     }
 
     // allow to download plugins from 3rd party maven repositories by --repos argument, or the user configuration
@@ -800,7 +806,7 @@ public final class PluginHelper {
                     return true;
                 }
 
-                plugin.customize(commandLine, main);
+                apply(plugin, commandLine, main);
                 return true;
             }
         } catch (Exception e) {

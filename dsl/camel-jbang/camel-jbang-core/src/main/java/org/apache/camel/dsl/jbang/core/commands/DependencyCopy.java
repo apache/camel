@@ -17,18 +17,19 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
-import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "copy",
@@ -49,27 +50,45 @@ public class DependencyCopy extends DependencyList {
 
     private boolean outputDirectoryCreated = false;
 
+    // the artifacts that could not be resolved or copied
+    private int failures;
+
     public DependencyCopy(CamelJBangMain main) {
         super(main);
+    }
+
+    @Override
+    public Integer doCall() throws Exception {
+        Path dir = Paths.get(outputDirectory);
+        if (Files.exists(dir) && !Files.isDirectory(dir)) {
+            throw CliException.usage("--output-directory must be a directory, was: " + outputDirectory);
+        }
+        int answer = super.doCall();
+        if (answer == 0 && failures > 0) {
+            // each artifact that failed is printed on stderr
+            return CliExitCode.FAILURE;
+        }
+        return answer;
     }
 
     private void createOutputDirectory() {
         if (!outputDirectoryCreated) {
             outputDirectoryCreated = true;
-            Path outputDirectoryPath = Paths.get(outputDirectory);
-            if (Files.exists(outputDirectoryPath)) {
-                if (Files.isDirectory(outputDirectoryPath)) {
-                    FileUtil.removeDir(outputDirectoryPath.toFile());
-                } else {
-                    printer().printErr("Error creating the output directory: " + outputDirectory
-                                       + " is not a directory");
-                    return;
-                }
-            }
+            Path dir = Paths.get(outputDirectory);
             try {
-                Files.createDirectories(outputDirectoryPath);
+                if (Files.isDirectory(dir)) {
+                    // the JARs of an earlier copy, which can be of other versions, but not the other files of the
+                    // directory: it is not always one that only holds the dependencies, such as with
+                    // --output-directory=.
+                    try (Stream<Path> files = Files.list(dir)) {
+                        for (Path jar : files.filter(f -> f.getFileName().toString().endsWith(".jar")).toList()) {
+                            Files.delete(jar);
+                        }
+                    }
+                }
+                Files.createDirectories(dir);
             } catch (IOException e) {
-                throw new UncheckedIOException("Error creating the output directory: " + outputDirectory, e);
+                throw CliException.failure("Cannot create the output directory " + outputDirectory + ": " + e.getMessage());
             }
         }
     }
@@ -88,8 +107,10 @@ public class DependencyCopy extends DependencyList {
                 Files.copy(artifact.getFile().toPath(), target);
             }
         } catch (MavenResolutionException e) {
+            failures++;
             printer().printErr("Error resolving the artifact: " + gav + " due to: " + e.getMessage());
         } catch (IOException e) {
+            failures++;
             printer().printErr("Error copying the artifact: " + gav + " due to: " + e.getMessage());
         }
     }

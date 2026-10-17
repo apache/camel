@@ -161,7 +161,60 @@ class DependencySecurityAuditToolsTest {
                 = tools.camel_dependency_security_audit(SIMPLE_POM, null, null, null, null, null);
 
         assertThat(result.recommendations()).isNotNull();
-        assertThat(result.recommendations()).anyMatch(r -> r.contains("Upgrade"));
+        assertThat(result.recommendations()).anyMatch(r -> r.startsWith("Upgrade from Camel 4.10.0"))
+                .noneMatch(r -> r.contains("SNAPSHOT"));
+    }
+
+    @Test
+    void shouldSayWhenTheCamelVersionIsNotDetected() {
+        // a Spring Boot project whose Camel version comes from the parent: the starter is audited as camel-http
+        String parentManaged = """
+                <project>
+                    <parent>
+                        <groupId>com.example</groupId>
+                        <artifactId>company-parent</artifactId>
+                        <version>1.0</version>
+                    </parent>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.camel.springboot</groupId>
+                            <artifactId>camel-http-starter</artifactId>
+                        </dependency>
+                    </dependencies>
+                </project>
+                """;
+
+        DependencySecurityAuditTools.AuditResult unknown
+                = tools.camel_dependency_security_audit(parentManaged, null, null, null, null, null);
+        assertThat(unknown.summary().camelVersion()).isNull();
+        assertThat(unknown.summary().camelVersionDetected()).isFalse();
+        assertThat(unknown.summary().clean()).isFalse();
+        assertThat(unknown.warnings()).singleElement().asString().contains("camelVersion");
+        assertThat(unknown.vulnerableArtifacts()).singleElement().satisfies(a -> {
+            assertThat(a.artifactId()).isEqualTo("camel-http-starter");
+            assertThat(a.reachable()).as("no routes, reachability unknown").isNull();
+        });
+        assertThat(unknown.recommendations()).noneMatch(r -> r.contains("directly used in routes"));
+
+        // the version of this server's catalog, so that no other catalog is downloaded
+        String version = tools.catalogService.getDefaultCatalog().getCatalogVersion().replace("-SNAPSHOT", "");
+        DependencySecurityAuditTools.AuditResult given
+                = tools.camel_dependency_security_audit(parentManaged, null, null, version, null, null);
+        assertThat(given.summary().camelVersion()).isEqualTo(version);
+        assertThat(given.summary().camelVersionDetected()).isFalse();
+        assertThat(given.warnings()).singleElement().asString().contains(version);
+    }
+
+    @Test
+    void shouldNotBeCleanWhenAdvisoriesWithoutComponentsMayApply() {
+        // CVE-2024-22371 names no component and affects 4.1.0 before 4.4.0
+        DependencySecurityAuditTools.AuditResult result = tools.camel_dependency_security_audit(
+                CURRENT_VERSION_POM.replace("4.22.0", "4.2.0"), null, null, null, null, null);
+
+        assertThat(result.uncheckedAdvisories()).extracting(DependencySecurityAuditTools.VulnerabilityFinding::cve)
+                .contains("CVE-2024-22371");
+        assertThat(result.summary().uncheckedAdvisories()).isPositive();
+        assertThat(result.summary().clean()).isFalse();
     }
 
     @Test

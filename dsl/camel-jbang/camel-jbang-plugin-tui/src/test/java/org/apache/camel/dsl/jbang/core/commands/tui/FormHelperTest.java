@@ -33,6 +33,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FormHelperTest {
 
     private static final String SMILE = "😀";
+    // a family: three emoji joined by ZWJs, eight chars that take two columns
+    private static final String FAMILY = "👨\u200D👩\u200D👧";
     private static final KeyModifiers CTRL = KeyModifiers.of(true, false, false);
     private static final KeyModifiers ALT = KeyModifiers.of(false, true, false);
 
@@ -93,5 +95,17 @@ class FormHelperTest {
         FormHelper.addCaretField(inside, state);
         assertThat(inside).extracting(Span::content).containsExactly("cam", "e", "l");
         assertThat(inside.get(1).style().effectiveModifiers()).contains(Modifier.REVERSED);
+    }
+
+    @Test
+    void caretFieldMarksTheWholeEmojiAtTheCursor() {
+        TextInputState state = new TextInputState("a" + FAMILY + "b");
+        state.moveCursorToEnd();
+        state.moveCursorLeft();
+        state.moveCursorLeft();
+
+        List<Span> spans = new ArrayList<>();
+        FormHelper.addCaretField(spans, state);
+        assertThat(spans).extracting(Span::content).containsExactly("a", FAMILY, "b");
     }
 }

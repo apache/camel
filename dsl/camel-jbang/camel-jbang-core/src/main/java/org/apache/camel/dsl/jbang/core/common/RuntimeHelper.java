@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -194,14 +195,21 @@ public final class RuntimeHelper {
         return readStatusFromFile(historyFile);
     }
 
+    /**
+     * Sends a message to an endpoint of the integration.
+     *
+     * @param  headers                  the headers as key=value pairs separated by newlines, or null
+     * @throws IllegalArgumentException when a header is not a key=value pair
+     */
     public static JsonObject sendMessage(long pid, String endpoint, String body, String headers) {
+        JsonArray headerList = headers != null ? parseHeaders(headers) : null;
         String result = executeAction(pid, "send", root -> {
             root.put("endpoint", endpoint);
             if (body != null) {
                 root.put("body", body);
             }
-            if (headers != null) {
-                root.put("headers", headers);
+            if (headerList != null) {
+                root.put("headers", headerList);
             }
         });
         try {
@@ -211,6 +219,28 @@ public final class RuntimeHelper {
             wrapper.put("result", result);
             return wrapper;
         }
+    }
+
+    /**
+     * The headers as the send action of the CLI connector reads them: a key and a value for each header.
+     */
+    static JsonArray parseHeaders(String headers) {
+        JsonArray list = new JsonArray();
+        for (String line : headers.split("\\R")) {
+            String header = line.strip();
+            if (header.isEmpty()) {
+                continue;
+            }
+            int pos = header.indexOf('=');
+            if (pos <= 0) {
+                throw new IllegalArgumentException("Header must be in key=value format, was: " + header);
+            }
+            JsonObject jo = new JsonObject();
+            jo.put("key", header.substring(0, pos).strip());
+            jo.put("value", header.substring(pos + 1));
+            list.add(jo);
+        }
+        return list;
     }
 
     public static JsonObject executeRowUpdate(

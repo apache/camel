@@ -44,6 +44,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -94,7 +95,7 @@ public class MigrationData {
             "org.wildfly.camel", "org.wildfly",
             "org.wildfly.plugins",
             "javax.ejb", "jakarta.ejb",
-            "camel-cdi", "maven-war-plugin");
+            "camel-cdi");
 
     private static final List<String> KARAF_MARKERS = Arrays.asList(
             "org.apache.karaf", "camel-blueprint",
@@ -144,25 +145,31 @@ public class MigrationData {
 
     /**
      * Parse pom.xml content and extract project analysis data.
+     * <p>
+     * The declared Camel dependencies are the {@code <dependency>} elements of the project (and its profiles), not the
+     * ones in {@code <dependencyManagement>} (a BOM or a managed version declares nothing) nor the dependencies of a
+     * plugin. Runtime markers are read from dependencies, plugins and the parent alike.
      */
     public static PomAnalysis parsePomContent(String pomContent) throws Exception {
         DocumentBuilderFactory factory = createSecureDocumentBuilderFactory();
         Document doc = factory.newDocumentBuilder()
                 .parse(new ByteArrayInputStream(pomContent.getBytes(StandardCharsets.UTF_8)));
+        Element project = doc.getDocumentElement();
 
         String camelVersion = null;
+        String camelQuarkusVersion = null;
         String springBootVersion = null;
         String quarkusVersion = null;
         String javaVersion = null;
-        boolean isWildfly = false;
-        boolean isKaraf = false;
         List<String> dependencies = new ArrayList<>();
+        List<String> managedDependencies = new ArrayList<>();
 
-        // Detect packaging type (war packaging is a strong WildFly/app-server signal)
-        String packaging = getElementText(doc.getDocumentElement(), "packaging");
-        if ("war".equalsIgnoreCase(packaging)) {
-            isWildfly = true;
-        }
+        // war packaging alone says only that the project is deployed to a servlet container or application server:
+        // a Spring Boot WAR is deployed to Tomcat, so it is a WildFly signal only without Spring Boot or Quarkus
+        String packaging = getChildText(project, "packaging");
+        boolean war = "war".equalsIgnoreCase(packaging);
+        boolean wildfly = false;
+        boolean karaf = "bundle".equalsIgnoreCase(packaging);
 
         // Extract properties
         NodeList propertiesNodes = doc.getElementsByTagName("properties");
@@ -172,6 +179,7 @@ public class MigrationData {
             if (camelVersion == null) {
                 camelVersion = getElementText(properties, "camel-version");
             }
+            camelQuarkusVersion = getElementText(properties, "camel-quarkus.version");
             springBootVersion = getElementText(properties, "spring-boot.version");
             if (springBootVersion == null) {
                 springBootVersion = getElementText(properties, "spring-boot-version");
@@ -188,67 +196,146 @@ public class MigrationData {
                 javaVersion = getElementText(properties, "maven.compiler.target");
             }
         }
+        boolean springBoot = springBootVersion != null;
+        boolean quarkus = quarkusVersion != null;
 
-        // Scan dependencyManagement and dependencies for version and runtime detection
+        Element parent = getChild(project, "parent");
+        if (parent != null) {
+            String artifactId = getChildText(parent, "artifactId");
+            String version = getChildText(parent, "version");
+            if ("spring-boot-starter-parent".equals(artifactId) || "spring-boot-dependencies".equals(artifactId)) {
+                springBoot = true;
+                if (springBootVersion == null && version != null && !version.startsWith("$")) {
+                    springBootVersion = version;
+                }
+            }
+        }
+
+        // Scan dependencyManagement, dependencies and plugin dependencies for version and runtime detection
         NodeList allDeps = doc.getElementsByTagName("dependency");
         for (int i = 0; i < allDeps.getLength(); i++) {
             Element dep = (Element) allDeps.item(i);
-            String groupId = getElementText(dep, "groupId");
-            String artifactId = getElementText(dep, "artifactId");
-            String version = getElementText(dep, "version");
+            String groupId = getChildText(dep, "groupId");
+            String artifactId = getChildText(dep, "artifactId");
+            String version = getChildText(dep, "version");
 
             if (groupId == null || artifactId == null) {
                 continue;
             }
+            boolean fixedVersion = version != null && !version.startsWith("$");
 
-            // Detect Camel version from BOM
-            if (camelVersion == null && version != null && !version.startsWith("$")) {
-                if ("camel-bom".equals(artifactId) || "camel-spring-boot-bom".equals(artifactId)
-                        || "camel-quarkus-bom".equals(artifactId)) {
-                    camelVersion = version;
-                }
+            // Detect Camel version from BOM (the camel-quarkus-bom version is a Camel Quarkus version)
+            if (camelVersion == null && fixedVersion
+                    && ("camel-bom".equals(artifactId) || "camel-spring-boot-bom".equals(artifactId))) {
+                camelVersion = version;
+            }
+            if (camelQuarkusVersion == null && fixedVersion && "camel-quarkus-bom".equals(artifactId)) {
+                camelQuarkusVersion = version;
             }
 
-            // Detect Spring Boot
-            if (springBootVersion == null && version != null && !version.startsWith("$")) {
-                if ("spring-boot-dependencies".equals(artifactId)
-                        || "spring-boot-starter-parent".equals(artifactId)) {
-                    springBootVersion = version;
-                }
+            // Detect Spring Boot by the group: an artifact name with spring-boot is not enough, such as
+            // io.quarkus:quarkus-spring-boot-properties in a Camel Quarkus project
+            if ("org.springframework.boot".equals(groupId) || "org.apache.camel.springboot".equals(groupId)) {
+                springBoot = true;
+            }
+            if (springBootVersion == null && fixedVersion
+                    && ("spring-boot-dependencies".equals(artifactId)
+                            || "spring-boot-starter-parent".equals(artifactId))) {
+                springBootVersion = version;
             }
 
             // Detect Quarkus
-            if (quarkusVersion == null && version != null && !version.startsWith("$")) {
-                if ("quarkus-bom".equals(artifactId)) {
-                    quarkusVersion = version;
-                }
+            if (groupId.startsWith("io.quarkus") || artifactId.startsWith("camel-quarkus-")) {
+                quarkus = true;
+            }
+            if (quarkusVersion == null && fixedVersion
+                    && ("quarkus-bom".equals(artifactId) || "quarkus-camel-bom".equals(artifactId))) {
+                quarkusVersion = version;
             }
 
-            // Detect WildFly
-            for (String marker : WILDFLY_MARKERS) {
-                if (groupId.contains(marker) || artifactId.contains(marker)) {
-                    isWildfly = true;
-                }
-            }
+            wildfly |= matchesMarker(groupId, artifactId, WILDFLY_MARKERS);
+            karaf |= matchesMarker(groupId, artifactId, KARAF_MARKERS);
 
-            // Detect Karaf
-            for (String marker : KARAF_MARKERS) {
-                if (groupId.contains(marker) || artifactId.contains(marker)) {
-                    isKaraf = true;
-                }
-            }
-
-            // Collect Camel dependencies
-            if (artifactId.startsWith("camel-")) {
+            if (hasAncestor(dep, "dependencyManagement")) {
+                managedDependencies.add(artifactId);
+            } else if (artifactId.startsWith("camel-") && !hasAncestor(dep, "plugin")) {
                 dependencies.add(artifactId);
             }
         }
 
+        // Plugins carry the WAR, WildFly and OSGi bundle markers
+        NodeList plugins = doc.getElementsByTagName("plugin");
+        for (int i = 0; i < plugins.getLength(); i++) {
+            Element plugin = (Element) plugins.item(i);
+            String groupId = getChildText(plugin, "groupId");
+            String artifactId = getChildText(plugin, "artifactId");
+            if (artifactId == null) {
+                continue;
+            }
+            if (groupId == null) {
+                groupId = "org.apache.maven.plugins";
+            }
+            if ("maven-war-plugin".equals(artifactId)) {
+                war = true;
+            } else if ("spring-boot-maven-plugin".equals(artifactId)) {
+                springBoot = true;
+            } else if ("quarkus-maven-plugin".equals(artifactId)) {
+                quarkus = true;
+            }
+            wildfly |= matchesMarker(groupId, artifactId, WILDFLY_MARKERS);
+            karaf |= matchesMarker(groupId, artifactId, KARAF_MARKERS);
+        }
+
+        if (war && !springBoot && !quarkus) {
+            wildfly = true;
+        }
+
         return new PomAnalysis(
-                camelVersion, springBootVersion, quarkusVersion, javaVersion,
-                dependencies, isWildfly, isKaraf);
+                camelVersion, camelQuarkusVersion, springBootVersion, quarkusVersion, javaVersion,
+                dependencies, managedDependencies, wildfly, karaf, springBoot, quarkus);
     }
 
+    private static boolean matchesMarker(String groupId, String artifactId, List<String> markers) {
+        for (String marker : markers) {
+            if (groupId.contains(marker) || artifactId.contains(marker)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasAncestor(Element element, String tagName) {
+        for (Node node = element.getParentNode(); node != null; node = node.getParentNode()) {
+            if (node instanceof Element e && tagName.equals(localName(e))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Element getChild(Element parent, String tagName) {
+        for (Node node = parent.getFirstChild(); node != null; node = node.getNextSibling()) {
+            if (node instanceof Element e && tagName.equals(localName(e))) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    private static String getChildText(Element parent, String tagName) {
+        Element child = getChild(parent, tagName);
+        if (child != null) {
+            String text = child.getTextContent();
+            if (text != null && !text.isBlank()) {
+                return text.trim();
+            }
+        }
+        return null;
+    }
+
+    private static String localName(Element element) {
+        return element.getLocalName() != null ? element.getLocalName() : element.getTagName();
+    }
     // XML helper
 
     private static DocumentBuilderFactory createSecureDocumentBuilderFactory() {
@@ -827,14 +914,28 @@ public class MigrationData {
     private record GuideIndex(List<GuideSection> sections, Map<String, Integer> documentFrequencies, double averageLength) {
     }
 
+    /**
+     * What {@link #parsePomContent} reads from a pom.xml.
+     *
+     * @param camelVersion        the Camel version (camel.version property, camel-bom or camel-spring-boot-bom), or
+     *                            null
+     * @param camelQuarkusVersion the Camel Quarkus version (camel-quarkus.version property or camel-quarkus-bom), or
+     *                            null
+     * @param dependencies        the Camel artifacts the project declares as dependencies
+     * @param managedDependencies the artifacts in dependencyManagement (BOMs, managed versions): declared nowhere
+     */
     public record PomAnalysis(
             String camelVersion,
+            String camelQuarkusVersion,
             String springBootVersion,
             String quarkusVersion,
             String javaVersion,
             List<String> dependencies,
+            List<String> managedDependencies,
             boolean isWildfly,
-            boolean isKaraf) {
+            boolean isKaraf,
+            boolean isSpringBoot,
+            boolean isQuarkus) {
 
         /**
          * Determine the runtime type from the POM analysis.
@@ -846,10 +947,10 @@ public class MigrationData {
             if (isKaraf) {
                 return "karaf";
             }
-            if (springBootVersion != null || dependencies.stream().anyMatch(d -> d.contains("spring-boot"))) {
+            if (isSpringBoot) {
                 return "spring-boot";
             }
-            if (quarkusVersion != null || dependencies.stream().anyMatch(d -> d.contains("quarkus"))) {
+            if (isQuarkus) {
                 return "quarkus";
             }
             return "main";

@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -171,6 +172,18 @@ public class VersionList extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // the options are wrong whatever the releases are, so before reading them
+        Comparator<Row> order = ORDER.comparator(sort);
+        if (dateFormat != null) {
+            try {
+                new SimpleDateFormat(dateFormat, Locale.US);
+            } catch (IllegalArgumentException e) {
+                throw CliException.usage("--date-format must be a date pattern such as dd-MM-yyyy, was: " + dateFormat);
+            }
+        }
+        requireDate("--from-date", fromDate);
+        requireDate("--to-date", toDate);
+
         // ensure from and to-version have major.minor
         if (fromVersion != null) {
             if (!(fromVersion.contains(".") || fromVersion.contains(","))) {
@@ -234,7 +247,7 @@ public class VersionList extends CamelCommand {
         }
 
         // sort rows
-        rows = rows.sorted(ORDER.comparator(sort));
+        rows = rows.sorted(order);
 
         List<Row> rowsList = rows.toList();
         if (tail > 0) {
@@ -295,14 +308,25 @@ public class VersionList extends CamelCommand {
                     }
                 }
             }
+            // not part of the table
             if (date != null) {
-                printer().println("Last updated: " + date + " (use --fresh to update list from internet)");
+                printer().printDiagnostic("Last updated: " + date + " (use --fresh to update list from internet)");
             } else {
-                printer().println("Last updated: none (use --fresh to update list from internet)");
+                printer().printDiagnostic("Last updated: none (use --fresh to update list from internet)");
             }
         }
 
         return 0;
+    }
+
+    private static void requireDate(String option, String date) {
+        if (date != null) {
+            try {
+                LocalDate.parse(date, DateTimeFormatter.ofPattern(YYYY_MM_DD));
+            } catch (DateTimeParseException e) {
+                throw CliException.usage(option + " must be a date such as 2025-01-31, was: " + date);
+            }
+        }
     }
 
     public static JsonObject updateCheckerFile(JsonObject root, String runtime, String repositories) {

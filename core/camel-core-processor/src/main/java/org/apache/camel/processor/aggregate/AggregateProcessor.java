@@ -1556,10 +1556,33 @@ public class AggregateProcessor extends BaseProcessorSupport
      */
     private final class AggregationTimeoutMap extends DefaultTimeoutMap<String, String> {
 
+        // the keys whose completion by timeout failed and is tried again: only the first failure is logged at WARN, so
+        // that a failure that does not go away does not log a WARN at every check
+        private final Set<String> retriedKeys = ConcurrentHashMap.newKeySet();
+
         private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
             // do NOT use locking on the timeout map as this aggregator has its own shared lock we will use instead
             super(executor, requestMapPollTimeMillis, optimisticLocking);
             addListener(this::onEviction);
+        }
+
+        @Override
+        public String put(String key, String value, long timeoutMillis) {
+            // a new message or group for the key: a failure of its timeout is a new one
+            forgetRetry(key);
+            return super.put(key, value, timeoutMillis);
+        }
+
+        @Override
+        public String remove(String key) {
+            forgetRetry(key);
+            return super.remove(key);
+        }
+
+        private void forgetRetry(String key) {
+            if (!retriedKeys.isEmpty()) {
+                retriedKeys.remove(key);
+            }
         }
 
         @Override
@@ -1580,6 +1603,32 @@ public class AggregateProcessor extends BaseProcessorSupport
             if (type != Listener.Type.Evict) {
                 return;
             }
+            try {
+                doOnEviction(key, exchangeId);
+                forgetRetry(key);
+            } catch (Exception e) {
+                // the entry is no longer in the timeout map, and the timeout map ignores errors of its listeners, so
+                // without a new entry a group the repository could not read or remove would never time out (an entry
+                // that a new message for the key has put in the meantime is kept)
+                long delay = getCompletionTimeoutCheckerInterval();
+                if (retriedKeys.add(key)) {
+                    LOG.warn("Error completing the group with correlation key: {} by its completion timeout,"
+                             + " will try again every {} ms (further failures for this key are logged at DEBUG)."
+                             + " Caused by: {}",
+                            key, delay, e.toString());
+                    LOG.debug("Error completing the group with correlation key: {} by its completion timeout", key, e);
+                } else {
+                    LOG.debug("Error completing the group with correlation key: {} by its completion timeout again,"
+                              + " will try again in {} ms",
+                            key, delay, e);
+                }
+                if (isRunAllowed()) {
+                    putIfAbsent(key, exchangeId, delay);
+                }
+            }
+        }
+
+        private void doOnEviction(String key, String exchangeId) {
             log.debug("Completion timeout triggered for correlation key: {}", key);
 
             // with optimistic locking the exchange id in the entry can belong to a group that has been completed

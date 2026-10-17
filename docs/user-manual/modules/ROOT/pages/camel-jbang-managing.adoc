@@ -148,6 +148,12 @@ camel get route
  63051  dude      java    timer://java?period=1000    Running    46s     46       0         0     0    0    9     0s/0s/-
 ----
 
+Use `--remote` to break down TOTAL, FAILED and INFLIGHT into remote/total pairs: the exchanges that came from a remote
+endpoint, such as Kafka or HTTP, of all the exchanges of the route. A route with a remote consumer has only remote
+exchanges, and a route such as `direct:audit` has the remote exchanges of the routes that call it. The same works with
+`camel get processor --remote` and `camel top route --remote`, and the JSON of these commands has the remote counters
+as `remoteTotal`, `remoteFailed` and `remoteInflight`.
+
 TIP: Run `camel get --help` to see all available sub-commands.
 
 == Top status
@@ -823,6 +829,9 @@ $ camel get metric
  11562  MyCoolCamel  gauge  system.cpu.usage                        0.15222772277227722
  11562  MyCoolCamel  gauge  system.load.average.1m                        3.58935546875
 ----
+
+Use `--filter` for the metrics of a type, or with a name or tags that contain the text or match a pattern such as
+`timer*`, `--custom` to leave out the metrics of Camel itself, and `--all` to include the metrics that are still `0`.
 
 == Circuit breaker status
 

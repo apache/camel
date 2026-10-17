@@ -39,6 +39,8 @@ import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_ATTRIBUTE_DONE;
@@ -48,6 +50,8 @@ import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_F
 import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.PERSISTENT_TIMESTAMP_KEY;
 
 public class GridFsConsumer extends DefaultConsumer implements Runnable {
+    private static final Logger LOG = LoggerFactory.getLogger(GridFsConsumer.class);
+
     private final GridFsEndpoint endpoint;
     private volatile ScheduledExecutorService taskExecutor;
     private volatile ExecutorService executor;
@@ -58,6 +62,12 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     // Two threads use it: run() sets the start value on the thread of the executor, before it schedules the polls;
     // the polls then read and move it on the thread of the taskExecutor.
     private volatile Date fromDate;
+    // the collection and the document of the persistent timestamp, read by the first poll that can reach MongoDB.
+    // run() resets them before it schedules the polls, the polls then use them on the thread of the taskExecutor
+    private volatile MongoCollection<Document> ptsCollection;
+    private volatile Document persistentTimestamp;
+    // the number of polls in a row that failed, so that only the first failure of an outage is reported
+    private volatile int consecutiveFailures;
 
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -90,6 +100,9 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     @Override
     public void run() {
         fromDate = null;
+        // the start of the consumer: the first value of the timestamp, also of a persistent timestamp that the first
+        // poll that reaches MongoDB creates
+        Date startDate = new Date();
 
         QueryStrategy queryStrategy = endpoint.getQueryStrategy();
         boolean usesTimestamp = queryStrategy != QueryStrategy.FileAttribute;
@@ -99,26 +112,11 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 || queryStrategy == QueryStrategy.TimeStampAndFileAttribute
                 || queryStrategy == QueryStrategy.PersistentTimestampAndFileAttribute;
 
-        MongoCollection<Document> ptsCollection = null;
-        Document persistentTimestamp = null;
-        if (persistsTimestamp) {
-            ptsCollection = endpoint.getDB().getCollection(endpoint.getPersistentTSCollection());
-
-            // ensure standard indexes as long as collections are small
-            if (ptsCollection.countDocuments() < 1000) {
-                ptsCollection.createIndex(new BasicDBObject("id", 1));
-            }
-
-            persistentTimestamp = ptsCollection.find(eq("id", endpoint.getPersistentTSObject())).first();
-            if (persistentTimestamp == null) {
-                persistentTimestamp = new Document("id", endpoint.getPersistentTSObject());
-                fromDate = new Date();
-                persistentTimestamp.put(PERSISTENT_TIMESTAMP_KEY, fromDate);
-                ptsCollection.insertOne(persistentTimestamp);
-            }
-            fromDate = persistentTimestamp.get(PERSISTENT_TIMESTAMP_KEY, Date.class);
-        } else if (usesTimestamp) {
-            fromDate = new Date();
+        ptsCollection = null;
+        persistentTimestamp = null;
+        consecutiveFailures = 0;
+        if (usesTimestamp && !persistsTimestamp) {
+            fromDate = startDate;
         }
 
         BlockingTask task = Tasks.backgroundTask()
@@ -132,11 +130,59 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 .withName("GridFsPolling")
                 .build();
 
-        MongoCollection<Document> finalPtsCollection = ptsCollection;
-        Document finalPersistentTimestamp = persistentTimestamp;
-        task.run(endpoint.getCamelContext(),
-                () -> processCollection(usesTimestamp, persistsTimestamp, usesAttribute, finalPtsCollection,
-                        finalPersistentTimestamp));
+        task.run(endpoint.getCamelContext(), () -> poll(usesTimestamp, persistsTimestamp, usesAttribute, startDate));
+    }
+
+    /**
+     * One poll. A failure, such as MongoDB that cannot be reached, is reported and the next poll tries again: an
+     * exception thrown out of the repeated task would end it, and the consumer would stay started without polling.
+     */
+    private boolean poll(boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute, Date startDate) {
+        try {
+            if (persistsTimestamp && persistentTimestamp == null) {
+                readPersistentTimestamp(startDate);
+            }
+            boolean answer = processCollection(usesTimestamp, persistsTimestamp, usesAttribute, ptsCollection,
+                    persistentTimestamp);
+            if (consecutiveFailures > 0) {
+                LOG.info("Polling {} works again after {} failed polls", endpoint, consecutiveFailures);
+                consecutiveFailures = 0;
+            }
+            return answer;
+        } catch (Exception e) {
+            if (!isRunAllowed()) {
+                // the consumer is stopping (for example the MongoClient is closed during shutdown): no poll follows
+                LOG.debug("Error polling {} while the consumer is stopping: {}", endpoint, e.toString());
+                return false;
+            }
+            consecutiveFailures++;
+            if (consecutiveFailures == 1) {
+                getExceptionHandler().handleException("Error polling " + endpoint + " (will try again on the next poll)", e);
+            } else {
+                // the failure of the outage is reported already, and the polls run every delay (500 ms by default)
+                LOG.debug("Error polling {} ({} polls in a row failed): {}", endpoint, consecutiveFailures, e.getMessage());
+            }
+            return false;
+        }
+    }
+
+    private void readPersistentTimestamp(Date startDate) {
+        MongoCollection<Document> collection = endpoint.getDB().getCollection(endpoint.getPersistentTSCollection());
+
+        // ensure standard indexes as long as collections are small
+        if (collection.countDocuments() < 1000) {
+            collection.createIndex(new BasicDBObject("id", 1));
+        }
+
+        Document timestamp = collection.find(eq("id", endpoint.getPersistentTSObject())).first();
+        if (timestamp == null) {
+            timestamp = new Document("id", endpoint.getPersistentTSObject());
+            timestamp.put(PERSISTENT_TIMESTAMP_KEY, startDate);
+            collection.insertOne(timestamp);
+        }
+        fromDate = timestamp.get(PERSISTENT_TIMESTAMP_KEY, Date.class);
+        ptsCollection = collection;
+        persistentTimestamp = timestamp;
     }
 
     private boolean processCollection(

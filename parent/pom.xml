@@ -114,7 +114,7 @@
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>5.0.2</citrus-version>
-        <classgraph-version>4.8.198</classgraph-version>
+        <classgraph-version>4.8.199</classgraph-version>
         <cloudant-version>0.10.22</cloudant-version>
         <com-ibm-mq-jakarta-client-version>10.0.0.5</com-ibm-mq-jakarta-client-version>
         <cometd-java-client-version>9.0.1</cometd-java-client-version>
@@ -382,7 +382,7 @@
         <maven-plugin-annotations-version>3.15.2</maven-plugin-annotations-version>
         <maven-plugin-testing-harness-version>3.5.1</maven-plugin-testing-harness-version>
         <maven-resources-plugin-version>3.5.0</maven-resources-plugin-version>
-        <maven-reporting-api-version>3.1.1</maven-reporting-api-version>
+        <maven-reporting-api-version>4.0.0</maven-reporting-api-version>
         <maven-reporting-impl-version>3.2.0</maven-reporting-impl-version>
         <maven-resolver-version>1.9.27</maven-resolver-version>
         <maven-shade-plugin-version>3.6.2</maven-shade-plugin-version>
@@ -3910,10 +3910,13 @@
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta-xml-bind-api-version}</version>
             </dependency>
+            <!-- all ASM artifacts (asm, asm-commons, asm-util, asm-tree, asm-analysis) at the same version -->
             <dependency>
                 <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
+                <artifactId>asm-bom</artifactId>
                 <version>${asm-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>

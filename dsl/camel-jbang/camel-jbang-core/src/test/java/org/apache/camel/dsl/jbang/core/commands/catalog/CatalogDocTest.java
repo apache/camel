@@ -21,6 +21,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Assertions;
@@ -114,6 +115,103 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
         Assertions.assertNotNull(doc, printer.getOutput());
         Assertions.assertEquals("component", doc.getString("kind"));
         Assertions.assertEquals("timer", doc.getString("name"));
+    }
+
+    @Test
+    public void shouldDocumentAnEip() throws Exception {
+        CatalogDoc command = createCommand("split", false);
+
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.startsWith("EIP Name: split"), output);
+        Assertions.assertTrue(output.contains("The split EIP supports (total: "), output);
+        Assertions.assertTrue(output.contains("aggregationStrategy"), output);
+        Assertions.assertTrue(output.contains("/eips/split-eip.html"), output);
+    }
+
+    @Test
+    public void shouldDocumentTheEipWithTheNameOfAComponentWithThePrefix() throws Exception {
+        CatalogDoc command = createCommand("log", false);
+        Assertions.assertEquals(0, command.doCall());
+        Assertions.assertTrue(printer.getOutput().startsWith("Component Name: log"), printer.getOutput());
+
+        printer = new StringPrinter();
+        command = createCommand("eip:log", false);
+        Assertions.assertEquals(0, command.doCall());
+        Assertions.assertTrue(printer.getOutput().startsWith("EIP Name: log"), printer.getOutput());
+    }
+
+    @Test
+    public void shouldPrintTheLinkOfAnEip() throws Exception {
+        CatalogDoc command = createCommand("split", false);
+        command.url = true;
+
+        Assertions.assertEquals(0, command.doCall());
+
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.matches("https://camel\\.apache\\.org/components/[^/]+/eips/split-eip\\.html"),
+                output);
+    }
+
+    @Test
+    public void shouldSuggestASimilarEip() throws Exception {
+        CatalogDoc command = createCommand("eip:spllit", false);
+
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+
+        Assertions.assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        Assertions.assertTrue(e.getMessage().startsWith("Camel eip: spllit not found. Did you mean? split"),
+                e.getMessage());
+    }
+
+    @Test
+    public void shouldPrintEipDocAsJson() throws Exception {
+        CatalogDoc command = createCommand("split", false);
+        command.jsonOutput = true;
+
+        Assertions.assertEquals(0, command.doCall());
+
+        JsonObject doc = Jsoner.deserialize(printer.getOutput(), (JsonObject) null);
+        Assertions.assertNotNull(doc, printer.getOutput());
+        Assertions.assertEquals("eip", doc.getString("kind"));
+    }
+
+    @Test
+    public void shouldDocumentADataFormatAndALanguage() throws Exception {
+        CatalogDoc command = createCommand("jackson", false);
+        Assertions.assertEquals(0, command.doCall());
+        Assertions.assertTrue(printer.getOutput().startsWith("Dataformat Name: jackson"), printer.getOutput());
+        Assertions.assertTrue(printer.getOutput().contains("<artifactId>camel-jackson</artifactId>"),
+                printer.getOutput());
+
+        printer = new StringPrinter();
+        command = createCommand("language:simple", false);
+        Assertions.assertEquals(0, command.doCall());
+        Assertions.assertTrue(printer.getOutput().startsWith("Language Name: simple"), printer.getOutput());
+    }
+
+    @Test
+    public void shouldFilterTheOptions() throws Exception {
+        CatalogDoc command = createCommand("timer", false);
+        command.filter = "delay";
+
+        Assertions.assertEquals(0, command.doCall());
+
+        String output = printer.getOutput();
+        Assertions.assertTrue(output.contains("match-filter: "), output);
+        Assertions.assertTrue(output.contains("delay"), output);
+        Assertions.assertFalse(output.contains("repeatCount"), output);
+    }
+
+    @Test
+    public void shouldDocumentCamelMain() throws Exception {
+        CatalogDoc command = createCommand("main", false);
+
+        Assertions.assertEquals(0, command.doCall());
+
+        Assertions.assertTrue(printer.getOutput().startsWith("Name: main"), printer.getOutput());
     }
 
     private CatalogDoc createCommand(String name, boolean example) {

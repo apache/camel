@@ -194,6 +194,10 @@ public class CamelContextStatus extends ProcessWatchCommand {
                     jo.put("total", JsonValues.number(r.total));
                     jo.put("failed", JsonValues.number(r.failed));
                     jo.put("inflight", JsonValues.number(r.inflight));
+                    // the exchanges that came from a remote endpoint
+                    jo.put("remoteTotal", JsonValues.number(r.totalRemote));
+                    jo.put("remoteFailed", JsonValues.number(r.failedRemote));
+                    jo.put("remoteInflight", JsonValues.number(r.inflightRemote));
                     jo.put("last", JsonValues.number(r.last));
                     jo.put("sinceLastStarted", JsonValues.text(r.sinceLastStarted));
                     jo.put("sinceLastCompleted", JsonValues.text(r.sinceLastCompleted));

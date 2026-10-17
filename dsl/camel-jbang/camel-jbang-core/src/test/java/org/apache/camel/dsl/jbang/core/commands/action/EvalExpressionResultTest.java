@@ -61,6 +61,20 @@ class EvalExpressionResultTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void theExpressionAndBodyAreSentAsTheyAre() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+
+        // the integration does not unescape them: escaped, the quotes and slashes would be part of the expression
+        int exit = callWithResponse(command("orders", "--template=${body} contains \"/\"", "--body={\"path\":\"a/b\"}"),
+                new JsonObject(Map.of("status", "success", "result", "true")));
+
+        assertThat(exit).isEqualTo(CliExitCode.OK);
+        JsonObject action = readActionFile(TEST_PID);
+        assertThat(action.getString("template")).isEqualTo("${body} contains \"/\"");
+        assertThat(action.getString("body")).isEqualTo("{\"path\":\"a/b\"}");
+    }
+
+    @Test
     void failedEvaluationIsAnError() throws Exception {
         writeStatusFile(TEST_PID, "orders");
         JsonObject exception = new JsonObject(Map.of("message", "Unknown function: foo", "stackTrace", "at Simple"));

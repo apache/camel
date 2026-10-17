@@ -24,6 +24,7 @@ import java.time.Instant;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -41,7 +42,6 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 /**
  * Base class for action command tests. Handles file system setup, status file writing and ProcessHandle mock creation
@@ -140,7 +140,19 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
         return call(command, response);
     }
 
+    /**
+     * Runs a step of a command, such as the one that sends the action of a command that first starts an integration of
+     * its own, against the fake integration (TEST_PID) that answers with {@code response}.
+     */
+    protected int callWithResponse(Callable<Integer> step, JsonObject response) throws Exception {
+        return call(step, response);
+    }
+
     private static int call(CamelCommand command, JsonObject response) throws Exception {
+        return call(command::doCall, response);
+    }
+
+    private static int call(Callable<Integer> step, JsonObject response) throws Exception {
         lastAction = null;
         AtomicBoolean running = new AtomicBoolean(true);
         Thread responder = new Thread(() -> {
@@ -162,7 +174,7 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
             ProcessHandle current = mockCurrentHandle();
             mocked.when(ProcessHandle::current).thenReturn(current);
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
-            return command.doCall();
+            return step.call();
         } finally {
             running.set(false);
             responder.join(TimeUnit.SECONDS.toMillis(10));
@@ -204,7 +216,9 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
     protected static ProcessHandle mockProcessHandle(long pid) {
         ProcessHandle ph = mock(ProcessHandle.class);
         ProcessHandle.Info info = mock(ProcessHandle.Info.class);
-        when(ph.pid()).thenReturn(pid);
+        // lenient: a step of a command that knows the pid (see callWithResponse(Callable, JsonObject)) does not look
+        // for the process
+        lenient().when(ph.pid()).thenReturn(pid);
         // lenient: info()/commandLine()/startInstant() are only read when a status file is matched; a test that
         // exercises the "no status file for this pid" path never reaches that code, leaving these unused
         lenient().when(ph.info()).thenReturn(info);
@@ -219,7 +233,7 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
      */
     protected static ProcessHandle mockCurrentHandle() {
         ProcessHandle current = mock(ProcessHandle.class);
-        when(current.pid()).thenReturn(CURRENT_PID);
+        lenient().when(current.pid()).thenReturn(CURRENT_PID);
         return current;
     }
 }

@@ -27,6 +27,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
@@ -180,6 +181,11 @@ public class CamelBrowseAction extends ActionBaseCommand {
             }
             rows.add(row);
             row = row.copy();
+        }
+
+        if (endpoint != null && rows.isEmpty()) {
+            // the endpoint asked for is not one the integration can browse
+            throw CliException.notFound("No browsable endpoint matches: " + endpoint);
         }
 
         // sort rows

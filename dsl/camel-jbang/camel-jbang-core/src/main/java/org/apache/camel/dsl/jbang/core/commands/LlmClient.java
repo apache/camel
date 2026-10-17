@@ -342,8 +342,10 @@ public class LlmClient {
 
     public boolean detectEndpoint() {
         boolean found;
-        if (tryExplicitUrl()) {
-            found = true;
+        if (url != null && !url.isBlank()) {
+            // the endpoint the user named, and only that one: never another provider, which may be a hosted one the
+            // user did not choose to send the prompts to
+            found = tryExplicitUrl();
         } else if (apiType != null) {
             found = switch (apiType) {
                 case anthropic -> tryAnthropicOrVertex();
@@ -1330,6 +1332,7 @@ public class LlmClient {
     }
 
     private ChatResponse streamOllamaChatRequest(String requestUrl, JsonObject body) {
+        StringBuilder fullText = new StringBuilder();
         try {
             String jsonBody = body.toJson();
             if (verbose) {
@@ -1351,7 +1354,6 @@ public class LlmClient {
                 return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
             }
 
-            StringBuilder fullText = new StringBuilder();
             List<ToolCall> toolCalls = new ArrayList<>();
             String[] doneReasonHolder = { null };
             int[] tokenHolder = { 0, 0, 0 };
@@ -1436,12 +1438,35 @@ public class LlmClient {
             }
             return new ChatResponse(text, toolCalls, stopReason, true, usage);
         } catch (HttpTimeoutException e) {
-            printer.println("\nRequest timed out after " + timeout + " seconds.");
+            streamFailed(fullText, "Request timed out after " + timeout + " seconds.");
             return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         } catch (Exception e) {
-            printer.println("\nError during streaming: " + e.getMessage());
+            streamFailed(fullText, "Calling the LLM failed: " + failure(e));
             return new ChatResponse(null, List.of(), "error", false, TokenUsage.EMPTY);
         }
+    }
+
+    /**
+     * A streamed answer that failed: the end of the line of the answer printed so far, and the error on stderr, so the
+     * output has only the answer.
+     */
+    private void streamFailed(CharSequence printed, String error) {
+        if (!printed.isEmpty()) {
+            printer.println();
+        }
+        printer.printErr(error);
+    }
+
+    /**
+     * The message of a failure, from its cause when it has none (a refused connection has no message of its own).
+     */
+    static String failure(Exception e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t.getMessage() != null && !t.getMessage().isBlank()) {
+                return t.getMessage();
+            }
+        }
+        return e.getClass().getSimpleName();
     }
 
     // ---- Shared message/tool builders ----
@@ -1711,10 +1736,18 @@ public class LlmClient {
                 JsonObject function = (JsonObject) tc.get("function");
                 String id = tc.getString("id");
                 String name = function.getString("name");
+                // the arguments are JSON text, or an object with some OpenAI-compatible servers (as with Ollama)
                 JsonObject args;
-                try {
-                    args = (JsonObject) Jsoner.deserialize(function.getString("arguments"));
-                } catch (Exception e) {
+                Object argsObj = function.get("arguments");
+                if (argsObj instanceof JsonObject jo) {
+                    args = jo;
+                } else if (argsObj instanceof String s) {
+                    try {
+                        args = (JsonObject) Jsoner.deserialize(s);
+                    } catch (Exception e) {
+                        args = new JsonObject();
+                    }
+                } else {
                     args = new JsonObject();
                 }
                 toolCalls.add(new ToolCall(id, name, args));
@@ -1932,7 +1965,7 @@ public class LlmClient {
             printer.printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer.printErr("Calling the LLM failed: " + e.getMessage());
+            printer.printErr("Calling the LLM failed: " + failure(e));
             return null;
         }
     }
@@ -1970,12 +2003,13 @@ public class LlmClient {
             printer.printErr("Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer.printErr("Calling the LLM failed: " + e.getMessage());
+            printer.printErr("Calling the LLM failed: " + failure(e));
             return null;
         }
     }
 
     String sendStreamingRequest(String requestUrl, JsonObject body, String authKey, String textField) {
+        StringBuilder fullResponse = new StringBuilder();
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(requestUrl))
@@ -1996,7 +2030,6 @@ public class LlmClient {
                 return null;
             }
 
-            StringBuilder fullResponse = new StringBuilder();
             response.body().forEach(line -> {
                 if (line.isBlank()) {
                     return;
@@ -2015,16 +2048,17 @@ public class LlmClient {
             printer.println();
             return fullResponse.toString();
         } catch (HttpTimeoutException e) {
-            printer.println("\nRequest timed out after " + timeout + " seconds.");
+            streamFailed(fullResponse, "Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer.println("\nError during streaming: " + e.getMessage());
+            streamFailed(fullResponse, "Calling the LLM failed: " + failure(e));
             return null;
         }
     }
 
     private String sendAnthropicStreamingRequest(String requestUrl, JsonObject body, Map<String, String> headers) {
         body.put("stream", true);
+        StringBuilder fullResponse = new StringBuilder();
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(requestUrl))
@@ -2044,7 +2078,6 @@ public class LlmClient {
                 return null;
             }
 
-            StringBuilder fullResponse = new StringBuilder();
             response.body().forEach(line -> {
                 if (line.isBlank() || !line.startsWith("data: ")) {
                     return;
@@ -2073,10 +2106,10 @@ public class LlmClient {
             printer.println();
             return fullResponse.toString();
         } catch (HttpTimeoutException e) {
-            printer.println("\nRequest timed out after " + timeout + " seconds.");
+            streamFailed(fullResponse, "Request timed out after " + timeout + " seconds.");
             return null;
         } catch (Exception e) {
-            printer.println("\nError during streaming: " + e.getMessage());
+            streamFailed(fullResponse, "Calling the LLM failed: " + failure(e));
             return null;
         }
     }

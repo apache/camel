@@ -39,7 +39,7 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     protected final MongoCollection<Document> dbCol;
     protected final Consumer consumer;
     protected final MongoDbEndpoint endpoint;
-    protected MongoCursor cursor;
+    protected volatile MongoCursor cursor;
 
     volatile boolean keepRunning = true;
     private volatile boolean stopped;
@@ -99,8 +99,20 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     public void run() {
         stoppedLatch = new CountDownLatch(1);
         try {
-            while (keepRunning) {
+            // an interrupt ends the thread, as it did before the cursor was reopened inside the try
+            while (keepRunning && !Thread.currentThread().isInterrupted()) {
                 try {
+                    if (cursor == null) {
+                        // a new cursor after the previous one ended. It is opened here, inside the try, so that a
+                        // failure to open it (the server cannot be reached yet) is reported and tried again after
+                        // the delay, instead of ending this thread while the consumer stays started
+                        cursor = initializeCursor();
+                        if (!keepRunning) {
+                            // stopped while the cursor was being opened, so stop() could not close it
+                            cursor.close();
+                            break;
+                        }
+                    }
                     doRun();
                 } catch (Exception e) {
                     if (keepRunning) {
@@ -115,7 +127,10 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                 }
                 // regenerate the cursor, if reading failed for some reason
                 if (keepRunning) {
-                    cursor.close();
+                    if (cursor != null) {
+                        cursor.close();
+                        cursor = null;
+                    }
                     regeneratingCursor();
 
                     if (cursorRegenerationDelayEnabled) {
@@ -126,8 +141,6 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                             Thread.currentThread().interrupt();
                         }
                     }
-
-                    cursor = initializeCursor();
                 }
             }
         } finally {

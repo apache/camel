@@ -342,9 +342,11 @@ public class ServiceBusConsumer extends DefaultConsumer implements ShutdownAware
                     continue;
                 }
 
-                // renew if lock is approaching expiry
+                // renew if the lock expires before the run after the next one: the period task scheduler runs this
+                // task every LOCK_RENEW_INTERVAL_SECONDS or a second later, so waiting for the next run when the lock
+                // expires within one interval can be too late, and the renewal itself is a call to Service Bus
                 Instant lockExpiry = entry.lockedUntil.toInstant();
-                if (now.plusSeconds(LOCK_RENEW_INTERVAL_SECONDS).isAfter(lockExpiry)) {
+                if (now.plusSeconds(2L * LOCK_RENEW_INTERVAL_SECONDS).isAfter(lockExpiry)) {
                     client.renewMessageLock(entry.message)
                             .subscribe(
                                     newLockedUntil -> {
