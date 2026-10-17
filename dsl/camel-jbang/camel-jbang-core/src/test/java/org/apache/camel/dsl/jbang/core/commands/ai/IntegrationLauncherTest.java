@@ -140,6 +140,12 @@ class IntegrationLauncherTest {
                 .isEqualTo("Failed to create route: order-generator because of No bean could be found in the registry for:"
                            + " orderNumber");
 
+        // an ERROR record without an exception in the lines after it: the cause is its message
+        Files.writeString(output, "2026-10-06 01:12:04.552 ERROR 81990 --- [           main] o.a.c.main.MainSupport  :"
+                                  + " Route start failed due to missing bean\n"
+                                  + "\tat some.Frame(Frame.java:1)\n");
+        assertThat(IntegrationLauncher.failureCause(output)).isEqualTo("Route start failed due to missing bean");
+
         // nothing that names an error: no cause, the output says what it says
         Files.writeString(output, "Downloading dependency org.example:missing:1.0\n");
         assertThat(IntegrationLauncher.failureCause(output)).isNull();
