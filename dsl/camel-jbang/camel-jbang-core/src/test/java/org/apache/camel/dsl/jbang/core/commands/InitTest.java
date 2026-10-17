@@ -197,6 +197,32 @@ class InitTest {
     }
 
     @Test
+    void initFailsWhenTheFileExists() throws Exception {
+        Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
+        StringPrinter printer = new StringPrinter();
+        Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + workingDir);
+
+        int exit = initCommand.doCall();
+
+        assertEquals(1, exit);
+        assertEquals("ERROR: File already exists: " + existing + " (use --force to overwrite it)", printer.getStderr());
+        assertEquals("- route: {}", Files.readString(existing), "the file is kept as it was");
+    }
+
+    @Test
+    void initForceOverwritesTheFile() throws Exception {
+        Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
+        Init initCommand = new Init(new CamelJBangMain());
+        CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + workingDir, "--force");
+
+        int exit = initCommand.doCall();
+
+        assertEquals(0, exit);
+        assertTrue(Files.readString(existing).contains("from:"), "the file is the template now");
+    }
+
+    @Test
     void initCleansTheDirectoryFirst() throws Exception {
         Path dir = Files.createDirectories(workingDir.resolve("project"));
         Path old = Files.writeString(dir.resolve("old.yaml"), "- route: {}");

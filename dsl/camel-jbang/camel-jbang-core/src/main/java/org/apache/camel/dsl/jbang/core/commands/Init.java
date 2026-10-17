@@ -81,6 +81,10 @@ public class Init extends CamelCommand {
             description = "Whether to clean directory first (deletes all files in directory)")
     private boolean cleanDirectory;
 
+    @Option(names = { "--force" },
+            description = "Overwrite a file that exists already (by default the command fails instead)")
+    private boolean force;
+
     @Option(names = { "--from-kamelet" },
             description = "To be used when extending an existing Kamelet")
     private String fromKamelet;
@@ -232,7 +236,39 @@ public class Init extends CamelCommand {
                 Files.createDirectories(parentPath);
             }
         }
+        if (existsAlready(targetPath)) {
+            return CliExitCode.FAILURE;
+        }
         Files.writeString(targetPath, content);
+        return 0;
+    }
+
+    /**
+     * Whether the file is there already and not to be overwritten (without --force), which is then an error.
+     */
+    private boolean existsAlready(Path targetPath) {
+        if (!force && Files.exists(targetPath)) {
+            printer().printErr("File already exists: " + targetPath + " (use --force to overwrite it)");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Writes the downloaded files, and none of them when one of them is there already (without --force).
+     */
+    private int writeDownloaded(List<Resource> resources) throws Exception {
+        for (Resource resource : resources) {
+            if (existsAlready(Paths.get(directory, FileUtil.stripPath(resource.getLocation())))) {
+                return CliExitCode.FAILURE;
+            }
+        }
+        for (Resource resource : resources) {
+            Path targetPath = Paths.get(directory, FileUtil.stripPath(resource.getLocation()));
+            try (OutputStream os = Files.newOutputStream(targetPath)) {
+                IOUtils.copy(resource.getInputStream(), os);
+            }
+        }
         return 0;
     }
 
@@ -435,18 +471,15 @@ public class Init extends CamelCommand {
             CamelContext tiny = new DefaultCamelContext();
             try (GitHubResourceResolver resolver = new GitHubResourceResolver()) {
                 resolver.setCamelContext(tiny);
+                List<Resource> resources = new ArrayList<>();
                 for (String u : all.toString().split(",")) {
                     Resource resource = resolver.resolve(u);
                     if (!resource.exists()) {
                         throw new ResourceDoesNotExist(resource);
                     }
-                    String loc = resource.getLocation();
-                    String name = FileUtil.stripPath(loc);
-                    Path targetPath = Paths.get(directory, name);
-                    try (OutputStream os = Files.newOutputStream(targetPath)) {
-                        IOUtils.copy(resource.getInputStream(), os);
-                    }
+                    resources.add(resource);
                 }
+                return writeDownloaded(resources);
             }
         }
 
@@ -472,18 +505,15 @@ public class Init extends CamelCommand {
             CamelContext tiny = new DefaultCamelContext();
             try (GistResourceResolver resolver = new GistResourceResolver()) {
                 resolver.setCamelContext(tiny);
+                List<Resource> resources = new ArrayList<>();
                 for (String u : all.toString().split(",")) {
                     Resource resource = resolver.resolve(u);
                     if (!resource.exists()) {
                         throw new ResourceDoesNotExist(resource);
                     }
-                    String loc = resource.getLocation();
-                    String name = FileUtil.stripPath(loc);
-                    Path targetPath = Paths.get(directory, name);
-                    try (OutputStream os = Files.newOutputStream(targetPath)) {
-                        IOUtils.copy(resource.getInputStream(), os);
-                    }
+                    resources.add(resource);
                 }
+                return writeDownloaded(resources);
             }
         }
 
