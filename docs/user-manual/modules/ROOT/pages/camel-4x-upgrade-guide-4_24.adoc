@@ -1118,6 +1118,15 @@ MINA does not pass a failed handshake on as an error: the producer fails with a 
 `org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
 certificate that does not list the host.
 
+=== camel-aws-secrets-manager - the CloudTrail refresh task reads every event since the last check
+
+With `camel.vault.aws.refreshEnabled=true` and without SQS notification, each check now reads every page of the
+Secrets Manager events since the previous check, including the events in the same second as the newest event seen
+before, so an update is no longer missed when more events than one page happened in between. The first check looks
+for the updates made after the task started: an update made before the start no longer reloads the context. A check
+sends one `LookupEvents` request per 50 events (before: always one); LookupEvents allows two requests per second per
+account and Region, so with very busy accounts the SQS notification mode is the better choice.
+
 === camel-aws2-kinesis - the consumer continues after the last record when a shard iterator expired
 
 When a cached shard iterator has expired (an iterator is valid for 5 minutes, so after a route was suspended for
