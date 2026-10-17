@@ -28,7 +28,6 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.ColorConverter;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
-import dev.tamboui.text.CharWidth;
 
 class DrawOverlay {
 
@@ -174,17 +173,17 @@ class DrawOverlay {
         int col = x;
         int row = y;
         for (int i = 0; i < text.length();) {
-            int cp = text.codePointAt(i);
-            if (cp == '\n') {
+            if (text.charAt(i) == '\n') {
                 row++;
                 col = x;
                 i++;
                 continue;
             }
-            String ch = new String(Character.toChars(cp));
-            cells.add(new DrawCell(col, row, ch, s));
-            col += Math.max(1, CharWidth.of(cp));
-            i += Character.charCount(cp);
+            // a cell for each character, all the code points of an emoji in one
+            int end = TuiHelper.characterEnd(text, i);
+            cells.add(new DrawCell(col, row, text.substring(i, end), s));
+            col += Math.max(1, TuiHelper.characterWidth(text, i, end));
+            i = end;
         }
         return cells;
     }

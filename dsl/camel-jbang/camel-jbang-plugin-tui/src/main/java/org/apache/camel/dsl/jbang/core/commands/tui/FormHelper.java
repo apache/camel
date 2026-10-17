@@ -111,7 +111,8 @@ final class FormHelper {
             spans.add(Span.raw(text + "█"));
             return;
         }
-        int end = pos + Character.charCount(text.codePointAt(pos));
+        // the whole character, all the code points of an emoji
+        int end = TuiHelper.characterEnd(text, pos);
         spans.add(Span.raw(text.substring(0, pos)));
         spans.add(Span.styled(text.substring(pos, end), Style.EMPTY.reversed()));
         spans.add(Span.raw(text.substring(end)));

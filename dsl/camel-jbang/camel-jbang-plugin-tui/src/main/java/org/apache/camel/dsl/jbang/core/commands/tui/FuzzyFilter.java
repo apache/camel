@@ -54,10 +54,10 @@ class FuzzyFilter {
         filter += typed.toLowerCase(Locale.ROOT);
     }
 
-    /** Removes the last character typed, both chars of one outside the basic plane. */
+    /** Removes the last character typed, all the code points of an emoji. */
     void deleteChar() {
         if (!filter.isEmpty()) {
-            filter = filter.substring(0, filter.offsetByCodePoints(filter.length(), -1));
+            filter = filter.substring(0, TuiHelper.characterStart(filter, filter.length()));
         }
     }
 
