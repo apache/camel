@@ -106,3 +106,66 @@ with the required Sparkplug Metric names and data types. This is accomplished
 using the `metricDataTypePayloadMap` Endpoint property setter method.
 
 These requirements allow Sparkplug 3.0.0 compliant behavior.
+
+=== Example
+
+The following routes publish a temperature for device `D1` of Edge Node `EdgeNode` in group `Basic`:
+
+* The Edge Node endpoint has the MQTT server, the client ID and the device IDs. Its route comes first, so that the Edge
+  Node starts before its device.
+* Both endpoints have the metric definitions of their birth messages, made by a Groovy script.
+* The body is a `SparkplugBPayload` with the metrics to publish.
+
+[source,yaml]
+----
+- beans:
+    - name: edgeMetrics
+      scriptLanguage: groovy
+      script: |
+        import org.eclipse.tahu.message.model.*
+        new SparkplugBPayloadMap.SparkplugBPayloadMapBuilder()
+                .addMetric(new Metric.MetricBuilder('uptime', MetricDataType.Int64, 0L).createMetric())
+                .createPayload()
+    - name: deviceMetrics
+      scriptLanguage: groovy
+      script: |
+        import org.eclipse.tahu.message.model.*
+        new SparkplugBPayloadMap.SparkplugBPayloadMapBuilder()
+                .addMetric(new Metric.MetricBuilder('temperature', MetricDataType.Double, 0.0d).createMetric())
+                .createPayload()
+- route:
+    from:
+      uri: timer:node
+      parameters:
+        delay: -1
+        repeatCount: 1
+      steps:
+        - to:
+            uri: tahu-edge://Basic/EdgeNode
+            parameters:
+              clientId: EdgeClient1
+              servers: "Mqtt:tcp://localhost:1883"
+              deviceIds: D1
+              metricDataTypePayloadMap: "#bean:edgeMetrics"
+- route:
+    from:
+      uri: timer:report
+      parameters:
+        period: 5000
+      steps:
+        - setBody:
+            expression:
+              groovy:
+                expression: |
+                  import org.eclipse.tahu.message.model.*
+                  new SparkplugBPayload.SparkplugBPayloadBuilder()
+                          .addMetric(new Metric.MetricBuilder('temperature', MetricDataType.Double, 21.5d).createMetric())
+                          .createPayload()
+        - to:
+            uri: tahu-edge://Basic/EdgeNode/D1
+            parameters:
+              metricDataTypePayloadMap: "#bean:deviceMetrics"
+----
+
+NOTE: With `camel run`, add `--dep=camel:tahu`. The beans are created before the dependencies of the routes are
+added, and the Groovy scripts need the Tahu classes.

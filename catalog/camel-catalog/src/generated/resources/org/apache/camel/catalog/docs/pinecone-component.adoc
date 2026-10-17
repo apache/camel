@@ -31,4 +31,47 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The `action` option, or the `CamelPineconeAction` header, selects the operation. The first route below creates a serverless index. The second route queries the index with a vector, and the `CamelPineconeQueryTopK` header sets how many matches it returns:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createIndex
+      steps:
+        - to:
+            uri: pinecone:my-collection
+            parameters:
+              action: CREATE_SERVERLESS_INDEX
+              token: "{{pinecone.token}}"
+              indexName: my-index
+              collectionSimilarityMetric: cosine
+              collectionDimension: 3
+              cloud: aws
+              cloudRegion: us-east-1
+- route:
+    from:
+      uri: direct:query
+      steps:
+        - setHeader:
+            name: CamelPineconeQueryTopK
+            expression:
+              constant:
+                expression: "3"
+        - setBody:
+            expression:
+              groovy:
+                expression: "[0.1f, 0.2f, 0.3f]"
+        - to:
+            uri: pinecone:my-collection
+            parameters:
+              action: QUERY
+              token: "{{pinecone.token}}"
+              indexName: my-index
+        - log:
+            message: "${body}"
+----
+
 

@@ -188,7 +188,7 @@ Java::
                         .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.INSERT)
                         .setHeader(Milvus.Headers.KEY_NAME).constant("userID")
                         .setHeader(Milvus.Headers.KEY_VALUE).constant(Long.valueOf("3"))
-                        .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
+                        .transformDataType(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
 
                 from("direct:up")
@@ -196,11 +196,69 @@ Java::
                         .setHeader(Milvus.Headers.ACTION).constant(MilvusAction.UPSERT)
                         .setHeader(Milvus.Headers.KEY_NAME).constant("userID")
                         .setHeader(Milvus.Headers.KEY_VALUE).constant(Long.valueOf("3"))
-                        .transform(new org.apache.camel.spi.DataType("milvus:embeddings"))
+                        .transformDataType(new org.apache.camel.spi.DataType("milvus:embeddings"))
                         .to(MILVUS_URI);
             }
         };
     } 
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:in
+      steps:
+        - to:
+            uri: langchain4j-embeddings:test
+        - setHeader:
+            name: CamelMilvusAction
+            expression:
+              constant:
+                expression: INSERT
+        - setHeader:
+            name: CamelMilvusKeyName
+            expression:
+              constant:
+                expression: userID
+        - setHeader:
+            name: CamelMilvusKeyValue
+            expression:
+              constant:
+                expression: "3"
+                resultType: java.lang.Long
+        - transformDataType:
+            toType: milvus:embeddings
+        - to:
+            uri: milvus:embeddings
+- route:
+    from:
+      uri: direct:up
+      steps:
+        - to:
+            uri: langchain4j-embeddings:test
+        - setHeader:
+            name: CamelMilvusAction
+            expression:
+              constant:
+                expression: UPSERT
+        - setHeader:
+            name: CamelMilvusKeyName
+            expression:
+              constant:
+                expression: userID
+        - setHeader:
+            name: CamelMilvusKeyValue
+            expression:
+              constant:
+                expression: "3"
+                resultType: java.lang.Long
+        - transformDataType:
+            toType: milvus:embeddings
+        - to:
+            uri: milvus:embeddings
 ----
 ====
 

@@ -36,3 +36,39 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+== Usage
+
+Set the service URL of the Pulsar cluster on the component, for example in `application.properties`:
+
+[source,properties]
+----
+camel.component.pulsar.service-url = pulsar://localhost:6650
+----
+
+The following routes send a message to the `orders` topic every five seconds, and consume the topic with the
+`order-processor` subscription:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:orders
+      parameters:
+        period: 5000
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Order ${exchangeId}"
+        - to:
+            uri: pulsar:persistent://public/default/orders
+- route:
+    from:
+      uri: pulsar:persistent://public/default/orders
+      parameters:
+        subscriptionName: order-processor
+      steps:
+        - log:
+            message: "Received ${body}"
+----
