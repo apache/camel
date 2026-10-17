@@ -100,6 +100,9 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     @Override
     public void run() {
         fromDate = null;
+        // the start of the consumer: the first value of the timestamp, also of a persistent timestamp that the first
+        // poll that reaches MongoDB creates
+        Date startDate = new Date();
 
         QueryStrategy queryStrategy = endpoint.getQueryStrategy();
         boolean usesTimestamp = queryStrategy != QueryStrategy.FileAttribute;
@@ -113,7 +116,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         persistentTimestamp = null;
         consecutiveFailures = 0;
         if (usesTimestamp && !persistsTimestamp) {
-            fromDate = new Date();
+            fromDate = startDate;
         }
 
         BlockingTask task = Tasks.backgroundTask()
@@ -127,17 +130,17 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                 .withName("GridFsPolling")
                 .build();
 
-        task.run(endpoint.getCamelContext(), () -> poll(usesTimestamp, persistsTimestamp, usesAttribute));
+        task.run(endpoint.getCamelContext(), () -> poll(usesTimestamp, persistsTimestamp, usesAttribute, startDate));
     }
 
     /**
      * One poll. A failure, such as MongoDB that cannot be reached, is reported and the next poll tries again: an
      * exception thrown out of the repeated task would end it, and the consumer would stay started without polling.
      */
-    private boolean poll(boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute) {
+    private boolean poll(boolean usesTimestamp, boolean persistsTimestamp, boolean usesAttribute, Date startDate) {
         try {
             if (persistsTimestamp && persistentTimestamp == null) {
-                readPersistentTimestamp();
+                readPersistentTimestamp(startDate);
             }
             boolean answer = processCollection(usesTimestamp, persistsTimestamp, usesAttribute, ptsCollection,
                     persistentTimestamp);
@@ -147,6 +150,11 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
             }
             return answer;
         } catch (Exception e) {
+            if (!isRunAllowed()) {
+                // the consumer is stopping (for example the MongoClient is closed during shutdown): no poll follows
+                LOG.debug("Error polling {} while the consumer is stopping: {}", endpoint, e.toString());
+                return false;
+            }
             consecutiveFailures++;
             if (consecutiveFailures == 1) {
                 getExceptionHandler().handleException("Error polling " + endpoint + " (will try again on the next poll)", e);
@@ -158,7 +166,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         }
     }
 
-    private void readPersistentTimestamp() {
+    private void readPersistentTimestamp(Date startDate) {
         MongoCollection<Document> collection = endpoint.getDB().getCollection(endpoint.getPersistentTSCollection());
 
         // ensure standard indexes as long as collections are small
@@ -169,7 +177,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
         Document timestamp = collection.find(eq("id", endpoint.getPersistentTSObject())).first();
         if (timestamp == null) {
             timestamp = new Document("id", endpoint.getPersistentTSObject());
-            timestamp.put(PERSISTENT_TIMESTAMP_KEY, new Date());
+            timestamp.put(PERSISTENT_TIMESTAMP_KEY, startDate);
             collection.insertOne(timestamp);
         }
         fromDate = timestamp.get(PERSISTENT_TIMESTAMP_KEY, Date.class);

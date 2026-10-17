@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoTimeoutException;
@@ -39,8 +40,10 @@ import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.ExceptionHandler;
 import org.bson.BsonArray;
 import org.bson.BsonDocument;
 import org.bson.BsonObjectId;
@@ -54,6 +57,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -78,6 +82,16 @@ class GridFsConsumerTimestampTest {
     private final AtomicInteger failingPolls = new AtomicInteger();
     // the number of reads of the persistent timestamp that fail
     private final AtomicInteger failingTimestampReads = new AtomicInteger();
+    // called when a read of the persistent timestamp fails
+    private volatile Runnable onFailedTimestampRead = () -> {
+    };
+    // the persistent timestamp documents that the consumer created
+    private final List<Date> created = new CopyOnWriteArrayList<>();
+    // the failures that the consumer reported through its ExceptionHandler
+    private final List<Throwable> reported = new CopyOnWriteArrayList<>();
+    // called by a query of the bucket, before the files are returned (or the failure is thrown)
+    private volatile Runnable onPoll = () -> {
+    };
     private final GridFSBucket bucket = mock(GridFSBucket.class);
     private final MongoDatabase database = mock(MongoDatabase.class);
     @SuppressWarnings("unchecked")
@@ -93,6 +107,7 @@ class GridFsConsumerTimestampTest {
         context.start();
 
         when(bucket.find(any(Bson.class))).thenAnswer(invocation -> {
+            onPoll.run();
             if (failingPolls.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
                 polls.countDown();
                 throw new MongoTimeoutException("Timed out while waiting for a server (test)");
@@ -216,7 +231,56 @@ class GridFsConsumerTimestampTest {
                 "the timestamp could not be read when the consumer started, the next poll must read it");
     }
 
+    @ParameterizedTest
+    @EnumSource(value = QueryStrategy.class, names = { "PersistentTimestamp", "PersistentTimestampAndFileAttribute" })
+    void newPersistentTimestampStartsWhenTheConsumerStartsAlthoughTheFirstPollFails(QueryStrategy strategy)
+            throws Exception {
+        // the first poll cannot read the timestamp (MongoDB not reachable yet); meanwhile another client uploads a file
+        AtomicReference<Date> failedAt = new AtomicReference<>();
+        failingTimestampReads.set(1);
+        onFailedTimestampRead = () -> {
+            failedAt.set(new Date());
+            stored.add(new GridFSFile(new BsonObjectId(), "early", 1, 1, new Date(failedAt.get().getTime() + 25), null));
+        };
+        // the next poll, which creates the timestamp, runs at least 50 ms after the failed one
+        startConsumer(strategy, 50);
+
+        awaitFullPolls(2);
+
+        assertEquals(1, created.size());
+        assertFalse(created.get(0).after(failedAt.get()),
+                "the new timestamp must be the start of the consumer, not the time of the first poll that worked");
+        assertEquals(List.of("early"), routed, "a file uploaded after the consumer started must be routed");
+    }
+
+    @Test
+    void pollFailureWhileTheConsumerStopsIsNotReported() throws Exception {
+        AtomicReference<Thread> pollThread = new AtomicReference<>();
+        CountDownLatch stopped = new CountDownLatch(1);
+        startConsumer(QueryStrategy.TimeStamp);
+        awaitFullPolls(1);
+
+        // the consumer is stopped during a poll, which then fails (as when the MongoClient is closed by the shutdown)
+        onPoll = () -> {
+            if (pollThread.compareAndSet(null, Thread.currentThread())) {
+                consumer.stop();
+                stopped.countDown();
+                throw new IllegalStateException("state should be: open (test)");
+            }
+        };
+        assertTrue(stopped.await(TIMEOUT_SECONDS, TimeUnit.SECONDS), "the consumer did not poll again");
+        // the polling thread ends once the failed poll returns, as its executor is shut down
+        pollThread.get().join(TimeUnit.SECONDS.toMillis(TIMEOUT_SECONDS));
+        assertFalse(pollThread.get().isAlive(), "the failed poll did not return");
+
+        assertEquals(List.of(), reported, "no poll follows, the failure must not be reported as one that is retried");
+    }
+
     private void startConsumer(QueryStrategy strategy) {
+        startConsumer(strategy, 1);
+    }
+
+    private void startConsumer(QueryStrategy strategy, long delay) {
         GridFsComponent component = new GridFsComponent();
         component.setCamelContext(context);
         GridFsEndpoint endpoint = new GridFsEndpoint("mongodb-gridfs:fake", component) {
@@ -238,11 +302,27 @@ class GridFsConsumerTimestampTest {
         endpoint.setCamelContext(context);
         endpoint.setQueryStrategy(strategy);
         endpoint.setInitialDelay(1);
-        endpoint.setDelay(1);
+        endpoint.setDelay(delay);
 
         Processor processor = exchange -> routed.add(exchange.getMessage().getBody(GridFSDownloadStream.class)
                 .getGridFSFile().getFilename());
         consumer = new GridFsConsumer(endpoint, processor);
+        consumer.setExceptionHandler(new ExceptionHandler() {
+            @Override
+            public void handleException(Throwable exception) {
+                reported.add(exception);
+            }
+
+            @Override
+            public void handleException(String message, Throwable exception) {
+                reported.add(exception);
+            }
+
+            @Override
+            public void handleException(String message, Exchange exchange, Throwable exception) {
+                reported.add(exception);
+            }
+        });
         consumer.start();
     }
 
@@ -323,12 +403,18 @@ class GridFsConsumerTimestampTest {
         MongoCollection<Document> timestamps = mock(MongoCollection.class);
         when(timestamps.countDocuments()).thenAnswer(invocation -> {
             if (failingTimestampReads.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
+                onFailedTimestampRead.run();
                 throw new MongoTimeoutException("Timed out while waiting for a server (test)");
             }
             return 0L;
         });
         FindIterable<Document> none = mock(FindIterable.class);
         when(timestamps.find(any(Bson.class))).thenReturn(none);
+        when(timestamps.insertOne(any(Document.class))).thenAnswer(invocation -> {
+            Document document = invocation.getArgument(0);
+            created.add(document.get(GridFsConstants.PERSISTENT_TIMESTAMP_KEY, Date.class));
+            return null;
+        });
         when(timestamps.findOneAndUpdate(any(Bson.class), any(Bson.class))).thenAnswer(invocation -> {
             Bson update = invocation.getArgument(1);
             BsonDocument document = toDocument(update);
