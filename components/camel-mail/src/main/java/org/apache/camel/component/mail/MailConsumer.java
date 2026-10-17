@@ -289,7 +289,12 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         Exchange exchange;
         while ((exchange = notRouted.poll()) != null) {
             removeIdempotentKey(exchange.getProperty(MAIL_MESSAGE_UID, String.class));
-            releaseExchange(exchange, true);
+            try {
+                releaseExchange(exchange, true);
+            } catch (Exception e) {
+                // keep giving back the other mails
+                LOG.warn("Cannot release an exchange that is not routed: {}.", e.toString());
+            }
         }
     }
 

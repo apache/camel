@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.mail.Folder;
@@ -48,6 +49,7 @@ class MailIdempotentRepositoryPollErrorTest extends CamelTestSupport {
     private static final MailboxUser james = Mailbox.getOrCreateUser("MailIdempotentRepositoryPollErrorTest-james", "secret");
 
     private final FailingIdempotentRepository repo = new FailingIdempotentRepository();
+    private final AtomicBoolean failNextRelease = new AtomicBoolean();
     private final List<Throwable> pollErrors = new ArrayList<>();
 
     @Override
@@ -77,6 +79,30 @@ class MailIdempotentRepositoryPollErrorTest extends CamelTestSupport {
         assertInstanceOf(RejectedExecutionException.class, pollErrors.get(0));
         assertEquals(2, routed.size());
         // the keys of the two mails that went into routing stay, the keys of the three mails after them are removed
+        assertEquals(new TreeSet<>(routed), repo.keys());
+    }
+
+    @Test
+    void keysOfTheRestOfTheBatchAreRemovedWhenReleasingAnExchangeThrows() throws Exception {
+        appendMessages(5);
+
+        List<String> routed = new ArrayList<>();
+        MailConsumer consumer = createConsumer(exchange -> {
+            routed.add(exchange.getProperty(MailConsumer.MAIL_MESSAGE_UID, String.class));
+            if (routed.size() == 2) {
+                // the next release (the first exchange given back) fails
+                failNextRelease.set(true);
+                throw new RejectedExecutionException("Simulated: cannot route the exchange");
+            }
+        });
+        try {
+            consumer.poll();
+        } finally {
+            consumer.stop();
+        }
+
+        assertEquals(2, routed.size());
+        // releasing the first given-back exchange fails, the keys of all three mails after the routed ones are removed
         assertEquals(new TreeSet<>(routed), repo.keys());
     }
 
@@ -115,6 +141,14 @@ class MailIdempotentRepositoryPollErrorTest extends CamelTestSupport {
             @Override
             protected void processExchange(Exchange exchange) throws Exception {
                 action.route(exchange);
+            }
+
+            @Override
+            public void releaseExchange(Exchange exchange, boolean autoRelease) {
+                if (failNextRelease.compareAndSet(true, false)) {
+                    throw new IllegalStateException("Simulated: cannot release the exchange");
+                }
+                super.releaseExchange(exchange, autoRelease);
             }
         };
         consumer.setStartScheduler(false);
