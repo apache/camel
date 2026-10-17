@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -63,6 +64,7 @@ public class DefaultBeanIntrospectionTest {
                 done.set(true);
                 other.join(5000);
             }
+            assertFalse(other.isAlive(), "the other thread should have stopped");
             assertNull(failure.get());
         }
     }
