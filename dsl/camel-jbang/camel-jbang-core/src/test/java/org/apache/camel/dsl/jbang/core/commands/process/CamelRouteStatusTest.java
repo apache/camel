@@ -271,6 +271,31 @@ class CamelRouteStatusTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void remoteBreaksDownTheCountersIntoRemoteAndTotal() throws Exception {
+        JsonObject stats = stats(10, 2, 1, 5);
+        stats.put("remoteExchangesTotal", 6);
+        stats.put("remoteExchangesFailed", 1);
+        stats.put("remoteExchangesInflight", 0);
+        writeStatusFile(TEST_PID, integration("myApp", route("audit", "direct:audit", "Started", stats)));
+
+        assertThat(call(command())).isZero();
+        String[] lines = printer.getOutput().split(System.lineSeparator());
+        assertThat(lines[1]).contains(" 10 ").doesNotContain("6/10");
+
+        printer = new StringPrinter();
+        assertThat(call(command("--remote"))).isZero();
+        lines = printer.getOutput().split(System.lineSeparator());
+        assertThat(lines[1]).contains("6/10", "1/2", "0/1");
+
+        printer = new StringPrinter();
+        assertThat(call(command("--json"))).isZero();
+        JsonObject route = Jsoner.deserialize(printer.getOutput(), (JsonArray) null).getMap(0);
+        assertThat(route.getLong("remoteTotal")).isEqualTo(6);
+        assertThat(route.getLong("remoteFailed")).isEqualTo(1);
+        assertThat(route.getLong("remoteInflight")).isZero();
+    }
+
+    @Test
     void sortByNameOfTheIntegrations() throws Exception {
         writeStatusFile(TEST_PID, integration("zeta", route("z1", "timer:z", "Started", stats(0, 0, 0, -1))));
         writeStatusFile(OTHER_PID, integration("alpha", route("a1", "timer:a", "Started", stats(0, 0, 0, -1))));
