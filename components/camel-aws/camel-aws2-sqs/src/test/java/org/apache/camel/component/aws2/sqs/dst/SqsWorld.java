@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.dst.demo.sqs;
+package org.apache.camel.component.aws2.sqs.dst;
 
 import java.util.ArrayList;
 import java.util.Arrays;
