@@ -48,6 +48,7 @@ public final class ArtifactUtils {
             Map.entry("alibaba-sls", "camel-alibaba-sls"),
             Map.entry("alibaba-sms", "camel-alibaba-sms"),
             Map.entry("amqp", "camel-amqp"),
+            Map.entry("apicurio-registry", "camel-apicurio-registry"),
             Map.entry("arangodb", "camel-arangodb"),
             Map.entry("as2", "camel-as2"),
             Map.entry("asterisk", "camel-asterisk"),
