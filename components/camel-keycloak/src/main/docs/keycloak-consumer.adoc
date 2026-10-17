@@ -563,21 +563,21 @@ YAML::
             expression:
               simple:
                 expression: "${body.type} == 'LOGIN_ERROR'"
-        - aggregate:
-            correlationExpression:
-              expression:
-                simple:
-                  expression: "${body.ipAddress}"
-            aggregationStrategy: "#arrayListAggregation"
-            completionSize: 5
-            completionTimeout: 300000
             steps:
-              - log:
-                  message: "SECURITY ALERT: Multiple failed login attempts from ${body[0].ipAddress}"
-              - to:
-                  uri: direct:block-ip
-              - to:
-                  uri: direct:send-security-alert
+              - aggregate:
+                  correlationExpression:
+                    simple:
+                      expression: "${body.ipAddress}"
+                  aggregationStrategy: "#class:org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy"
+                  completionSize: 5
+                  completionTimeout: 300000
+                  steps:
+                    - log:
+                        message: "SECURITY ALERT: Multiple failed login attempts from ${body[0].ipAddress}"
+                    - to:
+                        uri: direct:block-ip
+                    - to:
+                        uri: direct:send-security-alert
 ----
 ====
 
