@@ -765,6 +765,10 @@ YAML::
 It will only consume files from the _bar_ folder if a _done file_ exists in
 the same directory as the target files. Camel will automatically delete
 the _done file_ when it's done consuming the files.
+When a poll leaves files of the directory for the next poll (beyond
+`maxMessagesPerPoll`, or not started, for example when the read lock is not
+acquired), the _done file_ is kept until they are consumed; meanwhile a file
+written to the directory after the _done file_ waits for a new _done file_.
 
 [NOTE]
 ====
