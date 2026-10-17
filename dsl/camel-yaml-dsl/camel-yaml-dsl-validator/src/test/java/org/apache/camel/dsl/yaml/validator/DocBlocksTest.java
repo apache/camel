@@ -76,6 +76,17 @@ class DocBlocksTest {
     }
 
     @Test
+    void afterACommentOnlyARootOfTheDslIsARouteFile() {
+        // a kamelet is a step; semantic is a root of the schema
+        String doc = "[source,yaml]\n----\n# the step to add\n- kamelet:\n    name: beer-source\n----\n"
+                     + "[source,yaml]\n----\n# the semantic entry\n- semantic:\n    id: orders\n----\n";
+        List<DocBlocks.Example> examples = DocBlocks.examplesAt(doc);
+        assertEquals(1, examples.size(), String.valueOf(examples));
+        assertTrue(examples.get(0).yaml().startsWith("# the semantic entry\n- semantic:"), examples.get(0).yaml());
+        assertEquals(doc.indexOf("# the semantic entry"), examples.get(0).start());
+    }
+
+    @Test
     void aBlockClosesAtItsOwnDelimiter() {
         // a shorter or a longer line of dashes inside the block is part of it
         String doc = "[source,yaml]\n--------\n- from:\n    uri: direct:a\n    steps:\n      - log:\n"

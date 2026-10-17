@@ -51,12 +51,25 @@ public final class DocBlocks {
     private DocBlocks() {
     }
 
+    /** A route example of a page, and the offset in the page where its YAML starts (to tell its line). */
+    public record Example(int start, String yaml) {
+    }
+
     /**
      * The route examples of the page: the YAML blocks that start with a top-level list entry (after the comment lines
      * that may come first), without their callout markers, and without the blocks that carry {@value #SKIP_MARKER}.
      */
     public static List<String> examples(String doc) {
         List<String> answer = new ArrayList<>();
+        for (Example example : examplesAt(doc)) {
+            answer.add(example.yaml());
+        }
+        return answer;
+    }
+
+    /** The route examples of the page as {@link #examples(String)} finds them, each with where it starts. */
+    public static List<Example> examplesAt(String doc) {
+        List<Example> answer = new ArrayList<>();
         if (doc == null) {
             return answer;
         }
@@ -64,16 +77,19 @@ public final class DocBlocks {
         while (m.find()) {
             String yaml = CALLOUT.matcher(m.group(2)).replaceAll("").stripTrailing() + "\n";
             if (startsWithEntry(yaml) && !markedToSkip(doc, m.start())) {
-                answer.add(yaml);
+                answer.add(new Example(m.start(2), yaml));
             }
         }
         return answer;
     }
 
-    /** The entries a YAML DSL file is a list of. */
+    /**
+     * The entries a YAML DSL file is a list of: the roots of the schema, and the kebab-case names the parser also
+     * accepts. A kamelet is a step, not one of them.
+     */
     private static final Set<String> TOP_LEVEL = Set.of("beans", "dataFormats", "errorHandler", "from", "intercept",
-            "interceptFrom", "interceptSendToEndpoint", "kamelet", "onCompletion", "onException", "rest",
-            "restConfiguration", "route", "route-configuration", "route-template", "routeConfiguration", "routeTemplate",
+            "interceptFrom", "interceptSendToEndpoint", "onCompletion", "onException", "rest", "restConfiguration",
+            "route", "route-configuration", "route-template", "routeConfiguration", "routeTemplate", "semantic",
             "sslContextParameters", "templated-route", "templatedRoute", "transformers", "validators");
 
     /** The key of a list entry, as route in "- route:". */
