@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.dst.demo.slack;
+package org.apache.camel.component.slack.dst;
 
 import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstInstrument;
 import org.apache.camel.test.dst.DstTest;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 /**
- * Demo 2: the camel-slack consumer (CAMEL-25684, apache/camel#27923) with a consumer that is suspended and resumed at
- * times chosen by the seed, while it polls and routes a batch. Every message posted to the channel must be routed.
- * <p>
- * Runs against the code of the camel-slack module of the reactor. Enabled with {@code -Ddst.demo=true}: on a branch
- * without the fix it fails by design.
+ * Deterministic simulation test of the camel-slack consumer, suspended and resumed at times chosen by the seed while it
+ * polls and routes a batch: every message posted to the channel must be routed. Regression test for CAMEL-25684
+ * (apache/camel#27923): before that fix 2652 of 5000 seeds fail. A failing seed is replayed with
+ * {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds.
  */
-@EnabledIfSystemProperty(named = "dst.demo", matches = "true")
 @DstInstrument("org.apache.camel.component.slack")
 class SlackSuspendDstTest {
 
-    @DstTest(seeds = 2000)
+    @DstTest(seeds = 1000)
     void everyPostedMessageIsRoutedAcrossSuspendAndResume(Dst dst) throws Exception {
         new SlackWorld(dst).run();
     }

@@ -19,19 +19,18 @@ package org.apache.camel.component.aws2.sqs.dst;
 import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstInstrument;
 import org.apache.camel.test.dst.DstTest;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 /**
- * Demo 3: the visibility timeout extender of camel-aws2-sqs (CAMEL-25700, apache/camel#27985) with slow and failing
- * processing, short polling and faults of the SQS calls. A message the consumer holds must not be delivered again.
- * <p>
- * Enabled with {@code -Ddst.demo=true}.
+ * Deterministic simulation test of the visibility timeout extender of camel-aws2-sqs with slow and failing processing,
+ * short polling and faults of the SQS calls: a message the consumer holds must not be delivered again. Regression test
+ * for CAMEL-25700 (apache/camel#27985): before that fix 1397 of 5000 seeds fail. The world was written by Claus Ibsen
+ * for CAMEL-25738. A failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds;
+ * {@code -Ddst.sqs.visibilityTimeouts=1} shows CAMEL-25737.
  */
-@EnabledIfSystemProperty(named = "dst.demo", matches = "true")
 @DstInstrument("org.apache.camel.component.aws2.sqs")
 class SqsVisibilityDstTest {
 
-    @DstTest(seeds = 2000)
+    @DstTest(seeds = 1000)
     void noMessageIsDeliveredAgainWhileTheConsumerHoldsIt(Dst dst) throws Exception {
         new SqsWorld(dst).run();
     }

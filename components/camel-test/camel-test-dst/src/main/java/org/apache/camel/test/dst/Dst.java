@@ -259,6 +259,15 @@ public final class Dst {
         return values.get(nextInt(values.size()));
     }
 
+    /**
+     * Marks an exception as a fault injected by a fake: it gets no stack trace, so that thousands of seeds do not fill
+     * the log of the component with the same trace (the step trace of the run says where the fault came from).
+     */
+    public static <T extends Throwable> T injected(T fault) {
+        fault.setStackTrace(new StackTraceElement[0]);
+        return fault;
+    }
+
     // ------------------------------------------------------------------------------------------------------------
     // trace
 

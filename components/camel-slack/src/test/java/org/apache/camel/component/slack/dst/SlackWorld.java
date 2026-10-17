@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.dst.demo.slack;
+package org.apache.camel.component.slack.dst;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

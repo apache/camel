@@ -121,7 +121,7 @@ final class FakeSqs implements SqsClient {
         dst.block(latency, "sqs ReceiveMessage max=" + request.maxNumberOfMessages());
         if (faults && dst.chance(0.05)) {
             ledger.record("fault", "q", "receive failed");
-            throw SdkClientException.create("dst: ReceiveMessage failed (connection reset)");
+            throw Dst.injected(SdkClientException.create("dst: ReceiveMessage failed (connection reset)"));
         }
         List<Msg> visible = new ArrayList<>();
         for (Msg m : messages.values()) {
@@ -164,11 +164,12 @@ final class FakeSqs implements SqsClient {
             // the request is lost: nothing is deleted
             dst.block(latency, "sqs DeleteMessage (fails)");
             ledger.record("fault", "q", "delete failed " + request.receiptHandle());
-            throw SdkClientException.create("dst: DeleteMessage failed (connection reset)");
+            throw Dst.injected(SdkClientException.create("dst: DeleteMessage failed (connection reset)"));
         }
         Msg m = byHandle.get(request.receiptHandle());
         if (m == null) {
-            throw ReceiptHandleIsInvalidException.builder().message("The specified receipt handle isn't valid.").build();
+            throw Dst.injected(
+                    ReceiptHandleIsInvalidException.builder().message("The specified receipt handle isn't valid.").build());
         }
         if (!m.deleted) {
             boolean current = request.receiptHandle().equals(m.handle);
@@ -180,8 +181,8 @@ final class FakeSqs implements SqsClient {
                 if (dst.chance(0.5)) {
                     dst.block(latency, "sqs DeleteMessage (expired)");
                     ledger.record("delete-rejected", "q", m.id + " visibility timeout expired");
-                    throw ReceiptHandleIsInvalidException.builder()
-                            .message("The receipt handle has expired.").build();
+                    throw Dst.injected(ReceiptHandleIsInvalidException.builder()
+                            .message("The receipt handle has expired.").build());
                 }
                 delete(m, "deleted (expired handle)");
             } else {
@@ -214,7 +215,7 @@ final class FakeSqs implements SqsClient {
         if (faults && dst.chance(0.02)) {
             ledger.record("fault", "q", "visibility change failed for " + ids);
             onExtensionFault.accept(ids);
-            throw SdkClientException.create("dst: ChangeMessageVisibilityBatch failed (connection reset)");
+            throw Dst.injected(SdkClientException.create("dst: ChangeMessageVisibilityBatch failed (connection reset)"));
         }
         List<ChangeMessageVisibilityBatchResultEntry> ok = new ArrayList<>();
         List<BatchResultErrorEntry> failed = new ArrayList<>();

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.dst.demo.eventhubs;
+package org.apache.camel.component.azure.eventhubs.dst;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -120,7 +120,8 @@ final class EventHubsWorld {
                                         ? dst.between(timeout / 2, 2 * timeout) : dst.between(0, timeout / 2);
                                 downstream.schedule("downstream answer " + id, latency, () -> {
                                     if (dst.chance(0.05)) {
-                                        exchange.setException(new IllegalStateException("downstream failed for " + id));
+                                        exchange.setException(
+                                                Dst.injected(new IllegalStateException("downstream failed for " + id)));
                                         ledger.record("failed", partition, id);
                                     } else {
                                         // completed: the consumer's onComplete (processCommit) runs within done()
@@ -263,7 +264,7 @@ final class EventHubsWorld {
                         "checkpoint store answer " + id + (fail ? " (error)" : ""), latency, () -> {
                             int before = count();
                             if (fail) {
-                                sink.error(new IllegalStateException("checkpoint store unavailable"));
+                                sink.error(Dst.injected(new IllegalStateException("checkpoint store unavailable")));
                             } else {
                                 sink.success();
                             }

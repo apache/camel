@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.dst.demo.eventhubs;
+package org.apache.camel.component.azure.eventhubs.dst;
 
 import java.util.Map;
 
@@ -23,22 +23,24 @@ import org.apache.camel.test.dst.DstInstrument;
 import org.apache.camel.test.dst.DstTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Demo 1: the checkpointing of camel-azure-eventhubs (CAMEL-25683, apache/camel#27922) under seeded event bursts,
- * downstream latency and failures, and slow or failing checkpoint store answers.
+ * Deterministic simulation test of the checkpointing of camel-azure-eventhubs under seeded event bursts, downstream
+ * latency and failures, and slow or failing checkpoint store answers: every completed event is checkpointed when the
+ * partition goes quiet. Regression test for CAMEL-25683 (apache/camel#27922): before that fix 2064 of 5000 seeds fail.
+ * A failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds.
  * <p>
- * Runs against the code of the camel-azure-eventhubs module of the reactor. Enabled with {@code -Ddst.demo=true}: on a
- * branch without the fix it fails by design.
+ * Known residual on main, outside the default 1000 seeds: seed 3042 of 5000 fails when an event completes in the same
+ * millisecond in which the timer of its window ran ({@code EventHubsCheckpointUpdaterTask.isExpired()} compares with
+ * {@code >}, so the window is reused and that event waits for the next one). The window is one millisecond in real
+ * time.
  */
-@EnabledIfSystemProperty(named = "dst.demo", matches = "true")
 @DstInstrument("org.apache.camel.component.azure.eventhubs")
 class EventHubsCheckpointDstTest {
 
-    @DstTest(seeds = 2000)
+    @DstTest(seeds = 1000)
     void everyCompletedEventIsCheckpointedWhenThePartitionGoesQuiet(Dst dst) throws Exception {
         new EventHubsWorld(dst).run();
     }
