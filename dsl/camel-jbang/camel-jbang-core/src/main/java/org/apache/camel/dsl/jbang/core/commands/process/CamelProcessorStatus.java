@@ -334,6 +334,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 jo.put("total", JsonValues.number(r.total));
                 jo.put("failed", JsonValues.number(r.failed));
                 jo.put("inflight", JsonValues.number(r.inflight));
+                // the exchanges that came from a remote endpoint (of the routes only)
+                jo.put("remoteTotal", JsonValues.number(r.totalRemote));
+                jo.put("remoteFailed", JsonValues.number(r.failedRemote));
+                jo.put("remoteInflight", JsonValues.number(r.inflightRemote));
                 // processing times in millis
                 jo.put("mean", JsonValues.number(r.mean));
                 jo.put("min", JsonValues.number(r.min));

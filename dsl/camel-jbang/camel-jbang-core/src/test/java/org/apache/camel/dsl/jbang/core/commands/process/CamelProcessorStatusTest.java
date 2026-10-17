@@ -94,6 +94,23 @@ class CamelProcessorStatusTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void remoteBreaksDownTheCountersOfTheRoutes() throws Exception {
+        JsonObject route = route("audit", "direct:audit", "Started", 25, processor("audit-log1", "log", 1, 5));
+        JsonObject stats = route.getMap("statistics");
+        stats.put("remoteExchangesTotal", 6);
+        stats.put("remoteExchangesFailed", 0);
+        stats.put("remoteExchangesInflight", 0);
+        writeStatusFile(TEST_PID, integration(route));
+
+        assertThat(call(command("--remote"))).isZero();
+
+        String[] lines = printer.getOutput().split(System.lineSeparator());
+        assertThat(lines[1]).contains("audit", "6/10");
+        // a processor has no remote counters
+        assertThat(lines[2]).contains("log1", " 10 ").doesNotContain("/10");
+    }
+
+    @Test
     void disabledProcessor() throws Exception {
         JsonObject log = processor("orders-log1", "log", 1, 5);
         log.put("disabled", true);

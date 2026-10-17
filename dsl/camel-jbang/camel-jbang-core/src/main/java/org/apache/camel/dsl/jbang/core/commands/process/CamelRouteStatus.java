@@ -66,6 +66,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                         description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
+    @CommandLine.Option(names = { "--remote" },
+                        description = "Break down counters into remote/total pairs")
+    boolean remote;
+
     @CommandLine.Option(names = { "--short-uri" },
                         description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
@@ -180,6 +184,10 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                     row.total = stats.get("exchangesTotal").toString();
                     row.inflight = stats.get("exchangesInflight").toString();
                     row.failed = stats.get("exchangesFailed").toString();
+                    // the exchanges that came from a remote endpoint (Camel 4.24 onwards)
+                    row.totalRemote = text(stats.get("remoteExchangesTotal"));
+                    row.failedRemote = text(stats.get("remoteExchangesFailed"));
+                    row.inflightRemote = text(stats.get("remoteExchangesInflight"));
                     row.mean = stats.get("meanProcessingTime").toString();
                     if ("-1".equals(row.mean)) {
                         row.mean = null;
@@ -337,6 +345,9 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         jo.put("total", JsonValues.number(r.total));
         jo.put("failed", JsonValues.number(r.failed));
         jo.put("inflight", JsonValues.number(r.inflight));
+        jo.put("remoteTotal", JsonValues.number(r.totalRemote));
+        jo.put("remoteFailed", JsonValues.number(r.failedRemote));
+        jo.put("remoteInflight", JsonValues.number(r.inflightRemote));
         // processing times in millis
         jo.put("mean", JsonValues.number(r.mean));
         jo.put("min", JsonValues.number(r.min));
@@ -512,15 +523,28 @@ public class CamelRouteStatus extends ProcessWatchCommand {
     }
 
     protected String getTotal(Row r) {
+        if (remote && r.totalRemote != null) {
+            return r.totalRemote + "/" + r.total;
+        }
         return r.total;
     }
 
     protected String getFailed(Row r) {
+        if (remote && r.failedRemote != null) {
+            return r.failedRemote + "/" + r.failed;
+        }
         return r.failed;
     }
 
     protected String getInflight(Row r) {
+        if (remote && r.inflightRemote != null) {
+            return r.inflightRemote + "/" + r.inflight;
+        }
         return r.inflight;
+    }
+
+    private static String text(Object value) {
+        return value != null ? value.toString() : null;
     }
 
     static class Row {
@@ -539,8 +563,11 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         String coverage;
         String throughput;
         String total;
+        String totalRemote;
         String failed;
+        String failedRemote;
         String inflight;
+        String inflightRemote;
         String mean;
         String max;
         String min;
