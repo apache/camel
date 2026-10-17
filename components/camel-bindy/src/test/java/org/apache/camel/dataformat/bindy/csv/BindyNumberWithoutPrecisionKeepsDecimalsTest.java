@@ -22,6 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
+import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
+import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -92,6 +94,29 @@ public class BindyNumberWithoutPrecisionKeepsDecimalsTest extends CamelTestSuppo
         assertEquals(record + "\r\n", template.requestBody("direct:fixed-marshal", model, String.class));
     }
 
+    @Test
+    public void floatWithScientificToStringIsWrittenInPlainDecimals() {
+        CsvModel model = new CsvModel();
+        model.rate = new BigDecimal("1");
+        model.ratio = 1d;
+        // Float.toString gives 1.23E-4 for this value
+        model.weight = 0.000123f;
+
+        assertEquals("1,1,0.000123\r\n", template.requestBody("direct:csv-marshal", model, String.class));
+    }
+
+    @Test
+    public void keyValuePairRecordIsTheSameAfterUnmarshalAndMarshal() {
+        String record = "1=1.23456 2=0.000123 3=1.1";
+
+        KvpModel model = template.requestBody("direct:kvp-unmarshal", record, KvpModel.class);
+        assertEquals(new BigDecimal("1.23456"), model.rate);
+        assertEquals(0.000123d, model.ratio);
+        assertEquals(1.1f, model.weight);
+
+        assertEquals(record, template.requestBody("direct:kvp-marshal", model, String.class).trim());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -105,6 +130,11 @@ public class BindyNumberWithoutPrecisionKeepsDecimalsTest extends CamelTestSuppo
                 from("direct:csv-unmarshal").unmarshal(csv);
                 from("direct:fixed-marshal").marshal(fixed);
                 from("direct:fixed-unmarshal").unmarshal(fixed);
+
+                BindyDataFormat kvp
+                        = new BindyDataFormat().type(BindyType.KeyValue).classType(KvpModel.class).locale("en");
+                from("direct:kvp-marshal").marshal(kvp);
+                from("direct:kvp-unmarshal").unmarshal(kvp);
             }
         };
     }
@@ -128,5 +158,17 @@ public class BindyNumberWithoutPrecisionKeepsDecimalsTest extends CamelTestSuppo
 
         @DataField(pos = 11, length = 10)
         public Double factor;
+    }
+
+    @Message(pairSeparator = " ", keyValuePairSeparator = "=")
+    public static class KvpModel {
+        @KeyValuePairField(tag = 1)
+        public BigDecimal rate;
+
+        @KeyValuePairField(tag = 2)
+        public Double ratio;
+
+        @KeyValuePairField(tag = 3)
+        public Float weight;
     }
 }
