@@ -77,6 +77,30 @@ from("direct:start")
 	})
 	.to("whatsapp:123456789:insertYourPhoneNumberIdHere?authorizationToken=123456789:insertYourAuthorizationTokenHere");
 ----
+
+In YAML, a Groovy expression builds the request:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setBody:
+            expression:
+              groovy:
+                expression: |
+                  def request = new org.apache.camel.component.whatsapp.model.TextMessageRequest()
+                  request.to = '{{whatsapp.recipient}}'
+                  request.text = new org.apache.camel.component.whatsapp.model.TextMessage()
+                  request.text.body = 'This is an auto-generated message from Camel'
+                  request
+        - to:
+            uri: "whatsapp:{{whatsapp.phone-number-id}}"
+            parameters:
+              authorizationToken: "{{whatsapp.authorization-token}}"
+----
+
 For more information you can refer to https://developers.facebook.com/docs/whatsapp/cloud-api/reference[Cloud API Reference], Supported API are: https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages[Messages] and https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media[Media]
 
 === Webhook Mode
@@ -96,13 +120,30 @@ Maven users, for example, can add *netty-http* to their `pom.xml` file:
 
 Once done, you need to prepend the webhook URI to the whatsapp URI you want to use.
 
-In Java DSL:
-
-._Java-only: uses fromF with string formatting_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 fromF("webhook:whatsapp:%s?authorizationToken=%s&webhookVerifyToken=%s", "<phoneNumberId>", "<AuthorizationToken>", "<webhookVerifyToken>").log("${body}")
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "webhook:whatsapp:{{whatsapp.phone-number-id}}"
+      parameters:
+        authorizationToken: "{{whatsapp.authorization-token}}"
+        webhookVerifyToken: "{{whatsapp.webhook-verify-token}}"
+      steps:
+        - log:
+            message: "${body}"
+----
+====
 
 You can follow the
 https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks[set up webhooks guide]
