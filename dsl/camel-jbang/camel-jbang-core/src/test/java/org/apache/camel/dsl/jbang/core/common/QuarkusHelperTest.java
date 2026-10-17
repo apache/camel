@@ -83,6 +83,29 @@ public class QuarkusHelperTest {
         assertPlatformVersion(streams, "3.17.0", "2.8.0.Final");
     }
 
+    @Test
+    void releasedPlatformBomIsReadOnce() throws IOException, DeserializationException {
+        String src = Files.readString(Path.of("target/test-classes/QuarkusHelperTest/quarkus-registry-client-platforms.json"));
+        JsonObject json = (JsonObject) Jsoner.deserialize(src);
+        JsonArray platforms = json.getCollection("platforms");
+        JsonObject platform = platforms.getMap(0);
+        JsonArray streams = platform.getCollection("streams");
+
+        // reads the platform BOMs, unless an earlier test did
+        assertPlatformVersion(streams, "4.18.0", "3.33.1.1");
+
+        // the BOMs of released platforms are not resolved and read again
+        Optional<String> resolved = QuarkusHelper.findPlatformBom(
+                streams, new MajorMinor("4.18.0"),
+                gav -> {
+                    throw new IllegalStateException("Maven should not be asked for " + gav);
+                },
+                RuntimeType.QUARKUS_EXTENSION_REGISTRY_BASE_URL)
+                .map(QuarkusPlatformBom::quarkusCamelBom)
+                .map(MavenGav::getVersion);
+        Assertions.assertThat(resolved).contains("3.33.1.1");
+    }
+
     private void assertPlatformVersion(JsonArray streams, String camelVersion, String expectedPlatformVersion) {
         Optional<String> resolved = QuarkusHelper.findPlatformBom(
                 streams, new MajorMinor(camelVersion),
