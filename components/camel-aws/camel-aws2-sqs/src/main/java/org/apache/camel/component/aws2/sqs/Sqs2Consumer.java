@@ -180,10 +180,10 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             try {
                 getAsyncProcessor().process(exchange, cb);
             } catch (Error e) {
-                if (this.timeoutExtender != null) {
+                if (extender != null) {
                     // fatal error so stop the timeout extender
-                    timeoutExtender.cancel();
-                    timeoutExtender.entries.clear();
+                    extender.cancel();
+                    extender.entries.clear();
                 }
                 throw e;
             } catch (RuntimeException e) {
@@ -192,7 +192,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             }
         }
 
-        // the messages that are not routed (the consumer is stopping or suspending) must become visible again
+        // the messages that are not routed (the consumer is stopping or suspending) are no longer extended, so they
+        // become visible again when their current visibility timeout runs out
         stopExtending(extender, exchanges);
 
         return total;
@@ -444,7 +445,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
 
         /**
-         * Stops extending the visibility of the message of the given exchange.
+         * Stops extending the visibility of the message of the given exchange. The message is not made visible: it
+         * becomes visible again when its current (possibly just extended) visibility timeout runs out.
          */
         public void remove(Exchange exchange) {
             entries.remove(exchange.getExchangeId());
