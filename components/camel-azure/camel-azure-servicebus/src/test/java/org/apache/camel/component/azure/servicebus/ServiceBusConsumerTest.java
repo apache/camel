@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
+import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -693,6 +694,52 @@ public class ServiceBusConsumerTest {
 
             // run the lock renewer — it should NOT attempt renewal for the completed exchange
             lockRenewerTask.run();
+            verify(renewalClient, never()).renewMessageLock(any(ServiceBusReceivedMessage.class));
+        }
+    }
+
+    @Test
+    void lockRenewerRenewsALockThatWouldExpireBeforeItsNextRun() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        when(renewalClient.renewMessageLock(any(ServiceBusReceivedMessage.class)))
+                .thenReturn(Mono.just(OffsetDateTime.now().plusMinutes(1)));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            ArgumentCaptor<Long> periodCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), periodCaptor.capture());
+            long periodMillis = periodCaptor.getValue();
+
+            // the lock expires 2 seconds after the earliest moment the scheduler runs the renewer again
+            when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plus(Duration.ofMillis(periodMillis + 2000)));
+            processMessageCaptor.getValue().accept(messageContext);
+
+            taskCaptor.getValue().run();
+
+            // the next run comes at least periodMillis later (the period task scheduler ticks once per second), the
+            // renewal itself is a call to Service Bus: waiting for that run leaves at most 2 seconds, or none at all
+            verify(renewalClient).renewMessageLock(message);
+        }
+    }
+
+    @Test
+    void lockRenewerDoesNotRenewALockThatOutlastsTheNextRuns() throws Exception {
+        when(configuration.getServiceBusReceiveMode()).thenReturn(ServiceBusReceiveMode.PEEK_LOCK);
+        when(configuration.getMaxAutoLockRenewDuration()).thenReturn(300000L);
+        when(messageContext.getMessage()).thenReturn(message);
+        when(message.getLockedUntil()).thenReturn(OffsetDateTime.now().plusMinutes(1));
+        try (ServiceBusConsumer consumer = new ServiceBusConsumer(endpoint, processor)) {
+            consumer.doStart();
+
+            ArgumentCaptor<Runnable> taskCaptor = ArgumentCaptor.captor();
+            verify(periodTaskScheduler).schedulePeriodTask(taskCaptor.capture(), anyLong());
+            processMessageCaptor.getValue().accept(messageContext);
+
+            taskCaptor.getValue().run();
+
             verify(renewalClient, never()).renewMessageLock(any(ServiceBusReceivedMessage.class));
         }
     }
