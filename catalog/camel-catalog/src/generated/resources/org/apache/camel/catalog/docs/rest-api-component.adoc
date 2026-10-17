@@ -20,3 +20,32 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+== Usage
+
+You do not use the `rest-api` endpoint in a route yourself.
+The xref:manual::rest-dsl.adoc[Rest DSL] creates a route from it when the REST configuration has an `apiContextPath`.
+That route serves the OpenAPI document of the REST services at that path.
+It needs the `camel-openapi-java` component on the classpath.
+
+[source,yaml]
+----
+- restConfiguration:
+    apiContextPath: /api-doc
+- rest:
+    path: /orders
+    get:
+      - path: "/{id}"
+        to:
+          uri: direct:getOrder
+- route:
+    from:
+      uri: direct:getOrder
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Order ${header.id}"
+----
+
+With this, `GET /api-doc` returns the OpenAPI document, which describes `GET /orders/{id}`.
