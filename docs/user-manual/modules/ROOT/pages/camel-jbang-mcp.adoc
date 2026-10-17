@@ -384,8 +384,7 @@ project `directory` as an argument, the runtime tools take the integration `name
   first; invalid content is not written and the errors are returned. A YAML shape that a model often gets wrong but
   that has only one reading, such as `steps:` at the column of its EIP or an option at the column of the EIP it
   belongs to, is repaired instead: the file is written with the repairs, and `repaired` in the answer lists them.
-  The system property `camel.jbang.lenientWrites=false` turns the repairs off. Only a
-  plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
+  Only a plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
   With the security layer on, content longer than `camel.mcp.security.max-argument-length` is rejected, never cut,
@@ -401,8 +400,7 @@ project `directory` as an argument, the runtime tools take the integration `name
   Lines to find that are not in the file as given, as when a model writes them from memory, are matched to the
   closest lines of the file when exactly one place matches well (`matchedLines` in the answer names them). The lines
   the model changed are changed there, and the other lines stay as the file has them. Such an edit stands only when
-  its result is valid; otherwise the answer is the one of a miss, with the lines the file has there. The system
-  property `camel.jbang.lenientWrites=false` turns this matching off.
+  its result is valid; otherwise the answer is the one of a miss, with the lines the file has there.
   Validated and reloaded as a write is, and the answer says at which line it changed. A model that rewrites a whole
   file to add one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing
   file; `camel_write_file` writes a new one.

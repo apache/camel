@@ -1581,5 +1581,3 @@ Content with more than one reading is refused as before.
 to the closest lines of the file when exactly one place matches well. It changes there the lines the model changed and
 keeps the file's version of the other lines. The edit stands only when its result is valid; otherwise the answer is
 the one of a miss, with the lines the file has there. `matchedLines` in the answer names the lines it matched.
-
-Set the system property `camel.jbang.lenientWrites=false` to keep the strict behavior of earlier versions.

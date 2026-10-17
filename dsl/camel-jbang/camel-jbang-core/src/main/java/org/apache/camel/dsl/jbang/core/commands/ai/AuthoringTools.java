@@ -707,7 +707,7 @@ public final class AuthoringTools {
      * and the file is not changed.
      */
     public static JsonObject editedContent(Path dir, String file, String find, String replace, String edits) {
-        return editedContent(dir, file, find, replace, edits, LENIENT);
+        return editedContent(dir, file, find, replace, edits, true);
     }
 
     /**
@@ -1696,9 +1696,6 @@ public final class AuthoringTools {
                 .times();
     }
 
-    /** Whether writes repair the YAML shapes that have one reading (CAMEL-25532); on unless set to false. */
-    static final boolean LENIENT = !"false".equalsIgnoreCase(System.getProperty("camel.jbang.lenientWrites"));
-
     /** How many times the repairs are applied and the content validated again (a repair can reveal the next one). */
     private static final int REPAIR_ROUNDS = 8;
 
@@ -1712,9 +1709,6 @@ public final class AuthoringTools {
     private static Repaired repair(
             ToolContext ctx, Path dir, String file, String content, List<String> errors, List<String> before,
             boolean exists) {
-        if (!LENIENT) {
-            return null;
-        }
         String current = content;
         List<String> applied = new ArrayList<>();
         List<String> left = errors;
