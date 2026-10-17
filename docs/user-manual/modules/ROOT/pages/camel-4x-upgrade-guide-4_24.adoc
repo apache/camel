@@ -1532,10 +1532,11 @@ Some runtime tools of the Camel MCP server now do what their description says, w
 
 * `camel_runtime_receive` receives a message in one call: it starts a consumer on the endpoint, waits up to
   `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer. It returns one message
-  by default; `limit` returns more of the messages that arrived together, and the answer counts the ones it does not
-  return. Before, it started a consumer that kept running, took the messages from the routes, and returned none of
+  by default; `limit` returns up to that many, and `received` counts every message the consumer took, returned or
+  not. Before, it started a consumer that kept running, took the messages from the routes, and returned none of
   them. It is now marked destructive, so the `read-write` access level (`camel.mcp.security.access-level`) no longer
-  offers it, only `admin` does. It refuses to run while `camel cmd receive` is receiving from the same process.
+  offers it, only `admin` does. It runs one call at a time per process, and refuses to run while `camel cmd receive`
+  is receiving from the same process.
 * `camel_runtime_memory_leak` with `command=start` and no `mode` makes one recording (60 seconds by default) and
   returns at once; get the results with `query` once it is done. Before, it made two recordings and blocked for about
   90 seconds, longer than many MCP clients wait. Pass `mode=dual` for the previous behaviour, or make the two
