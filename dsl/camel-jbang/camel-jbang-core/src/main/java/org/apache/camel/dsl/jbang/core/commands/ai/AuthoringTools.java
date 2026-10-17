@@ -81,9 +81,15 @@ public final class AuthoringTools {
     static final Set<String> SKIPPED_DIRS = Set.of(
             "target", "build", "out", "node_modules", ".git", ".mvn", ".idea", ".vscode", ".gradle", ".settings",
             ".camel-jbang");
+    // the top-level entries of the YAML DSL: a file with only beans (beans.yaml) is loaded with the routes too, and a
+    // model that did not see it among the route files took the beans it declares for missing
     private static final Pattern YAML_ROUTE = Pattern.compile(
             "(?m)^\\s*-\\s*(route|from|rest|routeTemplate|route-template|templatedRoute|templated-route"
-                                                              + "|routeConfiguration|route-configuration|kamelet)\\s*:");
+                                                              + "|routeConfiguration|route-configuration|kamelet|beans"
+                                                              + "|errorHandler|error-handler|onException|on-exception"
+                                                              + "|intercept|interceptFrom|intercept-from"
+                                                              + "|interceptSendToEndpoint|intercept-send-to-endpoint"
+                                                              + "|onCompletion|on-completion)\\s*:");
 
     private AuthoringTools() {
     }

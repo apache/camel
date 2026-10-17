@@ -379,20 +379,20 @@ public final class SourceValidator {
             if (directory == null || !Files.isDirectory(directory)) {
                 return NONE;
             }
+            Path excluded = excludeFile != null ? directory.resolve(excludeFile).normalize() : null;
             try (var stream = Files.list(directory)) {
                 List<Path> files = new ArrayList<>(stream.filter(Files::isRegularFile).toList());
                 // a class of the project may also sit in the Maven layout, src/main/java/<package>/<Class>.java, which
                 // camel run --source-dir compiles too: without it a bean of that class was refused as not found
-                Path mavenSources = directory.resolve("src/main/java");
-                if (Files.isDirectory(mavenSources)) {
-                    try (var walk = Files.walk(mavenSources)) {
-                        walk.filter(Files::isRegularFile).filter(q -> q.getFileName().toString().endsWith(".java"))
-                                .forEach(files::add);
-                    }
-                }
+                addMavenFiles(directory.resolve("src/main/java"), ".java", files);
+                // and the YAML in src/main/resources, which camel run --source-dir loads as well (it loads the whole
+                // directory): a model that put the class in src/main/java wrote beans.yaml there, 6 times out of 8 in
+                // a benchmark night, and each reference to the bean was then refused as not declared
+                addMavenFiles(directory.resolve("src/main/resources"), ".yaml", files);
+                addMavenFiles(directory.resolve("src/main/resources"), ".yml", files);
                 for (Path p : files) {
                     String fn = p.getFileName().toString();
-                    if (fn.equals(excludeFile)) {
+                    if (p.normalize().equals(excluded)) {
                         continue;
                     }
                     String lower = fn.toLowerCase(Locale.ROOT);
@@ -429,6 +429,16 @@ public final class SourceValidator {
                 return NONE;
             }
             return new BeanDeclarations(names, classes, signatures, publicMethods, publicMethodNamesByClass);
+        }
+
+        /** Adds the files with the suffix in a directory of the Maven layout, subdirectories included, if it exists. */
+        private static void addMavenFiles(Path dir, String suffix, List<Path> files) throws IOException {
+            if (Files.isDirectory(dir)) {
+                try (var walk = Files.walk(dir)) {
+                    walk.filter(Files::isRegularFile).filter(q -> q.getFileName().toString().endsWith(suffix))
+                            .forEach(files::add);
+                }
+            }
         }
     }
 
