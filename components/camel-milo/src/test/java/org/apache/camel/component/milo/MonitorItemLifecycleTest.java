@@ -145,7 +145,7 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
                 from(resolve(MILO_CLIENT_ITEM_1)).routeId("item1").autoStartup(false)
                         // the slow route under test: a synchronous delay holds the delivery thread, once
                         .filter(exchange -> isSlowValueOnce(exchange))
-                        .delay(3000).syncDelayed()
+                        .delay(3000).syncDelayed().end() // the delay is a block of its own
                         .end()
                         .to(MOCK_ITEM_1);
                 from(resolve(MILO_CLIENT_ITEM_2)).routeId("item2").autoStartup(false).to(MOCK_ITEM_2);
