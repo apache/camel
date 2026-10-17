@@ -151,9 +151,10 @@ public class EvalExpressionCommand extends ActionWatchCommand {
         root.put("action", "eval");
         root.put("language", language);
         root.put("predicate", predicate);
-        root.put("template", Jsoner.escape(template));
+        // as they are: the action file is JSON, and the integration does not unescape them
+        root.put("template", template);
         if (body != null) {
-            root.put("body", Jsoner.escape(body));
+            root.put("body", body);
         }
         if (headers != null) {
             JsonArray arr = new JsonArray();
