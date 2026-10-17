@@ -38,6 +38,8 @@ final class AiProviderSelector {
 
     static final String ACP_PREFIX = "acp:";
     static final String ACP_CUSTOM = "acp:custom";
+    /** How the error starts when no provider is found, for which the panel shows the setup guide. */
+    static final String NO_PROVIDER = "No LLM service reachable";
     private static final String NPX_HINT = "npx not found: install Node.js 22 or newer (https://nodejs.org) and try again.";
 
     /**
@@ -218,6 +220,24 @@ final class AiProviderSelector {
         if (url != null && !url.isBlank()) {
             target.withUrl(url);
         }
+    }
+
+    /**
+     * Detects the endpoint of the client: null when it has one, otherwise the error for the panel. A URL that is set is
+     * the only one tried, so the error then says that it does not answer, rather than how to set up a provider.
+     */
+    static String detectEndpoint(LlmClient client) {
+        // read before detectEndpoint(), which sets the url of the provider it detects when none is set
+        String url = client.endpointUrl();
+        if (client.detectEndpoint()) {
+            return null;
+        }
+        if (url != null && !url.isBlank()) {
+            return "The LLM at " + url + " does not answer. A URL that is set is the only one tried: start the LLM there,"
+                   + " or press Ctrl+P to choose another provider.";
+        }
+        return NO_PROVIDER
+               + ". Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or start Ollama.";
     }
 
     private static LlmClient.ApiType parseApiType(String provider) {

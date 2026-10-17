@@ -41,7 +41,6 @@ import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * camel overview: the overview of the routes of a project, the summary file, and what an LLM adds to it (a local server
@@ -181,8 +180,7 @@ class OverviewTest extends CamelCommandBaseTestSupport {
 
     @Test
     void aiWithoutAnLlmIsAFailure() {
-        // an --url that does not answer is not the end of it: the client goes on to the Ollama of the host (CAMEL-24772)
-        assumeFalse(LlmClient.create().withApiType(LlmClient.ApiType.ollama).detectEndpoint(), "the host runs Ollama");
+        // an --url that does not answer is a failure: the client does not go on to another provider
         Overview command = command("--ai", "--api-type=ollama", "--url=http://127.0.0.1:1");
 
         assertThatThrownBy(command::doCall)

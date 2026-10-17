@@ -342,8 +342,10 @@ public class LlmClient {
 
     public boolean detectEndpoint() {
         boolean found;
-        if (tryExplicitUrl()) {
-            found = true;
+        if (url != null && !url.isBlank()) {
+            // the endpoint the user named, and only that one: never another provider, which may be a hosted one the
+            // user did not choose to send the prompts to
+            found = tryExplicitUrl();
         } else if (apiType != null) {
             found = switch (apiType) {
                 case anthropic -> tryAnthropicOrVertex();
