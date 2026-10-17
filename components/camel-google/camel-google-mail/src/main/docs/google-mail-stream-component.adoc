@@ -63,4 +63,24 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
 
+The consumer polls the mailbox for the messages that match `query`, and marks them as read.
+`is:unread` and `markAsRead` are the defaults. The headers carry the sender, the subject and the other fields:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-mail-stream:inbox
+      parameters:
+        query: "is:unread"
+        markAsRead: true
+        clientId: "{{google.clientId}}"
+        clientSecret: "{{google.clientSecret}}"
+        refreshToken: "{{google.refreshToken}}"
+        applicationName: camel-example
+      steps:
+        - log:
+            message: "Mail from ${header.CamelGoogleMailStreamFrom}: ${header.CamelGoogleMailStreamSubject}"
+----
