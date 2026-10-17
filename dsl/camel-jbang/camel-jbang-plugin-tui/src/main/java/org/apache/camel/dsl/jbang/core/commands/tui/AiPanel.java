@@ -644,9 +644,12 @@ class AiPanel {
                 toolSet.setMode(normalizeToolMode(TuiSettings.load().getAiTools()));
             }
             client = created;
+            // a url that is set is the only one tried, so say which one does not answer
+            String configuredUrl = client.endpointUrl();
             if (!client.detectEndpoint()) {
-                initError
-                        = "No LLM service reachable. Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or start Ollama.";
+                initError = configuredUrl != null && !configuredUrl.isBlank()
+                        ? "No LLM service reachable at " + configuredUrl + " (the URL of the AI settings)."
+                        : "No LLM service reachable. Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or start Ollama.";
                 client = null;
                 return;
             }

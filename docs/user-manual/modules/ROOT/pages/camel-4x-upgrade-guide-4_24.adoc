@@ -521,6 +521,13 @@ or follows, like Enter does.
 * `camel ask` with a question prints only the answer on stdout. The model it uses, the integration it asks about, the
   note about a small model, and the output of `--show-tools` and `--show-stats` go to stderr.
 
+=== camel-jbang - an LLM given with --url is the only one used
+
+`camel ask`, `camel explain` and `camel overview --ai` fail when the LLM given with `--url` does not answer: they went
+on to another provider, such as the Ollama of the host, or a hosted provider with an API key in the environment, and
+sent the prompts there. The AI panel of the Camel TUI does the same with the URL of its settings. Without `--url` the
+provider is detected as before.
+
 === camel-jbang - exit codes and errors of more commands
 
 * `camel export` does not clean the export directory when it is the current directory, or one that contains it, unless
