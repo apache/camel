@@ -63,6 +63,8 @@ data from proto `Message` to `Map`,
 you will need to set the `contentTypeFormat` to `native`
 and explicitly define the data type `Map` when you get body of the exchange.
 For instance: `exchange.getMessage().getBody(Map.class)`.
+In the `Map`, the value of a `bytes` field is a `byte[]`; when a `Map` is converted to a message, a `bytes` field takes a
+`byte[]` (or a `ByteString`).
 
 == Protobuf overview
 
