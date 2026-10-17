@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.yaml.validator.DocBlocks;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -195,7 +196,6 @@ public final class CatalogSamples {
         return sample(catalog, null, name, limit);
     }
 
-    private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\s*\\n----\\n(.*?)\\n----", Pattern.DOTALL);
     private static final Map<String, Found> DOC_CACHE = new ConcurrentHashMap<>();
 
     /** The validated examples of a page family, and for a component whether any of them uses its endpoint. */
@@ -274,13 +274,10 @@ public final class CatalogSamples {
             if (doc == null) {
                 continue;
             }
-            Matcher m = YAML_BLOCK.matcher(doc);
-            while (m.find()) {
-                String yaml = m.group(1).stripTrailing() + "\n";
-                if (!yaml.stripLeading().startsWith("- ")) {
-                    // a fragment (an option list, a manifest), not a route file
-                    continue;
-                }
+            // the route examples as the doc-samples plugin and the documentation tests read them (CAMEL-25736): a
+            // longer delimiter and a leading comment are fine, callout markers are left out, and a block marked as
+            // what to avoid is no sample; the fragments (an option list, a manifest) are not route files
+            for (String yaml : DocBlocks.examples(doc)) {
                 if (!SourceValidator.validateYamlSchema(yaml, catalog).isEmpty()) {
                     continue;
                 }
