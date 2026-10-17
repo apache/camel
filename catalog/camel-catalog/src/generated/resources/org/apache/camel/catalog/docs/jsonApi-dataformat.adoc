@@ -13,6 +13,34 @@
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
+== Usage
+
+The `dataFormatTypes` are the resource classes, separated by commas.
+They are annotated with `@Type` and `@Id` of the JSONAPI-Converter library.
+On unmarshal, `mainFormatType` is the class of the primary data of the document:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:marshal
+      steps:
+        - marshal:
+            jsonApi:
+              dataFormatTypes: com.example.Book,com.example.Author
+        - to:
+            uri: mock:marshal
+- route:
+    from:
+      uri: direct:unmarshal
+      steps:
+        - unmarshal:
+            jsonApi:
+              dataFormatTypes: com.example.Book,com.example.Author
+              mainFormatType: com.example.Book
+        - to:
+            uri: mock:unmarshal
+----
 
 == Dependencies
 
