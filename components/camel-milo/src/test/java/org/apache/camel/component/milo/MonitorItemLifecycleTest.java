@@ -143,12 +143,10 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
 
                 // the consumers deliver the current values while they start, so the tests start these routes
                 from(resolve(MILO_CLIENT_ITEM_1)).routeId("item1").autoStartup(false)
-                        .process(exchange -> {
-                            final Object value = exchange.getMessage().getBody(DataValue.class).getValue().getValue();
-                            if (SLOW_VALUE.equals(value) && slowValueProcessed.compareAndSet(false, true)) {
-                                Thread.sleep(3000);
-                            }
-                        })
+                        // the slow route under test: a synchronous delay holds the delivery thread, once
+                        .filter(exchange -> isSlowValueOnce(exchange))
+                        .delay(3000).syncDelayed()
+                        .end()
                         .to(MOCK_ITEM_1);
                 from(resolve(MILO_CLIENT_ITEM_2)).routeId("item2").autoStartup(false).to(MOCK_ITEM_2);
                 from(resolve(MILO_CLIENT_ITEMS_1_2)).routeId("items12").autoStartup(false).to(MOCK_ITEMS_1_2);
@@ -161,6 +159,11 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
                         .to(MOCK_WRITE_BACK);
             }
         };
+    }
+
+    private boolean isSlowValueOnce(Exchange exchange) {
+        final Object value = exchange.getMessage().getBody(DataValue.class).getValue().getValue();
+        return SLOW_VALUE.equals(value) && slowValueProcessed.compareAndSet(false, true);
     }
 
     @Test
