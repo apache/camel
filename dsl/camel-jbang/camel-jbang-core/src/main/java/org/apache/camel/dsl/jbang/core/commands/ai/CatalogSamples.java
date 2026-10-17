@@ -242,7 +242,22 @@ public final class CatalogSamples {
         return found;
     }
 
+    /**
+     * The entries whose examples are on the page of another EIP, after the examples of that EIP: interceptFrom and
+     * interceptSendToEndpoint are on the page of intercept, and had no sample (CAMEL-25735).
+     */
+    static final Map<String, String> SAMPLES_ON_PAGE_OF
+            = Map.of("interceptFrom", "intercept", "interceptSendToEndpoint", "intercept");
+
     private static Found eipSamples(CamelCatalog catalog, String key) {
+        String host = SAMPLES_ON_PAGE_OF.get(key);
+        if (host != null) {
+            // the examples of the page that start with the entry, not those of the EIP the page is about
+            String start = "- " + key + ":";
+            List<Map<String, String>> own = eipSamples(catalog, host).samples().stream()
+                    .filter(s -> s.get("yaml").stripLeading().startsWith(start)).toList();
+            return own.isEmpty() ? Found.NONE : new Found(own, false);
+        }
         for (String candidate : List.of(key + "-eip", kebab(key) + "-eip", kebab(key), key)) {
             if (catalog.asciiDoc(candidate) != null) {
                 return pageSamples(catalog, List.of(candidate), null);
@@ -813,6 +828,13 @@ public final class CatalogSamples {
             return partOf;
         }
         for (String k : samples().keySet()) {
+            if (k.equalsIgnoreCase(n)) {
+                return k;
+            }
+        }
+        // an entry whose examples are on the page of another EIP, which the shipped set does not have: they come from
+        // the catalog's documentation (CAMEL-25735)
+        for (String k : SAMPLES_ON_PAGE_OF.keySet()) {
             if (k.equalsIgnoreCase(n)) {
                 return k;
             }

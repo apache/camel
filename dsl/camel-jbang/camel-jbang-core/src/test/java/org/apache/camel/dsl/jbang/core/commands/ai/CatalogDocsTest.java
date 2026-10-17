@@ -304,6 +304,22 @@ class CatalogDocsTest {
     }
 
     @Test
+    void sslContextParametersIsKnown() throws Exception {
+        // CAMEL-25735: a top-level entry of the YAML DSL whose model is an application model of the catalog (models-app),
+        // not an EIP model; camel_catalog_doc and camel_catalog_find answered that nothing was found
+        JsonObject doc = catalogDoc(Map.of("name", "sslContextParameters"));
+        assertEquals("sslContextParameters", doc.getString("name"), String.valueOf(doc));
+        assertTrue(doc.getString("placement").startsWith("top-level entry"), doc.getString("placement"));
+        assertTrue(String.valueOf(doc.get("options")).contains("keyStore"), String.valueOf(doc.get("options")));
+        assertFalse(doc.getString("description").contains("&lt;"), doc.getString("description"));
+        assertNotNull(doc.get("sampleHint"), "camel-configuration-utilities.adoc has an example");
+
+        JsonArray matches = (JsonArray) CatalogDocs.find(new DefaultCamelCatalog(), "ssl", null, 10).get("matches");
+        assertTrue(matches.stream().anyMatch(m -> "sslContextParameters".equals(((JsonObject) m).getString("name"))),
+                String.valueOf(matches));
+    }
+
+    @Test
     void anEipAliasFindsTheEip() throws Exception {
         // the aliases of the EIP models (fan-out, dedup, rate-limit) are what a model asks with; the former
         // camel_catalog_eips tool matched them, now camel_catalog_find and camel_catalog_doc do

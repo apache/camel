@@ -300,6 +300,7 @@
                                 <entryPage>../../../docs/user-manual/modules/ROOT/pages/transformer.adoc=transformers</entryPage>
                                 <entryPage>../../../docs/user-manual/modules/ROOT/pages/validator.adoc=validators</entryPage>
                                 <entryPage>../../../docs/user-manual/modules/ROOT/pages/camel-configuration-utilities.adoc=sslContextParameters</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/data-format.adoc=dataFormats</entryPage>
                             </entryPages>
                             <!-- user manual pages that show old syntax or YAML that is not a Camel file -->
                             <excludes>

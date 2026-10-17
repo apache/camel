@@ -42,6 +42,7 @@ import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.util.json.JsonArray;
@@ -389,6 +390,10 @@ public final class CatalogDocs {
                     return beans;
                 }
             }
+            EipModel app = appModel(catalog, name);
+            if (app != null) {
+                return eipDoc(catalog, app, lowerFilter, scope, includeDoc, null);
+            }
             if (kind != null) {
                 // an alias (fan-out, dedup, rate-limit) or the whole title names the EIP as well
                 JsonObject byTerm = eipByTerm(catalog, name, lowerFilter, scope, includeDoc);
@@ -628,6 +633,35 @@ public final class CatalogDocs {
             result.put("matchedTerm", matchedTerm);
         }
         return result;
+    }
+
+    /**
+     * The top-level entries of the YAML DSL whose model is an application model of the catalog (models-app), not an EIP
+     * model: camel_catalog_doc and camel_catalog_find did not find sslContextParameters (CAMEL-25735).
+     */
+    static final List<String> APP_ENTRIES = List.of("sslContextParameters");
+
+    /** The application model of the catalog for a top-level entry (any case), or null. */
+    static EipModel appModel(CamelCatalog catalog, String name) {
+        String entry = APP_ENTRIES.stream().filter(e -> e.equalsIgnoreCase(name)).findFirst().orElse(null);
+        if (entry == null) {
+            return null;
+        }
+        try (InputStream is = catalog.getVersionManager()
+                .getResourceAsStream("org/apache/camel/catalog/models-app/" + entry + ".json")) {
+            if (is == null) {
+                return null;
+            }
+            EipModel model = JsonMapper.generateEipModel(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+            // the description comes from the javadoc, with its XML example escaped
+            if (model.getDescription() != null) {
+                model.setDescription(model.getDescription().replace("&lt;", "<").replace("&gt;", ">")
+                        .replace("&quot;", "\"").replace("&amp;", "&"));
+            }
+            return model;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /** The top-level entry of the YAML DSL that declares beans: a list of bean factories, with no model of its own. */
@@ -986,6 +1020,15 @@ public final class CatalogDocs {
             String key = normalizeName(term);
             if (BEANS_ENTRY.equals(key) || "bean".equals(key)) {
                 matches.add(summary("eip", BEANS_ENTRY, "Beans", BEANS_DESCRIPTION, "configuration"));
+            }
+            // and the entries of an application model, by the start of their name (ssl)
+            for (String entry : APP_ENTRIES) {
+                if (key.length() >= 3 && normalizeName(entry).startsWith(key)) {
+                    EipModel m = appModel(catalog, entry);
+                    if (m != null) {
+                        matches.add(summary("eip", m.getName(), m.getTitle(), m.getDescription(), m.getLabel()));
+                    }
+                }
             }
         }
         if (kind == null || "bean".equals(kind)) {
