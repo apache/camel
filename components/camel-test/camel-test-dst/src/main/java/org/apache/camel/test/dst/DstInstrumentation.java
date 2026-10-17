@@ -51,18 +51,25 @@ import net.bytebuddy.jar.asm.Opcodes;
 /**
  * Byte code level support for the code under test, which the harness does not otherwise control:
  * <ul>
- * <li>rewrites {@code System.currentTimeMillis()}, {@code System.nanoTime()} and {@code Instant.now()} in the classes
- * of the given packages to {@link DstClock}, so the code under test reads virtual time (no change of the component's
- * source);</li>
+ * <li>rewrites the time reads in the classes of the given packages to {@link DstClock}, so the code under test reads
+ * virtual time (no change of the component's source): {@code System.currentTimeMillis()}, {@code System.nanoTime()},
+ * {@code new Date()}, {@code Instant.now()}, {@code Clock.systemUTC()}, {@code Clock.systemDefaultZone()},
+ * {@code Clock.system(ZoneId)} and {@code now()} / {@code now(ZoneId)} of the {@code java.time} date and time
+ * types;</li>
  * <li>reports every other escape point it finds in those classes: own threads and executors, sleeps, wall clock reads
- * through {@code java.time}, the common fork-join pool, Reactor schedulers, blocking waits.</li>
+ * that are not rewritten, the common fork-join pool, Reactor schedulers, blocking waits.</li>
  * </ul>
+ * {@link #alsoRewrite(String...)} applies the same rewriting, without the report, to classes outside the code under
+ * test, for example {@code org.apache.camel.support.MonotonicClock} and {@code org.apache.camel.util.StopWatch} of
+ * Camel core. That is a stop-gap until Camel core has a time source the harness can replace.
+ * <p>
  * Uses a runtime-attached agent (as Mockito's inline mock maker does) and the ASM copy shipped in Byte Buddy.
  */
 public final class DstInstrumentation {
 
     private static final String CLOCK = "org/apache/camel/test/dst/DstClock";
     private static final Set<String> PREFIXES = new CopyOnWriteArraySet<>();
+    private static final Set<String> ALSO = new CopyOnWriteArraySet<>();
     private static Instrumentation instrumentation;
 
     private DstInstrumentation() {
@@ -79,8 +86,8 @@ public final class DstInstrumentation {
     public static final String BLOCKING = "blocking wait";
 
     /**
-     * Installs the time rewriting for the classes of these packages (and their sub packages). Classes already loaded
-     * are retransformed.
+     * Installs the time rewriting for the classes of these packages (and their sub packages): the code under test.
+     * Classes already loaded are retransformed.
      */
     public static synchronized void install(String... packages) {
         List<String> added = new ArrayList<>();
@@ -90,6 +97,35 @@ public final class DstInstrumentation {
                 added.add(internal);
             }
         }
+        retransform(added);
+    }
+
+    /**
+     * Rewrites the time reads of these classes or packages too, without reporting their escape points: a stop-gap for
+     * code outside the code under test that reads the clock, such as {@code org.apache.camel.support.MonotonicClock} or
+     * {@code org.apache.camel.util.StopWatch}. An entry whose last segment starts with an upper case letter is a class
+     * (with its nested classes), else a package (with its sub packages). The rewriting stays for the rest of the JVM;
+     * outside a run the rewritten calls read the real clock.
+     */
+    public static synchronized void alsoRewrite(String... classesOrPackages) {
+        List<String> added = new ArrayList<>();
+        for (String name : classesOrPackages) {
+            if (name == null || name.isBlank()) {
+                continue;
+            }
+            String internal = name.trim().replace('.', '/');
+            String last = internal.substring(internal.lastIndexOf('/') + 1);
+            if (last.isEmpty() || !Character.isUpperCase(last.charAt(0))) {
+                internal = internal + "/";
+            }
+            if (ALSO.add(internal)) {
+                added.add(internal);
+            }
+        }
+        retransform(added);
+    }
+
+    private static void retransform(List<String> added) {
         if (added.isEmpty()) {
             return;
         }
@@ -100,7 +136,7 @@ public final class DstInstrumentation {
         List<Class<?>> loaded = new ArrayList<>();
         for (Class<?> c : instrumentation.getAllLoadedClasses()) {
             String name = c.getName().replace('.', '/');
-            if (instrumentation.isModifiableClass(c) && added.stream().anyMatch(name::startsWith)) {
+            if (instrumentation.isModifiableClass(c) && added.stream().anyMatch(p -> matches(p, name))) {
                 loaded.add(c);
             }
         }
@@ -113,9 +149,25 @@ public final class DstInstrumentation {
         }
     }
 
-    private static boolean matches(String internalName) {
+    private static boolean matches(String prefix, String internalName) {
+        if (prefix.endsWith("/")) {
+            return internalName.startsWith(prefix);
+        }
+        return internalName.equals(prefix) || internalName.startsWith(prefix + "$");
+    }
+
+    private static boolean underTest(String internalName) {
         for (String p : PREFIXES) {
-            if (internalName.startsWith(p)) {
+            if (matches(p, internalName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean alsoRewritten(String internalName) {
+        for (String p : ALSO) {
+            if (matches(p, internalName)) {
                 return true;
             }
         }
@@ -127,13 +179,17 @@ public final class DstInstrumentation {
         public byte[] transform(
                 Module module, ClassLoader loader, String className, Class<?> redefined, ProtectionDomain domain,
                 byte[] bytes) {
-            if (className == null || !matches(className)) {
+            if (className == null) {
+                return null;
+            }
+            boolean report = underTest(className);
+            if (!report && !alsoRewritten(className)) {
                 return null;
             }
             try {
                 ClassReader reader = new ClassReader(bytes);
                 ClassWriter writer = new ClassWriter(reader, 0);
-                reader.accept(new EscapeVisitor(writer, true, null), 0);
+                reader.accept(new EscapeVisitor(writer, true, report, null), 0);
                 return writer.toByteArray();
             } catch (RuntimeException e) {
                 DstEscapes.recordRuntime("could not rewrite " + className + ": " + e);
@@ -184,18 +240,20 @@ public final class DstInstrumentation {
 
     private static void scanClass(InputStream in, Set<String> found) throws IOException {
         ClassReader reader = new ClassReader(in);
-        reader.accept(new EscapeVisitor(null, false, found), 0);
+        reader.accept(new EscapeVisitor(null, false, true, found), 0);
     }
 
     private static final class EscapeVisitor extends ClassVisitor {
         private final boolean rewrite;
+        private final boolean reportEscapes;
         private final Set<String> sink;
         private String className;
         private String sourceFile;
 
-        EscapeVisitor(ClassVisitor next, boolean rewrite, Set<String> sink) {
+        EscapeVisitor(ClassVisitor next, boolean rewrite, boolean reportEscapes, Set<String> sink) {
             super(Opcodes.ASM9, next);
             this.rewrite = rewrite;
+            this.reportEscapes = reportEscapes;
             this.sink = sink;
         }
 
@@ -234,7 +292,16 @@ public final class DstInstrumentation {
                 super.visitLineNumber(line, start);
             }
 
+            @Override
+            public void visitMaxs(int maxStack, int maxLocals) {
+                // room for the values the rewritten calls push (new Date(): the long time stamp)
+                super.visitMaxs(rewrite ? maxStack + 3 : maxStack, maxLocals);
+            }
+
             private void report(String category, String call) {
+                if (!reportEscapes) {
+                    return;
+                }
                 String simple = className.substring(className.lastIndexOf('/') + 1);
                 String where = simple + "." + method + ":" + line;
                 String entry = String.format("%-28s | %-60s | %s", category, where, call);
@@ -271,11 +338,25 @@ public final class DstInstrumentation {
                         super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, name, descriptor, false);
                         return;
                     }
-                } else if ("java/time/Instant".equals(owner) && "now".equals(name)
-                        && "()Ljava/time/Instant;".equals(descriptor)) {
+                } else if (owner.startsWith("java/time/") && "now".equals(name) && clockTarget(owner, descriptor) != null) {
                     report(VIRTUALIZED, call);
                     if (rewrite) {
-                        super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, "instantNow", descriptor, false);
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, clockTarget(owner, descriptor), descriptor, false);
+                        return;
+                    }
+                } else if ("java/time/Clock".equals(owner) && ("systemUTC".equals(name) || "systemDefaultZone".equals(name)
+                        || "system".equals(name) && "(Ljava/time/ZoneId;)Ljava/time/Clock;".equals(descriptor))) {
+                    report(VIRTUALIZED, call);
+                    if (rewrite) {
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, name, descriptor, false);
+                        return;
+                    }
+                } else if ("java/util/Date".equals(owner) && "<init>".equals(name) && "()V".equals(descriptor)) {
+                    report(VIRTUALIZED, "new Date()");
+                    if (rewrite) {
+                        // new Date() -> new Date(DstClock.currentTimeMillis())
+                        super.visitMethodInsn(Opcodes.INVOKESTATIC, CLOCK, "currentTimeMillis", "()J", false);
+                        super.visitMethodInsn(Opcodes.INVOKESPECIAL, owner, name, "(J)V", false);
                         return;
                     }
                 } else if ("java/lang/Thread".equals(owner)) {
@@ -299,12 +380,10 @@ public final class DstInstrumentation {
                     } else if ("get".equals(name) || "join".equals(name)) {
                         report(BLOCKING, call);
                     }
-                } else if (owner.startsWith("java/time/") && "now".equals(name)) {
+                } else if (owner.startsWith("java/time/") && "now".equals(name)
+                        && !descriptor.startsWith("(Ljava/time/Clock;")) {
+                    // now() of another java.time type (Year, YearMonth, MonthDay): not rewritten
                     report(WALL_CLOCK, call);
-                } else if ("java/time/Clock".equals(owner) && name.startsWith("system")) {
-                    report(WALL_CLOCK, call);
-                } else if ("java/util/Date".equals(owner) && "<init>".equals(name) && "()V".equals(descriptor)) {
-                    report(WALL_CLOCK, "new Date()");
                 } else if ("reactor/core/scheduler/Schedulers".equals(owner)) {
                     report(REACTOR, call);
                 } else if (("reactor/core/publisher/Mono".equals(owner) || "reactor/core/publisher/Flux".equals(owner))
@@ -323,6 +402,29 @@ public final class DstInstrumentation {
                 super.visitMethodInsn(opcode, owner, name, descriptor, itf);
             }
         }
+    }
+
+    /**
+     * The method of {@link DstClock} that replaces {@code now()} or {@code now(ZoneId)} of this {@code java.time} type,
+     * or null.
+     */
+    static String clockTarget(String owner, String descriptor) {
+        String type = owner.substring("java/time/".length());
+        String target = switch (type) {
+            case "Instant" -> "()Ljava/time/Instant;".equals(descriptor) ? "instantNow" : null;
+            case "LocalDateTime", "ZonedDateTime", "OffsetDateTime", "LocalDate", "LocalTime", "OffsetTime" ->
+                ("()L" + owner + ";").equals(descriptor) || ("(Ljava/time/ZoneId;)L" + owner + ";").equals(descriptor)
+                        ? Character.toLowerCase(type.charAt(0)) + type.substring(1) + "Now" : null;
+            default -> null;
+        };
+        return target;
+    }
+
+    /** The classes and packages outside the code under test whose time calls are rewritten too. */
+    public static Set<String> alsoRewritten() {
+        Set<String> answer = new LinkedHashSet<>();
+        ALSO.forEach(p -> answer.add(p.endsWith("/") ? p.substring(0, p.length() - 1).replace('/', '.') : p.replace('/', '.')));
+        return answer;
     }
 
     /** The packages whose time calls are rewritten. */

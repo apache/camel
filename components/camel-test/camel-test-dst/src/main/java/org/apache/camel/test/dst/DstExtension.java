@@ -90,7 +90,13 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
             return;
         }
         DstInstrumentation.install(instrument.value());
+        DstInstrumentation.alsoRewrite(instrument.alsoRewrite());
+        DstInstrumentation.alsoRewrite(System.getProperty("dst.alsoRewrite", "").split(","));
         StringBuilder sb = new StringBuilder();
+        if (!DstInstrumentation.alsoRewritten().isEmpty()) {
+            sb.append("DST time reads also rewritten outside the code under test (stop-gap): ")
+                    .append(DstInstrumentation.alsoRewritten()).append('\n');
+        }
         for (String p : instrument.value()) {
             List<String> found = DstInstrumentation.scan(p);
             sb.append("DST escape point scan of ").append(p).append(" (").append(found.size()).append(" call sites)\n");

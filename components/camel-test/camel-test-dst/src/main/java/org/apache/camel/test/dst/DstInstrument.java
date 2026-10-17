@@ -24,14 +24,27 @@ import java.lang.annotation.Target;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- * The packages of the code under test: their {@code System.currentTimeMillis()} and {@code System.nanoTime()} calls
- * read the virtual clock, and their escape points are reported before the first seed runs. Put it on the test class (it
- * also registers the class level part of {@link DstExtension}: the summary and the escape report).
+ * The packages of the code under test: their time reads (see {@link DstClock}) read the virtual clock, and their escape
+ * points are reported before the first seed runs. Put it on the test class (it also registers the class level part of
+ * {@link DstExtension}: the summary and the escape report).
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(DstExtension.class)
 public @interface DstInstrument {
 
+    /** The packages of the code under test (with their sub packages). */
     String[] value();
+
+    /**
+     * Classes or packages outside the code under test whose time reads are rewritten too, without an escape report, for
+     * example {@code org.apache.camel.support.MonotonicClock} or {@code org.apache.camel.util.StopWatch} of Camel core.
+     * An entry whose last segment starts with an upper case letter is a class (with its nested classes), else a
+     * package.
+     * <p>
+     * This is a stop-gap: Camel core reads {@code System} directly, and the rewriting of core classes stays for the
+     * rest of the test JVM (outside a run the rewritten calls read the real clock). The system property
+     * {@code dst.alsoRewrite} (comma separated) adds entries without changing the test.
+     */
+    String[] alsoRewrite() default {};
 }
