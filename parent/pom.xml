@@ -3910,10 +3910,13 @@
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta-xml-bind-api-version}</version>
             </dependency>
+            <!-- all ASM artifacts (asm, asm-commons, asm-util, asm-tree, asm-analysis) at the same version -->
             <dependency>
                 <groupId>org.ow2.asm</groupId>
-                <artifactId>asm</artifactId>
+                <artifactId>asm-bom</artifactId>
                 <version>${asm-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
