@@ -61,6 +61,8 @@ final class LenientRepairs {
                                                                     + " \\{(\\w+): \\{expression: \"(.*)\"\\}\\}");
     private static final Pattern ENUM = Pattern.compile(
             "^Line (\\d+): (\\w+): does not have a value in the enumeration \\[([^\\]]*)\\]");
+    /** A value in double quotes, as the values of an enumeration are listed in the validator's message. */
+    private static final Pattern QUOTED = Pattern.compile("\"([^\"]+)\"");
     private static final Pattern LIST_FOR_MAP = Pattern.compile(
             "^Line (\\d+): (otherwise|onFallback|doFinally): array found, object expected");
     private static final Pattern MAP_FOR_LIST = Pattern.compile(
@@ -171,7 +173,7 @@ final class LenientRepairs {
             int line = Integer.parseInt(m.group(1));
             String key = m.group(2);
             List<String> choices = new ArrayList<>();
-            Matcher q = Pattern.compile("\"([^\"]+)\"").matcher(m.group(3));
+            Matcher q = QUOTED.matcher(m.group(3));
             while (q.find()) {
                 choices.add(q.group(1));
             }

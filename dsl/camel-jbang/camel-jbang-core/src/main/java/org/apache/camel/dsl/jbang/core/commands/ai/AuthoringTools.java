@@ -1018,8 +1018,12 @@ public final class AuthoringTools {
     static int[] fuzzyWindow(String content, String find) {
         String[] lines = content.split("\n", -1);
         List<String> norm = new ArrayList<>(lines.length);
+        // how often each line occurs, so a line of find that is unique in the content is known without a scan per line
+        Map<String, Integer> occurrences = new HashMap<>();
         for (String l : lines) {
-            norm.add(fuzzyLine(l));
+            String n = fuzzyLine(l);
+            norm.add(n);
+            occurrences.merge(n, 1, Integer::sum);
         }
         List<String> want = find.lines().map(AuthoringTools::fuzzyLine).filter(l -> !l.isEmpty()).toList();
         if (want.isEmpty()) {
@@ -1027,7 +1031,7 @@ public final class AuthoringTools {
         }
         Set<String> distinct = new LinkedHashSet<>();
         for (String w : want) {
-            if (w.length() > 6 && !BARE_KEY.matcher(w).matches() && norm.stream().filter(w::equals).count() == 1) {
+            if (w.length() > 6 && !BARE_KEY.matcher(w).matches() && occurrences.getOrDefault(w, 0) == 1) {
                 distinct.add(w);
             }
         }
