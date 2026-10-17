@@ -140,6 +140,10 @@ class PromptDefinitionsTest {
         assertThat(text).contains("camel_migration_wildfly_karaf");
         assertThat(text).contains("camel_migration_recipes");
         assertThat(text).contains("camel_migration_guide_search");
+        // the arguments the tools take: camel_migration_compatibility has no components argument
+        assertThat(text).contains(
+                "`camel_migration_compatibility` with `currentVersion`, `targetVersion`, `runtime`, and `javaVersion`.");
+        assertThat(text).contains("`quarkusPlatformVersion`").contains("`runtime=quarkus`");
     }
 
     @Test

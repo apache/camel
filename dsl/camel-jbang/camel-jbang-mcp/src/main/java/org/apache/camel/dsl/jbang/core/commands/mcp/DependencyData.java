@@ -92,19 +92,60 @@ public class DependencyData {
     }
 
     /**
-     * Format a BOM dependency management snippet for a given runtime and version.
+     * Format a BOM dependency management snippet for a given runtime and Camel version.
      */
-    public String formatBomSnippet(String runtime, String version) {
+    public String formatBomSnippet(String runtime, String camelVersion) {
+        return formatBomSnippet(runtime, camelVersion, null);
+    }
+
+    /**
+     * Format a BOM dependency management snippet for a given runtime, without a Camel Quarkus version.
+     */
+    public String formatBomSnippet(String runtime, String camelVersion, String quarkusPlatformVersion) {
+        return formatBomSnippet(runtime, camelVersion, quarkusPlatformVersion, null);
+    }
+
+    /**
+     * Format a BOM dependency management snippet for a given runtime.
+     * <p>
+     * The Camel version is the version of the Camel and Camel Spring Boot BOMs only: Camel Quarkus has its own version
+     * line, so a Quarkus project imports {@code io.quarkus.platform:quarkus-camel-bom} at the Quarkus platform version
+     * when it is known, else the camel-quarkus-bom at the Camel Quarkus version when it is known, else the
+     * camel-quarkus-bom with a version to look up.
+     *
+     * @param camelVersion           the Camel version, or null
+     * @param quarkusPlatformVersion the Quarkus platform version, or null
+     * @param camelQuarkusVersion    the Camel Quarkus version, or null
+     */
+    public String formatBomSnippet(
+            String runtime, String camelVersion, String quarkusPlatformVersion, String camelQuarkusVersion) {
         BomTemplate template = getBomTemplate(runtime);
         if (template == null) {
             template = BOM_TEMPLATES.get(0); // default to main
         }
-        String ver = version != null ? version : "${camel.version}";
+        String groupId = template.groupId();
+        String artifactId = template.artifactId();
+        String ver = camelVersion != null ? camelVersion : "${camel.version}";
+        String comment = "";
+        if ("quarkus".equals(template.runtime())) {
+            if (quarkusPlatformVersion != null) {
+                groupId = "io.quarkus.platform";
+                artifactId = "quarkus-camel-bom";
+                ver = quarkusPlatformVersion;
+            } else if (camelQuarkusVersion != null) {
+                ver = camelQuarkusVersion;
+            } else {
+                ver = "${camel-quarkus.version}";
+                comment = "            <!-- a Camel Quarkus version, not a Camel version: look it up with "
+                          + "camel_version_list runtime=quarkus -->\n";
+            }
+        }
         return "<dependencyManagement>\n"
                + "    <dependencies>\n"
                + "        <dependency>\n"
-               + "            <groupId>" + template.groupId() + "</groupId>\n"
-               + "            <artifactId>" + template.artifactId() + "</artifactId>\n"
+               + comment
+               + "            <groupId>" + groupId + "</groupId>\n"
+               + "            <artifactId>" + artifactId + "</artifactId>\n"
                + "            <version>" + ver + "</version>\n"
                + "            <type>pom</type>\n"
                + "            <scope>import</scope>\n"
