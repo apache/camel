@@ -255,10 +255,9 @@ The assistant uses `camel_error_diagnose` to identify the exception chain, extra
 === OpenAPI contract-first
 
 * _"Validate this OpenAPI spec for Camel compatibility"_ — uses `camel_openapi_validate`
-* _"Generate a Camel YAML scaffold with mock mode"_ — uses `camel_openapi_scaffold`
-* _"Show me the mock directory structure"_ — uses `camel_openapi_mock_guidance`
+* _"Generate a Camel YAML scaffold with mock mode, and tell me where the mock files go"_ — uses `camel_openapi_scaffold`
 
-Combine all three for a complete prototyping workflow: validate, scaffold, then implement routes one at a time while Camel mocks the rest.
+Combine both for a complete prototyping workflow: validate, scaffold, then implement routes one at a time while Camel mocks the rest.
 
 === Runtime introspection
 
@@ -711,27 +710,28 @@ The advisories are also browseable as MCP resources: `camel://security/advisorie
 
 Since Camel 4.6, the recommended approach for building REST APIs from OpenAPI specifications is **contract-first**:
 referencing the OpenAPI spec directly at runtime via `rest:openApi` rather than generating REST DSL code. These tools
-help validate, scaffold, and provide mock guidance for that workflow.
+help validate and scaffold that workflow, following the rules of the `rest-openapi` component.
 
 [cols="1,3",options="header"]
 |===
 | Tool | Description
 
 | `camel_openapi_validate`
-| Validates an OpenAPI specification for compatibility with Camel's contract-first REST support. Checks for missing
-  `operationId` fields, unsupported security schemes, OpenAPI 3.1 limitations, webhooks usage, and empty paths.
+| Validates an OpenAPI specification for compatibility with Camel's contract-first REST support. Reports operations
+  without `operationId` (with the `direct:GENOPID_...` id Camel routes them to), security schemes (Camel enforces
+  none of them), webhooks (not served), OpenAPI 3.1 (parsed and served like 3.0) and empty paths.
   Returns errors, warnings, and info-level diagnostics.
 
 | `camel_openapi_scaffold`
 | Generates a Camel YAML scaffold for contract-first OpenAPI integration. Produces a `rest:openApi` configuration
-  block referencing the spec file and a `direct:<operationId>` route stub for each operation, with `Content-Type`
-  and `CamelHttpResponseCode` headers pre-configured from the spec. Supports configuring the `missingOperation`
-  mode (`fail`, `ignore`, or `mock`).
-
-| `camel_openapi_mock_guidance`
-| Provides guidance on configuring Camel's `missingOperation` modes (`fail`, `ignore`, `mock`). For `mock` mode,
-  returns the `camel-mock/` directory structure, mock file paths derived from the API paths, and example content
-  from the spec. Explains the behavior of each mode.
+  block referencing the spec file and a `direct:<operationId>` route stub for each operation (an operation without
+  `operationId` gets the id the `rest-openapi` component generates), with `Content-Type` and `CamelHttpResponseCode`
+  headers pre-configured from the spec. Supports configuring the `missingOperation` mode (`fail`, `ignore`, or
+  `mock`) and explains it. With `mock`, it also lists one `camel-mock/` file per path of the spec, named after the
+  request path: a path parameter carries a sample value, such as `camel-mock/pets/1.json` for `+/pets/{petId}+`,
+  which answers `/pets/1` (one file per value). It gives the example of the spec and what Camel answers without the
+  file: the example of the `200` response for the media type of the request's `Content-Type` or `Accept` header,
+  otherwise HTTP 204 with an empty body.
 |===
 
 === Migration

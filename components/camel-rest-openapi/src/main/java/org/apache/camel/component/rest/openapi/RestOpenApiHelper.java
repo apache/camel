@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
 import io.swagger.v3.oas.models.servers.Server;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ContentTypeAware;
@@ -44,8 +45,25 @@ public final class RestOpenApiHelper {
     private static final List<String> YAML_CONTENT_TYPES = Arrays.asList("application/yaml", "application/yml",
             "text/yaml", "text/yml", "text/x-yaml");
 
+    private static final String GENERATED_OPERATION_ID_PREFIX = "GENOPID_";
+
     private RestOpenApiHelper() {
         // utility class
+    }
+
+    /**
+     * The operation id that the default contract-first strategy ({@link DefaultRestOpenapiProcessorStrategy}) gives an
+     * operation of the specification without an {@code operationId}: {@code GENOPID_}, the HTTP method, then the path
+     * with {@code /} replaced by {@code .} and the braces of the path parameters by {@code _}. For example {@code GET
+     * /pets/{petId}} becomes {@code GENOPID_GET.pets._petId_}, and the operation is routed to
+     * {@code direct:GENOPID_GET.pets._petId_}.
+     *
+     * @param  path       the path of the operation in the specification, such as {@code /pets/{petId}}
+     * @param  httpMethod the HTTP method of the operation
+     * @return            the generated operation id
+     */
+    public static String generateOperationId(String path, HttpMethod httpMethod) {
+        return GENERATED_OPERATION_ID_PREFIX + httpMethod.name() + path.replace('/', '.').replaceAll("[{}]", "_");
     }
 
     public static String isMediaRange(final String given, final String name) {
