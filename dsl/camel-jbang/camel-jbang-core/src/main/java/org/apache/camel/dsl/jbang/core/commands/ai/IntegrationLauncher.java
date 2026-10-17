@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -61,6 +62,13 @@ public final class IntegrationLauncher {
 
     /** A stack frame, or the count of the frames a cause shares with the exception it caused. */
     private static final Pattern FRAME = Pattern.compile("^\\s*(at \\S.*|\\.\\.\\. \\d+ (more|common frames omitted))$");
+    /** The line camel run prints when it exits with an error. */
+    private static final Pattern CLI_ERROR = Pattern.compile("^ERROR: (.+)$");
+    /** An exception of the console output with its message. */
+    private static final Pattern EXCEPTION_LINE
+            = Pattern.compile("^(?:Caused by: )?[\\w.$]+(?:Exception|Error): (.+)$");
+    /** The longest cause put first in an answer; the output that follows has all of it. */
+    private static final int MAX_CAUSE = 500;
 
     /**
      * The processes this JVM started from a directory with --source-dir, so a copy that has not written its status file
@@ -142,10 +150,16 @@ public final class IntegrationLauncher {
         long deadline = System.currentTimeMillis() + STARTUP_TIMEOUT_MS;
         while (System.currentTimeMillis() < deadline) {
             if (!process.isAlive()) {
+                String cause = failureCause(output);
                 result.put("status", "failed");
                 result.put("exitCode", process.exitValue());
+                if (cause != null) {
+                    result.put("cause", cause);
+                }
                 result.put("output", failureOutput(output));
-                result.put("message", "camel run exited before the integration started; the output has the reason");
+                result.put("message", cause != null
+                        ? "camel run exited before the integration started: " + cause
+                        : "camel run exited before the integration started; the output has the reason");
                 return result;
             }
             RuntimeHelper.ProcessInfo info = findByPid(pid);
@@ -270,6 +284,49 @@ public final class IntegrationLauncher {
             }
         }
         return null;
+    }
+
+    /**
+     * What made a run fail to start, in one line: the error camel run prints as it exits ({@code ERROR: ...}), else the
+     * message of the first exception after a record logged at ERROR. The output shows it among the startup records,
+     * under the banner; the answer puts it first. A model retried camel_run three times with "Duplicate route ids
+     * detected" in the output, and never changed the file that held the copy of the route. Null when the output has
+     * neither.
+     */
+    static String failureCause(Path output) {
+        List<String> lines;
+        try {
+            lines = readText(output).lines().map(String::strip).toList();
+        } catch (IOException e) {
+            return null;
+        }
+        String cause = null;
+        // camel run prints its error last
+        for (int i = lines.size() - 1; i >= 0 && cause == null; i--) {
+            Matcher m = CLI_ERROR.matcher(lines.get(i));
+            if (m.matches()) {
+                cause = m.group(1);
+            }
+        }
+        for (int i = 0; i < lines.size() && cause == null; i++) {
+            if (lines.get(i).contains(" ERROR ")) {
+                for (int j = i + 1; j < Math.min(lines.size(), i + 5) && cause == null; j++) {
+                    Matcher m = EXCEPTION_LINE.matcher(lines.get(j));
+                    if (m.matches()) {
+                        cause = m.group(1);
+                    }
+                }
+                if (cause == null) {
+                    int at = lines.get(i).indexOf(" : ");
+                    cause = at > 0 ? lines.get(i).substring(at + 3) : lines.get(i);
+                }
+            }
+        }
+        if (cause == null || cause.isBlank()) {
+            return null;
+        }
+        cause = cause.strip();
+        return cause.length() > MAX_CAUSE ? cause.substring(0, MAX_CAUSE) + "..." : cause;
     }
 
     /**
@@ -565,10 +622,13 @@ public final class IntegrationLauncher {
             }
             if (!p.isAlive()) {
                 boolean kept = stoppedByRestart(directory, name);
+                String cause = failureCause(output);
                 throw new ToolExecutionException(
                         "Restart of " + (name != null ? name : "pid " + pid) + " failed with exit code "
-                                                 + p.exitValue()
-                                                 + ", so it is stopped now: fix the cause below, then camel_run starts it again"
+                                                 + p.exitValue() + ", so it is stopped now"
+                                                 + (cause != null
+                                                         ? ". The cause: " + cause + "\nFix it" : ": fix the cause below")
+                                                 + ", then camel_run starts it again"
                                                  + (kept ? " (directory " + directory + ") under the same name, " + name : "")
                                                  + ".\n" + failureOutput(output));
             }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +30,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -109,5 +113,34 @@ class SourceValidatorRoutesTest {
         JsonArray notChecked = (JsonArray) result.get("notChecked");
         assertThat(notChecked).hasSize(1);
         assertThat(notChecked.getString(0)).startsWith("Line 10: not checked: ").contains("options()");
+    }
+
+    @Test
+    void aRouteIdThatAnotherFileOfTheProjectHasIsReported(@TempDir Path dir) throws IOException {
+        // a model asked to declare a bean in beans.yaml copied the route there too: Camel did not start
+        String route = """
+                - route:
+                    id: order-generator
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - log: "New order"
+                """;
+        Files.writeString(dir.resolve("order-generator.camel.yaml"), route);
+        String beans = """
+                - beans:
+                    - name: orderNumber
+                      type: "#class:java.lang.StringBuilder"
+                """ + route;
+        assertThat(SourceValidator.validate("beans.yaml", beans, catalog, null, dir, null, false))
+                .containsExactly("Line 4: route id 'order-generator' is already the id of a route in"
+                                 + " order-generator.camel.yaml, and Camel does not start with two routes of one id (camel"
+                                 + " run loads every file of the directory): change the route in order-generator.camel.yaml"
+                                 + " rather than adding a copy here, or give this route another id");
+
+        // the file itself, written again, and a route of another id are fine
+        assertThat(SourceValidator.validate("order-generator.camel.yaml", route, catalog, null, dir, null, false)).isEmpty();
+        assertThat(SourceValidator.validate("beans.yaml", beans.replace("id: order-generator", "id: other"), catalog, null,
+                dir, null, false)).isEmpty();
     }
 }

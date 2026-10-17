@@ -101,6 +101,50 @@ class IntegrationLauncherTest {
         assertThat(text.indexOf("is starting")).isLessThan(text.indexOf("Failed to create route"));
     }
 
+    @Test
+    void failureCauseIsTheErrorCamelRunPrintsAsItExits(@TempDir Path dir) throws Exception {
+        // the console of camel run with a copy of the route in beans.yaml, next to the route file
+        String duplicate = "Failed to create route because: Duplicate route ids detected: order-generator. Please correct"
+                           + " ids to be unique among all your routes.";
+        StringBuilder out = new StringBuilder();
+        out.append("Running integration with the following configuration:\n    --kamelets-version=4.22.1\n");
+        out.append("2026-10-17 11:03:43.201  INFO 81710 --- [           main] org.apache.camel.main.MainSupport   :"
+                   + " Apache Camel (JBang) 4.24.0-SNAPSHOT is starting\n");
+        out.append("2026-10-17 11:03:43.640  WARN 81710 --- [           main] sl.yaml.common.YamlDeserializerBase :"
+                   + " YAML DSL compact notation detected in: file:./beans.yaml\n");
+        out.append("2026-10-17 11:03:43.652 ERROR 81710 --- [           main] org.apache.camel.main.MainSupport   :"
+                   + " Error starting Camel: org.apache.camel.FailedToCreateRouteException: " + duplicate + "\n");
+        out.append("org.apache.camel.FailedToCreateRouteException: ").append(duplicate).append('\n');
+        out.append("\tat org.apache.camel.main.RoutesConfigurer.addDiscoveredRoutes(RoutesConfigurer.java:385)\n");
+        out.append("\tat main.CamelJBang.main(CamelJBang.java:38)\n");
+        out.append("ERROR: ").append(duplicate).append('\n');
+        out.append("org.apache.camel.FailedToCreateRouteException: ").append(duplicate).append('\n');
+        out.append("\tat org.apache.camel.main.RoutesConfigurer.addDiscoveredRoutes(RoutesConfigurer.java:385)\n");
+        Path output = dir.resolve("camel-launch.log");
+        Files.writeString(output, out.toString());
+
+        assertThat(IntegrationLauncher.failureCause(output)).isEqualTo(duplicate);
+    }
+
+    @Test
+    void failureCauseWithoutTheErrorLineIsTheFirstLoggedException(@TempDir Path dir) throws Exception {
+        Path output = dir.resolve("camel-launch.log");
+        Files.writeString(output, "2026-10-06 01:12:03.101  INFO 81990 --- [           main] o.a.c.main.MainSupport  :"
+                                  + " Apache Camel (JBang) 4.24.0-SNAPSHOT is starting\n"
+                                  + "2026-10-06 01:12:04.552 ERROR 81990 --- [           main] o.a.c.main.MainSupport  :"
+                                  + " Failed to create route: order-generator\n"
+                                  + "org.apache.camel.FailedToCreateRouteException: Failed to create route: order-generator"
+                                  + " because of No bean could be found in the registry for: orderNumber\n"
+                                  + "\tat org.apache.camel.impl.engine.AbstractCamelContext.start(AbstractCamelContext.java:1)\n");
+        assertThat(IntegrationLauncher.failureCause(output))
+                .isEqualTo("Failed to create route: order-generator because of No bean could be found in the registry for:"
+                           + " orderNumber");
+
+        // nothing that names an error: no cause, the output says what it says
+        Files.writeString(output, "Downloading dependency org.example:missing:1.0\n");
+        assertThat(IntegrationLauncher.failureCause(output)).isNull();
+    }
+
     /**
      * CAMEL-25364: an exception message over several lines is kept, such as the diagnostics of a Java class that does
      * not compile: they are continuation lines in the same block as the frames, and this output is the only copy.
