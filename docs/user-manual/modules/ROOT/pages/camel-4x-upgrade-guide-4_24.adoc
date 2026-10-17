@@ -786,6 +786,21 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-netty-http - the security constraint resolves dot-segments in the request path
+
+A `netty-http` consumer configured with a `securityConstraint` now resolves `.` and `..` segments in the request path
+(including their percent-encoded `%2e` form) before the path is matched against the configured inclusions and exclusions,
+following the `remove_dot_segments` algorithm of RFC 3986. The constraint is therefore evaluated against the effective
+resolved path, which is the same resource the request is routed to. Excess `..` segments cannot climb above the root.
+
+Previously the path was matched in its raw form. With `matchOnUriPrefix=true` and a specific inclusion such as
+`/admin/*`, a request to `/foo/../admin/x` (or its encoded `/foo/%2e%2e/admin/x` form) was matched as `/../admin/x`,
+did not match the inclusion, and was treated as not restricted. Such a request now resolves to `/admin/x` and is
+challenged by the constraint.
+
+If a route relied on a dot-segment path being treated as not restricted, review the inclusions and exclusions so the
+intended resources are covered.
+
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
 A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now
