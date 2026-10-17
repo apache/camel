@@ -62,6 +62,9 @@ public abstract class AbstractNumberFormat<T extends Number> implements Format<T
         } else if (this.precision >= 0) {
             this.format.setMinimumFractionDigits(this.precision);
             this.format.setMaximumFractionDigits(this.precision);
+        } else {
+            // no precision: keep every decimal of the value (the default of DecimalFormat rounds to three)
+            this.format.setMaximumFractionDigits(Integer.MAX_VALUE);
         }
     }
 
