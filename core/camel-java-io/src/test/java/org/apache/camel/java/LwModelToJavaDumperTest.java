@@ -25,6 +25,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
 import org.junit.jupiter.api.Test;
 
@@ -104,6 +105,32 @@ public class LwModelToJavaDumperTest {
             // the model was not changed
             assertThat(((ThrowExceptionDefinition) context.getRouteDefinition("javaBuilt").getOutputs().get(1))
                     .getExceptionType()).isNull();
+        }
+    }
+
+    /**
+     * An option set to its documented default value is written: when it is not set, the option takes the value of a
+     * parent level (the rest configuration for a verb, the error handler for the redelivery of an onException).
+     */
+    @Test
+    public void testDumpOptionsSetToTheirDefaultValue() throws Exception {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    rest("/api").get("/raw").bindingMode(RestBindingMode.off).to("direct:raw");
+
+                    from("direct:start").routeId("redelivery")
+                            .onException(IllegalStateException.class).maximumRedeliveries(1).redeliveryDelay(1000).end()
+                            .to("mock:result");
+                }
+            });
+            Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+            LwModelToJavaDumper dumper = new LwModelToJavaDumper();
+
+            assertThat(dumper.dumpModelAsJava(context, model.getRestDefinitions().get(0))).contains(".bindingMode(\"off\")");
+            assertThat(dumper.dumpModelAsJava(context, context.getRouteDefinition("redelivery")))
+                    .contains(".redeliveryDelay(\"1000\")");
         }
     }
 }

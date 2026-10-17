@@ -549,6 +549,15 @@ or follows, like Enter does.
   nothing), and a route that cannot be read, such as invalid YAML, exits with `1` and the error of the parser (it failed
   with an internal error, `70`, and a stack trace).
 
+=== camel-xml-io, camel-yaml-io, camel-java-io - route dumps keep options set to their default value
+
+The XML, YAML and Java route dumps (`camel transform route`, `camel validate normalize`, `camel.main.dumpRoutes`, the
+developer console) now write these options whenever they are set, also with their documented default value: the
+binding options of a rest and its verbs (such as `bindingMode="off"`), the options of a redelivery policy, of a
+`resilience4jConfiguration` and of a `faultToleranceConfiguration`, and `shutdownRoute` / `shutdownRunningTask` of a
+route. Left out, such an option took the value of the parent level when the dump was loaded (the rest configuration,
+the error handler, the global circuit breaker configuration, the CamelContext), so the route behaved differently.
+
 === camel-jbang - camel get bean, get route-controller and top source
 
 * `camel get bean --dsl` shows the configuration of each property next to that property: it paired them by position,

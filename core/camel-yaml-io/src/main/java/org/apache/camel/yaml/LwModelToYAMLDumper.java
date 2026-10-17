@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -36,12 +37,15 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.FaultToleranceConfigurationCommon;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.model.Resilience4jConfigurationCommon;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -71,6 +75,17 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
  */
 @JdkService(ModelToYAMLDumper.FACTORY)
 public class LwModelToYAMLDumper implements ModelToYAMLDumper {
+
+    /**
+     * Options that are written whenever they are set, even with their documented default value: when they are not set,
+     * they take the value of a parent level (the rest or the rest configuration for a rest or verb, the CamelContext
+     * for a route), and a dump that leaves them out runs differently once loaded. The same holds for every option of a
+     * redelivery policy (an onException copies the error handler's policy) and of a circuit breaker configuration (it
+     * is layered over the global one).
+     */
+    static final Set<String> INHERITED_OPTIONS = Set.of(
+            "bindingMode", "skipBindingOnErrorCode", "clientRequestValidation", "clientResponseValidation", "enableCORS",
+            "enableNoContentResponse", "shutdownRoute", "shutdownRunningTask");
 
     @Override
     public String dumpModelAsYaml(CamelContext context, NamedNode definition) throws Exception {
@@ -126,6 +141,10 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
         topLevel.removeIf(oe -> isInRouteConfiguration(context, oe));
 
         YamlModelWriter writer = new YamlModelWriter() {
+            // the options of a redelivery policy or a circuit breaker configuration that are written as set, see
+            // INHERITED_OPTIONS
+            private boolean keepDefault;
+
             @Override
             protected <T> void doWriteOutputs(JsonObject jo, List<T> list, Function<T, JsonObject> writer) {
                 if (list != null && !contextScoped.isEmpty()) {
@@ -161,7 +180,42 @@ public class LwModelToYAMLDumper implements ModelToYAMLDumper {
                     expandUri(jo, value);
                     return;
                 }
-                super.doWriteAttribute(jo, key, value, defaultValue);
+                super.doWriteAttribute(jo, key, value, keepDefault || INHERITED_OPTIONS.contains(key) ? null : defaultValue);
+            }
+
+            @Override
+            protected JsonObject doWriteRedeliveryPolicyDefinition(RedeliveryPolicyDefinition def) {
+                boolean keep = keepDefault;
+                keepDefault = true;
+                try {
+                    return super.doWriteRedeliveryPolicyDefinition(def);
+                } finally {
+                    keepDefault = keep;
+                }
+            }
+
+            @Override
+            protected void doWriteResilience4jConfigurationCommonAttributes(
+                    JsonObject jo, Resilience4jConfigurationCommon def) {
+                boolean keep = keepDefault;
+                keepDefault = true;
+                try {
+                    super.doWriteResilience4jConfigurationCommonAttributes(jo, def);
+                } finally {
+                    keepDefault = keep;
+                }
+            }
+
+            @Override
+            protected void doWriteFaultToleranceConfigurationCommonAttributes(
+                    JsonObject jo, FaultToleranceConfigurationCommon def) {
+                boolean keep = keepDefault;
+                keepDefault = true;
+                try {
+                    super.doWriteFaultToleranceConfigurationCommonAttributes(jo, def);
+                } finally {
+                    keepDefault = keep;
+                }
             }
 
             @Override

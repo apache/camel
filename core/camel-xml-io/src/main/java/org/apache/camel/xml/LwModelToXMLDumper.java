@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.camel.CamelContext;
@@ -37,8 +38,11 @@ import org.apache.camel.model.BasicExpressionNode;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.FaultToleranceConfigurationCommon;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.RedeliveryPolicyDefinition;
+import org.apache.camel.model.Resilience4jConfigurationCommon;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
@@ -64,6 +68,17 @@ import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutpu
  */
 @JdkService(ModelToXMLDumper.FACTORY)
 public class LwModelToXMLDumper implements ModelToXMLDumper {
+
+    /**
+     * Options that are written whenever they are set, even with their documented default value: when they are not set,
+     * they take the value of a parent level (the rest or the rest configuration for a rest or verb, the CamelContext
+     * for a route), and a dump that leaves them out runs differently once loaded. The same holds for every option of a
+     * redelivery policy (an onException copies the error handler's policy) and of a circuit breaker configuration (it
+     * is layered over the global one).
+     */
+    static final Set<String> INHERITED_OPTIONS = Set.of(
+            "bindingMode", "skipBindingOnErrorCode", "clientRequestValidation", "clientResponseValidation", "enableCORS",
+            "enableNoContentResponse", "shutdownRoute", "shutdownRunningTask");
 
     @Override
     public String dumpModelAsXml(CamelContext context, NamedNode definition) throws Exception {
@@ -96,6 +111,10 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
 
         StringWriter buffer = new StringWriter();
         ModelWriter writer = new ModelWriter(buffer, BaseWriter.DEFAULT_NAMESPACE) {
+            // the options of a redelivery policy or a circuit breaker configuration that are written as set, see
+            // INHERITED_OPTIONS
+            private boolean keepDefault;
+
             @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
                     throws IOException {
@@ -165,6 +184,48 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                         value = resolve(value, properties);
                     }
                     super.doWriteValue(value);
+                }
+            }
+
+            @Override
+            protected void doWriteAttribute(String attribute, String value, String defaultValue) throws IOException {
+                super.doWriteAttribute(attribute, value,
+                        keepDefault || INHERITED_OPTIONS.contains(attribute) ? null : defaultValue);
+            }
+
+            @Override
+            protected void doWriteRedeliveryPolicyDefinition(String name, RedeliveryPolicyDefinition def)
+                    throws IOException {
+                boolean keep = keepDefault;
+                keepDefault = true;
+                try {
+                    super.doWriteRedeliveryPolicyDefinition(name, def);
+                } finally {
+                    keepDefault = keep;
+                }
+            }
+
+            @Override
+            protected void doWriteResilience4jConfigurationCommonAttributes(Resilience4jConfigurationCommon def)
+                    throws IOException {
+                boolean keep = keepDefault;
+                keepDefault = true;
+                try {
+                    super.doWriteResilience4jConfigurationCommonAttributes(def);
+                } finally {
+                    keepDefault = keep;
+                }
+            }
+
+            @Override
+            protected void doWriteFaultToleranceConfigurationCommonAttributes(FaultToleranceConfigurationCommon def)
+                    throws IOException {
+                boolean keep = keepDefault;
+                keepDefault = true;
+                try {
+                    super.doWriteFaultToleranceConfigurationCommonAttributes(def);
+                } finally {
+                    keepDefault = keep;
                 }
             }
 
