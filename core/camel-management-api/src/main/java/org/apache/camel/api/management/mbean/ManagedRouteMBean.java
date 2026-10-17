@@ -238,7 +238,7 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
      *
      * @since 4.24
      */
-    @ManagedAttribute(description = "Total number of exchanges inflight from remote endpoints only")
+    @ManagedAttribute(description = "Number of inflight exchanges from remote endpoints only")
     long getRemoteExchangesInflight();
 
 }

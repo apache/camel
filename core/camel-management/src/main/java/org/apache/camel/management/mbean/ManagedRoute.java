@@ -804,7 +804,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
         remoteExchangesTotal.reset();
         remoteExchangesCompleted.reset();
         remoteExchangesFailed.reset();
-        remoteExchangesInflight.reset();
+        // do not reset remoteExchangesInflight
     }
 
     @Override

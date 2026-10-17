@@ -17,6 +17,9 @@
 package org.apache.camel.management;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -31,8 +34,10 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ROUTE;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The remote exchange counters of the routes: the exchanges a route processed that came from a remote endpoint. Here
@@ -40,6 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteRemoteExchangesTest extends ManagementTestSupport {
+
+    private final CountDownLatch held = new CountDownLatch(1);
+    private final CountDownLatch release = new CountDownLatch(1);
 
     @Test
     public void testRemoteExchangesOfTheRoutes() throws Exception {
@@ -69,6 +77,29 @@ public class ManagedRouteRemoteExchangesTest extends ManagementTestSupport {
         mbeanServer.invoke(getCamelObjectName(TYPE_ROUTE, "audit"), "reset", null, null);
 
         assertCounters("audit", 0, 0, 0, 0);
+    }
+
+    @Test
+    public void testResetKeepsTheRemoteExchangesInflight() throws Exception {
+        // an exchange from remote that is in the route while the counters are reset
+        CompletableFuture<Object> reply = template.asyncRequestBody("remote:held", "order");
+        assertTrue(held.await(10, TimeUnit.SECONDS));
+
+        MBeanServer mbeanServer = getMBeanServer();
+        mbeanServer.invoke(getCamelObjectName(TYPE_ROUTE, "hold"), "reset", null, null);
+        mbeanServer.invoke(getContextObjectName(), "reset", null, null);
+
+        assertCounters("hold", 0, 0, 0, 1);
+        assertEquals(1L, (Long) mbeanServer.getAttribute(getContextObjectName(), "RemoteExchangesInflight"));
+
+        release.countDown();
+        reply.get(10, TimeUnit.SECONDS);
+
+        // the inflight counters go back to 0, and not below
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertCounters("hold", 1, 1, 0, 0);
+            assertEquals(0L, (Long) mbeanServer.getAttribute(getContextObjectName(), "RemoteExchangesInflight"));
+        });
     }
 
     private void assertCounters(String routeId, long total, long completed, long failed, long inflight)
@@ -117,6 +148,13 @@ public class ManagedRouteRemoteExchangesTest extends ManagementTestSupport {
                 from("direct:audit").routeId("audit")
                         .filter(body().isEqualTo("boom")).throwException(new IllegalArgumentException("Forced")).end()
                         .to("mock:result");
+                from("remote:held").routeId("held").to("direct:hold");
+                from("direct:hold").routeId("hold").process(exchange -> {
+                    held.countDown();
+                    if (!release.await(10, TimeUnit.SECONDS)) {
+                        throw new IllegalStateException("The exchange was not released");
+                    }
+                });
             }
         };
     }
