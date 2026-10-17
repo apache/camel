@@ -548,7 +548,9 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 }
             } catch (Exception e) {
                 getLog().debug("Could not parse " + kind + " class: " + simpleName + " - " + e.getMessage());
-                return;
+                if (imported == null) {
+                    return;
+                }
             }
         }
         if (imported != null) {

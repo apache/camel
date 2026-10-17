@@ -46,6 +46,21 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class PrepareCamelJBangCommandsMojoTest {
 
+    // the command Init of camel-jbang-core
+    private static final String CORE_INIT = """
+            package org.apache.camel.dsl.jbang.core.commands;
+
+            import picocli.CommandLine.Command;
+            import picocli.CommandLine.Option;
+
+            @Command(name = "init", description = "Creates a new Camel integration")
+            public class Init {
+
+                @Option(names = "--from-kamelet", description = "To be used when extending an existing Kamelet")
+                String fromKamelet;
+            }
+            """;
+
     @TempDir
     Path tempDir;
 
@@ -220,7 +235,7 @@ class PrepareCamelJBangCommandsMojoTest {
      */
     @Test
     void testPluginCommandDoesNotGetTheOptionsOfTheCoreCommandWithTheNameOfItsParent() throws Exception {
-        JBangCommand init = generatePluginWithLibraryParent();
+        JBangCommand init = generatePluginWithLibraryParent(CORE_INIT);
 
         assertThat(init.getOptions()).extracting(JBangCommandOption::getNames).doesNotContain("--from-kamelet");
     }
@@ -233,13 +248,26 @@ class PrepareCamelJBangCommandsMojoTest {
     void testPluginCommandGetsTheOptionsOfTheLibraryClassItExtends() throws Exception {
         compileLibrary();
 
-        JBangCommand init = generatePluginWithLibraryParent();
+        JBangCommand init = generatePluginWithLibraryParent(CORE_INIT);
 
         assertThat(init.getOptions()).extracting(JBangCommandOption::getNames).containsExactly("--directory", "-h,--help");
         JBangCommandOption directory = init.getOptions().get(0);
         assertThat(directory.getDescription()).isEqualTo("Directory where the files will be created");
         assertThat(directory.getDefaultValue()).isEqualTo(".");
         assertThat(directory.getJavaType()).isEqualTo("java.lang.String");
+    }
+
+    /**
+     * A source with the simple name of the library class that cannot be parsed does not keep the options of the library
+     * class from the classpath of the project.
+     */
+    @Test
+    void testPluginCommandGetsTheOptionsOfTheLibraryClassWhenASourceWithItsNameCannotBeParsed() throws Exception {
+        compileLibrary();
+
+        JBangCommand init = generatePluginWithLibraryParent("this is not java");
+
+        assertThat(init.getOptions()).extracting(JBangCommandOption::getNames).containsExactly("--directory", "-h,--help");
     }
 
     /**
@@ -307,23 +335,11 @@ class PrepareCamelJBangCommandsMojoTest {
 
     /**
      * A plugin as camel-jbang-plugin-test: camel test init, whose parent class Init is of a library, while
-     * camel-jbang-core has a command class Init too. Returns the generated test init command.
+     * camel-jbang-core has a command class Init too (with the given source). Returns the generated test init command.
      */
-    private JBangCommand generatePluginWithLibraryParent() throws Exception {
+    private JBangCommand generatePluginWithLibraryParent(String coreInit) throws Exception {
         Path core = tempDir.resolve("core/commands");
-        write(core.resolve("Init.java"), """
-                package org.apache.camel.dsl.jbang.core.commands;
-
-                import picocli.CommandLine.Command;
-                import picocli.CommandLine.Option;
-
-                @Command(name = "init", description = "Creates a new Camel integration")
-                public class Init {
-
-                    @Option(names = "--from-kamelet", description = "To be used when extending an existing Kamelet")
-                    String fromKamelet;
-                }
-                """);
+        write(core.resolve("Init.java"), coreInit);
         Path plugin = tempDir.resolve("plugin/commands");
         write(plugin.resolve("test/TestPlugin.java"), """
                 package org.apache.camel.dsl.jbang.core.commands.test;
