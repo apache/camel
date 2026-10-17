@@ -150,7 +150,7 @@ The component supports a 3-level hierarchical validation model:
 === Security Considerations and Untrusted Ingress
 
 [IMPORTANT]
-====
+======
 In Apache Camel's security model, Camel message headers take precedence over endpoint URI options.
 
 When building routes that accept untrusted external ingress (such as HTTP endpoints, webhooks, or public messaging queues), external messages may carry `CamelAlibabaEventBridge*` headers that could override endpoint-level security policies (such as `allowedEventSources` or validation toggles).
@@ -186,7 +186,7 @@ YAML::
               region: cn-hangzhou
 ----
 ====
-====
+======
 
 === Allowed Event Sources Configuration
 
