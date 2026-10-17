@@ -48,4 +48,4 @@ It needs the `camel-openapi-java` component on the classpath.
                 expression: "Order ${header.id}"
 ----
 
-With this, `GET /api-doc` returns the OpenAPI document, which describes `GET /orders/{id}`.
+With this, `GET /api-doc` returns the OpenAPI document, which describes `GET /orders/\{id}`.
