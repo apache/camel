@@ -89,7 +89,7 @@ class RuntimeToolsTest {
     @Test
     void httpRequestRequiresPath() {
         RuntimeTools tools = createTools();
-        assertThatThrownBy(() -> tools.camel_runtime_http_request(null, "GET", " ", null, null))
+        assertThatThrownBy(() -> tools.camel_runtime_http_request(null, "GET", " ", null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("path is required");
     }
@@ -100,7 +100,7 @@ class RuntimeToolsTest {
         RuntimeTools tools = createTools();
         assertThatThrownBy(() -> tools.camel_runtime_http_endpoints("no-such-app-25307", null))
                 .isInstanceOf(ToolCallException.class);
-        assertThatThrownBy(() -> tools.camel_runtime_http_request("no-such-app-25307", "GET", "/hello", null, null))
+        assertThatThrownBy(() -> tools.camel_runtime_http_request("no-such-app-25307", "GET", "/hello", null, null, null))
                 .isInstanceOf(ToolCallException.class);
     }
 
@@ -112,7 +112,7 @@ class RuntimeToolsTest {
         assertThat(McpSecurityConfig.AccessLevel.READ_ONLY.permits(
                 endpoints.annotations().readOnlyHint(), endpoints.annotations().destructiveHint())).isTrue();
         Tool request = RuntimeTools.class.getDeclaredMethod("camel_runtime_http_request", String.class, String.class,
-                String.class, String.class, String.class).getAnnotation(Tool.class);
+                String.class, String.class, String.class, Integer.class).getAnnotation(Tool.class);
         assertThat(request.annotations().readOnlyHint()).isFalse();
         assertThat(request.annotations().destructiveHint()).isFalse();
         assertThat(request.annotations().openWorldHint()).isFalse();

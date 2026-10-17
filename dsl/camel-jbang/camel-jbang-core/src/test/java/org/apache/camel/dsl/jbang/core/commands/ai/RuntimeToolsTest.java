@@ -82,11 +82,11 @@ class RuntimeToolsTest {
         answers.put("route-dump", Map.of("routes", List.of()));
 
         call("get_route_dump", Map.of());
-        assertThat(integration.lastAction().getString("id")).isEqualTo("*");
+        assertThat(integration.lastAction().getString("filter")).isEqualTo("*");
         assertThat(integration.lastAction().getString("format")).isEqualTo("yaml");
 
         call("get_route_dump", Map.of("routeId", "orders", "format", "xml"));
-        assertThat(integration.lastAction().getString("id")).isEqualTo("orders");
+        assertThat(integration.lastAction().getString("filter")).isEqualTo("orders");
         assertThat(integration.lastAction().getString("format")).isEqualTo("xml");
     }
 
@@ -97,7 +97,7 @@ class RuntimeToolsTest {
         answers.put("route-topology", Map.of("nodes", List.of()));
 
         call("get_route_structure", Map.of());
-        assertThat(integration.lastAction().getString("id")).isEqualTo("*");
+        assertThat(integration.lastAction().getString("filter")).isEqualTo("*");
         call("get_top_processors", Map.of());
         assertThat(integration.lastAction().getString("action")).isEqualTo("top-processors");
         call("get_route_topology", Map.of());
