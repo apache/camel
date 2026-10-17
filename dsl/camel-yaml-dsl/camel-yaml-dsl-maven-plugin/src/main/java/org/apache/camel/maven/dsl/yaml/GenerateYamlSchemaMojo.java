@@ -538,7 +538,42 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
             for (String enumValue : enumValues.split(",")) {
                 current.withArray("enum").add(enumValue);
             }
+        } else if (propertyType.startsWith("multienum:")) {
+            // several of the enum values separated by comma, such as A,B: a JSON schema enum cannot say that
+            current.put("type", "string");
+            current.put("pattern", multiEnumPattern(StringHelper.after(propertyType, ":")));
         }
+    }
+
+    /**
+     * The pattern of a comma-separated list of the enum values, with spaces allowed around the commas: for A,B it is
+     * ^\\s*(A|B)\\s*(,\\s*(A|B)\\s*)*$. It is an ECMA 262 regular expression, as JSON schema uses.
+     */
+    static String multiEnumPattern(String enumValues) {
+        String one = Stream.of(enumValues.split(","))
+                .map(String::trim)
+                .map(v -> v.replaceAll("[^A-Za-z0-9_-]", "\\\\$0"))
+                .collect(Collectors.joining("|", "(", ")"));
+        return "^\\s*" + one + "\\s*(,\\s*" + one + "\\s*)*$";
+    }
+
+    /**
+     * The enum values of a pattern made by {@link #multiEnumPattern(String)}, or null for any other pattern: the
+     * completion tree lists them as the schema had them before the pattern.
+     */
+    static List<String> multiEnumValues(String pattern) {
+        String start = "^\\s*(";
+        if (pattern == null || !pattern.startsWith(start)) {
+            return null;
+        }
+        int end = pattern.indexOf(')', start.length());
+        if (end < 0) {
+            return null;
+        }
+        List<String> values = Stream.of(pattern.substring(start.length(), end).split("\\|"))
+                .map(v -> v.replaceAll("\\\\(.)", "$1"))
+                .toList();
+        return multiEnumPattern(String.join(",", values)).equals(pattern) ? values : null;
     }
 
     private void collectYamlProperties(List<AnnotationInstance> annotations, ClassInfo info) {

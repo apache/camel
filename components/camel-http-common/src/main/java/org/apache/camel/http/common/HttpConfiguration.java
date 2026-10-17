@@ -24,7 +24,7 @@ public class HttpConfiguration implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Metadata(label = "producer,security",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, or NTLM. (NTLM is deprecated)")
+              description = "The authentication method to use: Basic, Bearer or NTLM. (NTLM is deprecated)")
     private String authMethod;
     @Metadata(label = "producer,security", security = "secret", description = "Authentication username")
     private String authUsername;
@@ -91,7 +91,7 @@ public class HttpConfiguration implements Serializable {
     }
 
     /**
-     * Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM (deprecated).
+     * The authentication method to use: Basic, Bearer or NTLM (deprecated).
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;

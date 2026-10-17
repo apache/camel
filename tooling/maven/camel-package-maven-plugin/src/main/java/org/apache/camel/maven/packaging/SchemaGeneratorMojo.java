@@ -403,6 +403,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                             o.setDeprecationNote(metadata.deprecationNote());
                         }
                         applySecurityMetadata(o, metadata);
+                        applyMultiEnumMetadata(o, metadata);
                         o.setJavaType(metadata.javaType());
                         // special if the property is for input (such as AGGREGATION_COMPLETE_CURRENT_GROUP)
                         if (labels.startsWith("consumer,")) {
@@ -596,6 +597,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 required, defaultValue, label, docComment, deprecated, deprecationNote, isEnum, enums,
                 null, false, isDuration, important);
         applySecurityMetadata(ep, metadata);
+        applyMultiEnumMetadata(ep, metadata);
         eipOptions.add(ep);
 
         return false;
@@ -654,6 +656,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 defaultValue, label, docComment, deprecated, deprecationNote, false, null,
                 null, false, isDuration, important);
         applySecurityMetadata(ep, metadata);
+        applyMultiEnumMetadata(ep, metadata);
         eipOptions.add(ep);
     }
 
@@ -744,6 +747,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     docComment, deprecated, deprecationNote, isEnum, enums,
                     oneOfTypes, asPredicate, isDuration, important);
             applySecurityMetadata(ep, metadata);
+            applyMultiEnumMetadata(ep, metadata);
             eipOptions.add(ep);
         }
     }
@@ -793,6 +797,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                     deprecated, deprecationNote, false, null, oneOfTypes,
                     false, false, important);
             applySecurityMetadata(ep, metadata);
+            applyMultiEnumMetadata(ep, metadata);
             eipOptions.add(ep);
         }
     }
@@ -1495,6 +1500,15 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setAsPredicate(asPredicate);
         option.setImportant(important);
         return option;
+    }
+
+    /**
+     * Whether the option takes several of its enum values, separated by comma ({@code @Metadata(multiEnum = true)}).
+     */
+    static void applyMultiEnumMetadata(EipOptionModel option, Metadata metadata) {
+        if (metadata != null && metadata.multiEnum() && option.getEnums() != null && !option.getEnums().isEmpty()) {
+            option.setMultiEnum(true);
+        }
     }
 
     /**

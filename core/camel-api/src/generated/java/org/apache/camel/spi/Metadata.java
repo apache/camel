@@ -79,6 +79,14 @@ public @interface Metadata {
     String enums() default "";
 
     /**
+     * Whether the option takes several of its {@link #enums()} values, separated by comma, such as
+     * <tt>CREATED,UPDATED</tt>. Spaces around the commas are allowed.
+     *
+     * Tooling can then offer to pick several values, and validation checks each value of the list.
+     */
+    boolean multiEnum() default false;
+
+    /**
      * Whether the option is secret/sensitive information such as a password.
      *
      * @deprecated use {@code security = "secret"} instead.
