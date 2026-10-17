@@ -127,6 +127,45 @@ However Camel allows to wrap the actual value inside `RAW(…)`, which makes esc
 milo-client:opc.tcp://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
 ----
 
+=== Monitoring and writing a node
+
+The following routes monitor one node and write another, on the server of the
+xref:milo-server-component.adoc[OPC UA Server] example. A consumer receives a `DataValue` for each change,
+and `${body.value.value}` is the value. A producer writes the message body to its node:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: milo-client:opc.tcp://localhost:12685
+      parameters:
+        node: "RAW(nsu=urn:org:apache:camel;s=temperature)"
+        samplingInterval: 1000
+        username: camel
+        password: secret
+        allowedSecurityPolicies: None
+      steps:
+        - log:
+            message: "Temperature: ${body.value.value}"
+- route:
+    from:
+      uri: timer:setpoint
+      parameters:
+        repeatCount: 1
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "42"
+        - to:
+            uri: milo-client:opc.tcp://localhost:12685
+            parameters:
+              node: "RAW(nsu=urn:org:apache:camel;s=setpoint)"
+              username: camel
+              password: secret
+              allowedSecurityPolicies: None
+----
+
 === Monitoring several nodes
 
 A consumer can monitor several nodes with the `nodes` option instead of `node` (the two options cannot be combined).
@@ -183,7 +222,10 @@ The component provide a producer to read values from multiple opc-ua nodes. The 
 
 Example:
 
-._Java-only: reading values from OPC UA nodes using enrich with an AggregationStrategy_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -197,6 +239,36 @@ from("direct:start")
             }
         }).to("mock:test1");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMiloNodeIds
+            expression:
+              groovy:
+                expression: "['nsu=urn:org:apache:camel;s=myitem1']"
+        - setHeader:
+            name: CamelMiloAwait
+            expression:
+              constant:
+                expression: "true"
+        - enrich:
+            expression:
+              constant:
+                expression: milo-client:opc.tcp://localhost:4334
+        - to:
+            uri: mock:test1
+----
+====
+
+The read is asynchronous. Without the `CamelMiloAwait` header, or `defaultAwaitWrites=true` on the endpoint,
+the route goes on before the values are in the body.
 
 === Custom data types: accessing the underlying milo OpcUaClient
 
