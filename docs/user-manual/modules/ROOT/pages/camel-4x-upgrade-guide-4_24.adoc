@@ -743,6 +743,12 @@ now read as a local date-time without a zone (`getDate()` returns a `LocalDateTi
 definition of an earlier message, if there was one. A calendar that defines a `TZID` an earlier message has defined
 differently is now read with its own definition.
 
+=== camel-flatpack - marshal writes the first row of the list
+
+With the default `ignoreFirstRecord=true`, marshalling a `List<Map<String, Object>>` skipped the first map, so the
+first data row was missing from the output (the header line is written from the column names). Every map of the list
+is now written. A route that added a dummy first map to work around this now gets it in the output too.
+
 === camel-milo - the OPC UA client validates the server certificate
 
 When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components
