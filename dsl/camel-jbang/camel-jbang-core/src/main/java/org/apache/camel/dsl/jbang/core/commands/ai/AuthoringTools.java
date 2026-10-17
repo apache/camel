@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -643,7 +644,24 @@ public final class AuthoringTools {
         if (content == null) {
             return edit; // not-found or ambiguous: the answer says what to do instead
         }
+        Path refusedKey = resolveFile(dir, file).toAbsolutePath().normalize();
+        Refused refusedBefore = LAST_REFUSED.get(refusedKey);
         JsonObject result = writeFile(ctx, dir, file, content, true);
+        if ("invalid".equals(result.getString("status")) && edit.get("matchedLines") != null) {
+            // CAMEL-25532: a match to the closest lines stands only when its result is valid. After a refused edit the
+            // next text to find is often the model's own replacement, which the file never got: matched to the closest
+            // lines it is refused again, and the model goes on editing a file that exists only in its memory. The
+            // answer of an exact match, not found with the lines the file has there, puts it back in step with the file
+            JsonObject exact = editedContent(dir, file, find, replace, edits, false);
+            if (exact.getString("content") == null) {
+                if (refusedBefore != null) {
+                    LAST_REFUSED.put(refusedKey, refusedBefore);
+                } else {
+                    LAST_REFUSED.remove(refusedKey);
+                }
+                return exact;
+            }
+        }
         if (!"invalid".equals(result.getString("status"))) {
             result.put("status", "edited");
             if (edit.get("matchedLines") instanceof JsonArray matched) {
@@ -651,7 +669,8 @@ public final class AuthoringTools {
                 result.put("message", "The text to find was not in the file as given; it was matched to the closest"
                                       + " lines of the file (" + String.join(", ", matched.stream().map(String::valueOf)
                                               .toList())
-                                      + ") and replaced there. " + result.getString("message"));
+                                      + "), and the lines you changed were changed there. Where the file has other text"
+                                      + " in lines you did not change, it was kept. " + result.getString("message"));
             }
             result.put("editedAtLine", edit.getInteger("editedAtLine"));
             result.put("replacedLines", edit.getInteger("replacedLines"));
@@ -688,6 +707,14 @@ public final class AuthoringTools {
      * and the file is not changed.
      */
     public static JsonObject editedContent(Path dir, String file, String find, String replace, String edits) {
+        return editedContent(dir, file, find, replace, edits, LENIENT);
+    }
+
+    /**
+     * As {@link #editedContent(Path, String, String, String, String)}; {@code closest} says whether a snippet that is
+     * not in the file may be matched to its closest lines (CAMEL-25532).
+     */
+    static JsonObject editedContent(Path dir, String file, String find, String replace, String edits, boolean closest) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
             throw new ToolExecutionException(file + " does not exist: write the whole file with camel_write_file");
@@ -713,7 +740,7 @@ public final class AuthoringTools {
         JsonArray matched = new JsonArray();
         int replaced = 0;
         for (int i = 0; i < all.size(); i++) {
-            JsonObject one = editedSnippet(file, content, all.get(i)[0], all.get(i)[1]);
+            JsonObject one = editedSnippet(file, content, all.get(i)[0], all.get(i)[1], closest);
             if (one.getString("content") == null) {
                 if (all.size() > 1) {
                     one.put("edit", i + 1);
@@ -782,7 +809,7 @@ public final class AuthoringTools {
               + " there\"}";
 
     /** One snippet replaced in the content: the {@link #editedContent(Path, String, String, String)} answer. */
-    private static JsonObject editedSnippet(String file, String content, String find, String replace) {
+    private static JsonObject editedSnippet(String file, String content, String find, String replace, boolean closest) {
         String wanted = find;
         String put = replace;
         boolean trimmedMatch = false;
@@ -820,22 +847,21 @@ public final class AuthoringTools {
                 put = unescapeLiterals(put);
             }
         }
-        int[] fuzzy = null;
-        if (first < 0 && LENIENT) {
-            // CAMEL-25532: the model writes the snippet from memory, and remembers a line, not the lines around it;
-            // the window of the file that best matches the snippet, when it holds a distinctive line of it and no
-            // other window is as good
-            fuzzy = fuzzyWindow(content, wanted);
-            if (fuzzy != null) {
-                first = fuzzy[0];
-                length = fuzzy[1] - fuzzy[0];
-                trimmedMatch = true;
-            }
-        }
         JsonObject result = new JsonObject();
         result.put("file", file);
-        if (fuzzy != null) {
-            result.put("matchedLines", fuzzy[2] + "-" + fuzzy[3]);
+        if (first < 0 && closest) {
+            // CAMEL-25532: the model writes the snippet from memory, and remembers a line, not the lines around it;
+            // the window of the file that best matches the snippet, when it holds a distinctive line of it and no
+            // other window is as good, gets the changes the model made between find and replace
+            int[] window = fuzzyWindow(content, wanted);
+            ClosestEdit merged = window != null ? mergeIntoWindow(content, window, wanted, put) : null;
+            if (merged != null) {
+                result.put("matchedLines", merged.firstLine() + "-" + merged.lastLine());
+                result.put("content", content.substring(0, merged.start()) + merged.text() + content.substring(merged.end()));
+                result.put("editedAtLine", merged.firstLine());
+                result.put("replacedLines", merged.lastLine() - merged.firstLine() + 1);
+                return result;
+            }
         }
         if (first < 0) {
             result.put("status", "not-found");
@@ -1047,6 +1073,175 @@ public final class AuthoringTools {
         int last = bestAt + bestSize - 1;
         int end = Math.min(offsets[last] + lines[last].length() + 1, content.length());
         return new int[] { offsets[bestAt], end, bestAt + 1, last + 1 };
+    }
+
+    /**
+     * A snippet merged into the closest lines of a file: the offsets it replaces, its text, and those lines (from 1).
+     */
+    record ClosestEdit(int start, int end, String text, int firstLine, int lastLine) {
+    }
+
+    /** A line of YAML as {@code key:} or {@code - key:}, with its key: the {@code key} group. */
+    private static final Pattern YAML_KEY = Pattern.compile("^(?:-\\s+)?([\\w.$-]+):(?:\\s|$)");
+
+    /**
+     * The changes the model made between find and replace, made in the window of the file that find was matched to
+     * (CAMEL-25532). find is the model's memory of those lines and can be wrong, so replace does not overwrite the
+     * window. The lines of find that are in the file and that replace keeps are anchors, and stay as the file has them.
+     * Each stretch between two anchors stays the file's where replace leaves the model's version of it unchanged, or
+     * where the file has replace's version already, and becomes replace's version otherwise, at the file's indentation.
+     * A line at either end of find that the file has just past the window (the same line, or the same key at the same
+     * depth) belongs to the window, so that a line the model changed is not left there twice. Null when find and the
+     * window have no line in common.
+     */
+    static ClosestEdit mergeIntoWindow(String content, int[] window, String find, String replace) {
+        String[] lines = content.split("\n", -1);
+        // the element after a final newline is not a line of the file
+        int lineCount = content.endsWith("\n") ? lines.length - 1 : lines.length;
+        int ws = window[2] - 1;
+        int we = window[3] - 1;
+        List<String> f = find.lines().filter(l -> !l.isBlank()).toList();
+        List<String> r = replace.lines().toList();
+        List<String> fNorm = f.stream().map(AuthoringTools::fuzzyLine).toList();
+        List<String> rNorm = r.stream().map(AuthoringTools::fuzzyLine).toList();
+        List<String> windowNorm = new ArrayList<>();
+        for (int i = ws; i <= we; i++) {
+            windowNorm.add(fuzzyLine(lines[i]));
+        }
+        // the line of the file each line of find is, or -1
+        int[] fw = alignLines(fNorm, windowNorm);
+        int firstF = -1;
+        int lastF = -1;
+        for (int i = 0; i < fw.length; i++) {
+            if (fw[i] >= 0) {
+                fw[i] += ws;
+                firstF = firstF < 0 ? i : firstF;
+                lastF = i;
+            }
+        }
+        if (firstF < 0) {
+            return null;
+        }
+        int delta = leadingSpaces(lines[fw[lastF]]) - leadingSpaces(f.get(lastF));
+        for (int i = lastF + 1, at = fw[lastF] + 1; i < f.size() && at < lineCount; i++, at++) {
+            if (!sameLineOrKey(f.get(i), lines[at], delta)) {
+                break;
+            }
+            fw[i] = at;
+            we = Math.max(we, at);
+        }
+        delta = leadingSpaces(lines[fw[firstF]]) - leadingSpaces(f.get(firstF));
+        for (int i = firstF - 1, at = fw[firstF] - 1; i >= 0 && at >= 0; i--, at--) {
+            if (!sameLineOrKey(f.get(i), lines[at], delta)) {
+                break;
+            }
+            fw[i] = at;
+            ws = Math.min(ws, at);
+        }
+        int[] fr = alignLines(fNorm, rNorm);
+        // the anchors, then the end of the window: {line of find, line of the file, line of replace}
+        List<int[]> anchors = new ArrayList<>();
+        for (int i = 0; i < f.size(); i++) {
+            if (fw[i] >= 0 && fr[i] >= 0) {
+                anchors.add(new int[] { i, fw[i], fr[i] });
+            }
+        }
+        anchors.add(new int[] { f.size(), we + 1, r.size() });
+        int firstDelta = leadingSpaces(lines[fw[firstF]]) - leadingSpaces(f.get(firstF));
+        List<String> out = new ArrayList<>();
+        int pf = -1;
+        int pw = ws - 1;
+        int pr = -1;
+        for (int[] a : anchors) {
+            List<String> stretchF = fNorm.subList(pf + 1, a[0]);
+            List<String> stretchW = new ArrayList<>();
+            for (int i = pw + 1; i < a[1]; i++) {
+                stretchW.add(fuzzyLine(lines[i]));
+            }
+            List<String> stretchR = rNorm.subList(pr + 1, a[2]);
+            if (sameLines(stretchF, stretchR) || sameLines(stretchW, stretchR)) {
+                for (int i = pw + 1; i < a[1]; i++) {
+                    out.add(lines[i]);
+                }
+            } else {
+                // the depth of the replacement where it goes: from the anchor before it, or after it for the first
+                int d = pf >= 0 ? leadingSpaces(lines[fw[pf]]) - leadingSpaces(f.get(pf))
+                        : a[0] < f.size() ? leadingSpaces(lines[a[1]]) - leadingSpaces(f.get(a[0])) : firstDelta;
+                for (String line : r.subList(pr + 1, a[2])) {
+                    out.add(shiftIndent(line, d));
+                }
+            }
+            if (a[0] < f.size()) {
+                out.add(lines[a[1]]);
+            }
+            pf = a[0];
+            pw = a[1];
+            pr = a[2];
+        }
+        int[] offsets = lineOffsets(content, lines);
+        int start = offsets[ws];
+        int end = we + 1 < lines.length ? offsets[we + 1] : content.length();
+        boolean newline = end > start && content.charAt(end - 1) == '\n';
+        return new ClosestEdit(start, end, String.join("\n", out) + (newline ? "\n" : ""), ws + 1, we + 1);
+    }
+
+    /** Which line of b each line of a is (their longest common subsequence), or -1; empty lines match nothing. */
+    static int[] alignLines(List<String> a, List<String> b) {
+        int[][] t = new int[a.size() + 1][b.size() + 1];
+        for (int i = a.size() - 1; i >= 0; i--) {
+            for (int j = b.size() - 1; j >= 0; j--) {
+                t[i][j] = !a.get(i).isEmpty() && a.get(i).equals(b.get(j))
+                        ? t[i + 1][j + 1] + 1 : Math.max(t[i + 1][j], t[i][j + 1]);
+            }
+        }
+        int[] answer = new int[a.size()];
+        Arrays.fill(answer, -1);
+        for (int i = 0, j = 0; i < a.size() && j < b.size();) {
+            if (!a.get(i).isEmpty() && a.get(i).equals(b.get(j))) {
+                answer[i++] = j++;
+            } else if (t[i + 1][j] >= t[i][j + 1]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return answer;
+    }
+
+    /** Whether a line of find is a line of the file: the same text, or the same key at the depth of its neighbours. */
+    private static boolean sameLineOrKey(String findLine, String fileLine, int delta) {
+        String a = fuzzyLine(findLine);
+        if (!a.isEmpty() && a.equals(fuzzyLine(fileLine))) {
+            return true;
+        }
+        Matcher m1 = YAML_KEY.matcher(findLine.strip());
+        Matcher m2 = YAML_KEY.matcher(fileLine.strip());
+        return m1.find() && m2.find() && m1.group(1).equals(m2.group(1))
+                && leadingSpaces(fileLine) - leadingSpaces(findLine) == delta;
+    }
+
+    /** Whether two lists of normalized lines are the same, blank lines aside. */
+    private static boolean sameLines(List<String> a, List<String> b) {
+        return a.stream().filter(l -> !l.isEmpty()).toList().equals(b.stream().filter(l -> !l.isEmpty()).toList());
+    }
+
+    private static int leadingSpaces(String line) {
+        int i = 0;
+        while (i < line.length() && line.charAt(i) == ' ') {
+            i++;
+        }
+        return i;
+    }
+
+    /** The line moved right by delta spaces, or left by as many of its leading spaces as it has up to -delta. */
+    private static String shiftIndent(String line, int delta) {
+        if (delta == 0 || line.isBlank()) {
+            return line;
+        }
+        if (delta > 0) {
+            return " ".repeat(delta) + line;
+        }
+        return line.substring(Math.min(-delta, leadingSpaces(line)));
     }
 
     /** The length of the longest common subsequence of two lists of lines. */

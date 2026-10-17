@@ -353,4 +353,161 @@ class AuthoringToolsLenientTest {
                     uri: direct:c
                 """)).isNull();
     }
+
+    private static final String ORDER_LINES = """
+            - route:
+                id: order-lines
+                from:
+                  uri: file
+                  parameters:
+                    directoryName: orders
+                    noop: true
+                    sortBy: "file:name"
+                  steps:
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - split:
+                        expression:
+                          simple: "${body[lines]}"
+                        steps:
+                          - log:
+                              message: "  pick ${body[qty]} x ${body[sku]}"
+            """;
+
+    @Test
+    void theLinesTheModelChangedAreChangedOnceInTheFile(@TempDir Path dir) throws IOException {
+        // r11L-1 route-order-lines step 2: the model remembered the steps of the split two columns to the left, and
+        // the message without its leading spaces. The closest window ended before the message line, the window was
+        // replaced, and the old message stayed below the new one: the key twice
+        Files.writeString(dir.resolve(FILE), ORDER_LINES);
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE, """
+                        - unmarshal:
+                            json:
+                              library: Jackson
+                        - split:
+                            expression:
+                              simple: "${body[lines]}"
+                          steps:
+                            - log:
+                                message: "pick ${body[qty]} x ${body[sku]}"
+                """, """
+                        - unmarshal:
+                            json:
+                              library: Jackson
+                        - setHeader:
+                            name: orderId
+                            simple: "${body[orderId]}"
+                        - split:
+                            expression:
+                              simple: "${body[lines]}"
+                          steps:
+                            - log:
+                                message: "  pick ${body[qty]} x ${body[sku]} for ${header.orderId}"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("edited");
+        assertThat(result.getString("message")).contains("the lines you changed were changed there");
+        assertThat(Files.readString(dir.resolve(FILE))).isEqualTo("""
+                - route:
+                    id: order-lines
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: orders
+                        noop: true
+                        sortBy: "file:name"
+                      steps:
+                        - unmarshal:
+                            json:
+                              library: Jackson
+                        - setHeader:
+                            name: orderId
+                            simple: "${body[orderId]}"
+                        - split:
+                            expression:
+                              simple: "${body[lines]}"
+                            steps:
+                              - log:
+                                  message: "  pick ${body[qty]} x ${body[sku]} for ${header.orderId}"
+                """);
+    }
+
+    @Test
+    void aLineRememberedWronglyThatTheModelChangesIsReplacedNotAdded(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve(FILE), ROUTE);
+        // the model remembers the log message wrongly, and changes it: the file's message is the one it changes
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE, """
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - log:
+                        message: "Invoice ${body[invoiceId]}"
+                """, """
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - log:
+                        message: "Invoice ${body[invoiceId]} for ${body[orderId]}: ${body[amount]} EUR"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("edited");
+        String after = Files.readString(dir.resolve(FILE));
+        assertThat(after).contains("message: \"Invoice ${body[invoiceId]} for ${body[orderId]}: ${body[amount]} EUR\"")
+                .doesNotContain("message: \"Invoice ${body[invoiceId]} for ${body[orderId]}\"\n")
+                .contains("uri: file:archive");
+        assertThat(after.split("message:", -1)).hasSize(2);
+    }
+
+    @Test
+    void aLineRememberedWronglyThatTheModelKeepsStaysAsTheFileHasIt(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve(FILE), ROUTE);
+        // the model remembers the log message wrongly and does not change it: the file keeps its own message, and the
+        // step the model adds after it goes in
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE, """
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - log:
+                        message: "Invoice ${body[invoiceId]}"
+                    - to:
+                        uri: file:archive
+                """, """
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - log:
+                        message: "Invoice ${body[invoiceId]}"
+                    - to:
+                        uri: file:archive
+                    - log:
+                        message: "archived"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("edited");
+        String after = Files.readString(dir.resolve(FILE));
+        assertThat(after).contains("message: \"Invoice ${body[invoiceId]} for ${body[orderId]}\"")
+                .doesNotContain("message: \"Invoice ${body[invoiceId]}\"\n")
+                .contains("message: \"archived\"");
+    }
+
+    @Test
+    void aClosestMatchWithAnInvalidResultIsNotFound(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve(FILE), ROUTE);
+        // after a refused edit, the next text to find is the model's own replacement, which the file never got: the
+        // answer is the one of an exact match, not found with the lines the file has there, and the file is unchanged
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE, """
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - lgo:
+                        message: "Invoice ${body[invoiceId]} for ${body[orderId]}"
+                """, """
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - lgo:
+                        message: "Invoice ${body[invoiceId]} for ${body[orderId]}: ${body[amount]} EUR"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("not-found");
+        assertThat(result.getString("fileWindow")).contains("- log:");
+        assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(ROUTE);
+    }
 }
