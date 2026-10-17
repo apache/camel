@@ -52,6 +52,7 @@ import org.apache.camel.component.file.GenericFileHelper;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
+import org.apache.camel.support.PayloadHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -472,7 +473,7 @@ public class FilesOperations extends NormalizedOperations {
         }
 
         InputStream is = null;
-        int length = 0;
+        long length = 0;
         if (exchange.getIn().getBody() == null) {
             // Do an explicit test for a null body and decide what to do
             if (endpoint.isAllowNullBody()) {
@@ -485,12 +486,22 @@ public class FilesOperations extends NormalizedOperations {
 
         try {
             if (is == null) {
-                var knownLength = exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class);
-                if (knownLength != null) {
+                // the file is created with its final size before the content is written, so the size must be the
+                // length of the body. The CamelFileLength header can be stale once the route changed the body (a
+                // shorter body leaves zero bytes at the end of the file), so it is only used for a stream body
+                // whose length cannot be known otherwise.
+                Object body = exchange.getIn().getBody();
+                Long knownLength = exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class);
+                length = PayloadHelper.getBodyLength(exchange.getIn());
+                if (length >= 0) {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
-                    length = knownLength.intValue();
+                } else if (body instanceof InputStream stream && knownLength != null) {
+                    is = stream;
+                    length = knownLength;
                 } else {
-                    log.warn("No file length header, so converting body to byte[].  It might be memory intensive.");
+                    if (body instanceof InputStream) {
+                        log.warn("No file length header, so converting body to byte[].  It might be memory intensive.");
+                    }
                     var bytes = exchange.getIn().getMandatoryBody(byte[].class);
                     length = bytes.length;
                     is = new ByteArrayInputStream(bytes);
@@ -551,7 +562,7 @@ public class FilesOperations extends NormalizedOperations {
         }
     }
 
-    private boolean createRemote(ShareFileClient fileClient, int length) {
+    private boolean createRemote(ShareFileClient fileClient, long length) {
         var code = fileClient.createWithResponse(length, null, null, null, null,
                 endpoint.getMetadataTimeout(), Context.NONE).getStatusCode();
         return code == HTTP_CREATED || code == HTTP_OK;
