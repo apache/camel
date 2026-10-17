@@ -39,6 +39,7 @@ public abstract class BaseOptionModel {
     protected String prefix;
     protected String optionalPrefix;
     protected boolean multiValue;
+    protected boolean multiEnum;
     protected boolean deprecated;
     protected String deprecationNote;
     protected boolean secret;
@@ -174,6 +175,14 @@ public abstract class BaseOptionModel {
 
     public void setMultiValue(boolean multiValue) {
         this.multiValue = multiValue;
+    }
+
+    public boolean isMultiEnum() {
+        return multiEnum;
+    }
+
+    public void setMultiEnum(boolean multiEnum) {
+        this.multiEnum = multiEnum;
     }
 
     public boolean isDeprecated() {

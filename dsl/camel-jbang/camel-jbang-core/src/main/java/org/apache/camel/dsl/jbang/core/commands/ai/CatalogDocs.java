@@ -2524,6 +2524,11 @@ public final class CatalogDocs {
             JsonArray enums = new JsonArray();
             enums.addAll(opt.getEnums());
             o.put("enumValues", enums);
+            if (opt.isMultiEnum() && opt.getEnums().size() > 1) {
+                // CAMEL-25739: the option takes several of its values
+                o.put("multiple", "several of enumValues can be set, separated by comma, such as "
+                                  + opt.getEnums().get(0) + "," + opt.getEnums().get(1));
+            }
         }
         if (isWrittenAsKind(opt)) {
             // written as one of its kinds (CAMEL-25370)

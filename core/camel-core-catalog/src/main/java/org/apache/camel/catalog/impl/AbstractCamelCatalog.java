@@ -335,17 +335,9 @@ public abstract class AbstractCamelCatalog {
                 // but we can only check if the value is not a placeholder
                 List<String> enums = row.getEnums();
                 if (!multiValue && !valuePlaceholder && !lookup && enums != null) {
-                    boolean found = false;
-                    for (String s : enums) {
-                        String dashEC = StringHelper.camelCaseToDash(value);
-                        String valueEC = StringHelper.asEnumConstantValue(value);
-                        if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        handleNotFound(result, value, name, enums);
+                    String notFound = notInEnums(value, enums, row.isMultiEnum());
+                    if (notFound != null) {
+                        handleNotFound(result, notFound, name, enums);
                     }
                 }
 
@@ -459,6 +451,33 @@ public abstract class AbstractCamelCatalog {
         }
 
         return result;
+    }
+
+    /**
+     * The value that is not one of the enum values, or null when it is one. An option that takes several of its enum
+     * values (multiEnum) has them separated by comma, and each one is checked, with the spaces around it left out.
+     */
+    private static String notInEnums(String value, List<String> enums, boolean multiEnum) {
+        String[] values = multiEnum ? value.split(",") : new String[] { value };
+        for (String v : values) {
+            String one = multiEnum ? v.trim() : v;
+            if (!isEnumValue(one, enums)) {
+                return one;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isEnumValue(String value, List<String> enums) {
+        String dashEC = StringHelper.camelCaseToDash(value);
+        String valueEC = StringHelper.asEnumConstantValue(value);
+        for (String s : enums) {
+            // equals as is or using the enum naming style
+            if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleNotFound(EndpointValidationResult result, String value, String name, List<String> enums) {
@@ -1374,18 +1393,9 @@ public abstract class AbstractCamelCatalog {
             // is enum
             List<String> enums = row.getEnums();
             if (!optionPlaceholder && !lookup && enums != null) {
-                boolean found = false;
-                String dashEC = StringHelper.camelCaseToDash(value);
-                String valueEC = StringHelper.asEnumConstantValue(value);
-                for (String s : enums) {
-                    // equals as is or using the enum naming style
-                    if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    handleNotFound(result, value, longKey, enums);
+                String notFound = notInEnums(value, enums, row.isMultiEnum());
+                if (notFound != null) {
+                    handleNotFound(result, notFound, longKey, enums);
                 }
             }
 

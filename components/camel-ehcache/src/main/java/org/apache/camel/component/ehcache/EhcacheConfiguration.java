@@ -60,7 +60,7 @@ public class EhcacheConfiguration implements Cloneable {
     private EventOrdering eventOrdering = EventOrdering.ORDERED;
     @UriParam(label = "consumer", defaultValue = "ASYNCHRONOUS")
     private EventFiring eventFiring = EventFiring.ASYNCHRONOUS;
-    @UriParam(label = "consumer", enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED")
+    @UriParam(label = "consumer", enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED", multiEnum = true)
     private String eventTypes;
 
     public EhcacheConfiguration() {
@@ -208,7 +208,7 @@ public class EhcacheConfiguration implements Cloneable {
         }
         String[] arr = types.split(",");
         for (String s : arr) {
-            answer.add(EventType.valueOf(s));
+            answer.add(EventType.valueOf(s.trim()));
         }
         return answer;
     }

@@ -10196,7 +10196,7 @@
             "type" : "string",
             "title" : "Option",
             "description" : "To configure additional options on JSONPath. Multiple values can be separated by comma.",
-            "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
+            "pattern" : "^\\s*(DEFAULT_PATH_LEAF_TO_NULL|ALWAYS_RETURN_LIST|AS_PATH_LIST|SUPPRESS_EXCEPTIONS|REQUIRE_PROPERTIES)\\s*(,\\s*(DEFAULT_PATH_LEAF_TO_NULL|ALWAYS_RETURN_LIST|AS_PATH_LIST|SUPPRESS_EXCEPTIONS|REQUIRE_PROPERTIES)\\s*)*$"
           },
           "resolveResource" : {
             "type" : "boolean",

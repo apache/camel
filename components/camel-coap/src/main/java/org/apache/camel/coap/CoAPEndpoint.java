@@ -84,7 +84,7 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     final static Logger LOGGER = LoggerFactory.getLogger(CoAPEndpoint.class);
     @UriPath
     private URI uri;
-    @UriParam(label = "consumer", enums = "DELETE,GET,POST,PUT")
+    @UriParam(label = "consumer", enums = "DELETE,GET,POST,PUT", multiEnum = true)
     private String coapMethodRestrict;
     @UriParam(label = "security", security = "secret")
     private PrivateKey privateKey;

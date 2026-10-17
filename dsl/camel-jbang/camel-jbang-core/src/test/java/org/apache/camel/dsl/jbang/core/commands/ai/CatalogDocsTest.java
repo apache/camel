@@ -596,6 +596,16 @@ class CatalogDocsTest {
         assertEquals("templateParameter", CatalogDocs.yamlKey(null, "routeTemplate", "templateParameter", element));
     }
 
+    /** CAMEL-25739: an option that takes several of its enum values says so, and one that takes one value does not. */
+    @Test
+    void anOptionWithSeveralEnumValuesSaysSo() {
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        var doc = CatalogDocs.catalogDoc(catalog, "ehcache", null, "component", "eventTypes", "all", false, false, null);
+        assertTrue(option(doc, "eventTypes").getString("multiple").contains("separated by comma"), doc.toJson());
+        doc = CatalogDocs.catalogDoc(catalog, "consul", null, "component", "action", "all", false, false, null);
+        assertNull(option(doc, "action").get("multiple"), doc.toJson());
+    }
+
     /** CAMEL-25539: onException says it is a top-level entry, and handled that it is an expression. */
     @Test
     void onExceptionSaysWhereItGoesAndTheShapeOfHandled() {
