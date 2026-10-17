@@ -101,6 +101,9 @@ public class Init extends CamelCommand {
             description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repositories;
 
+    // when the template is picked in the terminal, where to ask whether to overwrite a file that exists already
+    private Scanner overwritePrompt;
+
     public Init(CamelJBangMain main) {
         super(main);
     }
@@ -113,7 +116,8 @@ public class Init extends CamelCommand {
         if (file == null) {
             // try interactive picker if running in a TTY and not in CI
             if (EnvironmentHelper.isInteractiveTerminal()) {
-                return interactivePicker();
+                Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
+                return interactivePicker(activeTerminal != null ? activeTerminal.input() : System.in);
             }
             printer().printErr("Missing required parameter: <file>");
             printer().printTip("Run 'camel init --list' to see available templates, or run interactively in a terminal.");
@@ -244,14 +248,22 @@ public class Init extends CamelCommand {
     }
 
     /**
-     * Whether the file is there already and not to be overwritten (without --force), which is then an error.
+     * Whether the file is there already and not to be overwritten (without --force), which is then an error. When the
+     * template is picked in the terminal, the user is asked there whether to overwrite the file.
      */
     private boolean existsAlready(Path targetPath) {
-        if (!force && Files.exists(targetPath)) {
-            printer().printErr("File already exists: " + targetPath + " (use --force to overwrite it)");
-            return true;
+        if (force || !Files.exists(targetPath)) {
+            return false;
         }
-        return false;
+        if (overwritePrompt != null) {
+            printer().printf("File already exists: %s, overwrite it? [y/N]: ", targetPath);
+            String answer = overwritePrompt.hasNextLine() ? overwritePrompt.nextLine().trim() : "";
+            if ("y".equalsIgnoreCase(answer) || "yes".equalsIgnoreCase(answer)) {
+                return false;
+            }
+        }
+        printer().printErr("File already exists: " + targetPath + " (use --force to overwrite it)");
+        return true;
     }
 
     /**
@@ -333,7 +345,7 @@ public class Init extends CamelCommand {
         return 0;
     }
 
-    private int interactivePicker() throws Exception {
+    int interactivePicker(InputStream input) throws Exception {
         // Build template categories
         Map<String, List<String[]>> categories = new LinkedHashMap<>();
         categories.put("Routes", List.of(
@@ -348,9 +360,7 @@ public class Init extends CamelCommand {
         pipeTemplates.add(new String[] { "init-pipe.yaml", "Pipe CR (source to sink)", ".yaml" });
         categories.put("Pipes and CRs", pipeTemplates);
 
-        Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
-        InputStream scannerInput = activeTerminal != null ? activeTerminal.input() : System.in;
-        Scanner scanner = new Scanner(scannerInput);
+        Scanner scanner = new Scanner(input);
 
         // Step 1: Pick a category
         printer().println("Select a template category:");
@@ -419,6 +429,7 @@ public class Init extends CamelCommand {
         }
 
         this.file = filename;
+        overwritePrompt = scanner;
         int code = execute();
         if (code == 0) {
             createWorkingDirectoryIfAbsent();

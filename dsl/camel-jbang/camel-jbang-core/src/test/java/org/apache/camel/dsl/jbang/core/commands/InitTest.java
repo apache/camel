@@ -16,7 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -213,6 +216,12 @@ class InitTest {
     @Test
     void initForceOverwritesTheFile() throws Exception {
         Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
+        // the same command without --force keeps the file, so it is --force that overwrites it
+        Init withoutForce = new Init(new CamelJBangMain().withPrinter(new StringPrinter()));
+        CommandLine.populateCommand(withoutForce, "my.camel.yaml", "--dir=" + workingDir);
+        assertEquals(1, withoutForce.doCall());
+        assertEquals("- route: {}", Files.readString(existing));
+
         Init initCommand = new Init(new CamelJBangMain());
         CommandLine.populateCommand(initCommand, "my.camel.yaml", "--dir=" + workingDir, "--force");
 
@@ -220,6 +229,36 @@ class InitTest {
 
         assertEquals(0, exit);
         assertTrue(Files.readString(existing).contains("from:"), "the file is the template now");
+    }
+
+    @Test
+    void initPickerAsksBeforeOverwritingTheFile() throws Exception {
+        Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
+        StringPrinter printer = new StringPrinter();
+        Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(initCommand, "--dir=" + workingDir);
+
+        // the YAML route template, the file, and yes to overwriting it
+        int exit = initCommand.interactivePicker(input("1", "1", "my.camel.yaml", "y"));
+
+        assertEquals(0, exit);
+        assertTrue(printer.getStdout().contains("File already exists: " + existing + ", overwrite it? [y/N]: "));
+        assertTrue(Files.readString(existing).contains("from:"), "the file is the template now");
+    }
+
+    @Test
+    void initPickerKeepsTheFileWhenTheAnswerIsNo() throws Exception {
+        Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
+        StringPrinter printer = new StringPrinter();
+        Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(initCommand, "--dir=" + workingDir);
+
+        // no answer is no
+        int exit = initCommand.interactivePicker(input("1", "1", "my.camel.yaml", ""));
+
+        assertEquals(1, exit);
+        assertEquals("ERROR: File already exists: " + existing + " (use --force to overwrite it)", printer.getStderr());
+        assertEquals("- route: {}", Files.readString(existing), "the file is kept as it was");
     }
 
     @Test
@@ -294,5 +333,9 @@ class InitTest {
         assertEquals(2, exit);
         assertTrue(printer.getStderr().startsWith("ERROR: Missing required parameter: <file>"), printer.getStderr());
         assertEquals("", printer.getStdout());
+    }
+
+    private static InputStream input(String... lines) {
+        return new ByteArrayInputStream((String.join("\n", lines) + "\n").getBytes(StandardCharsets.UTF_8));
     }
 }
