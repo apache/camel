@@ -41,6 +41,22 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void theInterceptEntriesAndDataFormatsHaveSamples() {
+        // CAMEL-25735: interceptFrom and interceptSendToEndpoint are on the page of intercept, after its own examples,
+        // and the data format page of the user manual has an example of dataFormats now
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String entry : List.of("interceptFrom", "interceptSendToEndpoint", "dataFormats")) {
+            JsonObject o = CatalogSamples.sample(catalog, entry, 2);
+            assertThat(o.getString("placement")).as(entry).contains("top-level");
+            JsonArray samples = (JsonArray) o.get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            for (Object s : samples) {
+                assertThat(((JsonObject) s).getString("yaml")).as(entry).startsWith("- " + entry + ":");
+            }
+        }
+    }
+
+    @Test
     void theTopLevelEntriesDocumentedOnAnotherPageHaveSamples() {
         // CAMEL-25719: their examples are on the page of what they belong to (route templates, the REST DSL,
         // transformers, validators, the configuration utilities), which the samples did not read
