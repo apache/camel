@@ -75,6 +75,11 @@ public final class Dst {
     private volatile long progress;
     private volatile long watchdogMillis = Long.getLong("dst.watchdogMillis", 10_000);
     private volatile String stall;
+    private boolean stallThrown;
+    private volatile boolean strict;
+    private volatile List<String> allowedEscapes = List.of();
+    private volatile String escape;
+    private boolean escapeThrown;
 
     public Dst(long seed) {
         this(seed, 1_000_000);
@@ -170,6 +175,65 @@ public final class Dst {
     }
 
     // ------------------------------------------------------------------------------------------------------------
+    // strict mode: an uncontrolled escape reached at runtime fails the seed
+
+    /**
+     * In strict mode, reaching an escape point the harness does not control (an own thread or executor, the common
+     * pool, a Reactor scheduler, a wait it cannot run the loop for, a task submitted from a thread outside the harness)
+     * fails the seed; escapes whose description contains one of {@code allowed} are only recorded. Off by default for a
+     * {@code new Dst(seed)}; {@link DstExtension} switches it on unless {@code @DstInstrument(strict = false)} or
+     * {@code -Ddst.strict=false}.
+     */
+    public void strict(boolean strict, List<String> allowed) {
+        this.strict = strict;
+        this.allowedEscapes = List.copyOf(allowed);
+    }
+
+    public boolean isStrict() {
+        return strict;
+    }
+
+    /** The first uncontrolled escape reached in strict mode, or null. */
+    public String escape() {
+        return escape;
+    }
+
+    /**
+     * An escape was reached at runtime (from any thread). In strict mode the first one is kept and, on the loop thread,
+     * thrown at once; the next step of the loop throws it as well, in case the code under test swallowed it.
+     */
+    void escapeReached(String entry) {
+        if (!strict || allowedEscapes.stream().anyMatch(entry::contains)) {
+            return;
+        }
+        if (escape == null) {
+            escape = entry;
+        }
+        if (isLoopThread()) {
+            trace("ESCAPE " + entry);
+            throw escapeViolation();
+        }
+    }
+
+    DstViolation escapeViolation() {
+        return new DstViolation(
+                "escape", "the code under test reached an escape point the harness does not control (strict mode): "
+                          + escape + ". Fix or avoid it, or allow it with @DstInstrument(allowEscapes) when it cannot"
+                          + " change the result");
+    }
+
+    /** The reason this seed must fail although the test body may have passed (a stall or a strict escape), or null. */
+    DstViolation pendingFailure() {
+        if (stall != null) {
+            return new DstViolation("blocked loop thread", stall);
+        }
+        if (escape != null) {
+            return escapeViolation();
+        }
+        return null;
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
     // the seeded random source (only to be used from the loop thread, in a deterministic order)
 
     public int nextInt(int bound) {
@@ -252,7 +316,7 @@ public final class Dst {
             throw new IllegalStateException("The DST run of seed " + seed + " is closed");
         }
         if (!isLoopThread()) {
-            DstEscapes.recordRuntime("task submitted from a thread outside the harness: " + Thread.currentThread().getName()
+            DstEscapes.escaped(this, "task submitted from a thread outside the harness: " + Thread.currentThread().getName()
                                      + " -> " + executor.label() + " " + description);
         }
         DstTask<V> task = new DstTask<>(
@@ -298,8 +362,13 @@ public final class Dst {
     /** Runs one step, or moves the clock to the next due task. Returns false when no task can make progress. */
     private boolean step(long timeLimit) {
         progress++;
-        if (stall != null) {
+        if (stall != null && !stallThrown) {
+            stallThrown = true;
             throw new DstViolation("blocked loop thread", stall);
+        }
+        if (escape != null && !escapeThrown) {
+            escapeThrown = true;
+            throw escapeViolation();
         }
         if (steps >= maxSteps) {
             throw new DstViolation(
@@ -488,7 +557,7 @@ public final class Dst {
     /** Waits on the loop thread for a future of this run (used by {@link DstTask#get()}). */
     void await(DstTask<?> task) {
         if (!isLoopThread()) {
-            DstEscapes.recordRuntime("a thread outside the harness waits for a DST task: " + Thread.currentThread().getName()
+            DstEscapes.escaped(this, "a thread outside the harness waits for a DST task: " + Thread.currentThread().getName()
                                      + " -> " + task.description());
             throw new IllegalStateException("DST tasks can only be awaited on the loop thread");
         }
@@ -510,7 +579,7 @@ public final class Dst {
 
     void checkLoopThread(String what) {
         if (!isLoopThread()) {
-            DstEscapes.recordRuntime(what + " called from a thread outside the harness: " + Thread.currentThread().getName());
+            DstEscapes.escaped(this, what + " called from a thread outside the harness: " + Thread.currentThread().getName());
             throw new IllegalStateException(what + " must be called on the DST loop thread");
         }
     }

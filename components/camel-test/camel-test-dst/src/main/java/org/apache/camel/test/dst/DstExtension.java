@@ -159,20 +159,29 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
             all.add(stats);
         }
         long maxSteps = test.maxSteps();
+        DstInstrument instrument = context.getRequiredTestClass().getAnnotation(DstInstrument.class);
+        boolean strict = Boolean.parseBoolean(
+                System.getProperty("dst.strict", String.valueOf(instrument == null || instrument.strict())));
+        List<String> allowed = instrument == null ? List.of() : List.of(instrument.allowEscapes());
+        Mode mode = new Mode(maxSteps, strict, allowed);
         if (replay != null) {
-            return Arrays.stream(replay).mapToObj(seed -> invocation(name, seed, maxSteps, true, stats));
+            return Arrays.stream(replay).mapToObj(seed -> invocation(name, seed, mode, true, stats));
         }
         int seeds = Integer.getInteger("dst.seeds", test.seeds());
         long first = Long.getLong("dst.firstSeed", test.firstSeed());
         int maxFailures = Integer.getInteger("dst.maxFailures", test.maxFailures());
         return LongStream.range(0, seeds).mapToObj(i -> first + i)
                 .takeWhile(seed -> stats.failures < maxFailures)
-                .map(seed -> invocation(name, seed, maxSteps, false, stats));
+                .map(seed -> invocation(name, seed, mode, false, stats));
+    }
+
+    /** How the runs of a test method are made. */
+    record Mode(long maxSteps, boolean strict, List<String> allowedEscapes) {
     }
 
     private static TestTemplateInvocationContext invocation(
-            String name, long seed, long maxSteps, boolean replay, Stats stats) {
-        SeedRun run = new SeedRun(name, seed, maxSteps, replay, stats);
+            String name, long seed, Mode mode, boolean replay, Stats stats) {
+        SeedRun run = new SeedRun(name, seed, mode, replay, stats);
         return new TestTemplateInvocationContext() {
             @Override
             public String getDisplayName(int invocationIndex) {
@@ -191,7 +200,7 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
             TestExecutionExceptionHandler {
         private final String name;
         private final long seed;
-        private final long maxSteps;
+        private final Mode mode;
         private final boolean replay;
         private final Stats stats;
         private Dst dst;
@@ -199,10 +208,10 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         private boolean failed;
         private Path written;
 
-        SeedRun(String name, long seed, long maxSteps, boolean replay, Stats stats) {
+        SeedRun(String name, long seed, Mode mode, boolean replay, Stats stats) {
             this.name = name;
             this.seed = seed;
-            this.maxSteps = maxSteps;
+            this.mode = mode;
             this.replay = replay;
             this.stats = stats;
         }
@@ -215,7 +224,8 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         @Override
         public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
             if (dst == null) {
-                dst = new Dst(seed, maxSteps);
+                dst = new Dst(seed, mode.maxSteps());
+                dst.strict(mode.strict(), mode.allowedEscapes());
                 dst.trace("seed " + seed);
             }
             return dst;
@@ -238,9 +248,11 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
             if (dst == null) {
                 throw throwable;
             }
-            if (dst.stall() != null && !(throwable instanceof DstViolation)) {
-                // the watchdog interrupted a wait: report where the loop thread was blocked
-                throwable = new DstViolation("blocked loop thread", dst.stall());
+            DstViolation pending = dst.pendingFailure();
+            if (pending != null && !(throwable instanceof DstViolation)) {
+                // the watchdog interrupted a wait, or a strict escape was thrown and wrapped: report the cause
+                pending.initCause(throwable);
+                throwable = pending;
             }
             dst.trace("FAILED " + throwable);
             written = writeTrace("FAILED " + throwable);
@@ -261,10 +273,10 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         @Override
         public void afterTestExecution(ExtensionContext context) throws Exception {
             Throwable pending = null;
-            if (!failed && dst != null && dst.stall() != null) {
-                // the interrupted wait was swallowed by the code under test: the seed still fails
+            if (!failed && dst != null && dst.pendingFailure() != null) {
+                // a stall or a strict escape that the code under test swallowed: the seed still fails
                 try {
-                    handleTestExecutionException(context, new DstViolation("blocked loop thread", dst.stall()));
+                    handleTestExecutionException(context, dst.pendingFailure());
                 } catch (Throwable e) {
                     pending = e;
                 }

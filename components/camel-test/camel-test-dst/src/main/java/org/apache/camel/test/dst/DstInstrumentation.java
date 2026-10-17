@@ -62,8 +62,10 @@ import net.bytebuddy.jar.asm.Opcodes;
  * {@code CountDownLatch.await}, {@code Semaphore.acquire}, {@code DelayQueue} and {@code BlockingQueue}
  * {@code take/poll}) to {@link DstWaits}: on the loop thread they run the loop until the wait can end, or fail the seed
  * when nothing can end it;</li>
- * <li>reports every other escape point it finds in those classes: own threads and executors, sleeps, wall clock reads
- * that are not rewritten, the common fork-join pool, Reactor schedulers, blocking waits.</li>
+ * <li>reports every other escape point it finds in those classes: own threads and executors, wall clock reads that are
+ * not rewritten, the common fork-join pool, Reactor schedulers, blocking waits it cannot run the loop for; and adds a
+ * call to {@link DstEscapes#reached(String)} before each, so that in strict mode reaching one at runtime fails the
+ * seed.</li>
  * </ul>
  * {@link #alsoRewrite(String...)} applies the same rewriting, without the report, to classes outside the code under
  * test, for example {@code org.apache.camel.support.MonotonicClock} and {@code org.apache.camel.util.StopWatch} of
@@ -75,6 +77,7 @@ public final class DstInstrumentation {
 
     private static final String CLOCK = "org/apache/camel/test/dst/DstClock";
     private static final String WAITS = "org/apache/camel/test/dst/DstWaits";
+    private static final String ESCAPES = "org/apache/camel/test/dst/DstEscapes";
     private static final String TIME_UNIT = "Ljava/util/concurrent/TimeUnit;";
     private static final Set<String> FUTURES = Set.of(
             "java/util/concurrent/Future", "java/util/concurrent/ScheduledFuture", "java/util/concurrent/RunnableFuture",
@@ -320,9 +323,9 @@ public final class DstInstrumentation {
                 return className.substring(className.lastIndexOf('/') + 1) + "." + method + ":" + line;
             }
 
-            private void report(String category, String call) {
+            private String report(String category, String call) {
                 if (!reportEscapes) {
-                    return;
+                    return null;
                 }
                 String where = where();
                 String entry = String.format("%-28s | %-60s | %s", category, where, call);
@@ -331,17 +334,27 @@ public final class DstInstrumentation {
                 } else {
                     DstEscapes.recordLoaded(entry);
                 }
+                return entry;
+            }
+
+            /** An escape point the harness does not control: reported, and checked at runtime (strict mode). */
+            private void escape(String category, String call) {
+                String entry = report(category, call);
+                if (entry != null && rewrite) {
+                    super.visitLdcInsn(entry);
+                    super.visitMethodInsn(Opcodes.INVOKESTATIC, ESCAPES, "reached", "(Ljava/lang/String;)V", false);
+                }
             }
 
             @Override
             public void visitTypeInsn(int opcode, String type) {
                 if (opcode == Opcodes.NEW) {
                     switch (type) {
-                        case "java/lang/Thread" -> report(OWN_THREAD, "new Thread");
-                        case "java/util/Timer" -> report(OWN_EXECUTOR, "new Timer");
+                        case "java/lang/Thread" -> escape(OWN_THREAD, "new Thread");
+                        case "java/util/Timer" -> escape(OWN_EXECUTOR, "new Timer");
                         case "java/util/concurrent/ThreadPoolExecutor", "java/util/concurrent/ScheduledThreadPoolExecutor",
                                 "java/util/concurrent/ForkJoinPool" ->
-                            report(OWN_EXECUTOR, "new " + type.substring(type.lastIndexOf('/') + 1));
+                            escape(OWN_EXECUTOR, "new " + type.substring(type.lastIndexOf('/') + 1));
                         default -> {
                             // not an escape point
                         }
@@ -412,35 +425,35 @@ public final class DstInstrumentation {
                 } else if ("java/lang/Thread".equals(owner)) {
                     if (name.startsWith("ofVirtual") || name.startsWith("ofPlatform")
                             || "startVirtualThread".equals(name)) {
-                        report(OWN_THREAD, call);
+                        escape(OWN_THREAD, call);
                     }
                 } else if ("java/util/concurrent/Executors".equals(owner) && name.startsWith("new")) {
-                    report(OWN_EXECUTOR, call);
+                    escape(OWN_EXECUTOR, call);
                 } else if ("java/util/concurrent/ForkJoinPool".equals(owner) && "commonPool".equals(name)) {
-                    report(DEFAULT_POOL, call);
+                    escape(DEFAULT_POOL, call);
                 } else if ("java/util/concurrent/CompletableFuture".equals(owner)) {
                     if (name.endsWith("Async") && !descriptor.contains("Ljava/util/concurrent/Executor;")) {
-                        report(DEFAULT_POOL, call);
+                        escape(DEFAULT_POOL, call);
                     } else if ("delayedExecutor".equals(name)) {
-                        report(DEFAULT_POOL, call);
+                        escape(DEFAULT_POOL, call);
                     }
                 } else if (owner.startsWith("java/time/") && "now".equals(name)
                         && !descriptor.startsWith("(Ljava/time/Clock;")) {
                     // now() of another java.time type (Year, YearMonth, MonthDay): not rewritten
-                    report(WALL_CLOCK, call);
+                    escape(WALL_CLOCK, call);
                 } else if ("reactor/core/scheduler/Schedulers".equals(owner)) {
-                    report(REACTOR, call);
+                    escape(REACTOR, call);
                 } else if (("reactor/core/publisher/Mono".equals(owner) || "reactor/core/publisher/Flux".equals(owner))
                         && (name.startsWith("delay") || "interval".equals(name) || "timeout".equals(name)
                                 || "publishOn".equals(name) || "subscribeOn".equals(name))) {
-                    report(REACTOR, call);
+                    escape(REACTOR, call);
                 } else if (("reactor/core/publisher/Mono".equals(owner) || "reactor/core/publisher/Flux".equals(owner))
                         && name.startsWith("block")) {
-                    report(BLOCKING, call);
+                    escape(BLOCKING, call);
                 } else if ("java/lang/Object".equals(owner) && "wait".equals(name)
                         || "java/util/concurrent/locks/LockSupport".equals(owner) && name.startsWith("park")
                         || "java/util/concurrent/locks/Condition".equals(owner) && name.startsWith("await")) {
-                    report(BLOCKING, call);
+                    escape(BLOCKING, call);
                 }
                 super.visitMethodInsn(opcode, owner, name, descriptor, itf);
             }

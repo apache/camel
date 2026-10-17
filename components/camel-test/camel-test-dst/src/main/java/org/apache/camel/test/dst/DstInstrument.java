@@ -47,4 +47,18 @@ public @interface DstInstrument {
      * {@code dst.alsoRewrite} (comma separated) adds entries without changing the test.
      */
     String[] alsoRewrite() default {};
+
+    /**
+     * Strict mode (the default): a seed fails when the code under test reaches, at runtime, an escape point the harness
+     * does not control (an own thread or executor, the common pool, a Reactor scheduler, a wait the harness cannot run
+     * the loop for, a task submitted from a thread outside the harness). Without it such escapes are only listed in the
+     * summary. The system property {@code dst.strict} overrides it.
+     */
+    boolean strict() default true;
+
+    /**
+     * Escapes that are allowed in strict mode: an escape whose description contains one of these strings is only
+     * recorded, for example {@code "EventHubsConsumer.doStop"}. Say in a comment why each one cannot change the result.
+     */
+    String[] allowEscapes() default {};
 }

@@ -50,6 +50,27 @@ public final class DstEscapes {
         }
     }
 
+    /** An uncontrolled escape happened at runtime: recorded, and in strict mode it fails the seed of the run. */
+    static void escaped(Dst dst, String entry) {
+        recordRuntime(entry);
+        if (dst != null) {
+            dst.escapeReached(entry);
+        }
+    }
+
+    /**
+     * Called by the rewritten code under test just before an escape point the harness does not control (see
+     * {@link DstInstrumentation}). Outside a run it does nothing.
+     */
+    public static void reached(String entry) {
+        Dst dst = Dst.active();
+        if (dst == null) {
+            return;
+        }
+        String where = entry.replaceAll(" {2,}", " ").trim();
+        escaped(dst, "reached " + where + (dst.isLoopThread() ? "" : " (thread " + Thread.currentThread().getName() + ")"));
+    }
+
     public static List<String> loaded() {
         synchronized (LOADED) {
             return new ArrayList<>(LOADED);
