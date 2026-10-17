@@ -644,7 +644,8 @@ class AiPanel {
                 toolSet.setMode(normalizeToolMode(TuiSettings.load().getAiTools()));
             }
             client = created;
-            // a url that is set is the only one tried, so say which one does not answer
+            // read before detectEndpoint(), which sets the url of the provider it detects when none is set; a url that
+            // is set is the only one tried, so the error says which one does not answer
             String configuredUrl = client.endpointUrl();
             if (!client.detectEndpoint()) {
                 initError = configuredUrl != null && !configuredUrl.isBlank()
