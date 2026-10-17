@@ -20,7 +20,11 @@ camel test [options]
 [cols="2,5",options="header"]
 |===
 | Subcommand | Description
+| xref:jbang-commands/camel-jbang-test-agent.adoc[agent] | Manage Citrus agents
 | xref:jbang-commands/camel-jbang-test-init.adoc[init] | Creates a new Citrus test
+| xref:jbang-commands/camel-jbang-test-inspect.adoc[inspect] | Inspect a Citrus test and its source code in order to provide detailed information such as used endpoints as well as required modules and dependencies.
+| xref:jbang-commands/camel-jbang-test-ps.adoc[ps] | List running Citrus tests
+| xref:jbang-commands/camel-jbang-test-run.adoc[run] | Run as local Citrus test
 |===
 
 

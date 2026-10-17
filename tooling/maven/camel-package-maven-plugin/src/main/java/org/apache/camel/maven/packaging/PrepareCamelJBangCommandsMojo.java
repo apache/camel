@@ -51,6 +51,7 @@ import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.Import;
+import org.jboss.forge.roaster.model.source.Importer;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 
@@ -200,6 +201,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
             throws IOException {
 
         List<String> lines = Files.readAllLines(mainFile.toPath());
+        JavaSource<?> registering = parseSource(mainFile);
 
         // Find the start of the commandLine builder chain
         int startLine = -1;
@@ -226,7 +228,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 break;
             }
 
-            processSubcommandLine(lines.get(i), parentStack, commandsByClassName, model, null);
+            processSubcommandLine(lines.get(i), parentStack, commandsByClassName, model, null, registering);
         }
     }
 
@@ -244,6 +246,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         String plugin = nameMatcher.group(1);
 
         List<String> lines = Files.readAllLines(pluginFile.toPath());
+        JavaSource<?> registering = parseSource(pluginFile);
         for (String line : lines) {
             Matcher matcher = PLUGIN_ROOT_PATTERN.matcher(line.trim());
             if (!matcher.find()) {
@@ -255,7 +258,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
             Matcher newMatcher = NEW_COMMAND_PATTERN.matcher(target);
             if (newMatcher.find()) {
                 // a command without subcommands: commandLine.addSubcommand("name", new Command(main))
-                CommandInfo info = commandsByClassName.get(newMatcher.group(1));
+                CommandInfo info = commandInfo(newMatcher.group(1), commandsByClassName, registering);
                 if (info != null && !info.hidden) {
                     JBangCommand cmd = createCommand(info, cmdName, "");
                     cmd.setPlugin(plugin);
@@ -273,7 +276,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 if (!declMatcher.find()) {
                     continue;
                 }
-                CommandInfo info = commandsByClassName.get(declMatcher.group(1));
+                CommandInfo info = commandInfo(declMatcher.group(1), commandsByClassName, registering);
                 if (info == null || info.hidden) {
                     break;
                 }
@@ -285,7 +288,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
                 Stack<ParentInfo> parentStack = new Stack<>();
                 parentStack.push(new ParentInfo(root, -1));
                 for (int j = i + 1; j < lines.size(); j++) {
-                    processSubcommandLine(lines.get(j), parentStack, commandsByClassName, model, plugin);
+                    processSubcommandLine(lines.get(j), parentStack, commandsByClassName, model, plugin, registering);
                     if (lines.get(j).trim().endsWith(";")) {
                         break;
                     }
@@ -297,7 +300,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
 
     private void processSubcommandLine(
             String line, Stack<ParentInfo> parentStack, Map<String, CommandInfo> commandsByClassName,
-            JBangCommandModel model, String plugin) {
+            JBangCommandModel model, String plugin, JavaSource<?> registering) {
 
         String trimmedLine = line.trim();
         Matcher matcher = SUBCOMMAND_PATTERN.matcher(trimmedLine);
@@ -340,7 +343,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         // - Ends with 3 parens ())) = leaf command (closes CommandLine + addSubcommand)
         boolean hasSubcommands = closingParens == 2;
 
-        CommandInfo info = commandsByClassName.get(className);
+        CommandInfo info = commandInfo(className, commandsByClassName, registering);
         boolean parentSkipped = !parentStack.isEmpty() && parentStack.peek().command == null;
         if (info == null || info.hidden || parentSkipped) {
             if (info == null) {
@@ -372,6 +375,70 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         if (hasSubcommands) {
             // This command may have subcommands - push onto stack
             parentStack.push(new ParentInfo(cmd, indent));
+        }
+    }
+
+    /**
+     * The source that registers the commands, for the imports of their classes, or null when it cannot be parsed.
+     */
+    private JavaSource<?> parseSource(File file) {
+        try {
+            return Roaster.parse(file) instanceof JavaSource<?> source ? source : null;
+        } catch (Exception e) {
+            getLog().debug("Could not parse: " + file + " - " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * The command of a class: from its source when it is one of the command classes, or else from its class on the
+     * classpath of the project when the source that registers it imports it by name, such as a command of a library
+     * that a plugin adds as it is (camel test run is the Run of Citrus).
+     */
+    private CommandInfo commandInfo(
+            String className, Map<String, CommandInfo> commandsByClassName, JavaSource<?> registering) {
+        CommandInfo info = commandsByClassName.get(className);
+        if (info == null && registering != null) {
+            String imported = importedByName(registering, className);
+            if (imported != null) {
+                info = parseCommandFromClass(imported);
+            }
+        }
+        return info;
+    }
+
+    /**
+     * Parses a command from the picocli annotations of its class on the classpath of the project, read by reflection,
+     * as picocli is not a dependency of this plugin.
+     */
+    @SuppressWarnings("unchecked")
+    private CommandInfo parseCommandFromClass(String className) {
+        try {
+            ClassLoader loader = getProjectClassLoader();
+            Class<?> clazz = loader.loadClass(className);
+            Annotation command
+                    = clazz.getAnnotation((Class<? extends Annotation>) loader.loadClass("picocli.CommandLine$Command"));
+            if (command == null) {
+                return null;
+            }
+            CommandInfo info = new CommandInfo();
+            info.className = clazz.getSimpleName();
+            info.qualifiedName = clazz.getName();
+            info.name = (String) attribute(command, "name");
+            String description = String.join(" ", (String[]) attribute(command, "description"));
+            // without the hint to the help, as for a command of the sources
+            if (description.contains("(use")) {
+                description = description.substring(0, description.indexOf("(use")).trim();
+            }
+            info.description = description.isEmpty() ? null : description;
+            info.hidden = (Boolean) attribute(command, "hidden");
+            info.deprecated = clazz.isAnnotationPresent(Deprecated.class);
+            info.options = new ArrayList<>();
+            parseOptionsFromClass(className, info.options);
+            return info;
+        } catch (Exception | LinkageError e) {
+            getLog().debug("Could not read the command of class: " + className + " - " + e.getMessage());
+            return null;
         }
     }
 
@@ -559,10 +626,10 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * The qualified name of the type with the simple name that the class imports by name, or null when it does not.
+     * The qualified name of the type with the simple name that the source imports by name, or null when it does not.
      */
-    private static String importedByName(JavaClassSource clazz, String simpleName) {
-        for (Import imported : clazz.getImports()) {
+    private static String importedByName(Importer<?> source, String simpleName) {
+        for (Import imported : source.getImports()) {
             if (!imported.isWildcard() && !imported.isStatic() && imported.getSimpleName().equals(simpleName)) {
                 return imported.getQualifiedName();
             }
