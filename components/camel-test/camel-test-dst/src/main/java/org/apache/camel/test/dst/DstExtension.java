@@ -89,6 +89,8 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         if (instrument == null) {
             return;
         }
+        // the test and its world (the fakes) may live in a package of the code under test: they are not rewritten
+        DstInstrumentation.world(context.getRequiredTestClass().getPackageName());
         DstInstrumentation.install(instrument.value());
         DstInstrumentation.alsoRewrite(instrument.alsoRewrite());
         DstInstrumentation.alsoRewrite(System.getProperty("dst.alsoRewrite", "").split(","));

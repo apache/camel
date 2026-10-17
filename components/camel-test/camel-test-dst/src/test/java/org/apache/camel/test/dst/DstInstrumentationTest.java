@@ -81,4 +81,11 @@ class DstInstrumentationTest {
                 found.toString());
         assertTrue(found.stream().noneMatch(l -> l.startsWith(DstInstrumentation.WALL_CLOCK)), found.toString());
     }
+
+    @Test
+    void thePackageOfTheTestIsTheWorldAndIsNeitherScannedNorRewritten() {
+        // these tests wait and read the real clock on purpose (DstBlockingWaitTest): their package is the world
+        List<String> found = DstInstrumentation.scan("org.apache.camel.test.dst");
+        assertTrue(found.stream().noneMatch(l -> l.contains("Test.")), found.toString());
+    }
 }

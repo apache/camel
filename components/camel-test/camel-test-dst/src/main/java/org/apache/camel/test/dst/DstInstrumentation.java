@@ -30,7 +30,6 @@ import java.nio.file.Paths;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -90,6 +89,7 @@ public final class DstInstrumentation {
             "java/util/concurrent/LinkedTransferQueue");
     private static final Set<String> PREFIXES = new CopyOnWriteArraySet<>();
     private static final Set<String> ALSO = new CopyOnWriteArraySet<>();
+    private static final Set<String> WORLD = new CopyOnWriteArraySet<>();
     private static Instrumentation instrumentation;
 
     private DstInstrumentation() {
@@ -119,6 +119,20 @@ public final class DstInstrumentation {
             }
         }
         retransform(added);
+    }
+
+    /**
+     * The package of a test and its world (the fakes): never rewritten nor scanned, also when it lies inside a package
+     * of the code under test (a world in the tests of the component, such as
+     * {@code org.apache.camel.component.foo.dst}). Only this package, not its sub packages.
+     */
+    public static synchronized void world(String packageName) {
+        WORLD.add(packageName.replace('.', '/') + "/");
+    }
+
+    private static boolean inWorld(String internalName) {
+        int slash = internalName.lastIndexOf('/');
+        return slash > 0 && WORLD.contains(internalName.substring(0, slash + 1));
     }
 
     /**
@@ -157,7 +171,7 @@ public final class DstInstrumentation {
         List<Class<?>> loaded = new ArrayList<>();
         for (Class<?> c : instrumentation.getAllLoadedClasses()) {
             String name = c.getName().replace('.', '/');
-            if (instrumentation.isModifiableClass(c) && added.stream().anyMatch(p -> matches(p, name))) {
+            if (instrumentation.isModifiableClass(c) && !inWorld(name) && added.stream().anyMatch(p -> matches(p, name))) {
                 loaded.add(c);
             }
         }
@@ -203,6 +217,9 @@ public final class DstInstrumentation {
             if (className == null) {
                 return null;
             }
+            if (inWorld(className)) {
+                return null;
+            }
             boolean report = underTest(className);
             if (!report && !alsoRewritten(className)) {
                 return null;
@@ -227,9 +244,14 @@ public final class DstInstrumentation {
         String path = packageName.replace('.', '/');
         Set<String> found = new TreeSet<>();
         try {
-            Enumeration<URL> roots = Thread.currentThread().getContextClassLoader().getResources(path);
-            while (roots.hasMoreElements()) {
-                URL url = roots.nextElement();
+            List<URL> roots = Collections.list(Thread.currentThread().getContextClassLoader().getResources(path));
+            // the code under test is the main code: test classes in the same package are left out, unless the package
+            // has test classes only (the samples of the harness's own tests)
+            boolean main = roots.stream().anyMatch(u -> !isTestClasses(u));
+            for (URL url : roots) {
+                if (main && isTestClasses(url)) {
+                    continue;
+                }
                 if ("file".equals(url.getProtocol())) {
                     Path dir = Paths.get(url.toURI());
                     try (Stream<Path> files = Files.walk(dir)) {
@@ -259,8 +281,15 @@ public final class DstInstrumentation {
         return new ArrayList<>(found);
     }
 
+    private static boolean isTestClasses(URL url) {
+        return url.getPath().contains("/test-classes/");
+    }
+
     private static void scanClass(InputStream in, Set<String> found) throws IOException {
         ClassReader reader = new ClassReader(in);
+        if (inWorld(reader.getClassName())) {
+            return;
+        }
         reader.accept(new EscapeVisitor(null, false, true, found), 0);
     }
 
