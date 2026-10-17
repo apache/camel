@@ -77,11 +77,26 @@ public final class Dst {
 
     public Dst(long seed, long maxSteps) {
         this.seed = seed;
-        this.random = new Random(seed);
+        this.random = new Random(scramble(seed));
         this.loopThread = Thread.currentThread();
         this.maxSteps = maxSteps;
         this.wakeups = new DstExecutor(this, "wakeup", Integer.MAX_VALUE);
         active = this;
+    }
+
+    /**
+     * The seed of the random source of a run: the given seed scrambled with the SplitMix64 finalizer.
+     * <p>
+     * {@code new Random(seed)} draws nearly the same first values for consecutive seeds (for seeds 1 to 1000 the first
+     * {@code nextInt(2)} is always 1 and the first {@code nextDouble()} is always above 0.5), so the first choices of a
+     * world, often its configuration, would hardly change over thousands of seeds. The scramble is a bijection, so
+     * different seeds stay different and a seed still replays exactly.
+     */
+    static long scramble(long seed) {
+        long z = seed + 0x9E3779B97F4A7C15L;
+        z = (z ^ (z >>> 30)) * 0xBF58476D1CE4E5B9L;
+        z = (z ^ (z >>> 27)) * 0x94D049BB133111EBL;
+        return z ^ (z >>> 31);
     }
 
     /** The run of the calling thread, or null. */
