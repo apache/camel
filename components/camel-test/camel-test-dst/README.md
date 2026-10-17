@@ -49,8 +49,10 @@ strict mode of stage 1.
 The one failing seed of the Event Hubs world on `main` (seed 3042, outside the default 1000) is an event that
 completes in the same millisecond in which the timer of its window ran: `EventHubsCheckpointUpdaterTask.isExpired()`
 compares with `>`, so the window whose timer already ran is reused and the event is checkpointed only with the next
-event of the partition. In real time the window is one millisecond (low severity, not filed). Replaying seed 3042 in
-two JVMs gives the same trace (SHA-256 1137160c...).
+event of the partition (if the partition stays quiet, it is delivered again after a restart). In real time the window
+is narrow, but not only that millisecond: the timer task does not take the consumer's lock, so it can also run between
+the `isExpired()` check and the count of the event (low severity, not filed yet). Replaying seed 3042 in two JVMs gives
+the same trace (SHA-256 1137160c...).
 
 History: the first prototype run found that the first version of #27922 still lost the last events of a partition
 through the corner case raised in review (the timer's `compareAndSet` wiping a later window); the PR was updated
@@ -68,7 +70,7 @@ before it was merged. The SQS world found CAMEL-25737 because the seed also pick
 | `DstTest`, `DstSeed`, `DstInstrument`, `DstExtension` | JUnit integration |
 | `DstCamel` | a `CamelContext` on the loop, and an asynchronous route step with a seeded latency |
 
-## Stage 1 (this branch)
+## Stage 1 (CAMEL-25738)
 
 0. The seed is scrambled (SplitMix64): `new Random(seed)` drew the same first values for consecutive seeds.
 1. `java.time` reads and `new Date()` are rewritten too; `@DstInstrument(alsoRewrite)` rewrites listed core classes
@@ -91,8 +93,8 @@ before it was merged. The SQS world found CAMEL-25737 because the seed also pick
   sequence for that reason). A real fix may need virtual threads with a custom scheduler (a later stage).
 - Code on its own threads or a third-party scheduler (Reactor in the Azure SDKs) is outside the harness; strict mode
   makes reaching it fail the seed.
-- Camel core reads `System` directly; `alsoRewrite` is a stop-gap (see the dev@ proposal of a time source in
-  camel-util).
+- Camel core reads `System` directly; `alsoRewrite` is a stop-gap until Camel core has a time source the harness can
+  replace, which needs a dev@ discussion first.
 - One run per JVM at a time (the active run is a static field).
 - Results are only as good as the fakes of the external system.
 

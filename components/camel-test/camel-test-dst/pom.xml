@@ -29,14 +29,16 @@
     <artifactId>camel-test-dst</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Test :: DST (prototype)</name>
-    <description>Deterministic simulation testing for Camel (prototype): seeded virtual-time scheduler, fault injection, invariants and seed replay</description>
+    <name>Camel :: Test :: DST</name>
+    <description>Deterministic simulation testing for Camel consumers: seeded virtual-time scheduler, fault injection, invariants and seed replay</description>
 
     <properties>
         <firstVersion>4.24.0</firstVersion>
         <label>testing,java</label>
         <title>Test DST</title>
         <supportLevel>Preview</supportLevel>
+        <!-- the active run is a static field: one run per JVM at a time, so the tests of this module never run in parallel -->
+        <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>
 
     <dependencies>
@@ -104,7 +106,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- the agent that rewrites the time calls is attached at runtime (as Mockito does) -->
-                    <argLine>-XX:+EnableDynamicAgentLoading -Xmx1g</argLine>
+                    <argLine>${camel.surefire.fork.vmargs} -Xmx1g @{argLine}</argLine>
                     <systemPropertyVariables>
                         <dst.traceDir>${project.build.directory}/dst</dst.traceDir>
                     </systemPropertyVariables>

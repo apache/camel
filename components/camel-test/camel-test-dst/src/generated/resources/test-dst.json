@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "test-dst",
     "title": "Test DST",
-    "description": "Deterministic simulation testing for Camel (prototype): seeded virtual-time scheduler, fault injection, invariants and seed replay",
+    "description": "Deterministic simulation testing for Camel consumers: seeded virtual-time scheduler, fault injection, invariants and seed replay",
     "deprecated": false,
     "firstVersion": "4.24.0",
     "label": "testing,java",

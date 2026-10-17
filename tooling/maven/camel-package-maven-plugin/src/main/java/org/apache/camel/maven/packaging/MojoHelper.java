@@ -118,6 +118,7 @@ public final class MojoHelper {
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-vector-store"));
             case "camel-test":
                 return Arrays.asList(dir.resolve("camel-test-citrus"),
+                        dir.resolve("camel-test-dst"),
                         dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-junit6"),
                         dir.resolve("camel-test-spring-junit5"),

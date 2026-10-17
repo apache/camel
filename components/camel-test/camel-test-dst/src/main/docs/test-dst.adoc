@@ -2,7 +2,7 @@
 :doctitle: Test DST
 :shortname: test-dst
 :artifactid: camel-test-dst
-:description: Deterministic simulation testing for Camel (prototype): seeded virtual-time scheduler, fault injection, invariants and seed replay
+:description: Deterministic simulation testing for Camel consumers: seeded virtual-time scheduler, fault injection, invariants and seed replay
 :since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
