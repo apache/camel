@@ -383,6 +383,12 @@ public final class CatalogDocs {
             if (em != null) {
                 return eipDoc(catalog, em, lowerFilter, scope, includeDoc, null);
             }
+            if (BEANS_ENTRY.equalsIgnoreCase(name)) {
+                JsonObject beans = beansDoc(catalog, lowerFilter, scope, includeDoc);
+                if (beans != null) {
+                    return beans;
+                }
+            }
             if (kind != null) {
                 // an alias (fan-out, dedup, rate-limit) or the whole title names the EIP as well
                 JsonObject byTerm = eipByTerm(catalog, name, lowerFilter, scope, includeDoc);
@@ -620,6 +626,41 @@ public final class CatalogDocs {
         }
         if (matchedTerm != null) {
             result.put("matchedTerm", matchedTerm);
+        }
+        return result;
+    }
+
+    /** The top-level entry of the YAML DSL that declares beans: a list of bean factories, with no model of its own. */
+    static final String BEANS_ENTRY = "beans";
+
+    private static final String BEANS_DESCRIPTION
+            = "The top-level entry of the YAML DSL that declares beans: a list of beans, each with a name and how to create"
+              + " it (type, properties, constructors, a factory method or a script)";
+
+    /**
+     * The beans entry of the YAML DSL (CAMEL-25719). Each item of its list is a bean factory, so the options are those
+     * of the beanFactory model, and the answer says where the entry goes and how a route uses a bean, with an example.
+     * A model that looked up beans before was told "EIP not found" four times in one step, while camel_catalog_sample
+     * had the example all along. Null when the catalog has no beanFactory model.
+     */
+    private static JsonObject beansDoc(CamelCatalog catalog, String filter, OptionScope scope, boolean includeDoc) {
+        EipModel factory = catalog.eipModel("beanFactory");
+        if (factory == null) {
+            return null;
+        }
+        JsonObject result = eipDoc(catalog, factory, filter, scope, includeDoc, null);
+        result.put("name", BEANS_ENTRY);
+        result.put("title", "Beans");
+        result.put("description", BEANS_DESCRIPTION + ". The options are those of one bean; name is required. A route uses"
+                                  + " a bean as #bean:name in an option, ${bean:name.method} in Simple, or with the bean EIP"
+                                  + " (ref: name). The entry goes in the file of the routes, or in a file of its own such as"
+                                  + " beans.yaml next to them.");
+        result.put("placement", CatalogSamples.placement(BEANS_ENTRY));
+        // the example itself, short as it is, rather than a hint to fetch it with another call
+        JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, BEANS_ENTRY, 1).get("samples");
+        if (samples != null && !samples.isEmpty()) {
+            result.put("sample", ((JsonObject) samples.get(0)).getString("yaml"));
+            result.remove("sampleHint");
         }
         return result;
     }
@@ -939,6 +980,12 @@ public final class CatalogDocs {
                     }
                     matches.add(o);
                 }
+            }
+            // the beans entry of the YAML DSL has no model to suggest: a model that wants to declare a bean asks for
+            // beans, or for bean (CAMEL-25719)
+            String key = normalizeName(term);
+            if (BEANS_ENTRY.equals(key) || "bean".equals(key)) {
+                matches.add(summary("eip", BEANS_ENTRY, "Beans", BEANS_DESCRIPTION, "configuration"));
             }
         }
         if (kind == null || "bean".equals(kind)) {
