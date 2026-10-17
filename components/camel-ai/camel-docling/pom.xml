@@ -35,7 +35,7 @@
 
     <properties>
         <skipITs.s390x>true</skipITs.s390x>
-        <skipITs.ppc64le>true</skipITs.ppc64le>
+		<camel.failsafe.forkTimeout>1200</camel.failsafe.forkTimeout>
     </properties>
 
     <dependencies>
