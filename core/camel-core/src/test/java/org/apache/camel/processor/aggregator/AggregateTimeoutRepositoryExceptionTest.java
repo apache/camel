@@ -16,7 +16,10 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.List;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,14 +28,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.log.ConsumingAppender;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A group that is due for its completion timeout must still be completed when the aggregation repository fails once (a
@@ -41,7 +51,44 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class AggregateTimeoutRepositoryExceptionTest extends ContextTestSupport {
 
+    private static final String LOGGER = AggregateProcessor.class.getName();
+
     private final FailOnceRepository repository = new FailOnceRepository();
+
+    @AfterEach
+    public void removeAppender() {
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        ctx.getConfiguration().removeLogger(LOGGER);
+        ctx.updateLoggers();
+    }
+
+    @Test
+    public void testRepeatedFailuresOfAGroupLogOneWarn() throws Exception {
+        // the tests in this module run in parallel and log through the same logger: keep the lines of this key only
+        String key = "warn-once-" + context.getName();
+        Queue<String> warnings = new ConcurrentLinkedQueue<>();
+        ConsumingAppender.newAppender(LOGGER, "AggregateTimeoutRepositoryExceptionTest", Level.WARN, event -> {
+            String message = event.getMessage().getFormattedMessage();
+            if (event.getLevel() == Level.WARN && message.contains(key)) {
+                warnings.add(message);
+            }
+        });
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("B");
+
+        template.sendBodyAndHeader("direct:start", "A", "id", key);
+        template.sendBodyAndHeader("direct:start", "B", "id", key);
+        // the next three reads of the group are the ones of the timeout checker
+        repository.failingGets.set(3);
+
+        MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
+        assertEquals(3, repository.failures.get(), "the repository should have failed three times");
+        assertEquals(1, warnings.size(), "only the first failure is logged at WARN: " + warnings);
+        String warning = List.copyOf(warnings).get(0);
+        assertTrue(warning.contains("java.lang.IllegalStateException: Simulated repository failure in get"),
+                "the WARN names the type of the exception: " + warning);
+    }
 
     @Test
     public void testTimeoutCompletesGroupAfterFailedGet() throws Exception {
@@ -90,6 +137,7 @@ public class AggregateTimeoutRepositoryExceptionTest extends ContextTestSupport 
         private final MemoryAggregationRepository delegate = new MemoryAggregationRepository();
         private final AtomicBoolean failNextGet = new AtomicBoolean();
         private final AtomicBoolean failNextRemove = new AtomicBoolean();
+        private final AtomicInteger failingGets = new AtomicInteger();
         private final AtomicInteger failures = new AtomicInteger();
 
         @Override
@@ -99,7 +147,7 @@ public class AggregateTimeoutRepositoryExceptionTest extends ContextTestSupport 
 
         @Override
         public Exchange get(CamelContext camelContext, String key) {
-            if (failNextGet.compareAndSet(true, false)) {
+            if (failNextGet.compareAndSet(true, false) || failingGets.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
                 failures.incrementAndGet();
                 throw new IllegalStateException("Simulated repository failure in get");
             }
