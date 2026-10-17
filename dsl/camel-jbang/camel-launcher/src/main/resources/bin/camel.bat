@@ -28,9 +28,9 @@ set DIRNAME=%~dp0
 if "%DIRNAME%" == "" set DIRNAME=.
 set BASEDIR=%DIRNAME%
 
-@REM --- Shared Java 17+ discovery contract ---
+@REM --- Shared Java 21+ discovery contract ---
 @REM Candidates in order: JAVACMD, %JAVA_HOME%\bin\java.exe, java.exe on PATH, CAMEL_FALLBACK_JAVA.
-set CAMEL_MIN_JAVA=17
+set CAMEL_MIN_JAVA=21
 
 set "CAMEL_JAVACMD="
 call :tryJava "%JAVACMD%"
