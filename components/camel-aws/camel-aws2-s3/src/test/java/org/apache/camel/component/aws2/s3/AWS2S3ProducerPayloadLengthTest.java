@@ -149,4 +149,70 @@ public class AWS2S3ProducerPayloadLengthTest {
         assertEquals(PAYLOAD_SIZE, uploadedLength);
         assertArrayEquals(payload, uploadedContent);
     }
+
+    @Test
+    public void bodyLongerThanAStaleContentLengthHeaderIsStoredWhole() throws Exception {
+        // the consumer of another bucket set the header to the length of the object it read, then the route
+        // changed the body: the SDK sends only contentLength bytes, so the header must not cut the new body
+        String text = "a body made longer by the route";
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader(AWS2S3Constants.KEY, "changed.txt");
+        exchange.getIn().setHeader(AWS2S3Constants.CONTENT_LENGTH, 10L);
+        exchange.getIn().setBody(text);
+
+        producer.process(exchange);
+
+        assertEquals(text.length(), uploadedLength);
+        assertArrayEquals(text.getBytes(StandardCharsets.UTF_8), uploadedContent);
+    }
+
+    @Test
+    public void bodyShorterThanAStaleContentLengthHeaderIsStoredWithItsLength() throws Exception {
+        byte[] body = "short".getBytes(StandardCharsets.UTF_8);
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader(AWS2S3Constants.KEY, "short.txt");
+        exchange.getIn().setHeader(AWS2S3Constants.CONTENT_LENGTH, 1000L);
+        exchange.getIn().setBody(body);
+
+        producer.process(exchange);
+
+        assertEquals(body.length, uploadedLength);
+        assertArrayEquals(body, uploadedContent);
+    }
+
+    @Test
+    public void multiPartUploadOfABodyLongerThanAStaleContentLengthHeader() throws Exception {
+        when(configuration.isMultiPartUpload()).thenReturn(true);
+
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader(AWS2S3Constants.KEY, "big.bin");
+        exchange.getIn().setHeader(AWS2S3Constants.CONTENT_LENGTH, 10L);
+        exchange.getIn().setBody(payload);
+
+        producer.process(exchange);
+
+        assertEquals(PAYLOAD_SIZE, uploadedLength);
+        assertArrayEquals(payload, uploadedContent);
+    }
+
+    @Test
+    public void streamOfUnknownLengthUsesTheContentLengthHeader() throws Exception {
+        // guards the case the header is for: a stream whose length is not known is sent with the header length
+        InputStream stream = new FilterInputStream(new ByteArrayInputStream(payload)) {
+            @Override
+            public boolean markSupported() {
+                return false;
+            }
+        };
+
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getIn().setHeader(AWS2S3Constants.KEY, "big.bin");
+        exchange.getIn().setHeader(AWS2S3Constants.CONTENT_LENGTH, (long) PAYLOAD_SIZE);
+        exchange.getIn().setBody(stream);
+
+        producer.process(exchange);
+
+        assertEquals(PAYLOAD_SIZE, uploadedLength);
+        assertArrayEquals(payload, uploadedContent);
+    }
 }
