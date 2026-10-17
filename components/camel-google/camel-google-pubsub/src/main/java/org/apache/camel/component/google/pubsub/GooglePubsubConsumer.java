@@ -362,7 +362,16 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                                     pubsubMessage.getMessageId(), deliveryAttempt, resolvedMaxDeliveryAttempts);
                             GooglePubsubAcknowledge ack = new AcknowledgeSync(
                                     () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName);
-                            ack.nack(exchange);
+                            try {
+                                ack.nack(exchange);
+                            } catch (Exception e) {
+                                // keep pulling: the message is delivered again when its ack deadline expires and is
+                                // nacked then, while an exception here would end the pull loop of this consumer
+                                getExceptionHandler().handleException(
+                                        "Error nacking message " + pubsubMessage.getMessageId()
+                                                                      + " that reached max delivery attempts",
+                                        exchange, e);
+                            }
                             continue;
                         }
 
