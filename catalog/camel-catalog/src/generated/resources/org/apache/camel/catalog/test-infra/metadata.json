@@ -271,7 +271,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-keycloak",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "26.8.0",
+  "serviceVersion" : "26.8.1",
   "uiSupported" : true
 }, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
