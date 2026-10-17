@@ -38,7 +38,7 @@ abstract class InfraCommandTestSupport extends CamelCommandBaseTestSupport {
     @Override
     public void setup() throws Exception {
         super.setup();
-        CommandLineHelper.useHomeDir("target/test-infra-cmd");
+        useTestHomeDir();
         Files.createDirectories(CommandLineHelper.getCamelDir());
     }
 

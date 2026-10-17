@@ -17,18 +17,54 @@
 
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
+import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CamelCommandBaseTestSupport {
 
     protected StringPrinter printer;
 
+    private Path previousHome;
+    private Path testHome;
+
     @BeforeEach
     public void setup() throws Exception {
         printer = new StringPrinter();
+    }
+
+    /**
+     * Gives the test a home directory of its own: an empty directory for the {@code .camel} directory, the user
+     * configuration and the plugins of the CLI. The tests run in parallel forks, so a fixed directory would be shared
+     * with the tests of the other forks. The previous home is used again after the test.
+     *
+     * @return the home directory
+     */
+    protected Path useTestHomeDir() throws IOException {
+        if (previousHome == null) {
+            previousHome = CommandLineHelper.getHomeDir();
+        }
+        testHome = Files.createTempDirectory("camel-cli-test-home");
+        CommandLineHelper.useHomeDir(testHome.toString());
+        return testHome;
+    }
+
+    @AfterEach
+    public void restoreHomeDir() {
+        if (previousHome != null) {
+            CommandLineHelper.useHomeDir(previousHome.toString());
+            previousHome = null;
+        }
+        if (testHome != null) {
+            FileUtil.removeDir(testHome.toFile());
+            testHome = null;
+        }
     }
 
     public static String quarkusExtRegistry() {

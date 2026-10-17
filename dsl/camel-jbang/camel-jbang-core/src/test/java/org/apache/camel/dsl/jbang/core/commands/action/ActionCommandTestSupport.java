@@ -64,7 +64,7 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
     @Override
     public void setup() throws Exception {
         super.setup();
-        CommandLineHelper.useHomeDir("target/test-action");
+        useTestHomeDir();
         Files.createDirectories(CommandLineHelper.getCamelDir());
     }
 

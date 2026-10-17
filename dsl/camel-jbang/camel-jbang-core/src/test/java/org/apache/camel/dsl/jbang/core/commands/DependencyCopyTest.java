@@ -43,6 +43,7 @@ import static org.mockito.Mockito.spy;
  * camel dependency copy: the JARs of the dependencies of the integration, copied to a directory. The dependencies are
  * not downloaded: each resolves to a JAR of its own.
  */
+@UsesWorkingDirectory
 class DependencyCopyTest extends CamelCommandBaseTestSupport {
 
     @TempDir

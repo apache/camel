@@ -36,6 +36,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 /**
  * camel transform route: a route in another DSL, printed or written to a file or directory.
  */
+@UsesWorkingDirectory
 class TransformRouteTest extends CamelCommandBaseTestSupport {
 
     private static final String YAML = """

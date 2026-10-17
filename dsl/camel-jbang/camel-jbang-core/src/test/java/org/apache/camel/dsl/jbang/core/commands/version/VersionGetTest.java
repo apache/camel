@@ -19,17 +19,25 @@ package org.apache.camel.dsl.jbang.core.commands.version;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class VersionGetTest extends CamelCommandBaseTestSupport {
+
+    @BeforeEach
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestHomeDir();
+    }
 
     @Test
     public void shouldPrintVersions() throws Exception {
@@ -81,7 +89,7 @@ class VersionGetTest extends CamelCommandBaseTestSupport {
     }
 
     private void createJBangVersionFile(String version) throws IOException {
-        Path jBangDir = Paths.get("target", ".jbang", "cache");
+        Path jBangDir = CommandLineHelper.getHomeDir().resolve(".jbang/cache");
         if (!jBangDir.toFile().exists()) {
             jBangDir.toFile().mkdirs();
         }

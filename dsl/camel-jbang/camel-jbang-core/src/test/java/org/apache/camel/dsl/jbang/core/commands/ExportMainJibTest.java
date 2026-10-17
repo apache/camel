@@ -37,6 +37,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
+@UsesWorkingDirectory
 class ExportMainJibTest {
 
     private File workingDir;
