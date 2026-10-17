@@ -139,7 +139,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-nats",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.15.0",
+  "serviceVersion" : "2.15.1",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
