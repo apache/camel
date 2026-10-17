@@ -658,9 +658,10 @@ public final class CatalogDocs {
         result.put("placement", CatalogSamples.placement(BEANS_ENTRY));
         // the example itself, short as it is, rather than a hint to fetch it with another call
         JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, BEANS_ENTRY, 1).get("samples");
+        // the hint of eipDoc names beanFactory, which is not the name to ask for
+        result.remove("sampleHint");
         if (samples != null && !samples.isEmpty()) {
             result.put("sample", ((JsonObject) samples.get(0)).getString("yaml"));
-            result.remove("sampleHint");
         }
         return result;
     }
