@@ -298,6 +298,12 @@
                                 <entryPage>../../camel-yaml-dsl/camel-yaml-dsl/src/main/docs/yaml-dsl.adoc=beans</entryPage>
                                 <!-- the contract-first rest, next to the path-based examples of rest-dsl -->
                                 <entryPage>../../../docs/user-manual/modules/ROOT/pages/rest-dsl-openapi.adoc=rest</entryPage>
+                                <!-- the top-level entries whose examples are on a page about something else (CAMEL-25719) -->
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/route-template.adoc=templatedRoute</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/rest-dsl.adoc=restConfiguration</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/transformer.adoc=transformers</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/validator.adoc=validators</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/camel-configuration-utilities.adoc=sslContextParameters</entryPage>
                             </entryPages>
                             <!-- user manual pages that show old syntax or YAML that is not a Camel file -->
                             <excludes>

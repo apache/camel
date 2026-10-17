@@ -41,6 +41,20 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void theTopLevelEntriesDocumentedOnAnotherPageHaveSamples() {
+        // CAMEL-25719: their examples are on the page of what they belong to (route templates, the REST DSL,
+        // transformers, validators, the configuration utilities), which the samples did not read
+        for (String entry : List.of("templatedRoute", "restConfiguration", "transformers", "validators",
+                "sslContextParameters")) {
+            JsonObject o = CatalogSamples.sample(entry, 1);
+            assertThat(o.getString("placement")).as(entry).contains("top-level");
+            JsonArray samples = (JsonArray) o.get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            assertThat(((JsonObject) samples.get(0)).getString("yaml")).as(entry).startsWith("- " + entry + ":");
+        }
+    }
+
+    @Test
     void kebabCaseAndPartsResolveToTheEip() {
         JsonObject o = CatalogSamples.sample("circuit-breaker", 1);
         assertThat(o.getString("name")).isEqualTo("circuitBreaker");

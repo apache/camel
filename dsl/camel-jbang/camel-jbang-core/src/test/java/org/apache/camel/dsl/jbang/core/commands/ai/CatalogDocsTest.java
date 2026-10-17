@@ -278,6 +278,32 @@ class CatalogDocsTest {
     }
 
     @Test
+    void theBeansEntryOfTheYamlDslIsKnown() throws Exception {
+        // CAMEL-25719: a model that had to declare a bean looked up beans four times in one step and was told "EIP not
+        // found", while camel_catalog_sample had the example; the items of beans are bean factories
+        for (Map<String, Object> args : List.<Map<String, Object>> of(Map.of("name", "beans"),
+                Map.of("name", "beans", "kind", "eip"))) {
+            JsonObject doc = catalogDoc(args);
+            assertEquals("beans", doc.getString("name"), String.valueOf(doc));
+            assertTrue(doc.getString("placement").startsWith("top-level entry"), doc.getString("placement"));
+            assertTrue(doc.getString("description").contains("${bean:name.method}"), doc.getString("description"));
+            assertTrue(String.valueOf(doc.get("options")).contains("properties"), String.valueOf(doc.get("options")));
+            assertTrue(doc.getString("sample").contains("- beans:"), doc.getString("sample"));
+            assertNull(doc.get("sampleHint"), "the example is in the answer");
+        }
+
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String term : List.of("beans", "bean")) {
+            JsonArray matches = (JsonArray) CatalogDocs.find(catalog, term, null, 10).get("matches");
+            assertTrue(matches.stream().anyMatch(m -> "beans".equals(((JsonObject) m).getString("name"))),
+                    term + ": " + matches);
+        }
+        // the bean EIP comes first for bean, which is also the name of an EIP
+        JsonArray eips = (JsonArray) CatalogDocs.find(catalog, "bean", "eip", 10).get("matches");
+        assertEquals("bean", ((JsonObject) eips.get(0)).getString("name"));
+    }
+
+    @Test
     void anEipAliasFindsTheEip() throws Exception {
         // the aliases of the EIP models (fan-out, dedup, rate-limit) are what a model asks with; the former
         // camel_catalog_eips tool matched them, now camel_catalog_find and camel_catalog_doc do
