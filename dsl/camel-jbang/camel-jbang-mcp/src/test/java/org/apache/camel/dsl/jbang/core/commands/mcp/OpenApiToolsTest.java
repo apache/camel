@@ -359,7 +359,41 @@ class OpenApiToolsTest {
             assertThat(f.filePath()).isEqualTo("camel-mock/pets.json");
             assertThat(f.operationIds()).containsExactly("listPets", "createPet");
             assertThat(f.exampleContent()).contains("dog");
-            assertThat(f.note()).contains("GET answers the example", "POST echoes the request body");
+            assertThat(f.note()).contains("GET answers the example of its '200' response with HTTP 200 for a matching"
+                                          + " Content-Type or Accept (see modeExplanation), otherwise HTTP 204",
+                    "POST echoes the request body");
+        });
+    }
+
+    @Test
+    void scaffoldNamesTheMockFileAfterTheMediaTypeOfItsExample() {
+        String spec = """
+                {
+                  "openapi": "3.0.0",
+                  "info": { "title": "Pets", "version": "1.0" },
+                  "paths": {
+                    "/pets": {
+                      "get": {
+                        "operationId": "listPets",
+                        "responses": {
+                          "200": {
+                            "description": "OK",
+                            "content": {
+                              "application/json": { "schema": { "type": "array" } },
+                              "application/xml": { "example": "<pets><pet>dog</pet></pets>" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+                """;
+        OpenApiTools.ScaffoldResult result = tools.camel_openapi_scaffold(spec, null, "mock");
+
+        assertThat(result.mockFiles()).singleElement().satisfies(f -> {
+            assertThat(f.filePath()).isEqualTo("camel-mock/pets.xml");
+            assertThat(f.exampleContent()).isEqualTo("<pets><pet>dog</pet></pets>");
         });
     }
 

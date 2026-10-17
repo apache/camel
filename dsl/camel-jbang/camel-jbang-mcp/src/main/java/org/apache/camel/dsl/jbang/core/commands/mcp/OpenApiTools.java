@@ -331,6 +331,7 @@ public class OpenApiTools {
             Map<String, String> withoutFile = new LinkedHashMap<>();
             String responseType = null;
             String example = null;
+            String exampleType = null;
             for (Map.Entry<PathItem.HttpMethod, Operation> opEntry : operations.entrySet()) {
                 String method = opEntry.getKey().name();
                 Operation op = opEntry.getValue();
@@ -348,14 +349,13 @@ public class OpenApiTools {
                     continue;
                 }
                 ApiResponse ok = op.getResponses() != null ? op.getResponses().get("200") : null;
-                String opExample = firstExample(ok);
+                Map.Entry<String, String> opExample = firstExample(ok, responseType);
                 if (opExample != null) {
-                    withoutFile.put(method, "answers the example of its '200' response with HTTP 200 when the request's"
-                                            + " Content-Type or Accept header names a media type of that response"
-                                            + " (Accept */* takes application/json, then application/xml), otherwise"
-                                            + " HTTP 204 with an empty body");
+                    withoutFile.put(method, "answers the example of its '200' response with HTTP 200 for a matching"
+                                            + " Content-Type or Accept (see modeExplanation), otherwise HTTP 204");
                     if (example == null) {
-                        example = opExample;
+                        exampleType = opExample.getKey();
+                        example = opExample.getValue();
                     }
                 } else {
                     // no example in the '200' response, or no '200' response at all (CAMEL-25663): an empty answer
@@ -363,7 +363,9 @@ public class OpenApiTools {
                 }
             }
 
-            String ext = responseType != null && responseType.contains("xml") ? ".xml" : ".json";
+            // the file content is the example, so the extension follows the media type the example comes from
+            String fileType = exampleType != null ? exampleType : responseType;
+            String ext = fileType != null && fileType.contains("xml") ? ".xml" : ".json";
             StringBuilder note = new StringBuilder("Served with HTTP 200 for any method of ").append(path)
                     .append(" without a route.");
             // the component matches the request path, not the template: a path parameter takes a sample value
@@ -392,22 +394,44 @@ public class OpenApiTools {
     }
 
     /**
-     * The example camel-rest-openapi answers in mock mode for an operation without mock file: the example, or the first
-     * of the examples, of a media type of its "200" response.
+     * An example of the "200" response, used as a preview of the mock file content, with the media type it comes from:
+     * the example of the preferred media type when it has one, otherwise the first media type with an example. At
+     * runtime camel-rest-openapi takes the example of the media type matching the request's Content-Type or Accept
+     * header.
      */
-    private static String firstExample(ApiResponse ok) {
+    private static Map.Entry<String, String> firstExample(ApiResponse ok, String preferredType) {
         if (ok == null || ok.getContent() == null) {
             return null;
         }
-        for (MediaType mt : ok.getContent().values()) {
-            if (mt.getExample() != null) {
-                return mt.getExample().toString();
+        if (preferredType != null) {
+            String preferred = exampleOf(ok.getContent().get(preferredType));
+            if (preferred != null) {
+                return Map.entry(preferredType, preferred);
             }
-            if (mt.getExamples() != null && !mt.getExamples().isEmpty()) {
-                Object value = mt.getExamples().values().iterator().next().getValue();
-                if (value != null) {
-                    return value.toString();
-                }
+        }
+        for (Map.Entry<String, MediaType> mt : ok.getContent().entrySet()) {
+            String example = exampleOf(mt.getValue());
+            if (example != null) {
+                return Map.entry(mt.getKey(), example);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The example, or the first of the examples, of a media type.
+     */
+    private static String exampleOf(MediaType mt) {
+        if (mt == null) {
+            return null;
+        }
+        if (mt.getExample() != null) {
+            return mt.getExample().toString();
+        }
+        if (mt.getExamples() != null && !mt.getExamples().isEmpty()) {
+            Object value = mt.getExamples().values().iterator().next().getValue();
+            if (value != null) {
+                return value.toString();
             }
         }
         return null;
