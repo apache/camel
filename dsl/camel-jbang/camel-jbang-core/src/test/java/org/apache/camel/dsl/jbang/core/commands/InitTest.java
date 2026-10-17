@@ -247,6 +247,21 @@ class InitTest {
     }
 
     @Test
+    void initPickerWithForceDoesNotAsk() throws Exception {
+        Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
+        StringPrinter printer = new StringPrinter();
+        Init initCommand = new Init(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(initCommand, "--dir=" + workingDir, "--force");
+
+        // no answer to give, as there is no question
+        int exit = initCommand.interactivePicker(input("1", "1", "my.camel.yaml"));
+
+        assertEquals(0, exit);
+        assertFalse(printer.getStdout().contains("overwrite it?"), printer.getStdout());
+        assertTrue(Files.readString(existing).contains("from:"), "the file is the template now");
+    }
+
+    @Test
     void initPickerKeepsTheFileWhenTheAnswerIsNo() throws Exception {
         Path existing = Files.writeString(workingDir.resolve("my.camel.yaml"), "- route: {}");
         StringPrinter printer = new StringPrinter();
