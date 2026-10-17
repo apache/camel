@@ -3365,7 +3365,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "indent", def.getIndent(), "2");
         doWriteAttribute(sb, "delimiter", def.getDelimiter(), "COMMA");
-        doWriteAttribute(sb, "lengthMarker", def.getLengthMarker(), "false");
         doWriteAttribute(sb, "strict", def.getStrict(), "true");
         doWriteAttribute(sb, "contentTypeHeader", def.getContentTypeHeader(), "true");
     }
