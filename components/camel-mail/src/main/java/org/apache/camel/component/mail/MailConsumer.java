@@ -223,6 +223,18 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
+        try {
+            routeBatch(exchanges, total);
+        } finally {
+            // the remaining exchanges are not routed, as the consumer is stopping or routing an exchange failed: their
+            // mails must be consumed by a later poll (or by another consumer sharing the idempotent repository)
+            releaseNotRouted(CastUtils.cast(exchanges));
+        }
+
+        return total;
+    }
+
+    private void routeBatch(Queue<Object> exchanges, int total) throws Exception {
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
@@ -266,8 +278,37 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // process the exchange
             processExchange(exchange);
         }
+    }
 
-        return total;
+    /**
+     * Gives back exchanges that are not routed: removes the key of each mail from the idempotent repository (where
+     * {@link #isValidMessage(String, Message)} added it when the mail was retrieved), so the mail is not skipped as a
+     * duplicate later, and releases the exchange.
+     */
+    private void releaseNotRouted(Queue<Exchange> notRouted) {
+        Exchange exchange;
+        while ((exchange = notRouted.poll()) != null) {
+            removeIdempotentKey(exchange.getProperty(MAIL_MESSAGE_UID, String.class));
+            try {
+                releaseExchange(exchange, true);
+            } catch (Exception e) {
+                // keep giving back the other mails
+                LOG.warn("Cannot release an exchange that is not routed: {}.", e.toString());
+            }
+        }
+    }
+
+    private void removeIdempotentKey(String key) {
+        if (key != null && getEndpoint().getIdempotentRepository() != null) {
+            try {
+                getEndpoint().getIdempotentRepository().remove(key);
+            } catch (Exception e) {
+                // keep giving back the other mails, and do not hide the failure of the poll
+                LOG.warn("Cannot remove the key {} of a mail that is not routed from the idempotent repository: {}."
+                         + " The mail is skipped as a duplicate until the key is removed.",
+                        key, e.toString());
+            }
+        }
     }
 
     private void peekMessage(Message mail) {
@@ -323,17 +364,27 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             if (hasMessageLimit && answer.size() >= maxMessage) {
                 break;
             }
-            String key = getEndpoint().getMailUidGenerator().generateUuid(getEndpoint(), message);
-            if (isValidMessage(key, message)) {
-                // need to call setPeek on java-mail to avoid the message being flagged eagerly as SEEN on the server in case
-                // we process the message and rollback due an exception
-                if (getEndpoint().getConfiguration().isPeek()) {
-                    peekMessage(message);
+            // the key of this mail once it has been added to the idempotent repository
+            String addedKey = null;
+            try {
+                String key = getEndpoint().getMailUidGenerator().generateUuid(getEndpoint(), message);
+                if (isValidMessage(key, message)) {
+                    addedKey = key;
+                    // need to call setPeek on java-mail to avoid the message being flagged eagerly as SEEN on the server in case
+                    // we process the message and rollback due an exception
+                    if (getEndpoint().getConfiguration().isPeek()) {
+                        peekMessage(message);
+                    }
+                    Exchange exchange = createExchange(new KeyValueHolder<>(key, message));
+                    if (exchange != null) {
+                        answer.add(exchange);
+                    }
                 }
-                Exchange exchange = createExchange(new KeyValueHolder<>(key, message));
-                if (exchange != null) {
-                    answer.add(exchange);
-                }
+            } catch (Exception e) {
+                // the poll fails and none of the mails retrieved so far is routed
+                removeIdempotentKey(addedKey);
+                releaseNotRouted(answer);
+                throw e;
             }
         }
 
