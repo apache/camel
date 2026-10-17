@@ -96,6 +96,66 @@ It is also possible to set a default action on the consul endpoint and do withou
 consul:agent?action=REGISTER
 ----
 
+=== Key-value store
+
+The `kv` endpoint reads and writes the key-value store of Consul.
+The action comes from the `action` option or the `CamelConsulAction` header (the header wins),
+and the key from the `key` option or the `CamelConsulKey` header.
+A PUT stores the message body as the value. A GET_VALUE sets the value as the message body, and `valueAsString`
+makes it a string:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:save-greeting
+      steps:
+        - setHeader:
+            name: CamelConsulAction
+            expression:
+              constant:
+                expression: PUT
+        - to:
+            uri: consul:kv
+            parameters:
+              key: app/greeting
+- route:
+    from:
+      uri: direct:read-greeting
+      steps:
+        - setHeader:
+            name: CamelConsulAction
+            expression:
+              constant:
+                expression: GET_VALUE
+        - to:
+            uri: consul:kv
+            parameters:
+              key: app/greeting
+              valueAsString: true
+        - log:
+            message: "The greeting is ${body}"
+----
+
+A consumer of the `kv` endpoint watches a key with a blocking query of `blockSeconds` (10 by default).
+The route gets the value each time the query returns: when the value changes, or when the wait ends.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: consul:kv
+      parameters:
+        key: app/greeting
+        valueAsString: true
+      steps:
+        - log:
+            message: "${header.CamelConsulKey} is now ${body}"
+----
+
+The client connects to the Consul agent at `http://localhost:8500`, unless you set the `url` option,
+for example with `camel.component.consul.url` in `application.properties`.
+
 == Registering Camel Routes with Consul
 
 You can employ a `ServiceRegistrationRoutePolicy` to register Camel routes as services with Consul automatically.
