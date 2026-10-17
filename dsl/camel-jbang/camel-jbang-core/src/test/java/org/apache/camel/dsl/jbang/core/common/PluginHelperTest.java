@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -41,9 +42,17 @@ public class PluginHelperTest {
     @TempDir
     Path tempDir;
 
+    private Path previousHome;
+
     @BeforeEach
     public void setup() {
+        previousHome = CommandLineHelper.getHomeDir();
         CommandLineHelper.useHomeDir(tempDir.toString());
+    }
+
+    @AfterEach
+    public void restoreHome() {
+        CommandLineHelper.useHomeDir(previousHome.toString());
     }
 
     @Test
