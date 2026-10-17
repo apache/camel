@@ -544,6 +544,13 @@ Test infra usage:
 static KafkaService service = KafkaServiceFactory.createService();
 ```
 
+Deterministic simulation tests (`camel-test-dst`, preview): for timing bugs of a consumer (checkpoint, commit,
+acknowledge, visibility, reconnect, suspend), the real consumer runs under a seeded virtual-time scheduler against a
+fake of the external system. Before writing such a "world" for a component, follow the guide "Writing a fake world" in
+[`components/camel-test/camel-test-dst/src/main/docs/test-dst.adoc`](components/camel-test/camel-test-dst/src/main/docs/test-dst.adoc).
+The SQS world in `components/camel-aws/camel-aws2-sqs/src/test/java/org/apache/camel/component/aws2/sqs/dst/` is the
+worked example. Do not report a failing seed as a bug before the triage step of that guide.
+
 ## Component Layout
 
 ```

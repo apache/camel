@@ -9,27 +9,309 @@
 
 *Since Camel {since}*
 
-The `camel-test-dst` module (a prototype) runs Camel code under a deterministic, seeded, virtual-time scheduler.
+The `camel-test-dst` module runs the real code of a Camel consumer under a deterministic, seeded, virtual-time
+scheduler. Only the external system is faked. A test runs thousands of seeds in seconds, and a failing seed replays
+with the same step trace.
 
-* Every thread pool created through the `ExecutorServiceManager` is backed by one event loop (`DstThreadPoolFactory`).
-  Tasks run one at a time; virtual time jumps to the next due task; when several tasks are runnable the seed picks one.
-* Fakes of the external system inject faults chosen by the seed: delayed or failing answers, bursts and quiet periods,
-  suspend and resume of the consumer between two exchanges.
-* Invariants (`Invariants`) are checked at the end of each run.
-* `@DstTest(seeds = 2000)` runs a test method once per seed; a failing seed is reported with its step trace and is
-  replayed exactly with `@DstSeed(4711)` or `-Ddst.seed=4711`.
-* `@DstInstrument("org.apache.camel.component.foo")` rewrites `System.currentTimeMillis()` and `System.nanoTime()` in
-  the code under test to read virtual time, and reports the other escape points (own threads, sleeps, wall clock reads
-  through `java.time`, Reactor schedulers, blocking waits).
+* Every thread pool created through the `ExecutorServiceManager` is backed by one event loop on the test thread
+  (`DstThreadPoolFactory`). Tasks run one at a time; when several can run, the seed picks one.
+* Time is virtual: it jumps to the next due task. The time reads, sleeps and blocking waits of the code under test are
+  rewritten at test time (`@DstInstrument`), so "wait 30 seconds" costs nothing.
+* A fake of the external system (a queue, a checkpoint store, a web API) injects faults chosen by the same seed.
+* Invariants are checked at the end of each run.
+* `@DstTest(seeds = 1000)` runs a test method once per seed. A failing seed is printed with its trace and is replayed
+  exactly with `-Ddst.seed=4711` or `@DstSeed(4711)`.
+
+This is a test tool. Nothing of it runs in production, and it changes nothing in Camel.
+
+== A test
 
 [source,java]
 ----
-@DstInstrument("org.apache.camel.component.azure.eventhubs")
-class EventHubsCheckpointDstTest {
+@DstInstrument("org.apache.camel.component.aws2.sqs")
+class SqsVisibilityDstTest {
 
-    @DstTest(seeds = 2000)
-    void everyCompletedEventIsCheckpointedWhenThePartitionGoesQuiet(Dst dst) throws Exception {
-        new EventHubsWorld(dst).run();
+    @DstTest(seeds = 1000)
+    void noMessageIsDeliveredAgainWhileTheConsumerHoldsIt(Dst dst) throws Exception {
+        new SqsWorld(dst).run();
     }
 }
+----
+
+The world (`SqsWorld`) builds a `CamelContext` with `DstCamel.newContext(dst)`, binds the fake client, starts the
+route, drives the run with `dst.runUntil(...)` and `dst.runFor(...)`, and checks the invariants with `dst.check(...)`.
+The test and its world live in a package of their own (for example `org.apache.camel.component.aws2.sqs.dst`); that
+package is never rewritten.
+
+Three worlds are in the Camel code base and are the examples to copy:
+
+|===
+|Component |Test |Regression test for
+
+|camel-aws2-sqs |`SqsVisibilityDstTest` (the visibility timeout extender) |CAMEL-25700
+|camel-azure-eventhubs |`EventHubsCheckpointDstTest` (checkpointing by batch size and timeout) |CAMEL-25683
+|camel-slack |`SlackSuspendDstTest` (route suspend in the middle of a poll) |CAMEL-25684
+|===
+
+== What the harness controls
+
+[cols="1,3"]
+|===
+|Thread pools |Every pool and scheduled executor created by Camel or the component through the
+`ExecutorServiceManager`. A single-thread executor keeps its FIFO order; an executor with n threads offers its first n
+runnable tasks to the seed.
+|Time reads |`System.currentTimeMillis()`, `System.nanoTime()`, `new Date()`, `Instant.now()`, `Clock.systemUTC()`,
+`Clock.systemDefaultZone()`, `Clock.system(ZoneId)` and `now()` / `now(ZoneId)` of `LocalDateTime`, `ZonedDateTime`,
+`OffsetDateTime`, `LocalDate`, `LocalTime` and `OffsetTime`, in the packages of `@DstInstrument`.
+|Sleeps |`Thread.sleep` and `TimeUnit.sleep`: on the loop thread a sleep is a virtual wait. The sleeping task keeps
+its thread and the other tasks run meanwhile.
+|Blocking waits |`CompletableFuture.get/join`, `Future.get`, `CountDownLatch.await`, `Semaphore.acquire/tryAcquire`,
+`DelayQueue` and `BlockingQueue` `take/poll`: the loop runs until the wait can end, and a timed wait gives up in
+virtual time. A wait that no task of the run can end fails the seed at once and names the call site.
+|Timed waits on tasks |`Future.get(timeout)` on a task of the run and `awaitTermination` time out in virtual time.
+|===
+
+`@DstInstrument(alsoRewrite = ...)` applies the same rewriting to classes outside the code under test, for example
+`org.apache.camel.util.StopWatch`, `org.apache.camel.support.MonotonicClock`, `org.apache.camel.support.task`
+(`ForegroundTask`), `org.apache.camel.processor.errorhandler` (synchronous redelivery) or
+`org.apache.camel.impl.engine.DefaultShutdownStrategy` (its wait for in-flight exchanges). This is a stop-gap: Camel
+core reads `System` directly, and a time source in core that the harness can replace needs a dev@ discussion first.
+
+=== Escapes and strict mode
+
+Before the first seed, the harness scans the packages under test and writes every *escape point* to
+`target/dst/<Test>.escapes.txt`: own threads and executors, the common fork-join pool, Reactor schedulers, waits it
+cannot run the loop for (`Object.wait`, `LockSupport.park`, `Mono.block`), wall clock reads it does not rewrite.
+
+Strict mode is the default: when a seed reaches one of these at runtime, or a thread outside the harness submits a task
+to the loop, the seed fails with the escape as its cause. `@DstInstrument(allowEscapes = "Foo.bar")` allows an escape
+that cannot change the result (say why in a comment); `@DstInstrument(strict = false)` or `-Ddst.strict=false` only
+records escapes in `target/dst/<Test>.summary.txt`.
+
+A wait in code that is not rewritten (a latch in Camel core, for example) blocks the loop thread for real. A watchdog
+interrupts the loop thread after 10 s of real time without progress (`-Ddst.watchdogMillis`) and the seed fails with the
+stack where it was blocked.
+
+=== The one-stack model
+
+All tasks run on one thread, the test thread. A task that blocks (a call of the fake with a latency, a sleep, a wait)
+stays on the stack while the loop runs the other tasks *nested* above it. So a blocked task can resume only after
+every task that blocked after it has resumed. Three consequences:
+
+* Timing: see the rule in the guide below.
+* A timed wait notices its timeout only when the tasks nested above it return. If the awaited task completes after the
+  deadline that way, the caller still gets the `TimeoutException`, but the task's side effects have already happened.
+* A route stop or suspend that runs while an exchange is blocked in a synchronous call below it on the stack cannot see
+  that exchange finish. The Slack world therefore copies the suspend sequence of `DefaultShutdownStrategy` with a
+  short polling wait instead of calling `suspendRoute`. With an asynchronous downstream call
+  (`DstCamel.asyncStep`) a real `stopRoute` works.
+
+Code that uses its own threads or a third-party scheduler (the Azure SDKs on Reactor) is outside the harness; fake the
+client at a level above those threads.
+
+== Writing a fake world: a guide for AI agents and humans
+
+A world is the component's real consumer, a fake of the external system, a load (producers, operators), seeded faults
+and invariants. This guide uses the SQS world of camel-aws2-sqs (`FakeSqs`, `SqsWorld`, about 420 lines) as the worked
+example. Follow the steps in order.
+
+=== 1. Find where the client is swapped
+
+Look for the place where the component gets its client:
+
+* an endpoint option that takes a client instance, bound in the registry. camel-aws2-sqs has `amazonSQSClient`:
++
+[source,java]
+----
+context.getRegistry().bind("sqs", fakeSqs);   // FakeSqs implements SqsClient
+from("aws2-sqs://dst?amazonSQSClient=#sqs&queueUrl=RAW(" + FakeSqs.QUEUE_URL + ")&extendMessageVisibility=true"
+     + "&visibilityTimeout=" + visibilityTimeout + "&maxMessagesPerPoll=" + maxMessagesPerPoll
+     + "&concurrentConsumers=" + concurrentConsumers + "&initialDelay=100&delay=" + delay)
+----
+* else a static factory, replaced with Mockito's `mockStatic` for the duration of the run (the Event Hubs world mocks
+  `EventHubsClientFactory`, the Slack world mocks `Slack.getInstance`).
+
+Fake the client at the level where the component calls it synchronously. If the client runs its own threads (Reactor,
+Netty, an HTTP client pool), fake it above them.
+
+=== 2. Run the escape scan before writing anything
+
+Write the smallest test with `@DstInstrument("<component package>")` and one seed, run it, and read
+`target/dst/<Test>.escapes.txt`. Every line is a place where the component leaves the harness. For each one, decide:
+
+* *fix* it in the harness (the time reads, sleeps and waits listed above are already handled),
+* *avoid* it with the configuration of the world (the first SQS world kept `maxMessagesPerPoll` at 10 or less because
+  more joined several requests with `CompletableFuture.get()`; the harness now runs the loop for that wait), or
+* *document* it, in the world's Javadoc, and allow it in strict mode only if it cannot change the result.
+
+The SQS scan flagged `Instant.now()` in the visibility extender. Before it was rewritten, 271 of 500 seeds on `main`
+failed falsely: the extender computed its deadline from real time while the fake counted in virtual time.
+
+=== 3. Write the fake from the service's documentation
+
+Write the fake from the API reference of the service, not from the component's code: a fake copied from the consumer
+agrees with the consumer's bugs. Quote the rule next to the code that implements it, name the page, and mark what is
+assumed:
+
+[source,java]
+----
+// [R] "Valid values: 1 to 10. Default: 1." and "Amazon SQS never returns more messages than this value
+// (however, fewer messages might be returned)"
+int max = request.maxNumberOfMessages() != null ? request.maxNumberOfMessages() : 1;
+...
+// [D] "If you use an old ReceiptHandle, the request will succeed, but the message might not be deleted."
+if (dst.chance(0.5)) {
+    delete(m, "deleted (old handle)");
+}
+...
+// [C] "ReceiptHandleIsInvalid: The specified receipt handle isn't valid." (assumed for a deleted
+// message and for the handle of an earlier receive; the page does not spell these cases out)
+----
+
+Where the documentation allows several behaviours ("might", "fewer messages might be returned"), let the seed choose.
+List what is not modelled in the class Javadoc (`FakeSqs`: long polling, FIFO queues, the in-flight limit, retention,
+dead-letter queues).
+
+=== 4. The one-stack timing rule
+
+A blocked task resumes only after the tasks that blocked after it. A call of the fake that blocks for its latency can
+therefore return later than its latency, and anything it decides at the start can be stale at the end. The rule:
+
+* *reads take effect at the end of their latency*: `FakeSqs.receiveMessage` blocks first, then picks the visible
+  messages and starts their visibility timeout;
+* *writes take effect at the start*: `deleteMessage` deletes, then blocks for its latency;
+* *background tasks do not block*: the visibility extender of the consumer runs on a scheduled executor, so
+  `changeMessageVisibilityBatch` answers without a latency. If it blocked, a delayed resume could make the extension
+  arrive after the timeout it extends, which is not what SQS does.
+
+Write this down in the fake's Javadoc, as `FakeSqs` does.
+
+=== 5. Let the seed pick the configuration
+
+The seed picks the endpoint configuration as well as the timing, at the start of the run, and the world writes it to
+the trace:
+
+[source,java]
+----
+this.visibilityTimeout = dst.pick(List.of(2, 3, 5, 10));
+this.maxMessagesPerPoll = dst.pick(List.of(1, 2, 5, 10));
+this.concurrentConsumers = dst.pick(List.of(1, 2, 3));
+this.delay = dst.pick(List.of(100L, 500L, 1000L));
+dst.trace("world: visibilityTimeout=" + visibilityTimeout + " maxMessagesPerPoll=" + maxMessagesPerPoll + ...);
+----
+
+This found CAMEL-25737: with `visibilityTimeout=1` the extender is always late. It is left out of the default set while
+that issue is open, and `-Ddst.sqs.visibilityTimeouts=1` puts it back. The seed of a run is scrambled (SplitMix64), so
+consecutive seeds draw unrelated configurations.
+
+=== 6. Seeded faults, a drain phase, and fault-excuse records
+
+Inject the faults the service documents (failed calls, slow answers, lost requests) with `dst.chance(...)`, at a rate
+that still lets work get done (the SQS world: 5 % failed receives and deletes, 2 % failed visibility changes, 15 % slow
+processing). Then switch the faults off and let the system drain:
+
+[source,java]
+----
+dst.runUntil(() -> sendsLeft == 0, "all sends");
+dst.runFor(dst.between(0, 3L * visibilityTimeout * 1000));
+// faults cleared: the queue must drain
+faults = false;
+sqs.faults = false;
+long deadline = dst.now() + 20L * visibilityTimeout * 1000 + 30_000;
+while (!sqs.allDeleted() && dst.now() < deadline) {
+    dst.runFor(100);
+}
+----
+
+Some faults legitimately cause what the invariant forbids. Record which fault excuses which violation, and only those:
+a failed `ChangeMessageVisibilityBatch` lets SQS deliver the messages of that batch again, so `FakeSqs` reports their
+ids (`onExtensionFault`) and the world does not count a redelivery of those messages.
+
+=== 7. The invariant comes from the component's contract
+
+Write the property the component promises, not what the code happens to do. The visibility extender promises that a
+message is not delivered again while the consumer holds it. The world records what happened in a `DstLedger` and
+checks:
+
+[source,java]
+----
+dst.check(
+        Invariants.of("no message is delivered again while the consumer holds it",
+                () -> redeliveredWhileHeld.isEmpty() ? null : redeliveredWhileHeld.toString()),
+        Invariants.everyOfferedRoutedAtLeastOnce(ledger, "sent", "completed"),
+        Invariants.of("the queue is drained once the faults cleared",
+                () -> sqs.allDeleted() ? null : "not deleted: " + sqs.notDeleted()));
+----
+
+Start from the reusable `Invariants` (`everyOfferedRoutedAtLeastOnce`, `noDuplicates`,
+`lastCompletedAcknowledgedWhenQuiet`, `acknowledgedWithin`, `routeStarted`) and add the component's own with
+`Invariants.of(name, check)`. A violation message carries the configuration, so the failure report is readable on its
+own.
+
+=== 8. The self-check
+
+A world is only evidence when it can fail. Before trusting a pass on `main`:
+
+. *Fail on the code before a past fix.* Find a fixed bug of the same behaviour with `git log` on the component
+  (the SQS world: CAMEL-25700, commit d09593b4a584). Revert the fix locally and run the world: it must fail (1397 of 5000 seeds), and only
+  in the configurations the fix describes (for CAMEL-25700: `maxMessagesPerPoll >= 2` and `concurrentConsumers >= 2`).
+. *Pass on main*, with thousands of seeds (`-Ddst.seeds=5000`).
+. *Replay*: run a failing seed twice with `-Ddst.seed=<seed>`. The trace files in `target/dst/` must have the same
+  SHA-256 (it is on their second line).
+
+If the world cannot fail on the old code, its fake, its load or its invariant is too weak.
+
+=== 9. Triage before reporting
+
+A failing seed is not yet a bug. Before reporting one:
+
+. Group the failing seeds by configuration (the `world:` line of each trace, or the violation message). A failure
+  that appears only in one configuration points at that configuration (CAMEL-25737 was all `visibilityTimeout=1`).
+. Read one trace from the start: what the world chose, then each step with its virtual time and executor.
+. Tell three causes apart:
+** a *harness artifact*: an escape (check the summary), the one-stack rule broken by the fake, a time read that is
+   not rewritten (before the `Instant.now()` rewrite, half of the SQS seeds failed this way);
+** a *fake mistake*: the fake does something the service documentation does not allow;
+** a *real bug*: the consumer breaks its contract against a fake that follows the documentation.
+. Reproduce a real bug outside DST too, with a plain unit test, before filing it.
+
+=== Checklist
+
+* [ ] The client is swapped through an endpoint option or a static mock, at a synchronous level.
+* [ ] The escape scan was read; every escape is fixed, avoided or documented; the test runs in strict mode.
+* [ ] Every behaviour of the fake quotes the documentation; assumptions are marked; what is not modelled is listed.
+* [ ] Reads take effect at the end of their latency, writes at the start; background tasks do not block.
+* [ ] The seed picks the configuration, and the world traces it.
+* [ ] Faults are seeded, switched off for a drain phase, and recorded where they excuse a violation.
+* [ ] The invariant states the component's contract.
+* [ ] The world fails on the code before a past fix, passes on `main`, and a seed replays with the same SHA-256.
+
+== Options
+
+|===
+|System property |Meaning |Default
+
+|`dst.seeds` |number of seeds |`@DstTest(seeds)`
+|`dst.firstSeed` |first seed |`@DstTest(firstSeed)`, 1
+|`dst.maxFailures` |stop after this many failing seeds |`@DstTest(maxFailures)`, 1
+|`dst.seed` |comma separated seeds to replay; their full traces are written |-
+|`dst.traceDir` |where the reports and traces go |`target/dst`
+|`dst.strict` |strict mode |`@DstInstrument(strict)`, true
+|`dst.alsoRewrite` |comma separated classes or packages to rewrite too (stop-gap) |-
+|`dst.watchdogMillis` |real time without progress after which a waiting loop thread fails the seed |10000
+|===
+
+Reports in `target/dst/`: `<Test>.escapes.txt` (the scan), `<Test>.summary.txt` (seeds run, failing seeds, threads
+left alive, runtime escapes) and `<Test>.<method>/seed-<n>.trace` (the trace of each failing or replayed seed, with
+its SHA-256 on the second line).
+
+Add the module with test scope:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-dst</artifactId>
+    <scope>test</scope>
+</dependency>
 ----
