@@ -18,6 +18,8 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 
@@ -485,26 +488,7 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         // First, parse options from parent class (if any)
         String superType = clazz.getSuperType();
         if (superType != null && !superType.equals("java.lang.Object") && !superType.equals("Object")) {
-            // Try to find and parse the parent class
-            String parentClassName = superType;
-            if (parentClassName.contains(".")) {
-                parentClassName = parentClassName.substring(parentClassName.lastIndexOf('.') + 1);
-            }
-
-            // Search for parent class file
-            File parentFile = findClassFile(baseDir, parentClassName);
-            if (parentFile != null && parentFile.exists()) {
-                try {
-                    JavaType<?> parsedParent = Roaster.parse(parentFile);
-                    if (parsedParent instanceof JavaClassSource parentClazz) {
-                        parseOptionsFromClassHierarchy(parentClazz, options, parentFile.getParentFile());
-                    } else {
-                        getLog().debug("Skipping options from non-class parent type: " + parentClassName);
-                    }
-                } catch (Exception e) {
-                    getLog().debug("Could not parse parent class: " + parentClassName + " - " + e.getMessage());
-                }
-            }
+            parseOptionsFromType(clazz, superType, options, baseDir, "parent");
         }
 
         // Then parse options from this class (will override parent options with same name)
@@ -534,22 +518,109 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         // Also parse options from @CommandLine.Mixin fields
         for (FieldSource<JavaClassSource> field : clazz.getFields()) {
             if (hasMixinAnnotation(field)) {
-                String mixinTypeName = field.getType().getName();
-                File mixinFile = findClassFile(baseDir, mixinTypeName);
-                if (mixinFile != null && mixinFile.exists()) {
-                    try {
-                        JavaType<?> parsedMixin = Roaster.parse(mixinFile);
-                        if (parsedMixin instanceof JavaClassSource mixinClazz) {
-                            parseOptionsFromClassHierarchy(mixinClazz, options, mixinFile.getParentFile());
-                        } else {
-                            getLog().debug("Skipping options from non-class mixin type: " + mixinTypeName);
-                        }
-                    } catch (Exception e) {
-                        getLog().debug("Could not parse mixin class: " + mixinTypeName + " - " + e.getMessage());
-                    }
-                }
+                parseOptionsFromType(clazz, field.getType().getName(), options, baseDir, "mixin");
             }
         }
+    }
+
+    /**
+     * Parses the options of a parent class or a mixin type of a class: from its source when it is one of the command
+     * classes, or else from its class on the classpath of the project, such as the class of a library that a plugin
+     * command extends. The source is found by the simple name of the type, so for a type that the class imports by name
+     * it is only taken when it is of that type, as a class of a library may have the simple name of a command of
+     * camel-jbang-core. (The package that Roaster resolves for a type that is not imported by name is not certain: with
+     * an import on demand of a class, it takes a class of the same package for a nested class of the imported one.)
+     */
+    private void parseOptionsFromType(JavaClassSource clazz, String type, List<OptionInfo> options, File baseDir, String kind) {
+        String simpleName = type.substring(type.lastIndexOf('.') + 1);
+        String imported = importedByName(clazz, simpleName);
+        File file = findClassFile(baseDir, simpleName);
+        if (file != null && file.exists()) {
+            try {
+                JavaType<?> parsed = Roaster.parse(file);
+                if (imported == null || imported.equals(parsed.getQualifiedName())) {
+                    if (parsed instanceof JavaClassSource source) {
+                        parseOptionsFromClassHierarchy(source, options, file.getParentFile());
+                    } else {
+                        getLog().debug("Skipping options from non-class " + kind + " type: " + simpleName);
+                    }
+                    return;
+                }
+            } catch (Exception e) {
+                getLog().debug("Could not parse " + kind + " class: " + simpleName + " - " + e.getMessage());
+                return;
+            }
+        }
+        if (imported != null) {
+            parseOptionsFromClass(imported, options);
+        }
+    }
+
+    /**
+     * The qualified name of the type with the simple name that the class imports by name, or null when it does not.
+     */
+    private static String importedByName(JavaClassSource clazz, String simpleName) {
+        for (Import imported : clazz.getImports()) {
+            if (!imported.isWildcard() && !imported.isStatic() && imported.getSimpleName().equals(simpleName)) {
+                return imported.getQualifiedName();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Parses the options of a class that is not one of the command classes from its picocli annotations (and those of
+     * its parent classes and mixins), with the classpath of the project. picocli is not a dependency of this plugin, so
+     * the annotations are read by reflection.
+     */
+    @SuppressWarnings("unchecked")
+    private void parseOptionsFromClass(String className, List<OptionInfo> options) {
+        try {
+            ClassLoader loader = getProjectClassLoader();
+            Class<? extends Annotation> optionType
+                    = (Class<? extends Annotation>) loader.loadClass("picocli.CommandLine$Option");
+            Class<? extends Annotation> mixinType
+                    = (Class<? extends Annotation>) loader.loadClass("picocli.CommandLine$Mixin");
+            parseOptionsFromClass(loader.loadClass(className), optionType, mixinType, options);
+        } catch (Exception | LinkageError e) {
+            getLog().debug("Could not read the options of class: " + className + " - " + e.getMessage());
+        }
+    }
+
+    private void parseOptionsFromClass(
+            Class<?> clazz, Class<? extends Annotation> optionType, Class<? extends Annotation> mixinType,
+            List<OptionInfo> options)
+            throws ReflectiveOperationException {
+        if (clazz.getSuperclass() != null && clazz.getSuperclass() != Object.class) {
+            parseOptionsFromClass(clazz.getSuperclass(), optionType, mixinType, options);
+        }
+        for (Field field : clazz.getDeclaredFields()) {
+            Annotation optionAnn = field.getAnnotation(optionType);
+            if (optionAnn != null) {
+                OptionInfo option = new OptionInfo();
+                option.names = String.join(",", (String[]) attribute(optionAnn, "names"));
+                option.description = sanitizeDescription(String.join(" ", (String[]) attribute(optionAnn, "description")));
+                String defaultValue = (String) attribute(optionAnn, "defaultValue");
+                // how picocli marks an option without a default value
+                if (!"__no_default_value__".equals(defaultValue)) {
+                    option.defaultValue = sanitizeDescription(defaultValue);
+                }
+                option.required = (Boolean) attribute(optionAnn, "required");
+                option.hidden = (Boolean) attribute(optionAnn, "hidden");
+                String paramLabel = (String) attribute(optionAnn, "paramLabel");
+                option.paramLabel = paramLabel.isEmpty() ? null : paramLabel;
+                option.javaType = field.getType().getTypeName();
+                option.deprecated = field.isAnnotationPresent(Deprecated.class);
+                options.removeIf(o -> o.names.equals(option.names));
+                options.add(option);
+            } else if (field.isAnnotationPresent(mixinType)) {
+                parseOptionsFromClass(field.getType(), optionType, mixinType, options);
+            }
+        }
+    }
+
+    private static Object attribute(Annotation annotation, String name) throws ReflectiveOperationException {
+        return annotation.annotationType().getMethod(name).invoke(annotation);
     }
 
     private File findClassFile(File dir, String className) {
