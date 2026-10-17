@@ -724,6 +724,13 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-iggy - messageExpiry is sent to Iggy in microseconds
+
+The `messageExpiry` option is in seconds, but its value was passed unchanged to Iggy, which reads the message expiry
+of a topic in microseconds, so a topic created by Camel (`autoCreateTopic=true`) expired its messages a million times
+too early (`messageExpiry=3600` gave 3.6 ms instead of one hour). The value is now converted to microseconds. Topics
+created before keep their expiry: change it on the Iggy server.
+
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
 A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now
