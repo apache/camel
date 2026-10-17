@@ -29,21 +29,64 @@ There are ways to unmarshal parquet files/structures, usually binary parquet fil
 
 In this first example we unmarshal file payload to OutputStream and send it to mock endpoint, then we will be able to get GenericRecord or POJO (it could be a list if that is coming through)
 
-._Java-only: unmarshal with a local parquet data format variable_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:unmarshal").unmarshal(parquet).to("mock:unmarshal");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:unmarshal
+      steps:
+        - unmarshal:
+            parquetAvro:
+              unmarshalType: com.example.Order
+        - to:
+            uri: mock:unmarshal
+----
+====
+
+With `unmarshalType`, the records are objects of that class. Without it, they are `GenericRecord` objects.
+
 == Marshal
 
 Marshalling is the reverse process of unmarshalling, so when you have your `GenericRecord` or POJO and marshal it, you will get the parquet-formatted output stream on your producer endpoint.
 
-._Java-only: marshal with a local parquet data format variable_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:marshal").marshal(parquet).to("mock:marshal");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:marshal
+      steps:
+        - marshal:
+            parquetAvro:
+              unmarshalType: com.example.Order
+        - to:
+            uri: mock:marshal
+----
+====
+
+To marshal POJOs, set `unmarshalType` on marshal as well: the data format makes the parquet schema from that class.
+A `GenericRecord` has its own schema.
 
 == Dependencies
 

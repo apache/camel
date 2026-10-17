@@ -226,7 +226,7 @@ public final class CatalogSamples {
         try {
             found = switch (kind) {
                 case "component" -> componentSamples(catalog, key);
-                case "dataformat" -> pageSamples(catalog, dataFormatPages(catalog, key), null);
+                case "dataformat" -> pageSamples(catalog, dataFormatPages(catalog, key), dataFormatUse(catalog, key));
                 case "language" -> pageSamples(catalog, List.of(key + "-language"), null);
                 default -> eipSamples(catalog, key);
             };
@@ -713,6 +713,28 @@ public final class CatalogSamples {
         }
         Collections.sort(variants);
         return variants;
+    }
+
+    /**
+     * What the samples that use the data format itself write, to put them first: a page can show its siblings too (the
+     * univocity pages show the csv, fixed and tsv formats), and bindyCsv, bindyFixed and bindyKvp are all bindy, with
+     * the type Csv, Fixed or KeyValue.
+     */
+    static Pattern dataFormatUse(CamelCatalog catalog, String name) {
+        DataFormatModel model = catalog.findDataFormatNames().contains(name) ? catalog.dataFormatModel(name) : null;
+        if (model == null) {
+            return null;
+        }
+        if (name.equals(model.getModelName())) {
+            return Pattern.compile("^[\\s-]*" + Pattern.quote(name) + ":", Pattern.MULTILINE);
+        }
+        return model.getOptions().stream()
+                .filter(o -> "type".equals(o.getName()) && o.getDefaultValue() != null)
+                .findFirst()
+                .map(o -> Pattern.compile(
+                        "^\\s*type:\\s*[\"']?" + Pattern.quote(o.getDefaultValue().toString()) + "[\"']?\\s*$",
+                        Pattern.MULTILINE))
+                .orElse(null);
     }
 
     static String normalizeKind(String kind) {
