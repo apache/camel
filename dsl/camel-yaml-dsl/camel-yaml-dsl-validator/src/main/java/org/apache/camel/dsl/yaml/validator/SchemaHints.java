@@ -128,7 +128,6 @@ final class SchemaHints {
         return instance.get(key).isNull() ? "{" + key + "}" : null;
     }
 
-    /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
     /** A value that names a script file by its scheme, as resource: loads it. */
     private static final Pattern SCRIPT_FILE = Pattern.compile("(file|classpath|https?):.+", Pattern.DOTALL);
 
@@ -141,7 +140,7 @@ final class SchemaHints {
         String key = property.toLowerCase(Locale.ROOT);
         String text = value.strip();
         boolean scriptFile = !text.startsWith("resource:")
-                && (key.contains("resource") || key.startsWith("script") && SCRIPT_FILE.matcher(text).matches());
+                && (key.contains("resource") || (key.startsWith("script") && SCRIPT_FILE.matcher(text).matches()));
         if (scriptFile) {
             return "a " + language + " script file is loaded in expression: with the resource: prefix, write " + language
                    + ": {expression: \"resource:" + text.replace("\"", "\\\"") + "\"}";
@@ -150,6 +149,7 @@ final class SchemaHints {
                + value.replace("\"", "\\\"") + "\"}";
     }
 
+    /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
     private static String valueOf(Match m, String property, String fallback) {
         JsonNode instance = m.error().getInstanceNode();
         JsonNode value = instance != null ? instance.get(property) : null;
