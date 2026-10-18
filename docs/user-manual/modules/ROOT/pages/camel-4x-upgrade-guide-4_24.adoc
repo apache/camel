@@ -855,6 +855,14 @@ as `Failed to connect, because a certificate or security check failed`. To resto
 The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
 use the security policy `None` are not affected.
 
+=== camel-zipfile - ZipAggregationStrategy keeps entries with the same name
+
+`ZipAggregationStrategy` replaced an entry of the zip file when a later message had the same entry name, for example
+two files `orders.csv` from different folders of a recursive file consumer (the folders are not kept by default), so
+the content of the earlier file was lost. The later entry is now added with a number before its extension:
+`orders (1).csv`, `orders (2).csv`, and so on. Entry names can therefore differ from the file names (or the
+`CamelFileName` header). Use `preserveFolderStructure=true` to keep the folders in the entry names instead.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA
