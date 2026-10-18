@@ -64,7 +64,7 @@ final class HeaderChecks {
      * (exchange.getProperty('CamelTimerCounter', Integer) == 0).
      */
     static final Pattern TIMER_COUNTER_COMPARISON = Pattern.compile(
-            "CamelTimerCounter(?:\\}|['\"]\\s*(?:,\\s*[\\w.]+\\s*)?\\))?\\s*(==|!=|<=|<)\\s*['\"]?(\\d+)['\"]?");
+            "CamelTimerCounter(?:\\}|['\"]\\s*(?:,\\s*[\\w.]+\\s*)?\\))?\\s*(==|!=|<=|<|>=|>)\\s*['\"]?(\\d+)['\"]?");
 
     static final Pattern EXCHANGE_PROPERTY_REF_PATTERN = Pattern.compile("\\$\\{exchangeProperty\\.(Camel[A-Z][A-Za-z0-9]*)");
 
@@ -116,8 +116,8 @@ final class HeaderChecks {
     }
 
     /**
-     * The comparisons of CamelTimerCounter that can never be true (== 0, <= 0, < 1) or never be false (!= 0), as the
-     * counter is 1 on the first fire.
+     * The comparisons of CamelTimerCounter that can never be true (== 0, <= 0, < 1) or never be false (!= 0, > 0, >=
+     * 1), as the counter is 1 on the first fire.
      */
     static List<String> timerCounterComparisons(String content) {
         List<String> msgs = new ArrayList<>();
@@ -128,7 +128,7 @@ final class HeaderChecks {
                 String op = m.group(1);
                 int n = Integer.parseInt(m.group(2));
                 boolean never = ("==".equals(op) || "<=".equals(op)) && n == 0 || "<".equals(op) && n <= 1;
-                boolean always = "!=".equals(op) && n == 0;
+                boolean always = ("!=".equals(op) || ">".equals(op)) && n == 0 || ">=".equals(op) && n <= 1;
                 if (never || always) {
                     msgs.add("Line " + (i + 1) + ": CamelTimerCounter counts the fires from 1 (the first fire is 1), so "
                              + op + " " + n + " is " + (never ? "never true" : "always true")
