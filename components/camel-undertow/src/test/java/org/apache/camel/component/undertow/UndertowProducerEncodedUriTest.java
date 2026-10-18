@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -73,6 +74,14 @@ class UndertowProducerEncodedUriTest extends BaseUndertowTest {
         String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/echo",
                 null, Exchange.HTTP_QUERY, "q=hello", String.class);
         assertEquals("q=hello", out);
+    }
+
+    @Test
+    void sendsAHeaderWithTabAndLatin1() {
+        // a tab, a space and a Latin-1 (obs-text) character do not change the request framing, so they are NOT refused
+        Exchange out = template.request("undertow:http://localhost:{{port}}/echo",
+                e -> e.getIn().setHeader("MyHeader", "café\tau lait"));
+        assertFalse(out.isFailed(), "a header value with a tab and a Latin-1 character must not be refused");
     }
 
     private static void assertRejected(Exchange out, String expectedInMessage) {
