@@ -34,6 +34,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
@@ -121,7 +122,7 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
         } catch (Exception e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
-            exchange.setException(body == null ? nullBodyException(e) : e);
+            exchange.setException(body == null ? nullBodyException(exchange, e) : e);
         } finally {
             // The Iterator will close the stream itself
             if (!(result instanceof Iterator)) {
@@ -134,18 +135,22 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
 
     /**
      * A null body fails in the type converter, whose message only says that null cannot become an InputStream. Say what
-     * it means here: there is nothing to unmarshal, and allowNullBody skips it. The exception type stays the same, so
-     * an onException for it still matches.
+     * it means here: there is nothing to unmarshal, the step that left the body so, how to read the data, and that
+     * allowNullBody skips it (CAMEL-25285, CAMEL-25749). The exception type stays the same, so an onException for it
+     * still matches.
      */
-    private Exception nullBodyException(Exception e) {
+    private Exception nullBodyException(Exchange exchange, Exception e) {
         if (!(e instanceof NoTypeConversionAvailableException ntc) || ntc.getValue() != null) {
             return e;
         }
         String name
                 = dataFormat instanceof DataFormatName dfn ? dfn.getDataFormatName() : dataFormat.getClass().getSimpleName();
-        String what = variableSend != null ? "the variable " + variableSend : "the message body";
-        String message = "Cannot unmarshal using " + name + ": " + what + " is null, so there is nothing to unmarshal. "
-                         + "Set " + what + " first, or set allowNullBody=true to skip a null body.";
+        String message = variableSend != null
+                ? "Cannot unmarshal using " + name + ": the variable " + variableSend + " is null, so there is nothing to"
+                  + " unmarshal. Set the variable " + variableSend + " first, or set allowNullBody=true to skip a null body."
+                : "Cannot unmarshal using " + name + ": " + BodyFacts.describe(exchange)
+                  + ", so there is nothing to unmarshal: " + BodyFacts.hint(exchange, BodyFacts.Need.A_BODY)
+                  + "; or set allowNullBody=true to skip a null body.";
         NoTypeConversionAvailableException answer = new NoTypeConversionAvailableException(message, null, ntc.getToType());
         answer.initCause(e);
         return answer;

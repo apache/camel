@@ -21,10 +21,8 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -43,6 +41,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
@@ -253,56 +252,29 @@ public final class VertxPlatformHttpSupport {
             writeResponseAs(promise, ctx, bb);
             return;
         }
-        throw noTypeConversion(body, ExchangeHelper.getContentType(camelExchange));
+        throw noTypeConversion(camelExchange, body, ExchangeHelper.getContentType(camelExchange));
     }
 
     /**
-     * A Map or a List (a body unmarshalled from JSON, XML or CSV, or built as a map) cannot become the response, and
-     * the converter's message only names the conversion: say what to do, in the data format the Content-Type names, or
-     * name the usual ones when it names none (CAMEL-25751).
+     * A Map, a List or an object (a body unmarshalled from JSON, XML or CSV, or built in the route) cannot become the
+     * response, and the converter's message only names the conversion: say what the body is, the step that set it, and
+     * the marshal that writes it, in the data format the Content-Type names (CAMEL-25751, CAMEL-25749).
      */
-    static NoTypeConversionAvailableException noTypeConversion(Object body, String contentType) {
-        if (body instanceof Map || body instanceof Collection) {
-            String format = dataFormatOf(contentType);
-            String marshal = format != null
-                    ? "marshal it first (marshal: " + format + ", for the Content-Type " + contentType + ")"
-                    : "marshal it first with the data format of the reply (such as marshal: json, marshal: jacksonXml or"
-                      + " marshal: csv)";
-            // the REST binding writes json and xml
-            String binding = format == null ? ", or let the REST binding write it (bindingMode: json or xml)"
-                    : "json".equals(format) ? ", or let the REST binding write it (bindingMode: json)"
-                    : "jacksonXml".equals(format) ? ", or let the REST binding write it (bindingMode: xml)" : "";
-            return new NoTypeConversionAvailableException(
-                    NoTypeConversionAvailableException.createMessage(body, InputStream.class) + ": a "
-                                                          + (body instanceof Map ? "Map" : body instanceof List ? "List"
-                                                                  : "Collection")
-                                                          + " is not an HTTP response body: " + marshal
-                                                          + " as the last step of the route" + binding,
-                    body, InputStream.class);
+    static NoTypeConversionAvailableException noTypeConversion(Exchange exchange, Object body, String contentType) {
+        String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, contentType);
+        if (hint == null) {
+            return new NoTypeConversionAvailableException(body, InputStream.class);
         }
-        return new NoTypeConversionAvailableException(body, InputStream.class);
-    }
-
-    /**
-     * The data format that writes a content type, as the YAML DSL names it: json, jacksonXml, csv or yaml; or null
-     * (CAMEL-25751; CAMEL-25749 moves this onto one helper).
-     */
-    static String dataFormatOf(String contentType) {
-        if (contentType == null) {
-            return null;
-        }
-        int semicolon = contentType.indexOf(';');
-        String type = (semicolon > 0 ? contentType.substring(0, semicolon) : contentType).trim().toLowerCase(Locale.ROOT);
-        if (type.endsWith("/json") || type.endsWith("+json")) {
-            return "json";
-        } else if (type.endsWith("/xml") || type.endsWith("+xml")) {
-            return "jacksonXml";
-        } else if (type.endsWith("/csv") || type.endsWith("/tab-separated-values")) {
-            return "csv";
-        } else if (type.endsWith("/yaml") || type.endsWith("/x-yaml")) {
-            return "yaml";
-        }
-        return null;
+        // the REST binding writes json and xml
+        String format = BodyFacts.dataFormatOf(contentType);
+        String binding = format == null ? "; or let the REST binding write it (bindingMode: json or xml)"
+                : "json".equals(format) ? "; or let the REST binding write it (bindingMode: json)"
+                : "jacksonXml".equals(format) ? "; or let the REST binding write it (bindingMode: xml)" : "";
+        return new NoTypeConversionAvailableException(
+                NoTypeConversionAvailableException.createMessage(body, InputStream.class) + ": "
+                                                      + BodyFacts.describe(exchange) + ", which is not an HTTP response body: "
+                                                      + hint + ", as the last step of the route" + binding,
+                body, InputStream.class);
     }
 
     private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, ByteBuffer bb) {

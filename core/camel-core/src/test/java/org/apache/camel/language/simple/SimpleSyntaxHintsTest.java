@@ -186,7 +186,8 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
                 () -> context.resolveLanguage("simple").createExpression("${body.typo}").evaluate(exchange,
                         String.class));
         // CAMEL-25322: the dot reads a key, so the hint says the key is missing and which keys there are
-        assertThat(e.getMessage()).contains("(the Map has no key typo; its keys are: type)");
+        // CAMEL-25749: and what the body is, with the step that set it when the message history is on
+        assertThat(e.getMessage()).contains("(the Map has no key typo; the body is a Map (LinkedHashMap): its keys are: type)");
     }
 
     @Test
@@ -195,7 +196,7 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.orderId}").evaluate(exchange,
                         String.class));
-        assertThat(e.getMessage()).contains("(the Map has no key orderId; it is empty)");
+        assertThat(e.getMessage()).contains("(the Map has no key orderId; the body is a Map (LinkedHashMap): it is empty)");
     }
 
     @Test

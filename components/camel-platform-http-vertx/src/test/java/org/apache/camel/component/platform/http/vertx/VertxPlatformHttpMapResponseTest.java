@@ -77,19 +77,22 @@ public class VertxPlatformHttpMapResponseTest {
             assertTrue(map.startsWith("No type converter available to convert from type: java.util.LinkedHashMap"
                                       + " to the required type: java.io.InputStream"),
                     map);
-            assertTrue(map.contains("a Map is not an HTTP response body: marshal it first with the data format of the reply"
-                                    + " (such as marshal: json, marshal: jacksonXml or marshal: csv) as the last step of the"
-                                    + " route, or let the REST binding write it (bindingMode: json or xml)"),
+            assertTrue(map.contains("the body is a Map (LinkedHashMap), which is not an HTTP response body: marshal it first"
+                                    + " with the data format to write (such as marshal: json, marshal: jacksonXml or marshal:"
+                                    + " csv), or set the body to the text, as the last step of the route; or let the REST"
+                                    + " binding write it (bindingMode: json or xml)"),
                     map);
             // the Content-Type names the data format; the REST binding does not write csv
             String csv = handler.handled.get(1).getMessage();
-            assertTrue(csv.contains("a List is not an HTTP response body: marshal it first (marshal: csv, for the Content-Type"
-                                    + " text/csv) as the last step of the route"),
+            assertTrue(csv.contains("the body is a List ("), csv);
+            assertTrue(csv.contains("which is not an HTTP response body: marshal it first (marshal: csv, for the"
+                                    + " Content-Type text/csv), or set the body to the text, as the last step of the route"),
                     csv);
             assertFalse(csv.contains("REST binding"), csv);
             String xml = handler.handled.get(2).getMessage();
-            assertTrue(xml.contains("marshal it first (marshal: jacksonXml, for the Content-Type application/xml) as the last"
-                                    + " step of the route, or let the REST binding write it (bindingMode: xml)"),
+            assertTrue(xml.contains("marshal it first (marshal: jacksonXml, for the Content-Type application/xml), or set the"
+                                    + " body to the text, as the last step of the route; or let the REST binding write it"
+                                    + " (bindingMode: xml)"),
                     xml);
         } finally {
             context.stop();

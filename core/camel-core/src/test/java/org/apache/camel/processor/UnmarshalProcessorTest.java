@@ -107,8 +107,11 @@ public class UnmarshalProcessorTest extends TestSupport {
 
         NoTypeConversionAvailableException e
                 = assertInstanceOf(NoTypeConversionAvailableException.class, exchange.getException());
-        assertEquals("Cannot unmarshal using MyDataFormat: the message body is null, so there is nothing to unmarshal. "
-                     + "Set the message body first, or set allowNullBody=true to skip a null body.",
+        // what the body is, and how to read the data (CAMEL-25749)
+        assertEquals("Cannot unmarshal using MyDataFormat: the body is null, so there is nothing to unmarshal: read the"
+                     + " data first - setBody with constant: resource:file:data.json for a known file, or poll:, pollEnrich"
+                     + " or a from: consumer for one that is not (a route reached with direct: has the body of its caller);"
+                     + " or set allowNullBody=true to skip a null body.",
                 e.getMessage());
         assertNull(e.getValue());
         assertEquals(InputStream.class, e.getToType());
