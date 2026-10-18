@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -493,6 +494,33 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     public static class Property {
+
+        /**
+         * The model classes of which every option is written whenever it is set, even to its documented default value:
+         * an onException copies the error handler's redelivery policy and overrides only the options that are set, and
+         * a circuit breaker configuration is layered over the global one, so "not set" means "the value of the parent
+         * level", not "the default value", and a dump that leaves such an option out runs differently once loaded.
+         */
+        private static final Set<String> INHERITED_OPTION_CLASSES = Set.of(
+                "org.apache.camel.model.RedeliveryPolicyDefinition",
+                "org.apache.camel.model.Resilience4jConfigurationCommon",
+                "org.apache.camel.model.FaultToleranceConfigurationCommon");
+
+        /**
+         * The options (declaring class and attribute name) that are written whenever they are set, for the same reason:
+         * the rest binding options of a verb take the value of its rest, then of the rest configuration, which in turn
+         * falls back to the RestConfiguration of the CamelContext; the shutdown options of a route take the value of
+         * the CamelContext.
+         */
+        private static final Set<String> INHERITED_OPTIONS = Stream.concat(
+                Stream.of("RestDefinition", "VerbDefinition", "RestBindingDefinition", "RestConfigurationDefinition")
+                        .flatMap(c -> Stream.of("bindingMode", "skipBindingOnErrorCode", "clientRequestValidation",
+                                "clientResponseValidation", "enableCORS", "enableNoContentResponse")
+                                .map(o -> "org.apache.camel.model.rest." + c + "#" + o)),
+                Stream.of("org.apache.camel.model.RouteDefinition#shutdownRoute",
+                        "org.apache.camel.model.RouteDefinition#shutdownRunningTask"))
+                .collect(Collectors.toUnmodifiableSet());
+
         private final Member field;
         private final Member getter;
         private final Member setter;
@@ -618,7 +646,27 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
             return an;
         }
 
+        /**
+         * Whether "not set" means "the value of a parent level" for this option, see {@link #INHERITED_OPTIONS}.
+         */
+        public boolean isInheritedOption() {
+            Member declaring = field != null ? field : members().findFirst().orElse(null);
+            if (declaring == null) {
+                return false;
+            }
+            String className = declaring.getDeclaringClass().getName();
+            return INHERITED_OPTION_CLASSES.contains(className) || INHERITED_OPTIONS.contains(className + "#" + getName());
+        }
+
+        /**
+         * The default value as a Java literal, which the writers leave out, or the literal {@code null} when the option
+         * is always written when set (no default value, or an inherited option).
+         */
         public String getDefaultValue() {
+            if (isInheritedOption()) {
+                // written whenever it is set, as "not set" means "the value of a parent level"
+                return "null";
+            }
             String answer = null;
             Metadata m = getAnnotation(Metadata.class);
             if (m != null) {
