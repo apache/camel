@@ -16,10 +16,14 @@
  */
 package org.apache.camel.processor.groovy;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
 import groovy.lang.MissingPropertyException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +54,19 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
         Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:unknown", "x"));
         MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
         assertTrue(cause.getMessage().contains("the script variables are exchange, message, body, headers"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void fieldReadOnAStreamSaysToUnmarshal() {
+        // CAMEL-25749: body.sku on the body itself, the text of a request as a cached stream
+        ByteArrayInputStreamCache body = new ByteArrayInputStreamCache(
+                new ByteArrayInputStream("{\"sku\": \"A1\"}".getBytes(StandardCharsets.UTF_8)));
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:read", body, Exchange.CONTENT_TYPE, "application/json"));
+        MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("the body is a cached stream (ByteArrayInputStreamCache)"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("unmarshal it first (unmarshal: json, for the Content-Type application/json)"),
                 cause.getMessage());
     }
 
@@ -151,6 +168,7 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
                 from("direct:bean").transform().groovy("formatter.append(body)");
                 from("direct:unknown").transform().groovy("nosuch.toUpperCase()");
                 from("direct:field").transform().groovy("body.find { it.sku == headers.sku }");
+                from("direct:read").transform().groovy("body.sku");
                 from("direct:header").transform().groovy("headers.skuList.find { it.sku == headers.sku }");
                 from("direct:message").transform().groovy("message.getHeader('name') + ' ' + message.body");
             }
