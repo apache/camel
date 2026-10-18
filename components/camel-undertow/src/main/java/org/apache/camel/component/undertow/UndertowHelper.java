@@ -153,6 +153,31 @@ public final class UndertowHelper {
         return answer;
     }
 
+    /**
+     * Rejects a value that cannot be written to the HTTP request line or a header line as it is. The Undertow client
+     * writes each character of the request path, query and header values as a single byte without any validation, so a
+     * CR or LF would break the request into further lines or headers, and a character above {@code 0xFF} is narrowed to
+     * a single, different byte (for example {@code U+010A} would be written as {@code LF}). A control character, a
+     * {@code DEL} or a character above {@code 0xFF} is therefore refused; {@code SP} and {@code HTAB}, which do not
+     * change the framing, are allowed.
+     *
+     * @param  what                     a short description of the value, used in the error message
+     * @param  value                    the value to check, may be {@code null}
+     * @throws IllegalArgumentException if the value holds a character that cannot be written as it is
+     */
+    public static void checkWriteable(String what, String value) {
+        if (value == null) {
+            return;
+        }
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (ch > 0xFF || ch == 0x7F || (ch < 0x20 && ch != '\t')) {
+                throw new IllegalArgumentException(
+                        "Illegal character 0x" + Integer.toHexString(ch) + " in " + what);
+            }
+        }
+    }
+
     public static URI makeHttpURI(String httpURI) {
         return makeHttpURI(
                 URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI)));
