@@ -446,11 +446,17 @@ public final class Dst {
         }
     }
 
-    /** Runs all tasks due within the next {@code millis} virtual milliseconds, then sets the clock to that time. */
+    /**
+     * Runs all tasks due within the next {@code millis} virtual milliseconds, then sets the clock to that time.
+     * <p>
+     * A task that blocks can move the clock past that time (the loop runs the other tasks nested in its wait); then
+     * this returns as soon as the task returns, and the tasks due after that time run in the next call. Otherwise two
+     * periodic tasks that block each other would keep each other due, and the call would never return.
+     */
     public void runFor(long millis) {
         checkLoopThread("runFor");
         long target = now + millis;
-        while (step(target)) {
+        while (now <= target && step(target)) {
             // loop
         }
         if (now < target) {

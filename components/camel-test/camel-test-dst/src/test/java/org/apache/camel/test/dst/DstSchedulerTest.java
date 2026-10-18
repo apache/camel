@@ -18,6 +18,7 @@ package org.apache.camel.test.dst;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
 
@@ -105,6 +106,35 @@ class DstSchedulerTest {
             other.schedule("other thread", 50, () -> events.add("other@" + dst.now()));
             dst.runUntilQuiet();
             assertEquals(List.of("call@0", "other@50", "answer@100", "poller2@100"), events);
+        } finally {
+            dst.close();
+        }
+    }
+
+    @Test
+    void runForReturnsWhenTwoPeriodicTasksBlockEachOther() {
+        // each task alone blocks 8 ms of its 10 ms period; together, the nested one delays the other past its next due
+        // time, so when one returns the other is always due again (the Kinesis poll and shard monitor did this)
+        Dst dst = new Dst(1, 10_000);
+        try {
+            List<Long> a = new ArrayList<>();
+            List<Long> b = new ArrayList<>();
+            dst.executor("a", 1).scheduleAtFixedRate(() -> {
+                a.add(dst.now());
+                dst.block(8, "a");
+            }, 0, 10, TimeUnit.MILLISECONDS);
+            dst.executor("b", 1).scheduleAtFixedRate(() -> {
+                b.add(dst.now());
+                dst.block(8, "b");
+            }, 4, 10, TimeUnit.MILLISECONDS);
+            dst.runFor(100);
+            assertTrue(dst.now() >= 100 && dst.now() < 120, "the clock passed the target only by one blocking call: "
+                                                            + dst.now());
+            assertTrue(a.size() >= 9 && b.size() >= 9, "both tasks kept running: a=" + a + " b=" + b);
+            long steps = dst.steps();
+            dst.runFor(100);
+            assertTrue(dst.now() >= 200 && dst.now() < 220, String.valueOf(dst.now()));
+            assertTrue(dst.steps() - steps < 100, "the next call runs the next 100 ms only");
         } finally {
             dst.close();
         }
