@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -250,7 +251,24 @@ public final class VertxPlatformHttpSupport {
             writeResponseAs(promise, ctx, bb);
             return;
         }
-        throw new NoTypeConversionAvailableException(body, InputStream.class);
+        throw noTypeConversion(body);
+    }
+
+    /**
+     * A Map or a List (a body unmarshalled from JSON, or built as a map) cannot become the response, and the
+     * converter's message only names the conversion: say what to do (CAMEL-25751).
+     */
+    static NoTypeConversionAvailableException noTypeConversion(Object body) {
+        if (body instanceof Map || body instanceof Collection) {
+            return new NoTypeConversionAvailableException(
+                    NoTypeConversionAvailableException.createMessage(body, InputStream.class) + ": a "
+                                                          + (body instanceof Map ? "Map" : body instanceof List ? "List"
+                                                                  : "Collection")
+                                                          + " is not an HTTP response body: marshal it to JSON first (marshal: json) as the"
+                                                          + " last step of the route, or let the REST binding write it (bindingMode: json)",
+                    body, InputStream.class);
+        }
+        return new NoTypeConversionAvailableException(body, InputStream.class);
     }
 
     private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, ByteBuffer bb) {

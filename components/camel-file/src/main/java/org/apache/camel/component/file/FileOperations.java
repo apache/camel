@@ -38,13 +38,17 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -351,7 +355,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 // prefer FileInputStream over general stream
                 InputStream is = exchange.getMessage().getBody(FileInputStream.class);
                 if (is == null) {
-                    is = exchange.getMessage().getMandatoryBody(InputStream.class);
+                    is = mandatoryBodyStream(exchange, exchange.getMessage());
                 }
                 dis = new DigestInputStream(is, digest);
             }
@@ -378,8 +382,33 @@ public class FileOperations implements GenericFileOperations<File> {
             setPermissions(file);
 
             return true;
-        } catch (InvalidPayloadException | NoSuchAlgorithmException | IOException e) {
+        } catch (InvalidPayloadException e) {
+            // say why: the body cannot be written as it is
+            throw new GenericFileOperationFailedException("Cannot store file: " + file + ": " + e.getMessage(), e);
+        } catch (NoSuchAlgorithmException | IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
+        }
+    }
+
+    /**
+     * The body as a stream to write. A Map or a List (a body unmarshalled from JSON, or built as a map) cannot become
+     * one, and the converter's message only names the conversion: say what to do (CAMEL-25751).
+     */
+    static InputStream mandatoryBodyStream(Exchange exchange, Message message) throws InvalidPayloadException {
+        try {
+            return message.getMandatoryBody(InputStream.class);
+        } catch (InvalidPayloadException e) {
+            Object body = message.getBody();
+            if (body instanceof Map || body instanceof Collection) {
+                InvalidPayloadException answer = new InvalidPayloadException(
+                        exchange, InputStream.class, message,
+                        "a " + (body instanceof Map ? "Map" : body instanceof List ? "List" : "Collection")
+                                                              + " is not file content: marshal it first (marshal: json) or set the body to the"
+                                                              + " text");
+                answer.initCause(e.getCause() != null ? e.getCause() : e);
+                throw answer;
+            }
+            throw e;
         }
     }
 
@@ -399,7 +428,7 @@ public class FileOperations implements GenericFileOperations<File> {
     private void handleStreamAsFileSource(Exchange exchange, File file, InputStream is)
             throws InvalidPayloadException, IOException {
         if (is == null) {
-            is = exchange.getIn().getMandatoryBody(InputStream.class);
+            is = mandatoryBodyStream(exchange, exchange.getIn());
         }
         writeFileByStream(is, file);
     }
@@ -420,7 +449,7 @@ public class FileOperations implements GenericFileOperations<File> {
             // okay no direct reader conversion, so use an input stream
             // (which a lot can be converted as)
             if (is == null) {
-                is = exchange.getIn().getMandatoryBody(InputStream.class);
+                is = mandatoryBodyStream(exchange, exchange.getIn());
             }
             in = new InputStreamReader(is);
         }
