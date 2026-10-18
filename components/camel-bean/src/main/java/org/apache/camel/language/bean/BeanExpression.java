@@ -539,9 +539,11 @@ public class BeanExpression implements Expression, Predicate {
                 resultExchange.setException(null);
                 return value;
             }
+            String method = methodHint(methodName, resultExchange.getException());
+            String body = bodyHint(exchange, beanOf(holder, exchange));
             throw new RuntimeBeanExpressionException(
                     exchange, describeBean(holder, beanName, exchange),
-                    keyHint(holder, exchange, methodName, methodHint(methodName, resultExchange.getException())),
+                    body != null ? method + " (" + body + ")" : keyHint(holder, exchange, methodName, method),
                     resultExchange.getException());
         }
         return newResult;
@@ -629,9 +631,43 @@ public class BeanExpression implements Expression, Predicate {
             key = exp.evaluate(exchange, String.class);
         }
         if (key != null) {
-            return lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean(exchange));
+            Object bean = holder.getBean(exchange);
+            try {
+                return lookupResult(resultExchange, key, result, nullSafe, ognlPath, bean);
+            } catch (IndexOutOfBoundsException e) {
+                // ${body[status]} on the file as read, or on a stream: the same exception, saying what the body is
+                // and the step that parses it (CAMEL-25749)
+                String body = bodyHint(exchange, bean);
+                if (body == null) {
+                    throw e;
+                }
+                throw new IndexOutOfBoundsException(e.getMessage() + " (" + body + ")");
+            }
         }
         return result;
+    }
+
+    /**
+     * What the body is and what to write, when an OGNL read on the message body failed because of its type: the payload
+     * as text, bytes, a stream or the file as read, which an unmarshal turns into data, or an iterator, which has no
+     * size (CAMEL-25749). Null for a Map, whose keys {@link #keyHint} lists, and for a List or an object, where the
+     * name read is wrong rather than the body.
+     */
+    private static String bodyHint(Exchange exchange, Object bean) {
+        if (bean == null || bean instanceof Map || bean != exchange.getMessage().getBody()) {
+            return null;
+        }
+        String hint = BodyFacts.hint(exchange, BodyFacts.Need.DATA);
+        return hint != null ? BodyFacts.describe(exchange) + ": " + hint : null;
+    }
+
+    /** The bean an OGNL step is called on, or null when it cannot be resolved. */
+    private static Object beanOf(BeanHolder holder, Exchange exchange) {
+        try {
+            return holder != null ? holder.getBean(exchange) : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static Object lookupResult(

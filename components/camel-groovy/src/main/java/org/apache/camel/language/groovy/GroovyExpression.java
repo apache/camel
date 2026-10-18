@@ -103,11 +103,17 @@ public class GroovyExpression extends ExpressionSupport {
             boolean onText = e.getType() == Byte.class || e.getType() == Character.class || e.getType() == String.class;
             boolean bodyText = onText && (body instanceof byte[] || body instanceof String);
             String textHeader = onText && !bodyText ? jsonTextHeader(exchange) : null;
+            // body.email on the body itself: the file as read or a stream, which is not data yet, or an iterator
+            // (CAMEL-25749); null for an object, where the name read is wrong
+            String payload = !onText && body != null && e.getType() == body.getClass() && !(body instanceof Map)
+                    ? BodyFacts.hint(exchange, BodyFacts.Need.DATA) : null;
             String hint;
             if (bodyText) {
                 // what the body is, the step that set it, and the unmarshal that parses it (CAMEL-25749)
                 hint = BodyFacts.describe(exchange) + ", not parsed data: "
                        + BodyFacts.hint(exchange, BodyFacts.Need.DATA);
+            } else if (payload != null) {
+                hint = BodyFacts.describe(exchange) + ": " + payload;
             } else if (textHeader != null) {
                 String ref = isIdentifier(textHeader) ? "headers." + textHeader : "headers['" + textHeader + "']";
                 hint = "header '" + textHeader + "' is still JSON text, not parsed data: parse it in the script with"
