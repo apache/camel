@@ -66,7 +66,22 @@ public class HttpProducerMapBodyTest extends BaseHttpTest {
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
                 .hasMessageContaining("the body is a Map (LinkedHashMap), which is not an HTTP request body")
                 .hasMessageContaining("marshal it first with the data format to write (such as marshal: json,"
-                                      + " marshal: jacksonXml or marshal: csv), or set the body to the text");
+                                      + " marshal: jacksonXml or marshal: csv), or set the body to the text")
+                // the method is set, so it is not about GET
+                .hasMessageNotContaining("set httpMethod GET");
+    }
+
+    @Test
+    public void aMapBodyWithoutAMethodSaysHowToSendAGet() {
+        // no httpMethod option and no CamelHttpMethod header: the body made the call a POST (CAMEL-25745)
+        Exchange exchange = template.request(endpointUrl + "/post",
+                e -> e.getIn().setBody(new LinkedHashMap<>(Map.of("sku", "CAMEL-MUG", "qty", 2))));
+
+        assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("the body is a Map (LinkedHashMap), which is not an HTTP request body")
+                .hasMessageContaining("The call is a POST because the message has a body")
+                .hasMessageContaining("for a GET, set httpMethod GET on the endpoint")
+                .hasMessageContaining("for a POST, marshal it first with the data format to write");
     }
 
     @Test
