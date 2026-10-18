@@ -253,6 +253,10 @@ from("file:input/directory?antInclude=*/.txt")
         .to("file:output/directory");
 ----
 
+When the zip file already has an entry with the same name, for example two files `orders.csv` from different folders
+of a recursive file consumer, the later entry is added with a number before its extension (`orders (1).csv`,
+`orders (2).csv`, ...), so no content is lost. Use `preserveFolderStructure` to keep the folders in the entry names.
+
 == Dependencies
 
 To use Zip files in your camel routes, you need to add a dependency on

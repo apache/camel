@@ -151,6 +151,41 @@ public class QuotingAndOptionPlacementHintTest {
                 .contains("the simple text goes in expression:, write simple: {expression: \"${body} != null\"}"));
     }
 
+    /** CAMEL-25748: a script file is loaded with the resource: prefix, which the value under resource: often lacks. */
+    @Test
+    public void aScriptFileUnderAnotherKey() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:x
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                resource: "file:shipment-mapping.groovy"
+                        - setHeader:
+                            name: sku
+                            expression:
+                              groovy:
+                                script: "classpath:sku.groovy"
+                        - setHeader:
+                            name: qty
+                            expression:
+                              groovy:
+                                resourceUri: "resource:file:qty.groovy"
+                """;
+        List<String> lines = lines(yaml);
+        assertThat(lines).anySatisfy(m -> assertThat(m)
+                .contains("a groovy script file is loaded in expression: with the resource: prefix,"
+                          + " write groovy: {expression: \"resource:file:shipment-mapping.groovy\"}"));
+        assertThat(lines).anySatisfy(m -> assertThat(m)
+                .contains("write groovy: {expression: \"resource:classpath:sku.groovy\"}"));
+        // a value that has the prefix keeps it once
+        assertThat(lines).anySatisfy(m -> assertThat(m)
+                .contains("write groovy: {expression: \"resource:file:qty.groovy\"}"));
+        assertThat(lines).noneSatisfy(m -> assertThat(m).contains("resource:resource:"));
+    }
+
     private static List<String> lines(String yaml) {
         try {
             return YamlValidator.describeAll(yaml, validator.validate(yaml));
