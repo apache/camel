@@ -491,10 +491,13 @@ class SourceValidatorEndpointTest {
                           simple: "${exchangeProperty.CamelTimerCounter} > 0"
                       - filter:
                           groovy: "exchange.getProperty('CamelTimerCounter', Integer) >= 1"
+                      - filter:
+                          simple: "${exchangeProperty.CamelTimerCounter} >= 0"
                 """, catalog);
-        assertThat(msgs).hasSize(2);
+        assertThat(msgs).hasSize(3);
         assertThat(msgs.get(0)).startsWith("Line 5:").contains("> 0 is always true");
         assertThat(msgs.get(1)).startsWith("Line 7:").contains(">= 1 is always true");
+        assertThat(msgs.get(2)).startsWith("Line 9:").contains(">= 0 is always true");
     }
 
     @Test
