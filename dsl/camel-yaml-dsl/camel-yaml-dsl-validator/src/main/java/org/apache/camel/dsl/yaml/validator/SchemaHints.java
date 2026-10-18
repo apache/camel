@@ -129,6 +129,27 @@ final class SchemaHints {
     }
 
     /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
+    /** A value that names a script file by its scheme, as resource: loads it. */
+    private static final Pattern SCRIPT_FILE = Pattern.compile("(file|classpath|https?):.+", Pattern.DOTALL);
+
+    /**
+     * Where the text of a language goes, for the text written under another key (groovy: {script: "..."}). A script
+     * file under resource: (groovy: {resource: "file:x.groovy"}) is loaded with the resource: prefix, which the value
+     * often lacks (CAMEL-25748): the expression "file:x.groovy" would run as code.
+     */
+    static String languageTextHint(String language, String property, String value) {
+        String key = property.toLowerCase(Locale.ROOT);
+        String text = value.strip();
+        boolean scriptFile = !text.startsWith("resource:")
+                && (key.contains("resource") || key.startsWith("script") && SCRIPT_FILE.matcher(text).matches());
+        if (scriptFile) {
+            return "a " + language + " script file is loaded in expression: with the resource: prefix, write " + language
+                   + ": {expression: \"resource:" + text.replace("\"", "\\\"") + "\"}";
+        }
+        return "the " + language + " text goes in expression:, write " + language + ": {expression: \""
+               + value.replace("\"", "\\\"") + "\"}";
+    }
+
     private static String valueOf(Match m, String property, String fallback) {
         JsonNode instance = m.error().getInstanceNode();
         JsonNode value = instance != null ? instance.get(property) : null;
@@ -596,8 +617,7 @@ final class SchemaHints {
                             && m.error().getInstanceNode() != null
                             && !m.error().getInstanceNode().has("expression")
                             && m.error().getInstanceNode().path(m.unknown()).isTextual(),
-                    m -> "the " + m.name() + " text goes in expression:, write " + m.name() + ": {expression: \""
-                         + valueOf(m, m.unknown(), "...").replace("\"", "\\\"") + "\"}"),
+                    m -> languageTextHint(m.name(), m.unknown(), valueOf(m, m.unknown(), "..."))),
             unknownProperty(null,
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) != null,
                     m -> "did you mean '"
