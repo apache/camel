@@ -690,7 +690,7 @@ public class BeanExpression implements Expression, Predicate {
             throw new IndexOutOfBoundsException(
                     "Key: " + key + " not found in bean: " + bean + " of type: "
                                                 + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath
-                                                + "]" + keyHint(result != null ? result : bean, key));
+                                                + "]" + noKeysHint(result != null ? result : bean, key));
         } else {
             // null safe so we can return null
             return null;
@@ -702,7 +702,7 @@ public class BeanExpression implements Expression, Predicate {
      * (a request body before it is unmarshalled, or a variable set from it), JSON text, or a List, array or other
      * Collection, where [0] picks an element.
      */
-    static String keyHint(Object value, String key) {
+    static String noKeysHint(Object value, String key) {
         if (value instanceof StreamCache || value instanceof InputStream || value instanceof byte[]) {
             return " (the value is the message body as a stream, not a Map: unmarshal it first, for example with json,"
                    + " then read the key; a variable keeps the value it had when it was set)";
