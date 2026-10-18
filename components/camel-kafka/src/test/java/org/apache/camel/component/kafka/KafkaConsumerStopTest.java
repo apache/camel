@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
@@ -130,7 +129,6 @@ class KafkaConsumerStopTest extends CamelTestSupport {
      * wait is outside the monitor of {@link MockConsumer}, whose poll and wakeup are synchronized.
      */
     private static final class BlockingMockConsumer extends MockConsumer<Object, Object> {
-        final AtomicInteger polls = new AtomicInteger();
         private final Object signal = new Object();
         private boolean wokenUp;
         private boolean waiting;
@@ -141,7 +139,6 @@ class KafkaConsumerStopTest extends CamelTestSupport {
 
         @Override
         public ConsumerRecords<Object, Object> poll(Duration timeout) {
-            polls.incrementAndGet();
             long deadline = System.nanoTime() + timeout.toNanos();
             while (true) {
                 // throws a WakeupException when woken up
