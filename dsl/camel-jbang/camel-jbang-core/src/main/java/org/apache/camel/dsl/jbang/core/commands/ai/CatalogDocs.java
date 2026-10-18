@@ -48,6 +48,8 @@ import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The catalog documentation an AI agent authoring an integration asks for: a component, data format, language or EIP
@@ -58,6 +60,8 @@ import org.apache.camel.util.json.Jsoner;
  * the {@code camel_catalog_doc} tool of every Camel MCP server.
  */
 public final class CatalogDocs {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CatalogDocs.class);
 
     /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
     private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
@@ -660,6 +664,7 @@ public final class CatalogDocs {
             }
             return model;
         } catch (Exception e) {
+            LOG.debug("Cannot read the application model {} from the catalog", entry, e);
             return null;
         }
     }
