@@ -91,6 +91,9 @@ public class KafkaFetchRecords implements Runnable {
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
     private CommitManager commitManager;
+    // kept while the Kafka consumer is connected: the batching processor holds the records of earlier polls until its
+    // batch is complete, and the consumer does not return them again
+    private KafkaRecordProcessorFacade recordProcessorFacade;
     private volatile Exception lastError;
     private final KafkaConsumerListener consumerListener;
 
@@ -161,6 +164,9 @@ public class KafkaFetchRecords implements Runnable {
                     }
 
                     setConnected(true);
+                    // a new Kafka consumer starts from the committed offsets: the records held for an incomplete batch
+                    // of the previous consumer are polled again
+                    recordProcessorFacade = createRecordProcessor();
                     // a new Kafka consumer is not paused: pause it again if the consumer is suspended
                     state.compareAndSet(State.PAUSED, State.PAUSE_REQUESTED);
                 }
@@ -330,7 +336,8 @@ public class KafkaFetchRecords implements Runnable {
                 LOG.trace("Polling {} from {} with timeout: {}", threadId, getPrintableTopic(), pollTimeoutMs);
             }
 
-            final KafkaRecordProcessorFacade recordProcessorFacade = createRecordProcessor();
+            // the processor of the connection is used again after a failed poll (pollOnError ERROR_HANDLER, DISCARD
+            // or RETRY): the records it holds were returned by earlier polls and must still be processed
 
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
 
