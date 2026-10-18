@@ -98,6 +98,9 @@ final class TextBodyFlow {
     /** ${body}, ${body[lines]} or ${body.lines}: the body, or a field of it. */
     private static final Pattern THE_BODY = Pattern.compile("\\$\\{body(\\??\\.[A-Za-z_]\\w*|\\[[^\\]]+])*}");
 
+    /** $.sku or $['sku']: a jsonpath that reads a field of the body, which is then an object. */
+    private static final Pattern JSONPATH_FIELD = Pattern.compile("^\\$\\s*(\\.\\s*[A-Za-z_]|\\[\\s*['\"])");
+
     /** The data formats whose unmarshal makes a Map or a List of the text. */
     private static final Set<String> PARSES = Set.of("json", "jacksonXml", "yaml", "csv");
 
@@ -136,6 +139,12 @@ final class TextBodyFlow {
     /** The HTTP methods that send the body. */
     private static final Set<String> SENDS_A_BODY = Set.of("POST", "PUT", "PATCH");
 
+    /** The verbs of the REST DSL, whose routes answer the call with the body they end with. */
+    private static final Set<String> REST_VERBS = Set.of("get", "post", "put", "patch", "delete", "head");
+
+    /** The REST binding modes that write a Map or a List for the route. */
+    private static final Set<String> BINDS = Set.of("auto", "json", "xml", "json_xml");
+
     private TextBodyFlow() {
     }
 
@@ -169,10 +178,28 @@ final class TextBodyFlow {
         }
     }
 
-    static void check(JsonNode target, NodePath path, List<Error> errors) {
+    /**
+     * What a walk knows besides the body: the route, the routes of the file, where reports go (null for a route a step
+     * calls, which reports from its own walk), whether an http producer sends the body with POST, and the verbs of the
+     * OpenAPI operations a rest-openapi call can be judged by (empty when a REST binding may write the body).
+     */
+    private record Walk(String routeId, Map<String, JsonNode> byFrom, List<Error> errors, Set<String> seen, boolean post,
+            Map<String, Map<String, String>> operations) {
+
+        /** The walk of a route a step calls: for its outcome alone. */
+        Walk called() {
+            return new Walk(null, byFrom, null, seen, false, operations);
+        }
+    }
+
+    static void check(JsonNode target, NodePath path, List<Error> errors, ProjectFacts facts) {
         if (target == null || !target.isArray()) {
             return;
         }
+        // a rest-openapi call and a REST route can only be judged when no REST binding can write the data
+        boolean unbound = restUnbound(target, facts);
+        Map<String, Map<String, String>> operations = unbound ? facts.operations() : Map.of();
+        Set<String> restReplies = unbound ? restReplies(target, facts) : Set.of();
         Map<String, JsonNode> byFrom = new HashMap<>();
         for (JsonNode entry : target) {
             JsonNode from = from(entry);
@@ -201,15 +228,20 @@ final class TextBodyFlow {
                 at = at.append("from").append("steps");
             }
             String id = entry.has("route") && entry.get("route").has("id") ? entry.get("route").get("id").asText() : null;
-            String consumer = scheme(endpointOf(from));
+            String uri = endpointOf(from);
+            String consumer = scheme(uri);
             boolean post = NO_HTTP_HEADERS.contains(consumer) && !setsHttpHeaders(steps);
-            Body end = walk(steps, consumerText(from), at, id, byFrom, errors, new HashSet<>(), post);
-            // the body at the end of a platform-http route is the reply, written as a stream
-            if ("platform-http".equals(consumer) && end instanceof Parsed parsed && steps != null && steps.isArray()
-                    && !steps.isEmpty() && steps.get(steps.size() - 1).fieldNames().hasNext()) {
+            Body end = walk(steps, consumerText(from), at, new Walk(id, byFrom, errors, new HashSet<>(), post, operations));
+            // the body at the end of a platform-http route, or of the route of a REST call, is the reply
+            boolean rest = uri != null && restReplies.contains(normalize(uri));
+            if (("platform-http".equals(consumer) || rest) && end instanceof Parsed parsed && steps != null
+                    && steps.isArray() && !steps.isEmpty() && steps.get(steps.size() - 1).fieldNames().hasNext()) {
                 int last = steps.size() - 1;
                 errors.add(error(at.append(last).append(steps.get(last).fieldNames().next()), id,
-                        new Need("the body at the end of the route is the reply to the HTTP request", "as the last step"),
+                        new Need(
+                                "the body at the end of the route is the reply to the "
+                                 + (rest ? "REST call" : "HTTP request"),
+                                "as the last step", rest),
                         parsed));
             }
         }
@@ -253,11 +285,9 @@ final class TextBodyFlow {
      * Walks the steps in order with what is known about the body, reports the reads that need parsed data where it is
      * text and the steps that need text where it is parsed data, and answers what is known at the end. A report is only
      * made when errors is not null: the routes a step calls are walked for their outcome alone, and report from their
-     * own walk. post says an http producer here sends the body with POST: nothing in the route can pick another method.
+     * own walk.
      */
-    private static Body walk(
-            JsonNode steps, Body body, NodePath at, String routeId, Map<String, JsonNode> byFrom,
-            List<Error> errors, Set<String> seen, boolean post) {
+    private static Body walk(JsonNode steps, Body body, NodePath at, Walk w) {
         if (steps == null || !steps.isArray()) {
             return body;
         }
@@ -270,25 +300,25 @@ final class TextBodyFlow {
             String name = step.fieldNames().next();
             JsonNode value = step.get(name);
             NodePath here = at.append(j).append(name);
-            if (body != null && errors != null) {
+            if (body != null && w.errors() != null) {
                 if (SAME_BODY_BLOCKS.contains(name)) {
-                    walkBlock(value, body, here, routeId, byFrom, errors, seen, post);
+                    walkBlock(value, body, here, w);
                 } else if (body instanceof Text text) {
                     String read = readIn(value, text.readable());
                     if (read != null) {
-                        errors.add(error(here, routeId, read, text));
+                        w.errors().add(error(here, w.routeId(), read, text));
                     }
                 } else if (body instanceof Parsed parsed) {
-                    Need need = needsText(name, value, post);
+                    Need need = needsText(name, value, w);
                     Parsed element = "split".equals(name) ? splitElement(value, parsed) : null;
                     if (need != null) {
-                        errors.add(error(here, routeId, need, parsed));
+                        w.errors().add(error(here, w.routeId(), need, parsed));
                     } else if (element != null) {
-                        walk(value.get("steps"), element, here.append("steps"), routeId, byFrom, errors, seen, post);
+                        walk(value.get("steps"), element, here.append("steps"), w);
                     }
                 }
             }
-            body = after(name, value, step, body, byFrom, seen);
+            body = after(name, value, body, w);
         }
         return body;
     }
@@ -296,15 +326,13 @@ final class TextBodyFlow {
     /**
      * A choice, filter or doTry: its predicates read the body at the step, and so do its steps until one changes it.
      */
-    private static void walkBlock(
-            JsonNode node, Body body, NodePath at, String routeId, Map<String, JsonNode> byFrom,
-            List<Error> errors, Set<String> seen, boolean post) {
+    private static void walkBlock(JsonNode node, Body body, NodePath at, Walk w) {
         if (node == null) {
             return;
         }
         if (node.isArray()) {
             for (int i = 0; i < node.size(); i++) {
-                walkBlock(node.get(i), body, at.append(i), routeId, byFrom, errors, seen, post);
+                walkBlock(node.get(i), body, at.append(i), w);
             }
             return;
         }
@@ -315,21 +343,20 @@ final class TextBodyFlow {
             String key = it.next();
             JsonNode child = node.get(key);
             if ("steps".equals(key)) {
-                walk(child, body, at.append(key), routeId, byFrom, errors, seen, post);
+                walk(child, body, at.append(key), w);
             } else if (SAME_BODY_BLOCKS.contains(key) || child.isArray()) {
-                walkBlock(child, body, at.append(key), routeId, byFrom, errors, seen, post);
+                walkBlock(child, body, at.append(key), w);
             } else if (body instanceof Text text) {
                 String read = readEntry(key, child, text.readable());
                 if (read != null) {
-                    errors.add(error(at.append(key), routeId, read, text));
+                    w.errors().add(error(at.append(key), w.routeId(), read, text));
                 }
             }
         }
     }
 
     /** What is known about the body after a step. */
-    private static Body after(
-            String name, JsonNode value, JsonNode step, Body body, Map<String, JsonNode> byFrom, Set<String> seen) {
+    private static Body after(String name, JsonNode value, Body body, Walk w) {
         switch (name) {
             case "setBody", "transform" -> {
                 Text text = setBodyText(value);
@@ -365,16 +392,15 @@ final class TextBodyFlow {
                 if (scheme != null && KEEPS_THE_BODY.contains(scheme)) {
                     return body;
                 }
-                JsonNode called = uri != null ? byFrom.get(normalize(uri)) : null;
-                if (called == null || !"to".equals(name) || !seen.add(normalize(uri))) {
+                JsonNode called = uri != null ? w.byFrom().get(normalize(uri)) : null;
+                if (called == null || !"to".equals(name) || !w.seen().add(normalize(uri))) {
                     return null;
                 }
                 JsonNode from = from(called);
                 JsonNode steps = from.has("steps") ? from.get("steps")
                         : called.has("route") ? called.get("route").get("steps") : null;
-                Body end = walk(steps, body, new NodePath(PathType.JSON_POINTER), null, byFrom,
-                        null, seen, false);
-                seen.remove(normalize(uri));
+                Body end = walk(steps, body, new NodePath(PathType.JSON_POINTER), w.called());
+                w.seen().remove(normalize(uri));
                 if (end instanceof Text t) {
                     return new Text(
                             "to: " + normalize(uri) + " returns it as text (" + t.origin() + ")", t.format(),
@@ -473,16 +499,19 @@ final class TextBodyFlow {
     }
 
     /**
-     * The elements a split makes of parsed data: data, when it splits the body or a field of it with simple, and its
-     * steps read fields of each element before they change it, as ${body[sku]} does. Otherwise null: a List may hold
-     * text as well.
+     * The elements a split makes of parsed data: data, when it splits the body or a field of it (with simple, or with
+     * jsonpath, which reads parsed data as well), and its steps read fields of each element before they change it, as
+     * ${body[sku]} or a jsonpath $.sku does. Otherwise null: a List may hold text as well.
      */
     private static Parsed splitElement(JsonNode value, Parsed parsed) {
         JsonNode node = value != null && value.has("expression") ? value.get("expression") : value;
-        String expression = node != null && node.isObject() ? expressionText(node.get("simple")) : null;
+        String language = node != null && node.isObject() && node.fieldNames().hasNext() ? node.fieldNames().next() : null;
+        String expression = language != null ? expressionText(node.get(language)) : null;
         JsonNode steps = value != null ? value.get("steps") : null;
-        if (expression == null || !THE_BODY.matcher(expression.trim()).matches() || steps == null
-                || !steps.isArray()) {
+        boolean ofTheBody = expression != null
+                && (("simple".equals(language) && THE_BODY.matcher(expression.trim()).matches())
+                        || ("jsonpath".equals(language) && expression.trim().startsWith("$")));
+        if (!ofTheBody || steps == null || !steps.isArray()) {
             return null;
         }
         for (JsonNode step : steps) {
@@ -490,7 +519,7 @@ final class TextBodyFlow {
                 return null;
             }
             String name = step.fieldNames().next();
-            if (readIn(step.get(name), TEXT_PROPERTIES) != null) {
+            if (readIn(step.get(name), TEXT_PROPERTIES) != null || readsAFieldWithJsonPath(step.get(name))) {
                 return new Parsed(
                         parsed.origin() + ", and split " + expression.trim() + " gives its elements as data",
                         parsed.format());
@@ -502,12 +531,60 @@ final class TextBodyFlow {
         return null;
     }
 
-    /** What a step that needs the body as text does with it, and what to write; or null. */
-    private record Need(String what, String fix) {
+    /** Whether a node, not its nested steps, has a jsonpath expression that reads a field of the body. */
+    private static boolean readsAFieldWithJsonPath(JsonNode node) {
+        if (node == null) {
+            return false;
+        }
+        if (node.isArray()) {
+            for (JsonNode child : node) {
+                if (readsAFieldWithJsonPath(child)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (!node.isObject()) {
+            return false;
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String key = it.next();
+            if ("steps".equals(key)) {
+                continue;
+            }
+            if ("jsonpath".equals(key)) {
+                String path = expressionText(node.get(key));
+                if (path != null && JSONPATH_FIELD.matcher(path.trim()).find()) {
+                    return true;
+                }
+            } else if (readsAFieldWithJsonPath(node.get(key))) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    /** A to: that needs the body as text: one that writes a file, or an http producer that sends it with POST. */
-    private static Need needsText(String name, JsonNode value, boolean post) {
+    /**
+     * What a step that needs the body as text does with it, and what to write; rest when a REST binding could write it.
+     */
+    private record Need(String what, String fix, boolean rest) {
+
+        Need(String what, String fix) {
+            this(what, fix, false);
+        }
+    }
+
+    /**
+     * An OpenAPI operation a rest-openapi call names: the specification, as {@link ProjectFacts} keys it, and the id.
+     */
+    private record Operation(String spec, String id) {
+    }
+
+    /**
+     * A to: that needs the body as text: one that writes a file, an http producer that sends it with POST, or a
+     * rest-openapi call to an operation whose verb sends it (the producer calls with the verb of the specification).
+     */
+    private static Need needsText(String name, JsonNode value, Walk w) {
         if (!"to".equals(name) && !"toD".equals(name)) {
             return null;
         }
@@ -519,12 +596,109 @@ final class TextBodyFlow {
         if (WRITES_A_FILE.contains(scheme)) {
             return new Need(name + ": " + scheme + " writes the body to a file", "before this step");
         }
-        if (post && ("http".equals(scheme) || "https".equals(scheme)) && sendsTheBody(uri, value)) {
+        if (w.post() && ("http".equals(scheme) || "https".equals(scheme)) && sendsTheBody(uri, value)) {
             return new Need(
                     name + ": " + scheme + " sends the body as the request (a message with a body is sent as a POST)",
                     "before this step, or set httpMethod: GET when the call sends no body");
         }
+        if ("rest-openapi".equals(scheme)) {
+            Operation operation = operationOf(uri, value);
+            String verb = operation != null
+                    ? w.operations().getOrDefault(operation.spec(), Map.of()).get(operation.id())
+                    : null;
+            if (verb != null && SENDS_A_BODY.contains(verb.toUpperCase(Locale.ROOT))) {
+                return new Need(
+                        name + ": rest-openapi sends the body as the request of the operation " + operation.id() + " ("
+                                + verb.toUpperCase(Locale.ROOT) + " in " + operation.spec() + ")",
+                        "before this step", true);
+            }
+        }
         return null;
+    }
+
+    /**
+     * The operation a rest-openapi call names: rest-openapi:spec#operationId, rest-openapi:operationId with the default
+     * specification, or the specificationUri and operationId options. Null when no operation is named.
+     */
+    private static Operation operationOf(String uri, JsonNode value) {
+        JsonNode parameters = value != null && value.isObject() ? value.get("parameters") : null;
+        String path = uri.length() > "rest-openapi".length() ? uri.substring("rest-openapi".length() + 1) : "";
+        if (path.startsWith("//")) {
+            path = path.substring(2);
+        }
+        int q = path.indexOf('?');
+        if (q >= 0) {
+            path = path.substring(0, q);
+        }
+        String spec = parameters != null && parameters.has("specificationUri")
+                ? parameters.get("specificationUri").asText() : null;
+        String id = parameters != null && parameters.has("operationId") ? parameters.get("operationId").asText() : null;
+        int hash = path.indexOf('#');
+        if (hash >= 0) {
+            spec = spec != null ? spec : path.substring(0, hash);
+            id = id != null ? id : path.substring(hash + 1);
+        } else if (id == null && !path.isEmpty()) {
+            id = path;
+        }
+        return id == null || id.isBlank() ? null : new Operation(ProjectFacts.specName(spec), id);
+    }
+
+    /**
+     * Whether a REST binding cannot write a Map for the routes of the file: the project's properties are known to set
+     * none, and neither a restConfiguration nor a rest of the file sets one that writes data. Not known is not unbound.
+     */
+    private static boolean restUnbound(JsonNode target, ProjectFacts facts) {
+        if (facts == null || facts.restBindingMode() == null
+                || BINDS.contains(facts.restBindingMode().toLowerCase(Locale.ROOT))) {
+            return false;
+        }
+        for (JsonNode entry : target) {
+            JsonNode configuration = entry.isObject() ? entry.get("restConfiguration") : null;
+            if (configuration != null && binds(configuration)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Whether a node of the REST DSL sets a binding mode that writes data. */
+    private static boolean binds(JsonNode node) {
+        JsonNode mode = node != null && node.isObject() ? node.get("bindingMode") : null;
+        return mode != null && BINDS.contains(mode.asText().toLowerCase(Locale.ROOT));
+    }
+
+    /**
+     * The endpoints whose route answers a REST call with the body it ends with: the routes of the REST verbs, and the
+     * {@code direct:<operationId>} routes of the operations of a specification the REST DSL binds to (contract first).
+     * Only for a rest, verb or openApi that sets no binding mode that writes data.
+     */
+    private static Set<String> restReplies(JsonNode target, ProjectFacts facts) {
+        Set<String> answer = new HashSet<>();
+        for (JsonNode entry : target) {
+            JsonNode rest = entry.isObject() ? entry.get("rest") : null;
+            if (rest == null || !rest.isObject() || binds(rest)) {
+                continue;
+            }
+            for (var it = rest.fieldNames(); it.hasNext();) {
+                String key = it.next();
+                JsonNode value = rest.get(key);
+                if ("openApi".equals(key) && value.isObject() && value.has("specification") && !binds(value)) {
+                    Map<String, String> operations
+                            = facts.operations().get(ProjectFacts.specName(value.get("specification").asText()));
+                    if (operations != null) {
+                        operations.keySet().forEach(id -> answer.add("direct:" + id));
+                    }
+                } else if (REST_VERBS.contains(key)) {
+                    for (JsonNode operation : value.isArray() ? value : List.of(value)) {
+                        String uri = binds(operation) ? null : endpointOf(operation.get("to"));
+                        if (uri != null) {
+                            answer.add(normalize(uri));
+                        }
+                    }
+                }
+            }
+        }
+        return answer;
     }
 
     /**
@@ -708,6 +882,15 @@ final class TextBodyFlow {
                 .build();
     }
 
+    /** The REST binding writes json and xml: offer it where it applies. */
+    private static String restBinding(Need need, Parsed parsed) {
+        if (!need.rest()) {
+            return "";
+        }
+        return "json".equals(parsed.format()) ? ", or let the REST binding write it (bindingMode: json)"
+                : "jacksonXml".equals(parsed.format()) ? ", or let the REST binding write it (bindingMode: xml)" : "";
+    }
+
     private static Error error(NodePath at, String routeId, Need need, Parsed parsed) {
         return Error.builder()
                 .keyword("type")
@@ -716,7 +899,7 @@ final class TextBodyFlow {
                 .format(new MessageFormat("{0}"))
                 .arguments((routeId != null ? "route " + routeId + ": " : "") + need.what()
                            + ", but the body here is parsed data (a Map or a List), not text - " + parsed.origin()
-                           + ": add marshal: " + parsed.format() + " " + need.fix())
+                           + ": add marshal: " + parsed.format() + " " + need.fix() + restBinding(need, parsed))
                 .build();
     }
 }

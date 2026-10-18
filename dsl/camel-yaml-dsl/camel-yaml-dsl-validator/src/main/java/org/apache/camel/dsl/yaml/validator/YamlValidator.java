@@ -179,6 +179,15 @@ public class YamlValidator {
      *                          GET operation of an OpenAPI specification the file binds to (CAMEL-24844)
      */
     public List<Error> validate(String content, Set<String> bodylessEndpoints) throws Exception {
+        return validate(content, new ProjectFacts(bodylessEndpoints, Map.of(), null));
+    }
+
+    /**
+     * @param facts what the caller read from the files beside the route: the endpoints of the OpenAPI operations that
+     *              carry no body, the verbs of the operations the routes use, and the REST binding mode of the project
+     *              (CAMEL-25762)
+     */
+    public List<Error> validate(String content, ProjectFacts facts) throws Exception {
         if (schema == null) {
             init();
         }
@@ -198,7 +207,7 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            List<Error> errors = validate(target, bodylessEndpoints);
+            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE);
             // CAMEL-25560: the tree keeps the last of two equal keys, so a key given twice is only seen in the YAML nodes
             List<String> duplicates = DuplicateKeys.find(YamlPointerLines.root(content));
             if (duplicates.isEmpty()) {
@@ -728,7 +737,7 @@ public class YamlValidator {
         return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
     }
 
-    private List<Error> validate(JsonNode target, Set<String> bodylessEndpoints) {
+    private List<Error> validate(JsonNode target, ProjectFacts facts) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
         // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
         var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
@@ -792,9 +801,9 @@ public class YamlValidator {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
-            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, bodylessEndpoints);
+            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints());
             // a field read on a body that is still text (CAMEL-24844)
-            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts);
         }
         if (canonical) {
             checkOneOfCardinality(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
