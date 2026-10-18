@@ -1090,6 +1090,13 @@ comment after the transition was made, `watchers` and `addIssue` can fail after 
 (`addIssue` sets the created issue as the message body before it adds the watchers), and a retry or redelivery
 repeats the earlier requests.
 
+=== camel-jms - preserveMessageQos uses the time to live of the endpoint for a message without expiration
+
+With `preserveMessageQos=true`, a message without a `JMSExpiration` (header missing or 0) was sent with no time to
+live, so it never expired, even when the endpoint has a `timeToLive` and, for request/reply, although Camel sets the
+`requestTimeout` as time to live otherwise. Such a message now gets the time to live of the endpoint, as the option
+documents. Set `disableTimeToLive=true` to send it without time to live.
+
 === camel-twitter - twitter-search applies its query options again
 
 Since Camel 4.0 (the upgrade to Twitter4J 4.1, whose `Query` is immutable) the `twitter-search` endpoint sent only the
