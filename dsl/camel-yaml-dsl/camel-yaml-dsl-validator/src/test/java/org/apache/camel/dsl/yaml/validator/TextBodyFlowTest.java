@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.yaml.validator;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -569,6 +571,175 @@ public class TextBodyFlowTest {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         node.putObject("expression").put("groovy", script);
         return node;
+    }
+
+    /** The facts camel-jbang reads beside a route: stock-api.json, and properties that set no REST binding. */
+    private static final ProjectFacts STOCK_API = new ProjectFacts(
+            Set.of(), Map.of("stock-api.json", Map.of("reserveStock", "post", "getStock", "get")), "off");
+
+    @Test
+    public void testRestOpenApiCallOfAPostOperation() {
+        // what the benchmark wrote: the order is unmarshalled to read its lines, and sent as it is
+        String yaml = """
+                - route:
+                    id: reserve
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: rest-openapi:stock-api.json#reserveStock
+                            parameters:
+                              host: http://localhost:8080
+                """;
+        assertThat(lines(yaml, STOCK_API)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 9: ");
+            assertThat(m).contains("route reserve: to: rest-openapi sends the body as the request of the operation"
+                                   + " reserveStock (POST in stock-api.json)");
+            assertThat(m).contains("add marshal: json before this step, or let the REST binding write it (bindingMode: json)");
+        });
+        // the same operation named by options, or with the specification as a file: resource
+        String options = """
+                - route:
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: rest-openapi
+                            parameters:
+                              specificationUri: stock-api.json
+                              operationId: reserveStock
+                """;
+        assertThat(lines(options, STOCK_API)).singleElement().asString()
+                .contains("the operation reserveStock (POST in stock-api.json)");
+        assertThat(lines(yaml.replace("rest-openapi:stock-api.json", "rest-openapi:file:stock-api.json"), STOCK_API))
+                .hasSize(1);
+    }
+
+    @Test
+    public void testRestOpenApiCallOfTheLinesOfAJsonPathSplit() {
+        // what the benchmark wrote: the order lines are split with jsonpath, and each line, a Map, is sent as it is
+        String yaml = """
+                - route:
+                    id: reserve-order-lines
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - split:
+                            expression:
+                              jsonpath:
+                                expression: "$.lines"
+                            steps:
+                              - setHeader:
+                                  name: sku
+                                  expression:
+                                    jsonpath:
+                                      expression: "$.sku"
+                              - to:
+                                  uri: rest-openapi
+                                  parameters:
+                                    specificationUri: stock-api.json
+                                    operationId: reserveStock
+                """;
+        assertThat(lines(yaml, STOCK_API)).singleElement().satisfies(m -> {
+            assertThat(m).contains("rest-openapi sends the body as the request of the operation reserveStock");
+            assertThat(m).contains("split $.lines gives its elements as data");
+        });
+        // a jsonpath that reads no field of the element: the element may be text
+        assertThat(lines(yaml.replace("expression: \"$.sku\"", "expression: \"$\""), STOCK_API)).isEmpty();
+    }
+
+    @Test
+    public void testRestOpenApiCallsThatAreFine() {
+        String post = """
+                - route:
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to: rest-openapi:stock-api.json#reserveStock
+                """;
+        // a GET sends no body; an operation or a specification the facts do not know says nothing
+        assertThat(lines(post.replace("reserveStock", "getStock"), STOCK_API)).isEmpty();
+        assertThat(lines(post.replace("reserveStock", "cancelStock"), STOCK_API)).isEmpty();
+        assertThat(lines(post.replace("stock-api.json", "orders-api.json"), STOCK_API)).isEmpty();
+        // a REST binding writes the Map: in the properties, in the file, or not known
+        assertThat(lines(post, new ProjectFacts(Set.of(), STOCK_API.operations(), "json"))).isEmpty();
+        assertThat(lines("- restConfiguration:\n    bindingMode: json\n" + post, STOCK_API)).isEmpty();
+        assertThat(lines(post, new ProjectFacts(Set.of(), STOCK_API.operations(), null))).isEmpty();
+        assertThat(lines(post)).isEmpty();
+    }
+
+    @Test
+    public void testRestRouteReply() {
+        String yaml = """
+                - rest:
+                    get:
+                      - path: /stock/{sku}
+                        to: direct:stock
+                - route:
+                    id: stock
+                    from:
+                      uri: direct:stock
+                      steps:
+                        - setBody:
+                            constant: resource:file:stock.json
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            groovy: body.find { it.sku == headers.sku }
+                """;
+        assertThat(lines(yaml, STOCK_API)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 15: ");
+            assertThat(m).contains("route stock: the body at the end of the route is the reply to the REST call");
+            assertThat(m).contains("add marshal: json as the last step, or let the REST binding write it (bindingMode: json)");
+        });
+        // a binding on the verb, the rest or the configuration writes it; and nothing is said when it is not known
+        assertThat(lines(yaml.replace("        to: direct:stock", "        to: direct:stock\n        bindingMode: json"),
+                STOCK_API)).isEmpty();
+        assertThat(lines(yaml.replace("- rest:\n", "- rest:\n    bindingMode: auto\n"), STOCK_API)).isEmpty();
+        assertThat(lines("- restConfiguration:\n    bindingMode: json\n" + yaml, STOCK_API)).isEmpty();
+        assertThat(lines(yaml, new ProjectFacts(Set.of(), Map.of(), "json"))).isEmpty();
+        assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testContractFirstOperationReply() {
+        String yaml = """
+                - rest:
+                    openApi:
+                      specification: stock-api.json
+                - route:
+                    id: getStock
+                    from:
+                      uri: direct:getStock
+                      steps:
+                        - setBody:
+                            constant: resource:file:stock.json
+                        - unmarshal:
+                            json: {}
+                """;
+        assertThat(lines(yaml, STOCK_API)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route getStock: the body at the end of the route is the reply to the REST call");
+            assertThat(m).contains("add marshal: json as the last step");
+        });
+        // the operations of the specification are what makes direct:getStock the route of a REST call
+        assertThat(lines(yaml, new ProjectFacts(Set.of(), Map.of(), "off"))).isEmpty();
+        assertThat(lines(yaml.replace("direct:getStock", "direct:audit"), STOCK_API)).isEmpty();
+    }
+
+    private static List<String> lines(String yaml, ProjectFacts facts) {
+        try {
+            return YamlValidator.describeAll(yaml, validator.validate(yaml, facts));
+        } catch (Exception e) {
+            throw new AssertionError("Failed to validate:\n" + yaml, e);
+        }
     }
 
     private static List<String> lines(String yaml) {
