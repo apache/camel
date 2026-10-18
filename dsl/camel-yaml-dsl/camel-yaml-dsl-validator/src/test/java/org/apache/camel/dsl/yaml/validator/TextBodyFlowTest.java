@@ -294,6 +294,27 @@ public class TextBodyFlowTest {
     }
 
     @Test
+    public void testValidateKeepsTheBody() {
+        // validate checks the body and leaves it as it is
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - validate:
+                            simple: ${body[orderId]} != null
+                        - convertHeaderTo:
+                            name: CamelFileLength
+                            type: java.lang.Long
+                        - to: file:valid
+                """;
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file writes the body to a file"));
+    }
+
+    @Test
     public void testParsedDataSentWithPost() {
         // a message with a body is sent as a POST, and the http producer cannot make a request body of a Map
         String yaml = """

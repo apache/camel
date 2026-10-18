@@ -92,8 +92,8 @@ final class TextBodyFlow {
 
     /** Steps that leave the body as it is. */
     private static final Set<String> KEEPING_STEPS = Set.of("setHeader", "setHeaders", "setProperty", "setVariable",
-            "removeHeader", "removeHeaders", "removeProperty", "removeProperties", "log", "wireTap", "delay", "throttle",
-            "stop");
+            "setVariables", "removeHeader", "removeHeaders", "removeProperty", "removeProperties", "removeVariable",
+            "convertHeaderTo", "convertVariableTo", "validate", "log", "wireTap", "delay", "throttle", "sample", "stop");
 
     /** ${body}, ${body[lines]} or ${body.lines}: the body, or a field of it. */
     private static final Pattern THE_BODY = Pattern.compile("\\$\\{body(\\??\\.[A-Za-z_]\\w*|\\[[^\\]]+])*}");
