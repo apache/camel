@@ -1297,14 +1297,6 @@ go through one of those paths, remove the `{` and `}` characters from it in the 
 endpoint (Chunk has no escape for tags inside data), for example with a processor that rewrites the body or
 header.
 
-=== camel-azure-files - the producer creates the file with the length of the body
-
-The producer creates a file with its final size before writing it. It took that size from the `CamelFileLength`
-header whenever the header was set, even for a body the route had changed since a file consumer set the header, so
-a shorter body left zero bytes at the end of the file. The size is now the length of the body when it is known
-(a file, a `byte[]`, a cached stream), and any other body that is not a stream (such as a `String`) is converted to
-`byte[]`. The header is only used for a stream of unknown length.
-
 === camel-azure-servicebus - the dead-letter reason and description are bounded
 
 When the consumer dead-letters a message after a failed route with `enableDeadLettering=true`, the reason and the
