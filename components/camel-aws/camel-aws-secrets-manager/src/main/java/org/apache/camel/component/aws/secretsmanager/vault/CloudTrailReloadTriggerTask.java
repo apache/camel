@@ -102,6 +102,9 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
 
     // the largest page that LookupEvents accepts
     private static final int LOOKUP_MAX_RESULTS = 50;
+    // the events that change the value of a secret, looked up one by one
+    private static final List<String> UPDATE_EVENT_NAMES
+            = List.of(SECRETSMANAGER_UPDATE_EVENT, SECRETSMANAGER_UPDATE_SECRET_EVENT);
 
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
@@ -277,6 +280,29 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         lastTimeEventIds.clear();
     }
 
+    /**
+     * Adds every event with the given event name since the last check to the list, reading all pages.
+     */
+    private void lookupEvents(String eventName, List<Event> events) {
+        String nextToken = null;
+        do {
+            LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
+                    .maxResults(LOOKUP_MAX_RESULTS)
+                    .lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_NAME)
+                            .attributeValue(eventName).build());
+            if (lastTime != null) {
+                // inclusive, so an event in the same second as the newest event seen is not skipped
+                eventsRequestBuilder.startTime(lastTime);
+            }
+            if (nextToken != null) {
+                eventsRequestBuilder.nextToken(nextToken);
+            }
+            LookupEventsResponse response = cloudTrailClient.lookupEvents(eventsRequestBuilder.build());
+            events.addAll(response.events());
+            nextToken = response.nextToken();
+        } while (ObjectHelper.isNotEmpty(nextToken));
+    }
+
     @Override
     public void run() {
         lastCheckTime = Instant.now();
@@ -285,26 +311,13 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         if (!useSqsNotification) {
 
             try {
-                // read every page of the events since the last check, so that an update is not left behind when
-                // there are more events (such as GetSecretValue calls) than fit in one page
+                // read every page of the update events since the last check. LookupEvents takes a single lookup
+                // attribute, so there is one lookup per event name: filtering on the event source instead would also
+                // return every read (GetSecretValue, DescribeSecret), and the pages would grow with the read traffic
                 List<Event> events = new ArrayList<>();
-                String nextToken = null;
-                do {
-                    LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
-                            .maxResults(LOOKUP_MAX_RESULTS)
-                            .lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_SOURCE)
-                                    .attributeValue(SECRETSMANAGER_AMAZONAWS_COM).build());
-                    if (lastTime != null) {
-                        // inclusive, so an event in the same second as the newest event seen is not skipped
-                        eventsRequestBuilder.startTime(lastTime);
-                    }
-                    if (nextToken != null) {
-                        eventsRequestBuilder.nextToken(nextToken);
-                    }
-                    LookupEventsResponse response = cloudTrailClient.lookupEvents(eventsRequestBuilder.build());
-                    events.addAll(response.events());
-                    nextToken = response.nextToken();
-                } while (ObjectHelper.isNotEmpty(nextToken));
+                for (String eventName : UPDATE_EVENT_NAMES) {
+                    lookupEvents(eventName, events);
+                }
 
                 LOG.debug("Found {} events", events.size());
                 Instant newest = lastTime;

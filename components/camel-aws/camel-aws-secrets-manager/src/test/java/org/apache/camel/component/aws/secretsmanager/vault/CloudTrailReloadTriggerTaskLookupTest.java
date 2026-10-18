@@ -30,6 +30,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.model.Event;
+import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
+import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 import software.amazon.awssdk.services.cloudtrail.model.Resource;
@@ -46,8 +48,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Tests the CloudTrail lookups of the refresh task against a fake {@code LookupEvents} that answers like the service:
- * only the events with an event time at or after {@code startTime}, newest first, at most 50 per page, and a next token
- * while events are left.
+ * only the events that match the single lookup attribute and have an event time at or after {@code startTime}, newest
+ * first, at most 50 per page, and a next token while events are left.
  */
 class CloudTrailReloadTriggerTaskLookupTest {
 
@@ -76,7 +78,11 @@ class CloudTrailReloadTriggerTaskLookupTest {
 
     private LookupEventsResponse lookup(LookupEventsRequest request) {
         requests.add(request);
+        // the service takes at most one lookup attribute
+        assertTrue(request.lookupAttributes().size() <= 1, "LookupEvents takes at most one lookup attribute");
+        LookupAttribute attribute = request.lookupAttributes().isEmpty() ? null : request.lookupAttributes().get(0);
         List<Event> matching = visibleEvents.stream()
+                .filter(e -> attribute == null || matches(attribute, e))
                 .filter(e -> request.startTime() == null || !e.eventTime().isBefore(request.startTime()))
                 .sorted(Comparator.comparing(Event::eventTime).reversed())
                 .toList();
@@ -88,6 +94,14 @@ class CloudTrailReloadTriggerTaskLookupTest {
             response.nextToken(Integer.toString(to));
         }
         return response.build();
+    }
+
+    private static boolean matches(LookupAttribute attribute, Event event) {
+        return switch (attribute.attributeKey()) {
+            case EVENT_NAME -> attribute.attributeValue().equals(event.eventName());
+            case EVENT_SOURCE -> attribute.attributeValue().equals(event.eventSource());
+            default -> throw new IllegalArgumentException("Unexpected lookup attribute " + attribute);
+        };
     }
 
     private void addEvent(String name, String secret, Instant time) {
@@ -114,10 +128,10 @@ class CloudTrailReloadTriggerTaskLookupTest {
     void updateBehindMoreThanOnePageOfOtherEventsReloadsTheContext() throws Exception {
         Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
         CloudTrailReloadTriggerTask task = task(t0);
-        // the secret is updated, then other applications read secrets 60 times before the next check
+        // the secret is updated, then other secrets are updated 60 times before the next check
         addEvent("PutSecretValue", "tracked-secret", t0.plusSeconds(1));
         for (int i = 0; i < 60; i++) {
-            addEvent("GetSecretValue", "other-secret", t0.plusSeconds(2 + i % 20));
+            addEvent("PutSecretValue", "other-secret", t0.plusSeconds(2 + i % 20));
         }
 
         task.run();
@@ -133,7 +147,7 @@ class CloudTrailReloadTriggerTaskLookupTest {
         Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
         CloudTrailReloadTriggerTask task = task(t0);
         Instant t1 = t0.plusSeconds(10);
-        addEvent("GetSecretValue", "other-secret", t1);
+        addEvent("UpdateSecret", "other-secret", t1);
 
         task.run();
         assertFalse(task.getUpdates().containsKey("tracked-secret"));
@@ -171,14 +185,46 @@ class CloudTrailReloadTriggerTaskLookupTest {
 
             task.run();
 
-            assertNotNull(requests.get(0).startTime(), "the first lookup must not read the whole event history");
-            assertFalse(requests.get(0).startTime().isBefore(before.minusSeconds(1)));
+            assertEquals(2, requests.size(), "one lookup per update event name");
+            for (LookupEventsRequest request : requests) {
+                assertNotNull(request.startTime(), "the first lookup must not read the whole event history");
+                assertFalse(request.startTime().isBefore(before.minusSeconds(1)));
+            }
             assertFalse(task.getUpdates().containsKey("tracked-secret"));
             verify(reload, times(0)).onReload(task);
-            assertEquals(1, requests.size());
         } finally {
             setField(task, "cloudTrailClient", null);
             task.stop();
         }
+    }
+
+    @Test
+    void readsOfSecretsDoNotAddLookupRequests() throws Exception {
+        Instant t0 = Instant.parse("2026-10-17T10:00:00Z");
+        CloudTrailReloadTriggerTask task = task(t0);
+        // a busy account: other applications read secrets 200 times between two checks
+        for (int i = 0; i < 200; i++) {
+            addEvent(i % 2 == 0 ? "GetSecretValue" : "DescribeSecret", "other-secret", t0.plusSeconds(1 + i % 30));
+        }
+        addEvent("UpdateSecret", "tracked-secret", t0.plusSeconds(5));
+
+        task.run();
+
+        assertTrue(task.getUpdates().containsKey("tracked-secret"), "an UpdateSecret event must be seen");
+        verify(reload, times(1)).onReload(task);
+        assertEquals(2, requests.size(), "one request per update event name, whatever the number of reads");
+        assertEquals(List.of("PutSecretValue", "UpdateSecret"),
+                requests.stream().map(r -> {
+                    LookupAttribute a = r.lookupAttributes().get(0);
+                    assertEquals(LookupAttributeKey.EVENT_NAME, a.attributeKey());
+                    return a.attributeValue();
+                }).toList());
+
+        // the next check looks up from the newest update seen and does not reload again
+        requests.clear();
+        task.run();
+        verify(reload, times(1)).onReload(task);
+        assertEquals(2, requests.size());
+        assertTrue(requests.stream().allMatch(r -> t0.plusSeconds(5).equals(r.startTime())));
     }
 }
