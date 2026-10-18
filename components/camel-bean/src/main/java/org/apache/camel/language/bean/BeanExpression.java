@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.bean;
 
+import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,6 +31,7 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanConstants;
@@ -687,11 +690,31 @@ public class BeanExpression implements Expression, Predicate {
             throw new IndexOutOfBoundsException(
                     "Key: " + key + " not found in bean: " + bean + " of type: "
                                                 + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath
-                                                + "]");
+                                                + "]" + keyHint(result != null ? result : bean, key));
         } else {
             // null safe so we can return null
             return null;
         }
     }
 
+    /**
+     * What to do when a key is read from a value that has no keys (CAMEL-25746): the message body as a stream or bytes
+     * (a request body before it is unmarshalled, or a variable set from it), JSON text, or a list.
+     */
+    static String keyHint(Object value, String key) {
+        if (value instanceof StreamCache || value instanceof InputStream || value instanceof byte[]) {
+            return " (the value is the message body as a stream, not a Map: unmarshal it first, for example with json,"
+                   + " then read the key; a variable keeps the value it had when it was set)";
+        }
+        if (value instanceof CharSequence text) {
+            String trimmed = text.toString().strip();
+            if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+                return " (the value is JSON text, not a Map: unmarshal it first, for example with json, then read the key)";
+            }
+        }
+        if (value instanceof Collection || value instanceof Object[]) {
+            return " (a List has no keys: pick an element first, such as [0][" + key + "], or split the list)";
+        }
+        return "";
+    }
 }
