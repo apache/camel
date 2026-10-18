@@ -277,14 +277,38 @@ A failing seed is not yet a bug. Before reporting one:
 ** a *real bug*: the consumer breaks its contract against a fake that follows the documentation.
 . Reproduce a real bug outside DST too, with a plain unit test, before filing it.
 
+=== Pitfalls seen when agents wrote worlds
+
+Agents wrote nine worlds with this guide. These mistakes came up:
+
+* *Timestamps at 0.* Give the times of the fake virtual wall clock time (`Dst.EPOCH_MILLIS + dst.now()`, or
+  `dst.currentTimeMillis()`), not 0. A Service Bus fake with lock times in 1970 made the lock renewer renew on every run,
+  so the world could not fail. The self-check (fail on the code before the fix) caught it.
+* *No end to the run.* A consumer that loops forever needs an unwind at the end of the run, or the run never ends:
+  cancel its task through the task registry, or stop the route at the end of the drain phase.
+* *A fake that blocks under a lock.* A call of the fake made while the consumer holds a lock must not block: with the
+  one-stack rule, the tasks nested above it run while the lock is held.
+* *A violation without its excuse.* Every invariant needs the record of which injected faults excuse a violation of it.
+  Without it, a message dead-lettered after injected acknowledgement faults showed up as a false failure.
+* *Old traces.* Clear `target/dst` between runs, or the traces of an earlier run end up in the grouping of the failing
+  seeds.
+* *A loud test log.* A consumer looping under a buggy fake wrote a 31 GB test log and filled the disk. Set the
+  component to `WARN` in the test `log4j2` configuration, or cap the log.
+* *A fixed configuration.* Let the seed pick the endpoint configuration, edge values included. That is how
+  CAMEL-25737 (`visibilityTimeout=1`) and CAMEL-25741 (aws2-ddbstream, found with a fake DynamoDB Streams world) were
+  found.
+
 === Checklist
 
 * [ ] The client is swapped through an endpoint option or a static mock, at a synchronous level.
 * [ ] The escape scan was read; every escape is fixed, avoided or documented; the test runs in strict mode.
 * [ ] Every behaviour of the fake quotes the documentation; assumptions are marked; what is not modelled is listed.
 * [ ] Reads take effect at the end of their latency, writes at the start; background tasks do not block.
-* [ ] The seed picks the configuration, and the world traces it.
+* [ ] The seed picks the configuration, edge values included, and the world traces it.
+* [ ] The fake's timestamps are virtual wall clock time (`Dst.EPOCH_MILLIS` based), not 0.
+* [ ] A consumer that loops forever is unwound at the end of the run.
 * [ ] Faults are seeded, switched off for a drain phase, and recorded where they excuse a violation.
+* [ ] The component logs at `WARN` in the test log configuration, and `target/dst` is cleared between runs.
 * [ ] The invariant states the component's contract.
 * [ ] The world fails on the code before a past fix, passes on `main`, and a seed replays with the same SHA-256.
 
