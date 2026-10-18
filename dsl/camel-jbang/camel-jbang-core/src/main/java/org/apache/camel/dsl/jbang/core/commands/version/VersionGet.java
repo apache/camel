@@ -31,7 +31,8 @@ import picocli.CommandLine;
                              "  camel version get" })
 public class VersionGet extends CamelCommand {
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
+                        description = "Use global or local configuration")
     boolean global = true;
 
     public VersionGet(CamelJBangMain main) {
@@ -54,7 +55,7 @@ public class VersionGet extends CamelCommand {
             String kv = properties.getProperty("kamelets-version");
             String repos = properties.getProperty("repos");
             String runtime = properties.getProperty("runtime");
-            if (uv != null || repos != null || runtime != null) {
+            if (uv != null || kv != null || repos != null || runtime != null) {
                 printer().println("User configuration:");
                 if (uv != null) {
                     printer().println("    camel-version = " + uv);

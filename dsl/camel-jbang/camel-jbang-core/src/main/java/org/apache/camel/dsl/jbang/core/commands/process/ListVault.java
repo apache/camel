@@ -27,7 +27,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -42,6 +44,10 @@ import picocli.CommandLine.Command;
                  "%nExamples:",
                  "  camel get vault" })
 public class ListVault extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .number("pid", r -> r.pid)
+            .text("name", r -> r.name);
 
     public static class PidNameCompletionCandidates implements Iterable<String> {
 
@@ -71,139 +77,133 @@ public class ListVault extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        Row row = new Row();
-                        row.pid = Long.toString(ph.pid());
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
+        forEachIntegration(name, (ph, root) -> {
+            Row row = new Row();
+            row.pid = Long.toString(ph.pid());
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            final Row baseRow = row.copy();
+            JsonObject vaults = (JsonObject) root.get("vaults");
+            if (vaults != null) {
+                JsonObject aws = (JsonObject) vaults.get("aws-secrets");
+                if (aws != null) {
+                    row = baseRow.copy();
+                    row.vault = "AWS";
+                    row.region = aws.getString("region");
+                    row.lastCheck = aws.getLongOrDefault("lastCheckTimestamp", 0);
+                    row.lastReload = aws.getLongOrDefault("lastReloadTimestamp", 0);
+                    JsonArray arr = (JsonArray) aws.get("secrets");
+                    for (int i = 0; arr != null && i < arr.size(); i++) {
+                        if (i > 0) {
+                            // create a copy for 2+ secrets
+                            row = row.copy();
                         }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        final Row baseRow = row.copy();
-                        JsonObject vaults = (JsonObject) root.get("vaults");
-                        if (vaults != null) {
-                            JsonObject aws = (JsonObject) vaults.get("aws-secrets");
-                            if (aws != null) {
-                                row = baseRow.copy();
-                                row.vault = "AWS";
-                                row.region = aws.getString("region");
-                                row.lastCheck = aws.getLongOrDefault("lastCheckTimestamp", 0);
-                                row.lastReload = aws.getLongOrDefault("lastReloadTimestamp", 0);
-                                JsonArray arr = (JsonArray) aws.get("secrets");
-                                for (int i = 0; arr != null && i < arr.size(); i++) {
-                                    if (i > 0) {
-                                        // create a copy for 2+ secrets
-                                        row = row.copy();
-                                    }
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.secret = jo.getString("name");
-                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
-                                    rows.add(row);
-                                }
-                            }
-                            JsonObject gcp = (JsonObject) vaults.get("gcp-secrets");
-                            if (gcp != null) {
-                                row = baseRow.copy();
-                                row.vault = "GCP";
-                                row.lastCheck = gcp.getLongOrDefault("lastCheckTimestamp", 0);
-                                row.lastReload = gcp.getLongOrDefault("lastReloadTimestamp", 0);
-                                JsonArray arr = (JsonArray) gcp.get("secrets");
-                                for (int i = 0; arr != null && i < arr.size(); i++) {
-                                    if (i > 0) {
-                                        // create a copy for 2+ secrets
-                                        row = row.copy();
-                                    }
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.secret = jo.getString("name");
-                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
-                                    rows.add(row);
-                                }
-                            }
-                            JsonObject azure = (JsonObject) vaults.get("azure-secrets");
-                            if (azure != null) {
-                                row = baseRow.copy();
-                                row.vault = "Azure";
-                                row.lastCheck = azure.getLongOrDefault("lastCheckTimestamp", 0);
-                                row.lastReload = azure.getLongOrDefault("lastReloadTimestamp", 0);
-                                JsonArray arr = (JsonArray) azure.get("secrets");
-                                for (int i = 0; arr != null && i < arr.size(); i++) {
-                                    if (i > 0) {
-                                        // create a copy for 2+ secrets
-                                        row = row.copy();
-                                    }
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.secret = jo.getString("name");
-                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
-                                    rows.add(row);
-                                }
-                            }
-
-                            JsonObject kubernetes = (JsonObject) vaults.get("kubernetes-secrets");
-                            if (kubernetes != null) {
-                                row = baseRow.copy();
-                                row.vault = "Kubernetes";
-                                row.lastCheck = kubernetes.getLongOrDefault("startCheckTimestamp", 0);
-                                row.lastReload = kubernetes.getLongOrDefault("lastReloadTimestamp", 0);
-                                JsonArray arr = (JsonArray) kubernetes.get("secrets");
-                                for (int i = 0; arr != null && i < arr.size(); i++) {
-                                    if (i > 0) {
-                                        // create a copy for 2+ secrets
-                                        row = row.copy();
-                                    }
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.secret = jo.getString("name");
-                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
-                                    rows.add(row);
-                                }
-                            }
-
-                            JsonObject hashicorp = (JsonObject) vaults.get("hashicorp-secrets");
-                            if (hashicorp != null) {
-                                row = baseRow.copy();
-                                row.vault = "Hashicorp";
-                                row.lastCheck = hashicorp.getLongOrDefault("startCheckTimestamp", 0);
-                                row.lastReload = hashicorp.getLongOrDefault("lastReloadTimestamp", 0);
-                                rows.add(row);
-                            }
-
-                            JsonObject cmKubernetes = (JsonObject) vaults.get("kubernetes-configmaps");
-                            if (cmKubernetes != null) {
-                                row = baseRow.copy();
-                                row.vault = "Kubernetes-cm";
-                                row.lastCheck = cmKubernetes.getLongOrDefault("startCheckTimestamp", 0);
-                                row.lastReload = cmKubernetes.getLongOrDefault("lastReloadTimestamp", 0);
-                                JsonArray arr = (JsonArray) cmKubernetes.get("configmaps");
-                                for (int i = 0; arr != null && i < arr.size(); i++) {
-                                    if (i > 0) {
-                                        // create a copy for 2+ configmap
-                                        row = row.copy();
-                                    }
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.secret = jo.getString("name");
-                                    row.timestamp = jo.getLongOrDefault("timestamp", 0);
-                                    rows.add(row);
-                                }
-                            }
-                        }
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.secret = jo.getString("name");
+                        row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                        rows.add(row);
                     }
-                });
+                }
+                JsonObject gcp = (JsonObject) vaults.get("gcp-secrets");
+                if (gcp != null) {
+                    row = baseRow.copy();
+                    row.vault = "GCP";
+                    row.lastCheck = gcp.getLongOrDefault("lastCheckTimestamp", 0);
+                    row.lastReload = gcp.getLongOrDefault("lastReloadTimestamp", 0);
+                    JsonArray arr = (JsonArray) gcp.get("secrets");
+                    for (int i = 0; arr != null && i < arr.size(); i++) {
+                        if (i > 0) {
+                            // create a copy for 2+ secrets
+                            row = row.copy();
+                        }
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.secret = jo.getString("name");
+                        row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                        rows.add(row);
+                    }
+                }
+                JsonObject azure = (JsonObject) vaults.get("azure-secrets");
+                if (azure != null) {
+                    row = baseRow.copy();
+                    row.vault = "Azure";
+                    row.lastCheck = azure.getLongOrDefault("lastCheckTimestamp", 0);
+                    row.lastReload = azure.getLongOrDefault("lastReloadTimestamp", 0);
+                    JsonArray arr = (JsonArray) azure.get("secrets");
+                    for (int i = 0; arr != null && i < arr.size(); i++) {
+                        if (i > 0) {
+                            // create a copy for 2+ secrets
+                            row = row.copy();
+                        }
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.secret = jo.getString("name");
+                        row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                        rows.add(row);
+                    }
+                }
+
+                JsonObject kubernetes = (JsonObject) vaults.get("kubernetes-secrets");
+                if (kubernetes != null) {
+                    row = baseRow.copy();
+                    row.vault = "Kubernetes";
+                    row.lastCheck = kubernetes.getLongOrDefault("startCheckTimestamp", 0);
+                    row.lastReload = kubernetes.getLongOrDefault("lastReloadTimestamp", 0);
+                    JsonArray arr = (JsonArray) kubernetes.get("secrets");
+                    for (int i = 0; arr != null && i < arr.size(); i++) {
+                        if (i > 0) {
+                            // create a copy for 2+ secrets
+                            row = row.copy();
+                        }
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.secret = jo.getString("name");
+                        row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                        rows.add(row);
+                    }
+                }
+
+                JsonObject hashicorp = (JsonObject) vaults.get("hashicorp-secrets");
+                if (hashicorp != null) {
+                    row = baseRow.copy();
+                    row.vault = "Hashicorp";
+                    row.lastCheck = hashicorp.getLongOrDefault("startCheckTimestamp", 0);
+                    row.lastReload = hashicorp.getLongOrDefault("lastReloadTimestamp", 0);
+                    rows.add(row);
+                }
+
+                JsonObject cmKubernetes = (JsonObject) vaults.get("kubernetes-configmaps");
+                if (cmKubernetes != null) {
+                    row = baseRow.copy();
+                    row.vault = "Kubernetes-cm";
+                    row.lastCheck = cmKubernetes.getLongOrDefault("startCheckTimestamp", 0);
+                    row.lastReload = cmKubernetes.getLongOrDefault("lastReloadTimestamp", 0);
+                    JsonArray arr = (JsonArray) cmKubernetes.get("configmaps");
+                    for (int i = 0; arr != null && i < arr.size(); i++) {
+                        if (i > 0) {
+                            // create a copy for 2+ configmap
+                            row = row.copy();
+                        }
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.secret = jo.getString("name");
+                        row.timestamp = jo.getLongOrDefault("timestamp", 0);
+                        rows.add(row);
+                    }
+                }
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("vault", r.vault);
                     jo.put("region", r.region);
@@ -238,23 +238,6 @@ public class ListVault extends ProcessWatchCommand {
         return 0;
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            default:
-                return 0;
-        }
-    }
-
     private String getCheckAgo(Row r) {
         if (r.lastCheck == 0) {
             return "";
@@ -276,7 +259,7 @@ public class ListVault extends ProcessWatchCommand {
         return TimeUtils.printSince(r.timestamp);
     }
 
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         String vault;
@@ -285,15 +268,6 @@ public class ListVault extends ProcessWatchCommand {
         long lastReload;
         String secret;
         long timestamp;
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
     }
 
 }

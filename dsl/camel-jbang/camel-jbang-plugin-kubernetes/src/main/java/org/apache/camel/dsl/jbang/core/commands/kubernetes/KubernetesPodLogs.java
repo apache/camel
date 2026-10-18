@@ -25,6 +25,8 @@ import io.fabric8.kubernetes.client.dsl.LogWatch;
 import io.fabric8.kubernetes.client.dsl.PodResource;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.ObjectHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -59,6 +61,9 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
     // used for testing
     long maxMessageCount = -1;
     long messageCount = 0;
+    // whether a pod with the label showed up, and whether reading its log failed the last time
+    private boolean podFound;
+    private boolean readFailed;
 
     public KubernetesPodLogs(CamelJBangMain main) {
         super(main);
@@ -74,8 +79,7 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
 
         String[] parts = label.split("=", 2);
         if (parts.length != 2) {
-            printer().printErr("--label selector must be in syntax: key=value");
-            return 1;
+            throw CliException.usage("--label selector must be in syntax: key=value");
         }
 
         var retry = watchLogs();
@@ -86,7 +90,10 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
         }
 
         printer().println("Stopped pod logging!");
-        return 0;
+        if (!podFound) {
+            throw CliException.notFound("No pod with label " + label);
+        }
+        return readFailed ? CliExitCode.FAILURE : CliExitCode.OK;
     }
 
     // Returns true if a retry should be attempted
@@ -100,6 +107,7 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
             printer().printf("Pod for label %s not available%n", label);
             return true;
         }
+        podFound = true;
 
         var terminated = isPodTerminated(podRes);
         if (!terminated) {
@@ -128,8 +136,10 @@ public class KubernetesPodLogs extends KubernetesBaseCommand {
                     }
                     retryCount = 0;
                 }
+                readFailed = false;
             } catch (IOException e) {
-                printer().println("Failed to read pod logs - " + e.getMessage());
+                printer().printErr("Failed to read pod logs - " + e.getMessage());
+                readFailed = true;
             }
 
             terminated = isPodTerminated(podRes);

@@ -110,22 +110,30 @@ public final class KameletDefinitions {
         try {
             for (Object o : KameletCatalogHelper.loadKamelets(version, null).values()) {
                 KameletModel km = KameletCatalogHelper.createModel(o, true);
-                List<Property> props = new ArrayList<>();
-                if (km.properties != null) {
-                    for (KameletOptionModel om : km.properties.values()) {
-                        props.add(new Property(
-                                om.name, om.required, om.type, om.defaultValue, om.description,
-                                om.enumValues != null ? om.enumValues : List.of()));
-                    }
-                }
-                answer.put(km.name, new Definition(
-                        km.name, km.type, null, km.description,
-                        "the Kamelet catalog " + version, props));
+                answer.put(km.name, of(km, "the Kamelet catalog " + version));
             }
         } catch (Exception e) {
             // no catalog: the tools say nothing about Kamelets rather than the wrong thing
         }
         return answer;
+    }
+
+    /**
+     * The definition of a Kamelet of a catalog, such as the one camel doc loads.
+     *
+     * @param km     the Kamelet
+     * @param source where it comes from, such as the Kamelet catalog 4.18.0
+     */
+    public static Definition of(KameletModel km, String source) {
+        List<Property> props = new ArrayList<>();
+        if (km.properties != null) {
+            for (KameletOptionModel om : km.properties.values()) {
+                props.add(new Property(
+                        om.name, om.required, om.type, om.defaultValue, om.description,
+                        om.enumValues != null ? om.enumValues : List.of()));
+            }
+        }
+        return new Definition(km.name, km.type, null, km.description, source, props);
     }
 
     /** The project's own Kamelets: the *.kamelet.yaml files of the directory and its subdirectories. */

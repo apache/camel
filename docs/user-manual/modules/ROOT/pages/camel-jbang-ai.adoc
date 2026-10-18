@@ -51,6 +51,10 @@ Use `--show-tools` to see tool calls and results as they happen:
 camel ask "show me the route structure" --show-tools
 ----
 
+With a question, the answer is the only output on stdout, so a script can use it: the model in use, the tool calls of
+`--show-tools` and the token usage of `--show-stats` are printed on stderr. `camel ask` exits with `1` when the LLM
+cannot answer, such as when it is not reachable or the call fails.
+
 === What asks first
 
 Most tools only read, and run without asking. A call that changes the project,
@@ -71,6 +75,12 @@ on the terminal:
 Answer `y` to let the call run. A call you do not confirm does not run, and the
 model is told so. Without a terminal to ask on, as in a script, such a call
 does not run; `--yes` lets all of them run without asking.
+
+A `camel` command the model runs gives it the exit code, the output and the
+errors apart, as a script gets them (see xref:manual::camel-jbang-exit-codes.adoc[Exit Codes and Output]),
+and stops after 60 seconds. A command that runs until it is stopped is not run,
+and the model is told the form that returns: `camel run` without `--background`,
+`--watch` without `--duration`, `camel log` that follows, or `camel shell`.
 
 === Local and hosted models
 

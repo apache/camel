@@ -22,3 +22,45 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The component needs an Ignite node: xref:ignite-summary.adoc[Ignite] describes the ways to give it one.
+A node of its own with the default configuration takes one line in `application.properties`.
+On Java 17 and later, Ignite also needs the `--add-opens` JVM options that its documentation lists.
+
+[source,properties]
+----
+camel.component.ignite-queue.ignite-configuration = #class:org.apache.ignite.configuration.IgniteConfiguration
+----
+
+The first route adds the body to the `tasks` queue. The second polls the queue every second, and `POLL` returns
+null when the queue is empty:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:addTask
+      steps:
+        - to:
+            uri: ignite-queue:tasks
+            parameters:
+              operation: ADD
+- route:
+    from:
+      uri: timer:pollTasks
+      parameters:
+        period: 1000
+      steps:
+        - to:
+            uri: ignite-queue:tasks
+            parameters:
+              operation: POLL
+        - filter:
+            expression:
+              simple:
+                expression: "${body} != null"
+            steps:
+              - log:
+                  message: "Task: ${body}"
+----

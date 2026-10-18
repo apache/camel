@@ -18,6 +18,7 @@ package org.apache.camel.component.milo;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import org.apache.camel.EndpointInject;
@@ -31,20 +32,29 @@ import org.apache.camel.component.milo.client.MiloClientEndpoint;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
+import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaSubscription;
+import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
+import org.eclipse.milo.opcua.sdk.server.Session;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import static org.awaitility.Awaitility.await;
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Testing the monitored items of consumers sharing a connection, when a consumer is restarted, its node does not exist
- * or the server rejects the CreateMonitoredItems service call
+ * Testing the monitored items of consumers sharing a connection, when a consumer is restarted, its node does not exist,
+ * the server rejects the CreateMonitoredItems service call or the subscription stops publishing or times out
  */
 public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
 
@@ -77,15 +87,13 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
             = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem2");
 
     private static final String MILO_CLIENT_UNKNOWN_ITEM
-            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItem")
-              + "&omitNullValues=false";
+            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItem");
 
     private static final String MILO_CLIENT_UNKNOWN_ITEM_WRITE_BACK
-            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItemWriteBack")
-              + "&omitNullValues=false";
+            = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "unknownItemWriteBack");
 
     private static final String MILO_CLIENT_ITEMS_1_2
-            = MILO_CLIENT_BASE + "&omitNullValues=false&nodes=RAW(" + NODE_ITEM_1 + "," + NODE_ITEM_2 + ")";
+            = MILO_CLIENT_BASE + "&nodes=RAW(" + NODE_ITEM_1 + "," + NODE_ITEM_2 + ")";
 
     private static final String MOCK_ITEM_1 = "mock:item1";
 
@@ -96,6 +104,11 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
     private static final String MOCK_WRITE_BACK = "mock:writeBack";
 
     private static final String MOCK_ITEMS_1_2 = "mock:items12";
+
+    // the route of the first item takes longer than the watchdog of a shortened subscription for this value, once
+    private static final String SLOW_VALUE = "Slow";
+
+    private final AtomicBoolean slowValueProcessed = new AtomicBoolean();
 
     @EndpointInject(MOCK_ITEM_1)
     protected MockEndpoint item1Endpoint;
@@ -126,10 +139,15 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
                 from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
                 from(DIRECT_START_2).to(MILO_SERVER_ITEM_2);
 
-                from(resolve(MILO_CLIENT_ITEM_1)).routeId("item1").to(MOCK_ITEM_1);
                 from(resolve(MILO_CLIENT_UNKNOWN_ITEM)).routeId("unknownItem").to(MOCK_UNKNOWN_ITEM);
 
                 // the consumers deliver the current values while they start, so the tests start these routes
+                from(resolve(MILO_CLIENT_ITEM_1)).routeId("item1").autoStartup(false)
+                        // the slow route under test: a synchronous delay holds the delivery thread, once
+                        .filter(exchange -> isSlowValueOnce(exchange))
+                        .delay(3000).syncDelayed().end() // the delay is a block of its own
+                        .end()
+                        .to(MOCK_ITEM_1);
                 from(resolve(MILO_CLIENT_ITEM_2)).routeId("item2").autoStartup(false).to(MOCK_ITEM_2);
                 from(resolve(MILO_CLIENT_ITEMS_1_2)).routeId("items12").autoStartup(false).to(MOCK_ITEMS_1_2);
 
@@ -143,11 +161,18 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
         };
     }
 
+    private boolean isSlowValueOnce(Exchange exchange) {
+        final Object value = exchange.getMessage().getBody(DataValue.class).getValue().getValue();
+        return SLOW_VALUE.equals(value) && slowValueProcessed.compareAndSet(false, true);
+    }
+
     @Test
     void restartedConsumerReceivesEachValueOnce() throws Exception {
+        producer1.sendBody("Foo");
+
         item1Endpoint.expectedMessageCount(1);
         testBody(item1Endpoint.message(0), assertGoodValue("Foo"));
-        producer1.sendBody("Foo");
+        context.getRouteController().startRoute("item1");
         item1Endpoint.assertIsSatisfied();
 
         // the other consumers keep the shared connection open
@@ -180,10 +205,32 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
         unknownItemEndpoint.assertIsSatisfied();
 
         // the other consumers of the connection are not affected
+        producer1.sendBody("Foo");
+
         item1Endpoint.expectedMessageCount(1);
         testBody(item1Endpoint.message(0), assertGoodValue("Foo"));
-        producer1.sendBody("Foo");
+        context.getRouteController().startRoute("item1");
         item1Endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    void itemThatWasNotWrittenYetReportsABadStatusAtStartup() throws Exception {
+        // the first notification carries the current value of the item, which is a Bad status without a value until
+        // the item is written; the consumer delivers it like any other Bad status
+        item2Endpoint.expectedMessageCount(1);
+        item2Endpoint.expectedHeaderReceived(MiloConstants.HEADER_NODE_ID, NODE_ITEM_2);
+        testBody(item2Endpoint.message(0), value -> {
+            assertTrue(value.getStatusCode().isBad(), value.getStatusCode().toString());
+            assertNull(value.getValue().getValue());
+        });
+        context.getRouteController().startRoute("item2");
+        item2Endpoint.assertIsSatisfied();
+
+        item2Endpoint.reset();
+        item2Endpoint.expectedMessageCount(1);
+        testBody(item2Endpoint.message(0), assertGoodValue("Bar"));
+        producer2.sendBody("Bar");
+        item2Endpoint.assertIsSatisfied();
     }
 
     @Test
@@ -239,6 +286,181 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertGoodValue("Qux").accept(lastExchange(item2Endpoint).getMessage()
                         .getBody(DataValue.class)));
+    }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void subscriptionThatStopsPublishingIsRecreatedInTheSameSession() throws Exception {
+        producer1.sendBody("Foo");
+
+        item1Endpoint.expectedMinimumMessageCount(1);
+        testBody(item1Endpoint.message(0), assertGoodValue("Foo"));
+        context.getRouteController().startRoute("item1");
+        item1Endpoint.assertIsSatisfied();
+
+        final MiloClientEndpoint endpoint = context.getEndpoint(resolve(MILO_CLIENT_ITEM_1), MiloClientEndpoint.class);
+        final MiloClientConnection connection = endpoint.createConnection();
+        try {
+            final OpcUaClient client = connection.getOpcUaClient();
+            final OpcUaSubscription subscription = client.getSubscriptions().get(0);
+            // shortens the watchdog of the subscription to a few publishing intervals
+            subscription.setMaxKeepAliveCount(uint(1));
+            subscription.setLifetimeCount(uint(3));
+            subscription.modify();
+
+            // the server deletes the subscription and answers the pending publish requests without one
+            final UInteger subscriptionId = subscription.getSubscriptionId().orElseThrow();
+            assertTrue(client.deleteSubscriptions(List.of(subscriptionId)).getResults()[0].isGood());
+
+            producer1.sendBody("Bar");
+            await().atMost(30, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertGoodValue("Bar").accept(lastExchange(item1Endpoint).getMessage()
+                            .getBody(DataValue.class)));
+
+            assertSame(client, connection.getOpcUaClient());
+            assertNotEquals(subscriptionId, subscription.getSubscriptionId().orElseThrow());
+        } finally {
+            endpoint.releaseConnection(connection);
+        }
+    }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void subscriptionThatTimesOutOnTheServerIsRecreatedInTheSameSession() throws Exception {
+        producer1.sendBody("Foo");
+
+        item1Endpoint.expectedMinimumMessageCount(1);
+        testBody(item1Endpoint.message(0), assertGoodValue("Foo"));
+        context.getRouteController().startRoute("item1");
+        item1Endpoint.assertIsSatisfied();
+
+        final MiloClientEndpoint endpoint = context.getEndpoint(resolve(MILO_CLIENT_ITEM_1), MiloClientEndpoint.class);
+        final MiloClientConnection connection = endpoint.createConnection();
+        try {
+            final OpcUaClient client = connection.getOpcUaClient();
+            final UInteger subscriptionId = client.getSubscriptions().get(0).getSubscriptionId().orElseThrow();
+
+            timeOutSubscription(subscriptionId);
+
+            producer1.sendBody("Bar");
+            await().atMost(30, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertGoodValue("Bar").accept(lastExchange(item1Endpoint).getMessage()
+                            .getBody(DataValue.class)));
+
+            assertSame(client, connection.getOpcUaClient());
+            assertNotEquals(subscriptionId, client.getSubscriptions().get(0).getSubscriptionId().orElseThrow());
+        } finally {
+            endpoint.releaseConnection(connection);
+        }
+    }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void subscriptionThatASlowRouteHeldUpIsKept() throws Exception {
+        producer1.sendBody("Foo");
+
+        item1Endpoint.expectedMinimumMessageCount(1);
+        testBody(item1Endpoint.message(0), assertGoodValue("Foo"));
+        context.getRouteController().startRoute("item1");
+        item1Endpoint.assertIsSatisfied();
+
+        final MiloClientEndpoint endpoint = context.getEndpoint(resolve(MILO_CLIENT_ITEM_1), MiloClientEndpoint.class);
+        final MiloClientConnection connection = endpoint.createConnection();
+        try {
+            final OpcUaClient client = connection.getOpcUaClient();
+            final OpcUaSubscription subscription = client.getSubscriptions().get(0);
+            // shortens the watchdog of the subscription to a few publishing intervals
+            subscription.setMaxKeepAliveCount(uint(1));
+            subscription.modify();
+            final UInteger subscriptionId = subscription.getSubscriptionId().orElseThrow();
+            // replaced when the server confirms the subscription
+            final OpcUaSubscription.ServerState stateBefore = subscription.getServerState().orElseThrow();
+
+            // the client sends no publish request while the route processes the value, so the watchdog elapses
+            producer1.sendBody(SLOW_VALUE);
+            await().atMost(20, TimeUnit.SECONDS).until(() -> countValue(item1Endpoint, SLOW_VALUE) >= 1);
+
+            // a recreated subscription would deliver the current value again
+            await().during(3, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
+                    .until(() -> countValue(item1Endpoint, SLOW_VALUE) == 1);
+            assertEquals(subscriptionId, subscription.getSubscriptionId().orElse(null));
+            assertNotSame(stateBefore, subscription.getServerState().orElseThrow(), "the subscription was not checked");
+            producer1.sendBody("Bar");
+            await().atMost(10, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertGoodValue("Bar").accept(lastExchange(item1Endpoint).getMessage()
+                            .getBody(DataValue.class)));
+        } finally {
+            endpoint.releaseConnection(connection);
+        }
+    }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void nodeThatCannotBeMonitoredAgainIsReportedWithoutRebuildingTheConnection() throws Exception {
+        producer1.sendBody("Foo");
+        producer2.sendBody("Bar");
+        context.getRouteController().startRoute("item1");
+
+        items12Endpoint.expectedMessageCount(2);
+        context.getRouteController().startRoute("items12");
+        items12Endpoint.assertIsSatisfied();
+
+        final MiloClientEndpoint endpoint = context.getEndpoint(resolve(MILO_CLIENT_ITEM_1), MiloClientEndpoint.class);
+        final MiloClientConnection connection = endpoint.createConnection();
+        try {
+            final OpcUaClient client = connection.getOpcUaClient();
+            final OpcUaSubscription subscription = client.getSubscriptions().get(0);
+            final UInteger subscriptionId = subscription.getSubscriptionId().orElseThrow();
+
+            // the second node is removed on the server before the subscription times out there
+            getServer().getAddressSpaceManager().getManagedNode(ExpandedNodeId.parse(NODE_ITEM_2)).orElseThrow().delete();
+            timeOutSubscription(subscriptionId);
+
+            // the subscription is recreated in the same session, with the monitored items of the first node only
+            await().atMost(30, TimeUnit.SECONDS)
+                    .until(() -> subscription.getSubscriptionId().filter(id -> !id.equals(subscriptionId)).isPresent());
+            assertSame(client, connection.getOpcUaClient());
+            // the items are added one by one before they are created, so the count alone passes 2 on the way to 3
+            await().atMost(10, TimeUnit.SECONDS).until(() -> subscription.getMonitoredItems().size() == 2
+                    && subscription.isMonitoredItemsSynchronized());
+
+            // the consumer of the second node is told that it is gone, the consumers of the first node keep receiving
+            await().atMost(10, TimeUnit.SECONDS).until(() -> items12Endpoint.getReceivedExchanges().stream()
+                    .anyMatch(exchange -> NODE_ITEM_2.equals(exchange.getMessage().getHeader(MiloConstants.HEADER_NODE_ID))
+                            && new StatusCode(StatusCodes.Bad_NodeIdUnknown)
+                                    .equals(exchange.getMessage().getBody(DataValue.class).getStatusCode())));
+            producer1.sendBody("Baz");
+            await().atMost(10, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertGoodValue("Baz").accept(lastExchange(item1Endpoint).getMessage()
+                            .getBody(DataValue.class)));
+            assertSame(client, connection.getOpcUaClient());
+        } finally {
+            endpoint.releaseConnection(connection);
+        }
+    }
+
+    private OpcUaServer getServer() {
+        return context.getComponent("milo-server", MiloServerComponent.class).getServer();
+    }
+
+    /**
+     * The server reports the lifetime of the subscription as expired and removes it
+     */
+    private void timeOutSubscription(final UInteger subscriptionId) {
+        for (final Session session : getServer().getSessionManager().getAllSessions()) {
+            final var subscriptions = session.getSubscriptionManager();
+            final var subscription = subscriptions.getSubscription(subscriptionId);
+            if (subscription != null) {
+                subscriptions.sendStatusChangeNotification(subscription, new StatusCode(StatusCodes.Bad_Timeout));
+                subscriptions.removeSubscription(subscriptionId);
+            }
+        }
+    }
+
+    private static long countValue(final MockEndpoint endpoint, final Object value) {
+        return endpoint.getReceivedExchanges().stream()
+                .filter(exchange -> value.equals(exchange.getMessage().getBody(DataValue.class).getValue().getValue()))
+                .count();
     }
 
     private static Exchange lastExchange(final MockEndpoint endpoint) {

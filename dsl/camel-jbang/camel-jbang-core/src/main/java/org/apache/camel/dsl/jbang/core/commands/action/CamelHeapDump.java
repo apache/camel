@@ -16,12 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -44,8 +45,16 @@ public class CamelHeapDump extends ActionBaseCommand {
     String dumpName;
 
     @CommandLine.Option(names = { "--live" },
-                        description = "Whether to dump only live objects", defaultValue = "true")
+                        description = "Whether to dump only live objects", defaultValue = "true", arity = "0..1",
+                        fallbackValue = "true")
     boolean live = true;
+
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "60000", converter = TimeoutConverter.class,
+                        description = "How long to wait for the heap dump to be written, in millis or as a duration such as 2m")
+    long timeout = 60000;
+
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
 
     public CamelHeapDump(CamelJBangMain main) {
         super(main);
@@ -53,63 +62,39 @@ public class CamelHeapDump extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
 
-        long pid = pids.get(0);
-
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "heap-dump");
-        if (dumpName != null) {
-            root.put("name", dumpName);
-        }
-        root.put("live", Boolean.toString(live));
-
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-
-        JsonObject jo = getJsonObject(outputFile, 60000);
-        if (jo != null) {
-            String error = jo.getString("error");
-            if (error != null) {
-                printer().println("Heap dump failed: " + error);
-                return 1;
+        JsonObject jo = executeAction(process, "heap-dump", root -> {
+            if (dumpName != null) {
+                root.put("name", dumpName);
             }
-            String file = jo.getString("file");
-            long size = jo.getLongOrDefault("size", 0);
-            printer().printf("Heap dump written to: %s (%s)%n", file, formatSize(size));
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 60 seconds");
-            return 1;
+            root.put("live", Boolean.toString(live));
+        });
+        String error = jo.getString("error");
+        if (error != null) {
+            throw CliException.failure("Heap dump failed: " + error);
         }
-
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
-
+        String file = jo.getString("file");
+        long size = jo.getLongOrDefault("size", 0);
+        if (jsonOutput) {
+            JsonObject answer = new JsonObject();
+            answer.put("pid", process.pid());
+            answer.put("file", file);
+            answer.put("size", size);
+            JsonOutput.print(printer(), answer);
+        } else {
+            printer().printf("Heap dump written to: %s (%s)%n", file, formatSize(size));
+        }
         return 0;
     }
 
-    private static String formatSize(long bytes) {
+    static String formatSize(long bytes) {
         if (bytes >= 1024 * 1024 * 1024) {
-            return String.format("%.1f GB", bytes / (1024.0 * 1024.0 * 1024.0));
+            return String.format(Locale.ROOT, "%.1f GB", bytes / (1024.0 * 1024.0 * 1024.0));
         } else if (bytes >= 1024 * 1024) {
-            return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
+            return String.format(Locale.ROOT, "%.1f MB", bytes / (1024.0 * 1024.0));
         } else if (bytes >= 1024) {
-            return String.format("%.1f KB", bytes / 1024.0);
+            return String.format(Locale.ROOT, "%.1f KB", bytes / 1024.0);
         } else {
             return bytes + " bytes";
         }

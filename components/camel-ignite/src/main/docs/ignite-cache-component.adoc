@@ -27,3 +27,45 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The component needs an Ignite node: xref:ignite-summary.adoc[Ignite] describes the ways to give it one.
+A node of its own with the default configuration takes one line in `application.properties`.
+On Java 17 and later, Ignite also needs the `--add-opens` JVM options that its documentation lists.
+
+[source,properties]
+----
+camel.component.ignite-cache.ignite-configuration = #class:org.apache.ignite.configuration.IgniteConfiguration
+----
+
+The following routes put an order in the `orders` cache, and get it back by its key:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:putOrder
+      steps:
+        - setHeader:
+            name: CamelIgniteCacheKey
+            expression:
+              simple:
+                expression: "${header.orderId}"
+        - to:
+            uri: ignite-cache:orders
+            parameters:
+              operation: PUT
+- route:
+    from:
+      uri: direct:getOrder
+      steps:
+        - setHeader:
+            name: CamelIgniteCacheKey
+            expression:
+              simple:
+                expression: "${header.orderId}"
+        - to:
+            uri: ignite-cache:orders
+            parameters:
+              operation: GET
+----

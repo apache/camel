@@ -406,6 +406,14 @@ final class SchemaHints {
                         return "the library name is case sensitive"
                                + (match != null ? ": write library: " + match : ", write it as listed");
                     }),
+            // a comma-separated list of enum values, such as the jsonpath option (CAMEL-25739): name the values, not the
+            // pattern that checks them
+            append("pattern", null, m -> m.message().contains("^\\s*("),
+                    m -> {
+                        String values = between(m.message(), "^\\s*(", ")");
+                        return "write one or more of " + (values == null ? "the listed values" : values.replace("|", ", "))
+                               + ", separated by comma";
+                    }),
             append("type", "/?", m -> m.message().contains("array expected"),
                     m -> "a Camel YAML file is a list of entries, each starting with \"- \": - route:, - from:, - beans:,"
                          + " - rest:, - onException:"),

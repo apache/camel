@@ -19,17 +19,25 @@ package org.apache.camel.dsl.jbang.core.commands.version;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class VersionGetTest extends CamelCommandBaseTestSupport {
+
+    @BeforeEach
+    @Override
+    public void setup() throws Exception {
+        super.setup();
+        useTestHomeDir();
+    }
 
     @Test
     public void shouldPrintVersions() throws Exception {
@@ -65,8 +73,23 @@ class VersionGetTest extends CamelCommandBaseTestSupport {
         Assertions.assertEquals("kamelets-version = greatest", lines.get(4));
     }
 
+    @Test
+    public void shouldPrintOnlyTheKameletsVersion() throws Exception {
+        UserConfigHelper.createUserConfig("""
+                kamelets-version=4.18.0
+                """);
+        createJBangVersionFile("0.101");
+
+        VersionGet command = createCommand();
+        command.doCall();
+
+        List<String> lines = printer.getLines();
+        Assertions.assertEquals("User configuration:", lines.get(2));
+        Assertions.assertEquals("kamelets-version = 4.18.0", lines.get(3));
+    }
+
     private void createJBangVersionFile(String version) throws IOException {
-        Path jBangDir = Paths.get("target", ".jbang", "cache");
+        Path jBangDir = CommandLineHelper.getHomeDir().resolve(".jbang/cache");
         if (!jBangDir.toFile().exists()) {
             jBangDir.toFile().mkdirs();
         }

@@ -23,6 +23,11 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Printer interface used by commands to write output to given print stream. By default, uses System out print stream,
  * but unit tests for instance may use a different print stream.
+ * <p/>
+ * The output of a command goes to {@link #println(String)} and its siblings (stdout). Errors, warnings and tips go to
+ * the diagnostics channel (stderr) with {@link #printErr(String)}, {@link #printWarn(String)},
+ * {@link #printTip(String)} or {@link #printDiagnostic(String)}, so stdout carries only the output, such as JSON, for
+ * scripts and AI agents.
  */
 public interface Printer {
 
@@ -34,8 +39,19 @@ public interface Printer {
 
     void printf(String format, Object... args);
 
+    /**
+     * Prints a line on the diagnostics channel: errors, warnings, tips and progress that are not part of the output of
+     * the command. The CLI prints it on stderr. A printer without a separate channel prints it with the output.
+     */
+    default void printDiagnostic(String line) {
+        println(line);
+    }
+
+    /**
+     * Prints an error on the diagnostics channel, as {@code ERROR: message}.
+     */
     default void printErr(String message) {
-        printf("ERROR: %s%n", message);
+        printDiagnostic("ERROR: " + message);
     }
 
     default void printErr(String message, Exception e) {
@@ -52,7 +68,21 @@ public interface Printer {
     }
 
     /**
-     * Default printer uses System out print stream.
+     * Prints a warning on the diagnostics channel, as {@code WARN: message}.
+     */
+    default void printWarn(String message) {
+        printDiagnostic("WARN: " + message);
+    }
+
+    /**
+     * Prints a tip on the diagnostics channel, as {@code Tip: message}.
+     */
+    default void printTip(String message) {
+        printDiagnostic("Tip: " + message);
+    }
+
+    /**
+     * Default printer uses System out print stream, and System err for the diagnostics channel.
      */
     class SystemOutPrinter implements Printer {
         public void println() {
@@ -72,10 +102,19 @@ public interface Printer {
         public void printf(String format, Object... args) {
             System.out.printf(format, args);
         }
+
+        @Override
+        public void printDiagnostic(String line) {
+            // keep the order of the two streams when both go to the terminal
+            System.out.flush();
+            System.err.println(line);
+            System.err.flush();
+        }
     }
 
     /**
-     * Printer can be used in quiet mode - nothing is printed except error messages.
+     * Printer can be used in quiet mode - nothing is printed except error messages (warnings and tips are not printed
+     * either).
      */
     class QuietPrinter implements Printer {
 
@@ -102,13 +141,13 @@ public interface Printer {
         }
 
         @Override
+        public void printDiagnostic(String line) {
+        }
+
+        @Override
         public void printErr(String message) {
-            if (delegate instanceof SystemOutPrinter) {
-                // keep stdout clean (e.g. MCP stdio JSON-RPC stream) by sending errors to stderr
-                System.err.printf("ERROR: %s%n", message);
-            } else {
-                delegate.printErr(message);
-            }
+            // the system printer sends errors to stderr, which keeps stdout clean (e.g. MCP stdio JSON-RPC stream)
+            delegate.printErr(message);
         }
     }
 }

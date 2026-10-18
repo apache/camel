@@ -20,6 +20,7 @@ camel get route [options]
 |===
 | Option | Description | Default | Type
 | `--description` | Include description in the ID column (if available) |  | boolean
+| `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--error` | Shows detailed information for routes that has error status |  | boolean
 | `--filter` | Filter routes by id, or url |  | String
 | `--filter-mean` | Filter routes that must be slower than the given time (ms) |  | long
@@ -27,6 +28,7 @@ camel get route [options]
 | `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter routes by limiting to the given number of rows |  | int
 | `--note` | Include note in the ID column (if available) |  | boolean
+| `--remote` | Break down counters into remote/total pairs |  | boolean
 | `--running` | Only include running routes |  | boolean
 | `--short-uri` | List endpoint URI without query parameters (short) |  | boolean
 | `--show-group` | Include group column |  | boolean

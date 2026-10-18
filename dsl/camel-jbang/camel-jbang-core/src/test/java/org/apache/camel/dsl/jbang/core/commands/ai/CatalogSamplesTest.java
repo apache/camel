@@ -41,6 +41,36 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void theInterceptEntriesAndDataFormatsHaveSamples() {
+        // CAMEL-25735: interceptFrom and interceptSendToEndpoint are on the page of intercept, after its own examples,
+        // and the data format page of the user manual has an example of dataFormats now
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String entry : List.of("interceptFrom", "interceptSendToEndpoint", "dataFormats")) {
+            JsonObject o = CatalogSamples.sample(catalog, entry, 2);
+            assertThat(o.getString("placement")).as(entry).contains("top-level");
+            JsonArray samples = (JsonArray) o.get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            for (Object s : samples) {
+                assertThat(((JsonObject) s).getString("yaml")).as(entry).startsWith("- " + entry + ":");
+            }
+        }
+    }
+
+    @Test
+    void theTopLevelEntriesDocumentedOnAnotherPageHaveSamples() {
+        // CAMEL-25719: their examples are on the page of what they belong to (route templates, the REST DSL,
+        // transformers, validators, the configuration utilities), which the samples did not read
+        for (String entry : List.of("templatedRoute", "restConfiguration", "transformers", "validators",
+                "sslContextParameters")) {
+            JsonObject o = CatalogSamples.sample(entry, 1);
+            assertThat(o.getString("placement")).as(entry).contains("top-level");
+            JsonArray samples = (JsonArray) o.get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            assertThat(((JsonObject) samples.get(0)).getString("yaml")).as(entry).startsWith("- " + entry + ":");
+        }
+    }
+
+    @Test
     void kebabCaseAndPartsResolveToTheEip() {
         JsonObject o = CatalogSamples.sample("circuit-breaker", 1);
         assertThat(o.getString("name")).isEqualTo("circuitBreaker");
@@ -371,12 +401,36 @@ public class CatalogSamplesTest {
         assertThat(jackson.getString("kind")).isEqualTo("dataformat");
         assertThat(source(jackson, 0)).startsWith("jackson2-dataformat.adoc");
         assertThat((Integer) jackson.get("count")).isEqualTo(2);
-        // bindyCsv is on the bindy page, which has no YAML example
+        // bindyCsv, bindyFixed and bindyKvp are on the bindy page, and the samples of the asked type come first
         assertThat(CatalogSamples.dataFormatPages(catalog, "bindyCsv")).containsExactly("bindy-dataformat");
         JsonObject bindy = CatalogSamples.sample(catalog, "bindyCsv", 1);
         assertThat(bindy.getString("kind")).isEqualTo("dataformat");
-        assertThat((Integer) bindy.get("count")).isZero();
-        assertThat(bindy.getString("hint")).contains("no YAML route example");
+        assertThat(source(bindy, 0)).startsWith("bindy-dataformat.adoc");
+        assertThat(yaml(bindy, 0)).contains("type: Csv");
+        assertThat(yaml(CatalogSamples.sample(catalog, "bindyFixed", 1), 0)).contains("type: Fixed");
+        assertThat(yaml(CatalogSamples.sample(catalog, "bindyKvp", 1), 0)).contains("type: KeyValue");
+        // the univocityTsv page shows the csv and fixed formats first, and its own sample comes first
+        assertThat(yaml(CatalogSamples.sample(catalog, "univocityTsv", 1), 0)).contains("univocityTsv:");
+        assertThat(CatalogSamples.dataFormatUse(catalog, "jackson")).isNull();
+    }
+
+    @Test
+    void aPageWithoutYamlExampleSaysSo() {
+        // a catalog whose python page has no YAML example; without a version its answers are not cached
+        CamelCatalog catalog = new DefaultCamelCatalog() {
+            @Override
+            public String getCatalogVersion() {
+                return null;
+            }
+
+            @Override
+            public String asciiDoc(String name) {
+                return "python-language".equals(name) ? "= Python Language\n\nNo route example.\n" : super.asciiDoc(name);
+            }
+        };
+        JsonObject python = CatalogSamples.sample(catalog, "language", "python", 1);
+        assertThat((Integer) python.get("count")).isZero();
+        assertThat(python.getString("hint")).contains("no YAML route example");
     }
 
     /** CAMEL-25370: the error handler has samples, both of its places, and its kinds resolve to it. */

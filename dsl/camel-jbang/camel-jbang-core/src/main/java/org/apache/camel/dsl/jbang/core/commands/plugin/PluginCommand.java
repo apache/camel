@@ -29,7 +29,6 @@ public class PluginCommand extends PluginBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        new CommandLine(new PluginGet(getMain())).execute();
-        return 0;
+        return runDefault(new PluginGet(getMain()));
     }
 }

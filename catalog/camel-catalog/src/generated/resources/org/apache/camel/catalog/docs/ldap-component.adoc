@@ -96,6 +96,22 @@ XML (Spring)::
   </constructor-arg>
 </bean>
 ----
+
+YAML::
++
+In YAML, the bean is the environment of the context, as a `Hashtable`.
+The component then creates a new `DirContext` for each message, as the prototype scope does in Spring.
++
+[source,yaml]
+----
+- beans:
+    - name: ldapserver
+      type: java.util.Hashtable
+      properties:
+        "[java.naming.factory.initial]": com.sun.jndi.ldap.LdapCtxFactory
+        "[java.naming.provider.url]": ldap://localhost:10389
+        "[java.naming.security.authentication]": none
+----
 ====
 
 The preceding example declares a regular Sun-based LDAP `DirContext`
@@ -143,6 +159,32 @@ if (results.size() > 0) {
   String deviceCN = (String) deviceCNAttr.get();
   // ...
 }
+----
+
+In a YAML route, the filter is the message body, and the result is a list of `SearchResult`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:findGroups
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "(member=uid=huntc,ou=users,ou=system)"
+        - to:
+            uri: ldap:ldapserver
+            parameters:
+              base: ou=mygroup,ou=groups,ou=system
+              returnedAttributes: cn
+        - filter:
+            expression:
+              simple:
+                expression: "${body.size} > 0"
+            steps:
+              - log:
+                  message: "Common Name: ${body[0].attributes.get('cn').get()}"
 ----
 
 If no specific filter is required (for example, you need to look

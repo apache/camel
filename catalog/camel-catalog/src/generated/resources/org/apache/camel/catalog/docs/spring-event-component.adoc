@@ -39,4 +39,37 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+A route that consumes from `spring-event:default` gets each application event of the Spring `ApplicationContext`
+as the message body. Use a filter to keep the events you need:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: spring-event:default
+      steps:
+        - filter:
+            expression:
+              simple:
+                expression: "${body} is 'com.example.OrderPlacedEvent'"
+            steps:
+              - log:
+                  message: "Order placed: ${body}"
+----
+
+A route that sends to `spring-event:default` publishes an event: the message body when it is an `ApplicationEvent`,
+otherwise a `CamelEvent` that holds the exchange:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:publish
+      steps:
+        - to:
+            uri: spring-event:default
+----
+
 

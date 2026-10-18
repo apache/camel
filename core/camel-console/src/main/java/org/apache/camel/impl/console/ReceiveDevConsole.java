@@ -164,10 +164,13 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             if (removeOnDump) {
                 q.clear();
             }
-            JsonObject jo = (JsonObject) arr.get(0);
-            firstTimestamp = jo.getLongOrDefault("timestamp", 0);
-            jo = (JsonObject) arr.get(arr.size() - 1);
-            lastTimestamp = jo.getLongOrDefault("timestamp", 0);
+            // nothing may have been received since the last dump
+            if (!arr.isEmpty()) {
+                JsonObject jo = (JsonObject) arr.get(0);
+                firstTimestamp = jo.getLongOrDefault("timestamp", 0);
+                jo = (JsonObject) arr.get(arr.size() - 1);
+                lastTimestamp = jo.getLongOrDefault("timestamp", 0);
+            }
             String json = arr.toJson();
             sb.append(json).append("\n");
             return sb.toString();
@@ -216,10 +219,13 @@ public class ReceiveDevConsole extends AbstractDevConsole {
             if (removeOnDump) {
                 q.clear();
             }
-            JsonObject first = (JsonObject) messages.get(0);
-            firstTimestamp = first.getLongOrDefault("timestamp", 0);
-            JsonObject last = (JsonObject) messages.get(messages.size() - 1);
-            lastTimestamp = last.getLongOrDefault("timestamp", 0);
+            // nothing may have been received since the last dump
+            if (!messages.isEmpty()) {
+                JsonObject first = (JsonObject) messages.get(0);
+                firstTimestamp = first.getLongOrDefault("timestamp", 0);
+                JsonObject last = (JsonObject) messages.get(messages.size() - 1);
+                lastTimestamp = last.getLongOrDefault("timestamp", 0);
+            }
 
             Response response = new Response(messages, null, null, null, null, null, null, null, null);
             return JsonRecordSupport.toJsonObject(response);

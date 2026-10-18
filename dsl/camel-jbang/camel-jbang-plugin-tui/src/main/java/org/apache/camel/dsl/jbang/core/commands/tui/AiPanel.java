@@ -644,13 +644,11 @@ class AiPanel {
                 toolSet.setMode(normalizeToolMode(TuiSettings.load().getAiTools()));
             }
             client = created;
-            if (!client.detectEndpoint()) {
-                initError
-                        = "No LLM service reachable. Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or start Ollama.";
+            initError = AiProviderSelector.detectEndpoint(client);
+            if (initError != null) {
                 client = null;
                 return;
             }
-            initError = null;
             // know the Ollama window before the first question instead of resolving it in front of the first request
             client.resolveOllamaContextWindowInBackground();
             messages = new ArrayList<>();
@@ -2041,7 +2039,7 @@ class AiPanel {
         StringBuilder md = new StringBuilder();
 
         if (initError != null) {
-            if (initError.startsWith("No LLM service reachable")) {
+            if (initError.startsWith(AiProviderSelector.NO_PROVIDER)) {
                 md.append(buildAiSetupGuide());
             } else {
                 md.append("**Error:** ").append(initError).append("\n\n");
@@ -2690,7 +2688,7 @@ class AiPanel {
         }
         try {
             return toolRegistry.execute(name, args);
-        } catch (IllegalArgumentException e) {
+        } catch (TuiToolRegistry.UnknownToolException e) {
             return "Unknown TUI tool: " + name;
         } catch (Exception e) {
             return "Error executing " + name + ": " + e.getMessage();

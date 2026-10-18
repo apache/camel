@@ -86,10 +86,18 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
     protected final CamelContext context;
     private final LoadTriplet load = new LoadTriplet();
     private final String jmxDomain;
+    // whether the consumer of the route is remote, so all its exchanges came from a remote endpoint
+    private final boolean remoteConsumer;
+    // the exchanges from a remote endpoint that a route with an internal consumer processed
+    private final Statistic remoteExchangesTotal = new StatisticCounter();
+    private final Statistic remoteExchangesCompleted = new StatisticCounter();
+    private final Statistic remoteExchangesFailed = new StatisticCounter();
+    private final Statistic remoteExchangesInflight = new StatisticCounter();
 
     public ManagedRoute(CamelContext context, Route route) {
         this.route = route;
         this.context = context;
+        this.remoteConsumer = route.getEndpoint() != null && route.getEndpoint().isRemote();
         this.description = route.getDescription();
         this.note = route.getNote();
         this.configurationId = route.getConfigurationId();
@@ -793,6 +801,70 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
     public void reset() {
         super.reset();
         load.reset();
+        remoteExchangesTotal.reset();
+        remoteExchangesCompleted.reset();
+        remoteExchangesFailed.reset();
+        // do not reset remoteExchangesInflight
+    }
+
+    @Override
+    public void processExchange(Exchange exchange, String type) {
+        super.processExchange(exchange, type);
+        if (fromRemote(exchange)) {
+            remoteExchangesInflight.increment();
+        }
+    }
+
+    @Override
+    public void completedExchange(Exchange exchange, long time) {
+        super.completedExchange(exchange, time);
+        if (fromRemote(exchange)) {
+            remoteExchangesInflight.decrement();
+            if (isStatisticsEnabled()) {
+                remoteExchangesTotal.increment();
+                remoteExchangesCompleted.increment();
+            }
+        }
+    }
+
+    @Override
+    public void failedExchange(Exchange exchange) {
+        super.failedExchange(exchange);
+        if (fromRemote(exchange)) {
+            remoteExchangesInflight.decrement();
+            if (isStatisticsEnabled()) {
+                remoteExchangesTotal.increment();
+                remoteExchangesFailed.increment();
+            }
+        }
+    }
+
+    /**
+     * Whether the exchange came from a remote endpoint, counted by a route with an internal consumer only: all the
+     * exchanges of a route with a remote consumer came from it, so its own counters are its remote counters.
+     */
+    private boolean fromRemote(Exchange exchange) {
+        return !remoteConsumer && exchange.getFromEndpoint() != null && exchange.getFromEndpoint().isRemote();
+    }
+
+    @Override
+    public long getRemoteExchangesTotal() {
+        return remoteConsumer ? getExchangesTotal() : remoteExchangesTotal.getValue();
+    }
+
+    @Override
+    public long getRemoteExchangesCompleted() {
+        return remoteConsumer ? getExchangesCompleted() : remoteExchangesCompleted.getValue();
+    }
+
+    @Override
+    public long getRemoteExchangesFailed() {
+        return remoteConsumer ? getExchangesFailed() : remoteExchangesFailed.getValue();
+    }
+
+    @Override
+    public long getRemoteExchangesInflight() {
+        return remoteConsumer ? getExchangesInflight() : remoteExchangesInflight.getValue();
     }
 
     @Override

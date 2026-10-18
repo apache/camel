@@ -18,7 +18,6 @@ package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +30,7 @@ class PluginDeleteTest extends CamelCommandBaseTestSupport {
     public void setup() throws Exception {
         super.setup();
 
-        CommandLineHelper.useHomeDir("target");
+        useTestHomeDir();
         PluginHelper.createPluginConfig();
     }
 
@@ -52,9 +51,10 @@ class PluginDeleteTest extends CamelCommandBaseTestSupport {
     public void shouldHandleUnknownPlugin() throws Exception {
         PluginDelete command = new PluginDelete(new CamelJBangMain().withPrinter(printer));
         command.name = "foo";
-        command.doCall();
+        int exit = command.doCall();
 
-        Assertions.assertEquals("ERROR: Plugin foo not found in configuration", printer.getOutput());
+        Assertions.assertEquals(3, exit);
+        Assertions.assertEquals("ERROR: Plugin foo not found in configuration", printer.getStderr());
 
         Assertions.assertEquals("{\"plugins\":{}}", PluginHelper.getOrCreatePluginConfig().toJson());
     }

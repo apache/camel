@@ -26,7 +26,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -43,6 +45,10 @@ import picocli.CommandLine.Command;
                  "  camel get groovy --watch" })
 public class ListGroovy extends ProcessWatchCommand {
 
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .number("pid", r -> r.pid)
+            .text("name", r -> r.name);
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
@@ -58,59 +64,54 @@ public class ListGroovy extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
 
-                        JsonObject jo = (JsonObject) root.get("groovy");
-                        if (jo != null) {
-                            jo = (JsonObject) jo.get("compiler");
-                        }
-                        if (jo != null) {
-                            row = row.copy();
-                            row.compiledCounter = jo.getInteger("compiledCounter");
-                            row.preloaddCounter = jo.getInteger("preloadedCounter");
-                            row.classesSize = jo.getInteger("classesSize");
-                            row.time = jo.getLong("compiledTime");
-                            row.last = jo.getLong("lastCompilationTimestamp");
-                            row.compiledClasses.clear();
-                            JsonArray arr = jo.getCollection("classes");
-                            for (int i = 0; arr != null && i < arr.size(); i++) {
-                                row.compiledClasses.add(arr.getString(i));
-                            }
-                            rows.add(row);
-                        }
-                    }
-                });
+            JsonObject jo = (JsonObject) root.get("groovy");
+            if (jo != null) {
+                jo = (JsonObject) jo.get("compiler");
+            }
+            if (jo != null) {
+                row = row.copy();
+                row.compiledCounter = jo.getInteger("compiledCounter");
+                row.preloaddCounter = jo.getInteger("preloadedCounter");
+                row.classesSize = jo.getInteger("classesSize");
+                row.time = jo.getLong("compiledTime");
+                row.last = jo.getLong("lastCompilationTimestamp");
+                row.compiledClasses.clear();
+                JsonArray arr = jo.getCollection("classes");
+                for (int i = 0; arr != null && i < arr.size(); i++) {
+                    row.compiledClasses.add(arr.getString(i));
+                }
+                rows.add(row);
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("preload", r.preloaddCounter);
                     jo.put("compile", r.compiledCounter);
-                    jo.put("time", getTime(r));
+                    jo.put("time", r.time);
                     jo.put("since", getLast(r));
-                    jo.put("classes", getClasses(r));
+                    jo.put("lastTimestamp", r.last > 0 ? r.last : null);
+                    jo.put("classes", r.compiledClasses);
                     return jo;
                 }).collect(Collectors.toList())));
             } else {
@@ -155,24 +156,7 @@ public class ListGroovy extends ProcessWatchCommand {
         return String.join("\n", r.compiledClasses);
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            default:
-                return 0;
-        }
-    }
-
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         int compiledCounter;
@@ -181,14 +165,6 @@ public class ListGroovy extends ProcessWatchCommand {
         long time;
         long last;
         List<String> compiledClasses = new ArrayList<>();
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }

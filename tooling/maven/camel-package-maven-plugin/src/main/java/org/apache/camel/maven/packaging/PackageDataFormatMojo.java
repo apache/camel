@@ -356,6 +356,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             option.setPrefix(opt.getPrefix());
             option.setOptionalPrefix(opt.getOptionalPrefix());
             option.setMultiValue(opt.isMultiValue());
+            option.setMultiEnum(opt.isMultiEnum());
             option.setDeprecated(opt.isDeprecated());
             option.setDeprecationNote(opt.getDeprecationNote());
             option.setSecret(opt.isSecret());

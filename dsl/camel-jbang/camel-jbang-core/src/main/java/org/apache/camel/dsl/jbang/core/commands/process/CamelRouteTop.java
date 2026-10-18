@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -24,7 +25,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Top performing routes",
@@ -41,6 +44,10 @@ public class CamelRouteTop extends CamelRouteStatus {
 
     @Override
     protected void printTable(List<Row> rows, boolean remoteVisible) {
+        if (jsonOutput) {
+            super.printTable(rows, remoteVisible);
+            return;
+        }
         // Flexible column: FROM (40)
         // Fixed columns: PID(8)+NAME(30)+GROUP(20)+ID(25)+REMOTE(6)+STATUS(8)+AGE(8)+LOAD(12)+TOTAL(5)+FAIL(4)+INFLIGHT(8)+MEAN(4)+MIN(3)+MAX(3)+SINCE-LAST(10) ~= 154
         int tw = terminalWidth();
@@ -73,44 +80,24 @@ public class CamelRouteTop extends CamelRouteStatus {
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
+    @Override
+    protected JsonObject toJson(Row r) {
+        JsonObject jo = super.toJson(r);
+        // the load averages of the last 1, 5 and 15 minutes
+        jo.put("load01", JsonValues.decimal(r.load01));
+        jo.put("load05", JsonValues.decimal(r.load05));
+        jo.put("load15", JsonValues.decimal(r.load15));
+        return jo;
+    }
+
     private String getLoad(Row r) {
-        String s1 = r.load01 != null ? r.load01 : "-";
-        String s2 = r.load05 != null ? r.load05 : "-";
-        String s3 = r.load15 != null ? r.load15 : "-";
-        if ("0.00".equals(s1)) {
-            s1 = "-";
-        }
-        if ("0.00".equals(s2)) {
-            s2 = "-";
-        }
-        if ("0.00".equals(s3)) {
-            s3 = "-";
-        }
-        if (s1.equals("-") && s2.equals("-") && s3.equals("-")) {
-            return "0/0/0";
-        }
-        return s1 + "/" + s2 + "/" + s3;
+        return ListingFormat.load(r.load01, r.load05, r.load15);
     }
 
     @Override
-    protected int sortRow(Row o1, Row o2) {
-        // use super to group by first
-        int answer = super.sortRow(o1, o2);
-        if (answer == 0) {
-            int negate = 1;
-            if (sort.startsWith("-")) {
-                negate = -1;
-            }
-            // sort for highest mean value as we want the slowest in the top
-            long m1 = o1.mean != null ? Long.parseLong(o1.mean) : 0;
-            long m2 = o2.mean != null ? Long.parseLong(o2.mean) : 0;
-            if (m1 < m2) {
-                answer = negate;
-            } else if (m1 > m2) {
-                answer = -1 * negate;
-            }
-        }
-        return answer;
+    protected Comparator<Row> order() {
+        // then the slowest first, as the top shows the slowest
+        return super.order().thenComparing(ListingFormat.<Row> slowestFirst(sort, r -> r.mean));
     }
 
 }

@@ -614,7 +614,7 @@ final class BeanRefChecks {
 
     /** The languages whose text is a script that returns a value (a returned 'resource:...' string stays text). */
     private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "jq", "js", "javascript", "python", "mvel",
-            "ognl", "java", "spel", "jactl", "quickjs", "datasonnet", "wasm");
+            "ognl", "java", "spel", "jactl", "quickjs", "datasonnet");
     /** A quoted resource:... literal inside a script: the script returns that text. */
     private static final Pattern QUOTED_RESOURCE_LITERAL
             = Pattern.compile("['\"](resource:(?:classpath:|file:|ref:|bean:)?[^'\"\\\\\\s]+)['\"]");

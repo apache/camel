@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.yaml.validator.DocBlocks;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -195,7 +196,6 @@ public final class CatalogSamples {
         return sample(catalog, null, name, limit);
     }
 
-    private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\s*\\n----\\n(.*?)\\n----", Pattern.DOTALL);
     private static final Map<String, Found> DOC_CACHE = new ConcurrentHashMap<>();
 
     /** The validated examples of a page family, and for a component whether any of them uses its endpoint. */
@@ -226,7 +226,7 @@ public final class CatalogSamples {
         try {
             found = switch (kind) {
                 case "component" -> componentSamples(catalog, key);
-                case "dataformat" -> pageSamples(catalog, dataFormatPages(catalog, key), null);
+                case "dataformat" -> pageSamples(catalog, dataFormatPages(catalog, key), dataFormatUse(catalog, key));
                 case "language" -> pageSamples(catalog, List.of(key + "-language"), null);
                 default -> eipSamples(catalog, key);
             };
@@ -242,7 +242,22 @@ public final class CatalogSamples {
         return found;
     }
 
+    /**
+     * The entries whose examples are on the page of another EIP, after the examples of that EIP: interceptFrom and
+     * interceptSendToEndpoint are on the page of intercept, and had no sample (CAMEL-25735).
+     */
+    static final Map<String, String> SAMPLES_ON_PAGE_OF
+            = Map.of("interceptFrom", "intercept", "interceptSendToEndpoint", "intercept");
+
     private static Found eipSamples(CamelCatalog catalog, String key) {
+        String host = SAMPLES_ON_PAGE_OF.get(key);
+        if (host != null) {
+            // the examples of the page that start with the entry, not those of the EIP the page is about
+            String start = "- " + key + ":";
+            List<Map<String, String>> own = eipSamples(catalog, host).samples().stream()
+                    .filter(s -> s.get("yaml").stripLeading().startsWith(start)).toList();
+            return own.isEmpty() ? Found.NONE : new Found(own, false);
+        }
         for (String candidate : List.of(key + "-eip", kebab(key) + "-eip", kebab(key), key)) {
             if (catalog.asciiDoc(candidate) != null) {
                 return pageSamples(catalog, List.of(candidate), null);
@@ -274,13 +289,10 @@ public final class CatalogSamples {
             if (doc == null) {
                 continue;
             }
-            Matcher m = YAML_BLOCK.matcher(doc);
-            while (m.find()) {
-                String yaml = m.group(1).stripTrailing() + "\n";
-                if (!yaml.stripLeading().startsWith("- ")) {
-                    // a fragment (an option list, a manifest), not a route file
-                    continue;
-                }
+            // the route examples as the doc-samples plugin and the documentation tests read them (CAMEL-25736): a
+            // longer delimiter and a leading comment are fine, callout markers are left out, and a block marked as
+            // what to avoid is no sample; the fragments (an option list, a manifest) are not route files
+            for (String yaml : DocBlocks.examples(doc)) {
                 if (!SourceValidator.validateYamlSchema(yaml, catalog).isEmpty()) {
                     continue;
                 }
@@ -715,6 +727,28 @@ public final class CatalogSamples {
         return variants;
     }
 
+    /**
+     * What the samples that use the data format itself write, to put them first: a page can show its siblings too (the
+     * univocity pages show the csv, fixed and tsv formats), and bindyCsv, bindyFixed and bindyKvp are all bindy, with
+     * the type Csv, Fixed or KeyValue.
+     */
+    static Pattern dataFormatUse(CamelCatalog catalog, String name) {
+        DataFormatModel model = catalog.findDataFormatNames().contains(name) ? catalog.dataFormatModel(name) : null;
+        if (model == null) {
+            return null;
+        }
+        if (name.equals(model.getModelName())) {
+            return Pattern.compile("^[\\s-]*" + Pattern.quote(name) + ":", Pattern.MULTILINE);
+        }
+        return model.getOptions().stream()
+                .filter(o -> "type".equals(o.getName()) && o.getDefaultValue() != null)
+                .findFirst()
+                .map(o -> Pattern.compile(
+                        "^\\s*type:\\s*[\"']?" + Pattern.quote(o.getDefaultValue().toString()) + "[\"']?\\s*$",
+                        Pattern.MULTILINE))
+                .orElse(null);
+    }
+
     static String normalizeKind(String kind) {
         if (kind == null || kind.isBlank()) {
             return null;
@@ -813,6 +847,13 @@ public final class CatalogSamples {
             return partOf;
         }
         for (String k : samples().keySet()) {
+            if (k.equalsIgnoreCase(n)) {
+                return k;
+            }
+        }
+        // an entry whose examples are on the page of another EIP, which the shipped set does not have: they come from
+        // the catalog's documentation (CAMEL-25735)
+        for (String k : SAMPLES_ON_PAGE_OF.keySet()) {
             if (k.equalsIgnoreCase(n)) {
                 return k;
             }

@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,11 +62,10 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
         // no status file written, so the mocked process does not match "*" and files stays empty (the default)
         CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
 
-        int exit = callWithSingleProcess(command);
+        CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
-        assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("No running Camel integration found"),
-                "should report no running integration, was: " + printer.getOutput());
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("No running Camel integration found", e.getMessage(), "should report no running integration");
     }
 
     @Test
@@ -74,11 +76,10 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
         // "doesNotExist" matches no running process, so it is tried as a source file next
         command.files = List.of("doesNotExist");
 
-        int exit = callWithSingleProcess(command);
+        CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
-        assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("File does not exist: doesNotExist"),
-                "should report the missing source file, was: " + printer.getOutput());
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("File does not exist: doesNotExist", e.getMessage(), "should report the missing source file");
     }
 
     @Test
@@ -91,13 +92,12 @@ class CamelRouteTopologyActionTest extends ActionCommandTestSupport {
         CamelRouteTopologyAction command = new CamelRouteTopologyAction(new CamelJBangMain().withPrinter(printer));
         command.files = List.of("route1", "route2");
 
-        int exit = command.doCall();
+        CliException e = assertThrows(CliException.class, command::doCall);
 
-        assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("File does not exist: route1"),
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("File does not exist: route1", e.getMessage(),
                 "with 2+ file args, dispatch must go straight to source-file handling and skip the "
-                                                                                + "running-integration lookup entirely, was: "
-                                                                                + printer.getOutput());
+                                                                    + "running-integration lookup entirely");
     }
 
     // Note: the actual doCallSource -> Run.runTransform spawn path (successfully rendering topology from a real

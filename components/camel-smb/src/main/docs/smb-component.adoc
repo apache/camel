@@ -40,6 +40,31 @@ include::partial$component-endpoint-headers.adoc[]
 == Producer
 
 For the SMB producer to operate correctly, the header `Exchange.FILE_NAME` has to be included in the exchange.
+The following route writes a file to the share, and sets its name in the `CamelFileName` header:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:report
+      parameters:
+        repeatCount: 1
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: Hello from Camel
+        - setHeader:
+            name: CamelFileName
+            expression:
+              simple:
+                expression: "report-${date:now:yyyyMMdd}.txt"
+        - to:
+            uri: smb:myserver/data
+            parameters:
+              username: "{{smb.username}}"
+              password: "{{smb.password}}"
+----
 
 == Examples
 
@@ -63,6 +88,25 @@ public void configure() {
 ----
 
 NOTE: you may also get the file contents as an InputStream using `exchange.getMessage().getBody(InputStream.class)`.
+
+In YAML, a route that polls the share and logs the content of each file looks like this:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: smb:myserver/data
+      parameters:
+        username: "{{smb.username}}"
+        password: "{{smb.password}}"
+        move: done
+      steps:
+        - log:
+            message: "Read ${header.CamelFileName}: ${body}"
+----
+
+The consumer leaves the files on the share by default, and reads them again on the next poll.
+Set `move` (as above), `delete` or `noop`, so that each file is read once.
 
 === Polling files (advanced)
 

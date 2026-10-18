@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,8 +53,10 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusExtensionRegistryMixin;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -79,6 +82,12 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_IN
                              "  camel version list --runtime=spring-boot",
                              "  camel version list --lts" })
 public class VersionList extends CamelCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .by("version", (o1, o2) -> VersionHelper.compare(o1.camelVersion, o2.camelVersion))
+            .by("date", Comparator.comparing((Row r) -> r.releaseDate != null ? r.releaseDate : ""))
+            // the most days since the release first
+            .by("days", Comparator.comparingLong((Row r) -> r.daysSince).reversed());
 
     private static final String VERSION_LIST_CHECKER = ".camel-jbang-version-list.json";
 
@@ -128,16 +137,19 @@ public class VersionList extends CamelCommand {
     @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
     public boolean lts;
 
-    @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true")
+    @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true",
+                        arity = "0..1", fallbackValue = "true")
     public boolean eol = true;
 
-    @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true")
+    @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true",
+                        arity = "0..1", fallbackValue = "true")
     public boolean patch = true;
 
     @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
     public boolean rc;
 
-    @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true")
+    @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true",
+                        arity = "0..1", fallbackValue = "true")
     public boolean days;
 
     @CommandLine.Option(names = { "--date-format" }, description = "The format to show the date (such as dd-MM-yyyy)",
@@ -160,6 +172,18 @@ public class VersionList extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // the options are wrong whatever the releases are, so before reading them
+        Comparator<Row> order = ORDER.comparator(sort);
+        if (dateFormat != null) {
+            try {
+                new SimpleDateFormat(dateFormat, Locale.US);
+            } catch (IllegalArgumentException e) {
+                throw CliException.usage("--date-format must be a date pattern such as dd-MM-yyyy, was: " + dateFormat);
+            }
+        }
+        requireDate("--from-date", fromDate);
+        requireDate("--to-date", toDate);
+
         // ensure from and to-version have major.minor
         if (fromVersion != null) {
             if (!(fromVersion.contains(".") || fromVersion.contains(","))) {
@@ -223,7 +247,7 @@ public class VersionList extends CamelCommand {
         }
 
         // sort rows
-        rows = rows.sorted(sortRows());
+        rows = rows.sorted(order);
 
         List<Row> rowsList = rows.toList();
         if (tail > 0) {
@@ -284,14 +308,25 @@ public class VersionList extends CamelCommand {
                     }
                 }
             }
+            // not part of the table
             if (date != null) {
-                printer().println("Last updated: " + date + " (use --fresh to update list from internet)");
+                printer().printDiagnostic("Last updated: " + date + " (use --fresh to update list from internet)");
             } else {
-                printer().println("Last updated: none (use --fresh to update list from internet)");
+                printer().printDiagnostic("Last updated: none (use --fresh to update list from internet)");
             }
         }
 
         return 0;
+    }
+
+    private static void requireDate(String option, String date) {
+        if (date != null) {
+            try {
+                LocalDate.parse(date, DateTimeFormatter.ofPattern(YYYY_MM_DD));
+            } catch (DateTimeParseException e) {
+                throw CliException.usage(option + " must be a date such as 2025-01-31, was: " + date);
+            }
+        }
     }
 
     public static JsonObject updateCheckerFile(JsonObject root, String runtime, String repositories) {
@@ -403,10 +438,8 @@ public class VersionList extends CamelCommand {
             return versions;
 
         } catch (Exception e) {
-            printer().printErr("Error downloading available Camel versions due to: " + e.getMessage());
+            throw CliException.failure("Error downloading available Camel versions due to: " + e.getMessage());
         }
-
-        return Stream.of();
     }
 
     private Stream<Row> filterVersions(Stream<CamelAndRuntimeVersions> versions, List<ReleaseModel> releases) throws Exception {
@@ -480,31 +513,6 @@ public class VersionList extends CamelCommand {
             // ignore
         }
         return true;
-    }
-
-    protected Comparator<Row> sortRows() {
-        String s = sort;
-        final int negate;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        } else {
-            negate = 1;
-        }
-        switch (s) {
-            case "version":
-                return (o1, o2) -> VersionHelper.compare(o1.camelVersion, o2.camelVersion) * negate;
-            case "date":
-                return (o1, o2) -> {
-                    String d1 = o1.releaseDate != null ? o1.releaseDate : "";
-                    String d2 = o2.releaseDate != null ? o2.releaseDate : "";
-                    return d1.compareTo(d2) * negate;
-                };
-            case "days":
-                return (o1, o2) -> Long.compare(o2.daysSince, o1.daysSince) * negate;
-            default:
-                return (o1, o2) -> 0;
-        }
     }
 
     private String jdkVersion(Row r) {

@@ -18,12 +18,16 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.main.KameletMain;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class RunTest extends CamelCommandBaseTestSupport {
 
@@ -84,6 +88,26 @@ class RunTest extends CamelCommandBaseTestSupport {
         CommandLine.populateCommand(command, "--java-version=21", "route.yaml");
 
         Assertions.assertEquals("21", command.javaVersion);
+    }
+
+    @Test
+    public void shouldExpectRoutes() {
+        KameletMain main = mock(KameletMain.class);
+        when(main.getCamelContext()).thenReturn(new DefaultCamelContext());
+
+        Run command = new Run(new CamelJBangMain());
+        assertThat(command.hasNoRoutes(main)).isTrue();
+
+        // files can be added or changed later
+        command.dev = true;
+        assertThat(command.hasNoRoutes(main)).isFalse();
+        command = new Run(new CamelJBangMain());
+        command.sourceDir = "src";
+        assertThat(command.hasNoRoutes(main)).isFalse();
+        // or no files are wanted
+        command = new Run(new CamelJBangMain());
+        command.empty = true;
+        assertThat(command.hasNoRoutes(main)).isFalse();
     }
 
     @Test

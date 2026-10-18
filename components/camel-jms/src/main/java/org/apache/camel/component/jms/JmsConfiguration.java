@@ -692,6 +692,10 @@ public class JmsConfiguration implements Cloneable {
                     if (ttl <= 0) {
                         ttl = 1;
                     }
+                } else {
+                    // the message has no expiration, so use the time to live of the endpoint (timeToLive, or the
+                    // requestTimeout for request/reply), which is 0 (never expires) when none is configured
+                    ttl = this.getTimeToLive();
                 }
 
                 int priority = message.getJMSPriority();

@@ -36,17 +36,22 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
+import org.apache.camel.dsl.jbang.core.common.ChildProcess;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
-import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.support.LoggerHelper;
-import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -83,6 +88,9 @@ import static org.apache.camel.util.IOHelper.buffered;
                  "  camel debug hello.java --stop-on-exit=false" })
 public class Debug extends Run {
 
+    // how long a command to the debugger in the integration may wait until the integration took it
+    private static final long DEBUG_COMMAND_TIMEOUT = 5000;
+
     @CommandLine.Option(names = { "--remote-attach" },
                         description = "Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger)")
     boolean remoteAttach;
@@ -95,7 +103,7 @@ public class Debug extends Run {
                         description = "File to store the current message body (will override). This allows for manual inspecting the message later.")
     String output;
 
-    @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to stop the running Camel on exit")
     boolean stopOnExit = true;
 
@@ -103,7 +111,7 @@ public class Debug extends Run {
                         description = "Number of log lines to display on top of screen")
     int logLines = 10;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Print timestamp.")
     boolean timestamp = true;
 
@@ -123,19 +131,19 @@ public class Debug extends Run {
                         description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in debug messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
@@ -146,6 +154,7 @@ public class Debug extends Run {
     private MessageTableHelper tableHelper;
 
     // state from spawned debugging process
+    private Process spawnProcess;
     private InputStream spawnOutput;
     private InputStream spawnError;
     private final List<String> logBuffer = new ArrayList<>(100);
@@ -160,6 +169,11 @@ public class Debug extends Run {
 
     @Override
     public Integer doCall() throws Exception {
+        // the debugger reads its commands from the terminal
+        requireInteractiveTerminal("camel debug");
+        if (!remoteAttach) {
+            checkFilesExist();
+        }
         if (!exportRun) {
             printConfigurationValues("Debugging integration with the following configuration:");
         }
@@ -217,39 +231,41 @@ public class Debug extends Run {
                         // ignore
                     }
                 }
-                return -1;
+                return debugExitCode();
             }
         } while (exit == 0 && !quit.get());
 
         return 0;
     }
 
-    private Integer runRemoteAttach() {
-        // find PID of running apps (if there are multiple then filter by name)
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return -1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return -1;
+    // the debugged integration has ended: its exit code when it was spawned by this command
+    private int debugExitCode() {
+        if (spawnProcess != null && !spawnProcess.isAlive()) {
+            return spawnProcess.exitValue();
         }
-        long pid = pids.get(0);
+        return spawnPid == 0 ? CliExitCode.FAILURE : CliExitCode.OK;
+    }
 
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
+    private Integer runRemoteAttach() {
+        // the running integration to attach to (exactly one, or exit 3)
+        long pid = ProcessFinder.requireOne(name).pid();
 
+        JsonObject root = new JsonObject();
+        root.put("action", "cli-debug");
+        root.put("command", "attach");
+        if (breakpoint != null) {
+            root.put("breakpoint", breakpoint);
+        }
+        ActionResult result;
         try {
-            JsonObject root = new JsonObject();
-            root.put("action", "cli-debug");
-            root.put("command", "attach");
-            if (breakpoint != null) {
-                root.put("breakpoint", breakpoint);
-            }
-            Path f = getActionFile(Long.toString(pid));
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
-            return -1;
+            result = ActionClient.send(pid, root, DEBUG_COMMAND_TIMEOUT);
+        } catch (IOException e) {
+            printer().printErr("Cannot attach the debugger to PID " + pid + ": " + e.getMessage());
+            return CliExitCode.FAILURE;
+        }
+        if (!result.isOk()) {
+            printer().printErr("Cannot attach the debugger to PID " + pid + ": " + result.error());
+            return result.exitCode();
         }
 
         // attach to this pid
@@ -379,45 +395,26 @@ public class Debug extends Run {
             printer().println("Preparing Camel Spring Boot for debugging ...");
 
             // use maven wrapper if present
-            String mvnw = "mvnw";
-            if (FileUtil.isWindows()) {
-                mvnw = "mvnw.cmd";
-            }
-            if (!new File(mvnw).exists()) {
-                mvnw = "mvn";
-            }
+            String mvnw = MavenCommand.of(Path.of("."));
             // use maven to build the JAR and then run the JAR after-wards
             ProcessBuilder pb = new ProcessBuilder();
             pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "spring-boot:repackage");
             pb.inheritIO();
             Process p = pb.start();
 
-            if (p.waitFor(120, TimeUnit.SECONDS)) {
+            boolean built = p.waitFor(120, TimeUnit.SECONDS);
+            if (built && p.exitValue() != 0) {
+                printer().printErr("Building Camel Spring Boot for debugging failed (exit code " + p.exitValue() + ")");
+                return CliExitCode.FAILURE;
+            }
+            if (built) {
                 AtomicReference<Process> processRef = new AtomicReference<>();
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                    try {
-                        // We need to wait for the process to exit before doing any cleanup
-                        Process process = processRef.get();
-                        if (process != null) {
-                            process.destroy();
-                            for (int i = 0; i < 30; i++) {
-                                if (!process.isAlive()) {
-                                    break;
-                                }
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                }
-                            }
-                        }
-                        removeDir(Paths.get(RUN_PLATFORM_DIR));
-                        removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
-                        Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
-                    } catch (Exception e) {
-                        // Ignore
-                    }
-                }));
+                // the process (and those it started) stops with this JVM, then the files of the run are removed
+                ChildProcess.stopOnExit(processRef::get, () -> {
+                    removeDir(Paths.get(RUN_PLATFORM_DIR));
+                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
+                });
 
                 // okay build is complete then run java
                 pb = new ProcessBuilder();
@@ -436,13 +433,14 @@ public class Debug extends Run {
                 this.spawnOutput = p.getInputStream();
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
+                this.spawnProcess = p;
                 printer().println("Debugging Camel Spring Boot integration: " + name + " with PID: " + p.pid());
             } else {
                 printer().printErr("Timed out preparing Camel Spring Boot for debugging");
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
                 p.destroy();
-                return -1;
+                return CliExitCode.TIMEOUT;
             }
         }
 
@@ -504,45 +502,26 @@ public class Debug extends Run {
             printer().println("Preparing Camel Quarkus for debugging ...");
 
             // use maven wrapper if present
-            String mvnw = "mvnw";
-            if (FileUtil.isWindows()) {
-                mvnw = "mvnw.cmd";
-            }
-            if (!new File(mvnw).exists()) {
-                mvnw = "mvn";
-            }
+            String mvnw = MavenCommand.of(Path.of("."));
             // use maven to build the JAR and then run the JAR after-wards
             ProcessBuilder pb = new ProcessBuilder();
             pb.command(mvnw, "-Dmaven.test.skip", "--file", "camel-jbang-debug-pom.xml", "package", "quarkus:build");
             pb.inheritIO();
             Process p = pb.start();
 
-            if (p.waitFor(120, TimeUnit.SECONDS)) {
+            boolean built = p.waitFor(120, TimeUnit.SECONDS);
+            if (built && p.exitValue() != 0) {
+                printer().printErr("Building Camel Quarkus for debugging failed (exit code " + p.exitValue() + ")");
+                return CliExitCode.FAILURE;
+            }
+            if (built) {
                 AtomicReference<Process> processRef = new AtomicReference<>();
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                    try {
-                        // We need to wait for the process to exit before doing any cleanup
-                        Process process = processRef.get();
-                        if (process != null) {
-                            process.destroy();
-                            for (int i = 0; i < 30; i++) {
-                                if (!process.isAlive()) {
-                                    break;
-                                }
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                }
-                            }
-                        }
-                        removeDir(Paths.get(RUN_PLATFORM_DIR));
-                        removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
-                        Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
-                    } catch (Exception e) {
-                        // Ignore
-                    }
-                }));
+                // the process (and those it started) stops with this JVM, then the files of the run are removed
+                ChildProcess.stopOnExit(processRef::get, () -> {
+                    removeDir(Paths.get(RUN_PLATFORM_DIR));
+                    removeDir(Paths.get(CAMEL_JBANG_WORK_DIR));
+                    Files.deleteIfExists(Paths.get("camel-jbang-debug-pom.xml"));
+                });
 
                 // okay build is complete then run java
                 pb = new ProcessBuilder();
@@ -560,13 +539,14 @@ public class Debug extends Run {
                 this.spawnOutput = p.getInputStream();
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
+                this.spawnProcess = p;
                 printer().println("Debugging Camel Quarkus integration: " + name + " with PID: " + p.pid());
             } else {
                 printer().printErr("Timed out preparing Camel Quarkus for debugging");
                 this.spawnError = p.getErrorStream();
                 this.spawnPid = p.pid();
                 p.destroy();
-                return -1;
+                return CliExitCode.TIMEOUT;
             }
         }
 
@@ -580,11 +560,7 @@ public class Debug extends Run {
         cmds.remove(0);
         cmds.add(0, "run");
 
-        cmds.remove("--background=true");
-        cmds.remove("--background");
-        cmds.remove("--background-wait=true");
-        cmds.remove("--background-wait=false");
-        cmds.remove("--background-wait");
+        cmds = BackgroundWait.withoutBackgroundOptions(cmds);
 
         // remove args from debug that are not supported by run
         removeDebugOnlyOptions(cmds);
@@ -608,6 +584,7 @@ public class Debug extends Run {
         this.spawnOutput = p.getInputStream();
         this.spawnError = p.getErrorStream();
         this.spawnPid = p.pid();
+        this.spawnProcess = p;
         printer().println("Debugging Camel integration: " + name + " with PID: " + p.pid());
         return 0;
     }
@@ -657,11 +634,14 @@ public class Debug extends Run {
         return 0;
     }
 
-    private void sendDebugCommand(long pid, String command, String breakpoint, int position) {
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
+    /**
+     * Sends a command, such as step, to the debugger in the integration, and waits until the integration took it. The
+     * command goes in a file of its own (Camel 4.21 or later), so that another client of the integration cannot
+     * overwrite it before the integration read it.
+     *
+     * @return whether the integration took the command
+     */
+    static boolean sendDebugCommand(long pid, String command, String breakpoint, int position) {
         JsonObject root = new JsonObject();
         root.put("action", "debug");
         if (command != null) {
@@ -673,12 +653,10 @@ public class Debug extends Run {
         if (position > 0) {
             root.put("position", position);
         }
-        Path f = getActionFile(Long.toString(pid));
         try {
-            String text = root.toJson();
-            Files.writeString(f, text);
-        } catch (Exception e) {
-            // ignore
+            return ActionClient.send(pid, root, DEBUG_COMMAND_TIMEOUT).isOk();
+        } catch (IOException e) {
+            return false;
         }
     }
 
@@ -1286,51 +1264,9 @@ public class Debug extends Run {
     }
 
     List<Long> findPids(String name) {
-        List<Long> pids = new ArrayList<>();
-
-        // we need to know the pids of the running camel integrations
-        if (name.matches("\\d+")) {
-            return List.of(Long.parseLong(name));
-        } else {
-            if (name.endsWith("!")) {
-                // exclusive this name only
-                name = name.substring(0, name.length() - 1);
-            } else if (!name.endsWith("*")) {
-                // lets be open and match all that starts with this pattern
-                name = name + "*";
-            }
-        }
-
-        final long cur = ProcessHandle.current().pid();
-        final String pattern = name;
-        ProcessHandle.allProcesses()
-                .filter(ph -> ph.pid() != cur)
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        String pName = ProcessHelper.extractName(root, ph);
-                        // ignore file extension, so it is easier to match by name
-                        pName = FileUtil.onlyName(pName);
-                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                            pids.add(ph.pid());
-                        } else {
-                            // try camel context name
-                            JsonObject context = (JsonObject) root.get("context");
-                            if (context != null) {
-                                pName = context.getString("name");
-                                if ("CamelJBang".equals(pName)) {
-                                    pName = null;
-                                }
-                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
-                                    pids.add(ph.pid());
-                                }
-                            }
-                        }
-                    }
-                });
-
-        return pids;
+        // the running integrations that match the name or pid (see ProcessFinder)
+        return ProcessFinder.find(name).stream().map(ProcessFinder.CamelProcess::pid)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     JsonObject loadStatus(long pid) {

@@ -75,7 +75,6 @@
             <groupId>org.apache.directory.api</groupId>
             <artifactId>api-ldap-codec-standalone</artifactId>
             <version>${directory-api-version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.directory.api</groupId>

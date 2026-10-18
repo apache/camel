@@ -21,12 +21,14 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.UsesFixedPort;
 import org.apache.camel.dsl.jbang.core.model.InfraBaseDTO;
 import org.apache.camel.util.json.Jsoner;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
+@UsesFixedPort
 public class InfraTest extends CamelCommandBaseTestSupport {
 
     /**

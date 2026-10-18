@@ -23,6 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DrawOverlayTest {
 
+    // a family: three emoji joined by ZWJs, eight chars that take two columns
+    private static final String FAMILY = "👨\u200D👩\u200D👧";
+
     @Test
     void parseColorTakesTheNamesTheToolsDocument() {
         assertThat(DrawOverlay.parseColor("red")).isEqualTo(Color.RED);
@@ -55,5 +58,14 @@ class DrawOverlayTest {
         assertThat(DrawOverlay.parseColor(" ")).isNull();
         assertThat(DrawOverlay.parseColor("chartreuse-ish")).isNull();
         assertThat(DrawOverlay.parseColor("#12")).isNull();
+    }
+
+    @Test
+    void textPutsAWholeEmojiInOneCell() {
+        var cells = DrawOverlay.generateText(0, 0, "a" + FAMILY + "b", Color.RED);
+
+        // the family in one cell, two columns wide
+        assertThat(cells).extracting(DrawOverlay.DrawCell::symbol).containsExactly("a", FAMILY, "b");
+        assertThat(cells).extracting(DrawOverlay.DrawCell::x).containsExactly(0, 1, 3);
     }
 }

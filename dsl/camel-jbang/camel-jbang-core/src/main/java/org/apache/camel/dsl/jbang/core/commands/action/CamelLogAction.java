@@ -34,11 +34,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
+import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -47,7 +47,6 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.jansi.Ansi;
-import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "log",
@@ -65,8 +64,6 @@ public class CamelLogAction extends ActionBaseCommand {
     private static final String TIMESTAMP_MAIN = "yyyy-MM-dd HH:mm:ss.SSS";
     private static final String TIMESTAMP_SB = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
-    private CommandHelper.ReadConsoleTask waitUserTask;
-
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
         public PrefixCompletionCandidates() {
@@ -81,16 +78,21 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Print timestamp.")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new log lines (press enter to exit).")
+    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Keep following and outputting new log lines (press enter to exit)."
+                                      + " Without an interactive terminal the default is false, unless --duration is given.")
     boolean follow = true;
+
+    @CommandLine.Mixin
+    DurationMixin durationOption = new DurationMixin();
 
     @CommandLine.Option(names = { "--startup" }, defaultValue = "false",
                         description = "Only shows logs from the starting phase to make it quick to look at how Camel was started.")
@@ -133,25 +135,32 @@ public class CamelLogAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        follow = isFollowing(follow, durationOption.getDuration());
         if (follow && EnvironmentHelper.isEmbedded()) {
             follow = false;
-            printer().println("Tip: press F3 to switch to the Log tab for live log streaming");
+            printer().printTip("press F3 to switch to the Log tab for live log streaming");
         }
 
         Map<Long, Row> rows = new LinkedHashMap<>();
 
+        // before reading, as an integration that starts later is read with them too
+        if (find != null) {
+            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+            findPatterns = quoteAndCompilePatterns(find);
+        }
+        if (grep != null) {
+            findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+            grepPatterns = quoteAndCompilePatterns(grep);
+        }
+
         // find new pids
         updatePids(rows);
+        if (rows.isEmpty() && !follow) {
+            // shown once: a name that matches no running integration is not found
+            findProcesses(name);
+        }
         if (!rows.isEmpty()) {
             // read existing log files (skip by tail/since)
-            if (find != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                findPatterns = quoteAndCompilePatterns(find);
-            }
-            if (grep != null) {
-                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                grepPatterns = quoteAndCompilePatterns(grep);
-            }
             Date limit = null;
             if (since != null) {
                 long millis;
@@ -177,12 +186,8 @@ public class CamelLogAction extends ActionBaseCommand {
 
         if (follow) {
             boolean waitMessage = true;
-            final AtomicBoolean running = new AtomicBoolean(true);
-            Thread t = new Thread(() -> {
-                waitUserTask = new CommandHelper.ReadConsoleTask(() -> running.set(false));
-                waitUserTask.run();
-            }, "WaitForUser");
-            t.start();
+            // until Enter is pressed, or the --duration has passed
+            CommandHelper.RunUntil running = CommandHelper.RunUntil.start(durationOption.getDuration());
             StopWatch watch = new StopWatch();
             do {
                 if (rows.isEmpty()) {
@@ -206,7 +211,7 @@ public class CamelLogAction extends ActionBaseCommand {
                         Thread.sleep(100);
                     }
                 }
-            } while (running.get());
+            } while (running.isRunning());
         }
 
         return 0;
@@ -398,11 +403,7 @@ public class CamelLogAction extends ActionBaseCommand {
                 }
                 String n = String.format("%-" + nameMaxWidth + "s", name);
                 String prefix = Ansi.ansi().fg(color).a(n).a("| ").reset().toString();
-                if (EnvironmentHelper.isEmbedded()) {
-                    printer().print(prefix);
-                } else {
-                    AnsiConsole.out().print(prefix);
-                }
+                printColored(prefix);
             }
         } else {
             line = unescapeAnsi(line);
@@ -433,11 +434,7 @@ public class CamelLogAction extends ActionBaseCommand {
             line = before != null ? before + "---" + after : after;
         }
         if (loggingColor) {
-            if (EnvironmentHelper.isEmbedded()) {
-                printer().println(line);
-            } else {
-                AnsiConsole.out().println(line);
-            }
+            printlnColored(line);
         } else {
             printer().println(line);
         }

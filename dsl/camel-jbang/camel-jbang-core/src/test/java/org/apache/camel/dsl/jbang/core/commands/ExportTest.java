@@ -54,6 +54,7 @@ import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@UsesWorkingDirectory
 class ExportTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExportTest.class);

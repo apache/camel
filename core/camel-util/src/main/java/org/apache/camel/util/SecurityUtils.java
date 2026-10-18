@@ -275,7 +275,9 @@ public final class SecurityUtils {
                 "component:awscloudtrail",
                 "component:awsconfig",
                 "component:awssecretsmanager",
-                "component:awssecurityhub"));
+                "component:awssecurityhub",
+                "component:milobrowse",
+                "component:miloclient"));
         owners.put("trustallpackages", Set.of(
                 "component:activemq",
                 "component:activemq6"));

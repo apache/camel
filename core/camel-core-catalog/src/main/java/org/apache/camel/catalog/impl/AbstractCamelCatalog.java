@@ -335,17 +335,9 @@ public abstract class AbstractCamelCatalog {
                 // but we can only check if the value is not a placeholder
                 List<String> enums = row.getEnums();
                 if (!multiValue && !valuePlaceholder && !lookup && enums != null) {
-                    boolean found = false;
-                    for (String s : enums) {
-                        String dashEC = StringHelper.camelCaseToDash(value);
-                        String valueEC = StringHelper.asEnumConstantValue(value);
-                        if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        handleNotFound(result, value, name, enums);
+                    String notFound = notInEnums(value, enums, row.isMultiEnum());
+                    if (notFound != null) {
+                        handleNotFound(result, notFound, name, enums);
                     }
                 }
 
@@ -459,6 +451,33 @@ public abstract class AbstractCamelCatalog {
         }
 
         return result;
+    }
+
+    /**
+     * The value that is not one of the enum values, or null when it is one. An option that takes several of its enum
+     * values (multiEnum) has them separated by comma, and each one is checked, with the spaces around it left out.
+     */
+    private static String notInEnums(String value, List<String> enums, boolean multiEnum) {
+        String[] values = multiEnum ? value.split(",") : new String[] { value };
+        for (String v : values) {
+            String one = multiEnum ? v.trim() : v;
+            if (!isEnumValue(one, enums)) {
+                return one;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isEnumValue(String value, List<String> enums) {
+        String dashEC = StringHelper.camelCaseToDash(value);
+        String valueEC = StringHelper.asEnumConstantValue(value);
+        for (String s : enums) {
+            // equals as is or using the enum naming style
+            if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleNotFound(EndpointValidationResult result, String value, String name, List<String> enums) {
@@ -1185,7 +1204,15 @@ public abstract class AbstractCamelCatalog {
         }
 
         ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult();
-        boolean accept = acceptConfigurationPropertyKey(key);
+        // Load the main model once here to avoid repeated JSON parsing in acceptConfigurationPropertyKey
+        // and matchMainModelGroup. Only load it for keys that may reach the main-group branch:
+        // component/dataformat/language are accepted by a static prefix check and never use the model.
+        MainModel cachedMainModel = key != null && key.startsWith("camel.")
+                && !key.startsWith("camel.component.")
+                && !key.startsWith("camel.dataformat.")
+                && !key.startsWith("camel.language.")
+                        ? mainModel() : null;
+        boolean accept = acceptConfigurationPropertyKey(key, cachedMainModel);
         if (!accept) {
             result.setAccepted(false);
             return result;
@@ -1232,33 +1259,38 @@ public abstract class AbstractCamelCatalog {
                 int posBracket = nOption.indexOf('[');
                 validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
             }
-        } else if (key.startsWith("main.")
-                || key.startsWith("resilience4j.")
-                || key.startsWith("faulttolerance.")
-                || key.startsWith("threadpool.")
-                || key.startsWith("lra.")
-                || key.startsWith("health.")
-                || key.startsWith("rest.")) {
-            String name = StringHelper.before(key, ".");
-            if (value != null) {
-                MainModel model = mainModel();
-                if (model == null) {
-                    result.addIncapable("camel-main not detected on classpath");
-                    return result;
+        } else {
+            // Check if the key matches a main-model group (dynamic — replaces the hardcoded list).
+            // Must use longKey (the full camel.* key) because matchMainModelGroup compares against
+            // the full group names (e.g. "camel.server"), and key has already had "camel." stripped.
+            MainModel.MainGroupModel matchedGroup = matchMainModelGroup(longKey, cachedMainModel);
+            if (matchedGroup != null) {
+                String name = StringHelper.before(key, ".");
+                if (value != null) {
+                    // cachedMainModel is guaranteed non-null here: a match in matchMainModelGroup
+                    // implies the model was available (the groups come from the model itself).
+                    Map<String, BaseOptionModel> rows = new HashMap<>();
+                    cachedMainModel.getOptions().forEach(o -> rows.put(dashToCamelCase(o.getName()), o));
+
+                    // lower case option and remove dash
+                    String nOption = longKey.replace("-", "").toLowerCase(Locale.ENGLISH);
+
+                    // look for suffix or array index after the group prefix
+                    // group name depth tells us how many dots to skip: "camel.vault.aws" has 2 dots,
+                    // so the option starts after the 3rd dot in the full key
+                    int groupDots = (int) matchedGroup.getName().chars().filter(c -> c == '.').count();
+                    int pos = 0;
+                    for (int d = 0; d <= groupDots; d++) {
+                        pos = nOption.indexOf('.', pos) + 1;
+                    }
+                    // pos now points just after the group prefix in nOption (e.g. after "camel.server.")
+                    int afterGroup = pos;
+
+                    String suffix = null;
+                    int posDot = nOption.indexOf('.', afterGroup);
+                    int posBracket = nOption.indexOf('[', afterGroup);
+                    validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
                 }
-                Map<String, BaseOptionModel> rows = new HashMap<>();
-                model.getOptions().forEach(o -> rows.put(dashToCamelCase(o.getName()), o));
-
-                // lower case option and remove dash
-                String nOption = longKey.replace("-", "").toLowerCase(Locale.ENGLISH);
-
-                // look for suffix or array index after 2nd dot
-                int secondDot = nOption.indexOf('.', nOption.indexOf('.') + 1) + 1;
-
-                String suffix = null;
-                int posDot = nOption.indexOf('.', secondDot);
-                int posBracket = nOption.indexOf('[', secondDot);
-                validateConfigurationProperty(posDot, posBracket, suffix, nOption, result, rows, name, value, longKey);
             }
         }
 
@@ -1361,18 +1393,9 @@ public abstract class AbstractCamelCatalog {
             // is enum
             List<String> enums = row.getEnums();
             if (!optionPlaceholder && !lookup && enums != null) {
-                boolean found = false;
-                String dashEC = StringHelper.camelCaseToDash(value);
-                String valueEC = StringHelper.asEnumConstantValue(value);
-                for (String s : enums) {
-                    // equals as is or using the enum naming style
-                    if (value.equalsIgnoreCase(s) || dashEC.equalsIgnoreCase(s) || valueEC.equalsIgnoreCase(s)) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    handleNotFound(result, value, longKey, enums);
+                String notFound = notInEnums(value, enums, row.isMultiEnum());
+                if (notFound != null) {
+                    handleNotFound(result, notFound, longKey, enums);
                 }
             }
 
@@ -1408,20 +1431,64 @@ public abstract class AbstractCamelCatalog {
         return suffix == null || suffix.isEmpty() || suffix.equals(".");
     }
 
-    private static boolean acceptConfigurationPropertyKey(String key) {
+    private boolean acceptConfigurationPropertyKey(String key, MainModel cachedModel) {
         if (key == null) {
             return false;
         }
-        return key.startsWith("camel.component.")
+        // Keys outside the camel.* namespace are never checked by this catalog
+        if (!key.startsWith("camel.")) {
+            return false;
+        }
+        // Always-accepted static prefixes (component/dataformat/language have their own models)
+        if (key.startsWith("camel.component.")
                 || key.startsWith("camel.dataformat.")
-                || key.startsWith("camel.language.")
-                || key.startsWith("camel.main.")
-                || key.startsWith("camel.resilience4j.")
-                || key.startsWith("camel.faulttolerance.")
-                || key.startsWith("camel.threadpool.")
-                || key.startsWith("camel.health.")
-                || key.startsWith("camel.lra.")
-                || key.startsWith("camel.rest.");
+                || key.startsWith("camel.language.")) {
+            return true;
+        }
+        // Dynamic: accept any prefix that matches a group in the main-model metadata.
+        // camel-main binds keys after normalising dashes and case (MainHelper.optionKey /
+        // startsWithIgnoreCase), so we compare normalised forms to match e.g.
+        // camel.error-registry.* against the group name "camel.errorRegistry".
+        String normKey = key.replace("-", "").toLowerCase(Locale.ENGLISH);
+        MainModel model = cachedModel;
+        if (model != null) {
+            for (MainModel.MainGroupModel group : model.getGroups()) {
+                String normGroup = group.getName().replace("-", "").toLowerCase(Locale.ENGLISH) + ".";
+                if (normKey.startsWith(normGroup)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the matched group from the main-model metadata when the key (full {@code camel.*} key) corresponds to one
+     * of the registered groups, or {@code null} if no group matches.
+     * <p>
+     * Comparison is normalised (dashes removed, lower-cased) to mirror how camel-main binds keys at runtime via
+     * {@code MainHelper.optionKey} and {@code startsWithIgnoreCase}.
+     * <p>
+     * Note: {@link #acceptConfigurationPropertyKey} also iterates the groups with the same normalisation, but it
+     * returns a boolean rather than the matched group. Both methods receive the full {@code camel.*} key and compare it
+     * against the full group name (including the {@code camel.} prefix).
+     */
+    private MainModel.MainGroupModel matchMainModelGroup(String key, MainModel cachedModel) {
+        MainModel model = cachedModel;
+        if (model == null) {
+            return null;
+        }
+        // Normalise the incoming key once (full key, e.g. "camel.errorregistry.enabled")
+        String normKey = key.replace("-", "").toLowerCase(Locale.ENGLISH);
+        for (MainModel.MainGroupModel group : model.getGroups()) {
+            // group name is e.g. "camel.errorRegistry" — normalise the whole name (including "camel." prefix)
+            // to match the full key; do NOT strip "camel." here, because normKey still carries it.
+            String normGroupName = group.getName().replace("-", "").toLowerCase(Locale.ENGLISH);
+            if (normKey.startsWith(normGroupName + ".")) {
+                return group;
+            }
+        }
+        return null;
     }
 
     /**

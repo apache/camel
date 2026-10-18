@@ -19,6 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 import java.io.PrintWriter;
 import java.util.Optional;
 
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import picocli.CommandLine;
@@ -27,7 +31,25 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.UnmatchedArgumentException;
 
+/**
+ * Ends a command line that cannot be parsed, such as an unknown option, with the usage on stderr and exit code
+ * {@link CliExitCode#USAGE}. A command line that asks for JSON ({@code --json}) also gets the error as a JSON document
+ * on stdout, see {@link JsonOutput}.
+ */
 public class MissingPluginParameterExceptionHandler implements IParameterExceptionHandler {
+
+    private final CamelJBangMain main;
+
+    public MissingPluginParameterExceptionHandler() {
+        this(null);
+    }
+
+    /**
+     * @param main the CLI, whose printer gets the JSON document of an error
+     */
+    public MissingPluginParameterExceptionHandler(CamelJBangMain main) {
+        this.main = main;
+    }
 
     @Override
     public int handleParseException(ParameterException ex, String[] args) throws Exception {
@@ -41,13 +63,16 @@ public class MissingPluginParameterExceptionHandler implements IParameterExcepti
         }
 
         if (ex.getMessage().startsWith("Unmatched argument at index 0") && args.length > 0) {
+            // the CLI installs a known plugin before it runs the command, so this is only reached when plugins are
+            // not discovered: the command did not run
             Optional<PluginType> pluginType = PluginType.findByName(args[0]);
             if (pluginType.isPresent()) {
                 PluginHelper.enable(pluginType.get());
-                PrintWriter out = cmd.getOut();
-                out.printf("Installed plugin: %s%n", pluginType.get().getName());
-                out.println("Please re-run the command.");
-                return 0;
+                err.printf("Installed plugin: %s%n", pluginType.get().getName());
+                err.println("Run the command again to use it.");
+                printJsonError(cmd, args, CliExitCode.FAILURE,
+                        "Installed plugin: " + pluginType.get().getName() + ". Run the command again to use it.");
+                return CliExitCode.FAILURE;
             }
         }
 
@@ -67,9 +92,25 @@ public class MissingPluginParameterExceptionHandler implements IParameterExcepti
                     "Maybe a specific Camel CLI plugin must be installed? (Try 'camel plugin --help' for more information)"));
         }
 
-        return cmd.getExitCodeExceptionMapper() != null
+        int code = cmd.getExitCodeExceptionMapper() != null
                 ? cmd.getExitCodeExceptionMapper().getExitCode(ex)
                 : spec.exitCodeOnInvalidInput();
+        printJsonError(cmd, args, code, ex.getMessage());
+        return code;
+    }
+
+    private void printJsonError(CommandLine cmd, String[] args, int code, String message) {
+        // the option may come after the error, so the command line is checked too
+        boolean json = cmd.getCommand() instanceof CamelCommand command && command.isJsonOutput()
+                || JsonOutput.isRequested(args);
+        if (json) {
+            if (main != null) {
+                JsonOutput.printError(main.getOut(), code, message);
+            } else {
+                cmd.getOut().println(JsonOutput.error(code, message).toJson());
+                cmd.getOut().flush();
+            }
+        }
     }
 
 }

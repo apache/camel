@@ -212,6 +212,18 @@
                   "type": "integer",
                   "description": "Number of inflight exchanges"
                 },
+                "remoteExchangesTotal": {
+                  "type": "integer",
+                  "description": "Total number of exchanges that came from a remote endpoint"
+                },
+                "remoteExchangesFailed": {
+                  "type": "integer",
+                  "description": "Number of failed exchanges that came from a remote endpoint"
+                },
+                "remoteExchangesInflight": {
+                  "type": "integer",
+                  "description": "Number of inflight exchanges that came from a remote endpoint"
+                },
                 "meanProcessingTime": {
                   "type": "integer",
                   "description": "Mean processing time in milliseconds"
@@ -266,6 +278,9 @@
                 "exchangesTotal",
                 "exchangesFailed",
                 "exchangesInflight",
+                "remoteExchangesTotal",
+                "remoteExchangesFailed",
+                "remoteExchangesInflight",
                 "meanProcessingTime",
                 "maxProcessingTime",
                 "minProcessingTime"

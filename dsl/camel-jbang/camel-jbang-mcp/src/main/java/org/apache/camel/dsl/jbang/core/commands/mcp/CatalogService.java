@@ -144,9 +144,11 @@ public class CatalogService {
         try {
             loaded = doLoadCatalog(runtimeType, camelVersion, platformBomGav);
         } catch (Exception e) {
-            if (runtimeType == RuntimeType.main && hasVersion && !hasBom) {
-                // a version that cannot be downloaded (not released, no network): answer from the default catalog
-                // rather than fail the tool call
+            if (!hasBom && (runtimeType == RuntimeType.main && hasVersion
+                    || runtimeType == RuntimeType.springBoot && !hasVersion)) {
+                // a version/artifact that cannot be downloaded (not released, no network): answer from the default
+                // catalog rather than fail the tool call. For spring-boot without a pinned version, the default
+                // camel-main catalog is close enough for property validation and avoids flaky network failures.
                 return defaultCatalog;
             }
             throw e;

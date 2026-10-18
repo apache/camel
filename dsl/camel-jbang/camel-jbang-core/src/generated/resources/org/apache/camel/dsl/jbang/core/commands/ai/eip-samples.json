@@ -235,6 +235,12 @@
       "yaml": "- route:\n    from:\n      uri: direct\n      parameters:\n        name: start\n      steps:\n        - loadBalance:\n            customLoadBalancer:\n              ref: myBalancer\n            steps:\n              - to:\n                  uri: seda:x\n              - to:\n                  uri: seda:y\n              - to:\n                  uri: seda:z\n"
     }
   ],
+  "dataFormats": [
+    {
+      "source": "data-format.adoc",
+      "yaml": "- dataFormats:\n    - json:\n        id: orderJson\n        library: Jackson\n        prettyPrint: true\n- route:\n    from:\n      uri: timer:tick\n      parameters:\n        repeatCount: 1\n      steps:\n        - setBody:\n            expression:\n              constant:\n                expression: '{\"orderId\": \"ORD-1001\", \"qty\": 2}'\n        - unmarshal:\n            custom:\n              ref: orderJson\n        - marshal:\n            custom:\n              ref: orderJson\n        - log:\n            message: \"${body}\"\n"
+    }
+  ],
   "deadLetterChannel": [
     {
       "source": "dead-letter-channel.adoc",
@@ -1033,6 +1039,16 @@
       "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n        disabled: \"{{ordersEnabled}}\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n        disabled: \"true\"\n"
     }
   ],
+  "restConfiguration": [
+    {
+      "source": "rest-dsl.adoc",
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+    },
+    {
+      "source": "rest-dsl.adoc",
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n- route:\n    from:\n      uri: direct:customerNewOrder\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n- route:\n    from:\n      uri: direct:commonCustomerNewOrder\n      steps:\n        - log:\n            message: Created new order\n- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n"
+    }
+  ],
   "returnAddress": [
     {
       "source": "return-address.adoc",
@@ -1419,6 +1435,12 @@
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - to:\n            uri: mock:a\n        - split:\n            shareUnitOfWork: \"true\"\n            expression:\n              tokenize:\n                token: \",\"\n            steps:\n              - to:\n                  uri: mock:b\n              - to:\n                  uri: direct:line\n        - to:\n            uri: mock:result\n\n- route:\n    from:\n      uri: direct:line\n      steps:\n        - to:\n            uri: log:line\n        - process:\n            ref: myProcessor\n        - to:\n            uri: mock:line\n"
     }
   ],
+  "sslContextParameters": [
+    {
+      "source": "camel-configuration-utilities.adoc",
+      "yaml": "- sslContextParameters:\n    id: mySSL\n    keyStore: server.p12\n    keystorePassword: changeit\n    trustStore: truststore.p12\n    trustStorePassword: changeit\n- route:\n    from:\n      uri: direct:ssl\n      steps:\n        - to:\n            uri: mock:ssl\n"
+    }
+  ],
   "step": [
     {
       "source": "step-eip.adoc",
@@ -1449,6 +1471,24 @@
     {
       "source": "switch-eip.adoc",
       "yaml": "- semantic:\n    evaluation:\n      department:\n        expert: decisions\n        type: choice\n        instructions: Which department should handle this message?\n        criteria:\n          billing: Invoices, payments and refunds\n          technical: Bugs, outages and technical problems\n          other: Any other request\n- route:\n    from:\n      uri: direct:classify\n      steps:\n        - switch:\n            selector:\n              language:\n                language: semantic\n                expression: ref:department\n            case:\n              - value: billing\n                uri: direct:billing\n              - value: technical\n                uri: direct:technical\n            otherwise:\n              uri: direct:review\n"
+    }
+  ],
+  "templatedRoute": [
+    {
+      "source": "route-template.adoc",
+      "yaml": "- templatedRoute:\n    routeTemplateRef: \"myTemplate\"\n    parameters:\n      - name: \"name\"\n        value: \"one\"\n      - name: \"greeting\"\n        value: \"Hello\"\n\n- templatedRoute:\n    routeTemplateRef: \"myTemplate\"\n    parameters:\n      - name: \"name\"\n        value: \"two\"\n      - name: \"greeting\"\n        value: \"Bonjour\"\n      - name: \"myPeriod\"\n        value: \"5s\"\n"
+    },
+    {
+      "source": "route-template.adoc",
+      "yaml": "- templatedRoute:\n    routeTemplateRef: \"myTemplate\"\n    routeId: \"myCoolRoute\"\n    parameters:\n      - name: \"name\"\n        value: \"one\"\n      - name: \"greeting\"\n        value: \"hello\"\n      - name: \"myPeriod\"\n        value: \"5s\"\n"
+    },
+    {
+      "source": "route-template.adoc",
+      "yaml": "- templatedRoute:\n    routeTemplateRef: \"orderTemplate\"\n    routeId: \"webOrder\"\n    prefixId: \"web\"\n    parameters:\n      - name: \"queue\"\n        value: \"web\"\n"
+    },
+    {
+      "source": "route-template.adoc",
+      "yaml": "- templatedRoute:\n    routeTemplateRef: \"orderTemplate\"\n    routeId: \"ftpOrder\"\n    prefixId: \"ftp\"\n    parameters:\n      - name: \"queue\"\n        value: \"order.ftp\"\n"
     }
   ],
   "threads": [
@@ -1585,6 +1625,32 @@
       "yaml": "- route:\n    from:\n      uri: direct:cheese\n      steps:\n        - transformDataType:\n            toType: myDataType\n        - to:\n            uri: log:hello\n"
     }
   ],
+  "transformers": [
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    dataFormatTransformer:\n      fromType: java:com.example.Order\n      toType: \"csv:CSVOrder\"\n      bindy:\n        type: \"Csv\"\n        classType: \"com.example.Order\"\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    endpointTransformer:\n      uri: component:componentPathOptions?mappingFile=myMapping.xml\n      fromType: xml\n      toType: json\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    customTransformer:\n      className: com.example.MyCustomTransformer\n      fromType: xml\n      toType: json\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    loadTransformer:\n      defaults: true\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    loadTransformer:\n      packageScan: \"org.apache.camel.transformer.standard\"\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    endpointTransformer:\n      uri: xslt:transform.xsl\n      fromType: xml:ABCOrder\n      toType: xml:XYZOrder\n"
+    }
+  ],
   "unmarshal": [
     {
       "source": "unmarshal-eip.adoc",
@@ -1603,6 +1669,24 @@
     {
       "source": "validate-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: file:inbox\n      steps:\n        - validate:\n            expression:\n              simple:\n                expression: \"${header.bar} > 100\"\n        - to:\n            uri: bean:myServiceBean.processLine\n"
+    }
+  ],
+  "validators": [
+    {
+      "source": "validator.adoc",
+      "yaml": "- validators:\n    predicateValidator:\n      type: csv:CSVOrder\n      expression:\n        simple:\n          expression: \"${body} contains '{name:XOrder}'\"\n"
+    },
+    {
+      "source": "validator.adoc",
+      "yaml": "- validators:\n    endpointValidator:\n      type: xml\n      uri: validator:xsd\/schema.xsd\n"
+    },
+    {
+      "source": "validator.adoc",
+      "yaml": "- validators:\n    customValidator:\n      type: json\n      className: com.example.MyCustomValidator\n"
+    },
+    {
+      "source": "validator.adoc",
+      "yaml": "- validators:\n    endpointValidator:\n      type: xml:ABCOrder\n      uri: \"validator:xsd\/schema.xsd\"\n"
     }
   ],
   "weightedLoadBalancer": [

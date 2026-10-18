@@ -18,21 +18,25 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import org.jline.jansi.Ansi;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "expression",
@@ -40,7 +44,8 @@ import picocli.CommandLine;
                      showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel cmd expression --language=simple --exp='${body}'" })
+                             "  camel eval expression --language=simple --template='${body}' --body='Hello World'",
+                             "  camel eval expression myApp --language=simple --template='${header.foo}'" })
 public class EvalExpressionCommand extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
@@ -80,8 +85,8 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                         description = "Exchange variable (key=value)")
     List<String> variables;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "10000",
-                        description = "Timeout in millis waiting for evaluation to be done")
+    @CommandLine.Option(names = { "--timeout" }, defaultValue = "10000", converter = TimeoutConverter.class,
+                        description = "Timeout waiting for evaluation to be done, in millis or as a duration such as 30s")
     long timeout = 10000;
 
     @CommandLine.Mixin
@@ -97,21 +102,31 @@ public class EvalExpressionCommand extends ActionWatchCommand {
     public Integer doCall() throws Exception {
         if (template == null || template.isBlank()) {
             printer().printErr("Template is required");
-            return -1;
+            return CliExitCode.USAGE;
         }
         if (template.startsWith("file:")) {
             Path f = Path.of(template.substring(5));
             if (!Files.exists(f)) {
                 printer().printErr("Template file does not exist: " + f);
-                return -1;
+                return CliExitCode.NOT_FOUND;
             }
         }
 
         Integer exit;
-        List<Long> pids = isolated ? Collections.EMPTY_LIST : findPids(name);
-        if (pids.size() == 1) {
-            this.pid = pids.get(0);
-            printer().println("Using existing running Camel integration to evaluate (pid: " + this.pid + ")");
+        CamelProcess existing = null;
+        if (!isolated) {
+            if (name == null || "*".equals(name)) {
+                // without a name: the one running integration, else a new Camel
+                List<CamelProcess> processes = ProcessFinder.find("*");
+                existing = processes.size() == 1 ? processes.get(0) : null;
+            } else {
+                // a name or pid that matches no running integration, or more than one, is not found
+                existing = findOne(name);
+            }
+        }
+        if (existing != null) {
+            this.pid = existing.pid();
+            printer().printDiagnostic("Using existing running Camel integration to evaluate (pid: " + this.pid + ")");
             exit = super.doCall();
         } else {
             try {
@@ -120,7 +135,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                 // requires camel 4.3 onwards
                 if (camelVersion != null && VersionHelper.isLE(camelVersion, "4.2.0")) {
                     printer().printErr("This requires Camel version 4.3 or newer");
-                    return -1;
+                    return CliExitCode.USAGE;
                 }
                 exit = run.runTransformMessage(camelVersion, mavenResolver);
                 this.pid = run.spawnPid;
@@ -129,9 +144,6 @@ public class EvalExpressionCommand extends ActionWatchCommand {
                 }
             } finally {
                 if (pid > 0) {
-                    // cleanup output file
-                    Path outputFile = getOutputFile(Long.toString(pid));
-                    PathUtils.deleteFile(outputFile);
                     // stop running camel as we are done
                     Path parent = CommandLineHelper.getCamelDir();
                     Path pidFile = parent.resolve(Long.toString(pid));
@@ -151,17 +163,17 @@ public class EvalExpressionCommand extends ActionWatchCommand {
         root.put("action", "eval");
         root.put("language", language);
         root.put("predicate", predicate);
-        root.put("template", Jsoner.escape(template));
+        // as they are: the action file is JSON, and the integration does not unescape them
+        root.put("template", template);
         if (body != null) {
-            root.put("body", Jsoner.escape(body));
+            root.put("body", body);
         }
         if (headers != null) {
             JsonArray arr = new JsonArray();
             for (String h : headers) {
                 JsonObject jo = new JsonObject();
                 if (!h.contains("=")) {
-                    printer().printErr("Header must be in key=value format, was: " + h);
-                    return 1;
+                    throw CliException.usage("Header must be in key=value format, was: " + h);
                 }
                 jo.put("key", StringHelper.before(h, "="));
                 jo.put("value", StringHelper.after(h, "="));
@@ -174,8 +186,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
             for (String v : variables) {
                 JsonObject jo = new JsonObject();
                 if (!v.contains("=")) {
-                    printer().printErr("Variable must be in key=value format, was: " + v);
-                    return 1;
+                    throw CliException.usage("Variable must be in key=value format, was: " + v);
                 }
                 jo.put("key", StringHelper.before(v, "="));
                 jo.put("value", StringHelper.after(v, "="));
@@ -184,69 +195,24 @@ public class EvalExpressionCommand extends ActionWatchCommand {
             root.put("variables", arr);
         }
 
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            PathUtils.writeTextSafely(root.toJson(), f);
-        } catch (Exception e) {
-            // ignore
+        ActionResult answer = ActionClient.execute(pid, root, timeout);
+        JsonObject jo = answer.reply();
+        if (jo == null) {
+            throw new CliException(answer.exitCode(), "Evaluation timeout: " + answer.error());
         }
-
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            String status = jo.getString("status");
-            if ("success".equals(status)) {
-                String result = jo.getString("result");
-                printer().println(result);
-            } else {
-                JsonObject cause = jo.getMap("exception");
-                if (cause != null) {
-                    String msg = cause.getString("message");
-                    if (msg != null) {
-                        msg = Jsoner.unescape(msg);
-                    }
-                    String st = cause.getString("stackTrace");
-                    if (st != null) {
-                        st = Jsoner.unescape(st);
-                    }
-                    if (msg != null) {
-                        String text = Ansi.ansi().fgRed().a(msg).reset().toString();
-                        printer().printErr(text);
-                        printer().println();
-                    }
-                    if (st != null) {
-                        String text = Ansi.ansi().fgRed().a(st).reset().toString();
-                        printer().printErr(text);
-                        printer().println();
-                    }
-                    return 1;
-                }
-            }
+        String status = jo.getString("status");
+        if ("success".equals(status)) {
+            String result = jo.getString("result");
+            printer().println(result);
+            return 0;
         }
-
-        return 0;
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        StopWatch watch = new StopWatch();
-        while (watch.taken() < timeout) {
-            try {
-                // give time for response to be ready
-                Thread.sleep(20);
-
-                if (Files.exists(outputFile)) {
-                    String text = Files.readString(outputFile);
-                    return (JsonObject) Jsoner.deserialize(text);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                // ignore
-            }
+        JsonObject cause = jo.getMap("exception");
+        String msg = cause != null ? cause.getString("message") : null;
+        String st = cause != null ? cause.getString("stackTrace") : null;
+        if (st != null) {
+            printer().printDiagnostic(Jsoner.unescape(st));
         }
-        return null;
+        throw CliException.failure(msg != null ? Jsoner.unescape(msg) : "Evaluation failed: " + answer.error());
     }
 
 }

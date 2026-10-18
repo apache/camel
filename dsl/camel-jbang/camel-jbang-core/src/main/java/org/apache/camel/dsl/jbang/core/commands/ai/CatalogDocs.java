@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,17 +35,21 @@ import java.util.regex.Pattern;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
 import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The catalog documentation an AI agent authoring an integration asks for: a component, data format, language or EIP
@@ -55,6 +60,8 @@ import org.apache.camel.util.json.Jsoner;
  * the {@code camel_catalog_doc} tool of every Camel MCP server.
  */
 public final class CatalogDocs {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CatalogDocs.class);
 
     /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
     private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
@@ -73,6 +80,18 @@ public final class CatalogDocs {
 
     private CatalogDocs() {
     }
+
+    /** The docPage argument of camel_catalog_doc; the MCP server describes it the same way. */
+    public static final String DOC_PAGE_DESC
+            = "Returned as text: a section title from sections (e.g. SSL support), a sub-page from docPages (e.g. main),"
+              + " or for simple: functions, operators, ognl, advanced";
+    /** The optionsFilter argument of camel_catalog_doc. */
+    public static final String OPTIONS_FILTER_DESC
+            = "Word to match in option names or descriptions, all matches listed in full; for an EIP whose own options"
+              + " do not match, its elements' options are searched (nestedOptions)";
+    /** The limit argument of camel_catalog_doc. */
+    public static final String OPTIONS_LIMIT_DESC
+            = "Options of a component listed in full (default 20, the rest by name; all with optionsFilter)";
 
     /** The names the YAML DSL and its users give a data format, and the catalog artifact each is (CAMEL-24898). */
     static final Map<String, String> YAML_DATAFORMAT_NAMES = Map.ofEntries(
@@ -196,11 +215,37 @@ public final class CatalogDocs {
     public static JsonObject catalogDoc(
             CamelCatalog catalog, String name, String endpoint, String kind, String optionsFilter,
             String includeOptions, boolean includeHeaders, boolean includeDoc, String docPage) {
+        return catalogDoc(catalog, name, endpoint, kind, optionsFilter, includeOptions, includeHeaders, includeDoc,
+                docPage, -1);
+    }
+
+    /**
+     * The same, with how many options of a component are listed in full: a negative limit is the default, which is
+     * {@link #DEFAULT_OPTIONS_LIMIT} without a filter and all the matches with one. The answer is cut at
+     * {@link #MAX_ANSWER_LENGTH} characters, with a marker that says so (CAMEL-25541).
+     */
+    public static JsonObject catalogDoc(
+            CamelCatalog catalog, String name, String endpoint, String kind, String optionsFilter,
+            String includeOptions, boolean includeHeaders, boolean includeDoc, String docPage, int limit) {
+        return capAnswer(answer(catalog, name, endpoint, kind, optionsFilter, includeOptions, includeHeaders, includeDoc,
+                docPage, limit));
+    }
+
+    private static JsonObject answer(
+            CamelCatalog catalog, String name, String endpoint, String kind, String optionsFilter,
+            String includeOptions, boolean includeHeaders, boolean includeDoc, String docPage, int limit) {
         if (endpoint != null && !endpoint.isBlank()) {
             return validateEndpoint(catalog, endpoint.trim());
         }
         if (name == null || name.isBlank()) {
             return error("'name' or 'endpoint' parameter is required");
+        }
+        name = name.trim();
+        String suffixKind = kindOfSuffix(name);
+        if (suffixKind != null && (kind == null || kind.equals(suffixKind))) {
+            // the page names camel_catalog_docs hands out (wireTap-eip, jackson-dataformat) name the artifact too
+            name = name.substring(0, name.length() - suffixKind.length() - 1);
+            kind = suffixKind;
         }
         String page = docPage != null ? docPage.trim().toLowerCase(Locale.ROOT) : null;
         if ("kamelet".equals(kind) && !KameletDefinitions.catalog().containsKey(name)
@@ -218,22 +263,40 @@ public final class CatalogDocs {
 
         if (kind == null || "component".equals(kind)) {
             ComponentModel cm = catalog.componentModel(name);
+            if (cm == null) {
+                String exact = ignoringCase(catalog.findComponentNames(), name);
+                cm = exact != null ? catalog.componentModel(exact) : null;
+            }
             if (cm != null) {
-                String adoc = catalog.asciiDoc(name + "-component");
-                List<JsonObject> pages = componentDocPages(cm.getScheme(), adoc);
+                // smtp, imap and pop3 are documented on the mail page, named after the artifact
+                String docName = componentDocName(catalog, cm);
+                String adoc = docName != null ? catalog.asciiDoc(docName + "-component") : null;
+                List<JsonObject> pages = componentDocPages(docName, adoc);
+                List<DocSection> sections = docSections(adoc);
+                ComponentAnswer how = new ComponentAnswer(catalog, lowerFilter, limit, sections);
                 if (page != null && !page.isEmpty()) {
                     // a sub-page the component page links to, such as how to write a custom Kamelet
                     String sub = pages.stream().anyMatch(p -> page.equals(p.getString("page")))
-                            ? catalog.asciiDoc(cm.getScheme() + "-" + page) : null;
-                    if (sub == null) {
-                        JsonObject err = error("No doc page '" + page + "' for component " + name);
+                            ? catalog.asciiDoc(docName + "-" + page) : null;
+                    if (sub != null) {
+                        return componentDoc(cm, how, OptionScope.NONE, false, sub, null, pages);
+                    }
+                    // else a section of the page, by its title (CAMEL-25541)
+                    DocSection section = findSection(sections, page);
+                    if (section == null) {
+                        JsonObject err = error("No doc page or section '" + page + "' for component " + name);
                         err.put("docPages", new JsonArray(pages));
+                        err.put("sections", sectionTitles(sections, lowerFilter));
                         return err;
                     }
-                    return componentDoc(cm, lowerFilter, OptionScope.NONE, false, sub, null, pages);
+                    JsonObject answer = componentDoc(cm, how, OptionScope.NONE, false, section.text(), null, List.of());
+                    answer.put("section", section.title());
+                    answer.remove("sections");
+                    answer.remove("sectionsHint");
+                    return answer;
                 }
                 // the whole page when it was asked for, else its first section, which the options cannot say
-                return componentDoc(cm, lowerFilter, scope, includeHeaders, includeDoc ? adoc : null,
+                return componentDoc(cm, how, scope, includeHeaders, includeDoc ? adoc : null,
                         includeDoc ? null : docExcerpt(adoc, DOC_EXCERPT_BUDGET), pages);
             }
             JsonObject group = mainOptionsGroup(catalog, name);
@@ -250,6 +313,11 @@ public final class CatalogDocs {
             // (jackson): both are answered, with the YAML shape in the answer (CAMEL-24898)
             String artifact = YAML_DATAFORMAT_NAMES.getOrDefault(name.toLowerCase(), name);
             DataFormatModel dm = catalog.dataFormatModel(artifact);
+            String anyCase = dm == null ? ignoringCase(catalog.findDataFormatNames(), artifact) : null;
+            if (anyCase != null) {
+                artifact = anyCase;
+                dm = catalog.dataFormatModel(artifact);
+            }
             if (dm != null) {
                 String adoc = catalog.asciiDoc(artifact + "-dataformat");
                 JsonObject result = dataFormatDoc(dm, lowerFilter, scope, includeDoc ? adoc : null,
@@ -267,14 +335,31 @@ public final class CatalogDocs {
         }
         if (kind == null || "language".equals(kind)) {
             LanguageModel lm = catalog.languageModel(name);
+            String anyCase = lm == null ? ignoringCase(catalog.findLanguageNames(), name) : null;
+            if (anyCase != null) {
+                name = anyCase;
+                lm = catalog.languageModel(name);
+            }
             if (lm != null) {
                 String doc = null;
+                String sectionTitle = null;
                 if (page != null && !page.isEmpty()) {
                     doc = catalog.asciiDoc(name + "-" + page);
                     if (doc == null) {
-                        JsonObject err = error("No doc page '" + page + "' for language " + name);
-                        err.put("docPages", new JsonArray(languageDocPages(catalog, name)));
-                        return err;
+                        // a section of the page or of one of its sub-pages, by its title (CAMEL-25541)
+                        List<DocSection> sections = new ArrayList<>(docSections(catalog.asciiDoc(name + "-language")));
+                        for (String sub : languageDocPages(catalog, name)) {
+                            sections.addAll(docSections(catalog.asciiDoc(name + "-" + sub)));
+                        }
+                        DocSection section = findSection(sections, page);
+                        if (section == null) {
+                            JsonObject err = error("No doc page or section '" + page + "' for language " + name);
+                            err.put("docPages", new JsonArray(languageDocPages(catalog, name)));
+                            err.put("sections", sectionTitles(sections, lowerFilter));
+                            return err;
+                        }
+                        doc = section.text();
+                        sectionTitle = section.title();
                     }
                 } else if (includeDoc) {
                     doc = catalog.asciiDoc(name + "-language");
@@ -283,7 +368,12 @@ public final class CatalogDocs {
                 // the start of the page unless the whole of it, or one of its sub-pages, was asked for
                 String excerpt = docPageOnly || includeDoc
                         ? null : docExcerpt(catalog.asciiDoc(name + "-language"), DOC_EXCERPT_BUDGET_PROSE);
-                return languageDoc(lm, lowerFilter, scope, doc, languageDocPages(catalog, name), docPageOnly, excerpt);
+                JsonObject answer
+                        = languageDoc(lm, lowerFilter, scope, doc, languageDocPages(catalog, name), docPageOnly, excerpt);
+                if (sectionTitle != null) {
+                    answer.put("section", sectionTitle);
+                }
+                return answer;
             }
             if (kind != null) {
                 return notFound("Language", name, catalog.suggestLanguageNames(name, 5));
@@ -291,16 +381,30 @@ public final class CatalogDocs {
         }
         if (kind == null || "eip".equals(kind)) {
             EipModel em = catalog.eipModel(name);
+            String anyCase = em == null ? ignoringCase(catalog.findModelNames(), name) : null;
+            if (anyCase != null) {
+                em = catalog.eipModel(anyCase);
+            }
             if (em != null) {
                 return eipDoc(catalog, em, lowerFilter, scope, includeDoc, null);
             }
+            if (BEANS_ENTRY.equalsIgnoreCase(name)) {
+                JsonObject beans = beansDoc(catalog, lowerFilter, scope, includeDoc);
+                if (beans != null) {
+                    return beans;
+                }
+            }
+            EipModel app = appModel(catalog, name);
+            if (app != null) {
+                return eipDoc(catalog, app, lowerFilter, scope, includeDoc, null);
+            }
             if (kind != null) {
-                // an alias (fan-out, dedup, rate-limit) or a word of the title names the EIP as well
+                // an alias (fan-out, dedup, rate-limit) or the whole title names the EIP as well
                 JsonObject byTerm = eipByTerm(catalog, name, lowerFilter, scope, includeDoc);
                 if (byTerm != null) {
                     return byTerm;
                 }
-                return notFound("EIP", name, catalog.suggestEipNames(name, 5));
+                return withErrorHandling(notFound("EIP", name, catalog.suggestEipNames(name, 5)), name);
             }
         }
         if (kind == null || "api".equals(kind)) {
@@ -357,12 +461,66 @@ public final class CatalogDocs {
         suggestions.addAll(catalog.suggestEipNames(name, 3));
         suggestions.addAll(findBeans(catalog, name).stream().map(PojoBeanModel::getName).limit(3).toList());
         suggestions.addAll(KameletDefinitions.suggest(name, KameletDefinitions.catalog().keySet(), 3));
-        JsonObject answer = notFound("Artifact", name, suggestions);
+        JsonObject answer = withErrorHandling(notFound("Artifact", name, suggestions), name);
         if (name.toLowerCase(Locale.ROOT).contains("kamelet")) {
             // kamelet-custom, custom-kamelet: how to write one
             answer.put("guide", AuthoringTools.KAMELET_GUIDE);
         }
         return answer;
+    }
+
+    /** The words a model asks with when it wants the redelivery of the error handler, which no EIP is named after. */
+    private static final Set<String> ERROR_HANDLING_TERMS = Set.of(
+            "retry", "retries", "retrying", "redeliver", "redelivery", "redeliveries", "backoff");
+
+    /**
+     * The error handler entries for a not-found term that asks for retrying (CAMEL-25541): retry used to resolve to
+     * optimisticLockRetryPolicy, an option of the aggregate EIP, by a word of its title. The error handler entries come
+     * first in the suggestions, with how redelivery is written.
+     */
+    private static JsonObject withErrorHandling(JsonObject notFound, String term) {
+        if (!ERROR_HANDLING_TERMS.contains(term.trim().toLowerCase(Locale.ROOT))) {
+            return notFound;
+        }
+        List<String> suggestions = new ArrayList<>(List.of("errorHandler", "onException", "redeliveryPolicy"));
+        Object others = notFound.get("suggestions");
+        if (others instanceof JsonArray arr) {
+            for (Object o : arr) {
+                if (!suggestions.contains(String.valueOf(o))) {
+                    suggestions.add(String.valueOf(o));
+                }
+            }
+        }
+        notFound.put("suggestions", new JsonArray(suggestions));
+        notFound.put("errorHandling", "retrying a failed step is redelivery, configured on the error handler: "
+                                      + "errorHandler: {defaultErrorHandler: {redeliveryPolicy: {maximumRedeliveries: 3,"
+                                      + " redeliveryDelay: 1000}}} for all routes, or onException with redeliveryPolicy"
+                                      + " for one exception; camel_catalog_doc name=redeliveryPolicy lists the options");
+        return notFound;
+    }
+
+    /** The kind a page name of camel_catalog_docs ends with (kafka-component, wireTap-eip), or null. */
+    private static String kindOfSuffix(String name) {
+        String lower = name.toLowerCase(Locale.ROOT);
+        for (String kind : List.of("component", "dataformat", "language", "eip")) {
+            if (lower.endsWith("-" + kind) && lower.length() > kind.length() + 1) {
+                return kind;
+            }
+        }
+        return null;
+    }
+
+    /** The name of the list that equals the given one ignoring case (wiretap for wireTap), or null. */
+    private static String ignoringCase(List<String> names, String name) {
+        if (names == null) {
+            return null;
+        }
+        for (String n : names) {
+            if (n.equalsIgnoreCase(name)) {
+                return n;
+            }
+        }
+        return null;
     }
 
     /** The Kamelets of the catalog whose name has the term, then those whose description has it. */
@@ -434,8 +592,9 @@ public final class CatalogDocs {
     }
 
     /**
-     * The documentation of the EIP a term such as an alias (fan-out, dedup, rate-limit) or a word of the title names,
-     * with the term the caller used; null when no EIP matches.
+     * The documentation of the EIP a term such as an alias (fan-out, dedup, rate-limit) or its whole title names, with
+     * the term the caller used; null when no EIP matches. A single word of the title is not enough: retry named
+     * optimisticLockRetryPolicy, an option of the aggregate EIP, that way (CAMEL-25541); such matches stay suggestions.
      */
     private static JsonObject eipByTerm(
             CamelCatalog catalog, String term, String filter, OptionScope scope, boolean includeDoc) {
@@ -444,7 +603,20 @@ public final class CatalogDocs {
             return null;
         }
         EipModel em = catalog.eipModel(names.get(0));
-        return em == null ? null : eipDoc(catalog, em, filter, scope, includeDoc, term);
+        return em == null || !namesEip(em, term) ? null : eipDoc(catalog, em, filter, scope, includeDoc, term);
+    }
+
+    /** Whether the term is the name, an alias or the whole title of the EIP, ignoring case and punctuation. */
+    private static boolean namesEip(EipModel em, String term) {
+        String key = normalizeName(term);
+        if (key.equals(normalizeName(em.getName())) || key.equals(normalizeName(em.getTitle()))) {
+            return true;
+        }
+        return em.getAliases() != null && em.getAliases().stream().anyMatch(a -> key.equals(normalizeName(a)));
+    }
+
+    private static String normalizeName(String text) {
+        return text == null ? "" : text.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "");
     }
 
     private static JsonObject eipDoc(
@@ -463,6 +635,72 @@ public final class CatalogDocs {
         }
         if (matchedTerm != null) {
             result.put("matchedTerm", matchedTerm);
+        }
+        return result;
+    }
+
+    /**
+     * The top-level entries of the YAML DSL whose model is an application model of the catalog (models-app), not an EIP
+     * model: camel_catalog_doc and camel_catalog_find did not find sslContextParameters (CAMEL-25735).
+     */
+    static final List<String> APP_ENTRIES = List.of("sslContextParameters");
+
+    /** The application model of the catalog for a top-level entry (any case), or null. */
+    static EipModel appModel(CamelCatalog catalog, String name) {
+        String entry = APP_ENTRIES.stream().filter(e -> e.equalsIgnoreCase(name)).findFirst().orElse(null);
+        if (entry == null) {
+            return null;
+        }
+        try (InputStream is = catalog.getVersionManager()
+                .getResourceAsStream("org/apache/camel/catalog/models-app/" + entry + ".json")) {
+            if (is == null) {
+                return null;
+            }
+            EipModel model = JsonMapper.generateEipModel(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+            // the description comes from the javadoc, with its XML example escaped
+            if (model.getDescription() != null) {
+                model.setDescription(model.getDescription().replace("&lt;", "<").replace("&gt;", ">")
+                        .replace("&quot;", "\"").replace("&amp;", "&"));
+            }
+            return model;
+        } catch (Exception e) {
+            LOG.debug("Cannot read the application model {} from the catalog", entry, e);
+            return null;
+        }
+    }
+
+    /** The top-level entry of the YAML DSL that declares beans: a list of bean factories, with no model of its own. */
+    static final String BEANS_ENTRY = "beans";
+
+    private static final String BEANS_DESCRIPTION
+            = "The top-level entry of the YAML DSL that declares beans: a list of beans, each with a name and how to create"
+              + " it (type, properties, constructors, a factory method or a script)";
+
+    /**
+     * The beans entry of the YAML DSL (CAMEL-25719). Each item of its list is a bean factory, so the options are those
+     * of the beanFactory model, and the answer says where the entry goes and how a route uses a bean, with an example.
+     * A model that looked up beans before was told "EIP not found" four times in one step, while camel_catalog_sample
+     * had the example all along. Null when the catalog has no beanFactory model.
+     */
+    private static JsonObject beansDoc(CamelCatalog catalog, String filter, OptionScope scope, boolean includeDoc) {
+        EipModel factory = catalog.eipModel("beanFactory");
+        if (factory == null) {
+            return null;
+        }
+        JsonObject result = eipDoc(catalog, factory, filter, scope, includeDoc, null);
+        result.put("name", BEANS_ENTRY);
+        result.put("title", "Beans");
+        result.put("description", BEANS_DESCRIPTION + ". The options are those of one bean; name is required. A route uses"
+                                  + " a bean as #bean:name in an option, ${bean:name.method} in Simple, or with the bean EIP"
+                                  + " (ref: name). The entry goes in the file of the routes, or in a file of its own such as"
+                                  + " beans.yaml next to them.");
+        result.put("placement", CatalogSamples.placement(BEANS_ENTRY));
+        // the example itself, short as it is, rather than a hint to fetch it with another call
+        JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, BEANS_ENTRY, 1).get("samples");
+        // the hint of eipDoc names beanFactory, which is not the name to ask for
+        result.remove("sampleHint");
+        if (samples != null && !samples.isEmpty()) {
+            result.put("sample", ((JsonObject) samples.get(0)).getString("yaml"));
         }
         return result;
     }
@@ -618,51 +856,114 @@ public final class CatalogDocs {
      */
     static JsonObject mainOptionsGroup(CamelCatalog catalog, String name) {
         String n = name.trim().toLowerCase(Locale.ROOT);
-        if (n.startsWith("camel.")) {
+        boolean fullKey = n.startsWith("camel.");
+        if (fullKey) {
             n = n.substring("camel.".length());
         }
         if (n.endsWith(".")) {
             n = n.substring(0, n.length() - 1);
         }
-        if (n.isEmpty() || n.contains(".")) {
+        // a dotted name is a key only when written as one (camel.server.port), not a class name
+        if (n.isEmpty() || (n.contains(".") && !fullKey)) {
             return null;
         }
-        String prefix = "camel." + n + ".";
-        JsonArray options = new JsonArray();
+        // camel.jbang.* are the keys of camel run and export, in the jbang model of the catalog (CAMEL-25541)
+        boolean jbang = n.equals("jbang") || n.startsWith("jbang.");
+        List<? extends BaseOptionModel> all;
         try {
-            for (var o : catalog.mainModel().getOptions()) {
-                if (!o.getName().toLowerCase(Locale.ROOT).startsWith(prefix)) {
-                    continue;
-                }
-                JsonObject jo = new JsonObject();
-                jo.put("name", o.getName());
-                if (o.getType() != null) {
-                    jo.put("type", o.getType());
-                }
-                if (o.getDefaultValue() != null) {
-                    jo.put("defaultValue", o.getDefaultValue().toString());
-                }
-                if (o.getDescription() != null) {
-                    jo.put("description", o.getDescription());
-                }
-                options.add(jo);
-            }
+            all = jbang
+                    ? (catalog.jbangModel() != null ? catalog.jbangModel().getOptions() : null)
+                    : catalog.mainModel().getOptions();
         } catch (Exception e) {
             return null;
         }
-        if (options.isEmpty()) {
+        if (all == null) {
             return null;
         }
-        String group = ((JsonObject) options.get(0)).getString("name");
-        group = group.substring(0, group.lastIndexOf('.'));
+        String key = "camel." + n;
+        // a full key such as camel.server.port: its group with that key first (CAMEL-25541)
+        BaseOptionModel matched = all.stream()
+                .filter(o -> o.getName() != null && normalizeKey(o.getName()).equals(normalizeKey(key)))
+                .findFirst().orElse(null);
+        String group = matched != null ? matched.getName().substring(0, matched.getName().lastIndexOf('.')) : key;
+        List<BaseOptionModel> members = optionsUnder(all, group);
+        boolean unknownKey = false;
+        if (members.isEmpty() && n.contains(".")) {
+            // not a key, but its group is: the keys there are, with the closest ones
+            group = key.substring(0, key.lastIndexOf('.'));
+            members = optionsUnder(all, group);
+            unknownKey = true;
+        }
+        if (members.isEmpty()) {
+            return null;
+        }
+        JsonArray options = new JsonArray();
+        if (matched != null) {
+            options.add(mainOptionToJson(matched));
+        }
+        for (BaseOptionModel o : members) {
+            if (o != matched) {
+                options.add(mainOptionToJson(o));
+            }
+        }
         JsonObject result = new JsonObject();
-        result.put("kind", "main-options");
+        result.put("kind", jbang ? "jbang-options" : "main-options");
         result.put("group", group);
-        result.put("note", name + " is not a component: these are the " + group + ".* keys for application.properties"
-                           + " (camel run reads them at startup)");
+        if (jbang) {
+            result.put("note", "the " + group + ".* keys go in application.properties and are read by camel run and"
+                               + " camel export, not by the Camel application itself");
+        } else if (matched != null) {
+            result.put("note", matched.getName() + " is a key for application.properties (camel run and Camel Main read"
+                               + " it at startup); the other " + group + ".* keys follow it");
+        } else {
+            result.put("note", name + " is not a component: these are the " + group + ".* keys for"
+                               + " application.properties (camel run reads them at startup)");
+        }
+        if (matched != null) {
+            result.put("matchedKey", matched.getName());
+        }
+        if (unknownKey) {
+            result.put("error", "No key " + name.trim() + " in " + group + ".*");
+            String[] closest = EditDistanceSuggestionStrategy.suggest(
+                    members.stream().map(BaseOptionModel::getName).toList(), key, 5);
+            if (closest.length > 0) {
+                result.put("suggestions", new JsonArray(Arrays.asList(closest)));
+            }
+        }
         result.put("count", options.size());
         result.put("options", options);
         return result;
+    }
+
+    private static List<BaseOptionModel> optionsUnder(List<? extends BaseOptionModel> all, String group) {
+        String prefix = group.toLowerCase(Locale.ROOT) + ".";
+        List<BaseOptionModel> answer = new ArrayList<>();
+        for (BaseOptionModel o : all) {
+            if (o.getName() != null && o.getName().toLowerCase(Locale.ROOT).startsWith(prefix)) {
+                answer.add(o);
+            }
+        }
+        return answer;
+    }
+
+    /** A key without case and dashes: camel.jbang.camel-version is camel.jbang.camelVersion. */
+    private static String normalizeKey(String key) {
+        return key.toLowerCase(Locale.ROOT).replace("-", "");
+    }
+
+    private static JsonObject mainOptionToJson(BaseOptionModel o) {
+        JsonObject jo = new JsonObject();
+        jo.put("name", o.getName());
+        if (o.getType() != null) {
+            jo.put("type", o.getType());
+        }
+        if (o.getDefaultValue() != null) {
+            jo.put("defaultValue", o.getDefaultValue().toString());
+        }
+        if (o.getDescription() != null) {
+            jo.put("description", o.getDescription());
+        }
+        return jo;
     }
 
     /**
@@ -718,6 +1019,21 @@ public final class CatalogDocs {
                         o.put("aliases", new JsonArray(m.getAliases()));
                     }
                     matches.add(o);
+                }
+            }
+            // the beans entry of the YAML DSL has no model to suggest: a model that wants to declare a bean asks for
+            // beans, or for bean (CAMEL-25719)
+            String key = normalizeName(term);
+            if (BEANS_ENTRY.equals(key) || "bean".equals(key)) {
+                matches.add(summary("eip", BEANS_ENTRY, "Beans", BEANS_DESCRIPTION, "configuration"));
+            }
+            // and the entries of an application model, by the start of their name (ssl)
+            for (String entry : APP_ENTRIES) {
+                if (key.length() >= 3 && normalizeName(entry).startsWith(key)) {
+                    EipModel m = appModel(catalog, entry);
+                    if (m != null) {
+                        matches.add(summary("eip", m.getName(), m.getTitle(), m.getDescription(), m.getLabel()));
+                    }
                 }
             }
         }
@@ -1345,9 +1661,32 @@ public final class CatalogDocs {
                + " in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
     }
 
+    /** How many options of a component are listed in full when no filter is given (CAMEL-25541). */
+    static final int DEFAULT_OPTIONS_LIMIT = 20;
+
+    /**
+     * The longest answer, in characters: activemq listed 88 options in 38 K characters, which a client rejected or
+     * spilled to a file instead of showing it to the model (CAMEL-25541).
+     */
+    static final int MAX_ANSWER_LENGTH = 16000;
+
+    /** How much of the text of a page a cut answer keeps at least, before its lists are cut. */
+    static final int MIN_DOC_KEPT = 8000;
+
+    /**
+     * The main option group that configures what a component uses under camel run or Camel Main: platform-http listens
+     * on the camel.server.* port, which none of its own options sets.
+     */
+    private static final Map<String, String> MAIN_CONFIG_GROUPS = Map.of("platform-http", "camel.server");
+
+    /** What a component answer needs besides the model: the catalog, the filter, the option limit and the page. */
+    private record ComponentAnswer(CamelCatalog catalog, String filter, int limit, List<DocSection> sections) {
+    }
+
     private static JsonObject componentDoc(
-            ComponentModel model, String filter, OptionScope scope, boolean includeHeaders, String doc,
+            ComponentModel model, ComponentAnswer how, OptionScope scope, boolean includeHeaders, String doc,
             String docExcerpt, List<JsonObject> docPages) {
+        String filter = how.filter();
         JsonObject result = new JsonObject();
         result.put("kind", "component");
         result.put("name", model.getScheme());
@@ -1370,31 +1709,7 @@ public final class CatalogDocs {
         addCommonModelFields(result, model);
 
         if (scope != OptionScope.NONE) {
-            JsonArray options = new JsonArray();
-            int omitted = 0;
-            if (model.getComponentOptions() != null) {
-                for (BaseOptionModel opt : model.getComponentOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        if (scope.accepts(opt, filter)) {
-                            options.add(optionToJson(opt, "component"));
-                        } else {
-                            omitted++;
-                        }
-                    }
-                }
-            }
-            if (model.getEndpointOptions() != null) {
-                for (BaseOptionModel opt : model.getEndpointOptions()) {
-                    if (matchesOptionFilter(opt, filter)) {
-                        if (scope.accepts(opt, filter)) {
-                            options.add(optionToJson(opt, "endpoint"));
-                        } else {
-                            omitted++;
-                        }
-                    }
-                }
-            }
-            putOptions(result, options, omitted, scope);
+            putComponentOptions(result, model, how, scope);
         }
         if (includeHeaders && model.getEndpointHeaders() != null) {
             // the CamelXxx headers the component reads and sets, with the constant to use from Java
@@ -1434,7 +1749,473 @@ public final class CatalogDocs {
             result.put("docPages", new JsonArray(docPages));
             result.put("docPagesHint", pagesHint(docPages, "page"));
         }
+        if (!how.sections().isEmpty()) {
+            // what the excerpt leaves out is often what decides correctness (the mail useHeader* options, the xslt
+            // header parameters), so the page says what else it has, the sections with the filter term first
+            JsonArray titles = sectionTitles(how.sections(), filter);
+            result.put("sections", titles);
+            int matching = filter != null ? sectionsContaining(how.sections(), filter) : 0;
+            result.put("sectionsHint", "docPage=<section title> returns that section of the page as text"
+                                       + (matching > 0
+                                               ? "; the first " + matching + " contain '" + filter + "'"
+                                               : ""));
+        }
+        String mainGroup = MAIN_CONFIG_GROUPS.get(model.getScheme());
+        if (mainGroup != null) {
+            putMainConfig(result, how, mainGroup);
+        }
         return result;
+    }
+
+    /**
+     * The options of a component: those the scope accepts and the filter matches, the required ones first, then the
+     * endpoint options (what a URI takes) and the component options, with their application.properties key. Without a
+     * filter only the first {@link #DEFAULT_OPTIONS_LIMIT} are listed in full and the rest by name. A filter that
+     * matches nothing gets a note and the closest option names, and the prefix options are always said, as they take
+     * keys no option list names (CAMEL-25541).
+     */
+    private static void putComponentOptions(
+            JsonObject result, ComponentModel model, ComponentAnswer how, OptionScope scope) {
+        String filter = how.filter();
+        List<JsonObject> required = new ArrayList<>();
+        List<JsonObject> byName = new ArrayList<>();
+        List<JsonObject> others = new ArrayList<>();
+        int omitted = 0;
+        // most options of a component are also endpoint options of the same name (112 of the 116 common ones of
+        // kafka): such an option is listed once, with both scopes and its key, so the key is not past the limit and
+        // matchedOptions counts names
+        Set<String> componentNames = new HashSet<>();
+        if (model.getComponentOptions() != null) {
+            model.getComponentOptions().forEach(opt -> componentNames.add(opt.getName()));
+        }
+        Set<String> endpointListed = new HashSet<>();
+        Set<String> endpointOmitted = new HashSet<>();
+        for (String optionScope : List.of("endpoint", "component")) {
+            List<? extends BaseOptionModel> options
+                    = "endpoint".equals(optionScope) ? model.getEndpointOptions() : model.getComponentOptions();
+            if (options == null) {
+                continue;
+            }
+            for (BaseOptionModel opt : options) {
+                if (!matchesOptionFilter(opt, filter)) {
+                    continue;
+                }
+                boolean endpoint = "endpoint".equals(optionScope);
+                if (!endpoint && endpointListed.contains(opt.getName())) {
+                    // already listed with its endpoint twin
+                    continue;
+                }
+                if (!scope.accepts(opt, filter)) {
+                    // an option of both scopes is counted once (bridgeErrorHandler of timer is advanced on the
+                    // endpoint only, so it is listed as a component option)
+                    if (endpoint) {
+                        endpointOmitted.add(opt.getName());
+                        omitted++;
+                    } else if (!endpointOmitted.contains(opt.getName())) {
+                        omitted++;
+                    }
+                    continue;
+                }
+                if (endpoint) {
+                    endpointListed.add(opt.getName());
+                } else if (endpointOmitted.contains(opt.getName())) {
+                    // listed as a component option after all, so not omitted
+                    omitted--;
+                }
+                boolean both = endpoint && componentNames.contains(opt.getName());
+                JsonObject o = optionToJson(opt, both ? "endpoint,component" : optionScope);
+                if (both || !endpoint) {
+                    // the only valid application.properties key of an option: camel.component.<scheme>.* sets a
+                    // component option, never an endpoint one
+                    o.put("configKey", "camel.component." + model.getScheme() + "." + opt.getName());
+                }
+                if (opt.isRequired()) {
+                    required.add(o);
+                } else if (filter != null && opt.getName().toLowerCase(Locale.ROOT).contains(filter)) {
+                    // a name match before a match in a description
+                    byName.add(o);
+                } else {
+                    others.add(o);
+                }
+            }
+        }
+        List<JsonObject> ordered = new ArrayList<>(required);
+        ordered.addAll(byName);
+        ordered.addAll(others);
+        int max = how.limit() >= 0 ? how.limit() : filter == null ? DEFAULT_OPTIONS_LIMIT : Integer.MAX_VALUE;
+        // the required options are always listed
+        int listed = Math.min(ordered.size(), Math.max(max, required.size()));
+        putOptions(result, new JsonArray(ordered.subList(0, listed)), omitted, scope);
+        result.put("matchedOptions", ordered.size());
+        if (listed < ordered.size()) {
+            Set<String> rest = new LinkedHashSet<>();
+            for (JsonObject o : ordered.subList(listed, ordered.size())) {
+                rest.add(o.getString("name"));
+            }
+            result.put("truncated", true);
+            result.put("listedOptions", listed);
+            result.put("moreOptions", new JsonArray(new ArrayList<>(rest)));
+            String omittedHint = result.getString("optionsHint");
+            result.put("optionsHint", optionsHint(listed, ordered.size(), omittedHint));
+        }
+        if (filter != null && ordered.isEmpty() && omitted == 0) {
+            // an empty list read as "not supported" (smtp + tls, xslt + param): say that nothing matched, and where
+            // else to look
+            result.put("note", "no option matches '" + filter + "': see closestOptions, prefixOptions and the"
+                               + " sections of the page below (docPage=<section title> returns one)");
+            JsonArray closest = closestOptions(model, filter);
+            if (!closest.isEmpty()) {
+                result.put("closestOptions", closest);
+            }
+        }
+        JsonArray prefixOptions = prefixOptions(model);
+        if (!prefixOptions.isEmpty()) {
+            result.put("prefixOptions", prefixOptions);
+        }
+    }
+
+    /** Says how many options are listed in full and how to get the others, before the hint about omitted ones. */
+    private static String optionsHint(int listed, int matched, String omittedHint) {
+        String hint = listed + " of " + matched + " options listed in full (required first, then the endpoint"
+                      + " options), the others by name in moreOptions; optionsFilter=<word or option name> returns the"
+                      + " matching ones in full, includeOptions=all with limit=<n> lists more";
+        return omittedHint != null ? hint + "; " + omittedHint : hint;
+    }
+
+    /**
+     * The options whose name, or a word of it, is closest to the filter by edit distance, with their group: ssl for a
+     * mistyped tsl.
+     */
+    private static JsonArray closestOptions(ComponentModel model, String filter) {
+        Map<String, List<BaseOptionModel>> byWord = new LinkedHashMap<>();
+        Map<BaseOptionModel, String> scopes = new LinkedHashMap<>();
+        for (String optionScope : List.of("endpoint", "component")) {
+            List<? extends BaseOptionModel> options
+                    = "endpoint".equals(optionScope) ? model.getEndpointOptions() : model.getComponentOptions();
+            if (options == null) {
+                continue;
+            }
+            for (BaseOptionModel opt : options) {
+                scopes.putIfAbsent(opt, optionScope);
+                byWord.computeIfAbsent(opt.getName().toLowerCase(Locale.ROOT), k -> new ArrayList<>()).add(opt);
+                for (String word : opt.getName().split("(?<=[a-z0-9])(?=[A-Z])")) {
+                    if (word.length() > 1) {
+                        byWord.computeIfAbsent(word.toLowerCase(Locale.ROOT), k -> new ArrayList<>()).add(opt);
+                    }
+                }
+            }
+        }
+        JsonArray answer = new JsonArray();
+        Set<String> seen = new HashSet<>();
+        for (String word : EditDistanceSuggestionStrategy.suggest(byWord.keySet(), filter, 5)) {
+            for (BaseOptionModel opt : byWord.get(word)) {
+                if (answer.size() < 5 && seen.add(opt.getName())) {
+                    JsonObject o = new JsonObject();
+                    o.put("name", opt.getName());
+                    if (opt.getGroup() != null) {
+                        o.put("group", opt.getGroup());
+                    }
+                    o.put("scope", scopes.get(opt));
+                    answer.add(o);
+                }
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The multi-value options of a component, which take every URI parameter with their prefix: any mail.* parameter of
+     * smtp goes to JavaMail (mail.smtp.starttls.enable=true), which no option is named after.
+     */
+    private static JsonArray prefixOptions(ComponentModel model) {
+        JsonArray answer = new JsonArray();
+        Set<String> seen = new HashSet<>();
+        if (model.getEndpointOptions() == null) {
+            return answer;
+        }
+        for (BaseOptionModel opt : model.getEndpointOptions()) {
+            if (opt.isMultiValue() && opt.getPrefix() != null && seen.add(opt.getName())) {
+                JsonObject o = new JsonObject();
+                o.put("name", opt.getName());
+                o.put("prefix", opt.getPrefix());
+                o.put("usage", "any " + opt.getPrefix() + "* URI parameter is passed on as " + opt.getName() + ": ?"
+                               + opt.getPrefix() + "<key>=<value>");
+                answer.add(o);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Where a component that runs on a server of camel run or Camel Main gets its settings: the HTTP port of
+     * platform-http is camel.server.port, which an agent searched the component's options for (CAMEL-25541).
+     */
+    private static void putMainConfig(JsonObject result, ComponentAnswer how, String group) {
+        result.put("mainConfig", "the HTTP server is configured by the " + group + ".* keys of"
+                                 + " application.properties, not by an option of this component: with camel run it"
+                                 + " starts when a route uses platform-http, on port 8080 (camel.server.port or camel"
+                                 + " run --port changes it); with Camel Main set camel.server.enabled=true and"
+                                 + " camel.server.port; camel_catalog_doc name=" + group + " lists the keys");
+        if (how.filter() == null) {
+            return;
+        }
+        JsonArray keys = new JsonArray();
+        try {
+            for (BaseOptionModel o : optionsUnder(how.catalog().mainModel().getOptions(), group)) {
+                if (matchesOptionFilter(o, how.filter())) {
+                    keys.add(mainOptionToJson(o));
+                }
+            }
+        } catch (Exception e) {
+            return;
+        }
+        if (!keys.isEmpty()) {
+            result.put("mainOptions", keys);
+        }
+    }
+
+    /**
+     * The name the documentation page of a component has: its scheme, else the artifact (smtp, imap and pop3 are on the
+     * mail page of camel-mail); null when there is none.
+     */
+    private static String componentDocName(CamelCatalog catalog, ComponentModel model) {
+        if (catalog.asciiDoc(model.getScheme() + "-component") != null) {
+            return model.getScheme();
+        }
+        String artifact = model.getArtifactId();
+        if (artifact != null && artifact.startsWith("camel-")) {
+            String name = artifact.substring("camel-".length());
+            if (catalog.asciiDoc(name + "-component") != null) {
+                return name;
+            }
+        }
+        return null;
+    }
+
+    private static String titleWords(String text) {
+        return text.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", " ").strip();
+    }
+
+    /**
+     * A section of an AsciiDoc page: its title, its level (2 for ==), its text with its subsections, and its own text
+     * up to its first subsection.
+     */
+    record DocSection(String title, int level, String text, String own) {
+    }
+
+    private static final Pattern HEADING = Pattern.compile("^(={2,4}) +(\\S.*)$");
+    /** The delimiter line of an AsciiDoc listing (----), literal (....), comment (////) or passthrough (++++) block. */
+    private static final Pattern BLOCK_DELIMITER = Pattern.compile("-{4,}|\\.{4,}|/{4,}|\\+{4,}");
+
+    /** The sections of a page, from == to ====, in the order of the page; empty when there is no page. */
+    static List<DocSection> docSections(String adoc) {
+        List<DocSection> answer = new ArrayList<>();
+        if (adoc == null) {
+            return answer;
+        }
+        String[] lines = adoc.split("\n", -1);
+        List<Integer> starts = new ArrayList<>();
+        List<Integer> levels = new ArrayList<>();
+        List<String> titles = new ArrayList<>();
+        // the delimiter of the listing, literal, comment or passthrough block the line is in: a block closes only on
+        // the delimiter that opened it, so a .... line inside a ---- listing does not end it
+        String fence = null;
+        for (int i = 0; i < lines.length; i++) {
+            String trimmed = lines[i].strip();
+            if (fence == null && BLOCK_DELIMITER.matcher(trimmed).matches()) {
+                fence = trimmed;
+                continue;
+            }
+            if (fence != null) {
+                if (trimmed.equals(fence)) {
+                    fence = null;
+                }
+                continue;
+            }
+            Matcher m = HEADING.matcher(lines[i]);
+            if (m.matches()) {
+                starts.add(i);
+                levels.add(m.group(1).length());
+                titles.add(m.group(2).strip());
+            }
+        }
+        for (int h = 0; h < starts.size(); h++) {
+            int end = lines.length;
+            for (int n = h + 1; n < starts.size(); n++) {
+                if (levels.get(n) <= levels.get(h)) {
+                    end = starts.get(n);
+                    break;
+                }
+            }
+            int ownEnd = h + 1 < starts.size() ? Math.min(end, starts.get(h + 1)) : end;
+            String text = String.join("\n", Arrays.asList(lines).subList(starts.get(h), end)).strip();
+            String own = String.join("\n", Arrays.asList(lines).subList(starts.get(h), ownEnd)).strip();
+            answer.add(new DocSection(titles.get(h), levels.get(h), text, own));
+        }
+        return answer;
+    }
+
+    /**
+     * The titles of the sections, those whose own text contains the filter first (SSL support before the Usage section
+     * it is part of).
+     */
+    static JsonArray sectionTitles(List<DocSection> sections, String filter) {
+        JsonArray first = new JsonArray();
+        JsonArray rest = new JsonArray();
+        for (DocSection s : sections) {
+            if (filter != null && s.own().toLowerCase(Locale.ROOT).contains(filter)) {
+                first.add(s.title());
+            } else {
+                rest.add(s.title());
+            }
+        }
+        first.addAll(rest);
+        return first;
+    }
+
+    private static int sectionsContaining(List<DocSection> sections, String filter) {
+        return (int) sections.stream().filter(s -> s.own().toLowerCase(Locale.ROOT).contains(filter)).count();
+    }
+
+    /**
+     * The section a docPage names: by its title ignoring case and punctuation (also the AsciiDoc id, such as
+     * _ssl_support), else the first whose title contains it; null when none does.
+     */
+    static DocSection findSection(List<DocSection> sections, String page) {
+        String key = normalizeName(page);
+        if (key.isEmpty()) {
+            return null;
+        }
+        for (DocSection s : sections) {
+            if (key.equals(normalizeName(s.title()))) {
+                return s;
+            }
+        }
+        // else the words of the title from one of them on (usable parameters), not a run of letters across words
+        String words = " " + titleWords(page);
+        for (DocSection s : sections) {
+            if ((" " + titleWords(s.title())).contains(words)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Cuts an answer longer than {@link #MAX_ANSWER_LENGTH} characters, with a marker that says what was cut and how to
+     * ask for it: first the text of a page, at a line and down to {@link #MIN_DOC_KEPT} characters, with the titles of
+     * the sections left out; then the longest list, from its end (the options left out are named in moreOptions).
+     */
+    static JsonObject capAnswer(JsonObject answer) {
+        String doc = answer.getString("doc");
+        int excess = answer.toJson().length() - MAX_ANSWER_LENGTH;
+        if (excess > 0 && doc != null && doc.length() > MIN_DOC_KEPT) {
+            // the text is escaped in the JSON, so cut by the share of the escaped length that has to go
+            int escaped = Jsoner.serialize(doc).length();
+            int keep = (int) ((long) doc.length() * Math.max(0, escaped - excess - 600) / escaped);
+            keep = Math.max(MIN_DOC_KEPT, keep);
+            int at = doc.lastIndexOf('\n', keep);
+            at = at > keep / 2 ? at : keep;
+            List<String> left = new ArrayList<>();
+            for (DocSection s : docSections(doc.substring(at))) {
+                if (left.size() < 30) {
+                    left.add(s.title());
+                }
+            }
+            answer.put("doc", doc.substring(0, at) + "\n\n[cut at " + MAX_ANSWER_LENGTH + " characters"
+                              + (left.isEmpty() ? "" : "; the page goes on with: " + String.join(" | ", left))
+                              + "; docPage=<section title> returns one section]");
+            answer.put("truncated", true);
+        }
+        Map<String, Integer> cut = new LinkedHashMap<>();
+        for (int round = 0; round < 10; round++) {
+            excess = answer.toJson().length() - MAX_ANSWER_LENGTH;
+            if (excess <= 0) {
+                return answer;
+            }
+            String longest = null;
+            int longestSize = 0;
+            for (Map.Entry<String, Object> e : answer.entrySet()) {
+                if (e.getValue() instanceof JsonArray arr && arr.size() > 1) {
+                    int size = arr.toJson().length();
+                    if (size > longestSize) {
+                        longest = e.getKey();
+                        longestSize = size;
+                    }
+                }
+            }
+            if (longest == null) {
+                // no list left to shorten: the last resort is the longest text, the page below MIN_DOC_KEPT
+                // included, so the answer never goes over MAX_ANSWER_LENGTH
+                if (!cutLongestText(answer, excess)) {
+                    return answer;
+                }
+                continue;
+            }
+            JsonArray arr = (JsonArray) answer.get(longest);
+            List<String> removedNames = new ArrayList<>();
+            int removed = 0;
+            int freed = 0;
+            while (arr.size() > 1 && freed < excess + 300) {
+                Object last = arr.remove(arr.size() - 1);
+                freed += Jsoner.serialize(last).length() + 1;
+                removed++;
+                if (last instanceof JsonObject o && o.getString("name") != null) {
+                    removedNames.add(0, o.getString("name"));
+                }
+            }
+            answer.put("truncated", true);
+            if ("options".equals(longest) && answer.containsKey("listedOptions")) {
+                // the options cut are named with the others not listed in full, and the hint says how many are left
+                String prefix = answer.getInteger("listedOptions") + " of ";
+                String hint = answer.getString("optionsHint");
+                if (hint != null && hint.startsWith(prefix)) {
+                    answer.put("optionsHint", arr.size() + " of " + hint.substring(prefix.length()));
+                }
+                answer.put("listedOptions", arr.size());
+                JsonArray names = new JsonArray(removedNames);
+                Object more = answer.get("moreOptions");
+                if (more instanceof JsonArray m) {
+                    names.addAll(m);
+                }
+                answer.put("moreOptions", names);
+                continue;
+            }
+            int total = cut.merge(longest, removed, Integer::sum);
+            answer.put("truncatedNote", "the answer is cut at " + MAX_ANSWER_LENGTH + " characters: the last " + total
+                                        + " entries of " + longest + " are left out; optionsFilter=<word> or a"
+                                        + " smaller limit narrows the answer");
+        }
+        return answer;
+    }
+
+    /**
+     * Cuts the longest text of an answer by what it is over, with a marker; false when no text is long enough to free
+     * that much.
+     */
+    private static boolean cutLongestText(JsonObject answer, int excess) {
+        String key = null;
+        int length = 0;
+        for (Map.Entry<String, Object> e : answer.entrySet()) {
+            if (e.getValue() instanceof String text && text.length() > length) {
+                key = e.getKey();
+                length = text.length();
+            }
+        }
+        if (key == null) {
+            return false;
+        }
+        String marker = "\n[cut at " + MAX_ANSWER_LENGTH + " characters]";
+        String text = (String) answer.get(key);
+        // the text is escaped in the JSON, so cut by the share of the escaped length that has to go
+        int escaped = Jsoner.serialize(text).length();
+        int keep = (int) ((long) text.length() * (escaped - excess - marker.length() - 50) / escaped);
+        if (keep <= 0) {
+            return false;
+        }
+        answer.put(key, text.substring(0, keep) + marker);
+        answer.put("truncated", true);
+        return true;
     }
 
     /**
@@ -1839,6 +2620,11 @@ public final class CatalogDocs {
             JsonArray enums = new JsonArray();
             enums.addAll(opt.getEnums());
             o.put("enumValues", enums);
+            if (opt.isMultiEnum() && opt.getEnums().size() > 1) {
+                // CAMEL-25739: the option takes several of its values
+                o.put("multiple", "several of enumValues can be set, separated by comma, such as "
+                                  + opt.getEnums().get(0) + "," + opt.getEnums().get(1));
+            }
         }
         if (isWrittenAsKind(opt)) {
             // written as one of its kinds (CAMEL-25370)

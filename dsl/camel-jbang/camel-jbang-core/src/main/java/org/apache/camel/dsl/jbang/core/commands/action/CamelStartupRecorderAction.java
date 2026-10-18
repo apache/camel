@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,7 +26,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -39,8 +39,13 @@ import picocli.CommandLine;
                      description = "Display startup recording", sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nExamples:",
-                             "  camel get startup-recorder" })
+                             "  camel get startup-recorder",
+                             "  camel get startup-recorder --json" })
 public class CamelStartupRecorderAction extends ActionWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .numeric("duration", r -> r.duration)
+            .text("type", r -> r.type);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -48,6 +53,12 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
     @CommandLine.Option(names = { "--sort" }, completionCandidates = DurationTypeCompletionCandidates.class,
                         description = "Sort by duration, or type")
     String sort;
+
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;
 
@@ -59,51 +70,40 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
     public Integer doWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
+        this.pid = process.pid();
 
-        this.pid = pids.get(0);
-
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "startup-recorder");
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            JsonArray arr = (JsonArray) jo.get("steps");
-            for (int i = 0; arr != null && i < arr.size(); i++) {
-                JsonObject o = (JsonObject) arr.get(i);
-                Row row = new Row();
-                row.id = o.getInteger("id");
-                row.parentId = o.getInteger("parentId");
-                row.level = o.getInteger("level");
-                row.name = o.getString("name");
-                row.type = o.getString("type");
-                row.description = o.getString("description");
-                row.duration = o.getLong("duration");
-                rows.add(row);
-            }
+        JsonObject jo = executeAction(process, "startup-recorder", null);
+        JsonArray arr = (JsonArray) jo.get("steps");
+        for (int i = 0; arr != null && i < arr.size(); i++) {
+            JsonObject o = (JsonObject) arr.get(i);
+            Row row = new Row();
+            row.id = o.getInteger("id");
+            row.parentId = o.getInteger("parentId");
+            row.level = o.getInteger("level");
+            row.name = o.getString("name");
+            row.type = o.getString("type");
+            row.description = o.getString("description");
+            row.duration = o.getLong("duration");
+            rows.add(row);
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (jsonOutput) {
+            JsonOutput.printList(printer(), rows.stream().map(r -> {
+                JsonObject step = new JsonObject();
+                step.put("id", r.id);
+                step.put("parentId", r.parentId);
+                step.put("level", r.level);
+                step.put("name", r.name);
+                step.put("type", r.type);
+                step.put("description", r.description);
+                step.put("duration", r.duration);
+                return step;
+            }).toList());
+        } else if (!rows.isEmpty()) {
             int tw = terminalWidth();
             int fixedWidth = 10 + 15; // DURATION + TYPE (approx)
             int borderOverhead = TerminalWidthHelper.noBorderOverhead(3);
@@ -116,9 +116,6 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
                             .maxWidth(stepWidth, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getStep))));
         }
-
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
 
         return 0;
     }
@@ -137,27 +134,6 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
             return Long.toString(r.duration);
         }
         return "";
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort != null ? sort : "";
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "duration":
-                return Long.compare(o1.duration, o2.duration) * negate;
-            case "type":
-                return o1.type.compareToIgnoreCase(o2.type) * negate;
-            default:
-                return 0;
-        }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     private static class Row {

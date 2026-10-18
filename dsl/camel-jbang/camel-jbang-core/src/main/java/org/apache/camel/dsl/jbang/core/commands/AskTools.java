@@ -17,8 +17,6 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -37,7 +35,6 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolGroups;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
-import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
@@ -75,6 +72,9 @@ public class AskTools {
     private static final String CLI_LIST_COMMANDS = "cli_list_commands";
     private static final String CLI_COMMAND_HELP = "cli_command_help";
     private static final String CLI_EXEC = "cli_exec";
+    /** How long a command of cli_exec may run. */
+    static final long CLI_EXEC_TIMEOUT = 60000;
+    private static final int CLI_EXEC_MAX_OUTPUT = 32768;
 
     private long targetPid;
     private final ToolContext ctx;
@@ -210,8 +210,10 @@ public class AskTools {
         }
         tools.add(new LlmClient.ToolDef(
                 CLI_EXEC,
-                "Execute a Camel CLI command and return its output, such as 'get route' or 'ps'. A command that changes"
-                          + " something (run, stop, cmd, infra run, ...) asks the user first.",
+                "Execute a Camel CLI command, such as 'get route' or 'ps', and return its exitCode, stdout and stderr as"
+                          + " JSON (exit code 0 is success, 1 failed, 2 wrong command line, 3 not found, 124 timed out)."
+                          + " A command that changes something (run, stop, cmd, infra run, ...) asks the user first; one"
+                          + " that runs until it is stopped is refused with the form that returns.",
                 objectParams(Map.of(
                         "command", stringProp(
                                 "The command line without camel (e.g., 'get error --diagram', 'catalog component --filter=kafka')")))));
@@ -508,68 +510,90 @@ public class AskTools {
             // the command line without camel, as the description says; a model often writes it anyway
             cmdArgs = Arrays.copyOfRange(cmdArgs, 1, cmdArgs.length);
         }
+        String blocking = blockingHint(cmdArgs);
+        if (blocking != null) {
+            JsonObject refused = new JsonObject();
+            refused.put("status", "refused");
+            refused.put("message", blocking);
+            return refused.toJson();
+        }
         ToolConfirms.Call call = ToolConfirms.cliCommand(cmdArgs);
         if (!ctx.confirm(call)) {
             return rejected(call);
         }
-
-        picocli.CommandLine commandLine = CamelJBangMain.getCommandLine();
-        if (commandLine == null) {
+        if (CamelJBangMain.getCommandLine() == null) {
             return "Error: CLI not available";
         }
+        return CliRunner.run(List.of(cmdArgs), CLI_EXEC_TIMEOUT).toJson(CLI_EXEC_MAX_OUTPUT).toJson();
+    }
 
-        StringBuilder captured = new StringBuilder();
-        Printer capturingPrinter = new Printer() {
-            @Override
-            public void println() {
-                captured.append('\n');
+    /**
+     * Why a command cannot run from camel ask, with the form of it that can, or <tt>null</tt> when it can. The command
+     * runs in this JVM with the terminal of camel ask, where nobody presses Enter or Ctrl+C to stop it, and nobody
+     * answers its prompts.
+     */
+    static String blockingHint(String[] args) {
+        if (args.length == 0) {
+            return null;
+        }
+        List<String> list = List.of(args);
+        String command = args[0] + (args.length > 1 && !args[1].startsWith("-") ? " " + args[1] : "");
+        boolean limited = list.stream().anyMatch(a -> a.startsWith("--duration"));
+        switch (args[0]) {
+            case "debug", "shell", "tui", "nano", "edit", "ask" -> {
+                return "camel " + args[0] + " needs a terminal of its own, so it cannot run from camel ask";
             }
-
-            @Override
-            public void println(String line) {
-                captured.append(line).append('\n');
+            case "hawtio" -> {
+                return "camel hawtio runs the web console until it is stopped, so it cannot run from camel ask";
             }
-
-            @Override
-            public void print(String output) {
-                captured.append(output);
-            }
-
-            @Override
-            public void printf(String format, Object... fmtArgs) {
-                captured.append(String.format(format, fmtArgs));
-            }
-        };
-
-        CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        synchronized (CamelJBangMain.class) {
-            PrintWriter originalOut = commandLine.getOut();
-            PrintWriter originalErr = commandLine.getErr();
-            Printer originalPrinter = main.getOut();
-            commandLine.setOut(pw);
-            commandLine.setErr(pw);
-            main.setOut(capturingPrinter);
-            try {
-                int exitCode = commandLine.execute(cmdArgs);
-                pw.flush();
-                String output = captured.toString() + sw.toString();
-                if (output.isBlank() && exitCode != 0) {
-                    return "Command exited with code " + exitCode;
+            case "run", "dev" -> {
+                if (!isOn(list, "--background") && list.stream().noneMatch(a -> a.startsWith("--max-"))) {
+                    return "camel " + args[0] + " runs until it is stopped: add --background (then camel get, camel log"
+                           + " --follow=false and camel stop work with it), or a limit such as --max-seconds=30";
                 }
-                if (output.length() > 32768) {
-                    output = output.substring(0, 32768) + "\n... (truncated)";
-                }
-                return output;
-            } catch (Exception e) {
-                return "Error executing command: " + e.getMessage();
-            } finally {
-                main.setOut(originalPrinter);
-                commandLine.setOut(originalOut);
-                commandLine.setErr(originalErr);
+            }
+            default -> {
+                // the commands below
             }
         }
+        if ("infra run".equals(command) && !isOn(list, "--background")) {
+            return "camel infra run runs the service until it is stopped: add --background (then camel infra stop)";
+        }
+        boolean follows = "log".equals(args[0]) || "infra log".equals(command)
+                || ("trace".equals(args[0]) || "cmd receive".equals(command)) && isDump(list);
+        if (follows && isOn(list, "--follow") && !limited) {
+            return "camel " + command + " follows until it is stopped: add --follow=false, or --duration=10s";
+        }
+        if (list.contains("--watch") && !limited) {
+            return "--watch repeats until it is stopped: leave it out, or add --duration=10s";
+        }
+        if ("export".equals(args[0]) && list.contains("--clean-dir") && !list.contains("--yes") && !list.contains("-y")) {
+            return "camel export --clean-dir asks before it deletes the files in the directory: add --yes";
+        }
+        return null;
+    }
+
+    /**
+     * Whether a boolean option is on: <tt>--follow</tt> is on unless it is given as false.
+     */
+    private static boolean isOn(List<String> args, String option) {
+        for (int i = 0; i < args.size(); i++) {
+            String arg = args.get(i);
+            if (arg.equals(option + "=false") || arg.equals(option) && i + 1 < args.size()
+                    && "false".equals(args.get(i + 1))) {
+                return false;
+            }
+            if (arg.equals(option) || arg.equals(option + "=true")) {
+                return true;
+            }
+        }
+        // --follow is on by default, --background is not
+        return "--follow".equals(option);
+    }
+
+    private static boolean isDump(List<String> args) {
+        int pos = args.indexOf("--action");
+        return args.contains("--action=dump") || pos >= 0 && pos + 1 < args.size() && "dump".equals(args.get(pos + 1));
     }
 
     // ---- JSON schema helpers ----

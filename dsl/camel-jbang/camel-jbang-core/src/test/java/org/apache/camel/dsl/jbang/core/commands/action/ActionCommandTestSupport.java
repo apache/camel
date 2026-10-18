@@ -17,13 +17,16 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -39,23 +42,29 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 /**
  * Base class for action command tests. Handles file system setup, status file writing and ProcessHandle mock creation
  * for use with Mockito's mockStatic. Mirrors the proven {@code ProcessCommandTestSupport} (in the {@code process} test
- * package) and adds helpers for the action/output file round trip that action commands use.
+ * package) and adds a fake integration that answers the actions of the commands, like the camel-cli-connector does.
  */
 abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
 
     static final long TEST_PID = 12345L;
     static final long CURRENT_PID = 99999L;
 
+    /**
+     * How the camel-cli-connector of Camel 4.24 confirms an action without a result.
+     */
+    static final JsonObject CONFIRMED = new JsonObject(Map.of("status", "success"));
+
+    private static volatile JsonObject lastAction;
+
     @BeforeEach
     @Override
     public void setup() throws Exception {
         super.setup();
-        CommandLineHelper.useHomeDir("target/test-action");
+        useTestHomeDir();
         Files.createDirectories(CommandLineHelper.getCamelDir());
     }
 
@@ -103,61 +112,100 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
     }
 
     /**
-     * Reads back the action file an action command wrote for the given pid.
+     * The action the fake integration took last (see {@link #callWithResponse}).
      *
-     * @return the deserialized action JSON, or {@code null} if no action file exists
+     * @return the action JSON, or {@code null} if the command sent no action
      */
-    protected static JsonObject readActionFile(long pid) throws Exception {
-        Path f = CommandLineHelper.getCamelDir().resolve(pid + "-action.json");
-        if (!Files.exists(f)) {
-            return null;
-        }
-        return (JsonObject) Jsoner.deserialize(Files.readString(f));
+    protected static JsonObject readActionFile(long pid) {
+        return lastAction;
     }
 
     /**
      * Runs the command with ProcessHandle mocked so a single test process (TEST_PID) is discoverable and the current
-     * process is a distinct pid. Returns the exit code; any action/output files the command wrote persist on disk and
-     * can be asserted after this returns.
+     * process is a distinct pid. The test process confirms an action like the camel-cli-connector of Camel 4.24 does,
+     * and {@link #readActionFile(long)} returns the action. Returns the exit code.
      */
     protected static int callWithSingleProcess(CamelCommand command) throws Exception {
+        return call(command, CONFIRMED);
+    }
+
+    /**
+     * Runs a request/response reader command end to end. Mocks a single discoverable process (TEST_PID) that answers
+     * the action of the command with {@code response}, like the camel-cli-connector does: it writes the answer next to
+     * the request, then deletes the request.
+     *
+     * @return the command exit code; rendered output can be asserted afterwards via {@code printer.getOutput()}
+     */
+    protected int callWithResponse(CamelCommand command, JsonObject response) throws Exception {
+        return call(command, response);
+    }
+
+    /**
+     * Runs a step of a command, such as the one that sends the action of a command that first starts an integration of
+     * its own, against the fake integration (TEST_PID) that answers with {@code response}.
+     */
+    protected int callWithResponse(Callable<Integer> step, JsonObject response) throws Exception {
+        return call(step, response);
+    }
+
+    private static int call(CamelCommand command, JsonObject response) throws Exception {
+        return call(command::doCall, response);
+    }
+
+    private static int call(Callable<Integer> step, JsonObject response) throws Exception {
+        lastAction = null;
+        AtomicBoolean running = new AtomicBoolean(true);
+        Thread responder = new Thread(() -> {
+            Path dir = CommandLineHelper.getCamelDir();
+            while (running.get()) {
+                // the integration polls for actions
+                await().pollInterval(Duration.ofMillis(10)).atMost(30, TimeUnit.SECONDS)
+                        .until(() -> !running.get() || nextRequest(dir).isPresent());
+                Optional<Path> request = nextRequest(dir);
+                if (request.isPresent()) {
+                    answer(dir, request.get(), response);
+                }
+            }
+        }, "test-camel-responder");
+        responder.setDaemon(true);
+        responder.start();
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             ProcessHandle ph = mockProcessHandle(TEST_PID);
             ProcessHandle current = mockCurrentHandle();
             mocked.when(ProcessHandle::current).thenReturn(current);
             mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
-            return command.doCall();
+            return step.call();
+        } finally {
+            running.set(false);
+            responder.join(TimeUnit.SECONDS.toMillis(10));
         }
     }
 
-    /**
-     * Runs a request/response reader command end to end. Mocks a single discoverable process (TEST_PID) and, in a
-     * background thread, simulates the running Camel writing {@code response} to its output file once the command has
-     * written its action request.
-     * <p>
-     * The reader commands delete any stale output file <em>before</em> writing the action file and only then poll for
-     * the output, so the responder waits for the action file to appear: that guarantees the response lands after the
-     * command's own delete and cannot be wiped out. No {@code Thread.sleep} is used; the wait is driven by Awaitility.
-     *
-     * @return the command exit code; rendered output can be asserted afterwards via {@code printer.getOutput()}
-     */
-    protected int callWithResponse(CamelCommand command, JsonObject response) throws Exception {
-        Path actionFile = CommandLineHelper.getCamelDir().resolve(TEST_PID + "-action.json");
-        Path outputFile = CommandLineHelper.getCamelDir().resolve(TEST_PID + "-output.json");
-        Thread responder = new Thread(() -> {
-            await().atMost(5, TimeUnit.SECONDS).until(() -> Files.exists(actionFile));
-            try {
-                Files.writeString(outputFile, response.toJson());
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }, "test-camel-responder");
-        responder.setDaemon(true);
-        responder.start();
+    private static Optional<Path> nextRequest(Path dir) {
+        try (Stream<Path> files = Files.list(dir)) {
+            return files.filter(f -> f.getFileName().toString().startsWith(TEST_PID + "-action")).findFirst();
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    private static void answer(Path dir, Path request, JsonObject response) {
         try {
-            return callWithSingleProcess(command);
-        } finally {
-            responder.join(TimeUnit.SECONDS.toMillis(10));
+            String text = Files.readString(request);
+            if (text.isBlank()) {
+                return;
+            }
+            lastAction = Jsoner.deserialize(text, (JsonObject) null);
+            // the answer of a request with an id has the same id, and the shared action file (before 4.21) has one
+            String name = request.getFileName().toString();
+            Path output = dir.resolve(name.equals(TEST_PID + "-action.json")
+                    ? TEST_PID + "-output.json" : name.replace("-action-", "-output-"));
+            if (response != null) {
+                Files.writeString(output, response.toJson());
+            }
+            Files.deleteIfExists(request);
+        } catch (IOException e) {
+            // the command withdrew the request
         }
     }
 
@@ -168,7 +216,9 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
     protected static ProcessHandle mockProcessHandle(long pid) {
         ProcessHandle ph = mock(ProcessHandle.class);
         ProcessHandle.Info info = mock(ProcessHandle.Info.class);
-        when(ph.pid()).thenReturn(pid);
+        // lenient: a step of a command that knows the pid (see callWithResponse(Callable, JsonObject)) does not look
+        // for the process
+        lenient().when(ph.pid()).thenReturn(pid);
         // lenient: info()/commandLine()/startInstant() are only read when a status file is matched; a test that
         // exercises the "no status file for this pid" path never reaches that code, leaving these unused
         lenient().when(ph.info()).thenReturn(info);
@@ -183,7 +233,7 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
      */
     protected static ProcessHandle mockCurrentHandle() {
         ProcessHandle current = mock(ProcessHandle.class);
-        when(current.pid()).thenReturn(CURRENT_PID);
+        lenient().when(current.pid()).thenReturn(CURRENT_PID);
         return current;
     }
 }
