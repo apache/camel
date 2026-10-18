@@ -1156,6 +1156,17 @@ multi-host cluster still receives them. Previously they were registered for any 
 including the host of a node with another scheme or port, is now sent without them. A client set with the `client` or
 `openSearchClient` option is not changed.
 
+=== camel-aws-cloudtrail - the consumer looks again for events that CloudTrail shows late
+
+The consumer polls from the newest event time it has seen, so an event that CloudTrail made visible after a newer one
+was never routed. Now, every `lookBackInterval` (default 1 minute), the consumer also looks up the events from
+`lookBackWindow` (default 10 minutes) before now up to that newest event time, and routes those it has not routed yet.
+The normal polls send the same `LookupEvents` requests as before. The late-event lookup adds `ceil(N / maxResults)`
+requests per `lookBackInterval`, at most one per poll, where N is the number of events in that range: with the
+defaults one request per minute up to 50 events in 10 minutes, 20 per minute for 1000 events, and none once no event
+was seen for 10 minutes. AWS allows two `LookupEvents` requests per second per account and Region. Set
+`lookBackWindow=0` to disable the late-event lookup.
+
 === camel-aws2-s3 - a listed object that cannot be fetched is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (or to download its content) no longer
