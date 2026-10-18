@@ -38,6 +38,9 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
                 .parse(LocalPropertyResolver.getProperty(ArtemisContainer.class, ArtemisProperties.ARTEMIS_CONTAINER)));
 
         this.withEnv("AMQ_EXTRA_ARGS", "--relax-jolokia")
+                // no disk usage limit: above 90% of the disk (the Docker VM disk on a developer machine) the broker
+                // blocks every producer, and a route hangs on its send (CAMEL-25754)
+                .withEnv("JAVA_ARGS_APPEND", "-Dbrokerconfig.maxDiskUsage=-1")
                 .withEnv("AMQ_USER", DEFAULT_USERNAME)
                 .withEnv("AMQ_PASSWORD", DEFAULT_PASSWORD)
                 .withExposedPorts(DEFAULT_MQTT_PORT, DEFAULT_AMQP_PORT,
