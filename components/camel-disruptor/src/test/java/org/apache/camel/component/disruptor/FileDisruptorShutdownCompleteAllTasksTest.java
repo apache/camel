@@ -43,14 +43,14 @@ public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport 
         template.sendBodyAndHeader(url, "E", Exchange.FILE_NAME, "e.txt");
 
         // give it 20 seconds to shutdown
-        context.getShutdownStrategy().setTimeout(20 * 100000);
+        context.getShutdownStrategy().setTimeout(20);
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from(url).routeId("route1")
                         // let it complete all tasks during shutdown
-                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").delay(1000)
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").delay(1000).syncDelayed()
                         .to("disruptor:foo?size=8");
 
                 from("disruptor:foo?size=8").routeId("route2").to("log:bar").to("mock:bar");
