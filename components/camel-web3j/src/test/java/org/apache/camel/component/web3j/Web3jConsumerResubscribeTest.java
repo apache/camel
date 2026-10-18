@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -128,7 +129,7 @@ class Web3jConsumerResubscribeTest extends CamelTestSupport {
         startRoute(Web3jConstants.REPLAY_BLOCKS_OBSERVABLE);
 
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
-        verify(web3j, times(1)).replayPastBlocksFlowable(any(), any(), anyBoolean());
+        verify(web3j, after(200).times(1)).replayPastBlocksFlowable(any(), any(), anyBoolean());
     }
 
     @Test
@@ -140,7 +141,7 @@ class Web3jConsumerResubscribeTest extends CamelTestSupport {
         startRoute(Web3jConstants.ETH_LOG_OBSERVABLE + "&fromBlock=16");
 
         MockEndpoint.assertIsSatisfied(context, 5, TimeUnit.SECONDS);
-        verify(web3j, times(1)).ethLogFlowable(any());
+        verify(web3j, after(200).times(1)).ethLogFlowable(any());
     }
 
     @Test
