@@ -557,6 +557,19 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testOGNLKeyOnAnArraySaysToPickAnElement() {
+        exchange.getIn().setBody(new Object[] { Map.of("sku", "CAMEL-MUG", "qty", 42) });
+        RuntimeBeanExpressionException e = assertThrows(RuntimeBeanExpressionException.class,
+                () -> assertExpression("${body[qty]}", null));
+
+        IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("an array has no keys: pick an element first, such as [0][qty]"),
+                cause.getMessage());
+        // [0] picks the element the hint points to
+        assertExpression("${body[0][qty]}", 42);
+    }
+
+    @Test
     public void testOGNLPropertyMapIllegalSyntax() {
         ExpressionIllegalSyntaxException e = assertThrows(ExpressionIllegalSyntaxException.class,
                 () -> assertExpression("${exchangeProperty.foobar[bar}", null),

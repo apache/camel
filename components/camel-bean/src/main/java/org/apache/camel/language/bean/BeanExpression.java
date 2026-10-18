@@ -699,7 +699,8 @@ public class BeanExpression implements Expression, Predicate {
 
     /**
      * What to do when a key is read from a value that has no keys (CAMEL-25746): the message body as a stream or bytes
-     * (a request body before it is unmarshalled, or a variable set from it), JSON text, or a list.
+     * (a request body before it is unmarshalled, or a variable set from it), JSON text, or a List, array or other
+     * Collection, where [0] picks an element.
      */
     static String keyHint(Object value, String key) {
         if (value instanceof StreamCache || value instanceof InputStream || value instanceof byte[]) {
@@ -713,7 +714,8 @@ public class BeanExpression implements Expression, Predicate {
             }
         }
         if (value instanceof Collection || value instanceof Object[]) {
-            return " (a List has no keys: pick an element first, such as [0][" + key + "], or split the list)";
+            String type = value instanceof List ? "a List" : value instanceof Object[] ? "an array" : "a Collection";
+            return " (" + type + " has no keys: pick an element first, such as [0][" + key + "], or split it)";
         }
         return "";
     }
