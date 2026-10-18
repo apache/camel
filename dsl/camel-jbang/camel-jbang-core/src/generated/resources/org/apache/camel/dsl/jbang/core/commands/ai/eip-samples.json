@@ -235,6 +235,12 @@
       "yaml": "- route:\n    from:\n      uri: direct\n      parameters:\n        name: start\n      steps:\n        - loadBalance:\n            customLoadBalancer:\n              ref: myBalancer\n            steps:\n              - to:\n                  uri: seda:x\n              - to:\n                  uri: seda:y\n              - to:\n                  uri: seda:z\n"
     }
   ],
+  "dataFormats": [
+    {
+      "source": "data-format.adoc",
+      "yaml": "- dataFormats:\n    - json:\n        id: orderJson\n        library: Jackson\n        prettyPrint: true\n- route:\n    from:\n      uri: timer:tick\n      parameters:\n        repeatCount: 1\n      steps:\n        - setBody:\n            expression:\n              constant:\n                expression: '{\"orderId\": \"ORD-1001\", \"qty\": 2}'\n        - unmarshal:\n            custom:\n              ref: orderJson\n        - marshal:\n            custom:\n              ref: orderJson\n        - log:\n            message: \"${body}\"\n"
+    }
+  ],
   "deadLetterChannel": [
     {
       "source": "dead-letter-channel.adoc",
