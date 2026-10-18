@@ -119,15 +119,18 @@ public class MiloClientConnection implements AutoCloseable, CamelContextAware {
     public void close() throws Exception {
         lock.lock();
         try {
-            if (this.manager != null) {
-                this.manager.dispose();
-                this.manager = null;
+            try {
+                if (this.manager != null) {
+                    this.manager.dispose();
+                    this.manager = null;
+                }
+            } finally {
+                if (this.executor != null) {
+                    this.camelContext.getExecutorServiceManager().shutdown(this.executor);
+                    this.executor = null;
+                }
             }
         } finally {
-            if (this.executor != null) {
-                this.camelContext.getExecutorServiceManager().shutdown(this.executor);
-                this.executor = null;
-            }
             lock.unlock();
         }
     }
