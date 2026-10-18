@@ -3479,7 +3479,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "path", def.getPath(), null);
         doWriteAttribute(jo, "routeId", def.getRouteId(), null);
         doWriteAttribute(jo, "bindingMode", def.getBindingMode(), null);
-        doWriteAttribute(jo, "apiDocs", def.getApiDocs(), "true");
+        doWriteAttribute(jo, "apiDocs", def.getApiDocs(), null);
         doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
         doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), null);

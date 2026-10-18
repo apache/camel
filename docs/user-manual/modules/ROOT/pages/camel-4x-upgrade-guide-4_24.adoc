@@ -25,6 +25,14 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-core - the documented default of skipBindingOnErrorCode is true
+
+The `skipBindingOnErrorCode` option of the Rest DSL (on `restConfiguration`, `rest`, its verbs and `restBinding`) is now
+documented with the default value `true`, the default it has always had at runtime. Before, the model, the catalog, the
+XML and YAML DSL schemas said `false`. Routes behave as before.
+
+Tools that read the default from the catalog or the schemas now see `true`.
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
@@ -578,10 +586,11 @@ provider is detected as before.
 The XML, YAML and Java route dumps (`camel transform route`, `camel validate normalize`, `camel.main.dumpRoutes`, the
 developer console) now write these options whenever they are set, also with their documented default value: the
 binding options of the rest configuration, a rest and its verbs (such as `bindingMode="off"`), the options of a
-redelivery policy, of a `resilience4jConfiguration` and of a `faultToleranceConfiguration`, and `shutdownRoute` /
-`shutdownRunningTask` of a route. Left out, such an option took the value of the parent level when the dump was loaded
-(the rest configuration, the error handler, the global circuit breaker configuration, the CamelContext), so the route
-behaved differently.
+redelivery policy, of a `resilience4jConfiguration` and of a `faultToleranceConfiguration`, `shutdownRoute` /
+`shutdownRunningTask` of a route, and `apiDocs` of a rest verb. Left out, such an option took the value of the parent
+level when the dump was loaded (the rest configuration or the rest, the error handler, the global circuit breaker
+configuration, the CamelContext), so the route behaved differently, or, for `apiDocs`, a verb with `apiDocs="true"`
+under a rest with `apiDocs="false"` was left out of the OpenAPI document.
 
 === camel-jbang - camel get bean, get route-controller and top source
 
