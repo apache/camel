@@ -1254,6 +1254,17 @@ became `cafÃ©` in the headers and the body map. A charset that the request or 
 that sends ISO-8859-1 form data without declaring a charset now gets U+FFFD replacement characters instead of its
 text, and must declare its charset (for example `application/x-www-form-urlencoded; charset=ISO-8859-1`).
 
+=== camel-huaweicloud-obs - a listed object that cannot be got is skipped
+
+When the consumer lists the bucket, a failure to get one of the listed objects (for example access denied, or an
+archived object that is not restored) no longer fails the poll, as long as another object of that listing could be
+got: the object is skipped, the other listed objects are consumed, and the skipped object is tried again by a later
+poll. The failure is given to the exception handler of the consumer, with the key in the message (by default a `WARN`
+with the stack trace, at every poll that lists the object). Before, the poll failed, so the other objects listed with
+it were not consumed either, and when the bucket fitted in one listing (`maxMessagesPerPoll`, default 10) the consumer
+consumed no object at all. The poll still fails when none of the listed objects could be got. With the `fileName`
+option, a failed get still fails the poll.
+
 === camel-github2 - consumers and items of a poll that were not routed
 
 The `github2` consumers (`commit`, `event`, `pullRequest`, `pullRequestComment`, `tag`) remembered every item of a
