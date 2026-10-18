@@ -61,6 +61,8 @@ import net.bytebuddy.jar.asm.Opcodes;
  * {@code CountDownLatch.await}, {@code Semaphore.acquire}, {@code DelayQueue} and {@code BlockingQueue}
  * {@code take/poll}) to {@link DstWaits}: on the loop thread they run the loop until the wait can end, or fail the seed
  * when nothing can end it;</li>
+ * <li>rewrites {@code parallelStream()} of the {@code java.util} collections to {@code stream()}: the elements are
+ * handled in order by the calling task instead of on the common fork-join pool;</li>
  * <li>reports every other escape point it finds in those classes: own threads and executors, wall clock reads that are
  * not rewritten, the common fork-join pool, Reactor schedulers, blocking waits it cannot run the loop for; and adds a
  * call to {@link DstEscapes#reached(String)} before each, so that in strict mode reaching one at runtime fails the
@@ -105,6 +107,7 @@ public final class DstInstrumentation {
     public static final String REACTOR = "reactor scheduler";
     public static final String BLOCKING = "blocking wait";
     public static final String BLOCKING_LOOP = "blocking wait (runs the loop)";
+    public static final String SEQUENTIAL = "parallel stream (sequential)";
 
     /**
      * Installs the time rewriting for the classes of these packages (and their sub packages): the code under test.
@@ -458,6 +461,15 @@ public final class DstInstrumentation {
                     }
                 } else if ("java/util/concurrent/Executors".equals(owner) && name.startsWith("new")) {
                     escape(OWN_EXECUTOR, call);
+                } else if ("parallelStream".equals(name) && "()Ljava/util/stream/Stream;".equals(descriptor)
+                        && owner.startsWith("java/util/")) {
+                    // Collection.parallelStream runs on the common fork-join pool: rewritten to stream(), so the
+                    // elements are handled in order by the calling task
+                    report(SEQUENTIAL, call);
+                    if (rewrite) {
+                        super.visitMethodInsn(opcode, owner, "stream", descriptor, itf);
+                        return;
+                    }
                 } else if ("java/util/concurrent/ForkJoinPool".equals(owner) && "commonPool".equals(name)) {
                     escape(DEFAULT_POOL, call);
                 } else if ("java/util/concurrent/CompletableFuture".equals(owner)) {

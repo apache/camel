@@ -69,6 +69,8 @@ its thread and the other tasks run meanwhile.
 `DelayQueue` and `BlockingQueue` `take/poll`: the loop runs until the wait can end, and a timed wait gives up in
 virtual time. A wait that no task of the run can end fails the seed at once and names the call site.
 |Timed waits on tasks |`Future.get(timeout)` on a task of the run and `awaitTermination` time out in virtual time.
+|Parallel streams |`parallelStream()` of a `java.util` collection is rewritten to `stream()`: the elements are handled
+in order by the calling task, not on the common fork-join pool.
 |===
 
 `@DstInstrument(alsoRewrite = ...)` applies the same rewriting to classes outside the code under test, for example

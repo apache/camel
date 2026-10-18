@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.test.dst.sample.SampleClock;
+import org.apache.camel.test.dst.sample.SampleStreams;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,6 +81,28 @@ class DstInstrumentationTest {
         assertTrue(found.stream().anyMatch(l -> l.startsWith(DstInstrumentation.VIRTUALIZED) && l.contains("new Date()")),
                 found.toString());
         assertTrue(found.stream().noneMatch(l -> l.startsWith(DstInstrumentation.WALL_CLOCK)), found.toString());
+    }
+
+    @Test
+    void parallelStreamsRunInOrderOnTheCallingTask() {
+        List<String> found = DstInstrumentation.scan("org.apache.camel.test.dst.sample");
+        assertTrue(found.stream().anyMatch(l -> l.startsWith(DstInstrumentation.SEQUENTIAL)
+                && l.contains("SampleStreams.threadsOfParallelStream")),
+                found.toString());
+        Dst dst = new Dst(1);
+        try {
+            List<String> seen = new ArrayList<>();
+            dst.executor("ex", 1).execute(() -> seen.addAll(SampleStreams.threadsOfParallelStream(1000)));
+            dst.runUntilQuiet();
+            String loop = Thread.currentThread().getName();
+            List<String> expected = new ArrayList<>();
+            for (int i = 0; i < 1000; i++) {
+                expected.add(i + "@" + loop);
+            }
+            assertEquals(expected, seen, "not on the common fork-join pool, and in order");
+        } finally {
+            dst.close();
+        }
     }
 
     @Test
