@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
@@ -742,8 +743,9 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     }
 
     /**
-     * The body as a stream for the request entity. A Map or a List (a body unmarshalled from JSON, or built as a map)
-     * cannot become one, and the converter's message only names the conversion: say what to do (CAMEL-25309).
+     * The body as a stream for the request entity. A Map or a List (a body unmarshalled from JSON, XML or CSV, or built
+     * as a map) cannot become one, and the converter's message only names the conversion: say what to do, in the data
+     * format the Content-Type names, or name the usual ones when it names none (CAMEL-25309, CAMEL-25751).
      */
     private static InputStream mandatoryBodyStream(Exchange exchange, Message in) throws InvalidPayloadException {
         try {
@@ -751,16 +753,45 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         } catch (InvalidPayloadException e) {
             Object body = in.getBody();
             if (body instanceof Map || body instanceof Collection) {
+                String contentType = ExchangeHelper.getContentType(exchange);
+                String format = dataFormatOf(contentType);
                 InvalidPayloadException answer = new InvalidPayloadException(
                         exchange, InputStream.class, in,
                         "a " + (body instanceof Map ? "Map" : body instanceof List ? "List" : "Collection")
-                                                         + " is not an HTTP request body: marshal it to JSON first "
-                                                         + "(marshal: json) or set the body to the JSON text");
+                                                         + " is not an HTTP request body: "
+                                                         + (format != null
+                                                                 ? "marshal it first (marshal: " + format
+                                                                   + ", for the Content-Type " + contentType + ")"
+                                                                 : "marshal it first with the data format of the request (such as"
+                                                                   + " marshal: json, marshal: jacksonXml or marshal: csv)")
+                                                         + " or set the body to the text");
                 answer.initCause(e.getCause() != null ? e.getCause() : e);
                 throw answer;
             }
             throw e;
         }
+    }
+
+    /**
+     * The data format that writes a content type, as the YAML DSL names it: json, jacksonXml, csv or yaml; or null
+     * (CAMEL-25751; CAMEL-25749 moves this onto one helper).
+     */
+    static String dataFormatOf(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        int semicolon = contentType.indexOf(';');
+        String type = (semicolon > 0 ? contentType.substring(0, semicolon) : contentType).trim().toLowerCase(Locale.ROOT);
+        if (type.endsWith("/json") || type.endsWith("+json")) {
+            return "json";
+        } else if (type.endsWith("/xml") || type.endsWith("+xml")) {
+            return "jacksonXml";
+        } else if (type.endsWith("/csv") || type.endsWith("/tab-separated-values")) {
+            return "csv";
+        } else if (type.endsWith("/yaml") || type.endsWith("/x-yaml")) {
+            return "yaml";
+        }
+        return null;
     }
 
     /**
