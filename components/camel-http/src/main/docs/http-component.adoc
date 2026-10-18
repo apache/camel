@@ -46,6 +46,116 @@ include::partial$component-endpoint-headers.adoc[]
 
 == Usage
 
+=== Which HTTP method will be used
+
+IMPORTANT: Without the `httpMethod` option, the message body decides the method: a message with a body is sent as a
+`POST`, and a message without a body as a `GET`. After `unmarshal`, `split` or `setBody` the message has a body, so a
+call meant as a GET is sent as a POST. Set `httpMethod: GET` on the endpoint when you mean a GET; a GET sends no body
+(unless `getWithBody` is true).
+
+The method is chosen in this order:
+
+. The `httpMethod` option of the endpoint.
+. The `CamelHttpMethod` header.
+. `GET` when the `CamelHttpQuery` header, or the `CamelHttpUri` header, has a query string.
+. `GET` when the endpoint URI has a query string.
+. `POST` when the message has a body.
+. `GET` otherwise.
+
+For example, a stock lookup for each line of an order is a GET, whatever the line in the body is:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:checkStock")
+    .split(simple("${body[lines]}"))
+        .toD("http://localhost:8080/stock/${body[sku]}?httpMethod=GET")
+        .log("Stock answer: ${body}")
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:checkStock"/>
+    <split>
+        <simple>${body[lines]}</simple>
+        <toD uri="http://localhost:8080/stock/${body[sku]}?httpMethod=GET"/>
+        <log message="Stock answer: ${body}"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:checkStock
+      steps:
+        - split:
+            expression:
+              simple:
+                expression: "${body[lines]}"
+            steps:
+              - toD:
+                  uri: "http://localhost:8080/stock/${body[sku]}"
+                  parameters:
+                    httpMethod: GET
+              - log:
+                  message: "Stock answer: ${body}"
+----
+====
+
+To send the order as JSON, marshal the body first, and say that it is a POST:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:createOrder")
+    .marshal().json()
+    .to("http://localhost:8080/orders?httpMethod=POST");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:createOrder"/>
+    <marshal>
+        <json/>
+    </marshal>
+    <to uri="http://localhost:8080/orders?httpMethod=POST"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createOrder
+      steps:
+        - marshal:
+            json: {}
+        - to:
+            uri: http://localhost:8080/orders
+            parameters:
+              httpMethod: POST
+----
+====
+
 === Message Body
 
 Camel will store the HTTP response from the external server on the _OUT_ body.
@@ -130,16 +240,6 @@ a `HttpOperationFailedException` is thrown immediately (unless
 * Redirect location if server returned a redirect
 * Response body as a `java.lang.String`, if server provided a body as
 response
-
-=== Which HTTP method will be used
-
-The following algorithm is used to determine what HTTP method should be used: +
- 1. Use method provided as endpoint configuration (`httpMethod`). +
- 2. Use method provided in header (`Exchange.HTTP_METHOD`). +
- 3. `GET` if query string is provided in header. +
- 4. `GET` if endpoint is configured with a query string. +
- 5. `POST` if there is data to send (body is not `null`). +
- 6. `GET` otherwise.
 
 === Configuring URI to call
 
@@ -314,8 +414,9 @@ YAML::
 
 === How to set the http method (GET/PATCH/POST/PUT/DELETE/HEAD/OPTIONS/TRACE) to the HTTP producer
 
-The HTTP component provides a way to set the HTTP request method by
-setting the message header. Here is an example:
+Set the `httpMethod` option of the endpoint, as in <<_which_http_method_will_be_used,Which HTTP method will be used>>.
+The `CamelHttpMethod` header sets the method for each message, when the endpoint has no `httpMethod` option.
+Here is an example with the header:
 
 [tabs]
 ====
