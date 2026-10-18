@@ -25,8 +25,11 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.azure.core.util.polling.LongRunningOperationStatus;
+import com.azure.core.util.polling.PollResponse;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.models.BlobCopyInfo;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobStorageException;
 import org.apache.camel.AsyncCallback;
@@ -280,7 +283,21 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
                 final String destinationBlobName = buildDestinationBlobName(blobName);
 
                 // Copy to destination
-                copyBlobToDestination(containerName, blobName, destinationContainer, destinationBlobName);
+                final PollResponse<BlobCopyInfo> copy
+                        = copyBlobToDestination(containerName, blobName, destinationContainer, destinationBlobName);
+                if (copy.getStatus() != LongRunningOperationStatus.SUCCESSFULLY_COMPLETED) {
+                    // the copy failed, was aborted, or its status could not be read: keep the source blob, it is
+                    // consumed again on the next poll
+                    final String error = copy.getValue() != null ? copy.getValue().getError() : null;
+                    getExceptionHandler().handleException(
+                            "Error occurred during moving blob. The blob is not deleted and will be consumed again.",
+                            exchange,
+                            new IllegalStateException(
+                                    "Copy of blob " + blobName + " to container " + destinationContainer
+                                                      + " ended with status " + copy.getStatus()
+                                                      + (error != null ? ": " + error : "")));
+                    return;
+                }
 
                 // Delete source blob after successful copy (move = copy + delete)
                 deleteBlob(containerName, blobName);
@@ -338,12 +355,14 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     /**
      * Copies a blob from source container to destination container within the same storage account.
      *
-     * @param sourceContainer      the source container name
-     * @param sourceBlobName       the source blob name
-     * @param destinationContainer the destination container name
-     * @param destinationBlobName  the destination blob name
+     * @param  sourceContainer      the source container name
+     * @param  sourceBlobName       the source blob name
+     * @param  destinationContainer the destination container name
+     * @param  destinationBlobName  the destination blob name
+     * @return                      the last response of the copy: the copy is asynchronous on the service, and the
+     *                              poller returns normally also when the copy failed or was aborted
      */
-    private void copyBlobToDestination(
+    private PollResponse<BlobCopyInfo> copyBlobToDestination(
             String sourceContainer, String sourceBlobName,
             String destinationContainer, String destinationBlobName) {
         BlobContainerClient sourceContainerClient
@@ -359,7 +378,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         if (timeout == null) {
             timeout = Duration.ofMinutes(5);
         }
-        destBlobClient.beginCopy(sourceBlobClient.getBlobUrl(), Duration.ofSeconds(2))
+        return destBlobClient.beginCopy(sourceBlobClient.getBlobUrl(), Duration.ofSeconds(2))
                 .waitForCompletion(timeout);
     }
 
