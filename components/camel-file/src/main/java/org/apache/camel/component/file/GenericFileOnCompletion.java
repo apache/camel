@@ -40,7 +40,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private ExceptionHandler exceptionHandler;
     private final GenericFile<T> file;
     private final String absoluteFileName;
-    private GenericFileDoneFileAdmission doneFileAdmission;
+    private GenericFileKeptDoneFiles keptDoneFiles;
 
     public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
                                    GenericFileProcessStrategy processStrategy, GenericFile<T> file,
@@ -67,10 +67,11 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     /**
-     * The files left by the poll, when the endpoint uses a done file with a fixed name; <tt>null</tt> otherwise.
+     * The done files kept for the files the poll left, when the endpoint uses a done file with a fixed name;
+     * <tt>null</tt> otherwise.
      */
-    void setDoneFileAdmission(GenericFileDoneFileAdmission doneFileAdmission) {
-        this.doneFileAdmission = doneFileAdmission;
+    void setKeptDoneFiles(GenericFileKeptDoneFiles keptDoneFiles) {
+        this.keptDoneFiles = keptDoneFiles;
     }
 
     public ExceptionHandler getExceptionHandler() {
@@ -195,7 +196,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             StringHelper.notEmpty(doneFileName, "doneFileName", endpoint);
             // a done file with a fixed name is kept while the poll left files for the next one (beyond
             // maxMessagesPerPoll, or not started)
-            if (complete && doneFileAdmission != null && doneFileAdmission.hasLeft(doneFileName)) {
+            if (complete && keptDoneFiles != null && keptDoneFiles.isKept(doneFileName)) {
                 LOG.trace("Done file: {} is kept for the files left by this poll", doneFileName);
                 complete = false;
             }

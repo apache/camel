@@ -207,9 +207,10 @@ So `camel validate` can report an endpoint it did not report before.
 
 A done file with a fixed name (such as `doneFileName=ready`) is no longer deleted while a poll left files of its
 directory for the next poll (beyond `maxMessagesPerPoll`, or not started); before, they were left until a new done file
-was written. Meanwhile only these files are consumed. With `maxMessagesPerPoll` and `eagerMaxMessagesPerPoll=true` (the
-default), such a consumer checks every file of the directory on each poll, as `eagerMaxMessagesPerPoll=false` does.
-This applies to camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
+was written. Meanwhile the polls consume every file of the directory, as they do whenever the done file is there. This
+also applies to `pollEnrich` and `ConsumerTemplate.receive`, which take one file per call: the done file is now kept
+until the last file of the directory is received, where before the first received file deleted it. This applies to
+camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
 
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
