@@ -31,7 +31,8 @@ import static org.apache.camel.component.http.HttpMethods.POST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A Map or List body cannot be an HTTP request body; the error says to marshal it to JSON first (CAMEL-25309).
+ * A Map or List body cannot be an HTTP request body; the error says to marshal it first, in the data format the
+ * Content-Type names (CAMEL-25309, CAMEL-25751).
  */
 public class HttpProducerMapBodyTest extends BaseHttpTest {
 
@@ -57,18 +58,30 @@ public class HttpProducerMapBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void aMapBodySaysToMarshalItToJson() {
+    public void aMapBodySaysToMarshalIt() {
         Exchange exchange = template.request(endpointUrl + "/post?httpMethod=POST",
                 // the body after unmarshal: json with Jackson
                 e -> e.getIn().setBody(new LinkedHashMap<>(Map.of("orderId", "ORD-1001", "qty", 2))));
 
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
                 .hasMessageContaining("java.util.LinkedHashMap").hasMessageContaining("a Map is not an HTTP request body")
-                .hasMessageContaining("marshal it to JSON first (marshal: json)");
+                .hasMessageContaining("marshal it first with the data format of the request (such as marshal: json,"
+                                      + " marshal: jacksonXml or marshal: csv) or set the body to the text");
     }
 
     @Test
-    public void aListBodySaysToMarshalItToJson() {
+    public void theContentTypeNamesTheDataFormat() {
+        Exchange exchange = template.request(endpointUrl + "/post?httpMethod=POST", e -> {
+            e.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            e.getIn().setBody(new LinkedHashMap<>(Map.of("orderId", "ORD-1001")));
+        });
+
+        assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("marshal it first (marshal: jacksonXml, for the Content-Type application/xml)");
+    }
+
+    @Test
+    public void aListBodySaysToMarshalIt() {
         Exchange exchange = template.request(endpointUrl + "/post?httpMethod=POST",
                 e -> e.getIn().setBody(List.of(Map.of("sku", "CAMEL-MUG"))));
 

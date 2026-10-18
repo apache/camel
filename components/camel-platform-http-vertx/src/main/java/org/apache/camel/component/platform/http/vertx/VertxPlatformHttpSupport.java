@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -43,6 +44,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExceptionHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.http.HttpUtil;
@@ -251,24 +253,56 @@ public final class VertxPlatformHttpSupport {
             writeResponseAs(promise, ctx, bb);
             return;
         }
-        throw noTypeConversion(body);
+        throw noTypeConversion(body, ExchangeHelper.getContentType(camelExchange));
     }
 
     /**
-     * A Map or a List (a body unmarshalled from JSON, or built as a map) cannot become the response, and the
-     * converter's message only names the conversion: say what to do (CAMEL-25751).
+     * A Map or a List (a body unmarshalled from JSON, XML or CSV, or built as a map) cannot become the response, and
+     * the converter's message only names the conversion: say what to do, in the data format the Content-Type names, or
+     * name the usual ones when it names none (CAMEL-25751).
      */
-    static NoTypeConversionAvailableException noTypeConversion(Object body) {
+    static NoTypeConversionAvailableException noTypeConversion(Object body, String contentType) {
         if (body instanceof Map || body instanceof Collection) {
+            String format = dataFormatOf(contentType);
+            String marshal = format != null
+                    ? "marshal it first (marshal: " + format + ", for the Content-Type " + contentType + ")"
+                    : "marshal it first with the data format of the reply (such as marshal: json, marshal: jacksonXml or"
+                      + " marshal: csv)";
+            // the REST binding writes json and xml
+            String binding = format == null ? ", or let the REST binding write it (bindingMode: json or xml)"
+                    : "json".equals(format) ? ", or let the REST binding write it (bindingMode: json)"
+                    : "jacksonXml".equals(format) ? ", or let the REST binding write it (bindingMode: xml)" : "";
             return new NoTypeConversionAvailableException(
                     NoTypeConversionAvailableException.createMessage(body, InputStream.class) + ": a "
                                                           + (body instanceof Map ? "Map" : body instanceof List ? "List"
                                                                   : "Collection")
-                                                          + " is not an HTTP response body: marshal it to JSON first (marshal: json) as the"
-                                                          + " last step of the route, or let the REST binding write it (bindingMode: json)",
+                                                          + " is not an HTTP response body: " + marshal
+                                                          + " as the last step of the route" + binding,
                     body, InputStream.class);
         }
         return new NoTypeConversionAvailableException(body, InputStream.class);
+    }
+
+    /**
+     * The data format that writes a content type, as the YAML DSL names it: json, jacksonXml, csv or yaml; or null
+     * (CAMEL-25751; CAMEL-25749 moves this onto one helper).
+     */
+    static String dataFormatOf(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        int semicolon = contentType.indexOf(';');
+        String type = (semicolon > 0 ? contentType.substring(0, semicolon) : contentType).trim().toLowerCase(Locale.ROOT);
+        if (type.endsWith("/json") || type.endsWith("+json")) {
+            return "json";
+        } else if (type.endsWith("/xml") || type.endsWith("+xml")) {
+            return "jacksonXml";
+        } else if (type.endsWith("/csv") || type.endsWith("/tab-separated-values")) {
+            return "csv";
+        } else if (type.endsWith("/yaml") || type.endsWith("/x-yaml")) {
+            return "yaml";
+        }
+        return null;
     }
 
     private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, ByteBuffer bb) {

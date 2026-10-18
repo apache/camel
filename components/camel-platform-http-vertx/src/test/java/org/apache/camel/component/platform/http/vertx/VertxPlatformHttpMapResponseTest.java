@@ -30,11 +30,13 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * CAMEL-25751: a Map or a List as the reply - a body unmarshalled from JSON - says to marshal it first.
+ * CAMEL-25751: a Map or a List as the reply - a body unmarshalled from JSON, XML or CSV - says to marshal it first, in
+ * the data format the Content-Type names.
  */
 public class VertxPlatformHttpMapResponseTest {
 
@@ -55,7 +57,11 @@ public class VertxPlatformHttpMapResponseTest {
                                 exchange.getMessage().setBody(stock);
                             });
                     from("platform-http:/lines?exceptionHandler=#recording")
-                            .process(exchange -> exchange.getMessage().setBody(List.of(Map.of("sku", "A1"))));
+                            .setHeader(Exchange.CONTENT_TYPE, constant("text/csv"))
+                            .process(exchange -> exchange.getMessage().setBody(List.of(List.of("A1", "2"))));
+                    from("platform-http:/order?exceptionHandler=#recording")
+                            .setHeader(Exchange.CONTENT_TYPE, constant("application/xml"))
+                            .process(exchange -> exchange.getMessage().setBody(Map.of("orderId", "1001")));
                 }
             });
 
@@ -63,15 +69,28 @@ public class VertxPlatformHttpMapResponseTest {
 
             given().when().get("/stock").then().statusCode(500);
             given().when().get("/lines").then().statusCode(500);
+            given().when().get("/order").then().statusCode(500);
 
-            assertEquals(2, handler.handled.size(), () -> "Handled: " + handler.handled);
+            assertEquals(3, handler.handled.size(), () -> "Handled: " + handler.handled);
+            // no Content-Type: the usual data formats
             String map = assertInstanceOf(NoTypeConversionAvailableException.class, handler.handled.get(0)).getMessage();
             assertTrue(map.startsWith("No type converter available to convert from type: java.util.LinkedHashMap"
                                       + " to the required type: java.io.InputStream"),
                     map);
-            assertTrue(map.contains("a Map is not an HTTP response body: marshal it to JSON first (marshal: json)"), map);
-            String list = handler.handled.get(1).getMessage();
-            assertTrue(list.contains("a List is not an HTTP response body"), list);
+            assertTrue(map.contains("a Map is not an HTTP response body: marshal it first with the data format of the reply"
+                                    + " (such as marshal: json, marshal: jacksonXml or marshal: csv) as the last step of the"
+                                    + " route, or let the REST binding write it (bindingMode: json or xml)"),
+                    map);
+            // the Content-Type names the data format; the REST binding does not write csv
+            String csv = handler.handled.get(1).getMessage();
+            assertTrue(csv.contains("a List is not an HTTP response body: marshal it first (marshal: csv, for the Content-Type"
+                                    + " text/csv) as the last step of the route"),
+                    csv);
+            assertFalse(csv.contains("REST binding"), csv);
+            String xml = handler.handled.get(2).getMessage();
+            assertTrue(xml.contains("marshal it first (marshal: jacksonXml, for the Content-Type application/xml) as the last"
+                                    + " step of the route, or let the REST binding write it (bindingMode: xml)"),
+                    xml);
         } finally {
             context.stop();
         }

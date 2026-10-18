@@ -36,7 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * CAMEL-25751: a Map or a List written to a file - a body unmarshalled from JSON - says to marshal it first.
+ * CAMEL-25751: a Map or a List written to a file - a body unmarshalled from JSON, XML or CSV - says to marshal it
+ * first, in the data format the file name names.
  */
 public class FileProducerMapBodyTest {
 
@@ -47,29 +48,40 @@ public class FileProducerMapBodyTest {
     public void testMapBody() throws Exception {
         Map<String, Object> order = new LinkedHashMap<>();
         order.put("orderId", "1001");
-        String message = failure(order, null);
+        String message = failure(order, null, "order.json");
         assertTrue(message.startsWith("Cannot store file: "), message);
         assertTrue(message.contains("but has type: java.util.LinkedHashMap"), message);
-        assertTrue(message.contains(
-                "a Map is not file content: marshal it first (marshal: json) or set the body to the text"), message);
+        assertTrue(message.contains("a Map is not file content: marshal it first (marshal: json, for the file name"
+                                    + " order.json) or set the body to the text"),
+                message);
         assertFalse(Files.exists(dir.resolve("order.json")));
     }
 
     @Test
-    public void testListBodyWithCharset() throws Exception {
-        // a charset writes through a reader, which is made from the same stream
-        String message = failure(List.of(Map.of("sku", "A1")), "UTF-8");
-        assertTrue(message.contains("a List is not file content: marshal it first (marshal: json)"), message);
+    public void testListBodyToACsvFileWithCharset() throws Exception {
+        // the file name says the data format; a charset writes through a reader, made from the same stream
+        String message = failure(List.of(List.of("A1", "2")), "UTF-8", "lines.csv");
+        assertTrue(message.contains("a List is not file content: marshal it first (marshal: csv, for the file name"
+                                    + " lines.csv)"),
+                message);
+    }
+
+    @Test
+    public void testFileNameThatNamesNoDataFormat() throws Exception {
+        String message = failure(Map.of("sku", "A1"), null, "order.dat");
+        assertTrue(message.contains("a Map is not file content: marshal it first with the data format of the file (such as"
+                                    + " marshal: json, marshal: jacksonXml or marshal: csv)"),
+                message);
     }
 
     @Test
     public void testOtherBodyKeepsTheMessage() throws Exception {
-        String message = failure(new Object(), null);
+        String message = failure(new Object(), null, "order.json");
         assertTrue(message.contains("No body available of type: java.io.InputStream"), message);
         assertFalse(message.contains("is not file content"), message);
     }
 
-    private String failure(Object body, String charset) throws Exception {
+    private String failure(Object body, String charset, String fileName) throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             FileEndpoint endpoint = new FileEndpoint("file:" + dir, new FileComponent(context));
             endpoint.setFile(dir.toFile());
@@ -80,7 +92,7 @@ public class FileProducerMapBodyTest {
             exchange.getIn().setBody(body);
             FileOperations operations = new FileOperations(endpoint);
             GenericFileOperationFailedException e = assertThrows(GenericFileOperationFailedException.class,
-                    () -> operations.storeFile(dir.resolve("order.json").toString(), exchange, -1));
+                    () -> operations.storeFile(dir.resolve(fileName).toString(), exchange, -1));
             assertInstanceOf(InvalidPayloadException.class, e.getCause());
             return e.getMessage();
         }
