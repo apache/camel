@@ -22,7 +22,11 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -37,10 +41,9 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.config.ConnectionConfig;
-import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
@@ -48,6 +51,7 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
 import org.apache.hc.core5.reactor.ssl.TlsDetails;
 import org.apache.hc.core5.util.Timeout;
+import org.opensearch.client.Node;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
@@ -478,17 +482,16 @@ class OpensearchProducer extends DefaultAsyncProducer {
 
     private RestClient createClient() {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
+        // the credentials provider reads the nodes from the client, as the sniffer can change them
+        final AtomicReference<RestClient> restClientRef = new AtomicReference<>();
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
                 .setConnectTimeout(Timeout.of(Duration.ofMillis(configuration.getConnectionTimeout())))
                 // apply the socket/read timeout for both plain-HTTP and SSL connections, not only when SSL is enabled
                 .setResponseTimeout(Timeout.of(Duration.ofMillis(configuration.getSocketTimeout()))));
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
-            if (ObjectHelper.isNotEmpty(configuration.getUser()) && ObjectHelper.isNotEmpty(configuration.getPassword())) {
-                final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                // match-all AuthScope so basic auth is sent to every node, not only the first configured host
-                credentialsProvider.setCredentials(new AuthScope(null, null, -1, null, null),
-                        new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword().toCharArray()));
+            CredentialsProvider credentialsProvider = createCredentialsProvider(() -> nodeHosts(restClientRef.get()));
+            if (credentialsProvider != null) {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
 
@@ -535,6 +538,7 @@ class OpensearchProducer extends DefaultAsyncProducer {
         });
 
         final RestClient restClient = builder.build();
+        restClientRef.set(restClient);
         if (configuration.isEnableSniffer()) {
             SnifferBuilder snifferBuilder = Sniffer.builder(restClient);
             snifferBuilder.setSniffIntervalMillis(configuration.getSnifferInterval());
@@ -542,6 +546,25 @@ class OpensearchProducer extends DefaultAsyncProducer {
             sniffer = snifferBuilder.build();
         }
         return restClient;
+    }
+
+    /**
+     * Creates the provider of the configured user and password, which offers them only to the given nodes - every node
+     * of the cluster, not only the first configured host - or returns null when no credentials are configured.
+     */
+    CredentialsProvider createCredentialsProvider(Supplier<? extends Collection<HttpHost>> nodes) {
+        if (ObjectHelper.isEmpty(configuration.getUser()) || ObjectHelper.isEmpty(configuration.getPassword())) {
+            return null;
+        }
+        return new NodeScopedCredentialsProvider(
+                new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword().toCharArray()), nodes);
+    }
+
+    private List<HttpHost> nodeHosts(RestClient restClient) {
+        if (restClient == null) {
+            return configuration.getHostAddressesList();
+        }
+        return restClient.getNodes().stream().map(Node::getHost).toList();
     }
 
     @Override
