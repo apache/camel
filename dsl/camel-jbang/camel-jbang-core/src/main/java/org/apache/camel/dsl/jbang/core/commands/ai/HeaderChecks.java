@@ -57,6 +57,15 @@ final class HeaderChecks {
      */
     static final Map<String, String> METADATA_OPTION = Map.of("timer", "includeMetadata");
 
+    /**
+     * A comparison of the timer's counter with a number: the counter counts the fires from 1, so {@code == 0} is never
+     * true (CAMEL-25744: in 8 of 10 benchmark runs a model compared it with 0 to pick the first fire). The Simple forms
+     * (${exchangeProperty.CamelTimerCounter} == 0, ${header.CamelTimerCounter == 0 ? ...}) and the Groovy ones
+     * (exchange.getProperty('CamelTimerCounter', Integer) == 0).
+     */
+    static final Pattern TIMER_COUNTER_COMPARISON = Pattern.compile(
+            "CamelTimerCounter(?:\\}|['\"]\\s*(?:,\\s*[\\w.]+\\s*)?\\))?\\s*(==|!=|<=|<)\\s*['\"]?(\\d+)['\"]?");
+
     static final Pattern EXCHANGE_PROPERTY_REF_PATTERN = Pattern.compile("\\$\\{exchangeProperty\\.(Camel[A-Z][A-Za-z0-9]*)");
 
     /** Whether the option that makes the component set its exchange properties is true somewhere in the content. */
@@ -106,11 +115,36 @@ final class HeaderChecks {
         return null;
     }
 
+    /**
+     * The comparisons of CamelTimerCounter that can never be true (== 0, <= 0, < 1) or never be false (!= 0), as the
+     * counter is 1 on the first fire.
+     */
+    static List<String> timerCounterComparisons(String content) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            Matcher m = TIMER_COUNTER_COMPARISON.matcher(lines[i]);
+            while (m.find()) {
+                String op = m.group(1);
+                int n = Integer.parseInt(m.group(2));
+                boolean never = ("==".equals(op) || "<=".equals(op)) && n == 0 || "<".equals(op) && n <= 1;
+                boolean always = "!=".equals(op) && n == 0;
+                if (never || always) {
+                    msgs.add("Line " + (i + 1) + ": CamelTimerCounter counts the fires from 1 (the first fire is 1), so "
+                             + op + " " + n + " is " + (never ? "never true" : "always true")
+                             + ": compare with 1 to pick the first fire");
+                }
+            }
+        }
+        return msgs;
+    }
+
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
         if (content == null) {
             return msgs;
         }
+        msgs.addAll(timerCounterComparisons(content));
         Set<String> known = new LinkedHashSet<>();
         Map<String, String> owner = new LinkedHashMap<>();
         Matcher sm = SCHEME_IN_URI_PATTERN.matcher(content);
