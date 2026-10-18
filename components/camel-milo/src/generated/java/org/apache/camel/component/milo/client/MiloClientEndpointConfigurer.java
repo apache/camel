@@ -31,6 +31,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationUri": target.getConfiguration().setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "certificatevalidator":
+        case "certificateValidator": target.getConfiguration().setCertificateValidator(property(camelContext, org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class, value)); return true;
         case "channellifetime":
         case "channelLifetime": target.getConfiguration().setChannelLifetime(property(camelContext, java.lang.Long.class, value)); return true;
         case "clientid":
@@ -89,6 +91,10 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": target.getConfiguration().setSessionName(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontimeout":
         case "sessionTimeout": target.getConfiguration().setSessionTimeout(property(camelContext, java.lang.Long.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "trustlistdirectory":
+        case "trustListDirectory": target.getConfiguration().setTrustListDirectory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -104,6 +110,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationUri": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "certificatevalidator":
+        case "certificateValidator": return org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class;
         case "channellifetime":
         case "channelLifetime": return java.lang.Long.class;
         case "clientid":
@@ -162,6 +170,10 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": return java.lang.String.class;
         case "sessiontimeout":
         case "sessionTimeout": return java.lang.Long.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "trustlistdirectory":
+        case "trustListDirectory": return java.lang.String.class;
         default: return null;
         }
     }
@@ -178,6 +190,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationUri": return target.getConfiguration().getApplicationUri();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "certificatevalidator":
+        case "certificateValidator": return target.getConfiguration().getCertificateValidator();
         case "channellifetime":
         case "channelLifetime": return target.getConfiguration().getChannelLifetime();
         case "clientid":
@@ -236,6 +250,10 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "sessionName": return target.getConfiguration().getSessionName();
         case "sessiontimeout":
         case "sessionTimeout": return target.getConfiguration().getSessionTimeout();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "trustlistdirectory":
+        case "trustListDirectory": return target.getConfiguration().getTrustListDirectory();
         default: return null;
         }
     }
