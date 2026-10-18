@@ -217,7 +217,8 @@ final class TextBodyFlow {
 
     /**
      * Whether the steps set or read an HTTP control header (CamelHttpMethod, CamelHttpQuery...), which can make an http
-     * producer call with GET and leave the body out.
+     * producer call with GET and leave the body out. A match anywhere in the steps only turns the http check off for
+     * the route: it errs on the quiet side.
      */
     private static boolean setsHttpHeaders(JsonNode steps) {
         return steps != null && steps.toString().toLowerCase(Locale.ROOT).contains("camelhttp");
@@ -337,7 +338,7 @@ final class TextBodyFlow {
                 }
                 String call = keepsData(value);
                 return call != null
-                        ? new Parsed(parsed.origin() + ", and groovy " + call + " keeps it data", parsed.format())
+                        ? new Parsed(parsed.origin() + ", and groovy " + call + " keeps it as data", parsed.format())
                         : null;
             }
             case "unmarshal" -> {
@@ -467,7 +468,7 @@ final class TextBodyFlow {
         String element = p.find() ? p.group(1) : "it";
         boolean readsFields = Pattern.compile("(?<![\\w$])" + element + "\\s*(\\??\\.\\s*[A-Za-z_]|\\[)")
                 .matcher(closure).find();
-        return GIVES_DATA.contains(method) || PICKS.contains(method) && readsFields
+        return GIVES_DATA.contains(method) || (PICKS.contains(method) && readsFields)
                 ? "body." + method + " { ... }" : null;
     }
 

@@ -454,7 +454,7 @@ public class TextBodyFlowTest {
         assertThat(lines(yaml)).singleElement().satisfies(m -> {
             assertThat(m).startsWith("Line 11: ");
             assertThat(m).contains("route stock: the body at the end of the route is the reply to the HTTP request");
-            assertThat(m).contains("unmarshal: json turns the text into data, and groovy body.find { ... } keeps it data");
+            assertThat(m).contains("unmarshal: json turns the text into data, and groovy body.find { ... } keeps it as data");
             assertThat(m).contains("add marshal: json as the last step");
         });
     }
