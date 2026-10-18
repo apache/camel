@@ -454,9 +454,7 @@ YAML::
       steps:
         - setHeader:
             name: CamelHttpMethod
-            expression:
-              constant:
-                expression: POST
+            constant: POST
         - to:
             uri: http://www.google.com
         - to:
