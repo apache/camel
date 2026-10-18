@@ -1551,6 +1551,11 @@ Stopping a consumer now deletes its monitored items. Previously they stayed on t
 the shared connection open, so a restarted consumer received each value twice. While the server is unreachable, the
 stop waits until the client's next attempt to reconnect has failed.
 
+When the server removes the subscription that the consumers of a connection share, or the subscription times out on the
+server, it is now created again in the existing session; previously the consumers stopped receiving values until the
+connection was rebuilt for another reason. The monitored items deliver their current values again after the
+subscription is recreated.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of

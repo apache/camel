@@ -204,6 +204,29 @@ The default `omitNullValues=true` also omits a null value with a Good status tha
 does not learn that the node recovered. Set `omitNullValues=false` for a node whose value can be null, such as a
 `String`.
 
+=== Subscriptions that stop publishing
+
+The consumers of a connection share one subscription on the server. When the server stops publishing for it (no
+notification or keep-alive within about one and a half keep-alive intervals), Camel checks whether the server still
+has the subscription. If the server does not confirm it, or when the server reports that the subscription timed out
+(`Bad_Timeout`), Camel deletes it and, once the server has confirmed that it is gone, creates it again in the existing
+session. A node that can no longer be monitored is reported as described above and does not affect the other nodes.
+
+A route that is slow to process a value stops the publishing as well, because the client asks the server for more
+notifications only as the routes finish processing the ones it received. The subscription is then kept, unless the
+route takes longer than the lifetime of the subscription, which lets it time out on the server.
+
+A check or a delete that fails because the connection was lost is left to the session recovery of the client, which
+restores the session once the server can be reached again. The subscription then resumes publishing, or it is created
+again as above when the server no longer has it. If the server no longer has the session either, for example after a
+restart, the subscription cannot be transferred to a new session and the connection is rebuilt. A network that drops
+silently can stop the publishing before the client notices that the connection is lost; if the network is back before
+that, the check reaches the server and is handled as above.
+
+Any other failure of the delete, or a subscription that cannot be created again, rebuilds the connection to the server.
+After the subscription is recreated, every monitored item delivers its current value again, and value changes in
+between are not delivered.
+
 === Method ID
 
 It is possible to perform methods calls on OPC UA nodes. If the parameter `method` is set to the Node ID of a method call (the node ID must be set to the parent object in this case),
