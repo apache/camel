@@ -80,13 +80,14 @@ late event. Every `lookBackInterval` (1 minute by default) the consumer therefor
 routed yet (by event id). Events with an event time before the start of the consumer are not routed, and an event that
 becomes visible more than `lookBackWindow` after its event time is still missed.
 
-The polls send the same `LookupEvents` requests whatever these options. The late-event lookup adds
+The normal polls send the same `LookupEvents` requests regardless of these options. The late-event lookup adds
 `ceil(N / maxResults)` requests per `lookBackInterval`, at most one per poll, where N is the number of events (of the
 `eventSource`, if set) in its range, and none when the newest event time seen is older than `lookBackWindow`. With the
 defaults this is one request per minute while at most 50 events fall in 10 minutes, and 20 requests per minute with
 1000 events in 10 minutes. AWS allows two `LookupEvents` requests per second per account and Region; the polls
 themselves send at least one request every `delay` (500 ms by default, so up to about two per second), and one more per
-further page of new events. Set `lookBackWindow=0` to disable the late-event lookup.
+further page of new events. Set `lookBackWindow=0` to disable the late-event lookup. A negative `lookBackWindow`,
+or a `lookBackInterval` of 0 or less while the late-event lookup is enabled, fails the start of the consumer.
 
 === Example
 

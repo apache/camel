@@ -67,6 +67,17 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        CloudtrailConfiguration configuration = getEndpoint().getConfiguration();
+        if (configuration.getLookBackWindow() < 0) {
+            throw new IllegalArgumentException(
+                    "lookBackWindow must be 0 (disabled) or positive, but was " + configuration.getLookBackWindow());
+        }
+        if (configuration.getLookBackWindow() > 0 && configuration.getLookBackInterval() <= 0) {
+            // with 0 or less every poll would also send a late-event lookup, beyond the LookupEvents rate limit
+            throw new IllegalArgumentException(
+                    "lookBackInterval must be above 0 unless lookBackWindow is 0, but was "
+                                               + configuration.getLookBackInterval());
+        }
         super.doStart();
         if (lastTime == null) {
             // Start tailing from the consumer start time rather than replaying CloudTrail history.

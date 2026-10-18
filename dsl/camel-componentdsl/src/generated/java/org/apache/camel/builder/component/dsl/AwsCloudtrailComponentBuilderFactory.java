@@ -113,7 +113,8 @@ public interface AwsCloudtrailComponentBuilderFactory {
         /**
          * How often the consumer looks up the lookBackWindow again for events
          * that CloudTrail made visible late. A late event is routed at most
-         * this long after it became visible.
+         * this long after it became visible. Must be above 0 unless
+         * lookBackWindow is 0.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -130,20 +131,10 @@ public interface AwsCloudtrailComponentBuilderFactory {
     
         
         /**
-         * CloudTrail can make an event visible to LookupEvents minutes after
-         * its event time (AWS documents typical delivery within 5 minutes of
-         * the API call), after a newer event was already returned; the normal
-         * poll, which looks up from the newest event time seen, then misses it.
-         * Every lookBackInterval the consumer also looks up the events from
-         * lookBackWindow before now up to the newest event time seen, and
-         * routes those it has not routed yet (by event id). Events before the
-         * consumer start are not routed. Cost: each such lookup sends ceil(N /
-         * maxResults) LookupEvents requests, at most one per poll, where N is
-         * the number of events (of the eventSource) in that range, and none
-         * when the newest event time seen is older than the window. With the
-         * defaults that is one request per minute while at most 50 events fall
-         * in 10 minutes. The normal polls send the same requests as with 0. Set
-         * to 0 to disable the late-event lookup.
+         * How far back the consumer looks again, every lookBackInterval, for
+         * events that CloudTrail made visible after a newer event (CloudTrail
+         * typically delivers an event within 5 minutes). Events not routed yet
+         * are routed. Set to 0 to disable.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 

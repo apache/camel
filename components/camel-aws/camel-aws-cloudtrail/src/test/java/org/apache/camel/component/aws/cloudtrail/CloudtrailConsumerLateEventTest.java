@@ -40,7 +40,10 @@ import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -251,5 +254,37 @@ class CloudtrailConsumerLateEventTest {
         }
         assertEquals(List.of("newer"), routed, "a late event is not routed, as before");
         assertEquals(0, consumer.getRoutedEventIdsSize());
+    }
+
+    @Test
+    void lookBackIntervalOfZeroOrLessIsRejected() {
+        for (long interval : new long[] { 0, -1 }) {
+            configuration.setLookBackInterval(interval);
+            Exception e = assertThrows(Exception.class, this::startConsumer);
+            IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class,
+                    e instanceof IllegalArgumentException ? e : e.getCause());
+            assertTrue(cause.getMessage().contains("lookBackInterval"), cause.getMessage());
+            consumer = null;
+        }
+    }
+
+    @Test
+    void negativeLookBackWindowIsRejected() {
+        configuration.setLookBackWindow(-1);
+        Exception e = assertThrows(Exception.class, this::startConsumer);
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class,
+                e instanceof IllegalArgumentException ? e : e.getCause());
+        assertTrue(cause.getMessage().contains("lookBackWindow"), cause.getMessage());
+        consumer = null;
+    }
+
+    @Test
+    void lookBackIntervalIsNotCheckedWhenTheLookBackIsDisabled() throws Exception {
+        configuration.setLookBackWindow(0);
+        configuration.setLookBackInterval(0);
+        startConsumer();
+        visible.add(event("newer", T.plusSeconds(20)));
+        assertEquals(1, pollRequests());
+        assertEquals(List.of("newer"), routed);
     }
 }
