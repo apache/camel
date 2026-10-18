@@ -20,14 +20,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.milo.client.internal.SubscriptionManager;
+import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
-import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
@@ -39,10 +44,12 @@ import org.eclipse.milo.opcua.stack.core.types.structured.CallMethodResult;
 
 import static java.util.Objects.requireNonNull;
 
-public class MiloClientConnection implements AutoCloseable {
+public class MiloClientConnection implements AutoCloseable, CamelContextAware {
 
     private final Lock lock = new ReentrantLock();
     private final MiloClientConfiguration configuration;
+    private volatile CamelContext camelContext;
+    private ScheduledExecutorService executor;
     private SubscriptionManager manager;
     private volatile boolean initialized;
 
@@ -55,6 +62,16 @@ public class MiloClientConnection implements AutoCloseable {
 
     public MiloClientConfiguration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(final CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     /**
@@ -81,14 +98,37 @@ public class MiloClientConnection implements AutoCloseable {
     }
 
     protected void init() {
-        this.manager = new SubscriptionManager(this.configuration, Stack.sharedScheduledExecutor(), 10_000);
+        ObjectHelper.notNull(this.camelContext, "camelContext");
+
+        // A failed request disconnects the client, which can wait for a reconnect attempt that Milo schedules on its shared
+        // scheduled executor, so this connection handles its requests and reconnects on an executor of its own.
+        final ThreadPoolProfile profile = new ThreadPoolProfile("MiloClient");
+        // as many threads as that executor; with one processor or with virtual threads this is one thread, so a route
+        // that continues on it after an awaited request must not wait for another request of this connection
+        profile.setPoolSize(Runtime.getRuntime().availableProcessors());
+        // not bounded, like that executor, because a rejected reconnect would end the reconnects of this connection
+        profile.setMaxQueueSize(-1);
+        // a request that completes after the connection is closed fails instead of being dropped
+        profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
+        this.executor = this.camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "MiloClient", profile);
+
+        this.manager = new SubscriptionManager(this.configuration, this.executor, 10_000);
     }
 
     @Override
     public void close() throws Exception {
-        if (this.manager != null) {
-            this.manager.dispose();
-            this.manager = null;
+        lock.lock();
+        try {
+            if (this.manager != null) {
+                this.manager.dispose();
+                this.manager = null;
+            }
+        } finally {
+            if (this.executor != null) {
+                this.camelContext.getExecutorServiceManager().shutdown(this.executor);
+                this.executor = null;
+            }
+            lock.unlock();
         }
     }
 
