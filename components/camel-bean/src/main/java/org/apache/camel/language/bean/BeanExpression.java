@@ -43,6 +43,7 @@ import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.component.bean.RequestBeanHolder;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.KeyValueHolder;
@@ -595,6 +596,11 @@ public class BeanExpression implements Expression, Predicate {
         }
         try {
             Object bean = holder != null ? holder.getBean(exchange) : null;
+            if (bean instanceof Map<?, ?> && bean == exchange.getMessage().getBody()) {
+                // the body: which step made it this Map, as a split over an order's lines does (CAMEL-25749)
+                return hint + " (the Map has no key " + methodName + "; " + BodyFacts.describe(exchange) + ": "
+                       + BodyFacts.hint(exchange, BodyFacts.Need.DATA) + ")";
+            }
             if (bean instanceof Map<?, ?> map) {
                 String keys = map.keySet().stream().limit(MAX_KEYS_LISTED).map(String::valueOf)
                         .collect(Collectors.joining(", "));

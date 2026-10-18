@@ -51,8 +51,8 @@ public class FileProducerMapBodyTest {
         String message = failure(order, null, "order.json");
         assertTrue(message.startsWith("Cannot store file: "), message);
         assertTrue(message.contains("but has type: java.util.LinkedHashMap"), message);
-        assertTrue(message.contains("a Map is not file content: marshal it first (marshal: json, for the file name"
-                                    + " order.json) or set the body to the text"),
+        assertTrue(message.contains("the body is a Map (LinkedHashMap), which is not file content: marshal it first"
+                                    + " (marshal: json, for the file name order.json), or set the body to the text"),
                 message);
         assertFalse(Files.exists(dir.resolve("order.json")));
     }
@@ -61,7 +61,8 @@ public class FileProducerMapBodyTest {
     public void testListBodyToACsvFileWithCharset() throws Exception {
         // the file name says the data format; a charset writes through a reader, made from the same stream
         String message = failure(List.of(List.of("A1", "2")), "UTF-8", "lines.csv");
-        assertTrue(message.contains("a List is not file content: marshal it first (marshal: csv, for the file name"
+        assertTrue(message.contains("the body is a List ("), message);
+        assertTrue(message.contains("which is not file content: marshal it first (marshal: csv, for the file name"
                                     + " lines.csv)"),
                 message);
     }
@@ -69,16 +70,19 @@ public class FileProducerMapBodyTest {
     @Test
     public void testFileNameThatNamesNoDataFormat() throws Exception {
         String message = failure(Map.of("sku", "A1"), null, "order.dat");
-        assertTrue(message.contains("a Map is not file content: marshal it first with the data format of the file (such as"
+        assertTrue(message.contains("which is not file content: marshal it first with the data format to write (such as"
                                     + " marshal: json, marshal: jacksonXml or marshal: csv)"),
                 message);
     }
 
     @Test
-    public void testOtherBodyKeepsTheMessage() throws Exception {
+    public void testObjectBody() throws Exception {
+        // an object is written by a marshal too, as a Map is
         String message = failure(new Object(), null, "order.json");
         assertTrue(message.contains("No body available of type: java.io.InputStream"), message);
-        assertFalse(message.contains("is not file content"), message);
+        assertTrue(message.contains("the body is an object of class java.lang.Object, which is not file content: marshal it"
+                                    + " first (marshal: json, for the file name order.json)"),
+                message);
     }
 
     private String failure(Object body, String charset, String fileName) throws Exception {

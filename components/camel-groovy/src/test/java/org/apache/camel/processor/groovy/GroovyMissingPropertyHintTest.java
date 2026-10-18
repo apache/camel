@@ -59,7 +59,7 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> template.sendBodyAndHeader("direct:field", json, "sku", "A1"));
         MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("the body is still text (a byte[])"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("the body is bytes (a byte[]), not parsed data"), cause.getMessage());
         assertTrue(cause.getMessage().contains("unmarshal: json"), cause.getMessage());
     }
 
@@ -68,7 +68,7 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> template.sendBodyAndHeader("direct:field", "[{\"sku\": \"A1\"}]", "sku", "A1"));
         MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("the body is still text (a String)"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("the body is text (a String), not parsed data"), cause.getMessage());
     }
 
     @Test
@@ -102,7 +102,9 @@ public class GroovyMissingPropertyHintTest extends CamelTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> template.sendBodyAndHeader("direct:field", "sku=A1", "sku", "A1"));
         MissingPropertyException cause = assertInstanceOf(MissingPropertyException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("the data format of the payload (json, jacksonXml, csv, ...)"),
+        assertTrue(
+                cause.getMessage().contains(
+                        "the data format of the payload (such as unmarshal: json, unmarshal: jacksonXml or unmarshal: csv)"),
                 cause.getMessage());
     }
 

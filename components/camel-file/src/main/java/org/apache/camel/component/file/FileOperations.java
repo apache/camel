@@ -38,11 +38,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -51,9 +47,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -393,54 +389,25 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     /**
-     * The body as a stream to write. A Map or a List (a body unmarshalled from JSON, XML or CSV, or built as a map)
-     * cannot become one, and the converter's message only names the conversion: say what to do, in the data format the
-     * file name names, or name the usual ones when it names none (CAMEL-25751).
+     * The body as a stream to write. A Map, a List or an object (a body unmarshalled from JSON, XML or CSV, or built in
+     * the route) cannot become one, and the converter's message only names the conversion: say what the body is, the
+     * step that set it, and the marshal that writes it, in the data format the file name names (CAMEL-25751,
+     * CAMEL-25749).
      */
     static InputStream mandatoryBodyStream(Exchange exchange, Message message, File file) throws InvalidPayloadException {
         try {
             return message.getMandatoryBody(InputStream.class);
         } catch (InvalidPayloadException e) {
-            Object body = message.getBody();
-            if (body instanceof Map || body instanceof Collection) {
-                String format = dataFormatOf(MimeTypeHelper.probeMimeType(file.getName()));
+            String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, file.getName());
+            if (hint != null) {
                 InvalidPayloadException answer = new InvalidPayloadException(
                         exchange, InputStream.class, message,
-                        "a " + (body instanceof Map ? "Map" : body instanceof List ? "List" : "Collection")
-                                                              + " is not file content: "
-                                                              + (format != null
-                                                                      ? "marshal it first (marshal: " + format
-                                                                        + ", for the file name " + file.getName() + ")"
-                                                                      : "marshal it first with the data format of the file (such as"
-                                                                        + " marshal: json, marshal: jacksonXml or marshal: csv)")
-                                                              + " or set the body to the text");
+                        BodyFacts.describe(exchange) + ", which is not file content: " + hint);
                 answer.initCause(e.getCause() != null ? e.getCause() : e);
                 throw answer;
             }
             throw e;
         }
-    }
-
-    /**
-     * The data format that writes a content type, as the YAML DSL names it: json, jacksonXml, csv or yaml; or null
-     * (CAMEL-25751; CAMEL-25749 moves this onto one helper).
-     */
-    static String dataFormatOf(String contentType) {
-        if (contentType == null) {
-            return null;
-        }
-        int semicolon = contentType.indexOf(';');
-        String type = (semicolon > 0 ? contentType.substring(0, semicolon) : contentType).trim().toLowerCase(Locale.ROOT);
-        if (type.endsWith("/json") || type.endsWith("+json")) {
-            return "json";
-        } else if (type.endsWith("/xml") || type.endsWith("+xml")) {
-            return "jacksonXml";
-        } else if (type.endsWith("/csv") || type.endsWith("/tab-separated-values")) {
-            return "csv";
-        } else if (type.endsWith("/yaml") || type.endsWith("/x-yaml")) {
-            return "yaml";
-        }
-        return null;
     }
 
     @Override

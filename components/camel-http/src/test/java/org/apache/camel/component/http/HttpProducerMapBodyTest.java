@@ -64,9 +64,9 @@ public class HttpProducerMapBodyTest extends BaseHttpTest {
                 e -> e.getIn().setBody(new LinkedHashMap<>(Map.of("orderId", "ORD-1001", "qty", 2))));
 
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("java.util.LinkedHashMap").hasMessageContaining("a Map is not an HTTP request body")
-                .hasMessageContaining("marshal it first with the data format of the request (such as marshal: json,"
-                                      + " marshal: jacksonXml or marshal: csv) or set the body to the text");
+                .hasMessageContaining("the body is a Map (LinkedHashMap), which is not an HTTP request body")
+                .hasMessageContaining("marshal it first with the data format to write (such as marshal: json,"
+                                      + " marshal: jacksonXml or marshal: csv), or set the body to the text");
     }
 
     @Test
@@ -86,6 +86,6 @@ public class HttpProducerMapBodyTest extends BaseHttpTest {
                 e -> e.getIn().setBody(List.of(Map.of("sku", "CAMEL-MUG"))));
 
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("a List is not an HTTP request body");
+                .hasMessageContaining("the body is a List (").hasMessageContaining("which is not an HTTP request body");
     }
 }
