@@ -20,7 +20,11 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -59,10 +63,9 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.elasticsearch.client.Node;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
@@ -509,14 +512,14 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
 
     private RestClient createClient() {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
+        // the credentials provider reads the nodes from the client, as the sniffer can change them
+        final AtomicReference<RestClient> restClientRef = new AtomicReference<>();
 
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder
                 .setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
-            if (configuration.getUser() != null && configuration.getPassword() != null) {
-                final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-                credentialsProvider.setCredentials(AuthScope.ANY,
-                        new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword()));
+            CredentialsProvider credentialsProvider = createCredentialsProvider(() -> nodeHosts(restClientRef.get()));
+            if (credentialsProvider != null) {
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
             if (configuration.getSslContextParameters() != null) {
@@ -534,6 +537,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             return httpClientBuilder;
         });
         final RestClient restClient = builder.build();
+        restClientRef.set(restClient);
         if (configuration.isEnableSniffer()) {
             SnifferBuilder snifferBuilder = Sniffer.builder(restClient);
             snifferBuilder.setSniffIntervalMillis(configuration.getSnifferInterval());
@@ -541,6 +545,25 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
             sniffer = snifferBuilder.build();
         }
         return restClient;
+    }
+
+    /**
+     * Creates the provider of the configured user and password, which offers them only to the given nodes, or returns
+     * null when no credentials are configured.
+     */
+    CredentialsProvider createCredentialsProvider(Supplier<? extends Collection<HttpHost>> nodes) {
+        if (configuration.getUser() == null || configuration.getPassword() == null) {
+            return null;
+        }
+        return new NodeScopedCredentialsProvider(
+                new UsernamePasswordCredentials(configuration.getUser(), configuration.getPassword()), nodes);
+    }
+
+    private List<HttpHost> nodeHosts(RestClient restClient) {
+        if (restClient == null) {
+            return configuration.getHostAddressesList();
+        }
+        return restClient.getNodes().stream().map(Node::getHost).toList();
     }
 
     @Override
