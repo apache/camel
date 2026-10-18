@@ -19,7 +19,9 @@ package org.apache.camel.component.minio;
 import java.io.InputStream;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -201,23 +203,27 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     protected Deque<Exchange> createExchanges(Iterator<Result<Item>> minioObjectSummaries) throws Exception {
         int messageCounter = 0;
         Deque<Exchange> answer = new LinkedList<>();
+        // the listed objects whose stat failed, other than those that no longer exist, by object name
+        Map<String, Exception> failures = new LinkedHashMap<>();
+        // whether the stat of at least one listed object succeeded
+        boolean anyGot = false;
         try {
-            if (getConfiguration().isIncludeFolders()) {
-                do {
-                    messageCounter++;
-                    Item minioObjectSummary = minioObjectSummaries.next().get();
-                    addExchange(minioObjectSummary.objectName(), answer, true);
-                } while (minioObjectSummaries.hasNext());
-            } else {
-                do {
-                    messageCounter++;
-                    Item minioObjectSummary = minioObjectSummaries.next().get();
-                    // ignore if directory
-                    if (!minioObjectSummary.isDir()) {
-                        addExchange(minioObjectSummary.objectName(), answer, true);
+            do {
+                messageCounter++;
+                Item minioObjectSummary = minioObjectSummaries.next().get();
+                // ignore if directory, unless folders are included
+                if (getConfiguration().isIncludeFolders() || !minioObjectSummary.isDir()) {
+                    String objectName = minioObjectSummary.objectName();
+                    // a failure to get one listed object does not fail the poll as long as another listed object could
+                    // be got: the object is skipped, the other listed objects are consumed, and a later poll tries it
+                    // again
+                    try {
+                        anyGot |= addExchange(objectName, answer, true);
+                    } catch (Exception e) {
+                        failures.put(objectName, e);
                     }
-                } while (minioObjectSummaries.hasNext());
-            }
+                }
+            } while (minioObjectSummaries.hasNext());
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Received {} messages in this poll", messageCounter);
@@ -231,26 +237,59 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             throw e;
         }
 
+        if (!failures.isEmpty()) {
+            if (!anyGot) {
+                // none of the listed objects could be got, so this is not about one object (expired credentials, no
+                // permission, no connection): the poll fails, and the backoff of the scheduled consumer applies
+                releaseInProgress(null, answer);
+                Map.Entry<String, Exception> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the listed objects of bucket {} could be got ({} failed, the first is {}): the poll fails",
+                        getConfiguration().getBucketName(), failures.size(), first.getKey());
+                throw first.getValue();
+            }
+            for (Map.Entry<String, Exception> failure : failures.entrySet()) {
+                handleSkippedObject(failure.getKey(), failure.getValue());
+            }
+        }
+
         return answer;
     }
 
-    private void addExchange(String objectName, Deque<Exchange> answer, boolean listed) throws Exception {
+    /**
+     * Creates the exchange of an object and adds it.
+     *
+     * @return true if the exchange was added, false if the object is skipped (an exchange of a previous poll is still
+     *         processing it, or it no longer exists)
+     */
+    private boolean addExchange(String objectName, Deque<Exchange> answer, boolean listed) throws Exception {
         // skip the object if an exchange of a previous poll is still processing it
         if (!inProgress.add(objectName)) {
             LOG.trace("Skipping object {} as it is already in progress", objectName);
-            return;
+            return false;
         }
         try {
             answer.add(createExchange(objectName));
+            return true;
         } catch (Exception e) {
             inProgress.remove(objectName);
             if (listed && isNoSuchKey(e)) {
                 // deleted (for example by another consumer) after it was listed
                 LOG.debug("Skipping object {} as it no longer exists", objectName);
-                return;
+                return false;
             }
             throw e;
         }
+    }
+
+    private void handleSkippedObject(String objectName, Exception cause) {
+        getExceptionHandler().handleException("Error getting object " + objectName + " from bucket "
+                                              + getConfiguration().getBucketName()
+                                              + ". The object is skipped for this poll.",
+                cause);
+    }
+
+    private boolean objectNameConfigured() {
+        return isNotEmpty(getConfiguration().getObjectName());
     }
 
     private static boolean isNoSuchKey(Exception e) {
@@ -289,6 +328,10 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
         int skipped = 0;
+        // the listed objects whose body could not be got, other than those that no longer exist, by object name
+        Map<String, Exception> failures = new LinkedHashMap<>();
+        // whether the body of at least one object of the batch could be got
+        boolean anyGot = false;
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
@@ -308,6 +351,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                 try {
                     minioObject = getObject(srcBucketName, getMinioClient(), srcObjectName);
                     exchange.getIn().setBody(IOUtils.toByteArray(minioObject));
+                    anyGot = true;
                     if (getConfiguration().isAutoCloseBody()) {
                         exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
@@ -324,10 +368,18 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         skipped++;
                         continue;
                     }
-                    LOG.warn("Error getting MinioObject due: {}", e.getMessage());
-                    // this and the remaining exchanges of the batch are not processed
-                    releaseInProgress(srcObjectName, exchanges);
-                    throw e;
+                    if (objectNameConfigured()) {
+                        LOG.warn("Error getting MinioObject due: {}", e.getMessage());
+                        // the one object of the poll is not processed
+                        releaseInProgress(srcObjectName, exchanges);
+                        throw e;
+                    }
+                    // a failure to get one listed object does not stop the other objects of the batch: the object is
+                    // skipped, and a later poll tries it again
+                    inProgress.remove(srcObjectName);
+                    skipped++;
+                    failures.put(srcObjectName, e);
+                    continue;
                 }
             }
 
@@ -359,6 +411,20 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         }
         // the remaining exchanges are not processed as the consumer is stopping
         releaseInProgress(null, exchanges);
+
+        if (!failures.isEmpty()) {
+            if (!anyGot) {
+                // none of the objects of the batch could be got, so this is not about one object: the poll fails, and
+                // the backoff of the scheduled consumer applies
+                Map.Entry<String, Exception> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the objects of bucket {} could be got ({} failed, the first is {}): the poll fails",
+                        getConfiguration().getBucketName(), failures.size(), first.getKey());
+                throw first.getValue();
+            }
+            for (Map.Entry<String, Exception> failure : failures.entrySet()) {
+                handleSkippedObject(failure.getKey(), failure.getValue());
+            }
+        }
 
         // skipped objects were not polled: they must not count for sendEmptyMessageWhenIdle and greedy polling
         return total - skipped;
