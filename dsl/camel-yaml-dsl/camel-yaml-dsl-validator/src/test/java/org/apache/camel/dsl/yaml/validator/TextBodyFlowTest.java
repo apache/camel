@@ -18,6 +18,9 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -263,6 +266,309 @@ public class TextBodyFlowTest {
                             groovy: body.items
                 """;
         assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testParsedDataWrittenToAFile() {
+        // the order is unmarshalled to read its fields, and then written as it is: a Map is not file content
+        String yaml = """
+                - route:
+                    id: archive
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - setHeader:
+                            name: orderId
+                            simple: ${body[orderId]}
+                        - to:
+                            uri: file:archive
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 12: ");
+            assertThat(m).contains("route archive: to: file writes the body to a file");
+            assertThat(m).contains("the body here is parsed data (a Map or a List), not text");
+            assertThat(m).contains("unmarshal: json turns the text into data: add marshal: json before this step");
+        });
+    }
+
+    @Test
+    public void testValidateKeepsTheBody() {
+        // validate checks the body and leaves it as it is
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - validate:
+                            simple: ${body[orderId]} != null
+                        - convertHeaderTo:
+                            name: CamelFileLength
+                            type: java.lang.Long
+                        - to: file:valid
+                """;
+        assertThat(lines(yaml)).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file writes the body to a file"));
+    }
+
+    @Test
+    public void testParsedDataSentWithPost() {
+        // a message with a body is sent as a POST, and the http producer cannot make a request body of a Map
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json:
+                              library: Jackson
+                        - to:
+                            uri: http://localhost:8080/orders
+                            parameters:
+                              throwExceptionOnFailure: false
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 9: ");
+            assertThat(m).contains("to: http sends the body as the request (a message with a body is sent as a POST)");
+            assertThat(m).contains("add marshal: json before this step, or set httpMethod: GET when the call sends no body");
+        });
+    }
+
+    @Test
+    public void testSplitElementsSentWithPost() {
+        // what the benchmark wrote: each order line is a Map whose fields are read, and toD meant a GET lookup
+        String yaml = """
+                - route:
+                    id: check-stock
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - split:
+                            simple: "${body[lines]}"
+                            steps:
+                              - setHeader:
+                                  name: sku
+                                  simple: "${body[sku]}"
+                              - toD:
+                                  uri: "http://localhost:8080/stock/${header.sku}"
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).contains("route check-stock: toD: http sends the body as the request");
+            assertThat(m).contains("unmarshal: json turns the text into data, and split ${body[lines]} gives its"
+                                   + " elements as data");
+            assertThat(m).contains("or set httpMethod: GET when the call sends no body");
+        });
+    }
+
+    @Test
+    public void testSplitElementsNotReadAsDataSayNothing() {
+        // nothing in the split reads a field of the element, which may be text as well
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - split:
+                            simple: "${body[skus]}"
+                            steps:
+                              - setHeader:
+                                  name: sku
+                                  simple: "${body}"
+                              - to: http://localhost:8080/reserve
+                """;
+        assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testHttpCallsThatSendNoBodyAreFine() {
+        // a query string or httpMethod: GET makes the call a GET; a CamelHttpMethod header can, and so can the
+        // request of an HTTP consumer, whose headers the producer sees
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:a
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to: http://localhost:8080/stock?sku=A1
+                        - to:
+                            uri: http://localhost:8080/stock
+                            parameters:
+                              httpMethod: GET
+                - route:
+                    from:
+                      uri: file:b
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to:
+                            uri: http://localhost:8080/stock
+                            parameters:
+                              sku: A1
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            constant: resource:file:stock.json
+                        - unmarshal:
+                            json: {}
+                        - setHeader:
+                            name: CamelHttpMethod
+                            constant: GET
+                        - to: http://localhost:8080/stock
+                - route:
+                    from:
+                      uri: direct:c
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to: http://localhost:8080/stock
+                """;
+        assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testParsedDataAsTheReply() {
+        // what the benchmark wrote: the stock is looked up in the parsed file, and the Map found is the reply
+        String yaml = """
+                - route:
+                    id: stock
+                    from:
+                      uri: platform-http:/stock
+                      steps:
+                        - setBody:
+                            constant: resource:file:stock.json
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            groovy: body.find { it.sku == headers.sku }
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 11: ");
+            assertThat(m).contains("route stock: the body at the end of the route is the reply to the HTTP request");
+            assertThat(m).contains("unmarshal: json turns the text into data, and groovy body.find { ... } keeps it as data");
+            assertThat(m).contains("add marshal: json as the last step");
+        });
+    }
+
+    @Test
+    public void testTheCalledRouteReturnsData() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:lookup
+                      steps:
+                        - setBody:
+                            constant: resource:file:stock.json
+                        - unmarshal:
+                            json: {}
+                - route:
+                    id: stock
+                    from:
+                      uri: platform-http:/stock
+                      steps:
+                        - to: direct:lookup
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> {
+            assertThat(m).startsWith("Line 14: ");
+            assertThat(m).contains("to: direct:lookup returns it as data (unmarshal: json turns the text into data)");
+        });
+    }
+
+    @Test
+    public void testDataMadeTextAgainIsFine() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: platform-http:/stock
+                      steps:
+                        - setBody:
+                            constant: resource:file:stock.json
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            groovy: body.find { it.sku == headers.sku }
+                        - marshal:
+                            json: {}
+                - route:
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            csv: {}
+                        - setBody:
+                            simple: "${body.size()} rows"
+                        - to: file:report
+                """;
+        assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testWhatIsNotCertainlyDataSaysNothing() {
+        // a field of the element picked, an object of a class, an iterator, a bean: the body may be text, or not data
+        String yaml = """
+                - route:
+                    from:
+                      uri: platform-http:/qty
+                      steps:
+                        - setBody:
+                            constant: resource:file:stock.json
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            groovy: body.find { it.sku == headers.sku }?.qty
+                - route:
+                    from:
+                      uri: platform-http:/order
+                      steps:
+                        - unmarshal:
+                            json:
+                              unmarshalType: com.example.Order
+                - route:
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            csv:
+                              lazyLoad: true
+                        - to: file:out
+                - route:
+                    from:
+                      uri: platform-http:/total
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - bean:
+                            ref: totals
+                """;
+        assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testGroovyCallsThatKeepData() {
+        assertThat(TextBodyFlow.keepsData(groovy("body.findAll { it.qty > 0 }"))).isEqualTo("body.findAll { ... }");
+        assertThat(TextBodyFlow.keepsData(groovy("body.find { line -> line.sku == headers.sku }")))
+                .isEqualTo("body.find { ... }");
+        assertThat(TextBodyFlow.keepsData(groovy("body.collect { [sku: it.sku, total: it.qty * it.price] }")))
+                .isEqualTo("body.collect { ... }");
+        // what follows the closure, or an element whose fields are not read, may be anything
+        assertThat(TextBodyFlow.keepsData(groovy("body.find { it.sku == 'A1' }.qty"))).isNull();
+        assertThat(TextBodyFlow.keepsData(groovy("body.find { it == 'A1' }"))).isNull();
+        assertThat(TextBodyFlow.keepsData(groovy("body.size()"))).isNull();
+    }
+
+    private static JsonNode groovy(String script) {
+        ObjectNode node = JsonNodeFactory.instance.objectNode();
+        node.putObject("expression").put("groovy", script);
+        return node;
     }
 
     private static List<String> lines(String yaml) {
