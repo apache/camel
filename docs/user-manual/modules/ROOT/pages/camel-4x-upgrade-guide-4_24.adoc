@@ -1723,6 +1723,16 @@ a Spring Boot or Quarkus app that `camel run` runs (`<name>.log`), also while th
 tools keep, and the history of the AI prompt. Directories are not counted, and `--clean` counts only the files it
 removed.
 
+=== camel-google-storage - a listed object that cannot be got is skipped
+
+When the consumer lists the bucket, a failure to download one of the listed objects (for example access denied, or an
+object whose encryption key the consumer cannot use) no longer fails the poll, as long as another listed object could
+be got: the object is skipped, the other listed objects are consumed, and the skipped object is tried again by a later
+poll. The failure is given to the exception handler of the consumer, with the object name in the message (by default a
+`WARN` with the stack trace, at every poll that lists the object). Before, the poll failed, and as every poll lists the
+whole bucket, one such object stopped the consumer from consuming any object. The poll still fails when none of the
+listed objects could be got.
+
 === camel-mongodb-gridfs - the consumer routes a file once
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
