@@ -115,8 +115,8 @@ public final class OpenApiVerbs {
 
     /**
      * The {@code direct:} endpoints of the operations that carry no body, for a file that binds to an OpenAPI
-     * specification in the given directory. Empty when the file binds to none, or the specification cannot be read -
-     * nothing is guessed.
+     * specification beside it or in src/main/resources, found as {@link #operations} finds it. Empty when the file
+     * binds to none, or the specification cannot be read - nothing is guessed.
      */
     public static Set<String> bodylessEndpoints(String content, Path directory) {
         Set<String> answer = new LinkedHashSet<>();
@@ -125,29 +125,21 @@ public final class OpenApiVerbs {
         }
         Matcher m = SPECIFICATION.matcher(content);
         while (m.find()) {
-            Path spec = directory.resolve(m.group(1));
-            if (!Files.isRegularFile(spec)) {
+            Map<?, ?> paths = paths(directory, ProjectFacts.specName(m.group(1)));
+            if (paths == null) {
                 continue;
             }
-            try {
-                Map<?, ?> paths = paths(Files.readString(spec));
-                if (paths == null) {
+            for (Object path : paths.values()) {
+                if (!(path instanceof Map<?, ?> operations)) {
                     continue;
                 }
-                for (Object path : paths.values()) {
-                    if (!(path instanceof Map<?, ?> operations)) {
-                        continue;
-                    }
-                    for (Map.Entry<?, ?> operation : operations.entrySet()) {
-                        String verb = String.valueOf(operation.getKey()).toLowerCase(Locale.ROOT);
-                        if (WITHOUT_BODY.contains(verb) && operation.getValue() instanceof Map<?, ?> details
-                                && details.get("operationId") != null) {
-                            answer.add("direct:" + details.get("operationId"));
-                        }
+                for (Map.Entry<?, ?> operation : operations.entrySet()) {
+                    String verb = String.valueOf(operation.getKey()).toLowerCase(Locale.ROOT);
+                    if (WITHOUT_BODY.contains(verb) && operation.getValue() instanceof Map<?, ?> details
+                            && details.get("operationId") != null) {
+                        answer.add("direct:" + details.get("operationId"));
                     }
                 }
-            } catch (Exception e) {
-                // Catching Exception handles unreadable and unparseable JSON or YAML specifications.
             }
         }
         return answer;

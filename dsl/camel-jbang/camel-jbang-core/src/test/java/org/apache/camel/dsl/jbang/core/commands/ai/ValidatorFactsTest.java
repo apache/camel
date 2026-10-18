@@ -92,6 +92,17 @@ class ValidatorFactsTest {
     }
 
     @Test
+    void theOperationsWithoutABodyComeFromTheSameSpecification(@TempDir Path dir) throws Exception {
+        // a Maven project keeps the specification in src/main/resources: both facts find it there
+        Files.createDirectories(dir.resolve("src/main/resources"));
+        Files.writeString(dir.resolve("src/main/resources/stock-api.json"), STOCK_API);
+        String content = "- rest:\n    openApi:\n      specification: stock-api.json\n";
+
+        assertThat(OpenApiVerbs.bodylessEndpoints(content, dir)).containsExactly("direct:getStock");
+        assertThat(OpenApiVerbs.operations(content, dir)).containsOnlyKeys("stock-api.json");
+    }
+
+    @Test
     void aCallThatNamesNoSpecificationUsesTheDefault(@TempDir Path dir) throws Exception {
         Files.writeString(dir.resolve("openapi.json"), STOCK_API);
 
