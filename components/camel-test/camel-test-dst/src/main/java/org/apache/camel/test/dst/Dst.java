@@ -19,6 +19,7 @@ package org.apache.camel.test.dst;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HexFormat;
@@ -64,6 +65,7 @@ public final class Dst {
     private final long maxSteps;
     private final List<DstTask<?>> pending = new ArrayList<>();
     private final List<String> trace = new ArrayList<>();
+    private final ArrayDeque<String> traceTail = new ArrayDeque<>();
     private final List<DstTask<?>> running = new ArrayList<>();
     private final DstExecutor wakeups;
     private long now;
@@ -271,19 +273,35 @@ public final class Dst {
     // ------------------------------------------------------------------------------------------------------------
     // trace
 
-    /** Adds a line to the step trace, prefixed with the step number, the virtual time and the current executor. */
+    /**
+     * Adds a line to the step trace, prefixed with the step number, the virtual time and the current executor. A long
+     * trace keeps its first lines and its last lines (where the run failed), half of {@code MAX_TRACE_LINES} each.
+     */
     public void trace(String message) {
-        if (trace.size() >= MAX_TRACE_LINES) {
-            traceTruncated = true;
-            return;
-        }
         DstTask<?> current = running.isEmpty() ? null : running.get(running.size() - 1);
         String who = current != null ? current.executor().label() : "main";
-        trace.add(String.format("#%d t=%d [%s] %s", steps, now, who, message));
+        String line = String.format("#%d t=%d [%s] %s", steps, now, who, message);
+        if (trace.size() >= MAX_TRACE_LINES / 2) {
+            traceTruncated = true;
+            traceTail.addLast(line);
+            if (traceTail.size() > MAX_TRACE_LINES / 2) {
+                traceTail.removeFirst();
+            }
+            return;
+        }
+        trace.add(line);
     }
 
+    /** The trace; when it is truncated, its first lines, a "... (truncated) ..." line and its last lines. */
     public List<String> traceLines() {
-        return Collections.unmodifiableList(trace);
+        if (traceTail.isEmpty()) {
+            return Collections.unmodifiableList(trace);
+        }
+        List<String> all = new ArrayList<>(trace.size() + 1 + traceTail.size());
+        all.addAll(trace);
+        all.add("... (truncated) ...");
+        all.addAll(traceTail);
+        return Collections.unmodifiableList(all);
     }
 
     public boolean isTraceTruncated() {
@@ -294,7 +312,7 @@ public final class Dst {
     public String traceHash() {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            for (String line : trace) {
+            for (String line : traceLines()) {
                 md.update(line.getBytes(StandardCharsets.UTF_8));
                 md.update((byte) '\n');
             }

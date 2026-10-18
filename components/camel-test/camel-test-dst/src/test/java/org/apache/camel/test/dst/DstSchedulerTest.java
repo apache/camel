@@ -146,6 +146,27 @@ class DstSchedulerTest {
         assertNotEquals(traceHash(3), traceHash(4));
     }
 
+    @Test
+    void aTruncatedTraceKeepsItsEnd() {
+        Dst dst = new Dst(1);
+        try {
+            for (int i = 0; i < 300_000; i++) {
+                dst.trace("line " + i);
+            }
+            dst.trace("the end");
+            List<String> lines = dst.traceLines();
+            assertTrue(dst.isTraceTruncated());
+            assertTrue(lines.size() <= 200_001, String.valueOf(lines.size()));
+            assertTrue(lines.get(0).endsWith(" line 0"), lines.get(0));
+            assertTrue(lines.get(lines.size() - 1).endsWith(" the end"), "the end of the run is kept, where it failed");
+            String hash = dst.traceHash();
+            dst.trace("one more");
+            assertNotEquals(hash, dst.traceHash(), "the hash covers the kept end");
+        } finally {
+            dst.close();
+        }
+    }
+
     private static String traceHash(long seed) {
         Dst dst = new Dst(seed);
         try {
