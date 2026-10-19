@@ -894,6 +894,22 @@ expanded, and the declaration itself is not passed on to Smooks.
 Set `allowExternalEntities=true` on the endpoint or on the data format for documents that rely on external entities or
 an external DTD.
 
+=== camel-platform-http-main - management server settings on a shared port
+
+When the HTTP server (`camel.server.enabled=true`) and the HTTP management server (`camel.management.enabled=true`)
+have the same port (both default to 8080), the HTTP server serves the management endpoints. It cannot apply these
+options of the management server, which were ignored without notice:
+
+* `camel.management.host`, when set to another host than the one of the HTTP server
+* `camel.management.path`, when set to another path than the one of the HTTP server
+* `camel.management.useGlobalSslContextParameters=true`, when the HTTP server does not use the global SSL configuration
+* `camel.management.authenticationEnabled=true`, with the basic or JWT authentication options
+
+Camel now fails to start when the management server shares the port and one of them is configured, with a message
+that lists them. Set `camel.management.port` to another port, so that the management server runs a server of its own
+and applies them. To keep a single port, remove them and configure the HTTP server instead: for example,
+authentication configured on the HTTP server for `/*` also applies to the management endpoints.
+
 === camel-ical - each unmarshal parses with its own calendar builder
 
 The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at

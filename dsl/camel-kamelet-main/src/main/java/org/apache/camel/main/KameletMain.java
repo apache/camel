@@ -620,7 +620,9 @@ public class KameletMain extends MainCommandLineSupport {
         if (mcp) {
             configure().httpManagementServer().withEnabled(true);
             configure().httpManagementServer().withMcpEnabled(true);
-            if (!isConfigured("camel.management.host")) {
+            // a management server that shares the port of the HTTP server is served on the host of the HTTP server,
+            // and fails to start when configured with another host
+            if (!isConfigured("camel.management.host") && !isManagementSharingHttpServerPort()) {
                 configure().httpManagementServer().withHost("127.0.0.1");
             }
             String listeners = getInitialProperties().getProperty("camel.main.mainListenerClasses");
@@ -1074,19 +1076,46 @@ public class KameletMain extends MainCommandLineSupport {
     }
 
     private boolean isConfigured(String key) {
+        return getConfiguredValue(key) != null;
+    }
+
+    private String getConfiguredValue(String key) {
         if (getOverrideProperties() != null) {
             String value = getOverrideProperties().getProperty(key);
             if (value != null && !value.isBlank()) {
-                return true;
+                return value.trim();
             }
         }
         if (getInitialProperties() != null) {
             String value = getInitialProperties().getProperty(key);
             if (value != null && !value.isBlank()) {
-                return true;
+                return value.trim();
             }
         }
-        return false;
+        return null;
+    }
+
+    /**
+     * Whether the HTTP server is enabled with the same port as the management server, as far as the settings given so
+     * far tell. Answers false when unsure, as a management server with its own port must keep its own host.
+     */
+    private boolean isManagementSharingHttpServerPort() {
+        String enabled = getConfiguredValue("camel.server.enabled");
+        boolean serverEnabled = enabled != null ? "true".equalsIgnoreCase(enabled) : configure().httpServer().isEnabled();
+        if (!serverEnabled) {
+            return false;
+        }
+        String serverPort = getConfiguredValue("camel.server.port");
+        String managementPort = getConfiguredValue("camel.management.port");
+        try {
+            int port = serverPort != null ? Integer.parseInt(serverPort) : configure().httpServer().getPort();
+            int mport = managementPort != null
+                    ? Integer.parseInt(managementPort) : configure().httpManagementServer().getPort();
+            return port == mport;
+        } catch (NumberFormatException e) {
+            // such as a property placeholder
+            return false;
+        }
     }
 
     private static String getPid() {
