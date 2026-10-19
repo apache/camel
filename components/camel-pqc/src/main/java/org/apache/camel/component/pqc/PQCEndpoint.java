@@ -60,6 +60,15 @@ public class PQCEndpoint extends DefaultEndpoint {
         return new PQCProducer(this);
     }
 
+    /**
+     * Registers the BouncyCastle providers if they are not installed yet.
+     * <p/>
+     * The providers are deliberately never removed again. {@link Security} is JVM-global and shared with every other
+     * endpoint, every other {@code CamelContext} and all non-Camel code in the same JVM, and nothing records which
+     * component installed a given provider. Removing one on stop therefore tears it out from under unrelated users -
+     * including the sibling {@code pqc} endpoint of the same route and the statically initialised
+     * {@code PQCDefault*Material} classes of this very component, which also register BouncyCastle and never remove it.
+     */
     @Override
     public void doStart() throws Exception {
         super.doStart();
@@ -69,17 +78,6 @@ public class PQCEndpoint extends DefaultEndpoint {
         if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastlePQCProvider());
         }
-    }
-
-    @Override
-    public void doStop() throws Exception {
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) != null) {
-            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
-        }
-        if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) != null) {
-            Security.removeProvider(BouncyCastlePQCProvider.PROVIDER_NAME);
-        }
-        super.doStop();
     }
 
     public PQCConfiguration getConfiguration() {
