@@ -85,7 +85,7 @@ public class ArtemisAMQPInfraService extends AbstractArtemisEmbeddedService {
             roles.add(role);
             artemisConfiguration.putSecurityRoles("#", roles);
         }
-        artemisConfiguration.setMaxDiskUsage(98);
+        artemisConfiguration.setMaxDiskUsage(-1);
 
         // Set explicit topic name
         CoreAddressConfiguration pingTopicConfig = new CoreAddressConfiguration();
