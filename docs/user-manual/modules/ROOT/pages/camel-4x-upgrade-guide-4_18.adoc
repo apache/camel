@@ -233,6 +233,17 @@ receive the messages of the producers, and it is closed when it sends a message.
 A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
 rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
 
+=== camel-undertow - the producer refuses a request target or header value with control characters
+
+The undertow producer writes the path, query and header values of the outgoing request to the socket one character at
+a time, without validating them. A carriage return or line feed therefore broke the request into further lines, and a
+character above `0xFF` was written as a single, different byte (for example `U+010A` became a line feed). The producer
+now refuses to send a request path, query or header value that contains a control character or a character above
+`0xFF`, and fails the exchange with an `IllegalArgumentException` instead. A space and a tab, which do not change the
+framing, are still allowed. Routes that put a percent-encoded control character (such as `%0D%0A`) into the
+`CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
+likely to be affected.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
