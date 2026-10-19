@@ -180,6 +180,7 @@ public class Run extends CamelCommand {
     boolean transformMessageRun;
     boolean debugRun;
 
+    // package-private for RunPreviousLogTest
     Path logFile;
     public long spawnPid;
 

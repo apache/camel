@@ -293,6 +293,7 @@ public final class PreviousRun {
                 if (before == null || before.log().toFile().lastModified() < modified) {
                     String directory = status.get("runtime") instanceof JsonObject runtime
                             ? runtime.getString("directory") : null;
+                    // when the process was gone is not known: the last write of its log is the closest time to it
                     keep(f.toPath(), new Info(name, pid, directory, 0, modified, null, null, GONE, null));
                     continue;
                 }
