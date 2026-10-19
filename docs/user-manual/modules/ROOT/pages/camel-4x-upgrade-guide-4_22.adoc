@@ -45,6 +45,23 @@ when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, h
 registered for any host. A request to another host, including the host of a node with another scheme or port, is now
 sent without them. A client set with the `client` option is not changed.
 
+=== camel-thrift - SSL/TLS settings of the consumer, and errors sent to the client
+
+* A consumer configured with `negotiationType=SSL` and the default `synchronous=false` now fails to start. It used to
+start a server without SSL/TLS. SSL/TLS requires `synchronous=true`, as on the producer.
+* The `SASL` negotiation type, which is not implemented, now makes the producer and the consumer fail to start. They
+used to behave as with `PLAINTEXT`.
+* The SSL/TLS consumer now creates its server socket from the SSL context of `sslParameters`, so all of its settings
+apply, including the trust managers and the server parameters. For example, `serverParameters.clientAuthentication=REQUIRE`
+now requires a client certificate. Before, the consumer only used the key store, the protocol and the cipher suites,
+and never asked for a client certificate. The key managers are required, and as in the other components the key is
+read with their `keyPassword`: set it when the key is protected by a password. Before, the consumer read the key with
+the password of the key store.
+* A new `muteException` consumer option, enabled by default, sends a generic `TApplicationException` of type
+`INTERNAL_ERROR` ("Internal error processing <method>") to the client instead of an exception that the Thrift method
+does not declare. Before, the asynchronous consumer sent the message of the exception. An exception declared in the
+IDL is still sent as it is. Set `muteException=false` to send the exception as before.
+
 === camel-elasticsearch-rest-client - the credentials are only sent to the nodes of the cluster
 
 The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddressesList` and,

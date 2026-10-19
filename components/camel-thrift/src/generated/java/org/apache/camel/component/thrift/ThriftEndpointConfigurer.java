@@ -40,6 +40,8 @@ public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxpoolsize":
         case "maxPoolSize": target.getConfiguration().setMaxPoolSize(property(camelContext, int.class, value)); return true;
         case "method": target.getConfiguration().setMethod(property(camelContext, java.lang.String.class, value)); return true;
+        case "muteexception":
+        case "muteException": target.getConfiguration().setMuteException(property(camelContext, boolean.class, value)); return true;
         case "negotiationtype":
         case "negotiationType": target.getConfiguration().setNegotiationType(property(camelContext, org.apache.camel.component.thrift.ThriftNegotiationType.class, value)); return true;
         case "poolsize":
@@ -71,6 +73,8 @@ public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxpoolsize":
         case "maxPoolSize": return int.class;
         case "method": return java.lang.String.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
         case "negotiationtype":
         case "negotiationType": return org.apache.camel.component.thrift.ThriftNegotiationType.class;
         case "poolsize":
@@ -103,6 +107,8 @@ public class ThriftEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "maxpoolsize":
         case "maxPoolSize": return target.getConfiguration().getMaxPoolSize();
         case "method": return target.getConfiguration().getMethod();
+        case "muteexception":
+        case "muteException": return target.getConfiguration().isMuteException();
         case "negotiationtype":
         case "negotiationType": return target.getConfiguration().getNegotiationType();
         case "poolsize":
