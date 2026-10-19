@@ -45,22 +45,36 @@ roles:
     note: "Primary adversary model - body, headers, attachments, transport metadata."
   - role: component_far_side          # remote services, object stores, brokers, AI models
     trust: trusted_to_hold_data_untrusted_for_what_they_return
-    note: "Object/blob names, listing entries and LLM output are attacker-influenced."
+    note: "Object/blob names, listing entries, redirects and LLM output are attacker-influenced - also when the service is malicious, compromised or shared, or the protocol leaves its responses unprotected in transit (plain FTP listing)."
 
 trust_boundary:
   trusted: "the route plus everything the operator configured"
   untrusted: "the data flowing through the route (Exchange body, headers, attachments)"
 
+scope:
+  rule: "in scope when the framework, in a default or reasonably-expected configuration, lets untrusted input cross a trust boundary"
+  reasonably_expected: "a configuration the project's own documentation shows is reasonably expected by definition (CVE-2026-78164, CVE-2026-83531, CVE-2026-78163)"
+
 adversary_in_scope:
   controls: [message_body, message_headers, attachments, transport_metadata,
              remote_store_object_names_and_metadata,   # CVE-2026-66906/60093/66907
+             remote_directory_listings,                # CVE-2026-79983/79984/79985/79986
+             redirect_targets,                         # CVE-2026-85251
+             peer_supplied_callback_addresses,         # CVE-2026-80344
+             parsed_document_metadata,                 # CVE-2026-85249
              llm_output_and_tool_call_arguments,       # CVE-2026-49042
              query_parameters_and_path_segments]       # CVE-2026-55993
-  goals: [rce, endpoint_or_bean_redirect, unsafe_deserialization, xxe_ssrf, path_traversal, auth_bypass, secret_disclosure, backend_query_injection, external_process_argument_injection]
+  goals: [rce, endpoint_or_bean_redirect, unsafe_deserialization, xxe_ssrf, path_traversal, auth_bypass,
+          request_forgery_with_credentials, integrity_or_signature_check_bypass, cross_exchange_data_or_authority,
+          secret_disclosure, backend_query_injection, external_process_argument_injection]
+  secondary:
+    - actor: local_accounts_on_same_host
+      note: "cannot act as the service account; Camel must not write secrets, key material or message content to files they can read"
+      examples: [CVE-2023-34442, CVE-2026-85300]
 adversary_out_of_scope:
   - route_authors
   - deployment_operators
-  - management_surface_network_peers   # camel-management, dev console, jolokia, JMX
+  - management_surface_network_peers   # camel-management, dev console, jolokia, JMX - NOT Camel endpoints fed by messages (CVE-2026-83531)
   - transitive_third_party_dependency_authors
 
 component_families:
@@ -71,7 +85,7 @@ component_families:
     in_scope: true
   - family: management_surfaces        # camel-management, dev console, camel-jolokia, JMX
     in_scope: false
-    reason: "trust boundary is the management surface itself, not the MBean method"
+    reason: "trust boundary is the management surface itself, not the MBean method; a Camel endpoint that manages a component through messages (dynamic-router-control:) is not a management surface"
   - family: deprecated_components
     in_scope: limited
     reason: "primary remediation is the documented migration"
@@ -124,39 +138,69 @@ config_variants:
     - option: hostnameVerificationEnabled
       insecure_value: false
       default: component-dependent
+    - option: requireIntegrityProtection    # camel-crypto-pgp
+      insecure_value: false
+      default: true                  # CVE-2026-85243
+    - option: allowPredicateFromMessage     # dynamic-router-control
+      insecure_value: true
+      default: false                 # CVE-2026-83531; security = insecure:dev
+    - option: allowUrlSource                # camel-docling
+      insecure_value: true
+      default: false                 # CVE-2026-78163; security = insecure:dev
+    - option: allowFilePathSource           # camel-docling
+      insecure_value: true
+      default: false                 # CVE-2026-78163; security = insecure:dev; inputBaseDirectory (unset by default) confines paths when set
+    - option: allowExternalEntities         # camel-smooks
+      insecure_value: true
+      default: false                 # CVE-2026-88901; security = insecure:dev on the smooks: endpoint
+    - option: logPhi                        # camel-mllp
+      insecure_value: true
+      default: false                 # CVE-2026-85260
 
 properties_provided:
-  # id, violation symptom, indicative severity tier
+  # id, violation symptom, indicative severity tier (the range published at the advisory index since 2015)
   - id: no_untrusted_code_execution
     symptom: "deserialization gadget / bean-method-command dispatch / expression eval not requested by route / splice into external-process argv"
-    severity: critical
+    severity: medium_to_high
   - id: no_untrusted_endpoint_redirect
-    symptom: "wire-injected control header changes dispatch target, operation, or transport+credentials - inside the namespace (CamelBeanMethodName, CamelHttpUri, ...) or outside it (websocket.connectionKey, gridfs.*, irc.sendTo, operationName, mail.smtp.*)"
-    severity: critical
+    symptom: "wire-injected control header changes dispatch target, operation, saga, or transport+credentials - inside the namespace (CamelBeanMethodName, CamelHttpUri, ...) or outside it (websocket.connectionKey, gridfs.*, irc.sendTo, operationName, mail.smtp.*, Long-Running-Action)"
+    severity: medium_to_high
   - id: no_arbitrary_deserialization
     symptom: "attacker-chosen types instantiated via ObjectInputStream/XStream/Hessian/polymorphic-Jackson without filter"
-    severity: critical_when_gadget_reachable
+    severity: medium_to_high
   - id: no_external_resource_resolution_on_parse
     symptom: "XML/XSLT/XSD/XPath parse of attacker input reads file / SSRF / fetches remote DTD/stylesheet"
-    severity: high
-  - id: no_path_escape
-    symptom: "file/mail/ftp/object-store path escapes configured root via ../ or absolute name, whether supplied in a header or reported back by the remote store"
-    severity: high
-  - id: auth_components_enforce
-    symptom: "request served without valid token / unvalidated issuer-audience-signature / uncovered subpath / check silently skipped because its option was unset / authorization computed from a differently-normalized value than dispatch"
-    severity: critical
-  - id: no_secret_or_state_disclosure
-    symptom: "secrets/bodies/config reach a log (INFO/WARN/ERROR), event, world-readable file, or HTTP response"
     severity: medium_to_high
+  - id: no_untrusted_destination_or_credential_forwarding
+    symptom: "message body read as URL/path; peer-supplied address used as outbound destination; redirect carries the endpoint's credentials to a host the server chose"
+    severity: medium_to_high
+  - id: no_path_escape
+    symptom: "file/mail/ftp/object-store path escapes configured root via ../ or absolute name, whether supplied in a header or reported back by the remote store - incl. remote retrieve/delete/rename outside the polled directory from a listing name"
+    severity: medium_to_high
+  - id: auth_components_enforce
+    symptom: "request served without valid token / unvalidated issuer-audience-signature / uncovered subpath / check skipped because its option was unset or its claim absent / failed check did not stop the exchange / authentication an earlier exchange left on the thread reused / authorization computed from a differently-normalized value than dispatch"
+    severity: medium_to_high
+  - id: integrity_and_required_signature_verification_fail_closed
+    symptom: "message accepted as unmodified, or as signed when a signature is required, though the check was skipped (sender-chosen format) or ran over another exchange's data"
+    severity: medium
+  - id: no_cross_exchange_data_or_authority
+    symptom: "body, signing key, token or thread-bound authentication left by one exchange observed or used while another party's exchange is processed"
+    severity: medium
+  - id: no_secret_or_state_disclosure
+    symptom: "secrets/bodies/config reach a log (INFO/WARN/ERROR), event, file other local accounts can read, or a response"
+    severity: low_to_medium
   - id: no_backend_query_injection
     symptom: "attacker alters the structure of a Cypher/XSLT-extension/etc query Camel builds"
-    severity: high_to_critical
+    severity: medium
+
+severity_calibration:
+  note: "tiers are the ranges published at the advisory index since 2015 for the artifacts this model covers; the three Critical ratings date from 2013-2014 (CVE-2013-4330, CVE-2014-0002, CVE-2014-0003); CVE-2026-56140 was published Low as hardening; Critical remains available for code execution or full compromise with no precondition"
 
 core_router_engine_invariants:
   - no_engine_expression_eval_without_route_author_expression
-  - no_engine_promoted_dispatch_from_untrusted_content
+  - no_engine_promoted_dispatch_from_untrusted_content   # incl. the saga an exchange joins; a header outside Camel* is read only by the feature whose protocol carries it, never on every exchange (CVE-2026-85312)
   - no_type_converter_auto_deserialization_of_arbitrary_types
-  - placeholder_and_bean_ref_resolution_only_on_route_and_config_text
+  - placeholder_and_bean_ref_resolution_only_on_route_and_config_text   # whichever module calls it; resolved once at build time (CVE-2026-78164)
   - engine_never_promotes_wire_input_into_camel_header_namespace   # consumer HFS responsibility (CVE-2025-27636 family)
   - error_handling_and_inband_trace_no_eval_or_cross_exchange_disclosure
   - no_unbounded_resource_guarantee   # out of scope
@@ -169,11 +213,12 @@ properties_not_provided:
   - production_guarantees_under_dev_or_test_profile
   - information_hiding_at_debug_or_trace_log_levels
   - protection_from_operator_misconfiguration_outside_defaults
-  - constant_time_or_side_channel_resistant_comparison
+  - constant_time_or_side_channel_resistant_comparison   # disclaims side channels, not correctness of signature/integrity verification
 
 false_friends:
   - "DefaultHeaderFilterStrategy filters the internal Camel* namespace only, not application headers"
   - "removeHeaders(Camel*) strips internal-dispatch headers, not every untrusted header, and does not match control headers spelled outside the namespace"
+  - "a Camel* header name is not a trust marker: some consumers fill Camel* headers from the request (CamelHttpUri); use the value as the documented contract says, never evaluate it (CVE-2026-78164)"
   - "a HeaderFilterStrategy that is constructed but overwritten, or applied on one entry point only, filters nothing on the path that matters (CVE-2026-78329)"
   - "security policy framework is a startup linter, not a runtime sandbox"
   - "component deprecation is not a security boundary"
@@ -181,38 +226,57 @@ false_friends:
 
 in_scope_classes:
   - id: unsafe_deserialization
-    examples: [CVE-2026-40860, CVE-2026-43866, CVE-2026-40859, CVE-2026-43865, CVE-2026-46590, CVE-2026-40473, CVE-2026-42527]
+    examples: [CVE-2026-40860, CVE-2026-43866, CVE-2026-40859, CVE-2026-43865, CVE-2026-46590, CVE-2026-40473, CVE-2026-42527, CVE-2026-78165, CVE-2026-78162]
     mitigation_default: "CamelObjectInputStream installs a JEP-290 filter by default since 4.22 (CAMEL-24296), honouring jdk.serialFilter when set"
-    note: "an under-strength filter (CVE-2026-42527) and an indirect route via a third-party JDK-serialization API both fall in this class"
+    note: "an under-strength filter (CVE-2026-42527) and an indirect route via a third-party JDK-serialization API (CVE-2026-78165) both fall in this class"
   - id: xxe_and_remote_resource_resolution
-    examples: [CVE-2014-0002, CVE-2018-8027, CVE-2019-0188]
+    examples: [CVE-2014-0002, CVE-2018-8027, CVE-2019-0188, CVE-2026-85250, CVE-2026-88901, CVE-2026-91858]
+    note: "FEATURE_SECURE_PROCESSING alone is implementation-defined; set ACCESS_EXTERNAL_DTD/STYLESHEET. A third-party implementation another Camel component puts on the class path is in scope (CVE-2026-91858)"
   - id: expression_or_template_injection
-    examples: [CVE-2013-4330, CVE-2020-11994]
+    examples: [CVE-2013-4330, CVE-2020-11994, CVE-2026-83531, CVE-2026-78164]
+    note: "forwarding messages to an endpoint is not asking for their content to be evaluated; removing optional languages is not a mitigation (simple is always present)"
   - id: path_traversal
-    examples: [CVE-2018-8041, CVE-2019-0194, CVE-2026-66906, CVE-2026-60093, CVE-2026-66907]
-    note: "the escaping name may be reported back by the remote store, not supplied in a message"
-  - id: ssrf_or_remote_fetch_on_parse
-    examples: [CVE-2017-5643]
+    examples: [CVE-2018-8041, CVE-2019-0194, CVE-2026-66906, CVE-2026-60093, CVE-2026-66907, CVE-2026-79983, CVE-2026-79984, CVE-2026-79985, CVE-2026-79986]
+    note: "the escaping name may be reported back by the remote store, not supplied in a message; containment applies to the remote operand (retrieve/delete/rename) as well as the local target"
+  - id: request_forgery_and_credential_forwarding
+    examples: [CVE-2017-5643, CVE-2026-78163, CVE-2026-80344, CVE-2026-85251]
+    shapes: [parser_default_resolution, message_content_read_as_locator, peer_supplied_destination, redirect_with_credentials]
+    rule: "credentials go only to the authority the endpoint was configured with"
   - id: camel_header_bean_dispatch_abuse
     examples: [CVE-2025-27636, CVE-2026-40453, CVE-2026-46456, CVE-2026-46457, CVE-2026-46726, CVE-2026-48205, CVE-2026-48206, CVE-2026-49098, CVE-2026-49099]
     mitigation_default: "DefaultHeaderFilterStrategy blocks Camel* by default since 4.21 (CAMEL-23543)"
-    control_header_test: "a header is in scope when it selects a target, an operation, or the transport and its credentials - regardless of prefix"
-    control_headers_outside_namespace: [CVE-2026-71300, CVE-2026-48204, CVE-2026-49097, CVE-2026-46592, CVE-2026-46587, CVE-2026-46588, CVE-2026-46453, CVE-2026-46584, CVE-2026-49086]
-    inbound_mapping_sites: [consumer, data_format_unmarshal, structured_content_mode, transport_metadata]
-    mapping_site_examples: [CVE-2026-59230, CVE-2026-63621, CVE-2026-55993, CVE-2026-55994, CVE-2026-46454, CVE-2026-49042]
+    control_header_test: "a header is in scope when it selects a target, an operation, the context (saga) the exchange joins, or the transport and its credentials - regardless of prefix"
+    control_headers_outside_namespace: [CVE-2026-71300, CVE-2026-48204, CVE-2026-49097, CVE-2026-46592, CVE-2026-46587, CVE-2026-46588, CVE-2026-46453, CVE-2026-46584, CVE-2026-49086, CVE-2026-85312]
+    inbound_mapping_sites: [consumer, data_format_unmarshal, structured_content_mode, document_parsing_producer, transport_metadata]
+    mapping_site_examples: [CVE-2026-59230, CVE-2026-85314, CVE-2026-63621, CVE-2026-85249, CVE-2026-55993, CVE-2026-55994, CVE-2026-46454, CVE-2026-49042]
     inert_filter_examples: [CVE-2026-78329]
   - id: argument_injection_into_external_process
     examples: [CVE-2026-40047]
     note: "framework builds the argv on the route author's behalf; route-author exec is out of scope"
   - id: auth_or_authz_bypass
-    examples: [CVE-2026-23552, CVE-2026-40022, CVE-2026-46455, CVE-2026-53913, CVE-2026-66908]
+    examples: [CVE-2026-23552, CVE-2026-40022, CVE-2026-46455, CVE-2026-53913, CVE-2026-66908, CVE-2026-80312, CVE-2026-80343, CVE-2026-84178, CVE-2026-84181, CVE-2026-85301]
     sub_rules:
-      - "an unconfigured check must fail closed, never silently drop out of the chain (CVE-2026-66908, CVE-2026-53913, CAMEL-24411)"
-      - "authorization and dispatch must be computed from the same normalized value (CVE-2026-40022, CAMEL-24412)"
+      - "an unconfigured check, or one whose input (claim) is absent, must fail closed, never silently drop out of the chain (CVE-2026-66908, CVE-2026-53913, CVE-2026-80312, CVE-2026-85301)"
+      - "authorization and dispatch must be computed from the same normalized value (CVE-2026-40022, CVE-2026-80343)"
+      - "verify what each request presents; never inherit an authentication left on a pooled thread (CVE-2026-84181)"
+    related_outside_authorization:
+      - "a case-sensitive comparison on a case-insensitive protocol never matches under HTTP/2 (CVE-2026-85254)"
+      - "selecting a behaviour by prefix selects every value sharing the prefix (CVE-2026-85316)"
+  - id: integrity_or_signature_verification_bypass
+    examples: [CVE-2026-85243, CVE-2026-85248]
+    note: "receiver requires the protection rather than the sender offering it; stateful verifier objects stay per exchange; the PGP signatureVerificationOption=optional default is a documented heritage default (known limitation)"
+  - id: state_shared_between_exchanges
+    examples: [CVE-2026-85245, CVE-2026-85248, CVE-2026-85296, CVE-2026-84181, CVE-2026-85317]
+    note: "in scope when the shared state carries authority, identity or another party's data; a cache key must contain every field that changes what the cached value permits"
   - id: information_disclosure
-    examples: [CVE-2023-34442, CVE-2024-22371, CVE-2026-49365, CVE-2026-56139]
+    examples: [CVE-2023-34442, CVE-2024-22371, CVE-2026-49365, CVE-2026-56139, CVE-2026-84180, CVE-2026-85246, CVE-2026-85257, CVE-2026-85315, CVE-2026-85260, CVE-2026-85300]
+    note: "a consumer must not return the route's exception to the sender (muteException default true; declared faults excepted); sensitive payloads stay out of default log levels; secret files owner-only"
   - id: insecure_defaults
-    examples: [CVE-2020-11972, CVE-2020-11973, CVE-2026-40860, CVE-2026-43865]
+    examples: [CVE-2020-11972, CVE-2020-11973, CVE-2026-40860, CVE-2026-43865, CVE-2026-85247, CVE-2026-84176, CVE-2026-85313, CVE-2026-85260]
+    shapes:
+      - "turning a protection on must not turn another off (CVE-2026-85247)"
+      - "enabling CORS must not grant credentials to an origin nobody named (CVE-2026-84176, CVE-2026-85313)"
+      - "a library object Camel builds to do its own work (serializer, filter, parser factory) carries Camel's defaults; the wrapped client's connection/TLS/auth defaults stay inherited posture (CVE-2026-78165, CVE-2026-85313, CVE-2026-91858)"
   - id: backend_query_injection
     examples: [CVE-2025-66169, CVE-2026-46591, CVE-2014-0003]
 
@@ -221,7 +285,7 @@ known_non_findings:
   - "route-author simple/xpath/groovy/jexl/mvel evaluation"
   - "route-author .bean/.process/Runtime.exec/Class reference"
   - "Camel* header controls dispatch (intentional contract)"
-  - "application-level SEMANTIC header (To/Subject/HTTP X-/JMS/AMQP/MQTT/CoAP/Kafka) not stripped - NOT applicable when the header selects a target, an operation, or the transport and its credentials; see control_header_test"
+  - "application-level SEMANTIC header (To/Subject/HTTP X-/JMS/AMQP/MQTT/CoAP/Kafka) not stripped - NOT applicable when the header selects a target, an operation, the context the exchange joins, or the transport and its credentials; see control_header_test"
   - "DefaultHeaderFilterStrategy case bypass (it is case-insensitive by default)"
   - "management surface (dev console, backlog debugger, tracer, JMX, jolokia) exposes code/state"
   - "finding only under camel.main.profile=dev or test"
@@ -230,10 +294,12 @@ known_non_findings:
   - "deprecated component still ships and has a CVE"
   - "documented opt-in option enables unsafe behaviour"
   - "finding in core/camel-* where every core invariant held"
-  # not a non-finding, recorded here so triage does not mistake it for one:
+  # not non-findings, recorded here so triage does not mistake them for one:
   # "the component declares a HeaderFilterStrategy" is not evidence the strategy runs on the live path
+  # "the message reached a control endpoint" - control endpoints fed by messages are not management surfaces (CVE-2026-83531)
+  # "the finding needs Saxon-HE on the class path" - in scope when another Camel component puts it there (CVE-2026-91858)
 
-incomplete_fix_rule: "residue of a published advisory is triaged from scratch and, if VALID, gets its own advisory; shapes: not-all-call-sites (CAMEL-24413/24420), under-strength mitigation (CVE-2026-42527), alternate route to the same sink (CVE-2026-43866, CVE-2026-46591)"
+incomplete_fix_rule: "residue of a published advisory is triaged from scratch and, if VALID, gets its own advisory; shapes: not-all-call-sites (CVE-2026-78162), under-strength mitigation (CVE-2026-42527), alternate route to the same sink (CVE-2026-43866, CVE-2026-46591, CVE-2026-85314)"
 
 dispositions:
   - VALID

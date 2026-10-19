@@ -418,17 +418,24 @@ PMC has historically accepted:
   `ObjectInputStream` in consumers, type converters, aggregation repositories, key stores).
 - **XXE** and remote DTD/stylesheet resolution in XML/XSLT/XPath/XSD parsers.
 - **Expression or template language injection** where the framework itself passes untrusted
-  input to an evaluator (not the route author).
-- **Path traversal** in file/mail/FTP consumers and producers.
-- **SSRF triggered by parser default resolution**.
+  input to an evaluator (not the route author), including an expression taken from a control
+  message and property placeholders resolved in message content.
+- **Path traversal** in file/mail/FTP consumers and producers, including names a remote server
+  reports back (object keys, directory listings) on both the local and the remote side.
+- **Request forgery and credential forwarding**: SSRF by parser default resolution, a message
+  body read as a URL or path, a peer-supplied callback address, credentials re-sent on a redirect.
 - **Camel-header / bean-dispatch abuse** when a consumer maps untrusted input into the Exchange
   header map without a strict, case-insensitive `HeaderFilterStrategy`.
 - **Auth/authz bypass** in components implementing AAA (Keycloak, Shiro, platform-http auth,
   Spring Security integration).
-- **Information disclosure** of secrets or Exchange state via logs, events, world-readable files
-  or HTTP responses.
+- **Integrity or signature verification that can be skipped** (a sender-chosen downgrade, a
+  verifier shared between exchanges).
+- **State shared between exchanges** that carries another party's data, keys or authority.
+- **Information disclosure** of secrets or Exchange state via logs, events, files other local
+  accounts can read, HTTP responses, or route exceptions returned to the caller.
 - **Insecure defaults** — any component shipping with deserialisation, TLS-skip or admin-exposure
-  enabled out of the box.
+  enabled out of the box, including the stock settings of a library object Camel builds to do its
+  own work (a serializer, a filter, a parser factory).
 - **Injection into back-end queries** built by Camel itself (Cypher, XSLT extension functions,
   etc.).
 - **Tooling that reads route sources without running them** (`LwJavaParser`, the project overview,
@@ -445,12 +452,14 @@ The following are explicitly **not** framework vulnerabilities and will be close
 - A route author building a SQL / Cypher / LDAP / HTTP URI from untrusted input without
   parameterising. The route is at fault, not the framework.
 - Behaviour that is enabled by **explicit opt-in**: `allowJavaSerializedObject=true`,
-  `transferException=true`, `trustAllCertificates=true`, `hostnameVerificationEnabled=false`, or
-  selecting an `ObjectInputStream`-using data format.
+  `transferException=true`, `trustAllCertificates=true`, `hostnameVerificationEnabled=false`,
+  selecting an `ObjectInputStream`-using data format, or another option listed under
+  "Per-option opt-ins" in the security model (e.g. `allowPredicateFromMessage=true`).
 - **DoS / resource exhaustion** through unthrottled routes. Operators apply `throttle`,
   `circuitBreaker`, `resilience4j`, JVM limits.
 - A deployer exposing `camel-management`, the developer console, `camel-jolokia` or JMX on a
-  public network.
+  public network. A Camel endpoint fed by messages, such as `dynamic-router-control:`, is not a
+  management surface.
 - Third-party transitive dependency CVEs that are not reachable through any Camel-exposed code
   path.
 - Automated scanner reports without a PoC demonstrating an actual trust-boundary breach.
@@ -477,6 +486,8 @@ When reviewing or recommending a deployment, surface the following:
 - Do not enable Java serialisation on consumers exposed to untrusted networks.
 - Keep `camel-management`, the developer console, `camel-jolokia` and JMX on a trusted network
   only.
+- Restrict outbound network access to the hosts the routes need; it contains the
+  request-forgery family whatever triggers it.
 
 ### Committer review checklist (for security-sensitive PRs)
 
@@ -495,7 +506,22 @@ format, parser, or anything that handles `@UriParam` security knobs:
 - Does the change relax a default? New defaults err toward "denied unless opted in". A relaxed
   default needs an upgrade-guide entry and PMC sign-off.
 - Does an authentication or authorization component enforce what its option names claim — issuer
-  validation, audience checking, signature verification, every advertised sub-path covered?
+  validation, audience checking, signature verification, every advertised sub-path covered — and
+  fail closed when the option or the claim is absent?
+- Does the change resolve property placeholders in message content, or compile an expression or
+  a language name taken from a message? Placeholders are resolved once, from route and
+  configuration text (CVE-2026-78164); code from a message needs an endpoint opt-in that no header
+  can set (CVE-2026-83531).
+- Can the component present credentials to a host the route did not configure — a redirect
+  target, a peer-supplied callback or receipt address (CVE-2026-85251, CVE-2026-80344)?
+- Does a verifier fail closed when the sender omits the protection, and keep stateful verifier
+  objects per exchange (CVE-2026-85243, CVE-2026-85248)?
+- Does the component build a third-party object to do its own work (a serializer, a CORS filter,
+  a JAXP factory) with the library's stock defaults? Those defaults ship as Camel's
+  (CVE-2026-78165, CVE-2026-85313, CVE-2026-91858).
+- Can a consumer with a reply path return the route's exception to the caller? It needs a
+  `muteException` option defaulting to `true`; faults the service contract declares are the
+  exception.
 - Does the change add a public method to the route builder (`RouteBuilder`, `BuilderSupport`,
   `RouteConfigurationBuilder`) or the static DSL (`Builder`, `PredicateBuilder`, `AggregationStrategies`)?
   `LwJavaParserSecurityTest` then fails on purpose: `LwJavaParser` can call these methods while reading an
