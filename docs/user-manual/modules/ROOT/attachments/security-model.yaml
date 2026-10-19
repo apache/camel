@@ -200,7 +200,7 @@ core_router_engine_invariants:
   - no_engine_expression_eval_without_route_author_expression
   - no_engine_promoted_dispatch_from_untrusted_content   # incl. the saga an exchange joins; a header outside Camel* is read only by the feature whose protocol carries it, never on every exchange (CVE-2026-85312)
   - no_type_converter_auto_deserialization_of_arbitrary_types
-  - placeholder_and_bean_ref_resolution_only_on_route_and_config_text   # whichever module calls it; resolved once at build time (CVE-2026-78164)
+  - placeholder_and_bean_ref_resolution_only_on_route_and_config_text   # historic instance: CVE-2026-78164
   - engine_never_promotes_wire_input_into_camel_header_namespace   # consumer HFS responsibility (CVE-2025-27636 family)
   - error_handling_and_inband_trace_no_eval_or_cross_exchange_disclosure
   - no_unbounded_resource_guarantee   # out of scope

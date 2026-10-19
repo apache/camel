@@ -509,9 +509,9 @@ format, parser, or anything that handles `@UriParam` security knobs:
   validation, audience checking, signature verification, every advertised sub-path covered — and
   fail closed when the option or the claim is absent?
 - Does the change resolve property placeholders in message content, or compile an expression or
-  a language name taken from a message? Placeholders are resolved once, from route and
-  configuration text (CVE-2026-78164); code from a message needs an endpoint opt-in that no header
-  can set (CVE-2026-83531).
+  a language name taken from a message? Placeholder resolution belongs to route and configuration
+  text, not to message content (CVE-2026-78164); code from a message needs an endpoint opt-in that
+  no header can set (CVE-2026-83531).
 - Can the component present credentials to a host the route did not configure — a redirect
   target, a peer-supplied callback or receipt address (CVE-2026-85251, CVE-2026-80344)?
 - Does a verifier fail closed when the sender omits the protection, and keep stateful verifier

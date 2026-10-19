@@ -443,7 +443,7 @@ against core code, and the triager needs the core-side statement to judge it.
 | A registered core converter instantiating or deserialising arbitrary types from an untrusted body during automatic conversion (historic instance: CVE-2015-0263, the `camel-core` XML converter)
 | Medium to High
 
-| Property-placeholder and bean-reference resolution (`{{...}}`, `#bean:`, `#class:`, `#type:`, `#property:`) operates on route and configuration text supplied by the route author or operator, never on `Exchange` content, whichever module calls it; placeholders in route and configuration text are resolved once, when the route or endpoint is built
+| Property-placeholder and bean-reference resolution (`{{...}}`, `#bean:`, `#class:`, `#type:`, `#property:`) operates on route and configuration text supplied by the route author or operator, never on `Exchange` content
 | Message body or header content reaches placeholder or `#class:` / `#bean:` resolution and is resolved or instantiated - which reaches environment variables, JVM system properties, the vault property functions and no-argument methods of registry beans (historic instance: CVE-2026-78164, the HTTP producers resolving placeholders in the `CamelHttpUri` / `CamelRestHttpUri` override value on every message)
 | Medium to High
 
