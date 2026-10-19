@@ -356,7 +356,8 @@ public final class AuthoringTools {
 
         registry.accept(tool("camel_get_errors",
                 "The failed exchanges of a running integration: routeId, exchangeId, exception with stack trace, "
-                                                 + "body and headers.")
+                                                 + "body and headers. For an integration that is not running, it says "
+                                                 + "how its previous run ended.")
                 .param("name", "string", NAME_DESC, false)
                 .core(true)
                 .executor((ctx, args) -> {
