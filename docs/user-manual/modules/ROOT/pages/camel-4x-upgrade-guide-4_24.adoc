@@ -1699,6 +1699,14 @@ A name in camel case that starts with a lower-case letter, such as the datasourc
 looks like an option name and is written in dash case as a whole, underscores included (`my-orders`,
 `my-data-source`). Quote it to keep it: `quarkus.datasource."myOrders".db-kind`.
 
+=== camel-jbang - camel dirty removes only the files of processes that are gone
+
+`camel dirty` counts, and `camel dirty --clean` removes, only the files named after the pid of a process that is gone,
+such as `<pid>-status.json`. Before, it counted every other file in `~/.camel` too, and `--clean` removed them: the log of
+a Spring Boot or Quarkus app that `camel run` runs (`<name>.log`), also while the app ran, the console output that the AI
+tools keep, and the history of the AI prompt. Directories are not counted, and `--clean` counts only the files it
+removed.
+
 === camel-mongodb-gridfs - the consumer routes a file once
 
 With the `TimeStamp` (default) and `PersistentTimestamp` query strategies, the `mongodb-gridfs` consumer routed
@@ -1845,11 +1853,3 @@ integration, with `~/.camel/<name>-previous.json`, which says when and how the r
 ends replaces both, and at most the last 10 MB of a log are kept. `camel log <name> --previous` prints the log, like
 `kubectl logs --previous` in Kubernetes. The log of an integration that was killed is kept the same way, the next time a
 previous run is looked up. `camel dirty` does not count these files.
-
-=== camel-jbang - camel dirty removes only the files of processes that are gone
-
-`camel dirty` counts, and `camel dirty --clean` removes, only the files named after the pid of a process that is gone,
-such as `<pid>-status.json`. Before, it counted every other file in `~/.camel` too, and `--clean` removed them: the log of
-a Spring Boot or Quarkus app that `camel run` runs (`<name>.log`), also while the app ran, the console output that the AI
-tools keep, and the history of the AI prompt. Directories are not counted, and `--clean` counts only the files it
-removed.
