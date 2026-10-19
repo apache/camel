@@ -1673,6 +1673,14 @@ failures of the route go. A highlighted path that steps into an `onException` cl
 The `<camel-topology-diagram>` web component no longer draws the error paths of the route topology as calls between
 routes. With its new `errors` attribute it draws the routes reached only on error in a frame below the other routes.
 
+=== camel-jbang - the default name of a run of a whole directory
+
+`camel run --source-dir`, and `camel run` of a directory, without `--name` name the integration after the directory.
+A folder of a project layout (`src`, `main`, `resources`, `java`, `camel` or `routes`) gives way to the first parent
+with another name, and `.` is the working directory. Before, the name was the one of the first file, in the order that
+the file system lists them, which could be any file, such as a Java class that a route uses. `--name`, and
+`camel.main.name` in application.properties, still win.
+
 === camel-jbang - route-diagram, route-structure and route-topology read Java sources without compiling them
 
 Given Java source files, `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` (and the
