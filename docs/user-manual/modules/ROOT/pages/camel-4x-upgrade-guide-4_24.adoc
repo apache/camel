@@ -212,6 +212,13 @@ also applies to `pollEnrich` and `ConsumerTemplate.receive`, which take one file
 until the last file of the directory is received, where before the first received file deleted it. This applies to
 camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
 
+=== camel-pqc - an unknown hybridKdfAlgorithm is rejected
+
+The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
+`HKDF-SHA256`, `HKDF-SHA384` or `HKDF-SHA512`. Before, any other value silently fell back to `HKDF-SHA256`, so a typo
+such as `HKDF-SHA-512` went unnoticed - and if only one end of an exchange carried the typo, both ends still reported
+success while deriving the key with different digests.
+
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
 `camel validate normalize <files> --output=<dir>` now writes one normalized file per input file into the
