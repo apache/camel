@@ -803,12 +803,10 @@ now resolves to no value, as it already did without a field, so its default valu
 
 === camel-aws2-ddb - aws2-ddbstream reads every shard to its end
 
-The `aws2-ddbstream` consumer now reads a closed shard to its end before it reads the shards created from it, and uses
-`streamIteratorType` only for its start position. Before, a closed shard was left once its child shards were listed, so
-its records that were not read yet were never routed; and when every shard it was reading had been read to its end, the
-consumer started again from `streamIteratorType`: with `FROM_START` it routed records of the stream again (at every poll
-when its closed root shards were read to their end in one response), with `FROM_LATEST` it skipped the records already
-written to the new shards.
+The `aws2-ddbstream` consumer now reads a closed shard to its end before it reads its child shards, and uses
+`streamIteratorType` only for its start position. Before, records left in a closed shard could be skipped, and after a
+shard rotation the consumer started again from `streamIteratorType`: with `FROM_START` it routed records of the stream
+again, and with `FROM_LATEST` it skipped records already written to the new shards.
 
 === camel-bindy - a number field without precision keeps all its decimals when marshalled
 
