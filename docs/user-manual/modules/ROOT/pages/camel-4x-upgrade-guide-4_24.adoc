@@ -828,6 +828,13 @@ now resolves to no value, as it already did without a field, so its default valu
 (`{{?hashicorp:secret:missing#field}}`) applies. Before, without a default value, it failed with a
 `NullPointerException`.
 
+=== camel-aws2-ddb - aws2-ddbstream reads every shard to its end
+
+The `aws2-ddbstream` consumer now reads a closed shard to its end before it reads its child shards, and uses
+`streamIteratorType` only for its start position. Before, records left in a closed shard could be skipped, and after a
+shard rotation the consumer started again from `streamIteratorType`: with `FROM_START` it routed records of the stream
+again, and with `FROM_LATEST` it skipped records already written to the new shards.
+
 === camel-bindy - a number field without precision keeps all its decimals when marshalled
 
 A `BigDecimal`, `Double` or `Float` field whose `@DataField` (or `@KeyValuePairField`) has no `precision` and no
