@@ -837,6 +837,28 @@ It is now written with all its decimals, so a record that is unmarshalled and ma
 `Double` that is the result of a calculation is written with all its digits too (`0.1 + 0.2` as `0.30000000000000004`,
 before `0.3`). Set `precision` to get a fixed number of decimals, as before.
 
+=== camel-smooks - allowExternalEntities applies to Smooks Source bodies and to a reader declared without a class
+
+The Smooks component and `SmooksProcessor` now parse a message body that is already a Smooks `Source`
+(`org.smooks.io.source.StringSource`, `ReaderSource`, `StreamSource`, `ByteSource` or `URLSource`) with the same XML
+reader settings as the other message bodies, so external entities in it are only resolved when `allowExternalEntities`
+is `true`. Before, such a body was handed to Smooks as it was. The bytes of a `StreamSource`, `ByteSource` or
+`URLSource` are decoded with the exchange charset, or UTF-8, as before. These bodies are now parsed into a DOM before
+Smooks processes them, which uses more memory for very large inputs. `DOMSource` and `JavaSource` bodies are unchanged.
+
+A Smooks configuration whose `<reader>` declares no `class` only sets handlers, features or parameters of the default
+XML reader. The Smooks component, `SmooksProcessor` and the Smooks data format now apply `allowExternalEntities` to
+such a configuration as they do to a configuration without a `<reader>`, so the handlers and features of that reader no
+longer take part in parsing the XML unless `allowExternalEntities` is `true`. Configurations that declare a reader
+class, such as EDI, CSV, JSON, DFDL or a custom reader, are unchanged.
+
+A document with a document type declaration (`<!DOCTYPE ...>`) is now processed with these settings for every body
+type, `String`, `byte[]` and `InputStream` bodies included, which failed before: the entities of its internal subset are
+expanded, and the declaration itself is not passed on to Smooks.
+
+Set `allowExternalEntities=true` on the endpoint or on the data format for documents that rely on external entities or
+an external DTD.
+
 === camel-ical - each unmarshal parses with its own calendar builder
 
 The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at
