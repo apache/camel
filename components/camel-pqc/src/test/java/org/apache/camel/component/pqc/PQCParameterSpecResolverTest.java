@@ -107,13 +107,14 @@ class PQCParameterSpecResolverTest {
     void testIsSupported() {
         assertTrue(PQCParameterSpecResolver.isSupported("MLDSA"));
         assertTrue(PQCParameterSpecResolver.isSupported("MLKEM"));
-        // Stateful hash-based signatures and MAYO/SNOVA have no name-addressable parameter spec
+        // MAYO and SNOVA are stateless and MayoParameterSpec/SnovaParameterSpec both expose fromName in BC 1.86
+        assertTrue(PQCParameterSpecResolver.isSupported("MAYO"));
+        assertTrue(PQCParameterSpecResolver.isSupported("SNOVA"));
+        // Stateful hash-based signatures have no name-addressable parameter spec
         assertFalse(PQCParameterSpecResolver.isSupported("XMSS"));
         assertFalse(PQCParameterSpecResolver.isSupported("XMSSMT"));
         assertFalse(PQCParameterSpecResolver.isSupported("LMS"));
         assertFalse(PQCParameterSpecResolver.isSupported("HSS"));
-        assertFalse(PQCParameterSpecResolver.isSupported("MAYO"));
-        assertFalse(PQCParameterSpecResolver.isSupported("SNOVA"));
         assertFalse(PQCParameterSpecResolver.isSupported(null));
     }
 

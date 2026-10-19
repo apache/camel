@@ -28,10 +28,12 @@ import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.BIKEParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
 
 /**
  * Resolves the BouncyCastle {@link AlgorithmParameterSpec} for a PQC algorithm from the parameter-set name configured
@@ -41,8 +43,8 @@ import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
  * is accepted as an alias of the canonical dashed name ({@code ML-DSA-87}).
  * <p/>
  * The parameter set determines the NIST security level of the generated key material. The stateful hash-based signature
- * algorithms (XMSS, XMSSMT, LMS, HSS) and MAYO/SNOVA have no name-addressable BouncyCastle parameter spec and are
- * therefore not supported here - for those, register a KeyPair/Signature/KeyGenerator bean in the registry instead.
+ * algorithms (XMSS, XMSSMT, LMS, HSS) have no name-addressable BouncyCastle parameter spec and are therefore not
+ * supported here - for those, register a KeyPair/Signature/KeyGenerator bean in the registry instead.
  */
 public final class PQCParameterSpecResolver {
 
@@ -51,7 +53,7 @@ public final class PQCParameterSpecResolver {
      */
     private static final Set<String> SUPPORTED_ALGORITHMS = Set.of(
             // Signature algorithms
-            "MLDSA", "SLHDSA", "FALCON", "DILITHIUM", "SPHINCSPLUS",
+            "MLDSA", "SLHDSA", "FALCON", "DILITHIUM", "SPHINCSPLUS", "MAYO", "SNOVA",
             // Key encapsulation algorithms
             "MLKEM", "KYBER", "NTRU", "NTRULPRime", "SNTRUPrime", "BIKE", "HQC", "CMCE", "FRODO", "SABER");
 
@@ -81,8 +83,8 @@ public final class PQCParameterSpecResolver {
             throw new IllegalArgumentException(
                     "The parameterSpec option is not supported for algorithm " + algorithm
                                                + ". Supported algorithms are: " + SUPPORTED_ALGORITHMS
-                                               + ". For the stateful signature algorithms (XMSS, XMSSMT, LMS, HSS) and"
-                                               + " for MAYO/SNOVA, register a KeyPair bean in the registry instead.");
+                                               + ". For the stateful signature algorithms (XMSS, XMSSMT, LMS, HSS),"
+                                               + " register a KeyPair bean in the registry instead.");
         }
 
         // BouncyCastle resolves parameter-set names case-insensitively but never uses underscores in them, so accept
@@ -120,6 +122,10 @@ public final class PQCParameterSpecResolver {
                 return MLDSAParameterSpec.fromName(parameterSpec);
             case "SPHINCSPLUS":
                 return SLHDSAParameterSpec.fromName(parameterSpec);
+            case "MAYO":
+                return MayoParameterSpec.fromName(parameterSpec);
+            case "SNOVA":
+                return SnovaParameterSpec.fromName(parameterSpec);
             // Key encapsulation algorithms
             case "MLKEM":
             case "KYBER":
