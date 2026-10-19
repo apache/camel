@@ -97,6 +97,37 @@ class HybridKEMCurveTest {
     }
 
     @Test
+    void x25519RoundTrips() throws Exception {
+        KeyPairGenerator x25519Kpg = KeyPairGenerator.getInstance("X25519", "BC");
+        KeyPair x25519KeyPair = x25519Kpg.generateKeyPair();
+
+        KeyPairGenerator mlkemKpg = KeyPairGenerator.getInstance("ML-KEM", "BC");
+        mlkemKpg.initialize(MLKEMParameterSpec.ml_kem_768, new SecureRandom());
+        KeyPair mlkemKeyPair = mlkemKpg.generateKeyPair();
+
+        HybridKEM.HybridEncapsulationResult encapResult = HybridKEM.encapsulate(
+                x25519KeyPair.getPublic(),
+                mlkemKeyPair.getPublic(),
+                KeyAgreement.getInstance("X25519", "BC"),
+                KeyGenerator.getInstance("ML-KEM", "BC"),
+                "AES",
+                256,
+                "HKDF-SHA256");
+
+        SecretKey extracted = HybridKEM.extract(
+                encapResult.encapsulation(),
+                x25519KeyPair.getPrivate(),
+                mlkemKeyPair.getPrivate(),
+                KeyAgreement.getInstance("X25519", "BC"),
+                KeyGenerator.getInstance("ML-KEM", "BC"),
+                "AES",
+                256,
+                "HKDF-SHA256");
+
+        assertArrayEquals(encapResult.sharedSecret().getEncoded(), extracted.getEncoded());
+    }
+
+    @Test
     void x448RoundTrips() throws Exception {
         KeyPairGenerator x448Kpg = KeyPairGenerator.getInstance("X448", "BC");
         KeyPair x448KeyPair = x448Kpg.generateKeyPair();
