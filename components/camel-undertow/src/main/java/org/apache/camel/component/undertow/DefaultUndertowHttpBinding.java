@@ -407,7 +407,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
-            // set content-type
+            // set content-type (written verbatim by the client, so validate it like any other header value)
+            UndertowHelper.checkWriteable("Content-Type header", contentType);
             requestHeaders.put(Headers.CONTENT_TYPE, contentType);
             LOG.trace("Content-Type: {}", contentType);
         }
@@ -424,6 +425,10 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 String headerValue = tc.convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                    // the HTTP client writes each character of the value as a single byte with no validation, so a
+                    // CR or LF (or a character that narrows to one) would break the value out of its header line;
+                    // reject such a value rather than send a malformed request
+                    UndertowHelper.checkWriteable("value of HTTP header " + key, headerValue);
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
                     requestHeaders.add(new HttpString(key), headerValue);
                 }
