@@ -75,6 +75,7 @@ import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.PackageNameSourceLoader;
 import org.apache.camel.main.download.PromptPropertyPlaceholderSource;
+import org.apache.camel.main.download.ReloadDependencyDownloader;
 import org.apache.camel.main.download.SagaDownloader;
 import org.apache.camel.main.download.StubComponentAutowireStrategy;
 import org.apache.camel.main.download.TransactedDownloader;
@@ -118,6 +119,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.BacklogStartupStepRecorder;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.OrderedLocationProperties;
 
 /**
  * A Main class for booting up Camel with Kamelet in standalone mode.
@@ -881,6 +883,17 @@ public class KameletMain extends MainCommandLineSupport {
         camelContext.setApplicationContextClassLoader(cl);
         // auto configure camel afterwards
         super.autoconfigure(camelContext);
+    }
+
+    @Override
+    protected void autoConfigurationFromReloadedProperties(
+            CamelContext camelContext, OrderedLocationProperties reloadedProperties, boolean changed)
+            throws Exception {
+        // a dependency added to a properties file while the application runs is downloaded before the beans and
+        // components of the reload are created (CAMEL-25833)
+        new ReloadDependencyDownloader(camelContext).download(reloadedProperties,
+                getInstanceType() + ".dependencies", getInstanceType() + ".dependencies.main");
+        super.autoConfigurationFromReloadedProperties(camelContext, reloadedProperties, changed);
     }
 
     @Override
