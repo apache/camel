@@ -37,6 +37,7 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CommitConsumer.class);
     private static final int CAPACITY = 1000;
+    private static final int MAX_COMMITS_WITHOUT_LAST_SHA = 100;
 
     private final String branchName;
     private final String startingSha;
@@ -109,12 +110,24 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
             }
 
             List<GHCommit> commits = new ArrayList<>();
+            // read up to the last routed commit: the commits pushed since then all come before it. Stopping after the
+            // first 100 would lose the older ones when more were pushed between two polls, as lastSha then moves to
+            // the newest one. Without a last commit, or when it is not among the remembered number of newest commits
+            // (it is no longer on the branch), only the 100 newest are considered
+            int limit = lastSha != null ? CAPACITY : MAX_COMMITS_WITHOUT_LAST_SHA;
+            boolean lastShaFound = false;
             for (GHCommit commit : getRepository().queryCommits().from(branchName).list().withPageSize(100)) {
                 commits.add(commit);
-                // Stop after 100 commits to avoid fetching too many
-                if (commits.size() >= 100) {
+                if (lastSha != null && lastSha.equals(commit.getSHA1())) {
+                    lastShaFound = true;
                     break;
                 }
+                if (commits.size() >= limit) {
+                    break;
+                }
+            }
+            if (!lastShaFound && commits.size() > MAX_COMMITS_WITHOUT_LAST_SHA) {
+                commits = commits.subList(0, MAX_COMMITS_WITHOUT_LAST_SHA);
             }
 
             // clip the list after the last sha
@@ -139,6 +152,12 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
                 if (!commitHashes.contains(sha)) {
                     newCommits.push(commit);
                 }
+            }
+            if (newCommits.isEmpty() && lastSha != null && !lastShaFound && !commits.isEmpty()) {
+                // the last routed commit is no longer on the branch (a force push or a reset to an older commit), and
+                // the newest commits were all routed before: continue from the newest one, so that the next polls do
+                // not read the remembered number of commits again to look for the last routed one
+                lastSha = commits.get(0).getSHA1();
             }
 
             Queue<Object> exchanges = new ArrayDeque<>();
