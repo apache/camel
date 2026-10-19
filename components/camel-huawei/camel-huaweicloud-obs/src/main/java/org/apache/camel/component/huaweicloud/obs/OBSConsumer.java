@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.huaweicloud.obs;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -217,29 +219,50 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
      */
     private Queue<Exchange> createExchanges(List<ObsObject> obsObjects) {
         Queue<Exchange> answer = new LinkedList<>();
-        try {
-            for (ObsObject objectSummary : obsObjects) {
-                String objectKey = objectSummary.getObjectKey();
-                // skip the object if an exchange of a previous poll is still processing it
-                if (!inProgress.add(objectKey)) {
-                    LOG.trace("Skipping object {} as it is already in progress", objectKey);
+        // the listed objects that could not be got, other than those that no longer exist, by key
+        Map<String, RuntimeException> failures = new LinkedHashMap<>();
+        // whether at least one listed object could be got
+        boolean anyGot = false;
+        for (ObsObject objectSummary : obsObjects) {
+            String objectKey = objectSummary.getObjectKey();
+            // skip the object if an exchange of a previous poll is still processing it
+            if (!inProgress.add(objectKey)) {
+                LOG.trace("Skipping object {} as it is already in progress", objectKey);
+                continue;
+            }
+            // a failure to get one listed object does not fail the poll as long as another listed object could be
+            // got: the object is skipped, the other listed objects are consumed, and a later poll tries it again
+            try {
+                addExchange(objectKey, objectSummary, answer);
+                anyGot = true;
+            } catch (ObsException e) {
+                if (e.getResponseCode() == 404) {
+                    // deleted (for example by another consumer) after it was listed
+                    LOG.debug("Skipping object {} as it no longer exists", objectKey);
                     continue;
                 }
-                try {
-                    addExchange(objectKey, objectSummary, answer);
-                } catch (ObsException e) {
-                    if (e.getResponseCode() == 404) {
-                        // deleted (for example by another consumer) after it was listed
-                        LOG.debug("Skipping object {} as it no longer exists", objectKey);
-                        continue;
-                    }
-                    throw e;
-                }
+                failures.put(objectKey, e);
+            } catch (RuntimeException e) {
+                failures.put(objectKey, e);
             }
-        } catch (RuntimeException e) {
-            // none of the objects of this poll is processed
-            releaseNotProcessed(answer);
-            throw e;
+        }
+
+        if (!failures.isEmpty()) {
+            if (!anyGot) {
+                // none of the listed objects could be got, so this is not about one object (expired credentials, no
+                // permission to get, no connection): the poll fails, and the backoff of the scheduled consumer applies
+                releaseNotProcessed(answer);
+                Map.Entry<String, RuntimeException> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the listed objects of bucket {} could be got ({} failed, the first is {}): the poll fails",
+                        endpoint.getBucketName(), failures.size(), first.getKey());
+                throw first.getValue();
+            }
+            for (Map.Entry<String, RuntimeException> failure : failures.entrySet()) {
+                getExceptionHandler().handleException("Error getting object " + failure.getKey() + " from bucket "
+                                                      + endpoint.getBucketName()
+                                                      + ". The object is skipped for this poll.",
+                        failure.getValue());
+            }
         }
         return answer;
     }
