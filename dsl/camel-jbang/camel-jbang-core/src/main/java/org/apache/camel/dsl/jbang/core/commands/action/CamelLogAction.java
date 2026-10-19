@@ -267,7 +267,7 @@ public class CamelLogAction extends ActionBaseCommand {
     private void findRunning() {
         try {
             if (findProcesses(name).isEmpty()) {
-                // nothing runs
+                // nothing runs: the newest previous run (findAll is newest first)
                 List<PreviousRun.Info> found = PreviousRun.findAll();
                 if (!found.isEmpty()) {
                     printer().printTip(previousRunHint(found.get(0)));

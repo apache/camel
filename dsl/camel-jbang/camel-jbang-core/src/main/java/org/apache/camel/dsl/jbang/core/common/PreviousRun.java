@@ -164,6 +164,9 @@ public final class PreviousRun {
         String file = fileName(info.name());
         Path target = dir.resolve(file + LOG_SUFFIX);
         try {
+            // what was kept about the run before goes first, so a keep that fails (such as on a full disk) does not
+            // leave it next to the log of this run
+            Files.deleteIfExists(dir.resolve(file + INFO_SUFFIX));
             if (Files.size(log) > MAX_SIZE || !move(log, target)) {
                 copyEnd(log, target, MAX_SIZE);
                 try {
@@ -285,7 +288,9 @@ public final class PreviousRun {
                     ? context.getString("name") : null;
             if (name != null && !name.isBlank()) {
                 Info before = read(CommandLineHelper.getCamelDir().resolve(fileName(name) + INFO_SUFFIX));
-                if (before == null || before.ended() < modified) {
+                // the time of the kept log, not when its run ended, so both times come from the file system (a
+                // network file system has a clock of its own)
+                if (before == null || before.log().toFile().lastModified() < modified) {
                     String directory = status.get("runtime") instanceof JsonObject runtime
                             ? runtime.getString("directory") : null;
                     keep(f.toPath(), new Info(name, pid, directory, 0, modified, null, null, GONE, null));

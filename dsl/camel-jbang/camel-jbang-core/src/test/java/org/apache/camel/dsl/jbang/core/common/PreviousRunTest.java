@@ -22,6 +22,7 @@ import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
@@ -158,6 +159,40 @@ class PreviousRunTest {
 
         assertThat(Files.readAllLines(info.log())).containsExactly("newer run");
         assertThat(old).doesNotExist();
+    }
+
+    @Test
+    void theLogOfAKilledProcessIsComparedByTheTimesOfTheFiles() throws Exception {
+        // a run kept by a JVM whose clock is a day ahead of the file system (a network file system)
+        long ahead = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1);
+        Path kept = PreviousRun.keep(writeLog("123.log", "older run"),
+                new PreviousRun.Info("orders", 123, null, 0, ahead, 0, null, null, null));
+        Files.setLastModifiedTime(kept, FileTime.from(Instant.now().minus(2, ChronoUnit.HOURS)));
+        Path killed = writeLog(GONE_PID + ".log", "newer run, killed");
+        Files.setLastModifiedTime(killed, FileTime.from(Instant.now().minus(1, ChronoUnit.HOURS)));
+        writeStatus(GONE_PID, "orders");
+
+        PreviousRun.Info info = only(PreviousRun.find("orders"));
+
+        assertThat(info.pid()).isEqualTo(GONE_PID);
+        assertThat(Files.readAllLines(info.log())).containsExactly("newer run, killed");
+    }
+
+    @Test
+    void aKeepThatFailsLeavesNoInfoOfTheRunBefore() throws Exception {
+        PreviousRun.keep(writeLog("123.log", "first run"), "orders", 123, 0, null);
+        // the log cannot be written: a directory that is not empty has its name
+        Path kept = camelDir.resolve("orders-previous.log");
+        Files.delete(kept);
+        Files.createDirectories(kept.resolve("in-the-way"));
+        Path log = writeLog("456.log", "second run");
+
+        assertThat(PreviousRun.keep(log, "orders", 456, 70, "boom")).isNull();
+
+        // what was kept about the first run is not left next to something else, and the log of the second run stays
+        assertThat(camelDir.resolve("orders-previous.json")).doesNotExist();
+        assertThat(PreviousRun.find("orders")).isEmpty();
+        assertThat(log).exists();
     }
 
     @Test
