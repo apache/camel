@@ -517,33 +517,20 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                 }
                 break;
             case random:
-                if (part > 0) {
-                    if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + "-" + id.toString() + ext;
-                    } else {
-                        dynamicKeyName = fileName + "-" + id.toString();
-                    }
+                // every upload, the first one of the producer too: a producer that is started again, or another
+                // producer with the same keyName, would otherwise replace the first object with its own
+                if (ObjectHelper.isNotEmpty(ext)) {
+                    dynamicKeyName = fileName + "-" + id.toString() + ext;
                 } else {
-                    if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + ext;
-                    } else {
-                        dynamicKeyName = fileName;
-                    }
+                    dynamicKeyName = fileName + "-" + id.toString();
                 }
                 break;
             case timestamp:
-                if (part > 0) {
-                    if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + "-" + timestamp + ext;
-                    } else {
-                        dynamicKeyName = fileName + "-" + timestamp;
-                    }
+                // every upload, as for random
+                if (ObjectHelper.isNotEmpty(ext)) {
+                    dynamicKeyName = fileName + "-" + timestamp + ext;
                 } else {
-                    if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + ext;
-                    } else {
-                        dynamicKeyName = fileName;
-                    }
+                    dynamicKeyName = fileName + "-" + timestamp;
                 }
                 break;
             default:
