@@ -121,6 +121,12 @@ public class BatchConsumerWorker implements Runnable {
     }
 
     private void dispatchOrDiscard(List<Message> batch) {
+        if (isShutdownRequested() && isRedeliverable()) {
+            LOG.debug("Shutting down {}: discarding {} buffered message(s); "
+                      + "unacknowledged/uncommitted, will be redelivered",
+                    endpoint.getEndpointUri(), batch.size());
+            return;
+        }
         if (jmsUnhealthy) {
             if (isRedeliverable()) {
                 LOG.warn("JMS is unhealthy on {}: discarding {} buffered message(s); "

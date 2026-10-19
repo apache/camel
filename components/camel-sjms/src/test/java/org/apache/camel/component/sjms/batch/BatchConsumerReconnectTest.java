@@ -44,10 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
-    private static final String SJMS_QUEUE_NAME_TEMPLATE = "batch.consumer.%s.BatchConsumerReconnectTest";
-    private static final String ROUTE_ID_SESSION_TX = "tx";
-    private static final String ROUTE_ID_CLIENT_ACK_NO_TX = "no-tx-client-ack";
-    private static final String ROUTE_ID_AUTO_ACK_NO_TX = "no-tx-auto";
+    private static final String QUEUE_NAME_TEMPLATE = "batch.consumer.%s.BatchConsumerReconnectTest";
+    private static final String ROUTE_ID_SESSION_TX = "session-tx";
+    private static final String ROUTE_ID_CLIENT_ACK = "client-ack";
+    private static final String ROUTE_ID_AUTO_ACK = "auto-ack";
 
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
@@ -79,17 +79,17 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
     }
 
     @Test
-    public void testReconnectAutoAcknowledgedNotTransacted() throws Exception {
-        final String queueName = format(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX);
+    public void testReconnectAutoAcknowledge() throws Exception {
+        final String queueName = format(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK);
         final String endpointUri = "sjms:queue:" + queueName;
 
-        MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK_NO_TX));
+        MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK));
         mock.expectedMessageCount(1);
 
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
         int connectionsBefore = countingFactory.getCreateCount();
-        triggerConnectionFailure(context, ROUTE_ID_AUTO_ACK_NO_TX);
+        triggerConnectionFailure(context, ROUTE_ID_AUTO_ACK);
         await().atMost(30, TimeUnit.SECONDS)
                 .until(() -> countingFactory.getCreateCount() > connectionsBefore);
 
@@ -110,8 +110,8 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
     }
 
     @Test
-    public void testSessionTransacted() throws Exception {
-        final String queueName = format(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX);
+    public void testReconnectSessionTransacted() throws Exception {
+        final String queueName = format(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX);
         final String endpointUri = "sjms:queue:" + queueName;
 
         MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_SESSION_TX));
@@ -143,17 +143,17 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
     }
 
     @Test
-    public void testClientAcknowledge() throws Exception {
-        final String queueName = format(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX);
+    public void testReconnectClientAcknowledge() throws Exception {
+        final String queueName = format(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK);
         final String endpointUri = "sjms:queue:" + queueName;
 
-        MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK_NO_TX));
+        MockEndpoint mock = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK));
         mock.expectedMessageCount(0);
 
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
         int connectionsBefore = countingFactory.getCreateCount();
-        triggerConnectionFailure(context, ROUTE_ID_CLIENT_ACK_NO_TX);
+        triggerConnectionFailure(context, ROUTE_ID_CLIENT_ACK);
         await().atMost(30, TimeUnit.SECONDS)
                 .until(() -> countingFactory.getCreateCount() > connectionsBefore);
 
@@ -172,12 +172,12 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                createBatchRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
                         10000,
                         true, null, 1, new BatchTestHelper.DoNothingProcessor()),
-                createBatchRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK,
                         5, 10000, false, "CLIENT_ACKNOWLEDGE", 1, new BatchTestHelper.DoNothingProcessor()),
-                createBatchRoute(SJMS_QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX, 5, 10000, false,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK, 5, 10000, false,
                         "AUTO_ACKNOWLEDGE", 1, new BatchTestHelper.DoNothingProcessor())
         };
     }

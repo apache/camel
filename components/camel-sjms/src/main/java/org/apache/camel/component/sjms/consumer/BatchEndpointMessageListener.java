@@ -41,6 +41,7 @@ public class BatchEndpointMessageListener {
     private final SjmsConsumer consumer;
     private final SjmsEndpoint endpoint;
     private final Processor processor;
+    private String poisonBody;
 
     public BatchEndpointMessageListener(SjmsConsumer consumer, SjmsEndpoint endpoint, Processor processor) {
         this.consumer = consumer;
@@ -48,16 +49,32 @@ public class BatchEndpointMessageListener {
         this.processor = processor;
     }
 
+    public void setPoisonBody(String poisonBody) {
+        this.poisonBody = poisonBody;
+    }
+
     private Exchange aggregate(List<Message> rawMessages, Session session) {
         List<Exchange> exchanges = new ArrayList<>(rawMessages.size());
         for (Message m : rawMessages) {
-            Exchange e = endpoint.createExchange(m, session);
-            // Force eager materialization of JMS message headers and body into the
-            // Camel Exchange, before the session is committed/closed after dispatch.
-            e.getIn().getHeaders();
-            e.getIn().getBody();
+            Exchange exchange = endpoint.createExchange(m, session);
+            try {
+                // Force eager materialization of JMS message headers and body into the
+                // Camel Exchange, before the session is committed/closed after dispatch.
+                exchange.getIn().getHeaders();
+                exchange.getIn().getBody();
+            } catch (Exception e) {
+                exchange.setException(e);
+                String text = poisonBody;
+                try {
+                    text = endpoint.getCamelContext().resolveLanguage("simple")
+                            .createExpression(poisonBody).evaluate(exchange, String.class);
+                } catch (Exception t) {
+                    // ignore
+                }
+                exchange.getIn().setBody(text);
+            }
 
-            exchanges.add(e);
+            exchanges.add(exchange);
         }
 
         Exchange batchExchange = consumer.createExchange(false);

@@ -395,6 +395,7 @@ public class SjmsEndpoint extends DefaultEndpoint
         SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
 
         BatchEndpointMessageListener listener = new BatchEndpointMessageListener(consumer, this, processor);
+        configureBatchMesageListener(listener);
         container.setBatchListener(listener);
 
         configureConsumer(consumer);
@@ -420,6 +421,12 @@ public class SjmsEndpoint extends DefaultEndpoint
             listener.setReplyToDestination(getReplyTo());
         }
         listener.setAsync(isAsyncConsumer());
+    }
+
+    public void configureBatchMesageListener(BatchEndpointMessageListener listener) {
+        if (!"false".equals(eagerPoisonBody)) {
+            listener.setPoisonBody(eagerPoisonBody);
+        }
     }
 
     @Override

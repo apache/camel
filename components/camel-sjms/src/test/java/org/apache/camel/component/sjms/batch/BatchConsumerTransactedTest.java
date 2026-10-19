@@ -40,11 +40,33 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
 
     private static final String QUEUE_NAME_TEMPLATE = "batch.consumer.%s.BatchConsumerTransactedTest";
 
-    private static final String ROUTE_ID_SESSION_TX = "tx";
-    private static final String ROUTE_ID_CLIENT_ACK_NO_TX = "no-tx-client-ack";
-    private static final String ROUTE_ID_AUTO_ACK_NO_TX = "no-tx-auto";
+    private static final String ROUTE_ID_SESSION_TX = "session-tx";
+    private static final String ROUTE_ID_CLIENT_ACK = "client-ack";
+    private static final String ROUTE_ID_AUTO_ACK = "auto-ack";
 
     private static final String MESSAGE_TEXT = "Message %d";
+
+    @Test
+    public void testClientAcknowledgedNotTransacted() throws Exception {
+        MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_CLIENT_ACK));
+        mockStart.expectedMessageCount(2);
+
+        MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK));
+        mockFinish.expectedMessageCount(1);
+
+        sendMessagesWithText(template,
+                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK),
+                5, MESSAGE_TEXT);
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertBatchSizesInOrder(mockFinish, 5);
+        assertEquals(
+                IntStream.rangeClosed(1, 5)
+                        .mapToObj(i -> String.format(MESSAGE_TEXT, i))
+                        .toList(),
+                getBatchBodiesAsString(mockFinish.getExchanges().get(0)));
+        assertBatchRedelivered(mockFinish.getExchanges().get(0), "Message 1", true);
+    }
 
     @Test
     public void testSessionTransacted() throws Exception {
@@ -69,37 +91,15 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
     }
 
     @Test
-    public void testClientAcknowledgedNotTransacted() throws Exception {
-        MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_CLIENT_ACK_NO_TX));
-        mockStart.expectedMessageCount(2);
-
-        MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK_NO_TX));
-        mockFinish.expectedMessageCount(1);
-
-        sendMessagesWithText(template,
-                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX),
-                5, MESSAGE_TEXT);
-
-        MockEndpoint.assertIsSatisfied(context);
-        assertBatchSizesInOrder(mockFinish, 5);
-        assertEquals(
-                IntStream.rangeClosed(1, 5)
-                        .mapToObj(i -> String.format(MESSAGE_TEXT, i))
-                        .toList(),
-                getBatchBodiesAsString(mockFinish.getExchanges().get(0)));
-        assertBatchRedelivered(mockFinish.getExchanges().get(0), "Message 1", true);
-    }
-
-    @Test
     public void testAutoAcknowledgedNotTransacted() throws Exception {
-        MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_AUTO_ACK_NO_TX));
+        MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_AUTO_ACK));
         mockStart.expectedMessageCount(1);
 
-        MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK_NO_TX));
+        MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK));
         mockFinish.expectedMessageCount(0);
 
         sendMessagesWithText(template,
-                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX), 5, MESSAGE_TEXT);
+                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK), 5, MESSAGE_TEXT);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -110,9 +110,9 @@ public class BatchConsumerTransactedTest extends JmsTestSupport {
                 createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
                         1000,
                         true, null, 1, new ThrowExceptionProcessor()),
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK,
                         5, 1000, false, "CLIENT_ACKNOWLEDGE", 1, new ThrowExceptionProcessor()),
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK_NO_TX, 5, 1000, false,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK, 5, 1000, false,
                         "AUTO_ACKNOWLEDGE", 1, new ThrowExceptionProcessor())
         };
     }

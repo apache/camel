@@ -36,11 +36,27 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
 
     private static final String QUEUE_NAME_TEMPLATE = "batch.consumer.%s.BatchConsumerRollbackOnlyTest";
 
-    private static final String ROUTE_ID_SESSION_TX = "tx";
-    private static final String ROUTE_ID_CLIENT_ACK_NO_TX = "no-tx-client-ack";
+    private static final String ROUTE_ID_AUTO_ACK = "auto-ack";
+    private static final String ROUTE_ID_SESSION_TX = "session-tx";
+    private static final String ROUTE_ID_CLIENT_ACK = "client-ack";
 
     @Test
-    public void testSessionTransacted() throws Exception {
+    public void testRollbackAutoAcknowledge() throws Exception {
+        MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_AUTO_ACK));
+        mockStart.expectedMessageCount(1);
+
+        MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_AUTO_ACK));
+        mockFinish.expectedMessageCount(0);
+
+        sendMessages(template, format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK),
+                5);
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertBatchSizesInOrder(mockStart, 5);
+    }
+
+    @Test
+    public void testRollbackSessionTransacted() throws Exception {
         MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_SESSION_TX));
         mockStart.expectedMessageCount(2);
 
@@ -55,15 +71,15 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
     }
 
     @Test
-    public void testClientAcknowledgedNotTransacted() throws Exception {
-        MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_CLIENT_ACK_NO_TX));
+    public void testRollbackClientAcknowledged() throws Exception {
+        MockEndpoint mockStart = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_START, ROUTE_ID_CLIENT_ACK));
         mockStart.expectedMessageCount(2);
 
-        MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK_NO_TX));
+        MockEndpoint mockFinish = getMockEndpoint(format(BATCH_ROUTEBUILDER_MOCK_FINISH, ROUTE_ID_CLIENT_ACK));
         mockFinish.expectedMessageCount(1);
 
         sendMessages(template,
-                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX),
+                format("sjms:queue:" + QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK),
                 5);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -73,11 +89,15 @@ public class BatchConsumerRollbackOnlyTest extends JmsTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
-                        1000,
-                        true, null, 1, new MarkRollBackProcessor()),
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK_NO_TX,
-                        5, 1000, false, "CLIENT_ACKNOWLEDGE", 1, new MarkRollBackProcessor())
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK, 5, 1000,
+                        false, "AUTO_ACKNOWLEDGE", 1,
+                        new MarkRollBackProcessor()),
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5, 1000,
+                        true, null, 1,
+                        new MarkRollBackProcessor()),
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK, 5, 1000,
+                        false, "CLIENT_ACKNOWLEDGE", 1,
+                        new MarkRollBackProcessor())
         };
     }
 

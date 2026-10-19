@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
@@ -32,12 +32,12 @@ import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BatchConsumerExceptionHandlerTest extends JmsCommonTestSupport {
 
@@ -50,8 +50,6 @@ public class BatchConsumerExceptionHandlerTest extends JmsCommonTestSupport {
 
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
-
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     protected String getBrokerUri() {
@@ -87,23 +85,31 @@ public class BatchConsumerExceptionHandlerTest extends JmsCommonTestSupport {
         MockEndpoint mockFinish = getMockEndpoint(MOCK_FINISH);
 
         mockStart.expectedMessageCount(1);
+        mockStart.setAssertPeriod(5000);
+
         mockFinish.expectedMessageCount(0);
 
-        template.sendBodyAndHeader(SJMS_QUEUE_NAME, "Hello there!", "cheese", "y");
+        sendMessagesWithText(template, SJMS_QUEUE_NAME, 5, "Message %d!");
 
-        assertTrue(exceptionHandler.latch.await(5, TimeUnit.SECONDS),
-                "An exchange exception should be reported to the endpoint exceptionHandler");
-        assertNotNull(exceptionHandler.captured.get(), "The exceptionHandler should always get a cause");
-        assertEquals("java.lang.IllegalArgumentException: " + EXCEPTION_MESSAGE, exceptionHandler.captured.get().getMessage());
+        await()
+                .during(Duration.ofSeconds(5))
+                .atMost(Duration.ofSeconds(10))
+                .until(() -> exceptionHandler.counter.get() == 1);
 
         MockEndpoint.assertIsSatisfied(context);
+
+        Throwable captured = exceptionHandler.captured.get();
+        assertNotNull(captured, "The exceptionHandler should always get a cause");
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, captured.getCause());
+        assertEquals(EXCEPTION_MESSAGE, cause.getMessage());
+        assertEquals(1, exceptionHandler.counter.get());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("%s?batching=true&exceptionHandler=#myHandler", SJMS_QUEUE_NAME)
+                fromF("%s?batching=true&batchSize=5&exceptionHandler=#myHandler", SJMS_QUEUE_NAME)
                         .to(MOCK_START)
                         .process(exchange -> {
                             throw new IllegalArgumentException(EXCEPTION_MESSAGE);
@@ -115,7 +121,7 @@ public class BatchConsumerExceptionHandlerTest extends JmsCommonTestSupport {
 
     private static final class CapturingExceptionHandler implements ExceptionHandler {
 
-        private final CountDownLatch latch = new CountDownLatch(1);
+        private final AtomicInteger counter = new AtomicInteger();
         private final AtomicReference<Throwable> captured = new AtomicReference<>();
 
         @Override
@@ -130,8 +136,8 @@ public class BatchConsumerExceptionHandlerTest extends JmsCommonTestSupport {
 
         @Override
         public void handleException(String message, Exchange exchange, Throwable exception) {
+            counter.incrementAndGet();
             captured.compareAndSet(null, exception);
-            latch.countDown();
         }
     }
 }
