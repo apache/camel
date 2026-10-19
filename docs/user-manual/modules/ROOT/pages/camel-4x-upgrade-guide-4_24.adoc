@@ -1789,6 +1789,15 @@ server, it is now created again in the existing session; previously the consumer
 connection was rebuilt for another reason. The monitored items deliver their current values again after the
 subscription is recreated.
 
+=== camel-milo - a producer request for a node with an unknown namespace URI
+
+A `milo-client` write, method call or read, or a `milo-browse` browse, for a node ID with a namespace URI (`nsu=`) that
+is not in the namespace table of the server no longer makes the client reconnect, which also recreated the
+subscriptions of the consumers that share the connection. A write, read or browse answers the node like a node that
+the server does not have, with the status code `Bad_NodeIdUnknown`, and the other nodes of a read or browse are not
+affected. Previously an awaited write or read completed without an error and with a `null` body, and a browse failed
+with a `NullPointerException`.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
