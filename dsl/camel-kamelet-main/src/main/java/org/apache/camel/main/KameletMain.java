@@ -890,9 +890,12 @@ public class KameletMain extends MainCommandLineSupport {
             CamelContext camelContext, OrderedLocationProperties reloadedProperties, boolean changed)
             throws Exception {
         // a dependency added to a properties file while the application runs is downloaded before the beans and
-        // components of the reload are created (CAMEL-25833)
-        new ReloadDependencyDownloader(camelContext).download(reloadedProperties,
-                getInstanceType() + ".dependencies", getInstanceType() + ".dependencies.main");
+        // components of the reload are created (CAMEL-25833). Not when options are applied again, as a context reload
+        // does for secret rotation: that does not add dependencies
+        if (changed) {
+            new ReloadDependencyDownloader(camelContext).download(reloadedProperties,
+                    getInstanceType() + ".dependencies", getInstanceType() + ".dependencies.main");
+        }
         super.autoConfigurationFromReloadedProperties(camelContext, reloadedProperties, changed);
     }
 

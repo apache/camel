@@ -94,7 +94,9 @@ public final class ReloadDependencyDownloader {
 
     /**
      * The version of the library that the downloader has put on the classpath, from the path of its JAR in the Maven
-     * repository (such as .../com/github/javafaker/javafaker/1.0.1/javafaker-1.0.1.jar), or null.
+     * repository (such as .../com/github/javafaker/javafaker/1.0.1/javafaker-1.0.1.jar), or null. Only a JAR in the
+     * layout of a Maven repository is recognized, which is where the downloader puts them; for a JAR elsewhere, the
+     * dependency is downloaded as when this check did not exist.
      */
     private String loadedVersion(String groupId, String artifactId) {
         if (downloader.getClassLoader() instanceof URLClassLoader ucl) {
