@@ -1777,9 +1777,12 @@ public class Run extends CamelCommand {
         Path appProps = Paths.get(eq.exportDir, "src/main/resources/application.properties");
         if (Files.exists(appProps)) {
             String content = Files.readString(appProps);
+            // in the Camel directory of the CLI, where camel log looks for it (as for an existing Quarkus project)
+            String logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log").toAbsolutePath().toString()
+                    .replace("\\", "/");
             content += "\n# logging to file\n"
                        + "quarkus.log.file.enabled=true\n"
-                       + "quarkus.log.file.path=${user.home}/.camel/" + appName + ".log\n"
+                       + "quarkus.log.file.path=" + logFile + "\n"
                        + "quarkus.log.file.format=" + QUARKUS_LOG_FILE_FORMAT + "\n";
             Files.writeString(appProps, content);
         }

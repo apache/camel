@@ -1808,3 +1808,16 @@ the one of a miss, with the lines the file has there. `matchedLines` in the answ
 `~/.camel/camel-launch-<number>.log` or `camel-restart-<number>.log`, which stayed until the MCP server exited. An
 integration that still runs when the server exits keeps the file while it runs: `camel stop` removes it, and
 `camel dirty --clean` once the integration has ended.
+
+=== camel-jbang - where the CLI writes its log files
+
+* The `log4j2.properties` of camel-jbang-core logs to the console only. It is the configuration that log4j finds on the
+  classpath when nothing configures logging. It also wrote a log file into `~/.camel`, named after the `pid` system
+  property, which only the CLI sets: a JVM that uses camel-jbang-core without the CLI (such as a test) wrote
+  `~/.camel/${sys:pid}.log`, and `camel test run` left a `<pid>.log` there. The configuration that `camel run` uses with
+  color is now `log4j2-color.properties`, next to `log4j2-no-color.properties`.
+* The log files of the CLI (`<pid>.log`, `camel-export.log` and `camel-script.log`) are written into the Camel directory
+  of the CLI, where `camel log` reads them, instead of `~/.camel` under `user.home`. The two differ when `user.home` is
+  `?` (a user without a home, such as in a container), as the CLI then uses `$HOME`, and when a test gives the CLI a
+  home of its own. The CLI sets the directory as the system property `camel.jbang.logDir`. A Quarkus app that
+  `camel run` exports and runs also logs there.
