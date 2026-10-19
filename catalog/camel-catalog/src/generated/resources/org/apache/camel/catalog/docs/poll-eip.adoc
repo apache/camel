@@ -251,7 +251,7 @@ YAML::
 ----
 ====
 
-NOTE: Before Camel 4.24, `${body}` in the `fileName` was the file found, not the current message, and only the
+NOTE: Before Camel 4.24, `+${body}+` in the `fileName` was the file found, not the current message, and only the
 headers, variables and exchange properties of the message could be used. With an older version, put the value in a
 header or a variable first.
 

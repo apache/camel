@@ -215,9 +215,9 @@ camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
 === camel-file - poll and pollEnrich evaluate the fileName on the current message
 
 `poll` and `pollEnrich` with a file based component (file, ftp, ftps, sftp, smb and azure-files) evaluate a dynamic
-`fileName` that does not use the file functions on the current message, so `fileName=${body}` and
+`fileName` that does not use the file functions on the current message, so `+fileName=${body}+` and
 `fileName=${body[customer]}.json` read its body. Before, the consumer evaluated it for each file found, with that file
-as the body, so `${body}` was the file found. A `fileName` that uses the file functions (`${file:...}`,
+as the body, so `+${body}+` was the file found. A `fileName` that uses the file functions (`${file:...}`,
 `${date:file:...}`) is still evaluated for each file found, and headers, variables and exchange properties work as
 before. A `fileName` that read the file found through its headers, such as `${header.CamelFileName}`, must use the file
 functions instead (`${file:name}`).
