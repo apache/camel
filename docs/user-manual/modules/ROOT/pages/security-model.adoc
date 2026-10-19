@@ -396,8 +396,10 @@ which protective property it breaks.
 The tiers above are *indicative*: for each class they give the range of
 severities the Camel PMC has published at link:/security/[] since 2015 for the
 artifacts this page covers. The three Critical ratings in that record date
-from 2013 and 2014 (CVE-2013-4330, CVE-2014-0002, CVE-2014-0003), and
-CVE-2026-56140 was published as Low, as hardening alongside a sibling finding.
+from 2013 and 2014 (CVE-2013-4330, CVE-2014-0002, CVE-2014-0003); the index
+also lists Critical Camel K advisories (CVE-2026-80351, CVE-2026-80352), which
+are triaged against Camel K's own scope. CVE-2026-56140 was published as Low,
+as hardening alongside a sibling finding.
 Critical remains available for a finding that reaches code execution or full
 compromise with no precondition at all. The PMC assigns the definitive CVSS
 vector per report based on attack vector, the configuration required to reach

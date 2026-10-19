@@ -194,7 +194,7 @@ properties_provided:
     severity: medium
 
 severity_calibration:
-  note: "tiers are the ranges published at the advisory index since 2015 for the artifacts this model covers; the three Critical ratings date from 2013-2014 (CVE-2013-4330, CVE-2014-0002, CVE-2014-0003); CVE-2026-56140 was published Low as hardening; Critical remains available for code execution or full compromise with no precondition"
+  note: "tiers are the ranges published at the advisory index since 2015 for the artifacts this model covers; the three Critical ratings date from 2013-2014 (CVE-2013-4330, CVE-2014-0002, CVE-2014-0003); the Critical Camel K advisories on the index (CVE-2026-80351, CVE-2026-80352) are out of this model's scope; CVE-2026-56140 was published Low as hardening; Critical remains available for code execution or full compromise with no precondition"
 
 core_router_engine_invariants:
   - no_engine_expression_eval_without_route_author_expression
