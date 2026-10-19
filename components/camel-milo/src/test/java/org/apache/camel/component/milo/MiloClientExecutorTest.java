@@ -27,6 +27,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,11 @@ public class MiloClientExecutorTest extends AbstractMiloServerTest {
             = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
               + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1") + "&overrideHost=true";
 
+    // no server listens on this port
+    private static final String MILO_CLIENT_UNREACHABLE
+            = "milo-client:opc.tcp://localhost:" + AvailablePortFinder.getNextAvailable() + "?node="
+              + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1") + "&overrideHost=true";
+
     @EndpointInject("mock:item")
     protected MockEndpoint item;
 
@@ -55,6 +61,7 @@ public class MiloClientExecutorTest extends AbstractMiloServerTest {
             public void configure() {
                 from("milo-server:myitem1").to("mock:item");
                 from("direct:write").routeId("write").to(resolve(MILO_CLIENT_ITEM));
+                from(MILO_CLIENT_UNREACHABLE).routeId("unreachable").autoStartup(false).to("mock:unreachable");
             }
         };
     }
@@ -101,7 +108,8 @@ public class MiloClientExecutorTest extends AbstractMiloServerTest {
     }
 
     /**
-     * The executor of a connection is shut down when the last endpoint releases the connection.
+     * The pool that handles the outcome of the requests of a connection is shut down when the last endpoint releases
+     * the connection.
      */
     @Test
     void executorIsShutDownWithTheConnection() throws Exception {
@@ -114,14 +122,34 @@ public class MiloClientExecutorTest extends AbstractMiloServerTest {
         await().atMost(30, TimeUnit.SECONDS).until(() -> executorThreads().isEmpty());
     }
 
+    /**
+     * A connection that cannot connect waits for its next reconnect on a thread of its own. The thread ends when the
+     * last endpoint releases the connection, without waiting until that reconnect is due.
+     */
+    @Test
+    void reconnectThreadEndsWithTheConnection() throws Exception {
+        context.getRouteController().startRoute("unreachable");
+        await().atMost(30, TimeUnit.SECONDS).until(() -> !threads(" - MiloClientReconnect").isEmpty());
+
+        // the route is the only user of the connection
+        context.getRouteController().stopRoute("unreachable");
+
+        // the reconnect is due 10 seconds after the failed connect
+        await().atMost(5, TimeUnit.SECONDS).until(() -> threads(" - MiloClientReconnect").isEmpty());
+    }
+
     private void write(final String value) {
         template.sendBodyAndHeader("direct:write", new Variant(value), MiloConstants.HEADER_AWAIT, true);
     }
 
     private List<Thread> executorThreads() {
+        return threads(" - MiloClient");
+    }
+
+    private List<Thread> threads(final String suffix) {
         final String prefix = "Camel (" + context.getName() + ") thread #";
         return Thread.getAllStackTraces().keySet().stream()
-                .filter(thread -> thread.getName().startsWith(prefix) && thread.getName().endsWith(" - MiloClient"))
+                .filter(thread -> thread.getName().startsWith(prefix) && thread.getName().endsWith(suffix))
                 .toList();
     }
 }
