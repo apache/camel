@@ -642,6 +642,8 @@ The previous run of chuck (pid 80093) ended at 2026-10-19 10:32:01 (2m3s ago) wi
 ----
 
 The first line, on stderr, says which run it was and how it ended. The log follows on stdout.
+A run that Ctrl+C or SIGTERM stopped ended with exit code 130 or 143 (`(SIGINT)` or `(SIGTERM)` follows the code): the
+JVM exits with 128 and the number of the signal, as a shell and Kubernetes show it.
 The options `--tail`, `--since`, `--grep`, `--find` and `--startup` work as they do for a running integration.
 When you run `camel log` with the name of an integration that is not running, the error says how its previous run ended.
 

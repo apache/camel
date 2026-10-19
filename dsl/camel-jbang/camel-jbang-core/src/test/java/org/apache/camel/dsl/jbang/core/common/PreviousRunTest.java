@@ -28,6 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import sun.misc.Signal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -113,9 +114,9 @@ class PreviousRunTest {
 
     @Test
     void theNewestRunComesFirst() throws Exception {
-        PreviousRun.keep(writeLog("5.log", "x"), new PreviousRun.Info("orders", 5, null, 0, 1000, 0, null, null));
-        PreviousRun.keep(writeLog("6.log", "x"), new PreviousRun.Info("payments", 6, null, 0, 3000, 0, null, null));
-        PreviousRun.keep(writeLog("7.log", "x"), new PreviousRun.Info("invoices", 7, null, 0, 2000, 0, null, null));
+        PreviousRun.keep(writeLog("5.log", "x"), new PreviousRun.Info("orders", 5, null, 0, 1000, 0, null, null, null));
+        PreviousRun.keep(writeLog("6.log", "x"), new PreviousRun.Info("payments", 6, null, 0, 3000, 0, null, null, null));
+        PreviousRun.keep(writeLog("7.log", "x"), new PreviousRun.Info("invoices", 7, null, 0, 2000, 0, null, null, null));
 
         assertThat(names(PreviousRun.findAll())).containsExactly("payments", "invoices", "orders");
     }
@@ -198,6 +199,22 @@ class PreviousRunTest {
         assertThat(info.pid()).isEqualTo(ProcessHandle.current().pid());
         assertThat(info.exitCode()).isZero();
         assertThat(Files.readAllLines(info.log())).containsExactly("the run");
+    }
+
+    @Test
+    void aRunThatASignalStoppedEndsWithTheExitCodeOfTheJvm() throws Exception {
+        Path log = writeLog("123.log", "the run");
+        PreviousRun.Keeper keeper = new PreviousRun.Keeper(log, () -> "orders");
+        // SIGTERM, on which the JVM exits with 128 + the number of the signal
+        keeper.stoppedBy(new Signal("TERM"));
+
+        // Camel stopped as it should, so the run answers 0
+        keeper.ended(0, null);
+
+        PreviousRun.Info info = only(PreviousRun.find("orders"));
+        assertThat(info.exitCode()).isEqualTo(128 + new Signal("TERM").getNumber());
+        assertThat(info.signal()).isEqualTo("SIGTERM");
+        assertThat(info.describe()).endsWith(" with exit code " + info.exitCode() + " (SIGTERM)");
     }
 
     @Test

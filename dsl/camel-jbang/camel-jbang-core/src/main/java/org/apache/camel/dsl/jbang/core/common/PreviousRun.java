@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +41,8 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 /**
  * The log of the previous run of an integration, as <tt>kubectl logs --previous</tt> shows the log of the previous
@@ -87,11 +90,12 @@ public final class PreviousRun {
      * @param started   when it started, in epoch millis, 0 when not known
      * @param ended     when it ended, in epoch millis
      * @param exitCode  the exit code, or <tt>null</tt> when not known (such as of a process that was killed)
+     * @param signal    the signal that stopped the run, such as <tt>SIGTERM</tt>, or <tt>null</tt>
      * @param failure   why it ended, when it failed (such as the error it failed to start with), or <tt>null</tt>
      * @param log       the log it kept
      */
     public record Info(String name, long pid, String directory, long started, long ended, Integer exitCode,
-            String failure, Path log) {
+            String signal, String failure, Path log) {
 
         /**
          * Which run it was, and how it ended, in one line.
@@ -111,6 +115,9 @@ public final class PreviousRun {
             }
             if (exitCode != null) {
                 sb.append(" with exit code ").append(exitCode);
+            }
+            if (signal != null) {
+                sb.append(" (").append(signal).append(')');
             }
             if (failure != null) {
                 sb.append(": ").append(failure);
@@ -133,10 +140,15 @@ public final class PreviousRun {
      * @return          the kept log, or <tt>null</tt> when there was no log to keep
      */
     public static Path keep(Path log, String name, long pid, Integer exitCode, String failure) {
+        return keep(log, thisRun(name, pid, exitCode, null, failure));
+    }
+
+    // a run of this JVM that ends now
+    private static Info thisRun(String name, long pid, Integer exitCode, String signal, String failure) {
         long started = ProcessHandle.current().info().startInstant().map(Instant::toEpochMilli).orElse(0L);
-        return keep(log, new Info(
-                name, pid, System.getProperty("user.dir"), started, System.currentTimeMillis(),
-                exitCode, failure, null));
+        return new Info(
+                name, pid, System.getProperty("user.dir"), started, System.currentTimeMillis(), exitCode, signal,
+                failure, null);
     }
 
     /**
@@ -174,6 +186,9 @@ public final class PreviousRun {
             jo.put("ended", info.ended());
             if (info.exitCode() != null) {
                 jo.put("exitCode", info.exitCode());
+            }
+            if (info.signal() != null) {
+                jo.put("signal", info.signal());
             }
             if (info.failure() != null) {
                 String failure = info.failure().strip();
@@ -273,7 +288,7 @@ public final class PreviousRun {
                 if (before == null || before.ended() < modified) {
                     String directory = status.get("runtime") instanceof JsonObject runtime
                             ? runtime.getString("directory") : null;
-                    keep(f.toPath(), new Info(name, pid, directory, 0, modified, null, GONE, null));
+                    keep(f.toPath(), new Info(name, pid, directory, 0, modified, null, null, GONE, null));
                     continue;
                 }
             } else if (now - modified < ORPHAN_AGE) {
@@ -292,6 +307,10 @@ public final class PreviousRun {
      * Keeps the log of the run of this JVM once, when the run ends: see {@link #ended(Integer, String)}. When the JVM
      * exits before the run has ended (such as on Ctrl+C, while Camel stops), the log is kept as the JVM exits: the run
      * gets a few seconds to end and say how it ended, else the log is kept without that.
+     * <p/>
+     * A run that Ctrl+C or SIGTERM stops ends with the exit code of the JVM: 128 and the number of the signal (130 for
+     * SIGINT, 143 for SIGTERM), as a shell and Kubernetes show it. The keeper watches these signals for that, and
+     * passes each on to the handler of the JVM, which runs the shutdown hooks and exits.
      */
     public static final class Keeper {
 
@@ -300,11 +319,22 @@ public final class PreviousRun {
          */
         static final int EXIT_WAIT_SECONDS = 10;
 
+        /**
+         * The signals the JVM exits on, running its shutdown hooks.
+         */
+        private static final List<String> STOP_SIGNALS = List.of("INT", "TERM");
+
         private final Path log;
         private final Supplier<String> name;
         private final Thread hook;
         private final CountDownLatch ended = new CountDownLatch(1);
+        private final List<Watch> watches = new ArrayList<>();
+        private volatile Signal stoppedBy;
         private boolean kept;
+
+        // a signal that stops the JVM: the handler of the keeper, and the handler of the JVM it passes the signal on to
+        private record Watch(Signal signal, SignalHandler handler, AtomicReference<SignalHandler> jvm) {
+        }
 
         /**
          * A run that has started, and keeps its log when it ends.
@@ -317,6 +347,7 @@ public final class PreviousRun {
             this.name = name;
             this.hook = new Thread(() -> exiting(EXIT_WAIT_SECONDS), "CamelKeepPreviousLog");
             Runtime.getRuntime().addShutdownHook(hook);
+            watchSignals();
         }
 
         /**
@@ -330,9 +361,62 @@ public final class PreviousRun {
             ended.countDown();
             try {
                 Runtime.getRuntime().removeShutdownHook(hook);
+                // the JVM goes on (such as in a test): the signals go to the handlers of the JVM again
+                unwatchSignals();
             } catch (IllegalStateException e) {
                 // the JVM is exiting: the hook finds the log kept
             }
+        }
+
+        /**
+         * The signal stopped the JVM; visible for tests, as a test cannot send it.
+         */
+        void stoppedBy(Signal signal) {
+            stoppedBy = signal;
+        }
+
+        private void watchSignals() {
+            for (String name : STOP_SIGNALS) {
+                try {
+                    Signal signal = new Signal(name);
+                    AtomicReference<SignalHandler> jvm = new AtomicReference<>();
+                    SignalHandler handler = s -> {
+                        stoppedBy = s;
+                        SignalHandler next = jvm.get();
+                        if (next != null) {
+                            next.handle(s);
+                        } else {
+                            // what the JVM does on the signal
+                            System.exit(128 + s.getNumber());
+                        }
+                    };
+                    SignalHandler before = Signal.handle(signal, handler);
+                    if (before == SignalHandler.SIG_DFL || before == SignalHandler.SIG_IGN) {
+                        // the JVM does not exit on it here (such as a signal that is ignored): left as it was
+                        Signal.handle(signal, before);
+                    } else {
+                        jvm.set(before);
+                        watches.add(new Watch(signal, handler, jvm));
+                    }
+                } catch (IllegalArgumentException e) {
+                    // a signal this platform does not have, or that the JVM keeps (such as with -Xrs)
+                }
+            }
+        }
+
+        private void unwatchSignals() {
+            for (Watch watch : watches) {
+                try {
+                    SignalHandler current = Signal.handle(watch.signal(), watch.jvm().get());
+                    if (current != watch.handler()) {
+                        // a handler that came after the keeper stays
+                        Signal.handle(watch.signal(), current);
+                    }
+                } catch (IllegalArgumentException e) {
+                    // left as it is
+                }
+            }
+            watches.clear();
         }
 
         // the JVM exits: the run gets the seconds to end, and say how it ended
@@ -348,7 +432,11 @@ public final class PreviousRun {
         private synchronized void keep(Integer exitCode, String failure) {
             if (!kept) {
                 kept = true;
-                PreviousRun.keep(log, name.get(), ProcessHandle.current().pid(), exitCode, failure);
+                Signal signal = stoppedBy;
+                // the JVM exits with the exit code of the signal, whatever the run answered
+                PreviousRun.keep(log, thisRun(name.get(), ProcessHandle.current().pid(),
+                        signal != null ? Integer.valueOf(128 + signal.getNumber()) : exitCode,
+                        signal != null ? "SIG" + signal.getName() : null, failure));
             }
         }
     }
@@ -405,7 +493,7 @@ public final class PreviousRun {
         return new Info(
                 name, jo.getLongOrDefault("pid", 0), jo.getString("directory"),
                 jo.getLongOrDefault("started", 0), jo.getLongOrDefault("ended", 0), jo.getInteger("exitCode"),
-                jo.getString("failure"), log);
+                jo.getString("signal"), jo.getString("failure"), log);
     }
 
     private static JsonObject readJson(Path file) {
