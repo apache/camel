@@ -217,6 +217,19 @@ also applies to `pollEnrich` and `ConsumerTemplate.receive`, which take one file
 until the last file of the directory is received, where before the first received file deleted it. This applies to
 camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
 
+=== camel-pqc - an unknown hybridKdfAlgorithm is rejected
+
+The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
+`HKDF-SHA256`, `HKDF-SHA384` or `HKDF-SHA512`. Before, any other value silently fell back to `HKDF-SHA256`, so a typo
+such as `HKDF-SHA-512` went unnoticed - and if only one end of an exchange carried the typo, both ends still reported
+success while deriving the key with different digests.
+
+The HKDF info bytes of the hybrid KEM are also now encoded explicitly as UTF-8, where they previously used the
+platform default charset. The info string is the symmetric algorithm name, so this has no effect for the usual
+values such as `AES`, which are pure ASCII. A deployment running on a JVM whose default charset cannot encode that
+name identically to UTF-8 would, however, derive a different key than the previous version, and could not decrypt
+material produced by it.
+
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
 `camel validate normalize <files> --output=<dir>` now writes one normalized file per input file into the
