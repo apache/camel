@@ -366,7 +366,6 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         }
     }
 
-    @Override
     /**
      * Writes the metadata secret only.
      * <p/>
@@ -374,6 +373,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
      * would make revoking a key whose private secret is already gone impossible - which is exactly when revoking
      * matters.
      */
+    @Override
     public void updateKeyMetadata(String keyId, KeyMetadata metadata) throws Exception {
         createOrUpdateSecret(getSecretName(keyId, "metadata"), KeyMetadataCodec.toJson(metadata),
                 "PQC Key Metadata: " + keyId);

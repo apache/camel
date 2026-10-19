@@ -406,7 +406,6 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
         return metadata;
     }
 
-    @Override
     /**
      * Writes the metadata entry only.
      * <p/>
@@ -415,6 +414,7 @@ public class HashicorpVaultKeyLifecycleManager implements KeyLifecycleManager {
      * private key. It would also make revoking a key whose private entry is already gone impossible, which is exactly
      * when revoking matters.
      */
+    @Override
     public void updateKeyMetadata(String keyId, KeyMetadata metadata) throws Exception {
         VaultKeyValueOperations keyValue = vaultTemplate.opsForKeyValue(secretsEngine,
                 VaultKeyValueOperationsSupport.KeyValueBackend.versioned());

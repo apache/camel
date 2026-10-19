@@ -293,7 +293,6 @@ public class AzureKeyVaultKeyLifecycleManager implements KeyLifecycleManager {
         }
     }
 
-    @Override
     /**
      * Writes the metadata secret only.
      * <p/>
@@ -301,6 +300,7 @@ public class AzureKeyVaultKeyLifecycleManager implements KeyLifecycleManager {
      * would make revoking a key whose private secret is already gone impossible - which is exactly when revoking
      * matters.
      */
+    @Override
     public void updateKeyMetadata(String keyId, KeyMetadata metadata) throws Exception {
         secretClient.setSecret(getSecretName(keyId, "metadata"), KeyMetadataCodec.toJson(metadata));
         metadataCache.put(keyId, metadata);
