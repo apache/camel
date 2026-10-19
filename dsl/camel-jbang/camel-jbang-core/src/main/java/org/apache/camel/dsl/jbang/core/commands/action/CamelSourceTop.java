@@ -133,11 +133,12 @@ public class CamelSourceTop extends ActionWatchCommand {
                 row.put("id", r.id);
                 row.put("routeId", r.routeId);
                 row.put("location", r.location);
-                row.put("total", r.total);
-                row.put("mean", r.mean);
-                row.put("min", r.min);
-                row.put("max", r.max);
-                row.put("last", r.last);
+                // the counters are numbers, as in the JSON of the other listings
+                row.put("total", number(r.total));
+                row.put("mean", number(r.mean));
+                row.put("min", number(r.min));
+                row.put("max", number(r.max));
+                row.put("last", number(r.last));
                 row.put("code", r.code.stream().map(c -> {
                     JsonObject line = new JsonObject();
                     line.put("line", c.line);
@@ -174,6 +175,10 @@ public class CamelSourceTop extends ActionWatchCommand {
             }
             printer().println();
         }
+    }
+
+    private static Long number(String value) {
+        return value != null ? Long.valueOf(value) : null;
     }
 
     protected int sortRow(Row o1, Row o2) {

@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -81,9 +82,15 @@ public final class AuthoringTools {
     static final Set<String> SKIPPED_DIRS = Set.of(
             "target", "build", "out", "node_modules", ".git", ".mvn", ".idea", ".vscode", ".gradle", ".settings",
             ".camel-jbang");
+    // the top-level entries of the YAML DSL: a file with only beans (beans.yaml) is loaded with the routes too, and a
+    // model that did not see it among the route files took the beans it declares for missing
     private static final Pattern YAML_ROUTE = Pattern.compile(
             "(?m)^\\s*-\\s*(route|from|rest|routeTemplate|route-template|templatedRoute|templated-route"
-                                                              + "|routeConfiguration|route-configuration|kamelet)\\s*:");
+                                                              + "|routeConfiguration|route-configuration|kamelet|beans"
+                                                              + "|errorHandler|error-handler|onException|on-exception"
+                                                              + "|intercept|interceptFrom|intercept-from"
+                                                              + "|interceptSendToEndpoint|intercept-send-to-endpoint"
+                                                              + "|onCompletion|on-completion)\\s*:");
 
     private AuthoringTools() {
     }
@@ -91,7 +98,7 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
+                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI. A full key such as camel.server.port lists its application.properties group.")
                 .param("name", "string",
                         "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                         false)
@@ -103,11 +110,9 @@ public final class AuthoringTools {
                         "common (default: no deprecated or advanced), required, all or false", false)
                 .param("includeHeaders", "boolean", "Include the message headers of a component (default false)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
-                .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
-                        false)
-                .param("optionsFilter", "string",
-                        "Keyword to match in option names or descriptions; for an EIP whose own options do not match, the options of its elements are searched (nestedOptions)",
-                        false)
+                .param("docPage", "string", CatalogDocs.DOC_PAGE_DESC, false)
+                .param("optionsFilter", "string", CatalogDocs.OPTIONS_FILTER_DESC, false)
+                .param("limit", "integer", CatalogDocs.OPTIONS_LIMIT_DESC, false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)
@@ -116,7 +121,7 @@ public final class AuthoringTools {
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
                             args.get("kind"), args.get("optionsFilter"), args.get("includeOptions"),
                             bool(args, "includeHeaders", false), bool(args, "includeDoc", false),
-                            args.get("docPage")).toJson();
+                            args.get("docPage"), integer(args, "limit", -1)).toJson();
                 }));
 
         registry.accept(tool("camel_catalog_find",
@@ -639,9 +644,34 @@ public final class AuthoringTools {
         if (content == null) {
             return edit; // not-found or ambiguous: the answer says what to do instead
         }
+        Path refusedKey = resolveFile(dir, file).toAbsolutePath().normalize();
+        Refused refusedBefore = LAST_REFUSED.get(refusedKey);
         JsonObject result = writeFile(ctx, dir, file, content, true);
+        if ("invalid".equals(result.getString("status")) && edit.get("matchedLines") != null) {
+            // CAMEL-25532: a match to the closest lines stands only when its result is valid. After a refused edit the
+            // next text to find is often the model's own replacement, which the file never got: matched to the closest
+            // lines it is refused again, and the model goes on editing a file that exists only in its memory. The
+            // answer of an exact match, not found with the lines the file has there, puts it back in step with the file
+            JsonObject exact = editedContent(dir, file, find, replace, edits, false);
+            if (exact.getString("content") == null) {
+                if (refusedBefore != null) {
+                    LAST_REFUSED.put(refusedKey, refusedBefore);
+                } else {
+                    LAST_REFUSED.remove(refusedKey);
+                }
+                return exact;
+            }
+        }
         if (!"invalid".equals(result.getString("status"))) {
             result.put("status", "edited");
+            if (edit.get("matchedLines") instanceof JsonArray matched) {
+                result.put("matchedLines", matched);
+                result.put("message", "The text to find was not in the file as given; it was matched to the closest"
+                                      + " lines of the file (" + String.join(", ", matched.stream().map(String::valueOf)
+                                              .toList())
+                                      + "), and the lines you changed were changed there. Where the file has other text"
+                                      + " in lines you did not change, it was kept. " + result.getString("message"));
+            }
             result.put("editedAtLine", edit.getInteger("editedAtLine"));
             result.put("replacedLines", edit.getInteger("replacedLines"));
             if (edit.get("edits") != null) {
@@ -677,6 +707,14 @@ public final class AuthoringTools {
      * and the file is not changed.
      */
     public static JsonObject editedContent(Path dir, String file, String find, String replace, String edits) {
+        return editedContent(dir, file, find, replace, edits, true);
+    }
+
+    /**
+     * As {@link #editedContent(Path, String, String, String, String)}; {@code closest} says whether a snippet that is
+     * not in the file may be matched to its closest lines (CAMEL-25532).
+     */
+    static JsonObject editedContent(Path dir, String file, String find, String replace, String edits, boolean closest) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
             throw new ToolExecutionException(file + " does not exist: write the whole file with camel_write_file");
@@ -699,9 +737,10 @@ public final class AuthoringTools {
         }
         JsonObject result = null;
         JsonArray lines = new JsonArray();
+        JsonArray matched = new JsonArray();
         int replaced = 0;
         for (int i = 0; i < all.size(); i++) {
-            JsonObject one = editedSnippet(file, content, all.get(i)[0], all.get(i)[1]);
+            JsonObject one = editedSnippet(file, content, all.get(i)[0], all.get(i)[1], closest);
             if (one.getString("content") == null) {
                 if (all.size() > 1) {
                     one.put("edit", i + 1);
@@ -715,9 +754,15 @@ public final class AuthoringTools {
             content = one.getString("content");
             lines.add(one.getInteger("editedAtLine"));
             replaced += one.getInteger("replacedLines");
+            if (one.get("matchedLines") != null) {
+                matched.add((all.size() > 1 ? "edit " + (i + 1) + ": " : "") + "lines " + one.getString("matchedLines"));
+            }
             if (result == null) {
                 result = one;
             }
+        }
+        if (!matched.isEmpty()) {
+            result.put("matchedLines", matched);
         }
         result.put("content", content);
         result.put("replacedLines", replaced);
@@ -764,7 +809,7 @@ public final class AuthoringTools {
               + " there\"}";
 
     /** One snippet replaced in the content: the {@link #editedContent(Path, String, String, String)} answer. */
-    private static JsonObject editedSnippet(String file, String content, String find, String replace) {
+    private static JsonObject editedSnippet(String file, String content, String find, String replace, boolean closest) {
         String wanted = find;
         String put = replace;
         boolean trimmedMatch = false;
@@ -804,6 +849,20 @@ public final class AuthoringTools {
         }
         JsonObject result = new JsonObject();
         result.put("file", file);
+        if (first < 0 && closest) {
+            // CAMEL-25532: the model writes the snippet from memory, and remembers a line, not the lines around it;
+            // the window of the file that best matches the snippet, when it holds a distinctive line of it and no
+            // other window is as good, gets the changes the model made between find and replace
+            int[] window = fuzzyWindow(content, wanted);
+            ClosestEdit merged = window != null ? mergeIntoWindow(content, window, wanted, put) : null;
+            if (merged != null) {
+                result.put("matchedLines", merged.firstLine() + "-" + merged.lastLine());
+                result.put("content", content.substring(0, merged.start()) + merged.text() + content.substring(merged.end()));
+                result.put("editedAtLine", merged.firstLine());
+                result.put("replacedLines", merged.lastLine() - merged.firstLine() + 1);
+                return result;
+            }
+        }
         if (first < 0) {
             result.put("status", "not-found");
             String nearest = nearestBlock(content, wanted);
@@ -941,6 +1000,263 @@ public final class AuthoringTools {
             }
         }
         return found;
+    }
+
+    /** A line that is only a key, as "steps:" or "- log:": not distinctive. */
+    private static final Pattern BARE_KEY = Pattern.compile("^-?\\s*[\\w.-]+:\\s*$");
+
+    private static String fuzzyLine(String line) {
+        return line.strip().replaceAll("\\s+", " ").replace("\"", "").replace("'", "");
+    }
+
+    /**
+     * The window of the content that best matches the lines of find (their longest common subsequence), as {start
+     * offset, end offset, first line, last line}; null unless it holds a line of find that has a value and is unique in
+     * the content, has at least two lines of find, matches at least 60%, and no window apart from it matches nearly as
+     * well (CAMEL-25532).
+     */
+    static int[] fuzzyWindow(String content, String find) {
+        String[] lines = content.split("\n", -1);
+        List<String> norm = new ArrayList<>(lines.length);
+        // how often each line occurs, so a line of find that is unique in the content is known without a scan per line
+        Map<String, Integer> occurrences = new HashMap<>();
+        for (String l : lines) {
+            String n = fuzzyLine(l);
+            norm.add(n);
+            occurrences.merge(n, 1, Integer::sum);
+        }
+        List<String> want = find.lines().map(AuthoringTools::fuzzyLine).filter(l -> !l.isEmpty()).toList();
+        if (want.isEmpty()) {
+            return null;
+        }
+        Set<String> distinct = new LinkedHashSet<>();
+        for (String w : want) {
+            if (w.length() > 6 && !BARE_KEY.matcher(w).matches() && occurrences.getOrDefault(w, 0) == 1) {
+                distinct.add(w);
+            }
+        }
+        if (distinct.isEmpty()) {
+            return null;
+        }
+        int n = want.size();
+        double best = -1;
+        int bestAt = -1;
+        int bestSize = 0;
+        int bestCommon = 0;
+        List<double[]> scored = new ArrayList<>();
+        for (int size = Math.max(1, n - 2); size <= n + 2; size++) {
+            for (int i = 0; i + size <= lines.length; i++) {
+                List<String> window = norm.subList(i, i + size).stream().filter(l -> !l.isEmpty()).toList();
+                if (window.isEmpty() || window.stream().noneMatch(distinct::contains)) {
+                    continue;
+                }
+                int common = commonLines(want, window);
+                double ratio = 2.0 * common / (want.size() + window.size());
+                scored.add(new double[] { ratio, i, size });
+                if (ratio > best || (ratio == best && Math.abs(size - n) < Math.abs(bestSize - n))) {
+                    best = ratio;
+                    bestAt = i;
+                    bestSize = size;
+                    bestCommon = common;
+                }
+            }
+        }
+        if (best < 0.6 || bestCommon < 2) {
+            // one line in common says where the snippet was aimed, not where the rest of it goes
+            return null;
+        }
+        for (double[] other : scored) {
+            int at = (int) other[1];
+            int size = (int) other[2];
+            boolean apart = at + size <= bestAt || at >= bestAt + bestSize;
+            if (apart && other[0] >= best - 0.1) {
+                return null; // two places match about as well: not certain
+            }
+        }
+        int[] offsets = lineOffsets(content, lines);
+        int last = bestAt + bestSize - 1;
+        int end = Math.min(offsets[last] + lines[last].length() + 1, content.length());
+        return new int[] { offsets[bestAt], end, bestAt + 1, last + 1 };
+    }
+
+    /**
+     * A snippet merged into the closest lines of a file: the offsets it replaces, its text, and those lines (from 1).
+     */
+    record ClosestEdit(int start, int end, String text, int firstLine, int lastLine) {
+    }
+
+    /** A line of YAML as {@code key:} or {@code - key:}, with its key: the {@code key} group. */
+    private static final Pattern YAML_KEY = Pattern.compile("^(?:-\\s+)?([\\w.$-]+):(?:\\s|$)");
+
+    /**
+     * The changes the model made between find and replace, made in the window of the file that find was matched to
+     * (CAMEL-25532). find is the model's memory of those lines and can be wrong, so replace does not overwrite the
+     * window. The lines of find that are in the file and that replace keeps are anchors, and stay as the file has them.
+     * Each stretch between two anchors stays the file's where replace leaves the model's version of it unchanged, or
+     * where the file has replace's version already, and becomes replace's version otherwise, at the file's indentation.
+     * A line at either end of find that the file has just past the window (the same line, or the same key at the same
+     * depth) belongs to the window, so that a line the model changed is not left there twice. Null when find and the
+     * window have no line in common.
+     */
+    static ClosestEdit mergeIntoWindow(String content, int[] window, String find, String replace) {
+        String[] lines = content.split("\n", -1);
+        // the element after a final newline is not a line of the file
+        int lineCount = content.endsWith("\n") ? lines.length - 1 : lines.length;
+        int ws = window[2] - 1;
+        int we = window[3] - 1;
+        List<String> f = find.lines().filter(l -> !l.isBlank()).toList();
+        List<String> r = replace.lines().toList();
+        List<String> fNorm = f.stream().map(AuthoringTools::fuzzyLine).toList();
+        List<String> rNorm = r.stream().map(AuthoringTools::fuzzyLine).toList();
+        List<String> windowNorm = new ArrayList<>();
+        for (int i = ws; i <= we; i++) {
+            windowNorm.add(fuzzyLine(lines[i]));
+        }
+        // the line of the file each line of find is, or -1
+        int[] fw = alignLines(fNorm, windowNorm);
+        int firstF = -1;
+        int lastF = -1;
+        for (int i = 0; i < fw.length; i++) {
+            if (fw[i] >= 0) {
+                fw[i] += ws;
+                firstF = firstF < 0 ? i : firstF;
+                lastF = i;
+            }
+        }
+        if (firstF < 0) {
+            return null;
+        }
+        int delta = leadingSpaces(lines[fw[lastF]]) - leadingSpaces(f.get(lastF));
+        for (int i = lastF + 1, at = fw[lastF] + 1; i < f.size() && at < lineCount; i++, at++) {
+            if (!sameLineOrKey(f.get(i), lines[at], delta)) {
+                break;
+            }
+            fw[i] = at;
+            we = Math.max(we, at);
+        }
+        delta = leadingSpaces(lines[fw[firstF]]) - leadingSpaces(f.get(firstF));
+        for (int i = firstF - 1, at = fw[firstF] - 1; i >= 0 && at >= 0; i--, at--) {
+            if (!sameLineOrKey(f.get(i), lines[at], delta)) {
+                break;
+            }
+            fw[i] = at;
+            ws = Math.min(ws, at);
+        }
+        int[] fr = alignLines(fNorm, rNorm);
+        // the anchors, then the end of the window: {line of find, line of the file, line of replace}
+        List<int[]> anchors = new ArrayList<>();
+        for (int i = 0; i < f.size(); i++) {
+            if (fw[i] >= 0 && fr[i] >= 0) {
+                anchors.add(new int[] { i, fw[i], fr[i] });
+            }
+        }
+        anchors.add(new int[] { f.size(), we + 1, r.size() });
+        int firstDelta = leadingSpaces(lines[fw[firstF]]) - leadingSpaces(f.get(firstF));
+        List<String> out = new ArrayList<>();
+        int pf = -1;
+        int pw = ws - 1;
+        int pr = -1;
+        for (int[] a : anchors) {
+            List<String> stretchF = fNorm.subList(pf + 1, a[0]);
+            List<String> stretchW = new ArrayList<>();
+            for (int i = pw + 1; i < a[1]; i++) {
+                stretchW.add(fuzzyLine(lines[i]));
+            }
+            List<String> stretchR = rNorm.subList(pr + 1, a[2]);
+            if (sameLines(stretchF, stretchR) || sameLines(stretchW, stretchR)) {
+                for (int i = pw + 1; i < a[1]; i++) {
+                    out.add(lines[i]);
+                }
+            } else {
+                // the depth of the replacement where it goes: from the anchor before it, or after it for the first
+                int d = pf >= 0 ? leadingSpaces(lines[fw[pf]]) - leadingSpaces(f.get(pf))
+                        : a[0] < f.size() ? leadingSpaces(lines[a[1]]) - leadingSpaces(f.get(a[0])) : firstDelta;
+                for (String line : r.subList(pr + 1, a[2])) {
+                    out.add(shiftIndent(line, d));
+                }
+            }
+            if (a[0] < f.size()) {
+                out.add(lines[a[1]]);
+            }
+            pf = a[0];
+            pw = a[1];
+            pr = a[2];
+        }
+        int[] offsets = lineOffsets(content, lines);
+        int start = offsets[ws];
+        int end = we + 1 < lines.length ? offsets[we + 1] : content.length();
+        boolean newline = end > start && content.charAt(end - 1) == '\n';
+        return new ClosestEdit(start, end, String.join("\n", out) + (newline ? "\n" : ""), ws + 1, we + 1);
+    }
+
+    /** Which line of b each line of a is (their longest common subsequence), or -1; empty lines match nothing. */
+    static int[] alignLines(List<String> a, List<String> b) {
+        int[][] t = new int[a.size() + 1][b.size() + 1];
+        for (int i = a.size() - 1; i >= 0; i--) {
+            for (int j = b.size() - 1; j >= 0; j--) {
+                t[i][j] = !a.get(i).isEmpty() && a.get(i).equals(b.get(j))
+                        ? t[i + 1][j + 1] + 1 : Math.max(t[i + 1][j], t[i][j + 1]);
+            }
+        }
+        int[] answer = new int[a.size()];
+        Arrays.fill(answer, -1);
+        for (int i = 0, j = 0; i < a.size() && j < b.size();) {
+            if (!a.get(i).isEmpty() && a.get(i).equals(b.get(j))) {
+                answer[i++] = j++;
+            } else if (t[i + 1][j] >= t[i][j + 1]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return answer;
+    }
+
+    /** Whether a line of find is a line of the file: the same text, or the same key at the depth of its neighbours. */
+    private static boolean sameLineOrKey(String findLine, String fileLine, int delta) {
+        String a = fuzzyLine(findLine);
+        if (!a.isEmpty() && a.equals(fuzzyLine(fileLine))) {
+            return true;
+        }
+        Matcher m1 = YAML_KEY.matcher(findLine.strip());
+        Matcher m2 = YAML_KEY.matcher(fileLine.strip());
+        return m1.find() && m2.find() && m1.group(1).equals(m2.group(1))
+                && leadingSpaces(fileLine) - leadingSpaces(findLine) == delta;
+    }
+
+    /** Whether two lists of normalized lines are the same, blank lines aside. */
+    private static boolean sameLines(List<String> a, List<String> b) {
+        return a.stream().filter(l -> !l.isEmpty()).toList().equals(b.stream().filter(l -> !l.isEmpty()).toList());
+    }
+
+    private static int leadingSpaces(String line) {
+        int i = 0;
+        while (i < line.length() && line.charAt(i) == ' ') {
+            i++;
+        }
+        return i;
+    }
+
+    /** The line moved right by delta spaces, or left by as many of its leading spaces as it has up to -delta. */
+    private static String shiftIndent(String line, int delta) {
+        if (delta == 0 || line.isBlank()) {
+            return line;
+        }
+        if (delta > 0) {
+            return " ".repeat(delta) + line;
+        }
+        return line.substring(Math.min(-delta, leadingSpaces(line)));
+    }
+
+    /** The length of the longest common subsequence of two lists of lines. */
+    private static int commonLines(List<String> a, List<String> b) {
+        int[][] t = new int[a.size() + 1][b.size() + 1];
+        for (int i = 1; i <= a.size(); i++) {
+            for (int j = 1; j <= b.size(); j++) {
+                t[i][j] = a.get(i - 1).equals(b.get(j - 1)) ? t[i - 1][j - 1] + 1 : Math.max(t[i - 1][j], t[i][j - 1]);
+            }
+        }
+        return t[a.size()][b.size()];
     }
 
     /**
@@ -1223,18 +1539,31 @@ public final class AuthoringTools {
             }
         }
         List<String> problemsBefore = List.of();
+        List<String> repaired = List.of();
         if (validate && SourceValidator.isValidatableFile(file)) {
             // a missing consumer of a direct: endpoint does not refuse the write: it is often a file not written yet
             List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir,
                     null, false);
+            List<String> before = List.of();
             if (!errors.isEmpty() && exists) {
                 // the problems the file already had do not refuse the write: an edit that fixes one problem would be
                 // refused for the others, and the agent made to fix them all; only the problems the write brings are
-                problemsBefore = SourceValidator.validate(file, read(path), ctx.catalog(), ctx.propertyLineValidator(),
+                before = SourceValidator.validate(file, read(path), ctx.catalog(), ctx.propertyLineValidator(),
                         dir, null, false);
                 List<String> stillThere = new ArrayList<>();
-                errors = newProblems(problemsBefore, errors, stillThere);
+                errors = newProblems(before, errors, stillThere);
                 problemsBefore = stillThere;
+            }
+            if (!errors.isEmpty()) {
+                // CAMEL-25532: the shapes with one reading are repaired, and the write goes ahead when that leaves no
+                // new problem; the answer says what was repaired
+                Repaired r = repair(ctx, dir, file, content, errors, before, exists);
+                if (r != null) {
+                    content = r.content();
+                    repaired = r.applied();
+                    problemsBefore = r.stillThere();
+                    errors = List.of();
+                }
             }
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
@@ -1350,6 +1679,11 @@ public final class AuthoringTools {
         if (waiting != null) {
             result.put("message", result.getString("message") + " Note: " + waiting.summary() + " (see notes).");
         }
+        if (!repaired.isEmpty()) {
+            result.put("repaired", new JsonArray(repaired));
+            result.put("message", "Written with these repairs of the YAML (the file has them now): "
+                                  + String.join("; ", repaired) + ". " + result.getString("message"));
+        }
         return result;
     }
 
@@ -1364,6 +1698,39 @@ public final class AuthoringTools {
         return LAST_REFUSED.merge(path.toAbsolutePath().normalize(), new Refused(content, 1),
                 (last, now) -> last.content().equals(content) ? new Refused(content, last.times() + 1) : now)
                 .times();
+    }
+
+    /** How many times the repairs are applied and the content validated again (a repair can reveal the next one). */
+    private static final int REPAIR_ROUNDS = 8;
+
+    private record Repaired(String content, List<String> applied, List<String> stillThere) {
+    }
+
+    /**
+     * The content with the shapes that have one reading repaired, when that leaves no problem the file did not have;
+     * null otherwise (the write is refused as it was, with the problems of the content as written).
+     */
+    private static Repaired repair(
+            ToolContext ctx, Path dir, String file, String content, List<String> errors, List<String> before,
+            boolean exists) {
+        String current = content;
+        List<String> applied = new ArrayList<>();
+        List<String> left = errors;
+        List<String> stillThere = new ArrayList<>();
+        for (int round = 0; round < REPAIR_ROUNDS && !left.isEmpty(); round++) {
+            LenientRepairs.Result r = LenientRepairs.repair(current, left);
+            if (r == null) {
+                return null;
+            }
+            current = r.content();
+            applied.addAll(r.applied());
+            left = SourceValidator.validate(file, current, ctx.catalog(), ctx.propertyLineValidator(), dir, null, false);
+            stillThere = new ArrayList<>();
+            if (!left.isEmpty() && exists) {
+                left = newProblems(before, left, stillThere);
+            }
+        }
+        return left.isEmpty() ? new Repaired(current, applied, stillThere) : null;
     }
 
     private static final Pattern UNCONSUMED_DIRECT = Pattern.compile("sends to (direct:[^,\\s]+), and no route consumes it");

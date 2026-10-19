@@ -80,6 +80,61 @@ The following example shows how to configure the `JaxbDataFormat` and use it in 
 </beans>
 ----
 
+=== Using the YAML DSL
+
+In the YAML DSL, you configure the data format on the `marshal` and `unmarshal` steps:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            jaxb:
+              contextPath: org.apache.camel.example
+        - to:
+            uri: direct:marshalled
+- route:
+    from:
+      uri: direct:marshalled
+      steps:
+        - unmarshal:
+            jaxb:
+              contextPath: org.apache.camel.example
+        - to:
+            uri: mock:result
+----
+
+To use one configuration in many routes, define the data format once in `dataFormats` and refer to it by its id,
+as the Spring XML example does:
+
+[source,yaml]
+----
+- dataFormats:
+    - jaxb:
+        id: myJaxb
+        contextPath: org.apache.camel.example
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            custom:
+              ref: myJaxb
+        - to:
+            uri: direct:marshalled
+- route:
+    from:
+      uri: direct:marshalled
+      steps:
+        - unmarshal:
+            custom:
+              ref: myJaxb
+        - to:
+            uri: mock:result
+----
+
 === Multiple context paths
 
 It is possible to use this data format with more than one context path.
@@ -245,6 +300,23 @@ You can do the same using the XML DSL:
     <jaxb id="jaxb" contextPath="com.acme.model" schema="classpath:person.xsd,classpath:address.xsd"
           accessExternalSchemaProtocols="file"/>
 </marshal>
+----
+
+And using the YAML DSL:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            jaxb:
+              contextPath: com.acme.model
+              schema: "classpath:person.xsd,classpath:address.xsd"
+              accessExternalSchemaProtocols: file
+        - to:
+            uri: mock:result
 ----
 
 === Schema Location

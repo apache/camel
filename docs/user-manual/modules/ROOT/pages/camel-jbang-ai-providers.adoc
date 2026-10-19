@@ -30,6 +30,10 @@ camel ask "check health" --api-type=gemini --model=gemini-2.0-flash
 camel ask "check health" --api-type=ollama --model=llama3.1
 ----
 
+With `--url`, the CLI uses that endpoint and no other: when it does not answer, the command fails instead of going
+on to another provider, so the prompts never reach a provider you did not choose. The same holds for the URL set in
+the settings of the Camel TUI.
+
 NOTE: `camel harden` only detects Ollama (from `camel infra` or at `localhost:11434`).
 For another provider, give it the endpoint: `--url=https://api.openai.com --api-type=openai --api-key=sk-...`
 (any OpenAI-compatible API).

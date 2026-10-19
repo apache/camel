@@ -2031,6 +2031,94 @@ Please verify that your model classes implement serializable otherwise
 the queue manager will raise an error.
 ====
 
+=== Using the YAML DSL
+
+In the YAML DSL, the data format is `bindy`, and its `type` is `Csv`, `Fixed` or `KeyValue`.
+The `classType` is the model class.
+
+The following route reads CSV files, unmarshals them into a list of `Order` objects,
+and splits the list to handle one order at a time:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - unmarshal:
+            bindy:
+              type: Csv
+              classType: com.acme.model.Order
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:handleSingleOrder
+----
+
+To write CSV records, marshal a list of model objects.
+Set the `locale` when the numbers and dates must not depend on the machine: without it, Bindy uses the default locale
+of the JVM, and on a machine with a Danish or German locale `2500.45` is written as `2500,45`.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:handleOrders
+      steps:
+        - marshal:
+            bindy:
+              type: Csv
+              classType: com.acme.model.Order
+              locale: en-US
+        - to:
+            uri: file:outbox
+----
+
+Fixed-length records work the same way, with the type `Fixed`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox/fixed
+      steps:
+        - unmarshal:
+            bindy:
+              type: Fixed
+              classType: com.acme.model.fixed.Order
+        - split:
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:handleSingleOrder
+----
+
+For key-value pairs, such as FIX messages, the type is `KeyValue`.
+As in the Spring XML example, you can define the data format once in `dataFormats` and use it by its id:
+
+[source,yaml]
+----
+- dataFormats:
+    - bindy:
+        id: fixOrder
+        type: KeyValue
+        classType: com.acme.model.fix.Order
+- route:
+    from:
+      uri: file:inbox/fix
+      steps:
+        - unmarshal:
+            custom:
+              ref: fixOrder
+        - to:
+            uri: direct:handleFixOrder
+----
+
 == Dependencies
 
 To use Bindy in your camel routes, you need to add a dependency on

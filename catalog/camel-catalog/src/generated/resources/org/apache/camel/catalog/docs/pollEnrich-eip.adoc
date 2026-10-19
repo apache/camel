@@ -74,6 +74,100 @@ You can pass in a timeout value that determines which method to use:
 
 The timeout values are in milliseconds.
 
+For example, to read the file `data.txt` from the inbox directory, waiting up to 10 seconds for it. Without an
+`AggregationStrategy`, the polled message is the result, so the content of the file becomes the message body:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .pollEnrich("file:inbox?fileName=data.txt", 10000)
+  .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich timeout="10000">
+    <constant>file:inbox?fileName=data.txt</constant>
+  </pollEnrich>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - pollEnrich:
+            timeout: 10000
+            expression:
+              constant:
+                expression: file:inbox?fileName=data.txt
+        - to:
+            uri: mock:result
+----
+====
+
+=== Poll Enrich with Dynamic Endpoints
+
+Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current `Exchange`.
+
+For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+  .pollEnrich().simple("seda:${header.queueName}")
+  .to("direct:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <pollEnrich>
+    <simple>seda:${header.queueName}</simple>
+  </pollEnrich>
+  <to uri="direct:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - pollEnrich:
+            expression:
+              simple:
+                expression: "seda:${header.queueName}"
+        - to:
+            uri: direct:result
+----
+====
+
+TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
+
 === Using Poll Enrich
 
 The content enricher (`pollEnrich`) retrieves additional data from a _resource endpoint_ in order to enrich an incoming message (contained in the _original exchange_).
@@ -217,55 +311,6 @@ YAML::
 ====
 
 Notice that the enriched endpoint is a constant, however, Camel also supports dynamic endpoints which is covered next.
-
-=== Poll Enrich with Dynamic Endpoints
-
-Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current `Exchange`.
-
-For example to `pollEnrich` from an endpoint that uses a header to indicate a SEDA queue name:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("direct:start")
-  .pollEnrich().simple("seda:${header.queueName}")
-  .to("direct:result");
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="direct:start"/>
-  <pollEnrich>
-    <simple>seda:${header.queueName}</simple>
-  </pollEnrich>
-  <to uri="direct:result"/>
-</route>
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:start
-      steps:
-        - pollEnrich:
-            expression:
-              simple:
-                expression: "seda:${header.queueName}"
-        - to:
-            uri: direct:result
-----
-====
-
-TIP: See the `cacheSize` option for more details on _how much cache_ to use depending on how many or few unique endpoints are used.
 
 === Using Poll Enrich with file based components
 

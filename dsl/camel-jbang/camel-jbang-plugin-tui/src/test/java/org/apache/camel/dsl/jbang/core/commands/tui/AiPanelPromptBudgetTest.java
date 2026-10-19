@@ -47,7 +47,10 @@ class AiPanelPromptBudgetTest {
     // camel_error_diagnose joined the core set
     // raised to 5000 when camel_catalog_find joined the core set (CAMEL-24760): the budget guards against accidental
     // growth of the prefix, a 32k context leaves ample room
-    static final int CORE_BUDGET_TOKENS = 5_000;
+    // raised from 5000 for the bounded component answer of camel_catalog_doc (CAMEL-25541), measured ~5040: its limit
+    // argument, the docPage that also takes a section of the page, and the full application.properties key replace
+    // the camel_component_properties tool and the 38k-character answers a client spilled to a file
+    static final int CORE_BUDGET_TOKENS = 5_100;
     /** Measured ~6.9k tokens for 47 tools. */
     // raised from 7500 with tui_write_file and tui_validate_source
     // and from 7900 with the shared camel_* set (camel_catalog_find, camel_run and camel_error_diagnose added)
@@ -64,7 +67,8 @@ class AiPanelPromptBudgetTest {
     // see what the integration serves and call it is worth the ~250 tokens
     // raised from 10250 for the edits argument of camel_edit_file (CAMEL-25501), measured ~10400: several places of a
     // file changed in one call, so dev mode never reloads a file half done
-    static final int FULL_BUDGET_TOKENS = 10_500;
+    // raised from 10500 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~10485
+    static final int FULL_BUDGET_TOKENS = 10_600;
     /** Measured ~5.5k tokens for 28 tools: the core set (~4.7k) plus every tool group (CAMEL-24834). */
     // the SQL group adds tui_execute_sql and tui_update_row (~385 tokens), each group one guidance line in the prompt
     // (~130 for all three); an integration rarely has all of them, and the groups only load for the integration that
@@ -72,7 +76,8 @@ class AiPanelPromptBudgetTest {
     // raised from 5500 for the http group (CAMEL-25307), measured ~5460: tui_http_endpoints and tui_http_request
     // (~245 tokens) and its guidance line (~35), for the local model that otherwise cannot see or call the HTTP API
     // it is building
-    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_750;
+    // raised from 5750 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~5820
+    static final int CORE_WITH_GROUPS_BUDGET_TOKENS = 5_900;
 
     record Prefix(String mode, int tools, long promptChars, long toolChars) {
 
@@ -176,7 +181,9 @@ class AiPanelPromptBudgetTest {
             panel.refreshToolGroupsForTesting();
             Prefix prefix = measure(mode + "+semantic", panel);
             System.out.println("AI panel semantic prefix: " + prefix);
-            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6100 : 11000));
+            // core raised from 6100 with the core budget for camel_catalog_doc (CAMEL-25541), measured ~6170; full
+            // measured ~10820
+            assertTrue(prefix.totalTokens() <= (AiPanel.TOOL_MODE_CORE.equals(mode) ? 6250 : 11000));
         }
     }
 

@@ -47,12 +47,12 @@ if $cygwin ; then
   [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --unix "$CLASSPATH"`
 fi
 
-# --- Shared Java 17+ discovery contract ---
+# --- Shared Java 21+ discovery contract ---
 # Candidates are tried in order: JAVACMD, $JAVA_HOME/bin/java, java on PATH, CAMEL_FALLBACK_JAVA.
 # ($JAVA_HOME is also how SDKMAN's java candidate exposes its runtime.)
 # Each must exist, be executable, and report a Java major version >= CAMEL_MIN_JAVA.
 # Probe output is captured and never printed during a normal invocation.
-CAMEL_MIN_JAVA=17
+CAMEL_MIN_JAVA=21
 
 # Echo the Java major version of the launcher in $1, or nothing if it cannot be determined.
 camel_java_major() {

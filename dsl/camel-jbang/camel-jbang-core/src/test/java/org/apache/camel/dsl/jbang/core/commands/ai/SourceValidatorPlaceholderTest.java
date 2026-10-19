@@ -118,6 +118,54 @@ class SourceValidatorPlaceholderTest {
                 .noneMatch(e -> e.contains("required option"));
     }
 
+    /** CAMEL-25761: another key of the step between uri: and parameters:, or parameters: above uri: */
+    @Test
+    void theParametersAreFoundWhereverTheyStandInTheStep() {
+        String keyBetween = """
+                - route:
+                    from:
+                      uri: timer
+                      parameters:
+                        timerName: tick
+                      steps:
+                        - to:
+                            uri: jms
+                            variableReceive: answer
+                            parameters:
+                              destinationType: queue
+                              destinationName: stock
+                        - to:
+                            uri: jms
+                            id: send-order
+                            parameters:
+                              destinationName: orders
+                              destinationTyp: queue
+                """;
+        List<String> errors = SourceValidator.validateYamlEndpoints(keyBetween, catalog);
+        assertThat(errors).noneMatch(e -> e.contains("required option"));
+        // the options behind the other key are checked as well: a misspelled one is reported on its own line
+        assertThat(errors).anyMatch(e -> e.startsWith("Line 18:") && e.contains("destinationTyp"));
+
+        String paramsFirst = """
+                - route:
+                    from:
+                      uri: timer
+                      parameters:
+                        timerName: tick
+                      steps:
+                        - to:
+                            parameters:
+                              destinationName: stock
+                            uri: jms
+                """;
+        assertThat(SourceValidator.validateYamlEndpoints(paramsFirst, catalog)).noneMatch(e -> e.contains("required option"));
+
+        // without the option anywhere in the step, it is still reported
+        assertThat(SourceValidator.validateYamlEndpoints(keyBetween.replace("\n              destinationName: stock", ""),
+                catalog))
+                .anyMatch(e -> e.startsWith("Line 8: jms: the required option 'destinationName' is missing"));
+    }
+
     @Test
     void aSimplePlaceholderInABeanPropertySaysToWriteAPropertyPlaceholder() {
         String yaml = """

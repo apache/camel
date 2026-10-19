@@ -48,6 +48,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -119,7 +120,7 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
                         defaultValue = "both")
     String nodeLabel;
 
-    @CommandLine.Option(names = { "--metric" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--metric" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to include live metrics (only possible for running Camel application)")
     boolean metric;
 
@@ -183,11 +184,11 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             if (!textMode) {
                 terminalGraphics = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
                 if (terminalGraphics == null) {
-                    printer().println("Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
-                    printer().println(
+                    printer().printErr("Terminal does not support graphics protocols (Kitty, iTerm2, or Sixel).");
+                    printer().printErr(
                             "Try running in a supported terminal: Kitty, iTerm2, WezTerm, Ghostty, or VS Code.");
-                    printer().println("Or use --theme=ascii or --theme=unicode for plain text output.");
-                    return 1;
+                    printer().printErr("Or use --theme=ascii or --theme=unicode for plain text output.");
+                    return CliExitCode.USAGE;
                 }
             }
         }
@@ -254,20 +255,17 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             throw CliException.notFound("No route matching: " + filter);
         }
 
-        // parse highlight info
+        // parse highlight info: the routes are drawn with the nodes highlighted
         Set<String> highlightedNodeIds = null;
         RouteDiagramHelper.HighlightStyle hlStyle = null;
-        RouteDiagramHelper.HighlightInfo highlightInfo = null;
         if (highlight != null && !highlight.isBlank()) {
             highlightedNodeIds = new LinkedHashSet<>(Arrays.asList(highlight.split(",")));
             hlStyle = "fail".equalsIgnoreCase(highlightStyle)
                     ? RouteDiagramHelper.HighlightStyle.FAIL
                     : RouteDiagramHelper.HighlightStyle.SUCCESS;
-            highlightInfo = new RouteDiagramHelper.HighlightInfo(highlightedNodeIds, List.of(), hlStyle);
-            routes = RouteDiagramHelper.filterAndOrderRoutes(routes, highlightInfo);
-            if (routes.isEmpty()) {
-                printer().println("No routes contain highlighted nodes");
-                return 1;
+            Set<String> ids = highlightedNodeIds;
+            if (routes.stream().flatMap(r -> r.nodes.stream()).noneMatch(n -> n.id != null && ids.contains(n.id))) {
+                throw CliException.notFound("No route has the nodes to highlight: " + highlight);
             }
         }
 
@@ -318,8 +316,8 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
             try {
                 image = renderer.renderDiagram(layoutRoutes, currentY, colors, highlightedNodeIds, hlStyle);
             } catch (IllegalStateException e) {
-                printer().println(e.getMessage());
-                return 1;
+                printer().printErr(e.getMessage());
+                return CliExitCode.FAILURE;
             }
 
             if (output != null) {

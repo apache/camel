@@ -254,25 +254,31 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_route_dump",
-                "Dump route definitions in XML or YAML format.")
-                .param("routeId", "string", "Route ID to dump (use * for all routes)", false)
-                .param("format", "string", "Output format: xml or yaml (default: yaml)", false)
+                "Dump route definitions in XML, YAML or Java DSL format.")
+                .param("routeId", "string", "Route ID or pattern such as orders* to dump (use * for all routes)", false)
+                .param("format", "string", "Output format: xml, yaml or java (default: yaml)", false)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
                     String format = args.get("format");
+                    // the route-dump action reads the routes from "filter", as camel cmd route-dump sends it
                     return ctx.executeAction("route-dump", root -> {
-                        root.put("id", routeId != null ? routeId : "*");
+                        root.put("filter", routeFilter(routeId));
                         root.put("format", format != null ? format : "yaml");
                     });
                 }));
 
         register(tool("get_route_structure",
                 "Show the route structure as a tree of processors.")
-                .param("routeId", "string", "Route ID to inspect (use * for all routes)", false)
+                .param("routeId", "string", "Route ID or pattern such as orders* to inspect (use * for all routes)",
+                        false)
+                .param("brief", "boolean", "Only the overall structure, without the options and expressions", false)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
-                    return ctx.executeAction("route-structure",
-                            root -> root.put("id", routeId != null ? routeId : "*"));
+                    boolean brief = "true".equalsIgnoreCase(args.get("brief"));
+                    return ctx.executeAction("route-structure", root -> {
+                        root.put("filter", routeFilter(routeId));
+                        root.put("brief", String.valueOf(brief));
+                    });
                 }));
 
         register(tool("get_processor_detail",
@@ -343,7 +349,8 @@ public final class ToolRegistry {
                 .param("body", "string", "Message body to send", false)
                 .param("headers", "string",
                         "Message headers as key=value pairs separated by newlines", false)
-                .readOnly(false).destructive(false)
+                // the message runs through the routes and whatever they call, so it can change data
+                .readOnly(false).destructive(true)
                 .core(true)
                 .executor((ctx, args) -> {
                     String endpoint = args.get("endpoint");
@@ -370,7 +377,8 @@ public final class ToolRegistry {
                     return ctx.executeAction("eval", root -> {
                         root.put("language", language);
                         root.put("predicate", "false");
-                        root.put("template", Jsoner.escape(expression));
+                        // as it is: the action file is JSON, and the integration does not unescape it
+                        root.put("template", expression);
                     });
                 }));
 
@@ -420,6 +428,11 @@ public final class ToolRegistry {
                 .executor((ctx, args) -> {
                     String name = args.get("name");
                     String live = args.get("live");
+                    if (name != null && !isPlainFileName(name)) {
+                        throw new ToolExecutionException(
+                                "name must be a file name without a directory (the dump is written to the process"
+                                                         + " working directory): " + name);
+                    }
                     return ctx.executeAction("heap-dump", root -> {
                         if (name != null && !name.isBlank()) {
                             root.put("name", name);
@@ -689,6 +702,12 @@ public final class ToolRegistry {
                 entry.put("failedCalls", bj.get("failedCalls"));
                 entry.put("notPermittedCalls", bj.get("notPermittedCalls"));
                 entry.put("failureRate", bj.get("failureRate"));
+                // as camel get circuit-breaker shows them, when the breaker counts them
+                for (String key : new String[] { "fallbackCalls", "timedOutCalls", "bulkheadRejectedCalls" }) {
+                    if (bj.get(key) != null) {
+                        entry.put(key, bj.get(key));
+                    }
+                }
                 target.add(entry);
             }
         }
@@ -707,15 +726,15 @@ public final class ToolRegistry {
                     String routeId = args.get("routeId");
                     // Get route structure for analysis
                     String structureJson = ctx.executeAction("route-structure",
-                            root -> root.put("id", routeId != null ? routeId : "*"));
+                            root -> root.put("filter", routeFilter(routeId)));
                     // Get route dump for error handler info
                     String dumpJson = ctx.executeAction("route-dump", root -> {
-                        root.put("id", routeId != null ? routeId : "*");
+                        root.put("filter", routeFilter(routeId));
                         root.put("format", "yaml");
                     });
                     JsonObject response = new JsonObject();
-                    response.put("routeStructure", structureJson);
-                    response.put("routeDump", dumpJson);
+                    response.put("routeStructure", json(structureJson));
+                    response.put("routeDump", json(dumpJson));
                     response.put("analysisHints", buildAnalysisHints());
                     return response.toJson();
                 }));
@@ -730,10 +749,10 @@ public final class ToolRegistry {
                     String topJson = ctx.executeAction("top-processors", null);
                     // Get route structure for EIP type counting
                     String structureJson = ctx.executeAction("route-structure",
-                            root -> root.put("id", "*"));
+                            root -> root.put("filter", "*"));
                     JsonObject response = new JsonObject();
-                    response.put("processorStats", topJson);
-                    response.put("routeStructures", structureJson);
+                    response.put("processorStats", json(topJson));
+                    response.put("routeStructures", json(structureJson));
                     return response.toJson();
                 }));
 
@@ -751,15 +770,15 @@ public final class ToolRegistry {
                     // Get running route definitions
                     String dumpFormat = format;
                     String runningRoutes = ctx.executeAction("route-dump", root -> {
-                        root.put("id", "*");
+                        root.put("filter", "*");
                         root.put("format", dumpFormat);
                     });
                     // Get source files
                     String sourceFiles = ctx.executeAction("source",
                             root -> root.put("filter", "*"));
                     JsonObject response = new JsonObject();
-                    response.put("runningRoutes", runningRoutes);
-                    response.put("sourceFiles", sourceFiles);
+                    response.put("runningRoutes", json(runningRoutes));
+                    response.put("sourceFiles", json(sourceFiles));
                     response.put("format", dumpFormat);
                     response.put("hint",
                             "Compare the running route definitions with the source files to identify any differences. "
@@ -767,6 +786,24 @@ public final class ToolRegistry {
                                          + "and hot-reloading changes.");
                     return response.toJson();
                 }));
+    }
+
+    /**
+     * The answer of the integration in an answer of a tool: as JSON when it is, not as JSON text in the JSON.
+     */
+    private static Object json(String answer) {
+        Object parsed = Jsoner.deserialize(answer, (JsonObject) null);
+        return parsed != null ? parsed : answer;
+    }
+
+    /** The route pattern of the route-dump and route-structure actions: all routes when none is given. */
+    private static String routeFilter(String routeId) {
+        return routeId != null && !routeId.isBlank() ? routeId : "*";
+    }
+
+    /** Whether a heap dump name is only a file name, so the dump stays in the process working directory. */
+    static boolean isPlainFileName(String name) {
+        return !name.contains("/") && !name.contains("\\") && !".".equals(name) && !"..".equals(name);
     }
 
     private static JsonObject buildAnalysisHints() {
@@ -1373,7 +1410,7 @@ public final class ToolRegistry {
         }
         JsonArray steps = new JsonArray();
         Object traces = history.get("traces");
-        if (traces instanceof java.util.List<?> list) {
+        if (traces instanceof List<?> list) {
             for (Object o : list) {
                 if (!(o instanceof JsonObject t)) {
                     continue;

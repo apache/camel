@@ -1747,6 +1747,35 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testValidateMultiEnum() {
+        // CAMEL-25739: an option that takes several of its enum values, separated by comma
+        EndpointValidationResult result = catalog.validateEndpointProperties("ehcache:orders?eventTypes=CREATED,UPDATED");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+        result = catalog.validateEndpointProperties("jcache:orders?filteredEvents=CREATED,REMOVED");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+        result = catalog.validateEndpointProperties("coap://localhost:5683/orders?coapMethodRestrict=GET,POST");
+        assertTrue(result.isSuccess(), result.summaryErrorMessage(false));
+
+        // the value that is not one of them is reported
+        result = catalog.validateEndpointProperties("ehcache:orders?eventTypes=CREATED,FOO");
+        assertFalse(result.isSuccess());
+        assertEquals("FOO", result.getInvalidEnum().get("eventTypes"));
+
+        // an option that takes one value does not take a list
+        result = catalog.validateEndpointProperties("consul:kv?action=PUT,GET_VALUE");
+        assertFalse(result.isSuccess());
+        assertEquals("PUT,GET_VALUE", result.getInvalidEnum().get("action"));
+
+        // spaces around the commas are allowed
+        ConfigurationPropertiesValidationResult config
+                = catalog.validateConfigurationProperty("camel.component.ehcache.event-types=CREATED, UPDATED");
+        assertTrue(config.isSuccess(), config.summaryErrorMessage(false, false, false));
+        config = catalog.validateConfigurationProperty("camel.component.ehcache.event-types=CREATED, FOO");
+        assertFalse(config.isSuccess());
+        assertEquals("FOO", config.getInvalidEnum().get("camel.component.ehcache.event-types"));
+    }
+
+    @Test
     public void testValidateConfigurationPropertyComponent() {
         String text = "camel.component.seda.queueSize=1234";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
@@ -1974,6 +2003,64 @@ public class CamelCatalogTest {
         text = "camel.rest.api-properties[drink]=no";
         result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyNestedGroup() {
+        // camel.vault.aws.* is a nested group (3-segment prefix) — the catalog
+        // must recognise the group and validate the option name after the third dot.
+        String text = "camel.vault.aws.accessKey=AKIA1234";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        text = "camel.vault.aws.region=us-east-1";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        // invented option under the nested group must be accepted (group is known) but invalid
+        text = "camel.vault.aws.inventedOption=foo";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.isAccepted());
+        assertTrue(result.getUnknown().contains("camel.vault.aws.inventedOption"));
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyDashedGroupName() {
+        // The metadata group is "camel.errorRegistry" — the dashed form
+        // "camel.error-registry" must be accepted and validated.
+        String text = "camel.error-registry.enabled=true";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        text = "camel.error-registry.maximumEntries=100";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        text = "camel.ai-observability.enabled=true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyServerInventedOption() {
+        // camel.server.* is a known group — a real option must pass,
+        // and an invented option must fail validation.
+        String text = "camel.server.port=9999";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+        assertTrue(result.isAccepted());
+
+        text = "camel.server.inventedOption=foo";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.isAccepted());
+        assertTrue(result.getUnknown().contains("camel.server.inventedOption"));
     }
 
     @Test

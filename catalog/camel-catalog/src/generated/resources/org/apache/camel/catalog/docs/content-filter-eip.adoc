@@ -15,6 +15,54 @@ image::eip/ContentFilter.gif[image]
 * Using a xref:manual::processor.adoc[Processor] with the filtering programmed in Java
 * Using an xref:manual::expression.adoc[Expression]
 
+== Message Content filtering using expression
+
+Some languages like xref:languages:xpath-language.adoc[XPath], and xref:languages:xquery-language.adoc[XQuery]
+can be used to transform and filter content from messages.
+
+In the example we use xpath to filter a XML message to select all the `<foo><bar>` elements:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:Input")
+  .setBody().xpath("//foo/bar")
+  .to("activemq:Output");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="activemq:Input"/>
+  <setBody>
+    <xpath>//foo/bar</xpath>
+  </setBody>
+  <to uri="activemq:Output"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:Input
+      steps:
+        - setBody:
+            expression:
+              xpath:
+                expression: //foo/bar
+        - to:
+            uri: activemq:Output
+----
+====
+
 == Message Content filtering using a Processor
 
 In this example, we add our own xref:manual::processor.adoc[Processor] using
@@ -84,16 +132,12 @@ YAML::
 ----
 - route:
     from:
-      uri: direct
-      parameters:
-        name: start
+      uri: direct:start
       steps:
         - process:
             ref: myProcessor
         - to:
-            uri: mock
-            parameters:
-              name: result
+            uri: mock:result
 ----
 ====
 
@@ -109,9 +153,9 @@ Java::
 +
 [source,java]
 ----
-from("activemq:My.Queue")
+from("activemq:Input")
     .bean("myBeanName", "doFilter")
-    .to("activemq:Another.Queue");
+    .to("activemq:Output");
 ----
 
 XML::
@@ -136,53 +180,6 @@ YAML::
         - bean:
             ref: myBeanName
             method: doFilter
-        - to:
-            uri: activemq:Output
-----
-====
-
-== Message Content filtering using expression
-
-Some languages like xref:languages:xpath-language.adoc[XPath], and xref:languages:xquery-language.adoc[XQuery]
-can be used to transform and filter content from messages.
-
-In the example we use xpath to filter a XML message to select all the `<foo><bar>` elements:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("activemq:Input")
-  .setBody().xpath("//foo:bar")
-  .to("activemq:Output");
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="activemq:Input"/>
-  <setBody>
-    <xpath>//foo:bar</xpath>
-  </setBody>
-  <to uri="activemq:Output"/>
-</route> 
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: activemq:Input
-      steps:
-        - setBody:
-            expression:
-              xpath: //foo:bar
         - to:
             uri: activemq:Output
 ----

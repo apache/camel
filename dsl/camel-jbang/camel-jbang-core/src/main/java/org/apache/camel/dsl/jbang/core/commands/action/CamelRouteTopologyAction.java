@@ -97,7 +97,7 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
                         description = "Prefer route description over route id in node labels")
     boolean description;
 
-    @CommandLine.Option(names = { "--metric" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--metric" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to include live metrics (only possible for a running Camel application)")
     boolean metric;
 

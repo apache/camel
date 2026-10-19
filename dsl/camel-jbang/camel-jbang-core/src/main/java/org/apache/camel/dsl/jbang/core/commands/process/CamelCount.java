@@ -29,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -43,6 +44,8 @@ import picocli.CommandLine.Command;
                  "  camel get count",
                  "  camel get count --watch" })
 public class CamelCount extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -90,7 +93,7 @@ public class CamelCount extends ProcessWatchCommand {
         });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (jsonOutput) {
             // also with --total or --fail, as the rows have both counters
@@ -142,25 +145,6 @@ public class CamelCount extends ProcessWatchCommand {
         }
 
         return 0;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
     }
 
     private static class Row {

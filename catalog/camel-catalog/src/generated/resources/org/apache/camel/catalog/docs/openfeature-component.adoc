@@ -170,6 +170,10 @@ two variants (`on` / `off`) mapping to `true` / `false`:
 The route evaluates the flag and stores the result in an exchange property
 so the original message body is preserved:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -181,6 +185,34 @@ from("direct:start")
             .to("direct:skip-enrichment")
     .end();
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: openfeature:flags
+            parameters:
+              flagKey: enrichment-enabled
+              resultProperty: enrichEnabled
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${exchangeProperty.enrichEnabled} == true"
+                steps:
+                  - to:
+                      uri: direct:enrich-order
+            otherwise:
+              steps:
+                - to:
+                    uri: direct:skip-enrichment
+----
+====
 
 Boolean evaluation is the default (`evaluationType` is unset and
 `defaultValue` defaults to `"false"`).
@@ -207,12 +239,34 @@ parameter:
 }
 ----
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("openfeature:flags/variant?flagKey=checkout-banner&resultProperty=banner")
     .log("Banner: ${exchangeProperty.banner}");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: openfeature:flags/variant
+            parameters:
+              flagKey: checkout-banner
+              resultProperty: banner
+        - log:
+            message: "Banner: ${exchangeProperty.banner}"
+----
+====
 
 The `resultProperty` option stores the result in an exchange property
 instead of replacing the message body.
@@ -248,6 +302,10 @@ to a variant — the same targeting key always gets the same variant.
 The route passes a targeting key so each order ID is consistently assigned
 to the same variant:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -255,6 +313,29 @@ from("direct:start")
     .to("openfeature:flags/variant?flagKey=routing-algorithm&resultProperty=algorithm")
     .toD("direct:route-${exchangeProperty.algorithm}");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelOpenFeatureTargetingKey
+            expression:
+              simple:
+                expression: "${header.orderId}"
+        - to:
+            uri: openfeature:flags/variant
+            parameters:
+              flagKey: routing-algorithm
+              resultProperty: algorithm
+        - toD:
+            uri: "direct:route-${exchangeProperty.algorithm}"
+----
+====
 
 Without a targeting key, fractional evaluation may fall back to a random
 assignment or the default variant, depending on the provider.
@@ -287,6 +368,10 @@ all others get `v1`:
 
 The route stores the result in an exchange property and routes dynamically:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -294,9 +379,31 @@ from("direct:start")
     .toD("direct:orders-${exchangeProperty.orderVariant}");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: openfeature:flags/variant
+            parameters:
+              flagKey: order-compliance-v2
+              resultProperty: orderVariant
+        - toD:
+            uri: "direct:orders-${exchangeProperty.orderVariant}"
+----
+====
+
 The evaluation context is provided via a header — useful when the message
 body carries business data:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -307,9 +414,43 @@ from("direct:start")
     .toD("direct:orders-${exchangeProperty.orderVariant}");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelOpenFeatureTargetingKey
+            expression:
+              constant:
+                expression: order-123
+        - setHeader:
+            name: CamelOpenFeatureEvaluationContext
+            expression:
+              groovy:
+                expression: "[customer_tier: 'ENTERPRISE']"
+        - to:
+            uri: openfeature:flags/variant
+            parameters:
+              flagKey: order-compliance-v2
+              resultProperty: orderVariant
+        - toD:
+            uri: "direct:orders-${exchangeProperty.orderVariant}"
+----
+====
+
+In YAML, the Groovy expression `[customer_tier: 'ENTERPRISE']` makes the map of the evaluation context.
+
 Alternatively, enable `contextFromBody=true` to use a `Map` body as the
 evaluation context:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -317,6 +458,25 @@ from("direct:start")
         + "&resultProperty=orderVariant&contextFromBody=true")
     .toD("direct:orders-${exchangeProperty.orderVariant}");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: openfeature:flags/variant
+            parameters:
+              flagKey: order-compliance-v2
+              resultProperty: orderVariant
+              contextFromBody: true
+        - toD:
+            uri: "direct:orders-${exchangeProperty.orderVariant}"
+----
+====
 
 === Remote flagd service
 
@@ -357,6 +517,10 @@ resolves flag values from environment variables:
 Register the provider as a bean named `flags` (the default lookup name)
 or with a custom name:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 import dev.openfeature.contrib.providers.envvar.EnvVarProvider;
@@ -364,21 +528,71 @@ import dev.openfeature.contrib.providers.envvar.EnvVarProvider;
 registry.bind("flags", new EnvVarProvider());
 ----
 
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: flags
+      type: dev.openfeature.contrib.providers.envvar.EnvVarProvider
+----
+====
+
 Routes then use the provider without any additional configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("openfeature:flags?flagKey=MY_FEATURE_FLAG&resultProperty=flagValue");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: openfeature:flags
+            parameters:
+              flagKey: MY_FEATURE_FLAG
+              resultProperty: flagValue
+----
+====
+
 Or reference a named provider bean explicitly:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("openfeature:myDomain?flagKey=enrichment-enabled&provider=#myFlagProvider");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: openfeature:myDomain
+            parameters:
+              flagKey: enrichment-enabled
+              provider: "#myFlagProvider"
+----
+====
 
 === InMemoryProvider (testing and simple use cases)
 
@@ -404,17 +618,40 @@ registry.bind("flags", provider);
 
 Routes then use the provider without any additional configuration:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .to("openfeature:flags?flagKey=feature-x");
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: openfeature:flags
+            parameters:
+              flagKey: feature-x
+----
+====
+
 === Boolean predicate in filter (language)
 
 For boolean predicates in EIP constructs, use the
 xref:languages:openfeature-language.adoc[OpenFeature language]:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -422,5 +659,24 @@ from("direct:start")
         .to("direct:enrich-order")
     .end();
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            expression:
+              language:
+                language: openfeature
+                expression: enrichment-enabled
+            steps:
+              - to:
+                  uri: direct:enrich-order
+----
+====
 
 include::spring-boot:partial$starter.adoc[]

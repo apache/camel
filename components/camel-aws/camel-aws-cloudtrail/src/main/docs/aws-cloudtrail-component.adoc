@@ -73,4 +73,37 @@ This means you won't consume the events registered in the CloudTrail logs stored
 
 This is important to notice, and it must be taken into account when using this component.
 
+CloudTrail can make an event visible to `LookupEvents` some minutes after its event time, so a newer event can be
+returned first. Each poll looks up the events from the newest event time already seen, so it does not return such a
+late event. Every `lookBackInterval` (1 minute by default) the consumer therefore also looks up the events from
+`lookBackWindow` (10 minutes by default) before now up to the newest event time seen, and routes those it has not
+routed yet (by event id). Events with an event time before the start of the consumer are not routed, and an event that
+becomes visible more than `lookBackWindow` after its event time is still missed.
 
+The normal polls send the same `LookupEvents` requests regardless of these options. The late-event lookup adds
+`ceil(N / maxResults)` requests per `lookBackInterval`, at most one per poll, where N is the number of events (of the
+`eventSource`, if set) in its range, and none when the newest event time seen is older than `lookBackWindow`. With the
+defaults this is one request per minute while at most 50 events fall in 10 minutes, and 20 requests per minute with
+1000 events in 10 minutes. AWS allows two `LookupEvents` requests per second per account and Region; the polls
+themselves send at least one request every `delay` (500 ms by default, so up to about two per second), and one more per
+further page of new events. Set `lookBackWindow=0` to disable the late-event lookup. A negative `lookBackWindow`,
+or a `lookBackInterval` of 0 or less while the late-event lookup is enabled, fails the start of the consumer.
+
+=== Example
+
+The following route consumes the management events of S3 and logs who did what:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws-cloudtrail:trail
+      parameters:
+        eventSource: s3.amazonaws.com
+        region: eu-west-1
+        accessKey: "{{aws.access-key}}"
+        secretKey: "{{aws.secret-key}}"
+      steps:
+        - log:
+            message: "${header.CamelAwsCloudTrailEventName} by ${header.CamelAwsCloudTrailEventUsername}"
+----

@@ -31,7 +31,8 @@ import picocli.CommandLine;
                              "  camel version get" })
 public class VersionGet extends CamelCommand {
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
+                        description = "Use global or local configuration")
     boolean global = true;
 
     public VersionGet(CamelJBangMain main) {

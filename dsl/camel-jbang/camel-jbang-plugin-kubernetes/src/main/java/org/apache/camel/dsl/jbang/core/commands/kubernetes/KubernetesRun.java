@@ -137,7 +137,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     boolean verbose;
 
     @CommandLine.Option(names = { "--cleanup" },
-                        defaultValue = "true",
+                        defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.")
     boolean cleanup = true;
 
@@ -171,7 +171,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.")
     String clusterType;
 
-    @CommandLine.Option(names = { "--image-build" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--image-build" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Whether to build container image as part of the run.")
     boolean imageBuild = true;
 
@@ -232,11 +232,11 @@ public class KubernetesRun extends KubernetesBaseCommand {
                         description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" },
+    @CommandLine.Option(names = { "--maven-central-enabled" }, arity = "0..1", fallbackValue = "true",
                         description = "Whether downloading JARs from Maven Central repository is enabled")
     boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" },
+    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, arity = "0..1", fallbackValue = "true",
                         description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     boolean mavenApacheSnapshotEnabled = true;
 

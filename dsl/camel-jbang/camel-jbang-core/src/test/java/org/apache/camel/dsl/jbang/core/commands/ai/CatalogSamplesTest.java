@@ -41,6 +41,71 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void theInterceptEntriesAndDataFormatsHaveSamples() {
+        // CAMEL-25735: interceptFrom and interceptSendToEndpoint are on the page of intercept, after its own examples,
+        // and the data format page of the user manual has an example of dataFormats now
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String entry : List.of("interceptFrom", "interceptSendToEndpoint", "dataFormats")) {
+            JsonObject o = CatalogSamples.sample(catalog, entry, 2);
+            assertThat(o.getString("placement")).as(entry).contains("top-level");
+            JsonArray samples = (JsonArray) o.get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            for (Object s : samples) {
+                assertThat(((JsonObject) s).getString("yaml")).as(entry).startsWith("- " + entry + ":");
+            }
+        }
+    }
+
+    @Test
+    void theEipsWithoutExamplesOfTheirOwnHaveSamplesFromThePagesTheyBelongTo() {
+        // CAMEL-25774: loadBalance is on the pages of its policies, the circuit breaker settings on the Resilience4j and
+        // Fault Tolerance pages, and the resequencer settings on its page; a sample writes the key it is asked for
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String entry : List.of("loadBalance", "resilience4jConfiguration", "faultToleranceConfiguration",
+                "batchConfig", "streamConfig")) {
+            JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, entry, 5).get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            for (Object s : samples) {
+                assertThat(((JsonObject) s).getString("yaml")).as(entry).contains(entry + ":");
+            }
+        }
+        // the first sample of each policy page first, so the first two show two policies
+        JsonArray lb = (JsonArray) CatalogSamples.sample(catalog, "loadBalance", 2).get("samples");
+        assertThat(((JsonObject) lb.get(0)).getString("source")).startsWith("failoverLoadBalancer-eip");
+        assertThat(((JsonObject) lb.get(1)).getString("source")).startsWith("roundRobinLoadBalancer-eip");
+        // the settings are written inside the EIP, not as a step
+        assertThat(CatalogSamples.sample(catalog, "streamConfig", 1).getString("placement"))
+                .contains("written inside resequence").contains("not as a step");
+    }
+
+    @Test
+    void theIdempotentConsumerHasSamples() {
+        // CAMEL-25774: its page had no example, so the sample tool answered "no YAML sample"
+        JsonArray samples = (JsonArray) CatalogSamples.sample(new DefaultCamelCatalog(), "idempotentConsumer", 2)
+                .get("samples");
+        assertThat(samples).hasSize(2);
+        assertThat(((JsonObject) samples.get(0)).getString("yaml")).contains("idempotentRepository: myRepo")
+                .contains("MemoryIdempotentRepository");
+        // each sample declares the repository it uses, so it works on its own
+        assertThat(((JsonObject) samples.get(1)).getString("yaml")).contains("skipDuplicate: false")
+                .contains("CamelDuplicateMessage").contains("MemoryIdempotentRepository");
+    }
+
+    @Test
+    void theTopLevelEntriesDocumentedOnAnotherPageHaveSamples() {
+        // CAMEL-25719: their examples are on the page of what they belong to (route templates, the REST DSL,
+        // transformers, validators, the configuration utilities), which the samples did not read
+        for (String entry : List.of("templatedRoute", "restConfiguration", "transformers", "validators",
+                "sslContextParameters")) {
+            JsonObject o = CatalogSamples.sample(entry, 1);
+            assertThat(o.getString("placement")).as(entry).contains("top-level");
+            JsonArray samples = (JsonArray) o.get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            assertThat(((JsonObject) samples.get(0)).getString("yaml")).as(entry).startsWith("- " + entry + ":");
+        }
+    }
+
+    @Test
     void kebabCaseAndPartsResolveToTheEip() {
         JsonObject o = CatalogSamples.sample("circuit-breaker", 1);
         assertThat(o.getString("name")).isEqualTo("circuitBreaker");
@@ -73,11 +138,11 @@ public class CatalogSamplesTest {
         // an exact component name (chunk is the Chunk templating component) beats an alias of an EIP, unless asked
         assertThat(CatalogSamples.sample(catalog, "chunk", 1).getString("kind")).isEqualTo("component");
         assertThat(CatalogSamples.sample(catalog, "eip", "chunk", 1).getString("name")).isEqualTo("split");
-        // an alias of an EIP whose page has no YAML example still names the EIP
+        // dedup is the idempotent consumer, which has samples since its page has examples (CAMEL-25774)
         JsonObject dedup = CatalogSamples.sample(catalog, "dedup", 1);
-        assertThat(dedup.getString("error")).contains("dedup");
-        assertThat(dedup.getString("eip")).isEqualTo("idempotentConsumer");
-        assertThat(dedup.getString("hint")).contains("idempotentConsumer EIP");
+        assertThat(dedup.getString("name")).isEqualTo("idempotentConsumer");
+        assertThat(dedup.getString("note")).contains("idempotentConsumer EIP");
+        assertThat((JsonArray) dedup.get("samples")).isNotEmpty();
         assertThat(CatalogSamples.sample(catalog, "rate-limit", 1).getString("name")).isEqualTo("throttle");
         assertThat(CatalogSamples.sample(catalog, "router", 1).getString("name")).isEqualTo("choice");
         // an aliased part of an EIP shows the whole
@@ -119,7 +184,9 @@ public class CatalogSamplesTest {
             JsonObject o = CatalogSamples.sample(catalog, term, 2);
             assertThat(o.getString("name")).as(term).isEqualTo("http");
             assertThat(o.getString("note")).as(term).contains("to:", "toD:");
-            assertThat(((JsonObject) ((JsonArray) o.get("samples")).get(0)).getString("yaml")).contains("uri: http");
+            // the uri may be quoted, as in the toD of the GET example on the http page (CAMEL-25745)
+            assertThat(((JsonObject) ((JsonArray) o.get("samples")).get(0)).getString("yaml"))
+                    .containsPattern("uri: \"?http");
         }
         // calling an API by its contract: the rest-openapi producer
         JsonObject o = CatalogSamples.sample(catalog, "openapi client", 5);
@@ -371,12 +438,36 @@ public class CatalogSamplesTest {
         assertThat(jackson.getString("kind")).isEqualTo("dataformat");
         assertThat(source(jackson, 0)).startsWith("jackson2-dataformat.adoc");
         assertThat((Integer) jackson.get("count")).isEqualTo(2);
-        // bindyCsv is on the bindy page, which has no YAML example
+        // bindyCsv, bindyFixed and bindyKvp are on the bindy page, and the samples of the asked type come first
         assertThat(CatalogSamples.dataFormatPages(catalog, "bindyCsv")).containsExactly("bindy-dataformat");
         JsonObject bindy = CatalogSamples.sample(catalog, "bindyCsv", 1);
         assertThat(bindy.getString("kind")).isEqualTo("dataformat");
-        assertThat((Integer) bindy.get("count")).isZero();
-        assertThat(bindy.getString("hint")).contains("no YAML route example");
+        assertThat(source(bindy, 0)).startsWith("bindy-dataformat.adoc");
+        assertThat(yaml(bindy, 0)).contains("type: Csv");
+        assertThat(yaml(CatalogSamples.sample(catalog, "bindyFixed", 1), 0)).contains("type: Fixed");
+        assertThat(yaml(CatalogSamples.sample(catalog, "bindyKvp", 1), 0)).contains("type: KeyValue");
+        // the univocityTsv page shows the csv and fixed formats first, and its own sample comes first
+        assertThat(yaml(CatalogSamples.sample(catalog, "univocityTsv", 1), 0)).contains("univocityTsv:");
+        assertThat(CatalogSamples.dataFormatUse(catalog, "jackson")).isNull();
+    }
+
+    @Test
+    void aPageWithoutYamlExampleSaysSo() {
+        // a catalog whose python page has no YAML example; without a version its answers are not cached
+        CamelCatalog catalog = new DefaultCamelCatalog() {
+            @Override
+            public String getCatalogVersion() {
+                return null;
+            }
+
+            @Override
+            public String asciiDoc(String name) {
+                return "python-language".equals(name) ? "= Python Language\n\nNo route example.\n" : super.asciiDoc(name);
+            }
+        };
+        JsonObject python = CatalogSamples.sample(catalog, "language", "python", 1);
+        assertThat((Integer) python.get("count")).isZero();
+        assertThat(python.getString("hint")).contains("no YAML route example");
     }
 
     /** CAMEL-25370: the error handler has samples, both of its places, and its kinds resolve to it. */

@@ -49,38 +49,7 @@ what happened to the call itself:
 `CamelCircuitBreakerState` is the state of the breaker after the call was recorded, so the call that opens the
 breaker reports `OPEN` although it was attempted; use the rejected property to know whether a call was made.
 The caught exception is available in the fallback, for example as `${exception.message}` in the Simple language.
-
-For example, a fallback that answers differently when the service is down rather than failing once:
-
-[source,yaml]
-----
-- route:
-    from:
-      uri: timer:stock?period=1000
-      steps:
-        - circuitBreaker:
-            steps:
-              - to:
-                  uri: direct:supplier
-            onFallback:
-              steps:
-                - choice:
-                    when:
-                      - expression:
-                          simple:
-                            expression: "${exchangeProperty.CamelCircuitBreakerResponseRejected} == true"
-                        steps:
-                          - setBody:
-                              expression:
-                                constant:
-                                  expression: "supplier is down, using the last known stock"
-                    otherwise:
-                      steps:
-                        - setBody:
-                            expression:
-                              constant:
-                                expression: "stock check failed, will try again"
-----
+The example under _Using the exchange properties in the fallback_ below uses these properties.
 
 == Example
 
@@ -142,6 +111,89 @@ YAML::
                         expression: Fallback message
         - to:
             uri: mock:result
+----
+====
+
+=== Using the exchange properties in the fallback
+
+A fallback that answers differently when the service is down rather than failing once:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("timer:stock?period=1000")
+    .circuitBreaker()
+        .to("direct:supplier")
+    .onFallback()
+        .choice()
+            .when(simple("${exchangeProperty.CamelCircuitBreakerResponseRejected} == true"))
+                .setBody(constant("supplier is down, using the last known stock"))
+            .otherwise()
+                .setBody(constant("stock check failed, will try again"))
+        .end()
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="timer:stock?period=1000"/>
+  <circuitBreaker>
+    <to uri="direct:supplier"/>
+    <onFallback>
+      <choice>
+        <when>
+          <simple>${exchangeProperty.CamelCircuitBreakerResponseRejected} == true</simple>
+          <setBody>
+            <constant>supplier is down, using the last known stock</constant>
+          </setBody>
+        </when>
+        <otherwise>
+          <setBody>
+            <constant>stock check failed, will try again</constant>
+          </setBody>
+        </otherwise>
+      </choice>
+    </onFallback>
+  </circuitBreaker>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:stock?period=1000
+      steps:
+        - circuitBreaker:
+            steps:
+              - to:
+                  uri: direct:supplier
+            onFallback:
+              steps:
+                - choice:
+                    when:
+                      - expression:
+                          simple:
+                            expression: "${exchangeProperty.CamelCircuitBreakerResponseRejected} == true"
+                        steps:
+                          - setBody:
+                              expression:
+                                constant:
+                                  expression: "supplier is down, using the last known stock"
+                    otherwise:
+                      steps:
+                        - setBody:
+                            expression:
+                              constant:
+                                expression: "stock check failed, will try again"
 ----
 ====
 

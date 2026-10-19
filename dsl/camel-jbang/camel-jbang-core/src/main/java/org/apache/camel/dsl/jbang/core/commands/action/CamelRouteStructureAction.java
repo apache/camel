@@ -32,6 +32,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
@@ -50,6 +51,10 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
                  "  camel cmd route-structure",
                  "  camel cmd route-structure --filter=myRoute" })
 public class CamelRouteStructureAction extends ActionBaseCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.location)
+            .text("id", r -> r.routeId);
 
     public static class NameIdCompletionCandidates implements Iterable<String> {
 
@@ -173,7 +178,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                 }
             }
             // sort rows
-            rows.sort(this::sortRow);
+            rows.sort(ORDER.comparator(sort));
 
             if (rows.isEmpty() && filter != null) {
                 throw CliException.notFound("No route matching: " + filter);
@@ -236,23 +241,6 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             return jo;
         } finally {
             PathUtils.deleteFile(output);
-        }
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.location.compareToIgnoreCase(o2.location) * negate;
-            case "id":
-                return o1.routeId.compareToIgnoreCase(o2.routeId) * negate;
-            default:
-                return 0;
         }
     }
 

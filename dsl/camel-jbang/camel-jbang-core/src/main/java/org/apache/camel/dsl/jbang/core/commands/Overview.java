@@ -129,6 +129,9 @@ public class Overview extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (!"markdown".equals(format) && !"json".equals(format)) {
+            throw CliException.usage("--format must be markdown or json, was: " + format);
+        }
         Path dir = Path.of(directory != null ? directory : ".").toAbsolutePath().normalize();
         if (!Files.exists(dir)) {
             throw CliException.notFound("Directory does not exist: " + dir);

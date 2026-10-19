@@ -128,6 +128,27 @@ final class SchemaHints {
         return instance.get(key).isNull() ? "{" + key + "}" : null;
     }
 
+    /** A value that names a script file by its scheme, as resource: loads it. */
+    private static final Pattern SCRIPT_FILE = Pattern.compile("(file|classpath|https?):.+", Pattern.DOTALL);
+
+    /**
+     * Where the text of a language goes, for the text written under another key (groovy: {script: "..."}). A script
+     * file under resource: (groovy: {resource: "file:x.groovy"}) is loaded with the resource: prefix, which the value
+     * often lacks (CAMEL-25748): the expression "file:x.groovy" would run as code.
+     */
+    static String languageTextHint(String language, String property, String value) {
+        String key = property.toLowerCase(Locale.ROOT);
+        String text = value.strip();
+        boolean scriptFile = !text.startsWith("resource:")
+                && (key.contains("resource") || (key.startsWith("script") && SCRIPT_FILE.matcher(text).matches()));
+        if (scriptFile) {
+            return "a " + language + " script file is loaded in expression: with the resource: prefix, write " + language
+                   + ": {expression: \"resource:" + text.replace("\"", "\\\"") + "\"}";
+        }
+        return "the " + language + " text goes in expression:, write " + language + ": {expression: \""
+               + value.replace("\"", "\\\"") + "\"}";
+    }
+
     /** The text of a scalar property of the error's node, or the fallback when it is not a scalar. */
     private static String valueOf(Match m, String property, String fallback) {
         JsonNode instance = m.error().getInstanceNode();
@@ -406,6 +427,14 @@ final class SchemaHints {
                         return "the library name is case sensitive"
                                + (match != null ? ": write library: " + match : ", write it as listed");
                     }),
+            // a comma-separated list of enum values, such as the jsonpath option (CAMEL-25739): name the values, not the
+            // pattern that checks them
+            append("pattern", null, m -> m.message().contains("^\\s*("),
+                    m -> {
+                        String values = between(m.message(), "^\\s*(", ")");
+                        return "write one or more of " + (values == null ? "the listed values" : values.replace("|", ", "))
+                               + ", separated by comma";
+                    }),
             append("type", "/?", m -> m.message().contains("array expected"),
                     m -> "a Camel YAML file is a list of entries, each starting with \"- \": - route:, - from:, - beans:,"
                          + " - rest:, - onException:"),
@@ -441,11 +470,11 @@ final class SchemaHints {
                     m -> "steps: is a property of from:, next to uri:; a steps: written at the route level must be"
                          + " indented under from:"),
             // - id: myBean / class: ... : the bean properties are name and type
-            unknownProperty("/\\d+/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
+            unknownProperty(".*/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
                     m -> "a bean is - name: myBean followed by type: \"#class:com.example.MyBean\" (name instead of "
                          + m.unknown() + (m.unknown().equals("class") ? ", type instead of class" : "") + ")"),
             // - myBean: {type: ...} instead of - name: myBean / type: ...
-            unknownProperty("/\\d+/beans/\\d+", ANY,
+            unknownProperty(".*/beans/\\d+", ANY,
                     m -> "a bean item is written as - name: " + m.unknown()
                          + " followed by type: \"#class:com.example.MyBean\" (the name is a property, not the key)"),
             unknownProperty(null,
@@ -588,8 +617,7 @@ final class SchemaHints {
                             && m.error().getInstanceNode() != null
                             && !m.error().getInstanceNode().has("expression")
                             && m.error().getInstanceNode().path(m.unknown()).isTextual(),
-                    m -> "the " + m.name() + " text goes in expression:, write " + m.name() + ": {expression: \""
-                         + valueOf(m, m.unknown(), "...").replace("\"", "\\\"") + "\"}"),
+                    m -> languageTextHint(m.name(), m.unknown(), valueOf(m, m.unknown(), "..."))),
             unknownProperty(null,
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) != null,
                     m -> "did you mean '"

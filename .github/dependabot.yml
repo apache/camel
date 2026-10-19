@@ -39,6 +39,9 @@ updates:
       # fugue 7 is compiled for Java 25 and breaks camel-jira on Java 17 and 21 (CAMEL-25401): revisit when Camel's minimum Java is 25
       - dependency-name: "io.atlassian.fugue:fugue"
         update-types: ["version-update:semver-major"]
+      # classgraph 6 is compiled for Java 25 and drops an API camel-datasonnet uses: revisit when Camel's minimum Java is 25
+      - dependency-name: "io.github.classgraph:classgraph"
+        update-types: ["version-update:semver-major"]
     groups:
       Aliyun:
         patterns: ["com.aliyun:*","com.aliyun.openservices:*","com.aliyun.mns:*"]

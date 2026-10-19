@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,8 +40,12 @@ import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -55,6 +60,11 @@ import picocli.CommandLine.Command;
 @Command(name = "error",
          description = "Get captured routing errors of Camel integrations", sortOptions = false, showDefaultValues = true)
 public class ListError extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .number("pid", r -> r.pid)
+            .text("name", r -> r.name)
+            .numeric("age", r -> r.timestamp);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -91,7 +101,8 @@ public class ListError extends ProcessWatchCommand {
                         description = "Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace, or 'all' for all sections")
     String show;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--detail" },
@@ -120,6 +131,21 @@ public class ListError extends ProcessWatchCommand {
     @Override
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
+
+        // the options are wrong for every integration, so before reading them
+        Comparator<Row> order = ORDER.comparator(sort);
+        if (handled != null && !"true".equalsIgnoreCase(handled) && !"false".equalsIgnoreCase(handled)) {
+            throw CliException.usage("--handled must be true or false, was: " + handled);
+        }
+        long since = 0;
+        if (ago != null) {
+            try {
+                since = System.currentTimeMillis() - TimeUtils.toMilliSeconds(ago);
+            } catch (IllegalArgumentException e) {
+                throw CliException.usage("--ago must be a duration such as 60s, 5m or 1h, was: " + ago);
+            }
+        }
+        long cutoff = since;
 
         if (diagram) {
             System.setProperty("java.awt.headless", "true");
@@ -192,7 +218,7 @@ public class ListError extends ProcessWatchCommand {
                         }
 
                         // apply client-side filters
-                        if (matchesFilters(row)) {
+                        if (matchesFilters(row, cutoff)) {
                             rows.add(row);
                         }
                     }
@@ -200,8 +226,8 @@ public class ListError extends ProcessWatchCommand {
             }
         });
 
-        // sort rows
-        rows.sort(this::sortRow);
+        // the newest error of any integration, or the order of --sort
+        rows.sort(last ? ORDER.comparator("-age") : order);
 
         // apply limit
         List<Row> display = rows;
@@ -214,8 +240,8 @@ public class ListError extends ProcessWatchCommand {
             if (diagram) {
                 Row row = display.get(0);
                 if (row.messageHistory == null || row.messageHistory.length == 0) {
-                    printer().println("No message history available for this error (enable message history in Camel)");
-                    return 1;
+                    printer().printErr("No message history available for this error (enable message history in Camel)");
+                    return CliExitCode.FAILURE;
                 }
                 return doDiagramCall(Long.parseLong(row.pid), row);
             }
@@ -321,8 +347,8 @@ public class ListError extends ProcessWatchCommand {
         }
 
         if (nodeIds.isEmpty()) {
-            printer().println("No node IDs found in error message history");
-            return 1;
+            printer().printErr("No node IDs found in error message history");
+            return CliExitCode.FAILURE;
         }
 
         RouteDiagramHelper.HighlightStyle hlStyle = RouteDiagramHelper.HighlightStyle.FAIL;
@@ -337,8 +363,8 @@ public class ListError extends ProcessWatchCommand {
 
         List<RouteInfo> routes = RouteDiagramHelper.parseRoutes(structureJson);
         if (routes.isEmpty()) {
-            printer().println("No routes found");
-            return 1;
+            printer().printErr("No routes found");
+            return CliExitCode.FAILURE;
         }
 
         // add structural parent node IDs for each route that has highlighted nodes
@@ -354,8 +380,8 @@ public class ListError extends ProcessWatchCommand {
                 = new RouteDiagramHelper.HighlightInfo(nodeIds, new ArrayList<>(routeOrderSet), hlStyle);
         routes = RouteDiagramHelper.filterAndOrderRoutes(routes, highlightInfo);
         if (routes.isEmpty()) {
-            printer().println("No routes contain highlighted nodes from error history");
-            return 1;
+            printer().printErr("No routes contain highlighted nodes from error history");
+            return CliExitCode.FAILURE;
         }
 
         // layout
@@ -385,16 +411,16 @@ public class ListError extends ProcessWatchCommand {
             try {
                 image = renderer.renderDiagram(layoutRoutes, currentY, colors, nodeIds, hlStyle);
             } catch (IllegalStateException e) {
-                printer().println(e.getMessage());
-                return 1;
+                printer().printErr(e.getMessage());
+                return CliExitCode.FAILURE;
             }
 
             try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
                 TerminalGraphics tg = TerminalGraphicsManager.getBestProtocol(terminal).orElse(null);
                 if (tg == null) {
-                    printer().println(
+                    printer().printErr(
                             "Terminal does not support graphics. Use --theme=ascii or --theme=unicode for text output.");
-                    return 1;
+                    return CliExitCode.USAGE;
                 }
                 TerminalGraphics.ImageOptions opts = new TerminalGraphics.ImageOptions().preserveAspectRatio(true);
                 tg.displayImage(terminal, image, opts);
@@ -428,7 +454,7 @@ public class ListError extends ProcessWatchCommand {
         }
     }
 
-    private boolean matchesFilters(Row row) {
+    private boolean matchesFilters(Row row, long cutoff) {
         if (id != null && !id.equals(row.exchangeId)) {
             return false;
         }
@@ -439,21 +465,11 @@ public class ListError extends ProcessWatchCommand {
                 || !row.exceptionType.toLowerCase().contains(exception.toLowerCase()))) {
             return false;
         }
-        if (handled != null && !handled.equals(String.valueOf(row.handled))) {
+        if (handled != null && !handled.equalsIgnoreCase(String.valueOf(row.handled))) {
             return false;
         }
-        if (ago != null) {
-            try {
-                long millis = TimeUtils.toMilliSeconds(ago);
-                long cutoff = System.currentTimeMillis() - millis;
-                if (row.timestamp < cutoff) {
-                    return false;
-                }
-            } catch (Exception e) {
-                // ignore invalid ago value
-            }
-        }
-        return true;
+        // older than --ago
+        return cutoff <= 0 || row.timestamp >= cutoff;
     }
 
     private String getAge(Row r) {
@@ -482,26 +498,7 @@ public class ListError extends ProcessWatchCommand {
         return type;
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.timestamp, o2.timestamp) * negate;
-            default:
-                return 0;
-        }
-    }
-
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         long timestamp;
@@ -515,13 +512,5 @@ public class ListError extends ProcessWatchCommand {
         String exceptionMessage;
         String[] messageHistory;
         JsonObject rawJson;
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 }

@@ -45,7 +45,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -351,7 +353,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 // prefer FileInputStream over general stream
                 InputStream is = exchange.getMessage().getBody(FileInputStream.class);
                 if (is == null) {
-                    is = exchange.getMessage().getMandatoryBody(InputStream.class);
+                    is = mandatoryBodyStream(exchange, exchange.getMessage(), file);
                 }
                 dis = new DigestInputStream(is, digest);
             }
@@ -378,8 +380,33 @@ public class FileOperations implements GenericFileOperations<File> {
             setPermissions(file);
 
             return true;
-        } catch (InvalidPayloadException | NoSuchAlgorithmException | IOException e) {
+        } catch (InvalidPayloadException e) {
+            // say why: the body cannot be written as it is
+            throw new GenericFileOperationFailedException("Cannot store file: " + file + ": " + e.getMessage(), e);
+        } catch (NoSuchAlgorithmException | IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
+        }
+    }
+
+    /**
+     * The body as a stream to write. A Map, a List or an object (a body unmarshalled from JSON, XML or CSV, or built in
+     * the route) cannot become one, and the converter's message only names the conversion: say what the body is, the
+     * step that set it, and the marshal that writes it, in the data format the file name names (CAMEL-25751,
+     * CAMEL-25749).
+     */
+    static InputStream mandatoryBodyStream(Exchange exchange, Message message, File file) throws InvalidPayloadException {
+        try {
+            return message.getMandatoryBody(InputStream.class);
+        } catch (InvalidPayloadException e) {
+            String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, file.getName());
+            if (hint != null) {
+                InvalidPayloadException answer = new InvalidPayloadException(
+                        exchange, InputStream.class, message,
+                        BodyFacts.describe(exchange) + ", which is not file content: " + hint);
+                answer.initCause(e.getCause() != null ? e.getCause() : e);
+                throw answer;
+            }
+            throw e;
         }
     }
 
@@ -399,7 +426,7 @@ public class FileOperations implements GenericFileOperations<File> {
     private void handleStreamAsFileSource(Exchange exchange, File file, InputStream is)
             throws InvalidPayloadException, IOException {
         if (is == null) {
-            is = exchange.getIn().getMandatoryBody(InputStream.class);
+            is = mandatoryBodyStream(exchange, exchange.getIn(), file);
         }
         writeFileByStream(is, file);
     }
@@ -420,7 +447,7 @@ public class FileOperations implements GenericFileOperations<File> {
             // okay no direct reader conversion, so use an input stream
             // (which a lot can be converted as)
             if (is == null) {
-                is = exchange.getIn().getMandatoryBody(InputStream.class);
+                is = mandatoryBodyStream(exchange, exchange.getIn(), file);
             }
             in = new InputStreamReader(is);
         }

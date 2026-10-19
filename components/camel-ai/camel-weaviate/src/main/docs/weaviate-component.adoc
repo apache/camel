@@ -31,4 +31,67 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The `CamelWeaviateAction` header selects the operation. The routes below create a collection, add an object with its vector (the message body) and its properties (the `CamelWeaviateProperties` header), and run a keyword (BM25) search for the text in the message body:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createCollection
+      steps:
+        - setHeader:
+            name: CamelWeaviateAction
+            expression:
+              constant:
+                expression: CREATE_COLLECTION
+        - to:
+            uri: weaviate:Articles
+            parameters:
+              host: localhost:8080
+- route:
+    from:
+      uri: direct:addArticle
+      steps:
+        - setHeader:
+            name: CamelWeaviateAction
+            expression:
+              constant:
+                expression: CREATE
+        - setHeader:
+            name: CamelWeaviateProperties
+            expression:
+              groovy:
+                expression: "[title: 'Camel in Action', category: 'books']"
+        - setBody:
+            expression:
+              groovy:
+                expression: "[0.1f, 0.2f, 0.3f]"
+        - to:
+            uri: weaviate:Articles
+            parameters:
+              host: localhost:8080
+- route:
+    from:
+      uri: direct:search
+      steps:
+        - setHeader:
+            name: CamelWeaviateAction
+            expression:
+              constant:
+                expression: BM25_QUERY
+        - setHeader:
+            name: CamelWeaviateQueryTopK
+            expression:
+              constant:
+                expression: "5"
+        - to:
+            uri: weaviate:Articles
+            parameters:
+              host: localhost:8080
+        - log:
+            message: "${body}"
+----
+
 

@@ -17,8 +17,11 @@
 package org.apache.camel.component.pqc.crypto.hybrid;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.ECGenParameterSpec;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.XECPublicKey;
+import java.security.spec.NamedParameterSpec;
 import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.KeyAgreement;
@@ -88,7 +91,7 @@ public final class HybridKEM {
         }
 
         // Generate ephemeral key pair for classical key agreement
-        KeyPair ephemeralKeyPair = generateEphemeralKeyPair(classicalPublicKey.getAlgorithm());
+        KeyPair ephemeralKeyPair = generateEphemeralKeyPair(classicalPublicKey);
 
         // Perform classical key agreement
         byte[] classicalSharedSecret;
@@ -263,7 +266,7 @@ public final class HybridKEM {
 
         // Use HKDF to derive the final key
         HKDFBytesGenerator hkdf = createHKDF(kdfAlgorithm);
-        hkdf.init(new HKDFParameters(ikm, null, info.getBytes()));
+        hkdf.init(new HKDFParameters(ikm, null, info.getBytes(StandardCharsets.UTF_8)));
 
         byte[] output = new byte[outputLength];
         hkdf.generateBytes(output, 0, outputLength);
@@ -279,26 +282,40 @@ public final class HybridKEM {
             case "HKDF-SHA256" -> new HKDFBytesGenerator(new SHA256Digest());
             case "HKDF-SHA384" -> new HKDFBytesGenerator(new SHA384Digest());
             case "HKDF-SHA512" -> new HKDFBytesGenerator(new SHA512Digest());
-            default -> new HKDFBytesGenerator(new SHA256Digest());
+            // Falling back to SHA-256 here would let a typo derive a different key on each side of the exchange,
+            // with both ends reporting success
+            default -> throw new IllegalArgumentException(
+                    "Unsupported hybrid KDF algorithm: " + algorithm
+                                                          + ". Supported values are HKDF-SHA256, HKDF-SHA384 and HKDF-SHA512");
         };
     }
 
     /**
-     * Generates an ephemeral key pair for the given algorithm.
+     * Generates the ephemeral key pair used for the classical half of the key agreement.
+     * <p/>
+     * The ephemeral key must live in the same group as the recipient's key, so the group is taken from that key rather
+     * than from its algorithm name: {@code getAlgorithm()} returns a bare {@code EC} for every curve, so deriving the
+     * curve from it would pin every agreement to one curve regardless of the key actually in use.
      */
-    private static KeyPair generateEphemeralKeyPair(String algorithm) throws Exception {
+    private static KeyPair generateEphemeralKeyPair(PublicKey recipientPublicKey) throws Exception {
         KeyPairGenerator kpg;
 
-        if ("EC".equals(algorithm)) {
+        if (recipientPublicKey instanceof ECPublicKey ecPublicKey) {
             kpg = KeyPairGenerator.getInstance("EC");
-            // Default to P-256
-            kpg.initialize(new ECGenParameterSpec("secp256r1"), SecureRandomHelper.getSecureRandom());
-        } else if ("X25519".equals(algorithm) || "XDH".equals(algorithm)) {
-            kpg = KeyPairGenerator.getInstance("X25519");
-        } else if ("X448".equals(algorithm)) {
-            kpg = KeyPairGenerator.getInstance("X448");
+            kpg.initialize(ecPublicKey.getParams(), SecureRandomHelper.getSecureRandom());
+        } else if (recipientPublicKey instanceof XECPublicKey xecPublicKey
+                && xecPublicKey.getParams() instanceof NamedParameterSpec namedSpec) {
+            kpg = KeyPairGenerator.getInstance(namedSpec.getName());
+            kpg.initialize(namedSpec, SecureRandomHelper.getSecureRandom());
         } else {
-            // For other algorithms, try to use the same algorithm
+            // BouncyCastle XDH keys report the concrete name (X25519 / X448), which fully determines the group
+            String algorithm = recipientPublicKey.getAlgorithm();
+            if ("XDH".equals(algorithm)) {
+                throw new InvalidKeyException(
+                        "Cannot determine the X25519/X448 group of the classical public key of type "
+                                              + recipientPublicKey.getClass().getName()
+                                              + ": it exposes neither XECPublicKey parameters nor a concrete algorithm name");
+            }
             kpg = KeyPairGenerator.getInstance(algorithm);
         }
 
@@ -306,17 +323,16 @@ public final class HybridKEM {
     }
 
     /**
-     * Reconstructs a public key from encoded bytes.
+     * Reconstructs a public key from encoded bytes. The X.509 encoding carries its own domain parameters, so a key
+     * factory for the family is enough - naming a concrete curve here would reject the other curves of that family.
      */
     private static PublicKey reconstructPublicKey(byte[] encoded, String algorithm) throws Exception {
         KeyFactory kf;
 
         if ("EC".equals(algorithm) || "ECDH".equals(algorithm)) {
             kf = KeyFactory.getInstance("EC");
-        } else if ("X25519".equals(algorithm) || "XDH".equals(algorithm)) {
-            kf = KeyFactory.getInstance("X25519");
-        } else if ("X448".equals(algorithm)) {
-            kf = KeyFactory.getInstance("X448");
+        } else if ("XDH".equals(algorithm)) {
+            kf = KeyFactory.getInstance("XDH");
         } else {
             kf = KeyFactory.getInstance(algorithm);
         }

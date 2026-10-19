@@ -148,10 +148,12 @@ class AuthoringToolsTest {
     @Test
     void writeValidatesFirstAndRefusesInvalidContent(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");
+        // a misspelling no repair reads (a write repairs logLevel to loggingLevel, CAMEL-25532)
         JsonObject invalid = call("camel_write_file", new ToolContext(),
-                Map.of("directory", dir.toString(), "file", "demo.camel.yaml", "content", INVALID_ROUTE));
+                Map.of("directory", dir.toString(), "file", "demo.camel.yaml", "content",
+                        VALID_ROUTE.replace("loggingLevel", "loggingLevl")));
         assertEquals("invalid", invalid.getString("status"));
-        assertTrue(invalid.getCollection("errors").stream().anyMatch(m -> m.toString().contains("logLevel")),
+        assertTrue(invalid.getCollection("errors").stream().anyMatch(m -> m.toString().contains("loggingLevl")),
                 invalid.toJson());
         assertEquals("- route: {}\n", Files.readString(dir.resolve("demo.camel.yaml"), StandardCharsets.UTF_8));
 
@@ -209,6 +211,21 @@ class AuthoringToolsTest {
                         VALID_ROUTE));
         assertEquals("created", written.getString("status"));
         assertEquals(VALID_ROUTE, Files.readString(dir.resolve("src/main/resources/camel/x.camel.yaml")));
+    }
+
+    @Test
+    void aBeansFileIsListedWithTheRouteFiles(@TempDir Path dir) throws IOException {
+        // beans.yaml has no route, yet camel run loads it with the routes: a model that did not see it among the route
+        // files took the beans it declares for missing
+        Files.writeString(dir.resolve("demo.camel.yaml"), VALID_ROUTE);
+        Files.createDirectories(dir.resolve("src/main/resources"));
+        Files.writeString(dir.resolve("src/main/resources/beans.yaml"), """
+                - beans:
+                    - name: orderNumber
+                      type: camel.example.OrderNumber
+                """);
+        JsonObject list = call("camel_get_files", new ToolContext(), Map.of("directory", dir.toString()));
+        assertEquals(List.of("demo.camel.yaml", "src/main/resources/beans.yaml"), list.getCollection("routeFiles"));
     }
 
     @Test

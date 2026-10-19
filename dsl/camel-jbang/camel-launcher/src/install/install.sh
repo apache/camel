@@ -194,12 +194,12 @@ validate_tar() {
     grep -Fqx "$expected_root/bin/camel.sh" "$listing" || fail "archive is missing bin/camel.sh"
 }
 
-# Runs the freshly staged upstream launcher; a nonzero exit (e.g. no Java 17+ available) aborts
+# Runs the freshly staged upstream launcher; a nonzero exit (e.g. no Java 21+ available) aborts
 # the install and leaves the previously active installation untouched.
 verify_staged() {
     staged_sh="$1"
     chmod +x "$staged_sh" 2>/dev/null || true
-    "$staged_sh" version >/dev/null 2>&1 || fail "staged launcher failed verification (Java 17+ required)"
+    "$staged_sh" version >/dev/null 2>&1 || fail "staged launcher failed verification (Java 21+ required)"
 }
 
 activate() {

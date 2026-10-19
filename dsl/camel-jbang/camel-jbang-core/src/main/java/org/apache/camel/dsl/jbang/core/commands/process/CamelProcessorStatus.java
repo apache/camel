@@ -18,9 +18,11 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -28,7 +30,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.tooling.model.Strings;
@@ -48,6 +52,8 @@ import picocli.CommandLine.Command;
                  "  camel get processor --source",
                  "  camel get processor --watch" })
 public class CamelProcessorStatus extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     public static class PidNameCompletionCandidates implements Iterable<String> {
 
@@ -206,38 +212,46 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
 
         // filter rows
         if (running || filter != null || group != null) {
-            rows.removeIf(r -> {
-                boolean keep = true;
-                if (filter != null) {
-                    keep = PatternHelper.matchPatterns(r.processorId, filter);
-                }
-                if (!keep && filter != null) {
-                    for (String f : filter) {
-                        if (!keep) {
-                            String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching processor
-                            keep = PatternHelper.matchPattern(r.processor, w);
-                        }
-                    }
-                }
-                // group take precedence
-                if (keep && group != null) {
-                    keep = PatternHelper.matchPatterns(r.group, group);
-                }
-                if (keep && running) {
-                    keep = "Started".equals(r.state);
-                }
-                return !keep;
-            });
+            // a route stays with its processors that are kept, so they are shown with their integration and route
+            Set<String> routesOfProcessors = rows.stream()
+                    .filter(r -> r.processorId != null && accept(r))
+                    .map(r -> r.pid + "/" + r.routeId)
+                    .collect(Collectors.toSet());
+            rows.removeIf(r -> !accept(r)
+                    && (r.processorId != null || !routesOfProcessors.contains(r.pid + "/" + r.routeId)));
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(order());
 
         if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 
         return 0;
+    }
+
+    private boolean accept(Row r) {
+        boolean keep = true;
+        if (filter != null) {
+            keep = PatternHelper.matchPatterns(r.processorId, filter);
+        }
+        if (!keep && filter != null) {
+            for (String f : filter) {
+                if (!keep) {
+                    String w = f.endsWith("*") ? f : f + "*"; // use wildcard in matching processor
+                    keep = PatternHelper.matchPattern(r.processor, w);
+                }
+            }
+        }
+        // group take precedence
+        if (keep && group != null) {
+            keep = PatternHelper.matchPatterns(r.group, group);
+        }
+        if (keep && running) {
+            keep = "Started".equals(r.state);
+        }
+        return keep;
     }
 
     private void addProcessors(Row route, List<Row> rows, List<JsonObject> processors) {
@@ -247,7 +261,6 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
             row.name = route.name;
             row.routeId = route.routeId;
             row.group = route.group;
-            rows.add(row);
             row.processorId = o.getString("id");
             row.nodePrefixId = o.getString("nodePrefixId");
             row.processor = o.getString("processor");
@@ -300,6 +313,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                     }
                 }
             }
+            // with --filter-mean only the slower processors, as for the routes
+            if (mean <= 0 || (row.mean != null && Long.parseLong(row.mean) >= mean)) {
+                rows.add(row);
+            }
         }
     }
 
@@ -317,6 +334,10 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 jo.put("total", JsonValues.number(r.total));
                 jo.put("failed", JsonValues.number(r.failed));
                 jo.put("inflight", JsonValues.number(r.inflight));
+                // the exchanges that came from a remote endpoint (of the routes only)
+                jo.put("remoteTotal", JsonValues.number(r.totalRemote));
+                jo.put("remoteFailed", JsonValues.number(r.failedRemote));
+                jo.put("remoteInflight", JsonValues.number(r.inflightRemote));
                 // processing times in millis
                 jo.put("mean", JsonValues.number(r.mean));
                 jo.put("min", JsonValues.number(r.min));
@@ -365,23 +386,11 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 new Column().header("SINCE-LAST").with(this::getSinceLast))));
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
+    /**
+     * The order of the rows by the --sort option.
+     */
+    protected Comparator<Row> order() {
+        return ORDER.comparator(sort);
     }
 
     protected String getSinceLast(Row r) {
@@ -391,15 +400,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     }
 
     protected String getDelta(Row r) {
-        if (r.delta != null) {
-            if (r.delta.startsWith("-")) {
-                return r.delta;
-            } else if (!"0".equals(r.delta)) {
-                // use plus sign to denote slower when positive
-                return "+" + r.delta;
-            }
-        }
-        return r.delta;
+        return ListingFormat.delta(r.delta);
     }
 
     protected String getTotal(Row r) {

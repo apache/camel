@@ -1139,6 +1139,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setGroup(group);
                     option.setLabel(label);
                     option.setEnums(enums);
+                    option.setMultiEnum(enums != null && !enums.isEmpty() && metadata != null && metadata.multiEnum());
                     option.setNestedType(nestedType);
                     option.setConfigurationClass(nestedTypeName);
                     option.setConfigurationField(nestedFieldName);
@@ -1471,6 +1472,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         option.setGroup(group);
         option.setLabel(label);
         option.setEnums(enums);
+        option.setMultiEnum(enums != null && !enums.isEmpty()
+                && (param.multiEnum() || metadata != null && metadata.multiEnum()));
         option.setNestedType(nestedType);
         option.setConfigurationClass(nestedTypeName);
         option.setConfigurationField(nestedFieldName);

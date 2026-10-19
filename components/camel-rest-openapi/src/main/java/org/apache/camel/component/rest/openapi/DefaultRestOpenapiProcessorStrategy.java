@@ -68,8 +68,6 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
 
     private static final String BODY_VERBS = "DELETE,PUT,POST,PATCH";
 
-    private static final String GEN_OPID = "GENOPID_";
-
     private CamelContext camelContext;
     private ProducerCache producerCache;
     private String component = "direct";
@@ -163,12 +161,11 @@ public class DefaultRestOpenapiProcessorStrategy extends ServiceSupport
      *
      * @param  path       The path for this operation, such as /users.
      * @param  httpMethod The operation to perform
-     * @return            A generated operation id based on the path and the operation. Slashes and braces in the path
-     *                    are replaced with placeholder characters.
+     * @return            A generated operation id based on the path and the operation, see
+     *                    {@link RestOpenApiHelper#generateOperationId(String, HttpMethod)}
      */
     private String generateOperationId(String path, HttpMethod httpMethod) {
-        final String sanitizedPath = path.replace('/', '.').replaceAll("[{}]", "_");
-        final String opId = GEN_OPID + httpMethod.name() + sanitizedPath;
+        final String opId = RestOpenApiHelper.generateOperationId(path, httpMethod);
         LOG.debug("Generated operationId {} for path {} and method {}", opId, path, httpMethod.name());
         return opId;
     }

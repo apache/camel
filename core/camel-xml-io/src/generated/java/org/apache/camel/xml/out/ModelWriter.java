@@ -645,9 +645,6 @@ public class ModelWriter extends BaseWriter {
     public void writeVariableExpression(VariableExpression def) throws IOException {
         doWriteVariableExpression("variable", def);
     }
-    public void writeWasmExpression(WasmExpression def) throws IOException {
-        doWriteWasmExpression("wasm", def);
-    }
     public void writeXMLTokenizerExpression(XMLTokenizerExpression def) throws IOException {
         doWriteXMLTokenizerExpression("xtokenize", def);
     }
@@ -1038,15 +1035,15 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteFaultToleranceConfigurationCommonAttributes(FaultToleranceConfigurationCommon def) throws IOException {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("typedGuard", def.getTypedGuard(), null);
-        doWriteAttribute("delay", def.getDelay(), "5000");
-        doWriteAttribute("successThreshold", def.getSuccessThreshold(), "1");
-        doWriteAttribute("requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute("failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
-        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute("delay", def.getDelay(), null);
+        doWriteAttribute("successThreshold", def.getSuccessThreshold(), null);
+        doWriteAttribute("requestVolumeThreshold", def.getRequestVolumeThreshold(), null);
+        doWriteAttribute("failureRatio", def.getFailureRatio(), null);
+        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), null);
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), null);
+        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), null);
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), null);
+        doWriteAttribute("bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), null);
         doWriteAttribute("threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
     }
     protected void doWriteFaultToleranceConfigurationCommon(String name, FaultToleranceConfigurationCommon def) throws IOException {
@@ -1470,28 +1467,28 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("maximumRedeliveries", def.getMaximumRedeliveries(), null);
-        doWriteAttribute("redeliveryDelay", def.getRedeliveryDelay(), "1000");
+        doWriteAttribute("redeliveryDelay", def.getRedeliveryDelay(), null);
         doWriteAttribute("asyncDelayedRedelivery", def.getAsyncDelayedRedelivery(), null);
-        doWriteAttribute("backOffMultiplier", def.getBackOffMultiplier(), "2.0");
+        doWriteAttribute("backOffMultiplier", def.getBackOffMultiplier(), null);
         doWriteAttribute("useExponentialBackOff", def.getUseExponentialBackOff(), null);
-        doWriteAttribute("collisionAvoidanceFactor", def.getCollisionAvoidanceFactor(), "0.15");
+        doWriteAttribute("collisionAvoidanceFactor", def.getCollisionAvoidanceFactor(), null);
         doWriteAttribute("useCollisionAvoidance", def.getUseCollisionAvoidance(), null);
-        doWriteAttribute("maximumRedeliveryDelay", def.getMaximumRedeliveryDelay(), "60000");
-        doWriteAttribute("retriesExhaustedLogLevel", def.getRetriesExhaustedLogLevel(), "ERROR");
-        doWriteAttribute("retryAttemptedLogLevel", def.getRetryAttemptedLogLevel(), "DEBUG");
-        doWriteAttribute("retryAttemptedLogInterval", def.getRetryAttemptedLogInterval(), "1");
-        doWriteAttribute("logRetryAttempted", def.getLogRetryAttempted(), "true");
-        doWriteAttribute("logStackTrace", def.getLogStackTrace(), "true");
+        doWriteAttribute("maximumRedeliveryDelay", def.getMaximumRedeliveryDelay(), null);
+        doWriteAttribute("retriesExhaustedLogLevel", def.getRetriesExhaustedLogLevel(), null);
+        doWriteAttribute("retryAttemptedLogLevel", def.getRetryAttemptedLogLevel(), null);
+        doWriteAttribute("retryAttemptedLogInterval", def.getRetryAttemptedLogInterval(), null);
+        doWriteAttribute("logRetryAttempted", def.getLogRetryAttempted(), null);
+        doWriteAttribute("logStackTrace", def.getLogStackTrace(), null);
         doWriteAttribute("logRetryStackTrace", def.getLogRetryStackTrace(), null);
         doWriteAttribute("logHandled", def.getLogHandled(), null);
-        doWriteAttribute("logNewException", def.getLogNewException(), "true");
+        doWriteAttribute("logNewException", def.getLogNewException(), null);
         doWriteAttribute("logContinued", def.getLogContinued(), null);
-        doWriteAttribute("logExhausted", def.getLogExhausted(), "true");
+        doWriteAttribute("logExhausted", def.getLogExhausted(), null);
         doWriteAttribute("logExhaustedMessageHistory", def.getLogExhaustedMessageHistory(), null);
         doWriteAttribute("logExhaustedMessageBody", def.getLogExhaustedMessageBody(), null);
         doWriteAttribute("disableRedelivery", def.getDisableRedelivery(), null);
         doWriteAttribute("delayPattern", def.getDelayPattern(), null);
-        doWriteAttribute("allowRedeliveryWhileStopping", def.getAllowRedeliveryWhileStopping(), "true");
+        doWriteAttribute("allowRedeliveryWhileStopping", def.getAllowRedeliveryWhileStopping(), null);
         doWriteAttribute("exchangeFormatterRef", def.getExchangeFormatterRef(), null);
         endElement(name);
     }
@@ -1544,29 +1541,29 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("circuitBreaker", def.getCircuitBreaker(), null);
         doWriteAttribute("config", def.getConfig(), null);
-        doWriteAttribute("failureRateThreshold", def.getFailureRateThreshold(), "50");
-        doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
-        doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
-        doWriteAttribute("slidingWindowSize", def.getSlidingWindowSize(), "100");
-        doWriteAttribute("slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
-        doWriteAttribute("slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), "SYNCHRONIZED");
-        doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
-        doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
-        doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState(), "60000");
-        doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
-        doWriteAttribute("maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), "0");
-        doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
-        doWriteAttribute("slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60000");
-        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
-        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
-        doWriteAttribute("bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
-        doWriteAttribute("asynchronous", def.getAsynchronous(), "false");
-        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute("failureRateThreshold", def.getFailureRateThreshold(), null);
+        doWriteAttribute("permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), null);
+        doWriteAttribute("throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), null);
+        doWriteAttribute("slidingWindowSize", def.getSlidingWindowSize(), null);
+        doWriteAttribute("slidingWindowType", def.getSlidingWindowType(), null);
+        doWriteAttribute("slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), null);
+        doWriteAttribute("minimumNumberOfCalls", def.getMinimumNumberOfCalls(), null);
+        doWriteAttribute("writableStackTraceEnabled", def.getWritableStackTraceEnabled(), null);
+        doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState(), null);
+        doWriteAttribute("automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), null);
+        doWriteAttribute("maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), null);
+        doWriteAttribute("slowCallRateThreshold", def.getSlowCallRateThreshold(), null);
+        doWriteAttribute("slowCallDurationThreshold", def.getSlowCallDurationThreshold(), null);
+        doWriteAttribute("bulkheadEnabled", def.getBulkheadEnabled(), null);
+        doWriteAttribute("bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), null);
+        doWriteAttribute("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), null);
+        doWriteAttribute("bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), null);
+        doWriteAttribute("asynchronous", def.getAsynchronous(), null);
+        doWriteAttribute("timeoutEnabled", def.getTimeoutEnabled(), null);
         doWriteAttribute("timeoutExecutorService", def.getTimeoutExecutorService(), null);
-        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
-        doWriteAttribute("micrometerEnabled", def.getMicrometerEnabled(), "false");
+        doWriteAttribute("timeoutDuration", def.getTimeoutDuration(), null);
+        doWriteAttribute("timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), null);
+        doWriteAttribute("micrometerEnabled", def.getMicrometerEnabled(), null);
     }
     protected void doWriteResilience4jConfigurationCommonElements(Resilience4jConfigurationCommon def) throws IOException {
         doWriteList(null, "ignoreException", def.getIgnoreExceptions(), this::doWriteString);
@@ -1654,8 +1651,8 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("delayer", def.getDelayer(), null);
         doWriteAttribute("errorHandlerRef", def.getErrorHandlerRef(), null);
         doWriteAttribute("routePolicyRef", def.getRoutePolicyRef(), null);
-        doWriteAttribute("shutdownRoute", def.getShutdownRoute(), "Default");
-        doWriteAttribute("shutdownRunningTask", def.getShutdownRunningTask(), "CompleteCurrentTaskOnly");
+        doWriteAttribute("shutdownRoute", def.getShutdownRoute(), null);
+        doWriteAttribute("shutdownRunningTask", def.getShutdownRunningTask(), null);
         doWriteAttribute("precondition", def.getPrecondition(), null);
         doWriteList(null, "routeProperty", def.getRouteProperties(), this::doWritePropertyDefinition);
         doWriteElement("errorHandler", def.getErrorHandler(), this::doWriteErrorHandlerDefinition);
@@ -3152,13 +3149,6 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement(name);
     }
-    protected void doWriteWasmExpression(String name, WasmExpression def) throws IOException {
-        startElement(name);
-        doWriteTypedExpressionDefinitionAttributes(def);
-        doWriteAttribute("module", def.getModule(), null);
-        doWriteValue(def.getExpression());
-        endElement(name);
-    }
     protected void doWriteXMLTokenizerExpression(String name, XMLTokenizerExpression def) throws IOException {
         startElement(name);
         doWriteNamespaceAwareExpressionAttributes(def);
@@ -3367,14 +3357,14 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("consumes", def.getConsumes(), null);
         doWriteAttribute("produces", def.getProduces(), null);
-        doWriteAttribute("bindingMode", def.getBindingMode(), "off");
+        doWriteAttribute("bindingMode", def.getBindingMode(), null);
         doWriteAttribute("type", def.getType(), null);
         doWriteAttribute("outType", def.getOutType(), null);
-        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute("enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute("component", def.getComponent(), null);
         endElement(name);
     }
@@ -3394,13 +3384,13 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("apiContextRouteId", def.getApiContextRouteId(), null);
         doWriteAttribute("apiVendorExtension", def.getApiVendorExtension(), "false");
         doWriteAttribute("hostNameResolver", toString(def.getHostNameResolver()), "allLocalIp");
-        doWriteAttribute("bindingMode", toString(def.getBindingMode()), "off");
+        doWriteAttribute("bindingMode", toString(def.getBindingMode()), null);
         doWriteAttribute("bindingPackageScan", def.getBindingPackageScan(), null);
-        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute("enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute("inlineRoutes", def.getInlineRoutes(), "true");
         doWriteAttribute("jsonDataFormat", def.getJsonDataFormat(), "jackson");
         doWriteAttribute("xmlDataFormat", def.getXmlDataFormat(), "jaxb");
@@ -3420,12 +3410,12 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("path", def.getPath(), null);
         doWriteAttribute("consumes", def.getConsumes(), null);
         doWriteAttribute("produces", def.getProduces(), null);
-        doWriteAttribute("bindingMode", def.getBindingMode(), "off");
-        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute("bindingMode", def.getBindingMode(), null);
+        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute("enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute("apiDocs", def.getApiDocs(), "true");
         doWriteAttribute("tag", def.getTag(), null);
         doWriteList(null, null, def.getVerbs(), this::doWriteVerbDefinitionRef);
@@ -3477,19 +3467,19 @@ public class ModelWriter extends BaseWriter {
     }
     protected void doWriteVerbDefinitionAttributes(VerbDefinition def) throws IOException {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
-        doWriteAttribute("enableCORS", def.getEnableCORS(), "false");
+        doWriteAttribute("enableCORS", def.getEnableCORS(), null);
         doWriteAttribute("deprecated", def.getDeprecated(), "false");
         doWriteAttribute("streamCache", def.getStreamCache(), null);
         doWriteAttribute("type", def.getType(), null);
         doWriteAttribute("outType", def.getOutType(), null);
-        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), "false");
+        doWriteAttribute("clientResponseValidation", def.getClientResponseValidation(), null);
         doWriteAttribute("path", def.getPath(), null);
         doWriteAttribute("routeId", def.getRouteId(), null);
-        doWriteAttribute("bindingMode", def.getBindingMode(), "off");
+        doWriteAttribute("bindingMode", def.getBindingMode(), null);
         doWriteAttribute("apiDocs", def.getApiDocs(), "true");
-        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), "false");
-        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), "false");
+        doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), null);
+        doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), null);
         doWriteAttribute("produces", def.getProduces(), null);
         doWriteAttribute("disabled", def.getDisabled(), null);
         doWriteAttribute("consumes", def.getConsumes(), null);
@@ -3973,7 +3963,6 @@ public class ModelWriter extends BaseWriter {
                 case "SpELExpression" -> doWriteSpELExpression("spel", (SpELExpression) v);
                 case "TokenizerExpression" -> doWriteTokenizerExpression("tokenize", (TokenizerExpression) v);
                 case "VariableExpression" -> doWriteVariableExpression("variable", (VariableExpression) v);
-                case "WasmExpression" -> doWriteWasmExpression("wasm", (WasmExpression) v);
                 case "XMLTokenizerExpression" -> doWriteXMLTokenizerExpression("xtokenize", (XMLTokenizerExpression) v);
                 case "XPathExpression" -> doWriteXPathExpression("xpath", (XPathExpression) v);
                 case "XQueryExpression" -> doWriteXQueryExpression("xquery", (XQueryExpression) v);

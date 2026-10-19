@@ -63,24 +63,26 @@ class AuthoringToolsLoopTest {
 
     @Test
     void theSameRefusedContentAgainIsSaidToBeTheSame(@TempDir Path dir) throws IOException {
-        JsonObject first = write(dir, STEPS_NEXT_TO_SPLIT);
+        // a misspelled option: a write repairs steps: next to split: (CAMEL-25532), not this
+        String refused = STEPS_NEXT_TO_SPLIT.replace("message:", "mesage:")
+                .replace("      steps:\n            - log:\n                mesage: \"pick ${body}\"",
+                        "        steps:\n              - log:\n                  mesage: \"pick ${body}\"");
+        JsonObject first = write(dir, refused);
         assertThat(first.getString("status")).isEqualTo("invalid");
         assertThat(first.get("repeated")).isNull();
 
-        JsonObject second = write(dir, STEPS_NEXT_TO_SPLIT);
+        JsonObject second = write(dir, refused);
         assertThat(second.getInteger("repeated")).isEqualTo(2);
         assertThat(second.getString("message"))
                 .contains("the same as your last write of it, refused 2 times now")
                 .contains("where an error shows the lines to write, copy them");
-        assertThat(write(dir, STEPS_NEXT_TO_SPLIT).getInteger("repeated")).isEqualTo(3);
+        assertThat(write(dir, refused).getInteger("repeated")).isEqualTo(3);
 
         // other content starts again, and a write that goes through forgets it
-        assertThat(write(dir, STEPS_NEXT_TO_SPLIT.replace("pick", "take")).get("repeated")).isNull();
-        assertThat(write(dir,
-                STEPS_NEXT_TO_SPLIT.replace("      steps:\n            - log:\n                message: \"pick ${body}\"",
-                        "        steps:\n              - log:\n                  message: \"pick ${body}\""))
-                .getString("status")).isIn("created", "overwritten");
-        assertThat(write(dir, STEPS_NEXT_TO_SPLIT).get("repeated")).isNull();
+        assertThat(write(dir, refused.replace("pick", "take")).get("repeated")).isNull();
+        assertThat(write(dir, refused.replace("mesage:", "message:")).getString("status"))
+                .isIn("created", "overwritten");
+        assertThat(write(dir, refused).get("repeated")).isNull();
     }
 
     @Test

@@ -30,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -45,6 +46,10 @@ import picocli.CommandLine.Command;
                  "  camel get route-controller",
                  "  camel get route-controller --json" })
 public class RouteControllerAction extends ActionWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("id", r -> r.routeId)
+            .text("state", r -> r.status);
 
     public static class IdStateCompletionCandidates implements Iterable<String> {
 
@@ -66,11 +71,13 @@ public class RouteControllerAction extends ActionWatchCommand {
     String sort;
 
     @CommandLine.Option(names = { "--header" },
-                        description = "Include controller configuration details", defaultValue = "true")
+                        description = "Include controller configuration details", defaultValue = "true", arity = "0..1",
+                        fallbackValue = "true")
     boolean header;
 
     @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack-traces in error messages", defaultValue = "true")
+                        description = "Include stack-traces in error messages", defaultValue = "true", arity = "0..1",
+                        fallbackValue = "true")
     boolean trace;
 
     @CommandLine.Option(names = { "--depth" },
@@ -145,7 +152,7 @@ public class RouteControllerAction extends ActionWatchCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (watch) {
             clearScreen();
@@ -157,14 +164,15 @@ public class RouteControllerAction extends ActionWatchCommand {
                     printer().printf("\tInitial Starting Routes: %b%n", jo.getBoolean("startingRoutes"));
                     printer().printf("\tUnhealthy Routes: %b%n", jo.getBoolean("unhealthyRoutes"));
                     printer().printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
-                    printer().printf("\tRoutes Started: %d%n", jo.getInteger("startedRoutes"));
+                    printer().printf("\tRoutes Started: %d%n", jo.getLong("startedRoutes"));
                     printer().printf("\tRoutes Restarting: %d%n", jo.getInteger("restartingRoutes"));
                     printer().printf("\tRoutes Exhausted: %d%n", jo.getInteger("exhaustedRoutes"));
-                    printer().printf("\tInitial Delay: %d%n", jo.getInteger("initialDelay"));
-                    printer().printf("\tBackoff Delay: %d%n", jo.getInteger("backoffDelay"));
-                    printer().printf("\tBackoff Max Delay: %d%n", jo.getInteger("backoffMaxDelay"));
-                    printer().printf("\tBackoff Max Elapsed Time: %d%n", jo.getInteger("backoffMaxElapsedTime"));
-                    printer().printf("\tBackoff Max Attempts: %d%n", jo.getInteger("backoffMaxAttempts"));
+                    // the delays and times in millis, and the attempts, are longs
+                    printer().printf("\tInitial Delay: %d%n", jo.getLong("initialDelay"));
+                    printer().printf("\tBackoff Delay: %d%n", jo.getLong("backoffDelay"));
+                    printer().printf("\tBackoff Max Delay: %d%n", jo.getLong("backoffMaxDelay"));
+                    printer().printf("\tBackoff Max Elapsed Time: %d%n", jo.getLong("backoffMaxElapsedTime"));
+                    printer().printf("\tBackoff Max Attempts: %d%n", jo.getLong("backoffMaxAttempts"));
                     printer().printf("\tThread Pool Size: %d%n", jo.getInteger("threadPoolSize"));
                     printer().printf("\tUnhealthy On Restarting: %b%n", jo.getBoolean("unhealthyOnRestarting"));
                     printer().printf("\tUnhealthy On Exhaust: %b%n", jo.getBoolean("unhealthyOnExhausted"));
@@ -174,7 +182,10 @@ public class RouteControllerAction extends ActionWatchCommand {
             } else {
                 if (header) {
                     printer().println("Default Route Controller");
-                    printer().printf("\tStarting Routes: %b%n", jo.getBoolean("startingRoutes"));
+                    // only the supervising route controller tells
+                    if (jo.containsKey("startingRoutes")) {
+                        printer().printf("\tStarting Routes: %b%n", jo.getBoolean("startingRoutes"));
+                    }
                     printer().printf("\tRoutes Total: %s%n", jo.getInteger("totalRoutes"));
                     printer().println("\n");
                 }
@@ -226,23 +237,6 @@ public class RouteControllerAction extends ActionWatchCommand {
                     printer().println(String.valueOf(sb));
                 }
             }
-        }
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "id":
-                return o1.routeId.compareToIgnoreCase(o2.routeId) * negate;
-            case "state":
-                return o1.status.compareToIgnoreCase(o2.status) * negate;
-            default:
-                return 0;
         }
     }
 

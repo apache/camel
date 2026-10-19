@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -49,6 +48,9 @@ public class UpdateRun extends CamelCommand {
     @CommandLine.Mixin
     private CamelUpdateMixin updateMixin;
 
+    // the directory of the Maven project to update
+    Path projectDir = Path.of(".");
+
     public UpdateRun(CamelJBangMain main) {
         super(main);
     }
@@ -63,18 +65,14 @@ public class UpdateRun extends CamelCommand {
      */
     @Override
     public Integer doCall() throws Exception {
-        try (Stream<Path> files = Files.list(Path.of("."))) {
-            // Check if the current directory contains a Maven project (i.e., a pom.xml file)
-            if (files.noneMatch(f -> f.getFileName().toString().equals("pom.xml"))) {
-                printer().printErr("No Maven Project found in the current directory, " +
-                                   "please execute camel upgrade run command in the directory containing the Maven project to update");
-
-                return CliExitCode.NOT_FOUND;
-            }
+        if (!Files.isRegularFile(projectDir.resolve("pom.xml"))) {
+            printer().printErr("No Maven project found in the current directory: run camel update run in the directory "
+                               + "with the pom.xml of the project to update");
+            return CliExitCode.NOT_FOUND;
         }
 
         List<String> command = new ArrayList<>();
-        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader();) {
+        try (MavenDependencyDownloader downloader = createDownloader()) {
             downloader.setRepositories(updateMixin.mavenResolver.repos());
             downloader.start();
 
@@ -94,14 +92,21 @@ public class UpdateRun extends CamelCommand {
 
                 return CliExitCode.FAILURE;
             } catch (DownloadException e) {
-                printer().printErr(String.format("Cannot find Camel Upgrade Recipes %s:%s:%s",
-                        "org.apache.camel.upgrade", update.getArtifactCoordinates(), updateMixin.version));
+                printer().printErr("Cannot download what the update to Camel " + updateMixin.version + " needs: "
+                                   + e.getMessage());
 
                 return CliExitCode.FAILURE;
             }
         }
 
         return executeCommand(command);
+    }
+
+    /**
+     * The downloader of the upgrade recipes and versions.
+     */
+    protected MavenDependencyDownloader createDownloader() {
+        return new MavenDependencyDownloader();
     }
 
     /**
@@ -112,8 +117,8 @@ public class UpdateRun extends CamelCommand {
      * @throws IOException          if an I/O error occurs
      * @throws InterruptedException if the command execution is interrupted
      */
-    private int executeCommand(List<String> command) throws IOException, InterruptedException {
-        ProcessBuilder pb = new ProcessBuilder(command);
+    protected int executeCommand(List<String> command) throws IOException, InterruptedException {
+        ProcessBuilder pb = new ProcessBuilder(command).directory(projectDir.toFile());
         Process p = pb.redirectErrorStream(true)
                 .start();
 

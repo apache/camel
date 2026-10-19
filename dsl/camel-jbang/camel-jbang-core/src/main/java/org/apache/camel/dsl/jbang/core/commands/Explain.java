@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -141,7 +142,7 @@ public class Explain extends CamelCommand {
 
     @Option(names = { "--stream" },
             description = "Stream the response as it's generated (shows progress)",
-            defaultValue = "true")
+            defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean stream = true;
 
     public Explain(CamelJBangMain main) {
@@ -150,6 +151,9 @@ public class Explain extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        if (!"text".equals(format) && !"markdown".equals(format)) {
+            throw CliException.usage("--format must be text or markdown, was: " + format);
+        }
         // check the input before reaching out to an LLM
         for (String file : files) {
             if (!Files.exists(Path.of(file))) {
@@ -185,20 +189,21 @@ public class Explain extends CamelCommand {
     }
 
     private void printConfiguration(LlmClient client) {
-        printer().println("LLM Configuration:");
-        printer().println("  URL: " + (client.url != null ? client.url : "(Vertex AI)"));
-        printer().println("  API Type: " + client.apiType);
-        printer().println("  Model: " + client.model);
+        printer().printDiagnostic("LLM Configuration:");
+        printer().printDiagnostic("  URL: " + (client.url != null ? client.url : "(Vertex AI)"));
+        printer().printDiagnostic("  API Type: " + client.apiType);
+        printer().printDiagnostic("  Model: " + client.model);
         printMaskedApiKey(client.apiKey);
-        printer().println();
+        printer().printDiagnostic("");
     }
 
     private void printMaskedApiKey(String key) {
         if (key == null || key.isBlank()) {
             return;
         }
-        String masked = "****" + key.substring(Math.max(0, key.length() - 4));
-        printer().println("  API Key: " + masked);
+        // the last characters of a long key only: a short one would be shown whole
+        String masked = key.length() > 8 ? "****" + key.substring(key.length() - 4) : "****";
+        printer().printDiagnostic("  API Key: " + masked);
     }
 
     private void printUsageHelp() {
@@ -227,8 +232,7 @@ public class Explain extends CamelCommand {
 
         printPromptsIfRequested(sysPrompt, userPrompt);
 
-        printer().println("Analyzing route with " + client.model + " (" + client.apiType + ")...");
-        printer().println();
+        printer().printDiagnostic("Analyzing route with " + client.model + " (" + client.apiType + ")...");
 
         String explanation = client.generate(sysPrompt, userPrompt);
 
@@ -246,12 +250,12 @@ public class Explain extends CamelCommand {
         if (!showPrompt) {
             return;
         }
-        printer().println("--- SYSTEM PROMPT ---");
-        printer().println(sysPrompt);
-        printer().println("--- USER PROMPT ---");
-        printer().println(userPrompt);
-        printer().println("--- END PROMPTS ---");
-        printer().println();
+        printer().printDiagnostic("--- SYSTEM PROMPT ---");
+        printer().printDiagnostic(sysPrompt);
+        printer().printDiagnostic("--- USER PROMPT ---");
+        printer().printDiagnostic(userPrompt);
+        printer().printDiagnostic("--- END PROMPTS ---");
+        printer().printDiagnostic("");
     }
 
     private int handleExplanationResult(String explanation) {

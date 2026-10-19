@@ -255,10 +255,9 @@ The assistant uses `camel_error_diagnose` to identify the exception chain, extra
 === OpenAPI contract-first
 
 * _"Validate this OpenAPI spec for Camel compatibility"_ — uses `camel_openapi_validate`
-* _"Generate a Camel YAML scaffold with mock mode"_ — uses `camel_openapi_scaffold`
-* _"Show me the mock directory structure"_ — uses `camel_openapi_mock_guidance`
+* _"Generate a Camel YAML scaffold with mock mode, and tell me where the mock files go"_ — uses `camel_openapi_scaffold`
 
-Combine all three for a complete prototyping workflow: validate, scaffold, then implement routes one at a time while Camel mocks the rest.
+Combine both for a complete prototyping workflow: validate, scaffold, then implement routes one at a time while Camel mocks the rest.
 
 === Runtime introspection
 
@@ -306,8 +305,18 @@ project `directory` as an argument, the runtime tools take the integration `name
   advanced pages. With `endpoint` it checks a URI against the catalog: unknown options with the closest real
   names, invalid values, missing path parts, consumer options on a producer endpoint. `includeHeaders=true`
   adds the message headers of a component (the `CamelXxx` names, their constants, types and consumer or
-  producer group), `includeDoc=true` the AsciiDoc page. An EIP alias (`fan-out`, `dedup`, `rate-limit`) or a
-  word of its title finds the EIP; the answer then names the `matchedTerm`.
+  producer group), `includeDoc=true` the AsciiDoc page. An EIP alias (`fan-out`, `dedup`, `rate-limit`) or its
+  whole title finds the EIP; the answer then names the `matchedTerm`. A page name of `camel_catalog_docs`
+  (`kafka-component`, `wireTap-eip`) and a name in another case are found too; a retry or redelivery word points
+  at the error handler. Without `optionsFilter` a component lists the required options and the first 20 others
+  in full (`limit` changes it) and the rest by name in `moreOptions`; each component option carries its
+  `application.properties` key (`configKey`), an option of both the endpoint and the component is listed once
+  (`scope` is `endpoint,component`), and the multi-value options that take any parameter with a prefix
+  (`mail.*` of smtp) are listed in `prefixOptions`. A filter that matches no option says so, with the closest
+  option names. The answer lists the `sections` of the component page, those that contain the filter first, and
+  `docPage=<section title>` returns one. A full key (`camel.server.port`, `camel.jbang.dependencies`) answers
+  its group of `application.properties` keys, the key first. An answer is cut at 16 000 characters, with a
+  marker that says what was left out.
   `includeOptions` picks the options listed: `common` (the default) leaves out the deprecated and advanced
   ones and says how many with `omittedOptions`, `required` lists the required ones, `all` everything, `false`
   none; `optionsFilter` matches a keyword in the option names, descriptions and groups and searches all
@@ -372,8 +381,10 @@ project `directory` as an argument, the runtime tools take the integration `name
 
 | `camel_write_file`
 | Writes the complete content of a file in the project directory. YAML and `.properties` content is validated
-  first; invalid content is not written and the errors are returned. Only a
-  plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
+  first; invalid content is not written and the errors are returned. A YAML shape that a model often gets wrong but
+  that has only one reading, such as `steps:` at the column of its EIP or an option at the column of the EIP it
+  belongs to, is repaired instead: the file is written with the repairs, and `repaired` in the answer lists them.
+  Only a plain file name in the directory is accepted. Nobody is asked before the write: the MCP client (Claude Code,
   Cursor and the others ask before a tool that is not read-only runs) is where the human sits, and the
   `read-only` access level of the security layer hides the tool altogether.
   With the security layer on, content longer than `camel.mcp.security.max-argument-length` is rejected, never cut,
@@ -386,6 +397,10 @@ project `directory` as an argument, the runtime tools take the integration `name
 | `camel_edit_file`
 | Changes a file by replacing one snippet: the lines to find (they must name one place; other indentation is fine)
   and what to put there.
+  Lines to find that are not in the file as given, as when a model writes them from memory, are matched to the
+  closest lines of the file when exactly one place matches well (`matchedLines` in the answer names them). The lines
+  the model changed are changed there, and the other lines stay as the file has them. Such an edit stands only when
+  its result is valid; otherwise the answer is the one of a miss, with the lines the file has there.
   Validated and reloaded as a write is, and the answer says at which line it changed. A model that rewrites a whole
   file to add one step corrupts the lines it did not mean to touch, so this is the tool for a change to an existing
   file; `camel_write_file` writes a new one.
@@ -496,10 +511,6 @@ client to the next.
 | `camel_catalog_docs`
 | List the AsciiDoc documentation page names of the catalog (`kafka-component`, `split-eip`, ...), with a
   substring filter; `camel_catalog_doc` with `includeDoc=true` returns a page.
-
-| `camel_component_properties`
-| List valid configuration property keys for a Camel component in `camel.component.<scheme>.<name>` form,
-  including option name, type, default value, and description.
 |===
 
 === Kamelet Catalog
@@ -617,8 +628,12 @@ client to the next.
 | `camel_dependency_security_audit`
 | Audits a project's dependencies for known vulnerabilities: cross-references the `pom.xml` with the Camel
   security advisory database for the CVEs affecting each artifact at the project's Camel version, and reports
-  severity, affected and fixed version ranges, and whether the vulnerable component is actually used (reachable)
-  or only a transitive dependency. The POM content is sanitized to mask sensitive data.
+  severity, affected and fixed version ranges, and, when routes are given, whether the vulnerable component is
+  actually used by them (reachable). Spring Boot starters and Camel Quarkus extensions are audited as the component
+  they provide. When the `pom.xml` does not set the Camel version (parent-managed), the answer says so and audits
+  the `camelVersion` argument, or without it lists every advisory of the declared components. Advisories that name
+  no component cannot be matched to a dependency and are listed as `uncheckedAdvisories`; the audit is only
+  reported `clean` when there are none. The POM content is sanitized to mask sensitive data.
 |===
 
 ==== Security advisory data
@@ -654,9 +669,11 @@ The advisories are also browseable as MCP resources: `camel://security/advisorie
 
 | `camel_dependency_check`
 | Checks Camel project dependency hygiene given a `pom.xml` and optional route definitions. Detects outdated
-  Camel versions compared to the latest catalog release, identifies missing Maven dependencies for components
-  used in routes, and flags version conflicts between the Camel BOM and explicit dependency overrides.
-  Returns actionable recommendations with corrected dependency snippets.
+  Camel versions compared to the latest Camel release, identifies missing Maven dependencies for components
+  used in routes (a Spring Boot starter or Camel Quarkus extension counts as its component, and the snippet uses
+  the project's runtime artifact; a component only in `dependencyManagement` is not declared), and flags version
+  conflicts between the Camel BOM and explicit dependency overrides. Returns actionable recommendations with
+  corrected dependency snippets.
 |===
 
 === Validation and Transformation
@@ -677,7 +694,10 @@ The advisories are also browseable as MCP resources: `camel://security/advisorie
 
 | `camel_properties_translate`
 | Translate Camel configuration properties between runtimes (`main`, `spring-boot`, `quarkus`). Handles
-  runtime-specific keys like HTTP server and management endpoint configuration.
+  runtime-specific keys like HTTP server and management endpoint configuration (`+camel.server.*+` and
+  `+camel.management.*+` on Camel Main). Legacy `+camel.springboot.*+` keys become `+camel.main.*+`, except the Spring
+  Boot only options, which keep their Spring Boot key (`camel.springboot.lenient-configuration-binding`) and have
+  no equivalent on the other runtimes.
 |===
 
 === Route Diagram
@@ -696,27 +716,28 @@ The advisories are also browseable as MCP resources: `camel://security/advisorie
 
 Since Camel 4.6, the recommended approach for building REST APIs from OpenAPI specifications is **contract-first**:
 referencing the OpenAPI spec directly at runtime via `rest:openApi` rather than generating REST DSL code. These tools
-help validate, scaffold, and provide mock guidance for that workflow.
+help validate and scaffold that workflow, following the rules of the `rest-openapi` component.
 
 [cols="1,3",options="header"]
 |===
 | Tool | Description
 
 | `camel_openapi_validate`
-| Validates an OpenAPI specification for compatibility with Camel's contract-first REST support. Checks for missing
-  `operationId` fields, unsupported security schemes, OpenAPI 3.1 limitations, webhooks usage, and empty paths.
+| Validates an OpenAPI specification for compatibility with Camel's contract-first REST support. Reports operations
+  without `operationId` (with the `direct:GENOPID_...` id Camel routes them to), security schemes (Camel enforces
+  none of them), webhooks (not served), OpenAPI 3.1 (parsed and served like 3.0) and empty paths.
   Returns errors, warnings, and info-level diagnostics.
 
 | `camel_openapi_scaffold`
 | Generates a Camel YAML scaffold for contract-first OpenAPI integration. Produces a `rest:openApi` configuration
-  block referencing the spec file and a `direct:<operationId>` route stub for each operation, with `Content-Type`
-  and `CamelHttpResponseCode` headers pre-configured from the spec. Supports configuring the `missingOperation`
-  mode (`fail`, `ignore`, or `mock`).
-
-| `camel_openapi_mock_guidance`
-| Provides guidance on configuring Camel's `missingOperation` modes (`fail`, `ignore`, `mock`). For `mock` mode,
-  returns the `camel-mock/` directory structure, mock file paths derived from the API paths, and example content
-  from the spec. Explains the behavior of each mode.
+  block referencing the spec file and a `direct:<operationId>` route stub for each operation (an operation without
+  `operationId` gets the id the `rest-openapi` component generates), with `Content-Type` and `CamelHttpResponseCode`
+  headers pre-configured from the spec. Supports configuring the `missingOperation` mode (`fail`, `ignore`, or
+  `mock`) and explains it. With `mock`, it also lists one `camel-mock/` file per path of the spec, named after the
+  request path: a path parameter carries a sample value, such as `camel-mock/pets/1.json` for `+/pets/{petId}+`,
+  which answers `/pets/1` (one file per value). It gives the example of the spec and what Camel answers without the
+  file: the example of the `200` response for the media type of the request's `Content-Type` or `Accept` header,
+  otherwise HTTP 204 with an empty body.
 |===
 
 === Migration
@@ -728,16 +749,22 @@ help validate, scaffold, and provide mock guidance for that workflow.
 | `camel_migration_analyze`
 | Analyzes a Camel project's `pom.xml` to detect the runtime type (`main`, `spring-boot`, `quarkus`, `wildfly`,
   `karaf`), Camel version, Java version, and Camel component dependencies. This is the first step in a migration
-  workflow.
+  workflow. A WAR is `wildfly` only without Spring Boot or Quarkus, and the dependencies are the declared ones,
+  not those in `dependencyManagement` or of a plugin.
 
 | `camel_migration_compatibility`
-| Checks migration compatibility for Camel components by providing relevant migration guide URLs and Java version
-  requirements. The LLM consults the migration guides for detailed component rename mappings and API changes.
+| Checks whether a migration between two Camel versions is possible on the project's Java version, from the JDK
+  versions each release supports in the catalog (as `camel_version_list` reports them), and returns the relevant
+  migration guide URLs. The LLM consults the migration guides for detailed component rename mappings and API
+  changes.
 
 | `camel_migration_recipes`
-| Returns Maven commands to run Camel OpenRewrite migration recipes for upgrading between versions. The project
-  must compile successfully before running the recipes, as OpenRewrite requires a compilable project to parse
-  and transform the code.
+| Returns Maven commands to run Camel OpenRewrite migration recipes for upgrading between versions: the
+  `CamelMigrationRecipe` of `camel-upgrade-recipes` for Camel Main, the `CamelSpringBootMigrationRecipe` of
+  `camel-spring-boot-upgrade-recipes` for Spring Boot, and the `update` goal of the `quarkus-maven-plugin` for
+  Quarkus, at the Quarkus platform version given as `quarkusPlatformVersion` (the one `camel_version_list` reports
+  for the target Camel version), else at the latest recommended platform. The project must compile successfully
+  before running the recipes, as OpenRewrite requires a compilable project to parse and transform the code.
 
 | `camel_migration_guide_search`
 | Searches Camel migration and upgrade guides for a specific term or component name. Each result is one topic
@@ -798,10 +825,12 @@ process is running).
 | Get the source code of routes in the running Camel application. Supports wildcard filtering.
 
 | `camel_runtime_route_dump`
-| Dump route definitions in XML or YAML format.
+| Dump route definitions in XML, YAML or Java DSL format. `routeId` takes a route id or a pattern such as `orders*`
+  (all routes when omitted).
 
 | `camel_runtime_route_structure`
-| Show the route structure as a tree of processors.
+| Show the route structure as a tree of processors, for the routes `routeId` names (a route id or a pattern, all
+  routes when omitted). `brief=true` leaves out the options and expressions.
 
 | `camel_runtime_processor_detail`
 | Show the configured options of every processor in a route: each processor's type, id, and configured options
@@ -809,7 +838,8 @@ process is running).
   with its documentation from the Camel catalog.
 
 | `camel_runtime_route_control`
-| Control a route: start, stop, suspend, or resume it by route ID.
+| Control a route: start, stop, suspend, or resume it by route ID. Marked destructive for all four commands, as an
+  MCP hint applies to a tool, not to one of its arguments, and stop and suspend take the route's consumer offline.
 
 | `camel_runtime_route_topology`
 | Get the inter-route topology showing how routes connect to each other and to external endpoints.
@@ -846,16 +876,21 @@ process is running).
 
 | `camel_runtime_heap_dump`
 | Write a heap dump (`.hprof`) from a running integration for deep memory analysis with tools such as Eclipse MAT,
-  VisualVM or jhat. The dump is written to the process working directory.
+  VisualVM or jhat. The dump is written to the process working directory; a `name` with a directory is refused.
 
 | `camel_runtime_memory_leak`
 | Diagnose memory leaks in a running Camel integration using Java Flight Recorder (JFR).
-  Use command 'start' to begin recording, 'stop' to get results, 'status' to check state,
-  and 'query' to retrieve cached results. Supports dual-recording mode for trend comparison.
+  `start` begins a recording of `duration` seconds (default 60) and returns at once; `status` checks it, `query`
+  (or `stop`, to end it early) returns the results, and `compare` compares the last two recordings (growth and
+  trend per class). For a trend, record X seconds, then 2X seconds, then compare. `mode=dual` does all of this in one
+  call that blocks for about three times the duration (90 seconds with its default of 30), longer than many MCP
+  clients wait: use it only with a client that waits that long.
 
 | `camel_runtime_history`
 | Get the message history trace of the last completed exchange. Shows the route path, processors visited,
-  headers, body, and timing.
+  headers, body, and timing. It is recorded when message history is on and the tracer is enabled or on standby,
+  which is the default of `camel run` (dev profile); elsewhere set `camel.main.message-history=true` and
+  `camel.trace.standby=true`.
 
 | `camel_runtime_thread_dump`
 | Get a JVM thread dump showing thread names, states, and stack traces.
@@ -880,7 +915,7 @@ process is running).
 | `camel_runtime_http_request`
 | Sends an HTTP request (method, path, headers, body) to the application's own server on localhost and its port,
   and returns the status, the headers and the body (cut at 6000 characters, the answer says when). Any other host
-  is refused, and redirects are not followed.
+  is refused, and redirects are not followed. `timeoutSeconds` bounds the wait (default 30, at most 120).
 
 | `camel_runtime_tool_groups`
 | Which runtime tool groups (`sql`, `tracing`, `resilience`, `http`) the application needs, from what its status shows.
@@ -979,23 +1014,37 @@ xref:camel-jbang-tui-local-models.adoc#_tool_groups_from_the_selected_integratio
 | Tool | Description
 
 | `camel_runtime_send`
-| Send a test message to a Camel endpoint in the running application.
+| Send a test message to a Camel endpoint in the running application. Marked destructive: the message runs through
+  the routes and whatever they call.
 
 | `camel_runtime_trace`
 | Enable, disable, or dump message tracing for the running Camel application.
+
+| `camel_runtime_trace_dump`
+| Dump the traced messages, the same as `camel_runtime_trace` with `action=dump`, as a read-only tool, so a client
+  at the `read-only` access level can read the traces.
 
 | `camel_runtime_ai_trace`
 | Trace the AI-specific exchange flow of a running application: token usage, model ids, guardrail outcomes,
   completion reasons, streaming chunk counts and per-component latency for the AI components (Bedrock,
   LangChain4j, Docling, Textract, OpenAI, KServe, DJL, TensorFlow Serving, HuggingFace). It combines the message
-  history with the processor statistics, filtered to the AI steps.
+  history with the processor statistics, filtered to the AI steps. A process that does not answer is reported as
+  an error.
 
 | `camel_runtime_browse`
 | Browse messages in a Camel endpoint (e.g., messages queued in a SEDA endpoint).
 
 | `camel_runtime_receive`
-| Receive (poll) a message from a Camel endpoint in the running application. Consumes one message
-  from the endpoint.
+| Receive a message from an endpoint of the running application, the complement of `camel_runtime_send`, in one
+  call: it starts a consumer on the endpoint (an endpoint uri, or a pattern matching an endpoint the application
+  sends to), waits up to `timeoutSeconds` (default 10, at most 60) for a message, returns it and stops the consumer.
+  It returns one message by default: `limit` (at least 1) returns up to that many. `received` counts every message
+  the consumer took, including the ones taken after the first that arrived and before the consumer stopped, and the
+  answer says how many of them it does not return (`notReturned`). The consumer competes with the routes that
+  consume the endpoint, so the messages it takes do not reach them: the tool is marked destructive. One call at a
+  time per process: a second call waits for the first, up to its own `timeoutSeconds`. Use `camel_runtime_browse`
+  to look at queued messages without taking them. It refuses to run while `camel cmd receive` is receiving from the
+  same process.
 |===
 
 == Available Prompts

@@ -20,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -30,8 +31,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.util.StringHelper;
@@ -50,6 +53,8 @@ import picocli.CommandLine.Command;
                  "  camel get health myApp --down",
                  "  camel get health --watch" })
 public class ListHealth extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -89,6 +94,12 @@ public class ListHealth extends ProcessWatchCommand {
     @Override
     public Integer doProcessWatchCall() throws Exception {
         final List<Row> rows = new ArrayList<>();
+
+        // the options are wrong for every integration, so before reading them
+        Comparator<Row> order = ORDER.comparator(sort);
+        if (level != null && !"default".equals(level) && !"full".equals(level)) {
+            throw CliException.usage("--level must be full or default, was: " + level);
+        }
 
         // include stack-traces
         if (trace && depth <= 1) {
@@ -190,7 +201,7 @@ public class ListHealth extends ProcessWatchCommand {
         });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(order);
 
         if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
@@ -284,25 +295,6 @@ public class ListHealth extends ProcessWatchCommand {
         }
 
         return 0;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
     }
 
     protected String getId(Row r) {

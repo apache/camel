@@ -39,7 +39,6 @@ import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.VariableExpression;
-import org.apache.camel.model.language.WasmExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -481,23 +480,6 @@ public final class LanguageBuilderFactory {
      */
     public XQueryExpression.Builder xquery(String expression) {
         var builder = xquery();
-        builder.expression(expression);
-        return builder;
-    }
-
-    /**
-     * Uses the Wasm language
-     */
-    public WasmExpression.Builder wasm() {
-        return new WasmExpression.Builder();
-    }
-
-    /**
-     * Uses the Wasm language
-     */
-    public WasmExpression.Builder wasm(String module, String expression) {
-        var builder = wasm();
-        builder.module(module);
         builder.expression(expression);
         return builder;
     }

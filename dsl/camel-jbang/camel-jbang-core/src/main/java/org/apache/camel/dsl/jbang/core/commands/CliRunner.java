@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -103,10 +104,12 @@ public final class CliRunner {
      * @param timeoutMillis how long the command may run, or 0 to wait until it has finished
      */
     public static CliResult run(List<String> args, long timeoutMillis) {
-        CommandLine commandLine = CamelJBangMain.getCommandLine();
-        if (commandLine == null) {
+        CommandLine main = CamelJBangMain.getCommandLine();
+        if (main == null) {
             throw new IllegalStateException("The Camel CLI is not initialized");
         }
+        // new instances of the commands, so that no field keeps the value a run before left in it
+        CommandLine commandLine = ((CamelJBangMain) main.getCommand()).newCommandLine();
         Output output = new Output();
         long start = System.nanoTime();
         if (timeoutMillis <= 0) {
@@ -175,6 +178,7 @@ public final class CliRunner {
             commandLine.setOut(output.helpOut);
             commandLine.setErr(output.helpErr);
             try {
+                RuntimeUtil.newCommand();
                 return commandLine.execute(args.toArray(String[]::new));
             } finally {
                 output.helpOut.flush();

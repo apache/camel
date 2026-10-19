@@ -34,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -47,6 +48,12 @@ import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 public abstract class CatalogBaseCommand extends CamelCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.name)
+            .text("level", r -> r.level)
+            .alias("support-level", "level")
+            .text("description", r -> r.description);
 
     @CommandLine.Option(names = { "--camel-version" },
                         description = "To use a different Camel version than the default version")
@@ -108,6 +115,15 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     }
 
     CamelCatalog loadCatalog() throws Exception {
+        return loadCatalog(runtime, camelVersion, quarkusPlatform, mavenResolver);
+    }
+
+    /**
+     * The catalog of the runtime and Camel version: of Spring Boot, of the Quarkus platform, or of Camel.
+     */
+    static CamelCatalog loadCatalog(
+            RuntimeType runtime, String camelVersion, QuarkusPlatformMixin quarkusPlatform, MavenResolverMixin mavenResolver)
+            throws Exception {
         if (RuntimeType.springBoot == runtime) {
             return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
         } else if (RuntimeType.quarkus == runtime) {
@@ -154,7 +170,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
@@ -210,31 +226,6 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
 
         return 0;
-    }
-
-    int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "level":
-            case "support-level":
-                return compareIgnoreCase(o1.level, o2.level) * negate;
-            case "description":
-                return compareIgnoreCase(o1.description, o2.description) * negate;
-            default:
-                return 0;
-        }
-    }
-
-    // a missing value sorts first
-    static int compareIgnoreCase(String s1, String s2) {
-        return (s1 != null ? s1 : "").compareToIgnoreCase(s2 != null ? s2 : "");
     }
 
     String shortGav(Row r) {

@@ -25,6 +25,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -42,6 +43,10 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
                  "  camel cmd route-dump --format=yaml",
                  "  camel cmd route-dump --json" })
 public class CamelRouteDumpAction extends ActionBaseCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.location)
+            .text("id", r -> r.routeId);
 
     public static class NameIdCompletionCandidates implements Iterable<String> {
 
@@ -80,7 +85,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
     @CommandLine.Option(names = { "--uri-as-parameters" },
                         description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
-                        defaultValue = "true")
+                        defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean uriAsParameters;
 
     @CommandLine.Option(names = { "--filter" },
@@ -142,7 +147,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (rows.isEmpty() && filter != null) {
             throw CliException.notFound("No route matching: " + filter);
@@ -166,23 +171,6 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
         }
 
         return 0;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.location.compareToIgnoreCase(o2.location) * negate;
-            case "id":
-                return o1.routeId.compareToIgnoreCase(o2.routeId) * negate;
-            default:
-                return 0;
-        }
     }
 
     protected void printSource(List<Row> rows) {

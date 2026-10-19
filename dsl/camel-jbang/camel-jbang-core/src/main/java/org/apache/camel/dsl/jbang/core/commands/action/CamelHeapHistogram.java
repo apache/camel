@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -42,6 +44,11 @@ import picocli.CommandLine.Command;
                  "  camel cmd heap-histogram --sort instances",
                  "  camel cmd heap-histogram --filter camel --top 30" })
 public class CamelHeapHistogram extends ActionWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .by("bytes", Comparator.comparingLong((Row r) -> r.bytes).reversed())
+            .by("instances", Comparator.comparingLong((Row r) -> r.instances).reversed())
+            .text("className", r -> r.className);
 
     public static class SortCompletionCandidates implements Iterable<String> {
 
@@ -111,7 +118,7 @@ public class CamelHeapHistogram extends ActionWatchCommand {
             }
         }
 
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (top > 0 && rows.size() > top) {
             rows = rows.subList(0, top);
@@ -186,26 +193,6 @@ public class CamelHeapHistogram extends ActionWatchCommand {
                         .with(r -> formatNumber(r.instances)),
                 new Column().header("BYTES").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> formatBytes(r.bytes)))));
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "instances":
-                return Long.compare(o2.instances, o1.instances) * negate;
-            case "className":
-                return (o1.className != null
-                        ? o1.className.compareToIgnoreCase(o2.className != null ? o2.className : "")
-                        : 0)
-                       * negate;
-            default:
-                return Long.compare(o2.bytes, o1.bytes) * negate;
-        }
     }
 
     static String formatBytes(long bytes) {

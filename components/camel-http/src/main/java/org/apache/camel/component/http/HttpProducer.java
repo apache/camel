@@ -52,6 +52,7 @@ import org.apache.camel.http.base.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
@@ -742,20 +743,30 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
     }
 
     /**
-     * The body as a stream for the request entity. A Map or a List (a body unmarshalled from JSON, or built as a map)
-     * cannot become one, and the converter's message only names the conversion: say what to do (CAMEL-25309).
+     * The body as a stream for the request entity. A Map, a List or an object (a body unmarshalled from JSON, XML or
+     * CSV, or built in the route) cannot become one, and the converter's message only names the conversion: say what
+     * the body is, the step that set it, and the marshal that writes it, in the data format the Content-Type names
+     * (CAMEL-25309, CAMEL-25749). When neither the httpMethod option nor the CamelHttpMethod header set the method, the
+     * body made the call a POST, which is often meant as a GET (a lookup for each line of a split order): say that too
+     * (CAMEL-25745).
      */
-    private static InputStream mandatoryBodyStream(Exchange exchange, Message in) throws InvalidPayloadException {
+    private InputStream mandatoryBodyStream(Exchange exchange, Message in) throws InvalidPayloadException {
         try {
             return in.getMandatoryBody(InputStream.class);
         } catch (InvalidPayloadException e) {
-            Object body = in.getBody();
-            if (body instanceof Map || body instanceof Collection) {
-                InvalidPayloadException answer = new InvalidPayloadException(
-                        exchange, InputStream.class, in,
-                        "a " + (body instanceof Map ? "Map" : body instanceof List ? "List" : "Collection")
-                                                         + " is not an HTTP request body: marshal it to JSON first "
-                                                         + "(marshal: json) or set the body to the JSON text");
+            // what the body is, the step that set it, and the marshal that writes it (CAMEL-25309, CAMEL-25749)
+            String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, ExchangeHelper.getContentType(exchange));
+            if (hint != null) {
+                String message = BodyFacts.describe(exchange) + ", which is not an HTTP request body";
+                if (getEndpoint().getHttpMethod() == null && in.getHeader(HttpConstants.HTTP_METHOD) == null) {
+                    // the body made the call a POST (CAMEL-25745)
+                    message += ". The call is a POST because the message has a body and neither the httpMethod option"
+                               + " nor the CamelHttpMethod header sets the method: for a GET, set httpMethod GET on the"
+                               + " endpoint (a GET sends no body); for a POST, " + hint;
+                } else {
+                    message += ": " + hint;
+                }
+                InvalidPayloadException answer = new InvalidPayloadException(exchange, InputStream.class, in, message);
                 answer.initCause(e.getCause() != null ? e.getCause() : e);
                 throw answer;
             }

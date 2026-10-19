@@ -30,3 +30,33 @@ include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
+
+== Usage
+
+The JMX consumer receives the notifications of an MBean.
+With `monitorType`, it creates a JMX monitor that watches an attribute,
+and sends a notification when the value crosses a threshold.
+`jmx:platform` is the MBean server of the JVM that runs Camel.
+The route below gets a notification when the JVM has more than 200 threads.
+The gauge sends it again only after the value has gone below `thresholdLow`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: jmx:platform
+      parameters:
+        objectDomain: java.lang
+        key.type: Threading
+        monitorType: gauge
+        observedAttribute: ThreadCount
+        granularityPeriod: 5000
+        notifyHigh: true
+        thresholdHigh: 200
+        thresholdLow: 100
+      steps:
+        - log:
+            message: "The JVM has more than 200 threads: ${body}"
+----
+
+The message body is the notification as XML. Set `format` to `raw` to get the notification object.

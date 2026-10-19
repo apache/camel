@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -144,5 +145,33 @@ class CamelContextStatusTest extends ProcessCommandTestSupport {
             assertTrue(output.startsWith("["), "JSON output should be a JSON array");
             assertTrue(output.contains("jsonApp"), "JSON should contain the context name");
         }
+    }
+
+    @Test
+    void testJsonHasTheRemoteCounters() throws Exception {
+        JsonObject status = buildContextStatus("jsonApp", 5);
+        JsonObject context = status.getMap("context");
+        JsonObject stats = context.getMap("statistics");
+        stats.put("remoteExchangesTotal", 3);
+        stats.put("remoteExchangesFailed", 1);
+        stats.put("remoteExchangesInflight", 0);
+        writeStatusFile(TEST_PID, status);
+
+        CamelContextStatus command = new CamelContextStatus(new CamelJBangMain().withPrinter(printer));
+        command.jsonOutput = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            ProcessHandle currentHandle = mockCurrentHandle();
+            mocked.when(ProcessHandle::current).thenReturn(currentHandle);
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+
+            assertEquals(0, command.doCall());
+        }
+
+        JsonObject row = Jsoner.deserialize(printer.getOutput(), (JsonArray) null).getMap(0);
+        assertEquals(3L, row.getLong("remoteTotal"));
+        assertEquals(1L, row.getLong("remoteFailed"));
+        assertEquals(0L, row.getLong("remoteInflight"));
     }
 }

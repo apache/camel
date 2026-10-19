@@ -8,7 +8,15 @@
   "aggregate": [
     {
       "source": "aggregate-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - aggregate:\n            aggregateController: myController\n            aggregationStrategy: myAppender\n            completionSize: 10\n            correlationExpression:\n              header:\n                expression: id\n            steps:\n              - to:\n                  uri: mock:result\n"
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - aggregate:\n            aggregationStrategy: groupedExchangeStrategy\n            completionTimeout: 500\n            correlationExpression:\n              constant:\n                expression: \"true\"\n            steps:\n              - to:\n                  uri: mock:result\n- beans:\n    - name: groupedExchangeStrategy\n      type: org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy\n"
+    },
+    {
+      "source": "aggregate-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:lines\n      steps:\n        - aggregate:\n            correlationExpression:\n              header:\n                expression: orderId\n            aggregationStrategy: groupedBodies\n            completionSize: 10\n            completionTimeout: 5000\n            steps:\n              - to:\n                  uri: direct:order\n- beans:\n    - name: groupedBodies\n      type: org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy\n"
+    },
+    {
+      "source": "aggregate-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - aggregate:\n            id: myAggregator\n            aggregateController: myController\n            aggregationStrategy: myAppender\n            completionSize: 10\n            correlationExpression:\n              header:\n                expression: id\n            steps:\n              - to:\n                  uri: mock:result\n"
     },
     {
       "source": "aggregate-eip.adoc",
@@ -17,6 +25,14 @@
     {
       "source": "aggregate-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - aggregate:\n            aggregationStrategy: \"#class:com.foo.MyBodyAppender\"\n            aggregationStrategyMethodName: append\n            completionSize: 3\n            correlationExpression:\n              constant:\n                expression: \"true\"\n            steps:\n              - to:\n                  uri: mock:result\n"
+    },
+    {
+      "source": "aggregate-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - aggregate:\n            aggregationStrategy: \"#class:com.foo.MyBodyAppender\"\n            completionSize: 3\n            correlationExpression:\n              constant:\n                expression: \"true\"\n            steps:\n              - to:\n                  uri: mock:result\n"
+    },
+    {
+      "source": "aggregate-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - pollEnrich:\n            expression:\n              constant:\n                expression: seda:foo\n            timeout: 1000\n            aggregationStrategy: myAppender\n            aggregationStrategyMethodName: append\n            aggregationStrategyMethodAllowNull: true\n        - to:\n            uri: mock:result\n"
     },
     {
       "source": "aggregate-eip.adoc",
@@ -90,7 +106,23 @@
   "cache": [
     {
       "source": "cache-eip.adoc",
-      "yaml": "- from:\n    uri: \"direct:start\"\n    steps:\n      - cache:\n          simple: \"${header.productId}\"\n          keyValueRepository: \"myCache\"\n          ttl: \"10m\"\n          steps:\n            - to: \"http:\/\/product-service\/api\/product\"\n      - to: \"direct:continue\"\n"
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - cache:\n            expression:\n              simple:\n                expression: \"${header.productId}\"\n            steps:\n              - to:\n                  uri: http:\/\/product-service\/api\/product\n              - unmarshal:\n                  json: {}\n        - to:\n            uri: direct:continue\n"
+    },
+    {
+      "source": "cache-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - cache:\n            expression:\n              simple:\n                expression: \"${header.productId}\"\n            keyValueRepository: myCache\n            ttl: 10m\n            steps:\n              - to:\n                  uri: http:\/\/product-service\/api\/product\n        - to:\n            uri: direct:continue\n"
+    },
+    {
+      "source": "cache-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - cache:\n            expression:\n              simple:\n                expression: \"${header.key}\"\n            keyValueRepository: myCache\n            steps:\n              - to:\n                  uri: http:\/\/service\n"
+    },
+    {
+      "source": "cache-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:getProduct\n      steps:\n        - cache:\n            expression:\n              simple:\n                expression: \"${header.productId}\"\n            keyValueRepository: productCache\n            ttl: 30m\n            steps:\n              - to:\n                  uri: http:\/\/product-service\/api\/product\n\n# Invalidation route\n- route:\n    from:\n      uri: jms:topic:product.changes\n      steps:\n        - bean:\n            ref: productCache\n            method: \"delete(${header.productId})\"\n        - log:\n            message: \"Invalidated cache for product ${header.productId}\"\n"
+    },
+    {
+      "source": "cache-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:clearAll\n      steps:\n        - bean:\n            ref: productCache\n            method: clear\n"
     }
   ],
   "channelAdapter": [
@@ -112,18 +144,14 @@
   "circuitBreaker": [
     {
       "source": "circuitBreaker-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: timer:stock?period=1000\n      steps:\n        - circuitBreaker:\n            steps:\n              - to:\n                  uri: direct:supplier\n            onFallback:\n              steps:\n                - choice:\n                    when:\n                      - expression:\n                          simple:\n                            expression: \"${exchangeProperty.CamelCircuitBreakerResponseRejected} == true\"\n                        steps:\n                          - setBody:\n                              expression:\n                                constant:\n                                  expression: \"supplier is down, using the last known stock\"\n                    otherwise:\n                      steps:\n                        - setBody:\n                            expression:\n                              constant:\n                                expression: \"stock check failed, will try again\"\n"
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - circuitBreaker:\n            steps:\n              - to:\n                  uri: http:\/\/fooservice.com\/slow\n            onFallback:\n              steps:\n                - transform:\n                    expression:\n                      constant:\n                        expression: Fallback message\n        - to:\n            uri: mock:result\n"
     },
     {
       "source": "circuitBreaker-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - circuitBreaker:\n            steps:\n              - to:\n                  uri: http:\/\/fooservice.com\/slow\n            onFallback:\n              steps:\n                - transform:\n                    expression:\n                      constant:\n                        expression: Fallback message\n        - to:\n            uri: mock:result\n"
+      "yaml": "- route:\n    from:\n      uri: timer:stock?period=1000\n      steps:\n        - circuitBreaker:\n            steps:\n              - to:\n                  uri: direct:supplier\n            onFallback:\n              steps:\n                - choice:\n                    when:\n                      - expression:\n                          simple:\n                            expression: \"${exchangeProperty.CamelCircuitBreakerResponseRejected} == true\"\n                        steps:\n                          - setBody:\n                              expression:\n                                constant:\n                                  expression: \"supplier is down, using the last known stock\"\n                    otherwise:\n                      steps:\n                        - setBody:\n                            expression:\n                              constant:\n                                expression: \"stock check failed, will try again\"\n"
     }
   ],
   "claimCheck": [
-    {
-      "source": "claimCheck-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct\n      parameters:\n        name: start\n      steps:\n        - to:\n            uri: mock\n            parameters:\n              name: a\n        - claimCheck:\n            operation: Set\n            key: \"${header.myKey}\"\n        - transform:\n            expression:\n              constant:\n                expression: Bye World\n        - to:\n            uri: mock\n            parameters:\n              name: b\n        - claimCheck:\n            operation: Get\n            key: \"${header.myKey}\"\n        - to:\n            uri: mock\n            parameters:\n              name: c\n        - transform:\n            expression:\n              constant:\n                expression: Hi World\n        - to:\n            uri: mock\n            parameters:\n              name: d\n        - claimCheck:\n            operation: Get\n            key: \"${header.myKey}\"\n        - to:\n            uri: mock\n            parameters:\n              name: e\n"
-    },
     {
       "source": "claimCheck-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - to: mock:a\n        - claimCheck:\n            operation: Push\n        - transform:\n            expression:\n              constant: Bye World\n        - to:\n            uri: mock:b\n        - claimCheck:\n            operation: Pop\n        - to:\n            uri: mock:c\n"
@@ -135,6 +163,10 @@
     {
       "source": "claimCheck-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - to:\n            uri: mock:a\n        - claimCheck:\n            operation: Push\n        - transform:\n            expression:\n              constant: ByeWorld\n        - setHeader:\n            name: foo\n            expression:\n              constant: 456\n        - removeHeader:\n            name: bar\n        - to:\n            uri: mock:b\n        - claimCheck:\n            operation: Pop\n            filter: \"header:(foo|bar)\"\n        - to:\n            uri: mock:c\n"
+    },
+    {
+      "source": "claimCheck-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct\n      parameters:\n        name: start\n      steps:\n        - to:\n            uri: mock\n            parameters:\n              name: a\n        - claimCheck:\n            operation: Set\n            key: \"${header.myKey}\"\n        - transform:\n            expression:\n              constant:\n                expression: Bye World\n        - to:\n            uri: mock\n            parameters:\n              name: b\n        - claimCheck:\n            operation: Get\n            key: \"${header.myKey}\"\n        - to:\n            uri: mock\n            parameters:\n              name: c\n        - transform:\n            expression:\n              constant:\n                expression: Hi World\n        - to:\n            uri: mock\n            parameters:\n              name: d\n        - claimCheck:\n            operation: Get\n            key: \"${header.myKey}\"\n        - to:\n            uri: mock\n            parameters:\n              name: e\n"
     }
   ],
   "competingConsumers": [
@@ -164,29 +196,29 @@
     },
     {
       "source": "content-enricher.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct\n      parameters:\n        name: start\n      steps:\n        - setBody:\n            expression:\n              simple:\n                expression: \"${body} World!\"\n        - to:\n            uri: mock\n            parameters:\n              name: result\n"
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - setBody:\n            expression:\n              simple:\n                expression: \"${body} World!\"\n        - to:\n            uri: mock:result\n"
     },
     {
       "source": "content-enricher.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct\n      parameters:\n        name: start\n      steps:\n        - process:\n            ref: myProcessor\n        - to:\n            uri: mock\n            parameters:\n              name: result\n"
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - process:\n            ref: myProcessor\n        - to:\n            uri: mock:result\n"
     },
     {
       "source": "content-enricher.adoc",
-      "yaml": "- route:\n    from:\n      uri: activemq:Input\n      steps:\n        - bean:\n            ref: myBeanName\n            method: doTransform\n        - to:\n            uri: activemq:Output\n"
+      "yaml": "- route:\n    from:\n      uri: activemq:My.Queue\n      steps:\n        - bean:\n            ref: myBeanName\n            method: doTransform\n        - to:\n            uri: activemq:Another.Queue\n"
     }
   ],
   "contentFilter": [
     {
       "source": "content-filter-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct\n      parameters:\n        name: start\n      steps:\n        - process:\n            ref: myProcessor\n        - to:\n            uri: mock\n            parameters:\n              name: result\n"
+      "yaml": "- route:\n    from:\n      uri: activemq:Input\n      steps:\n        - setBody:\n            expression:\n              xpath:\n                expression: \/\/foo\/bar\n        - to:\n            uri: activemq:Output\n"
+    },
+    {
+      "source": "content-filter-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - process:\n            ref: myProcessor\n        - to:\n            uri: mock:result\n"
     },
     {
       "source": "content-filter-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: activemq:Input\n      steps:\n        - bean:\n            ref: myBeanName\n            method: doFilter\n        - to:\n            uri: activemq:Output\n"
-    },
-    {
-      "source": "content-filter-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: activemq:Input\n      steps:\n        - setBody:\n            expression:\n              xpath: \/\/foo:bar\n        - to:\n            uri: activemq:Output\n"
     }
   ],
   "convertBodyTo": [
@@ -235,10 +267,20 @@
       "yaml": "- route:\n    from:\n      uri: direct\n      parameters:\n        name: start\n      steps:\n        - loadBalance:\n            customLoadBalancer:\n              ref: myBalancer\n            steps:\n              - to:\n                  uri: seda:x\n              - to:\n                  uri: seda:y\n              - to:\n                  uri: seda:z\n"
     }
   ],
+  "dataFormats": [
+    {
+      "source": "data-format.adoc",
+      "yaml": "- dataFormats:\n    - json:\n        id: orderJson\n        library: Jackson\n        prettyPrint: true\n- route:\n    from:\n      uri: timer:tick\n      parameters:\n        repeatCount: 1\n      steps:\n        - setBody:\n            expression:\n              constant:\n                expression: '{\"orderId\": \"ORD-1001\", \"qty\": 2}'\n        - unmarshal:\n            custom:\n              ref: orderJson\n        - marshal:\n            custom:\n              ref: orderJson\n        - log:\n            message: \"${body}\"\n"
+    }
+  ],
   "deadLetterChannel": [
     {
       "source": "dead-letter-channel.adoc",
       "yaml": "- errorHandler:\n    deadLetterChannel:\n      deadLetterUri: \"log:dead?level=ERROR\"\n"
+    },
+    {
+      "source": "dead-letter-channel.adoc",
+      "yaml": "- errorHandler:\n    deadLetterChannel:\n      deadLetterUri: \"log:dead?level=ERROR\"\n- route:\n    from:\n      uri: direct:newOrder\n      steps:\n        - bean:\n            ref: orderService\n            method: validate\n        - bean:\n            ref: orderService\n            method: store\n"
     },
     {
       "source": "dead-letter-channel.adoc",
@@ -435,6 +477,16 @@
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - to:\n            uri: jms:queue:foo\n"
     }
   ],
+  "idempotentConsumer": [
+    {
+      "source": "idempotentConsumer-eip.adoc",
+      "yaml": "- beans:\n    - name: myRepo\n      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository\n- route:\n    from:\n      uri: direct:start\n      steps:\n        - idempotentConsumer:\n            expression:\n              header:\n                expression: messageId\n            idempotentRepository: myRepo\n            steps:\n              - to:\n                  uri: mock:result\n"
+    },
+    {
+      "source": "idempotentConsumer-eip.adoc",
+      "yaml": "- beans:\n    - name: myRepo\n      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository\n- route:\n    from:\n      uri: direct:start\n      steps:\n        - idempotentConsumer:\n            expression:\n              header:\n                expression: messageId\n            idempotentRepository: myRepo\n            skipDuplicate: false\n            steps:\n              - choice:\n                  when:\n                    - expression:\n                        simple:\n                          expression: \"${exchangeProperty.CamelDuplicateMessage} == true\"\n                      steps:\n                        - log:\n                            message: \"Message ${header.messageId} is a duplicate\"\n                  otherwise:\n                    steps:\n                      - to:\n                          uri: mock:result\n"
+    }
+  ],
   "intercept": [
     {
       "source": "intercept.adoc",
@@ -494,10 +546,6 @@
     }
   ],
   "kamelet": [
-    {
-      "source": "kamelet-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - to:\n            uri: kamelet:my-aggregate\n            parameters:\n              count: 5\n        - to:\n            uri: log:info\n        - to:\n            uri: mock:result\n"
-    },
     {
       "source": "kamelet-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - kamelet:\n            name: my-aggregate?count=5\n            steps:\n              - to:\n                  uri: log:info\n              - to:\n                  uri: mock:result\n"
@@ -584,7 +632,7 @@
     },
     {
       "source": "log-eip.adoc",
-      "yaml": "- route:\n    id: moo\n    from:\n      uri: direct:moo\n      steps:\n        - log:\n            logger: myLogger\n            message: \"Me Got ${body}\"\n        - to:\n            uri: mock:baz\n"
+      "yaml": "- route:\n    from:\n      uri: direct:moo\n      steps:\n        - log:\n            logger: myLogger\n            message: \"Me Got ${body}\"\n        - to:\n            uri: bean:foo\n- beans:\n    - name: myLogger\n      type: org.slf4j.LoggerFactory\n      factoryMethod: getLogger\n      constructors:\n        0: com.mycompany.mylogger\n"
     },
     {
       "source": "log-eip.adoc",
@@ -618,6 +666,10 @@
     }
   ],
   "marshal": [
+    {
+      "source": "marshal-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:order\n      steps:\n        - marshal:\n            json:\n              library: Jackson\n        - to:\n            uri: jms:queue:order\n"
+    },
     {
       "source": "marshal-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: file:inbox\/xml\n      steps:\n        - unmarshal:\n            jaxb:\n              contextPath: com.acme.order\n        - to:\n            uri: bean:validateOrder\n        - marshal:\n            jaxb:\n              contextPath: com.acme.order\n        - to:\n            uri: jms:queue:order\n"
@@ -763,6 +815,16 @@
       "yaml": "- onException:\n    exception:\n      - org.apache.camel.ValidationException\n    steps:\n      - to:\n          uri: activemq:validationFailed\n- onException:\n    exception:\n      - com.foo.ShipOrderException\n    steps:\n      - to:\n          uri: activemq:shipFailed\n- route:\n    from:\n      uri: seda:order\n      steps:\n        - to:\n            uri: bean:processOrder\n"
     }
   ],
+  "pausable": [
+    {
+      "source": "pausable-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: kafka:topic\n      steps:\n        - pausable:\n            consumerListener: kafkaConsumerListener\n            untilCheck: canContinue\n        - log:\n            message: \"Received: ${body}\"\n        - to:\n            uri: direct:destination\n- beans:\n    - name: kafkaConsumerListener\n      type: org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener\n    - name: canContinue\n      type: com.foo.CanContinuePredicate\n"
+    },
+    {
+      "source": "pausable-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: kafka:topic\n      steps:\n        - pausable:\n            consumerListener: kafkaConsumerListener\n            untilCheck: canContinue\n        - circuitBreaker:\n            resilience4jConfiguration:\n              circuitBreaker: pausableCircuit\n            steps:\n              - to:\n                  uri: direct:downstream\n"
+    }
+  ],
   "pipeline": [
     {
       "source": "pipeline-eip.adoc",
@@ -800,18 +862,26 @@
   "pollEnrich": [
     {
       "source": "pollEnrich-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - pollEnrich:\n            timeout: 10000\n            expression:\n              constant:\n                expression: file:inbox?fileName=data.txt\n        - to:\n            uri: mock:result\n"
+    },
+    {
+      "source": "pollEnrich-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - pollEnrich:\n            expression:\n              simple:\n                expression: \"seda:${header.queueName}\"\n        - to:\n            uri: direct:result\n"
+    },
+    {
+      "source": "pollEnrich-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - pollEnrich:\n            aggregationStrategy: myStrategy\n            timeout: 10000\n            expression:\n              constant:\n                expression: file:inbox?fileName=data.txt\n        - to:\n            uri: mock:result\n"
     },
     {
       "source": "pollEnrich-eip.adoc",
       "yaml": "- rest:\n    path: \/report\n    get:\n      - path: \/{id}\/report\n        to:\n          uri: direct:report\n\n- route:\n    from:\n      uri: direct:report\n      steps:\n        - pollEnrich:\n            expression:\n              constant:\n                expression: \"aws-s3:xavier-dev?amazonS3Client=#s3client&deleteAfterRead=false&fileName=report-file.pdf\"\n"
-    },
-    {
-      "source": "pollEnrich-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - pollEnrich:\n            expression:\n              simple:\n                expression: \"seda:${header.queueName}\"\n        - to:\n            uri: direct:result\n"
     }
   ],
   "process": [
+    {
+      "source": "process-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: activemq:myQueue\n      steps:\n        - process:\n            ref: myProcessor\n- beans:\n    - name: myProcessor\n      type: com.foo.MyProcessor\n"
+    },
     {
       "source": "process-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: activemq:myQueue\n      steps:\n        - process:\n            ref: \"#class:com.foo.MyProcessor\"\n"
@@ -853,6 +923,10 @@
     {
       "source": "recipientList-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:a\n      steps:\n        - recipientList:\n            ignoreInvalidEndpoints: \"true\"\n            expression:\n              header:\n                expression: myHeader\n"
+    },
+    {
+      "source": "recipientList-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - multicast:\n            aggregationStrategy: myStrategy\n            parallelProcessing: true\n            timeout: 250\n            steps:\n              - to:\n                  uri: direct:a\n              - to:\n                  uri: direct:b\n              - to:\n                  uri: direct:c\n        - to:\n            uri: mock:result\n- route:\n    from:\n      uri: direct:a\n      steps:\n        - delay:\n            expression:\n              constant:\n                expression: \"1000\"\n        - to:\n            uri: mock:A\n        - setBody:\n            expression:\n              constant:\n                expression: A\n- route:\n    from:\n      uri: direct:b\n      steps:\n        - to:\n            uri: mock:B\n        - setBody:\n            expression:\n              constant:\n                expression: B\n- route:\n    from:\n      uri: direct:c\n      steps:\n        - to:\n            uri: mock:C\n        - setBody:\n            expression:\n              constant:\n                expression: C\n- beans:\n    - name: myStrategy\n      type: com.foo.MyAggregationStrategy\n"
     },
     {
       "source": "recipientList-eip.adoc",
@@ -1031,6 +1105,56 @@
     {
       "source": "rest-dsl.adoc",
       "yaml": "- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n        disabled: \"{{ordersEnabled}}\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n        disabled: \"true\"\n"
+    }
+  ],
+  "restConfiguration": [
+    {
+      "source": "rest-dsl.adoc",
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    get:\n      - path: \"\/customers\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/customers\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/customers\/neworder\"\n        to: \"direct:customerNewOrder\"\n"
+    },
+    {
+      "source": "rest-dsl.adoc",
+      "yaml": "- restConfiguration:\n    inlineRoutes: true\n- rest:\n    path: \"\/customers\/\"\n    get:\n      - path: \"\/{id}\"\n        to: \"direct:customerDetails\"\n      - path: \"\/{id}\/orders\"\n        to: \"direct:customerOrders\"\n    post:\n      - path: \"\/neworder\"\n        to: \"direct:customerNewOrder\"\n- route:\n    from:\n      uri: direct:customerNewOrder\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n- route:\n    from:\n      uri: direct:commonCustomerNewOrder\n      steps:\n        - log:\n            message: Created new order\n- route:\n    from:\n      uri: kafka:new-order\n      steps:\n        - to:\n            uri: direct:commonCustomerNewOrder\n"
+    }
+  ],
+  "resumable": [
+    {
+      "source": "resumable-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: some:component\n      steps:\n        - resumable:\n            resumeStrategy: kafkaResumeStrategy\n        - process:\n            ref: myProcessor\n"
+    },
+    {
+      "source": "resumable-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: some:component\n      steps:\n        - resumable:\n            resumeStrategy: testResumeStrategy\n            intermittent: true\n        - process:\n            ref: myProcessor\n- beans:\n    - name: testResumeStrategy\n      type: com.foo.MyTestResumeStrategy\n"
+    }
+  ],
+  "resumeStrategies": [
+    {
+      "source": "resume-strategies.adoc",
+      "yaml": "- beans:\n    - name: testResumeStrategy\n      type: com.foo.MyTestResumeStrategy\n    - name: resumeCache\n      type: com.foo.MyChoiceOfResumeCache\n      constructors:\n        0: 100\n- route:\n    from:\n      uri: some:component\n      steps:\n        - resumable:\n            resumeStrategy: testResumeStrategy\n        - process:\n            ref: myProcessor\n"
+    },
+    {
+      "source": "resume-strategies.adoc",
+      "yaml": "- beans:\n    - name: resumeCache\n      type: com.foo.MyChoiceOfResumeCache\n      constructors:\n        0: 100\n- route:\n    from:\n      uri: some:component\n      steps:\n        - resumable:\n            resumeStrategy: \"#class:com.foo.MyTestResumeStrategy\"\n        - process:\n            ref: myProcessor\n"
+    },
+    {
+      "source": "resume-strategies.adoc",
+      "yaml": "- route:\n    from:\n      uri: some:component\n      steps:\n        - resumable:\n            resumeStrategy: testResumeStrategy\n            intermittent: true\n        - process:\n            ref: myProcessor\n- beans:\n    - name: testResumeStrategy\n      type: com.foo.MyTestResumeStrategy\n"
+    },
+    {
+      "source": "resume-strategies.adoc",
+      "yaml": "- route:\n    from:\n      uri: \"file:{{input.dir}}\"\n      parameters:\n        noop: true\n        fileName: \"{{input.file}}\"\n      steps:\n        - resumable:\n            resumeStrategy: testResumeStrategy\n        - convertBodyTo:\n            type: java.io.Reader\n        - process:\n            ref: myProcessor\n"
+    },
+    {
+      "source": "resume-strategies.adoc",
+      "yaml": "- route:\n    from:\n      uri: \"file:{{input.dir}}\"\n      parameters:\n        noop: true\n        fileName: \"{{input.file}}\"\n      steps:\n        - resumable:\n            resumeStrategy: testResumeStrategy\n        - convertBodyTo:\n            type: java.io.InputStream\n        - process:\n            ref: myProcessor\n"
+    },
+    {
+      "source": "resume-strategies.adoc",
+      "yaml": "- route:\n    from:\n      uri: kafka:topic\n      steps:\n        - pausable:\n            consumerListener: kafkaConsumerListener\n            untilCheck: canContinue\n        - log:\n            message: \"Received an exchange: ${body}\"\n        - to:\n            uri: direct:destination\n- beans:\n    - name: kafkaConsumerListener\n      type: org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener\n    - name: canContinue\n      type: com.foo.CanContinuePredicate\n"
+    },
+    {
+      "source": "resume-strategies.adoc",
+      "yaml": "- route:\n    id: pausable-it\n    from:\n      uri: kafka:topic\n      steps:\n        - pausable:\n            consumerListener: kafkaConsumerListener\n            untilCheck: canContinue\n        - log:\n            message: \"Got record from Kafka: ${body}\"\n        - circuitBreaker:\n            resilience4jConfiguration:\n              circuitBreaker: pausableCircuit\n            steps:\n              - to:\n                  uri: direct:downstream\n"
     }
   ],
   "returnAddress": [
@@ -1340,15 +1464,15 @@
     },
     {
       "source": "split-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:splitUsingBody\n      steps:\n        - split:\n            expression:\n              simple:\n                expression: \"${body}\"\n            steps:\n              - to:\n                  uri: mock:result\n"
+    },
+    {
+      "source": "split-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:a\n      steps:\n        - split:\n            delimiter: \"\\n\"\n            expression:\n              simple:\n                expression: \"${body}\"\n            steps:\n              - to:\n                  uri: direct:b\n"
     },
     {
       "source": "split-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: activemq:my.queue\n      steps:\n        - split:\n            expression:\n              xpath:\n                expression: \/\/foo\/bar\n            steps:\n              - to:\n                  uri: file:some\/directory\n"
-    },
-    {
-      "source": "split-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct:splitUsingBody\n      steps:\n        - split:\n            expression:\n              simple:\n                expression: \"${body}\"\n            steps:\n              - to:\n                  uri: mock:result\n"
     },
     {
       "source": "split-eip.adoc",
@@ -1416,7 +1540,13 @@
     },
     {
       "source": "split-eip.adoc",
-      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - to:\n            uri: mock:a\n        - split:\n            shareUnitOfWork: \"true\"\n            expression:\n              tokenize:\n                token: \",\"\n            steps:\n              - to:\n                  uri: mock:b\n              - to:\n                  uri: direct:line\n        - to:\n            uri: mock:result\n\n- route:\n    from:\n      uri: direct:line\n      steps:\n        - to:\n            uri: log:line\n        - process:\n            ref: myProcessor\n        - to:\n            uri: mock:line\n"
+      "yaml": "- errorHandler:\n    deadLetterChannel:\n      deadLetterUri: mock:dead\n      useOriginalMessage: true\n      redeliveryPolicy:\n        maximumRedeliveries: 3\n        redeliveryDelay: \"0\"\n- route:\n    from:\n      uri: direct:start\n      steps:\n        - to:\n            uri: mock:a\n        - split:\n            shareUnitOfWork: \"true\"\n            expression:\n              tokenize:\n                token: \",\"\n            steps:\n              - to:\n                  uri: mock:b\n              - to:\n                  uri: direct:line\n        - to:\n            uri: mock:result\n\n- route:\n    from:\n      uri: direct:line\n      steps:\n        - to:\n            uri: log:line\n        - process:\n            ref: myProcessor\n        - to:\n            uri: mock:line\n"
+    }
+  ],
+  "sslContextParameters": [
+    {
+      "source": "camel-configuration-utilities.adoc",
+      "yaml": "- sslContextParameters:\n    id: mySSL\n    keyStore: server.p12\n    keystorePassword: changeit\n    trustStore: truststore.p12\n    trustStorePassword: changeit\n- route:\n    from:\n      uri: direct:ssl\n      steps:\n        - to:\n            uri: mock:ssl\n"
     }
   ],
   "step": [
@@ -1449,6 +1579,24 @@
     {
       "source": "switch-eip.adoc",
       "yaml": "- semantic:\n    evaluation:\n      department:\n        expert: decisions\n        type: choice\n        instructions: Which department should handle this message?\n        criteria:\n          billing: Invoices, payments and refunds\n          technical: Bugs, outages and technical problems\n          other: Any other request\n- route:\n    from:\n      uri: direct:classify\n      steps:\n        - switch:\n            selector:\n              language:\n                language: semantic\n                expression: ref:department\n            case:\n              - value: billing\n                uri: direct:billing\n              - value: technical\n                uri: direct:technical\n            otherwise:\n              uri: direct:review\n"
+    }
+  ],
+  "templatedRoute": [
+    {
+      "source": "route-template.adoc",
+      "yaml": "- templatedRoute:\n    routeTemplateRef: \"myTemplate\"\n    parameters:\n      - name: \"name\"\n        value: \"one\"\n      - name: \"greeting\"\n        value: \"Hello\"\n\n- templatedRoute:\n    routeTemplateRef: \"myTemplate\"\n    parameters:\n      - name: \"name\"\n        value: \"two\"\n      - name: \"greeting\"\n        value: \"Bonjour\"\n      - name: \"myPeriod\"\n        value: \"5s\"\n"
+    },
+    {
+      "source": "route-template.adoc",
+      "yaml": "- templatedRoute:\n    routeTemplateRef: \"myTemplate\"\n    routeId: \"myCoolRoute\"\n    parameters:\n      - name: \"name\"\n        value: \"one\"\n      - name: \"greeting\"\n        value: \"hello\"\n      - name: \"myPeriod\"\n        value: \"5s\"\n"
+    },
+    {
+      "source": "route-template.adoc",
+      "yaml": "- templatedRoute:\n    routeTemplateRef: \"orderTemplate\"\n    routeId: \"webOrder\"\n    prefixId: \"web\"\n    parameters:\n      - name: \"queue\"\n        value: \"web\"\n"
+    },
+    {
+      "source": "route-template.adoc",
+      "yaml": "- templatedRoute:\n    routeTemplateRef: \"orderTemplate\"\n    routeId: \"ftpOrder\"\n    prefixId: \"ftp\"\n    parameters:\n      - name: \"queue\"\n        value: \"order.ftp\"\n"
     }
   ],
   "threads": [
@@ -1546,7 +1694,17 @@
     },
     {
       "source": "toD-eip.adoc",
-      "yaml": "- from:\n    uri: direct:start\n    steps:\n      - toD:\n          uri: \"${header.target}\"\n          allowedSchemes: \"http,https\"\n"
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - toD:\n            uri: \"${header.target}\"\n            allowedSchemes: \"http,https\"\n"
+    }
+  ],
+  "tokenizer": [
+    {
+      "source": "tokenizer-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - tokenizer:\n            langChain4jParagraphTokenizer:\n              maxTokens: 1024\n              maxOverlap: 10\n              tokenizerType: OPEN_AI\n        - split:\n            expression:\n              simple:\n                expression: \"${body}\"\n            steps:\n              - to:\n                  uri: mock:result\n"
+    },
+    {
+      "source": "tokenizer-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - tokenizer:\n            langChain4jParagraphTokenizer:\n              maxTokens: 1024\n              modelName: gpt-4o-mini\n              maxOverlap: 10\n              tokenizerType: OPEN_AI\n        - split:\n            expression:\n              simple:\n                expression: \"${body}\"\n            steps:\n              - to:\n                  uri: mock:result\n"
     }
   ],
   "topicLoadBalancer": [
@@ -1585,7 +1743,37 @@
       "yaml": "- route:\n    from:\n      uri: direct:cheese\n      steps:\n        - transformDataType:\n            toType: myDataType\n        - to:\n            uri: log:hello\n"
     }
   ],
+  "transformers": [
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    dataFormatTransformer:\n      fromType: java:com.example.Order\n      toType: \"csv:CSVOrder\"\n      bindy:\n        type: \"Csv\"\n        classType: \"com.example.Order\"\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    endpointTransformer:\n      uri: component:componentPathOptions?mappingFile=myMapping.xml\n      fromType: xml\n      toType: json\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    customTransformer:\n      className: com.example.MyCustomTransformer\n      fromType: xml\n      toType: json\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    loadTransformer:\n      defaults: true\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    loadTransformer:\n      packageScan: \"org.apache.camel.transformer.standard\"\n"
+    },
+    {
+      "source": "transformer.adoc",
+      "yaml": "- transformers:\n    endpointTransformer:\n      uri: xslt:transform.xsl\n      fromType: xml:ABCOrder\n      toType: xml:XYZOrder\n"
+    }
+  ],
   "unmarshal": [
+    {
+      "source": "unmarshal-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: file:inbox\/json\n      steps:\n        - unmarshal:\n            json:\n              library: Jackson\n        - log:\n            message: \"Order ${body[orderId]} for customer ${body[customer]}\"\n        - to:\n            uri: bean:validateOrder\n"
+    },
     {
       "source": "unmarshal-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: file:inbox\/xml\n      steps:\n        - unmarshal:\n            jaxb:\n              contextPath: com.acme.order\n        - to:\n            uri: bean:validateOrder\n        - marshal:\n            jaxb:\n              contextPath: com.acme.order\n        - to:\n            uri: jms:queue:order\n"
@@ -1603,6 +1791,24 @@
     {
       "source": "validate-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: file:inbox\n      steps:\n        - validate:\n            expression:\n              simple:\n                expression: \"${header.bar} > 100\"\n        - to:\n            uri: bean:myServiceBean.processLine\n"
+    }
+  ],
+  "validators": [
+    {
+      "source": "validator.adoc",
+      "yaml": "- validators:\n    predicateValidator:\n      type: csv:CSVOrder\n      expression:\n        simple:\n          expression: \"${body} contains '{name:XOrder}'\"\n"
+    },
+    {
+      "source": "validator.adoc",
+      "yaml": "- validators:\n    endpointValidator:\n      type: xml\n      uri: validator:xsd\/schema.xsd\n"
+    },
+    {
+      "source": "validator.adoc",
+      "yaml": "- validators:\n    customValidator:\n      type: json\n      className: com.example.MyCustomValidator\n"
+    },
+    {
+      "source": "validator.adoc",
+      "yaml": "- validators:\n    endpointValidator:\n      type: xml:ABCOrder\n      uri: \"validator:xsd\/schema.xsd\"\n"
     }
   ],
   "weightedLoadBalancer": [

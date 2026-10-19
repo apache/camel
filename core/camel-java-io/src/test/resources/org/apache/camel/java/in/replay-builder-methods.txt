@@ -41,8 +41,6 @@ Builder.simple,java.lang.String,java.lang.Class,boolean,boolean
 Builder.systemProperty,java.lang.String
 Builder.systemProperty,java.lang.String,java.lang.String
 Builder.variable,java.lang.String
-Builder.wasm,java.lang.String
-Builder.wasm,java.lang.String,java.lang.Class
 BuilderSupport.body
 BuilderSupport.bodyAs,java.lang.Class
 BuilderSupport.constant,[Ljava.lang.Object;

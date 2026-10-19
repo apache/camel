@@ -39,9 +39,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -514,6 +516,9 @@ public final class QuarkusHelper {
         }
     }
 
+    // the managed versions of a released Quarkus platform BOM, by BOM and groupId:artifactId
+    private static final Map<String, String> MANAGED_VERSIONS = new ConcurrentHashMap<>();
+
     private record PlatformRelease(ComparableVersion platformVersion, MavenGav quarkusCamelBomGav) {
         PlatformRelease(ComparableVersion platformVersion, MavenGav quarkusCamelBomGav) {
             this.platformVersion = Objects.requireNonNull(platformVersion, "platformVersion");
@@ -541,6 +546,26 @@ public final class QuarkusHelper {
         }
 
         public List<String> findManagedVersions(Function<MavenGav, MavenArtifact> mavenResolver, Ga... gas) {
+            // a released BOM does not change, and reading it is slow: a JVM that runs several commands (camel shell,
+            // the TUI, the MCP server, the tests) reads it once
+            final String bom = quarkusCamelBomGav.toMavenResolverString();
+            final boolean release = !bom.endsWith("-SNAPSHOT");
+            if (release) {
+                List<String> cached = Stream.of(gas).map(ga -> MANAGED_VERSIONS.get(bom + "|" + ga)).toList();
+                if (!cached.contains(null)) {
+                    return cached;
+                }
+            }
+            List<String> answer = readManagedVersions(mavenResolver, gas);
+            if (release) {
+                for (int i = 0; i < gas.length; i++) {
+                    MANAGED_VERSIONS.put(bom + "|" + gas[i], answer.get(i));
+                }
+            }
+            return answer;
+        }
+
+        private List<String> readManagedVersions(Function<MavenGav, MavenArtifact> mavenResolver, Ga... gas) {
             final MavenArtifact artifact = mavenResolver.apply(quarkusCamelBomGav);
             Path file = artifact.getFile().toPath();
             if (!Files.isRegularFile(file)) {

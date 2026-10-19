@@ -695,8 +695,8 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Authentication methods allowed to use as a comma separated list of
-         * values Basic, Bearer, or NTLM. (NTLM is deprecated).
+         * The authentication method to use: Basic, Bearer or NTLM. (NTLM is
+         * deprecated).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

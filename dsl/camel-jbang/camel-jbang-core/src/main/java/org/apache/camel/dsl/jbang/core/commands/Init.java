@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -82,6 +81,10 @@ public class Init extends CamelCommand {
             description = "Whether to clean directory first (deletes all files in directory)")
     private boolean cleanDirectory;
 
+    @Option(names = { "--force" },
+            description = "Overwrite a file that exists already (by default the command fails instead)")
+    private boolean force;
+
     @Option(names = { "--from-kamelet" },
             description = "To be used when extending an existing Kamelet")
     private String fromKamelet;
@@ -98,6 +101,9 @@ public class Init extends CamelCommand {
             description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repositories;
 
+    // when the template is picked in the terminal, where to ask whether to overwrite a file that exists already
+    private Scanner overwritePrompt;
+
     public Init(CamelJBangMain main) {
         super(main);
     }
@@ -110,7 +116,8 @@ public class Init extends CamelCommand {
         if (file == null) {
             // try interactive picker if running in a TTY and not in CI
             if (EnvironmentHelper.isInteractiveTerminal()) {
-                return interactivePicker();
+                Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
+                return interactivePicker(activeTerminal != null ? activeTerminal.input() : System.in);
             }
             printer().printErr("Missing required parameter: <file>");
             printer().printTip("Run 'camel init --list' to see available templates, or run interactively in a terminal.");
@@ -233,26 +240,66 @@ public class Init extends CamelCommand {
                 Files.createDirectories(parentPath);
             }
         }
+        if (existsAlready(targetPath)) {
+            return CliExitCode.FAILURE;
+        }
         Files.writeString(targetPath, content);
+        return 0;
+    }
+
+    /**
+     * Whether the file is there already and not to be overwritten (without --force), which is then an error. When the
+     * template is picked in the terminal, the user is asked there whether to overwrite the file.
+     */
+    private boolean existsAlready(Path targetPath) {
+        if (force || !Files.exists(targetPath)) {
+            return false;
+        }
+        if (overwritePrompt != null) {
+            printer().printf("File already exists: %s, overwrite it? [y/N]: ", targetPath);
+            String answer = overwritePrompt.hasNextLine() ? overwritePrompt.nextLine().trim() : "";
+            if ("y".equalsIgnoreCase(answer) || "yes".equalsIgnoreCase(answer)) {
+                return false;
+            }
+        }
+        printer().printErr("File already exists: " + targetPath + " (use --force to overwrite it)");
+        return true;
+    }
+
+    /**
+     * Writes the downloaded files, and none of them when one of them is there already (without --force).
+     */
+    private int writeDownloaded(List<Resource> resources) throws Exception {
+        for (Resource resource : resources) {
+            if (existsAlready(Paths.get(directory, FileUtil.stripPath(resource.getLocation())))) {
+                return CliExitCode.FAILURE;
+            }
+        }
+        for (Resource resource : resources) {
+            Path targetPath = Paths.get(directory, FileUtil.stripPath(resource.getLocation()));
+            try (OutputStream os = Files.newOutputStream(targetPath)) {
+                IOUtils.copy(resource.getInputStream(), os);
+            }
+        }
         return 0;
     }
 
     /**
      * @return The package declaration lines to insert at the beginning of the file or empty string if no package found
      */
-    private String computeJavaPackageDeclaration(Path targetPath) throws IOException {
-        String packageDeclaration = "";
-        String canonicalPath = targetPath.getParent().toAbsolutePath().normalize().toString();
-        String srcMainJavaPath = Paths.get("src", "main", "java").toString();
-        int index = canonicalPath.indexOf(srcMainJavaPath);
-        if (index != -1) {
-            String packagePath = canonicalPath.substring(index + srcMainJavaPath.length() + 1);
-            String packageName = packagePath.replace(File.separatorChar, '.');
-            if (!packageName.isEmpty()) {
-                packageDeclaration = "package " + packageName + ";\n\n";
+    private String computeJavaPackageDeclaration(Path targetPath) {
+        // the directories after src/main/java (as whole names: not src/main/javafx, and none for src/main/java itself)
+        List<String> names = new ArrayList<>();
+        for (Path name : targetPath.toAbsolutePath().normalize().getParent()) {
+            names.add(name.toString());
+        }
+        for (int i = names.size() - 3; i >= 0; i--) {
+            if ("src".equals(names.get(i)) && "main".equals(names.get(i + 1)) && "java".equals(names.get(i + 2))) {
+                String packageName = String.join(".", names.subList(i + 3, names.size()));
+                return packageName.isEmpty() ? "" : "package " + packageName + ";\n\n";
             }
         }
-        return packageDeclaration;
+        return "";
     }
 
     private int listTemplates() {
@@ -298,7 +345,7 @@ public class Init extends CamelCommand {
         return 0;
     }
 
-    private int interactivePicker() throws Exception {
+    int interactivePicker(InputStream input) throws Exception {
         // Build template categories
         Map<String, List<String[]>> categories = new LinkedHashMap<>();
         categories.put("Routes", List.of(
@@ -313,9 +360,7 @@ public class Init extends CamelCommand {
         pipeTemplates.add(new String[] { "init-pipe.yaml", "Pipe CR (source to sink)", ".yaml" });
         categories.put("Pipes and CRs", pipeTemplates);
 
-        Terminal activeTerminal = EnvironmentHelper.getActiveTerminal();
-        InputStream scannerInput = activeTerminal != null ? activeTerminal.input() : System.in;
-        Scanner scanner = new Scanner(scannerInput);
+        Scanner scanner = new Scanner(input);
 
         // Step 1: Pick a category
         printer().println("Select a template category:");
@@ -384,6 +429,7 @@ public class Init extends CamelCommand {
         }
 
         this.file = filename;
+        overwritePrompt = scanner;
         int code = execute();
         if (code == 0) {
             createWorkingDirectoryIfAbsent();
@@ -436,18 +482,15 @@ public class Init extends CamelCommand {
             CamelContext tiny = new DefaultCamelContext();
             try (GitHubResourceResolver resolver = new GitHubResourceResolver()) {
                 resolver.setCamelContext(tiny);
+                List<Resource> resources = new ArrayList<>();
                 for (String u : all.toString().split(",")) {
                     Resource resource = resolver.resolve(u);
                     if (!resource.exists()) {
                         throw new ResourceDoesNotExist(resource);
                     }
-                    String loc = resource.getLocation();
-                    String name = FileUtil.stripPath(loc);
-                    Path targetPath = Paths.get(directory, name);
-                    try (OutputStream os = Files.newOutputStream(targetPath)) {
-                        IOUtils.copy(resource.getInputStream(), os);
-                    }
+                    resources.add(resource);
                 }
+                return writeDownloaded(resources);
             }
         }
 
@@ -473,18 +516,15 @@ public class Init extends CamelCommand {
             CamelContext tiny = new DefaultCamelContext();
             try (GistResourceResolver resolver = new GistResourceResolver()) {
                 resolver.setCamelContext(tiny);
+                List<Resource> resources = new ArrayList<>();
                 for (String u : all.toString().split(",")) {
                     Resource resource = resolver.resolve(u);
                     if (!resource.exists()) {
                         throw new ResourceDoesNotExist(resource);
                     }
-                    String loc = resource.getLocation();
-                    String name = FileUtil.stripPath(loc);
-                    Path targetPath = Paths.get(directory, name);
-                    try (OutputStream os = Files.newOutputStream(targetPath)) {
-                        IOUtils.copy(resource.getInputStream(), os);
-                    }
+                    resources.add(resource);
                 }
+                return writeDownloaded(resources);
             }
         }
 

@@ -94,5 +94,11 @@
             <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- deterministic simulation test of the visibility timeout extender (dst package) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-dst</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

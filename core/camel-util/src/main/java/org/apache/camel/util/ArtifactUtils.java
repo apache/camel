@@ -480,7 +480,6 @@ public final class ArtifactUtils {
             Map.entry("tokenize", "camel-core-languages"),
             Map.entry("typesafe-ai", "camel-typesafe-ai"),
             Map.entry("variable", "camel-core-languages"),
-            Map.entry("wasm", "camel-wasm"),
             Map.entry("xpath", "camel-xpath"),
             Map.entry("xquery", "camel-saxon"),
             Map.entry("xtokenize", "camel-stax")

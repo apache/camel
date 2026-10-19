@@ -31,7 +31,8 @@ import static org.apache.camel.component.http.HttpMethods.POST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A Map or List body cannot be an HTTP request body; the error says to marshal it to JSON first (CAMEL-25309).
+ * A Map or List body cannot be an HTTP request body; the error says to marshal it first, in the data format the
+ * Content-Type names (CAMEL-25309, CAMEL-25751).
  */
 public class HttpProducerMapBodyTest extends BaseHttpTest {
 
@@ -57,22 +58,49 @@ public class HttpProducerMapBodyTest extends BaseHttpTest {
     }
 
     @Test
-    public void aMapBodySaysToMarshalItToJson() {
+    public void aMapBodySaysToMarshalIt() {
         Exchange exchange = template.request(endpointUrl + "/post?httpMethod=POST",
                 // the body after unmarshal: json with Jackson
                 e -> e.getIn().setBody(new LinkedHashMap<>(Map.of("orderId", "ORD-1001", "qty", 2))));
 
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("java.util.LinkedHashMap").hasMessageContaining("a Map is not an HTTP request body")
-                .hasMessageContaining("marshal it to JSON first (marshal: json)");
+                .hasMessageContaining("the body is a Map (LinkedHashMap), which is not an HTTP request body")
+                .hasMessageContaining("marshal it first with the data format to write (such as marshal: json,"
+                                      + " marshal: jacksonXml or marshal: csv), or set the body to the text")
+                // the method is set, so it is not about GET
+                .hasMessageNotContaining("set httpMethod GET");
     }
 
     @Test
-    public void aListBodySaysToMarshalItToJson() {
+    public void aMapBodyWithoutAMethodSaysHowToSendAGet() {
+        // no httpMethod option and no CamelHttpMethod header: the body made the call a POST (CAMEL-25745)
+        Exchange exchange = template.request(endpointUrl + "/post",
+                e -> e.getIn().setBody(new LinkedHashMap<>(Map.of("sku", "CAMEL-MUG", "qty", 2))));
+
+        assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("the body is a Map (LinkedHashMap), which is not an HTTP request body")
+                .hasMessageContaining("The call is a POST because the message has a body")
+                .hasMessageContaining("for a GET, set httpMethod GET on the endpoint")
+                .hasMessageContaining("for a POST, marshal it first with the data format to write");
+    }
+
+    @Test
+    public void theContentTypeNamesTheDataFormat() {
+        Exchange exchange = template.request(endpointUrl + "/post?httpMethod=POST", e -> {
+            e.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            e.getIn().setBody(new LinkedHashMap<>(Map.of("orderId", "ORD-1001")));
+        });
+
+        assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
+                .hasMessageContaining("marshal it first (marshal: jacksonXml, for the Content-Type application/xml)");
+    }
+
+    @Test
+    public void aListBodySaysToMarshalIt() {
         Exchange exchange = template.request(endpointUrl + "/post?httpMethod=POST",
                 e -> e.getIn().setBody(List.of(Map.of("sku", "CAMEL-MUG"))));
 
         assertThat(exchange.getException()).isInstanceOf(InvalidPayloadException.class)
-                .hasMessageContaining("a List is not an HTTP request body");
+                .hasMessageContaining("the body is a List (").hasMessageContaining("which is not an HTTP request body");
     }
 }

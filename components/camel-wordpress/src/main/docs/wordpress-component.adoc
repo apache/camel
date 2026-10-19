@@ -55,6 +55,15 @@ public void configure() {
 }
 ----
 
+Without Java code, set the same component options in `application.properties`:
+
+[source,properties]
+----
+camel.component.wordpress.url = http://yoursite.com/wp-json/
+camel.component.wordpress.api-version = 2
+----
+
+
 == Examples
 
 === Consumer Example
@@ -63,6 +72,20 @@ Consumer polls from the API from time to time domain objects from WordPress. Fol
 
 - `wordpress:post` retrieves posts (defaults to 10 posts)    
 - `wordpress:post?id=1` search for a specific post
+
+The following route polls the post with the id 1:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: wordpress:post
+      parameters:
+        id: 1
+      steps:
+        - log:
+            message: "${body}"
+----
 
 === Producer Example
 
@@ -89,5 +112,6 @@ To configure it,
 you must install the https://github.com/WP-API/Basic-Auth[Basic-Auth WordPress plugin] and pass the credentials to the endpoint:
 
 `from("direct:deletePost").to("wordpress:post:delete?id=9&user=ben&password=password123").to("mock:resultDelete");`
+
 
 **It's not recommended to use Basic Authentication in production without TLS!!**

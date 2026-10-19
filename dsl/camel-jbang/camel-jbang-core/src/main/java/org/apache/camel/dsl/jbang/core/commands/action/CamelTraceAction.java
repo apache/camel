@@ -48,6 +48,7 @@ import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -57,7 +58,6 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.jline.jansi.Ansi;
-import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "trace",
@@ -72,6 +72,8 @@ public class CamelTraceAction extends ActionBaseCommand {
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
     private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+
+    private static final RowSort<StatusRow> ORDER = RowSort.<StatusRow> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
@@ -113,7 +115,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     @CommandLine.Mixin
     ActionTimeoutMixin timeoutOption;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Print timestamp.")
     boolean timestamp = true;
 
@@ -161,26 +163,27 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Show exchange properties in traced messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exchange variables in traced messages")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in traced messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in traced messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--compact" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Compact output (no empty line separating traced messages)")
     boolean compact = true;
 
@@ -257,8 +260,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             rows.add(row);
         }
 
-        // sort rows
-        rows.sort(this::sortStatusRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
@@ -296,25 +298,6 @@ public class CamelTraceAction extends ActionBaseCommand {
             return "Standby";
         }
         return "Stopped";
-    }
-
-    protected int sortStatusRow(StatusRow o1, StatusRow o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
     }
 
     protected Integer doDumpCall() throws Exception {
@@ -359,6 +342,10 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         // find new pids
         updatePids(pids);
+        if (pids.isEmpty() && !follow) {
+            // shown once: a name that matches no running integration is not found
+            findProcesses(name);
+        }
         if (!pids.isEmpty()) {
             // read existing trace files (skip by tail/since)
             Date limit = null;
@@ -768,7 +755,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                 ts = sdf.format(new Date(row.timestamp));
             }
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+                printColored(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
             } else {
                 printer().print(ts);
             }
@@ -777,8 +764,8 @@ public class CamelTraceAction extends ActionBaseCommand {
         // pid
         String p = String.format("%5.5s", row.pid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+            printColored(Ansi.ansi().fgMagenta().a(p).reset());
+            printColored(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
         } else {
             printer().print(p);
             printer().print(" --- ");
@@ -790,7 +777,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
         tn = String.format("[%25.25s]", tn);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
+            printColored(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
         } else {
             printer().print(tn);
         }
@@ -807,7 +794,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
         ids = String.format("%40.40s", ids);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
+            printColored(Ansi.ansi().fgCyan().a(ids).reset());
         } else {
             printer().print(ids);
         }
@@ -815,7 +802,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         // uuid
         String u = String.format("%5.5s", row.uid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(u).reset());
+            printColored(Ansi.ansi().fgMagenta().a(u).reset());
         } else {
             printer().print(u);
         }
@@ -826,9 +813,9 @@ public class CamelTraceAction extends ActionBaseCommand {
         String e = getElapsed(row);
         if (e != null) {
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+                printColored(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
             } else {
-                printer().print("(" + e + ")");
+                printer().print(" (" + e + ")");
             }
         }
         // trace message
@@ -873,7 +860,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
         if (depth == 0) {
             // special with only created/completed
-            return row.parent.depth == 1 && row.first || row.parent.depth == 0 && row.last;
+            return row.parent.depth == 1 && row.first || row.parent.depth <= 0 && row.last;
         }
         return row.parent.depth <= depth;
     }
@@ -903,7 +890,8 @@ public class CamelTraceAction extends ActionBaseCommand {
             }
         } else if (r.last) {
             String done = r.exception != null ? "Completed (exception)" : "Completed (success)";
-            String s = r.parent.depth == 0 ? done : "Returning from " + r.routeId;
+            // below 0 when --tail cut the start of the exchange
+            String s = r.parent.depth <= 0 ? done : "Returning from " + r.routeId;
             if (loggingColor) {
                 return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(s).reset().toString();
             } else {

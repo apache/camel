@@ -152,6 +152,18 @@ class CatalogServiceTest {
         assertThat(version(createService(null), null, "9.99.99", bom)).isEqualTo(BUILTIN_VERSION);
     }
 
+    @Test
+    void springBootWithoutVersionFallsBackToDefaultCatalogWhenOffline() {
+        // When runtime=spring-boot with no explicit version or BOM, the catalog loader tries to download
+        // the Spring Boot catalog provider from Maven Central. In environments without network access (CI),
+        // this fails with a DownloadException. The fix is to fall back to the default catalog rather than
+        // surfacing a confusing network error to the user.
+        // This test uses a non-existent repo so the download always fails, simulating offline/CI behaviour.
+        CatalogService service = createService("file:///nonexistent-repo-that-never-exists");
+
+        assertThat(version(service, "spring-boot", null, null)).isEqualTo(BUILTIN_VERSION);
+    }
+
     // Download tests — require Maven Central access.
     // Disabled in CI environments to avoid flaky network-dependent failures.
 

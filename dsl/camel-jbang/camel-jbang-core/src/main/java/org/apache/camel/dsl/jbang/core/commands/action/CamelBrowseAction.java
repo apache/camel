@@ -27,8 +27,12 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
@@ -44,6 +48,10 @@ import picocli.CommandLine;
                              "  camel cmd browse --endpoint=seda:foo",
                              "  camel cmd browse --endpoint=seda:foo --limit=10" })
 public class CamelBrowseAction extends ActionBaseCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("uri", r -> r.uri)
+            .numeric("size", r -> r.queueSize);
 
     public static class UriSizeCompletionCandidates implements Iterable<String> {
 
@@ -96,11 +104,11 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "Sort by uri, or size", defaultValue = "uri")
     String sort;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in browsed messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in browsed messages")
     boolean showBody = true;
 
@@ -112,7 +120,8 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         description = "Maximum size of the message body to include in the dump")
     int bodyMaxChars;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--pretty" },
@@ -174,8 +183,13 @@ public class CamelBrowseAction extends ActionBaseCommand {
             row = row.copy();
         }
 
+        if (endpoint != null && rows.isEmpty()) {
+            // the endpoint asked for is not one the integration can browse
+            throw CliException.notFound("No browsable endpoint matches: " + endpoint);
+        }
+
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (jsonOutput) {
             JsonOutput.printList(printer(), rows.stream().map(r -> {
@@ -269,23 +283,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
                         .with(r -> r.uri))));
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "uri":
-                return o1.uri.compareToIgnoreCase(o2.uri) * negate;
-            case "size":
-                return Long.compare(o1.queueSize, o2.queueSize) * negate;
-            default:
-                return 0;
-        }
-    }
-
     protected String getMessageAgo(Row r) {
         StringJoiner sj = new StringJoiner("/");
         if (r.firstTimestamp > 0) {
@@ -308,17 +305,10 @@ public class CamelBrowseAction extends ActionBaseCommand {
     }
 
     protected String getEndpointUri(Row r) {
-        String u = r.uri;
-        if (shortUri) {
-            int pos = u.indexOf('?');
-            if (pos > 0) {
-                u = u.substring(0, pos);
-            }
-        }
-        return u;
+        return ListingFormat.uri(r.uri, shortUri);
     }
 
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         String ago;
@@ -330,14 +320,6 @@ public class CamelBrowseAction extends ActionBaseCommand {
         long firstTimestamp;
         long lastTimestamp;
         List<JsonObject> messages;
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }

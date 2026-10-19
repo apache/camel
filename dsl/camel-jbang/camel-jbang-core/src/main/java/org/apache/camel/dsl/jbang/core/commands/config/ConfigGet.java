@@ -38,7 +38,8 @@ public class ConfigGet extends CamelCommand {
     @CommandLine.Parameters(description = "Configuration key", arity = "1")
     String key;
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
+                        description = "Use global or local configuration")
     boolean global = true;
 
     @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")

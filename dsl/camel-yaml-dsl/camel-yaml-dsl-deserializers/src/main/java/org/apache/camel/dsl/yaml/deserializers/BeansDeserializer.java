@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
+import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.BeanModelHelper;
 import org.apache.camel.model.Model;
@@ -39,7 +40,10 @@ import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PojoBeanHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.snakeyaml.engine.v2.api.ConstructNode;
+import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
+import org.snakeyaml.engine.v2.nodes.NodeTuple;
+import org.snakeyaml.engine.v2.nodes.ScalarNode;
 import org.snakeyaml.engine.v2.nodes.SequenceNode;
 
 @YamlIn
@@ -57,6 +61,7 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
     @Override
     public Object construct(Node node) {
         final BeansCustomizer answer = new BeansCustomizer();
+        checkBeansIsAList(node);
         final SequenceNode sn = asSequenceNode(node);
         final YamlDeserializationContext dc = getDeserializationContext(node);
 
@@ -98,6 +103,42 @@ public class BeansDeserializer extends YamlDeserializerSupport implements Constr
 
     public void clearCache() {
         beanCache.clear();
+    }
+
+    /**
+     * Fails with what to write when beans: is written keyed by the bean name, as a map (beans: {myBean: {type: ...}})
+     * or as list items (- myBean: {type: ...}), which is what people and AI models tend to write first (CAMEL-24704).
+     * The list with name: is the only form of beans: (also in routeTemplate and templatedRoute).
+     */
+    static void checkBeansIsAList(Node node) {
+        if (node instanceof MappingNode mn) {
+            String name = "myBean";
+            if (!mn.getValue().isEmpty()) {
+                NodeTuple first = mn.getValue().get(0);
+                String key = first.getKeyNode() instanceof ScalarNode sk ? sk.getValue() : name;
+                // beans:\n  name: myBean\n  type: ...: the "- " of the list item was forgotten
+                if ("name".equals(key) && first.getValueNode() instanceof ScalarNode sv) {
+                    key = sv.getValue();
+                }
+                name = key;
+            }
+            throw new YamlDeserializationException(
+                    node, "beans is a list: each bean starts with \"- \": - name: " + name
+                          + " followed by type: \"#class:com.example.MyBean\" (indented under the -)");
+        }
+        if (node instanceof SequenceNode sn) {
+            for (Node item : sn.getValue()) {
+                // - myBean: {type: ...}: a single key holding the bean, which is not one of its map properties
+                if (item instanceof MappingNode mn && mn.getValue().size() == 1
+                        && mn.getValue().get(0).getKeyNode() instanceof ScalarNode sk
+                        && mn.getValue().get(0).getValueNode() instanceof MappingNode
+                        && !Set.of("properties", "constructors").contains(sk.getValue())) {
+                    throw new YamlDeserializationException(
+                            item, "a bean item is written as - name: " + sk.getValue()
+                                  + " followed by type: \"#class:com.example.MyBean\" (the name is a property, not the key)");
+                }
+            }
+        }
     }
 
     protected void registerBean(

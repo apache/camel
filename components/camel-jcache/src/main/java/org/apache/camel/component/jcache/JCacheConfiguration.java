@@ -61,7 +61,7 @@ public class JCacheConfiguration {
     private boolean statisticsEnabled;
     @UriParam
     private boolean managementEnabled;
-    @UriParam(label = "consumer", enums = "CREATED,UPDATED,REMOVED,EXPIRED")
+    @UriParam(label = "consumer", enums = "CREATED,UPDATED,REMOVED,EXPIRED", multiEnum = true)
     private String filteredEvents;
     @UriParam(label = "consumer,advanced")
     private List<CacheEntryEventFilter> eventFilters;

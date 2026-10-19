@@ -153,6 +153,61 @@ delay, etc. Example:
 jira://[type]?[required options]&jql=RAW(project=[project key] AND status in (Open, \"Coding In Progress\") AND \"Number of comments\">0)"
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
+=== Examples
+
+The Jira server and the credentials are component options, for example in `application.properties`:
+
+[source,properties]
+----
+camel.component.jira.jira-url = https://jira.example.com
+camel.component.jira.username = {{env:JIRA_USERNAME}}
+camel.component.jira.password = {{env:JIRA_PASSWORD}}
+----
+
+The following route polls the new open issues of a project every minute. The body is the `Issue`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: jira:newIssues
+      parameters:
+        jql: "RAW(project=CAMEL AND status=Open)"
+        delay: 60000
+      steps:
+        - log:
+            message: "New issue ${body.key}: ${body.summary}"
+----
+
+The following route creates an issue. The message body is the description, and the body after the call is the created `Issue`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:report
+      steps:
+        - setHeader:
+            name: CamelJiraIssueProjectKey
+            expression:
+              constant:
+                expression: CAMEL
+        - setHeader:
+            name: CamelJiraIssueTypeName
+            expression:
+              constant:
+                expression: Bug
+        - setHeader:
+            name: CamelJiraIssueSummary
+            expression:
+              simple:
+                expression: "Order ${header.orderId} failed"
+        - to:
+            uri: jira:addIssue
+        - log:
+            message: "Created ${body.key}"
+----
+
 === Operations
 
 See a list of required headers to set when using the Jira operations. The author field for the producers is automatically set to the authenticated user on the Jira side.

@@ -1419,13 +1419,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteVariableExpression(sb, def);
         return sb.toString();
     }
-    public String writeWasmExpression(WasmExpression def) {
-        resetState();
-        StringBuilder sb = new StringBuilder();
-        beginStep(sb, "wasm", def);
-        doWriteWasmExpression(sb, def);
-        return sb.toString();
-    }
     public String writeXMLTokenizerExpression(XMLTokenizerExpression def) {
         resetState();
         StringBuilder sb = new StringBuilder();
@@ -1965,15 +1958,15 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteFaultToleranceConfigurationCommonAttributes(StringBuilder sb, FaultToleranceConfigurationCommon def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "typedGuard", def.getTypedGuard(), null);
-        doWriteAttribute(sb, "delay", def.getDelay(), "5000");
-        doWriteAttribute(sb, "successThreshold", def.getSuccessThreshold(), "1");
-        doWriteAttribute(sb, "requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute(sb, "failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(sb, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
-        doWriteAttribute(sb, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute(sb, "delay", def.getDelay(), null);
+        doWriteAttribute(sb, "successThreshold", def.getSuccessThreshold(), null);
+        doWriteAttribute(sb, "requestVolumeThreshold", def.getRequestVolumeThreshold(), null);
+        doWriteAttribute(sb, "failureRatio", def.getFailureRatio(), null);
+        doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), null);
+        doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), null);
+        doWriteAttribute(sb, "bulkheadEnabled", def.getBulkheadEnabled(), null);
+        doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), null);
+        doWriteAttribute(sb, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), null);
         doWriteAttribute(sb, "threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
     }
     protected void doWriteFaultToleranceConfigurationCommon(StringBuilder sb, FaultToleranceConfigurationCommon def) {
@@ -2314,28 +2307,28 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     protected void doWriteRedeliveryPolicyDefinition(StringBuilder sb, RedeliveryPolicyDefinition def) {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "maximumRedeliveries", def.getMaximumRedeliveries(), null);
-        doWriteAttribute(sb, "redeliveryDelay", def.getRedeliveryDelay(), "1000");
+        doWriteAttribute(sb, "redeliveryDelay", def.getRedeliveryDelay(), null);
         doWriteAttribute(sb, "asyncDelayedRedelivery", def.getAsyncDelayedRedelivery(), null);
-        doWriteAttribute(sb, "backOffMultiplier", def.getBackOffMultiplier(), "2.0");
+        doWriteAttribute(sb, "backOffMultiplier", def.getBackOffMultiplier(), null);
         doWriteAttribute(sb, "useExponentialBackOff", def.getUseExponentialBackOff(), null);
-        doWriteAttribute(sb, "collisionAvoidanceFactor", def.getCollisionAvoidanceFactor(), "0.15");
+        doWriteAttribute(sb, "collisionAvoidanceFactor", def.getCollisionAvoidanceFactor(), null);
         doWriteAttribute(sb, "useCollisionAvoidance", def.getUseCollisionAvoidance(), null);
-        doWriteAttribute(sb, "maximumRedeliveryDelay", def.getMaximumRedeliveryDelay(), "60000");
-        doWriteAttribute(sb, "retriesExhaustedLogLevel", def.getRetriesExhaustedLogLevel(), "ERROR");
-        doWriteAttribute(sb, "retryAttemptedLogLevel", def.getRetryAttemptedLogLevel(), "DEBUG");
-        doWriteAttribute(sb, "retryAttemptedLogInterval", def.getRetryAttemptedLogInterval(), "1");
-        doWriteAttribute(sb, "logRetryAttempted", def.getLogRetryAttempted(), "true");
-        doWriteAttribute(sb, "logStackTrace", def.getLogStackTrace(), "true");
+        doWriteAttribute(sb, "maximumRedeliveryDelay", def.getMaximumRedeliveryDelay(), null);
+        doWriteAttribute(sb, "retriesExhaustedLogLevel", def.getRetriesExhaustedLogLevel(), null);
+        doWriteAttribute(sb, "retryAttemptedLogLevel", def.getRetryAttemptedLogLevel(), null);
+        doWriteAttribute(sb, "retryAttemptedLogInterval", def.getRetryAttemptedLogInterval(), null);
+        doWriteAttribute(sb, "logRetryAttempted", def.getLogRetryAttempted(), null);
+        doWriteAttribute(sb, "logStackTrace", def.getLogStackTrace(), null);
         doWriteAttribute(sb, "logRetryStackTrace", def.getLogRetryStackTrace(), null);
         doWriteAttribute(sb, "logHandled", def.getLogHandled(), null);
-        doWriteAttribute(sb, "logNewException", def.getLogNewException(), "true");
+        doWriteAttribute(sb, "logNewException", def.getLogNewException(), null);
         doWriteAttribute(sb, "logContinued", def.getLogContinued(), null);
-        doWriteAttribute(sb, "logExhausted", def.getLogExhausted(), "true");
+        doWriteAttribute(sb, "logExhausted", def.getLogExhausted(), null);
         doWriteAttribute(sb, "logExhaustedMessageHistory", def.getLogExhaustedMessageHistory(), null);
         doWriteAttribute(sb, "logExhaustedMessageBody", def.getLogExhaustedMessageBody(), null);
         doWriteAttribute(sb, "disableRedelivery", def.getDisableRedelivery(), null);
         doWriteAttribute(sb, "delayPattern", def.getDelayPattern(), null);
-        doWriteAttribute(sb, "allowRedeliveryWhileStopping", def.getAllowRedeliveryWhileStopping(), "true");
+        doWriteAttribute(sb, "allowRedeliveryWhileStopping", def.getAllowRedeliveryWhileStopping(), null);
         doWriteAttribute(sb, "exchangeFormatterRef", def.getExchangeFormatterRef(), null);
     }
     protected void doWriteRemoveHeaderDefinition(StringBuilder sb, RemoveHeaderDefinition def) {
@@ -2375,29 +2368,29 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteIdentifiedTypeAttributes(sb, def);
         doWriteAttribute(sb, "circuitBreaker", def.getCircuitBreaker(), null);
         doWriteAttribute(sb, "config", def.getConfig(), null);
-        doWriteAttribute(sb, "failureRateThreshold", def.getFailureRateThreshold(), "50");
-        doWriteAttribute(sb, "permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
-        doWriteAttribute(sb, "throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
-        doWriteAttribute(sb, "slidingWindowSize", def.getSlidingWindowSize(), "100");
-        doWriteAttribute(sb, "slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
-        doWriteAttribute(sb, "slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), "SYNCHRONIZED");
-        doWriteAttribute(sb, "minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
-        doWriteAttribute(sb, "writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
-        doWriteAttribute(sb, "waitDurationInOpenState", def.getWaitDurationInOpenState(), "60000");
-        doWriteAttribute(sb, "automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
-        doWriteAttribute(sb, "maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), "0");
-        doWriteAttribute(sb, "slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
-        doWriteAttribute(sb, "slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60000");
-        doWriteAttribute(sb, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
-        doWriteAttribute(sb, "bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
-        doWriteAttribute(sb, "bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
-        doWriteAttribute(sb, "asynchronous", def.getAsynchronous(), "false");
-        doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute(sb, "failureRateThreshold", def.getFailureRateThreshold(), null);
+        doWriteAttribute(sb, "permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), null);
+        doWriteAttribute(sb, "throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), null);
+        doWriteAttribute(sb, "slidingWindowSize", def.getSlidingWindowSize(), null);
+        doWriteAttribute(sb, "slidingWindowType", def.getSlidingWindowType(), null);
+        doWriteAttribute(sb, "slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), null);
+        doWriteAttribute(sb, "minimumNumberOfCalls", def.getMinimumNumberOfCalls(), null);
+        doWriteAttribute(sb, "writableStackTraceEnabled", def.getWritableStackTraceEnabled(), null);
+        doWriteAttribute(sb, "waitDurationInOpenState", def.getWaitDurationInOpenState(), null);
+        doWriteAttribute(sb, "automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), null);
+        doWriteAttribute(sb, "maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), null);
+        doWriteAttribute(sb, "slowCallRateThreshold", def.getSlowCallRateThreshold(), null);
+        doWriteAttribute(sb, "slowCallDurationThreshold", def.getSlowCallDurationThreshold(), null);
+        doWriteAttribute(sb, "bulkheadEnabled", def.getBulkheadEnabled(), null);
+        doWriteAttribute(sb, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), null);
+        doWriteAttribute(sb, "bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), null);
+        doWriteAttribute(sb, "bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), null);
+        doWriteAttribute(sb, "asynchronous", def.getAsynchronous(), null);
+        doWriteAttribute(sb, "timeoutEnabled", def.getTimeoutEnabled(), null);
         doWriteAttribute(sb, "timeoutExecutorService", def.getTimeoutExecutorService(), null);
-        doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(sb, "timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
-        doWriteAttribute(sb, "micrometerEnabled", def.getMicrometerEnabled(), "false");
+        doWriteAttribute(sb, "timeoutDuration", def.getTimeoutDuration(), null);
+        doWriteAttribute(sb, "timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), null);
+        doWriteAttribute(sb, "micrometerEnabled", def.getMicrometerEnabled(), null);
     }
     protected void doWriteResilience4jConfigurationCommonElements(StringBuilder sb, Resilience4jConfigurationCommon def) {
         doWriteStringList(sb, null, "ignoreException", def.getIgnoreExceptions());
@@ -2464,8 +2457,8 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "delayer", def.getDelayer(), null);
         doWriteAttribute(sb, "errorHandlerRef", def.getErrorHandlerRef(), null);
         doWriteAttribute(sb, "routePolicyRef", def.getRoutePolicyRef(), null);
-        doWriteAttribute(sb, "shutdownRoute", def.getShutdownRoute(), "Default");
-        doWriteAttribute(sb, "shutdownRunningTask", def.getShutdownRunningTask(), "CompleteCurrentTaskOnly");
+        doWriteAttribute(sb, "shutdownRoute", def.getShutdownRoute(), null);
+        doWriteAttribute(sb, "shutdownRunningTask", def.getShutdownRunningTask(), null);
         doWriteAttribute(sb, "precondition", def.getPrecondition(), null);
         doWriteChildList(sb, "routeProperty", def.getRouteProperties(), this::doWritePropertyDefinition);
         doWriteChildElement(sb, "errorHandler", def.getErrorHandler(), this::doWriteErrorHandlerDefinition);
@@ -3677,11 +3670,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteExpressionDefinitionAttributes(sb, def);
         doWriteValue(sb, def.getExpression());
     }
-    protected void doWriteWasmExpression(StringBuilder sb, WasmExpression def) {
-        doWriteTypedExpressionDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "module", def.getModule(), null);
-        doWriteValue(sb, def.getExpression());
-    }
     protected void doWriteXMLTokenizerExpression(StringBuilder sb, XMLTokenizerExpression def) {
         doWriteNamespaceAwareExpressionAttributes(sb, def);
         doWriteAttribute(sb, "mode", def.getMode(), "i");
@@ -3837,14 +3825,14 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteOptionalIdentifiedDefinitionAttributes(sb, def);
         doWriteAttribute(sb, "consumes", def.getConsumes(), null);
         doWriteAttribute(sb, "produces", def.getProduces(), null);
-        doWriteAttribute(sb, "bindingMode", def.getBindingMode(), "off");
+        doWriteAttribute(sb, "bindingMode", def.getBindingMode(), null);
         doWriteAttribute(sb, "type", def.getType(), null);
         doWriteAttribute(sb, "outType", def.getOutType(), null);
-        doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute(sb, "clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute(sb, "enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute(sb, "clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute(sb, "enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(sb, "component", def.getComponent(), null);
     }
     protected void doWriteRestConfigurationDefinition(StringBuilder sb, RestConfigurationDefinition def) {
@@ -3862,13 +3850,13 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "apiContextRouteId", def.getApiContextRouteId(), null);
         doWriteAttribute(sb, "apiVendorExtension", def.getApiVendorExtension(), "false");
         doWriteAttribute(sb, "hostNameResolver", toString(def.getHostNameResolver()), "allLocalIp");
-        doWriteAttribute(sb, "bindingMode", toString(def.getBindingMode()), "off");
+        doWriteAttribute(sb, "bindingMode", toString(def.getBindingMode()), null);
         doWriteAttribute(sb, "bindingPackageScan", def.getBindingPackageScan(), null);
-        doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute(sb, "clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute(sb, "enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute(sb, "clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute(sb, "enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(sb, "inlineRoutes", def.getInlineRoutes(), "true");
         doWriteAttribute(sb, "jsonDataFormat", def.getJsonDataFormat(), "jackson");
         doWriteAttribute(sb, "xmlDataFormat", def.getXmlDataFormat(), "jaxb");
@@ -3886,12 +3874,12 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "path", def.getPath(), null);
         doWriteAttribute(sb, "consumes", def.getConsumes(), null);
         doWriteAttribute(sb, "produces", def.getProduces(), null);
-        doWriteAttribute(sb, "bindingMode", def.getBindingMode(), "off");
-        doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute(sb, "clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute(sb, "enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute(sb, "bindingMode", def.getBindingMode(), null);
+        doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute(sb, "clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute(sb, "enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(sb, "apiDocs", def.getApiDocs(), "true");
         doWriteAttribute(sb, "tag", def.getTag(), null);
         doWriteChildList(sb, "verbs", def.getVerbs(), this::doWriteVerbDefinitionRef);
@@ -3934,19 +3922,19 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
     }
     protected void doWriteVerbDefinitionAttributes(StringBuilder sb, VerbDefinition def) {
         doWriteOptionalIdentifiedDefinitionAttributes(sb, def);
-        doWriteAttribute(sb, "enableCORS", def.getEnableCORS(), "false");
+        doWriteAttribute(sb, "enableCORS", def.getEnableCORS(), null);
         doWriteAttribute(sb, "deprecated", def.getDeprecated(), "false");
         doWriteAttribute(sb, "streamCache", def.getStreamCache(), null);
         doWriteAttribute(sb, "type", def.getType(), null);
         doWriteAttribute(sb, "outType", def.getOutType(), null);
-        doWriteAttribute(sb, "clientResponseValidation", def.getClientResponseValidation(), "false");
+        doWriteAttribute(sb, "clientResponseValidation", def.getClientResponseValidation(), null);
         doWriteAttribute(sb, "path", def.getPath(), null);
         doWriteAttribute(sb, "routeId", def.getRouteId(), null);
-        doWriteAttribute(sb, "bindingMode", def.getBindingMode(), "off");
+        doWriteAttribute(sb, "bindingMode", def.getBindingMode(), null);
         doWriteAttribute(sb, "apiDocs", def.getApiDocs(), "true");
-        doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
-        doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), "false");
+        doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
+        doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), null);
         doWriteAttribute(sb, "produces", def.getProduces(), null);
         doWriteAttribute(sb, "disabled", def.getDisabled(), null);
         doWriteAttribute(sb, "consumes", def.getConsumes(), null);
@@ -6580,11 +6568,6 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
                     beginStep(sb, "variable", v);
                     doWriteVariableExpression(sb, (VariableExpression) v);
                     endStep(sb, "variable", v);
-                }
-                case "WasmExpression" -> {
-                    beginStep(sb, "wasm", v);
-                    doWriteWasmExpression(sb, (WasmExpression) v);
-                    endStep(sb, "wasm", v);
                 }
                 case "XMLTokenizerExpression" -> {
                     beginStep(sb, "xtokenize", v);

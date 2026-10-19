@@ -179,6 +179,15 @@ public class YamlValidator {
      *                          GET operation of an OpenAPI specification the file binds to (CAMEL-24844)
      */
     public List<Error> validate(String content, Set<String> bodylessEndpoints) throws Exception {
+        return validate(content, new ProjectFacts(bodylessEndpoints, Map.of(), null));
+    }
+
+    /**
+     * @param facts what the caller read from the files beside the route: the endpoints of the OpenAPI operations that
+     *              carry no body, the verbs of the operations the routes use, and the REST binding mode of the project
+     *              (CAMEL-25762)
+     */
+    public List<Error> validate(String content, ProjectFacts facts) throws Exception {
         if (schema == null) {
             init();
         }
@@ -198,7 +207,7 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            List<Error> errors = validate(target, bodylessEndpoints);
+            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE);
             // CAMEL-25560: the tree keeps the last of two equal keys, so a key given twice is only seen in the YAML nodes
             List<String> duplicates = DuplicateKeys.find(YamlPointerLines.root(content));
             if (duplicates.isEmpty()) {
@@ -666,8 +675,12 @@ public class YamlValidator {
      * <p/>
      * The envelope is described loosely on purpose. Camel does not own the Kamelet CRD, so the parts it does not read
      * are accepted as they come rather than failed for being unknown.
+     * <p/>
+     * The schema of the template is kept under {@code definitions}, where draft 4 (the dialect of the route schema)
+     * keeps a schema that is only referenced: under a key of its own at the root it is no keyword, and the validator
+     * warns about an unknown keyword each time a JVM loads the schema (CAMEL-25820).
      */
-    private JsonNode kameletModel(JsonNode routeModel) {
+    JsonNode kameletModel(JsonNode routeModel) {
         ObjectNode root = mapper.createObjectNode();
         JsonNode dialect = routeModel.get("$schema");
         if (dialect != null) {
@@ -687,14 +700,14 @@ public class YamlValidator {
         specProperties.putObject("types").put("type", "object");
         specProperties.putObject("dataTypes").put("type", "object");
         specProperties.putObject("dependencies").put("type", "array");
-        specProperties.putObject("template").put("$ref", "#/templateEntry");
+        specProperties.putObject("template").put("$ref", "#/definitions/templateEntry");
         // an entry of a route file is exactly one of route/from/beans/..., which is what maxProperties says. The
         // template of a Kamelet is not: counter-source declares its bean beside its from, and 60 of the 250 kamelets
         // of the library do the same. Everything else about an entry still holds, and the $refs inside the copy point
         // at #/items/definitions/..., which is why the items node is kept as well.
         ObjectNode template = routeModel.get("items").deepCopy();
         template.remove("maxProperties");
-        root.set("templateEntry", template);
+        root.putObject("definitions").set("templateEntry", template);
         root.set("items", routeModel.get("items"));
         return root;
     }
@@ -728,7 +741,7 @@ public class YamlValidator {
         return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
     }
 
-    private List<Error> validate(JsonNode target, Set<String> bodylessEndpoints) {
+    private List<Error> validate(JsonNode target, ProjectFacts facts) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
         // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
         var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
@@ -792,9 +805,9 @@ public class YamlValidator {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             // where the body comes from, across the routes of the file (CAMEL-24844)
-            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, bodylessEndpoints);
+            BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints());
             // a field read on a body that is still text (CAMEL-24844)
-            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            TextBodyFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts);
         }
         if (canonical) {
             checkOneOfCardinality(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
@@ -841,7 +854,7 @@ public class YamlValidator {
             "delay", "delay: {expression: {constant: {expression: \"1000\"}}}");
 
     private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel", "ognl",
-            "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "wasm", "datasonnet");
+            "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "datasonnet");
 
     /**
      * ${body.value} < 1 written as a groovy expression: Simple syntax inside another language, which groovy reads as a

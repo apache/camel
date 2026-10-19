@@ -67,6 +67,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "Total number of exchanges") long exchangesTotal,
             @Metadata(description = "Number of failed exchanges") long exchangesFailed,
             @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Total number of exchanges that came from a remote endpoint") long remoteExchangesTotal,
+            @Metadata(description = "Number of failed exchanges that came from a remote endpoint") long remoteExchangesFailed,
+            @Metadata(description = "Number of inflight exchanges that came from a remote endpoint") long remoteExchangesInflight,
             @Metadata(description = "Mean processing time in milliseconds") long meanProcessingTime,
             @Metadata(description = "Max processing time in milliseconds") long maxProcessingTime,
             @Metadata(description = "Min processing time in milliseconds") long minProcessingTime,
@@ -544,6 +547,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 coverage, hasLoad ? load1 : null, hasLoad ? load5 : null, hasLoad ? load15 : null,
                 thp.isEmpty() ? null : thp,
                 mrb.getIdleSince(), mrb.getExchangesTotal(), mrb.getExchangesFailed(), mrb.getExchangesInflight(),
+                mrb.getRemoteExchangesTotal(), mrb.getRemoteExchangesFailed(), mrb.getRemoteExchangesInflight(),
                 mrb.getMeanProcessingTime(), mrb.getMaxProcessingTime(), mrb.getMinProcessingTime(),
                 p50, p95, p99, lastProcessingTime, deltaProcessingTime,
                 lastCreated, lastCompleted, lastFailureHandled, lastFailed);

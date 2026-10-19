@@ -50,7 +50,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class UserManualDocExamplesTest {
 
     private static final Path PAGES = Path.of("docs", "user-manual", "modules", "ROOT", "pages");
-    private static final Pattern YAML_BLOCK = Pattern.compile("\\[source,yaml\\]\\n-{4,}\\n(.*?)\\n-{4,}", Pattern.DOTALL);
     private static final Pattern FIRST_KEY = Pattern.compile("^\\s*-\\s+([A-Za-z]+)\\s*:");
 
     private static YamlValidator validator;
@@ -104,10 +103,10 @@ class UserManualDocExamplesTest {
             String page = entry.getKey();
             String doc = entry.getValue();
             int n = 0;
-            Matcher m = YAML_BLOCK.matcher(doc);
-            while (m.find()) {
-                String yaml = m.group(1).stripTrailing() + "\n";
-                Matcher key = FIRST_KEY.matcher(yaml.stripLeading());
+            // the blocks as the doc-samples plugin and the other documentation tests read them
+            for (DocBlocks.Example example : DocBlocks.examplesAt(doc)) {
+                String yaml = example.yaml();
+                Matcher key = FIRST_KEY.matcher(firstEntry(yaml));
                 if (!key.find() || !roots.contains(key.group(1))) {
                     // a step or an option fragment, or the YAML of another tool: not a route file
                     continue;
@@ -116,7 +115,7 @@ class UserManualDocExamplesTest {
                 examples++;
                 List<Error> errors = validator.validate(yaml);
                 if (!errors.isEmpty()) {
-                    int line = 1 + countLines(doc, m.start(1));
+                    int line = 1 + countLines(doc, example.start());
                     failures.add(page + ".adoc:" + line + " example " + n + ": " + errors.get(0).getMessage());
                 }
             }
@@ -149,6 +148,11 @@ class UserManualDocExamplesTest {
             }
         }
         return answer;
+    }
+
+    /** The first line of the YAML that is not blank or a comment. */
+    private static String firstEntry(String yaml) {
+        return yaml.lines().map(String::strip).filter(l -> !l.isEmpty() && !l.startsWith("#")).findFirst().orElse("");
     }
 
     private static int countLines(String text, int end) {

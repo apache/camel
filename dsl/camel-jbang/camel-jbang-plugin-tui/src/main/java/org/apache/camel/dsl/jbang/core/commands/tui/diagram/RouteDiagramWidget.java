@@ -27,6 +27,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
+import dev.tamboui.text.GraphemeClusters;
 import dev.tamboui.widget.Widget;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
@@ -228,17 +229,13 @@ public class RouteDiagramWidget implements Widget {
         if (y < area.top() || y >= area.bottom()) {
             return;
         }
-        // a character at a time, by the columns it takes: an emoji or a CJK character two
+        // a character at a time, by the columns it takes: an emoji or a CJK character two, and all the code points of
+        // an emoji (a ZWJ sequence, a flag) or of a letter with a combining mark go together
         String text = m.text();
         int offset = 0;
         for (int i = 0; i < text.length();) {
-            int cp = text.codePointAt(i);
-            int end = i + Character.charCount(cp);
-            // a combining mark goes with the character before it
-            while (end < text.length() && CharWidth.of(text.codePointAt(end)) == 0) {
-                end += Character.charCount(text.codePointAt(end));
-            }
-            int width = Math.max(1, CharWidth.of(cp));
+            int end = GraphemeClusters.clusterEnd(text, i);
+            int width = Math.max(1, CharWidth.of(text.substring(i, end)));
             int x = area.x() + m.col() - scrollX + offset;
             if (x + width > area.right()) {
                 return;

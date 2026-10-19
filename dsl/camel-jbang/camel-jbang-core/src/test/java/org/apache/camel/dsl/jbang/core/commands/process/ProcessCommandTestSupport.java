@@ -48,7 +48,7 @@ abstract class ProcessCommandTestSupport extends CamelCommandBaseTestSupport {
     @Override
     public void setup() throws Exception {
         super.setup();
-        CommandLineHelper.useHomeDir("target/test-process");
+        useTestHomeDir();
         Files.createDirectories(CommandLineHelper.getCamelDir());
     }
 

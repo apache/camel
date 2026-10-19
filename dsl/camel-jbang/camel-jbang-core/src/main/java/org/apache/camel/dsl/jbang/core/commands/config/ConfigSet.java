@@ -36,7 +36,8 @@ public class ConfigSet extends CamelCommand {
     @CommandLine.Parameters(description = "Configuration parameter (ex. key=value)", arity = "1")
     String configuration;
 
-    @CommandLine.Option(names = { "--global" }, description = "Use global or local configuration")
+    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
+                        description = "Use global or local configuration")
     boolean global = true;
 
     public ConfigSet(CamelJBangMain main) {

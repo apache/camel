@@ -140,6 +140,13 @@ class CliRunnerTest {
     }
 
     @Test
+    void everyRunHasNewCommands() {
+        // a field that is not an option keeps its value only when the same instance runs again
+        assertThat(CliRunner.run(List.of("count")).stdout()).isEqualTo("runs=1");
+        assertThat(CliRunner.run(List.of("count")).stdout()).isEqualTo("runs=1");
+    }
+
+    @Test
     void resultAsJson() {
         JsonObject json = new CliRunner.CliResult(3, "out", "x".repeat(10), 12, false).toJson(5);
 
@@ -153,13 +160,39 @@ class CliRunnerTest {
     private static class TestMain extends CamelJBangMain {
         @Override
         public void postAddCommands(CommandLine commandLine, String[] args) {
-            // the commands of the CLI, and one that ignores the interrupt
+            // the commands of the CLI, one that ignores the interrupt, and one that counts its runs
             commandLine.addSubcommand("busy", new CommandLine(new BusyCommand(this)));
+            commandLine.addSubcommand("count", new CommandLine(new CountCommand(this)));
         }
 
         @Override
         public void quit(int exitCode) {
             // in the test
+        }
+    }
+
+    /**
+     * A command that counts its runs in a field that is not an option.
+     */
+    @CommandLine.Command(name = "count")
+    static class CountCommand extends CamelCommand {
+
+        private int runs;
+
+        CountCommand(CamelJBangMain main) {
+            super(main);
+        }
+
+        @Override
+        protected boolean disarrangeLogging() {
+            return false;
+        }
+
+        @Override
+        public Integer doCall() {
+            runs++;
+            printer().println("runs=" + runs);
+            return 0;
         }
     }
 

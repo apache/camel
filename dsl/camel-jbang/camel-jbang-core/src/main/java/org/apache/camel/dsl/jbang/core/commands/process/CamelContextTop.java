@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -46,6 +49,12 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractS
                  "  camel top context",
                  "  camel top context --watch" })
 public class CamelContextTop extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .number("pid", r -> r.pid)
+            .text("name", r -> r.name)
+            .by("mem", Comparator.comparingLong((Row r) -> r.heapMemUsed).reversed())
+            .numeric("age", r -> r.uptime);
 
     public static class PidNameMemAgeCompletionCandidates implements Iterable<String> {
 
@@ -141,7 +150,7 @@ public class CamelContextTop extends ProcessWatchCommand {
         });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
@@ -216,27 +225,6 @@ public class CamelContextTop extends ProcessWatchCommand {
         return platformVersion;
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "mem":
-                return Long.compare(o1.heapMemUsed, o2.heapMemUsed) * negate * -1; // we want the biggest first
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
-    }
-
     protected String getThroughput(Row r) {
         String s = r.throughput;
         if (s == null || s.isEmpty()) {
@@ -290,22 +278,7 @@ public class CamelContextTop extends ProcessWatchCommand {
     }
 
     private String getLoad(Row r) {
-        String s1 = r.load01 != null ? r.load01 : "-";
-        String s2 = r.load05 != null ? r.load05 : "-";
-        String s3 = r.load15 != null ? r.load15 : "-";
-        if ("0.00".equals(s1)) {
-            s1 = "-";
-        }
-        if ("0.00".equals(s2)) {
-            s2 = "-";
-        }
-        if ("0.00".equals(s3)) {
-            s3 = "-";
-        }
-        if (s1.equals("-") && s2.equals("-") && s3.equals("-")) {
-            return "0/0/0";
-        }
-        return s1 + "/" + s2 + "/" + s3;
+        return ListingFormat.load(r.load01, r.load05, r.load15);
     }
 
     private static long asMegaBytesOneDigit(long bytes) {

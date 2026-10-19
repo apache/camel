@@ -23,7 +23,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -41,7 +40,7 @@ class CamelStartupRecorderActionTest extends CamelCommandBaseTestSupport {
     @Override
     public void setup() throws Exception {
         super.setup();
-        CommandLineHelper.useHomeDir("target/startup-recorder-test");
+        useTestHomeDir();
     }
 
     @Test

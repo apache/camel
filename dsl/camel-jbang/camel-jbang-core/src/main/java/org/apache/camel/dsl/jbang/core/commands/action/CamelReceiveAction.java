@@ -51,10 +51,13 @@ import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.main.KameletMain;
@@ -81,6 +84,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
+
+    private static final RowSort<StatusRow> ORDER = RowSort.<StatusRow> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     public static class PrefixCompletionCandidates implements Iterable<String> {
 
@@ -183,11 +188,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Show exchange variables in received messages")
     boolean showExchangeVariables;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message headers in received messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Show message body in received messages")
     boolean showBody = true;
 
@@ -195,10 +200,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         description = "Show only message body in received messages")
     boolean onlyBody;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
+                        description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--compact" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Compact output (no empty line separating messages)")
     boolean compact = true;
 
@@ -458,8 +464,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     }
                 });
 
-        // sort rows
-        rows.sort(this::sortStatusRow);
+        rows.sort(ORDER.comparator(sort));
 
         if (!rows.isEmpty()) {
             int tw = terminalWidth();
@@ -494,25 +499,6 @@ public class CamelReceiveAction extends ActionBaseCommand {
         return "Disabled";
     }
 
-    protected int sortStatusRow(StatusRow o1, StatusRow o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
-    }
-
     protected Integer doDumpCall() throws Exception {
         follow = isFollowing(follow, durationOption.getDuration());
         // setup table helper
@@ -534,6 +520,10 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
         // find new pids
         updatePids(pids);
+        if (pids.isEmpty() && !follow) {
+            // shown once: a name that matches no running integration is not found
+            findProcesses(name);
+        }
         if (!pids.isEmpty()) {
             // read existing received files (skip by tail/since)
             Date limit = null;
@@ -627,8 +617,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
         List<Long> pids;
         if (name != null) {
             pids = findPids(name);
-        } else {
+        } else if (pid != 0) {
+            // the integration this command started to receive in
             pids = List.of(pid);
+        } else {
+            pids = findPids("*");
         }
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
@@ -725,16 +718,17 @@ public class CamelReceiveAction extends ActionBaseCommand {
             if (arr != null) {
                 for (Object o : arr) {
                     Row row = new Row(pid);
-                    row.original = root;
                     row.pid = pid.pid;
                     row.name = pid.name;
                     JsonObject jo = (JsonObject) o;
+                    row.json = jo;
                     row.uid = jo.getLong("uid");
                     String uri = jo.getString("endpointUri");
                     if (uri != null) {
                         row.endpoint = new JsonObject();
                         if (mask) {
                             uri = URISupport.sanitizeUri(uri);
+                            jo.put("endpointUri", uri);
                         }
                         row.endpoint.put("endpoint", uri);
                         row.endpoint.put("remote", jo.getBooleanOrDefault("remoteEndpoint", true));
@@ -748,8 +742,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
                         row.timestamp = ts;
                     }
                     row.message = jo.getMap("message");
-                    row.message.remove("exchangeId");
-                    row.message.remove("exchangePattern");
+                    if (!"json".equalsIgnoreCase(output)) {
+                        // the table of the message does not show them
+                        row.message.remove("exchangeId");
+                        row.message.remove("exchangePattern");
+                    }
                     if (onlyBody) {
                         row.message.remove("exchangeProperties");
                         row.message.remove("exchangeVariables");
@@ -855,7 +852,11 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     protected void printDump(String name, int pids, Row row, Date limit) {
         if ("json".equalsIgnoreCase(output)) {
-            String dump = row.original.toJson();
+            // a message per line (a line of the file holds the messages the integration received since the line before)
+            String dump = row.json.toJson();
+            if (!isValidSince(limit, row.timestamp) || !isValidGrep(dump)) {
+                return;
+            }
             if (pretty) {
                 dump = valueAsStringPretty(dump, loggingColor);
             }
@@ -939,14 +940,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
     }
 
     protected String getEndpointUri(StatusRow r) {
-        String u = r.uri;
-        if (shortUri) {
-            int pos = u.indexOf('?');
-            if (pos > 0) {
-                u = u.substring(0, pos);
-            }
-        }
-        return u;
+        return ListingFormat.uri(r.uri, shortUri);
     }
 
     protected String getMessageAgo(StatusRow r) {
@@ -964,7 +958,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
     }
 
     private static class Row {
-        JsonObject original;
+        JsonObject json;
         Pid parent;
         String pid;
         String name;
@@ -980,7 +974,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     }
 
-    private static class StatusRow implements Cloneable {
+    private static class StatusRow extends CopyableRow<StatusRow> {
         String pid;
         String name;
         String age;
@@ -990,14 +984,6 @@ public class CamelReceiveAction extends ActionBaseCommand {
         long firstTimestamp;
         long lastTimestamp;
         String uri;
-
-        StatusRow copy() {
-            try {
-                return (StatusRow) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }
