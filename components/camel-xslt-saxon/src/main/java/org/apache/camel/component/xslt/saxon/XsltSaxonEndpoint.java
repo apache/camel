@@ -216,16 +216,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 XsltSaxonHelper.registerSaxonExtensionFunctions(tf, saxonExtensionFunctions);
             }
 
-            try {
-                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            } catch (IllegalArgumentException e) {
-                LOG.debug("TransformerFactory does not support {}", XMLConstants.ACCESS_EXTERNAL_DTD);
-            }
-            try {
-                factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-            } catch (IllegalArgumentException e) {
-                LOG.debug("TransformerFactory does not support {}", XMLConstants.ACCESS_EXTERNAL_STYLESHEET);
-            }
+            XsltSaxonHelper.configureExternalAccess(factory);
 
             final TransformerFactoryConfigurationStrategy strategy = getTransformerFactoryConfigurationStrategy();
             if (strategy != null) {
@@ -258,6 +249,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         xslt.setEntityResolver(getEntityResolver());
         xslt.setAllowStAX(allowStAX);
         xslt.setUseJsonBody(useJsonBody);
+        xslt.setSecureProcessing(secureProcessing);
         xslt.setDeleteOutputFile(isDeleteOutputFile());
         xslt.setSource(ExpressionBuilder.singleInputExpression(getSource()));
 
