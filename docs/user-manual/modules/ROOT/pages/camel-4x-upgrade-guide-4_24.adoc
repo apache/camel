@@ -1788,6 +1788,19 @@ a `bytes` field is now a `byte[]` with the content of the field. Previously it w
 `ByteString.toString()` returns, a description such as `<ByteString@1b6d3586 size=4 contents="...">`, which does not
 contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepted for a `bytes` field.
 
+=== camel-jbang - where the CLI writes its log files
+
+* The `log4j2.properties` of camel-jbang-core logs to the console only. It is the configuration that log4j finds on the
+  classpath when nothing configures logging. It also wrote a log file into `~/.camel`, named after the `pid` system
+  property, which only the CLI sets: a JVM that uses camel-jbang-core without the CLI (such as a test) wrote
+  `~/.camel/${sys:pid}.log`, and `camel test run` left a `<pid>.log` there. The configuration that `camel run` uses with
+  color is now `log4j2-color.properties`, next to `log4j2-no-color.properties`.
+* The log files of the CLI (`<pid>.log`, `camel-export.log` and `camel-script.log`) are written into the Camel directory
+  of the CLI, where `camel log` reads them, instead of `~/.camel` under `user.home`. The two differ when `user.home` is
+  `?` (a user without a home, such as in a container), as the CLI then uses `$HOME`, and when a test gives the CLI a
+  home of its own. The CLI sets the directory as the system property `camel.jbang.logDir`. A Quarkus app that
+  `camel run` exports and runs also logs there.
+
 === camel-jbang-mcp - runtime tools that changed behaviour
 
 Some runtime tools of the Camel MCP server now do what their description says, which changes what a client sees:
