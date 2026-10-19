@@ -50,6 +50,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExceptionHandler;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.ChildProcess;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -65,6 +66,7 @@ import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
@@ -178,7 +180,8 @@ public class Run extends CamelCommand {
     boolean transformMessageRun;
     boolean debugRun;
 
-    private Path logFile;
+    // package-private for RunPreviousLogTest
+    Path logFile;
     public long spawnPid;
 
     private Printer quietPrinter;
@@ -3052,26 +3055,63 @@ public class Run extends CamelCommand {
 
     protected int runKameletMain(KameletMain main) throws Exception {
         Recording jfrRecording = startJfrRecording();
+        PreviousRun.Keeper previousLog = null;
+        if (logFile != null && keepsPreviousLog()) {
+            // CAMEL-25784: the log is kept as the previous log of the integration when the run ends, and so are the
+            // logs that runs which were killed left behind
+            PreviousRun.keepOrphans();
+            previousLog = new PreviousRun.Keeper(logFile, () -> runName(main));
+        }
+        Integer exitCode = null;
+        String failure = null;
         try {
             main.start();
             if (hasNoRoutes(main)) {
                 // it would run doing nothing: a file without routes, or a mistake in it
-                printer().printErr(files.isEmpty()
-                        ? "No routes found" : "No routes found in: " + String.join(", ", files));
+                failure = files.isEmpty() ? "No routes found" : "No routes found in: " + String.join(", ", files);
+                printer().printErr(failure);
                 main.stop();
-                return CliExitCode.FAILURE;
+                exitCode = CliExitCode.FAILURE;
+                return exitCode;
             }
             main.run();
+            int code = main.getExitCode();
+            // no exit code is set when Camel is stopped from outside (such as camel stop)
+            exitCode = code == Integer.MIN_VALUE ? CliExitCode.OK : code;
+            return exitCode;
+        } catch (Exception | Error e) {
+            // such as a route that failed to start
+            failure = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+            exitCode = new CliExecutionExceptionHandler(getMain()).getExitCode(e);
+            throw e;
         } finally {
             stopJfrRecording(jfrRecording);
-            // cleanup and delete log file
-            if (logFile != null) {
+            if (previousLog != null) {
+                previousLog.ended(exitCode, failure);
+            } else if (logFile != null) {
+                // cleanup and delete log file
                 FileUtil.deleteFile(logFile);
             }
         }
-        int code = main.getExitCode();
-        // no exit code is set when Camel is stopped from outside (such as camel stop)
-        return code == Integer.MIN_VALUE ? CliExitCode.OK : code;
+    }
+
+    /**
+     * Whether the log of the run is kept as the previous log of the integration when the run ends (CAMEL-25784):
+     * {@code camel run} on the command line, not a Camel that another command runs in its JVM (such as
+     * {@code camel cmd send --local} and {@code camel transform}).
+     */
+    boolean keepsPreviousLog() {
+        return spec != null && !exportRun && !transformRun && !transformMessageRun && !scriptRun;
+    }
+
+    /**
+     * The name of the integration, as {@code camel ps} and {@code camel log} find it: the name of its CamelContext,
+     * which is {@code camel.main.name}, else the name of the run when Camel did not get that far.
+     */
+    private String runName(KameletMain main) {
+        CamelContext context = main.getCamelContext();
+        String answer = context != null ? context.getName() : null;
+        return answer != null && !answer.isBlank() ? answer : name;
     }
 
     /**

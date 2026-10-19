@@ -103,6 +103,27 @@ class DirtyTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void testTheLogOfAPreviousRunIsNotDirty() throws Exception {
+        // kept on purpose (CAMEL-25784), and the next run of that name replaces it
+        Files.writeString(CommandLineHelper.getCamelDir().resolve("orders-previous.log"), "Started");
+        Files.writeString(CommandLineHelper.getCamelDir().resolve("orders-previous.json"), "{}");
+        // a name can be a number
+        Files.writeString(CommandLineHelper.getCamelDir().resolve("123-previous.log"), "Started");
+
+        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        command.clean = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertEquals("", printer.getOutput().trim());
+            assertTrue(Files.exists(CommandLineHelper.getCamelDir().resolve("orders-previous.log")));
+            assertTrue(Files.exists(CommandLineHelper.getCamelDir().resolve("123-previous.log")));
+        }
+    }
+
+    @Test
     void testFileBelongsToTheWholePid() {
         // pid 12 does not own the files of pid 123
         assertEquals(123L, Dirty.pidOf("123-status.json"));
