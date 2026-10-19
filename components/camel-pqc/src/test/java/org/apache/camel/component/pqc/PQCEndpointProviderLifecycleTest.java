@@ -61,14 +61,14 @@ public class PQCEndpointProviderLifecycleTest {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
-                    from("direct:a").to("pqc:a?operation=sign&signatureAlgorithm=MLDSA");
-                    from("direct:b").to("pqc:b?operation=sign&signatureAlgorithm=MLDSA");
+                    from("direct:a").routeId("a").to("pqc:a?operation=sign&signatureAlgorithm=MLDSA");
+                    from("direct:b").routeId("b").to("pqc:b?operation=sign&signatureAlgorithm=MLDSA");
                 }
             });
             context.start();
 
             // stopping the first route disposes its endpoint; the second one must keep working
-            context.getRouteController().stopRoute("route1");
+            context.getRouteController().stopRoute("a");
             context.removeEndpoints("pqc:a*");
 
             context.createProducerTemplate().sendBody("direct:b", "Hello");
