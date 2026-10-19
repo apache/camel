@@ -213,6 +213,29 @@ class LogFileReaderTest {
     }
 
     @Test
+    void aStartThatFailedHasNoFrameOfTheUsersCode() {
+        // after the frames of Camel come those of the CLI and of picocli, its command line library: no user's code
+        List<String> lines = List.of(
+                "2026-10-19 12:58:17.301 ERROR 40927 --- [           main] org.apache.camel.main.MainSupport   : Error"
+                                     + " starting Camel: org.apache.camel.FailedToStartRouteException: Failed to start route:"
+                                     + " route1 because: java.lang.IllegalStateException: Cannot find RestApiProcessorFactory",
+                "org.apache.camel.FailedToStartRouteException: Failed to start route: route1 because:"
+                                                                                                                                + " java.lang.IllegalStateException: Cannot find RestApiProcessorFactory",
+                "\tat org.apache.camel.impl.engine.AbstractCamelContext.doStartRoute(AbstractCamelContext.java:1300)",
+                "\tat org.apache.camel.main.KameletMain.doStart(KameletMain.java:433)",
+                "\tat org.apache.camel.dsl.jbang.core.commands.Run.runKameletMain(Run.java:3067)",
+                "\tat picocli.CommandLine.executeUserObject(CommandLine.java:2031)",
+                "\tat picocli.CommandLine.access$1500(CommandLine.java:148)",
+                "\tat org.apache.camel.dsl.jbang.launcher.CamelLauncher.main(CamelLauncher.java:46)",
+                "\tat java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)",
+                "\tat org.springframework.boot.loader.launch.JarLauncher.main(JarLauncher.java:40)");
+
+        JsonObject error = (JsonObject) LogFileReader.build(lines, 50, null, null, false, new JsonObject())
+                .getCollection("lines").iterator().next();
+        assertNull(error.get("at"), "no frame is of the user's code: " + error);
+    }
+
+    @Test
     void aGroovyScriptIsTheUsersCode() {
         List<String> lines = List.of(
                 "2026-10-03 09:00:00.000  WARN 42 --- [ timer://orders] TimerConsumer : Error processing exchange",
