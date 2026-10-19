@@ -46,6 +46,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -211,7 +213,7 @@ class XsltSaxonDomSourceTest {
     @ValueSource(strings = { "document", "sax", "stream", "stax" })
     void testExplicitDocumentAndStreamingSources(String kind) throws Exception {
         Source source = documentOrStreamingSource(kind);
-        assertSame(source, getSource(source));
+        assertPreparedSource(kind, getSource(source));
         String result = template.requestBody(ENDPOINT, source, String.class);
         assertTrue(result.contains("<root"), result);
         assertEquals("root", parse(result).getDocumentElement().getNodeName());
@@ -222,10 +224,27 @@ class XsltSaxonDomSourceTest {
     void testImplicitDocumentAndStreamingSources(String kind) throws Exception {
         Source source = documentOrStreamingSource(kind);
         Payload payload = new Payload(source, false);
-        assertSame(source, getSource(payload));
+        assertPreparedSource(kind, getSource(payload));
         String result = template.requestBody(ENDPOINT, payload, String.class);
         assertEquals("root", parse(result).getDocumentElement().getNodeName());
         assertTrue(payload.conversions >= 2);
+    }
+
+    /**
+     * A source that is already parsed ({@code DOMSource}) or read through a reader the caller controls
+     * ({@code StAXSource}) is passed through unchanged; a stream-based source still to be parsed is wrapped with a
+     * reader that does not resolve references to external resources.
+     */
+    private static void assertPreparedSource(String kind, Source prepared) throws Exception {
+        if (kind.equals("document")) {
+            assertInstanceOf(DOMSource.class, prepared);
+        } else if (kind.equals("stax")) {
+            assertInstanceOf(StAXSource.class, prepared);
+        } else {
+            SAXSource saxSource = assertInstanceOf(SAXSource.class, prepared);
+            assertNotNull(saxSource.getXMLReader(), "A restricted reader should be installed on the source");
+            assertFalse(saxSource.getXMLReader().getFeature("http://xml.org/sax/features/external-general-entities"));
+        }
     }
 
     private static Source documentOrStreamingSource(String kind) throws Exception {

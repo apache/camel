@@ -20,6 +20,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
@@ -30,6 +39,10 @@ import org.slf4j.LoggerFactory;
 final class XsltSaxonHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonHelper.class);
+
+    private static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
+    private static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
+    private static final String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
 
     private XsltSaxonHelper() {
     }
@@ -53,6 +66,64 @@ final class XsltSaxonHelper {
     public static void configureSecureProcessing(TransformerFactoryImpl factory, boolean secureProcessing)
             throws Exception {
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, secureProcessing);
+    }
+
+    /**
+     * Restricts the external resource access of the given factory to the empty set, so that stylesheet compilation and
+     * the {@code document()} function do not reach external resources. This is the same configuration the
+     * {@code xslt-saxon} endpoint applies to the factory it creates; it is shared so the endpoint and
+     * {@link XsltSaxonAggregationStrategy} cannot drift apart.
+     */
+    public static void configureExternalAccess(TransformerFactory factory) {
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (IllegalArgumentException e) {
+            LOG.debug("TransformerFactory does not support {}", XMLConstants.ACCESS_EXTERNAL_DTD);
+        }
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            LOG.debug("TransformerFactory does not support {}", XMLConstants.ACCESS_EXTERNAL_STYLESHEET);
+        }
+    }
+
+    /**
+     * Returns a source whose parsing does not resolve references to external resources, for an input that is still to
+     * be parsed. The factory's {@code ACCESS_EXTERNAL_*} attributes do not cover this parse, because the transformer
+     * factory has a {@link javax.xml.transform.URIResolver} installed that resolves the reference itself, so the input
+     * is parsed with a dedicated reader instead.
+     * <p>
+     * A {@link SAXSource} that already carries its own {@link XMLReader}, and any source that is not stream-based (for
+     * example a {@code DOMSource} or a {@code StAXSource}), is returned unchanged; its content has already been parsed
+     * or is read through a reader the caller controls. Only a stream-based source still to be parsed
+     * ({@code StreamSource}, including Camel's {@code StringSource}/{@code BytesSource}, or a reader-less
+     * {@code SAXSource}) is wrapped with the restricted reader.
+     */
+    public static Source secureSource(Source source) {
+        if (source == null) {
+            return null;
+        }
+        if (source instanceof SAXSource saxSource && saxSource.getXMLReader() != null) {
+            return source;
+        }
+        InputSource inputSource = SAXSource.sourceToInputSource(source);
+        if (inputSource == null) {
+            return source;
+        }
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
+            factory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
+            factory.setFeature(LOAD_EXTERNAL_DTD, false);
+            XMLReader xmlReader = factory.newSAXParser().getXMLReader();
+            return new SAXSource(xmlReader, inputSource);
+        } catch (ParserConfigurationException | SAXException e) {
+            LOG.warn("Cannot create a restricted XMLReader for the input source, transforming it as is: {}",
+                    e.getMessage(), e);
+            return source;
+        }
     }
 
     public static void registerSaxonExtensionFunctions(

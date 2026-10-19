@@ -1325,6 +1325,30 @@ and uses the bucket of the endpoint, or the bucket named in the new `CamelIBMCOS
 that sets `CamelIBMCOSBucketName` to choose the bucket of a producer operation (for example `createBucket` or
 `deleteBucket`) must set `CamelIBMCOSOverrideBucketName` instead.
 
+=== camel-xslt-saxon - external resource access is restricted for a Source message body
+
+`XsltSaxonAggregationStrategy` now configures its Saxon `TransformerFactory` the same way the `xslt-saxon`
+endpoint configures the factory it creates: `FEATURE_SECURE_PROCESSING` is enabled and `ACCESS_EXTERNAL_DTD`
+and `ACCESS_EXTERNAL_STYLESHEET` are set to an empty string. Previously the strategy used the Saxon defaults,
+so the same stylesheet ran with different settings depending on whether it was used from the endpoint or from
+the strategy. On Saxon PE/EE, `FEATURE_SECURE_PROCESSING` also disables reflexive Java extension functions in the
+stylesheet.
+
+In addition, both the strategy and the `xslt-saxon` endpoint now parse a message body that is already a
+`javax.xml.transform.Source` still to be parsed, for example a `StreamSource` or the body after a
+`convertBodyTo(Source.class)`, with a reader that does not resolve references to external resources declared
+in the document. A `DOMSource`, a `StAXSource`, or a `Source` that already carries its own reader is left
+unchanged, and a declaration internal to the document is still applied. The other body types (`String`,
+`byte[]`, `InputStream`) are unaffected, as they already reach the transformer through Camel's StAX/SAX
+conversion.
+
+On the `xslt-saxon` endpoint, `secureProcessing` now controls both: setting `secureProcessing=false` (for example so
+a Saxon PE/EE stylesheet can call Java extension functions) also restores the previous, unrestricted parsing of a
+`Source` body. The option is marked as a security knob (`security=insecure:dev`, `insecureValue=false`), so
+`camel.main.profile=prod` reports it when it is turned off. `XsltSaxonAggregationStrategy` has no switch for the
+`Source` parsing: `setTransformerFactory(...)` replaces the factory, but the strategy's `XsltSaxonBuilder` keeps
+`secureProcessing=true`, so the body is still parsed with the restricted reader.
+
 === camel-ical - each unmarshal parses with its own calendar builder
 
 The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at
