@@ -115,7 +115,9 @@ class OBSConsumerObjectThatCannotBeGotTest extends CamelTestSupport {
         addConsumerRoute("&deleteAfterRead=true&exceptionHandler=#recordErrors");
 
         mock.assertIsSatisfied();
-        assertEquals(Set.of("b.txt"), Set.copyOf(objects), "a.txt and c.txt are consumed and deleted, b.txt stays");
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(Set.of("b.txt"), Set.copyOf(objects),
+                        "a.txt and c.txt are consumed and deleted, b.txt stays"));
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(
                 () -> assertTrue(handled.stream().anyMatch(m -> m.contains("b.txt")), "the skipped object is reported"));
     }
@@ -134,7 +136,8 @@ class OBSConsumerObjectThatCannotBeGotTest extends CamelTestSupport {
         addConsumerRoute("&deleteAfterRead=true&maxMessagesPerPoll=2");
 
         mock.assertIsSatisfied();
-        assertEquals(Set.of("a.txt"), Set.copyOf(objects), "b.txt, c.txt and d.txt are consumed and deleted");
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(Set.of("a.txt"), Set.copyOf(objects), "b.txt, c.txt and d.txt are consumed and deleted"));
     }
 
     @Test
