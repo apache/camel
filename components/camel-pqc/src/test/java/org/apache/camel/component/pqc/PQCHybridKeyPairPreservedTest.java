@@ -24,6 +24,8 @@ import java.security.Security;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.pqc.crypto.hybrid.PQCDefaultECDSAMLDSAMaterial;
+import org.apache.camel.component.pqc.crypto.hybrid.PQCDefaultX25519MLKEMMaterial;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
@@ -107,7 +109,7 @@ public class PQCHybridKeyPairPreservedTest {
     }
 
     @Test
-    void hybridSignStillAutoConfiguresWhenNothingIsSupplied() throws Exception {
+    void hybridSignStillAutoConfiguresTheMatchedPair() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             context.start();
 
@@ -115,8 +117,32 @@ public class PQCHybridKeyPairPreservedTest {
                     "pqc:sign?operation=hybridSign&signatureAlgorithm=MLDSA&classicalSignatureAlgorithm=ECDSA_P256",
                     PQCEndpoint.class);
 
-            assertNotNull(endpoint.getConfiguration().getKeyPair(), "the PQC half must be auto-configured");
-            assertNotNull(endpoint.getConfiguration().getClassicalKeyPair(),
+            // the matched pair, not the generic MLDSA default: asserting only non-null would not notice the
+            // difference, and for the KEM pairing below it is a difference in security level
+            assertSame(PQCDefaultECDSAMLDSAMaterial.pqcKeyPair, endpoint.getConfiguration().getKeyPair(),
+                    "the PQC half must be the one matched to the classical algorithm");
+            assertSame(PQCDefaultECDSAMLDSAMaterial.classicalKeyPair,
+                    endpoint.getConfiguration().getClassicalKeyPair(),
+                    "the classical half must be auto-configured");
+        }
+    }
+
+    @Test
+    void hybridKemStillAutoConfiguresTheMatchedPair() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            PQCEndpoint endpoint = context.getEndpoint(
+                    "pqc:kem?operation=hybridGenerateSecretKeyEncapsulation&keyEncapsulationAlgorithm=MLKEM"
+                                                       + "&classicalKEMAlgorithm=X25519",
+                    PQCEndpoint.class);
+
+            // PQCDefaultX25519MLKEMMaterial is ML-KEM-768; the generic PQCDefaultMLKEMMaterial is ML-KEM-512, so
+            // falling back to it would silently weaken the default hybrid pairing
+            assertSame(PQCDefaultX25519MLKEMMaterial.pqcKeyPair, endpoint.getConfiguration().getKeyPair(),
+                    "the PQC half must be the ML-KEM-768 material matched to X25519");
+            assertSame(PQCDefaultX25519MLKEMMaterial.classicalKeyPair,
+                    endpoint.getConfiguration().getClassicalKeyPair(),
                     "the classical half must be auto-configured");
         }
     }

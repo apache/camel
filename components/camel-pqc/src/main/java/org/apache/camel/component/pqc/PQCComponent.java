@@ -88,6 +88,14 @@ public class PQCComponent extends HealthCheckComponent {
         PQCEndpoint endpoint = new PQCEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
 
+        // Captured here, before any auto-configuration runs. The generic blocks below fill the PQC material in, so
+        // asking the same question later would always answer "present" and the matched hybrid material would never
+        // be applied.
+        boolean pqcSignatureMaterialSupplied = ObjectHelper.isNotEmpty(configuration.getSigner())
+                || ObjectHelper.isNotEmpty(configuration.getKeyPair());
+        boolean pqcKemMaterialSupplied = ObjectHelper.isNotEmpty(configuration.getKeyGenerator())
+                || ObjectHelper.isNotEmpty(configuration.getKeyPair());
+
         // When a parameterSpec (NIST security level) is configured, generate the key material with that parameter set
         // instead of using the algorithm's hardcoded default material
         if (ObjectHelper.isNotEmpty(configuration.getParameterSpec())) {
@@ -187,10 +195,10 @@ public class PQCComponent extends HealthCheckComponent {
         }
 
         // Auto-configure hybrid signature materials
-        configureHybridSignatureMaterial(configuration);
+        configureHybridSignatureMaterial(configuration, pqcSignatureMaterialSupplied);
 
         // Auto-configure hybrid KEM materials
-        configureHybridKEMMaterial(configuration);
+        configureHybridKEMMaterial(configuration, pqcKemMaterialSupplied);
 
         return endpoint;
     }
@@ -282,20 +290,15 @@ public class PQCComponent extends HealthCheckComponent {
     /**
      * Auto-configures hybrid signature materials based on classical and PQC algorithm settings.
      */
-    private void configureHybridSignatureMaterial(PQCConfiguration configuration) {
+    private void configureHybridSignatureMaterial(PQCConfiguration configuration, boolean pqcMaterialSupplied) {
         // Only configure if hybrid signature operations and classical algorithm is specified
         if (configuration.getOperation() != PQCOperations.hybridSign
                 && configuration.getOperation() != PQCOperations.hybridVerify) {
             return;
         }
 
-        // Captured before anything is auto-configured: the pre-built hybrid materials below replace the PQC half as
-        // well, and must only do so when the route author did not supply it
-        boolean pqcMaterialMissing = ObjectHelper.isEmpty(configuration.getSigner())
-                && ObjectHelper.isEmpty(configuration.getKeyPair());
-
         // Configure PQC signature material if not already set
-        if (pqcMaterialMissing) {
+        if (!pqcMaterialSupplied) {
             if (ObjectHelper.isNotEmpty(configuration.getSignatureAlgorithm())) {
                 switch (configuration.getSignatureAlgorithm()) {
                     case "MLDSA":
@@ -327,14 +330,14 @@ public class PQCComponent extends HealthCheckComponent {
                 if ("ECDSA_P256".equals(classicalAlg) && "MLDSA".equals(pqcAlg)) {
                     configuration.setClassicalSigner(PQCDefaultECDSAMLDSAMaterial.classicalSigner);
                     configuration.setClassicalKeyPair(PQCDefaultECDSAMLDSAMaterial.classicalKeyPair);
-                    if (pqcMaterialMissing) {
+                    if (!pqcMaterialSupplied) {
                         configuration.setSigner(PQCDefaultECDSAMLDSAMaterial.pqcSigner);
                         configuration.setKeyPair(PQCDefaultECDSAMLDSAMaterial.pqcKeyPair);
                     }
                 } else if ("ED25519".equals(classicalAlg) && "MLDSA".equals(pqcAlg)) {
                     configuration.setClassicalSigner(PQCDefaultEd25519MLDSAMaterial.classicalSigner);
                     configuration.setClassicalKeyPair(PQCDefaultEd25519MLDSAMaterial.classicalKeyPair);
-                    if (pqcMaterialMissing) {
+                    if (!pqcMaterialSupplied) {
                         configuration.setSigner(PQCDefaultEd25519MLDSAMaterial.pqcSigner);
                         configuration.setKeyPair(PQCDefaultEd25519MLDSAMaterial.pqcKeyPair);
                     }
@@ -346,7 +349,7 @@ public class PQCComponent extends HealthCheckComponent {
     /**
      * Auto-configures hybrid KEM materials based on classical and PQC algorithm settings.
      */
-    private void configureHybridKEMMaterial(PQCConfiguration configuration) {
+    private void configureHybridKEMMaterial(PQCConfiguration configuration, boolean pqcMaterialSupplied) {
         // Only configure if hybrid KEM operations and classical algorithm is specified
         if (configuration.getOperation() != PQCOperations.hybridGenerateSecretKeyEncapsulation
                 && configuration.getOperation() != PQCOperations.hybridExtractSecretKeyEncapsulation
@@ -354,13 +357,8 @@ public class PQCComponent extends HealthCheckComponent {
             return;
         }
 
-        // Captured before anything is auto-configured: the pre-built hybrid materials below replace the PQC half as
-        // well, and must only do so when the route author did not supply it
-        boolean pqcMaterialMissing = ObjectHelper.isEmpty(configuration.getKeyGenerator())
-                && ObjectHelper.isEmpty(configuration.getKeyPair());
-
         // Configure PQC KEM material if not already set
-        if (pqcMaterialMissing) {
+        if (!pqcMaterialSupplied) {
             if (ObjectHelper.isNotEmpty(configuration.getKeyEncapsulationAlgorithm())) {
                 switch (configuration.getKeyEncapsulationAlgorithm()) {
                     case "MLKEM":
@@ -384,14 +382,14 @@ public class PQCComponent extends HealthCheckComponent {
                 if ("X25519".equals(classicalAlg) && "MLKEM".equals(pqcAlg)) {
                     configuration.setClassicalKeyAgreement(PQCDefaultX25519MLKEMMaterial.classicalKeyAgreement);
                     configuration.setClassicalKeyPair(PQCDefaultX25519MLKEMMaterial.classicalKeyPair);
-                    if (pqcMaterialMissing) {
+                    if (!pqcMaterialSupplied) {
                         configuration.setKeyGenerator(PQCDefaultX25519MLKEMMaterial.pqcKeyGenerator);
                         configuration.setKeyPair(PQCDefaultX25519MLKEMMaterial.pqcKeyPair);
                     }
                 } else if ("ECDH_P256".equals(classicalAlg) && "MLKEM".equals(pqcAlg)) {
                     configuration.setClassicalKeyAgreement(PQCDefaultECDHMLKEMMaterial.classicalKeyAgreement);
                     configuration.setClassicalKeyPair(PQCDefaultECDHMLKEMMaterial.classicalKeyPair);
-                    if (pqcMaterialMissing) {
+                    if (!pqcMaterialSupplied) {
                         configuration.setKeyGenerator(PQCDefaultECDHMLKEMMaterial.pqcKeyGenerator);
                         configuration.setKeyPair(PQCDefaultECDHMLKEMMaterial.pqcKeyPair);
                     }
