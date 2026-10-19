@@ -1827,3 +1827,11 @@ With live reloading (such as `camel run --dev`), a change to application.propert
 
 `PropertiesReload` has a new default method, `onChanged`, which a properties file that changed calls with the properties
 that changed. A context reload (such as for secret rotation) still calls `onReload`.
+
+=== camel-jbang - the default name of a run of a whole directory
+
+`camel run --source-dir`, and `camel run` of a directory, without `--name` name the integration after the directory.
+A folder of a project layout (`src`, `main`, `resources`, `java`, `camel` or `routes`) gives way to the first parent
+with another name, and `.` is the working directory. Before, the name was the one of the first file, in the order that
+the file system lists them, which could be any file, such as a Java class that a route uses. `--name`, and
+`camel.main.name` in application.properties, still win.

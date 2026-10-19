@@ -305,7 +305,9 @@ public class Run extends CamelCommand {
             description = "Additional JVM arguments (e.g. -Xmx256m -Xms128m)")
     String jvmArgs;
 
-    @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
+    @Option(names = { "--name" }, defaultValue = "CamelJBang",
+            description = "The name of the Camel application. By default the name of the directory when running a whole directory"
+                          + " (--source-dir, or a directory), else the name of the first file")
     String name;
 
     @Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
@@ -1170,6 +1172,15 @@ public class Run extends CamelCommand {
                 for (Path f : walkResourceDir(dirPath)) {
                     sjClasspathFiles.add(f.toString());
                 }
+            }
+        }
+
+        if ("CamelJBang".equals(name) && sourceDir != null && !exportRun && !transformRun) {
+            // a whole directory is one app, named after the directory (CAMEL-25830): its first file depends on the
+            // order of the file system, and can be any file, such as a Java class that a route uses
+            String dirName = directoryName(sourceDir);
+            if (dirName != null) {
+                name = dirName;
             }
         }
 
@@ -3048,6 +3059,30 @@ public class Run extends CamelCommand {
             // wait for that process to exit as we run in foreground
             return p.waitFor();
         }
+    }
+
+    /**
+     * The folders of a project layout, whose name says nothing about the app (CAMEL-25830).
+     */
+    private static final Set<String> LAYOUT_FOLDERS = Set.of("src", "main", "resources", "java", "camel", "routes");
+
+    /**
+     * The name of an app that is a whole directory: the name of the directory, or of the first parent with a name that
+     * is not one of the folders of a project layout ({@code src/main/resources/camel} is named after the project), and
+     * {@code .} is the working directory.
+     *
+     * @return the name, or <tt>null</tt> when the directory and its parents have no such name
+     */
+    static String directoryName(String dir) {
+        Path path = Paths.get(dir).toAbsolutePath().normalize();
+        while (path != null && path.getFileName() != null) {
+            String answer = path.getFileName().toString();
+            if (!LAYOUT_FOLDERS.contains(answer.toLowerCase(Locale.ROOT))) {
+                return answer;
+            }
+            path = path.getParent();
+        }
+        return null;
     }
 
     protected int runKameletMain(KameletMain main) throws Exception {
