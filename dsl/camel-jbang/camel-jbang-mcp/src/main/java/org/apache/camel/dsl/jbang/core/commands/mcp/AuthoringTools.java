@@ -300,7 +300,8 @@ public class AuthoringTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "The failed exchanges of a running integration: routeId, exchangeId, exception with stack "
-                        + "trace, body and headers.")
+                        + "trace, body and headers. For an integration that is not running, it says how its previous "
+                        + "run ended.")
     public JsonObject camel_get_errors(
             @ToolArg(description = NAME_DESC, required = false) String name) {
         return call("camel_get_errors", args("name", name));
