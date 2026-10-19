@@ -77,102 +77,6 @@ YAML::
 ----
 ====
 
-The Split EIP has special support for splitting using a delimiter, instead of using
-xref:components:languages:tokenize-language.adoc[Tokenize] language.
-
-The previous example can also be done as follows:
-
-[tabs]
-====
-
-Java::
-+
-[source,java]
-----
-from("direct:a")
-    .split(body()).delimiter("\n")
-        .to("direct:b");
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-  <from uri="direct:a"/>
-  <split delimiter="\n">
-    <simple>${body}</simple>
-    <to uri="direct:b"/>
-  </split>
-</route>
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: direct:a
-      steps:
-        - split:
-            delimiter: "\n"
-            expression:
-              simple:
-                expression: "${body}"
-            steps:
-              - to:
-                  uri: direct:b
-----
-====
-
-The splitter can use any xref:manual:ROOT:expression.adoc[Expression],
-so you could use any of the supported languages such as
-xref:components:languages:simple-language.adoc[Simple], xref:components:languages:xpath-language.adoc[XPath],
-xref:components:languages:jsonpath-language.adoc[JSonPath], xref:components:languages:groovy-language.adoc[Groovy] to perform the split.
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("activemq:my.queue")
-    .split(xpath("//foo/bar"))
-        .to("file:some/directory");
-----
-
-XML::
-+
-[source,xml]
-----
-<route>
-    <from uri="activemq:my.queue"/>
-    <split>
-        <xpath>//foo/bar</xpath>
-        <to uri="file:some/directory"/>
-    </split>
-</route>
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: activemq:my.queue
-      steps:
-        - split:
-            expression:
-              xpath:
-                expression: //foo/bar
-            steps:
-              - to:
-                  uri: file:some/directory
-----
-====
-
 === Splitting the message body
 
 A common use case is to split a list/set/collection/map, array, or something that is iterable
@@ -236,6 +140,106 @@ In YAML, you use xref:components:languages:simple-language.adoc[Simple] to refer
             steps:
               - to:
                   uri: mock:result
+----
+====
+
+=== Splitting with a delimiter
+
+The Split EIP has special support for splitting using a delimiter, instead of using
+xref:components:languages:tokenize-language.adoc[Tokenize] language.
+
+The first example can also be done as follows:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:a")
+    .split(body()).delimiter("\n")
+        .to("direct:b");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:a"/>
+  <split delimiter="\n">
+    <simple>${body}</simple>
+    <to uri="direct:b"/>
+  </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - split:
+            delimiter: "\n"
+            expression:
+              simple:
+                expression: "${body}"
+            steps:
+              - to:
+                  uri: direct:b
+----
+====
+
+=== Splitting with an expression
+
+The splitter can use any xref:manual:ROOT:expression.adoc[Expression],
+so you could use any of the supported languages such as
+xref:components:languages:simple-language.adoc[Simple], xref:components:languages:xpath-language.adoc[XPath],
+xref:components:languages:jsonpath-language.adoc[JSonPath], xref:components:languages:groovy-language.adoc[Groovy] to perform the split.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("activemq:my.queue")
+    .split(xpath("//foo/bar"))
+        .to("file:some/directory");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:my.queue"/>
+    <split>
+        <xpath>//foo/bar</xpath>
+        <to uri="file:some/directory"/>
+    </split>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq:my.queue
+      steps:
+        - split:
+            expression:
+              xpath:
+                expression: //foo/bar
+            steps:
+              - to:
+                  uri: file:some/directory
 ----
 ====
 

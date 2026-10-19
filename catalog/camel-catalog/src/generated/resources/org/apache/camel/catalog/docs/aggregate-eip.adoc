@@ -279,6 +279,61 @@ be used at the same time.
 
 Completion is mandatory and must be configured on the aggregation.
 
+For example, to collect the order lines of each order into a List, and send the order on when it has 10 lines, or when
+no new line has arrived for 5 seconds:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:lines")
+    .aggregate(header("orderId"), new GroupedBodyAggregationStrategy())
+        .completionSize(10)
+        .completionTimeout(5000)
+        .to("direct:order");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:lines"/>
+    <aggregate aggregationStrategy="groupedBodies" completionSize="10" completionTimeout="5000">
+        <correlationExpression>
+            <header>orderId</header>
+        </correlationExpression>
+        <to uri="direct:order"/>
+    </aggregate>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:lines
+      steps:
+        - aggregate:
+            correlationExpression:
+              header:
+                expression: orderId
+            aggregationStrategy: groupedBodies
+            completionSize: 10
+            completionTimeout: 5000
+            steps:
+              - to:
+                  uri: direct:order
+- beans:
+    - name: groupedBodies
+      type: org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy
+----
+====
+
 === Pre-completion mode
 
 There can be use-cases where you want the incoming
