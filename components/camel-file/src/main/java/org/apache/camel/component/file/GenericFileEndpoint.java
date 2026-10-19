@@ -61,7 +61,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 50000;
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileEndpoint.class);
-    /** The file functions of the File Language, which read the file found: ${file:name}, ${date:file:yyyyMMdd}. */
+    /**
+     * The file functions of the File Language, which read the file found: ${file:name}, ${date:file:yyyyMMdd},
+     * ${date-with-timezone:file:yyyyMMdd z}, and the same as $simple{file:name}.
+     */
     private static final Pattern FILE_FUNCTION = Pattern.compile("\\$(simple)?\\{(date(-with-timezone)?:)?file:");
 
     // common options

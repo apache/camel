@@ -58,7 +58,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected GenericFileOperations<T> operations;
     protected GenericFileProcessStrategy<T> processStrategy;
     protected volatile ShutdownRunningTask shutdownRunningTask;
-    // the fileName of the message that poll or pollEnrich polls for, during that poll (CAMEL-25792)
+    // the fileName of the message that poll or pollEnrich polls for, during that poll (CAMEL-25792). Parallel pollEnrich
+    // calls can share this consumer, so the value may belong to another exchange: isMatched() then evaluates the
+    // fileName itself, and the cache only saves work
     private volatile DynamicFileName dynamicFileName;
     protected volatile int pendingExchanges;
     protected Processor customProcessor;
