@@ -84,16 +84,12 @@ YAML::
 ----
 - route:
     from:
-      uri: direct
-      parameters:
-        name: start
+      uri: direct:start
       steps:
         - process:
             ref: myProcessor
         - to:
-            uri: mock
-            parameters:
-              name: result
+            uri: mock:result
 ----
 ====
 
@@ -109,9 +105,9 @@ Java::
 +
 [source,java]
 ----
-from("activemq:My.Queue")
+from("activemq:Input")
     .bean("myBeanName", "doFilter")
-    .to("activemq:Another.Queue");
+    .to("activemq:Output");
 ----
 
 XML::
@@ -155,7 +151,7 @@ Java::
 [source,java]
 ----
 from("activemq:Input")
-  .setBody().xpath("//foo:bar")
+  .setBody().xpath("//foo/bar")
   .to("activemq:Output");
 ----
 
@@ -166,10 +162,10 @@ XML::
 <route>
   <from uri="activemq:Input"/>
   <setBody>
-    <xpath>//foo:bar</xpath>
+    <xpath>//foo/bar</xpath>
   </setBody>
   <to uri="activemq:Output"/>
-</route> 
+</route>
 ----
 
 YAML::
@@ -182,7 +178,8 @@ YAML::
       steps:
         - setBody:
             expression:
-              xpath: //foo:bar
+              xpath:
+                expression: //foo/bar
         - to:
             uri: activemq:Output
 ----

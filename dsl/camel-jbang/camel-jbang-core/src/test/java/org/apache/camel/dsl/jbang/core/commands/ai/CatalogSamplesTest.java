@@ -57,6 +57,41 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void theEipsWithoutExamplesOfTheirOwnHaveSamplesFromThePagesTheyBelongTo() {
+        // CAMEL-25774: loadBalance is on the pages of its policies, the circuit breaker settings on the Resilience4j and
+        // Fault Tolerance pages, and the resequencer settings on its page; a sample writes the key it is asked for
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String entry : List.of("loadBalance", "resilience4jConfiguration", "faultToleranceConfiguration",
+                "batchConfig", "streamConfig")) {
+            JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, entry, 5).get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            for (Object s : samples) {
+                assertThat(((JsonObject) s).getString("yaml")).as(entry).contains(entry + ":");
+            }
+        }
+        // the first sample of each policy page first, so the first two show two policies
+        JsonArray lb = (JsonArray) CatalogSamples.sample(catalog, "loadBalance", 2).get("samples");
+        assertThat(((JsonObject) lb.get(0)).getString("source")).startsWith("failoverLoadBalancer-eip");
+        assertThat(((JsonObject) lb.get(1)).getString("source")).startsWith("roundRobinLoadBalancer-eip");
+        // the settings are written inside the EIP, not as a step
+        assertThat(CatalogSamples.sample(catalog, "streamConfig", 1).getString("placement"))
+                .contains("written inside resequence").contains("not as a step");
+    }
+
+    @Test
+    void theIdempotentConsumerHasSamples() {
+        // CAMEL-25774: its page had no example, so the sample tool answered "no YAML sample"
+        JsonArray samples = (JsonArray) CatalogSamples.sample(new DefaultCamelCatalog(), "idempotentConsumer", 2)
+                .get("samples");
+        assertThat(samples).hasSize(2);
+        assertThat(((JsonObject) samples.get(0)).getString("yaml")).contains("idempotentRepository: myRepo")
+                .contains("MemoryIdempotentRepository");
+        // each sample declares the repository it uses, so it works on its own
+        assertThat(((JsonObject) samples.get(1)).getString("yaml")).contains("skipDuplicate: false")
+                .contains("CamelDuplicateMessage").contains("MemoryIdempotentRepository");
+    }
+
+    @Test
     void theTopLevelEntriesDocumentedOnAnotherPageHaveSamples() {
         // CAMEL-25719: their examples are on the page of what they belong to (route templates, the REST DSL,
         // transformers, validators, the configuration utilities), which the samples did not read
