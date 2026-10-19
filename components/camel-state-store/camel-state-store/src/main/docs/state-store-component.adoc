@@ -163,6 +163,21 @@ endpoints. If none is found, the default in-memory backend (`MemoryKeyValueRepos
 This means you can configure a backend once (via Java or properties) and all `state-store`
 endpoints will use it without needing `backend=#beanName` on each endpoint URI.
 
+=== Backend per store name
+
+To give each store name its own backend, set the `backendFactory` component option to a
+`StateStoreBackendFactory`. A single bean of that type in the registry is autowired. The factory
+is called once per store name and takes precedence over the registry lookup above. The component
+starts and stops the backends it creates. If the factory returns `null`, the usual resolution applies.
+
+[source,java]
+----
+StateStoreComponent stateStore = context.getComponent("state-store", StateStoreComponent.class);
+stateStore.setBackendFactory(storeName -> new MyKeyValueRepository(storeName));
+----
+
+An explicit `backend` option on the endpoint still takes precedence over the factory.
+
 === In-Memory (default)
 
 The default backend (`MemoryKeyValueRepository`) stores entries in a `ConcurrentHashMap`. TTL

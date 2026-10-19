@@ -25,6 +25,8 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "backendfactory":
+        case "backendFactory": target.setBackendFactory(property(camelContext, org.apache.camel.component.statestore.StateStoreBackendFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -32,10 +34,17 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"backendFactory"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "backendfactory":
+        case "backendFactory": return org.apache.camel.component.statestore.StateStoreBackendFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         default: return null;
@@ -48,6 +57,8 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "backendfactory":
+        case "backendFactory": return target.getBackendFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         default: return null;
