@@ -289,8 +289,13 @@ public class PQCComponent extends HealthCheckComponent {
             return;
         }
 
+        // Captured before anything is auto-configured: the pre-built hybrid materials below replace the PQC half as
+        // well, and must only do so when the route author did not supply it
+        boolean pqcMaterialMissing = ObjectHelper.isEmpty(configuration.getSigner())
+                && ObjectHelper.isEmpty(configuration.getKeyPair());
+
         // Configure PQC signature material if not already set
-        if (ObjectHelper.isEmpty(configuration.getSigner()) && ObjectHelper.isEmpty(configuration.getKeyPair())) {
+        if (pqcMaterialMissing) {
             if (ObjectHelper.isNotEmpty(configuration.getSignatureAlgorithm())) {
                 switch (configuration.getSignatureAlgorithm()) {
                     case "MLDSA":
@@ -322,13 +327,17 @@ public class PQCComponent extends HealthCheckComponent {
                 if ("ECDSA_P256".equals(classicalAlg) && "MLDSA".equals(pqcAlg)) {
                     configuration.setClassicalSigner(PQCDefaultECDSAMLDSAMaterial.classicalSigner);
                     configuration.setClassicalKeyPair(PQCDefaultECDSAMLDSAMaterial.classicalKeyPair);
-                    configuration.setSigner(PQCDefaultECDSAMLDSAMaterial.pqcSigner);
-                    configuration.setKeyPair(PQCDefaultECDSAMLDSAMaterial.pqcKeyPair);
+                    if (pqcMaterialMissing) {
+                        configuration.setSigner(PQCDefaultECDSAMLDSAMaterial.pqcSigner);
+                        configuration.setKeyPair(PQCDefaultECDSAMLDSAMaterial.pqcKeyPair);
+                    }
                 } else if ("ED25519".equals(classicalAlg) && "MLDSA".equals(pqcAlg)) {
                     configuration.setClassicalSigner(PQCDefaultEd25519MLDSAMaterial.classicalSigner);
                     configuration.setClassicalKeyPair(PQCDefaultEd25519MLDSAMaterial.classicalKeyPair);
-                    configuration.setSigner(PQCDefaultEd25519MLDSAMaterial.pqcSigner);
-                    configuration.setKeyPair(PQCDefaultEd25519MLDSAMaterial.pqcKeyPair);
+                    if (pqcMaterialMissing) {
+                        configuration.setSigner(PQCDefaultEd25519MLDSAMaterial.pqcSigner);
+                        configuration.setKeyPair(PQCDefaultEd25519MLDSAMaterial.pqcKeyPair);
+                    }
                 }
             }
         }
@@ -345,8 +354,13 @@ public class PQCComponent extends HealthCheckComponent {
             return;
         }
 
+        // Captured before anything is auto-configured: the pre-built hybrid materials below replace the PQC half as
+        // well, and must only do so when the route author did not supply it
+        boolean pqcMaterialMissing = ObjectHelper.isEmpty(configuration.getKeyGenerator())
+                && ObjectHelper.isEmpty(configuration.getKeyPair());
+
         // Configure PQC KEM material if not already set
-        if (ObjectHelper.isEmpty(configuration.getKeyGenerator()) && ObjectHelper.isEmpty(configuration.getKeyPair())) {
+        if (pqcMaterialMissing) {
             if (ObjectHelper.isNotEmpty(configuration.getKeyEncapsulationAlgorithm())) {
                 switch (configuration.getKeyEncapsulationAlgorithm()) {
                     case "MLKEM":
@@ -370,13 +384,17 @@ public class PQCComponent extends HealthCheckComponent {
                 if ("X25519".equals(classicalAlg) && "MLKEM".equals(pqcAlg)) {
                     configuration.setClassicalKeyAgreement(PQCDefaultX25519MLKEMMaterial.classicalKeyAgreement);
                     configuration.setClassicalKeyPair(PQCDefaultX25519MLKEMMaterial.classicalKeyPair);
-                    configuration.setKeyGenerator(PQCDefaultX25519MLKEMMaterial.pqcKeyGenerator);
-                    configuration.setKeyPair(PQCDefaultX25519MLKEMMaterial.pqcKeyPair);
+                    if (pqcMaterialMissing) {
+                        configuration.setKeyGenerator(PQCDefaultX25519MLKEMMaterial.pqcKeyGenerator);
+                        configuration.setKeyPair(PQCDefaultX25519MLKEMMaterial.pqcKeyPair);
+                    }
                 } else if ("ECDH_P256".equals(classicalAlg) && "MLKEM".equals(pqcAlg)) {
                     configuration.setClassicalKeyAgreement(PQCDefaultECDHMLKEMMaterial.classicalKeyAgreement);
                     configuration.setClassicalKeyPair(PQCDefaultECDHMLKEMMaterial.classicalKeyPair);
-                    configuration.setKeyGenerator(PQCDefaultECDHMLKEMMaterial.pqcKeyGenerator);
-                    configuration.setKeyPair(PQCDefaultECDHMLKEMMaterial.pqcKeyPair);
+                    if (pqcMaterialMissing) {
+                        configuration.setKeyGenerator(PQCDefaultECDHMLKEMMaterial.pqcKeyGenerator);
+                        configuration.setKeyPair(PQCDefaultECDHMLKEMMaterial.pqcKeyPair);
+                    }
                 }
             }
         }
