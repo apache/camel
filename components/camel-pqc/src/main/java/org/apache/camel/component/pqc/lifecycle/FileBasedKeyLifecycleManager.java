@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileBasedKeyLifecycleManager.class);
+    private static final String METADATA_SUFFIX = ".metadata";
 
     private final Path keyDirectory;
     private final ObjectMapper objectMapper;
@@ -253,9 +254,30 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
         LOG.info("Deleted key: {}", keyId);
     }
 
+    /**
+     * Lists the keys by scanning the key directory, not by reading the cache.
+     * <p/>
+     * The cache is only filled by this process, so returning it would hide any key file written after start-up - by
+     * another process, by an operator restoring a backup, or by a sidecar. That matters directly for
+     * {@link KeyRotationScheduler}, which drives entirely off this method and would otherwise stop rotating anything it
+     * had not seen at boot. The other implementations all query their backing store here.
+     */
     @Override
     public List<KeyMetadata> listKeys() throws Exception {
-        return new ArrayList<>(metadataCache.values());
+        List<KeyMetadata> keys = new ArrayList<>();
+        try (Stream<Path> files = Files.list(keyDirectory)) {
+            for (String keyId : files.filter(path -> path.toString().endsWith(METADATA_SUFFIX))
+                    .map(path -> path.getFileName().toString())
+                    .map(name -> name.substring(0, name.length() - METADATA_SUFFIX.length()))
+                    .sorted()
+                    .toList()) {
+                KeyMetadata metadata = getKeyMetadata(keyId);
+                if (metadata != null) {
+                    keys.add(metadata);
+                }
+            }
+        }
+        return keys;
     }
 
     @Override
@@ -383,10 +405,10 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
     private void loadExistingKeys() {
         try (Stream<Path> files = Files.list(keyDirectory)) {
-            files.filter(path -> path.toString().endsWith(".metadata"))
+            files.filter(path -> path.toString().endsWith(METADATA_SUFFIX))
                     .forEach(path -> {
                         try {
-                            String keyId = path.getFileName().toString().replace(".metadata", "");
+                            String keyId = path.getFileName().toString().replace(METADATA_SUFFIX, "");
                             KeyMetadata metadata = getKeyMetadata(keyId);
                             if (metadata != null) {
                                 LOG.debug("Loaded existing key: {}", metadata);
@@ -450,7 +472,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     }
 
     private Path getMetadataFile(String keyId) {
-        return resolveKeyFile(keyId, ".metadata");
+        return resolveKeyFile(keyId, METADATA_SUFFIX);
     }
 
     private Path getLegacyKeyFile(String keyId) {

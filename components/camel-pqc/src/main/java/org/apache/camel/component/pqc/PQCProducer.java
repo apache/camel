@@ -1099,10 +1099,10 @@ public class PQCProducer extends DefaultProducer {
             throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for deleteKeyState");
         }
 
-        KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
-        if (klm != null) {
-            klm.deleteKey(keyId);
-        }
+        // Required, as for every other lifecycle operation. Reporting success for a stateful key state that was
+        // never deleted is the worst available outcome: the caller believes the exhausted or compromised state is
+        // gone and may reuse the key.
+        getRequiredKeyLifecycleManager().deleteKey(keyId);
     }
 
     /**

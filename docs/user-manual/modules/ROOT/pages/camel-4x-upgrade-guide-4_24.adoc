@@ -313,6 +313,28 @@ All commands find running integrations the same way:
 * The `--timeout` of `camel cmd send`, `camel cmd receive`, `camel eval expression`, `camel transform message` and the
   `camel semantic` commands also takes a duration such as `30s` (a number is still millis).
 
+=== camel-pqc - KeyLifecycleManager behaviour aligned across the implementations
+
+Four differences between the `KeyLifecycleManager` implementations are resolved. All four are corrections, but each
+is observable.
+
+* `updateKeyMetadata` on the AWS Secrets Manager, Azure Key Vault and HashiCorp Vault managers no longer re-stores
+  the key pair. It previously read the key back and wrote it again, creating a new version of the private key secret
+  on every status change - with the default `max_versions = 10` of a Vault KV v2 mount, ten metadata edits purged
+  every historical version of the private key. It also meant `revokeKey` threw for a key whose private secret was
+  already gone. The file-based manager already wrote metadata only.
+* `FileBasedKeyLifecycleManager.listKeys()` now scans the key directory instead of returning an in-process cache
+  filled once at construction. A key file written after start-up - by another process, a restored backup or a
+  sidecar - was previously invisible, which silently stopped `KeyRotationScheduler` from rotating it.
+* The `deleteKeyState` operation now fails with `IllegalStateException` when no `keyLifecycleManager` is configured,
+  as every other key lifecycle operation already did. It previously reported success having deleted nothing.
+* `exportKey` with `PEM` and `includePrivate = true` produces a document that `importKey` can read back. The
+  combined export carries both a `PUBLIC KEY` and a `PRIVATE KEY` block, and the parser stripped only one pair of
+  armour lines, leaving the other in the Base64 input and failing with `Illegal base64 character 2d`. The export
+  format itself is unchanged, so documents written by earlier versions are unaffected.
+
+PEM handling is also now explicitly UTF-8 rather than the platform default charset.
+
 === camel-jbang - exit codes, and errors on stderr
 
 The Camel CLI has a documented set of exit codes (see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]):

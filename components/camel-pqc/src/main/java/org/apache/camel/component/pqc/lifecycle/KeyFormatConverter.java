@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pqc.lifecycle;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -71,7 +72,9 @@ public class KeyFormatConverter {
 
             // Concatenate with separator for PEM
             if (format == KeyLifecycleManager.KeyFormat.PEM) {
-                return (new String(publicKeyBytes) + "\n" + new String(privateKeyBytes)).getBytes();
+                return (new String(publicKeyBytes, StandardCharsets.UTF_8) + "\n"
+                        + new String(privateKeyBytes, StandardCharsets.UTF_8))
+                        .getBytes(StandardCharsets.UTF_8);
             } else {
                 // For DER, just return private key (contains public key info)
                 return privateKeyBytes;
@@ -131,7 +134,7 @@ public class KeyFormatConverter {
             pem.append(base64, i, Math.min(i + 64, base64.length())).append("\n");
         }
         pem.append("-----END PUBLIC KEY-----\n");
-        return pem.toString().getBytes();
+        return pem.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -148,28 +151,46 @@ public class KeyFormatConverter {
             pem.append(base64, i, Math.min(i + 64, base64.length())).append("\n");
         }
         pem.append("-----END PRIVATE KEY-----\n");
-        return pem.toString().getBytes();
+        return pem.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     /**
      * Parse PEM-encoded public key
      */
-    private static byte[] parsePEMPublicKey(byte[] pemData) throws Exception {
-        String pemString = new String(pemData);
-        pemString = pemString.replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replaceAll("\\s", "");
-        return Base64.getDecoder().decode(pemString);
+    private static byte[] parsePEMPublicKey(byte[] pemData) {
+        return parsePEMBlock(pemData, "PUBLIC KEY");
     }
 
     /**
      * Parse PEM-encoded private key
      */
-    private static byte[] parsePEMPrivateKey(byte[] pemData) throws Exception {
-        String pemString = new String(pemData);
-        pemString = pemString.replace("-----BEGIN PRIVATE KEY-----", "")
-                .replace("-----END PRIVATE KEY-----", "")
-                .replaceAll("\\s", "");
-        return Base64.getDecoder().decode(pemString);
+    private static byte[] parsePEMPrivateKey(byte[] pemData) {
+        return parsePEMBlock(pemData, "PRIVATE KEY");
+    }
+
+    /**
+     * Extracts the body of one labelled PEM block.
+     * <p/>
+     * The block is located by its BEGIN and END lines rather than by stripping those lines out of the whole input, so
+     * that a document holding more than one block - as {@link #exportKeyPair} produces for a key pair including the
+     * private key - yields the requested block instead of a Base64 string still carrying the armour of the other one.
+     */
+    private static byte[] parsePEMBlock(byte[] pemData, String label) {
+        String pem = new String(pemData, StandardCharsets.UTF_8);
+        String begin = "-----BEGIN " + label + "-----";
+        String end = "-----END " + label + "-----";
+
+        int from = pem.indexOf(begin);
+        if (from < 0) {
+            throw new IllegalArgumentException("PEM data holds no '" + begin + "' line");
+        }
+        from += begin.length();
+
+        int to = pem.indexOf(end, from);
+        if (to < 0) {
+            throw new IllegalArgumentException("PEM data holds no '" + end + "' line");
+        }
+
+        return Base64.getDecoder().decode(pem.substring(from, to).replaceAll("\\s", ""));
     }
 }
