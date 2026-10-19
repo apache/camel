@@ -209,6 +209,31 @@ The default `omitNullValues=true` also omits a null value with a Good status tha
 does not learn that the node recovered. Set `omitNullValues=false` for a node whose value can be null, such as a
 `String`.
 
+=== Communication loss and recovery
+
+When the client loses communication with the server, every node that a consumer monitors delivers an exchange with
+the status `Bad_NoCommunication` and a null value, stamped with the time the client recognised the loss. Communication
+is lost when the session with the server stops being active, for example because the network connection closed or
+the server stopped answering, and when Camel rebuilds the connection. With the default settings, a connection that
+stops answering without closing is recognised after 10 to 15 seconds. A consumer that starts while the server cannot
+be reached delivers the status for its nodes when it starts. A node delivers the status once per loss; a node that the
+server refused to monitor keeps the status of that refusal instead, and nothing is
+delivered when a consumer stops or the Camel context shuts down.
+
+Once communication is restored, every node delivers its current value, also when the value did not change. In the
+existing session, Camel asks the server to send the current values again with the `ResendData` method; when the
+server does not provide it, Camel creates the subscription again, and the values the server queued during the loss
+are not delivered. Values can arrive more than once after a loss, and a value received before Camel rebuilt the
+connection can arrive after the first value of the new connection. A route that counts values, computes differences
+or detects changes must tolerate this. A value that did not change during the loss keeps its earlier timestamps.
+
+Routes run while communication is lost. An OPC UA request that a route makes while the client reconnects, for example
+a write, waits for the next reconnect attempt and is sent if that attempt succeeds, so it can take effect after
+communication is restored. A request that fails rebuilds the connection.
+
+Camel keeps no last value. A route that needs one keeps the last good value of each node itself. To recognise the
+status, check the status code of the `DataValue` body, for example with `${body.statusCode.bad}`.
+
 === Subscriptions that stop publishing
 
 The consumers of a connection share one subscription on the server. When the server stops publishing for it (no

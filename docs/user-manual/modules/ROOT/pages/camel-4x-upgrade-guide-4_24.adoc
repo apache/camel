@@ -1806,6 +1806,28 @@ the server does not have, with the status code `Bad_NodeIdUnknown`, and the othe
 affected. Previously an awaited write or read completed without an error and with a `null` body, and a browse failed
 with a `NullPointerException`.
 
+=== camel-milo - the consumer reports a lost connection and refreshes its values after it
+
+The OPC UA client consumer delivers `Bad_NoCommunication` with a null value for every monitored node when
+communication with the server is lost, and the current value of every node once communication is restored. Before,
+the consumer delivered nothing during an outage, and values that did not change were not delivered again after it.
+
+A consumer that starts while the server cannot be reached, or whose client cannot connect at all, for example because
+of wrong credentials or an untrusted server certificate, delivers the status for its nodes too; the cause is in the
+log. A connection that Camel rebuilds after a failed request delivers it for every node of the connection. Each loss and
+each recovery delivers one exchange per node.
+
+A route that uses only the value of the `DataValue` body receives a null for these exchanges, which the type converters
+turn into `0` or `false`; a route that stores values checks the status code of the body first, for example with
+`${body.statusCode.bad}`. A value can now arrive again after an outage, so a route that counts values, computes
+differences or detects changes must tolerate repeats. The consumer's route also runs during an outage: an OPC UA write
+that it makes while the client reconnects waits for the next reconnect attempt and can take effect after communication
+is restored, and a request that fails rebuilds the connection.
+
+To keep the previous behaviour, filter the exchanges with a bad status out right after the consumer, for example with
+`filter(simple("${body.statusCode.bad} == false"))`. This also drops the other bad statuses, such as the refusal of a
+node, and the current values delivered after an outage still arrive.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
