@@ -281,6 +281,22 @@ With `--output=<file>` or without `--output`, the routes are still merged, and t
 the standard error, when the top-level `onException` of one file applies to the routes of the other files
 in the merged output.
 
+=== camel-pqc - generateSecretKeyEncapsulation stamps the JCE algorithm name on the secret key
+
+The `SecretKeyWithEncapsulation` produced by `generateSecretKeyEncapsulation` now carries the mapped JCE algorithm
+name, as the `extractSecretKeyEncapsulation` and `extractSecretKeyFromEncapsulation` operations already did. Before, it
+carried the raw enum name.
+
+This is only visible for the two algorithms whose enum name differs from the JCE name: `DESEDE` now yields `DESede`
+(was `DESEDE`), and `GOST3412_2015` now yields `GOST3412-2015` (was `GOST3412_2015`). The raw names are not resolvable
+cipher algorithms, so a key labelled with one could not be passed to `Cipher.getInstance(key.getAlgorithm())`, and the
+generate and extract ends of the same exchange disagreed on the key's identity. Code asserting on the old value must
+be updated.
+
+`generateSecretKeyEncapsulation` now also rejects a missing `symmetricKeyAlgorithm` with
+`Symmetric Algorithm needs to be specified`, as the extract operations already did, instead of failing later inside
+BouncyCastle with `Missing argument`.
+
 === camel-jbang - camel ask asks before a call that changes something, reaches out or runs code
 
 `camel ask` now asks on the terminal before a file write (showing the diff), a message to an endpoint the
