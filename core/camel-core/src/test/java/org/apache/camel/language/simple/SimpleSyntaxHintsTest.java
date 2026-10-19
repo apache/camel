@@ -16,7 +16,15 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
 
@@ -186,7 +194,54 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
                 () -> context.resolveLanguage("simple").createExpression("${body.typo}").evaluate(exchange,
                         String.class));
         // CAMEL-25322: the dot reads a key, so the hint says the key is missing and which keys there are
-        assertThat(e.getMessage()).contains("(the Map has no key typo; its keys are: type)");
+        // CAMEL-25749: and what the body is, with the step that set it when the message history is on
+        assertThat(e.getMessage()).contains("(the Map has no key typo; the body is a Map (LinkedHashMap): its keys are: type)");
+    }
+
+    @Test
+    public void testOgnlOnAStreamSaysToUnmarshal() {
+        // CAMEL-25749: ${body.qty} on the body of an HTTP request, still the text as a cached stream
+        exchange.getIn().setBody(new ByteArrayInputStreamCache(
+                new ByteArrayInputStream("{\"qty\": 2}".getBytes(StandardCharsets.UTF_8))));
+        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.qty}").evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("the body is a cached stream (ByteArrayInputStreamCache): unmarshal it first"
+                                            + " (unmarshal: json, for the Content-Type application/json) to read its fields");
+    }
+
+    @Test
+    public void testOgnlSizeOnAnIteratorSaysItHasNone() {
+        // CAMEL-25749: ${body.size()} on what sql gives with outputType=StreamList
+        exchange.getIn().setBody(List.of("A1", "A2").iterator());
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.size()}").evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("the body is an iterator (")
+                .contains("it has no size and can be read once: split it, or have the producer give a List");
+    }
+
+    @Test
+    public void testKeyOnTheFileAsReadSaysToUnmarshal() {
+        // CAMEL-25749: ${body[status]} on the file consumer's body, before any unmarshal
+        GenericFile<File> file = new GenericFile<>();
+        file.setFile(new File("orders/order-1003.json"));
+        file.setFileName("order-1003.json");
+        exchange.getIn().setBody(file);
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "order-1003.json");
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body[status]}").evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("Key: status not found in bean")
+                .contains("(the body is the file as read (a GenericFile): unmarshal it first (unmarshal: json, for the file"
+                          + " name order-1003.json) to read its fields)");
+    }
+
+    @Test
+    public void testOgnlOnAnObjectSaysNothingAboutTheBody() {
+        // a name an object does not have is a wrong name, not a body of the wrong type
+        exchange.getIn().setBody(new StringBuilder("x"));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.qty}").evaluate(exchange, String.class));
+        assertThat(e.getMessage()).doesNotContain("the body is");
     }
 
     @Test
@@ -195,7 +250,7 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
         Exception e = assertThrows(Exception.class,
                 () -> context.resolveLanguage("simple").createExpression("${body.orderId}").evaluate(exchange,
                         String.class));
-        assertThat(e.getMessage()).contains("(the Map has no key orderId; it is empty)");
+        assertThat(e.getMessage()).contains("(the Map has no key orderId; the body is a Map (LinkedHashMap): it is empty)");
     }
 
     @Test

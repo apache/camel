@@ -36,6 +36,7 @@ import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.apache.camel.dsl.yaml.validator.YamlPointerLines;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -118,9 +119,10 @@ public final class SourceValidator {
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the
-            // route: read it, so that a GET operation is known to carry no body (CAMEL-24844)
+            // route: read it, so that a GET operation is known to carry no body (CAMEL-24844), and with the REST binding
+            // mode of the properties, whether a Map sent or returned over REST is written for the route (CAMEL-25762)
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator,
-                    directory != null ? OpenApiVerbs.bodylessEndpoints(content, directory) : Set.of());
+                    ValidatorFacts.read(content, directory));
             if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
                 // the shape of a Kamelet file, which the schema of a route file does not know
                 List<String> shape = KameletChecks.validateKameletFile(content);
@@ -234,11 +236,20 @@ public final class SourceValidator {
      */
     public static List<String> validateCamelYaml(
             String content, CamelCatalog catalog, YamlValidator schemaValidator, Set<String> bodylessEndpoints) {
+        return validateCamelYaml(content, catalog, schemaValidator, new ProjectFacts(bodylessEndpoints, Map.of(), null));
+    }
+
+    /**
+     * As {@link #validateCamelYaml(String, CamelCatalog, YamlValidator)} with what the files beside the route say: the
+     * OpenAPI operations the file uses and the REST binding mode of the project (CAMEL-25762).
+     */
+    public static List<String> validateCamelYaml(
+            String content, CamelCatalog catalog, YamlValidator schemaValidator, ProjectFacts facts) {
         List<String> msgs = new ArrayList<>();
         if (content == null || content.isBlank()) {
             return msgs;
         }
-        if (validateYamlSchema(content, catalog, schemaValidator, bodylessEndpoints, msgs)) {
+        if (validateYamlSchema(content, catalog, schemaValidator, facts, msgs)) {
             msgs.addAll(validateYamlCatalog(content, catalog));
         }
         return msgs;
@@ -261,11 +272,11 @@ public final class SourceValidator {
     /** Adds the schema errors to msgs; false when the YAML could not be checked at all (no schema, not YAML). */
     private static boolean validateYamlSchema(
             String content, CamelCatalog catalog, YamlValidator schemaValidator, List<String> msgs) {
-        return validateYamlSchema(content, catalog, schemaValidator, Set.of(), msgs);
+        return validateYamlSchema(content, catalog, schemaValidator, ProjectFacts.NONE, msgs);
     }
 
     private static boolean validateYamlSchema(
-            String content, CamelCatalog catalog, YamlValidator schemaValidator, Set<String> bodylessEndpoints,
+            String content, CamelCatalog catalog, YamlValidator schemaValidator, ProjectFacts facts,
             List<String> msgs) {
         YamlValidator validator;
         try {
@@ -276,7 +287,7 @@ public final class SourceValidator {
             return false;
         }
         try {
-            msgs.addAll(formatSchemaErrors(validator.validate(content, bodylessEndpoints), content));
+            msgs.addAll(formatSchemaErrors(validator.validate(content, facts), content));
             return true;
         } catch (Exception e) {
             msgs.add("Invalid YAML: " + e.getMessage());

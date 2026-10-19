@@ -82,6 +82,28 @@ with another scheme or port, is now sent without them. A route that needs to aut
 address it in `httpUri`. When `proxyHost` is set, the `username` and `password` are no longer offered to the proxy when
 it asks for authentication.
 
+=== camel-elasticsearch - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
+registered for any host. A request to another host, including the host of a node with another scheme or port, is now
+sent without them. A client set with the `client` option is not changed.
+
+=== camel-elasticsearch-rest-client - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddressesList` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
+registered for any host. A request to another host, including the host of a node with another scheme or port, is now
+sent without them. A client set with the `restClient` option is not changed.
+
+=== camel-opensearch - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Every node of a
+multi-host cluster still receives them. Previously they were registered for any host. A request to another host,
+including the host of a node with another scheme or port, is now sent without them. A client set with the `client`
+option is not changed.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
@@ -127,6 +149,30 @@ authenticate it itself, with `authenticate(new TokenCredentials(token))` on the 
 
 For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
 a value that also appears in the query string of the request.
+
+=== camel-chunk - message data printed with a direct tag is rendered literally
+
+Previously the `chunk` component bound the message body, headers and variables into the Chunk engine so that
+Chunk re-parsed those values as template source: a value that itself contained Chunk tags (such as a body of
+`{$headers.name}`) had those tags expanded instead of being printed verbatim.
+
+Message data bound to the engine is now neutralised so that a direct `{$tag}` printing the body, a header, a
+variable, or an element of a nested map, list or array renders the value literally instead of evaluating the
+tags inside it. Tag-free data is unchanged and Chunk's string filters (for example `slice`, `get`, `join`)
+keep their existing behaviour. Routes that relied on message data being evaluated as Chunk template code must
+move that markup into the template itself.
+
+As part of this, a non-`List` `Collection` value (such as a `Set`) is now bound as a `List`, so a direct
+`{$body}` prints Chunk's list placeholder instead of the collection's `toString()`, and a filter such as
+`|join` operates on its elements.
+
+This does not cover every path: Chunk re-parses any string it produces while rendering, so the output of a
+filter (`{$body|trim}`), a string property of a bean body (`{$body.name}`, `{$exception.message}`) and string
+items bound by a `{% loop %}` are still parsed as template code. Keep untrusted data to direct `{$tag}`
+output; do not pass untrusted values through Chunk filters, bean properties or loops. If untrusted data must
+go through one of those paths, remove the `{` and `}` characters from it in the route before the `chunk`
+endpoint (Chunk has no escape for tags inside data), for example with a processor that rewrites the body or
+header.
 
 === camel-spring-ws - internal Camel headers are no longer written into SOAP headers
 

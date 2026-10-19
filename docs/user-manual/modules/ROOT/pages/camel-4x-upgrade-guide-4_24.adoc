@@ -203,6 +203,15 @@ that a route sends to and no route consumes, so they report the same endpoints o
 
 So `camel validate` can report an endpoint it did not report before.
 
+=== camel-file - a done file with a fixed name is kept for the files a poll left
+
+A done file with a fixed name (such as `doneFileName=ready`) is no longer deleted while a poll left files of its
+directory for the next poll (beyond `maxMessagesPerPoll`, or not started); before, they were left until a new done file
+was written. Meanwhile the polls consume every file of the directory, as they do whenever the done file is there. This
+also applies to `pollEnrich` and `ConsumerTemplate.receive`, which take one file per call: the done file is now kept
+until the last file of the directory is received, where before the first received file deleted it. This applies to
+camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
+
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
 `camel validate normalize <files> --output=<dir>` now writes one normalized file per input file into the
@@ -564,6 +573,16 @@ provider is detected as before.
   nothing), and a route that cannot be read, such as invalid YAML, exits with `1` and the error of the parser (it failed
   with an internal error, `70`, and a stack trace).
 
+=== camel-xml-io, camel-yaml-io, camel-java-io - route dumps keep options set to their default value
+
+The XML, YAML and Java route dumps (`camel transform route`, `camel validate normalize`, `camel.main.dumpRoutes`, the
+developer console) now write these options whenever they are set, also with their documented default value: the
+binding options of the rest configuration, a rest and its verbs (such as `bindingMode="off"`), the options of a
+redelivery policy, of a `resilience4jConfiguration` and of a `faultToleranceConfiguration`, and `shutdownRoute` /
+`shutdownRunningTask` of a route. Left out, such an option took the value of the parent level when the dump was loaded
+(the rest configuration, the error handler, the global circuit breaker configuration, the CamelContext), so the route
+behaved differently.
+
 === camel-jbang - camel get bean, get route-controller and top source
 
 * `camel get bean --dsl` shows the configuration of each property next to that property: it paired them by position,
@@ -786,6 +805,14 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-iggy - messageExpiry is sent to Iggy in microseconds
+
+The `messageExpiry` option is in seconds, but its value was passed unchanged to Iggy, which reads the message expiry
+of a topic in microseconds, so a topic created by Camel (`autoCreateTopic=true`) expired its messages a million times
+too early (`messageExpiry=3600` gave 3.6 ms instead of one hour). The value is now converted to microseconds. Topics
+created before keep their expiry: change it on the Iggy server. If you set `messageExpiry` in microseconds to work
+around this, set it in seconds now, or newly created topics keep their messages a million times longer than intended.
+
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
 A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now
@@ -875,6 +902,14 @@ none of them lists, whatever the value of `failOnUnknownHost`, which only applie
 such an entry: `@revoked` and `@cert-authority` entries do not list a host.
 Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
 endpoint is configured with.
+
+=== camel-zipfile - ZipAggregationStrategy keeps entries with the same name
+
+`ZipAggregationStrategy` replaced an entry of the zip file when a later message had the same entry name, for example
+two files `orders.csv` from different folders of a recursive file consumer (the folders are not kept by default), so
+the content of the earlier file was lost. The later entry is now added with a number before its extension:
+`orders (1).csv`, `orders (2).csv`, and so on. Entry names can therefore differ from the file names (or the
+`CamelFileName` header). Use `preserveFolderStructure=true` to keep the folders in the entry names instead.
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
@@ -1019,6 +1054,17 @@ new `compile` option of the endpoint (default `false`). The module is now loaded
 every producer, so stopping and starting a route does not read the module again: remove the route and add it
 again, or restart the application, to load a module that has changed.
 
+=== camel-web3j - the consumer subscribes again after an error
+
+When the subscription of a consumer ends with an error (for example a request to the node that fails inside
+`BLOCK_OBSERVABLE` or `TRANSACTION_OBSERVABLE`, or a node that cannot be reached when the route starts), the consumer
+now subscribes again every 15 seconds until it succeeds. The error is routed as before, and logged at `WARN`; the
+failed attempts that follow are logged at `DEBUG`. Previously the consumer received nothing more while the route
+stayed started. A new subscription starts at the latest block, so the blocks between the error and the new
+subscription are not routed. `REPLAY_BLOCKS_OBSERVABLE`, `REPLAY_TRANSACTIONS_OBSERVABLE` and an
+`ETH_LOG_OBSERVABLE` with `fromBlock` set to a block number are not subscribed again, as that would route the same
+blocks or logs again.
+
 === camel-vertx-http - a header with several values is sent as several headers
 
 A message header whose value is a `java.util.Collection` or an object array (as the HTTP consumers map a request
@@ -1069,6 +1115,17 @@ The `value` of a Switch case and the `uriDelimiter` of the Dynamic Router EIP we
 placeholder or a route template parameter in them never matched (Switch) or did not split the slip (Dynamic Router).
 They are now resolved at startup like the other EIP options; a placeholder of a property that does not exist now
 fails the route at startup.
+
+=== camel-undertow - the producer refuses a request target or header value with control characters
+
+The undertow producer writes the path, query and header values of the outgoing request to the socket one character at
+a time, without validating them. A carriage return or line feed therefore broke the request into further lines, and a
+character above `0xFF` was written as a single, different byte (for example `U+010A` became a line feed). The producer
+now refuses to send a request path, query or header value that contains a control character or a character above
+`0xFF`, and fails the exchange with an `IllegalArgumentException` instead. A space and a tab, which do not change the
+framing, are still allowed. Routes that put a percent-encoded control character (such as `%0D%0A`) into the
+`CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
+likely to be affected.
 
 === camel-dapr - the saveBulk and executeTransaction state operations are sent
 
@@ -1185,6 +1242,17 @@ multi-host cluster still receives them. Previously they were registered for any 
 including the host of a node with another scheme or port, is now sent without them. A client set with the `client` or
 `openSearchClient` option is not changed.
 
+=== camel-aws-cloudtrail - the consumer looks again for events that CloudTrail shows late
+
+The consumer polls from the newest event time it has seen, so an event that CloudTrail made visible after a newer one
+was never routed. Now, every `lookBackInterval` (default 1 minute), the consumer also looks up the events from
+`lookBackWindow` (default 10 minutes) before now up to that newest event time, and routes those it has not routed yet.
+The normal polls send the same `LookupEvents` requests as before. The late-event lookup adds `ceil(N / maxResults)`
+requests per `lookBackInterval`, at most one per poll, where N is the number of events in that range: with the
+defaults one request per minute up to 50 events in 10 minutes, 20 per minute for 1000 events, and none once no event
+was seen for 10 minutes. AWS allows two `LookupEvents` requests per second per account and Region. Set
+`lookBackWindow=0` to disable the late-event lookup.
+
 === camel-aws2-s3 - a listed object that cannot be fetched is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (or to download its content) no longer
@@ -1218,6 +1286,16 @@ MINA does not pass a failed handshake on as an error: the producer fails with a 
 `timeout` while waiting for a reply), and the handshake error is logged at `ERROR` level by
 `org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
 certificate that does not list the host.
+
+=== camel-aws-secrets-manager - the CloudTrail refresh task reads every event since the last check
+
+With `camel.vault.aws.refreshEnabled=true` and without SQS notification, each check now reads every page of the
+`PutSecretValue` and `UpdateSecret` events since the previous check, including the events in the same second as the
+newest event seen before, so an update is no longer missed when more events than one page happened in between. The
+first check looks for the updates made after the task started: an update made before the start no longer reloads the
+context. A check sends two `LookupEvents` requests, one per event name, and one more per further 50 updates (before:
+always one request, for all Secrets Manager events); reads of secrets no longer add requests. LookupEvents allows two
+requests per second per account and Region.
 
 === camel-aws2-kinesis - the consumer continues after the last record when a shard iterator expired
 

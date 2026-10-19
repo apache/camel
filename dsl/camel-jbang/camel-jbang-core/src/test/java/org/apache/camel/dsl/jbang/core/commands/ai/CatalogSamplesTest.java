@@ -149,7 +149,8 @@ public class CatalogSamplesTest {
             JsonObject o = CatalogSamples.sample(catalog, term, 2);
             assertThat(o.getString("name")).as(term).isEqualTo("http");
             assertThat(o.getString("note")).as(term).contains("to:", "toD:");
-            assertThat(((JsonObject) ((JsonArray) o.get("samples")).get(0)).getString("yaml")).contains("uri: http");
+            assertThat(((JsonObject) ((JsonArray) o.get("samples")).get(0)).getString("yaml"))
+                    .containsPattern("uri: \"?http");
         }
         // calling an API by its contract: the rest-openapi producer
         JsonObject o = CatalogSamples.sample(catalog, "openapi client", 5);

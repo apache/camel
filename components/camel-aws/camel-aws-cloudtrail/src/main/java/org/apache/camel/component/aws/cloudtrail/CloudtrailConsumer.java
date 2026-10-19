@@ -20,8 +20,10 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
@@ -31,10 +33,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.model.*;
 
 public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CloudtrailConsumer.class);
 
     // Cursor for the next lookup window. Kept per-consumer (not static) so multiple cloudtrail
     // routes in the same JVM do not clobber each other's position.
@@ -43,16 +49,41 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
     // returned again on the next poll and must be filtered to avoid duplicate delivery.
     private final Set<String> lastProcessedEventIds = new HashSet<>();
 
+    // Late-event lookup (lookBackWindow > 0): every lookBackInterval the events of [now - lookBackWindow, lastTime]
+    // are looked up again, one page per poll, and the ones not routed yet are routed. CloudTrail can make an event
+    // visible after a newer one, which the lookup from lastTime above does not return.
+    private Instant startedAt;
+    private Instant nextLookBackAt;
+    // the range and next page of the late-event lookup in progress (lookBackFrom is null when none is)
+    private Instant lookBackFrom;
+    private Instant lookBackTo;
+    private String lookBackToken;
+    // ids of the routed events with their event time, pruned once the event time is before every later lookup
+    private final Map<String, Instant> routedEventIds = new HashMap<>();
+
     public CloudtrailConsumer(CloudtrailEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
     @Override
     protected void doStart() throws Exception {
+        CloudtrailConfiguration configuration = getEndpoint().getConfiguration();
+        if (configuration.getLookBackWindow() < 0) {
+            throw new IllegalArgumentException(
+                    "lookBackWindow must be 0 (disabled) or positive, but was " + configuration.getLookBackWindow());
+        }
+        if (configuration.getLookBackWindow() > 0 && configuration.getLookBackInterval() <= 0) {
+            // with 0 or less every poll would also send a late-event lookup, beyond the LookupEvents rate limit
+            throw new IllegalArgumentException(
+                    "lookBackInterval must be above 0 unless lookBackWindow is 0, but was "
+                                               + configuration.getLookBackInterval());
+        }
         super.doStart();
         if (lastTime == null) {
             // Start tailing from the consumer start time rather than replaying CloudTrail history.
-            lastTime = Instant.now();
+            lastTime = now();
+            startedAt = lastTime;
+            nextLookBackAt = startedAt.plusMillis(getEndpoint().getConfiguration().getLookBackInterval());
         }
     }
 
@@ -95,10 +126,11 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
         Set<String> newestEventIds = new HashSet<>();
         Queue<Exchange> exchanges = new ArrayDeque<>();
         for (Event event : events) {
-            if (lastProcessedEventIds.contains(event.eventId())) {
+            if (lastProcessedEventIds.contains(event.eventId()) || routedEventIds.containsKey(event.eventId())) {
                 continue;
             }
             exchanges.add(createExchange(event));
+            rememberRouted(event);
 
             Instant eventTime = event.eventTime();
             if (newest == null || eventTime.isAfter(newest)) {
@@ -118,7 +150,95 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
         lastProcessedEventIds.clear();
         lastProcessedEventIds.addAll(newestEventIds);
 
+        if (getEndpoint().getConfiguration().getLookBackWindow() > 0) {
+            lookBackPage(attributes, exchanges);
+        }
+
         return processBatch(CastUtils.cast(exchanges));
+    }
+
+    /**
+     * Sends at most one LookupEvents request of the late-event lookup: the next page of the one in progress, or the
+     * first page of a new one when lookBackInterval has passed.
+     */
+    private void lookBackPage(List<LookupAttribute> attributes, Queue<Exchange> exchanges) {
+        CloudtrailConfiguration configuration = getEndpoint().getConfiguration();
+        Instant now = now();
+        if (lookBackFrom == null && !now.isBefore(nextLookBackAt)) {
+            nextLookBackAt = now.plusMillis(configuration.getLookBackInterval());
+            Instant from = now.minusMillis(configuration.getLookBackWindow());
+            from = from.isBefore(startedAt) ? startedAt : from;
+            if (!from.isAfter(lastTime)) {
+                // events after lastTime are returned by the normal lookup
+                lookBackFrom = from;
+                lookBackTo = lastTime;
+            }
+        }
+        if (lookBackFrom != null) {
+            LookupEventsRequest.Builder request = LookupEventsRequest.builder().maxResults(configuration.getMaxResults())
+                    .startTime(lookBackFrom).endTime(lookBackTo);
+            if (!attributes.isEmpty()) {
+                request.lookupAttributes(attributes);
+            }
+            if (lookBackToken != null) {
+                request.nextToken(lookBackToken);
+            }
+            LookupEventsResponse response;
+            try {
+                response = getClient().lookupEvents(request.build());
+            } catch (RuntimeException e) {
+                // the events of the normal lookup are still routed; the late-event lookup starts again at the next
+                // lookBackInterval (at most once per lookBackInterval, so the stack trace is only logged at DEBUG)
+                LOG.warn("Cannot look up the events of the last {} ms that CloudTrail made visible late: {}",
+                        configuration.getLookBackWindow(), e.getMessage());
+                LOG.debug("Late-event lookup failed", e);
+                lookBackFrom = null;
+                lookBackToken = null;
+                return;
+            }
+            for (Event event : response.events()) {
+                if (!lastProcessedEventIds.contains(event.eventId()) && !routedEventIds.containsKey(event.eventId())) {
+                    exchanges.add(createExchange(event));
+                    rememberRouted(event);
+                    if (event.eventTime().equals(lastTime)) {
+                        // the normal lookup starts at lastTime (inclusive) and returns it again
+                        lastProcessedEventIds.add(event.eventId());
+                    }
+                }
+            }
+            lookBackToken = response.nextToken();
+            if (ObjectHelper.isEmpty(lookBackToken)) {
+                lookBackFrom = null;
+                lookBackToken = null;
+            }
+        }
+        // a later late-event lookup starts at or after this instant, so older ids cannot be returned again
+        Instant keepFrom = now.minusMillis(configuration.getLookBackWindow());
+        if (lookBackFrom != null && lookBackFrom.isBefore(keepFrom)) {
+            keepFrom = lookBackFrom;
+        }
+        Instant pruneBefore = keepFrom;
+        routedEventIds.values().removeIf(t -> t.isBefore(pruneBefore));
+    }
+
+    private void rememberRouted(Event event) {
+        if (getEndpoint().getConfiguration().getLookBackWindow() > 0) {
+            routedEventIds.put(event.eventId(), event.eventTime());
+        }
+    }
+
+    /**
+     * The current time, used for the consumer start and the late-event lookup (tests can override it).
+     */
+    protected Instant now() {
+        return Instant.now();
+    }
+
+    /**
+     * Number of routed event ids kept for the late-event lookup (for tests).
+     */
+    int getRoutedEventIdsSize() {
+        return routedEventIds.size();
     }
 
     @Override

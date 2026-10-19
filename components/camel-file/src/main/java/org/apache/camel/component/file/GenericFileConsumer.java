@@ -20,10 +20,12 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -67,6 +69,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     private boolean retrieveFile = true;
     // files already reported as resolving outside the starting directory (bounded)
     private final Map<String, Boolean> skippedOutsideStartingDirectory = LRUCacheFactory.newLRUCache(1000);
+    // the done files with a fixed name kept for the files a poll left (null if the endpoint has no such done file)
+    private final GenericFileKeptDoneFiles keptDoneFiles;
 
     protected GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations,
                                   GenericFileProcessStrategy<T> processStrategy) {
@@ -79,6 +83,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         this.excludePattern = endpoint.getExcludePattern();
         this.includeExt = endpoint.getIncludeExt() != null ? endpoint.getIncludeExt().toLowerCase().split(",") : null;
         this.excludeExt = endpoint.getExcludeExt() != null ? endpoint.getExcludeExt().toLowerCase().split(",") : null;
+        // a done file with a fixed name stands for all the files of its directory, and is deleted (unless noop) after
+        // the last file of a poll, so it must be kept when the poll left some of them for the next poll
+        this.keptDoneFiles = endpoint.getDoneFileName() != null && !endpoint.isNoop()
+                && !endpoint.getDoneFileName().contains("{file:name") ? new GenericFileKeptDoneFiles() : null;
     }
 
     public Processor getCustomProcessor() {
@@ -165,6 +173,22 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             LOG.debug("Took {} to poll: {}", TimeUtils.printDuration(delta, true), name);
         }
 
+        GenericFileKeptDoneFiles kept = getKeptDoneFiles();
+        if (kept != null) {
+            // one file more than the limit is listed when a done file with a fixed name is used (see
+            // canPollMoreFiles): then the poll leaves files for the next one, so cut the list to the files the eager
+            // limit takes and keep the done files of the files listed
+            boolean listingCut = eagerLimitMaxMessagesPerPoll && maxMessagesPerPoll > 0 && files.size() > maxMessagesPerPoll;
+            Set<String> listedDoneFiles = startDoneFileBatch(kept, files, !listingCut);
+            if (listingCut) {
+                List<GenericFile<T>> excessive = files.subList(maxMessagesPerPoll, files.size());
+                removeExcessiveInProgressFiles(excessive);
+                excessive.clear();
+                limitHit = true;
+                listedDoneFiles.forEach(kept::keep);
+            }
+        }
+
         // log if we hit the limit
         if (limitHit) {
             LOG.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.",
@@ -201,6 +225,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             if (files.size() > maxMessagesPerPoll) {
                 LOG.debug("Limiting maximum messages to poll at {} files as there were more messages in this poll.",
                         maxMessagesPerPoll);
+                // the done files of the files cut are kept for the next poll
+                for (Exchange exchange : exchanges.subList(maxMessagesPerPoll, exchanges.size())) {
+                    keepDoneFile(getExchangeFileProperty(exchange));
+                }
                 // must first remove excessive files from the in progress
                 // repository
                 removeExcessiveInProgressFiles(exchanges, maxMessagesPerPoll);
@@ -247,6 +275,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
+            // the file as polled: the begin strategy may pre move it, and then binds the pre moved file to the exchange
+            GenericFile<?> polledFile = getExchangeFileProperty(exchange);
+
             // process the current exchange
             boolean started;
             if (customProcessor != null) {
@@ -259,10 +290,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             // if we did not start process the file then decrement the counter
             if (!started) {
+                // the done file must stay for this file, also if it is not started as the last file of the batch
+                keepDoneFile(polledFile);
                 answer--;
                 // this exchange was not started processing so remember to release it afterward
                 notStarted.add(exchange);
             }
+        }
+
+        // the files not processed (the batch was stopped) are left for the next poll too
+        for (Object exchange : exchanges) {
+            keepDoneFile(getExchangeFileProperty((Exchange) exchange));
         }
 
         // drain any in progress files as we are done with this batch
@@ -324,6 +362,47 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
+     * The done files with a fixed name kept for the files left by the last poll, or <tt>null</tt> if not used (no such
+     * done file, or a custom processor that does not complete the files).
+     */
+    GenericFileKeptDoneFiles getKeptDoneFiles() {
+        return customProcessor == null ? keptDoneFiles : null;
+    }
+
+    /**
+     * Starts the batch of the kept done files with the files listed, and deletes the done files kept for files that are
+     * gone.
+     *
+     * @return the done files of the files listed
+     */
+    private Set<String> startDoneFileBatch(GenericFileKeptDoneFiles kept, List<GenericFile<T>> files, boolean complete) {
+        Set<String> doneFiles = new HashSet<>();
+        for (GenericFile<T> file : files) {
+            doneFiles.add(endpoint.createDoneFileName(file.getAbsoluteFilePath()));
+        }
+        List<String> gone = kept.startBatch(doneFiles, complete);
+        if (gone != null) {
+            // the done file was kept for files that are no longer there, so it is no longer needed
+            for (String doneFileName : gone) {
+                try {
+                    boolean deleted = operations.deleteFile(doneFileName);
+                    LOG.trace("Done file: {} kept for files that are gone was deleted: {}", doneFileName, deleted);
+                } catch (Exception e) {
+                    LOG.debug("Cannot delete done file: {} due to: {}", doneFileName, e.getMessage(), e);
+                }
+            }
+        }
+        return doneFiles;
+    }
+
+    private void keepDoneFile(GenericFile<?> file) {
+        GenericFileKeptDoneFiles kept = getKeptDoneFiles();
+        if (kept != null) {
+            kept.keep(endpoint.createDoneFileName(file.getAbsoluteFilePath()));
+        }
+    }
+
+    /**
      * Whether or not we can continue polling for more files
      *
      * @param  fileList the current list of gathered files
@@ -338,6 +417,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (maxMessagesPerPoll <= 0) {
             // no limitation
             return true;
+        }
+
+        if (getKeptDoneFiles() != null) {
+            // with a done file with a fixed name, one more file is listed to know whether the poll leaves files for the
+            // next one, and then the done file is kept (the list is cut to the limit after polling)
+            return fileList.size() <= maxMessagesPerPoll;
         }
 
         // then only poll if we haven't reached the max limit
@@ -483,8 +568,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // register on completion callback that does the completion
             // strategies
             // (for instance to move the file after we have processed it)
-            exchange.getExchangeExtension().addOnCompletion(
-                    new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName));
+            GenericFileOnCompletion<T> onCompletion
+                    = new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName);
+            onCompletion.setKeptDoneFiles(getKeptDoneFiles());
+            exchange.getExchangeExtension().addOnCompletion(onCompletion);
 
             LOG.debug("About to process file: {} using exchange: {}", target, exchange);
 
@@ -1011,6 +1098,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected void doStop() throws Exception {
         prepareOnStartup = false;
         skippedOutsideStartingDirectory.clear();
+        if (keptDoneFiles != null) {
+            keptDoneFiles.clear();
+        }
         super.doStop();
         ServiceHelper.stopService(processStrategy);
     }

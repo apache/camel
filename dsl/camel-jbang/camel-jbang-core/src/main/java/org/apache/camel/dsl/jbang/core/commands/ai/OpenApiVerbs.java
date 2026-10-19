@@ -18,12 +18,16 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.apache.camel.util.json.Jsoner;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -44,13 +48,75 @@ public final class OpenApiVerbs {
     private static final Pattern SPECIFICATION = Pattern.compile(
             "openApi:\\s*\\n\\s*(?:[a-zA-Z]+:[^\\n]*\\n\\s*)*?specification:\\s*[\"']?([^\"'\\s]+)[\"']?");
 
+    /** rest-openapi:spec#operationId or rest-openapi://spec#operationId: the specification, which may be empty. */
+    private static final Pattern REST_OPENAPI_CALL = Pattern.compile("rest-openapi:(?://)?([^\\s\"'?#]*)#");
+
+    /** The specificationUri option of a rest-openapi call. */
+    private static final Pattern SPECIFICATION_URI = Pattern.compile("specificationUri:\\s*[\"']?([^\"'\\s]+)[\"']?");
+
     private OpenApiVerbs() {
     }
 
     /**
+     * The operations of the OpenAPI specifications a file uses, by specification as {@link ProjectFacts#specName} names
+     * it: the verb of each operationId, in lower case. The specifications a contract-first binding names, and the ones
+     * of rest-openapi calls (the default openapi.json when a call names none), beside the route or in
+     * src/main/resources. A specification that cannot be read is left out - nothing is guessed (CAMEL-25762).
+     */
+    public static Map<String, Map<String, String>> operations(String content, Path directory) {
+        Map<String, Map<String, String>> answer = new LinkedHashMap<>();
+        if (content == null || directory == null) {
+            return answer;
+        }
+        Set<String> specs = new LinkedHashSet<>();
+        for (Pattern pattern : List.of(SPECIFICATION, REST_OPENAPI_CALL, SPECIFICATION_URI)) {
+            Matcher m = pattern.matcher(content);
+            while (m.find()) {
+                specs.add(ProjectFacts.specName(m.group(1)));
+            }
+        }
+        if (content.contains("rest-openapi")) {
+            specs.add(ProjectFacts.specName(null));
+        }
+        for (String spec : specs) {
+            Map<?, ?> paths = spec.contains("://") || spec.contains("{{") ? null : paths(directory, spec);
+            if (paths == null) {
+                continue;
+            }
+            Map<String, String> verbs = new LinkedHashMap<>();
+            for (Object path : paths.values()) {
+                if (path instanceof Map<?, ?> operations) {
+                    for (Map.Entry<?, ?> operation : operations.entrySet()) {
+                        if (operation.getValue() instanceof Map<?, ?> details && details.get("operationId") != null) {
+                            verbs.put(String.valueOf(details.get("operationId")),
+                                    String.valueOf(operation.getKey()).toLowerCase(Locale.ROOT));
+                        }
+                    }
+                }
+            }
+            answer.put(spec, verbs);
+        }
+        return answer;
+    }
+
+    /** The paths of a specification beside the route, or in src/main/resources; null when it cannot be read. */
+    private static Map<?, ?> paths(Path directory, String file) {
+        Path p = directory.resolve(file);
+        if (!Files.isRegularFile(p)) {
+            p = directory.resolve("src/main/resources").resolve(file);
+        }
+        try {
+            return Files.isRegularFile(p) ? paths(Files.readString(p)) : null;
+        } catch (Exception e) {
+            // an unreadable specification says nothing
+            return null;
+        }
+    }
+
+    /**
      * The {@code direct:} endpoints of the operations that carry no body, for a file that binds to an OpenAPI
-     * specification in the given directory. Empty when the file binds to none, or the specification cannot be read -
-     * nothing is guessed.
+     * specification beside it or in src/main/resources, found as {@link #operations} finds it. Empty when the file
+     * binds to none, or the specification cannot be read - nothing is guessed.
      */
     public static Set<String> bodylessEndpoints(String content, Path directory) {
         Set<String> answer = new LinkedHashSet<>();
@@ -59,29 +125,21 @@ public final class OpenApiVerbs {
         }
         Matcher m = SPECIFICATION.matcher(content);
         while (m.find()) {
-            Path spec = directory.resolve(m.group(1));
-            if (!Files.isRegularFile(spec)) {
+            Map<?, ?> paths = paths(directory, ProjectFacts.specName(m.group(1)));
+            if (paths == null) {
                 continue;
             }
-            try {
-                Map<?, ?> paths = paths(Files.readString(spec));
-                if (paths == null) {
+            for (Object path : paths.values()) {
+                if (!(path instanceof Map<?, ?> operations)) {
                     continue;
                 }
-                for (Object path : paths.values()) {
-                    if (!(path instanceof Map<?, ?> operations)) {
-                        continue;
-                    }
-                    for (Map.Entry<?, ?> operation : operations.entrySet()) {
-                        String verb = String.valueOf(operation.getKey()).toLowerCase(java.util.Locale.ROOT);
-                        if (WITHOUT_BODY.contains(verb) && operation.getValue() instanceof Map<?, ?> details
-                                && details.get("operationId") != null) {
-                            answer.add("direct:" + details.get("operationId"));
-                        }
+                for (Map.Entry<?, ?> operation : operations.entrySet()) {
+                    String verb = String.valueOf(operation.getKey()).toLowerCase(Locale.ROOT);
+                    if (WITHOUT_BODY.contains(verb) && operation.getValue() instanceof Map<?, ?> details
+                            && details.get("operationId") != null) {
+                        answer.add("direct:" + details.get("operationId"));
                     }
                 }
-            } catch (Exception e) {
-                // Catching Exception handles unreadable and unparseable JSON or YAML specifications.
             }
         }
         return answer;
