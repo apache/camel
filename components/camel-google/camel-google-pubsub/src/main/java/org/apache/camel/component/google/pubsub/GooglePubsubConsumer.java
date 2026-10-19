@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.google.api.core.AbstractApiService;
 import com.google.api.core.ApiFuture;
@@ -67,6 +68,12 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
     private final GooglePubsubEndpoint endpoint;
     private final Processor processor;
     private final AtomicInteger pendingExchanges = new AtomicInteger();
+    /**
+     * The subscriber loops started by the current start of this consumer. Incremented when the consumer starts, and
+     * when it stops pulling (deferShutdown, doStop): a loop of an earlier generation ends instead of subscribing or
+     * pulling again, also when the consumer has been started again meanwhile.
+     */
+    private final AtomicLong generation = new AtomicLong();
     private ExecutorService executor;
     private ScheduledExecutorService taskExecutor;
     private final List<Subscriber> subscribers;
@@ -102,11 +109,21 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                     resolvedMaxDeliveryAttempts, endpoint.getDestinationName());
         }
 
+        // started again after a stop: the executors of the previous start are otherwise only shut down in doShutdown.
+        // Their subscriber loops end on their own (generation), so a regular shutdown lets them finish and then
+        // releases the threads
+        if (executor != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
+        }
+        if (taskExecutor != null) {
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
+        }
         executor = endpoint.createExecutor(this);
         taskExecutor = endpoint.getCamelContext().getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, "PubSubReconnectTask");
+        long current = generation.incrementAndGet();
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
-            executor.submit(new SubscriberWrapper());
+            executor.submit(new SubscriberWrapper(current));
         }
     }
 
@@ -114,6 +131,7 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
     protected void doStop() throws Exception {
         localLog.info("Stopping Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
 
+        generation.incrementAndGet();
         if (!subscribers.isEmpty()) {
             localLog.info("Stopping subscribers for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
             subscribers.forEach(AbstractApiService::stopAsync);
@@ -144,6 +162,9 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
 
     @Override
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // stop pulling: the consumer stays started until the pending exchanges are done, so the subscriber loops must
+        // not subscribe or pull again when their subscriber terminates or their pull is cancelled
+        generation.incrementAndGet();
         if (!subscribers.isEmpty()) {
             subscribers.forEach(AbstractApiService::stopAsync);
         }
@@ -217,9 +238,19 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
     private class SubscriberWrapper implements Runnable {
 
         private final String subscriptionName;
+        private final long wrapperGeneration;
 
-        SubscriberWrapper() {
+        SubscriberWrapper(long wrapperGeneration) {
+            this.wrapperGeneration = wrapperGeneration;
             subscriptionName = ProjectSubscriptionName.format(endpoint.getProjectId(), endpoint.getDestinationName());
+        }
+
+        /**
+         * Whether this loop may subscribe or pull (again): the consumer runs and has not stopped pulling or been
+         * started again since this loop was started.
+         */
+        private boolean isPullAllowed() {
+            return isRunAllowed() && !isSuspendingOrSuspended() && wrapperGeneration == generation.get();
         }
 
         @Override
@@ -250,7 +281,7 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
         }
 
         private void asynchronousPull(String subscriptionName) throws IOException {
-            while (isRunAllowed() && !isSuspendingOrSuspended()) {
+            while (isPullAllowed()) {
                 MessageReceiver messageReceiver = new CamelMessageReceiver(GooglePubsubConsumer.this, endpoint, processor);
 
                 Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver, endpoint);
@@ -261,7 +292,7 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                     subscribers.add(subscriber);
                     subscriberAdded = true;
                     // a stop while the subscriber was starting missed it; stop it here or awaitTerminated never returns
-                    if (!isRunAllowed() || isSuspendingOrSuspended()) {
+                    if (!isPullAllowed()) {
                         subscriber.stopAsync();
                     }
                     subscriber.awaitTerminated();
@@ -320,7 +351,7 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
         }
 
         private void synchronousPull(String subscriptionName) throws ExecutionException, InterruptedException {
-            while (isRunAllowed() && !isSuspendingOrSuspended()) {
+            while (isPullAllowed()) {
                 ApiFuture<PullResponse> synchronousPullResponseFuture = null;
                 try (SubscriberStub subscriber = endpoint.getComponent().getSubscriberStub(endpoint)) {
 
@@ -333,7 +364,7 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                     synchronousPullResponseFuture = subscriber.pullCallable().futureCall(pullRequest);
                     pendingSynchronousPullResponses.add(synchronousPullResponseFuture);
                     // a stop while the pull was being issued missed this future; cancel it here or get() blocks
-                    if (!isRunAllowed() || isSuspendingOrSuspended()) {
+                    if (!isPullAllowed()) {
                         synchronousPullResponseFuture.cancel(true);
                     }
                     PullResponse pullResponse = synchronousPullResponseFuture.get();
