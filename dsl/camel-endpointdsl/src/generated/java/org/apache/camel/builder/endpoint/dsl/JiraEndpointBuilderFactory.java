@@ -108,7 +108,9 @@ public interface JiraEndpointBuilderFactory {
             return this;
         }
         /**
-         * Max number of issues to search for.
+         * Max number of issues to search for. The newIssues consumer reads every
+         * issue created since its previous poll, page by page, with this as the
+         * page size.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -123,7 +125,9 @@ public interface JiraEndpointBuilderFactory {
             return this;
         }
         /**
-         * Max number of issues to search for.
+         * Max number of issues to search for. The newIssues consumer reads every
+         * issue created since its previous poll, page by page, with this as the
+         * page size.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.

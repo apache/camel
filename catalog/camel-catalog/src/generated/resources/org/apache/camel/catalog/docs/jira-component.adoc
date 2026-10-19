@@ -141,6 +141,10 @@ automatically set the JQL as:
 This is in order to optimize startup processing, rather than having to index every single
 issue in the project.
 
+Each poll reads every page of that search, so all the issues created since the previous poll are consumed, also when
+there are more than `maxResults` of them (for example after Jira was unreachable for a while); `maxResults` is then
+the page size of the search.
+
 Another note is that, similarly, the newComments consumer will have to
 index every single issue *and* comment on the project. Therefore, for
 large projects, it's *vital* to optimize the JQL expression as much as
