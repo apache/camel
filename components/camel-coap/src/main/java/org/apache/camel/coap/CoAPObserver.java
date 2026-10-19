@@ -17,6 +17,8 @@
 package org.apache.camel.coap;
 
 import java.io.IOException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,6 +33,9 @@ import org.eclipse.californium.core.CoapResponse;
  */
 public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     private final CoAPEndpoint endpoint;
+    // guards client and observation: onError() runs on a Californium thread and observes again, which must not race
+    // doStop(), or the new observation is not cancelled (the server keeps notifying it) or the client is gone
+    private final Lock lock = new ReentrantLock();
     private CoapClient client;
     private volatile Observation observation;
 
@@ -42,10 +47,15 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (this.client == null) {
-            client = endpoint.createCoapClient(endpoint.getUri());
+        lock.lock();
+        try {
+            if (this.client == null) {
+                client = endpoint.createCoapClient(endpoint.getUri());
+            }
+            startObserve();
+        } finally {
+            lock.unlock();
         }
-        startObserve();
     }
 
     @Override
@@ -69,14 +79,19 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     protected void doStop() throws Exception {
         // cancel the observation, or the server keeps sending notifications to this consumer after it was stopped, and
         // a route that is started again then gets every notification twice (once from the stopped consumer)
-        Observation current = observation;
-        observation = null;
-        if (current != null) {
-            current.cancel();
-        }
-        if (client != null) {
-            client.shutdown();
-            client = null;
+        lock.lock();
+        try {
+            Observation current = observation;
+            observation = null;
+            if (current != null) {
+                current.cancel();
+            }
+            if (client != null) {
+                client.shutdown();
+                client = null;
+            }
+        } finally {
+            lock.unlock();
         }
         super.doStop();
     }
@@ -84,11 +99,19 @@ public class CoAPObserver extends DefaultConsumer implements CoapHandler {
     @Override
     public void onError() {
         getExceptionHandler().handleException(new IOException("CoAP request timed out or has been rejected by the server"));
-        if (isRunAllowed()) {
-            startObserve();
+        lock.lock();
+        try {
+            // doStop() runs after the status became STOPPING, so either it cancels the observation that is started
+            // here (with its relation set), or this sees that the consumer is stopping and does not observe again
+            if (isRunAllowed() && client != null) {
+                startObserve();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
+    // called with the lock held
     private void startObserve() {
         Observation next = new Observation();
         this.observation = next;

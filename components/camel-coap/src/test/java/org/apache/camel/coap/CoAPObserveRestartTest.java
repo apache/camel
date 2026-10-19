@@ -16,10 +16,15 @@
  */
 package org.apache.camel.coap;
 
+import java.io.IOException;
+import java.net.URI;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
@@ -28,11 +33,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapObserveRelation;
 import org.eclipse.californium.core.CoapResource;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A route with an {@code observe=true} consumer that is stopped must stop observing the resource, so that it routes
@@ -148,6 +158,91 @@ class CoAPObserveRestartTest extends CoAPTestSupport {
         await().during(1, TimeUnit.SECONDS).atMost(2, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(List.of(), observerErrors, "errors of the stopped observer"));
         assertEquals(1, mock.getReceivedCounter(), "exchanges routed by the observer");
+    }
+
+    @Test
+    void observerStoppedWhileObservingAgainCancelsTheNewObservation() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:observed");
+        mock.expectedBodiesReceived("Hello 0");
+        MockEndpoint.assertIsSatisfied(context);
+
+        // an observe consumer whose client stops the consumer while it observes again (after an error), that is
+        // between the new observation being set and its relation being returned
+        AtomicReference<CoAPObserver> consumer = new AtomicReference<>();
+        AtomicReference<Thread> stopper = new AtomicReference<>();
+        AtomicReference<CoapObserveRelation> first = new AtomicReference<>();
+        AtomicReference<CoapObserveRelation> raced = new AtomicReference<>();
+        AtomicReference<CoapClient> coapClient = new AtomicReference<>();
+        AtomicBoolean armed = new AtomicBoolean();
+        AtomicBoolean shutdown = new AtomicBoolean();
+        AtomicBoolean observedAfterShutdown = new AtomicBoolean();
+        String uri = String.format("coap://localhost:%d/TestResource?observe=true", PORT.getPort());
+        CoAPEndpoint endpoint = new CoAPEndpoint(uri, context.getComponent("coap", CoAPComponent.class)) {
+            @Override
+            public CoapClient createCoapClient(URI uri) throws IOException, GeneralSecurityException {
+                CoapClient configured = super.createCoapClient(uri);
+                CoapClient client = new CoapClient(uri) {
+                    @Override
+                    public CoapObserveRelation observe(CoapHandler handler) {
+                        if (armed.compareAndSet(true, false)) {
+                            Thread thread = new Thread(() -> consumer.get().stop(), "observer-stopper");
+                            stopper.set(thread);
+                            thread.start();
+                            // until the stop is done, or is waiting for the observe to be set up
+                            await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.get().isStopped()
+                                    || consumer.get().isStopping() && thread.getState() == Thread.State.WAITING);
+                            observedAfterShutdown.set(shutdown.get());
+                            CoapObserveRelation relation = super.observe(handler);
+                            raced.set(relation);
+                            return relation;
+                        }
+                        CoapObserveRelation relation = super.observe(handler);
+                        first.compareAndSet(null, relation);
+                        return relation;
+                    }
+
+                    @Override
+                    public void shutdown() {
+                        shutdown.set(true);
+                        super.shutdown();
+                    }
+                };
+                client.setEndpoint(configured.getEndpoint());
+                coapClient.set(client);
+                return client;
+            }
+        };
+        consumer.set(new CoAPObserver(endpoint, exchange -> {
+        }));
+        consumer.get().setExceptionHandler(observerErrorHandler);
+        try {
+            consumer.get().start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> observerCount() == 2);
+
+            // the observation ends (as when it timed out or was rejected), so the consumer observes again, and is
+            // stopped meanwhile
+            first.get().proactiveCancel();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> observerCount() == 1);
+            armed.set(true);
+            consumer.get().onError();
+            stopper.get().join(10000);
+
+            assertTrue(consumer.get().isStopped(), "the consumer is stopped");
+            assertTrue(raced.get().isCanceled(), "the observation started while the consumer was stopped is cancelled");
+            // the server only has the observer of the route
+            await().atMost(10, TimeUnit.SECONDS).until(() -> observerCount() == 1);
+            // and the client was not used after it was shut down (it would create a new executor that is never shut down)
+            assertFalse(observedAfterShutdown.get(), "observed again with the client that was shut down");
+        } finally {
+            consumer.get().stop();
+            if (raced.get() != null) {
+                raced.get().proactiveCancel();
+            }
+            if (coapClient.get() != null) {
+                // the executor of a client that observed after it was shut down
+                coapClient.get().shutdown();
+            }
+        }
     }
 
     private int observerCount() throws Exception {
