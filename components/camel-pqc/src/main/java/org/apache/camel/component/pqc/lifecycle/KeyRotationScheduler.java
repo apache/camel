@@ -54,10 +54,11 @@ import org.slf4j.LoggerFactory;
  * }</pre>
  *
  * On every tick the scheduler lists the managed keys, keeps only those matching the configured {@link #setKeyFilter key
- * filter} (by default only {@link KeyMetadata.KeyStatus#ACTIVE ACTIVE} keys) and, for each of them, delegates the
- * decision to {@link KeyLifecycleManager#needsRotation(String, Duration, long)}. When a key needs rotation, the id of
- * its replacement is produced by the configured {@link #setKeyIdStrategy key id strategy} (by default the previous key
- * id with a rotation marker and timestamp appended).
+ * filter} (by default {@link KeyMetadata.KeyStatus#ACTIVE ACTIVE} and {@link KeyMetadata.KeyStatus#PENDING_ROTATION
+ * PENDING_ROTATION} keys) and, for each of them, delegates the decision to
+ * {@link KeyLifecycleManager#needsRotation(String, Duration, long)}. When a key needs rotation, the id of its
+ * replacement is produced by the configured {@link #setKeyIdStrategy key id strategy} (by default the previous key id
+ * with a rotation marker and timestamp appended).
  * <p/>
  * At least one rotation signal should be configured (a {@link #setMaxKeyAge maximum age}, a {@link #setMaxKeyUsage
  * maximum usage}, or a per-key {@code nextRotationAt}/{@code PENDING_ROTATION} status recorded in the key metadata);
@@ -76,7 +77,10 @@ public class KeyRotationScheduler extends ServiceSupport implements CamelContext
     private Duration checkInterval = Duration.ofHours(1);
     private Duration maxKeyAge;
     private long maxKeyUsage;
-    private Predicate<KeyMetadata> keyFilter = metadata -> metadata.getStatus() == KeyMetadata.KeyStatus.ACTIVE;
+    // PENDING_ROTATION has to pass the filter too: it is one of the documented rotation signals, and a key an
+    // operator marked that way is by definition no longer ACTIVE
+    private Predicate<KeyMetadata> keyFilter = metadata -> metadata.getStatus() == KeyMetadata.KeyStatus.ACTIVE
+            || metadata.getStatus() == KeyMetadata.KeyStatus.PENDING_ROTATION;
     private Function<KeyMetadata, String> keyIdStrategy = KeyRotationScheduler::defaultRotatedKeyId;
     private KeyRotationListener listener;
 
@@ -269,8 +273,8 @@ public class KeyRotationScheduler extends ServiceSupport implements CamelContext
     }
 
     /**
-     * Selects which keys are considered for rotation. Defaults to only {@link KeyMetadata.KeyStatus#ACTIVE ACTIVE}
-     * keys.
+     * Selects which keys are considered for rotation. Defaults to {@link KeyMetadata.KeyStatus#ACTIVE ACTIVE} and
+     * {@link KeyMetadata.KeyStatus#PENDING_ROTATION PENDING_ROTATION} keys.
      */
     public KeyRotationScheduler setKeyFilter(Predicate<KeyMetadata> keyFilter) {
         this.keyFilter = ObjectHelper.notNull(keyFilter, "keyFilter");

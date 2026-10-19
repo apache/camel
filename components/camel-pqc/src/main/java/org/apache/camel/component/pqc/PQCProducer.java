@@ -580,7 +580,7 @@ public class PQCProducer extends DefaultProducer {
         }
         exchange.getMessage().setHeader(PQCConstants.SIGNATURE, signature);
 
-        persistStatefulKeyStateAfterSign(exchange);
+        recordKeyUsageAfterSign(exchange);
     }
 
     private void verification(Exchange exchange)
@@ -831,7 +831,7 @@ public class PQCProducer extends DefaultProducer {
         exchange.getMessage().setHeader(PQCConstants.PQC_SIGNATURE, components.pqcSignature());
 
         try {
-            persistStatefulKeyStateAfterSign(exchange);
+            recordKeyUsageAfterSign(exchange);
         } catch (Exception e) {
             throw new RuntimeCamelException("Failed to persist stateful key state after hybrid signing", e);
         }
@@ -1201,18 +1201,19 @@ public class PQCProducer extends DefaultProducer {
     }
 
     /**
-     * Persists stateful key state after a signing operation through the KeyLifecycleManager, if configured. This
-     * ensures the key index is tracked across restarts.
+     * Records the use of the signing key through the KeyLifecycleManager, if one is configured and the exchange names a
+     * key.
+     * <p/>
+     * This advances {@code usageCount}, which is what the {@code maxKeyUsage} rotation signal of
+     * {@link org.apache.camel.component.pqc.lifecycle.KeyRotationScheduler} reads. It must therefore run for every key,
+     * not only the stateful ones: ML-DSA, SLH-DSA, Falcon and the KEM keys would otherwise sit at a usage count of zero
+     * forever and never be rotated.
+     * <p/>
+     * For a stateful signature key the advanced private key is stored as well, so the one-time index survives a
+     * restart.
      */
-    private void persistStatefulKeyStateAfterSign(Exchange exchange) throws Exception {
+    private void recordKeyUsageAfterSign(Exchange exchange) throws Exception {
         if (keyPair == null || keyPair.getPrivate() == null) {
-            return;
-        }
-
-        PrivateKey privateKey = keyPair.getPrivate();
-        long remaining = getStatefulKeyRemaining(privateKey);
-        if (remaining < 0) {
-            // Not a stateful key
             return;
         }
 
@@ -1226,22 +1227,28 @@ public class PQCProducer extends DefaultProducer {
             return;
         }
 
-        // Update metadata with current usage
+        PrivateKey privateKey = keyPair.getPrivate();
+        boolean stateful = getStatefulKeyRemaining(privateKey) >= 0;
+
         KeyMetadata metadata = klm.getKeyMetadata(keyId);
         if (metadata == null) {
-            LOG.warn(
-                    "No metadata found for stateful key '{}'. The key index has been advanced by the signing operation "
-                     + "but cannot be persisted — on restart this index advance will be lost, which may lead to key reuse. "
-                     + "Ensure a KeyLifecycleManager is properly configured and the key is stored with metadata.",
-                    keyId);
+            if (stateful) {
+                LOG.warn(
+                        "No metadata found for stateful key '{}'. The key index has been advanced by the signing operation "
+                         + "but cannot be persisted — on restart this index advance will be lost, which may lead to key reuse. "
+                         + "Ensure a KeyLifecycleManager is properly configured and the key is stored with metadata.",
+                        keyId);
+            }
             return;
         }
 
         metadata.updateLastUsed();
         klm.updateKeyMetadata(keyId, metadata);
 
-        // Persist the updated key (with new index) so state survives restarts
-        klm.storeKey(keyId, keyPair, metadata);
+        if (stateful) {
+            // Persist the updated key (with new index) so state survives restarts
+            klm.storeKey(keyId, keyPair, metadata);
+        }
     }
 
     /**
