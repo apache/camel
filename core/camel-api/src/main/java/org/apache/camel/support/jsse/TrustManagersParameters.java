@@ -125,7 +125,7 @@ public class TrustManagersParameters extends JsseParameters {
      * Sets optional algorithm name for the {@link TrustManagerFactory} used to create the {@link TrustManager}s
      * represented by this object's configuration.
      *
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      *
      * @param value the desired algorithm or {@code null} to use default
      * @see         TrustManagerFactory#getDefaultAlgorithm()

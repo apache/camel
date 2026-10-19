@@ -37,6 +37,35 @@ A saga option named like a parameter of the participant callback URLs, in any ca
 `Camel-Saga-Complete`, `Camel-Saga-Signature` or `Camel-Saga-Lra`), now fails the creation of its route, with or
 without a callback secret. The value of such an option could not be read back from the callback before.
 
+=== camel-ssh - known_hosts entries are matched as in OpenSSH
+
+When `knownHostsResource` is set, the entries of the `known_hosts` file are now matched as OpenSSH
+matches them, against the host name or address the client connects to, written `host` for port 22 and
+`[host]:port` for another port:
+
+* A host pattern must match that name as a whole. An entry for another host whose name or address
+contains the configured one is no longer used.
+* A pattern such as `db.example.com` only applies to port 22. A server on another port needs an entry
+such as `[db.example.com]:2222`, or a pattern that matches that form, such as `*`.
+* The host is used as it is written: the host configured on the endpoint, or the `HostName` that
+`~/.ssh/config` gives for it. An endpoint configured with a host name no longer uses entries listed
+only under its address, an endpoint configured with an address no longer uses entries listed under the
+name that a reverse lookup of the address returns, and an IPv6 address such as `::1` is matched as
+written instead of in its expanded form.
+* Every entry of the host is considered, so a host can be listed with several keys. Wildcard, negated
+and hashed patterns, comments and `@revoked` entries are supported. `@cert-authority` entries are
+ignored.
+* A `known_hosts` resource that cannot be read, or that has a line that cannot be read (for example an
+unknown `@` marker, a missing key, or a key that is not valid base64), now makes every connection fail,
+whatever the value of `failOnUnknownHost`. Previously such a resource was treated as having no entry,
+and such a line was skipped.
+
+As before, a server whose host has entries without a marker is rejected when it presents a key that
+none of them lists, whatever the value of `failOnUnknownHost`, which only applies to a host without
+such an entry: `@revoked` and `@cert-authority` entries do not list a host.
+Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
+endpoint is configured with.
+
 === camel-netty-http - the roles of a security constraint are matched by role name
 
 The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
@@ -204,6 +233,31 @@ java.io.IOException: No subject alternative names matching IP address 127.0.0.1 
     Caused by: javax.net.ssl.SSLHandshakeException: No subject alternative names matching IP address 127.0.0.1 found
 ----
 
+=== camel-milo - the OPC UA client validates the server certificate
+
+When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components
+now validate the certificate of the OPC UA server. Before, any server certificate was accepted, and no option allowed
+to validate it.
+
+Configure the trusted certificates with the new `trustListDirectory` option: put the certificate of the server, or of
+the CA that issued it, in the `trusted/certs` directory of the trust list. A server certificate that does not chain up
+to a trusted certificate is written to `rejected/certs`, from where it can be moved to `trusted/certs` once it has been
+checked. The trust list also refuses a server certificate outside its validity period, revoked by a revocation list of
+the trust list, or whose application URI differs from the one of the server. A server certificate issued by a CA is
+refused with `Bad_CertificateRevocationUnknown` when the trust list holds no revocation list of that CA: add the CRL of
+the CA (an empty one is enough) to `trusted/crl` or `issuer/crl`. A custom validator can be configured with the new
+`certificateValidator` option instead.
+
+With neither option, the client does not connect to such an endpoint. It logs a `WARN` message
+`Failed to connect: The certificate of the OPC UA server cannot be validated`, followed by the endpoint and its
+security policy, and tries again every 10 seconds. A producer fails with `IllegalStateException: No connected`, caused
+by the same message. A server certificate refused by the trust list or by a `certificateValidator` is logged at `WARN`
+as `Failed to connect, because a certificate or security check failed`. To restore the previous behaviour, set the new
+`trustAllCertificates` option to `true`. This is insecure: the client then does not authenticate the server.
+
+The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
+use the security policy `None` are not affected.
+
 === camel-pqc - a configured KeyGenerator is used by one exchange at a time
 
 When Camel creates the instance itself, the KEM operations of the `pqc` component and the PQC data format now use a
@@ -232,6 +286,17 @@ receive the messages of the producers, and it is closed when it sends a message.
 
 A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
 rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
+
+=== camel-undertow - the producer refuses a request target or header value with control characters
+
+The undertow producer writes the path, query and header values of the outgoing request to the socket one character at
+a time, without validating them. A carriage return or line feed therefore broke the request into further lines, and a
+character above `0xFF` was written as a single, different byte (for example `U+010A` became a line feed). The producer
+now refuses to send a request path, query or header value that contains a control character or a character above
+`0xFF`, and fails the exchange with an `IllegalArgumentException` instead. A space and a tab, which do not change the
+framing, are still allowed. Routes that put a percent-encoded control character (such as `%0D%0A`) into the
+`CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
+likely to be affected.
 
 == Upgrading from 4.18.4 to 4.18.5
 

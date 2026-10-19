@@ -16,17 +16,13 @@
  */
 package org.apache.camel.support.jsse;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Blank, duplicate and not trimmed values in the named groups and signature schemes lists must not make the configured
@@ -34,13 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class SSLContextParametersNamedGroupsListTest {
 
-    private static List<String> get(SSLParameters params, String name) throws Exception {
-        Method method = SSLParameters.class.getMethod(name);
-        return List.of((String[]) method.invoke(params));
-    }
-
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testNamedGroups() throws Exception {
         NamedGroupsParameters ngp = new NamedGroupsParameters();
         ngp.setNamedGroup(List.of("secp384r1", "secp384r1", "", " x25519"));
@@ -48,11 +38,11 @@ public class SSLContextParametersNamedGroupsListTest {
         scp.setNamedGroups(ngp);
 
         SSLEngine engine = scp.createSSLContext(null).createSSLEngine();
-        assertEquals(List.of("secp384r1", "x25519"), get(engine.getSSLParameters(), "getNamedGroups"));
+        assertThat(List.of(engine.getSSLParameters().getNamedGroups()))
+                .containsExactly("secp384r1", "x25519");
     }
 
     @Test
-    @EnabledForJreRange(min = JRE.JAVA_21)
     public void testSignatureSchemes() throws Exception {
         SignatureSchemesParameters ssp = new SignatureSchemesParameters();
         ssp.setSignatureScheme(List.of("ecdsa_secp256r1_sha256", " ecdsa_secp256r1_sha256", "", "rsa_pss_rsae_sha256"));
@@ -60,7 +50,7 @@ public class SSLContextParametersNamedGroupsListTest {
         scp.setSignatureSchemes(ssp);
 
         SSLEngine engine = scp.createSSLContext(null).createSSLEngine();
-        assertEquals(List.of("ecdsa_secp256r1_sha256", "rsa_pss_rsae_sha256"),
-                get(engine.getSSLParameters(), "getSignatureSchemes"));
+        assertThat(List.of(engine.getSSLParameters().getSignatureSchemes()))
+                .containsExactly("ecdsa_secp256r1_sha256", "rsa_pss_rsae_sha256");
     }
 }

@@ -717,7 +717,8 @@ public class SubscriptionManager {
     }
 
     private final MiloClientConfiguration configuration;
-    private final ScheduledExecutorService executor;
+    private final ScheduledExecutorService reconnectExecutor;
+    private final Executor executor;
     private final long reconnectTimeout;
     private final ServerCertificateTrust serverCertificateTrust;
     private final Lock lock = new ReentrantLock();
@@ -728,10 +729,11 @@ public class SubscriptionManager {
     private Future<?> reconnectJob;
     private final Map<UInteger, Subscription> subscriptions = new HashMap<>();
 
-    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService executor,
-                               final long reconnectTimeout) {
+    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService reconnectExecutor,
+                               final Executor executor, final long reconnectTimeout) {
 
         this.configuration = configuration;
+        this.reconnectExecutor = reconnectExecutor;
         this.executor = executor;
         this.reconnectTimeout = reconnectTimeout;
         this.serverCertificateTrust = new ServerCertificateTrust(configuration);
@@ -834,8 +836,8 @@ public class SubscriptionManager {
      * The executor that the client of a subscription delivers its values on, which handles the outcome of a check or a
      * delete. Creating the subscription again and rebuilding the connection block until the server answers, and a
      * request sent while the connection is lost waits for the channel until a reconnect attempt restores it or fails.
-     * The client schedules those attempts on the shared scheduled executor of Milo, which {@link #executor} is as well
-     * and which has a single thread on a machine with one processor, so the wait must not hold one of its threads.
+     * The client schedules those attempts on the shared scheduled executor of Milo, which has a single thread on a
+     * machine with one processor, so the wait must not hold one of its threads.
      * <p>
      * Milo asks that blocking calls are not made on the threads of this executor either, because they complete the
      * responses. The executor of the transport is not set here, so this is the shared executor of Milo, a cached pool
@@ -1101,6 +1103,11 @@ public class SubscriptionManager {
             }
             this.disposed = true;
             connected = this.connected;
+            if (this.reconnectJob != null) {
+                // a waiting reconnect would keep the thread of the reconnect executor until it is due
+                this.reconnectJob.cancel(false);
+                this.reconnectJob = null;
+            }
         } finally {
             lock.unlock();
         }
@@ -1128,9 +1135,10 @@ public class SubscriptionManager {
             }
 
             if (immediate) {
-                this.reconnectJob = this.executor.submit(this::connect);
+                this.reconnectJob = this.reconnectExecutor.submit(this::connect);
             } else {
-                this.reconnectJob = this.executor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
+                this.reconnectJob
+                        = this.reconnectExecutor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
             }
         } finally {
             lock.unlock();

@@ -24,7 +24,48 @@ into a Java object; or some other representation according to the data format be
 
 == Example
 
-The following example reads XML files from the inbox/xml directory.
+The following example sends an order as JSON to a JMS queue. The message body is an object, such as a Map or a POJO,
+and `marshal` turns it into JSON text with xref:dataformats:jackson2-dataformat.adoc[Jackson]:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+  .marshal().json(JsonLibrary.Jackson)
+  .to("jms:queue:order");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <marshal><json library="Jackson"/></marshal>
+  <to uri="jms:queue:order"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - marshal:
+            json:
+              library: Jackson
+        - to:
+            uri: jms:queue:order
+----
+====
+
+The next example reads XML files from the inbox/xml directory.
 Each file is then transformed into Java Objects using xref:dataformats:jaxb-dataformat.adoc[JAXB].
 Then a xref:ROOT:bean-component.adoc[Bean] is invoked that takes in the Java object.
 
