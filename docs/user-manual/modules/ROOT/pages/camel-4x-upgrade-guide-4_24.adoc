@@ -882,6 +882,17 @@ the content of the earlier file was lost. The later entry is now added with a nu
 `orders (1).csv`, `orders (2).csv`, and so on. Entry names can therefore differ from the file names (or the
 `CamelFileName` header). Use `preserveFolderStructure=true` to keep the folders in the entry names instead.
 
+=== camel-milo - each client connection has a thread pool of its own
+
+A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse
+requests, and its reconnects, on a thread pool of its own named `MiloClient`. Before, it used the shared scheduled
+executor of Milo (`milo-shared-scheduled-executor`). A route that continues after an awaited request now runs on a
+thread of this pool. A connection has up to as many of these threads as there are processors, and one with virtual
+threads enabled; they end when the connection is closed.
+
+A `MiloClientConnection` created outside an endpoint needs a `CamelContext`, set with `setCamelContext`, before it is
+used.
+
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
 The LRA saga service now joins, completes or compensates an LRA only when its URL is under the configured LRA

@@ -1,0 +1,127 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.milo;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.EndpointInject;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.milo.server.MiloServerComponent;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.eclipse.milo.opcua.stack.core.Stack;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.component.milo.NodeIds.nodeValue;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * Tests the executor that a client connection handles the outcome of its requests on.
+ */
+public class MiloClientExecutorTest extends AbstractMiloServerTest {
+
+    private static final String MILO_CLIENT_ITEM
+            = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
+              + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1") + "&overrideHost=true";
+
+    @EndpointInject("mock:item")
+    protected MockEndpoint item;
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("milo-server:myitem1").to("mock:item");
+                from("direct:write").routeId("write").to(resolve(MILO_CLIENT_ITEM));
+            }
+        };
+    }
+
+    /**
+     * A failed request disconnects the client, and the disconnect can wait for a reconnect attempt that the client
+     * schedules on the shared scheduled executor of Milo, which has a single thread on a machine with one processor.
+     * The outcome of a request is therefore not handled on that executor: an awaited write completes while all of its
+     * threads are busy.
+     */
+    @Test
+    void awaitedWriteCompletesWhileTheSharedScheduledExecutorOfMiloIsBusy() throws Exception {
+        item.expectedMessageCount(2);
+        testBody(item.message(0), assertGoodValue("Foo1"));
+        testBody(item.message(1), assertGoodValue("Foo2"));
+
+        // connects
+        write("Foo1");
+
+        final ScheduledThreadPoolExecutor scheduler = (ScheduledThreadPoolExecutor) Stack.sharedScheduledExecutor();
+        final CountDownLatch busy = new CountDownLatch(scheduler.getCorePoolSize());
+        final CountDownLatch release = new CountDownLatch(1);
+        for (int i = 0; i < scheduler.getCorePoolSize(); i++) {
+            scheduler.execute(() -> {
+                busy.countDown();
+                try {
+                    release.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            });
+        }
+        try {
+            assertTrue(busy.await(30, TimeUnit.SECONDS), "All the threads of the executor should be busy");
+
+            final CompletableFuture<Object> written = template.asyncRequestBodyAndHeader(
+                    "direct:write", new Variant("Foo2"), MiloConstants.HEADER_AWAIT, true);
+            written.get(30, TimeUnit.SECONDS);
+        } finally {
+            release.countDown();
+        }
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    /**
+     * The executor of a connection is shut down when the last endpoint releases the connection.
+     */
+    @Test
+    void executorIsShutDownWithTheConnection() throws Exception {
+        write("Foo1");
+        assertFalse(executorThreads().isEmpty(), "The write should have been handled on the executor");
+
+        // the route is the only user of the connection
+        context.getRouteController().stopRoute("write");
+
+        await().atMost(30, TimeUnit.SECONDS).until(() -> executorThreads().isEmpty());
+    }
+
+    private void write(final String value) {
+        template.sendBodyAndHeader("direct:write", new Variant(value), MiloConstants.HEADER_AWAIT, true);
+    }
+
+    private List<Thread> executorThreads() {
+        final String prefix = "Camel (" + context.getName() + ") thread #";
+        return Thread.getAllStackTraces().keySet().stream()
+                .filter(thread -> thread.getName().startsWith(prefix) && thread.getName().endsWith(" - MiloClient"))
+                .toList();
+    }
+}

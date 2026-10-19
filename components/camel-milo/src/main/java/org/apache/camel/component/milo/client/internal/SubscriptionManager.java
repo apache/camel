@@ -834,8 +834,8 @@ public class SubscriptionManager {
      * The executor that the client of a subscription delivers its values on, which handles the outcome of a check or a
      * delete. Creating the subscription again and rebuilding the connection block until the server answers, and a
      * request sent while the connection is lost waits for the channel until a reconnect attempt restores it or fails.
-     * The client schedules those attempts on the shared scheduled executor of Milo, which {@link #executor} is as well
-     * and which has a single thread on a machine with one processor, so the wait must not hold one of its threads.
+     * The client schedules those attempts on the shared scheduled executor of Milo, which has a single thread on a
+     * machine with one processor, so the wait must not hold one of its threads.
      * <p>
      * Milo asks that blocking calls are not made on the threads of this executor either, because they complete the
      * responses. The executor of the transport is not set here, so this is the shared executor of Milo, a cached pool
