@@ -255,25 +255,31 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     }
 
     /**
-     * Lists the keys by scanning the key directory, not by reading the cache.
+     * Lists the keys by scanning the key directory for metadata files.
      * <p/>
-     * The cache is only filled by this process, so returning it would hide any key file written after start-up - by
-     * another process, by an operator restoring a backup, or by a sidecar. That matters directly for
-     * {@link KeyRotationScheduler}, which drives entirely off this method and would otherwise stop rotating anything it
-     * had not seen at boot. The other implementations all query their backing store here.
+     * Returning the cache alone would hide any key file written after start-up - by another process, by an operator
+     * restoring a backup, or by a sidecar. That matters directly for {@link KeyRotationScheduler}, which drives
+     * entirely off this method and would otherwise stop rotating anything it had not seen at boot. Note that the scan
+     * finds such a key, but the metadata of a key this process already knows still comes from the cache, so a status
+     * another process wrote for it is not picked up until a restart.
+     * <p/>
+     * A file that cannot be read is logged and skipped rather than failing the call: one corrupt or half-written
+     * metadata file must not stop every other key from being listed, and so rotated.
      */
     @Override
     public List<KeyMetadata> listKeys() throws Exception {
         List<KeyMetadata> keys = new ArrayList<>();
         try (Stream<Path> files = Files.list(keyDirectory)) {
-            for (String keyId : files.filter(path -> path.toString().endsWith(METADATA_SUFFIX))
-                    .map(path -> path.getFileName().toString())
-                    .map(name -> name.substring(0, name.length() - METADATA_SUFFIX.length()))
-                    .sorted()
-                    .toList()) {
-                KeyMetadata metadata = getKeyMetadata(keyId);
-                if (metadata != null) {
-                    keys.add(metadata);
+            for (Path file : files.filter(path -> path.toString().endsWith(METADATA_SUFFIX)).sorted().toList()) {
+                String name = file.getFileName().toString();
+                String keyId = name.substring(0, name.length() - METADATA_SUFFIX.length());
+                try {
+                    KeyMetadata metadata = getKeyMetadata(keyId);
+                    if (metadata != null) {
+                        keys.add(metadata);
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Failed to read key metadata, skipping: {}", file, e);
                 }
             }
         }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pqc.lifecycle;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
@@ -23,6 +24,7 @@ import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -86,11 +88,26 @@ class KeyLifecycleParityTest {
     }
 
     @Test
+    void anUnreadableMetadataFileDoesNotSinkTheWholeListing() throws Exception {
+        FileBasedKeyLifecycleManager manager = new FileBasedKeyLifecycleManager(keyDirectory.toString());
+        manager.generateKeyPair("MLDSA", "good-key");
+
+        // a corrupt or half-written metadata file, which TRUNCATE_EXISTING makes possible for a concurrent writer
+        Files.writeString(keyDirectory.resolve("broken.metadata"), "not json at all");
+        Files.writeString(keyDirectory.resolve("empty.metadata"), "");
+
+        List<KeyMetadata> keys = new FileBasedKeyLifecycleManager(keyDirectory.toString()).listKeys();
+
+        assertEquals(1, keys.size(), "an unreadable file must be skipped, not fail the whole listing");
+        assertEquals("good-key", keys.get(0).getKeyId());
+    }
+
+    @Test
     void aCombinedPemExportCanBeImportedBack() throws Exception {
         KeyPair original = mldsaKeyPair();
 
         byte[] pem = KeyFormatConverter.exportKeyPair(original, KeyLifecycleManager.KeyFormat.PEM, true);
-        String text = new String(pem, java.nio.charset.StandardCharsets.UTF_8);
+        String text = new String(pem, StandardCharsets.UTF_8);
         assertTrue(text.contains("-----BEGIN PUBLIC KEY-----"), "the export must carry the public block");
         assertTrue(text.contains("-----BEGIN PRIVATE KEY-----"), "the export must carry the private block");
 
@@ -119,10 +136,12 @@ class KeyLifecycleParityTest {
         FileBasedKeyLifecycleManager manager = new FileBasedKeyLifecycleManager(keyDirectory.toString());
         manager.generateKeyPair("MLDSA", "a-key");
 
-        Path privateKeyFile = Files.list(keyDirectory)
-                .filter(p -> p.getFileName().toString().contains("private"))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("no private key file was written"));
+        Path privateKeyFile;
+        try (Stream<Path> files = Files.list(keyDirectory)) {
+            privateKeyFile = files.filter(p -> p.getFileName().toString().contains("private"))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("no private key file was written"));
+        }
         long before = Files.getLastModifiedTime(privateKeyFile).toMillis();
 
         KeyMetadata metadata = manager.getKeyMetadata("a-key");
