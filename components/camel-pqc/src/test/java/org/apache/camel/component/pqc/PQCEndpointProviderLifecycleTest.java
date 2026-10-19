@@ -56,7 +56,7 @@ public class PQCEndpointProviderLifecycleTest {
     }
 
     @Test
-    void stoppingOneEndpointLeavesTheOtherUsable() throws Exception {
+    void stoppingOneEndpointLeavesTheProviderForTheOther() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             context.addRoutes(new RouteBuilder() {
                 @Override
@@ -67,7 +67,8 @@ public class PQCEndpointProviderLifecycleTest {
             });
             context.start();
 
-            // stopping the first route disposes its endpoint; the second one must keep working
+            // stopping the first route disposes its endpoint. The second route keeps its own Signature either way,
+            // so what this pins is the provider: on main the stop de-registers it for the whole JVM.
             context.getRouteController().stopRoute("a");
             context.removeEndpoints("pqc:a*");
 
