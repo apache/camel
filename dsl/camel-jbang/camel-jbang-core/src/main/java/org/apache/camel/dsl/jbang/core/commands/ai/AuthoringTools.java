@@ -2142,11 +2142,6 @@ public final class AuthoringTools {
     }
 
     /**
-     * Selects the process the call names, else keeps the selected one, else the only one running.
-     *
-     * @throws ToolExecutionException when no process can be selected
-     */
-    /**
      * The log of the previous run of the integration (CAMEL-25784): the last run of it that ended, such as one that
      * failed to start, found by the name or pid given, else by the pid selected before. Its message says how that run
      * ended.
@@ -2203,7 +2198,7 @@ public final class AuthoringTools {
     private static PreviousRun.Info previousRun(
             ToolContext ctx, Map<String, String> args, ToolExecutionException notRunning) {
         String name = args.get("name");
-        String key = name != null && !name.isBlank() ? name : ctx.pid() >= 0 ? Long.toString(ctx.pid()) : null;
+        String key = name != null && !name.isBlank() ? name : (ctx.pid() >= 0 ? Long.toString(ctx.pid()) : null);
         List<PreviousRun.Info> found = key != null ? PreviousRun.find(key) : List.of();
         if (found.size() == 1) {
             return found.get(0);
@@ -2228,6 +2223,11 @@ public final class AuthoringTools {
                 && !PreviousRun.find(Long.toString(pid)).isEmpty();
     }
 
+    /**
+     * Selects the process the call names, else keeps the selected one, else the only one running.
+     *
+     * @throws ToolExecutionException when no process can be selected
+     */
     private static RuntimeHelper.ProcessInfo selectProcess(ToolContext ctx, Map<String, String> args) {
         String name = args.get("name");
         if (name != null && !name.isBlank()) {
