@@ -40,9 +40,10 @@ public final class RuntimeUtil {
      * The system property with the directory of the log files, which the logging configurations of the CLI name their
      * files after: the Camel directory of the CLI ({@link CommandLineHelper#getCamelDir()}), where camel run, camel log
      * and the AI tools look for them. It can differ from <tt>~/.camel</tt>, such as for a CLI with a home of its own (a
-     * test), or when the user has no home (a container), where <tt>user.home</tt> is <tt>?</tt>.
+     * test), or when the user has no home (a container), where <tt>user.home</tt> is <tt>?</tt>. The CLI sets it, it
+     * is not an option.
      */
-    public static final String LOG_DIR = "camel.jbang.logDir";
+    static final String LOG_DIR = "camel.jbang.logDir";
 
     /**
      * The logging configuration of the CLI with color: the console, and the log file of the process.
