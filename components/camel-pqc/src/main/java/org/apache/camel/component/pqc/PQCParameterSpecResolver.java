@@ -87,24 +87,35 @@ public final class PQCParameterSpecResolver {
                                                + " register a KeyPair bean in the registry instead.");
         }
 
-        // BouncyCastle resolves parameter-set names case-insensitively but never uses underscores in them, so accept
-        // the underscore form (ml_dsa_87), which matches the BouncyCastle constant names, as an alias.
-        String name = parameterSpec.replace('_', '-');
+        // The name is tried as written first. Most BouncyCastle specs spell their parameter sets with dashes and
+        // resolve the underscore form only through the alias below, but the SNOVA names keep their underscores
+        // (SNOVA_24_5_5_SHAKE_SSK) and do not resolve in dashed form at all, so rewriting first would make every
+        // SNOVA parameter set unreachable.
+        AlgorithmParameterSpec resolved = tryResolve(algorithm, parameterSpec);
 
-        AlgorithmParameterSpec resolved;
-        try {
-            resolved = doResolve(algorithm, name);
-        } catch (IllegalArgumentException e) {
-            // The ML-DSA/ML-KEM/SLH-DSA/CMCE/FrodoKEM specs throw for an unknown name
-            throw new IllegalArgumentException(
-                    "Unknown parameterSpec '" + parameterSpec + "' for algorithm " + algorithm, e);
+        if (resolved == null && parameterSpec.indexOf('_') >= 0) {
+            // Accept the underscore form of a dashed name (ml_dsa_87 for ML-DSA-87), which matches how the
+            // BouncyCastle constants are written
+            resolved = tryResolve(algorithm, parameterSpec.replace('_', '-'));
         }
+
         if (resolved == null) {
-            // The older BouncyCastle specs return null instead of throwing for an unknown name
             throw new IllegalArgumentException(
                     "Unknown parameterSpec '" + parameterSpec + "' for algorithm " + algorithm);
         }
         return resolved;
+    }
+
+    /**
+     * Resolves one spelling of a parameter-set name, answering {@code null} when it is not known. Some BouncyCastle
+     * specs throw for an unknown name and others return {@code null}, so both are normalised here.
+     */
+    private static AlgorithmParameterSpec tryResolve(String algorithm, String parameterSpec) {
+        try {
+            return doResolve(algorithm, parameterSpec);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     private static AlgorithmParameterSpec doResolve(String algorithm, String parameterSpec) {

@@ -96,7 +96,8 @@ public class PQCProducer extends DefaultProducer {
     // DILITHIUM and SPHINCSPLUS are deliberately absent: they are aliases that resolve to ML-DSA and SLH-DSA
     // respectively (see PQCSignatureAlgorithms), so warning that they are "not FIPS 204/205" and recommending
     // ML-DSA / SLH-DSA instead would tell the user to switch to what they are already using.
-    private static final Set<String> NON_FIPS_PQ_SIGNATURES = Set.of(
+    // Package-private so the unit test can assert on the set itself rather than on the source text
+    static final Set<String> NON_FIPS_PQ_SIGNATURES = Set.of(
             PQCSignatureAlgorithms.XMSS.name(),
             PQCSignatureAlgorithms.XMSSMT.name(),
             PQCSignatureAlgorithms.FALCON.name(),

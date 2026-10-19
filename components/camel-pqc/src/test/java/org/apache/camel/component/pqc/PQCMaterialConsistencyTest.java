@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pqc;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -35,7 +35,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -91,14 +90,24 @@ class PQCMaterialConsistencyTest {
      * actually resolved is pinned explicitly.
      */
     @ParameterizedTest
-    @CsvSource({ "mayo1,MAYO-1", "mayo2,MAYO-2", "mayo3,MAYO-3", "mayo5,MAYO-5" })
-    void mayoResolvesEveryDocumentedLevel(String requested, String canonical) {
-        AlgorithmParameterSpec spec = PQCParameterSpecResolver.resolve("MAYO", requested);
+    @CsvSource({
+            "MAYO,mayo1,MAYO-1",
+            "MAYO,mayo2,MAYO-2",
+            "MAYO,mayo3,MAYO-3",
+            "MAYO,mayo5,MAYO-5",
+            "MAYO,MAYO-1,MAYO-1",
+            // BouncyCastle keeps the underscores in the SNOVA names, so these must survive as written
+            "SNOVA,SNOVA_24_5_5_SHAKE_SSK,SNOVA_24_5_5_SHAKE_SSK",
+            "SNOVA,snova_24_5_5_shake_ssk,SNOVA_24_5_5_SHAKE_SSK",
+            "SNOVA,SNOVA_24_5_4_ESK,SNOVA_24_5_4_ESK" })
+    void everyNamedLevelResolvesToTheLevelRequested(String algorithm, String requested, String canonical) {
+        AlgorithmParameterSpec spec = PQCParameterSpecResolver.resolve(algorithm, requested);
 
-        assertNotNull(spec, "MAYO must resolve " + requested);
-        assertInstanceOf(MayoParameterSpec.class, spec, "MAYO must resolve to a MayoParameterSpec for " + requested);
-        assertEquals(canonical, ((MayoParameterSpec) spec).getName(),
-                "the resolved MAYO parameter set must be the level that was requested");
+        assertNotNull(spec, algorithm + " must resolve " + requested);
+        String name = spec instanceof MayoParameterSpec mayo
+                ? mayo.getName()
+                : ((SnovaParameterSpec) spec).getName();
+        assertEquals(canonical, name, "the resolved parameter set must be the level that was requested");
     }
 
     @Test
@@ -110,17 +119,14 @@ class PQCMaterialConsistencyTest {
     }
 
     @Test
-    void theAliasAlgorithmsAreNotReportedAsNonFips() throws IOException {
+    void theAliasAlgorithmsAreNotReportedAsNonFips() {
         // DILITHIUM resolves to ML-DSA and SPHINCSPLUS to SLH-DSA, so warning that they are not FIPS 204/205 and
         // recommending ML-DSA / SLH-DSA would point the user at what they already use
-        String producer = Files.readString(
-                Paths.get("src/main/java/org/apache/camel/component/pqc/PQCProducer.java"), StandardCharsets.UTF_8);
-        int from = producer.indexOf("NON_FIPS_PQ_SIGNATURES = Set.of(");
-        assertTrue(from > 0, "cannot locate the non-FIPS signature set");
-        String block = producer.substring(from, producer.indexOf(");", from));
-
-        assertFalse(block.contains("DILITHIUM"), "DILITHIUM is an ML-DSA alias and is FIPS 204");
-        assertFalse(block.contains("SPHINCSPLUS"), "SPHINCSPLUS is an SLH-DSA alias and is FIPS 205");
-        assertTrue(block.contains("FALCON"), "FALCON is genuinely not in FIPS 204/205 yet");
+        assertFalse(PQCProducer.NON_FIPS_PQ_SIGNATURES.contains(PQCSignatureAlgorithms.DILITHIUM.name()),
+                "DILITHIUM is an ML-DSA alias and is FIPS 204");
+        assertFalse(PQCProducer.NON_FIPS_PQ_SIGNATURES.contains(PQCSignatureAlgorithms.SPHINCSPLUS.name()),
+                "SPHINCSPLUS is an SLH-DSA alias and is FIPS 205");
+        assertTrue(PQCProducer.NON_FIPS_PQ_SIGNATURES.contains(PQCSignatureAlgorithms.FALCON.name()),
+                "FALCON is genuinely not in FIPS 204/205 yet");
     }
 }
