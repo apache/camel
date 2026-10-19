@@ -139,7 +139,7 @@ jobs:
         env:
           EXTRA_MODULES: ${{ inputs.extra_modules }}
           MAVEN_EXTRA_ARGS: ${{ matrix.maven_extra_args || '' }}
-        run: ./mvnw -l build.log install -B -DskipTests -Dquickly $MAVEN_EXTRA_ARGS -pl "$EXTRA_MODULES" -am
+        run: ./mvnw -T1C -l build.log install -B -DskipTests -Dquickly $MAVEN_EXTRA_ARGS -pl "$EXTRA_MODULES" -am
       - name: archive logs
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
