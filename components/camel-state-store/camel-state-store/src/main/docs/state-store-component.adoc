@@ -179,7 +179,7 @@ stateStore.setBackendFactory(storeName -> new MyKeyValueRepository(storeName));
 An explicit `backend` option on the endpoint still takes precedence over the factory.
 
 NOTE: Autowiring only applies when the registry holds exactly one `StateStoreBackendFactory`. With two or
-more, none is autowired and the component silently falls back to the default resolution; set
+more, none is autowired: the component logs a WARN and falls back to the default resolution. Set
 `backendFactory` explicitly to choose one.
 
 === In-Memory (default)

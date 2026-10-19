@@ -19,6 +19,7 @@ package org.apache.camel.component.statestore;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.KeyValueRepository;
@@ -41,6 +42,7 @@ public class StateStoreComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(StateStoreComponent.class);
 
     private final ConcurrentHashMap<String, KeyValueRepository> backends = new ConcurrentHashMap<>();
+    private final AtomicBoolean backendFactoryChecked = new AtomicBoolean();
 
     @Metadata(label = "advanced", autowired = true,
               description = "Factory that creates a dedicated backend for each store name. When set, it takes precedence over"
@@ -74,6 +76,15 @@ public class StateStoreComponent extends DefaultComponent {
             return explicitBackend;
         }
         return backends.computeIfAbsent(storeName, k -> {
+            if (backendFactory == null && backendFactoryChecked.compareAndSet(false, true)) {
+                // checked lazily as autowiring happens after the component is initialized
+                int count = getCamelContext().getRegistry().findByType(StateStoreBackendFactory.class).size();
+                if (count > 1) {
+                    LOG.warn("Found {} StateStoreBackendFactory instances in the registry. None is autowired;"
+                             + " set the backendFactory option to choose one.",
+                            count);
+                }
+            }
             KeyValueRepository backend = backendFactory != null ? backendFactory.createBackend(storeName) : null;
             if (backend != null) {
                 LOG.debug("Created KeyValueRepository '{}' for store '{}' using backend factory",

@@ -20,7 +20,7 @@ import org.apache.camel.spi.KeyValueRepository;
 
 /**
  * Creates the {@link KeyValueRepository} backend for a given state store name.
- * <p/>
+ * <p>
  * Use this when each store name should map to its own backend instance, for example a separate cache per store. The
  * returned backend is owned by the {@link StateStoreComponent}, which starts and stops it.
  *
@@ -33,7 +33,7 @@ public interface StateStoreBackendFactory {
      * Creates the backend for the given store name.
      *
      * @param  storeName the name of the state store, as used in the endpoint URI
-     * @return           the backend for the store, or <tt>null</tt> to fall back to the default backend resolution
+     * @return           the backend for the store, or {@code null} to fall back to the default backend resolution
      */
     KeyValueRepository createBackend(String storeName);
 }
