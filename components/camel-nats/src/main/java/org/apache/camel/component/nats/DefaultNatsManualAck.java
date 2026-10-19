@@ -23,14 +23,22 @@ import io.nats.client.Message;
 class DefaultNatsManualAck implements NatsManualAck {
 
     private final Message message;
+    private final Runnable onAcknowledged;
 
     DefaultNatsManualAck(Message message) {
+        this(message, () -> {
+        });
+    }
+
+    DefaultNatsManualAck(Message message, Runnable onAcknowledged) {
         this.message = message;
+        this.onAcknowledged = onAcknowledged;
     }
 
     @Override
     public void ack() {
         message.ack();
+        onAcknowledged.run();
     }
 
     @Override
@@ -46,6 +54,7 @@ class DefaultNatsManualAck implements NatsManualAck {
     @Override
     public void term() {
         message.term();
+        onAcknowledged.run();
     }
 
     @Override
