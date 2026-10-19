@@ -923,13 +923,16 @@ the content of the earlier file was lost. The later entry is now added with a nu
 `orders (1).csv`, `orders (2).csv`, and so on. Entry names can therefore differ from the file names (or the
 `CamelFileName` header). Use `preserveFolderStructure=true` to keep the folders in the entry names instead.
 
-=== camel-milo - each client connection has a thread pool of its own
+=== camel-milo - each client connection has thread pools of its own
 
 A `milo-client` or `milo-browse` connection now handles the outcome of its write, method call, read and browse
-requests, and its reconnects, on a thread pool of its own named `MiloClient`. Before, it used the shared scheduled
-executor of Milo (`milo-shared-scheduled-executor`). A route that continues after an awaited request now runs on a
-thread of this pool. A connection has up to as many of these threads as there are processors, and one with virtual
-threads enabled; they end when the connection is closed.
+requests on a thread pool of its own named `MiloClient`, and runs its reconnects on a single thread named
+`MiloClientReconnect`. Before, it used the shared scheduled executor of Milo (`milo-shared-scheduled-executor`) for
+both. A route that continues after an awaited request now runs on a thread of the `MiloClient` pool. The pool has up
+to as many threads as there are processors, which end after they have been idle for the keep-alive time of the
+default thread pool profile (60 seconds). With virtual threads enabled and more than one processor, it starts a
+virtual thread for each task instead. The `MiloClientReconnect` thread starts with the first reconnect of the
+connection, and its reconnects run one after the other. The threads of a connection end when it is closed.
 
 A `MiloClientConnection` created outside an endpoint needs a `CamelContext`, set with `setCamelContext`, before it is
 used.
