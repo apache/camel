@@ -1818,8 +1818,9 @@ With live reloading (such as `camel run --dev`), a change to application.propert
   `file:application.properties`. Before, the two did not match, so the file was added once more for its property
   placeholders, but its `camel.component.*`, `camel.dataformat.*` and `camel.language.*` options were not applied.
 * A new bean (`camel.beans.*`) is created and bound, before the components are configured again, so a component can
-  refer to it (`#bean:name`), and a component that is created later can autowire it. The class of the bean is
-  downloaded when needed, as when the application starts.
+  refer to it (`#bean:name`), and a component that is created later can autowire it. With camel-jbang, the class of
+  the bean is downloaded when camel-jbang knows it, such as the Artemis client. A dependency that is added to
+  `camel.jbang.dependencies` while the application runs is not downloaded until a restart (CAMEL-25833).
 * A bean that exists is left as it is, as components may hold it. When its properties change, a `WARN` says that a
   restart is needed.
 * A properties file that is created while the application runs is applied as well.
