@@ -118,7 +118,18 @@ public final class LogFileReader {
      * @return         lines (newest first), totalLines and returnedLines, or an error when there is no log file
      */
     public static JsonObject read(long pid, String name, int limit, String filter, String level, boolean details) {
-        Path file = logFile(pid, name);
+        return read(logFile(pid, name), limit, filter, level, details);
+    }
+
+    /**
+     * @param  file    the log file, such as the log of the previous run of an integration
+     * @param  limit   maximum records to return
+     * @param  filter  case-insensitive substring the message or detail must contain; null for all
+     * @param  level   only records of this level (INFO, WARN, ERROR, DEBUG, TRACE); null for all
+     * @param  details whether a stack trace stays in its record
+     * @return         lines (newest first), totalLines and returnedLines, or an error when there is no log file
+     */
+    public static JsonObject read(Path file, int limit, String filter, String level, boolean details) {
         JsonObject result = new JsonObject();
         result.put("file", file.toString());
         if (!Files.isRegularFile(file)) {

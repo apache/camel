@@ -1845,3 +1845,13 @@ integration, with `~/.camel/<name>-previous.json`, which says when and how the r
 ends replaces both, and at most the last 10 MB of a log are kept. `camel log <name> --previous` prints the log, like
 `kubectl logs --previous` in Kubernetes. The log of an integration that was killed is kept the same way, the next time a
 previous run is looked up. `camel dirty` does not count these files.
+
+=== camel-jbang - the AI tools wait for Camel to start, and read the log of the previous run
+
+* `camel_run` and `camel_control restart` answer that the integration started once its CamelContext has started. They
+  answered as soon as the status file of the integration appeared, which happens while Camel starts and before the
+  routes start. An integration whose route then failed to start was answered as started, and stopped right after.
+  Now the answer is the failure, with its cause.
+* `camel_get_log` of an integration that is not running answers with the log of its previous run (see
+  `camel log --previous`), and its message says how that run ended. `previous=true` asks for that log also when the
+  integration runs again. `camel_get_errors` of an integration that is not running says how its previous run ended.
