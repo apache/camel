@@ -71,7 +71,9 @@ public class KeycloakConfiguration implements Cloneable {
     @UriParam(description = "Type of events to consume: events or admin-events", defaultValue = "events")
     private String eventType = "events";
 
-    @UriParam(description = "Maximum number of events to retrieve per poll", defaultValue = "100")
+    @UriParam(description = "Maximum number of events to retrieve per poll. Later polls read every event since the"
+                            + " previous poll, page by page, with this as the page size",
+              defaultValue = "100")
     private int maxResults = 100;
 
     @UriParam(description = "Offset for pagination (first result index)", defaultValue = "0")
@@ -281,7 +283,8 @@ public class KeycloakConfiguration implements Cloneable {
     }
 
     /**
-     * Maximum number of events to retrieve per poll. Default is 100.
+     * Maximum number of events to retrieve per poll. Later polls read every event since the previous poll, page by
+     * page, with this as the page size. Default is 100.
      */
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;

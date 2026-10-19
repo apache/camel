@@ -22,6 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.ToLongFunction;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -119,16 +121,16 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
         // Don't use dateFrom filter to avoid issues with inclusive/exclusive semantics
         // Instead rely on client-side fingerprint-based deduplication
         List<String> eventTypes = parseCommaSeparatedList(config.getTypes());
-        List<EventRepresentation> events = keycloakClient.realm(realm).getEvents(
+        List<EventRepresentation> events = fetchNewEvents((first, max) -> keycloakClient.realm(realm).getEvents(
                 eventTypes, // types
                 config.getClient(), // client
                 config.getUser(), // user
                 config.getDateFrom(), // dateFrom
                 config.getDateTo(), // dateTo
                 config.getIpAddress(), // ipAddress
-                config.getFirst(), // first
-                config.getMaxResults() // max
-        );
+                first, // first
+                max // max
+        ), EventRepresentation::getTime);
 
         Queue<Exchange> queue = new LinkedList<>();
         long highestEventTime = lastEventTime != null ? lastEventTime : 0;
@@ -164,12 +166,6 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
             if (eventTime > highestEventTime) {
                 highestEventTime = eventTime;
             }
-
-            // Prevent unbounded memory growth
-            if (processedEventFingerprints.size() > MAX_FINGERPRINT_CACHE_SIZE) {
-                processedEventFingerprints.clear();
-                LOG.debug("Cleared fingerprint cache due to size limit");
-            }
         }
 
         // Update lastEventTime if we processed events with newer timestamps
@@ -178,8 +174,49 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
             lastEventTime = highestEventTime;
             LOG.debug("Updated last event time to: {}", lastEventTime);
         }
+        limitFingerprintCache();
 
         return queue;
+    }
+
+    /**
+     * Reads the events of a poll. Keycloak returns the most recent events first, and the newest event of a poll becomes
+     * the checkpoint, so the events that do not fit into the first {@code maxResults} (the older new ones, for example
+     * after Keycloak was unreachable for a while) would never be returned again. Once a checkpoint is set, the
+     * following pages are read as well, until a page reaches an event older than the checkpoint or is the last one.
+     * When new events arrive while the pages are read, the next page repeats events of the previous one; the
+     * fingerprints skip them.
+     */
+    private <T> List<T> fetchNewEvents(BiFunction<Integer, Integer, List<T>> fetch, ToLongFunction<T> eventTime) {
+        KeycloakConfiguration config = getEndpoint().getConfiguration();
+        int first = config.getFirst();
+        int max = config.getMaxResults();
+        List<T> page = fetch.apply(first, max);
+        if (lastEventTime == null || max <= 0 || page == null || page.size() < max) {
+            return page;
+        }
+        List<T> answer = new ArrayList<>(page);
+        while (page.size() >= max && eventTime.applyAsLong(page.get(page.size() - 1)) >= lastEventTime
+                && isRunAllowed()) {
+            first += max;
+            page = fetch.apply(first, max);
+            if (page == null) {
+                break;
+            }
+            answer.addAll(page);
+        }
+        return answer;
+    }
+
+    /**
+     * Prevents unbounded memory growth. Done after a poll, when only the fingerprints at the checkpoint are left, and
+     * not while the events of a poll are read: those fingerprints are needed until the end of the poll.
+     */
+    private void limitFingerprintCache() {
+        if (processedEventFingerprints.size() > MAX_FINGERPRINT_CACHE_SIZE) {
+            processedEventFingerprints.clear();
+            LOG.debug("Cleared fingerprint cache due to size limit");
+        }
     }
 
     /**
@@ -214,18 +251,19 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
         // Don't use dateFrom filter to avoid issues with inclusive/exclusive semantics
         // Instead rely on client-side fingerprint-based deduplication
         List<String> adminOperationTypes = parseCommaSeparatedList(config.getOperationTypes());
-        List<AdminEventRepresentation> adminEvents = keycloakClient.realm(realm).getAdminEvents(
-                adminOperationTypes, // operationTypes
-                config.getAuthRealmFilter(), // authRealm
-                config.getAuthClient(), // authClient
-                config.getAuthUser(), // authUser
-                config.getAuthIpAddress(), // authIpAddress
-                config.getResourcePath(), // resourcePath
-                config.getDateFrom(), // dateFrom
-                config.getDateTo(), // dateTo
-                config.getFirst(), // first
-                config.getMaxResults() // max
-        );
+        List<AdminEventRepresentation> adminEvents
+                = fetchNewEvents((first, max) -> keycloakClient.realm(realm).getAdminEvents(
+                        adminOperationTypes, // operationTypes
+                        config.getAuthRealmFilter(), // authRealm
+                        config.getAuthClient(), // authClient
+                        config.getAuthUser(), // authUser
+                        config.getAuthIpAddress(), // authIpAddress
+                        config.getResourcePath(), // resourcePath
+                        config.getDateFrom(), // dateFrom
+                        config.getDateTo(), // dateTo
+                        first, // first
+                        max // max
+                ), AdminEventRepresentation::getTime);
 
         Queue<Exchange> queue = new LinkedList<>();
         long highestEventTime = lastEventTime != null ? lastEventTime : 0;
@@ -261,14 +299,6 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
             if (eventTime > highestEventTime) {
                 highestEventTime = eventTime;
             }
-
-            // Prevent unbounded memory growth
-            if (processedEventFingerprints.size() > MAX_FINGERPRINT_CACHE_SIZE) {
-                // Keep only recent fingerprints when cache gets too large
-                // This is a simple strategy - in production you'd want a more sophisticated LRU cache
-                processedEventFingerprints.clear();
-                LOG.debug("Cleared fingerprint cache due to size limit");
-            }
         }
 
         // Update lastEventTime if we processed events with newer timestamps
@@ -277,6 +307,7 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
             lastEventTime = highestEventTime;
             LOG.debug("Updated last admin event time to: {}", lastEventTime);
         }
+        limitFingerprintCache();
 
         return queue;
     }
