@@ -675,8 +675,12 @@ public class YamlValidator {
      * <p/>
      * The envelope is described loosely on purpose. Camel does not own the Kamelet CRD, so the parts it does not read
      * are accepted as they come rather than failed for being unknown.
+     * <p/>
+     * The schema of the template is kept under {@code definitions}, where draft 4 (the dialect of the route schema)
+     * keeps a schema that is only referenced: under a key of its own at the root it is no keyword, and the validator
+     * warns about an unknown keyword each time a JVM loads the schema (CAMEL-25820).
      */
-    private JsonNode kameletModel(JsonNode routeModel) {
+    JsonNode kameletModel(JsonNode routeModel) {
         ObjectNode root = mapper.createObjectNode();
         JsonNode dialect = routeModel.get("$schema");
         if (dialect != null) {
@@ -696,14 +700,14 @@ public class YamlValidator {
         specProperties.putObject("types").put("type", "object");
         specProperties.putObject("dataTypes").put("type", "object");
         specProperties.putObject("dependencies").put("type", "array");
-        specProperties.putObject("template").put("$ref", "#/templateEntry");
+        specProperties.putObject("template").put("$ref", "#/definitions/templateEntry");
         // an entry of a route file is exactly one of route/from/beans/..., which is what maxProperties says. The
         // template of a Kamelet is not: counter-source declares its bean beside its from, and 60 of the 250 kamelets
         // of the library do the same. Everything else about an entry still holds, and the $refs inside the copy point
         // at #/items/definitions/..., which is why the items node is kept as well.
         ObjectNode template = routeModel.get("items").deepCopy();
         template.remove("maxProperties");
-        root.set("templateEntry", template);
+        root.putObject("definitions").set("templateEntry", template);
         root.set("items", routeModel.get("items"));
         return root;
     }
