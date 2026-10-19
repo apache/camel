@@ -1463,6 +1463,16 @@ anything there - the JDK does not support host name verification on the server s
 client certificate with `Endpoint Identification Algorithm HTTPS is not supported on the server side` - so a consumer
 that asks for client certificates and had the option set now completes the handshake instead of failing it.
 
+=== camel-alibaba-oss - a listed object that cannot be got is skipped
+
+When the consumer lists the bucket, a failure to get one of the listed objects (for example access denied, or an
+archived object that is not restored) no longer fails the poll, as long as another object of that listing could be
+got: the object is skipped, the other listed objects are consumed, and the skipped object is tried again by a later
+poll. The failure is given to the exception handler of the consumer, with the key in the message (by default a `WARN`
+with the stack trace, at every poll that lists the object). Before, the poll failed and the next poll listed the same
+page again, so one such object stopped the consumer from consuming any object. The poll still fails when none of the
+listed objects could be got, and the next poll then reads the next page of the listing.
+
 === camel-dropbox - search and get read every page of the result
 
 The `search` operation (producer and consumer) now returns every match that the service gives. Previously it returned
