@@ -833,7 +833,7 @@ public class PQCProducer extends DefaultProducer {
         try {
             recordKeyUsageAfterSign(exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelException("Failed to persist stateful key state after hybrid signing", e);
+            throw new RuntimeCamelException("Failed to record key usage after hybrid signing", e);
         }
     }
 
@@ -1205,9 +1205,12 @@ public class PQCProducer extends DefaultProducer {
      * key.
      * <p/>
      * This advances {@code usageCount}, which is what the {@code maxKeyUsage} rotation signal of
-     * {@link org.apache.camel.component.pqc.lifecycle.KeyRotationScheduler} reads. It must therefore run for every key,
-     * not only the stateful ones: ML-DSA, SLH-DSA, Falcon and the KEM keys would otherwise sit at a usage count of zero
+     * {@link org.apache.camel.component.pqc.lifecycle.KeyRotationScheduler} reads. It therefore runs for every signing
+     * key, not only the stateful ones: ML-DSA, SLH-DSA and Falcon keys would otherwise sit at a usage count of zero
      * forever and never be rotated.
+     * <p/>
+     * The key encapsulation operations do not call this method, so a KEM key still does not advance its usage count and
+     * {@code maxKeyUsage} does not apply to it.
      * <p/>
      * For a stateful signature key the advanced private key is stored as well, so the one-time index survives a
      * restart.
