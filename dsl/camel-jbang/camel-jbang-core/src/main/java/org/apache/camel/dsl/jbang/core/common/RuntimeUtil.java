@@ -136,7 +136,8 @@ public final class RuntimeUtil {
         }
 
         synchronized (RuntimeUtil.class) {
-            // log4j resolves the name of a log file when it loads the configuration
+            // log4j resolves the name of a log file when it loads the configuration. Always the Camel directory of the
+            // CLI, not an option: camel log and the AI tools read the log of a pid there
             System.setProperty(LOG_DIR, CommandLineHelper.getCamelDir().toString());
             if (configured == null) {
                 long pid = ProcessHandle.current().pid();
