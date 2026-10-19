@@ -429,6 +429,45 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testTemplateBeansKeyedByNameSayHowToWriteThem() throws Exception {
+        // CAMEL-24704: the beans of a routeTemplate and a templatedRoute are the same list as the top-level beans
+        List<Error> errors = validator.validate("""
+                - routeTemplate:
+                    id: myTemplate
+                    beans:
+                      myBean:
+                        type: "#class:com.example.MyBean"
+                    from:
+                      uri: "direct:{{name}}"
+                      steps:
+                        - to: "mock:result"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("beans is a list: - name: myBean"));
+
+        errors = validator.validate("""
+                - templatedRoute:
+                    routeTemplateRef: myTemplate
+                    beans:
+                      - myBean:
+                          type: "#class:com.example.MyBean"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("a bean item is written as - name: myBean"));
+
+        errors = validator.validate("""
+                - routeTemplate:
+                    id: myTemplate
+                    beans:
+                      - id: myBean
+                        type: "#class:com.example.MyBean"
+                    from:
+                      uri: "direct:{{name}}"
+                      steps:
+                        - to: "mock:result"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("(name instead of id)"));
+    }
+
+    @Test
     public void testJbangDepsLineIsNamed() throws Exception {
         List<Error> errors = validator.validate("""
                 //DEPS org.apache.camel:camel-groovy

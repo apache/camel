@@ -470,11 +470,11 @@ final class SchemaHints {
                     m -> "steps: is a property of from:, next to uri:; a steps: written at the route level must be"
                          + " indented under from:"),
             // - id: myBean / class: ... : the bean properties are name and type
-            unknownProperty("/\\d+/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
+            unknownProperty(".*/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
                     m -> "a bean is - name: myBean followed by type: \"#class:com.example.MyBean\" (name instead of "
                          + m.unknown() + (m.unknown().equals("class") ? ", type instead of class" : "") + ")"),
             // - myBean: {type: ...} instead of - name: myBean / type: ...
-            unknownProperty("/\\d+/beans/\\d+", ANY,
+            unknownProperty(".*/beans/\\d+", ANY,
                     m -> "a bean item is written as - name: " + m.unknown()
                          + " followed by type: \"#class:com.example.MyBean\" (the name is a property, not the key)"),
             unknownProperty(null,
