@@ -58,6 +58,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected GenericFileOperations<T> operations;
     protected GenericFileProcessStrategy<T> processStrategy;
     protected volatile ShutdownRunningTask shutdownRunningTask;
+    // the fileName of the message that poll or pollEnrich polls for, during that poll (CAMEL-25792)
+    private volatile DynamicFileName dynamicFileName;
     protected volatile int pendingExchanges;
     protected Processor customProcessor;
     protected boolean eagerLimitMaxMessagesPerPoll = true;
@@ -130,6 +132,23 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      */
     @Override
     protected int poll(Exchange dynamic) throws Exception {
+        if (dynamic == null || endpoint.getFileName() == null || endpoint.isFileNameUsingFileFunctions()) {
+            return doPoll(dynamic);
+        }
+        // poll and pollEnrich: a fileName without the file functions is about the message being enriched, not the
+        // file found, so it is evaluated once for this poll on a copy of that message (CAMEL-25792)
+        DynamicFileName current = new DynamicFileName(dynamic, evaluateDynamicFileName(dynamic));
+        dynamicFileName = current;
+        try {
+            return doPoll(dynamic);
+        } finally {
+            if (dynamicFileName == current) {
+                dynamicFileName = null;
+            }
+        }
+    }
+
+    private int doPoll(Exchange dynamic) throws Exception {
         // must prepare on startup the very first time
         if (!prepareOnStartup) {
             // prepare on startup
@@ -966,9 +985,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         if (endpoint.getFileName() != null) {
-            // create a dummy exchange as Exchange is needed for expression evaluation
-            Exchange dummy = GenericFileHelper.createDummy(endpoint, dynamic, file);
-            String result = evaluateFileExpression(dummy);
+            String result;
+            if (dynamic != null && !endpoint.isFileNameUsingFileFunctions()) {
+                // poll and pollEnrich: the fileName of the message being enriched (CAMEL-25792)
+                DynamicFileName current = dynamicFileName;
+                result = current != null && current.exchange() == dynamic
+                        ? current.name() : evaluateDynamicFileName(dynamic);
+            } else {
+                // create a dummy exchange as Exchange is needed for expression evaluation
+                Exchange dummy = GenericFileHelper.createDummy(endpoint, dynamic, file);
+                result = evaluateFileExpression(dummy);
+            }
             if (result != null) {
                 if (!name.equals(result)) {
                     return false;
@@ -1065,6 +1092,20 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @return              <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
     protected abstract boolean isMatched(Supplier<GenericFile<T>> file, String doneFileName, T[] files);
+
+    /**
+     * The fileName evaluated on a copy of the message being enriched by poll or pollEnrich: its body, headers,
+     * variables and exchange properties, without the file found (CAMEL-25792).
+     */
+    private String evaluateDynamicFileName(Exchange dynamic) {
+        Exchange copy = GenericFileHelper.createDummy(endpoint, dynamic);
+        copy.getMessage().setBody(dynamic.getMessage().getBody());
+        return evaluateFileExpression(copy);
+    }
+
+    /** The fileName of the message being enriched, for the poll of that message. */
+    private record DynamicFileName(Exchange exchange, String name) {
+    }
 
     protected String evaluateFileExpression(Exchange exchange) {
         String result = endpoint.getFileName().evaluate(exchange, String.class);

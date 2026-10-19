@@ -276,6 +276,70 @@ and then `poll` or `pollEnrich` will then pick the top file after the sorting.
 
 This improves performance for use-cases without need for sorting first.
 
+==== The file name of a dynamic uri
+
+With the file based components (file, ftp, ftps, sftp, smb and azure-files), Camel reuses one endpoint for every
+message, and the consumer evaluates the `fileName` option when it looks for the file:
+
+* A `fileName` that uses the file functions, such as `${file:onlyname.noext}` or `${date:file:yyyyMMdd}`, is evaluated
+  for each file found, as these functions read that file.
+* Any other `fileName` is evaluated on the message being enriched: its body, headers, variables and exchange
+  properties.
+
+For example, the body is an order as a Map, and the route reads the file of its customer into the variable `customer`,
+so the order stays the body:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:order")
+  .pollEnrich().simple("file:customers?fileName=${body[customer]}.json&noop=true")
+    .timeout(5000).variableReceive("customer")
+  .log("Order ${body[orderId]} for customer ${variable.customer}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:order"/>
+  <pollEnrich timeout="5000" variableReceive="customer">
+    <simple>file:customers?fileName=${body[customer]}.json&amp;noop=true</simple>
+  </pollEnrich>
+  <log message="Order ${body[orderId]} for customer ${variable.customer}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:order
+      steps:
+        - pollEnrich:
+            expression:
+              simple:
+                expression: "file:customers?fileName=${body[customer]}.json&noop=true"
+            timeout: 5000
+            variableReceive: customer
+        - log:
+            message: "Order ${body[orderId]} for customer ${variable.customer}"
+----
+====
+
+NOTE: Before Camel 4.24, `${body}` in the `fileName` was the file found, not the message being enriched, and only the
+headers, variables and exchange properties of the message could be used. With an older version, put the value in a
+header or a variable first.
+
+To evaluate the whole uri on the message instead, with an endpoint for each file name, set `allowOptimisedComponents` to
+`false`.
+
 == See More
 
 - xref:poll-eip.adoc[Poll EIP]
