@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
@@ -357,6 +358,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     protected boolean onPropertiesReload(Resource resource, boolean reloadRoutes) throws Exception {
+        // the location the properties component knows the file by, which can be written another way than the file
+        // that changed, such as file:./application.properties for file:application.properties (CAMEL-25767)
+        String location = knownLocation(resource);
+
         // optimize to only update if something changed
         OrderedLocationProperties changed = null;
 
@@ -372,7 +377,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 IOHelper.close(is);
             }
             changed = new OrderedLocationProperties();
-            changed.putAll(resource.getLocation(), tmp);
+            changed.putAll(location, tmp);
             // filter to only keep changed properties
             pc.keepOnlyChangeProperties(changed);
         }
@@ -381,16 +386,16 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         if (changed != null && !changed.isEmpty()) {
             LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
                     resource.getLocation());
-            reloaded = pc.reloadProperties(resource.getLocation());
+            reloaded = pc.reloadProperties(location);
             if (reloaded) {
-                pr.onReload(resource.getLocation(), changed);
+                pr.onChanged(location, changed);
                 // trigger all routes to be reloaded
                 if (reloadRoutes) {
                     retryFailedOrReloadAll();
                 }
             } else {
                 // this may be a new properties file, so we need to add as new known location
-                String existing = getPropertiesByLocation(resource.getLocation());
+                String existing = getPropertiesByLocation(location);
                 if (existing == null) {
                     // remove scheme
                     String loc = resource.getLocation();
@@ -400,6 +405,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     PropertiesSource ps = pc.getPropertiesSourceFactory().newFilePropertiesSource(loc);
                     pc.addPropertiesSource(ps);
                     reloaded = true;
+                    // the configuration in a new properties file is applied as well (CAMEL-25767)
+                    pr.onChanged(location, changed);
+                    if (reloadRoutes) {
+                        retryFailedOrReloadAll();
+                    }
                 }
             }
         }
@@ -424,6 +434,37 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         } catch (Exception e) {
             // the retry failed for its own reason, which restorePreviousRoutes logged; the properties did reload
             LOG.debug("Retrying the failed reload after the properties changed failed too: {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * The location of the properties component for the file of the resource, as the same file can be written in other
+     * ways (file:./application.properties and file:application.properties), else the location of the resource.
+     */
+    private String knownLocation(Resource resource) {
+        String location = resource.getLocation();
+        Path file = filePath(location);
+        if (file == null) {
+            return location;
+        }
+        for (String s : getCamelContext().getPropertiesComponent().getLocations()) {
+            String known = s.endsWith(";optional=true") ? s.substring(0, s.length() - 14) : s;
+            if (file.equals(filePath(known))) {
+                return known;
+            }
+        }
+        return location;
+    }
+
+    // the absolute path of a file: location, or null
+    private static Path filePath(String location) {
+        if (location == null || !location.startsWith("file:")) {
+            return null;
+        }
+        try {
+            return Paths.get(location.substring(5)).toAbsolutePath().normalize();
+        } catch (InvalidPathException e) {
+            return null;
         }
     }
 

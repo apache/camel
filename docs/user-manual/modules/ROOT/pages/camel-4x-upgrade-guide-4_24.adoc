@@ -1808,3 +1808,21 @@ the one of a miss, with the lines the file has there. `matchedLines` in the answ
 `~/.camel/camel-launch-<number>.log` or `camel-restart-<number>.log`, which stayed until the MCP server exited. An
 integration that still runs when the server exits keeps the file while it runs: `camel stop` removes it, and
 `camel dirty --clean` once the integration has ended.
+
+=== camel-main - a properties file that changed while reloading applies its beans and components
+
+With live reloading (such as `camel run --dev`), a change to application.properties now applies its configuration:
+
+* The file is matched to the properties file the application loaded, also when its location is written another way:
+  `camel run --source-dir=.` loads `file:./application.properties`, and the file watcher reports
+  `file:application.properties`. Before, the two did not match, so the file was added once more for its property
+  placeholders, but its `camel.component.*`, `camel.dataformat.*` and `camel.language.*` options were not applied.
+* A new bean (`camel.beans.*`) is created and bound, before the components are configured again, so a component can
+  refer to it (`#bean:name`), and a component that is created later can autowire it. The class of the bean is
+  downloaded when needed, as when the application starts.
+* A bean that exists is left as it is, as components may hold it. When its properties change, a `WARN` says that a
+  restart is needed.
+* A properties file that is created while the application runs is applied as well.
+
+`PropertiesReload` has a new default method, `onChanged`, which a properties file that changed calls with the properties
+that changed. A context reload (such as for secret rotation) still calls `onReload`.
