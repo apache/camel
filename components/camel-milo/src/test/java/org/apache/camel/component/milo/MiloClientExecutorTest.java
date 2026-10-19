@@ -31,6 +31,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.milo.NodeIds.nodeValue;
 import static org.awaitility.Awaitility.await;
@@ -47,9 +48,8 @@ public class MiloClientExecutorTest extends AbstractMiloServerTest {
               + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1") + "&overrideHost=true";
 
     // no server listens on this port
-    private static final String MILO_CLIENT_UNREACHABLE
-            = "milo-client:opc.tcp://localhost:" + AvailablePortFinder.getNextAvailable() + "?node="
-              + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1") + "&overrideHost=true";
+    @RegisterExtension
+    AvailablePortFinder.Port unreachablePort = AvailablePortFinder.find();
 
     @EndpointInject("mock:item")
     protected MockEndpoint item;
@@ -61,7 +61,9 @@ public class MiloClientExecutorTest extends AbstractMiloServerTest {
             public void configure() {
                 from("milo-server:myitem1").to("mock:item");
                 from("direct:write").routeId("write").to(resolve(MILO_CLIENT_ITEM));
-                from(MILO_CLIENT_UNREACHABLE).routeId("unreachable").autoStartup(false).to("mock:unreachable");
+                from("milo-client:opc.tcp://localhost:" + unreachablePort.getPort() + "?node="
+                     + nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1") + "&overrideHost=true")
+                        .routeId("unreachable").autoStartup(false).to("mock:unreachable");
             }
         };
     }
