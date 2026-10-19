@@ -121,7 +121,9 @@ public class HazelcastSedaConfiguration {
 
     /**
      * If set to true then the consumer runs in transaction mode, where the messages in the seda queue will only be
-     * removed if the transaction commits, which happens when the processing is complete.
+     * removed if the transaction commits, which happens when the processing is complete. A Hazelcast transaction
+     * belongs to the thread that began it, so each consumer thread waits for its exchange to complete, also when the
+     * route continues on another thread, before it takes the next message.
      */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;

@@ -112,27 +112,24 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     }
                     try {
                         final TransactionContext txc = transactionCtx;
-                        // process using the asynchronous routing engine
-                        processor.process(exchange, new AsyncCallback() {
-                            public void done(boolean asyncDone) {
-                                // a rollback only exchange (without an exception) did not complete successfully either
-                                boolean rollback = exchange.getException() != null || exchange.isRollbackOnly()
-                                        || exchange.isRollbackOnlyLast();
-                                if (rollback && txc != null) {
-                                    LOG.trace("Rollback transaction: {}", txc.getTxnId());
-                                    txc.rollbackTransaction();
-                                }
-                                if (exchange.getException() != null) {
-                                    getExceptionHandler().handleException("Error processing exchange", exchange,
-                                            exchange.getException());
-                                }
-                                // It's OK, I commit
-                                if (!rollback && txc != null) {
-                                    LOG.trace("Commit transaction: {}", txc.getTxnId());
-                                    txc.commitTransaction();
-                                }
+                        if (txc != null) {
+                            // a Hazelcast transaction belongs to the thread that began it, and cannot be committed
+                            // or rolled back from another thread: wait for the exchange to complete, also when the
+                            // route continues on another thread, and end the transaction on this thread
+                            try {
+                                processor.process(exchange);
+                            } catch (Exception e) {
+                                exchange.setException(e);
                             }
-                        });
+                            onExchangeDone(exchange, txc);
+                        } else {
+                            // process using the asynchronous routing engine
+                            processor.process(exchange, new AsyncCallback() {
+                                public void done(boolean asyncDone) {
+                                    onExchangeDone(exchange, null);
+                                }
+                            });
+                        }
                     } catch (Exception e) {
                         LOG.error("Hzlq Exception caught: {}", e, e);
                         // Rollback
@@ -176,6 +173,24 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                         .build()
                         .run(getEndpoint().getCamelContext(), () -> true);
             }
+        }
+    }
+
+    private void onExchangeDone(Exchange exchange, TransactionContext txc) {
+        // a rollback only exchange (without an exception) did not complete successfully either
+        boolean rollback = exchange.getException() != null || exchange.isRollbackOnly()
+                || exchange.isRollbackOnlyLast();
+        if (rollback && txc != null) {
+            LOG.trace("Rollback transaction: {}", txc.getTxnId());
+            txc.rollbackTransaction();
+        }
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+        }
+        // It's OK, I commit
+        if (!rollback && txc != null) {
+            LOG.trace("Commit transaction: {}", txc.getTxnId());
+            txc.commitTransaction();
         }
     }
 

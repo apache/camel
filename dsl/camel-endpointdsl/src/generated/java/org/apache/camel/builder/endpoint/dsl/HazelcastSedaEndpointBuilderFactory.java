@@ -244,7 +244,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
+         * commits, which happens when the processing is complete. A Hazelcast
+         * transaction belongs to the thread that began it, so each consumer
+         * thread waits for its exchange to complete, also when the route
+         * continues on another thread, before it takes the next message.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -261,7 +264,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
+         * commits, which happens when the processing is complete. A Hazelcast
+         * transaction belongs to the thread that began it, so each consumer
+         * thread waits for its exchange to complete, also when the route
+         * continues on another thread, before it takes the next message.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -647,7 +653,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
+         * commits, which happens when the processing is complete. A Hazelcast
+         * transaction belongs to the thread that began it, so each consumer
+         * thread waits for its exchange to complete, also when the route
+         * continues on another thread, before it takes the next message.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -664,7 +673,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
+         * commits, which happens when the processing is complete. A Hazelcast
+         * transaction belongs to the thread that began it, so each consumer
+         * thread waits for its exchange to complete, also when the route
+         * continues on another thread, before it takes the next message.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -979,7 +991,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
+         * commits, which happens when the processing is complete. A Hazelcast
+         * transaction belongs to the thread that began it, so each consumer
+         * thread waits for its exchange to complete, also when the route
+         * continues on another thread, before it takes the next message.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -996,7 +1011,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
+         * commits, which happens when the processing is complete. A Hazelcast
+         * transaction belongs to the thread that began it, so each consumer
+         * thread waits for its exchange to complete, also when the route
+         * continues on another thread, before it takes the next message.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
