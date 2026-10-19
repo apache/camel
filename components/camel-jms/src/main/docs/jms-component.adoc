@@ -120,6 +120,10 @@ Spring XML::
 The application properties work with routes in any DSL (YAML, XML or Java) on Camel Main and Camel JBang. Then the
 routes use the broker as usual, for example `jms:queue:orders`.
 
+When the registry has exactly one `ConnectionFactory`, the component uses it without the `connectionFactory` option
+(`allowAutoWiredConnectionFactory`, which is on by default). The example has two, the one of the client and the pool,
+so it sets the pool on the component.
+
 `camel run` downloads the client libraries of these classes. In a Maven project, add
 `org.apache.artemis:artemis-jakarta-client` and `org.messaginghub:pooled-jms`.
 
