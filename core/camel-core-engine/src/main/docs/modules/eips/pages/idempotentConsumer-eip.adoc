@@ -59,4 +59,140 @@ xref:ROOT:sql-component.adoc[JdbcOrphanLockAwareIdempotentRepository]
 
 == Example
 
-For example, see the above implementations for more details.
+The idempotent consumer needs an expression that gives the id of each message, and a repository that remembers the ids
+it has seen. In the example below the id is the `messageId` header, and the repository is a `MemoryIdempotentRepository`,
+which keeps the last 1000 ids in memory. A message with an id that is already in the repository is skipped, so it does
+not reach `mock:result`.
+
+In XML and YAML the repository is a bean, and the idempotent consumer refers to it by name.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository())
+        .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<bean name="myRepo" type="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
+
+<route>
+    <from uri="direct:start"/>
+    <idempotentConsumer idempotentRepository="myRepo">
+        <header>messageId</header>
+        <to uri="mock:result"/>
+    </idempotentConsumer>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: myRepo
+      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - idempotentConsumer:
+            expression:
+              header:
+                expression: messageId
+            idempotentRepository: myRepo
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
+The memory repository forgets the ids when the application stops. To keep them, use `FileIdempotentRepository` or one
+of the repositories listed above.
+
+=== Handling the duplicates in the route
+
+By default, a duplicate is skipped. When `skipDuplicate` is `false`, a duplicate goes through the idempotent consumer
+too, and the exchange property `CamelDuplicateMessage` is `true`. The route can then decide what to do with it, for
+example log it:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository())
+        .skipDuplicate(false)
+        .choice()
+            .when(simple("${exchangeProperty.CamelDuplicateMessage} == true"))
+                .log("Message ${header.messageId} is a duplicate")
+            .otherwise()
+                .to("mock:result")
+        .end()
+    .end();
+----
+
+XML::
++
+[source,xml]
+----
+<bean name="myRepo" type="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
+
+<route>
+    <from uri="direct:start"/>
+    <idempotentConsumer idempotentRepository="myRepo" skipDuplicate="false">
+        <header>messageId</header>
+        <choice>
+            <when>
+                <simple>${exchangeProperty.CamelDuplicateMessage} == true</simple>
+                <log message="Message ${header.messageId} is a duplicate"/>
+            </when>
+            <otherwise>
+                <to uri="mock:result"/>
+            </otherwise>
+        </choice>
+    </idempotentConsumer>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: myRepo
+      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - idempotentConsumer:
+            expression:
+              header:
+                expression: messageId
+            idempotentRepository: myRepo
+            skipDuplicate: false
+            steps:
+              - choice:
+                  when:
+                    - expression:
+                        simple:
+                          expression: "${exchangeProperty.CamelDuplicateMessage} == true"
+                      steps:
+                        - log:
+                            message: "Message ${header.messageId} is a duplicate"
+                  otherwise:
+                    steps:
+                      - to:
+                          uri: mock:result
+----
+====

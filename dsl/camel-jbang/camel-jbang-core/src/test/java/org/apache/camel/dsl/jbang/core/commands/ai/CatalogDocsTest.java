@@ -680,9 +680,12 @@ class CatalogDocsTest {
             assertFalse(((JsonObject) o).containsKey("yaml"), ((JsonObject) o).toJson());
         }
         assertTrue(doc.getString("sampleHint").contains("camel_catalog_sample name=split"), doc.toJson());
-        // the sample hint only for an EIP camel_catalog_sample has a sample of
+        // the sample hint only for an EIP camel_catalog_sample has a sample of: pausable has one since its page has YAML
+        // examples (CAMEL-25774); a tokenizer implementation, written inside tokenizer, has none
         doc = CatalogDocs.catalogDoc(catalog, "pausable", null, "eip", null, null, false, false, null);
         assertTrue(doc.getString("placement").startsWith("a step inside the steps of a route"), doc.toJson());
+        assertTrue(doc.getString("sampleHint").contains("camel_catalog_sample name=pausable"), doc.toJson());
+        doc = CatalogDocs.catalogDoc(catalog, "langChain4jParagraphTokenizer", null, "eip", null, null, false, false, null);
         assertFalse(doc.containsKey("sampleHint"), doc.toJson());
     }
 

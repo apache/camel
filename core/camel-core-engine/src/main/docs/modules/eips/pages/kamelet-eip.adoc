@@ -72,6 +72,7 @@ XML::
 
 YAML::
 +
+// yaml-validator: skip
 [source,yaml]
 ----
 - route:
