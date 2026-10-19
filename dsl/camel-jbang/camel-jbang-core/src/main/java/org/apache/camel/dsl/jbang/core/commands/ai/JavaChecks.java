@@ -43,6 +43,15 @@ final class JavaChecks {
      * its line. Returns nothing when no compiler is available (a JRE).
      */
     public static List<String> validateJava(String fileName, String content) {
+        return validateJava(fileName, content, null);
+    }
+
+    /**
+     * As {@link #validateJava(String, String)}, together with the other Java files of the project in the directory, as
+     * {@code camel run} compiles them: a class that uses another class of the project compiles, where on its own it was
+     * refused with "cannot find symbol" (CAMEL-25814). Only the diagnostics of this file are reported.
+     */
+    public static List<String> validateJava(String fileName, String content, Path directory) {
         List<String> msgs = new ArrayList<>();
         javax.tools.JavaCompiler compiler = javax.tools.ToolProvider.getSystemJavaCompiler();
         if (compiler == null || content == null || content.isBlank()) {
@@ -64,11 +73,18 @@ final class JavaChecks {
         javax.tools.DiagnosticCollector<javax.tools.JavaFileObject> diagnostics = new javax.tools.DiagnosticCollector<>();
         try {
             Path out = Files.createTempDirectory("camel-validate-java");
-            try {
+            try (javax.tools.StandardJavaFileManager files
+                    = compiler.getStandardFileManager(null, Locale.ENGLISH, java.nio.charset.StandardCharsets.UTF_8)) {
                 List<String> options = new ArrayList<>(
                         List.of("-proc:none", "-Xlint:none", "-d", out.toString(),
                                 "-classpath", System.getProperty("java.class.path", "")));
-                compiler.getTask(null, null, diagnostics, options, null, List.of(source)).call();
+                List<javax.tools.JavaFileObject> units = new ArrayList<>();
+                units.add(source);
+                for (javax.tools.JavaFileObject sibling : files.getJavaFileObjectsFromPaths(
+                        siblingSources(directory, fileName, pkg, className))) {
+                    units.add(sibling);
+                }
+                compiler.getTask(null, files, diagnostics, options, null, units).call();
             } finally {
                 try (var walk = Files.walk(out)) {
                     walk.sorted(java.util.Comparator.reverseOrder()).forEach(f -> f.toFile().delete());
@@ -79,7 +95,8 @@ final class JavaChecks {
         }
         String[] lines = content.split("\n", -1);
         for (var d : diagnostics.getDiagnostics()) {
-            if (d.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
+            // the errors of this file: another file of the project may not compile, which is not this file's problem
+            if (d.getKind() == javax.tools.Diagnostic.Kind.ERROR && (d.getSource() == null || d.getSource() == source)) {
                 String text = d.getMessage(Locale.ENGLISH).replace("\n", " ").trim();
                 long ln = d.getLineNumber();
                 if ((text.contains("expected") || text.startsWith("illegal character"))
@@ -166,6 +183,50 @@ final class JavaChecks {
             }
         }
         return msgs;
+    }
+
+    /**
+     * The other Java files of the project, which {@code camel run} compiles with the file: those in the directory and
+     * in {@code src/main/java}, as the bean declarations are read. The file itself, and another file of the same class,
+     * are left out, as the content being validated replaces them.
+     */
+    static List<Path> siblingSources(Path directory, String fileName, String pkg, String className) {
+        List<Path> answer = new ArrayList<>();
+        if (directory == null || !Files.isDirectory(directory)) {
+            return answer;
+        }
+        Path self = directory.resolve(fileName).normalize();
+        String fqcn = pkg != null ? pkg + "." + className : className;
+        try {
+            List<Path> files = new ArrayList<>();
+            try (var list = Files.list(directory)) {
+                list.filter(Files::isRegularFile).forEach(files::add);
+            }
+            Path maven = directory.resolve("src/main/java");
+            if (Files.isDirectory(maven)) {
+                try (var walk = Files.walk(maven)) {
+                    walk.filter(Files::isRegularFile).forEach(files::add);
+                }
+            }
+            for (Path f : files) {
+                String name = f.getFileName().toString();
+                if (!name.endsWith(".java") || f.normalize().equals(self)) {
+                    continue;
+                }
+                if (name.equals(className + ".java")) {
+                    Matcher pm = JAVA_PACKAGE_PATTERN.matcher(Files.readString(f));
+                    String other = pm.find() ? pm.group(1) + "." + className : className;
+                    if (other.equals(fqcn)) {
+                        continue;
+                    }
+                }
+                answer.add(f);
+            }
+        } catch (Exception e) {
+            // the file on its own, as before
+            return List.of();
+        }
+        return answer;
     }
 
     static final Pattern MISSING_CLASS_PATTERN = Pattern.compile("cannot find symbol\\s+symbol:\\s+class (\\w+)");
