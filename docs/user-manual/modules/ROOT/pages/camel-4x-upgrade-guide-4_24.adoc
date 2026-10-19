@@ -1439,6 +1439,17 @@ Previously it returned only the first chunk of the event log (at most 500 events
 any sign. A wide `after`/`before` window now returns every event in one list: that is one request per 500 events plus
 one that finds the end of the log, and more memory. Narrow the window when the event log is large.
 
+=== camel-aws2-eventbridge - the consumer keeps one target for a queue given with queueUrl
+
+A consumer that uses its own queue (`queueUrl`) added a target with a new random id to the EventBridge rule at every
+start, and removed it on stop. Two consumers that share the queue, or a restart after a consumer was not stopped
+cleanly, left two targets for the queue, and EventBridge put every event on the queue twice. The target now has an id
+derived from the queue ARN, and stays on the rule when the consumer stops, so the queue also collects the events of the
+rule while no consumer runs. Remove the target from the rule yourself when you no longer use the queue, and remove
+targets with ids `camel-eb-` plus 8 characters that an earlier version left for the queue. An auto-created queue is
+not affected. During a rolling upgrade from an earlier version, events can be put on the queue twice until the last
+instance on the earlier version stops.
+
 === camel-chunk - message data printed with a direct tag is rendered literally
 
 Previously the `chunk` component bound the message body, headers and variables into the Chunk engine so that
