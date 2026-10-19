@@ -19,28 +19,19 @@ package org.apache.camel.component.gson;
 import java.util.*;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class GsonDataFormatTest {
 
+    // the exchange is not read: the unmarshal type header is only used with allowUnmarshallType
     @Mock
     private Exchange exchange;
-    @Mock
-    private Message message;
-
-    @BeforeEach
-    public void setup() {
-        when(exchange.getIn()).thenReturn(message);
-    }
 
     @Test
     public void testString() throws Exception {
