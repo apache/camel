@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -111,8 +112,7 @@ public class PQCGenerateEncapsulationAlgorithmNameTest extends CamelTestSupport 
                 () -> templateNoAlgorithm.sendBody("Hello"));
 
         Throwable cause = e.getCause();
-        assertTrue(cause instanceof IllegalArgumentException,
-                "expected IllegalArgumentException but got " + cause);
+        assertInstanceOf(IllegalArgumentException.class, cause, "expected a configuration error but got " + cause);
         assertTrue(cause.getMessage().contains("Symmetric Algorithm"),
                 "unexpected message: " + cause.getMessage());
     }
