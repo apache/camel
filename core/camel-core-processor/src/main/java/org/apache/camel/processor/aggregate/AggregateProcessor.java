@@ -1905,7 +1905,7 @@ public class AggregateProcessor extends BaseProcessorSupport
             // Auto-discover a KeyValueRepository from the registry and wrap it
             KeyValueRepository kvRepo = camelContext.getRegistry().findSingleByType(KeyValueRepository.class);
             if (kvRepo != null) {
-                aggregationRepository = new KeyValueAggregationRepository(kvRepo);
+                setAggregationRepository(new KeyValueAggregationRepository(kvRepo));
                 LOG.info("Auto-discovered KeyValueRepository from registry, wrapping as AggregationRepository");
             } else {
                 aggregationRepository = new MemoryAggregationRepository(optimisticLocking);
