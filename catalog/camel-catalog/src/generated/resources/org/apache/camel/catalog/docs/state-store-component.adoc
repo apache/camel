@@ -178,6 +178,10 @@ stateStore.setBackendFactory(storeName -> new MyKeyValueRepository(storeName));
 
 An explicit `backend` option on the endpoint still takes precedence over the factory.
 
+NOTE: Autowiring only applies when the registry holds exactly one `StateStoreBackendFactory`. With two or
+more, none is autowired and the component silently falls back to the default resolution; set
+`backendFactory` explicitly to choose one.
+
 === In-Memory (default)
 
 The default backend (`MemoryKeyValueRepository`) stores entries in a `ConcurrentHashMap`. TTL
