@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
@@ -51,6 +52,10 @@ public class Dirty extends ProcessBaseCommand {
 
         List<File> dirty = new ArrayList<>();
         for (File f : files) {
+            if (PreviousRun.isPreviousRunFile(f.getName())) {
+                // kept on purpose: the log of the previous run of an integration (camel log --previous)
+                continue;
+            }
             // the files of a process that is alive are in use (such as the launcher of an integration that runs in a
             // child process, whose Camel has stopped), and so are the files of ourselves
             Long pid = pidOf(f.getName());

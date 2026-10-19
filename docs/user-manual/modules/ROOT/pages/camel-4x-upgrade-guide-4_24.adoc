@@ -1827,3 +1827,11 @@ With live reloading (such as `camel run --dev`), a change to application.propert
 
 `PropertiesReload` has a new default method, `onChanged`, which a properties file that changed calls with the properties
 that changed. A context reload (such as for secret rotation) still calls `onReload`.
+
+=== camel-jbang - camel run keeps the log of the previous run
+
+When `camel run` ends, its log is no longer deleted. It is kept as `~/.camel/<name>-previous.log`, by the name of the
+integration, with `~/.camel/<name>-previous.json`, which says when and how the run ended. The next run of that name that
+ends replaces both, and at most the last 10 MB of a log are kept. `camel log <name> --previous` prints the log, like
+`kubectl logs --previous` in Kubernetes. The log of an integration that was killed is kept the same way, the next time a
+previous run is looked up. `camel dirty` does not count these files.

@@ -628,6 +628,31 @@ camel log chuck --grep=error
 
 By default, `log` tails continuously. Use `--follow=false` to output matching lines and exit.
 
+=== The log of the previous run
+
+When an integration stops, its log is kept as the log of its previous run, like `kubectl logs --previous` in Kubernetes.
+Use `--previous` to see why an integration stopped, such as one that failed to start:
+
+[source,bash]
+----
+$ camel log chuck --previous
+The previous run of chuck (pid 80093) ended at 2026-10-19 10:32:01 (2m3s ago) with exit code 70: Failed to create route: route1 ...
+2026-10-19 10:32:00.912  INFO 80093 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 4.24.0 is starting
+...
+----
+
+The first line, on stderr, says which run it was and how it ended. The log follows on stdout.
+The options `--tail`, `--since`, `--grep`, `--find` and `--startup` work as they do for a running integration.
+When you run `camel log` with the name of an integration that is not running, the error says how its previous run ended.
+
+Each name keeps the log of its last run that ended, as `~/.camel/<name>-previous.log`.
+The next run of that name that ends replaces it. Like Kubernetes, at most the last 10 MB of a log are kept.
+An integration that was killed, or whose JVM crashed, leaves its log behind.
+That log becomes the log of its previous run the next time you look one up.
+
+NOTE: The log is kept for the `jbang` runtime, which runs Camel in the JVM of the Camel CLI. This is the default, also
+with `--background`. The runtimes that run with Maven (`--runtime=spring-boot`, `quarkus` or `main`) do not keep it.
+
 == Configuring logging levels
 
 View and change logging levels at runtime:

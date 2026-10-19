@@ -33,14 +33,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -55,7 +58,8 @@ import picocli.CommandLine;
                              "%nExamples:",
                              "  camel log hello",
                              "  camel log *",
-                             "  camel log hello --tail=50" })
+                             "  camel log hello --tail=50",
+                             "  camel log hello --previous" })
 public class CamelLogAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
@@ -75,7 +79,8 @@ public class CamelLogAction extends ActionBaseCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
+    @CommandLine.Parameters(description = "Name or pid of running Camel integration, or of the run that ended with --previous. (default selects all)",
+                            arity = "0..1")
     String name = "*";
 
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
@@ -118,6 +123,11 @@ public class CamelLogAction extends ActionBaseCommand {
                         description = "Filter logs to only output lines matching text (ignore case).", arity = "0..*")
     String[] grep;
 
+    @CommandLine.Option(names = { "--previous" }, defaultValue = "false",
+                        description = "Print the log of the previous run of the integration instead: the last run of that name that ended,"
+                                      + " such as one that failed to start (like kubectl logs --previous).")
+    boolean previous;
+
     String findAnsi;
     Pattern[] grepPatterns;
     Pattern[] findPatterns;
@@ -135,7 +145,8 @@ public class CamelLogAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        follow = isFollowing(follow, durationOption.getDuration());
+        // a previous run has ended, so there is nothing to follow
+        follow = !previous && isFollowing(follow, durationOption.getDuration());
         if (follow && EnvironmentHelper.isEmbedded()) {
             follow = false;
             printer().printTip("press F3 to switch to the Log tab for live log streaming");
@@ -153,11 +164,15 @@ public class CamelLogAction extends ActionBaseCommand {
             grepPatterns = quoteAndCompilePatterns(grep);
         }
 
-        // find new pids
-        updatePids(rows);
-        if (rows.isEmpty() && !follow) {
-            // shown once: a name that matches no running integration is not found
-            findProcesses(name);
+        if (previous) {
+            previousRun(rows);
+        } else {
+            // find new pids
+            updatePids(rows);
+            if (rows.isEmpty() && !follow) {
+                // shown once: a name that matches no running integration is not found
+                findRunning();
+            }
         }
         if (!rows.isEmpty()) {
             // read existing log files (skip by tail/since)
@@ -217,6 +232,60 @@ public class CamelLogAction extends ActionBaseCommand {
         return 0;
     }
 
+    /**
+     * The previous run of the integration (CAMEL-25784): the one that matches the name, after a line on stderr that
+     * says which run it was and how it ended.
+     *
+     * @throws CliException with exit code 3 when no previous run, or more than one, matches
+     */
+    private void previousRun(Map<Long, Row> rows) {
+        boolean all = name == null || name.isBlank() || "*".equals(name);
+        List<PreviousRun.Info> found = PreviousRun.find(name);
+        if (found.isEmpty()) {
+            throw CliException.notFound(all ? "No previous run of a Camel integration" : "No previous run matches: " + name);
+        }
+        if (found.size() > 1) {
+            StringJoiner names = new StringJoiner(", ");
+            found.forEach(i -> names.add(i.name()));
+            throw CliException.notFound((all ? "There are " : "Name " + name + " matches ") + found.size()
+                                        + " previous runs: " + names + ". Specify the name of one.");
+        }
+        PreviousRun.Info info = found.get(0);
+        printer().printDiagnostic(info.describe());
+        Row row = new Row();
+        row.pid = Long.toString(info.pid());
+        row.name = info.name();
+        row.file = info.log();
+        nameMaxWidth = Math.max(NAME_MIN_WIDTH, Math.min(NAME_MAX_WIDTH, row.name.length()));
+        rows.put(info.pid(), row);
+    }
+
+    /**
+     * Fails when a name given matches no running integration, saying where the log of its previous run is, which tells
+     * why it is not running.
+     */
+    private void findRunning() {
+        try {
+            if (findProcesses(name).isEmpty()) {
+                // nothing runs
+                List<PreviousRun.Info> found = PreviousRun.findAll();
+                if (!found.isEmpty()) {
+                    printer().printTip(previousRunHint(found.get(0)));
+                }
+            }
+        } catch (CliException e) {
+            List<PreviousRun.Info> found = PreviousRun.find(name);
+            if (found.size() != 1) {
+                throw e;
+            }
+            throw CliException.notFound(e.getMessage() + ". " + previousRunHint(found.get(0)));
+        }
+    }
+
+    private static String previousRunHint(PreviousRun.Info info) {
+        return "camel log " + info.name() + " --previous prints the log of its previous run, which " + info.howItEnded();
+    }
+
     private void updatePids(Map<Long, Row> rows) {
         List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
@@ -267,7 +336,7 @@ public class CamelLogAction extends ActionBaseCommand {
 
         for (Row row : rows.values()) {
             if (row.reader == null) {
-                Path file = logFile(row.pid, row.name);
+                Path file = logFile(row);
                 if (Files.exists(file)) {
                     row.reader = new LineNumberReader(Files.newBufferedReader(file));
                     if (tail == 0) {
@@ -440,8 +509,8 @@ public class CamelLogAction extends ActionBaseCommand {
         }
     }
 
-    private static Path logFile(String pid) {
-        return logFile(pid, null);
+    private static Path logFile(Row row) {
+        return row.file != null ? row.file : logFile(row.pid, row.name);
     }
 
     private static Path logFile(String pid, String appName) {
@@ -458,7 +527,7 @@ public class CamelLogAction extends ActionBaseCommand {
 
     private void tailStartupLogFiles(Map<Long, Row> rows) throws Exception {
         for (Row row : rows.values()) {
-            Path log = logFile(row.pid, row.name);
+            Path log = logFile(row);
             if (Files.exists(log)) {
                 row.fifo = new ArrayDeque<>();
                 row.reader = new LineNumberReader(Files.newBufferedReader(log));
@@ -480,7 +549,7 @@ public class CamelLogAction extends ActionBaseCommand {
 
     private void tailLogFiles(Map<Long, Row> rows, int tail, Date limit) throws Exception {
         for (Row row : rows.values()) {
-            Path log = logFile(row.pid, row.name);
+            Path log = logFile(row);
             if (Files.exists(log)) {
                 row.reader = new LineNumberReader(Files.newBufferedReader(log));
                 String line;
@@ -595,6 +664,8 @@ public class CamelLogAction extends ActionBaseCommand {
     private static class Row {
         String pid;
         String name;
+        // the log of a previous run, else the log of the running integration
+        Path file;
         Queue<String> fifo;
         LineNumberReader reader;
     }

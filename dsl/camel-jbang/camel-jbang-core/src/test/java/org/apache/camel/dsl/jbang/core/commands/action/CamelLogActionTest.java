@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -166,6 +168,82 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         assertThat(lines().get(1)).startsWith("orders").endsWith(": Failed");
     }
 
+    @Test
+    void previousPrintsTheLogOfTheRunThatEnded() throws Exception {
+        keepPreviousRun("orders", line(-300, "Starting"), line(-1, "Failed to start route route1"));
+
+        assertThat(callWithSingleProcess(command("--previous"))).isZero();
+
+        // which run it was, and how it ended, on stderr; the log on stdout
+        assertThat(printer.getStderr()).startsWith("The previous run of orders (pid 4242) ended at ")
+                .endsWith(" with exit code 70: Failed to start route route1 because: boom");
+        assertThat(stdoutLines()).hasSize(2)
+                .last().asString().endsWith(": Failed to start route route1");
+    }
+
+    @Test
+    void previousTakesTheOptionsOfTheLog() throws Exception {
+        keepPreviousRun("orders", line(-300, "Starting"), line(-60, "Slow"), line(-1, "Failed to start route route1"));
+
+        assertThat(callWithSingleProcess(command("--previous", "--tail=2", "--grep=start"))).isZero();
+
+        assertThat(stdoutLines()).hasSize(2)
+                .first().asString().endsWith(": Starting");
+    }
+
+    @Test
+    void previousPrintsTheLogOfAnIntegrationThatWasKilled() throws Exception {
+        // the process is gone, and left its log and its status file
+        writeLog(TEST_PID + ".log", line(-60, "Started"), line(-1, "Processing"));
+
+        assertThat(callWithSingleProcess(command("--previous"))).isZero();
+
+        assertThat(printer.getStderr()).startsWith("The previous run of orders (pid " + TEST_PID + ") ended at ")
+                .endsWith("ago): " + "the process was gone without stopping Camel (killed, or its JVM crashed)");
+        assertThat(stdoutLines()).hasSize(2);
+    }
+
+    @Test
+    void previousOfANameWithoutPreviousRunIsNotFound() throws Exception {
+        keepPreviousRun("orders", line(-1, "Failed"));
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(command, "payments", "--previous");
+
+        assertThatThrownBy(() -> callWithSingleProcess(command))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND))
+                .hasMessage("No previous run matches: payments");
+    }
+
+    @Test
+    void previousOfANameThatMatchesSeveralRunsAsksForOne() throws Exception {
+        keepPreviousRun("orders", line(-1, "Failed"));
+        keepPreviousRun("orders-eu", line(-1, "Failed"));
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(command, "ord", "--previous");
+
+        assertThatThrownBy(() -> callWithSingleProcess(command))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND))
+                .hasMessageStartingWith("Name ord matches 2 previous runs: ")
+                .hasMessageEndingWith(". Specify the name of one.");
+    }
+
+    @Test
+    void aNameThatIsNotRunningSaysWhereTheLogOfItsPreviousRunIs() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        keepPreviousRun("payments", line(-1, "Failed"));
+        CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(command, "payments", "--follow=false");
+
+        assertThatThrownBy(() -> callWithSingleProcess(command))
+                .isInstanceOfSatisfying(CliException.class,
+                        e -> assertThat(e.getExitCode()).isEqualTo(CliExitCode.NOT_FOUND))
+                .hasMessageStartingWith("No running Camel integration matches: payments. camel log payments --previous"
+                                        + " prints the log of its previous run, which ended at ")
+                .hasMessageEndingWith(" with exit code 70: Failed to start route route1 because: boom");
+    }
+
     private CamelLogAction command(String... args) throws Exception {
         writeStatusFile(TEST_PID, "orders");
         CamelLogAction command = new CamelLogAction(new CamelJBangMain().withPrinter(printer));
@@ -175,6 +253,11 @@ class CamelLogActionTest extends ActionCommandTestSupport {
         return command;
     }
 
+    // the log only (stdout), without the highlighting of --find and --grep
+    private List<String> stdoutLines() {
+        return printer.getStdout().lines().map(l -> l.replaceAll("\u001B\\[[;\\d]*m", "")).toList();
+    }
+
     // without the highlighting of --find and --grep
     private List<String> lines() throws Exception {
         return printer.getLines().stream().map(l -> l.replaceAll("\u001B\\[[;\\d]*m", "")).toList();
@@ -182,6 +265,13 @@ class CamelLogActionTest extends ActionCommandTestSupport {
 
     private static void writeLog(String name, String... lines) throws Exception {
         Files.write(CommandLineHelper.getCamelDir().resolve(name), List.of(lines));
+    }
+
+    // a run of the name that failed to start
+    private static void keepPreviousRun(String name, String... lines) throws Exception {
+        Path log = CommandLineHelper.getCamelDir().resolve("4242.log");
+        Files.write(log, List.of(lines));
+        PreviousRun.keep(log, name, 4242, 70, "Failed to start route route1 because: boom");
     }
 
     private static String line(long seconds, String message) {

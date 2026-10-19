@@ -131,6 +131,9 @@ camel dirty
 camel dirty --clean
 ----
 
+The log of the previous run of an integration (`~/.camel/<name>-previous.log`, see `camel log --previous`) is kept on
+purpose, so `camel dirty` leaves it.
+
 An error is printed as one line that starts with `ERROR:`. To see the stack trace of every error, set the
 environment variable `CAMEL_CLI_DEBUG` to `true`. See xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]
 for what each exit code means.
