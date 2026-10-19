@@ -19651,8 +19651,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "langChain4jLineTokenizer" : {
@@ -19707,8 +19706,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "langChain4jParagraphTokenizer" : {
@@ -19763,8 +19761,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "langChain4jSentenceTokenizer" : {
@@ -19819,8 +19816,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "langChain4jTokenizer" : {
@@ -19897,8 +19893,7 @@
         "displayName" : "Model Name",
         "kind" : "attribute",
         "index" : 4,
-        "group" : "common",
-        "required" : true
+        "group" : "common"
       } ]
     },
     "customTransformer" : {
