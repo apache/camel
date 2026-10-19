@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -363,14 +364,21 @@ class AuthoringToolsTest {
     }
 
     @Test
-    void runtimeToolsSayWhatToDoWithoutAnIntegration() {
-        ToolExecutionException e = assertThrows(ToolExecutionException.class,
-                () -> ToolRegistry.execute("camel_get_errors", new ToolContext(), Map.of("name", "no-such-app-xyz")));
-        assertTrue(e.getMessage().contains("no-such-app-xyz"), e.getMessage());
-        e = assertThrows(ToolExecutionException.class,
-                () -> ToolRegistry.execute("camel_control", new ToolContext(), Map.of("action", "stop", "name",
-                        "no-such-app-xyz")));
-        assertTrue(e.getMessage().contains("no-such-app-xyz"), e.getMessage());
+    void runtimeToolsSayWhatToDoWithoutAnIntegration(@TempDir Path home) {
+        // a home of its own: the tools look for the previous run of an integration that is not running
+        Path previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            ToolExecutionException e = assertThrows(ToolExecutionException.class,
+                    () -> ToolRegistry.execute("camel_get_errors", new ToolContext(), Map.of("name", "no-such-app-xyz")));
+            assertTrue(e.getMessage().contains("no-such-app-xyz"), e.getMessage());
+            e = assertThrows(ToolExecutionException.class,
+                    () -> ToolRegistry.execute("camel_control", new ToolContext(), Map.of("action", "stop", "name",
+                            "no-such-app-xyz")));
+            assertTrue(e.getMessage().contains("no-such-app-xyz"), e.getMessage());
+        } finally {
+            CommandLineHelper.useHomeDir(previousHome.toString());
+        }
     }
 
     @Test

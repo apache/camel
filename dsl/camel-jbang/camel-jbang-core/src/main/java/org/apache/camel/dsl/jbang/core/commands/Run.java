@@ -3083,7 +3083,8 @@ public class Run extends CamelCommand {
             exitCode = code == Integer.MIN_VALUE ? CliExitCode.OK : code;
             return exitCode;
         } catch (Exception | Error e) {
-            // such as a route that failed to start
+            // such as a route that failed to start, or an Error such as a NoClassDefFoundError of a missing dependency:
+            // only noted as why the run ended, and thrown again
             failure = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
             exitCode = new CliExecutionExceptionHandler(getMain()).getExitCode(e);
             throw e;

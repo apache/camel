@@ -105,10 +105,17 @@ public final class PreviousRun {
         }
 
         /**
+         * When the run ended, in local time, such as <tt>2026-10-19 10:32:01</tt>.
+         */
+        public String endedAt() {
+            return TIME.format(Instant.ofEpochMilli(ended));
+        }
+
+        /**
          * How the run ended: when, with which exit code, and why when it failed.
          */
         public String howItEnded() {
-            StringBuilder sb = new StringBuilder("ended at ").append(TIME.format(Instant.ofEpochMilli(ended)));
+            StringBuilder sb = new StringBuilder("ended at ").append(endedAt());
             long ago = System.currentTimeMillis() - ended;
             if (ago >= 0) {
                 sb.append(" (").append(TimeUtils.printDuration(ago, false)).append(" ago)");

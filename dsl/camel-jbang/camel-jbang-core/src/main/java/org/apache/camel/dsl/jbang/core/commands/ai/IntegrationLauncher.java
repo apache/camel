@@ -168,7 +168,7 @@ public final class IntegrationLauncher {
                 return result;
             }
             RuntimeHelper.ProcessInfo info = findByPid(pid);
-            if (info != null) {
+            if (info != null && started(pid)) {
                 // the name the other tools find the process by: the one the caller gave, else the Camel context name
                 // (the source file name without its extensions); the pid is in the result as well
                 String started = runName != null && !runName.isBlank()
@@ -282,6 +282,21 @@ public final class IntegrationLauncher {
             cmd.addAll(extraArgs);
         }
         return cmd;
+    }
+
+    /**
+     * Whether the CamelContext of the integration has started, as its status file says (CAMEL-25784). The CLI connector
+     * writes the status file while Camel starts, before the routes start, so a route that fails to start ends the
+     * process after the file has appeared: a run that was answered as started had died at startup. A status without a
+     * state (an older Camel) counts as started.
+     */
+    static boolean started(long pid) {
+        JsonObject status = RuntimeHelper.readStatus(pid);
+        if (status == null) {
+            return false;
+        }
+        String state = status.get("context") instanceof JsonObject context ? context.getString("state") : null;
+        return state == null || "Started".equals(state);
     }
 
     private static RuntimeHelper.ProcessInfo findByPid(long pid) {
@@ -623,7 +638,7 @@ public final class IntegrationLauncher {
             Path output = launched.log();
             long deadline = System.currentTimeMillis() + STARTUP_TIMEOUT_MS;
             while (System.currentTimeMillis() < deadline && p.isAlive()) {
-                if (findByPid(p.pid()) != null) {
+                if (findByPid(p.pid()) != null && started(p.pid())) {
                     removeWhenEnded(p, output);
                     return "Restarted " + (name != null ? name : "pid " + pid) + " as pid " + p.pid();
                 }
