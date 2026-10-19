@@ -89,14 +89,9 @@ public class FlatpackDataFormat extends ServiceSupport implements DataFormat, Da
 
         Writer writer = createWriter(exchange, firstRow, stream);
         try {
-            boolean first = true;
+            // the header line comes from the column names, every map of the list is a data row
             writer.printHeader();
             for (Map<String, Object> row : data) {
-                if (ignoreFirstRecord && first) {
-                    // skip first row
-                    first = false;
-                    continue;
-                }
                 for (Entry<String, Object> entry : row.entrySet()) {
                     writer.addRecordEntry(entry.getKey(), entry.getValue());
                 }
