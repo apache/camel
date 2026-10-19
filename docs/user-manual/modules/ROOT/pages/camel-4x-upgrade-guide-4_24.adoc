@@ -1800,3 +1800,11 @@ Content with more than one reading is refused as before.
 to the closest lines of the file when exactly one place matches well. It changes there the lines the model changed and
 keeps the file's version of the other lines. The edit stands only when its result is valid; otherwise the answer is
 the one of a miss, with the lines the file has there. `matchedLines` in the answer names the lines it matched.
+
+=== camel-jbang - the console output of an integration that the AI tools start
+
+`camel_run` and `camel_control restart` send the console output of the integration they start to
+`~/.camel/<pid>-run.log`, as `camel run --background` does, and remove it when the integration ends. It went to
+`~/.camel/camel-launch-<number>.log` or `camel-restart-<number>.log`, which stayed until the MCP server exited. An
+integration that still runs when the server exits keeps the file while it runs: `camel stop` removes it, and
+`camel dirty --clean` once the integration has ended.
