@@ -113,12 +113,14 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
      * To be called from the asynchronous callback of the request made by {@link #installWatch()}, with its result code.
      * When the request failed (for example with SESSIONEXPIRED on a handle whose session expired, or CONNECTIONLOSS),
      * ZooKeeper did not register the watch, so the awaited event will never come: the operation stops waiting and fails
-     * with the {@link KeeperException} of that result code.
+     * with the {@link KeeperException} of that result code. If the awaited event was already received there is nothing
+     * left to wait for, so the failure of the request (for example NONODE because the node was deleted in the meantime)
+     * is ignored.
      *
      * @param rc the result code of the request
      */
     protected void watchRequestCompleted(int rc) {
-        if (rc != KeeperException.Code.OK.intValue()) {
+        if (rc != KeeperException.Code.OK.intValue() && waitForAnyWatchedType.getCount() > 0) {
             failure = new ExecutionException(
                     "Could not watch node '" + getNode() + "'",
                     KeeperException.create(KeeperException.Code.get(rc), getNode()));
