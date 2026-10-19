@@ -226,7 +226,7 @@ public class PQCProducer extends DefaultProducer {
                     statefulDeleteKeyState(exchange);
                     break;
                 default:
-                    throw new IllegalArgumentException("Unsupported operation");
+                    throw new IllegalArgumentException("Unsupported operation: " + operation);
             }
             success = true;
         } finally {
@@ -237,9 +237,54 @@ public class PQCProducer extends DefaultProducer {
     private PQCOperations determineOperation(Exchange exchange) {
         PQCOperations operation = exchange.getIn().getHeader(PQCConstants.OPERATION, PQCOperations.class);
         if (operation == null) {
-            operation = getConfiguration().getOperation();
+            return getConfiguration().getOperation();
         }
+        checkOperationIsUsable(operation);
         return operation;
+    }
+
+    /**
+     * Rejects a {@link PQCConstants#OPERATION} header selecting an operation this producer has no resources for.
+     * <p/>
+     * {@link #doStart()} builds the {@code Signature} only for the signature operations and the {@code KeyGenerator}
+     * only for the KEM ones, and the key material is autowired for whichever algorithm option the endpoint declares. An
+     * override that crosses from one family to the other would otherwise dereference a null and surface as a bare
+     * NullPointerException deep inside the operation.
+     */
+    private void checkOperationIsUsable(PQCOperations operation) {
+        String missing = null;
+        switch (operation) {
+            case sign, verify -> missing = signer == null ? "a Signature" : null;
+            case hybridSign, hybridVerify -> {
+                if (signer == null) {
+                    missing = "a Signature";
+                } else if (classicalSigner == null) {
+                    missing = "a classical Signature";
+                }
+            }
+            case generateSecretKeyEncapsulation, extractSecretKeyEncapsulation ->
+                missing = keyGenerator == null ? "a KeyGenerator" : null;
+            case hybridGenerateSecretKeyEncapsulation, hybridExtractSecretKeyEncapsulation -> {
+                if (keyGenerator == null) {
+                    missing = "a KeyGenerator";
+                } else if (classicalKeyAgreement == null) {
+                    missing = "a classical KeyAgreement";
+                }
+            }
+            default -> {
+                // the remaining operations work off the exchange payload or the KeyLifecycleManager
+            }
+        }
+
+        if (missing != null) {
+            throw new IllegalArgumentException(
+                    "The " + PQCConstants.OPERATION + " header requests operation '" + operation
+                                               + "', but this endpoint is configured for '"
+                                               + getConfiguration().getOperation()
+                                               + "' and so holds no " + missing
+                                               + " for it. Configure a separate endpoint for that operation, or set"
+                                               + " the matching algorithm and key material on this one.");
+        }
     }
 
     protected PQCConfiguration getConfiguration() {
@@ -1272,7 +1317,9 @@ public class PQCProducer extends DefaultProducer {
                                 classicalAlg);
                     }
                 } catch (IllegalArgumentException e) {
-                    // Unknown classical algorithm - will fail later during init
+                    // Not fatal here: the endpoint may still be configured with explicit classical key material.
+                    // It is logged because otherwise a typo surfaces much later as an opaque initialisation failure.
+                    LOG.debug("Unknown classical signature algorithm '{}', skipping its advisory checks", classicalAlg, e);
                 }
             }
             String pqcAlg = config.getSignatureAlgorithm();

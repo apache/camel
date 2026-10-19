@@ -302,6 +302,19 @@ model better at tool calling, such as `qwen3.6`, is installed.
 `bean`). Scripts that read the `REMOTE` column of the table must read `SCOPE` instead. The `--json` output keeps
 `remote` and adds `internal`.
 
+=== camel-pqc - the CamelPQCOperation header is validated, and two header types are corrected
+
+A `CamelPQCOperation` header selecting an operation the endpoint holds no key material for is now rejected with an
+`IllegalArgumentException` naming the requested operation, the configured one, and what is missing. Before, an
+override crossing between the signature and the key encapsulation operations dereferenced a null and surfaced as a
+bare `NullPointerException`. Routes relying on such an override have to configure a separate endpoint for the other
+operation; the override itself keeps working within a family and for the operations that need no key material.
+
+Two header declarations also carried the wrong `javaType` in the component metadata, which is visible to tooling and
+in the generated header table. `CamelPQCOperation` is `org.apache.camel.component.pqc.PQCOperations` (was `String`)
+and `CamelPQCSecretKey` is `javax.crypto.SecretKey` (was `Boolean`). The runtime values are unchanged - only the
+declared types were wrong.
+
 === camel-jbang - finding integrations by name or PID
 
 All commands find running integrations the same way:
