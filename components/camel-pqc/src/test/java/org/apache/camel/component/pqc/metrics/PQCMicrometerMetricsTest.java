@@ -21,12 +21,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Micrometer holds the state object of a gauge through a weak reference, so the remaining-signatures supplier has to be
@@ -95,13 +97,18 @@ class PQCMicrometerMetricsTest {
     }
 
     @Test
-    void noMeterRegistryYieldsTheNoopImplementation() {
-        assertNotNull(PQCMetrics.NOOP);
-        // the no-op must tolerate every call without a registry behind it
-        PQCMetrics.NOOP.recordOperation("sign", "MLDSA", true);
-        PQCMetrics.NOOP.registerStatefulKeyGauge("LMS", () -> 1);
-        PQCMetrics.NOOP.close();
-        assertFalse(PQCMetrics.NOOP instanceof PQCMicrometerMetrics);
+    void aContextWithoutAMeterRegistryYieldsTheNoopImplementation() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.start();
+
+            PQCMetrics metrics = PQCMicrometerMetrics.create(context);
+
+            assertSame(PQCMetrics.NOOP, metrics, "with no MeterRegistry in the registry the no-op must be returned");
+            // the no-op must tolerate every call without a registry behind it
+            metrics.recordOperation("sign", "MLDSA", true);
+            metrics.registerStatefulKeyGauge("LMS", () -> 1);
+            metrics.close();
+        }
     }
 
     /**
@@ -113,6 +120,7 @@ class PQCMicrometerMetricsTest {
         for (int i = 0; i < 100 && canary.get() != null; i++) {
             System.gc();
         }
-        assertNull(canary.get(), "no garbage collection was observed, the test below would prove nothing");
+        // -XX:+DisableExplicitGC makes System.gc() a no-op; the assertion below would then prove nothing
+        assumeTrue(canary.get() == null, "no garbage collection was observed, skipping");
     }
 }
