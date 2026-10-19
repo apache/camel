@@ -82,7 +82,7 @@ public class PQCOperationHeaderOverrideTest extends CamelTestSupport {
 
         String message = cause.getMessage();
         assertTrue(message.contains("generateSecretKeyEncapsulation"), "must name the requested operation: " + message);
-        assertTrue(message.contains("sign"), "must name the configured operation: " + message);
+        assertTrue(message.contains("configured for 'sign'"), "must name the configured operation: " + message);
         assertTrue(message.contains("KeyGenerator"), "must name what is missing: " + message);
     }
 
