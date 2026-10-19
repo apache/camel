@@ -229,6 +229,11 @@ or of `--source-dir`, and from the properties files given on the command line or
 for example `camel run camel/*.yaml camel/application.properties` run from the parent directory of `camel`.
 They are added to the dependencies given with `--dep`.
 
+In dev mode (`--dev`), a dependency that is added to `camel.jbang.dependencies` (or `camel.jbang.dependencies.main`)
+while the application runs is downloaded when the properties file is reloaded, before the beans and components
+of the file are created. To change the version of a library that is on the classpath, or to remove a library,
+restart the application.
+
 == Including resource directories
 
 To include entire directories of resource files (such as XSD schemas, WSDL files, etc.)
