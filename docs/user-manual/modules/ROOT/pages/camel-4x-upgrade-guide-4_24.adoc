@@ -1297,6 +1297,13 @@ In both cases the objects are no longer kept in the `inProgressRepository`; befo
 the same key) was skipped by all later polls until the endpoint was restarted. With the `fileName` option, a failed
 get still fails the poll.
 
+=== camel-aws2-s3 - the producer stores the whole body when the content-length header is stale
+
+When the length of the body is known without reading it (a `byte[]`, `String`, file, `Path` or cached stream), the
+producer now uploads it with that length, and the `CamelAwsS3ContentLength` header is only used for a stream whose
+length is not known. Previously the header took precedence: after a route changed the body of an object read by the
+aws2-s3 consumer (which sets the header), a longer body was stored cut to the old length and a shorter one failed.
+
 === camel-mina - the host name of the server is verified over SSL
 
 When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the

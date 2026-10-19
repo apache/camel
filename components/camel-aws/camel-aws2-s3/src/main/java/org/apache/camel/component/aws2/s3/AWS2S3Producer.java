@@ -191,11 +191,8 @@ public class AWS2S3Producer extends DefaultProducer {
             contentLength = f.length();
         } else {
             // okay we use input stream
-            if (contentLength <= 0) {
-                // such as a java.nio.file.Path, byte[] or stream cache
-                contentLength = PayloadHelper.getLength(obj);
-            }
             inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
+            contentLength = bodyLength(obj, inputStream, contentLength);
             if (contentLength <= 0) {
                 contentLength = PayloadHelper.getLength(inputStream);
                 if (contentLength == -1) {
@@ -369,11 +366,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 contentLength = filePayload.length();
             } else {
                 // okay we use input stream
-                if (contentLength <= 0) {
-                    // such as a java.nio.file.Path, byte[] or stream cache
-                    contentLength = PayloadHelper.getLength(obj);
-                }
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
+                contentLength = bodyLength(obj, inputStream, contentLength);
                 if (contentLength <= 0) {
                     contentLength = PayloadHelper.getLength(inputStream);
                     if (contentLength == -1) {
@@ -395,6 +389,20 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isDeleteAfterWrite() && filePayload != null) {
             FileUtil.deleteFile(filePayload);
         }
+    }
+
+    /**
+     * The length of the body when it is known without reading it (such as a java.nio.file.Path, byte[], String or
+     * stream cache), otherwise the given content-length header. The header is not used for a body of known length, as
+     * it can be stale once the route changed the body (for example the length of an object read by the consumer), and
+     * the SDK sends exactly that many bytes.
+     */
+    private static long bodyLength(Object body, InputStream inputStream, long contentLengthHeader) {
+        long length = PayloadHelper.getLength(body);
+        if (length < 0) {
+            length = PayloadHelper.getLength(inputStream);
+        }
+        return length >= 0 ? length : contentLengthHeader;
     }
 
     private void doPutObject(
