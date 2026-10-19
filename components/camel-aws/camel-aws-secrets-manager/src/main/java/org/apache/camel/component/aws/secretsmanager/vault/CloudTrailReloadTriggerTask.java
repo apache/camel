@@ -281,18 +281,21 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     }
 
     /**
-     * Adds every event with the given event name since the last check to the list, reading all pages.
+     * Adds every event with the given event name since the given time to the list, reading all pages.
+     *
+     * @param since the start time of the lookup, the same for every page and every event name of one check; null to
+     *              look up without a start time
      */
-    private void lookupEvents(String eventName, List<Event> events) {
+    private void lookupEvents(String eventName, Instant since, List<Event> events) {
         String nextToken = null;
         do {
             LookupEventsRequest.Builder eventsRequestBuilder = LookupEventsRequest.builder()
                     .maxResults(LOOKUP_MAX_RESULTS)
                     .lookupAttributes(LookupAttribute.builder().attributeKey(LookupAttributeKey.EVENT_NAME)
                             .attributeValue(eventName).build());
-            if (lastTime != null) {
+            if (since != null) {
                 // inclusive, so an event in the same second as the newest event seen is not skipped
-                eventsRequestBuilder.startTime(lastTime);
+                eventsRequestBuilder.startTime(since);
             }
             if (nextToken != null) {
                 eventsRequestBuilder.nextToken(nextToken);
@@ -314,13 +317,16 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 // read every page of the update events since the last check. LookupEvents takes a single lookup
                 // attribute, so there is one lookup per event name: filtering on the event source instead would also
                 // return every read (GetSecretValue, DescribeSecret), and the pages would grow with the read traffic
+                // read lastTime once: every page of both lookups uses the same start time, even if the task is shut
+                // down (which clears lastTime) while the lookups run
+                Instant since = lastTime;
                 List<Event> events = new ArrayList<>();
                 for (String eventName : UPDATE_EVENT_NAMES) {
-                    lookupEvents(eventName, events);
+                    lookupEvents(eventName, since, events);
                 }
 
                 LOG.debug("Found {} events", events.size());
-                Instant newest = lastTime;
+                Instant newest = since;
                 Set<String> newestEventIds = new HashSet<>();
                 for (Event event : events) {
                     if (lastTimeEventIds.contains(event.eventId())) {
@@ -335,25 +341,25 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                     } else if (eventTime.equals(newest)) {
                         newestEventIds.add(event.eventId());
                     }
-                    if (event.eventSource().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
-                        if (event.eventName().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
-                                || event.eventName().equalsIgnoreCase(SECRETSMANAGER_UPDATE_SECRET_EVENT)) {
-                            List<Resource> a = event.resources();
-                            for (Resource res : a) {
-                                String name = res.resourceName();
-                                if (matchSecret(name)) {
-                                    updates.put(name, event.eventTime());
-                                    if (isReloadEnabled()) {
-                                        LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
-                                        triggerReloading = true;
-                                    }
-                                    break;
-                                }
+                    // the lookups are filtered by event name (PutSecretValue or UpdateSecret), but event names are not
+                    // unique across AWS services, so the event source is still checked
+                    if (!SECRETSMANAGER_AMAZONAWS_COM.equalsIgnoreCase(event.eventSource())) {
+                        continue;
+                    }
+                    List<Resource> a = event.resources();
+                    for (Resource res : a) {
+                        String name = res.resourceName();
+                        if (matchSecret(name)) {
+                            updates.put(name, event.eventTime());
+                            if (isReloadEnabled()) {
+                                LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
+                                triggerReloading = true;
                             }
+                            break;
                         }
                     }
                 }
-                if (newest != null && newest.equals(lastTime)) {
+                if (newest != null && newest.equals(since)) {
                     // no newer event: the events at lastTime seen before are still returned by the next lookup
                     newestEventIds.addAll(lastTimeEventIds);
                 }
