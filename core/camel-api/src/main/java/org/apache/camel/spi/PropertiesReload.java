@@ -44,4 +44,20 @@ public interface PropertiesReload {
      */
     void onReload(String name, Properties properties) throws Exception;
 
+    /**
+     * Callback when a resource with properties changed and is re-loaded, such as a properties file that was saved while
+     * live reloading is enabled. Unlike {@link #onReload(String, Properties)}, the properties are only those that
+     * changed, as the user edited them, so a listener can tell which changes it cannot apply without a restart.
+     * <p/>
+     * The default calls {@link #onReload(String, Properties)}.
+     *
+     * @param  name       name of the resource such as the file name (absolute)
+     * @param  properties the properties that changed
+     * @throws Exception  error reloading properties
+     * @since             4.24
+     */
+    default void onChanged(String name, Properties properties) throws Exception {
+        onReload(name, properties);
+    }
+
 }
