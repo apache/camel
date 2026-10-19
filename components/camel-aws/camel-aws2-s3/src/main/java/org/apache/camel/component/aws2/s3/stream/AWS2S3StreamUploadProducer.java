@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -71,9 +72,21 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AWS2S3StreamUploadProducer.class);
     private static final String TIMEOUT_CHECKER_EXECUTOR_NAME = "S3_Streaming_Upload_Timeout_Checker";
+    // the number of timestamp windows whose completed uploads are counted
+    private static final int MAX_COUNTED_WINDOWS = 10000;
     private AtomicInteger part = new AtomicInteger();
     private UploadState uploadAggregate = null;
     private final Map<Long, UploadState> timestampBasedUploads = new ConcurrentHashMap<>();
+    // The uploads completed for each timestamp window, guarded by the lock. A window is uploaded again when it gets
+    // more messages after its upload was completed (batchMessageNumber, batchSize or streamingUploadTimeout); the new
+    // object gets a name of its own, as an object with the name of the first one would replace it. Only the windows
+    // used last are counted, so a long-running producer does not keep every window it has seen.
+    private final Map<Long, Integer> completedUploadsByWindow = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Long, Integer> eldest) {
+            return size() > MAX_COUNTED_WINDOWS;
+        }
+    };
     private final Lock lock = new ReentrantLock();
     private transient String s3ProducerToString;
     private ScheduledExecutorService timeoutCheckerExecutorService;
@@ -155,6 +168,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                             try {
                                 uploadPart(state);
                                 completeUpload(state);
+                                completedUploadsByWindow.merge(entry.getKey(), 1, Integer::sum);
                             } catch (Exception e) {
                                 LOG.warn("Error during timeout-triggered upload flush for {}", state.dynamicKeyName, e);
                             }
@@ -373,7 +387,8 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     final String keyName = getConfiguration().getKeyName();
                     final String fileName = AWS2S3Utils.determineFileName(keyName);
                     final String extension = AWS2S3Utils.determineFileExtension(keyName);
-                    newState.dynamicKeyName = generateTimestampBasedFileName(fileName, extension, timestampWindow);
+                    newState.dynamicKeyName = generateTimestampBasedFileName(fileName, extension, timestampWindow,
+                            completedUploadsByWindow.getOrDefault(timestampWindow, 0));
 
                     // Initialize multipart upload
                     CreateMultipartUploadRequest.Builder createMultipartUploadRequest
@@ -423,6 +438,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                         uploadPart(state);
                     CompleteMultipartUploadResponse uploadResult = completeUpload(state);
                     timestampBasedUploads.remove(timestampWindow);
+                    completedUploadsByWindow.merge(timestampWindow, 1, Integer::sum);
                     if (getConfiguration().isMultiPartUpload()) {
                         maxRead = Math.toIntExact(getConfiguration().getPartSize());
                     }
@@ -557,7 +573,13 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         return (timestamp / windowSize) * windowSize;
     }
 
-    private String generateTimestampBasedFileName(String baseFileName, String extension, long timestampWindow) {
+    /**
+     * The name of an upload of a timestamp window: the first upload of the window has the name of the window, a later
+     * one (the window got more messages after its upload was completed) gets the number of the uploads before it as a
+     * suffix, so it does not replace them.
+     */
+    private String generateTimestampBasedFileName(
+            String baseFileName, String extension, long timestampWindow, int completedUploads) {
         Date windowStart = new Date(timestampWindow);
         Date windowEnd = new Date(timestampWindow + getConfiguration().getTimestampWindowSizeMillis());
 
@@ -577,6 +599,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         SimpleDateFormat timeFormat = new SimpleDateFormat(timePattern);
         timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         String timeRange = timeFormat.format(windowStart) + "-" + timeFormat.format(windowEnd);
+        if (completedUploads > 0) {
+            timeRange = timeRange + "-" + completedUploads;
+        }
 
         if (extension != null && !extension.isEmpty()) {
             return baseFileName + "_" + sdf.format(windowStart) + "_" + timeRange + extension;

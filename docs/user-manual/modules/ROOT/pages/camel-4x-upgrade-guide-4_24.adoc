@@ -1268,6 +1268,18 @@ context. A check sends two `LookupEvents` requests, one per event name, and one 
 always one request, for all Secrets Manager events); reads of secrets no longer add requests. LookupEvents allows two
 requests per second per account and Region.
 
+=== camel-aws2-s3 - a timestamp window uploaded more than once is stored in more than one object
+
+With `streamingUploadMode=true` and `timestampGroupingEnabled=true`, the upload of a time window is completed when it
+reaches `batchMessageNumber` messages (10 by default) or `batchSize` bytes, or when `streamingUploadTimeout` runs. A
+later message of the same window started a new upload with the same key, and S3 replaced the object of the first upload
+with it, so the messages of the earlier uploads were lost (unless the bucket is versioned). A later upload of a window
+now gets the number of the uploads of that window before it after the time range: for example
+`grouped-messages_20240101_0800_0800-0805.txt`, then `grouped-messages_20240101_0800_0800-0805-1.txt`,
+`grouped-messages_20240101_0800_0800-0805-2.txt`, and so on. The first upload of a window keeps the name it had. The
+producer counts the uploads of the last 10000 windows it completed, and starts again from the name of the first upload
+when it is restarted.
+
 === camel-aws2-kinesis - the consumer continues after the last record when a shard iterator expired
 
 When a cached shard iterator has expired (an iterator is valid for 5 minutes, so after a route was suspended for

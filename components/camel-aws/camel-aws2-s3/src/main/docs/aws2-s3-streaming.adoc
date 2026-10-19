@@ -96,7 +96,11 @@ Messages are grouped based on their timestamps extracted from the specified head
 - Date: Java Date object
 - String: String representation of Unix timestamp in milliseconds
 
-Files are automatically named using a timestamp-based pattern that includes the time window information.
+Files are automatically named using a timestamp-based pattern that includes the time window information, for example
+`grouped-messages_20240101_0800_0800-0805.txt` for the window from 08:00 to 08:05 (UTC). The upload of a window is
+completed when it reaches `batchMessageNumber` messages or `batchSize` bytes, or when `streamingUploadTimeout` runs. When
+more messages of that window come after it, they are uploaded to a new object of the window, named with the number of
+the uploads of the window before it: `grouped-messages_20240101_0800_0800-0805-1.txt`, then `-2`, and so on.
 
 ==== Example Configuration
 
