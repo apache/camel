@@ -51,8 +51,18 @@ public class MainPropertiesReload extends ServiceSupport
 
     @Override
     public void onReload(String name, Properties properties) throws Exception {
+        // such as a context reload, which applies the options with a property placeholder again (secret rotation)
         if (properties instanceof OrderedLocationProperties prop) {
-            main.autoConfigurationFromReloadedProperties(camelContext, prop);
+            main.autoConfigurationFromReloadedProperties(camelContext, prop, false);
+            main.autowireWildcardProperties(camelContext);
+        }
+    }
+
+    @Override
+    public void onChanged(String name, Properties properties) throws Exception {
+        // a properties file that changed, such as application.properties in dev mode: the properties that changed
+        if (properties instanceof OrderedLocationProperties prop) {
+            main.autoConfigurationFromReloadedProperties(camelContext, prop, true);
             main.autowireWildcardProperties(camelContext);
         }
     }

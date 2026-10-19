@@ -257,6 +257,18 @@ class CatalogDocsTest {
     }
 
     @Test
+    void aBrokerWithoutAComponentOfItsOwnFindsJms() {
+        // CAMEL-25783: nothing in the catalog is named artemis, so a model asking for it found nothing
+        DefaultCamelCatalog catalog = new DefaultCamelCatalog();
+        for (String term : List.of("artemis", "ibm mq")) {
+            JsonArray matches = (JsonArray) CatalogDocs.find(catalog, term, null, 10).get("matches");
+            JsonObject first = (JsonObject) matches.get(0);
+            assertEquals("jms", first.getString("name"), term);
+            assertTrue(first.getString("note").contains("Connecting to a broker"), first.toJson());
+        }
+    }
+
+    @Test
     void anInterfaceNameFindsTheBuiltInBeans() {
         org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
         var result = CatalogDocs.find(catalog, "AggregationStrategy", "bean", 20);

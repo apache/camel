@@ -109,6 +109,10 @@ public final class CatalogSamples {
     private static final String[] HTTP_CALL = {
             "http", "a to: with the http component (toD: when the URI is built from the message, such as a path"
                     + " parameter); the response becomes the message body" };
+    // a JMS broker without a component of its own (CAMEL-25783)
+    private static final String[] JMS_BROKER = {
+            "jms", "the jms component, with the ConnectionFactory of the broker's client library as a bean on the"
+                   + " component (the jms page shows it under Connecting to a broker)" };
     private static final String[] OPENAPI_CALL = {
             "rest-openapi", "a to: with the rest-openapi component, its specificationUri and operationId; path and"
                             + " query parameters come from headers of the same name, the body is the request body" };
@@ -138,7 +142,9 @@ public final class CatalogSamples {
             Map.entry("call service", HTTP_CALL), Map.entry("call", HTTP_CALL), Map.entry("http call", HTTP_CALL),
             Map.entry("call api", HTTP_CALL), Map.entry("http client", HTTP_CALL), Map.entry("call http", HTTP_CALL),
             Map.entry("openapi client", OPENAPI_CALL), Map.entry("call by contract", OPENAPI_CALL),
-            Map.entry("call operation", OPENAPI_CALL));
+            Map.entry("call operation", OPENAPI_CALL),
+            Map.entry("artemis", JMS_BROKER), Map.entry("activemq artemis", JMS_BROKER), Map.entry("ibm mq", JMS_BROKER),
+            Map.entry("ibmmq", JMS_BROKER), Map.entry("websphere mq", JMS_BROKER));
 
     private static volatile Map<String, List<Map<String, String>>> samples;
 

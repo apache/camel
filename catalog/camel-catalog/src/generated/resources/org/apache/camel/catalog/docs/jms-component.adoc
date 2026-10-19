@@ -35,11 +35,11 @@ for this component:
 ====
 *Using ActiveMQ*
 
-If you are using http://activemq.apache.org/[Apache ActiveMQ], you
+If you are using http://activemq.apache.org/[Apache ActiveMQ] Classic, you
 should prefer the ActiveMQ component as it has been
 optimized for ActiveMQ. All the options and
 samples on this page are also valid for the ActiveMQ
-component.
+component. For ActiveMQ Artemis, use this component, as shown in _Connecting to a broker_ below.
 ====
 
 [NOTE]
@@ -59,6 +59,78 @@ this page for important notes about request/reply, as Camel offers a
 number of options to configure for performance, and clustered
 environments.
 ====
+
+== Connecting to a broker
+
+The JMS component needs a `ConnectionFactory` from the client library of the broker. Create it as a bean, and set it
+on the component with the `connectionFactory` option. Put a connection pool around it: without a pool, the component
+opens a new connection for every message it sends.
+
+For example, for ActiveMQ Artemis (such as the broker that `camel infra run artemis` starts), with the
+https://github.com/messaginghub/pooled-jms[pooled-jms] connection pool:
+
+[tabs]
+====
+Application properties::
++
+[source,properties]
+----
+camel.beans.artemisCF = #class:org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory
+camel.beans.artemisCF.brokerURL = tcp://localhost:61616
+camel.beans.artemisCF.user = artemis
+camel.beans.artemisCF.password = artemis
+camel.beans.pooledCF = #class:org.messaginghub.pooled.jms.JmsPoolConnectionFactory
+camel.beans.pooledCF.connectionFactory = #bean:artemisCF
+camel.beans.pooledCF.maxConnections = 8
+camel.component.jms.connection-factory = #bean:pooledCF
+----
+
+Java::
++
+[source,java]
+----
+ActiveMQConnectionFactory artemis = new ActiveMQConnectionFactory("tcp://localhost:61616", "artemis", "artemis");
+JmsPoolConnectionFactory pool = new JmsPoolConnectionFactory();
+pool.setConnectionFactory(artemis);
+pool.setMaxConnections(8);
+context.getComponent("jms", JmsComponent.class).setConnectionFactory(pool);
+----
+
+Spring XML::
++
+[source,xml]
+----
+<bean id="artemisCF" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+  <property name="brokerURL" value="tcp://localhost:61616"/>
+  <property name="user" value="artemis"/>
+  <property name="password" value="artemis"/>
+</bean>
+
+<bean id="pooledCF" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" destroy-method="stop">
+  <property name="connectionFactory" ref="artemisCF"/>
+  <property name="maxConnections" value="8"/>
+</bean>
+
+<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+  <property name="connectionFactory" ref="pooledCF"/>
+</bean>
+----
+====
+
+The application properties work with routes in any DSL (YAML, XML or Java) on Camel Main and Camel JBang. Then the
+routes use the broker as usual, for example `jms:queue:orders`.
+
+When the registry has exactly one `ConnectionFactory`, the component uses it without the `connectionFactory` option
+(`allowAutoWiredConnectionFactory`, which is on by default). The example has two, the one of the client and the pool,
+so it sets the pool on the component.
+
+`camel run` downloads the client libraries of these classes. In a Maven project, add
+`org.apache.artemis:artemis-jakarta-client` and `org.messaginghub:pooled-jms`.
+
+Other brokers work the same way, with the `ConnectionFactory` of their client library, for example
+`com.ibm.mq.jakarta.jms.MQConnectionFactory` for IBM MQ (with `hostName`, `port`, `channel`, `queueManager`, and
+`transportType` set to `1` for a client connection). For ActiveMQ Classic, the xref:activemq-component.adoc[ActiveMQ]
+component sets up the connection factory from a `brokerURL`.
 
 == URI format
 
@@ -887,24 +959,33 @@ another JMS endpoint).
 
 === Configuring different JMS providers
 
-You can configure your JMS provider in Spring XML as
-follows:
+You can configure as many JMS component instances as you wish, each with its own connection factory, and give each a
+unique name. For example, a component named `artemis`, with the `pooledCF` connection factory from _Connecting to a
+broker_ above:
 
-You can configure as many JMS component instances as you wish
-and give them *a unique name using the* `id` **attribute**. The
-preceding example configures an `activemq` component. You could do the
-same to configure MQSeries, TibCo, BEA, Sonic and so on.
+[tabs]
+====
+Application properties::
++
+[source,properties]
+----
+camel.beans.artemis = #class:org.apache.camel.component.jms.JmsComponent
+camel.beans.artemis.connectionFactory = #bean:pooledCF
+----
 
-Once you have a named JMS component, you can then refer to endpoints
-within that component using URIs. For example, for the component name,
-`activemq`, you can then refer to destinations using the URI format,
-`activemq:[queue:|topic:]destinationName`. You can use the same approach
-for all other JMS providers.
+Spring XML::
++
+[source,xml]
+----
+<bean id="artemis" class="org.apache.camel.component.jms.JmsComponent">
+  <property name="connectionFactory" ref="pooledCF"/>
+</bean>
+----
+====
 
-This works by the SpringCamelContext lazily fetching components from the
-spring context for the scheme name you use for
-Endpoint URIs and having the
-Component resolve the endpoint URIs.
+Once you have a named JMS component, you can refer to destinations of that component with its name as the scheme, for
+example `artemis:[queue:|topic:]destinationName`. Camel looks up the component by that name in the registry. You can
+do the same for other JMS providers, such as IBM MQ or TIBCO EMS.
 
 ==== Using JNDI to find the ConnectionFactory
 
