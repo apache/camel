@@ -446,8 +446,12 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * saved together with a property it uses is therefore built with that property already in place, instead of failing
      * on it and being restored (CAMEL-25032).
      * <p/>
-     * If the batch fails, the files are reloaded one at a time: the reload then fails on the one file that is wrong and
-     * says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
+     * A properties or Groovy file that fails is reported at once, as when it changed alone, and the other files still
+     * reload. A properties file is not reloaded again: the properties component has its new values already, so the file
+     * would have no changes left, and its failure would be lost (CAMEL-25834).
+     * <p/>
+     * If the routes fail, the route files are reloaded one at a time: the reload then fails on the one file that is
+     * wrong and says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
      */
     @Override
     protected void onReloadBatch(List<File> changed) {
@@ -456,21 +460,27 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             super.onReloadBatch(changed);
             return;
         }
+        setLastError(null);
+        List<File> routeFiles = new ArrayList<>();
         List<Resource> routes = new ArrayList<>();
         boolean others = false;
-        try {
-            setLastError(null);
-            for (File file : changed) {
-                String name = FileUtil.compactPath(file.getPath());
-                Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
-                if (name.endsWith(".properties")) {
-                    others |= onPropertiesReload(resource, false);
-                } else if (name.endsWith(".groovy")) {
-                    others |= onGroovyReload(resource, false);
-                } else {
-                    routes.add(resource);
+        for (File file : changed) {
+            String name = FileUtil.compactPath(file.getPath());
+            Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
+            if (name.endsWith(".properties") || name.endsWith(".groovy")) {
+                try {
+                    others |= name.endsWith(".properties")
+                            ? onPropertiesReload(resource, false) : onGroovyReload(resource, false);
+                    incSucceededCounter();
+                } catch (Exception e) {
+                    reloadFailed(name, e);
                 }
+            } else {
+                routeFiles.add(file);
+                routes.add(resource);
             }
+        }
+        try {
             if (!routes.isEmpty()) {
                 onRouteReload(routes, false);
             } else if (others) {
@@ -478,14 +488,14 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 retryFailedOrReloadAll();
             }
             // the counter is files reloaded, as it is when they are reloaded one at a time
-            for (int i = 0; i < changed.size(); i++) {
+            for (int i = 0; i < routes.size(); i++) {
                 incSucceededCounter();
             }
         } catch (Exception e) {
-            LOG.debug("Reloading {} changed file(s) together failed, reloading them one at a time to find the file"
-                      + " that is wrong: {}",
-                    changed.size(), e.getMessage(), e);
-            super.onReloadBatch(changed);
+            LOG.debug("Reloading {} changed route file(s) together failed, reloading them one at a time to find the"
+                      + " file that is wrong: {}",
+                    routes.size(), e.getMessage(), e);
+            super.onReloadBatch(routeFiles);
         }
     }
 
