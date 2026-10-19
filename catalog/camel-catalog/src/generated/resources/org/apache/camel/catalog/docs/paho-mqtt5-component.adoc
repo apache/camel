@@ -79,6 +79,24 @@ String payload = "message";
 producerTemplate.sendBody("paho-mqtt5:topic", payload);
 ----
 
+=== Manual acknowledgements
+
+With `manualAcksEnabled=true` a message is acknowledged when its exchange completes. MQTT has no negative
+acknowledgement: the broker sends an unacknowledged message again only when the client connects again to the same
+session, and it does not send more than `receiveMaximum` unacknowledged messages to the client. So when an exchange
+fails:
+
+* with `cleanStart=false` the consumer disconnects and connects again, and the broker sends the message again;
+* with a clean session (`cleanStart=true`, the default) the broker never sends the message again, so the consumer
+  acknowledges it, and the failure is left to the Camel error handler;
+* with a client set by the `client` option the message stays unacknowledged until that client connects again.
+
+With `cleanStart=false` the reconnects of failed exchanges in a row back off: the first one waits one second, each
+further one waits twice as long, up to `maxReconnectDelay`, and a successful exchange starts again from one second.
+Each such reconnect is logged at WARN. The broker then also sends again the other messages that were not acknowledged
+yet, such as the ones still being routed. A message that always fails is still delivered again and again; use a Camel
+error handler, for example a dead letter channel, for such messages.
+
 
 == Examples
 

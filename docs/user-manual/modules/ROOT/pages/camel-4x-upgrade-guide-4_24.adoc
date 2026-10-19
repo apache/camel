@@ -805,6 +805,16 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-paho-mqtt5 - a failed message with manualAcksEnabled is delivered again or acknowledged
+
+With `manualAcksEnabled=true`, a message whose exchange failed was left unacknowledged. The broker never sent it
+again during the connection, and after `receiveMaximum` such messages it sent the consumer nothing more. Now, with
+`cleanStart=false` the consumer connects again after a failed exchange (after one second, doubled for each failed
+exchange in a row up to `maxReconnectDelay`, logged at WARN), and the broker sends the message again; with a
+clean session (`cleanStart=true`, the default), where the broker never sends it again, the failed message is
+acknowledged and the failure is left to the Camel error handler. A consumer that uses a client set with the `client`
+option keeps the old behaviour.
+
 === camel-iggy - messageExpiry is sent to Iggy in microseconds
 
 The `messageExpiry` option is in seconds, but its value was passed unchanged to Iggy, which reads the message expiry

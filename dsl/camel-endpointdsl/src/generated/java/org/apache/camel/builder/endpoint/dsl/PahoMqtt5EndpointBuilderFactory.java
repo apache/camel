@@ -666,9 +666,11 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * default, this is false and message will be automatically acknowledged
          * upon received by Camel. If set to true, the acknowledgement is
          * deferred to be acknowledged by Camel at the end of processing the
-         * message. This ensures that only successfully processed messages is
-         * acknowledged, and allows to rollback and retry the message in case of
-         * an error during routing in Camel.
+         * message. This ensures that only successfully processed messages are
+         * acknowledged. When the processing fails, with cleanStart=false the
+         * consumer connects again so that the broker sends the message again;
+         * with a clean session the broker would never send it again, so the
+         * message is acknowledged.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -687,9 +689,11 @@ public interface PahoMqtt5EndpointBuilderFactory {
          * default, this is false and message will be automatically acknowledged
          * upon received by Camel. If set to true, the acknowledgement is
          * deferred to be acknowledged by Camel at the end of processing the
-         * message. This ensures that only successfully processed messages is
-         * acknowledged, and allows to rollback and retry the message in case of
-         * an error during routing in Camel.
+         * message. This ensures that only successfully processed messages are
+         * acknowledged. When the processing fails, with cleanStart=false the
+         * consumer connects again so that the broker sends the message again;
+         * with a clean session the broker would never send it again, so the
+         * message is acknowledged.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

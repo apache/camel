@@ -17,7 +17,10 @@
 package org.apache.camel.component.paho.mqtt5;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -45,6 +48,10 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     private volatile boolean stopClient;
     private volatile MqttConnectionOptions connectionOptions;
     private final AtomicBoolean restarting = new AtomicBoolean(false);
+    private final AtomicBoolean reconnecting = new AtomicBoolean(false);
+    // failed exchanges in a row that made the consumer reconnect, for the backoff; reset by a successful exchange
+    private final AtomicInteger failedMessageReconnects = new AtomicInteger();
+    private volatile ScheduledExecutorService reconnectExecutor;
 
     public PahoMqtt5Consumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -134,6 +141,13 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
             LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
             client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+
+            failedMessageReconnects.set(0);
+            if (stopClient && getEndpoint().getConfiguration().isManualAcksEnabled()
+                    && !getEndpoint().getConfiguration().isCleanStart()) {
+                reconnectExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                        .newSingleThreadScheduledExecutor(this, "PahoMqtt5-Reconnect");
+            }
         } catch (Exception startException) {
             MqttClient ownedClient = stopClient ? client : null;
             if (ownedClient != null) {
@@ -181,6 +195,12 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         MqttClient ownedClient = stopClient ? client : null;
         Exception stopException = null;
+        ScheduledExecutorService executor = reconnectExecutor;
+        if (executor != null) {
+            reconnectExecutor = null;
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+        }
+        reconnecting.set(false);
         try {
             super.doStop();
 
@@ -230,6 +250,113 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         return primaryException;
     }
 
+    /**
+     * MQTT has no negative acknowledgement: the broker sends an unacknowledged message again only when the client
+     * connects again to the same session, and it sends no more than receiveMaximum unacknowledged messages to the
+     * client. A failed message that is just left unacknowledged is therefore never retried, and enough of them stop the
+     * consumer for good.
+     * <p>
+     * With cleanStart=false the client reconnects, so that the broker sends the message again; the reconnects of failed
+     * exchanges in a row back off (see {@link #reconnectDelay(int)}), so that a message that always fails does not
+     * reconnect in a tight loop. With a clean session the broker never sends it again, so it is acknowledged, which
+     * frees its place in the receive window.
+     */
+    private void rollback(Exchange exchange, MqttMessage mqttMessage) {
+        MqttClient current = client;
+        if (current == null) {
+            return;
+        }
+        if (getEndpoint().getConfiguration().isCleanStart()) {
+            LOG.debug("Acknowledging failed MQTT message with ID: {} of Exchange ID: {} as a clean session never"
+                      + " delivers it again",
+                    mqttMessage.getId(), exchange.getExchangeId());
+            try {
+                current.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
+            } catch (MqttException e) {
+                getExceptionHandler().handleException(
+                        "Error acknowledging failed MQTT message with ID: " + mqttMessage.getId(), exchange, e);
+            }
+        } else if (stopClient) {
+            reconnectAfterFailure(current, exchange, mqttMessage);
+        } else {
+            LOG.warn("Rollback due to error processing Exchange ID: {}: MQTT message with ID: {} stays unacknowledged"
+                     + " until the externally provided client connects again",
+                    exchange.getExchangeId(), mqttMessage.getId());
+        }
+    }
+
+    private void reconnectAfterFailure(MqttClient current, Exchange exchange, MqttMessage mqttMessage) {
+        String reason = "Rollback due to error processing Exchange ID: " + exchange.getExchangeId()
+                        + ", so that the broker delivers MQTT message with ID: " + mqttMessage.getId() + " again";
+        if (!scheduleReconnect(current, reason)) {
+            LOG.debug("{}: a reconnect is already scheduled", reason);
+        }
+    }
+
+    /**
+     * The delay before the reconnect of the given failed exchange in a row: the minimum automatic reconnect delay of
+     * the client (1 second), doubled for each further failed exchange in a row, up to maxReconnectDelay.
+     */
+    private long reconnectDelay(int attempt) {
+        long max = Math.max(0, getEndpoint().getConfiguration().getMaxReconnectDelay());
+        MqttConnectionOptions options = connectionOptions;
+        long min = options != null ? TimeUnit.SECONDS.toMillis(options.getAutomaticReconnectMinDelay()) : 1000;
+        long delay = min << Math.min(attempt - 1, 20);
+        return Math.min(delay, max);
+    }
+
+    private void reconnect(MqttClient current) {
+        try {
+            // the message callback may still be running (disconnect is not allowed from it), so this runs here
+            if (isRunAllowed() && current == client && current.isConnected()) {
+                current.disconnect();
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Failed to disconnect after a failed exchange", e);
+        }
+        // the disconnect covers every message that failed until now; a message the broker sends again on the new
+        // connection can fail before this method returns, and must be able to schedule the next reconnect
+        reconnecting.set(false);
+        try {
+            if (isRunAllowed() && current == client && !current.isConnected()) {
+                current.connect(connectionOptions);
+                current.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Failed to reconnect after a failed exchange", e);
+            // the client does not reconnect on its own after a disconnect it was asked for, so try again later
+            scheduleReconnect(current, "Reconnect failed");
+        }
+    }
+
+    /**
+     * Schedules a reconnect after the backoff delay, unless one is already scheduled or the consumer is stopping.
+     */
+    private boolean scheduleReconnect(MqttClient current, String reason) {
+        ScheduledExecutorService executor = reconnectExecutor;
+        if (executor == null || !isRunAllowed() || !reconnecting.compareAndSet(false, true)) {
+            return false;
+        }
+        int attempt = failedMessageReconnects.incrementAndGet();
+        long delay = reconnectDelay(attempt);
+        LOG.warn("{}: reconnecting in {} ms (reconnect {} in a row)", reason, delay, attempt);
+        try {
+            executor.schedule(() -> reconnect(current), delay, TimeUnit.MILLISECONDS);
+            return true;
+        } catch (RuntimeException e) {
+            // the consumer is stopping
+            reconnecting.set(false);
+            return false;
+        }
+    }
+
+    /**
+     * The number of failed exchanges in a row that made the consumer reconnect. Package-private, for tests.
+     */
+    int getFailedMessageReconnects() {
+        return failedMessageReconnects.get();
+    }
+
     @Override
     public PahoMqtt5Endpoint getEndpoint() {
         return (PahoMqtt5Endpoint) super.getEndpoint();
@@ -249,6 +376,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
+                    failedMessageReconnects.set(0);
                     try {
                         PahoMqtt5Consumer.this.client.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
                     } catch (MqttException e) {
@@ -260,7 +388,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
                 @Override
                 public void onFailure(Exchange exchange) {
-                    LOG.debug("Rollback due to error processing Exchange ID: {}", exchange.getExchangeId());
+                    rollback(exchange, mqttMessage);
                 }
             });
         }
