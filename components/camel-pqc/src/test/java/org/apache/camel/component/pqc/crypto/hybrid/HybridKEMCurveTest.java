@@ -32,7 +32,7 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,11 +56,7 @@ class HybridKEMCurveTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "secp256r1",
-            "secp384r1",
-            "secp521r1"
-    })
+    @ValueSource(strings = { "secp256r1", "secp384r1", "secp521r1" })
     void hybridKemRoundTripsOnEveryNistCurve(String curve) throws Exception {
         KeyPairGenerator ecKpg = KeyPairGenerator.getInstance("EC", "BC");
         ecKpg.initialize(new ECGenParameterSpec(curve), new SecureRandom());
