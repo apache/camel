@@ -138,11 +138,11 @@ public class CatalogSamplesTest {
         // an exact component name (chunk is the Chunk templating component) beats an alias of an EIP, unless asked
         assertThat(CatalogSamples.sample(catalog, "chunk", 1).getString("kind")).isEqualTo("component");
         assertThat(CatalogSamples.sample(catalog, "eip", "chunk", 1).getString("name")).isEqualTo("split");
-        // an alias of an EIP whose page has no YAML example still names the EIP
+        // dedup is the idempotent consumer, which has samples since its page has examples (CAMEL-25774)
         JsonObject dedup = CatalogSamples.sample(catalog, "dedup", 1);
-        assertThat(dedup.getString("error")).contains("dedup");
-        assertThat(dedup.getString("eip")).isEqualTo("idempotentConsumer");
-        assertThat(dedup.getString("hint")).contains("idempotentConsumer EIP");
+        assertThat(dedup.getString("name")).isEqualTo("idempotentConsumer");
+        assertThat(dedup.getString("note")).contains("idempotentConsumer EIP");
+        assertThat((JsonArray) dedup.get("samples")).isNotEmpty();
         assertThat(CatalogSamples.sample(catalog, "rate-limit", 1).getString("name")).isEqualTo("throttle");
         assertThat(CatalogSamples.sample(catalog, "router", 1).getString("name")).isEqualTo("choice");
         // an aliased part of an EIP shows the whole
@@ -184,6 +184,7 @@ public class CatalogSamplesTest {
             JsonObject o = CatalogSamples.sample(catalog, term, 2);
             assertThat(o.getString("name")).as(term).isEqualTo("http");
             assertThat(o.getString("note")).as(term).contains("to:", "toD:");
+            // the uri may be quoted, as in the toD of the GET example on the http page (CAMEL-25745)
             assertThat(((JsonObject) ((JsonArray) o.get("samples")).get(0)).getString("yaml"))
                     .containsPattern("uri: \"?http");
         }
