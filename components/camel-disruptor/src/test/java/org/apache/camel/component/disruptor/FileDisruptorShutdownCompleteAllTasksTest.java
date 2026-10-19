@@ -50,6 +50,8 @@ public class FileDisruptorShutdownCompleteAllTasksTest extends CamelTestSupport 
             public void configure() {
                 from(url).routeId("route1")
                         // let it complete all tasks during shutdown
+                        // sync delay, so the poll thread routes the batch itself
+                        // and files are still pending when the context stops
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").delay(1000).syncDelayed()
                         .to("disruptor:foo?size=8");
 
