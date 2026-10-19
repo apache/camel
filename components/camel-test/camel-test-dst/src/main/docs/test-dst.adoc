@@ -226,11 +226,23 @@ dst.runFor(dst.between(0, 3L * visibilityTimeout * 1000));
 // faults cleared: the queue must drain
 faults = false;
 sqs.faults = false;
-long deadline = dst.now() + 20L * visibilityTimeout * 1000 + 30_000;
-while (!sqs.allDeleted() && dst.now() < deadline) {
+// drain while it makes progress: stop when no message was deleted for a while, or at a cap
+long quiet = 20L * visibilityTimeout * 1000 + 30_000;
+long cap = dst.now() + 3_600_000;
+int left = sqs.notDeleted().size();
+long lastProgress = dst.now();
+while (!sqs.allDeleted() && dst.now() < cap && dst.now() - lastProgress < quiet) {
     dst.runFor(100);
+    int now = sqs.notDeleted().size();
+    if (now < left) {
+        left = now;
+        lastProgress = dst.now();
+    }
 }
 ----
+
+Drain until progress stops, not for a fixed time. With a fixed drain time, 1 of 20,000 seeds failed falsely: one
+consumer taking one message per poll was still deleting messages when the time ran out.
 
 Some faults legitimately cause what the invariant forbids. Record which fault excuses which violation, and only those:
 a failed `ChangeMessageVisibilityBatch` lets SQS deliver the messages of that batch again, so `FakeSqs` reports their
