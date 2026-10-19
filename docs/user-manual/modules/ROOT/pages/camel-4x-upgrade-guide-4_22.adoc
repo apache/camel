@@ -13,6 +13,31 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.22.2 to 4.22.3
 
+=== camel-milo - the OPC UA client validates the server certificate
+
+When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components
+now validate the certificate of the OPC UA server. Before, any server certificate was accepted, and no option allowed
+to validate it.
+
+Configure the trusted certificates with the new `trustListDirectory` option: put the certificate of the server, or of
+the CA that issued it, in the `trusted/certs` directory of the trust list. A server certificate that does not chain up
+to a trusted certificate is written to `rejected/certs`, from where it can be moved to `trusted/certs` once it has been
+checked. The trust list also refuses a server certificate outside its validity period, revoked by a revocation list of
+the trust list, or whose application URI differs from the one of the server. A server certificate issued by a CA is
+refused with `Bad_CertificateRevocationUnknown` when the trust list holds no revocation list of that CA: add the CRL of
+the CA (an empty one is enough) to `trusted/crl` or `issuer/crl`. A custom validator can be configured with the new
+`certificateValidator` option instead.
+
+With neither option, the client does not connect to such an endpoint. It logs a `WARN` message
+`Failed to connect: The certificate of the OPC UA server cannot be validated`, followed by the endpoint and its
+security policy, and tries again every 10 seconds. A producer fails with `IllegalStateException: No connected`, caused
+by the same message. A server certificate refused by the trust list or by a `certificateValidator` is logged at `WARN`
+as `Failed to connect, because a certificate or security check failed`. To restore the previous behaviour, set the new
+`trustAllCertificates` option to `true`. This is insecure: the client then does not authenticate the server.
+
+The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
+use the security policy `None` are not affected.
+
 === camel-elasticsearch - the credentials are only sent to the nodes of the cluster
 
 The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
