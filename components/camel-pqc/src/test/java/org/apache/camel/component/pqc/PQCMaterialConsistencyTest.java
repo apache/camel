@@ -22,15 +22,21 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -79,12 +85,20 @@ class PQCMaterialConsistencyTest {
                 algorithm + " has a name-addressable BouncyCastle parameter spec and must accept parameterSpec");
     }
 
-    @Test
-    void mayoResolvesEveryDocumentedLevel() {
-        for (String name : new String[] { "mayo1", "mayo2", "mayo3", "mayo5" }) {
-            assertTrue(PQCParameterSpecResolver.resolve("MAYO", name).toString().toLowerCase().contains("mayo"),
-                    "MAYO must resolve " + name);
-        }
+    /**
+     * {@code MayoParameterSpec.fromName} returns {@code null} for an unknown name rather than throwing, and
+     * {@code getName()} answers the canonical form ({@code MAYO-1}) rather than echoing the requested one, so the level
+     * actually resolved is pinned explicitly.
+     */
+    @ParameterizedTest
+    @CsvSource({ "mayo1,MAYO-1", "mayo2,MAYO-2", "mayo3,MAYO-3", "mayo5,MAYO-5" })
+    void mayoResolvesEveryDocumentedLevel(String requested, String canonical) {
+        AlgorithmParameterSpec spec = PQCParameterSpecResolver.resolve("MAYO", requested);
+
+        assertNotNull(spec, "MAYO must resolve " + requested);
+        assertInstanceOf(MayoParameterSpec.class, spec, "MAYO must resolve to a MayoParameterSpec for " + requested);
+        assertEquals(canonical, ((MayoParameterSpec) spec).getName(),
+                "the resolved MAYO parameter set must be the level that was requested");
     }
 
     @Test
