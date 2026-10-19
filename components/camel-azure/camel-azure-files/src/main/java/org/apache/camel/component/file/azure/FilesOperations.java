@@ -76,6 +76,7 @@ public class FilesOperations extends NormalizedOperations {
     static final int HTTP_OK = 200;
     static final int HTTP_CREATED = 201;
     static final int HTTP_ACCEPTED = 202;
+    static final int HTTP_PARTIAL_CONTENT = 206;
     static final int HTTP_NOT_FOUND = 404;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -385,7 +386,9 @@ public class FilesOperations extends NormalizedOperations {
             log.trace("Downloading {} to local work directory.", remoteName);
             var ret = cwd().getFileClient(remoteName).downloadWithResponse(os, range, null, endpoint.getDataTimeout(),
                     Context.NONE);
-            result = ret.getStatusCode() == HTTP_OK;
+            // a download with a range (resumed download) is answered with 206 Partial Content
+            int status = ret.getStatusCode();
+            result = status == HTTP_OK || (status == HTTP_PARTIAL_CONTENT && range.getStart() > 0);
 
         } catch (RuntimeException e) {
             log.trace("Error occurred during retrieving file: {} to local directory.", name);
