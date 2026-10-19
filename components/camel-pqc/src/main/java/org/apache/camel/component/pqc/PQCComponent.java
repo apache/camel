@@ -114,6 +114,14 @@ public class PQCComponent extends HealthCheckComponent {
                         configuration.setSigner(PQCDefaultXMSSMaterial.signer);
                         configuration.setKeyPair(PQCDefaultXMSSMaterial.keyPair);
                         break;
+                    case "XMSSMT":
+                        configuration.setSigner(PQCDefaultXMSSMTMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultXMSSMTMaterial.keyPair);
+                        break;
+                    case "HSS":
+                        configuration.setSigner(PQCDefaultHSSMaterial.signer);
+                        configuration.setKeyPair(PQCDefaultHSSMaterial.keyPair);
+                        break;
                     case "FALCON":
                         configuration.setSigner(PQCDefaultFalconMaterial.signer);
                         configuration.setKeyPair(PQCDefaultFalconMaterial.keyPair);
@@ -175,6 +183,10 @@ public class PQCComponent extends HealthCheckComponent {
                     case "NTRULPRime":
                         configuration.setKeyGenerator(PQCDefaultNTRULPRimeMaterial.keyGenerator);
                         configuration.setKeyPair(PQCDefaultNTRULPRimeMaterial.keyPair);
+                        break;
+                    case "SNTRUPrime":
+                        configuration.setKeyGenerator(PQCDefaultSNTRUPrimeMaterial.keyGenerator);
+                        configuration.setKeyPair(PQCDefaultSNTRUPrimeMaterial.keyPair);
                         break;
                     case "KYBER":
                         configuration.setKeyGenerator(PQCDefaultKYBERMaterial.keyGenerator);
