@@ -29,6 +29,9 @@ import org.apache.camel.spi.OAuthTokenValidationResult;
  */
 public final class A2AUserProfile {
 
+    // the claims that name the client a token was issued to (RFC 9068 and OpenID Connect)
+    private static final List<String> CLIENT_CLAIMS = List.of("client_id", "azp");
+
     private final String scheme;
     private final String subject;
     private final String issuer;
@@ -119,12 +122,41 @@ public final class A2AUserProfile {
         return Collections.unmodifiableMap(map);
     }
 
+    /**
+     * The key of the caller that owns the tasks it creates. A validated token is keyed by its subject or, for a token
+     * without a subject, by the client it was issued to (the {@code client_id} or {@code azp} claim). A profile without
+     * a token, such as one of an API key, is keyed by its scheme, which every caller with that credential shares.
+     */
     public String ownerKey() {
-        if (issuer != null || subject != null) {
-            return String.valueOf(issuer) + "|" + String.valueOf(subject);
+        if (hasSubject()) {
+            return issuer + "|" + subject;
+        }
+        String client = clientId();
+        if (client != null) {
+            return "client|" + issuer + "|" + client;
         }
         Map<String, Object> profile = asMap();
         return profile.isEmpty() ? null : profile.toString();
+    }
+
+    /**
+     * Whether this profile identifies the caller, rather than only the scheme of a shared credential.
+     */
+    boolean identifiesCaller() {
+        return hasSubject() || clientId() != null;
+    }
+
+    private boolean hasSubject() {
+        return subject != null && !subject.isBlank();
+    }
+
+    private String clientId() {
+        for (String claim : CLIENT_CLAIMS) {
+            if (claims.get(claim) instanceof String value && !value.isBlank()) {
+                return value;
+            }
+        }
+        return null;
     }
 
     private static void putIfPresent(Map<String, Object> map, String key, String value) {

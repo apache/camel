@@ -219,11 +219,22 @@ public class A2AAuthHandler {
         }
     }
 
+    /**
+     * The profile of a requirement with several schemes is the one that identifies the caller, such as the profile of a
+     * validated token, whatever the order of the schemes: the profile of a shared credential, such as an API key, only
+     * names its scheme.
+     */
     private static A2AUserProfile selectProfile(A2AUserProfile current, A2AUserProfile candidate) {
         if (current == null) {
             return candidate;
         }
-        if (candidate != null && candidate.ownerKey() != null && current.ownerKey() == null) {
+        if (candidate == null) {
+            return current;
+        }
+        if (candidate.identifiesCaller() && !current.identifiesCaller()) {
+            return candidate;
+        }
+        if (candidate.ownerKey() != null && current.ownerKey() == null) {
             return candidate;
         }
         return current;

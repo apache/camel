@@ -81,6 +81,18 @@ such an entry: `@revoked` and `@cert-authority` entries do not list a host.
 Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
 endpoint is configured with.
 
+=== camel-a2a - caller profile and task owner
+
+* When a security requirement of the agent card combines several schemes, such as an API key and an OAuth token, the
+caller profile (`CamelA2AUserProfile`) is now the one of the token, whatever the order of the schemes. Before, it was
+the profile of the first scheme, so a requirement that listed the API key first only gave `{"scheme": "apiKey"}` to
+the route, and the tasks belonged to the API key.
+* A token without a `sub` claim, such as a client credentials token, is now identified by its `client_id` or `azp`
+claim, so the tasks of different clients are kept apart. A valid token that has none of these claims is now rejected
+with HTTP 401.
+* The `CamelOAuthTokenValidationResult` exchange property is now set on the exchange that the route processes, as
+documented. Before, it was only set on the incoming HTTP exchange.
+
 === camel-opensearch - the credentials are only sent to the nodes of the cluster
 
 The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,

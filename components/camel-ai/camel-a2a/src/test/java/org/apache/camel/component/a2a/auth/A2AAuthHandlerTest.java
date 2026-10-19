@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.a2a.A2AConfiguration;
+import org.apache.camel.component.a2a.A2AConstants;
 import org.apache.camel.component.a2a.model.AgentCard;
 import org.apache.camel.component.a2a.model.SecurityRequirement;
 import org.apache.camel.component.a2a.model.SecurityScheme;
@@ -253,7 +254,7 @@ class A2AAuthHandlerTest extends CamelTestSupport {
         A2AUserProfile profile = handler.validateConsumerAuth(exchange, cardWithScheme("oauth", "oauth2"));
 
         assertOAuthProfile(profile, "oauth2");
-        assertThat(exchange.getProperty(BearerTokenExtractor.OAUTH_TOKEN_VALIDATION_RESULT))
+        assertThat(exchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT))
                 .isInstanceOf(OAuthTokenValidationResult.class);
     }
 
@@ -272,7 +273,7 @@ class A2AAuthHandlerTest extends CamelTestSupport {
         A2AUserProfile profile = handler.validateConsumerAuth(exchange, cardWithScheme("oidc", "openIdConnect"));
 
         assertOAuthProfile(profile, "openIdConnect");
-        assertThat(exchange.getProperty(BearerTokenExtractor.OAUTH_TOKEN_VALIDATION_RESULT))
+        assertThat(exchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT))
                 .isInstanceOf(OAuthTokenValidationResult.class);
     }
 
@@ -364,6 +365,74 @@ class A2AAuthHandlerTest extends CamelTestSupport {
         assertThatThrownBy(() -> handler.validateConsumerAuth(missingScope, adminCard))
                 .isInstanceOf(SecurityException.class)
                 .hasMessageContaining("missing required scopes");
+    }
+
+    @Test
+    void validateConsumerAuthKeepsTheTokenProfileWhateverTheOrderOfTheSchemes() {
+        bindOAuthValidationFactory();
+
+        A2AConfiguration config = new A2AConfiguration();
+        config.setValidateAuth(true);
+        config.setApiKey("secret-key");
+        config.setOauthProfile("myprofile");
+        A2AAuthHandler handler = new A2AAuthHandler(config, defaultHandlers());
+
+        for (List<String> order : List.of(List.of("agentKey", "oauth"), List.of("oauth", "agentKey"))) {
+            Map<String, SecurityScheme> schemes = new LinkedHashMap<>();
+            schemes.put("agentKey", SecurityScheme.apiKey("header", "X-Agent-Key"));
+            schemes.put("oauth", SecurityScheme.oauth2(null));
+            Map<String, List<String>> requirement = new LinkedHashMap<>();
+            order.forEach(name -> requirement.put(name, List.of()));
+            AgentCard card = new AgentCard.Builder()
+                    .setName("test")
+                    .setSecuritySchemes(schemes)
+                    .setSecurityRequirements(List.of(SecurityRequirement.fromScopeMap(requirement)))
+                    .build();
+
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setHeader("X-Agent-Key", "secret-key");
+            exchange.getMessage().setHeader("Authorization", "Bearer valid-token");
+
+            assertOAuthProfile(handler.validateConsumerAuth(exchange, card), "oauth2");
+        }
+    }
+
+    @Test
+    void validateConsumerAuthKeysATokenWithoutSubjectByItsClient() {
+        bindOAuthValidationFactory();
+
+        A2AConfiguration config = new A2AConfiguration();
+        config.setValidateAuth(true);
+        config.setOauthProfile("myprofile");
+        A2AAuthHandler handler = new A2AAuthHandler(config, defaultHandlers());
+
+        Exchange clientIdExchange = new DefaultExchange(context);
+        clientIdExchange.getMessage().setHeader("Authorization", "Bearer client-id-token");
+        assertThat(handler.validateConsumerAuth(clientIdExchange, cardWithScheme("oauth", "oauth2")).ownerKey())
+                .isEqualTo("client|https://issuer.example|svc-a");
+
+        Exchange azpExchange = new DefaultExchange(context);
+        azpExchange.getMessage().setHeader("Authorization", "Bearer azp-token");
+        assertThat(handler.validateConsumerAuth(azpExchange, cardWithScheme("oauth", "oauth2")).ownerKey())
+                .isEqualTo("client|https://issuer.example|svc-b");
+    }
+
+    @Test
+    void validateConsumerAuthRejectsATokenThatDoesNotIdentifyTheCaller() {
+        bindOAuthValidationFactory();
+
+        A2AConfiguration config = new A2AConfiguration();
+        config.setValidateAuth(true);
+        config.setOauthProfile("myprofile");
+        A2AAuthHandler handler = new A2AAuthHandler(config, defaultHandlers());
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader("Authorization", "Bearer anonymous-token");
+
+        assertThatThrownBy(() -> handler.validateConsumerAuth(exchange, cardWithScheme("oauth", "oauth2")))
+                .isInstanceOf(SecurityException.class)
+                .hasMessageContaining("does not identify the caller");
+        assertThat(exchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT)).isNull();
     }
 
     @Test
@@ -459,6 +528,20 @@ class A2AAuthHandlerTest extends CamelTestSupport {
                         List.of("message:send", "tasks:read"),
                         Map.of("tenant", "acme"),
                         1234567890L);
+            }
+            if ("client-id-token".equals(token)) {
+                return OAuthTokenValidationResult.valid(
+                        null, "https://issuer.example", List.of("camel-a2a"), List.of(), Map.of("client_id", "svc-a"),
+                        1234567890L);
+            }
+            if ("azp-token".equals(token)) {
+                return OAuthTokenValidationResult.valid(
+                        null, "https://issuer.example", List.of("camel-a2a"), List.of(), Map.of("azp", "svc-b"),
+                        1234567890L);
+            }
+            if ("anonymous-token".equals(token)) {
+                return OAuthTokenValidationResult.valid(
+                        null, "https://issuer.example", List.of("camel-a2a"), List.of(), Map.of(), 1234567890L);
             }
             return OAuthTokenValidationResult.invalid(ErrorCode.INVALID_TOKEN, "invalid token");
         }

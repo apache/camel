@@ -240,7 +240,7 @@ The agent card must declare the security scheme:
 }
 ----
 
-When authentication succeeds, the `CamelA2AUserProfile` exchange property is populated with a `Map<String, Object>` containing the authenticated user's profile (subject, issuer, scopes, claims). When using OAuth/OIDC, the full `OAuthTokenValidationResult` is also available as the `CamelOAuthTokenValidationResult` exchange property.
+When authentication succeeds, the `CamelA2AUserProfile` exchange property is populated with a `Map<String, Object>` containing the authenticated user's profile (subject, issuer, scopes, claims). When using OAuth/OIDC, the full `OAuthTokenValidationResult` is also available as the `CamelOAuthTokenValidationResult` exchange property. See <<_caller_profile,Caller Profile>> for how the profile is derived.
 
 ==== API Key Authentication
 
@@ -331,6 +331,28 @@ The agent card must declare an `http` bearer security scheme:
 ----
 
 NOTE: The agent card endpoint (`GET /.well-known/agent-card.json`) is always public — clients need it for discovery before they can authenticate.
+
+==== Caller Profile
+
+The consumer derives the caller profile from the security schemes it validated, and sets it as the `CamelA2AUserProfile` exchange property of the exchange the route processes:
+
+[cols="1,3"]
+|===
+| Scheme | Caller profile
+
+| OAuth 2.0, OpenID Connect, and HTTP bearer with `oauthProfile`
+| The validated token: `scheme`, `subject`, `issuer`, `audience`, `scopes` and `claims`. The `OAuthTokenValidationResult` of the token is also set as the `CamelOAuthTokenValidationResult` exchange property. A token must identify the caller with its `sub` claim or, for a token without `sub` such as a client credentials token, with its `client_id` or `azp` claim. A token that has none of these claims is rejected.
+
+| HTTP bearer with the static `bearerToken` option
+| Only the scheme (`bearer`): every caller that sends the token is the same caller.
+
+| API key
+| Only the scheme (`apiKey`): every caller that sends the key is the same caller.
+|===
+
+When a security requirement combines several schemes, such as an API key and an OAuth token, the caller profile is the one of the token, whatever the order of the schemes in the requirement.
+
+Tasks and push notification configurations belong to the caller that created the task: the issuer and subject of a token, or the issuer and client of a token without subject. Callers that authenticate with the same API key or static bearer token share their tasks.
 
 === SSE Streaming with `${a2a:emit()}`
 
