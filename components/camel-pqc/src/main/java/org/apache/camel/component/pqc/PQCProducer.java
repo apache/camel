@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
@@ -121,6 +122,9 @@ public class PQCProducer extends DefaultProducer {
     private Signature signer;
     private KeyGenerator keyGenerator;
     private KeyPair keyPair;
+
+    // Keeps the "usage could not be recorded" warning to one line per producer instead of one per exchange
+    private final AtomicBoolean usageRecordFailureWarned = new AtomicBoolean();
 
     // Set only when this producer created the Signature itself, so it knows how to create another one.
     // Left null when the user configured an instance, which then has to be shared and locked instead.
@@ -1246,11 +1250,25 @@ public class PQCProducer extends DefaultProducer {
         }
 
         metadata.updateLastUsed();
-        klm.updateKeyMetadata(keyId, metadata);
 
         if (stateful) {
-            // Persist the updated key (with new index) so state survives restarts
+            // storeKey writes the metadata entry as well in every manager, so calling updateKeyMetadata first would
+            // simply double the number of remote writes per signature
             klm.storeKey(keyId, keyPair, metadata);
+        } else {
+            // Only the usage count is at stake here. Failing the exchange over it would throw away a perfectly good
+            // signature to protect a counter whose loss merely delays a rotation - unlike a stateful index, which
+            // cannot be recovered once it has been handed out twice.
+            try {
+                klm.updateKeyMetadata(keyId, metadata);
+            } catch (Exception e) {
+                if (usageRecordFailureWarned.compareAndSet(false, true)) {
+                    LOG.warn("Could not record the usage of key '{}' through the keyLifecycleManager, so its"
+                             + " usageCount does not advance and a configured maxKeyUsage threshold may not be"
+                             + " reached. The signature itself is unaffected. Reported once per producer.",
+                            keyId, e);
+                }
+            }
         }
     }
 

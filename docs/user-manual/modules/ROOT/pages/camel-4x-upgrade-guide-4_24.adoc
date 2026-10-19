@@ -355,6 +355,15 @@ deployment that already configured them will start rotating keys where before no
 Review any configured `maxKeyUsage` threshold before upgrading: a long-running deployment may rotate on the first
 check once the counter starts advancing.
 
+Recording the usage also costs a write. A signing endpoint with a `keyLifecycleManager` and a `CamelPQCKeyId` header
+now updates the key metadata in the backing store on every signature, where a non-stateful key previously wrote
+nothing. Against AWS Secrets Manager, Azure Key Vault or HashiCorp Vault that is a remote call per message. A failure
+of that write does not fail the exchange for a non-stateful key - it is logged once per producer and the signature is
+returned - because losing a usage count only delays a rotation. Leave the `CamelPQCKeyId` header off the signing
+exchanges, or use `maxKeyAge` or `nextRotationAt`, if the write is not wanted.
+
+The key encapsulation operations do not record usage, so `maxKeyUsage` still never triggers for a KEM key.
+
 === camel-jbang - camel get endpoint shows the scope of an endpoint
 
 `camel get endpoint` replaces the `REMOTE` column with `SCOPE`, which tells three kinds of endpoint apart:

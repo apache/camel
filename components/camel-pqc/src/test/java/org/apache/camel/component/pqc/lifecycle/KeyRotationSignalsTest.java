@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pqc.lifecycle;
 
+import java.security.KeyPair;
 import java.security.Security;
 
 import org.apache.camel.EndpointInject;
@@ -27,7 +28,6 @@ import org.apache.camel.component.pqc.PQCConstants;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,16 +41,7 @@ public class KeyRotationSignalsTest extends CamelTestSupport {
 
     private static final String KEY_ID = "signing-key";
 
-    private final InMemoryKeyLifecycleManager keyManager = new InMemoryKeyLifecycleManager();
-
-    @EndpointInject("mock:sign")
-    protected MockEndpoint resultSign;
-
-    @Produce("direct:sign")
-    protected ProducerTemplate templateSign;
-
-    @BeforeEach
-    void addProvider() {
+    private static void registerProviders() {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
@@ -59,14 +50,31 @@ public class KeyRotationSignalsTest extends CamelTestSupport {
         }
     }
 
+    private final InMemoryKeyLifecycleManager keyManager = new InMemoryKeyLifecycleManager();
+    private KeyPair signingKeyPair;
+
+    @EndpointInject("mock:sign")
+    protected MockEndpoint resultSign;
+
+    @Produce("direct:sign")
+    protected ProducerTemplate templateSign;
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() {
+            public void configure() throws Exception {
+                // re-registered per route build: until CAMEL-25795 lands, stopping the previous test's context
+                // de-registers the providers for the whole JVM
+                registerProviders();
                 context.getRegistry().bind("keyManager", keyManager);
+                // the key that signs is the one the usage is recorded against: recordKeyUsageAfterSign counts
+                // against the key named by CamelPQCKeyId, so the endpoint signs with that very key pair
+                signingKeyPair = keyManager.generateKeyPair("MLDSA", KEY_ID);
+                context.getRegistry().bind("signingKeyPair", signingKeyPair);
                 from("direct:sign")
-                        .to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA&keyLifecycleManager=#keyManager")
+                        .to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA&keyLifecycleManager=#keyManager"
+                            + "&keyPair=#signingKeyPair")
                         .to("mock:sign");
             }
         };
@@ -74,7 +82,6 @@ public class KeyRotationSignalsTest extends CamelTestSupport {
 
     @Test
     void signingAStatelessKeyAdvancesTheUsageCount() throws Exception {
-        keyManager.generateKeyPair("MLDSA", KEY_ID);
         assertEquals(0, keyManager.getKeyMetadata(KEY_ID).getUsageCount());
 
         resultSign.expectedMessageCount(3);
@@ -93,7 +100,6 @@ public class KeyRotationSignalsTest extends CamelTestSupport {
 
     @Test
     void aPendingRotationKeyIsSelectedByTheDefaultFilter() throws Exception {
-        keyManager.generateKeyPair("MLDSA", KEY_ID);
         KeyMetadata metadata = keyManager.getKeyMetadata(KEY_ID);
         metadata.setStatus(KeyMetadata.KeyStatus.PENDING_ROTATION);
         keyManager.updateKeyMetadata(KEY_ID, metadata);
