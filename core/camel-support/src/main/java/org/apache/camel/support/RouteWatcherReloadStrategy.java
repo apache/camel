@@ -567,18 +567,19 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     = getCamelContext().getRegistry().lookupByNameAndType(RELOAD_RESOURCES, Collection.class);
             if (extras != null) {
                 for (Resource extra : extras) {
-                    if (!sources.contains(extra)) {
+                    // a file that is gone would fail the reload, and every reload after it (CAMEL-25831)
+                    if (!sources.contains(extra) && !isDeletedFile(extra)) {
                         sources.add(extra);
                     }
                 }
             }
             // the Java sources are compiled again, so all beans are created again: a bean of a changed class, and the
-            // beans that call it
+            // beans that call it (not those whose file is gone, such as a Java class that was deleted, CAMEL-25831)
             if (beanResources != null && sources.stream().anyMatch(RouteWatcherReloadStrategy::isJavaSource)) {
                 Collection<Resource> beans = beanResources.get();
                 if (beans != null) {
                     for (Resource bean : beans) {
-                        if (bean != null && !equalResourceLocation(sources, bean)) {
+                        if (bean != null && !isDeletedFile(bean) && !equalResourceLocation(sources, bean)) {
                             sources.add(bean);
                         }
                     }
