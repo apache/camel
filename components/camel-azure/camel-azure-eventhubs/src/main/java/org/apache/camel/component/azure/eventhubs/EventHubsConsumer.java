@@ -231,8 +231,11 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
             EventHubsCheckpointUpdaterTask checkpointTask = checkpointTasksByPartition.get(partitionId);
             ScheduledFuture<?> scheduledTask = scheduledTasksByPartition.get(partitionId);
 
-            if (checkpointTask == null || checkpointTask.isExpired()) {
-                checkpointTask = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents);
+            // a new window starts when the timer of the current one has run, not when the wall clock passed its time: the
+            // timer can run in the millisecond of its scheduled time, or later, and the event must be counted in the
+            // window whose timer has not taken the count yet
+            if (checkpointTask == null || checkpointTask.isDone()) {
+                checkpointTask = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents, lock);
                 // delegate the checkpoint update to a dedicated Thread
                 long timeout = getConfiguration().getCheckpointBatchTimeout();
                 checkpointTask.setScheduledTime(System.currentTimeMillis() + timeout);
@@ -251,6 +254,8 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
                     processedEvents.set(0);
                     exchange.getIn().setHeader(EventHubsConstants.CHECKPOINT_UPDATED_BY, COMPLETED_BY_SIZE);
                     LOG.debug("eventhub consumer batch size of reached for partition {}", partitionId);
+                    // a timer that has already started takes nothing (it waits for the lock)
+                    checkpointTask.cancel();
                     if (scheduledTask != null) {
                         scheduledTask.cancel(false);
                     }

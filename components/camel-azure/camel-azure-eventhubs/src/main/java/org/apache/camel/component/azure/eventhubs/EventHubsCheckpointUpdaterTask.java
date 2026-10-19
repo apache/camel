@@ -17,6 +17,8 @@
 package org.apache.camel.component.azure.eventhubs;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.azure.messaging.eventhubs.models.EventContext;
 import org.slf4j.Logger;
@@ -32,20 +34,44 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
     private volatile EventContext eventContext;
     private final AtomicInteger processedEvents;
     private volatile long scheduledTime;
+    // the lock of the consumer, which counts the events under it
+    private final Lock lock;
+    // set under the lock when the task has taken the count of its window, or was cancelled
+    private volatile boolean done;
 
     public EventHubsCheckpointUpdaterTask(EventContext eventContext, AtomicInteger processedEvents) {
+        this(eventContext, processedEvents, new ReentrantLock());
+    }
+
+    public EventHubsCheckpointUpdaterTask(EventContext eventContext, AtomicInteger processedEvents, Lock lock) {
         this.eventContext = eventContext;
         this.processedEvents = processedEvents;
+        this.lock = lock;
     }
 
     @Override
     public void run() {
         // take the count when the checkpoint is started: an event that completes while it is being stored is counted
-        // for the next window from 0, and a checkpoint by batch size in the meantime cannot be confused with this one
-        final int processed = processedEvents.getAndSet(0);
+        // for the next window from 0, and a checkpoint by batch size in the meantime cannot be confused with this one.
+        // This is done under the lock of the consumer, so an event is either counted (and its context set) before, and
+        // checkpointed here, or after, and then it sees that this task is done and starts a new window.
+        final int processed;
+        final EventContext context;
+        lock.lock();
+        try {
+            if (done) {
+                LOG.debug("skip checkpointing offset: the window was already checkpointed by batch size");
+                return;
+            }
+            done = true;
+            processed = processedEvents.getAndSet(0);
+            context = eventContext;
+        } finally {
+            lock.unlock();
+        }
         if (processed > 0) {
             LOG.debug("checkpointing offset after reaching timeout, with a batch of {}", processed);
-            eventContext.updateCheckpointAsync()
+            context.updateCheckpointAsync()
                     .subscribe(unused -> LOG.debug("Processed one event..."),
                             error -> {
                                 LOG.warn("Error when updating Checkpoint: {}", error.getMessage(), error);
@@ -68,6 +94,25 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
 
     public long getScheduledTime() {
         return scheduledTime;
+    }
+
+    /**
+     * Whether this task has taken the count of its window (or was cancelled), so a new event must start a new window.
+     */
+    public boolean isDone() {
+        return done;
+    }
+
+    /**
+     * Cancels the task under the lock of the consumer: if it is already running, it takes nothing.
+     */
+    public void cancel() {
+        lock.lock();
+        try {
+            done = true;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public boolean isExpired() {
