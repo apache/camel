@@ -43,6 +43,11 @@ route, drives the run with `dst.runUntil(...)` and `dst.runFor(...)`, and checks
 The test and its world live in a package of their own (for example `org.apache.camel.component.aws2.sqs.dst`); that
 package is never rewritten.
 
+A `Dst` is one run. The extension creates one per seed and closes it after the seed; a test that creates its own
+`new Dst(seed)` closes it in a `finally`. The virtual clock is JVM-wide, so only one run may be open at a time: a second
+`new Dst` while another run is open throws `IllegalStateException` ("another run (seed N) is still active"), and a DST
+test refuses to start when JUnit runs tests in parallel (`junit.jupiter.execution.parallel.enabled=true`).
+
 Three worlds are in the Camel code base and are the examples to copy:
 
 |===
@@ -86,7 +91,9 @@ Before the first seed, the harness scans the packages under test and writes ever
 cannot run the loop for (`Object.wait`, `LockSupport.park`, `Mono.block`), wall clock reads it does not rewrite.
 
 Strict mode is the default: when a seed reaches one of these at runtime, or a thread outside the harness submits a task
-to the loop, the seed fails with the escape as its cause. `@DstInstrument(allowEscapes = "Foo.bar")` allows an escape
+to the loop, reads the virtual clock or sleeps, the seed fails with the escape as its cause. A clock read from such a
+thread (a Reactor or Netty thread, for example) still gets the virtual time and its sleep still takes real time, so
+that thread mixes the two; this is what strict mode is there to make visible. `@DstInstrument(allowEscapes = "Foo.bar")` allows an escape
 that cannot change the result (say why in a comment); `@DstInstrument(strict = false)` or `-Ddst.strict=false` only
 records escapes in `target/dst/<Test>.summary.txt`.
 
@@ -356,7 +363,15 @@ seed of the in-JVM replay test of the Event Hubs world, default 1).
 * The one-stack model above: a blocked task resumes only after the tasks that blocked after it.
 * Code on its own threads or on a third-party scheduler is outside the harness; strict mode makes reaching it fail the
   seed.
-* One run per JVM at a time: the active run is a static field.
+* One run per JVM at a time: the active run, and so the virtual clock, is a static field, and every rewritten clock read
+  in the JVM sees it. A world must therefore not go into a module that runs its tests in parallel
+  (`camel.surefire.parallel=true`, as camel-jms and camel-sql do): the other tests in that surefire fork would read the
+  virtual clock while a run is active. The harness enforces this: a second run while one is open fails, and a DST test
+  refuses to start when JUnit runs tests in parallel.
+* The rewriting stays for the rest of the surefire fork: the classes of the `@DstInstrument` packages (the component's
+  main classes, and its test classes in the same package) stay rewritten for every test that runs after the DST test,
+  the same as the `alsoRewrite` entries. Outside a run they read the real clock and sleep for real, so the other tests
+  of the component still pass.
 * The results are only as good as the fake of the external system.
 
 == The classes

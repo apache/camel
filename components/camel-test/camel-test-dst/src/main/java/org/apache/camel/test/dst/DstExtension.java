@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.LongStream;
@@ -80,8 +81,24 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
         return Paths.get(System.getProperty("dst.traceDir", "target/dst"));
     }
 
+    static final String PARALLEL_ENABLED = "junit.jupiter.execution.parallel.enabled";
+
+    /**
+     * The virtual clock of a run is JVM-wide (one run per JVM at a time, see {@link Dst}): DST tests refuse to run when
+     * JUnit runs tests in parallel, as other tests would read the virtual clock while a run is active.
+     */
+    static void checkNotParallel(Optional<String> parallelEnabled) {
+        if (parallelEnabled.map(String::trim).map(Boolean::parseBoolean).orElse(false)) {
+            throw new IllegalStateException(
+                    "DST: " + PARALLEL_ENABLED + " is true, but a DST run owns the JVM-wide virtual clock (one run per"
+                                            + " JVM at a time): run DST tests in a module or surefire execution without"
+                                            + " parallel tests (camel.surefire.parallel=false)");
+        }
+    }
+
     @Override
     public void beforeAll(ExtensionContext context) {
+        checkNotParallel(context.getConfigurationParameter(PARALLEL_ENABLED));
         ExtensionContext.Store store = context.getStore(NS);
         store.put("threads", DstEscapes.liveThreads());
         store.put("stats", new ArrayList<Stats>());
@@ -144,6 +161,7 @@ public class DstExtension implements TestTemplateInvocationContextProvider, Befo
     @Override
     @SuppressWarnings("unchecked")
     public Stream<TestTemplateInvocationContext> provideTestTemplateInvocationContexts(ExtensionContext context) {
+        checkNotParallel(context.getConfigurationParameter(PARALLEL_ENABLED));
         Method method = context.getRequiredTestMethod();
         DstTest test = method.getAnnotation(DstTest.class);
         String name = context.getRequiredTestClass().getSimpleName() + "." + method.getName();

@@ -84,6 +84,11 @@ final class EventHubsWorld {
 
     private final boolean countProbes;
 
+    // private fields of the consumer that the probes read: looked up when the world is built, so that a renamed field
+    // fails every seed at once with its name (a failure inside a task of the run would only be traced)
+    private final Field scheduledTasksByPartition = consumerField("scheduledTasksByPartition");
+    private final Field processedEventsByPartition = consumerField("processedEventsByPartition");
+
     EventHubsWorld(Dst dst) {
         this(dst, true);
     }
@@ -206,8 +211,8 @@ final class EventHubsWorld {
 
     private void probeTimerState(String partition) {
         try {
-            ScheduledFuture<?> timer = this.<Map<String, ScheduledFuture<?>>> field("scheduledTasksByPartition").get(partition);
-            AtomicInteger count = this.<Map<String, AtomicInteger>> field("processedEventsByPartition").get(partition);
+            ScheduledFuture<?> timer = this.<Map<String, ScheduledFuture<?>>> field(scheduledTasksByPartition).get(partition);
+            AtomicInteger count = this.<Map<String, AtomicInteger>> field(processedEventsByPartition).get(partition);
             if (timer != null && count != null && count.get() > 0) {
                 if (timer.isCancelled()) {
                     probe("A: counted for a window whose timer was cancelled by a size checkpoint");
@@ -221,10 +226,21 @@ final class EventHubsWorld {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T field(String name) throws ReflectiveOperationException {
-        Field f = EventHubsConsumer.class.getDeclaredField(name);
-        f.setAccessible(true);
+    private <T> T field(Field f) throws ReflectiveOperationException {
         return (T) f.get(consumer);
+    }
+
+    private static Field consumerField(String name) {
+        try {
+            Field f = EventHubsConsumer.class.getDeclaredField(name);
+            f.setAccessible(true);
+            return f;
+        } catch (NoSuchFieldException e) {
+            throw new IllegalStateException(
+                    "EventHubsWorld reads the private field " + name + " of EventHubsConsumer, which no longer exists:"
+                                            + " update the world",
+                    e);
+        }
     }
 
     private void probe(String what) {
@@ -284,7 +300,7 @@ final class EventHubsWorld {
 
         private int count() {
             try {
-                AtomicInteger c = EventHubsWorld.this.<Map<String, AtomicInteger>> field("processedEventsByPartition")
+                AtomicInteger c = EventHubsWorld.this.<Map<String, AtomicInteger>> field(processedEventsByPartition)
                         .get(partition);
                 return c == null ? 0 : c.get();
             } catch (ReflectiveOperationException e) {

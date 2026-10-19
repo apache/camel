@@ -73,7 +73,7 @@ public final class Dst {
     private long steps;
     private int nesting;
     private boolean traceTruncated;
-    private boolean closed;
+    private volatile boolean closed;
     private volatile long progress;
     private volatile long watchdogMillis = Long.getLong("dst.watchdogMillis", 10_000);
     private volatile String stall;
@@ -93,7 +93,7 @@ public final class Dst {
         this.loopThread = Thread.currentThread();
         this.maxSteps = maxSteps;
         this.wakeups = new DstExecutor(this, "wakeup", Integer.MAX_VALUE);
-        active = this;
+        activate(this);
         DstWatchdog.ensureStarted();
     }
 
@@ -112,7 +112,21 @@ public final class Dst {
         return z ^ (z >>> 31);
     }
 
-    /** The run of the calling thread, or null. */
+    /**
+     * Makes the run the active one. The virtual clock is JVM-wide (every rewritten clock read in the JVM sees the
+     * active run), so only one run may be open at a time: a second run while another one is not closed (tests that run
+     * in parallel, or a run that was not closed) fails fast instead of sharing the clock.
+     */
+    private static synchronized void activate(Dst dst) {
+        Dst previous = active;
+        if (previous != null && !previous.isClosed()) {
+            throw new IllegalStateException(
+                    "DST: another run (seed " + previous.seed() + ") is still active; one run per JVM at a time");
+        }
+        active = dst;
+    }
+
+    /** The active run (one per JVM, whatever thread asks), or null. */
     static Dst active() {
         return active;
     }
@@ -181,10 +195,10 @@ public final class Dst {
 
     /**
      * In strict mode, reaching an escape point the harness does not control (an own thread or executor, the common
-     * pool, a Reactor scheduler, a wait it cannot run the loop for, a task submitted from a thread outside the harness)
-     * fails the seed; escapes whose description contains one of {@code allowed} are only recorded. Off by default for a
-     * {@code new Dst(seed)}; {@link DstExtension} switches it on unless {@code @DstInstrument(strict = false)} or
-     * {@code -Ddst.strict=false}.
+     * pool, a Reactor scheduler, a wait it cannot run the loop for, a task submitted, a virtual clock read or a sleep
+     * from a thread outside the harness) fails the seed; escapes whose description contains one of {@code allowed} are
+     * only recorded. Off by default for a {@code new Dst(seed)}; {@link DstExtension} switches it on unless
+     * {@code @DstInstrument(strict = false)} or {@code -Ddst.strict=false}.
      */
     public void strict(boolean strict, List<String> allowed) {
         this.strict = strict;
@@ -632,8 +646,10 @@ public final class Dst {
             closed = true;
             pending.clear();
         }
-        if (active == this) {
-            active = null;
+        synchronized (Dst.class) {
+            if (active == this) {
+                active = null;
+            }
         }
     }
 

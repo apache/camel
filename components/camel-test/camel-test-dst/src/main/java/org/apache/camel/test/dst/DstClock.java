@@ -41,6 +41,10 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Sleeps are rewritten too ({@code Thread.sleep} and {@code TimeUnit.sleep}): on the loop thread a sleep is a virtual
  * wait ({@link Dst#block(long, String)}), so the sleeping task keeps its thread and the other tasks run meanwhile.
+ * <p>
+ * A clock read or a sleep from a thread outside the harness while a run is active is an escape (see
+ * {@link DstEscapes}): it is recorded, and in strict mode it fails the seed unless {@code @DstInstrument(allowEscapes)}
+ * covers it. The read still returns the virtual time and the sleep still sleeps in real time.
  */
 public final class DstClock {
 
@@ -52,8 +56,9 @@ public final class DstClock {
     private static Dst read() {
         Dst dst = Dst.active();
         if (dst != null && !dst.isLoopThread()) {
-            DstEscapes.recordRuntime("virtual clock read from a thread outside the harness: "
-                                     + Thread.currentThread().getName());
+            // strict mode fails the seed: the thread mixes the virtual time of the run with its own (real) timing
+            DstEscapes.escaped(dst, "virtual clock read from a thread outside the harness: "
+                                    + Thread.currentThread().getName());
         }
         return dst;
     }
@@ -77,13 +82,21 @@ public final class DstClock {
     // sleeps: Thread.sleep(long), Thread.sleep(long, int), Thread.sleep(Duration) and TimeUnit.sleep(long), with the
     // call site added by the rewriting
 
+    /**
+     * A real sleep on a thread the harness does not run, while a run is active: recorded, and in strict mode it fails
+     * the seed (unless allowed). The thread still sleeps in real time.
+     */
+    private static void sleptOutside(Dst dst, String where) {
+        DstEscapes.escaped(dst, "real sleep on a thread outside the harness: " + Thread.currentThread().getName()
+                                + " at " + where);
+    }
+
     public static void sleep(long millis, String where) throws InterruptedException {
         Dst dst = Dst.active();
         if (dst == null) {
             Thread.sleep(millis);
         } else if (!dst.isLoopThread()) {
-            DstEscapes.recordRuntime("real sleep on a thread outside the harness: " + Thread.currentThread().getName()
-                                     + " at " + where);
+            sleptOutside(dst, where);
             Thread.sleep(millis);
         } else {
             if (millis < 0) {
@@ -103,8 +116,7 @@ public final class DstClock {
         Dst dst = Dst.active();
         if (dst == null || !dst.isLoopThread()) {
             if (dst != null) {
-                DstEscapes.recordRuntime("real sleep on a thread outside the harness: "
-                                         + Thread.currentThread().getName() + " at " + where);
+                sleptOutside(dst, where);
             }
             Thread.sleep(millis, nanos);
         } else {
@@ -116,8 +128,7 @@ public final class DstClock {
         Dst dst = Dst.active();
         if (dst == null || !dst.isLoopThread()) {
             if (dst != null) {
-                DstEscapes.recordRuntime("real sleep on a thread outside the harness: "
-                                         + Thread.currentThread().getName() + " at " + where);
+                sleptOutside(dst, where);
             }
             // Thread.sleep(Duration) is Java 19+, this module compiles for 17
             Thread.sleep(duration.toMillis(), duration.toNanosPart() % 1_000_000);
@@ -130,8 +141,7 @@ public final class DstClock {
         Dst dst = Dst.active();
         if (dst == null || !dst.isLoopThread()) {
             if (dst != null) {
-                DstEscapes.recordRuntime("real sleep on a thread outside the harness: "
-                                         + Thread.currentThread().getName() + " at " + where);
+                sleptOutside(dst, where);
             }
             unit.sleep(amount);
         } else if (amount > 0) {

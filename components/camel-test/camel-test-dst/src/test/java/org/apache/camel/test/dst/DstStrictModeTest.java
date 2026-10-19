@@ -17,8 +17,11 @@
 package org.apache.camel.test.dst;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.test.dst.sample.SampleClock;
 import org.apache.camel.test.dst.sample.SampleEscapes;
+import org.apache.camel.test.dst.sample.SampleSleeper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -97,6 +100,98 @@ class DstStrictModeTest {
             assertNull(dst.escape());
             assertTrue(DstEscapes.runtime().stream().anyMatch(l -> l.contains("SampleEscapes.commonPool")),
                     DstEscapes.runtime().toString());
+        } finally {
+            dst.close();
+        }
+    }
+
+    private static final String CLOCK_READ = "virtual clock read from a thread outside the harness: outside-clock";
+    private static final String SLEEP = "real sleep on a thread outside the harness: outside-sleep";
+
+    /** Code under test reads the clock and sleeps on threads the harness does not run (a Reactor or Netty thread). */
+    private static long outside() throws Exception {
+        AtomicLong read = new AtomicLong();
+        Thread clock = new Thread(() -> read.set(SampleClock.now()), "outside-clock");
+        Thread sleep = new Thread(() -> {
+            try {
+                SampleSleeper.sleepMillis(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }, "outside-sleep");
+        clock.start();
+        clock.join();
+        sleep.start();
+        sleep.join();
+        return read.get();
+    }
+
+    @Test
+    void aClockReadOffTheLoopFailsTheSeed() throws Exception {
+        Dst dst = new Dst(1);
+        try {
+            dst.strict(true, List.of());
+            AtomicLong read = new AtomicLong();
+            Thread clock = new Thread(() -> read.set(SampleClock.now()), "outside-clock");
+            clock.start();
+            clock.join();
+            assertEquals(dst.currentTimeMillis(), read.get(), "the read still returns the virtual time");
+            assertTrue(dst.escape().contains(CLOCK_READ), dst.escape());
+            DstViolation e = assertThrows(DstViolation.class, dst::runUntilQuiet);
+            assertEquals("escape", e.getInvariant());
+            assertNotNull(dst.pendingFailure(), "the extension fails the seed at the end as well");
+        } finally {
+            dst.close();
+        }
+    }
+
+    @Test
+    void aSleepOffTheLoopFailsTheSeed() throws Exception {
+        Dst dst = new Dst(1);
+        try {
+            dst.strict(true, List.of());
+            Thread sleep = new Thread(() -> {
+                try {
+                    SampleSleeper.sleepMillis(1);
+                    SampleSleeper.sleepMillisNanos(1);
+                    SampleSleeper.sleepSeconds(0);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }, "outside-sleep");
+            sleep.start();
+            sleep.join();
+            assertTrue(dst.escape().contains(SLEEP), dst.escape());
+            assertThrows(DstViolation.class, dst::runUntilQuiet);
+        } finally {
+            dst.close();
+        }
+    }
+
+    @Test
+    void allowedClockReadsAndSleepsOffTheLoopOnlyRecord() throws Exception {
+        Dst dst = new Dst(1);
+        try {
+            dst.strict(true, List.of(CLOCK_READ, SLEEP));
+            assertEquals(dst.currentTimeMillis(), outside());
+            assertNull(dst.escape());
+            dst.runUntilQuiet();
+        } finally {
+            dst.close();
+        }
+    }
+
+    @Test
+    void clockReadsAndSleepsOffTheLoopAreRecordedWhenNotStrict() throws Exception {
+        Dst dst = new Dst(1);
+        try {
+            dst.strict(false, List.of());
+            assertEquals(dst.currentTimeMillis(), outside());
+            assertNull(dst.escape());
+            dst.runUntilQuiet();
+            List<String> runtime = DstEscapes.runtime();
+            assertTrue(runtime.stream().anyMatch(l -> l.contains(CLOCK_READ)), runtime.toString());
+            assertTrue(runtime.stream().anyMatch(l -> l.contains(SLEEP)), runtime.toString());
         } finally {
             dst.close();
         }
