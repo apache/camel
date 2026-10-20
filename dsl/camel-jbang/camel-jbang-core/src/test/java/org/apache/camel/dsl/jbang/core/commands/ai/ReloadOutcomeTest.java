@@ -137,6 +137,25 @@ class ReloadOutcomeTest {
         assertTrue(output.get(1).toString().startsWith("WARN Rollback file strategy"), output.toJson());
     }
 
+    /** The errors after the first lines are the news: a route that went on and failed later on. */
+    @Test
+    void anErrorAfterTheFirstLinesIsKept() {
+        List<String> lines = new java.util.ArrayList<>(RELOADED);
+        for (int i = 1; i <= 6; i++) {
+            lines.add("2026-09-21 10:00:4" + (i + 1) + ".000  INFO 42 --- [ timer://tick] route1 : Order " + i);
+        }
+        lines.add("2026-09-21 10:00:48.500 ERROR 42 --- [ timer://tick] o.a.c.p.e.DefaultErrorHandler : Failed delivery for"
+                  + " exchangeId: A. Exhausted after delivery attempt: 1 caught: java.lang.IllegalStateException: stock");
+        lines.add("2026-09-21 10:00:49.000  INFO 42 --- [ timer://tick] route1 : Order 7");
+
+        JsonArray output = ReloadOutcome.output(records(BEFORE, lines));
+
+        assertEquals(List.of("Hello again", "Order 1", "Order 2", "Order 3", "Order 4"), List.copyOf(output.subList(0, 5)));
+        assertTrue(output.get(5).toString().startsWith("ERROR Failed delivery for exchangeId: A"), output.toJson());
+        assertEquals("... 3 more lines: camel_get_log shows them", output.get(6));
+        assertEquals(7, output.size(), output.toJson());
+    }
+
     @Test
     void whatWasLoggedBeforeTheNewestReloadIsNotOutput() {
         assertEquals(List.of("Hello Camel"), List.copyOf(ReloadOutcome.output(records(BEFORE))));
