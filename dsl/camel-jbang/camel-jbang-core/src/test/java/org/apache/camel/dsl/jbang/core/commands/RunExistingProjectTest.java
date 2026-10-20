@@ -94,8 +94,9 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
 
         Run.writeCamelMainRunLogConfig(logConfig, "my-app", "debug");
 
-        // the previous log is removed so the readers do not show stale lines
+        // the log of the last run is kept as its previous run (CAMEL-25832), so the readers do not show stale lines
         assertThat(logFile).doesNotExist();
+        assertThat(CommandLineHelper.getCamelDir().resolve("my-app-previous.log")).hasContent("stale output of a previous run");
         String content = Files.readString(logConfig);
         assertThat(content).contains("appender.file.fileName = " + logFile.toAbsolutePath().toString().replace("\\", "/"));
         assertThat(content).contains("rootLogger.level = debug");
@@ -156,15 +157,21 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
 
     @Test
     void springBootLogsToFileViaLogbackConfiguration() {
-        List<String> args = run("--profile=dev", "--port=9090", "--prop=foo=bar", "--jvm-args=-Xmx512m", "pom.xml")
-                .buildExistingSpringBootJvmArgs();
+        String logFile = CommandLineHelper.getCamelDir().resolve("my-app.log").toAbsolutePath().toString()
+                .replace("\\", "/");
 
-        // the logback configuration is a temp file: the project needs no src/main/resources and is not changed
+        List<String> args = run("--profile=dev", "--port=9090", "--prop=foo=bar", "--jvm-args=-Xmx512m", "pom.xml")
+                .buildExistingSpringBootJvmArgs("my-app");
+
+        // the logback configuration is a temp file: the project needs no src/main/resources and is not changed; it logs
+        // to <name>.log, as the other runtimes do, so the log is kept as the previous run (CAMEL-25832)
         assertThat(args.get(0)).startsWith("-Dlogging.config=file:").endsWith(".xml");
         assertThat(Path.of(URI.create(args.get(0).substring("-Dlogging.config=".length())))).exists()
-                .content().contains("<configuration");
+                .content().contains("<configuration").contains("value=\"" + logFile + "\"").doesNotContain("{{");
+        // the name is passed, so the app reports the name of its log file
         assertThat(args.subList(1, args.size())).containsExactly(
                 "-Dcamel.main.profile=dev",
+                "-Dcamel.main.name=my-app",
                 "-Dserver.port=9090",
                 "-Dfoo=bar",
                 "-Xmx512m");
@@ -175,7 +182,7 @@ class RunExistingProjectTest extends CamelCommandBaseTestSupport {
         List<String> args = run("--jfr", "pom.xml").buildExistingQuarkusJvmArgs("my-app");
         assertThat(args).anyMatch(a -> a.startsWith("-XX:StartFlightRecording"));
 
-        args = run("--jfr", "pom.xml").buildExistingSpringBootJvmArgs();
+        args = run("--jfr", "pom.xml").buildExistingSpringBootJvmArgs("my-app");
         assertThat(args).anyMatch(a -> a.startsWith("-XX:StartFlightRecording"));
     }
 

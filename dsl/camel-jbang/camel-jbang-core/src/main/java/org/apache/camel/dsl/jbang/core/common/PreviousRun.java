@@ -150,6 +150,36 @@ public final class PreviousRun {
         return keep(log, thisRun(name, pid, exitCode, null, failure));
     }
 
+    /**
+     * Keeps the log of a run that ended as the previous log of its name, with the signal that stopped it, such as a run
+     * of a process that this JVM started (CAMEL-25832).
+     *
+     * @param  log      the log of the run
+     * @param  name     the name of the integration
+     * @param  pid      the pid it ran as, 0 when not known
+     * @param  exitCode the exit code, or <tt>null</tt> when not known
+     * @param  signal   the signal that stopped the run, such as <tt>SIGINT</tt>, or <tt>null</tt>
+     * @param  failure  why it ended, when it failed, or <tt>null</tt>
+     * @return          the kept log, or <tt>null</tt> when there was no log to keep
+     */
+    public static Path keep(Path log, String name, long pid, Integer exitCode, String signal, String failure) {
+        return keep(log, thisRun(name, pid, exitCode, signal, failure));
+    }
+
+    /**
+     * Keeps a log that a run of this name left behind, such as a run that was killed so it could not keep its log, as
+     * the previous log of its name (CAMEL-25832). How that run ended is not known: the last write of its log is the
+     * closest time to when it ended.
+     *
+     * @return the kept log, or <tt>null</tt> when there was no log to keep
+     */
+    public static Path keepLeftover(Path log, String name) {
+        if (log == null || !Files.isRegularFile(log)) {
+            return null;
+        }
+        return keep(log, new Info(name, 0, null, 0, log.toFile().lastModified(), null, null, null, null));
+    }
+
     // a run of this JVM that ends now
     private static Info thisRun(String name, long pid, Integer exitCode, String signal, String failure) {
         long started = ProcessHandle.current().info().startInstant().map(Instant::toEpochMilli).orElse(0L);
