@@ -50,6 +50,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExceptionHandler;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.ChildProcess;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -65,6 +66,7 @@ import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
@@ -178,7 +180,8 @@ public class Run extends CamelCommand {
     boolean transformMessageRun;
     boolean debugRun;
 
-    private Path logFile;
+    // package-private for RunPreviousLogTest
+    Path logFile;
     public long spawnPid;
 
     private Printer quietPrinter;
@@ -305,7 +308,9 @@ public class Run extends CamelCommand {
             description = "Additional JVM arguments (e.g. -Xmx256m -Xms128m)")
     String jvmArgs;
 
-    @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
+    @Option(names = { "--name" }, defaultValue = "CamelJBang",
+            description = "The name of the Camel application. By default the name of the directory when running a whole directory"
+                          + " (--source-dir, or a directory), else the name of the first file")
     String name;
 
     @Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
@@ -1173,6 +1178,15 @@ public class Run extends CamelCommand {
             }
         }
 
+        if ("CamelJBang".equals(name) && sourceDir != null && !exportRun && !transformRun) {
+            // a whole directory is one app, named after the directory (CAMEL-25830): its first file depends on the
+            // order of the file system, and can be any file, such as a Java class that a route uses
+            String dirName = directoryName(sourceDir);
+            if (dirName != null) {
+                name = dirName;
+            }
+        }
+
         for (String file : files) {
             if (file.startsWith("clipboard") && !(Files.exists(Paths.get(file)))) {
                 file = loadFromClipboard(file);
@@ -1777,9 +1791,12 @@ public class Run extends CamelCommand {
         Path appProps = Paths.get(eq.exportDir, "src/main/resources/application.properties");
         if (Files.exists(appProps)) {
             String content = Files.readString(appProps);
+            // in the Camel directory of the CLI, where camel log looks for it (as for an existing Quarkus project)
+            String logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log").toAbsolutePath().toString()
+                    .replace("\\", "/");
             content += "\n# logging to file\n"
                        + "quarkus.log.file.enabled=true\n"
-                       + "quarkus.log.file.path=${user.home}/.camel/" + appName + ".log\n"
+                       + "quarkus.log.file.path=" + logFile + "\n"
                        + "quarkus.log.file.format=" + QUARKUS_LOG_FILE_FORMAT + "\n";
             Files.writeString(appProps, content);
         }
@@ -3050,28 +3067,90 @@ public class Run extends CamelCommand {
         }
     }
 
+    /**
+     * The folders of a project layout, whose name says nothing about the app (CAMEL-25830).
+     */
+    private static final Set<String> LAYOUT_FOLDERS = Set.of("src", "main", "resources", "java", "camel", "routes");
+
+    /**
+     * The name of an app that is a whole directory: the name of the directory, or of the first parent with a name that
+     * is not one of the folders of a project layout ({@code src/main/resources/camel} is named after the project), and
+     * {@code .} is the working directory.
+     *
+     * @return the name, or <tt>null</tt> when the directory and its parents have no such name
+     */
+    static String directoryName(String dir) {
+        Path path = Paths.get(dir).toAbsolutePath().normalize();
+        while (path != null && path.getFileName() != null) {
+            String answer = path.getFileName().toString();
+            if (!LAYOUT_FOLDERS.contains(answer.toLowerCase(Locale.ROOT))) {
+                return answer;
+            }
+            path = path.getParent();
+        }
+        return null;
+    }
+
     protected int runKameletMain(KameletMain main) throws Exception {
         Recording jfrRecording = startJfrRecording();
+        PreviousRun.Keeper previousLog = null;
+        if (logFile != null && keepsPreviousLog()) {
+            // CAMEL-25784: the log is kept as the previous log of the integration when the run ends, and so are the
+            // logs that runs which were killed left behind
+            PreviousRun.keepOrphans();
+            previousLog = new PreviousRun.Keeper(logFile, () -> runName(main));
+        }
+        Integer exitCode = null;
+        String failure = null;
         try {
             main.start();
             if (hasNoRoutes(main)) {
                 // it would run doing nothing: a file without routes, or a mistake in it
-                printer().printErr(files.isEmpty()
-                        ? "No routes found" : "No routes found in: " + String.join(", ", files));
+                failure = files.isEmpty() ? "No routes found" : "No routes found in: " + String.join(", ", files);
+                printer().printErr(failure);
                 main.stop();
-                return CliExitCode.FAILURE;
+                exitCode = CliExitCode.FAILURE;
+                return exitCode;
             }
             main.run();
+            int code = main.getExitCode();
+            // no exit code is set when Camel is stopped from outside (such as camel stop)
+            exitCode = code == Integer.MIN_VALUE ? CliExitCode.OK : code;
+            return exitCode;
+        } catch (Exception | Error e) {
+            // such as a route that failed to start, or an Error such as a NoClassDefFoundError of a missing dependency:
+            // only noted as why the run ended, and thrown again
+            failure = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+            exitCode = new CliExecutionExceptionHandler(getMain()).getExitCode(e);
+            throw e;
         } finally {
             stopJfrRecording(jfrRecording);
-            // cleanup and delete log file
-            if (logFile != null) {
+            if (previousLog != null) {
+                previousLog.ended(exitCode, failure);
+            } else if (logFile != null) {
+                // cleanup and delete log file
                 FileUtil.deleteFile(logFile);
             }
         }
-        int code = main.getExitCode();
-        // no exit code is set when Camel is stopped from outside (such as camel stop)
-        return code == Integer.MIN_VALUE ? CliExitCode.OK : code;
+    }
+
+    /**
+     * Whether the log of the run is kept as the previous log of the integration when the run ends (CAMEL-25784):
+     * {@code camel run} on the command line, not a Camel that another command runs in its JVM (such as
+     * {@code camel cmd send --local} and {@code camel transform}).
+     */
+    boolean keepsPreviousLog() {
+        return spec != null && !exportRun && !transformRun && !transformMessageRun && !scriptRun;
+    }
+
+    /**
+     * The name of the integration, as {@code camel ps} and {@code camel log} find it: the name of its CamelContext,
+     * which is {@code camel.main.name}, else the name of the run when Camel did not get that far.
+     */
+    private String runName(KameletMain main) {
+        CamelContext context = main.getCamelContext();
+        String answer = context != null ? context.getName() : null;
+        return answer != null && !answer.isBlank() ? answer : name;
     }
 
     /**

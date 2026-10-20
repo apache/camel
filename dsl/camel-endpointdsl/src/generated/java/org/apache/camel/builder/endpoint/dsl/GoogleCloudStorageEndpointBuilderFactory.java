@@ -877,6 +877,81 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * The email of a service account to impersonate with the credentials of
+         * Workload Identity Federation, so the workload gets the permissions of
+         * that service account. Used when useWorkloadIdentityFederation is
+         * enabled; the federated identity needs the Service Account Token
+         * Creator role on the service account.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param impersonatedServiceAccount the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder impersonatedServiceAccount(String impersonatedServiceAccount) {
+            doSetProperty("impersonatedServiceAccount", impersonatedServiceAccount);
+            return this;
+        }
+        /**
+         * Whether to authenticate with Workload Identity Federation instead of
+         * a service account key: with the credential configuration file given
+         * in workloadIdentityConfig or, when it is not set, with the
+         * Application Default Credentials, which detect Workload Identity on
+         * GKE.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useWorkloadIdentityFederation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder useWorkloadIdentityFederation(boolean useWorkloadIdentityFederation) {
+            doSetProperty("useWorkloadIdentityFederation", useWorkloadIdentityFederation);
+            return this;
+        }
+        /**
+         * Whether to authenticate with Workload Identity Federation instead of
+         * a service account key: with the credential configuration file given
+         * in workloadIdentityConfig or, when it is not set, with the
+         * Application Default Credentials, which detect Workload Identity on
+         * GKE.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useWorkloadIdentityFederation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder useWorkloadIdentityFederation(String useWorkloadIdentityFederation) {
+            doSetProperty("useWorkloadIdentityFederation", useWorkloadIdentityFederation);
+            return this;
+        }
+        /**
+         * The Workload Identity Federation credential configuration file (JSON,
+         * of type external_account), which says how to exchange a token of an
+         * external identity provider, such as AWS, Azure or an OIDC provider,
+         * for Google credentials. Used when useWorkloadIdentityFederation is
+         * enabled. It is loaded from the classpath by default; prefix it with
+         * classpath:, file:, http: or https: to load it from another location.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param workloadIdentityConfig the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointConsumerBuilder workloadIdentityConfig(String workloadIdentityConfig) {
+            doSetProperty("workloadIdentityConfig", workloadIdentityConfig);
+            return this;
+        }
     }
 
     /**
@@ -1220,6 +1295,81 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
             doSetProperty("operation", operation);
             return this;
         }
+        /**
+         * The email of a service account to impersonate with the credentials of
+         * Workload Identity Federation, so the workload gets the permissions of
+         * that service account. Used when useWorkloadIdentityFederation is
+         * enabled; the federated identity needs the Service Account Token
+         * Creator role on the service account.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param impersonatedServiceAccount the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder impersonatedServiceAccount(String impersonatedServiceAccount) {
+            doSetProperty("impersonatedServiceAccount", impersonatedServiceAccount);
+            return this;
+        }
+        /**
+         * Whether to authenticate with Workload Identity Federation instead of
+         * a service account key: with the credential configuration file given
+         * in workloadIdentityConfig or, when it is not set, with the
+         * Application Default Credentials, which detect Workload Identity on
+         * GKE.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useWorkloadIdentityFederation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder useWorkloadIdentityFederation(boolean useWorkloadIdentityFederation) {
+            doSetProperty("useWorkloadIdentityFederation", useWorkloadIdentityFederation);
+            return this;
+        }
+        /**
+         * Whether to authenticate with Workload Identity Federation instead of
+         * a service account key: with the credential configuration file given
+         * in workloadIdentityConfig or, when it is not set, with the
+         * Application Default Credentials, which detect Workload Identity on
+         * GKE.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useWorkloadIdentityFederation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder useWorkloadIdentityFederation(String useWorkloadIdentityFederation) {
+            doSetProperty("useWorkloadIdentityFederation", useWorkloadIdentityFederation);
+            return this;
+        }
+        /**
+         * The Workload Identity Federation credential configuration file (JSON,
+         * of type external_account), which says how to exchange a token of an
+         * external identity provider, such as AWS, Azure or an OIDC provider,
+         * for Google credentials. Used when useWorkloadIdentityFederation is
+         * enabled. It is loaded from the classpath by default; prefix it with
+         * classpath:, file:, http: or https: to load it from another location.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param workloadIdentityConfig the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointProducerBuilder workloadIdentityConfig(String workloadIdentityConfig) {
+            doSetProperty("workloadIdentityConfig", workloadIdentityConfig);
+            return this;
+        }
     }
 
     /**
@@ -1424,6 +1574,81 @@ public interface GoogleCloudStorageEndpointBuilderFactory {
          */
         default GoogleCloudStorageEndpointBuilder storageLocation(String storageLocation) {
             doSetProperty("storageLocation", storageLocation);
+            return this;
+        }
+        /**
+         * The email of a service account to impersonate with the credentials of
+         * Workload Identity Federation, so the workload gets the permissions of
+         * that service account. Used when useWorkloadIdentityFederation is
+         * enabled; the federated identity needs the Service Account Token
+         * Creator role on the service account.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param impersonatedServiceAccount the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointBuilder impersonatedServiceAccount(String impersonatedServiceAccount) {
+            doSetProperty("impersonatedServiceAccount", impersonatedServiceAccount);
+            return this;
+        }
+        /**
+         * Whether to authenticate with Workload Identity Federation instead of
+         * a service account key: with the credential configuration file given
+         * in workloadIdentityConfig or, when it is not set, with the
+         * Application Default Credentials, which detect Workload Identity on
+         * GKE.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useWorkloadIdentityFederation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointBuilder useWorkloadIdentityFederation(boolean useWorkloadIdentityFederation) {
+            doSetProperty("useWorkloadIdentityFederation", useWorkloadIdentityFederation);
+            return this;
+        }
+        /**
+         * Whether to authenticate with Workload Identity Federation instead of
+         * a service account key: with the credential configuration file given
+         * in workloadIdentityConfig or, when it is not set, with the
+         * Application Default Credentials, which detect Workload Identity on
+         * GKE.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useWorkloadIdentityFederation the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointBuilder useWorkloadIdentityFederation(String useWorkloadIdentityFederation) {
+            doSetProperty("useWorkloadIdentityFederation", useWorkloadIdentityFederation);
+            return this;
+        }
+        /**
+         * The Workload Identity Federation credential configuration file (JSON,
+         * of type external_account), which says how to exchange a token of an
+         * external identity provider, such as AWS, Azure or an OIDC provider,
+         * for Google credentials. Used when useWorkloadIdentityFederation is
+         * enabled. It is loaded from the classpath by default; prefix it with
+         * classpath:, file:, http: or https: to load it from another location.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param workloadIdentityConfig the value to set
+         * @return the dsl builder
+         */
+        default GoogleCloudStorageEndpointBuilder workloadIdentityConfig(String workloadIdentityConfig) {
+            doSetProperty("workloadIdentityConfig", workloadIdentityConfig);
             return this;
         }
     }

@@ -3030,7 +3030,7 @@ The password for reading/opening/verifying the key store.
             <xs:documentation xml:lang="en">
 <![CDATA[
 The type of the key store to create and load. See
-https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
+https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3066,7 +3066,7 @@ To lookup an existing KeyStore instance from the registry, for example for testi
 <![CDATA[
 The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom
 represented by this object's configuration. See
-https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
+https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14552,7 +14552,7 @@ The maximum number of tokens that can overlap in each segment.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="modelName" type="xs:string" use="required">
+        <xs:attribute name="modelName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -15344,7 +15344,7 @@ enabled for JSon or XML. Multiple package names can be separated by comma.
         <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
-messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: false
+messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: true
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15521,7 +15521,7 @@ a parent level. Default value: off
 <![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
 messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may
-be configured on a parent level. Default value: false
+be configured on a parent level. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15945,7 +15945,7 @@ a parent level. Default value: off
 <![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
 messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may
-be configured on a parent level. Default value: false
+be configured on a parent level. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16983,7 +16983,7 @@ Sets the class name to use for binding from POJO to output for the outgoing data
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
-messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: false
+messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17617,7 +17617,7 @@ The provider identifier for the JSSE implementation to use when constructing an 
             <xs:documentation xml:lang="en">
 <![CDATA[
 The protocol for the secure sockets created by the SSLContext represented by this instance's configuration. See
-https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
+https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>

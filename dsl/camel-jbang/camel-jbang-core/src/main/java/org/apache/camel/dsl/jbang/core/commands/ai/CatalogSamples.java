@@ -109,6 +109,10 @@ public final class CatalogSamples {
     private static final String[] HTTP_CALL = {
             "http", "a to: with the http component (toD: when the URI is built from the message, such as a path"
                     + " parameter); the response becomes the message body" };
+    // a JMS broker without a component of its own (CAMEL-25783)
+    private static final String[] JMS_BROKER = {
+            "jms", "the jms component, with the ConnectionFactory of the broker's client library as a bean on the"
+                   + " component (the jms page shows it under Connecting to a broker)" };
     private static final String[] OPENAPI_CALL = {
             "rest-openapi", "a to: with the rest-openapi component, its specificationUri and operationId; path and"
                             + " query parameters come from headers of the same name, the body is the request body" };
@@ -138,7 +142,9 @@ public final class CatalogSamples {
             Map.entry("call service", HTTP_CALL), Map.entry("call", HTTP_CALL), Map.entry("http call", HTTP_CALL),
             Map.entry("call api", HTTP_CALL), Map.entry("http client", HTTP_CALL), Map.entry("call http", HTTP_CALL),
             Map.entry("openapi client", OPENAPI_CALL), Map.entry("call by contract", OPENAPI_CALL),
-            Map.entry("call operation", OPENAPI_CALL));
+            Map.entry("call operation", OPENAPI_CALL),
+            Map.entry("artemis", JMS_BROKER), Map.entry("activemq artemis", JMS_BROKER), Map.entry("ibm mq", JMS_BROKER),
+            Map.entry("ibmmq", JMS_BROKER), Map.entry("websphere mq", JMS_BROKER));
 
     private static volatile Map<String, List<Map<String, String>>> samples;
 
@@ -249,7 +255,36 @@ public final class CatalogSamples {
     static final Map<String, String> SAMPLES_ON_PAGE_OF
             = Map.of("interceptFrom", "intercept", "interceptSendToEndpoint", "intercept");
 
+    /**
+     * The EIPs whose own page has no example: their samples are the examples on the pages of what they belong to that
+     * write them, the first of each page first (CAMEL-25774). loadBalance is on the pages of its policies, the circuit
+     * breaker settings on the pages of Resilience4j and Fault Tolerance, and the resequencer settings on its page.
+     */
+    static final Map<String, List<String>> SAMPLES_IN_PAGES_OF = Map.of(
+            "loadBalance", List.of("failoverLoadBalancer-eip", "roundRobinLoadBalancer-eip", "weightedLoadBalancer-eip",
+                    "randomLoadBalancer-eip", "stickyLoadBalancer-eip", "topicLoadBalancer-eip", "customLoadBalancer-eip"),
+            "resilience4jConfiguration", List.of("resilience4j-eip"),
+            "faultToleranceConfiguration", List.of("fault-tolerance-eip"),
+            "batchConfig", List.of("resequence-eip"),
+            "streamConfig", List.of("resequence-eip"));
+
+    /** The settings written inside an EIP as one of its options, not as a step (CAMEL-25774). */
+    static final Map<String, String> SETTINGS_OF = Map.of(
+            "resilience4jConfiguration", "circuitBreaker", "faultToleranceConfiguration", "circuitBreaker",
+            "batchConfig", "resequence", "streamConfig", "resequence");
+
     private static Found eipSamples(CamelCatalog catalog, String key) {
+        List<String> pages = SAMPLES_IN_PAGES_OF.get(key);
+        if (pages != null) {
+            Pattern writes = Pattern.compile("(?m)^\\s*(- )?" + Pattern.quote(key) + ":");
+            List<List<Map<String, String>>> perPage = new ArrayList<>();
+            for (String page : pages) {
+                perPage.add(pageSamples(catalog, List.of(page), null).samples().stream()
+                        .filter(s -> writes.matcher(s.get("yaml")).find()).toList());
+            }
+            List<Map<String, String>> all = interleave(perPage);
+            return all.isEmpty() ? Found.NONE : new Found(all, false);
+        }
         String host = SAMPLES_ON_PAGE_OF.get(key);
         if (host != null) {
             // the examples of the page that start with the entry, not those of the EIP the page is about
@@ -264,6 +299,20 @@ public final class CatalogSamples {
             }
         }
         return Found.NONE;
+    }
+
+    /** The samples of each page in turn: the first of every page, then the second, and so on. */
+    private static List<Map<String, String>> interleave(List<List<Map<String, String>>> perPage) {
+        List<Map<String, String>> answer = new ArrayList<>();
+        int longest = perPage.stream().mapToInt(List::size).max().orElse(0);
+        for (int i = 0; i < longest; i++) {
+            for (List<Map<String, String>> page : perPage) {
+                if (i < page.size()) {
+                    answer.add(page.get(i));
+                }
+            }
+        }
+        return answer;
     }
 
     private static Found componentSamples(CamelCatalog catalog, String name) {
@@ -774,6 +823,10 @@ public final class CatalogSamples {
         if (TOP_LEVEL.contains(key)) {
             return "top-level entry: a list item at the same level as route or from, not a step inside a route";
         }
+        String owner = SETTINGS_OF.get(key);
+        if (owner != null) {
+            return "the settings of " + owner + ": written inside " + owner + " as " + key + ":, not as a step";
+        }
         return "a step inside the steps of a route (or of another EIP)";
     }
 
@@ -854,6 +907,12 @@ public final class CatalogSamples {
         // an entry whose examples are on the page of another EIP, which the shipped set does not have: they come from
         // the catalog's documentation (CAMEL-25735)
         for (String k : SAMPLES_ON_PAGE_OF.keySet()) {
+            if (k.equalsIgnoreCase(n)) {
+                return k;
+            }
+        }
+        // an EIP whose examples are on the pages of what it belongs to (CAMEL-25774)
+        for (String k : SAMPLES_IN_PAGES_OF.keySet()) {
             if (k.equalsIgnoreCase(n)) {
                 return k;
             }

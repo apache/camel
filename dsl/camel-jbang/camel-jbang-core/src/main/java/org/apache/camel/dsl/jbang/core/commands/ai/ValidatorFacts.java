@@ -54,7 +54,7 @@ final class ValidatorFacts {
         }
         return new ProjectFacts(
                 OpenApiVerbs.bodylessEndpoints(content, directory), OpenApiVerbs.operations(content, directory),
-                restBindingMode(directory));
+                restBindingMode(directory), OpenApiVerbs.requestFields(content, directory));
     }
 
     /**

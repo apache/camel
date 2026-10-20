@@ -71,13 +71,8 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: ['17', '25']
+        java: ['21', '25']
         experimental: [ false ]
-        include:
-          - java: '17'
-            # JDK 17 is kept for runtime compatibility testing.
-            # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
-            maven_extra_args: '-Denforcer.phase=none'
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -218,7 +213,7 @@ jobs:
       # The comment content is identical across JDKs (same modules tested),
       # so last writer wins. However, we only upload (and overwrite) when the
       # comment file actually exists — a cancelled build (e.g., JDK 25 killed
-      # while JDK 17 fails) won't have the file and must not overwrite an
+      # while JDK 21 fails) won't have the file and must not overwrite an
       # artifact from a matrix entry that did produce it.
       #
       # The recovered-flake section is the one part that is NOT identical across

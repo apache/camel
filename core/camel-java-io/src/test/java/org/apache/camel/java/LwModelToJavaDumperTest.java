@@ -21,12 +21,15 @@ import java.io.IOException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.java.out.JavaDslModelWriter;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.ThrowExceptionDefinition;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.xml.LwModelToXMLDumper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,6 +64,51 @@ public class LwModelToJavaDumperTest {
 
             RouteConfigurationDefinition config = model.getRouteConfigurationDefinitions().get(0);
             assertThat(dumper.dumpModelAsJava(context, config)).startsWith("routeConfiguration(\"cfg\")");
+        }
+    }
+
+    @Test
+    public void testDumpRestKeepsSkipBindingOnErrorCodeFalse() throws Exception {
+        // skipBindingOnErrorCode defaults to true, so false set explicitly must be kept
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    rest("/api").skipBindingOnErrorCode(false)
+                            .get("/hello").skipBindingOnErrorCode(false).to("direct:hello");
+                }
+            });
+            Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+            RestDefinition rest = model.getRestDefinitions().get(0);
+
+            String java = new LwModelToJavaDumper().dumpModelAsJava(context, rest);
+            assertThat(java.split("\\.skipBindingOnErrorCode\\(false\\)", -1)).as(java).hasSize(3);
+
+            String xml = new LwModelToXMLDumper().dumpModelAsXml(context, rest);
+            assertThat(xml.split("skipBindingOnErrorCode=\"false\"", -1)).as(xml).hasSize(3);
+
+            RestConfigurationDefinition config = new RestConfigurationDefinition().skipBindingOnErrorCode(false);
+            assertThat(new JavaDslModelWriter().writeRestConfiguration(config)).contains(".skipBindingOnErrorCode(false)");
+        }
+    }
+
+    @Test
+    public void testDumpRestVerbApiDocsTrueUnderRestApiDocsFalse() throws Exception {
+        // a verb whose apiDocs is not set takes the value of its rest, so apiDocs(true) set on the verb must be kept
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    rest("/api").apiDocs(false)
+                            .get("/documented").apiDocs(true).to("direct:documented");
+                }
+            });
+            Model model = context.getCamelContextExtension().getContextPlugin(Model.class);
+            RestDefinition rest = model.getRestDefinitions().get(0);
+
+            String java = new LwModelToJavaDumper().dumpModelAsJava(context, rest);
+            // once for the rest and once for the verb
+            assertThat(java.split("\\.apiDocs\\(", -1)).as(java).hasSize(3);
         }
     }
 

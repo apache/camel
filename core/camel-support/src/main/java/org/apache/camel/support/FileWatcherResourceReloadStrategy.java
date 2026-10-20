@@ -415,16 +415,24 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
             getResourceReload().onReload(name, resource);
             incSucceededCounter();
         } catch (Exception e) {
-            setLastError(e);
-            incFailedCounter();
-            // the same event a failed context reload emits, so a listener can act on the file
-            EventHelper.notifyContextReloadFailure(getCamelContext(), name, e);
-            String msg = e.getMessage();
-            if (msg != null && msg.endsWith(".")) {
-                msg = msg.substring(0, msg.length() - 1);
-            }
-            LOG.warn("Error reloading routes from file: {} due to: {}. This exception is ignored.", name, msg, e);
+            reloadFailed(name, e);
         }
+    }
+
+    /**
+     * Counts and reports a file that failed to reload: the last error, the failed counter, the event of a failed
+     * context reload, and a WARN.
+     */
+    void reloadFailed(String name, Exception e) {
+        setLastError(e);
+        incFailedCounter();
+        // the same event a failed context reload emits, so a listener can act on the file
+        EventHelper.notifyContextReloadFailure(getCamelContext(), name, e);
+        String msg = e.getMessage();
+        if (msg != null && msg.endsWith(".")) {
+            msg = msg.substring(0, msg.length() - 1);
+        }
+        LOG.warn("Error reloading routes from file: {} due to: {}. This exception is ignored.", name, msg, e);
     }
 
 }

@@ -165,7 +165,7 @@ public final class SourceValidator {
             return validateProperties(content, catalog, extraPropertyLine);
         }
         if (name.endsWith(".java")) {
-            List<String> msgs = validateJava(fileName, content);
+            List<String> msgs = JavaChecks.validateJava(fileName, content, directory);
             if (directory != null && !msgs.isEmpty()) {
                 msgs = withSiblingClassHints(msgs, BeanDeclarations.scan(directory, fileName));
             }

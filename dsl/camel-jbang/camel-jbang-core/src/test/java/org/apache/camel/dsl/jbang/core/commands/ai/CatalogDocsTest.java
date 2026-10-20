@@ -257,6 +257,18 @@ class CatalogDocsTest {
     }
 
     @Test
+    void aBrokerWithoutAComponentOfItsOwnFindsJms() {
+        // CAMEL-25783: nothing in the catalog is named artemis, so a model asking for it found nothing
+        DefaultCamelCatalog catalog = new DefaultCamelCatalog();
+        for (String term : List.of("artemis", "ibm mq")) {
+            JsonArray matches = (JsonArray) CatalogDocs.find(catalog, term, null, 10).get("matches");
+            JsonObject first = (JsonObject) matches.get(0);
+            assertEquals("jms", first.getString("name"), term);
+            assertTrue(first.getString("note").contains("Connecting to a broker"), first.toJson());
+        }
+    }
+
+    @Test
     void anInterfaceNameFindsTheBuiltInBeans() {
         org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
         var result = CatalogDocs.find(catalog, "AggregationStrategy", "bean", 20);
@@ -680,9 +692,12 @@ class CatalogDocsTest {
             assertFalse(((JsonObject) o).containsKey("yaml"), ((JsonObject) o).toJson());
         }
         assertTrue(doc.getString("sampleHint").contains("camel_catalog_sample name=split"), doc.toJson());
-        // the sample hint only for an EIP camel_catalog_sample has a sample of
+        // the sample hint only for an EIP camel_catalog_sample has a sample of: pausable has one since its page has YAML
+        // examples (CAMEL-25774); a tokenizer implementation, written inside tokenizer, has none
         doc = CatalogDocs.catalogDoc(catalog, "pausable", null, "eip", null, null, false, false, null);
         assertTrue(doc.getString("placement").startsWith("a step inside the steps of a route"), doc.toJson());
+        assertTrue(doc.getString("sampleHint").contains("camel_catalog_sample name=pausable"), doc.toJson());
+        doc = CatalogDocs.catalogDoc(catalog, "langChain4jParagraphTokenizer", null, "eip", null, null, false, false, null);
         assertFalse(doc.containsKey("sampleHint"), doc.toJson());
     }
 

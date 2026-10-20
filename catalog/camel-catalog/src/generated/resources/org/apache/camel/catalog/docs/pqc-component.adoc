@@ -360,9 +360,9 @@ All other signature algorithms follow the exact same route pattern shown above f
 
 |HSS
 |`HSS`
-|HSS
+|LMS
 |BC
-|LMS-SHA256-N32-H5
+|LMS-SHA256-N32-H5 / SHA256-N32-W2 (OTS), 2 levels
 |`PQCDefaultHSSMaterial`
 
 |Dilithium

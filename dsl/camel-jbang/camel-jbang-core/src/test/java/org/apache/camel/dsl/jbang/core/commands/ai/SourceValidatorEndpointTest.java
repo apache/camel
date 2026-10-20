@@ -344,14 +344,31 @@ class SourceValidatorEndpointTest {
         org.assertj.core.api.Assertions.assertThat(msgs.get(0))
                 .contains("not applicable in producer only mode")
                 .contains("it writes the body")
-                .contains("poll EIP");
+                .contains("poll EIP")
+                // a data file the route needs is read, not consumed
+                .contains("to read a data file the route needs, such as a lookup table: setVariable with constant:"
+                          + " resource:file:<path>");
+
+        // another component does not get the file's hint
+        String kafka = """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to:
+                          uri: "kafka:orders?groupId=orders"
+                """;
+        org.assertj.core.api.Assertions
+                .assertThat(SourceValidator.validateYamlEndpoints(kafka, new org.apache.camel.catalog.DefaultCamelCatalog()))
+                .singleElement().asString().contains("poll EIP").doesNotContain("resource:file");
     }
 
     @org.junit.jupiter.api.Test
     void componentDocSaysWhereItGoes() {
         org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("file"))).contains("from: consumes")
-                .contains("poll EIP");
+                .contains("poll EIP").contains("setVariable with constant: resource:file:stock.json");
+        org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("jms"))).contains("poll EIP")
+                .doesNotContain("resource:file");
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("timer")))
                 .startsWith("consumer only");
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("log")))

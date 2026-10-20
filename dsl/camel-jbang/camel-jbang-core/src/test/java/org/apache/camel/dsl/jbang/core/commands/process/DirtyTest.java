@@ -23,6 +23,8 @@ import java.util.Optional;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -99,6 +101,80 @@ class DirtyTest extends ProcessCommandTestSupport {
             assertEquals(0, exit);
             assertFalse(Files.exists(orphan), "Orphan file should be deleted by --clean");
             assertTrue(printer.getOutput().contains("Cleaned"), "Should print cleaned confirmation");
+        }
+    }
+
+    @Test
+    void testTheLogOfAPreviousRunIsNotDirty() throws Exception {
+        // kept on purpose (CAMEL-25784), and the next run of that name replaces it
+        Files.writeString(CommandLineHelper.getCamelDir().resolve("orders-previous.log"), "Started");
+        Files.writeString(CommandLineHelper.getCamelDir().resolve("orders-previous.json"), "{}");
+        // a name can be a number
+        Files.writeString(CommandLineHelper.getCamelDir().resolve("123-previous.log"), "Started");
+
+        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        command.clean = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertEquals("", printer.getOutput().trim());
+            assertTrue(Files.exists(CommandLineHelper.getCamelDir().resolve("orders-previous.log")));
+            assertTrue(Files.exists(CommandLineHelper.getCamelDir().resolve("123-previous.log")));
+        }
+    }
+
+    @Test
+    void testFilesThatBelongToNoProcessAreNotDirty() throws Exception {
+        Path dir = CommandLineHelper.getCamelDir();
+        // the log of a Spring Boot or Quarkus app, which writes it while it runs
+        Files.writeString(dir.resolve("orders.log"), "Started");
+        // the console output the AI tools keep, and other files of the CLI
+        Files.writeString(dir.resolve("camel-launch-123456.log"), "Started");
+        Files.writeString(dir.resolve("ai-prompt.history"), "hello");
+        Files.writeString(dir.resolve("camel-export.log"), "Exported");
+        // directories, such as a cache
+        Files.createDirectories(dir.resolve("quarkus-extension-registries").resolve("cache"));
+        Files.createDirectories(dir.resolve("12345-dir"));
+
+        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        command.clean = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertEquals("", printer.getOutput().trim());
+            for (String name : new String[] {
+                    "orders.log", "camel-launch-123456.log", "ai-prompt.history", "camel-export.log",
+                    "quarkus-extension-registries", "12345-dir" }) {
+                assertTrue(Files.exists(dir.resolve(name)), name + " is left");
+            }
+        }
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void testOnlyTheFilesThatWereRemovedAreCounted() throws Exception {
+        Path dir = CommandLineHelper.getCamelDir();
+        Path orphan = dir.resolve("77777-status.json");
+        Files.writeString(orphan, "{}");
+        // a file in a directory that cannot be written cannot be deleted
+        assertTrue(dir.toFile().setWritable(false));
+
+        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        command.clean = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            int exit = command.doCall();
+
+            assertEquals(0, exit);
+            assertTrue(printer.getOutput().contains("Cleaned 0 orphan files"), printer.getOutput());
+            assertTrue(printer.getOutput().contains("WARN: Cannot delete: 77777-status.json"), printer.getOutput());
+            assertTrue(Files.exists(orphan));
+        } finally {
+            dir.toFile().setWritable(true);
         }
     }
 

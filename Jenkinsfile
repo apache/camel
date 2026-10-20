@@ -17,7 +17,6 @@
 def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=1"
 def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 def MAVEN_TEST_PARAMS_UBUNTU = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
-def MAVEN_JDK_17_PARAMS = "-Denforcer.skip=true"
 /*
 Below parameters are required for camel/core/camel-core module's test cases to pass on ppc64 and s390x
 - xpathExprGrpLimit: limits the number of groups an Xpath expression can contain
@@ -52,7 +51,7 @@ pipeline {
     parameters {
         booleanParam(name: 'VIRTUAL_THREAD', defaultValue: false, description: 'Perform the build using virtual threads')
         choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu-avx'], description: 'Run on specific platform')
-        choice(name: 'JDK_FILTER', choices: ['all', 'jdk_17_latest' ,'jdk_21_latest', 'jdk_25_latest'], description: 'Run on specific jdk')
+        choice(name: 'JDK_FILTER', choices: ['all', 'jdk_21_latest', 'jdk_25_latest'], description: 'Run on specific jdk')
     }
     agent none
     stages {
@@ -77,7 +76,7 @@ pipeline {
                 axes {
                     axis {
                         name 'JDK_NAME'
-                        values 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
+                        values 'jdk_21_latest', 'jdk_25_latest'
                     }
                     axis {
                         name 'PLATFORM'
@@ -85,26 +84,6 @@ pipeline {
                     }
                 }
                 excludes {
-                    exclude {
-                        axis {
-                            name 'JDK_NAME'
-                            values 'jdk_17_latest'
-                        }
-                        axis {
-                            name 'PLATFORM'
-                            values 'ppc64le'
-                        }
-                    }
-                    exclude {
-                        axis {
-                            name 'JDK_NAME'
-                            values 'jdk_17_latest'
-                        }
-                        axis {
-                            name 'PLATFORM'
-                            values 's390x'
-                        }
-                    }
                     exclude {
                         axis {
                             name 'JDK_NAME'
@@ -165,8 +144,6 @@ pipeline {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {
                                             // Enable virtual threads and coverage required later by Sonar check
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD} -Pcoverage"
-                                        } else if ("${JDK_NAME}" == "jdk_17_latest") {
-                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_JDK_17_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install"
                                         } else {
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install"
                                         }

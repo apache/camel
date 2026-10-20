@@ -21,27 +21,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <!-- Since this is a test case lets run a local ZK server -->
-  <bean id="zkContainer" class="org.apache.camel.test.infra.zookeeper.services.ZooKeeperContainer" init-method="start" destroy-method="stop">
-    <constructor-arg>
-      <value>zookeeper</value>
-    </constructor-arg>
-  </bean>
+  <!-- Resolve system properties set by the @RegisterExtension ZooKeeperService -->
+  <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"/>
 
-  <bean id="zkConnectString" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject" ref="zkContainer"/>
-    <property name="targetMethod" value="getConnectionString">
-    </property>
-  </bean>
-
-  <bean id="curator" class="org.apache.camel.component.zookeepermaster.CuratorFactoryBean" depends-on="zkContainer">
-    <property name="timeout" value="3000"/>
-    <property name="connectString" ref="zkConnectString"/>
+  <!-- Use the ZooKeeper started by the @RegisterExtension ZooKeeperService in the test class.
+       The connection string is published via the system property zookeeper.connection.string. -->
+  <bean id="curator" class="org.apache.camel.component.zookeepermaster.CuratorFactoryBean">
+    <property name="timeout" value="30000"/>
+    <property name="connectString" value="${zookeeper.connection.string}"/>
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="curator">
     <route id="zookeeper-master-quartz">
-      <from uri="zookeeper-master:master-000:quartz://masterTest?cron=0/2+0/1+*+1/1+*+?+*"/>
+      <from uri="zookeeper-master:master-quartz-it:quartz://masterTest?cron=0/2+0/1+*+1/1+*+?+*"/>
       <to uri="mock:results"/>
     </route>
 

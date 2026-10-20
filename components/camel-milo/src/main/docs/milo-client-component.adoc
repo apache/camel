@@ -127,6 +127,11 @@ However Camel allows to wrap the actual value inside `RAW(…)`, which makes esc
 milo-client:opc.tcp://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
 ----
 
+A producer request for a node whose namespace URI (`nsu=`) is not in the namespace table of the server is answered
+like a request for a node that the server does not have. A write returns the status code `Bad_NodeIdUnknown`. A read,
+or a browse of the xref:milo-browse-component.adoc[Milo Browse] component, returns that status code for this node and
+the results of the other nodes. The connection and the consumers that share it are not affected.
+
 === Monitoring and writing a node
 
 The following routes monitor one node and write another, on the server of the

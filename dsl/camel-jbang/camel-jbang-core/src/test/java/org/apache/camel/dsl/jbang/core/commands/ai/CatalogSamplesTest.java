@@ -57,6 +57,41 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void theEipsWithoutExamplesOfTheirOwnHaveSamplesFromThePagesTheyBelongTo() {
+        // CAMEL-25774: loadBalance is on the pages of its policies, the circuit breaker settings on the Resilience4j and
+        // Fault Tolerance pages, and the resequencer settings on its page; a sample writes the key it is asked for
+        CamelCatalog catalog = new DefaultCamelCatalog();
+        for (String entry : List.of("loadBalance", "resilience4jConfiguration", "faultToleranceConfiguration",
+                "batchConfig", "streamConfig")) {
+            JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, entry, 5).get("samples");
+            assertThat(samples).as(entry).isNotEmpty();
+            for (Object s : samples) {
+                assertThat(((JsonObject) s).getString("yaml")).as(entry).contains(entry + ":");
+            }
+        }
+        // the first sample of each policy page first, so the first two show two policies
+        JsonArray lb = (JsonArray) CatalogSamples.sample(catalog, "loadBalance", 2).get("samples");
+        assertThat(((JsonObject) lb.get(0)).getString("source")).startsWith("failoverLoadBalancer-eip");
+        assertThat(((JsonObject) lb.get(1)).getString("source")).startsWith("roundRobinLoadBalancer-eip");
+        // the settings are written inside the EIP, not as a step
+        assertThat(CatalogSamples.sample(catalog, "streamConfig", 1).getString("placement"))
+                .contains("written inside resequence").contains("not as a step");
+    }
+
+    @Test
+    void theIdempotentConsumerHasSamples() {
+        // CAMEL-25774: its page had no example, so the sample tool answered "no YAML sample"
+        JsonArray samples = (JsonArray) CatalogSamples.sample(new DefaultCamelCatalog(), "idempotentConsumer", 2)
+                .get("samples");
+        assertThat(samples).hasSize(2);
+        assertThat(((JsonObject) samples.get(0)).getString("yaml")).contains("idempotentRepository: myRepo")
+                .contains("MemoryIdempotentRepository");
+        // each sample declares the repository it uses, so it works on its own
+        assertThat(((JsonObject) samples.get(1)).getString("yaml")).contains("skipDuplicate: false")
+                .contains("CamelDuplicateMessage").contains("MemoryIdempotentRepository");
+    }
+
+    @Test
     void theTopLevelEntriesDocumentedOnAnotherPageHaveSamples() {
         // CAMEL-25719: their examples are on the page of what they belong to (route templates, the REST DSL,
         // transformers, validators, the configuration utilities), which the samples did not read
@@ -103,11 +138,11 @@ public class CatalogSamplesTest {
         // an exact component name (chunk is the Chunk templating component) beats an alias of an EIP, unless asked
         assertThat(CatalogSamples.sample(catalog, "chunk", 1).getString("kind")).isEqualTo("component");
         assertThat(CatalogSamples.sample(catalog, "eip", "chunk", 1).getString("name")).isEqualTo("split");
-        // an alias of an EIP whose page has no YAML example still names the EIP
+        // dedup is the idempotent consumer, which has samples since its page has examples (CAMEL-25774)
         JsonObject dedup = CatalogSamples.sample(catalog, "dedup", 1);
-        assertThat(dedup.getString("error")).contains("dedup");
-        assertThat(dedup.getString("eip")).isEqualTo("idempotentConsumer");
-        assertThat(dedup.getString("hint")).contains("idempotentConsumer EIP");
+        assertThat(dedup.getString("name")).isEqualTo("idempotentConsumer");
+        assertThat(dedup.getString("note")).contains("idempotentConsumer EIP");
+        assertThat((JsonArray) dedup.get("samples")).isNotEmpty();
         assertThat(CatalogSamples.sample(catalog, "rate-limit", 1).getString("name")).isEqualTo("throttle");
         assertThat(CatalogSamples.sample(catalog, "router", 1).getString("name")).isEqualTo("choice");
         // an aliased part of an EIP shows the whole
@@ -143,12 +178,21 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void artemisIsTheJmsComponentWithItsConnectionFactory() {
+        // CAMEL-25783: a broker without a component of its own
+        JsonObject o = CatalogSamples.sample(new DefaultCamelCatalog(), "artemis", 1);
+        assertThat(o.getString("name")).isEqualTo("jms");
+        assertThat(o.getString("note")).contains("ConnectionFactory", "Connecting to a broker");
+    }
+
+    @Test
     void callingAServiceIsTheHttpComponentNotEnrich() {
         CamelCatalog catalog = new DefaultCamelCatalog();
         for (String term : List.of("call service", "http call", "Call API")) {
             JsonObject o = CatalogSamples.sample(catalog, term, 2);
             assertThat(o.getString("name")).as(term).isEqualTo("http");
             assertThat(o.getString("note")).as(term).contains("to:", "toD:");
+            // the uri may be quoted, as in the toD of the GET example on the http page (CAMEL-25745)
             assertThat(((JsonObject) ((JsonArray) o.get("samples")).get(0)).getString("yaml"))
                     .containsPattern("uri: \"?http");
         }

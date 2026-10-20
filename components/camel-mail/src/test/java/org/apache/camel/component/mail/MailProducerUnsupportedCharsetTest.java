@@ -46,18 +46,13 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
     public void testSendUnsupportedCharset() throws Exception {
         jones1.clear();
 
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                from(jones1.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&ignoreUnsupportedCharset=true")
-                        .to("mock:result");
-            }
-        });
+        // Start context first (needed for template) but without any consumer route yet.
+        // Both messages must be in the mailbox before the POP3 consumer starts polling.
+        // POP3 has no SEEN flag and runs with delete=false by default, so every poll
+        // re-delivers all messages. If the consumer fired between the two SMTP sends it
+        // would receive Hello World twice; expectedBodiesReceivedInAnyOrder would then
+        // consume both Hello slots and report Bye World as missing.
         context.start();
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("Hello World\r\n", "Bye World\r\n");
-        mock.allMessages().header("Content-Type").isEqualTo("text/plain");
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("To", jones1.getEmail());
@@ -69,6 +64,21 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         headers.put("Content-Type", "text/plain; charset=XXX");
         template.sendBodyAndHeaders(jones1.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=true", "Bye World", headers);
 
+        // Set up expectations and add the consumer route only after both messages are in the
+        // mailbox. delete=true ensures each message is delivered exactly once regardless of
+        // timing, making the test robust even if subsequent polls happen before assertIsSatisfied.
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World\r\n", "Bye World\r\n");
+        mock.allMessages().header("Content-Type").isEqualTo("text/plain");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from(jones1.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&delete=true&ignoreUnsupportedCharset=true")
+                        .to("mock:result");
+            }
+        });
+
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -79,7 +89,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from(jones2.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&ignoreUnsupportedCharset=false")
+                from(jones2.uriPrefix(Protocol.pop3) + "&initialDelay=100&delay=100&delete=true&ignoreUnsupportedCharset=false")
                         .to("mock:result");
             }
         });

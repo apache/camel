@@ -64,11 +64,14 @@ public final class LogFileReader {
     /** A frame of a stack trace: {@code at org.example.OrderBean.process(OrderBean.java:42)}. */
     private static final Pattern FRAME = Pattern.compile("^\\tat (\\S+\\(.*\\))$");
 
-    /** Frames of the runtime, not of the user's code: Camel, the JDK, Groovy, Vert.x and the like. */
+    /**
+     * Frames of the runtime, not of the user's code: Camel, the JDK, Groovy, Vert.x and the like, and picocli, the
+     * command line library of the CLI, which a start that failed has under the frames of Camel.
+     */
     private static final List<String> RUNTIME_PACKAGES = List.of(
             "org.apache.camel.", "java.", "javax.", "jakarta.", "jdk.", "sun.", "com.sun.", "groovy.",
             "org.codehaus.groovy.", "org.apache.groovy.", "io.vertx.", "io.netty.", "io.smallrye.", "io.quarkus.",
-            "org.springframework.", "com.fasterxml.", "org.jboss.", "kotlin.");
+            "org.springframework.", "com.fasterxml.", "org.jboss.", "kotlin.", "picocli.");
 
     /** Internal fields of a record, removed before it is returned. */
     private static final String TRACE = "_trace";
@@ -115,7 +118,18 @@ public final class LogFileReader {
      * @return         lines (newest first), totalLines and returnedLines, or an error when there is no log file
      */
     public static JsonObject read(long pid, String name, int limit, String filter, String level, boolean details) {
-        Path file = logFile(pid, name);
+        return read(logFile(pid, name), limit, filter, level, details);
+    }
+
+    /**
+     * @param  file    the log file, such as the log of the previous run of an integration
+     * @param  limit   maximum records to return
+     * @param  filter  case-insensitive substring the message or detail must contain; null for all
+     * @param  level   only records of this level (INFO, WARN, ERROR, DEBUG, TRACE); null for all
+     * @param  details whether a stack trace stays in its record
+     * @return         lines (newest first), totalLines and returnedLines, or an error when there is no log file
+     */
+    public static JsonObject read(Path file, int limit, String filter, String level, boolean details) {
         JsonObject result = new JsonObject();
         result.put("file", file.toString());
         if (!Files.isRegularFile(file)) {

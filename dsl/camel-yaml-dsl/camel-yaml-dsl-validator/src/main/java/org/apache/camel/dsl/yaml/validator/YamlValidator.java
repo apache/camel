@@ -390,6 +390,10 @@ public class YamlValidator {
         if (msg.contains("expected <block end>, but found '<block mapping start>'")) {
             return marks.size() > 1 ? mappingKeyColumn(marks.get(0), problem, lines) : null;
         }
+        // a key in the column of the dashes of a list: '?' is the parser's name for a key
+        if (msg.contains("expected <block end>, but found '?'")) {
+            return marks.size() > 1 ? keyInListColumn(marks.get(0), problem, lines) : null;
+        }
         if (msg.contains("mapping values are not allowed here")) {
             return mappingValue(problem, lines);
         }
@@ -497,6 +501,45 @@ public class YamlValidator {
         return hint("line " + problem.line() + ": " + keyName(lines[problem.line() - 1]) + " starts in column "
                     + problem.column() + ", but the keys of the mapping that starts at line " + mapping.line()
                     + " are in column " + mapping.column() + "; every key of a mapping must start in the same column");
+    }
+
+    /**
+     * A key in the column of the dashes of the list above it, such as steps: under - simple: of a when: list, or
+     * onFallback: under the - to: of the steps: of a circuitBreaker: it is part of neither the list item nor the
+     * mapping that holds the list. Names both columns, one of which was meant.
+     */
+    private static Error keyInListColumn(Mark item, Mark problem, String[] lines) {
+        String itemLine = lines[item.line() - 1];
+        int dash = item.column() - 1;
+        if (dash < 0 || dash >= itemLine.length() || itemLine.charAt(dash) != '-') {
+            return null;
+        }
+        String afterDash = itemLine.substring(dash + 1);
+        int itemKeyColumn = dash + 2 + afterDash.length() - afterDash.stripLeading().length();
+        String key = keyName(lines[problem.line() - 1]);
+        String answer = "line " + problem.line() + ": " + key + " starts in column " + problem.column()
+                        + ", the column of the - of the list item at line " + item.line() + ", so it is part of neither"
+                        + " that item nor the key that holds the list. Write it in column " + itemKeyColumn
+                        + " to make it a key of the item, as " + keyName(afterDash) + " is";
+        // the key whose value the list is: the nearest line above that is indented less than the dashes
+        for (int i = item.line() - 2; i >= 0; i--) {
+            String stripped = lines[i].stripLeading();
+            if (stripped.isEmpty() || stripped.startsWith("#")) {
+                continue;
+            }
+            int indent = lines[i].length() - stripped.length();
+            if (indent < dash) {
+                int column = indent + 1;
+                if (stripped.startsWith("-")) {
+                    String rest = stripped.substring(1);
+                    stripped = rest.stripLeading();
+                    column += 1 + rest.length() - stripped.length();
+                }
+                return hint(answer + ", or in column " + column + " to make it a key next to " + keyName(stripped)
+                            + " (line " + (i + 1) + ")");
+            }
+        }
+        return hint(answer);
     }
 
     /**
@@ -675,8 +718,12 @@ public class YamlValidator {
      * <p/>
      * The envelope is described loosely on purpose. Camel does not own the Kamelet CRD, so the parts it does not read
      * are accepted as they come rather than failed for being unknown.
+     * <p/>
+     * The schema of the template is kept under {@code definitions}, where draft 4 (the dialect of the route schema)
+     * keeps a schema that is only referenced: under a key of its own at the root it is no keyword, and the validator
+     * warns about an unknown keyword each time a JVM loads the schema (CAMEL-25820).
      */
-    private JsonNode kameletModel(JsonNode routeModel) {
+    JsonNode kameletModel(JsonNode routeModel) {
         ObjectNode root = mapper.createObjectNode();
         JsonNode dialect = routeModel.get("$schema");
         if (dialect != null) {
@@ -696,14 +743,14 @@ public class YamlValidator {
         specProperties.putObject("types").put("type", "object");
         specProperties.putObject("dataTypes").put("type", "object");
         specProperties.putObject("dependencies").put("type", "array");
-        specProperties.putObject("template").put("$ref", "#/templateEntry");
+        specProperties.putObject("template").put("$ref", "#/definitions/templateEntry");
         // an entry of a route file is exactly one of route/from/beans/..., which is what maxProperties says. The
         // template of a Kamelet is not: counter-source declares its bean beside its from, and 60 of the 250 kamelets
         // of the library do the same. Everything else about an entry still holds, and the $refs inside the copy point
         // at #/items/definitions/..., which is why the items node is kept as well.
         ObjectNode template = routeModel.get("items").deepCopy();
         template.remove("maxProperties");
-        root.set("templateEntry", template);
+        root.putObject("definitions").set("templateEntry", template);
         root.set("items", routeModel.get("items"));
         return root;
     }
@@ -914,8 +961,7 @@ public class YamlValidator {
                         .messageKey("type")
                         .format(new MessageFormat("{0}"))
                         .arguments(name + ": ${...} is simple syntax, not " + name + ": write the expression in " + name
-                                   + " (" + example + "), or use simple: {expression: \"" + text.replace("\"", "'")
-                                   + "\"}")
+                                   + " (" + example + "), or use simple: {expression: " + yamlQuoted(text) + "}")
                         .build());
             }
             if ("constant".equals(name) && !template) {
@@ -923,6 +969,14 @@ public class YamlValidator {
             }
             checkSimpleSyntaxInScripts(value, path.append(name), errors, template);
         }
+    }
+
+    /**
+     * The text as a quoted YAML value, as written: in single quotes when it holds a double quote, as a JSON text does,
+     * so a hint does not turn {"error": ...} into {'error': ...}, which is not JSON.
+     */
+    static String yamlQuoted(String text) {
+        return text.contains("\"") || text.contains("\\") ? "'" + text.replace("'", "''") + "'" : "\"" + text + "\"";
     }
 
     /** A simple function in a constant: ${header.sku}, ${body}, ${exchangeProperty.x}, ${date:now:...}. */
@@ -950,7 +1004,7 @@ public class YamlValidator {
                     .messageKey("type")
                     .format(new MessageFormat("{0}"))
                     .arguments(m.group() + " is not evaluated, a constant is used as written: use simple:"
-                               + " {expression: \"" + text.replace("\"", "'") + "\"} for a value with expressions")
+                               + " {expression: " + yamlQuoted(text) + "} for a value with expressions")
                     .build());
         }
     }

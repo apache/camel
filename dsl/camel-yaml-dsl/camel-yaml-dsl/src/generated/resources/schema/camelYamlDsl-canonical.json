@@ -11343,7 +11343,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -11487,7 +11487,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -11631,7 +11631,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -12008,7 +12008,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -12152,7 +12152,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -12296,7 +12296,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -12495,7 +12495,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
-            "default" : false
+            "default" : true
           },
           "type" : {
             "type" : "string",
@@ -12682,7 +12682,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
-            "default" : false
+            "default" : true
           },
           "useXForwardHeaders" : {
             "type" : "boolean",
@@ -12844,7 +12844,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "tag" : {
             "type" : "string",

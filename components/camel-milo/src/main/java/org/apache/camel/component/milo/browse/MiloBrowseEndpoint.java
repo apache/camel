@@ -150,7 +150,9 @@ public class MiloBrowseEndpoint extends DefaultEndpoint {
     }
 
     public MiloClientConnection createConnection() {
-        return this.connectionManager.createConnection(configuration, null);
+        final MiloClientConnection connection = this.connectionManager.createConnection(configuration, null);
+        connection.setCamelContext(getCamelContext());
+        return connection;
     }
 
     public void releaseConnection(MiloClientConnection connection) {

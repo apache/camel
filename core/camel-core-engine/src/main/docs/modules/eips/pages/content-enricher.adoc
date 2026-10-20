@@ -108,18 +108,14 @@ YAML::
 ----
 - route:
     from:
-      uri: direct
-      parameters:
-        name: start
+      uri: direct:start
       steps:
         - setBody:
             expression:
               simple:
                 expression: "${body} World!"
         - to:
-            uri: mock
-            parameters:
-              name: result
+            uri: mock:result
 ----
 ====
 
@@ -188,16 +184,12 @@ YAML::
 ----
 - route:
     from:
-      uri: direct
-      parameters:
-        name: start
+      uri: direct:start
       steps:
         - process:
             ref: myProcessor
         - to:
-            uri: mock
-            parameters:
-              name: result
+            uri: mock:result
 ----
 ====
 
@@ -223,9 +215,9 @@ XML::
 [source,xml]
 ----
 <route>
-    <from uri="activemq:Input"/>
+    <from uri="activemq:My.Queue"/>
     <bean ref="myBeanName" method="doTransform"/>
-    <to uri="activemq:Output"/>
+    <to uri="activemq:Another.Queue"/>
 </route>
 ----
 
@@ -235,13 +227,13 @@ YAML::
 ----
 - route:
     from:
-      uri: activemq:Input
+      uri: activemq:My.Queue
       steps:
         - bean:
             ref: myBeanName
             method: doTransform
         - to:
-            uri: activemq:Output
+            uri: activemq:Another.Queue
 ----
 ====
 

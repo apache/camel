@@ -3476,7 +3476,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("path", def.getPath(), null);
         doWriteAttribute("routeId", def.getRouteId(), null);
         doWriteAttribute("bindingMode", def.getBindingMode(), null);
-        doWriteAttribute("apiDocs", def.getApiDocs(), "true");
+        doWriteAttribute("apiDocs", def.getApiDocs(), null);
         doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
         doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), null);

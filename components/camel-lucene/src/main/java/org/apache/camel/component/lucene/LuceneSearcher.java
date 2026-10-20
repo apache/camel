@@ -31,6 +31,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.TopScoreDocCollectorManager;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class LuceneSearcher {
         searchHits.setNumberOfHits(numberOfHits);
 
         for (ScoreDoc hit : hits) {
-            Document selectedDocument = indexSearcher.doc(hit.doc);
+            Document selectedDocument = indexSearcher.getIndexReader().storedFields().document(hit.doc);
             Hit aHit = new Hit();
             if (returnLuceneDocs) {
                 aHit.setDocument(selectedDocument);
@@ -98,7 +99,8 @@ public class LuceneSearcher {
 
         QueryParser parser = new QueryParser("contents", analyzer);
         Query query = parser.parse(searchPhrase);
-        TopScoreDocCollector collector = TopScoreDocCollector.create(maxNumberOfHits, totalHitsThreshold);
+        TopScoreDocCollector collector
+                = new TopScoreDocCollectorManager(maxNumberOfHits, totalHitsThreshold).newCollector();
         indexSearcher.search(query, collector);
         hits = collector.topDocs().scoreDocs;
 

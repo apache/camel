@@ -52,7 +52,7 @@ public class LangChain4jTokenizerDefinition extends TokenizerImplementationDefin
               description = "The maximum number of tokens that can overlap in each segment.")
     private String maxOverlap;
 
-    @XmlAttribute(required = true)
+    @XmlAttribute
     @Metadata(javaType = "java.lang.String", required = false,
               description = "The underlying model name used by the tokenizer."
                             + " Providing this switches to computing segment sizes in terms of tokens.")

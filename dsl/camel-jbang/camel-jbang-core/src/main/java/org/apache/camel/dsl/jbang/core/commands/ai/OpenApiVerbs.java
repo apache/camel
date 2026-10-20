@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -68,17 +69,7 @@ public final class OpenApiVerbs {
         if (content == null || directory == null) {
             return answer;
         }
-        Set<String> specs = new LinkedHashSet<>();
-        for (Pattern pattern : List.of(SPECIFICATION, REST_OPENAPI_CALL, SPECIFICATION_URI)) {
-            Matcher m = pattern.matcher(content);
-            while (m.find()) {
-                specs.add(ProjectFacts.specName(m.group(1)));
-            }
-        }
-        if (content.contains("rest-openapi")) {
-            specs.add(ProjectFacts.specName(null));
-        }
-        for (String spec : specs) {
+        for (String spec : specs(content)) {
             Map<?, ?> paths = spec.contains("://") || spec.contains("{{") ? null : paths(directory, spec);
             if (paths == null) {
                 continue;
@@ -99,14 +90,97 @@ public final class OpenApiVerbs {
         return answer;
     }
 
+    /**
+     * The fields the JSON request of each operation needs: the required properties of its schema, following a $ref to
+     * the schemas of the components. By specification, found and keyed as {@link #operations} does; an operation
+     * without a JSON request, or whose schema requires nothing, is left out. A model that is told to marshal the data
+     * of a route sends it as it is, which an operation rarely takes.
+     */
+    public static Map<String, Map<String, List<String>>> requestFields(String content, Path directory) {
+        Map<String, Map<String, List<String>>> answer = new LinkedHashMap<>();
+        if (content == null || directory == null) {
+            return answer;
+        }
+        for (String spec : specs(content)) {
+            Map<?, ?> root = spec.contains("://") || spec.contains("{{") ? null : document(directory, spec);
+            if (root == null || !(root.get("paths") instanceof Map<?, ?> paths)) {
+                continue;
+            }
+            Map<String, List<String>> fields = new LinkedHashMap<>();
+            for (Object path : paths.values()) {
+                if (path instanceof Map<?, ?> operations) {
+                    for (Object operation : operations.values()) {
+                        if (operation instanceof Map<?, ?> details && details.get("operationId") != null) {
+                            List<String> required = required(root, jsonSchema(details));
+                            if (!required.isEmpty()) {
+                                fields.put(String.valueOf(details.get("operationId")), required);
+                            }
+                        }
+                    }
+                }
+            }
+            if (!fields.isEmpty()) {
+                answer.put(spec, fields);
+            }
+        }
+        return answer;
+    }
+
+    /** The specifications a file uses, as {@link #operations} finds them. */
+    private static Set<String> specs(String content) {
+        Set<String> specs = new LinkedHashSet<>();
+        for (Pattern pattern : List.of(SPECIFICATION, REST_OPENAPI_CALL, SPECIFICATION_URI)) {
+            Matcher m = pattern.matcher(content);
+            while (m.find()) {
+                specs.add(ProjectFacts.specName(m.group(1)));
+            }
+        }
+        if (content.contains("rest-openapi")) {
+            specs.add(ProjectFacts.specName(null));
+        }
+        return specs;
+    }
+
+    /** The schema of the JSON request of an operation, or null. */
+    private static Object jsonSchema(Map<?, ?> operation) {
+        if (operation.get("requestBody") instanceof Map<?, ?> body && body.get("content") instanceof Map<?, ?> content
+                && content.get("application/json") instanceof Map<?, ?> json) {
+            return json.get("schema");
+        }
+        return null;
+    }
+
+    /** The required properties of a schema, following a $ref to the schemas of the components. */
+    private static List<String> required(Map<?, ?> root, Object schema) {
+        if (schema instanceof Map<?, ?> s && s.get("$ref") instanceof String ref
+                && ref.startsWith("#/components/schemas/")
+                && root.get("components") instanceof Map<?, ?> components
+                && components.get("schemas") instanceof Map<?, ?> schemas) {
+            schema = schemas.get(ref.substring("#/components/schemas/".length()));
+        }
+        List<String> answer = new ArrayList<>();
+        if (schema instanceof Map<?, ?> s && s.get("required") instanceof List<?> required) {
+            for (Object field : required) {
+                answer.add(String.valueOf(field));
+            }
+        }
+        return answer;
+    }
+
     /** The paths of a specification beside the route, or in src/main/resources; null when it cannot be read. */
     private static Map<?, ?> paths(Path directory, String file) {
+        Map<?, ?> root = document(directory, file);
+        return root != null && root.get("paths") instanceof Map<?, ?> paths ? paths : null;
+    }
+
+    /** A specification beside the route, or in src/main/resources; null when it cannot be read. */
+    private static Map<?, ?> document(Path directory, String file) {
         Path p = directory.resolve(file);
         if (!Files.isRegularFile(p)) {
             p = directory.resolve("src/main/resources").resolve(file);
         }
         try {
-            return Files.isRegularFile(p) ? paths(Files.readString(p)) : null;
+            return Files.isRegularFile(p) ? document(Files.readString(p)) : null;
         } catch (Exception e) {
             // an unreadable specification says nothing
             return null;
@@ -146,6 +220,12 @@ public final class OpenApiVerbs {
     }
 
     static Map<?, ?> paths(String text) {
+        Map<?, ?> root = document(text);
+        return root != null && root.get("paths") instanceof Map<?, ?> paths ? paths : null;
+    }
+
+    /** A specification as JSON or YAML; null when it cannot be read. */
+    private static Map<?, ?> document(String text) {
         try {
             Object document;
             if (text.stripLeading().startsWith("{")) {
@@ -153,7 +233,7 @@ public final class OpenApiVerbs {
             } else {
                 document = new Yaml(new SafeConstructor(new LoaderOptions())).load(text);
             }
-            return document instanceof Map<?, ?> root && root.get("paths") instanceof Map<?, ?> paths ? paths : null;
+            return document instanceof Map<?, ?> root ? root : null;
         } catch (Exception e) {
             // Ignore unreadable or unparseable JSON or YAML specifications.
             return null;

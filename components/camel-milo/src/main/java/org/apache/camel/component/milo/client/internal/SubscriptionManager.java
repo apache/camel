@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,6 +67,7 @@ import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DiagnosticInfo;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
@@ -266,7 +268,7 @@ public class SubscriptionManager {
             for (final Map.Entry<UInteger, Subscription> entry : subscriptions.entrySet()) {
                 final Subscription s = entry.getValue();
 
-                final NodeId node = lookupMonitoredNode(s.getNodeId());
+                final NodeId node = lookupNamespace(s.getNodeId()).get();
 
                 if (node == null) {
                     // reported once like a node the server rejects, the other nodes and the connection are not affected
@@ -340,16 +342,6 @@ public class SubscriptionManager {
             }
 
             return pendingValues;
-        }
-
-        /**
-         * @return the node ID with the namespace index of the server, or null if its namespace URI is not in the
-         *         namespace table of the server
-         */
-        private NodeId lookupMonitoredNode(final ExpandedNodeId nodeId) throws Exception {
-            final String uri = nodeId.getNamespaceUri();
-            final UShort index = uri == null ? nodeId.getNamespaceIndex() : lookupNamespaceIndex(uri).get();
-            return index == null ? null : toNodeId(index, nodeId);
         }
 
         /**
@@ -445,6 +437,10 @@ public class SubscriptionManager {
             }
         }
 
+        /**
+         * @return the node ID with the namespace index of the server, completed with null if its namespace URI is not
+         *         in the namespace table of the server: such a node does not exist on the server
+         */
         private CompletableFuture<NodeId> lookupNamespace(final ExpandedNodeId nodeId) {
             LOG.trace("Expanded Node Id: {}", nodeId);
 
@@ -452,7 +448,13 @@ public class SubscriptionManager {
 
             if (uri != null) {
                 LOG.trace("Looking up namespace: {}", uri);
-                return lookupNamespaceIndex(uri).thenApply(index -> toNodeId(index, nodeId));
+                return lookupNamespaceIndex(uri).thenApply(index -> {
+                    if (index == null) {
+                        LOG.debug("The namespace URI of node {} is unknown to the server", nodeId.toParseableString());
+                        return null;
+                    }
+                    return toNodeId(index, nodeId);
+                });
             } else {
                 final UShort index = nodeId.getNamespaceIndex();
                 LOG.trace("Using provided index: {}", index);
@@ -479,6 +481,11 @@ public class SubscriptionManager {
 
                 LOG.debug("Node - expanded: {}, full: {}", nodeId, node);
 
+                if (node == null) {
+                    // answered like a node the server does not have
+                    return completedFuture(new StatusCode(StatusCodes.Bad_NodeIdUnknown));
+                }
+
                 return this.client.writeValuesAsync(List.of(node), List.of(value))
                         .thenApply(r -> r.get(0))
                         .whenComplete((status, error) -> {
@@ -501,6 +508,14 @@ public class SubscriptionManager {
                 return lookupNamespace(methodId).thenCompose(method -> {
 
                     LOG.debug("Method - expanded: {}, full: {}", methodId, method);
+
+                    if (node == null || method == null) {
+                        // answered like the server: an unknown object is Bad_NodeIdUnknown, an unknown method Bad_MethodInvalid
+                        final StatusCode status
+                                = new StatusCode(node == null ? StatusCodes.Bad_NodeIdUnknown : StatusCodes.Bad_MethodInvalid);
+                        return completedFuture(
+                                new CallMethodResult(status, new StatusCode[0], new DiagnosticInfo[0], new Variant[0]));
+                    }
 
                     final CallMethodRequest cmr = new CallMethodRequest(node, method, inputArguments);
 
@@ -535,7 +550,23 @@ public class SubscriptionManager {
 
             return CompletableFuture.allOf(nodeIdFutures).thenCompose(param -> {
                 List<NodeId> nodeIds = Stream.of(nodeIdFutures).map(CompletableFuture::join).collect(Collectors.toList());
-                return this.client.readValuesAsync(0, TimestampsToReturn.Server, nodeIds);
+                final List<NodeId> known = nodeIds.stream().filter(Objects::nonNull).collect(Collectors.toList());
+                if (known.size() == nodeIds.size()) {
+                    return this.client.readValuesAsync(0, TimestampsToReturn.Server, nodeIds);
+                }
+                // a node the server does not have gets the value the server returns for such a node
+                final CompletableFuture<List<DataValue>> read = known.isEmpty()
+                        ? completedFuture(List.of()) : this.client.readValuesAsync(0, TimestampsToReturn.Server, known);
+                return read.thenApply(values -> {
+                    final Iterator<DataValue> knownValues = values.iterator();
+                    final List<DataValue> result = new ArrayList<>(nodeIds.size());
+                    for (final NodeId nodeId : nodeIds) {
+                        result.add(nodeId == null
+                                ? new DataValue(new StatusCode(StatusCodes.Bad_NodeIdUnknown))
+                                : knownValues.next());
+                    }
+                    return result;
+                });
             });
         }
 
@@ -704,20 +735,39 @@ public class SubscriptionManager {
 
                     .thenCompose(__ -> {
 
-                        final List<NodeId> nodeIds = Stream.of(futures).map(CompletableFuture::join)
-                                .collect(Collectors.toList());
-
-                        return completedFuture(nodeIds.stream().map(nodeId -> new BrowseDescription(
-                                nodeId, direction, NodeIds.References, includeSubTypes, uint(nodeClasses),
-                                uint(BrowseResultMask.All.getValue()))).collect(Collectors.toList()));
-                    })
-
-                    .thenCompose(descriptions -> browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest));
+                        // a node the server does not have gets the result the server returns for such a node
+                        final Map<ExpandedNodeId, BrowseResult> unknown = new HashMap<>();
+                        final List<BrowseDescription> descriptions = new ArrayList<>();
+                        for (int i = 0; i < futures.length; i++) {
+                            final NodeId nodeId = futures[i].join();
+                            if (nodeId == null) {
+                                unknown.put(expandedNodeIds.get(i), new BrowseResult(
+                                        new StatusCode(StatusCodes.Bad_NodeIdUnknown), ByteString.NULL_VALUE,
+                                        new ReferenceDescription[0]));
+                            } else {
+                                descriptions.add(new BrowseDescription(
+                                        nodeId, direction, NodeIds.References, includeSubTypes, uint(nodeClasses),
+                                        uint(BrowseResultMask.All.getValue())));
+                            }
+                        }
+                        if (unknown.isEmpty()) {
+                            return browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest);
+                        }
+                        final CompletableFuture<Map<ExpandedNodeId, BrowseResult>> knownResults = descriptions.isEmpty()
+                                ? completedFuture(Map.of())
+                                : browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest);
+                        return knownResults.thenApply(results -> {
+                            final Map<ExpandedNodeId, BrowseResult> all = new HashMap<>(results);
+                            all.putAll(unknown);
+                            return all;
+                        });
+                    });
         }
     }
 
     private final MiloClientConfiguration configuration;
-    private final ScheduledExecutorService executor;
+    private final ScheduledExecutorService reconnectExecutor;
+    private final Executor executor;
     private final long reconnectTimeout;
     private final ServerCertificateTrust serverCertificateTrust;
     private final Lock lock = new ReentrantLock();
@@ -728,10 +778,11 @@ public class SubscriptionManager {
     private Future<?> reconnectJob;
     private final Map<UInteger, Subscription> subscriptions = new HashMap<>();
 
-    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService executor,
-                               final long reconnectTimeout) {
+    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService reconnectExecutor,
+                               final Executor executor, final long reconnectTimeout) {
 
         this.configuration = configuration;
+        this.reconnectExecutor = reconnectExecutor;
         this.executor = executor;
         this.reconnectTimeout = reconnectTimeout;
         this.serverCertificateTrust = new ServerCertificateTrust(configuration);
@@ -834,8 +885,8 @@ public class SubscriptionManager {
      * The executor that the client of a subscription delivers its values on, which handles the outcome of a check or a
      * delete. Creating the subscription again and rebuilding the connection block until the server answers, and a
      * request sent while the connection is lost waits for the channel until a reconnect attempt restores it or fails.
-     * The client schedules those attempts on the shared scheduled executor of Milo, which {@link #executor} is as well
-     * and which has a single thread on a machine with one processor, so the wait must not hold one of its threads.
+     * The client schedules those attempts on the shared scheduled executor of Milo, which has a single thread on a
+     * machine with one processor, so the wait must not hold one of its threads.
      * <p>
      * Milo asks that blocking calls are not made on the threads of this executor either, because they complete the
      * responses. The executor of the transport is not set here, so this is the shared executor of Milo, a cached pool
@@ -1101,6 +1152,11 @@ public class SubscriptionManager {
             }
             this.disposed = true;
             connected = this.connected;
+            if (this.reconnectJob != null) {
+                // a waiting reconnect would keep the thread of the reconnect executor until it is due
+                this.reconnectJob.cancel(false);
+                this.reconnectJob = null;
+            }
         } finally {
             lock.unlock();
         }
@@ -1128,9 +1184,10 @@ public class SubscriptionManager {
             }
 
             if (immediate) {
-                this.reconnectJob = this.executor.submit(this::connect);
+                this.reconnectJob = this.reconnectExecutor.submit(this::connect);
             } else {
-                this.reconnectJob = this.executor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
+                this.reconnectJob
+                        = this.reconnectExecutor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
             }
         } finally {
             lock.unlock();

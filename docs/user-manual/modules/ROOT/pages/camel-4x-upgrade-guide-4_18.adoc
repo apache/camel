@@ -37,6 +37,35 @@ A saga option named like a parameter of the participant callback URLs, in any ca
 `Camel-Saga-Complete`, `Camel-Saga-Signature` or `Camel-Saga-Lra`), now fails the creation of its route, with or
 without a callback secret. The value of such an option could not be read back from the callback before.
 
+=== camel-ssh - known_hosts entries are matched as in OpenSSH
+
+When `knownHostsResource` is set, the entries of the `known_hosts` file are now matched as OpenSSH
+matches them, against the host name or address the client connects to, written `host` for port 22 and
+`[host]:port` for another port:
+
+* A host pattern must match that name as a whole. An entry for another host whose name or address
+contains the configured one is no longer used.
+* A pattern such as `db.example.com` only applies to port 22. A server on another port needs an entry
+such as `[db.example.com]:2222`, or a pattern that matches that form, such as `*`.
+* The host is used as it is written: the host configured on the endpoint, or the `HostName` that
+`~/.ssh/config` gives for it. An endpoint configured with a host name no longer uses entries listed
+only under its address, an endpoint configured with an address no longer uses entries listed under the
+name that a reverse lookup of the address returns, and an IPv6 address such as `::1` is matched as
+written instead of in its expanded form.
+* Every entry of the host is considered, so a host can be listed with several keys. Wildcard, negated
+and hashed patterns, comments and `@revoked` entries are supported. `@cert-authority` entries are
+ignored.
+* A `known_hosts` resource that cannot be read, or that has a line that cannot be read (for example an
+unknown `@` marker, a missing key, or a key that is not valid base64), now makes every connection fail,
+whatever the value of `failOnUnknownHost`. Previously such a resource was treated as having no entry,
+and such a line was skipped.
+
+As before, a server whose host has entries without a marker is rejected when it presents a key that
+none of them lists, whatever the value of `failOnUnknownHost`, which only applies to a host without
+such an entry: `@revoked` and `@cert-authority` entries do not list a host.
+Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
+endpoint is configured with.
+
 === camel-netty-http - the roles of a security constraint are matched by role name
 
 The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
@@ -120,6 +149,28 @@ authenticate it itself, with `authenticate(new TokenCredentials(token))` on the 
 
 For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
 a value that also appears in the query string of the request.
+
+=== camel-smooks - allowExternalEntities applies to Smooks Source bodies and to a reader declared without a class
+
+The Smooks component and `SmooksProcessor` now parse a message body that is already a Smooks `Source`
+(`org.smooks.io.source.StringSource`, `ReaderSource`, `StreamSource`, `ByteSource` or `URLSource`) with the same XML
+reader settings as the other message bodies, so external entities in it are only resolved when `allowExternalEntities`
+is `true`. Before, such a body was handed to Smooks as it was. The bytes of a `StreamSource`, `ByteSource` or
+`URLSource` are decoded with the exchange charset, or UTF-8, as before. These bodies are now parsed into a DOM before
+Smooks processes them, which uses more memory for very large inputs. `DOMSource` and `JavaSource` bodies are unchanged.
+
+A Smooks configuration whose `<reader>` declares no `class` only sets handlers, features or parameters of the default
+XML reader. The Smooks component, `SmooksProcessor` and the Smooks data format now apply `allowExternalEntities` to
+such a configuration as they do to a configuration without a `<reader>`, so the handlers and features of that reader no
+longer take part in parsing the XML unless `allowExternalEntities` is `true`. Configurations that declare a reader
+class, such as EDI, CSV, JSON, DFDL or a custom reader, are unchanged.
+
+A document with a document type declaration (`<!DOCTYPE ...>`) is now processed with these settings for every body
+type, `String`, `byte[]` and `InputStream` bodies included, which failed before: the entities of its internal subset are
+expanded, and the declaration itself is not passed on to Smooks.
+
+Set `allowExternalEntities=true` on the endpoint or on the data format for documents that rely on external entities or
+an external DTD.
 
 === camel-chunk - message data printed with a direct tag is rendered literally
 
@@ -257,6 +308,32 @@ receive the messages of the producers, and it is closed when it sends a message.
 
 A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
 rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
+
+=== camel-undertow - the producer refuses a request target or header value with control characters
+
+The undertow producer writes the path, query and header values of the outgoing request to the socket one character at
+a time, without validating them. A carriage return or line feed therefore broke the request into further lines, and a
+character above `0xFF` was written as a single, different byte (for example `U+010A` became a line feed). The producer
+now refuses to send a request path, query or header value that contains a control character or a character above
+`0xFF`, and fails the exchange with an `IllegalArgumentException` instead. A space and a tab, which do not change the
+framing, are still allowed. Routes that put a percent-encoded control character (such as `%0D%0A`) into the
+`CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
+likely to be affected.
+
+=== camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
+
+When `pollEnrich` (or `poll`) times out and no `aggregationStrategy` is configured, the body is set to `null`, and with
+`variableReceive` the variable is `null`. For a message that creates its body on demand, the `null` did not stick: the
+next read created the body again. The message of a file consumer creates its body from its file, so after a timeout
+the body, or the variable of `variableReceive`, was the file of the incoming exchange instead of `null`. The messages
+of the JMS, sjms, mail, HTTP, XMPP, SMPP, SNMP and Spring WS consumers create their body on demand as well, so there it
+was the payload of the consumer again.
+
+The body, or the variable, is now `null` after a timeout for these consumers too. A route that read the incoming file
+or payload from the body after a timed out `pollEnrich` must keep it before the `pollEnrich` instead, for example with
+`variableReceive`, which leaves the body as it was. To keep the body empty, the message is replaced by a plain message
+with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
+consumer (such as `GenericFileMessage` or `JmsMessage`).
 
 == Upgrading from 4.18.4 to 4.18.5
 

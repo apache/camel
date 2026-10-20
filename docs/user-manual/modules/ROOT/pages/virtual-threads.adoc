@@ -820,7 +820,7 @@ Apache Camel provides the `ContextValue` abstraction that automatically chooses 
 |===
 | JDK Version | Virtual Threads Enabled | Implementation
 
-| JDK 17-24
+| JDK 21-24
 | N/A
 | ThreadLocal
 

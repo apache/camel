@@ -2873,6 +2873,22 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testLoadWithAFilePrefixReadsTheClasspath() {
+        // the load function reads the classpath only: a file: prefix is not used
+        Expression expression = context.resolveLanguage("simple").createExpression("${load(file:mysimple.txt)}");
+        assertEquals("The name is ${body}", expression.evaluate(exchange, String.class));
+
+        // and when the file is not on the classpath, the error says so, and what reads a file of the file-system
+        Expression missing = context.resolveLanguage("simple").createExpression("${load(file:target/data/stock.json)}");
+        Exception e = assertThrows(Exception.class, () -> missing.evaluate(exchange, String.class));
+        assertIsInstanceOf(FileNotFoundException.class, e.getCause());
+        String message = e.getCause().getMessage();
+        assertTrue(message.contains("The load function loads from the classpath only, so the file: prefix is not used"),
+                message);
+        assertTrue(message.contains("use the constant language with resource:file:target/data/stock.json"), message);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 

@@ -61,6 +61,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected static final int DEFAULT_IN_PROGRESS_CACHE_SIZE = 50000;
 
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileEndpoint.class);
+    /**
+     * The file functions of the File Language, which read the file found: ${file:name}, ${date:file:yyyyMMdd},
+     * ${date-with-timezone:file:yyyyMMdd z}, and the same as $simple{file:name}.
+     */
+    private static final Pattern FILE_FUNCTION = Pattern.compile("\\$(simple)?\\{(date(-with-timezone)?:)?file:");
 
     // common options
 
@@ -90,6 +95,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                            + "CamelFileName header; the CamelOverruleFileName is a header that is used only once, and makes it easier "
                                                            + "as this avoids to temporary store CamelFileName and have to restore it afterwards.")
     protected Expression fileName;
+    // whether the fileName uses the file functions: poll and pollEnrich then evaluate it for each file found, else on the
+    // message they enrich (CAMEL-25792)
+    private boolean fileNameUsesFileFunctions = true;
     @UriParam(description = "Producer: If provided, then Camel will write a 2nd done file when the original file has "
                             + "been written. The done file will be empty. This option configures what file name to use. Either you can "
                             + "specify a fixed name. Or you can use dynamic placeholders. The done file will always be written in the "
@@ -914,10 +922,23 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setFileName(Expression fileName) {
         this.fileName = fileName;
+        // what an expression object reads is unknown, so poll and pollEnrich evaluate it for each file found as before
+        this.fileNameUsesFileFunctions = true;
     }
 
     public void setFileName(String fileLanguageExpression) {
         this.fileName = createFileLanguageExpression(fileLanguageExpression);
+        this.fileNameUsesFileFunctions
+                = fileLanguageExpression != null && FILE_FUNCTION.matcher(fileLanguageExpression).find();
+    }
+
+    /**
+     * Whether the fileName uses the file functions of the File Language, such as ${file:name}, which read the file
+     * found. Poll and pollEnrich evaluate such a fileName for each file found, and any other on the message they enrich
+     * (CAMEL-25792).
+     */
+    boolean isFileNameUsingFileFunctions() {
+        return fileNameUsesFileFunctions;
     }
 
     public String getDoneFileName() {

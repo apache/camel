@@ -435,6 +435,23 @@ final class SchemaHints {
                         return "write one or more of " + (values == null ? "the listed values" : values.replace("|", ", "))
                                + ", separated by comma";
                     }),
+            // - stop as a step: a step is a key with its options as a map, {} when it has none to set
+            replace("type", ".*/steps/\\d+",
+                    m -> m.message().contains("string found, object expected") && m.error().getInstanceNode() != null
+                            && m.error().getInstanceNode().isTextual(),
+                    m -> {
+                        String text = m.error().getInstanceNode().asText().trim();
+                        if (!m.validator().stepNames().contains(text)) {
+                            return "a step is a key followed by its options, such as - log: {message: \"...\"} or"
+                                   + " - stop: {}; " + text + " is not a step";
+                        }
+                        String property = SchemaHints.STRING_STEP_PROPERTY.get(text);
+                        return "a step is a key followed by its options: write - " + text + ": "
+                               + (property != null
+                                       ? "{" + property + ": \"...\"}"
+                                       : "{} (the options of the step, if any, go inside the braces)");
+                    },
+                    "type", "type"),
             append("type", "/?", m -> m.message().contains("array expected"),
                     m -> "a Camel YAML file is a list of entries, each starting with \"- \": - route:, - from:, - beans:,"
                          + " - rest:, - onException:"),
@@ -470,11 +487,11 @@ final class SchemaHints {
                     m -> "steps: is a property of from:, next to uri:; a steps: written at the route level must be"
                          + " indented under from:"),
             // - id: myBean / class: ... : the bean properties are name and type
-            unknownProperty("/\\d+/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
+            unknownProperty(".*/beans/\\d+", m -> Set.of("id", "ref", "class").contains(m.unknown()),
                     m -> "a bean is - name: myBean followed by type: \"#class:com.example.MyBean\" (name instead of "
                          + m.unknown() + (m.unknown().equals("class") ? ", type instead of class" : "") + ")"),
             // - myBean: {type: ...} instead of - name: myBean / type: ...
-            unknownProperty("/\\d+/beans/\\d+", ANY,
+            unknownProperty(".*/beans/\\d+", ANY,
                     m -> "a bean item is written as - name: " + m.unknown()
                          + " followed by type: \"#class:com.example.MyBean\" (the name is a property, not the key)"),
             unknownProperty(null,
@@ -618,6 +635,17 @@ final class SchemaHints {
                             && !m.error().getInstanceNode().has("expression")
                             && m.error().getInstanceNode().path(m.unknown()).isTextual(),
                     m -> languageTextHint(m.name(), m.unknown(), valueOf(m, m.unknown(), "..."))),
+            // - simple: "${body}" as a step: a language is not a step (and no "did you mean 'sample'?")
+            unknownProperty(".*/steps/\\d+",
+                    m -> m.validator().languageKeys().contains(m.unknown())
+                            && !m.validator().stepNames().contains(m.unknown()),
+                    m -> {
+                        String text = YamlValidator.yamlQuoted(valueOf(m, m.unknown(), "..."));
+                        return "'" + m.unknown() + "' is a language, not a step: an expression is written in a step that"
+                               + " uses it, such as - setBody: {expression: {" + m.unknown() + ": {expression: " + text
+                               + "}}} to set the body, or - filter: {expression: {" + m.unknown() + ": {expression: "
+                               + text + "}}, steps: [...]} to keep the messages it matches";
+                    }),
             unknownProperty(null,
                     m -> YamlValidator.closest(m.unknown(), m.validator().knownProperties(m.schemaLocation())) != null,
                     m -> "did you mean '"

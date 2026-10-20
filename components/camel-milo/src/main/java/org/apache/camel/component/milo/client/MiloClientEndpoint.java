@@ -145,7 +145,10 @@ public class MiloClientEndpoint extends DefaultEndpoint {
     }
 
     public MiloClientConnection createConnection() {
-        return this.connectionManager.createConnection(configuration, monitorFilterConfiguration);
+        final MiloClientConnection connection
+                = this.connectionManager.createConnection(configuration, monitorFilterConfiguration);
+        connection.setCamelContext(getCamelContext());
+        return connection;
     }
 
     public void releaseConnection(MiloClientConnection connection) {
