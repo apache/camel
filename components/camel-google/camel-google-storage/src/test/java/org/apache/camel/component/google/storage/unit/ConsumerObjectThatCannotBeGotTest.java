@@ -133,12 +133,15 @@ class ConsumerObjectThatCannotBeGotTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        addConsumerRoute("&pollStrategy=#countPolls");
+        addConsumerRoute("&pollStrategy=#countPolls&exceptionHandler=#recordErrors");
 
         // as for a failed listing (expired credentials, no permission to get objects): the poll fails, so the error
         // handling and the backoff of the scheduled consumer apply
         assertTrue(failedPolls.await(20, TimeUnit.SECONDS), "the polls fail");
         mock.assertIsSatisfied();
+        // the failed poll reaches the exception handler, and no object is reported as skipped before it
+        assertTrue(handled.stream().anyMatch(m -> m.startsWith("Failed polling endpoint")),
+                "the failed polls are reported: " + handled);
         assertNull(skippedReportedMessage(), "no object is reported as skipped: " + handled);
     }
 
