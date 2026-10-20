@@ -69,6 +69,8 @@ public class KeyValueAggregationRepository extends ServiceSupport
     private static final String COMPLETED_PREFIX = "completed:";
 
     private KeyValueRepository repository;
+    // the completed exchanges kept for recovery are stored under this prefix
+    private String completedPrefix = COMPLETED_PREFIX;
     private CamelContext camelContext;
     private boolean useRecovery = true;
     private String deadLetterUri;
@@ -94,6 +96,28 @@ public class KeyValueAggregationRepository extends ServiceSupport
     public KeyValueAggregationRepository(KeyValueRepository repository) {
         ObjectHelper.notNull(repository, "repository");
         this.repository = repository;
+    }
+
+    /**
+     * Creates an aggregation repository adapter backed by the given key-value repository, which keeps the completed
+     * exchanges for recovery under the given name.
+     * <p/>
+     * Use this when several aggregators share the same key-value repository: the recover task of an aggregator scans
+     * all the completed exchanges of its repository and sends them again, so an aggregator would otherwise recover, and
+     * send a second time on its own route, an exchange that another aggregator completed and is still processing.
+     *
+     * @param repository   the underlying key-value repository; must not be {@code null}
+     * @param recoveryName the name under which the completed exchanges are kept, such as the route id and the id of the
+     *                     aggregator; {@code null} keeps them under the default prefix shared by all the adapters
+     *                     without a name
+     * @since              4.24
+     */
+    public KeyValueAggregationRepository(KeyValueRepository repository, String recoveryName) {
+        this(repository);
+        if (recoveryName != null) {
+            // not under the default prefix, so that an adapter without a name does not scan them
+            this.completedPrefix = "completed[" + recoveryName + "]:";
+        }
     }
 
     /**
@@ -128,7 +152,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
             // it can be older than the exchange: when a group is completed by an incoming exchange, the last
             // aggregated exchange is not added to the repository before it is removed.
             LOG.trace("Moving Exchange with ID {} to completed (pending confirmation)", exchange.getExchangeId());
-            repository.put(COMPLETED_PREFIX + exchange.getExchangeId(),
+            repository.put(completedPrefix + exchange.getExchangeId(),
                     DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders));
         }
     }
@@ -136,7 +160,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
         LOG.trace("Confirming an Exchange with ID {}", exchangeId);
-        repository.delete(COMPLETED_PREFIX + exchangeId);
+        repository.delete(completedPrefix + exchangeId);
     }
 
     @Override
@@ -152,8 +176,8 @@ public class KeyValueAggregationRepository extends ServiceSupport
     public Set<String> scan(CamelContext camelContext) {
         LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
         Set<String> scanned = repository.keys().stream()
-                .filter(k -> k.startsWith(COMPLETED_PREFIX))
-                .map(k -> k.substring(COMPLETED_PREFIX.length()))
+                .filter(k -> k.startsWith(completedPrefix))
+                .map(k -> k.substring(completedPrefix.length()))
                 .collect(Collectors.toUnmodifiableSet());
         LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
         return scanned;
@@ -165,7 +189,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
         if (!useRecovery) {
             return null;
         }
-        return unmarshallExchange(camelContext, (DefaultExchangeHolder) repository.get(COMPLETED_PREFIX + exchangeId));
+        return unmarshallExchange(camelContext, (DefaultExchangeHolder) repository.get(completedPrefix + exchangeId));
     }
 
     @Override
