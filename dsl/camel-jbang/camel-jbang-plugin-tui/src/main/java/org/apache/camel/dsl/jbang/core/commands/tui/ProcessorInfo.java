@@ -21,6 +21,8 @@ import java.util.Map;
 
 class ProcessorInfo {
     String id;
+    /** The prefix of the ids of the steps of a route template or kamelet (only when it has one). */
+    String nodePrefixId;
     String processor;
     /** Where the processor is in the source, file:line (only when the runtime records source locations). */
     String source;

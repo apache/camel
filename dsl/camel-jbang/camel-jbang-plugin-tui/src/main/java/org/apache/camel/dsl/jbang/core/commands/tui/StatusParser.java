@@ -302,6 +302,7 @@ final class StatusParser {
                         JsonObject pj = (JsonObject) p;
                         ProcessorInfo pi = new ProcessorInfo();
                         pi.id = pj.getString("id");
+                        pi.nodePrefixId = pj.getString("nodePrefixId");
                         pi.processor = pj.getString("processor");
                         pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);

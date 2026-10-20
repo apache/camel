@@ -51,6 +51,12 @@ class RoutesTab extends AbstractDiagramTab {
 
     /** The widest the body types of a step are in the processors table: the info panel of the diagram has them all. */
     private static final int MAX_BODY_TYPES_WIDTH = 40;
+    /** The widest the TYPE column of the processors table grows to for the tree of the steps. */
+    private static final int MAX_TYPE_WIDTH = 30;
+    /** The room what a step does has in the processors table before the body types take the rest. */
+    private static final int MIN_PROCESSOR_WIDTH = 30;
+    /** What a step does in the processors table of Top mode, where the bar of the times takes the rest. */
+    private static final int TOP_PROCESSOR_WIDTH = 30;
 
     private static final String[] ROUTE_SORT_COLUMNS = { "name", "from", "status", "total", "failed" };
     private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta", "p50", "p95", "p99" };
@@ -87,6 +93,16 @@ class RoutesTab extends AbstractDiagramTab {
         // the tab opens on its table: a diagram shown the last time is closed
         if (isShowDiagram()) {
             closeDiagram();
+        }
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        // what the steps do, for the table of the processors: the route structure the diagrams use, asked of the
+        // integration again only when its routes change
+        String pid = ctx.selectedPid;
+        if (pid != null && !isShowDiagram()) {
+            ctx.diagramTopology.refreshStructure(ctx, pid);
         }
     }
 
@@ -856,9 +872,11 @@ class RoutesTab extends AbstractDiagramTab {
             if (maxValue <= 0) {
                 maxValue = 1;
             }
+            // sorted by time, not a tree: the steps are known by their line and what they do
+            int lineWidth = lineWidth(route);
 
             for (ProcessorInfo proc : sorted) {
-                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY;
                 long chartVal = procChartValue(proc);
                 String bar;
                 if (chartVal > 0) {
@@ -873,9 +891,13 @@ class RoutesTab extends AbstractDiagramTab {
                     barStyle = Style.EMPTY.fg(Theme.accent());
                 }
 
-                rows.add(Row.from(
-                        Cell.from("   " + (proc.processor != null ? proc.processor : "")),
-                        Cell.from(Span.styled(proc.id != null ? proc.id : "", nameStyle)),
+                List<Cell> cells = new ArrayList<>();
+                cells.add(Cell.from("   " + (proc.processor != null ? proc.processor : "")));
+                if (lineWidth > 0) {
+                    cells.add(lineCell(ProcessorLabels.line(proc.source), lineWidth));
+                }
+                cells.addAll(List.of(
+                        Cell.from(ProcessorLabels.label(proc, step(route, proc), TOP_PROCESSOR_WIDTH, nameStyle)),
                         Cell.from(Span.styled(bar, barStyle)),
                         rightCell(proc.total > 0 ? String.valueOf(proc.meanTime) : "", 6, topTimeStyle(proc.meanTime)),
                         rightCell(proc.total > 0 ? String.valueOf(proc.maxTime) : "", 6, topTimeStyle(proc.maxTime)),
@@ -890,40 +912,50 @@ class RoutesTab extends AbstractDiagramTab {
                         rightCell(String.valueOf(proc.failed), 6,
                                 proc.failed > 0 ? Theme.error() : Style.EMPTY),
                         rightCell(String.valueOf(proc.inflight), 8)));
+                rows.add(Row.from(cells));
             }
+
+            List<Cell> header = new ArrayList<>();
+            List<Constraint> widths = new ArrayList<>();
+            header.add(Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())));
+            widths.add(Constraint.length(20));
+            if (lineWidth > 0) {
+                header.add(rightCell("LINE", lineWidth, Style.EMPTY.bold()));
+                widths.add(Constraint.length(lineWidth));
+            }
+            header.addAll(List.of(
+                    Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                    Cell.from(""),
+                    rightCell(routeTopSortLabel("MEAN", "mean"), 6, routeTopSortStyle("mean")),
+                    rightCell(routeTopSortLabel("MAX", "max"), 6, routeTopSortStyle("max")),
+                    rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
+                    rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
+                    rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
+                    rightCell(routeTopSortLabel("P50", "p50"), 6, routeTopSortStyle("p50")),
+                    rightCell(routeTopSortLabel("P95", "p95"), 6, routeTopSortStyle("p95")),
+                    rightCell(routeTopSortLabel("P99", "p99"), 6, routeTopSortStyle("p99")),
+                    rightCell("TOTAL", 8, Style.EMPTY.bold()),
+                    rightCell("FAIL", 6, Style.EMPTY.bold()),
+                    rightCell("INFLIGHT", 8, Style.EMPTY.bold())));
+            widths.addAll(List.of(
+                    Constraint.length(TOP_PROCESSOR_WIDTH),
+                    Constraint.fill(),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(6),
+                    Constraint.length(8),
+                    Constraint.length(6),
+                    Constraint.length(9)));
 
             table = Table.builder()
                     .rows(rows)
-                    .header(Row.from(
-                            Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
-                            Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                            Cell.from(""),
-                            rightCell(routeTopSortLabel("MEAN", "mean"), 6, routeTopSortStyle("mean")),
-                            rightCell(routeTopSortLabel("MAX", "max"), 6, routeTopSortStyle("max")),
-                            rightCell(routeTopSortLabel("MIN", "min"), 6, routeTopSortStyle("min")),
-                            rightCell(routeTopSortLabel("LAST", "last"), 6, routeTopSortStyle("last")),
-                            rightCell(routeTopSortLabel("DELTA", "delta"), 6, routeTopSortStyle("delta")),
-                            rightCell(routeTopSortLabel("P50", "p50"), 6, routeTopSortStyle("p50")),
-                            rightCell(routeTopSortLabel("P95", "p95"), 6, routeTopSortStyle("p95")),
-                            rightCell(routeTopSortLabel("P99", "p99"), 6, routeTopSortStyle("p99")),
-                            rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                            rightCell("FAIL", 6, Style.EMPTY.bold()),
-                            rightCell("INFLIGHT", 8, Style.EMPTY.bold())))
-                    .widths(
-                            Constraint.length(20),
-                            Constraint.length(14),
-                            Constraint.fill(),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(9))
+                    .header(Row.from(header))
+                    .widths(widths.toArray(Constraint[]::new))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                             .title(" Processors [" + route.routeId + "] ")
                             .build())
@@ -957,6 +989,19 @@ class RoutesTab extends AbstractDiagramTab {
             bodyColWidth = Math.min(bodyColWidth, MAX_BODY_TYPES_WIDTH) + 1;
         }
 
+        // the tree of the steps is in TYPE, and LINE says where a step is in the source (when the runtime records it)
+        int typeWidth = typeWidth(route);
+        int lineWidth = lineWidth(route);
+        // PROCESSOR and BODY TYPES share what the borders, the gaps and the other columns leave: what a step does comes
+        // first, the body types get the rest up to their width (the info panel of the diagram has them all)
+        int columns = 8 + (lineWidth > 0 ? 1 : 0) + (bodyTypes ? 1 : 0);
+        int rest = Math.max(0,
+                area.width() - 2 - (columns - 1) - (typeWidth + lineWidth + 10 + 8 + 6 + 8 + 20 + 12));
+        if (bodyTypes) {
+            bodyColWidth = Math.max(CharWidth.of(" BODY TYPES"), Math.min(bodyColWidth, rest - MIN_PROCESSOR_WIDTH));
+        }
+        int procWidth = Math.max(0, rest - bodyColWidth);
+
         List<Row> rows = new ArrayList<>();
 
         // Synthetic top row representing the route itself
@@ -971,21 +1016,20 @@ class RoutesTab extends AbstractDiagramTab {
         } else {
             routeTimingCol = "";
         }
-        // PROCESSOR gets the rest of the width: the borders, ">> ", 7 gaps and the other columns; a long URI
-        // ends with an ellipsis where it is cut
-        int procWidth = Math.max(0, area.width() - 2 - 3 - 7 - (20 + 10 + 8 + 6 + 8 + 20 + 12)
-                                    - (bodyTypes ? bodyColWidth + 1 : 0));
-        List<Cell> routeCells = new ArrayList<>(
-                List.of(
-                        Cell.from("   route"),
-                        Cell.from(Span.styled(TuiHelper.truncate(
-                                route.from != null ? TuiHelper.displayUri(route.from) : route.routeId, procWidth),
-                                routeStyle)),
-                        rightCell(formatThroughput(route.throughput), 8),
-                        rightCell(String.valueOf(route.total), 8),
-                        rightCell(String.valueOf(route.failed), 6,
-                                route.failed > 0 ? Theme.error() : Style.EMPTY),
-                        rightCell(String.valueOf(route.inflight), 8)));
+        List<Cell> routeCells = new ArrayList<>();
+        routeCells.add(Cell.from("   route"));
+        if (lineWidth > 0) {
+            routeCells.add(lineCell(ProcessorLabels.line(route.source), lineWidth));
+        }
+        routeCells.addAll(List.of(
+                Cell.from(Span.styled(TuiHelper.truncate(
+                        route.from != null ? TuiHelper.displayUri(route.from) : route.routeId, procWidth),
+                        routeStyle)),
+                rightCell(formatThroughput(route.throughput), 8),
+                rightCell(String.valueOf(route.total), 8),
+                rightCell(String.valueOf(route.failed), 6,
+                        route.failed > 0 ? Theme.error() : Style.EMPTY),
+                rightCell(String.valueOf(route.inflight), 8)));
         if (bodyTypes) {
             routeCells.add(Cell.from(""));
         }
@@ -994,8 +1038,7 @@ class RoutesTab extends AbstractDiagramTab {
         rows.add(Row.from(routeCells));
 
         for (ProcessorInfo proc : route.processors) {
-            String indent = "  ".repeat(proc.level);
-            Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+            Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY;
 
             String procTimingCol;
             if (hasProcPercentiles && proc.p50Time >= 0) {
@@ -1008,16 +1051,18 @@ class RoutesTab extends AbstractDiagramTab {
                 procTimingCol = "";
             }
 
-            List<Cell> cells = new ArrayList<>(
-                    List.of(
-                            Cell.from("   " + (proc.processor != null ? proc.processor : "")),
-                            Cell.from(Span.styled(TuiHelper.truncate(indent + (proc.id != null ? proc.id : ""), procWidth),
-                                    nameStyle)),
-                            rightCell(formatThroughput(proc.throughput), 8),
-                            rightCell(String.valueOf(proc.total), 8),
-                            rightCell(String.valueOf(proc.failed), 6,
-                                    proc.failed > 0 ? Theme.error() : Style.EMPTY),
-                            rightCell(String.valueOf(proc.inflight), 8)));
+            List<Cell> cells = new ArrayList<>();
+            cells.add(Cell.from(TuiHelper.truncate(typeCell(proc), typeWidth)));
+            if (lineWidth > 0) {
+                cells.add(lineCell(ProcessorLabels.line(proc.source), lineWidth));
+            }
+            cells.addAll(List.of(
+                    Cell.from(ProcessorLabels.label(proc, step(route, proc), procWidth, nameStyle)),
+                    rightCell(formatThroughput(proc.throughput), 8),
+                    rightCell(String.valueOf(proc.total), 8),
+                    rightCell(String.valueOf(proc.failed), 6,
+                            proc.failed > 0 ? Theme.error() : Style.EMPTY),
+                    rightCell(String.valueOf(proc.inflight), 8)));
             if (bodyTypes) {
                 cells.add(Cell.from(Span.styled(
                         " " + TuiHelper.truncate(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds), bodyColWidth - 1),
@@ -1029,22 +1074,26 @@ class RoutesTab extends AbstractDiagramTab {
         }
         String procTimingHeader = hasProcPercentiles ? "P50/P95/P99" : "MIN/MAX/MEAN";
 
-        List<Cell> header = new ArrayList<>(
-                List.of(
-                        Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
-                        Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                        rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
-                        rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                        rightCell("FAIL", 6, Style.EMPTY.bold()),
-                        rightCell("INFLIGHT", 8, Style.EMPTY.bold())));
-        List<Constraint> widths = new ArrayList<>(
-                List.of(
-                        Constraint.length(20),
-                        Constraint.fill(),
-                        Constraint.length(10),
-                        Constraint.length(8),
-                        Constraint.length(6),
-                        Constraint.length(8)));
+        List<Cell> header = new ArrayList<>();
+        List<Constraint> widths = new ArrayList<>();
+        header.add(Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())));
+        widths.add(Constraint.length(typeWidth));
+        if (lineWidth > 0) {
+            header.add(rightCell("LINE", lineWidth, Style.EMPTY.bold()));
+            widths.add(Constraint.length(lineWidth));
+        }
+        header.addAll(List.of(
+                Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
+                rightCell("TOTAL", 8, Style.EMPTY.bold()),
+                rightCell("FAIL", 6, Style.EMPTY.bold()),
+                rightCell("INFLIGHT", 8, Style.EMPTY.bold())));
+        widths.addAll(List.of(
+                Constraint.fill(),
+                Constraint.length(10),
+                Constraint.length(8),
+                Constraint.length(6),
+                Constraint.length(8)));
         if (bodyTypes) {
             header.add(Cell.from(Span.styled(" BODY TYPES", Style.EMPTY.bold())));
             widths.add(Constraint.length(bodyColWidth));
@@ -1062,6 +1111,39 @@ class RoutesTab extends AbstractDiagramTab {
                         .title(" Processors [" + route.routeId + "] ")
                         .build())
                 .build();
+    }
+
+    /** The type of a step, indented by its level: the tree of the steps of the route. */
+    private static String typeCell(ProcessorInfo proc) {
+        return "   " + "  ".repeat(Math.max(0, proc.level - 1)) + (proc.processor != null ? proc.processor : "");
+    }
+
+    /** As wide as the deepest step needs, up to a limit. */
+    private static int typeWidth(RouteInfo route) {
+        int width = CharWidth.of("   route");
+        for (ProcessorInfo proc : route.processors) {
+            width = Math.max(width, CharWidth.of(typeCell(proc)));
+        }
+        return Math.min(width, MAX_TYPE_WIDTH);
+    }
+
+    /** As wide as the highest line needs, or 0 when the runtime records no source locations (no LINE column). */
+    private static int lineWidth(RouteInfo route) {
+        int max = 0;
+        for (ProcessorInfo proc : route.processors) {
+            Integer line = ProcessorLabels.line(proc.source);
+            max = line != null ? Math.max(max, line) : max;
+        }
+        return max > 0 ? Math.max(CharWidth.of("LINE"), String.valueOf(max).length()) : 0;
+    }
+
+    private static Cell lineCell(Integer line, int width) {
+        return rightCell(line != null ? String.valueOf(line) : "", width, Theme.muted());
+    }
+
+    /** The step as the route structure has it, from what the diagrams asked of the integration. */
+    private DiagramTopology.Step step(RouteInfo route, ProcessorInfo proc) {
+        return ctx.diagramTopology.step(ctx.selectedPid, route.routeId, proc.id);
     }
 
     private String formatThroughput(String throughput) {
