@@ -31,6 +31,7 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -50,7 +51,23 @@ public class KeyRotationSignalsTest extends CamelTestSupport {
         }
     }
 
-    private final InMemoryKeyLifecycleManager keyManager = new InMemoryKeyLifecycleManager();
+    private final FailingReadKeyLifecycleManager keyManager = new FailingReadKeyLifecycleManager();
+
+    /**
+     * An in-memory manager whose metadata reads can be made to fail, like a vault that is unreachable.
+     */
+    private static final class FailingReadKeyLifecycleManager extends InMemoryKeyLifecycleManager {
+        private volatile boolean failReads;
+
+        @Override
+        public KeyMetadata getKeyMetadata(String keyId) {
+            if (failReads) {
+                throw new IllegalStateException("simulated vault outage");
+            }
+            return super.getKeyMetadata(keyId);
+        }
+    }
+
     private KeyPair signingKeyPair;
 
     @EndpointInject("mock:sign")
@@ -76,6 +93,12 @@ public class KeyRotationSignalsTest extends CamelTestSupport {
                         .to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA&keyLifecycleManager=#keyManager"
                             + "&keyPair=#signingKeyPair")
                         .to("mock:sign");
+                // the key status check before signing is a deliberate fail-closed read of the same metadata; this
+                // route turns it off, so the only vault read of an exchange is the one recording the usage
+                from("direct:signNoStatusCheck")
+                        .to("pqc:sign?operation=sign&signatureAlgorithm=MLDSA&keyLifecycleManager=#keyManager"
+                            + "&keyPair=#signingKeyPair&strictKeyLifecycle=false")
+                        .to("mock:sign");
             }
         };
     }
@@ -96,6 +119,25 @@ public class KeyRotationSignalsTest extends CamelTestSupport {
 
         assertTrue(keyManager.needsRotation(KEY_ID, null, 3),
                 "a key at its maxKeyUsage must be reported as needing rotation");
+    }
+
+    @Test
+    void aFailedMetadataReadKeepsTheSignatureOfAStatelessKey() throws Exception {
+        resultSign.expectedMessageCount(1);
+
+        keyManager.failReads = true;
+        try {
+            template.sendBodyAndHeader("direct:signNoStatusCheck", "Hello", PQCConstants.KEY_ID, KEY_ID);
+        } finally {
+            keyManager.failReads = false;
+        }
+
+        resultSign.assertIsSatisfied();
+        // ML-DSA is not stateful, so no one-time index was consumed: only the usage count is lost
+        assertNotNull(resultSign.getExchanges().get(0).getMessage().getHeader(PQCConstants.SIGNATURE, byte[].class),
+                "a vault that cannot be read must not cost the signature of a stateless key");
+        assertEquals(0, keyManager.getKeyMetadata(KEY_ID).getUsageCount(),
+                "the usage that could not be recorded must not be counted afterwards");
     }
 
     @Test

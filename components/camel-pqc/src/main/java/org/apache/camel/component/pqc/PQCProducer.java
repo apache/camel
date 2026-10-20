@@ -1237,7 +1237,17 @@ public class PQCProducer extends DefaultProducer {
         PrivateKey privateKey = keyPair.getPrivate();
         boolean stateful = getStatefulKeyRemaining(privateKey) >= 0;
 
-        KeyMetadata metadata = klm.getKeyMetadata(keyId);
+        KeyMetadata metadata;
+        try {
+            metadata = klm.getKeyMetadata(keyId);
+        } catch (Exception e) {
+            if (stateful) {
+                throw e;
+            }
+            // the read fails for the same reasons as the write below, and costs the same: only the usage count
+            warnUsageRecordFailure(keyId, e);
+            return;
+        }
         if (metadata == null) {
             if (stateful) {
                 LOG.warn(
@@ -1262,13 +1272,21 @@ public class PQCProducer extends DefaultProducer {
             try {
                 klm.updateKeyMetadata(keyId, metadata);
             } catch (Exception e) {
-                if (usageRecordFailureWarned.compareAndSet(false, true)) {
-                    LOG.warn("Could not record the usage of key '{}' through the keyLifecycleManager, so its"
-                             + " usageCount does not advance and a configured maxKeyUsage threshold may not be"
-                             + " reached. The signature itself is unaffected. Reported once per producer.",
-                            keyId, e);
-                }
+                warnUsageRecordFailure(keyId, e);
             }
+        }
+    }
+
+    /**
+     * Warns, once per producer, that the usage of a non-stateful key was not recorded because its metadata could not be
+     * read from or written to the keyLifecycleManager. The signature is kept: only the usage count is lost.
+     */
+    private void warnUsageRecordFailure(String keyId, Exception e) {
+        if (usageRecordFailureWarned.compareAndSet(false, true)) {
+            LOG.warn("Could not record the usage of key '{}' through the keyLifecycleManager, so its"
+                     + " usageCount does not advance and a configured maxKeyUsage threshold may not be"
+                     + " reached. The signature itself is unaffected. Reported once per producer.",
+                    keyId, e);
         }
     }
 

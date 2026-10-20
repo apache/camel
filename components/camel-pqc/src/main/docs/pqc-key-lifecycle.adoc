@@ -943,7 +943,8 @@ not an audit figure.
 
 Recording the usage of a non-stateful key writes to the backing store on every signature. On a high volume route
 against a remote vault, prefer `maxKeyAge` or `nextRotationAt`, or leave the `CamelPQCKeyId` header off the signing
-exchanges.
+exchanges. A store that cannot be read or written does not fail the exchange of a non-stateful key: the usage is not
+recorded, a warning is logged once per producer, and the signature is returned.
 ====
 
 ._Java-only: scheduling automated key rotation_
