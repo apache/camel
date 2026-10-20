@@ -24,9 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.URISupport;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.chat2.Chat;
 import org.jivesoftware.smack.chat2.ChatManager;
 import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
@@ -57,9 +59,22 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
+    // set when the connection logged in again after it was lost, until the consumer entered its room again
+    private volatile boolean rejoinRoom;
+    // the connection logs in again after it was lost: by the connection monitor of this consumer, or by Smack's
+    // ReconnectionManager (enabled by the component), whichever connects first
+    private final ConnectionListener connectionListener = new ConnectionListener() {
+        @Override
+        public void authenticated(XMPPConnection connection, boolean resumed) {
+            if (!resumed) {
+                loggedInAgain();
+            }
+        }
+    };
     private ChatManager chatManager;
-    private XMPPTCPConnection connection;
-    private ScheduledExecutorService scheduledExecutor;
+    // package-private for tests
+    XMPPTCPConnection connection;
+    private volatile ScheduledExecutorService scheduledExecutor;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -102,19 +117,14 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
             final AndFilter packetFilter = new AndFilter(new StanzaTypeFilter(Presence.class));
             connection.addSyncStanzaListener(this, packetFilter);
-            String roomPassword = endpoint.getRoomPassword();
             MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
             muc = mucm.getMultiUserChat(JidCreate.entityBareFrom(endpoint.resolveRoom(connection)));
             muc.addMessageListener(this);
-            MucEnterConfiguration.Builder mucc = muc.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
-                    .requestNoHistory();
-            if (roomPassword != null) {
-                mucc.withPassword(roomPassword);
-            }
-            muc.join(mucc.build());
+            joinRoom();
             LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
         }
 
+        connection.addConnectionListener(connectionListener);
         this.startRobustConnectionMonitor();
         super.doStart();
     }
@@ -151,16 +161,76 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
                 endpoint.getConnectionPollDelay(), TimeUnit.SECONDS);
     }
 
-    private void checkConnection() throws Exception {
+    /**
+     * Connects and logs in the connection again when it was lost, and enters the room again when needed. Smack's
+     * ReconnectionManager can connect and log in the same connection at the same time: whichever comes second gets
+     * AlreadyConnectedException or AlreadyLoggedInException, which only means that the other one did it.
+     * Package-private for tests.
+     */
+    void checkConnection() throws Exception {
         if (!connection.isConnected()) {
             LOG.info("Attempting to reconnect to: {}", XmppEndpoint.getConnectionMessage(connection));
             try {
                 connection.connect();
                 LOG.debug("Successfully connected to XMPP server through: {}", connection);
+            } catch (SmackException.AlreadyConnectedException e) {
+                LOG.debug("Already connected again to XMPP server through: {}", connection);
             } catch (SmackException e) {
                 LOG.warn("Connection to XMPP server failed. Will try to reconnect later again.", e);
+                return;
             }
         }
+        if (!connection.isAuthenticated() && (endpoint.getUser() == null || endpoint.isLogin())) {
+            // connecting again does not log in: the server delivers nothing to the connection until it logs in again
+            // (Smack's ReconnectionManager only logs in when its attempt found the connection not connected)
+            try {
+                endpoint.login(connection);
+            } catch (SmackException.AlreadyLoggedInException e) {
+                // its login calls authenticated, which enters the room again
+                LOG.debug("Already logged in again to XMPP server through: {}", connection);
+            }
+        }
+        rejoinRoomIfNeeded();
+    }
+
+    /**
+     * Called when the connection logged in again after it was lost, by whoever connected it again.
+     */
+    private void loggedInAgain() {
+        LOG.info("Logged in again to: {}", XmppEndpoint.getConnectionMessage(connection));
+        if (muc != null) {
+            // the server removed the consumer from its room when the connection was lost. Enter it again in the thread of
+            // the connection monitor, not in the thread that logged in; the monitor also tries again if it fails
+            rejoinRoom = true;
+            ScheduledExecutorService executor = scheduledExecutor;
+            if (executor != null && !executor.isShutdown()) {
+                executor.execute(() -> {
+                    try {
+                        rejoinRoomIfNeeded();
+                    } catch (Exception e) {
+                        LOG.warn("Could not enter the room again. Will try again at the next connection check.", e);
+                    }
+                });
+            }
+        }
+    }
+
+    private void rejoinRoomIfNeeded() throws Exception {
+        if (rejoinRoom && muc != null && connection.isAuthenticated()) {
+            joinRoom();
+            rejoinRoom = false;
+            LOG.info("Joined room again: {} as: {}", muc.getRoom(), endpoint.getNickname());
+        }
+    }
+
+    private void joinRoom() throws Exception {
+        MucEnterConfiguration.Builder mucc = muc.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                .requestNoHistory();
+        String roomPassword = endpoint.getRoomPassword();
+        if (roomPassword != null) {
+            mucc.withPassword(roomPassword);
+        }
+        muc.join(mucc.build());
     }
 
     private ScheduledExecutorService getExecutor() {
@@ -179,6 +249,9 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
         if (scheduledExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
+        }
+        if (connection != null) {
+            connection.removeConnectionListener(connectionListener);
         }
 
         if (muc != null) {
