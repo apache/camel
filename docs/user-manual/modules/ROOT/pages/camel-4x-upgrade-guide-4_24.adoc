@@ -2260,6 +2260,12 @@ and the delay between two connection attempts stayed 10 seconds. It now sets tha
 delay, and a value of 0 or less is rejected. To set the request timeout, use the `requestTimeout` option instead
 (for example `camel.component.milo-client.requestTimeout`, or `getConfiguration().setRequestTimeout(...)` in Java).
 
+=== camel-milo - the sessionTimeout of the components reaches their endpoints
+
+A `sessionTimeout` configured on the `milo-client` or `milo-browse` component (for example
+`camel.component.milo-client.sessionTimeout`) did not reach its endpoints, so their sessions used the default of Milo,
+120000 milliseconds. The endpoints now use it, unless they set `sessionTimeout` themselves.
+
 === camel-infinispan - the key option of the producer takes precedence over the key header
 
 The `infinispan` and `infinispan-embedded` producers now use the `key` option of the endpoint when it is set, and use the
