@@ -267,12 +267,19 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
             endpoint.releaseConnection(connection);
         }
 
-        // the connection is rebuilt and the new consumer receives the current values, not a bad status
-        items12Endpoint.expectedMessageCount(2);
-        items12Endpoint.allMessages().predicate(exchange -> exchange.getMessage().getBody(DataValue.class).getStatusCode()
-                .isGood());
+        // the connection is rebuilt: the new consumer reports its nodes without communication, unless the first values
+        // of the new connection get there first, and ends with the current values, not a creation status
+        items12Endpoint.expectedMinimumMessageCount(2);
+        items12Endpoint.allMessages().predicate(exchange -> {
+            final StatusCode status = exchange.getMessage().getBody(DataValue.class).getStatusCode();
+            return status.isGood() || status.getValue() == StatusCodes.Bad_NoCommunication;
+        });
         context.getRouteController().startRoute("items12");
         items12Endpoint.assertIsSatisfied();
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertGoodValue("Foo").accept(lastExchange(items12Endpoint, NODE_ITEM_1).getMessage().getBody(DataValue.class));
+            assertGoodValue("Bar").accept(lastExchange(items12Endpoint, NODE_ITEM_2).getMessage().getBody(DataValue.class));
+        });
 
         producer1.sendBody("Baz");
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -466,6 +473,16 @@ public class MonitorItemLifecycleTest extends AbstractMiloServerTest {
     private static Exchange lastExchange(final MockEndpoint endpoint) {
         final List<Exchange> exchanges = endpoint.getReceivedExchanges();
         return exchanges.get(exchanges.size() - 1);
+    }
+
+    private static Exchange lastExchange(final MockEndpoint endpoint, final String nodeId) {
+        final List<Exchange> exchanges = endpoint.getReceivedExchanges();
+        for (int i = exchanges.size() - 1; i >= 0; i--) {
+            if (nodeId.equals(exchanges.get(i).getMessage().getHeader(MiloConstants.HEADER_NODE_ID, String.class))) {
+                return exchanges.get(i);
+            }
+        }
+        throw new AssertionError("No exchange of node " + nodeId);
     }
 
     private static Consumer<DataValue> assertStatus(final long statusCode) {
