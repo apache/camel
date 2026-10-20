@@ -156,6 +156,9 @@ config_variants:
     - option: logPhi                        # camel-mllp
       insecure_value: true
       default: false                 # CVE-2026-85260
+    - option: allowUnmarshallType           # camel-jackson, camel-gson, camel-jsonb
+      insecure_value: true
+      default: false                 # CVE-2016-8749 (Jackson); the unmarshal type header selects the class
 
 properties_provided:
   # id, violation symptom, indicative severity tier (the range published at the advisory index since 2015)
