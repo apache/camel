@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class MinioConsumerObjectThatCannotBeGotTest extends CamelTestSupport {
 
-    private FakeS3Server server;
+    FakeS3Server server;
     private final CountDownLatch failedPolls = new CountDownLatch(2);
     private final List<String> handled = new CopyOnWriteArrayList<>();
     private final CountDownLatch skippedReported = new CountDownLatch(1);
@@ -150,12 +150,37 @@ class MinioConsumerObjectThatCannotBeGotTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-    private void addConsumerRoute(String options) throws Exception {
+    @Test
+    void refusedLastListedObjectDoesNotHoldTheListingBack() throws Exception {
+        // with maxMessagesPerPoll=2 the first poll lists a.txt and b.txt (and c.txt if the client reads the next page
+        // too): c.txt, which cannot be stated, must not keep later polls from listing an object added before it
+        server.put("a.txt", "a");
+        server.put("b.txt", "b");
+        server.put("c.txt", "c");
+        server.refuseStats("c.txt");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("a", "b");
+
+        addConsumerRoute("&maxMessagesPerPoll=2&exceptionHandler=#recordErrors&pollStrategy=#countPolls");
+
+        mock.assertIsSatisfied();
+        // the polls that list only c.txt fail
+        assertTrue(failedPolls.await(20, TimeUnit.SECONDS), "the polls that list only c.txt fail");
+
+        mock.reset();
+        mock.expectedBodiesReceived("a2");
+        server.put("a2.txt", "a2");
+        mock.assertIsSatisfied();
+        assertTrue(server.contains("c.txt"), "c.txt stays");
+    }
+
+    void addConsumerRoute(String options) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("minio://bucket?accessKey=xxx&secretKey=yyy&region=us-east-1&initialDelay=0&delay=10"
                      + "&endpoint=" + server.endpoint() + options)
+                        .routeId("consumer")
                         .convertBodyTo(String.class)
                         .to("mock:result");
             }

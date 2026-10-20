@@ -69,6 +69,10 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     private final Set<String> inProgress = ConcurrentHashMap.newKeySet();
     private long totalCounter;
     private String continuationToken;
+    // the name of the last object listed by the poll, and the number of objects it listed (set once the listing is
+    // read to the end)
+    private String lastListedObjectName;
+    private int listedObjects;
     private transient String minioConsumerToString;
 
     public MinioConsumer(MinioEndpoint endpoint, Processor processor) {
@@ -175,11 +179,21 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
             forceConsumerAsReady();
 
             if (listObjects.hasNext()) {
-                exchanges = createExchanges(listObjects);
-                if (maxMessagesPerPoll <= 0 || exchanges.size() < maxMessagesPerPoll) {
-                    continuationToken = null;
-                } else {
-                    continuationToken = exchanges.getLast().getIn().getHeader(MinioConstants.OBJECT_NAME, String.class);
+                lastListedObjectName = null;
+                listedObjects = 0;
+                try {
+                    exchanges = createExchanges(listObjects);
+                } finally {
+                    // the next poll continues after the last listed object, also when objects of this poll are skipped
+                    // or none of them could be got: such objects must not hold the consumer back, and they are listed
+                    // again when the listing starts over
+                    if (lastListedObjectName != null) {
+                        if (maxMessagesPerPoll <= 0 || listedObjects < maxMessagesPerPoll) {
+                            continuationToken = null;
+                        } else {
+                            continuationToken = lastListedObjectName;
+                        }
+                    }
                 }
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Found {} objects in bucket {}...", totalCounter, bucketName);
@@ -207,6 +221,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
         Map<String, Exception> failures = new LinkedHashMap<>();
         // whether the stat of at least one listed object succeeded
         boolean anyGot = false;
+        String lastListed = null;
         try {
             do {
                 messageCounter++;
@@ -223,7 +238,10 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         failures.put(objectName, e);
                     }
                 }
+                lastListed = minioObjectSummary.objectName();
             } while (minioObjectSummaries.hasNext());
+            lastListedObjectName = lastListed;
+            listedObjects = messageCounter;
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Received {} messages in this poll", messageCounter);
@@ -361,6 +379,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         });
                     }
                 } catch (Exception e) {
+                    // the exchange is not routed, so nothing else gives it back to the exchange factory
+                    releaseExchange(exchange, false);
                     if (isNoSuchKey(e)) {
                         // deleted (for example by another consumer) after it was listed
                         LOG.debug("Skipping object {} as it no longer exists", srcObjectName);
