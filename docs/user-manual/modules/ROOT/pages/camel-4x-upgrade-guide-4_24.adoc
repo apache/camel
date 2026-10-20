@@ -2107,3 +2107,18 @@ its array headers (`tags[#2]:` becomes `tags[2]:`).
 With `strict=false`, unmarshalling no longer returns `null` or a partial result for malformed TOON. Only the non-strict
 recoveries of the TOON specification apply, such as accepting an array whose length differs from the declared length;
 other malformed TOON fails with `IllegalArgumentException`, as in strict mode.
+
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - sendNoop also applies to the consumer
+
+The `sendNoop` option now also applies to the check a consumer makes before each poll, not only to the pre-write check
+of a producer, and its label is now `common,advanced` instead of `producer,advanced`. The default is still `true`, so a
+consumer sends a noop before each poll as before.
+
+A consumer endpoint that already sets `sendNoop=false`, which was ignored before (for example a URI shared by `from`
+and `to`), now skips that noop and only checks whether the client still regards itself as connected. For ftp and ftps
+the client does not notice a connection that the server has closed, so such a consumer finds it only when the next
+operation fails, during the poll or while processing a file. After a failure caused by an I/O error, the consumer
+sends a noop before the next poll, and connects again if the noop fails. For sftp and mina-sftp the client notices a
+closed connection, but not one that dropped silently. For sftp the noop is a keep-alive message that does not wait for
+a reply, so it does not find such a connection either. Remove `sendNoop=false` from the consumer endpoint to keep the
+noop before each poll.

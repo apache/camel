@@ -2695,6 +2695,60 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and the consumer then
+         * only checks whether the client still regards itself as connected. For
+         * ftp and ftps the client does not notice a connection that the server
+         * has closed, so it is found only when the next operation fails. After
+         * a failure caused by an I/O error, the consumer sends a noop before
+         * the next poll, and connects again if the noop fails. For sftp and
+         * mina-sftp the client notices a closed connection, but not one that
+         * dropped silently. For sftp the noop is a keep-alive message that does
+         * not wait for a reply.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointConsumerBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and the consumer then
+         * only checks whether the client still regards itself as connected. For
+         * ftp and ftps the client does not notice a connection that the server
+         * has closed, so it is found only when the next operation fails. After
+         * a failure caused by an I/O error, the consumer sends a noop before
+         * the next poll, and connects again if the noop fails. For sftp and
+         * mina-sftp the client notices a closed connection, but not one that
+         * dropped silently. For sftp the noop is a keep-alive message that does
+         * not wait for a reply.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointConsumerBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -4671,6 +4725,60 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and the consumer then
+         * only checks whether the client still regards itself as connected. For
+         * ftp and ftps the client does not notice a connection that the server
+         * has closed, so it is found only when the next operation fails. After
+         * a failure caused by an I/O error, the consumer sends a noop before
+         * the next poll, and connects again if the noop fails. For sftp and
+         * mina-sftp the client notices a closed connection, but not one that
+         * dropped silently. For sftp the noop is a keep-alive message that does
+         * not wait for a reply.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointProducerBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and the consumer then
+         * only checks whether the client still regards itself as connected. For
+         * ftp and ftps the client does not notice a connection that the server
+         * has closed, so it is found only when the next operation fails. After
+         * a failure caused by an I/O error, the consumer sends a noop before
+         * the next poll, and connects again if the noop fails. For sftp and
+         * mina-sftp the client notices a closed connection, but not one that
+         * dropped silently. For sftp the noop is a keep-alive message that does
+         * not wait for a reply.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
          * Used to specify if a null body is allowed during file writing. If set
          * to true then an empty file will be created, when set to false, and
          * attempting to send a null body to the file component, a
@@ -4948,44 +5056,6 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(String moveExistingFileStrategy) {
             doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
-            return this;
-        }
-        /**
-         * Whether to send a noop command as a pre-write check before uploading
-         * files to the FTP server. This is enabled by default as a validation
-         * of the connection is still valid, which allows to silently re-connect
-         * to be able to upload the file. However if this causes problems, you
-         * can turn this option off.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         * 
-         * @param sendNoop the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSftpEndpointProducerBuilder sendNoop(boolean sendNoop) {
-            doSetProperty("sendNoop", sendNoop);
-            return this;
-        }
-        /**
-         * Whether to send a noop command as a pre-write check before uploading
-         * files to the FTP server. This is enabled by default as a validation
-         * of the connection is still valid, which allows to silently re-connect
-         * to be able to upload the file. However if this causes problems, you
-         * can turn this option off.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         * 
-         * @param sendNoop the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
-            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -6317,6 +6387,60 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder fastExistsCheck(String fastExistsCheck) {
             doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and the consumer then
+         * only checks whether the client still regards itself as connected. For
+         * ftp and ftps the client does not notice a connection that the server
+         * has closed, so it is found only when the next operation fails. After
+         * a failure caused by an I/O error, the consumer sends a noop before
+         * the next poll, and connects again if the noop fails. For sftp and
+         * mina-sftp the client notices a closed connection, but not one that
+         * dropped silently. For sftp the noop is a keep-alive message that does
+         * not wait for a reply.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and the consumer then
+         * only checks whether the client still regards itself as connected. For
+         * ftp and ftps the client does not notice a connection that the server
+         * has closed, so it is found only when the next operation fails. After
+         * a failure caused by an I/O error, the consumer sends a noop before
+         * the next poll, and connects again if the noop fails. For sftp and
+         * mina-sftp the client notices a closed connection, but not one that
+         * dropped silently. For sftp the noop is a keep-alive message that does
+         * not wait for a reply.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSftpEndpointBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
