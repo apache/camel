@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.azure.eventhubs;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -27,7 +26,6 @@ import com.azure.messaging.eventhubs.models.PartitionContext;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.support.DefaultExchange;
@@ -61,7 +59,6 @@ class EventHubsConsumerCheckpointWindowTest {
     private final ScheduledFuture scheduledFuture = mock(ScheduledFuture.class);
 
     private EventHubsConsumer consumer;
-    private Method processCommit;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -82,9 +79,6 @@ class EventHubsConsumerCheckpointWindowTest {
         field.set(consumer, scheduledExecutorService);
         when(scheduledExecutorService.schedule(any(Runnable.class), anyLong(), any(TimeUnit.class)))
                 .thenReturn(scheduledFuture);
-
-        processCommit = EventHubsConsumer.class.getDeclaredMethod("processCommit", Exchange.class, EventContext.class);
-        processCommit.setAccessible(true);
     }
 
     @Test
@@ -138,7 +132,7 @@ class EventHubsConsumerCheckpointWindowTest {
     }
 
     private void complete(EventContext eventContext) throws Exception {
-        processCommit.invoke(consumer, DefaultExchange.newFromEndpoint(endpoint), eventContext);
+        consumer.processCommit(DefaultExchange.newFromEndpoint(endpoint), eventContext);
     }
 
     private List<Runnable> scheduledTasks() {

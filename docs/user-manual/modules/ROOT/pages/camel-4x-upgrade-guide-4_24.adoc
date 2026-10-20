@@ -1681,6 +1681,19 @@ exception handler of the consumer, with the blob name in the message (by default
 poll that lists the blob). Before, the poll failed, and as every poll lists the container again, one such blob stopped
 the consumer from consuming any blob. The poll still fails when none of the listed blobs could be got.
 
+=== camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
+
+With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
+has run, and no longer when the wall clock passes the time the timer was scheduled for. Before, an event that
+completed in the millisecond in which the timer ran (or while the timer was taking the count) was counted in the
+window whose count had already been taken: it was checkpointed only with the next event, and when the partition stayed
+quiet it was delivered again after a restart.
+
+The `CamelAzureEventHubsCheckpointUpdatedBy` header can now be `timeout`. An event that completes after the
+scheduled time of its window, but before the (late) timer has run, joins that window and gets `timeout`; its offset is
+checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
+set. Routes that read this header can now see `timeout` as well as `size`.
+
 === camel-azure-servicebus - the dead-letter reason and description are bounded
 
 When the consumer dead-letters a message after a failed route with `enableDeadLettering=true`, the reason and the

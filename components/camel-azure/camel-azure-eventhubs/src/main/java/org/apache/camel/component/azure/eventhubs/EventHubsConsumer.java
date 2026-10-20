@@ -222,7 +222,7 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
      *
      * @param exchange the exchange
      */
-    private void processCommit(final Exchange exchange, final EventContext eventContext) {
+    void processCommit(final Exchange exchange, final EventContext eventContext) {
         lock.lock();
         try {
             final String partitionId = eventContext.getPartitionContext().getPartitionId();

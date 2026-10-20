@@ -36,8 +36,8 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
     private volatile long scheduledTime;
     // the lock of the consumer, which counts the events under it
     private final Lock lock;
-    // set under the lock when the task has taken the count of its window, or was cancelled
-    private volatile boolean done;
+    // set when the task has taken the count of its window, or was cancelled; read and written under the lock only
+    private boolean done;
 
     public EventHubsCheckpointUpdaterTask(EventContext eventContext, AtomicInteger processedEvents) {
         this(eventContext, processedEvents, new ReentrantLock());
@@ -98,6 +98,7 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
 
     /**
      * Whether this task has taken the count of its window (or was cancelled), so a new event must start a new window.
+     * Called under the lock of the consumer.
      */
     public boolean isDone() {
         return done;
