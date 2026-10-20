@@ -220,7 +220,8 @@ public class EventHubsConsumer extends DefaultConsumer implements ShutdownAware 
     /**
      * Strategy to commit the offset after message being processed successfully.
      *
-     * @param exchange the exchange
+     * @param exchange     the exchange
+     * @param eventContext the event context of the event, used to update the checkpoint
      */
     void processCommit(final Exchange exchange, final EventContext eventContext) {
         lock.lock();

@@ -39,6 +39,8 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -127,6 +129,11 @@ class EventHubsConsumerCheckpointWindowTest {
 
         // the timer of the first window had already started, so the cancel did not stop it
         runTasksFrom(0);
+
+        // the cancelled timer of the first window takes nothing: its event context is second (set when second was
+        // counted), which was checkpointed once by batch size and not again; first was never checkpointed by itself
+        verify(first, never()).updateCheckpointAsync();
+        verify(second, times(1)).updateCheckpointAsync();
 
         verify(third).updateCheckpointAsync();
     }

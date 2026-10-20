@@ -39,6 +39,15 @@ public class EventHubsCheckpointUpdaterTask implements Runnable {
     // set when the task has taken the count of its window, or was cancelled; read and written under the lock only
     private boolean done;
 
+    /**
+     * Creates a task that synchronizes on a private lock of its own, unrelated to any consumer: for standalone or test
+     * use. {@link EventHubsConsumer} uses {@link #EventHubsCheckpointUpdaterTask(EventContext, AtomicInteger, Lock)}
+     * with its own lock, which it holds while it counts the events; with a private lock an event could be counted in a
+     * window whose timer has already taken the count.
+     *
+     * @param eventContext    the event context to checkpoint
+     * @param processedEvents the count of the events processed since the last checkpoint
+     */
     public EventHubsCheckpointUpdaterTask(EventContext eventContext, AtomicInteger processedEvents) {
         this(eventContext, processedEvents, new ReentrantLock());
     }
