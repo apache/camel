@@ -96,6 +96,31 @@ class NettyHttpBasicAuthConstraintDotSegmentTest extends BaseNettyTestSupport {
         assertStatus("netty-http:http://localhost:{{port}}/foo/admin/../public/x", 400);
     }
 
+    @Test
+    void pathParameterIsRejected() {
+        // raw /admin;x/y evades /admin/*, but a backend that strips path parameters sees /admin/y
+        assertStatus("netty-http:http://localhost:{{port}}/foo/admin;x/y", 400);
+        assertStatus("netty-http:http://localhost:{{port}}/foo/admin%3bx/y", 400);
+    }
+
+    @Test
+    void dotSegmentWithPathParameterIsRejected() {
+        // raw /public/..;/admin/x matches the /public/* exclusion, but a backend that treats ..; as .. sees /admin/x
+        assertStatus("netty-http:http://localhost:{{port}}/foo/public/..;/admin/x", 400);
+    }
+
+    @Test
+    void backslashIsRejected() {
+        // raw /public/\..\..\admin matches the /public/* exclusion, but a backend that treats \ as / sees /admin
+        assertStatus("netty-http:http://localhost:{{port}}/foo/public/%5c..%5c..%5cadmin", 400);
+    }
+
+    @Test
+    void emptySegmentIsRejected() {
+        // raw //admin/x evades /admin/*, but a backend that collapses empty segments sees /admin/x
+        assertStatus("netty-http:http://localhost:{{port}}/foo//admin/x", 400);
+    }
+
     private void assertStatus(String uri, int expected) {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody(uri, "Hello", String.class));

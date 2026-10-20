@@ -168,9 +168,11 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             // and the route may each interpret it differently, so a path such as /foo/../admin/x (or its percent-encoded
             // /foo/%2e%2e/admin/x form) could be matched against the constraint inclusions/exclusions in a different
             // form than the one the route handles. Reject it up front when a security constraint is configured; a
-            // well-behaved HTTP client normalizes dot-segments before sending (CAMEL-25705).
-            if (security.getSecurityConstraint() != null && containsDotSegments(uri.getPath())) {
-                LOG.debug("Rejecting request with . or .. path segments for resource: {}", url);
+            // well-behaved HTTP client normalizes dot-segments before sending (CAMEL-25705). The same applies to a path
+            // with an empty segment, a ; path parameter or a \ (also in their percent-encoded forms), which a backend
+            // the route forwards to may collapse, strip or treat as a / respectively.
+            if (security.getSecurityConstraint() != null && isAmbiguousPath(uri.getPath())) {
+                LOG.debug("Rejecting request with an ambiguous path for resource: {}", url);
                 HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
                 response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
                 response.headers().set(Exchange.CONTENT_LENGTH, 0);
@@ -245,6 +247,19 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             target = target.substring(path.length());
         }
         return target;
+    }
+
+    /**
+     * Whether the (decoded) path may be interpreted differently by the security constraint, the consumer dispatch, the
+     * route or a backend the route forwards to: it contains a {@code .} or {@code ..} segment, an empty segment
+     * ({@code //}), a {@code ;} path parameter or a {@code \}. Such a path is rejected up front when a security
+     * constraint is configured (see {@link #channelRead0}).
+     */
+    static boolean isAmbiguousPath(String path) {
+        if (path == null) {
+            return false;
+        }
+        return path.indexOf(';') != -1 || path.indexOf('\\') != -1 || path.contains("//") || containsDotSegments(path);
     }
 
     /**

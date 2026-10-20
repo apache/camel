@@ -49,4 +49,23 @@ class HttpServerChannelHandlerDotSegmentTest {
     void resolvesDotSegments(String input, String expected) {
         assertEquals(expected, HttpServerChannelHandler.removeDotSegments(input), () -> "input " + input);
     }
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', textBlock = """
+            # input                 | expected
+            /foo/admin/x            | false
+            /admin/file.txt         | false
+            /admin/.hidden/secret   | false
+            /foo/admin/x/           | false
+            /                       | false
+            /foo/../admin/x         | true
+            /foo/admin/.            | true
+            /foo//admin/x           | true
+            /foo/admin;x/y          | true
+            /foo/public/..;/admin   | true
+            /foo/public/\\..\\admin | true
+            """)
+    void detectsAmbiguousPath(String input, boolean expected) {
+        assertEquals(expected, HttpServerChannelHandler.isAmbiguousPath(input), () -> "input " + input);
+    }
 }

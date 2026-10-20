@@ -1130,6 +1130,12 @@ could be matched against the inclusions and exclusions in a different form than 
 it up front keeps the constraint decision and the routed path consistent. A well-behaved HTTP client normalizes
 dot-segments before sending, so normal traffic is unaffected.
 
+For the same reason, such a consumer also rejects with HTTP 400 a request whose path contains an empty segment (`//`),
+a `;` path parameter (also as `%3b`) or a `\` (also as `%5c`). A backend the route forwards the request to may collapse
+the empty segment, strip the path parameter or treat the backslash as a `/`, and so act on a different path than the one
+the constraint was checked against. A route that needs matrix parameters (`;`) must not configure a
+`securityConstraint` on the same consumer.
+
 This applies only when a `securityConstraint` is configured; a consumer without one is unchanged, and continues to
 receive the request path as sent.
 
