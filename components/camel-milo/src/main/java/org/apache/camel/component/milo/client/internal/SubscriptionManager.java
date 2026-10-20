@@ -1495,10 +1495,10 @@ public class SubscriptionManager {
 
             if (this.connected == null) {
                 // no communication with the server: the nodes are reported off the thread that starts the consumer,
-                // and the report is dropped once the next connection has delivered their values
-                final long generation = this.generationCounter.get();
+                // with a generation below every connection's, so the report is dropped once any connection has
+                // delivered their values, also one that was being built while they were registered
                 final DateTime time = DateTime.now();
-                this.executor.execute(() -> deliverLoss(subscriptions, generation, time));
+                this.executor.execute(() -> deliverLoss(subscriptions, 0L, time));
             } else if (!this.connected.listener.sessionActive) {
                 // the session is lost; the nodes are reported before the values of their items, on the same queue
                 reportLoss(this.connected.manager, this.connected.generation, subscriptions);
