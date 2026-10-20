@@ -808,6 +808,18 @@ A message that the route marks rollback only every time was removed before, and 
 Handle such a message in the route instead, for example by moving it aside, rather than marking it rollback only
 every time.
 
+=== camel-a2a - caller profile and task owner
+
+* When a security requirement of the agent card combines several schemes, such as an API key and an OAuth token, the
+caller profile (`CamelA2AUserProfile`) is now the one of the token, whatever the order of the schemes. Before, it was
+the profile of the first scheme, so a requirement that listed the API key first only gave `{"scheme": "apiKey"}` to
+the route, and the tasks belonged to the API key.
+* A token without a `sub` claim is now identified by the `username` that a token introspection response gives, else by
+its `client_id` or `azp` claim (such as a client credentials token), so the tasks of different users and clients are
+kept apart. A valid token that has none of these claims is now rejected with HTTP 401.
+* The `CamelOAuthTokenValidationResult` exchange property is now set on the exchange that the route processes, as
+documented. Before, it was only set on the incoming HTTP exchange.
+
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 
 The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
