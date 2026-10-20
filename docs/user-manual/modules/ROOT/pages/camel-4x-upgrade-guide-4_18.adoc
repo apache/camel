@@ -225,6 +225,22 @@ A `BasicMessageFilter` created in application code applies a `SpringWebserviceHe
 created with another strategy. A route that relies on the previous behaviour can supply a custom
 `headerFilterStrategy` on the `spring-ws` endpoint.
 
+=== camel-platform-http-main - management server settings on a shared port
+
+When the HTTP server (`camel.server.enabled=true`) and the HTTP management server (`camel.management.enabled=true`)
+have the same port (both default to 8080), the HTTP server serves the management endpoints. It cannot apply these
+options of the management server, which were ignored without notice:
+
+* `camel.management.host`, when set to another host than the one of the HTTP server
+* `camel.management.path`, when set to another path than the one of the HTTP server
+* `camel.management.useGlobalSslContextParameters=true`, when the HTTP server does not use the global SSL configuration
+* `camel.management.authenticationEnabled=true`, with the basic or JWT authentication options
+
+Camel now fails to start when the management server shares the port and one of them is configured, with a message
+that lists them. Set `camel.management.port` to another port, so that the management server runs a server of its own
+and applies them. To keep a single port, remove them and configure the HTTP server instead: for example,
+authentication configured on the HTTP server for `/*` also applies to the management endpoints.
+
 === camel-mina - the host name of the server is verified over SSL
 
 When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the

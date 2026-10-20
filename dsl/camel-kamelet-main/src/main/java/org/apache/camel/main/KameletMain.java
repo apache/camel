@@ -620,9 +620,7 @@ public class KameletMain extends MainCommandLineSupport {
         if (mcp) {
             configure().httpManagementServer().withEnabled(true);
             configure().httpManagementServer().withMcpEnabled(true);
-            if (!isConfigured("camel.management.host")) {
-                configure().httpManagementServer().withHost("127.0.0.1");
-            }
+            // the management server is bound to 127.0.0.1 in autoconfigure, when all the properties can be resolved
             String listeners = getInitialProperties().getProperty("camel.main.mainListenerClasses");
             String embedded = "org.apache.camel.component.mcp.server.jbang.JbangDevMcpMainListener";
             if (listeners == null || listeners.isBlank()) {
@@ -881,6 +879,9 @@ public class KameletMain extends MainCommandLineSupport {
         ClassLoader cl = createApplicationContextClassLoader(camelContext);
         // create classloader that may include additional JARs
         camelContext.setApplicationContextClassLoader(cl);
+        if ("true".equals(getInitialProperties().get(getInstanceType() + ".mcp"))) {
+            applyMcpManagementHost(camelContext);
+        }
         // auto configure camel afterwards
         super.autoconfigure(camelContext);
     }
@@ -1087,6 +1088,35 @@ public class KameletMain extends MainCommandLineSupport {
             }
         }
         return false;
+    }
+
+    /**
+     * camel run --mcp binds the management server to 127.0.0.1, unless camel.management.host is configured, or the
+     * management server shares the port of the HTTP server, which then serves it on its own host (another host would
+     * fail the startup). Decided before the auto configuration, when every property source, such as
+     * application.properties, can be resolved.
+     */
+    void applyMcpManagementHost(CamelContext camelContext) {
+        var pc = camelContext.getPropertiesComponent();
+        if (pc.resolveProperty("camel.management.host").isPresent()) {
+            return;
+        }
+        boolean serverEnabled = pc.resolveProperty("camel.server.enabled").map(v -> "true".equalsIgnoreCase(v.trim()))
+                .orElse(configure().httpServer().isEnabled());
+        if (serverEnabled) {
+            try {
+                int port = pc.resolveProperty("camel.server.port").map(v -> Integer.parseInt(v.trim()))
+                        .orElse(configure().httpServer().getPort());
+                int managementPort = pc.resolveProperty("camel.management.port").map(v -> Integer.parseInt(v.trim()))
+                        .orElse(configure().httpManagementServer().getPort());
+                if (port == managementPort) {
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                // cannot tell, so keep the management server on 127.0.0.1
+            }
+        }
+        configure().httpManagementServer().withHost("127.0.0.1");
     }
 
     private static String getPid() {
