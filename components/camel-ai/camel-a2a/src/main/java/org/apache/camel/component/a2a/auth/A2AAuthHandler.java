@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.a2a.A2AConfiguration;
+import org.apache.camel.component.a2a.A2AConstants;
 import org.apache.camel.component.a2a.model.AgentCard;
 import org.apache.camel.component.a2a.model.SecurityRequirement;
 import org.apache.camel.component.a2a.model.SecurityScheme;
@@ -122,6 +123,9 @@ public class A2AAuthHandler {
             try {
                 return validateRequirement(exchange, card, requirement);
             } catch (SecurityException e) {
+                // a token validated for a requirement that is not satisfied, such as one missing a required scope,
+                // is not the credential the caller is authenticated with
+                exchange.removeProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT);
                 lastFailure = e;
             }
         }

@@ -398,6 +398,38 @@ class A2AAuthHandlerTest extends CamelTestSupport {
     }
 
     @Test
+    void validateConsumerAuthDropsTheTokenOfARequirementThatIsNotSatisfied() {
+        bindOAuthValidationFactory();
+
+        A2AConfiguration config = new A2AConfiguration();
+        config.setValidateAuth(true);
+        config.setApiKey("secret-key");
+        config.setOauthProfile("myprofile");
+        A2AAuthHandler handler = new A2AAuthHandler(config, defaultHandlers());
+
+        Map<String, SecurityScheme> schemes = new LinkedHashMap<>();
+        schemes.put("oauth", SecurityScheme.oauth2(null));
+        schemes.put("agentKey", SecurityScheme.apiKey("header", "X-Agent-Key"));
+        AgentCard card = new AgentCard.Builder()
+                .setName("test")
+                .setSecuritySchemes(schemes)
+                .setSecurityRequirements(List.of(
+                        SecurityRequirement.of("oauth", List.of("admin")),
+                        SecurityRequirement.of("agentKey", List.of())))
+                .build();
+
+        // the token is valid but lacks the admin scope, so the caller is authenticated with the API key
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader("Authorization", "Bearer valid-token");
+        exchange.getMessage().setHeader("X-Agent-Key", "secret-key");
+
+        A2AUserProfile profile = handler.validateConsumerAuth(exchange, card);
+
+        assertThat(profile.getScheme()).isEqualTo("apiKey");
+        assertThat(exchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT)).isNull();
+    }
+
+    @Test
     void validateConsumerAuthKeysATokenWithoutSubjectByItsClient() {
         bindOAuthValidationFactory();
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.a2a;
 
+import java.io.InputStream;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,13 +29,22 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.a2a.model.AgentCapabilities;
+import org.apache.camel.component.a2a.model.AgentCard;
 import org.apache.camel.component.a2a.model.ListTasksResponse;
 import org.apache.camel.component.a2a.model.Message;
+import org.apache.camel.component.a2a.model.SecurityRequirement;
+import org.apache.camel.component.a2a.model.SecurityScheme;
 import org.apache.camel.component.a2a.model.SendMessageRequest;
 import org.apache.camel.component.a2a.model.SendMessageResponse;
+import org.apache.camel.component.a2a.model.StreamResponse;
 import org.apache.camel.component.a2a.model.Task;
 import org.apache.camel.component.a2a.model.TaskState;
+import org.apache.camel.component.a2a.model.TaskStatus;
+import org.apache.camel.component.a2a.model.TaskStatusUpdateEvent;
 import org.apache.camel.component.a2a.model.TextPart;
+import org.apache.camel.spi.OAuthTokenValidationConfig;
+import org.apache.camel.spi.OAuthTokenValidationFactory;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -78,6 +89,82 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
     }
 
     @Test
+    void routeReceivesTheOAuthTokenValidationResultWhenStreaming() throws Exception {
+        AgentCapabilities capabilities = new AgentCapabilities();
+        capabilities.setStreaming(true);
+        A2AConfiguration config = new A2AConfiguration();
+        config.setAgentCard(AgentCard.builder().setCapabilities(capabilities).build());
+
+        AtomicReference<Object> received = new AtomicReference<>();
+        AtomicReference<A2AConsumer> consumerRef = new AtomicReference<>();
+        A2AConsumer consumer = createConsumer(config, exchange -> {
+            received.set(exchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT));
+            // complete the task, which ends the stream
+            String taskId = exchange.getMessage().getHeader(A2AConstants.TASK_ID, String.class);
+            consumerRef.get().getEndpoint().getTaskStore().notifySubscribers(taskId,
+                    StreamResponse.ofStatusUpdate(TaskStatusUpdateEvent.builder().taskId(taskId)
+                            .status(new TaskStatus(TaskState.COMPLETED)).build()));
+        });
+        consumerRef.set(consumer);
+        OAuthTokenValidationResult result = OAuthTokenValidationResult.valid(
+                "user-1", "https://issuer.example", List.of("camel-a2a"), List.of(), Map.of(), 0);
+
+        consumer.doStart();
+        try {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.setProperty(A2AConstants.USER_PROFILE,
+                    Map.of("subject", "user-1", "issuer", "https://issuer.example"));
+            exchange.setProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT, result);
+            exchange.getMessage().setBody(OBJECT_MAPPER.writeValueAsString(sendMessageRequest("msg-stream")));
+
+            consumer.handleMessageStream(exchange);
+            // read the stream to its end: the route has then processed the message
+            exchange.getMessage().getBody(InputStream.class).readAllBytes();
+        } finally {
+            consumer.doStop();
+        }
+
+        assertThat(received.get()).isSameAs(result);
+    }
+
+    @Test
+    void routeDoesNotReceiveTheTokenOfARequirementThatIsNotSatisfied() throws Exception {
+        context.getRegistry().bind(OAuthTokenValidationFactory.FACTORY, new StubOAuthTokenValidationFactory());
+
+        Map<String, SecurityScheme> schemes = new LinkedHashMap<>();
+        schemes.put("oauth", SecurityScheme.oauth2(null));
+        schemes.put("agentKey", SecurityScheme.apiKey("header", "X-Agent-Key"));
+        A2AConfiguration config = new A2AConfiguration();
+        config.setValidateAuth(true);
+        config.setApiKey("secret-key");
+        config.setOauthProfile("myprofile");
+        config.setAgentCard(AgentCard.builder()
+                .setSecuritySchemes(schemes)
+                .setSecurityRequirements(List.of(
+                        SecurityRequirement.of("oauth", List.of("admin")),
+                        SecurityRequirement.of("agentKey", List.of())))
+                .build());
+
+        AtomicReference<Object> profile = new AtomicReference<>();
+        AtomicReference<Object> result = new AtomicReference<>();
+        A2AConsumer consumer = createConsumer(config, exchange -> {
+            profile.set(exchange.getProperty(A2AConstants.USER_PROFILE));
+            result.set(exchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT));
+            exchange.getMessage().setBody("ok");
+        });
+
+        // the token is valid but lacks the admin scope, so the caller is authenticated with the API key
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader("Authorization", "Bearer valid-token");
+        exchange.getMessage().setHeader("X-Agent-Key", "secret-key");
+        exchange.getMessage().setBody(OBJECT_MAPPER.writeValueAsString(sendMessageRequest("msg-key")));
+        consumer.createDispatchProcessor(consumer::handleSendMessage, false).process(exchange);
+
+        assertThat(profile.get()).isEqualTo(Map.of("scheme", "apiKey"));
+        assertThat(result.get()).isNull();
+    }
+
+    @Test
     void tasksOfTheClientsOfTokensWithoutSubjectAreSeparate() throws Exception {
         A2AConsumer consumer = createConsumer(exchange -> {
             exchange.getMessage().setHeader(A2AConstants.TASK_STATE, TaskState.WORKING.getProtoName());
@@ -92,7 +179,10 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
     }
 
     private A2AConsumer createConsumer(Processor processor) throws Exception {
-        A2AConfiguration config = new A2AConfiguration();
+        return createConsumer(new A2AConfiguration(), processor);
+    }
+
+    private A2AConsumer createConsumer(A2AConfiguration config, Processor processor) throws Exception {
         config.setName("Profile Agent");
         config.setVersion("1.0.0");
 
@@ -116,14 +206,18 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
         return sendMessage(consumer, exchange, "msg-" + profile.hashCode()).getTask().id();
     }
 
-    private SendMessageResponse sendMessage(A2AConsumer consumer, Exchange exchange, String messageId) throws Exception {
+    private static SendMessageRequest sendMessageRequest(String messageId) {
         SendMessageRequest request = new SendMessageRequest();
         request.setMessage(Message.builder()
                 .messageId(messageId)
                 .role(Message.Role.ROLE_USER)
                 .parts(List.of(new TextPart("hello")))
                 .build());
-        exchange.getMessage().setBody(OBJECT_MAPPER.writeValueAsString(request));
+        return request;
+    }
+
+    private SendMessageResponse sendMessage(A2AConsumer consumer, Exchange exchange, String messageId) throws Exception {
+        exchange.getMessage().setBody(OBJECT_MAPPER.writeValueAsString(sendMessageRequest(messageId)));
 
         consumer.handleSendMessage(exchange);
 
@@ -139,5 +233,30 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
         ListTasksResponse response = OBJECT_MAPPER.readValue(
                 exchange.getMessage().getBody(byte[].class), ListTasksResponse.class);
         return response.tasks().stream().map(Task::id).toList();
+    }
+
+    private static final class StubOAuthTokenValidationFactory implements OAuthTokenValidationFactory {
+
+        @Override
+        public OAuthTokenValidationResult validateToken(OAuthTokenValidationConfig config, String token) {
+            return validate(token);
+        }
+
+        @Override
+        public OAuthTokenValidationResult validateToken(CamelContext context, String profileName, String token) {
+            return validate(token);
+        }
+
+        @Override
+        public void validateConfiguration(OAuthTokenValidationConfig config) {
+        }
+
+        private static OAuthTokenValidationResult validate(String token) {
+            if ("valid-token".equals(token)) {
+                return OAuthTokenValidationResult.valid("alice", "https://issuer.example", List.of("camel-a2a"),
+                        List.of("message:send"), Map.of(), 1234567890L);
+            }
+            return OAuthTokenValidationResult.invalid(OAuthTokenValidationResult.ErrorCode.INVALID_TOKEN, "invalid token");
+        }
     }
 }
