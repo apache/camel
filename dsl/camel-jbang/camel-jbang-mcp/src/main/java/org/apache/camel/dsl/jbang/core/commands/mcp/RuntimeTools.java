@@ -242,7 +242,7 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show the route structure as a tree of processors. With the message history on (camel run --dev),"
                         + " a processor has bodyTypes: the body types it has been reached with, across the messages, and"
-                        + " bodyKinds: null, payload, data or iterator. More than one kind needs attention: a step that"
+                        + " bodyKinds: null, payload, data or collection. More than one kind needs attention: a step that"
                         + " writes fails for data, one that reads fields fails for a payload. The routes tool counts them"
                         + " per route (mixedBodyKinds).")
     public JsonObject camel_runtime_route_structure(

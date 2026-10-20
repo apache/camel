@@ -58,15 +58,17 @@ public interface BodyTypeRegistry {
         PAYLOAD,
 
         /**
-         * Parsed data: a Map, a List or an object, with fields to read. What an unmarshal gives; a step that writes or
+         * Data: one Java object with fields to read, a Map or an object. What an unmarshal gives; a step that writes or
          * sends needs it marshalled first.
          */
         DATA,
 
         /**
-         * An iterator or a stream of elements, which can be read once and has no size.
+         * A collection of objects: a List, a Set or an array, or an iterator or a stream over them (which can be read
+         * once). A step that reads fields needs one element, such as by a split; a step that writes or sends needs it
+         * marshalled first.
          */
-        ITERATOR
+        COLLECTION
     }
 
     /**

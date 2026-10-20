@@ -60,7 +60,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             @Metadata(description = "The endpoint URI (only present when this processor references an endpoint)") String uri,
             @Metadata(description = "Whether the endpoint is remote (only present when true)") Boolean remote,
             @Metadata(description = "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)") List<String> bodyTypes,
-            @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map, a List or an object) or iterator. More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)") List<String> bodyKinds,
+            @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)") List<String> bodyKinds,
             @Metadata(description = "Runtime statistics for this route or processor, as an opaque JSON object (only present when metrics were requested)") Map<String, Object> statistics) {
     }
 
@@ -299,7 +299,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
     }
 
     /**
-     * The kinds by their names in the JSON and text output: null, payload, data and iterator.
+     * The kinds by their names in the JSON and text output: null, payload, data and collection.
      */
     static List<String> kindNames(List<BodyTypeRegistry.Kind> kinds) {
         List<String> answer = new ArrayList<>(kinds.size());

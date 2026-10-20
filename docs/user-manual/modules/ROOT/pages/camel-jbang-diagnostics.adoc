@@ -201,7 +201,7 @@ Source: orders.camel.yaml
 ----
 
 A step reached with more than one type is a part of the route that is dynamic, such as the log here. When the types are
-of more than one kind (`null`, `payload`, `data` or `iterator`), the step needs attention: here some messages reach the
+of more than one kind (`null`, `payload`, `data` or `collection`), the step needs attention: here some messages reach the
 HTTP call with parsed data that was never marshalled, which the call cannot send. `--varied` shows only the steps that
 have been reached with more than one body type:
 
