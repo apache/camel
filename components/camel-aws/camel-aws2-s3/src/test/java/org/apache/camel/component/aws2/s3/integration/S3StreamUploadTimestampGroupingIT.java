@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
@@ -40,6 +41,21 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    @BeforeEach
+    void removeTheObjectsOfAnEarlierRun() {
+        // a surefire rerun uses the same bucket, and a new producer numbers the uploads of a window after the objects of
+        // that window already in the bucket: start from an empty bucket, so only the objects of this test are listed
+        Exchange ex = template.request("direct:listObjects",
+                exchange -> exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects));
+        List<S3Object> objects = ex.getMessage().getBody(List.class);
+        for (S3Object object : objects) {
+            template.request("direct:listObjects", exchange -> {
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteObject);
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, object.key());
+            });
+        }
+    }
 
     @Test
     public void testTimestampGroupingBasic() throws Exception {
@@ -75,23 +91,13 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
         });
 
         List<S3Object> resp = ex.getMessage().getBody(List.class);
-        assertEquals(2, resp.size(), "Should create 2 files for 2 different timestamp windows");
-
-        // Verify files have timestamp-based naming
-        boolean foundWindow1File = false;
-        boolean foundWindow2File = false;
-
-        for (S3Object s3Object : resp) {
-            String key = s3Object.key();
-            if (key.contains("20240101_0800_0800-0805")) {
-                foundWindow1File = true;
-            } else if (key.contains("20240101_0805_0805-0810")) {
-                foundWindow2File = true;
-            }
-        }
-
-        assertTrue(foundWindow1File, "Should find file for first timestamp window");
-        assertTrue(foundWindow2File, "Should find file for second timestamp window");
+        // batchMessageNumber=5: each window is uploaded twice, and the second upload of a window gets its own object
+        assertEquals(List.of(
+                "basicTest_20240101_0800_0800-0805-1.txt",
+                "basicTest_20240101_0800_0800-0805.txt",
+                "basicTest_20240101_0805_0805-0810-1.txt",
+                "basicTest_20240101_0805_0805-0810.txt"),
+                resp.stream().map(S3Object::key).sorted().toList());
     }
 
     @Test
