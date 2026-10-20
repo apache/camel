@@ -62,7 +62,7 @@ public class PQCEndpoint extends DefaultEndpoint {
 
     /**
      * Registers the BouncyCastle providers if they are not installed yet.
-     * <p/>
+     * <p>
      * The providers are deliberately never removed again. {@link Security} is JVM-global and shared with every other
      * endpoint, every other {@code CamelContext} and all non-Camel code in the same JVM, and nothing records which
      * component installed a given provider. Removing one on stop therefore tears it out from under unrelated users -
