@@ -31,6 +31,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
+import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -44,6 +45,7 @@ import org.apache.camel.spi.PollDynamicAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
@@ -644,6 +646,13 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
                 // and therefore we should set an empty body to indicate this fact
                 // but keep headers/attachments as we want to propagate those
                 oldExchange.getIn().setBody(null);
+                if (oldExchange.getIn().getBody() != null) {
+                    // a message that creates its body on demand brings it back, such as the message of a file
+                    // consumer, whose body is its file: a plain message with the same headers keeps the body empty
+                    Message empty = new DefaultMessage(oldExchange);
+                    empty.copyFromWithNewBody(oldExchange.getIn(), null);
+                    oldExchange.setIn(empty);
+                }
                 oldExchange.setOut(null);
             }
             return oldExchange;
