@@ -832,6 +832,24 @@ marked rollback only, so the commit of the outer block fails (in Camel Quarkus w
 to commit, as with camel-spring (`UnexpectedRollbackException`). To roll back only the inner block, use
 `PROPAGATION_REQUIRES_NEW` for it.
 
+=== camel-thrift - SSL/TLS settings of the consumer, and errors sent to the client
+
+* A consumer configured with `negotiationType=SSL` and the default `synchronous=false` now fails to start. It used to
+start a server without SSL/TLS. SSL/TLS requires `synchronous=true`, as on the producer.
+* The `SASL` negotiation type, which is not implemented, now makes the producer and the consumer fail to start. They
+used to behave as with `PLAINTEXT`.
+* The SSL/TLS consumer now creates its server socket from the SSL context of `sslParameters`, so all of its settings
+apply, including the trust managers and the server parameters. For example, `serverParameters.clientAuthentication=REQUIRE`
+now requires a client certificate. Before, the consumer only used the key store, the protocol and the cipher suites,
+and never asked for a client certificate. The key managers are required, and as in the other components the key is
+read with their `keyPassword`: set it when the key is protected by a password. Before, the consumer read the key with
+the password of the key store.
+* A new `muteException` consumer option, enabled by default, sends a generic `TApplicationException` of type
+`INTERNAL_ERROR` ("Internal error processing <method>") to the client instead of an exception that the Thrift method
+does not declare. Before, the asynchronous consumer sent the message of the exception, and the synchronous consumer
+sent a `TApplicationException` as it was, such as one returned by another Thrift service that the route called. An
+exception declared in the IDL is still sent as it is. Set `muteException=false` to send the exception as before.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
