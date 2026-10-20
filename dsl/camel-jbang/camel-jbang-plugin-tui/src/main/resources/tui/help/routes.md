@@ -18,6 +18,15 @@ they are sent to. A typical integration has multiple routes working together.
 - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
 - **SINCE-LAST** — Time since the last exchange activity on this route, shown as up to three values separated by `/`: started/completed/failed (e.g., `1s/3s/1m14s`). Values are omitted when there is no activity of that type
 
+## Processors
+
+Below the routes are the steps of the selected route, with the same numbers:
+
+- **TYPE** — The kind of step (`to`, `setBody`, `choice`), indented under the step it is inside, such as the steps of a branch of a choice
+- **LINE** — The line of the route source the step is on (when the runtime records the source locations)
+- **PROCESSOR** — What the step does, as the route diagram shows it: where it sends to (`log:outbox`), its expression (`simple{${body}}`) or its data format (`jackson`). An id the route gives a step (`id: audit`) is shown first; the ids Camel generates (`to1`, `setBody2`) are left out, as they only repeat the type
+- **BODY TYPES** — The body types the step has been reached with, across the messages (with the message history on)
+
 ## Percentile Latency (P50/P95/P99)
 
 When **Extended** statistics level is enabled, the timing columns show
