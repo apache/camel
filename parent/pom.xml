@@ -363,7 +363,7 @@
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.5</log4j2-version>
         <logback-version>1.6.5</logback-version>
-        <lucene-version>10.4.0</lucene-version>
+        <lucene-version>10.5.2</lucene-version>
         <littleproxy-version>2.9.1</littleproxy-version>
         <lz4-java-version>1.12.0</lz4-java-version>
         <mapstruct-version>1.6.3</mapstruct-version>
