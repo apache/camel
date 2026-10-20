@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.w3c.dom.Document;
@@ -213,6 +215,15 @@ public final class RouteCoverageHelper {
 
             CoverageData cd = new CoverageData(id, key, count, routeId);
             cd.setLineNumber(lineNumber);
+            // the body types the node was reached with, from every dump file (each test writes its own)
+            List<String> bodyTypes = commaSeparated(node, "bodyTypes");
+            List<String> bodyKinds = commaSeparated(node, "bodyKinds");
+            if (holder != null && holder.getNode().equals(key)) {
+                bodyTypes = union(holder.getBodyTypes(), bodyTypes);
+                bodyKinds = union(holder.getBodyKinds(), bodyKinds);
+            }
+            cd.setBodyTypes(bodyTypes);
+            cd.setBodyKinds(bodyKinds);
             if (holder == null) {
                 // add new
                 data.add(counter.get(), cd);
@@ -232,6 +243,23 @@ public final class RouteCoverageHelper {
                 parseRouteData(catalog, child, data, counter, routeId);
             }
         }
+    }
+
+    private static List<String> commaSeparated(Node node, String attribute) {
+        Node value = node.getAttributes().getNamedItem(attribute);
+        if (value == null || value.getNodeValue().isBlank()) {
+            return List.of();
+        }
+        return List.of(value.getNodeValue().split(","));
+    }
+
+    /**
+     * The values of both lists, each once, in the order first seen.
+     */
+    private static List<String> union(List<String> first, List<String> second) {
+        Set<String> answer = new LinkedHashSet<>(first);
+        answer.addAll(second);
+        return List.copyOf(answer);
     }
 
 }
