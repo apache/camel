@@ -16,10 +16,12 @@
  */
 package org.apache.camel.language.bean;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.BeanScope;
@@ -33,6 +35,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanConstants;
 import org.apache.camel.component.bean.BeanExpressionProcessor;
@@ -540,14 +543,38 @@ public class BeanExpression implements Expression, Predicate {
                 return value;
             }
             String method = methodHint(methodName, resultExchange.getException());
-            String body = bodyHint(exchange, beanOf(holder, exchange));
+            Object bean = beanOf(holder, exchange);
+            String body = bodyHint(exchange, bean);
+            String list = body == null ? listHint(bean, methodName) : null;
             throw new RuntimeBeanExpressionException(
                     exchange, describeBean(holder, beanName, exchange),
-                    body != null ? method + " (" + body + ")" : keyHint(holder, exchange, methodName, method),
+                    body != null
+                            ? method + " (" + body + ")"
+                            : list != null ? method + list : keyHint(holder, exchange, methodName, method),
                     resultExchange.getException());
         }
         return newResult;
     }
+
+    /**
+     * ${body.orderId}, or a method a model makes up such as ${body.find(...)}, on a List: neither is there, so say how
+     * to get to an element: by its index, by a field with jsonpath, or one at a time with split. The way
+     * {@link #noKeysHint} does for ${body[orderId]}; null for any other bean.
+     */
+    static String listHint(Object bean, String methodName) {
+        if (!(bean instanceof Collection<?>) && !(bean instanceof Object[])) {
+            return null;
+        }
+        String type = bean instanceof List ? "a List" : bean instanceof Object[] ? "an array" : "a Collection";
+        boolean field = methodName != null && FIELD_NAME.matcher(methodName).matches();
+        String name = field ? methodName : "field";
+        return " (" + type + " has no " + (field ? "method or key " + methodName : "such method")
+               + ": pick an element first, such as [0]." + name + ", or the element whose " + name
+               + " has a given value with jsonpath, such as jsonpath: \"$[?(@." + name + " == '${header." + name
+               + "}')]\" with resultType java.util.Map, or split it)";
+    }
+
+    private static final Pattern FIELD_NAME = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
 
     /** Says that the bean is not a Map with that key, as null is a value a key can hold. */
     private static final Object NO_SUCH_KEY = new Object();
@@ -734,11 +761,19 @@ public class BeanExpression implements Expression, Predicate {
     }
 
     /**
-     * What to do when a key is read from a value that has no keys (CAMEL-25746): the message body as a stream or bytes
-     * (a request body before it is unmarshalled, or a variable set from it), JSON text, or a List, array or other
-     * Collection, where [0] picks an element.
+     * What to do when a key is read from a value that has no keys (CAMEL-25746): the file as read (a variable set from
+     * the body of a file consumer or of pollEnrich), the message body as a stream or bytes (a request body before it is
+     * unmarshalled, or a variable set from it), JSON text, or a List, array or other Collection, where [0] picks an
+     * element.
      */
     static String noKeysHint(Object value, String key) {
+        if (value instanceof WrappedFile<?> || value instanceof File) {
+            // a variable set from the body of a file consumer or of pollEnrich holds the file, not its data
+            String type = value instanceof WrappedFile<?> ? value.getClass().getSimpleName() : "File";
+            return " (the value is the file as read (a " + type + "), not its data: unmarshal it first, for example with"
+                   + " json, then read the key; a variable is unmarshalled in place with variableSend and variableReceive"
+                   + " set to its name, such as unmarshal: {json: {}, variableSend: customer, variableReceive: customer})";
+        }
         if (value instanceof StreamCache || value instanceof InputStream || value instanceof byte[]) {
             return " (the value is the message body as a stream, not a Map: unmarshal it first, for example with json,"
                    + " then read the key; a variable keeps the value it had when it was set)";
