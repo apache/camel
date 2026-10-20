@@ -45,6 +45,7 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
 
         for (int i = 1; i <= 2; i++) {
             int count = i * 23;
+            int uploads = i;
 
             result.expectedMessageCount(count);
 
@@ -54,12 +55,15 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
 
             MockEndpoint.assertIsSatisfied(context, 11, TimeUnit.SECONDS);
 
+            // each iteration is uploaded by the timeout to its own object (random naming names the first one too)
             Awaitility.await().atMost(11, TimeUnit.SECONDS)
                     .untilAsserted(() -> {
                         Exchange ex = template.request("direct:listObjects", this::process);
 
                         List<S3Object> resp = ex.getMessage().getBody(List.class);
-                        assertEquals(1, resp.size());
+                        assertEquals(uploads, resp.size());
+                        // 23 messages of "Andrea\n" per iteration
+                        assertEquals(7L * 23 * uploads, resp.stream().mapToLong(S3Object::size).sum());
                     });
         }
     }

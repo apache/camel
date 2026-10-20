@@ -65,34 +65,23 @@ public class S3StreamUploadTimestampNamingStrategyIT extends Aws2S3Base {
         List<S3Object> resp = ex.getMessage().getBody(List.class);
         assertEquals(40, resp.size());
 
-        // Verify that uploaded files use timestamp naming strategy
-        // Files should have names like: fileTest.txt, fileTest-<timestamp>.txt
-        boolean foundBaseFile = false;
-        boolean foundTimestampFile = false;
-
+        // Every upload is named with its timestamp, the first one too: fileTest-<timestamp>.txt, never fileTest.txt
         for (S3Object s3Object : resp) {
             String key = s3Object.key();
+            assertTrue(key.startsWith("fileTest-") && key.endsWith(".txt"),
+                    "Expected a timestamp-named file (fileTest-<timestamp>.txt): " + key);
 
-            if ("fileTest.txt".equals(key)) {
-                foundBaseFile = true;
-            } else if (key.startsWith("fileTest-") && key.endsWith(".txt")) {
-                foundTimestampFile = true;
-
-                // Extract timestamp from filename and verify it's within expected range
-                String timestampStr = key.substring("fileTest-".length(), key.length() - ".txt".length());
-                try {
-                    long timestamp = Long.parseLong(timestampStr);
-                    assertTrue(timestamp >= beforeUpload && timestamp <= afterUpload,
-                            "Timestamp " + timestamp + " should be between " + beforeUpload + " and " + afterUpload);
-                } catch (NumberFormatException e) {
-                    // This shouldn't happen with timestamp naming strategy
-                    throw new AssertionError("Expected numeric timestamp in filename: " + key, e);
-                }
+            // Extract timestamp from filename and verify it's within expected range
+            String timestampStr = key.substring("fileTest-".length(), key.length() - ".txt".length());
+            try {
+                long timestamp = Long.parseLong(timestampStr);
+                assertTrue(timestamp >= beforeUpload && timestamp <= afterUpload,
+                        "Timestamp " + timestamp + " should be between " + beforeUpload + " and " + afterUpload);
+            } catch (NumberFormatException e) {
+                // This shouldn't happen with timestamp naming strategy
+                throw new AssertionError("Expected numeric timestamp in filename: " + key, e);
             }
         }
-
-        assertTrue(foundBaseFile, "Should find base file (fileTest.txt)");
-        assertTrue(foundTimestampFile, "Should find timestamp-named files (fileTest-<timestamp>.txt)");
     }
 
     @Override
