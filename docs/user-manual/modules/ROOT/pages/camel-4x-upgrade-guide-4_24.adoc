@@ -1323,6 +1323,14 @@ handshake; an IP address must be listed as a subject alternative name of the cer
 host name (such as `mllp://8888`) cannot pass the check. Use a certificate that matches the host of the endpoint, or set
 the new `hostnameVerification` option to `false` to keep the previous behaviour.
 
+=== camel-aws2-s3 - streaming upload with the random or timestamp naming strategy names the first file too
+
+With `streamingUploadMode=true` and `namingStrategy=random` (or `timestamp`), the first file uploaded by a producer was
+named after `keyName` alone (for example `camel.txt`), and only the later files got a UUID (or a timestamp) after
+`keyName`. A producer that was started again (a restart of the route or of the application), or another producer with
+the same `keyName`, wrote its first file to the same key and replaced the first file written before. Every file now
+gets the UUID (or the timestamp), the first one too: `camel-<uuid>.txt`. The progressive naming strategy is unchanged.
+
 === camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
 
 With `sortEntries=true` the `atom` consumer sorted the entries of a feed by their published date and routed them from

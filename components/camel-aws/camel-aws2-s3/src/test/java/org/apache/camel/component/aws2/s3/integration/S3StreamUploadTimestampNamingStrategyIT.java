@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
@@ -39,6 +40,20 @@ public class S3StreamUploadTimestampNamingStrategyIT extends Aws2S3Base {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    @BeforeEach
+    void removeTheObjectsOfAnEarlierRun() {
+        // a surefire rerun uses the same bucket: start from an empty bucket, so only the objects of this run are counted
+        Exchange ex = template.request("direct:listObjects",
+                exchange -> exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects));
+        List<S3Object> objects = ex.getMessage().getBody(List.class);
+        for (S3Object object : objects) {
+            template.request("direct:listObjects", exchange -> {
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteObject);
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, object.key());
+            });
+        }
+    }
 
     @Test
     public void sendInWithTimestampNamingStrategy() throws Exception {
@@ -65,34 +80,23 @@ public class S3StreamUploadTimestampNamingStrategyIT extends Aws2S3Base {
         List<S3Object> resp = ex.getMessage().getBody(List.class);
         assertEquals(40, resp.size());
 
-        // Verify that uploaded files use timestamp naming strategy
-        // Files should have names like: fileTest.txt, fileTest-<timestamp>.txt
-        boolean foundBaseFile = false;
-        boolean foundTimestampFile = false;
-
+        // Every upload is named with its timestamp, the first one too: fileTest-<timestamp>.txt, never fileTest.txt
         for (S3Object s3Object : resp) {
             String key = s3Object.key();
+            assertTrue(key.startsWith("fileTest-") && key.endsWith(".txt"),
+                    "Expected a timestamp-named file (fileTest-<timestamp>.txt): " + key);
 
-            if ("fileTest.txt".equals(key)) {
-                foundBaseFile = true;
-            } else if (key.startsWith("fileTest-") && key.endsWith(".txt")) {
-                foundTimestampFile = true;
-
-                // Extract timestamp from filename and verify it's within expected range
-                String timestampStr = key.substring("fileTest-".length(), key.length() - ".txt".length());
-                try {
-                    long timestamp = Long.parseLong(timestampStr);
-                    assertTrue(timestamp >= beforeUpload && timestamp <= afterUpload,
-                            "Timestamp " + timestamp + " should be between " + beforeUpload + " and " + afterUpload);
-                } catch (NumberFormatException e) {
-                    // This shouldn't happen with timestamp naming strategy
-                    throw new AssertionError("Expected numeric timestamp in filename: " + key, e);
-                }
+            // Extract timestamp from filename and verify it's within expected range
+            String timestampStr = key.substring("fileTest-".length(), key.length() - ".txt".length());
+            try {
+                long timestamp = Long.parseLong(timestampStr);
+                assertTrue(timestamp >= beforeUpload && timestamp <= afterUpload,
+                        "Timestamp " + timestamp + " should be between " + beforeUpload + " and " + afterUpload);
+            } catch (NumberFormatException e) {
+                // This shouldn't happen with timestamp naming strategy
+                throw new AssertionError("Expected numeric timestamp in filename: " + key, e);
             }
         }
-
-        assertTrue(foundBaseFile, "Should find base file (fileTest.txt)");
-        assertTrue(foundTimestampFile, "Should find timestamp-named files (fileTest-<timestamp>.txt)");
     }
 
     @Override

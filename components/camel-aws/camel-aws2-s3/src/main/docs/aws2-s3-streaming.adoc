@@ -7,8 +7,10 @@ xref:ROOT:aws2-s3-component.adoc[Back to AWS S3 Component]
 
 With the stream mode enabled, users will be able to upload data to S3 without knowing ahead of time the dimension of the data, by leveraging multipart upload.
 The upload will be completed when the batchSize has been completed or the batchMessageNumber has been reached.
-There are two possible naming strategies: progressive and random.
+There are three possible naming strategies: progressive, random and timestamp.
 With the progressive strategy, each file will have the name composed by keyName option and a progressive counter, and eventually the file extension (if any), while with the random strategy a UUID will be added after keyName and eventually the file extension will be appended.
+With the timestamp strategy, the time the upload started (in milliseconds) is added after keyName instead of the UUID.
+With the random and timestamp strategies every file gets this part, the first file of the producer too, so a producer that is started again does not replace the files written before.
 
 Additionally, streaming upload mode supports timestamp-based file grouping, which allows messages to be automatically grouped into time windows based on their timestamps.
 
