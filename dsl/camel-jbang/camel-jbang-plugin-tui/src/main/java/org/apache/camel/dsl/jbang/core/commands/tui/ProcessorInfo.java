@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.List;
 import java.util.Map;
 
 class ProcessorInfo {
@@ -43,4 +44,8 @@ class ProcessorInfo {
     String uri;
     /** The statistics as the status file has them, for the route diagram (DiagramTopology). */
     Map<String, ?> statistics;
+    /** The body types the step has been reached with, across the messages, in the order first seen (CAMEL-25750). */
+    List<String> bodyTypes = List.of();
+    /** The kinds of those bodies: null, payload, data or collection. More than one needs attention. */
+    List<String> bodyKinds = List.of();
 }

@@ -94,6 +94,22 @@ class AbstractDiagramTabTest {
 
     @ParameterizedTest
     @MethodSource("tabs")
+    void yShowsTheBodyTypesOnTheArrowsOfARoute(Function<MonitorContext, AbstractDiagramTab> factory) {
+        AbstractDiagramTab tab = inRoute(factory, false);
+
+        assertThat(tab.handleKeyEvent(KeyEvent.ofChar('y'))).isTrue();
+        assertThat(tab.diagram.isShowBodyTypes()).isTrue();
+        assertThat(tab.handleKeyEvent(KeyEvent.ofChar('y'))).isTrue();
+        assertThat(tab.diagram.isShowBodyTypes()).isFalse();
+
+        // the topology has no steps to show them for
+        tab.topologyMode = true;
+        tab.handleKeyEvent(KeyEvent.ofChar('y'));
+        assertThat(tab.diagram.isShowBodyTypes()).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("tabs")
     void mAndEToggleWhatTheDiagramShows(Function<MonitorContext, AbstractDiagramTab> factory) {
         AbstractDiagramTab tab = factory.apply(ctx);
         tab.diagram.setLoadingPlaceholder();

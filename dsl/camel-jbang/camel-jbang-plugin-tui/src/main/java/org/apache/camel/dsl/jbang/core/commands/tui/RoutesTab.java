@@ -49,6 +49,9 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class RoutesTab extends AbstractDiagramTab {
 
+    /** The widest the body types of a step are in the processors table: the info panel of the diagram has them all. */
+    private static final int MAX_BODY_TYPES_WIDTH = 40;
+
     private static final String[] ROUTE_SORT_COLUMNS = { "name", "from", "status", "total", "failed" };
     private static final String[] ROUTE_TOP_SORT_COLUMNS = { "mean", "max", "min", "last", "delta", "p50", "p95", "p99" };
 
@@ -535,8 +538,18 @@ class RoutesTab extends AbstractDiagramTab {
             totalColWidth = Math.max(totalColWidth, tw + since + 1);
             failColWidth = Math.max(failColWidth, fw + failSince + 1);
         }
+        // the steps reached with more than one body type (CAMEL-25750): a column only when a route has some
+        boolean bodyTypes = sortedRoutes.stream().anyMatch(r -> r.variedBodyTypes > 0);
+        int bodyColWidth = 0;
+        if (bodyTypes) {
+            bodyColWidth = CharWidth.of("BODY TYPES");
+            for (RouteInfo route : sortedRoutes) {
+                bodyColWidth = Math.max(bodyColWidth, CharWidth.of(bodyTypesLabel(route)));
+            }
+        }
         // FROM gets the rest of the width: the borders, ">> ", 7 gaps and the other columns
-        int fromWidth = Math.max(0, areaWidth - 2 - 3 - 7 - (24 + 10 + 10 + totalColWidth + failColWidth + 20 + 12));
+        int fromWidth = Math.max(0, areaWidth - 2 - 3 - 7 - (24 + 10 + 10 + totalColWidth + failColWidth + 20 + 12)
+                                    - (bodyTypes ? bodyColWidth + 1 : 0));
 
         List<Row> routeRows = new ArrayList<>();
         Map<String, String> aiDescriptions = aiDescriptions();
@@ -569,15 +582,21 @@ class RoutesTab extends AbstractDiagramTab {
                             Span.styled(" (" + route.sinceLastFailed + ")", Theme.muted()))
                     : Line.from(Span.styled(String.format("%" + fw + "d", route.failed), failStyle));
 
-            routeRows.add(Row.from(
-                    Cell.from(Span.styled(TuiHelper.truncate(route.routeId, 24), Style.EMPTY.fg(Theme.accent()))),
-                    routeFromCell(route, aiDescriptions, fromWidth),
-                    Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
-                    rightCell(formatThroughput(route.throughput), 8),
-                    Cell.from(totalCell),
-                    Cell.from(failCell),
-                    rightCell(timingCol, 20),
-                    Cell.from(buildPercentileBarLine(route.p50Time, route.p95Time, route.p99Time, 10))));
+            List<Cell> cells = new ArrayList<>(
+                    List.of(
+                            Cell.from(Span.styled(TuiHelper.truncate(route.routeId, 24), Style.EMPTY.fg(Theme.accent()))),
+                            routeFromCell(route, aiDescriptions, fromWidth),
+                            Cell.from(Span.styled(route.state != null ? route.state : "", stateStyle)),
+                            rightCell(formatThroughput(route.throughput), 8),
+                            Cell.from(totalCell),
+                            Cell.from(failCell)));
+            if (bodyTypes) {
+                cells.add(Cell.from(Span.styled(bodyTypesLabel(route),
+                        route.mixedBodyKinds > 0 ? Theme.warning() : Theme.muted())));
+            }
+            cells.add(rightCell(timingCol, 20));
+            cells.add(Cell.from(buildPercentileBarLine(route.p50Time, route.p95Time, route.p99Time, 10)));
+            routeRows.add(Row.from(cells));
         }
 
         IntegrationInfo selDef = ctx.findSelectedIntegration();
@@ -591,45 +610,74 @@ class RoutesTab extends AbstractDiagramTab {
                 totalTimingCol = formatDurationMs(selDef.minTime) + "/" + formatDurationMs(selDef.maxTime) + "/"
                                  + formatDurationMs(selDef.meanTime);
             }
-            routeRows.add(Row.from(
-                    Cell.from(Span.styled("GLOBAL", ts)),
-                    Cell.from(""),
-                    Cell.from(""),
-                    rightCell(formatThroughput(selDef.throughput), 8, ts),
-                    Cell.from(Span.styled(String.format("%" + tw + "d", selDef.exchangesTotal), ts)),
-                    Cell.from(Span.styled(String.format("%" + fw + "d", selDef.failed),
-                            selDef.failed > 0 ? Theme.error().bold() : ts)),
-                    rightCell(totalTimingCol, 20, ts),
-                    Cell.from(buildPercentileBarLine(selDef.p50Time, selDef.p95Time, selDef.p99Time, 10))));
+            List<Cell> cells = new ArrayList<>(
+                    List.of(
+                            Cell.from(Span.styled("GLOBAL", ts)),
+                            Cell.from(""),
+                            Cell.from(""),
+                            rightCell(formatThroughput(selDef.throughput), 8, ts),
+                            Cell.from(Span.styled(String.format("%" + tw + "d", selDef.exchangesTotal), ts)),
+                            Cell.from(Span.styled(String.format("%" + fw + "d", selDef.failed),
+                                    selDef.failed > 0 ? Theme.error().bold() : ts))));
+            if (bodyTypes) {
+                cells.add(Cell.from(""));
+            }
+            cells.add(rightCell(totalTimingCol, 20, ts));
+            cells.add(Cell.from(buildPercentileBarLine(selDef.p50Time, selDef.p95Time, selDef.p99Time, 10)));
+            routeRows.add(Row.from(cells));
         }
 
         String timingHeader = hasPercentiles ? "P50/P95/P99" : "MIN/MAX/MEAN";
 
-        return Table.builder()
-                .rows(routeRows)
-                .header(Row.from(
+        List<Cell> header = new ArrayList<>(
+                List.of(
                         Cell.from(Span.styled(routeSortLabel("ROUTE", "name"), routeSortStyle("name"))),
                         Cell.from(Span.styled(routeSortLabel("FROM", "from"), routeSortStyle("from"))),
                         Cell.from(Span.styled(routeSortLabel("STATUS", "status"), routeSortStyle("status"))),
                         rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
                         centerCell(routeSortLabel("TOTAL", "total"), 14, routeSortStyle("total")),
-                        centerCell(routeSortLabel("FAIL", "failed"), 14, routeSortStyle("failed")),
-                        rightCell(timingHeader, 20, Style.EMPTY.bold()),
-                        Cell.from("")))
-                .widths(
+                        centerCell(routeSortLabel("FAIL", "failed"), 14, routeSortStyle("failed"))));
+        List<Constraint> widths = new ArrayList<>(
+                List.of(
                         Constraint.length(24),
                         Constraint.fill(),
                         Constraint.length(10),
                         Constraint.length(10),
                         Constraint.length(totalColWidth),
-                        Constraint.length(failColWidth),
-                        Constraint.length(20),
-                        Constraint.length(12))
+                        Constraint.length(failColWidth)));
+        if (bodyTypes) {
+            header.add(Cell.from(Span.styled("BODY TYPES", Style.EMPTY.bold())));
+            widths.add(Constraint.length(bodyColWidth));
+        }
+        header.add(rightCell(timingHeader, 20, Style.EMPTY.bold()));
+        header.add(Cell.from(""));
+        widths.add(Constraint.length(20));
+        widths.add(Constraint.length(12));
+
+        return Table.builder()
+                .rows(routeRows)
+                .header(Row.from(header))
+                .widths(widths.toArray(Constraint[]::new))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                         .title(" Routes ").build())
                 .build();
+    }
+
+    /**
+     * The steps of a route reached with more than one body type, across the messages (CAMEL-25750): "⚠ 1 mixed · 2
+     * varied" when some are reached with bodies of more than one kind, which need attention; empty when none varied.
+     */
+    static String bodyTypesLabel(RouteInfo route) {
+        if (route.variedBodyTypes <= 0) {
+            return "";
+        }
+        if (route.mixedBodyKinds <= 0) {
+            return route.variedBodyTypes + " varied";
+        }
+        return TuiIcons.WARN + " " + route.mixedBodyKinds + " mixed"
+               + (route.variedBodyTypes > route.mixedBodyKinds ? " · " + route.variedBodyTypes + " varied" : "");
     }
 
     @Override
@@ -654,6 +702,7 @@ class RoutesTab extends AbstractDiagramTab {
                         "e", "external",
                         EXTERNAL_LABELS[externalMode].trim().replace("[", "").replace("]", "")));
             } else if (!diagram.getEipNodeBoxes().isEmpty()) {
+                toggles.add(new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"));
                 toggles.add(new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
             }
             toggles.add(new SubViewBar.Toggle("n", "description", diagram.isShowDescription() ? "on" : "off"));
@@ -880,98 +929,139 @@ class RoutesTab extends AbstractDiagramTab {
                             .build())
                     .build();
         } else {
-            boolean hasProcPercentiles = route.p50Time >= 0
-                    || route.processors.stream().anyMatch(p -> p.p50Time >= 0);
-
-            List<Row> rows = new ArrayList<>();
-
-            // Synthetic top row representing the route itself
-            Style routeStyle = route.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
-            String routeTimingCol;
-            if (hasProcPercentiles && route.p50Time >= 0) {
-                routeTimingCol = formatDurationMs(route.p50Time) + "/" + formatDurationMs(route.p95Time) + "/"
-                                 + formatDurationMs(route.p99Time);
-            } else if (route.total > 0) {
-                routeTimingCol = formatDurationMs(route.minTime) + "/" + formatDurationMs(route.maxTime) + "/"
-                                 + formatDurationMs(route.meanTime);
-            } else {
-                routeTimingCol = "";
-            }
-            // PROCESSOR gets the rest of the width: the borders, ">> ", 7 gaps and the other columns; a long URI
-            // ends with an ellipsis where it is cut
-            int procWidth = Math.max(0, area.width() - 2 - 3 - 7 - (20 + 10 + 8 + 6 + 8 + 20 + 12));
-            rows.add(Row.from(
-                    Cell.from("   route"),
-                    Cell.from(Span.styled(TuiHelper.truncate(
-                            route.from != null ? TuiHelper.displayUri(route.from) : route.routeId, procWidth),
-                            routeStyle)),
-                    rightCell(formatThroughput(route.throughput), 8),
-                    rightCell(String.valueOf(route.total), 8),
-                    rightCell(String.valueOf(route.failed), 6,
-                            route.failed > 0 ? Theme.error() : Style.EMPTY),
-                    rightCell(String.valueOf(route.inflight), 8),
-                    rightCell(routeTimingCol, 20),
-                    Cell.from(buildPercentileBarLine(route.p50Time, route.p95Time, route.p99Time, 10))));
-
-            for (ProcessorInfo proc : route.processors) {
-                String indent = "  ".repeat(proc.level);
-                Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
-
-                String procTimingCol;
-                if (hasProcPercentiles && proc.p50Time >= 0) {
-                    procTimingCol = formatDurationMs(proc.p50Time) + "/" + formatDurationMs(proc.p95Time) + "/"
-                                    + formatDurationMs(proc.p99Time);
-                } else if (proc.total > 0) {
-                    procTimingCol = formatDurationMs(proc.minTime) + "/" + formatDurationMs(proc.maxTime) + "/"
-                                    + formatDurationMs(proc.meanTime);
-                } else {
-                    procTimingCol = "";
-                }
-
-                rows.add(Row.from(
-                        Cell.from("   " + (proc.processor != null ? proc.processor : "")),
-                        Cell.from(Span.styled(TuiHelper.truncate(indent + (proc.id != null ? proc.id : ""), procWidth),
-                                nameStyle)),
-                        rightCell(formatThroughput(proc.throughput), 8),
-                        rightCell(String.valueOf(proc.total), 8),
-                        rightCell(String.valueOf(proc.failed), 6,
-                                proc.failed > 0 ? Theme.error() : Style.EMPTY),
-                        rightCell(String.valueOf(proc.inflight), 8),
-                        rightCell(procTimingCol, 20),
-                        Cell.from(buildPercentileBarLine(proc.p50Time, proc.p95Time, proc.p99Time, 10))));
-            }
-            String procTimingHeader = hasProcPercentiles ? "P50/P95/P99" : "MIN/MAX/MEAN";
-
-            table = Table.builder()
-                    .rows(rows)
-                    .header(Row.from(
-                            Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
-                            Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
-                            rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
-                            rightCell("TOTAL", 8, Style.EMPTY.bold()),
-                            rightCell("FAIL", 6, Style.EMPTY.bold()),
-                            rightCell("INFLIGHT", 8, Style.EMPTY.bold()),
-                            rightCell(procTimingHeader, 20, Style.EMPTY.bold()),
-                            Cell.from("")))
-                    .widths(
-                            Constraint.length(20),
-                            Constraint.fill(),
-                            Constraint.length(10),
-                            Constraint.length(8),
-                            Constraint.length(6),
-                            Constraint.length(8),
-                            Constraint.length(20),
-                            Constraint.length(12))
-                    .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Processors [" + route.routeId + "] ")
-                            .build())
-                    .build();
+            table = buildProcessorTable(area, route);
         }
 
         frame.renderStatefulWidget(table, area, processorTableState);
         int processorRowCount = routeTopMode ? route.processors.size() : route.processors.size() + 1;
         renderTableScrollbar(frame, area, table, processorTableState, processorTableScrollState,
                 processorRowCount);
+    }
+
+    /**
+     * The processors of a route in the default mode (counters, timing), with the body types each step has been reached
+     * with, when the message history recorded them (CAMEL-25750).
+     */
+    private Table buildProcessorTable(Rect area, RouteInfo route) {
+        boolean hasProcPercentiles = route.p50Time >= 0
+                || route.processors.stream().anyMatch(p -> p.p50Time >= 0);
+        // a column only when a step has body types, as wide as the longest up to a limit: the info panel of the
+        // diagram has them all; a space before them sets them apart from the inflight count
+        boolean bodyTypes = route.processors.stream().anyMatch(p -> !p.bodyTypes.isEmpty());
+        int bodyColWidth = 0;
+        if (bodyTypes) {
+            bodyColWidth = CharWidth.of("BODY TYPES");
+            for (ProcessorInfo proc : route.processors) {
+                bodyColWidth = Math.max(bodyColWidth, CharWidth.of(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds)));
+            }
+            bodyColWidth = Math.min(bodyColWidth, MAX_BODY_TYPES_WIDTH) + 1;
+        }
+
+        List<Row> rows = new ArrayList<>();
+
+        // Synthetic top row representing the route itself
+        Style routeStyle = route.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+        String routeTimingCol;
+        if (hasProcPercentiles && route.p50Time >= 0) {
+            routeTimingCol = formatDurationMs(route.p50Time) + "/" + formatDurationMs(route.p95Time) + "/"
+                             + formatDurationMs(route.p99Time);
+        } else if (route.total > 0) {
+            routeTimingCol = formatDurationMs(route.minTime) + "/" + formatDurationMs(route.maxTime) + "/"
+                             + formatDurationMs(route.meanTime);
+        } else {
+            routeTimingCol = "";
+        }
+        // PROCESSOR gets the rest of the width: the borders, ">> ", 7 gaps and the other columns; a long URI
+        // ends with an ellipsis where it is cut
+        int procWidth = Math.max(0, area.width() - 2 - 3 - 7 - (20 + 10 + 8 + 6 + 8 + 20 + 12)
+                                    - (bodyTypes ? bodyColWidth + 1 : 0));
+        List<Cell> routeCells = new ArrayList<>(
+                List.of(
+                        Cell.from("   route"),
+                        Cell.from(Span.styled(TuiHelper.truncate(
+                                route.from != null ? TuiHelper.displayUri(route.from) : route.routeId, procWidth),
+                                routeStyle)),
+                        rightCell(formatThroughput(route.throughput), 8),
+                        rightCell(String.valueOf(route.total), 8),
+                        rightCell(String.valueOf(route.failed), 6,
+                                route.failed > 0 ? Theme.error() : Style.EMPTY),
+                        rightCell(String.valueOf(route.inflight), 8)));
+        if (bodyTypes) {
+            routeCells.add(Cell.from(""));
+        }
+        routeCells.add(rightCell(routeTimingCol, 20));
+        routeCells.add(Cell.from(buildPercentileBarLine(route.p50Time, route.p95Time, route.p99Time, 10)));
+        rows.add(Row.from(routeCells));
+
+        for (ProcessorInfo proc : route.processors) {
+            String indent = "  ".repeat(proc.level);
+            Style nameStyle = proc.failed > 0 ? Theme.error() : Style.EMPTY.fg(Theme.accent());
+
+            String procTimingCol;
+            if (hasProcPercentiles && proc.p50Time >= 0) {
+                procTimingCol = formatDurationMs(proc.p50Time) + "/" + formatDurationMs(proc.p95Time) + "/"
+                                + formatDurationMs(proc.p99Time);
+            } else if (proc.total > 0) {
+                procTimingCol = formatDurationMs(proc.minTime) + "/" + formatDurationMs(proc.maxTime) + "/"
+                                + formatDurationMs(proc.meanTime);
+            } else {
+                procTimingCol = "";
+            }
+
+            List<Cell> cells = new ArrayList<>(
+                    List.of(
+                            Cell.from("   " + (proc.processor != null ? proc.processor : "")),
+                            Cell.from(Span.styled(TuiHelper.truncate(indent + (proc.id != null ? proc.id : ""), procWidth),
+                                    nameStyle)),
+                            rightCell(formatThroughput(proc.throughput), 8),
+                            rightCell(String.valueOf(proc.total), 8),
+                            rightCell(String.valueOf(proc.failed), 6,
+                                    proc.failed > 0 ? Theme.error() : Style.EMPTY),
+                            rightCell(String.valueOf(proc.inflight), 8)));
+            if (bodyTypes) {
+                cells.add(Cell.from(Span.styled(
+                        " " + TuiHelper.truncate(BodyTypes.shortLabel(proc.bodyTypes, proc.bodyKinds), bodyColWidth - 1),
+                        BodyTypes.style(proc.bodyKinds))));
+            }
+            cells.add(rightCell(procTimingCol, 20));
+            cells.add(Cell.from(buildPercentileBarLine(proc.p50Time, proc.p95Time, proc.p99Time, 10)));
+            rows.add(Row.from(cells));
+        }
+        String procTimingHeader = hasProcPercentiles ? "P50/P95/P99" : "MIN/MAX/MEAN";
+
+        List<Cell> header = new ArrayList<>(
+                List.of(
+                        Cell.from(Span.styled("   TYPE", Style.EMPTY.bold())),
+                        Cell.from(Span.styled("PROCESSOR", Style.EMPTY.bold())),
+                        rightCell(ctx.ratePerMinute ? "MSG/M" : "MSG/S", 8, Style.EMPTY.bold()),
+                        rightCell("TOTAL", 8, Style.EMPTY.bold()),
+                        rightCell("FAIL", 6, Style.EMPTY.bold()),
+                        rightCell("INFLIGHT", 8, Style.EMPTY.bold())));
+        List<Constraint> widths = new ArrayList<>(
+                List.of(
+                        Constraint.length(20),
+                        Constraint.fill(),
+                        Constraint.length(10),
+                        Constraint.length(8),
+                        Constraint.length(6),
+                        Constraint.length(8)));
+        if (bodyTypes) {
+            header.add(Cell.from(Span.styled(" BODY TYPES", Style.EMPTY.bold())));
+            widths.add(Constraint.length(bodyColWidth));
+        }
+        header.add(rightCell(procTimingHeader, 20, Style.EMPTY.bold()));
+        header.add(Cell.from(""));
+        widths.add(Constraint.length(20));
+        widths.add(Constraint.length(12));
+
+        return Table.builder()
+                .rows(rows)
+                .header(Row.from(header))
+                .widths(widths.toArray(Constraint[]::new))
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                        .title(" Processors [" + route.routeId + "] ")
+                        .build())
+                .build();
     }
 
     private String formatThroughput(String throughput) {

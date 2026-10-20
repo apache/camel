@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -63,10 +64,14 @@ import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutNode;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyLayoutResult;
 import org.apache.camel.diagram.TopologyLayoutEngine.TopologyNodeInfo;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.TopologyDiagramWidget;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
+import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.addParentNodes;
+import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.normalizeRouteLayoutY;
+import static org.apache.camel.dsl.jbang.core.commands.tui.DiagramLayouts.normalizeTopologyLayoutY;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
@@ -80,6 +85,8 @@ class DiagramSupport {
     private boolean showDiagram;
     private boolean topologyMode;
     private boolean showDescription;
+    /** The body types each step has been reached with, beside the arrows of the route diagram (CAMEL-25750). */
+    private boolean showBodyTypes;
     private Path aiSourceDirectory;
     /** The AI labels of the decision points of the routes shown, by their node (CAMEL-25161). */
     private volatile Map<String, IntegrationSummary.StepLabel> stepLabels = Map.of();
@@ -166,6 +173,14 @@ class DiagramSupport {
 
     void setShowDescription(boolean showDescription) {
         this.showDescription = showDescription;
+    }
+
+    boolean isShowBodyTypes() {
+        return showBodyTypes;
+    }
+
+    void setShowBodyTypes(boolean showBodyTypes) {
+        this.showBodyTypes = showBodyTypes;
     }
 
     List<TopologyAsciiRenderer.NodeBox> getNodeBoxes() {
@@ -1195,11 +1210,11 @@ class DiagramSupport {
 
     // ---- Route EIP node selection ----
 
-    private List<org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget.EipNodeBox> eipNodeBoxes
+    private List<RouteDiagramWidget.EipNodeBox> eipNodeBoxes
             = Collections.emptyList();
     private int selectedEipNodeIndex = -1;
 
-    List<org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget.EipNodeBox> getEipNodeBoxes() {
+    List<RouteDiagramWidget.EipNodeBox> getEipNodeBoxes() {
         return eipNodeBoxes;
     }
 
@@ -1215,7 +1230,7 @@ class DiagramSupport {
         selectedEipNodeIndex = 0;
     }
 
-    org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget.EipNodeBox getSelectedEipNodeBox() {
+    RouteDiagramWidget.EipNodeBox getSelectedEipNodeBox() {
         if (selectedEipNodeIndex >= 0 && selectedEipNodeIndex < eipNodeBoxes.size()) {
             return eipNodeBoxes.get(selectedEipNodeIndex);
         }
@@ -1532,11 +1547,14 @@ class DiagramSupport {
         Map<String, String> linkable = computeLinkableEndpoints(currentRouteId);
         Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
 
-        var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
+        // built again once the scroll is clamped to its size
+        Supplier<RouteDiagramWidget> widgets = () -> new RouteDiagramWidget(
                 routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
                 showDescription, routeDescs)
                 .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null)
-                .withErrorMark(errorMarkRouteIds().contains(currentRouteId));
+                .withErrorMark(errorMarkRouteIds().contains(currentRouteId))
+                .withBodyTypes(showBodyTypes).withBodyKindMarks(true);
+        var widget = widgets.get();
 
         int totalRows = widget.getTotalRows();
         int totalCols = widget.getTotalCols();
@@ -1550,11 +1568,7 @@ class DiagramSupport {
         scrollY = Math.min(scrollY, maxVScroll);
         scrollX = Math.min(scrollX, maxHScroll);
 
-        var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
-                routeLayout, nw, selectedEipNodeIndex, scrollX, scrollY, metrics, linkable,
-                showDescription, routeDescs)
-                .withErrorFrame(layoutShowErrorPaths ? routeErrorFrames.get(currentRouteId) : null)
-                .withErrorMark(errorMarkRouteIds().contains(currentRouteId));
+        var finalWidget = widgets.get();
 
         List<Rect> vChunks = Layout.vertical()
                 .constraints(Constraint.fill(), Constraint.length(1))
@@ -2105,7 +2119,7 @@ class DiagramSupport {
         Map<String, String> linkable = computeLinkableEndpoints(routeId);
         Map<String, String> routeDescs = showDescription ? computeRouteDescriptions() : Collections.emptyMap();
 
-        var widget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
+        var widget = new RouteDiagramWidget(
                 routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
                 showDescription, routeDescs, activeHighlight, historyFailed);
 
@@ -2136,7 +2150,7 @@ class DiagramSupport {
             }
         }
 
-        var finalWidget = new org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget(
+        var finalWidget = new RouteDiagramWidget(
                 routeLayout, nw, selIdx, scrollX, scrollY, false, linkable,
                 showDescription, routeDescs, activeHighlight, historyFailed);
 
@@ -2351,67 +2365,6 @@ class DiagramSupport {
                 }
             }
         });
-    }
-
-    static void addParentNodes(List<RouteDiagramLayoutEngine.NodeInfo> nodes, Set<String> nodeIds) {
-        for (int i = 0; i < nodes.size(); i++) {
-            RouteDiagramLayoutEngine.NodeInfo node = nodes.get(i);
-            if (node.id == null || nodeIds.contains(node.id)) {
-                continue;
-            }
-            boolean hasHighlightedChild = false;
-            for (int j = i + 1; j < nodes.size(); j++) {
-                RouteDiagramLayoutEngine.NodeInfo child = nodes.get(j);
-                if (child.level <= node.level) {
-                    break;
-                }
-                if (child.id != null && nodeIds.contains(child.id)) {
-                    hasHighlightedChild = true;
-                    break;
-                }
-            }
-            if (hasHighlightedChild) {
-                nodeIds.add(node.id);
-            }
-        }
-    }
-
-    private static void normalizeTopologyLayoutY(TopologyLayoutResult result) {
-        if (result.nodes.isEmpty()) {
-            return;
-        }
-        int minY = Integer.MAX_VALUE;
-        for (TopologyLayoutNode node : result.nodes) {
-            minY = Math.min(minY, node.y);
-        }
-        if (minY <= 0) {
-            return;
-        }
-        int shift = minY - 40;
-        for (TopologyLayoutNode node : result.nodes) {
-            node.y -= shift;
-        }
-    }
-
-    private static void normalizeRouteLayoutY(RouteDiagramLayoutEngine.LayoutRoute lr) {
-        int minY = Integer.MAX_VALUE;
-        for (RouteDiagramLayoutEngine.LayoutNode ln : lr.nodes) {
-            if (!"route".equals(ln.type)) {
-                minY = Math.min(minY, ln.y);
-            }
-        }
-        if (minY <= 0 || minY == Integer.MAX_VALUE) {
-            return;
-        }
-        int shift = minY - 40;
-        for (RouteDiagramLayoutEngine.LayoutNode ln : lr.nodes) {
-            ln.y -= shift;
-            if (ln.connectFromMerge) {
-                ln.mergeY -= shift;
-            }
-        }
-        lr.labelY -= shift;
-        lr.maxY -= shift;
     }
 
     /**

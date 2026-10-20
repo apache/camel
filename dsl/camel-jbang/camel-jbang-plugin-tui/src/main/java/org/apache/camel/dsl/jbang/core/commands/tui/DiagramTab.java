@@ -512,6 +512,7 @@ class DiagramTab extends AbstractDiagramTab {
             }
             case ROUTE -> List.of(view, new SubViewBar.Toggle("x", "errors", errorsToggle()),
                     new SubViewBar.Toggle("m", "metrics", metrics),
+                    new SubViewBar.Toggle("y", "types", diagram.isShowBodyTypes() ? "on" : "off"),
                     new SubViewBar.Toggle("d", "detail", detailMode ? "on" : "off"));
         };
     }
@@ -821,6 +822,12 @@ class DiagramTab extends AbstractDiagramTab {
                 String linkedRoute = diagram.findLinkedRouteId(drillDownRouteId);
                 if (linkedRoute != null) {
                     node.put("linkedRoute", linkedRoute);
+                }
+                var treeNode = eipBox.layoutNode().treeNode;
+                if (treeNode != null && !treeNode.info.bodyTypes.isEmpty()) {
+                    // the body types the step has been reached with; more than one kind is a step that needs attention
+                    node.put("bodyTypes", new JsonArray(treeNode.info.bodyTypes));
+                    node.put("bodyKinds", new JsonArray(treeNode.info.bodyKinds));
                 }
                 result.put("selectedNode", node);
             }
