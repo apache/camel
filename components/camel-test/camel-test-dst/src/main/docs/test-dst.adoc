@@ -309,11 +309,11 @@ Agents wrote nine worlds with this guide. These mistakes came up:
   CAMEL-25737 (`visibilityTimeout=1`) and CAMEL-25741 (aws2-ddbstream, found with a fake DynamoDB Streams world) were
   found.
 
-These came up when writing worlds for IMAP, JMS, NATS JetStream and Azure Service Bus:
+Later worlds (IMAP, JMS, NATS JetStream, Azure Service Bus) showed more:
 
-* *An empty answer at once.* A fake that answers at once with nothing (no message, no responder) lets the consumer
-  poll in a tight loop in which virtual time does not move, so the run never gets to its end. Give every call of the
-  fake a round-trip latency.
+* *An empty answer at once.* A fake that answers at once with nothing (no message, no responder) lets a consumer with
+  its own receive loop (JMS, a NATS fetch) spin without virtual time moving; the seed fails on the step budget or the
+  watchdog instead of reaching its end. Give every call of the fake a round-trip latency.
 * *A proxy that throws what the interface does not declare.* A `java.lang.reflect.Proxy` keeps the fake of a wide
   interface (JMS) small. A checked exception that the interface method does not declare comes out of the proxy as
   `UndeclaredThrowableException`; do what the library does instead (for an `InterruptedException` in a fetch: set the
