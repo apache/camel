@@ -32,6 +32,8 @@ public class JGroupsRaftProducer extends DefaultProducer {
 
     // Producer settings
     private final JGroupsRaftEndpoint endpoint;
+    // whether this producer connected the handle, so that a producer that never started does not disconnect it
+    private volatile boolean connected;
 
     // Constructor
     public JGroupsRaftProducer(JGroupsRaftEndpoint endpoint) {
@@ -45,11 +47,15 @@ public class JGroupsRaftProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         endpoint.connect();
+        connected = true;
     }
 
     @Override
     protected void doStop() throws Exception {
-        endpoint.disconnect();
+        if (connected) {
+            connected = false;
+            endpoint.disconnect();
+        }
         super.doStop();
     }
 

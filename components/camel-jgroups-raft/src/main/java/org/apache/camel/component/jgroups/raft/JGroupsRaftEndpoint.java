@@ -98,17 +98,25 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Closing JGroupsraft Channel {}", getEndpointUri());
-        if (resolvedRaftHandle != null && resolvedRaftHandle.channel() != null) {
-            resolvedRaftHandle.channel().close();
-            LOG.info("Closed JGroupsraft Channel {}", getEndpointUri());
-        }
-        LOG.info("Closing Log {}", getEndpointUri());
-        if (resolvedRaftHandle != null && resolvedRaftHandle.log() != null) {
-            resolvedRaftHandle.log().close();
-            LOG.info("Closed Log Channel {}", getEndpointUri());
+        // a handle this endpoint did not create (such as the raftHandle of the component) is used by other endpoints,
+        // and is closed by the component
+        if (resolvedRaftHandle != null && isOwnHandle()) {
+            LOG.info("Closing JGroupsraft Channel {}", getEndpointUri());
+            if (resolvedRaftHandle.channel() != null) {
+                resolvedRaftHandle.channel().close();
+                LOG.info("Closed JGroupsraft Channel {}", getEndpointUri());
+            }
+            LOG.info("Closing Log {}", getEndpointUri());
+            if (resolvedRaftHandle.log() != null) {
+                resolvedRaftHandle.log().close();
+                LOG.info("Closed Log Channel {}", getEndpointUri());
+            }
         }
         super.doStop();
+    }
+
+    private boolean isOwnHandle() {
+        return raftHandle == null;
     }
 
     private RaftHandle resolveHandle() throws Exception {
@@ -120,14 +128,14 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             LOG.trace("Raft Handle created with configured channelProperties: {} and state machine: {}", channelProperties,
                     stateMachine);
             @SuppressWarnings("resource")
-            // NOTE: channel will be closed by the component during
+            // NOTE: channel will be closed by this endpoint during
             // stop() lifecycle step.
             JChannel channel = new JChannel(channelProperties).name(raftId); // NOSONAR
             return new RaftHandle(channel, stateMachine).raftId(raftId);
         }
         LOG.trace("Raft Handle created with defaults: {}, {},", JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG, stateMachine);
         @SuppressWarnings("resource")
-        // NOTE: channel will be closed by the component during
+        // NOTE: channel will be closed by this endpoint during
         // stop() lifecycle step.
         JChannel channel = new JChannel(JGroupsRaftConstants.DEFAULT_JGROUPSRAFT_CONFIG).name(raftId); // NOSONAR
         return new RaftHandle(channel, stateMachine).raftId(raftId);
@@ -139,9 +147,13 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public void connect() throws Exception {
-        connectCount.incrementAndGet();
         LOG.trace("Connecting JGroups-raft Channel {} with cluster name: {}, raftHandle: {} and using config: {}",
                 getEndpointUri(), clusterName, resolvedRaftHandle, channelProperties == null ? "default" : channelProperties);
+        if (!isOwnHandle()) {
+            ((JGroupsRaftComponent) getComponent()).connectSharedHandle(resolvedRaftHandle, clusterName);
+            return;
+        }
+        connectCount.incrementAndGet();
         resolvedRaftHandle.channel().connect(clusterName);
     }
 
@@ -149,6 +161,10 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
      * Disconnect shared RaftHandle channel, called by producer and consumer.
      */
     public void disconnect() {
+        if (!isOwnHandle()) {
+            ((JGroupsRaftComponent) getComponent()).disconnectSharedHandle(resolvedRaftHandle);
+            return;
+        }
         if (connectCount.decrementAndGet() == 0) {
             LOG.trace("Disconnecting JGroupsraft Channel {}", getEndpointUri());
             resolvedRaftHandle.channel().disconnect();
