@@ -421,7 +421,7 @@
         <flagd-provider-version>0.14.2</flagd-provider-version>
         <flagd-core-version>2.0.1</flagd-core-version>
         <flagd-api-version>1.0.0</flagd-api-version>
-        <mcp-java-sdk-version>2.0.1</mcp-java-sdk-version>
+        <mcp-java-sdk-version>2.1.0</mcp-java-sdk-version>
         <mssql-jdbc-version>12.10.0.jre11</mssql-jdbc-version>
         <ojdbc-version>23.8.0.25.04</ojdbc-version>
         <openai-java-version>4.78.0</openai-java-version>
