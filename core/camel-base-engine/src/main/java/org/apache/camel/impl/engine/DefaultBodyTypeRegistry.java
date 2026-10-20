@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,7 @@ public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
     @Override
     public List<String> getBodyTypes(String routeId, String nodeId) {
         NodeTypes types = node(routeId, nodeId);
-        return types != null ? List.of(types.types) : List.of();
+        return types != null ? types.types(null) : List.of();
     }
 
     @Override
@@ -66,13 +68,19 @@ public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
     }
 
     @Override
+    public List<String> getBodyTypes(String routeId, String nodeId, Kind kind) {
+        NodeTypes types = node(routeId, nodeId);
+        return types != null && kind != null ? types.types(kind) : List.of();
+    }
+
+    @Override
     public Map<String, List<String>> getBodyTypes(String routeId) {
         Map<String, NodeTypes> nodes = routes.get(routeId);
         if (nodes == null) {
             return Map.of();
         }
         Map<String, List<String>> answer = new LinkedHashMap<>();
-        nodes.forEach((id, types) -> answer.put(id, List.of(types.types)));
+        nodes.forEach((id, types) -> answer.put(id, types.types(null)));
         return answer;
     }
 
@@ -92,39 +100,67 @@ public class DefaultBodyTypeRegistry implements BodyTypeRegistry {
     }
 
     /**
+     * A body type and its kind.
+     */
+    private record TypeKind(String type, Kind kind) {
+    }
+
+    /**
      * The distinct types and kinds of one node, as small arrays that are replaced when a new one is seen: reading them
      * (on every exchange) takes no lock.
      */
     private static final class NodeTypes {
 
-        private volatile String[] types = new String[0];
+        private volatile TypeKind[] types = new TypeKind[0];
         private volatile Kind[] kinds = new Kind[0];
 
         void add(String type, Kind kind) {
-            String[] known = types;
+            TypeKind[] known = types;
             // a node keeps every kind, also of a type beyond the first few: a new kind is what needs attention
-            if (contains(known, type)
-                    || known.length >= MAX_TYPES_PER_NODE && (kind == null || contains(kinds, kind))) {
+            if (containsType(known, type)
+                    || known.length >= MAX_TYPES_PER_NODE && (kind == null || containsKind(kinds, kind))) {
                 return;
             }
             synchronized (this) {
-                if (kind != null && !contains(kinds, kind)) {
+                if (kind != null && !containsKind(kinds, kind)) {
                     Kind[] next = Arrays.copyOf(kinds, kinds.length + 1);
                     next[kinds.length] = kind;
                     kinds = next;
                 }
-                String[] current = types;
-                if (!contains(current, type) && current.length < MAX_TYPES_PER_NODE) {
-                    String[] next = Arrays.copyOf(current, current.length + 1);
-                    next[current.length] = type;
+                TypeKind[] current = types;
+                if (!containsType(current, type) && current.length < MAX_TYPES_PER_NODE) {
+                    TypeKind[] next = Arrays.copyOf(current, current.length + 1);
+                    next[current.length] = new TypeKind(type, kind);
                     types = next;
                 }
             }
         }
 
-        private static <T> boolean contains(T[] array, T value) {
-            for (T t : array) {
-                if (t.equals(value)) {
+        /**
+         * The types, of the kind only when one is given.
+         */
+        List<String> types(Kind kind) {
+            List<String> answer = new ArrayList<>();
+            for (TypeKind t : types) {
+                if (kind == null || kind == t.kind()) {
+                    answer.add(t.type());
+                }
+            }
+            return Collections.unmodifiableList(answer);
+        }
+
+        private static boolean containsType(TypeKind[] types, String type) {
+            for (TypeKind t : types) {
+                if (t.type().equals(type)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static boolean containsKind(Kind[] kinds, Kind kind) {
+            for (Kind k : kinds) {
+                if (k == kind) {
                     return true;
                 }
             }

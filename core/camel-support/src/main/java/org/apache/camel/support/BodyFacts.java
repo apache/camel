@@ -26,9 +26,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.stream.BaseStream;
 import java.util.stream.Collectors;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.MessageHistory;
@@ -112,6 +114,11 @@ import org.apache.camel.util.URISupport;
  * </table>
  * When the Content-Type, the file name or the text names no data format, the hint lists the usual ones (json,
  * jacksonXml, csv). A hint is null when the body is not why the step failed.
+ * <p/>
+ * While the message history is on, the hint also says when other messages have reached the failing step with a body of
+ * another kind (as the {@link BodyTypeRegistry} keeps them): "; other messages reached this step with data
+ * (LinkedHashMap), so the body here depends on the path a message takes". Then the step is right for some messages, and
+ * a path to it, such as a branch that does not unmarshal, is what differs.
  *
  * @since 4.24
  */
@@ -173,11 +180,12 @@ public final class BodyFacts {
      */
     public static String hint(Exchange exchange, Need need, String target) {
         Object body = exchange.getMessage().getBody();
-        return switch (need) {
+        String answer = switch (need) {
             case DATA -> dataHint(exchange, body);
             case BYTES -> bytesHint(body, target);
             case A_BODY -> isEmpty(body) ? readTheDataFirst() : null;
         };
+        return answer != null ? answer + otherBodies(exchange, body) : null;
     }
 
     /**
@@ -331,6 +339,54 @@ public final class BodyFacts {
             return "";
         }
         return ", unchanged since from: " + URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
+    }
+
+    /**
+     * When other messages have reached the failing step with a body of another kind, as the {@link BodyTypeRegistry}
+     * knows while the message history is on: the body depends on the path a message takes, such as a branch that does
+     * not unmarshal. Empty otherwise (CAMEL-25750).
+     */
+    private static String otherBodies(Exchange exchange, Object body) {
+        List<MessageHistory> history = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        CamelContext context = exchange.getContext();
+        if (history == null || history.isEmpty() || context == null) {
+            return "";
+        }
+        // the step that failed is the last one the message reached
+        MessageHistory step = history.get(history.size() - 1);
+        String routeId = step.getRouteId();
+        String nodeId = step.getNode() != null ? step.getNode().getId() : null;
+        BodyTypeRegistry registry = context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        if (registry == null || routeId == null || nodeId == null) {
+            return "";
+        }
+        BodyTypeRegistry.Kind kind = kindOf(body);
+        StringJoiner others = new StringJoiner(" and ");
+        for (BodyTypeRegistry.Kind other : registry.getBodyKinds(routeId, nodeId)) {
+            if (other != kind) {
+                others.add(kindWords(other, registry.getBodyTypes(routeId, nodeId, other)));
+            }
+        }
+        if (others.length() == 0) {
+            return "";
+        }
+        return "; other messages reached this step with " + others
+               + ", so the body here depends on the path a message takes";
+    }
+
+    /** A kind in words, with the simple names of its types: data (LinkedHashMap), or no body. */
+    private static String kindWords(BodyTypeRegistry.Kind kind, List<String> types) {
+        String words = switch (kind) {
+            case NULL -> "no body";
+            case PAYLOAD -> "a payload";
+            case DATA -> "data";
+            case ITERATOR -> "an iterator";
+        };
+        if (kind == BodyTypeRegistry.Kind.NULL || types.isEmpty()) {
+            return words;
+        }
+        return words + " (" + types.stream().map(t -> StringHelper.afterLast(t, ".", t)).collect(Collectors.joining(", "))
+               + ")";
     }
 
     /** A step as people find it: unmarshal at orders.yaml:9, or the step and its label when there is no location. */
