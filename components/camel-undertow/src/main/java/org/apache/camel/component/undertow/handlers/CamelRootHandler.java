@@ -32,8 +32,11 @@ import io.undertow.util.URLUtils;
 public class CamelRootHandler implements HttpHandler {
     private final Lock lock = new ReentrantLock();
     private final CamelPathHandler pathHandler;
+    // the handler of the requests that no path matches
+    private final HttpHandler defaultHandler;
 
     public CamelRootHandler(HttpHandler defaultHandler) {
+        this.defaultHandler = defaultHandler;
         pathHandler = new CamelPathHandler(defaultHandler);
     }
 
@@ -99,9 +102,11 @@ public class CamelRootHandler implements HttpHandler {
         CamelPathTemplateHandler templateHandler;
         if (basePathHandler instanceof CamelMethodHandler) {
             // A static path handler is already set for the base path. Use it as a default handler
-            templateHandler = new CamelPathTemplateHandler((CamelMethodHandler) basePathHandler);
+            templateHandler = new CamelPathTemplateHandler((CamelMethodHandler) basePathHandler, defaultHandler);
         } else if (basePathHandler == null) {
-            templateHandler = new CamelPathTemplateHandler(new CamelMethodHandler());
+            // a request under the base path that no template matches goes to the default handler of the server, as
+            // when the base path is not there
+            templateHandler = new CamelPathTemplateHandler(new CamelMethodHandler(), defaultHandler);
         } else {
             throw new IllegalArgumentException(String.format("Unsupported handler '%s' was found", basePathHandler));
         }

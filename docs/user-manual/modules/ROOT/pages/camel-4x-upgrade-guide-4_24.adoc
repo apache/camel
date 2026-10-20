@@ -1447,6 +1447,17 @@ became `cafÃ©` in the headers and the body map. A charset that the request or 
 that sends ISO-8859-1 form data without declaring a charset now gets U+FFFD replacement characters instead of its
 text, and must declare its charset (for example `application/x-www-form-urlencoded; charset=ISO-8859-1`).
 
+=== camel-undertow - rest-dsl and plain consumers on the same port are both served
+
+When rest-dsl consumers and plain `undertow:` consumers use the same port, both kinds are now served. Before, only the
+kind that registered first on the port was served, the other answered 404, and stopping the last consumer of one kind
+stopped the server for the other. A request now goes to the plain endpoints first, and to the rest-dsl consumers when
+no plain endpoint matches its path. If the rest-dsl consumers registered first and a plain endpoint of the same port
+has a path that overlaps theirs (for example `matchOnUriPrefix=true` on `/`), that endpoint now takes those requests:
+give it another path or port. A request under the static part of a plain endpoint path with a template (such as
+`/api/x/y` for `/api/{name}`) that no template matches now goes on to the rest-dsl consumers, and gets 404 when none
+matches (it got 405 before).
+
 === camel-huaweicloud-obs - a listed object that cannot be got is skipped
 
 When the consumer lists the bucket, a failure to get one of the listed objects (for example access denied, or an
