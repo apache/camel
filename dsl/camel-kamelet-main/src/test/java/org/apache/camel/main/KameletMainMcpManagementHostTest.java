@@ -16,7 +16,10 @@
  */
 package org.apache.camel.main;
 
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,35 +32,46 @@ class KameletMainMcpManagementHostTest {
 
     @Test
     void bindsTheManagementServerToLoopback() throws Exception {
-        assertEquals("127.0.0.1", managementHost());
+        assertEquals("127.0.0.1", managementHost(null));
     }
 
     @Test
     void bindsTheManagementServerWithItsOwnPortToLoopback() throws Exception {
-        assertEquals("127.0.0.1", managementHost("camel.server.enabled", "true", "camel.management.port", "9876"));
+        assertEquals("127.0.0.1", managementHost(null, "camel.server.enabled", "true", "camel.management.port", "9876"));
     }
 
     @Test
     void keepsTheHostWhenSharingThePortOfTheHttpServer() throws Exception {
-        assertEquals("0.0.0.0", managementHost("camel.server.enabled", "true"));
+        // such as camel run --mcp --port 8080
+        assertEquals("0.0.0.0", managementHost(null, "camel.server.enabled", "true"));
         assertEquals("0.0.0.0",
-                managementHost("camel.server.enabled", "true", "camel.server.port", "0", "camel.management.port", "0"));
+                managementHost(null, "camel.server.enabled", "true", "camel.server.port", "0", "camel.management.port", "0"));
+    }
+
+    @Test
+    void keepsTheHostWhenTheHttpServerIsEnabledInApplicationProperties() throws Exception {
+        assertEquals("0.0.0.0", managementHost("classpath:org/apache/camel/main/mcp-shared-port.properties"));
     }
 
     @Test
     void leavesAConfiguredHostToCamelMain() throws Exception {
         // camel-main binds camel.management.host later on
-        assertEquals("0.0.0.0", managementHost("camel.management.host", "192.168.1.10"));
+        assertEquals("0.0.0.0", managementHost(null, "camel.management.host", "192.168.1.10"));
     }
 
-    private static String managementHost(String... properties) throws Exception {
+    private static String managementHost(String location, String... properties) throws Exception {
         KameletMain main = new KameletMain("camel.jbang");
-        main.addInitialProperty("camel.jbang.mcp", "true");
-        for (int i = 0; i < properties.length; i += 2) {
-            main.addInitialProperty(properties[i], properties[i + 1]);
+        try (CamelContext context = new DefaultCamelContext()) {
+            Properties initial = new Properties();
+            for (int i = 0; i < properties.length; i += 2) {
+                initial.setProperty(properties[i], properties[i + 1]);
+            }
+            context.getPropertiesComponent().setInitialProperties(initial);
+            if (location != null) {
+                context.getPropertiesComponent().setLocation(location);
+            }
+            main.applyMcpManagementHost(context);
         }
-        try (CamelContext context = main.createCamelContext()) {
-            return main.configure().httpManagementServer().getHost();
-        }
+        return main.configure().httpManagementServer().getHost();
     }
 }
