@@ -188,6 +188,9 @@ public class KameletComponent extends DefaultComponent {
             setProperties(endpoint, parameters);
         } else {
             endpoint = new KameletEndpoint(uri, this, templateId, routeId) {
+                // the route this endpoint created from the template while the context runs (such as from toD)
+                private volatile String createdRouteId;
+
                 @Override
                 protected void doInit() throws Exception {
                     super.doInit();
@@ -197,7 +200,19 @@ public class KameletComponent extends DefaultComponent {
                     //
                     String routeId = getCamelContext().getCamelContextExtension().getCreateRoute();
                     String processorId = getCamelContext().getCamelContextExtension().getCreateProcessor();
-                    lifecycleHandler.track(this, routeId, processorId);
+                    createdRouteId = lifecycleHandler.track(this, routeId, processorId);
+                }
+
+                @Override
+                protected void doShutdown() throws Exception {
+                    // an endpoint used once and discarded (toD or recipientList with cacheSize=-1) is shut down after
+                    // use: remove the route it created, otherwise every call keeps one more route for ever
+                    String id = createdRouteId;
+                    createdRouteId = null;
+                    if (id != null) {
+                        removeCreatedRoute(id);
+                    }
+                    super.doShutdown();
                 }
             };
 
@@ -484,6 +499,26 @@ public class KameletComponent extends DefaultComponent {
         super.doInit();
     }
 
+    /**
+     * Stops and removes the route a Kamelet endpoint created from its template while the context runs, when that
+     * endpoint is shut down (it is not shut down while the context runs unless it was used once and discarded).
+     */
+    private void removeCreatedRoute(String routeId) {
+        CamelContext context = getCamelContext();
+        if (context == null || !context.isStarted() || context.isStopping() || context.getRoute(routeId) == null) {
+            // the context removes all the routes when it stops
+            return;
+        }
+        try {
+            LOG.debug("Removing route with id={} created by a Kamelet endpoint that is shut down", routeId);
+            context.getRouteController().stopRoute(routeId);
+            context.removeRoute(routeId);
+        } catch (Exception e) {
+            LOG.warn("Error removing route {} created by a Kamelet endpoint that is shut down. This exception is ignored.",
+                    routeId, e);
+        }
+    }
+
     @Override
     protected void doShutdown() throws Exception {
         getCamelContext().getLifecycleStrategies().remove(lifecycleHandler);
@@ -515,18 +550,18 @@ public class KameletComponent extends DefaultComponent {
             this.initialized = new AtomicBoolean();
         }
 
-        public void createRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
+        public String createRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
                 throws Exception {
             // creating dynamic routes from kamelets should not happen concurrently so we use locking
             lock.lock();
             try {
-                doCreateRouteForEndpoint(endpoint, parentRouteId, parentProcessorId);
+                return doCreateRouteForEndpoint(endpoint, parentRouteId, parentProcessorId);
             } finally {
                 lock.unlock();
             }
         }
 
-        protected void doCreateRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
+        protected String doCreateRouteForEndpoint(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId)
                 throws Exception {
             final String templateId = endpoint.getTemplateId();
             final String loc = endpoint.getLocation() != null ? endpoint.getLocation() : getLocation();
@@ -548,7 +583,7 @@ public class KameletComponent extends DefaultComponent {
             }
             creating.push(templateId);
             try {
-                doCreateRouteForEndpoint(endpoint, parentRouteId, parentProcessorId, templateId, loc);
+                return doCreateRouteForEndpoint(endpoint, parentRouteId, parentProcessorId, templateId, loc);
             } finally {
                 creating.pop();
                 if (creating.isEmpty()) {
@@ -557,7 +592,7 @@ public class KameletComponent extends DefaultComponent {
             }
         }
 
-        private void doCreateRouteForEndpoint(
+        private String doCreateRouteForEndpoint(
                 KameletEndpoint endpoint, String parentRouteId, String parentProcessorId, String templateId, String loc)
                 throws Exception {
 
@@ -584,6 +619,7 @@ public class KameletComponent extends DefaultComponent {
                 }
 
                 LOG.debug("Route with id={} created from template={}", id, templateId);
+                return id;
             } catch (Exception e) {
                 throw new FailedToCreateKameletException(templateId, loc, e);
             }
@@ -609,16 +645,22 @@ public class KameletComponent extends DefaultComponent {
             this.initialized.set(initialized);
         }
 
-        public void track(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId) {
+        /**
+         * Creates the route of the endpoint now if the context is initialized, or when it is.
+         *
+         * @return the id of the route created now, or {@code null} if it is created later
+         */
+        public String track(KameletEndpoint endpoint, String parentRouteId, String parentProcessorId) {
             if (this.initialized.get()) {
                 try {
-                    createRouteForEndpoint(endpoint, parentRouteId, parentProcessorId);
+                    return createRouteForEndpoint(endpoint, parentRouteId, parentProcessorId);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }
             } else {
                 LOG.debug("Tracking route template={} and id={}", endpoint.getTemplateId(), endpoint.getRouteId());
                 this.endpoints.add(new Tuple(endpoint, parentRouteId, parentProcessorId));
+                return null;
             }
         }
     }
