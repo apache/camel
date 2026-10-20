@@ -53,6 +53,14 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-main - a failure to start is logged
+
+A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
+as `camel run` already did. Before, the failure left `main()` and only the JVM printed it, on stderr
+(`Exception in thread "main" ...`), so the log file of the application did not say why it stopped.
+The JVM no longer prints that same failure a second time. When the application logs nothing at ERROR (such as without
+a logging implementation), the JVM prints it as before.
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
