@@ -84,6 +84,14 @@ public final class LocalStorageHelper {
     }
 
     /**
+     * Every read of the content of the object of the static FakeStorageRpc instance is refused with 403, until the next
+     * {@link #getOptions()}.
+     */
+    public static void refuseReads(String bucket, String name) {
+        INSTANCE.refuseReads(bucket, name);
+    }
+
+    /**
      * Returns a {@link StorageOptions} that creates a new FakeStorageRpc instance with the given option.
      */
     public static StorageOptions customOptions(final boolean throwIfOptions) {
