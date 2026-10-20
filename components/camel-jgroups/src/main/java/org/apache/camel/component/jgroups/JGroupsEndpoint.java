@@ -155,11 +155,17 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        if (resolvedChannel != null) {
+        // a channel this endpoint did not create (such as the channel of the component) is used by other endpoints,
+        // and is closed by the component
+        if (resolvedChannel != null && isOwnChannel()) {
             LOG.trace("Closing JGroups Channel {}", getEndpointUri());
             resolvedChannel.close();
         }
         super.doStop();
+    }
+
+    private boolean isOwnChannel() {
+        return channel == null;
     }
 
     private ObjectInputFilter resolveDeserializationFilter() {
@@ -227,8 +233,12 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      * Connect shared channel, called by producer and consumer.
      */
     public void connect() throws Exception {
-        connectCount.incrementAndGet();
         LOG.trace("Connecting JGroups Channel {}", getEndpointUri());
+        if (!isOwnChannel()) {
+            ((JGroupsComponent) getComponent()).connectSharedChannel(resolvedChannel, clusterName);
+            return;
+        }
+        connectCount.incrementAndGet();
         resolvedChannel.connect(clusterName);
     }
 
@@ -236,6 +246,10 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      * Disconnect shared channel, called by producer and consumer.
      */
     public void disconnect() {
+        if (!isOwnChannel()) {
+            ((JGroupsComponent) getComponent()).disconnectSharedChannel(resolvedChannel);
+            return;
+        }
         if (connectCount.decrementAndGet() == 0) {
             LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
             resolvedChannel.disconnect();
