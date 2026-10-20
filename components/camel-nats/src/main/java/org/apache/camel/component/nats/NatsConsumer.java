@@ -64,6 +64,11 @@ public class NatsConsumer extends DefaultConsumer {
     private ExecutorService executor;
     private Connection connection;
     private Dispatcher dispatcher;
+    // the messages that the handler is processing, and the close of the dispatcher of a stopped consumer that waits
+    // until none is: closing a dispatcher interrupts its thread, which runs the route
+    private final Object inFlightLock = new Object();
+    private int messagesInFlight;
+    private Runnable closeDispatcherWhenIdle;
     private boolean active;
     // set by the consuming task, and again by the push consumer keeper, and read when the consumer stops
     private volatile JetStreamSubscription jetStreamSubscription;
@@ -122,6 +127,34 @@ public class NatsConsumer extends DefaultConsumer {
             } catch (final Exception e) {
                 this.getExceptionHandler().handleException("Error during unsubscribing", e);
             }
+            // a JetStream push subscription belongs to the dispatcher (it cannot unsubscribe directly) and is on its
+            // deliver subject, not on the topic: end it through the dispatcher, which matters when the connection is
+            // shared and stays open. This does not interrupt the dispatcher thread, which may still run an exchange
+            JetStreamSubscription pushSubscription = this.jetStreamSubscription;
+            if (pushSubscription != null && pushSubscription.isActive()) {
+                try {
+                    this.dispatcher.unsubscribe(pushSubscription);
+                } catch (final Exception e) {
+                    this.getExceptionHandler().handleException("Error during unsubscribing", e);
+                }
+            }
+            // the dispatcher was created by this consumer: close it (which ends its thread) once no message is in
+            // flight, as closing it interrupts its thread, and Camel stops a consumer before it waits for the exchanges
+            // in flight
+            final Dispatcher stoppedDispatcher = this.dispatcher;
+            final Connection stoppedConnection = this.connection;
+            Runnable close = () -> closeDispatcher(stoppedConnection, stoppedDispatcher);
+            synchronized (this.inFlightLock) {
+                if (this.messagesInFlight > 0) {
+                    // closed by the handler once the message is done
+                    this.closeDispatcherWhenIdle = close;
+                    close = null;
+                }
+            }
+            if (close != null) {
+                close.run();
+            }
+            this.dispatcher = null;
         }
 
         if (ObjectHelper.isNotEmpty(this.jetStreamSubscription) && this.jetStreamSubscription.isActive()) {
@@ -149,6 +182,19 @@ public class NatsConsumer extends DefaultConsumer {
             }
         }
         super.doStop();
+    }
+
+    /**
+     * Closes a dispatcher of this consumer, unless its connection is closed (which closed it).
+     */
+    private void closeDispatcher(Connection c, Dispatcher d) {
+        if (c != null && c.getStatus() != Connection.Status.CLOSED) {
+            try {
+                c.closeDispatcher(d);
+            } catch (final Exception e) {
+                LOG.debug("Error closing the dispatcher of the stopped consumer", e);
+            }
+        }
     }
 
     public boolean isActive() {
@@ -554,6 +600,28 @@ public class NatsConsumer extends DefaultConsumer {
 
             @Override
             public void onMessage(Message msg) throws InterruptedException {
+                synchronized (NatsConsumer.this.inFlightLock) {
+                    NatsConsumer.this.messagesInFlight++;
+                }
+                try {
+                    processMessage(msg);
+                } finally {
+                    Runnable close = null;
+                    synchronized (NatsConsumer.this.inFlightLock) {
+                        if (--NatsConsumer.this.messagesInFlight == 0) {
+                            close = NatsConsumer.this.closeDispatcherWhenIdle;
+                            NatsConsumer.this.closeDispatcherWhenIdle = null;
+                        }
+                    }
+                    if (close != null) {
+                        // the consumer stopped while this message was processed: close its dispatcher now (on this
+                        // thread, which the close interrupts once the message is done)
+                        close.run();
+                    }
+                }
+            }
+
+            private void processMessage(Message msg) throws InterruptedException {
                 LOG.debug("Received Message: {}", msg);
                 final Exchange exchange = NatsConsumer.this.createExchange(false);
 
