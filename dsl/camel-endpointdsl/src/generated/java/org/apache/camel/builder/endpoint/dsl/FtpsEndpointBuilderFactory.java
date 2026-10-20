@@ -2245,6 +2245,44 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
@@ -4182,6 +4220,44 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
@@ -5657,6 +5733,44 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder ftpClientTrustStoreParameters(Map values) {
             doSetMultiValueProperties("ftpClientTrustStoreParameters", "ftpClient.trustStore.", values);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
             return this;
         }
         /**

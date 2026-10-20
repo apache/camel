@@ -164,6 +164,8 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             }
         }
 
+        client.setEndpointCheckingEnabled(getFtpsConfiguration().isHostnameVerification());
+
         return client;
     }
 
