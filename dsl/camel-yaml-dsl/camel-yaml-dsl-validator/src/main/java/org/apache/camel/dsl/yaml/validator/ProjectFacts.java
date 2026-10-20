@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.validator;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,9 +31,11 @@ import java.util.Set;
  *                          operationId, in lower case
  * @param restBindingMode   the binding mode the project's properties set for REST ({@code off} when they set none), or
  *                          null when not known: then nothing is said that a binding could change
+ * @param requestFields     per specification, keyed as {@link #operations()} is: the fields the JSON request of an
+ *                          operationId needs, for the operations whose request schema requires some
  */
 public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
-        String restBindingMode) {
+        String restBindingMode, Map<String, Map<String, List<String>>> requestFields) {
 
     /** Nothing known about the project. */
     public static final ProjectFacts NONE = new ProjectFacts(Set.of(), Map.of(), null);
@@ -40,6 +43,13 @@ public record ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String
     public ProjectFacts {
         bodylessEndpoints = bodylessEndpoints != null ? bodylessEndpoints : Set.of();
         operations = operations != null ? operations : Map.of();
+        requestFields = requestFields != null ? requestFields : Map.of();
+    }
+
+    /** Without the fields of the requests. */
+    public ProjectFacts(Set<String> bodylessEndpoints, Map<String, Map<String, String>> operations,
+                        String restBindingMode) {
+        this(bodylessEndpoints, operations, restBindingMode, Map.of());
     }
 
     /**
