@@ -2148,6 +2148,32 @@ visible later: GridFS sets the upload date on the client. Use `TimeStampAndFileA
 `PersistentTimestampAndFileAttribute` if such files must be routed: these strategies keep the start date in their
 query, as before, and mark each file so that it is routed once.
 
+=== camel-paho-mqtt5, camel-paho - consumers that share a client get the messages of their own topic
+
+A client has a single callback, and each consumer set it on its client. The consumers of several endpoints that use
+the same client (the `client` option) therefore all routed their messages through the consumer that started last, and
+only that consumer subscribed again after the client reconnected. The consumers of a client now share one callback:
+a message goes to the consumers whose topic filter matches it, also when a single consumer of the client is left
+(only a client that the consumer created for itself still gives it every message), and each consumer subscribes again
+after a reconnect.
+When a consumer that uses a client set with the `client` option stops, it now unsubscribes its topic from the client
+(unless `cleanStart=false`, or `cleanSession=false` for `camel-paho`, or another running consumer of the client uses
+the same topic filter), as the client stays connected, and it uses the same client again when it starts again (it
+created a client of its own before). This depends on the endpoint option, not on how the client was connected: set
+`cleanStart=false` on the endpoints to keep the subscriptions of a client connected with `cleanStart=false`. With
+`cleanStart=false` the stopped consumer's subscription stays on the connected client, so the broker keeps sending its
+messages, which are dropped (with one WARN per topic, then at DEBUG) until the consumer starts again. With
+`manualAcksEnabled=true` such a dropped message is also acknowledged, so it is gone from a session that the broker
+keeps: left unacknowledged, it would count against `receiveMaximum` (for `camel-paho`, the broker's limit of
+unacknowledged messages per client), and the broker would then send nothing more to any consumer of the client.
+Consumers of one client whose topic filters overlap (such as `orders/#` and `orders/eu`, or the same filter) each get
+a message that matches several filters, and a broker that sends one copy per matching subscription (MQTT allows it,
+Apache ActiveMQ Artemis does it) makes each of them get every copy. With `manualAcksEnabled=true` each of them
+acknowledges the message, so a message that failed in one of these routes is still acknowledged when another of them
+processes it. Each subscribe of a filter makes the broker send the retained message of a matching topic again, so
+consumers of the same filter get it again when another of them starts and each time they subscribe again after a
+reconnect. Give such consumers a client of their own.
+
 === Semantic image input and audit output
 
 Semantic evaluations now recognize a selected `$\{body}` with an image `Content-Type`, and
