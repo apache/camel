@@ -48,6 +48,7 @@ import jdk.jfr.Recording;
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.LogFileReader;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExceptionHandler;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
@@ -2144,10 +2145,48 @@ public class Run extends CamelCommand {
             return null;
         }
         String signal = code != null ? signalOf(code) : null;
-        // the exit code of Maven is not the one of the app: said as such, when it failed
+        // the exit code of Maven is not the one of the app
         Integer exitCode = app || signal != null ? code : null;
-        String failure = !app && code != null && code != 0 && signal == null ? "Maven ended with exit code " + code : null;
+        String failure = null;
+        if (code != null && code != 0 && signal == null) {
+            // why it failed, as the log of the app says, as camel run says it for the default runtime; else that Maven
+            // failed, as the exit code of Maven is not given
+            failure = failureInLog(runLogFile(appName));
+            if (failure == null && !app) {
+                failure = "Maven ended with exit code " + code;
+            }
+        }
         return PreviousRun.keep(runLogFile(appName), appName, pid, exitCode, signal, failure);
+    }
+
+    /**
+     * At most this many records at the end of the log are looked at for why a run failed.
+     */
+    private static final int FAILURE_RECORDS = 20;
+
+    /**
+     * Why a run that failed ended, as its log says: the first ERROR record among the last records of the log, with the
+     * cause of its stack trace, such as "Application run failed: java.lang.IllegalArgumentException: Invalid time
+     * pattern: notanumber" (Spring Boot), "Failed to start application: ..." (Quarkus) or "Error starting Camel: ..."
+     * (Camel Main). The first, as an error that follows it is about the same failure in other words: Quarkus logs the
+     * failure of Camel, then that Quarkus failed to start. Null when the end of the log has no ERROR.
+     */
+    static String failureInLog(Path log) {
+        if (!Files.isRegularFile(log)) {
+            return null;
+        }
+        String answer = null;
+        if (LogFileReader.read(log, FAILURE_RECORDS, null, null, false).get("lines") instanceof List<?> lines) {
+            // newest first: the last ERROR found is the first one logged
+            for (Object o : lines) {
+                if (o instanceof JsonObject r && "ERROR".equalsIgnoreCase(r.getString("level"))) {
+                    String message = r.getStringOrDefault("message", "").strip();
+                    String cause = r.getString("cause");
+                    answer = cause != null && !message.contains(cause) ? message + ": " + cause : message;
+                }
+            }
+        }
+        return answer;
     }
 
     /**

@@ -87,8 +87,8 @@ class RunMavenRuntimePreviousLogTest {
 
     @Test
     void theExitCodeOfMavenIsNotGivenAsTheOneOfTheApp() throws Exception {
-        // quarkus:run, quarkus:dev and spring-boot:run run the app in a process of its own
-        log("orders", "ERROR Application run failed");
+        // quarkus:run, quarkus:dev and spring-boot:run run the app in a process of its own; its log says no error here
+        log("orders", "2026-10-20 09:56:19.842  INFO 16321 --- [           main] route1 : the app stopped");
 
         Run.keepRunLog("orders", 0, 1, false);
 
@@ -97,6 +97,81 @@ class RunMavenRuntimePreviousLogTest {
         assertThat(info.exitCode()).isNull();
         assertThat(info.failure()).isEqualTo("Maven ended with exit code 1");
         assertThat(info.describe()).contains("The previous run of orders ended at").endsWith(": Maven ended with exit code 1");
+    }
+
+    @Test
+    void theFailureOfAMavenRunIsTheErrorItsLogEndsWith() throws Exception {
+        // Spring Boot logs the failure, with the stack trace; the root cause says why
+        log("orders",
+                """
+                        2026-10-20T09:56:19.838+02:00  INFO 16321 --- [           main] o.a.c.impl.engine.AbstractCamelContext   : Apache Camel 4.24.0 (orders) is starting
+                        2026-10-20T09:56:19.842+02:00 ERROR 16321 --- [           main] o.s.boot.SpringApplication               : Application run failed
+                        org.apache.camel.FailedToCreateRouteException: Failed to create route: boom
+                        \tat org.apache.camel.reifier.RouteReifier.createRoute(RouteReifier.java:95)
+                        Caused by: java.lang.IllegalArgumentException: Invalid time pattern: notanumber
+                        \tat org.apache.camel.util.TimeUtils.toMilliSeconds(TimeUtils.java:214)
+                        """);
+
+        Run.keepRunLog("orders", 0, 1, false);
+
+        PreviousRun.Info info = previous("orders");
+        assertThat(info.exitCode()).isNull();
+        assertThat(info.failure())
+                .isEqualTo("Application run failed: java.lang.IllegalArgumentException: Invalid time pattern: notanumber");
+    }
+
+    @Test
+    void theFirstOfTheErrorsAtTheEndIsWhyTheRunFailed() throws Exception {
+        // Quarkus logs the failure of Camel, then that Quarkus failed to start (in the format camel run gives its log file)
+        log("orders",
+                """
+                        2026-10-20 11:19:03.060 ERROR 24512 --- [           main] o.a.c.quarkus.main.CamelMainRuntime      : Failed to start application: org.apache.camel.FailedToCreateRouteException: Failed to create route: boom
+                        org.apache.camel.FailedToCreateRouteException: Failed to create route: boom
+                        \tat org.apache.camel.reifier.RouteReifier.createRoute(RouteReifier.java:95)
+                        2026-10-20 11:19:03.072 ERROR 24512 --- [           main] io.quarkus.runtime.Application           : Failed to start application: java.lang.RuntimeException: Failed to start quarkus
+                        java.lang.RuntimeException: Failed to start quarkus
+                        \tat io.quarkus.runner.ApplicationImpl.doStart(Unknown Source)
+                        """);
+
+        Run.keepRunLog("orders", 0, 1, false);
+
+        assertThat(previous("orders").failure()).isEqualTo(
+                "Failed to start application: org.apache.camel.FailedToCreateRouteException: Failed to create route: boom");
+    }
+
+    @Test
+    void theFailureOfAnAppIsTheErrorItsLogEndsWith() throws Exception {
+        // Camel Main logs that it failed to start
+        log("orders",
+                """
+                        2026-10-20 09:55:49.909  INFO 16017 --- [           main] he.camel.cli.connector.LocalCliConnector : Camel CLI connector enabled
+                        2026-10-20 09:55:49.950 ERROR 16017 --- [           main] org.apache.camel.main.MainSupport        : Error starting Camel: org.apache.camel.FailedToCreateRouteException: Failed to create route: boom
+                        org.apache.camel.FailedToCreateRouteException: Failed to create route: boom
+                        \tat org.apache.camel.reifier.RouteReifier.createRoute(RouteReifier.java:95)
+                        """);
+
+        Run.keepRunLog("orders", 16017, 1, true);
+
+        PreviousRun.Info info = previous("orders");
+        assertThat(info.exitCode()).isEqualTo(1);
+        assertThat(info.failure())
+                .isEqualTo("Error starting Camel: org.apache.camel.FailedToCreateRouteException: Failed to create route: boom");
+        assertThat(info.describe()).endsWith("with exit code 1: Error starting Camel:"
+                                             + " org.apache.camel.FailedToCreateRouteException: Failed to create route: boom");
+    }
+
+    @Test
+    void anErrorLongBeforeTheEndIsNotWhyTheRunFailed() throws Exception {
+        StringBuilder sb = new StringBuilder(
+                "2026-10-20 09:00:00.000 ERROR 1 --- [main] route1 : Failed delivery of an exchange\n");
+        for (int i = 0; i < 30; i++) {
+            sb.append("2026-10-20 09:00:01.000  INFO 1 --- [main] route1 : line ").append(i).append('\n');
+        }
+        log("orders", sb.toString());
+
+        Run.keepRunLog("orders", 0, 1, false);
+
+        assertThat(previous("orders").failure()).isEqualTo("Maven ended with exit code 1");
     }
 
     @Test
