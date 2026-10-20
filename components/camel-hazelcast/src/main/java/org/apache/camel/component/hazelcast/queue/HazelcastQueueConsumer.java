@@ -33,6 +33,9 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
 
     // the minimum delay before polling again after a poll error, so a pollingTimeout of 0 does not spin
     private static final long MIN_POLL_ERROR_DELAY = 1000L;
+    // the longest a single IQueue.poll waits: the consumer stops by letting its poll end, not by interrupting it, so it
+    // waits for pollingTimeout in polls of at most this time and sees a stop within it
+    private static final long MAX_POLL_WAIT = 1000L;
 
     private final Processor processor;
     private ExecutorService executor;
@@ -71,19 +74,23 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
             listener = null;
         }
 
-        super.doStop();
-
         if (stopLatch != null) {
             stopLatch.countDown();
         }
         if (executor != null) {
+            // do not interrupt the polling thread: a poll removes the item from the queue, so an interrupted exchange
+            // loses its item, and an interrupted poll keeps waiting on the member and takes the next item offered
+            // without anybody routing it. The thread ends after its current poll (at most MAX_POLL_WAIT) and its
+            // current exchange, which is why the processor is only stopped afterwards
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
             } else {
-                executor.shutdownNow();
+                executor.shutdown();
             }
         }
         executor = null;
+
+        super.doStop();
     }
 
     class QueueConsumerTask implements Runnable {
@@ -101,9 +108,9 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
             while (isRunAllowed()) {
                 final Object body;
                 try {
-                    body = queue.poll(config.getPollingTimeout(), TimeUnit.MILLISECONDS);
+                    body = pollItem();
                 } catch (InterruptedException e) {
-                    // only doStop interrupts this thread
+                    // only a forced shutdown interrupts this thread
                     Thread.currentThread().interrupt();
                     return;
                 } catch (Exception e) {
@@ -127,6 +134,25 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                     } finally {
                         releaseExchange(exchange, false);
                     }
+                }
+            }
+        }
+
+        /**
+         * Waits up to pollingTimeout for an item, in polls of at most MAX_POLL_WAIT, and ends early when the consumer
+         * stops.
+         *
+         * @return the item, or null if none was offered in that time or the consumer stops
+         */
+        private Object pollItem() throws InterruptedException {
+            final long timeout = config.getPollingTimeout();
+            final long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeout);
+            long remaining = timeout;
+            while (true) {
+                Object body = queue.poll(Math.min(remaining, MAX_POLL_WAIT), TimeUnit.MILLISECONDS);
+                remaining = TimeUnit.NANOSECONDS.toMillis(deadline - System.nanoTime());
+                if (body != null || remaining <= 0 || !isRunAllowed()) {
+                    return body;
                 }
             }
         }
