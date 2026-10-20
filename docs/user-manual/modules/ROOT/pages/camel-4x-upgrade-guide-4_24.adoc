@@ -1237,6 +1237,15 @@ nothing was stored and the exchange completed without an error. The requests are
 the answer like the other state operations: the states are stored, and a request that Dapr rejects (or a sidecar that
 cannot be reached) fails the exchange.
 
+=== camel-pubnub - the producer uses its configured channel
+
+The pubnub producer no longer reads the `CamelPubNubChannel` header. This header is set by the pubnub consumer to the
+channel a message was received on, and the producer used it instead of the channel configured on its endpoint, so a
+route from one pubnub endpoint to another sent each message back to the channel it came from. The producer now uses the
+channel of its endpoint, for every operation. To choose a different channel for a message, set the new
+`CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
+the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
+
 === camel-docker - the events consumer subscribes again when its event stream ends
 
 The `docker:events` consumer subscribes again when its event stream fails or ends (for example when the Docker daemon

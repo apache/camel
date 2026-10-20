@@ -257,7 +257,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
     }
 
     private String getChannel(Exchange exchange) {
-        String channel = exchange.getIn().getHeader(PubNubConstants.CHANNEL, String.class);
+        String channel = exchange.getIn().getHeader(PubNubConstants.OVERRIDE_CHANNEL, String.class);
         return channel != null ? channel : pubnubConfiguration.getChannel();
     }
 
