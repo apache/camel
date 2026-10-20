@@ -154,9 +154,11 @@ public class BodyFactsTest extends ContextTestSupport {
         assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(Boolean.TRUE));
         // parsed data: fields to read, and a marshal to write it
         assertEquals(Kind.DATA, BodyFacts.kindOf(new LinkedHashMap<>(Map.of("id", 1))));
-        assertEquals(Kind.DATA, BodyFacts.kindOf(new ArrayList<>(List.of(1, 2))));
+        // a collection of objects: elements, and something a split walks
+        assertEquals(Kind.COLLECTION, BodyFacts.kindOf(new ArrayList<>(List.of(1, 2))));
+        assertEquals(Kind.COLLECTION, BodyFacts.kindOf(new String[] { "a" }));
         assertEquals(Kind.DATA, BodyFacts.kindOf(new Object()));
-        assertEquals(Kind.ITERATOR, BodyFacts.kindOf(List.of(1, 2).iterator()));
+        assertEquals(Kind.COLLECTION, BodyFacts.kindOf(List.of(1, 2).iterator()));
     }
 
     @Test

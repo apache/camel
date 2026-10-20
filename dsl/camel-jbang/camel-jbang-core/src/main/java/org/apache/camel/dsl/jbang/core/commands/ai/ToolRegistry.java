@@ -271,7 +271,7 @@ public final class ToolRegistry {
         register(tool("get_route_structure",
                 "Show the route structure as a tree of processors. With the message history on (camel run --dev), a"
                                              + " processor has bodyTypes: the body types it has been reached with, across"
-                                             + " the messages, and bodyKinds: null, payload, data or iterator. More than one"
+                                             + " the messages, and bodyKinds: null, payload, data or collection. More than one"
                                              + " kind needs attention: a step that writes fails for data, one that reads"
                                              + " fields fails for a payload.")
                 .param("routeId", "string", "Route ID or pattern such as orders* to inspect (use * for all routes)",

@@ -5830,7 +5830,7 @@
 													},
 													"mixedBodyKinds": {
 														"type": "integer",
-														"description": "The number of steps that have been reached with bodies of more than one kind (null, payload, data or iterator): these need attention, as a step that writes or sends fails for the data, and a step that reads fields fails for the payload. The route-structure console says which steps (only present when there are any)"
+														"description": "The number of steps that have been reached with bodies of more than one kind (null, payload, data or collection): these need attention, as a step that writes or sends fails for the data, and a step that reads fields fails for the payload. The route-structure console says which steps (only present when there are any)"
 													},
 													"lastError": {
 														"type": "object",
@@ -6897,7 +6897,7 @@
 																	"items": {
 																		"type": "string"
 																	},
-																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map, a List or an object) or iterator. More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)"
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)"
 																},
 																"statistics": {
 																	"type": "object",

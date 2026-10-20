@@ -837,7 +837,7 @@ process is running).
 | Show the route structure as a tree of processors, for the routes `routeId` names (a route id or a pattern, all
   routes when omitted). `brief=true` leaves out the options and expressions. With the message history on, each step has
   the body types it has been reached with (`bodyTypes`) and their kinds (`bodyKinds`: `null`, `payload`, `data` or
-  `iterator`); `varied=true` keeps only the steps reached with more than one body type.
+  `collection`); `varied=true` keeps only the steps reached with more than one body type.
 
 | `camel_runtime_processor_detail`
 | Show the configured options of every processor in a route: each processor's type, id, and configured options
