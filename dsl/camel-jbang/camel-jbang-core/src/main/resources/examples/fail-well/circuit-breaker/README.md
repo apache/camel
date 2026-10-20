@@ -7,14 +7,18 @@ fallback without calling the supplier, and tries again after five seconds until 
 ## What you will see
 
 ```text
-INFO ... circuit-breaker.camel.yaml:30 : Stock check 1 (breaker CLOSED): CAMEL-MUG: 47 in stock at the supplier
-INFO ... circuit-breaker.camel.yaml:30 : Stock check 2 (breaker CLOSED): CAMEL-MUG: 35 in stock at the supplier
-INFO ... circuit-breaker.camel.yaml:30 : Stock check 3 (breaker CLOSED): CAMEL-MUG: 49 in stock at the supplier
-INFO ... circuit-breaker.camel.yaml:30 : Stock check 4 (breaker CLOSED): no answer, using last known stock
-INFO ... circuit-breaker.camel.yaml:30 : Stock check 5 (breaker OPEN): no answer, using last known stock
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 1 (breaker CLOSED): CAMEL-MUG: 24 in stock at the supplier
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 2 (breaker CLOSED): CAMEL-MUG: 44 in stock at the supplier
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 3 (breaker CLOSED): CAMEL-MUG: 31 in stock at the supplier
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 4 (breaker CLOSED): supplier failed, using last known stock
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 5 (breaker OPEN): supplier failed, using last known stock
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 6 (breaker OPEN): breaker open, supplier not called, using last known stock
 ...
-INFO ... circuit-breaker.camel.yaml:30 : Stock check 14 (breaker OPEN): no answer, using last known stock
-INFO ... circuit-breaker.camel.yaml:30 : Stock check 15 (breaker CLOSED): CAMEL-MUG: 58 in stock at the supplier
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 10 (breaker OPEN): supplier failed, using last known stock
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 11 (breaker OPEN): breaker open, supplier not called, using last known stock
+...
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 14 (breaker OPEN): breaker open, supplier not called, using last known stock
+INFO ... circuit-breaker.camel.yaml:43 : Stock check 15 (breaker CLOSED): CAMEL-MUG: 46 in stock at the supplier
 ```
 
 ## Install Camel CLI
@@ -35,13 +39,18 @@ Stop it with `ctrl` + `c`; the state logged on each line is the breaker's state 
 - `circuitBreaker` wraps the call to `direct:supplier` with [Resilience4j](https://resilience4j.readme.io/):
   the breaker counts the last four calls (`slidingWindowSize`) and opens when half of them failed
   (`failureRateThreshold`), which happens on check 5.
-- While open, the steps are not run at all; `onFallback` sets the body instead. After `waitDurationInOpenState`,
-  five seconds, the breaker goes half open and lets one call through (`permittedNumberOfCallsInHalfOpenState`):
-  check 10 still fails, so it opens for another five seconds; check 15 succeeds and closes it.
+- `onFallback` runs both when a call fails and when the open breaker does not make the call at all, and
+  `CamelCircuitBreakerResponseRejected` tells them apart: `false` on checks 4 and 5, where the supplier was
+  called and failed (the failure on check 5 opens the breaker, so the state after it is `OPEN`), and `true` on
+  check 6 onwards, where the steps are not run at all. That difference is what the breaker buys: no call to a
+  service that is known to be down.
+- After `waitDurationInOpenState`, five seconds, the breaker goes half open and lets one call through
+  (`permittedNumberOfCallsInHalfOpenState`): check 10 is that call and still fails, so it opens for another five
+  seconds; check 15 succeeds and closes it.
 - The supplier is a second route with `noErrorHandler`, so its exception reaches the breaker; it is down while
   the timer counter is 4 to 12.
-- `CamelCircuitBreakerState` is one of the exchange properties the breaker sets; `CamelCircuitBreakerResponseSuccessfulExecution`
-  and `CamelCircuitBreakerResponseFromFallback` are the others.
+- `CamelCircuitBreakerState` and `CamelCircuitBreakerResponseRejected` are exchange properties the breaker sets;
+  `CamelCircuitBreakerResponseSuccessfulExecution` and `CamelCircuitBreakerResponseFromFallback` are others.
 
 ## Build it step by step
 
@@ -51,9 +60,13 @@ Stop it with `ctrl` + `c`; the state logged on each line is the breaker's state 
 3. Wrap the call in `circuitBreaker` with `onFallback`: no more stack traces, but the supplier is still called
    nine times because the default window is 100 calls.
 4. Add the `resilience4jConfiguration` shown here and log `CamelCircuitBreakerState` to watch it open and close.
+5. Choose the fallback body on `CamelCircuitBreakerResponseRejected`, so the log shows which checks the breaker
+   saved from calling the supplier.
 
 ## Try changing
 
+- Run `camel get circuit-breaker` in another terminal while it runs: the state and the success, failure,
+  rejected, fallback and timeout counters of the breaker.
 - Set `waitDurationInOpenState` to 2000 and see the breaker try the supplier sooner.
 - Add `timeoutEnabled: true` and `timeoutDuration: 500` and a `delay` of 1000 in the supplier: a slow supplier
   counts as a failure too.
