@@ -476,7 +476,9 @@ List<String> types = registry.getBodyTypes("orders", "to1");
 List<BodyTypeRegistry.Kind> kinds = registry.getBodyKinds("orders", "to1");
 ----
 
-The Camel CLI shows them as well, see xref:manual::camel-jbang-diagnostics.adoc[Camel CLI diagnostics].
+The Camel CLI shows them as well, see xref:manual::camel-jbang-diagnostics.adoc[Camel CLI diagnostics]. And its YAML
+validator uses them where it cannot tell the body from the file itself, such as after an HTTP consumer, see
+xref:manual::camel-jbang-validation.adoc[Camel CLI validation].
 
 == Configuring MessageHistory format
 
