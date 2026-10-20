@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.model;
 
+import java.util.List;
+
 public final class RouteCoverageNode {
 
     private String className;
@@ -25,6 +27,8 @@ public final class RouteCoverageNode {
     private int lineNumber;
     private int count;
     private int level;
+    private List<String> bodyTypes = List.of();
+    private List<String> bodyKinds = List.of();
 
     public String getClassName() {
         return className;
@@ -72,6 +76,28 @@ public final class RouteCoverageNode {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    /**
+     * The body types the node has been reached with, from the route coverage dump.
+     */
+    public List<String> getBodyTypes() {
+        return bodyTypes;
+    }
+
+    public void setBodyTypes(List<String> bodyTypes) {
+        this.bodyTypes = bodyTypes != null ? bodyTypes : List.of();
+    }
+
+    /**
+     * The kinds of the bodies the node has been reached with: null, payload, data or iterator.
+     */
+    public List<String> getBodyKinds() {
+        return bodyKinds;
+    }
+
+    public void setBodyKinds(List<String> bodyKinds) {
+        this.bodyKinds = bodyKinds != null ? bodyKinds : List.of();
     }
 
     @Override
