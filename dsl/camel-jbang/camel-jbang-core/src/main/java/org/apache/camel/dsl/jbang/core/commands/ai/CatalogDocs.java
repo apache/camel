@@ -1669,8 +1669,14 @@ public final class CatalogDocs {
         if (model.isProducerOnly()) {
             return "producer only: use it as a to: (send to it); it cannot start a route";
         }
-        return "from: consumes (reads or receives, starts a route); to: produces (writes or sends); to consume one message"
-               + " in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
+        String answer = "from: consumes (reads or receives, starts a route); to: produces (writes or sends); to consume one"
+                        + " message in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
+        if ("file".equals(model.getScheme())) {
+            // a lookup table the route needs is read, not consumed: the poll EIP moves the file when it has no noop
+            answer += "; to read a data file the route needs, such as a lookup table, use the constant language with"
+                      + " resource:file: (such as setVariable with constant: resource:file:stock.json)";
+        }
+        return answer;
     }
 
     /** How many options of a component are listed in full when no filter is given (CAMEL-25541). */
