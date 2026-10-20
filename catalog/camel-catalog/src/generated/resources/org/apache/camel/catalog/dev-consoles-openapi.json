@@ -624,6 +624,104 @@
 				}
 			}
 		},
+		"\/q\/dev\/body-type": {
+			"get": {
+				"summary": "Body Type",
+				"description": "The body types each step of the routes has been reached with",
+				"operationId": "body-type",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by route id, route uri, and source location",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "varied",
+						"in": "query",
+						"description": "Whether to include only the steps that have been reached with more than one body type",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Body Type output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"source": {
+														"type": "string",
+														"description": "The source location (only present when known)"
+													},
+													"steps": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string",
+																	"description": "The processor ID"
+																},
+																"type": {
+																	"type": "string",
+																	"description": "The processor type"
+																},
+																"line": {
+																	"type": "integer",
+																	"description": "The source line number (only present when known)"
+																},
+																"code": {
+																	"type": "string",
+																	"description": "The code representation of this processor"
+																},
+																"bodyTypes": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The body types this processor has been reached with, across the messages, in the order first seen: more than one means the type varied"
+																},
+																"bodyKinds": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention"
+																}
+															}
+														},
+														"description": "The steps of the route that a message has reached, with their body types"
+													}
+												}
+											},
+											"description": "The routes with a step that a message has reached (the message history records the body types, such as in the dev profile)"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"\/q\/dev\/browse": {
 			"get": {
 				"summary": "Browse",

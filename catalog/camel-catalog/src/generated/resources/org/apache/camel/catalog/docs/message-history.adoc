@@ -482,6 +482,17 @@ List<BodyTypeRegistry.Kind> kinds = registry.getBodyKinds("orders", "to1");
 
 The Camel CLI shows them as well, see xref:manual::camel-jbang-diagnostics.adoc[Camel CLI diagnostics].
 
+=== Dumping the body types
+
+Run the messages of the expected workload, such as in a test, and then read what each step has been reached with:
+
+* The `body-type` dev console lists the steps that a message has reached, per route, with their types and kinds.
+  `varied=true` keeps only the steps reached with more than one type, and `filter` selects the routes.
+* Over JMX, each processor has the `BodyTypes` and `BodyKinds` attributes, and each route counts its steps reached with
+  more than one type (`VariedBodyTypes`) and with bodies of more than one kind (`MixedBodyKinds`).
+* The route coverage dump (`dumpRoutesCoverageAsXml`, which the Camel test kits write when route coverage is enabled)
+  has `bodyTypes` and `bodyKinds` attributes on each step a message has reached.
+
 == Configuring MessageHistory format
 
 The  Message History format in Camel is controlled by `Java String.format` patterns stored as global options on the CamelContext.
