@@ -71,13 +71,16 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
     @Override
     protected void doStop() throws Exception {
+        if (executor != null) {
+            // wait for the consumer threads to end their current poll (at most pollTimeout) and route what it returned:
+            // a poll takes the item from the queue, so an item polled after the processor is stopped is lost
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
+            executor = null;
+        }
+        // after the consumer threads, which use it for the delay after an error
         if (taskExecutor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
             taskExecutor = null;
-        }
-        if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
-            executor = null;
         }
         super.doStop();
     }
