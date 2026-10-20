@@ -27,6 +27,7 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
@@ -39,6 +40,20 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
+
+    @BeforeEach
+    void removeTheObjectsOfAnEarlierRun() {
+        // a surefire rerun uses the same bucket: start from an empty bucket, so only the objects of this run are counted
+        Exchange ex = template.request("direct:listObjects",
+                exchange -> exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects));
+        List<S3Object> objects = ex.getMessage().getBody(List.class);
+        for (S3Object object : objects) {
+            template.request("direct:listObjects", exchange -> {
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteObject);
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, object.key());
+            });
+        }
+    }
 
     @Test
     public void sendIn() throws Exception {

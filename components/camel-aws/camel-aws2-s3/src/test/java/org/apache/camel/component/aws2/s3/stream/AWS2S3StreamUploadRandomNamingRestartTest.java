@@ -49,9 +49,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
- * With timestamp grouping, a window whose upload is completed (by batchMessageNumber, batchSize or the streaming upload
- * timeout) and then gets more messages is uploaded again. The new object must not replace the first one: a bucket keeps
- * one object per key. Uses a mocked S3 client that keeps the completed objects by key, like a bucket.
+ * With namingStrategy=random every upload must get the UUID, the first one of a producer too: a producer that is
+ * started again (or a second producer with the same keyName) must not replace the objects written before. Uses a mocked
+ * S3 client that keeps the completed objects by key, like a bucket.
  */
 public class AWS2S3StreamUploadRandomNamingRestartTest {
 
