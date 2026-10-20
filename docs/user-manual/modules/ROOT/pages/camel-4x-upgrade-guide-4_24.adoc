@@ -373,6 +373,21 @@ Errors, warnings and tips are printed on stderr instead of stdout, so stdout onl
 as JSON. If a script reads the error text of a command from stdout, read stderr instead. The list of plugins that are
 not installed, after `camel --help`, is printed on stderr, and only in an interactive terminal.
 
+=== camel-pqc - parameterSpec accepts MAYO and SNOVA, and the FIPS advisory no longer flags two aliases
+
+`parameterSpec` can now select a named parameter set for `MAYO` and `SNOVA`. Both were rejected on the grounds that
+they have no name-addressable BouncyCastle parameter spec, which is not the case: `MayoParameterSpec.fromName` and
+`SnovaParameterSpec.fromName` both exist, and neither algorithm is stateful. The stateful hash-based signatures
+(`XMSS`, `XMSSMT`, `LMS`, `HSS`) are still rejected, as they genuinely have no such spec.
+
+`DILITHIUM` and `SPHINCSPLUS` no longer produce the "not part of NIST FIPS 204/205" warning on hybrid endpoints.
+Both are aliases that resolve to `ML-DSA` and `SLH-DSA`, so the warning was recommending the algorithm already in
+use. `FALCON`, `MAYO`, `SNOVA`, `XMSS` and `XMSSMT` still warn.
+
+The five default key material classes that generated their key pair with the provider's default RNG (`Falcon`,
+`MAYO`, `SNOVA`, `LMS`, `HSS`) now use the shared `SecureRandomHelper` like the other sixteen. No key format or
+parameter set changes; only the randomness source is now uniform.
+
 === camel-cli-connector - every action with a request id gets an answer
 
 An action written to `~/.camel/<pid>-action-<requestId>.json` now always gets an answer in
