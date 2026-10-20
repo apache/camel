@@ -67,7 +67,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
     /**
      * The body types and kinds a line of the route structure has been reached with.
      */
-    private record LineBodyTypes(List<String> types, List<String> kinds) {
+    record LineBodyTypes(List<String> types, List<String> kinds) {
     }
 
     public record RouteEntry(
@@ -210,7 +210,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 .forEach(task::apply);
     }
 
-    private static boolean accept(NamedRoute route, String filter) {
+    static boolean accept(NamedRoute route, String filter) {
         if (filter == null || filter.isBlank()) {
             return true;
         }
@@ -280,7 +280,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
      * for the route and its from (the first two lines), and for a processor no exchange has reached. The first
      * processor has the body as the from gave it.
      */
-    private static List<LineBodyTypes> bodyTypesPerLine(
+    static List<LineBodyTypes> bodyTypesPerLine(
             CamelContext camelContext, String routeId, List<ModelDumpLine> lines) {
         BodyTypeRegistry registry = camelContext.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
         List<LineBodyTypes> answer = new ArrayList<>(lines.size());
@@ -313,7 +313,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
      * The body types by their simple class names, such as {@code String | LinkedHashMap}, followed by the kinds when
      * there is more than one: {@code String | LinkedHashMap (payload and data)}.
      */
-    private static String bodyTypesText(LineBodyTypes types) {
+    static String bodyTypesText(LineBodyTypes types) {
         StringJoiner sj = new StringJoiner(" | ");
         for (String type : types.types()) {
             sj.add(StringHelper.afterLast(type, ".", type));

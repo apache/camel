@@ -46,6 +46,8 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
  * <ul>
  * <li>exchangesTotal - Total number of exchanges</li>
  * <li>totalProcessingTime - Total processing time in millis</li>
+ * <li>bodyTypes - The body types the step has been reached with (when the message history recorded any)</li>
+ * <li>bodyKinds - The kinds of those bodies: null, payload, data or iterator</li>
  * </ul>
  * Is included as attributes on the route nodes.
  */
@@ -152,6 +154,12 @@ public final class RouteCoverageXmlParser {
                             el.setAttribute("totalProcessingTime", Long.toString(totalTime));
                             int index = processor.getIndex();
                             el.setAttribute("index", Integer.toString(index));
+                            // the body types the step was reached with, and their kinds (CAMEL-25750)
+                            String[] types = processor.getBodyTypes();
+                            if (types != null && types.length > 0) {
+                                el.setAttribute("bodyTypes", String.join(",", types));
+                                el.setAttribute("bodyKinds", String.join(",", processor.getBodyKinds()));
+                            }
                         }
                     }
                 } catch (Exception e) {

@@ -32,7 +32,6 @@ import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
-import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.ExceptionHelper;
@@ -316,12 +315,15 @@ public class RouteDevConsole extends AbstractDevConsole {
             List<ProcessorDevConsole.ProcessorEntry> procList = processors ? includeProcessorsJson(mrb) : null;
 
             Route r = getCamelContext().getRoute(mrb.getRouteId());
-            BodyTypeCounts bodyTypes = bodyTypeCounts(mrb.getRouteId());
+            // the steps reached with more than one body type, and with more than one kind (CAMEL-25750)
+            int varied = mrb.getVariedBodyTypes();
+            int mixed = mrb.getMixedBodyKinds();
             list.add(new RouteEntry(
                     mrb.getRouteId(), mrb.getRouteGroup(), mrb.getNodePrefixId(), mrb.getDescription(), mrb.getNote(),
                     mrb.isCreatedByKamelet(), mrb.isCreatedByRouteTemplate(), mrb.getRouteTemplateId(), mrb.getEndpointUri(),
                     mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getTemplatedRouteSource(), mrb.getState(),
-                    r != null && r.supportsSuspension(), mrb.getUptime(), bodyTypes.varied(), bodyTypes.mixed(), lastError,
+                    r != null && r.supportsSuspension(), mrb.getUptime(), varied > 0 ? varied : null, mixed > 0 ? mixed : null,
+                    lastError,
                     stats, procList));
             return null;
         };
@@ -511,30 +513,6 @@ public class RouteDevConsole extends AbstractDevConsole {
                 LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
             }
         }
-    }
-
-    /**
-     * How many steps of a route have been reached with more than one body type, and with bodies of more than one kind
-     * (each null when there are none).
-     */
-    private record BodyTypeCounts(Integer varied, Integer mixed) {
-    }
-
-    private BodyTypeCounts bodyTypeCounts(String routeId) {
-        BodyTypeRegistry registry = getCamelContext().getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
-        int varied = 0;
-        int mixed = 0;
-        if (registry != null) {
-            for (Map.Entry<String, List<String>> node : registry.getBodyTypes(routeId).entrySet()) {
-                if (node.getValue().size() > 1) {
-                    varied++;
-                    if (registry.getBodyKinds(routeId, node.getKey()).size() > 1) {
-                        mixed++;
-                    }
-                }
-            }
-        }
-        return new BodyTypeCounts(varied > 0 ? varied : null, mixed > 0 ? mixed : null);
     }
 
     public static JsonObject gatherRouteStats(CamelContext camelContext, ManagedRouteMBean mrb) {

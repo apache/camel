@@ -69,6 +69,12 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Line number of this node in the source file (when loaded from a line number aware parser)")
     Integer getSourceLineNumber();
 
+    @ManagedAttribute(description = "The body types this processor has been reached with, across the messages, in the order first seen (recorded while the message history is on)")
+    String[] getBodyTypes();
+
+    @ManagedAttribute(description = "The kinds of the bodies this processor has been reached with: null, payload, data or iterator. More than one needs attention: a step that writes fails for data, one that reads fields fails for a payload")
+    String[] getBodyKinds();
+
     @ManagedAttribute(description = "Whether this processor supports extended JMX information")
     Boolean getSupportExtendedInformation();
 
