@@ -516,6 +516,60 @@ class SourceValidatorEndpointTest {
         assertThat(msgs).isEmpty();
     }
 
+    /** The routes of a REST DSL use direct, which has no header metadata: a wrong status header is still reported. */
+    @Test
+    void aWrongHttpStatusHeaderIsReportedInADirectRoute() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - rest:
+                    get:
+                      - path: /orders/{id}
+                        to: direct:get-order
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setHeader:
+                            name: CamelHttpStatusCode
+                            constant: 404
+                        - setHeader:
+                            name: Exchange.HTTP_STATUS
+                            constant: 404
+                        - log: "${header.CamelHttpStatusCode}"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 10:").contains("Camel has no header CamelHttpStatusCode")
+                .contains("the header CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)");
+        assertThat(msgs.get(1)).startsWith("Line 13:").contains("Exchange has no constant HTTP_STATUS")
+                .contains("the route fails to start").contains("the header CamelHttpResponseCode");
+    }
+
+    @Test
+    void aConstantOfExchangeIsTheNameCamelLooksUp() {
+        // Camel looks the constant up when it creates the route (DefaultCamelContextExtension.resolvePropertyPlaceholders)
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setHeader:
+                          name: Exchange.HTTP_RESPONSE_CODE
+                          constant: 404
+                      - setHeader:
+                          name: CamelHttpResponseCode
+                          constant: 404
+                      - setProperty:
+                          name: Exchange.HTTP_STATUS
+                          constant: 404
+                      - setHeader:
+                          name: Exchange.FILE_NAM
+                          constant: out.json
+                """, catalog);
+        // the name of a setProperty is looked up as well
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 11:").contains("Exchange has no constant HTTP_STATUS");
+        assertThat(msgs.get(1)).startsWith("Line 14:").contains("Exchange has no constant FILE_NAM")
+                .contains("did you mean Exchange.FILE_NAME");
+    }
+
     @Test
     void withIncludeMetadataAHeaderLookupFindsTheExchangeProperty() {
         // Simple's ${header.x} falls back to the exchange properties, so it reads the counter
