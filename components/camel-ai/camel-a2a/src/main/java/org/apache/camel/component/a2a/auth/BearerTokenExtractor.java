@@ -88,7 +88,7 @@ final class BearerTokenExtractor {
         if (!profile.identifiesCaller()) {
             // the caller would own its tasks together with every other caller of such a token
             throw new SecurityException(
-                    schemeName + " token does not identify the caller: it has no sub, client_id or azp claim");
+                    schemeName + " token does not identify the caller: it has no sub, username, client_id or azp claim");
         }
         exchange.setProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT, result);
 

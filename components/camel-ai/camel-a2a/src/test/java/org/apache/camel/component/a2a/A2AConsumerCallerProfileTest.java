@@ -178,6 +178,20 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
         assertThat(listTasks(consumer, clientProfile("svc-b"))).containsExactly(taskOfB);
     }
 
+    @Test
+    void tasksOfTheUsersOfAClientAreSeparate() throws Exception {
+        A2AConsumer consumer = createConsumer(exchange -> {
+            exchange.getMessage().setHeader(A2AConstants.TASK_STATE, TaskState.WORKING.getProtoName());
+            exchange.getMessage().setBody("ok");
+        });
+
+        String taskOfAlice = createTask(consumer, userProfile("alice"));
+        String taskOfBob = createTask(consumer, userProfile("bob"));
+
+        assertThat(listTasks(consumer, userProfile("alice"))).containsExactly(taskOfAlice);
+        assertThat(listTasks(consumer, userProfile("bob"))).containsExactly(taskOfBob);
+    }
+
     private A2AConsumer createConsumer(Processor processor) throws Exception {
         return createConsumer(new A2AConfiguration(), processor);
     }
@@ -194,6 +208,12 @@ class A2AConsumerCallerProfileTest extends CamelTestSupport {
         endpoint.doStart();
 
         return new A2AConsumer(endpoint, processor);
+    }
+
+    // the profile of an introspected token without sub: the user and the client it was issued to
+    private static Map<String, Object> userProfile(String username) {
+        return Map.of("scheme", "oauth2", "issuer", "https://issuer.example", "claims",
+                Map.of("username", username, "client_id", "svc"));
     }
 
     private static Map<String, Object> clientProfile(String clientId) {

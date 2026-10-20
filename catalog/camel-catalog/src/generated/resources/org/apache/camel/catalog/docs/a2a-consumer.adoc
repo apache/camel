@@ -341,7 +341,7 @@ The consumer derives the caller profile from the security schemes it validated, 
 | Scheme | Caller profile
 
 | OAuth 2.0, OpenID Connect, and HTTP bearer with `oauthProfile`
-| The validated token: `scheme`, `subject`, `issuer`, `audience`, `scopes` and `claims`. The `OAuthTokenValidationResult` of the token is also set as the `CamelOAuthTokenValidationResult` exchange property. A token must identify the caller with its `sub` claim or, for a token without `sub` such as a client credentials token, with its `client_id` or `azp` claim. A token that has none of these claims is rejected.
+| The validated token: `scheme`, `subject`, `issuer`, `audience`, `scopes` and `claims`. The `OAuthTokenValidationResult` of the token is also set as the `CamelOAuthTokenValidationResult` exchange property. A token must identify the caller with its `sub` claim or, for a token without `sub`, with the `username` that a token introspection response gives, or with its `client_id` or `azp` claim, such as a client credentials token. A token that has none of these claims is rejected.
 
 | HTTP bearer with the static `bearerToken` option
 | Only the scheme (`bearer`): every caller that sends the token is the same caller.
@@ -352,7 +352,7 @@ The consumer derives the caller profile from the security schemes it validated, 
 
 When a security requirement combines several schemes, such as an API key and an OAuth token, the caller profile is the one of the token, whatever the order of the schemes in the requirement.
 
-Tasks and push notification configurations belong to the caller that created the task: the issuer and subject of a token, or the issuer and client of a token without subject. Callers that authenticate with the same API key or static bearer token share their tasks.
+Tasks and push notification configurations belong to the caller that created the task: the issuer and subject of a token, or for a token without subject the issuer and its user name, else its client. Callers that authenticate with the same API key or static bearer token share their tasks.
 
 === SSE Streaming with `${a2a:emit()}`
 

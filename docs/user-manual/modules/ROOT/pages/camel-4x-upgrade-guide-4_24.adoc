@@ -790,9 +790,9 @@ every time.
 caller profile (`CamelA2AUserProfile`) is now the one of the token, whatever the order of the schemes. Before, it was
 the profile of the first scheme, so a requirement that listed the API key first only gave `{"scheme": "apiKey"}` to
 the route, and the tasks belonged to the API key.
-* A token without a `sub` claim, such as a client credentials token, is now identified by its `client_id` or `azp`
-claim, so the tasks of different clients are kept apart. A valid token that has none of these claims is now rejected
-with HTTP 401.
+* A token without a `sub` claim is now identified by the `username` that a token introspection response gives, else by
+its `client_id` or `azp` claim (such as a client credentials token), so the tasks of different users and clients are
+kept apart. A valid token that has none of these claims is now rejected with HTTP 401.
 * The `CamelOAuthTokenValidationResult` exchange property is now set on the exchange that the route processes, as
 documented. Before, it was only set on the incoming HTTP exchange.
 

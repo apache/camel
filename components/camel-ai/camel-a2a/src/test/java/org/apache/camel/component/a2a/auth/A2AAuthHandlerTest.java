@@ -450,6 +450,22 @@ class A2AAuthHandlerTest extends CamelTestSupport {
     }
 
     @Test
+    void validateConsumerAuthKeysAnIntrospectedTokenWithoutSubjectByItsUser() {
+        bindOAuthValidationFactory();
+
+        A2AConfiguration config = new A2AConfiguration();
+        config.setValidateAuth(true);
+        config.setOauthProfile("myprofile");
+        A2AAuthHandler handler = new A2AAuthHandler(config, defaultHandlers());
+
+        // an RFC 7662 introspection response without sub names the user and the client
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader("Authorization", "Bearer username-token");
+        assertThat(handler.validateConsumerAuth(exchange, cardWithScheme("oauth", "oauth2")).ownerKey())
+                .isEqualTo("user|https://issuer.example|alice");
+    }
+
+    @Test
     void validateConsumerAuthRejectsATokenThatDoesNotIdentifyTheCaller() {
         bindOAuthValidationFactory();
 
@@ -565,6 +581,11 @@ class A2AAuthHandlerTest extends CamelTestSupport {
                 return OAuthTokenValidationResult.valid(
                         null, "https://issuer.example", List.of("camel-a2a"), List.of(), Map.of("client_id", "svc-a"),
                         1234567890L);
+            }
+            if ("username-token".equals(token)) {
+                return OAuthTokenValidationResult.valid(
+                        null, "https://issuer.example", List.of("camel-a2a"), List.of(),
+                        Map.of("username", "alice", "client_id", "svc-a"), 1234567890L);
             }
             if ("azp-token".equals(token)) {
                 return OAuthTokenValidationResult.valid(

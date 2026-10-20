@@ -29,6 +29,8 @@ import org.apache.camel.spi.OAuthTokenValidationResult;
  */
 public final class A2AUserProfile {
 
+    // the claim that names the resource owner in a token introspection response (RFC 7662)
+    private static final String USERNAME_CLAIM = "username";
     // the claims that name the client a token was issued to (RFC 9068 and OpenID Connect)
     private static final List<String> CLIENT_CLAIMS = List.of("client_id", "azp");
 
@@ -124,12 +126,17 @@ public final class A2AUserProfile {
 
     /**
      * The key of the caller that owns the tasks it creates. A validated token is keyed by its subject or, for a token
-     * without a subject, by the client it was issued to (the {@code client_id} or {@code azp} claim). A profile without
-     * a token, such as one of an API key, is keyed by its scheme, which every caller with that credential shares.
+     * without a subject, by the user that a token introspection response names (the {@code username} claim), else by
+     * the client the token was issued to (the {@code client_id} or {@code azp} claim). A profile without a token, such
+     * as one of an API key, is keyed by its scheme, which every caller with that credential shares.
      */
     public String ownerKey() {
         if (hasSubject()) {
             return issuer + "|" + subject;
+        }
+        String username = claim(USERNAME_CLAIM);
+        if (username != null) {
+            return "user|" + issuer + "|" + username;
         }
         String client = clientId();
         if (client != null) {
@@ -143,7 +150,7 @@ public final class A2AUserProfile {
      * Whether this profile identifies the caller, rather than only the scheme of a shared credential.
      */
     boolean identifiesCaller() {
-        return hasSubject() || clientId() != null;
+        return hasSubject() || claim(USERNAME_CLAIM) != null || clientId() != null;
     }
 
     private boolean hasSubject() {
@@ -151,12 +158,17 @@ public final class A2AUserProfile {
     }
 
     private String clientId() {
-        for (String claim : CLIENT_CLAIMS) {
-            if (claims.get(claim) instanceof String value && !value.isBlank()) {
+        for (String name : CLIENT_CLAIMS) {
+            String value = claim(name);
+            if (value != null) {
                 return value;
             }
         }
         return null;
+    }
+
+    private String claim(String name) {
+        return claims.get(name) instanceof String value && !value.isBlank() ? value : null;
     }
 
     private static void putIfPresent(Map<String, Object> map, String key, String value) {
