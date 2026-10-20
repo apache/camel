@@ -65,7 +65,9 @@ public class NatsConsumer extends DefaultConsumer {
     private Connection connection;
     private Dispatcher dispatcher;
     private boolean active;
+    // set by the consuming task, and again by the push consumer keeper, and read when the consumer stops
     private volatile JetStreamSubscription jetStreamSubscription;
+    private NatsJetStreamPushConsumerKeeper pushConsumerKeeper;
 
     public NatsConsumer(NatsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -102,6 +104,11 @@ public class NatsConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         final NatsConfiguration configuration = this.getEndpoint().getConfiguration();
+
+        if (this.pushConsumerKeeper != null) {
+            this.pushConsumerKeeper.stop();
+            this.pushConsumerKeeper = null;
+        }
 
         if (configuration.isFlushConnection() && ObjectHelper.isNotEmpty(this.connection)) {
             LOG.debug("Flushing Messages before stopping");
@@ -275,13 +282,24 @@ public class NatsConsumer extends DefaultConsumer {
                         configuration.getTopic(), queueName, configuration.getAckPolicy(), configuration.getAckWait(),
                         configuration.getNackWait());
 
+                // the keeper subscribes again when the server deleted the ephemeral consumer (after a disconnect of
+                // more than its inactive threshold, server restart); a durable consumer is not created again
+                NatsJetStreamPushConsumerKeeper keeper = new NatsJetStreamPushConsumerKeeper(
+                        NatsConsumer.this, this.connection, streamName, configuration.getTopic(), queueName,
+                        dispatcher, messageHandler, cc, NatsConsumer.this.executor,
+                        sub -> NatsConsumer.this.jetStreamSubscription = sub);
                 NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
                         NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
                         queueName,
                         dispatcher,
-                        messageHandler,
+                        keeper,
                         autoAck,
                         pushOptions);
+                NatsConsumer.this.pushConsumerKeeper = keeper;
+                keeper.start(NatsConsumer.this.jetStreamSubscription,
+                        streamInfo != null ? streamInfo.getCreateTime() : null,
+                        streamInfo != null && streamInfo.getStreamState() != null
+                                ? streamInfo.getStreamState().getLastSequence() : -1);
 
                 NatsConsumer.this.setActive(true);
             }

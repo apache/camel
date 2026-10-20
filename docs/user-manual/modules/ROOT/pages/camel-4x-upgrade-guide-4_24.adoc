@@ -2169,6 +2169,26 @@ wraps an `ExecutionException`, with the `RuntimeCamelException` (status and body
 order of the messages is the same. The steps after the producer now run on the calling thread, and no longer on a
 thread of the HTTP client.
 
+=== camel-nats - the JetStream push consumer subscribes again when its ephemeral consumer was deleted
+
+With `jetstreamEnabled=true` and `pullSubscription=false`, the `nats` consumer stayed subscribed to the deliver
+subject of a JetStream consumer that the server had deleted, and consumed nothing more until the route was restarted.
+After every reconnect it now asks the server for its consumer and subscribes again when its ephemeral consumer (no
+`durableName`, and no durable name in the `consumerConfiguration`) is gone, which the server deletes after about 5
+seconds without a subscriber, for example while the client is disconnected, or loses on a restart. The new consumer
+starts at the first message the route did not acknowledge, so the route can see again the messages after that one
+(with `ackPolicy=None`, after the last message delivered). A message that was not acknowledged and was already
+delivered `maxDeliver` times does not count, as the server does not deliver it again. When nothing was delivered yet,
+a consumer with the deliver policy `New` (or `Last`) starts after (or at) the last message of the stream at the
+subscribe. On a stream with `WorkQueue` retention, and on a stream that was created again since the route subscribed,
+the new consumer uses the consumer configuration as it is (from the first message of the new stream for `New` and
+`Last`). When the consumer cannot be checked or created again (for example JetStream is not ready yet after a server
+restart, or the stream is gone until it is created again), the consumer keeps trying while the route runs, a few times
+a second apart and then up to every 30 seconds, and logs a WARN after the first attempts. A durable
+consumer is not created again: when it is gone (deleted by an administrator, or after its `inactiveThreshold`), the
+consumer logs a WARN and keeps its subscription, and messages arrive again when the durable is created again with the
+same deliver subject.
+
 === camel-vertx-websocket - the client consumer makes one reconnect attempt at a time
 
 When the WebSocket of a consumer with `consumeAsClient=true` is closed, the consumer now makes one reconnect attempt
