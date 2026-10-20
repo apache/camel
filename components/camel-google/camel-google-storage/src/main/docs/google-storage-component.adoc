@@ -55,6 +55,29 @@ Provide authentication credentials to your application code by setting the envir
 export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
 ----
 
+=== Workload Identity Federation
+
+Instead of a service account key, the component can authenticate with
+https://cloud.google.com/iam/docs/workload-identity-federation[Workload Identity Federation], enabled with
+`useWorkloadIdentityFederation=true`:
+
+* With `workloadIdentityConfig`, the component loads a credential configuration file of type `external_account`, such
+as the one that `gcloud iam workload-identity-pools create-cred-config` generates, and exchanges the token of the external
+identity provider (AWS, Azure, an OIDC provider) for Google credentials.
+* Without it, the component uses the Application Default Credentials, which detect Workload Identity on GKE.
+
+Set `impersonatedServiceAccount` to act as a service account with the federated credentials. The federated identity
+needs the `Service Account Token Creator` role on that service account.
+
+._Java-only: constructing the endpoint URI programmatically_
+
+[source,java]
+----
+String endpoint = "google-storage://myCamelBucket?useWorkloadIdentityFederation=true"
+        + "&workloadIdentityConfig=file:/etc/gcp/wif-config.json"
+        + "&impersonatedServiceAccount=storage-writer@my-project.iam.gserviceaccount.com";
+----
+
 
 == URI Format
 
