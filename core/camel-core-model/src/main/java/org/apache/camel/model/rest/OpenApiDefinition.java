@@ -62,6 +62,10 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     @Metadata(description = "Used for inclusive filtering of mock data from directories. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma.",
               label = "advanced", defaultValue = "classpath:camel-mock/**")
     private String mockIncludePattern;
+    @XmlAttribute
+    @Metadata(description = "Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to the classpath and the file system only, and none allows only references inside the document. A reference the option does not allow fails the start.",
+              enums = "all,local,none", defaultValue = "all")
+    private String externalReferences;
 
     public void setRest(RestDefinition rest) {
         this.rest = rest;
@@ -123,6 +127,14 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
 
     public void setMockIncludePattern(String mockIncludePattern) {
         this.mockIncludePattern = mockIncludePattern;
+    }
+
+    public String getExternalReferences() {
+        return externalReferences;
+    }
+
+    public void setExternalReferences(String externalReferences) {
+        this.externalReferences = externalReferences;
     }
 
     public String getRouteId() {
@@ -194,6 +206,16 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
      */
     public OpenApiDefinition unmatchedRequestHandling(String unmatchedRequestHandling) {
         this.unmatchedRequestHandling = unmatchedRequestHandling;
+        return this;
+    }
+
+    /**
+     * Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows
+     * references to the classpath and the file system only, and none allows only references inside the document. A
+     * reference the option does not allow fails the start.
+     */
+    public OpenApiDefinition externalReferences(String externalReferences) {
+        this.externalReferences = externalReferences;
         return this;
     }
 

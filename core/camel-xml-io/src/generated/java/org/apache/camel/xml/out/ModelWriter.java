@@ -3289,6 +3289,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("missingOperation", def.getMissingOperation(), "fail");
         doWriteAttribute("unmatchedRequestHandling", def.getUnmatchedRequestHandling(), "platform");
         doWriteAttribute("mockIncludePattern", def.getMockIncludePattern(), "classpath:camel-mock/**");
+        doWriteAttribute("externalReferences", def.getExternalReferences(), "all");
         endElement(name);
     }
     protected void doWriteOpenIdConnectDefinition(String name, OpenIdConnectDefinition def) throws IOException {

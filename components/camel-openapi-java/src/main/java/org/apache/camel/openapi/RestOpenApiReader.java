@@ -67,12 +67,14 @@ import io.swagger.v3.oas.models.tags.Tag;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.model.rest.ApiKeyDefinition;
 import org.apache.camel.model.rest.BasicAuthDefinition;
 import org.apache.camel.model.rest.BearerTokenDefinition;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.MutualTLSDefinition;
 import org.apache.camel.model.rest.OAuth2Definition;
+import org.apache.camel.model.rest.OpenApiDefinition;
 import org.apache.camel.model.rest.OpenIdConnectDefinition;
 import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.ResponseHeaderDefinition;
@@ -166,6 +168,9 @@ public class RestOpenApiReader {
                     InputStream is = res.getInputStream();
                     String data = IOHelper.loadText(is);
                     IOHelper.close(is);
+                    // the parser resolves every external reference of the contract, so check them first
+                    OpenApiExternalReferences.check(externalReferences(camelContext, rest.getOpenApi()), data,
+                            rest.getOpenApi().getSpecification(), false);
                     OpenAPIV3Parser parser = new OpenAPIV3Parser();
                     SwaggerParseResult out = parser.readContents(data);
                     OpenAPI answer = out.getOpenAPI();
@@ -1345,6 +1350,23 @@ public class RestOpenApiReader {
             String name = names.get(ref);
             return name == null ? ref : name;
         }
+    }
+
+    /**
+     * The externalReferences option of the contract: from its openApi element, or else from the rest-openapi component,
+     * which consumes the contract and whose setting therefore applies to the api-doc as well.
+     */
+    private static String externalReferences(CamelContext camelContext, OpenApiDefinition openApi) {
+        String answer = openApi.getExternalReferences();
+        if (answer == null) {
+            Component component = camelContext.hasComponent("rest-openapi");
+            if (component != null) {
+                Object value = PluginHelper.getBeanIntrospection(camelContext)
+                        .getOrElseProperty(component, "externalReferences", null, true);
+                answer = value != null ? value.toString() : null;
+            }
+        }
+        return answer != null ? CamelContextHelper.parseText(camelContext, answer) : null;
     }
 
 }

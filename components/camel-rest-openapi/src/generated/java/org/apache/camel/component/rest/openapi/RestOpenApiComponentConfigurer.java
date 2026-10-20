@@ -42,6 +42,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "consumercomponentname":
         case "consumerComponentName": target.setConsumerComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
+        case "externalreferences":
+        case "externalReferences": target.setExternalReferences(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -88,6 +90,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "consumercomponentname":
         case "consumerComponentName": return java.lang.String.class;
         case "consumes": return java.lang.String.class;
+        case "externalreferences":
+        case "externalReferences": return java.lang.String.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -135,6 +139,8 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
         case "consumercomponentname":
         case "consumerComponentName": return target.getConsumerComponentName();
         case "consumes": return target.getConsumes();
+        case "externalreferences":
+        case "externalReferences": return target.getExternalReferences();
         case "host": return target.getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
