@@ -12,6 +12,7 @@ they are sent to. A typical integration has multiple routes working together.
 - **MSG/S** or **MSG/M** — Current message throughput (per second or per minute) for this route. Configure in Settings (F2)
 - **TOTAL** — Total exchanges processed by this route since startup
 - **FAIL** — Exchanges that ended with an unhandled error in this route
+- **BODY TYPES** — Shown when steps of a route have been reached with more than one body type, across the messages (with the message history on, such as `camel run --dev`): how many steps varied, and how many of them with bodies of more than one kind, which need attention (`⚠ 1 mixed · 2 varied`). The processors of the selected route then have a BODY TYPES column too, with the types each step has been reached with
 - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed
 - **MEAN** — Average exchange processing time in milliseconds. A rising MEAN may indicate a downstream service getting slower
 - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
@@ -147,6 +148,7 @@ in the diagram.
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
 - `m` — toggle metrics
+- `y` — toggle the body types each step has been reached with, beside the arrows
 - `n` — toggle description labels
 - `PgUp/PgDn` — scroll detail panel (when detail is on)
 

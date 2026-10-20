@@ -244,7 +244,7 @@ final class StatusParser {
     /**
      * Routes and their processors with statistics.
      */
-    private static void parseRoutes(IntegrationInfo info, JsonObject root) {
+    static void parseRoutes(IntegrationInfo info, JsonObject root) {
         JsonArray routes = (JsonArray) root.get("routes");
         if (routes != null) {
             for (Object r : routes) {
@@ -258,6 +258,9 @@ final class StatusParser {
                 ri.state = rj.getString("state");
                 ri.supportsSuspension = rj.getBooleanOrDefault("supportsSuspension", false);
                 ri.uptime = rj.getString("uptime");
+                // the steps reached with more than one body type, and with more than one kind (CAMEL-25750)
+                ri.variedBodyTypes = rj.getIntegerOrDefault("variedBodyTypes", 0);
+                ri.mixedBodyKinds = rj.getIntegerOrDefault("mixedBodyKinds", 0);
 
                 Map<String, ?> rs = rj.getMap("statistics");
                 ri.statistics = rs;
@@ -303,6 +306,9 @@ final class StatusParser {
                         pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);
                         pi.uri = pj.getString("uri");
+                        // the body types the step has been reached with, and their kinds (CAMEL-25750)
+                        pi.bodyTypes = stringList(pj.get("bodyTypes"));
+                        pi.bodyKinds = stringList(pj.get("bodyKinds"));
 
                         Map<String, ?> ps = pj.getMap("statistics");
                         pi.statistics = ps;
@@ -1577,6 +1583,18 @@ final class StatusParser {
 
     static long objToLong(Object o) {
         return TuiHelper.objToLong(o);
+    }
+
+    /** The strings of a JSON array, or an empty list. */
+    static List<String> stringList(Object o) {
+        if (!(o instanceof List<?> list) || list.isEmpty()) {
+            return List.of();
+        }
+        List<String> answer = new ArrayList<>(list.size());
+        for (Object item : list) {
+            answer.add(String.valueOf(item));
+        }
+        return answer;
     }
 
     private static void parseVaultSecrets(

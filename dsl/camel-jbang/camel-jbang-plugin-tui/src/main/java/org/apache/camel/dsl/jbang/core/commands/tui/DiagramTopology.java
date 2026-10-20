@@ -164,7 +164,8 @@ final class DiagramTopology {
 
     /**
      * The statistics of each line of the route's code: the first two lines (the route and its from) have the route's,
-     * the others those of their step.
+     * the others those of their step, with the body types the step has been reached with so far (CAMEL-25750): the
+     * structure has those it was asked with.
      */
     private static void addStepStatistics(JsonObject route, RouteInfo info) {
         Collection<?> code = route.getCollection("code");
@@ -172,9 +173,13 @@ final class DiagramTopology {
             return;
         }
         Map<String, Map<String, ?>> steps = new HashMap<>();
+        Map<String, ProcessorInfo> bodies = new HashMap<>();
         for (ProcessorInfo p : info.processors) {
             if (p.id != null && p.statistics != null) {
                 steps.put(p.id, p.statistics);
+            }
+            if (p.id != null && !p.bodyTypes.isEmpty()) {
+                bodies.put(p.id, p);
             }
         }
         JsonArray lines = new JsonArray();
@@ -189,6 +194,11 @@ final class DiagramTopology {
                 };
                 if (statistics != null) {
                     line.put("statistics", statistics instanceof JsonObject jo ? jo : new JsonObject(statistics));
+                }
+                ProcessorInfo body = index > 1 ? bodies.get(line.getString("id")) : null;
+                if (body != null) {
+                    line.put("bodyTypes", new JsonArray(body.bodyTypes));
+                    line.put("bodyKinds", new JsonArray(body.bodyKinds));
                 }
                 lines.add(line);
             } else {

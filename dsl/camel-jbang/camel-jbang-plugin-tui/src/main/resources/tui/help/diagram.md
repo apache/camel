@@ -81,8 +81,8 @@ state: `a` ai (off shows only what the sources and the runtime
 say: no AI labels, notes or capabilities; it does not change the AI
 overview setting; with no summary yet it has the AI write one, as
 `/overview` does), `b` view (business: labels and what capabilities achieve;
-technical: route ids and endpoints), `m` metrics, `e` external, `d`
-detail, `g` group, `u` utility (one setting for the architecture
+technical: route ids and endpoints), `m` metrics, `e` external, `y` types
+(the body types on the arrows of a route), `d` detail, `g` group, `u` utility (one setting for the architecture
 and the topology, so both show the same groups), `x` errors (the
 error handling in a frame below the routes; in the architecture
 a box of the routes reached only on error). The footer lists
@@ -149,6 +149,35 @@ its failures go, is in a frame below the route when `x` is on. The
 history view always shows the onException clauses, so a replay can
 step into them.
 
+## Body Types
+
+With the message history on (such as `camel run --dev`), Camel keeps the
+body types each step has been reached with, across the messages. In the
+route diagram, `y` shows them beside the arrow into each step, so the
+arrows show how the body changes along the route:
+
+```
+           ┌──────────────────────┐
+           │   unmarshal[json]    │
+           └──────────────────────┘
+                      │
+                      │ ⚠ byte[] | LinkedHashMap (payload and data)
+                    3 ▼ 12
+           ┌────────────────────⚠─┐
+           │   to[file:outbox]    │
+           └──────────────────────┘
+```
+
+A step reached with bodies of more than one kind (`null`, `payload`,
+`data` or `collection`) needs attention, as its body depends on the path
+a message takes: its box has a `⚠` in its top border, whether the types
+are shown or not. Where the arrows of a branch are side by side, the
+types are cut to the room there is: the first ones and how many more
+(`ByteArrayInputStreamCache +2`). The Info panel of the selected step
+lists them all with their kind, and in the topology the Info panel of a
+route says how many of its steps were reached with more than one type
+(`⚠ 1 mixed · 2 varied`).
+
 ## Route Structure Preview
 
 A compact tree structure preview appears in the bottom-right corner
@@ -199,6 +228,8 @@ you an at-a-glance view of where you are in the route.
 - `c` — show source code at selected node
 - `d` — toggle EIP detail panel (shows configured options)
 - `x` — show or hide the route's error handling, in a frame below it
+- `y` — show the body types each step has been reached with, beside the
+  arrows into the steps
 - `g` — go to node (fuzzy search popup)
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
