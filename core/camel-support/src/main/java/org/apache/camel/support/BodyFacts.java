@@ -380,7 +380,7 @@ public final class BodyFacts {
             case NULL -> "no body";
             case PAYLOAD -> "a payload";
             case DATA -> "data";
-            case ITERATOR -> "an iterator";
+            case COLLECTION -> "a collection";
         };
         if (kind == BodyTypeRegistry.Kind.NULL || types.isEmpty()) {
             return words;
