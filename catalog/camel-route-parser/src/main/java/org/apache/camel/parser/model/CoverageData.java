@@ -79,8 +79,8 @@ public class CoverageData {
     }
 
     /**
-     * The kinds of the bodies the node has been reached with: null, payload, data or iterator. More than one means the
-     * node needs attention.
+     * The kinds of the bodies the node has been reached with: null, payload, data or collection. More than one means
+     * the node needs attention.
      */
     public List<String> getBodyKinds() {
         return bodyKinds;

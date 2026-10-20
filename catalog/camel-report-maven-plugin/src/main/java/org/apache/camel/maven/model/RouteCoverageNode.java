@@ -90,7 +90,7 @@ public final class RouteCoverageNode {
     }
 
     /**
-     * The kinds of the bodies the node has been reached with: null, payload, data or iterator.
+     * The kinds of the bodies the node has been reached with: null, payload, data or collection.
      */
     public List<String> getBodyKinds() {
         return bodyKinds;
