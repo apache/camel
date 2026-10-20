@@ -467,7 +467,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             ignored.add("camel.management.path=" + path + " (the HTTP server uses " + mainServer.getPath() + ")");
         }
         if (configuration.getSslContextParameters() != null) {
-            ignored.add("sslContextParameters");
+            ignored.add("sslContextParameters (the HTTP server uses its own SSL configuration)");
         } else if (configuration.isUseGlobalSslContextParameters() && !mainServer.isUseGlobalSslContextParameters()) {
             ignored.add("camel.management.useGlobalSslContextParameters=true (the HTTP server does not use the global SSL"
                         + " configuration)");

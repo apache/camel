@@ -23,7 +23,12 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
+import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.Main;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -111,6 +116,25 @@ class ManagementHttpServerSharedPortTest {
 
         String message = startFailure();
         assertTrue(message.contains("camel.management.authenticationEnabled"), message);
+    }
+
+    @Test
+    void sharedPortRejectsManagementSslContextParameters() throws Exception {
+        // only set programmatically: camel-main has no option for it
+        try (CamelContext context = new DefaultCamelContext()) {
+            VertxPlatformHttpServerConfiguration configuration = new VertxPlatformHttpServerConfiguration();
+            configuration.setBindPort(port.getPort());
+            context.addService(new VertxPlatformHttpServer(configuration));
+
+            ManagementHttpServer server = new ManagementHttpServer();
+            server.setCamelContext(context);
+            server.setPort(port.getPort());
+            server.setSslContextParameters(new SSLContextParameters());
+
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, server::init);
+            assertTrue(e.getMessage().contains("sslContextParameters (the HTTP server uses its own SSL configuration)"),
+                    e.getMessage());
+        }
     }
 
     @Test
