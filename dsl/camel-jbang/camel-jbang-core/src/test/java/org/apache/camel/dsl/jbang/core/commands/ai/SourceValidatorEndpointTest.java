@@ -344,14 +344,31 @@ class SourceValidatorEndpointTest {
         org.assertj.core.api.Assertions.assertThat(msgs.get(0))
                 .contains("not applicable in producer only mode")
                 .contains("it writes the body")
-                .contains("poll EIP");
+                .contains("poll EIP")
+                // a data file the route needs is read, not consumed
+                .contains("to read a data file the route needs, such as a lookup table: setVariable with constant:"
+                          + " resource:file:<path>");
+
+        // another component does not get the file's hint
+        String kafka = """
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to:
+                          uri: "kafka:orders?groupId=orders"
+                """;
+        org.assertj.core.api.Assertions
+                .assertThat(SourceValidator.validateYamlEndpoints(kafka, new org.apache.camel.catalog.DefaultCamelCatalog()))
+                .singleElement().asString().contains("poll EIP").doesNotContain("resource:file");
     }
 
     @org.junit.jupiter.api.Test
     void componentDocSaysWhereItGoes() {
         org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("file"))).contains("from: consumes")
-                .contains("poll EIP");
+                .contains("poll EIP").contains("setVariable with constant: resource:file:stock.json");
+        org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("jms"))).contains("poll EIP")
+                .doesNotContain("resource:file");
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("timer")))
                 .startsWith("consumer only");
         org.assertj.core.api.Assertions.assertThat(CatalogDocs.usage(catalog.componentModel("log")))
@@ -514,6 +531,60 @@ class SourceValidatorEndpointTest {
                           simple: "${exchangeProperty.CamelTimerCounter} >= 2"
                 """, catalog);
         assertThat(msgs).isEmpty();
+    }
+
+    /** The routes of a REST DSL use direct, which has no header metadata: a wrong status header is still reported. */
+    @Test
+    void aWrongHttpStatusHeaderIsReportedInADirectRoute() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - rest:
+                    get:
+                      - path: /orders/{id}
+                        to: direct:get-order
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setHeader:
+                            name: CamelHttpStatusCode
+                            constant: 404
+                        - setHeader:
+                            name: Exchange.HTTP_STATUS
+                            constant: 404
+                        - log: "${header.CamelHttpStatusCode}"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 10:").contains("Camel has no header CamelHttpStatusCode")
+                .contains("the header CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)");
+        assertThat(msgs.get(1)).startsWith("Line 13:").contains("Exchange has no constant HTTP_STATUS")
+                .contains("the route fails to start").contains("the header CamelHttpResponseCode");
+    }
+
+    @Test
+    void aConstantOfExchangeIsTheNameCamelLooksUp() {
+        // Camel looks the constant up when it creates the route (DefaultCamelContextExtension.resolvePropertyPlaceholders)
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setHeader:
+                          name: Exchange.HTTP_RESPONSE_CODE
+                          constant: 404
+                      - setHeader:
+                          name: CamelHttpResponseCode
+                          constant: 404
+                      - setProperty:
+                          name: Exchange.HTTP_STATUS
+                          constant: 404
+                      - setHeader:
+                          name: Exchange.FILE_NAM
+                          constant: out.json
+                """, catalog);
+        // the name of a setProperty is looked up as well
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 11:").contains("Exchange has no constant HTTP_STATUS");
+        assertThat(msgs.get(1)).startsWith("Line 14:").contains("Exchange has no constant FILE_NAM")
+                .contains("did you mean Exchange.FILE_NAME");
     }
 
     @Test

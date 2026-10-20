@@ -509,15 +509,16 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         /**
          * The options (declaring class and attribute name) that are written whenever they are set, for the same reason:
          * the rest binding options of a verb take the value of its rest, then of the rest configuration, which in turn
-         * falls back to the RestConfiguration of the CamelContext; the shutdown options of a route take the value of
-         * the CamelContext.
+         * falls back to the RestConfiguration of the CamelContext; the apiDocs option of a verb takes the value of its
+         * rest in the OpenAPI document; the shutdown options of a route take the value of the CamelContext.
          */
         private static final Set<String> INHERITED_OPTIONS = Stream.concat(
                 Stream.of("RestDefinition", "VerbDefinition", "RestBindingDefinition", "RestConfigurationDefinition")
                         .flatMap(c -> Stream.of("bindingMode", "skipBindingOnErrorCode", "clientRequestValidation",
                                 "clientResponseValidation", "enableCORS", "enableNoContentResponse")
                                 .map(o -> "org.apache.camel.model.rest." + c + "#" + o)),
-                Stream.of("org.apache.camel.model.RouteDefinition#shutdownRoute",
+                Stream.of("org.apache.camel.model.rest.VerbDefinition#apiDocs",
+                        "org.apache.camel.model.RouteDefinition#shutdownRoute",
                         "org.apache.camel.model.RouteDefinition#shutdownRunningTask"))
                 .collect(Collectors.toUnmodifiableSet());
 

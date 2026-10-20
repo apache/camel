@@ -178,13 +178,15 @@ public final class ReloadOutcome {
      */
     private static final Pattern ROUTE_LOGGER = Pattern.compile("(^|\\.)(yaml|yml|xml|java|groovy):\\d+$");
     private static final int OUTPUT_LINES = 5;
+    private static final int OUTPUT_ERRORS = 3;
     private static final int OUTPUT_CHARS = 400;
 
     /**
      * What the routes logged after the newest reload, waiting up to the timeout for the first of it: the records of the
-     * routes' log steps, and any WARN or ERROR, newest last, at most five, each cut to 400 characters. A write answered
-     * with the result of the change shows the agent at once what its route now does (CAMEL-25513): an agent left to
-     * call camel_get_log reads it before the reload ran, or not at all.
+     * routes' log steps, and any WARN or ERROR, newest last, each cut to 400 characters: the first five, the first
+     * three ERROR after them, and a line that says how many are left out. A write answered with the result of the
+     * change shows the agent at once what its route now does (CAMEL-25513): an agent left to call camel_get_log reads
+     * it before the reload ran, or not at all.
      */
     public static JsonArray awaitOutput(long pid, String name, long timeoutMillis) {
         StopWatch watch = new StopWatch();
@@ -226,7 +228,20 @@ public final class ReloadOutcome {
         // newest first in the log: the first lines the routes logged after the reload are at the end
         Collections.reverse(lines);
         JsonArray out = new JsonArray();
-        out.addAll(lines.subList(0, Math.min(OUTPUT_LINES, lines.size())));
+        int first = Math.min(OUTPUT_LINES, lines.size());
+        out.addAll(lines.subList(0, first));
+        // an ERROR after the first lines is kept as well: the route went on, and its failure is the news
+        int errors = 0;
+        for (String line : lines.subList(first, lines.size())) {
+            if (line.startsWith("ERROR ") && errors < OUTPUT_ERRORS) {
+                out.add(line);
+                errors++;
+            }
+        }
+        int left = lines.size() - out.size();
+        if (left > 0) {
+            out.add("... " + left + " more line" + (left == 1 ? "" : "s") + ": camel_get_log shows them");
+        }
         return out;
     }
 

@@ -440,9 +440,9 @@ public interface PQCEndpointBuilderFactory {
          * are case-insensitive and the underscore form (ml_dsa_87) is accepted
          * as an alias. When set, the key material is generated with this
          * parameter set instead of the algorithm default. Not supported for the
-         * stateful signature algorithms (XMSS, XMSSMT, LMS, HSS), for MAYO and
-         * SNOVA, nor for the hybrid operations: for those, register a KeyPair
-         * bean in the registry instead.
+         * stateful signature algorithms (XMSS, XMSSMT, LMS, HSS) nor for the
+         * hybrid operations: for those, register a KeyPair bean in the registry
+         * instead.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

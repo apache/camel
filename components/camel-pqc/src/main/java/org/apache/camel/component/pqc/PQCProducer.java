@@ -93,14 +93,16 @@ public class PQCProducer extends DefaultProducer {
 
     // Signature algorithms not part of NIST FIPS 204/205 post-quantum standards.
     // XMSS/XMSSMT are NIST SP 800-208 but are stateful and not in FIPS 204/205.
-    private static final Set<String> NON_FIPS_PQ_SIGNATURES = Set.of(
+    // DILITHIUM and SPHINCSPLUS are deliberately absent: they are aliases that resolve to ML-DSA and SLH-DSA
+    // respectively (see PQCSignatureAlgorithms), so warning that they are "not FIPS 204/205" and recommending
+    // ML-DSA / SLH-DSA instead would tell the user to switch to what they are already using.
+    // Package-private so the unit test can assert on the set itself rather than on the source text
+    static final Set<String> NON_FIPS_PQ_SIGNATURES = Set.of(
             PQCSignatureAlgorithms.XMSS.name(),
             PQCSignatureAlgorithms.XMSSMT.name(),
-            PQCSignatureAlgorithms.DILITHIUM.name(),
             PQCSignatureAlgorithms.FALCON.name(),
             PQCSignatureAlgorithms.SNOVA.name(),
-            PQCSignatureAlgorithms.MAYO.name(),
-            PQCSignatureAlgorithms.SPHINCSPLUS.name());
+            PQCSignatureAlgorithms.MAYO.name());
 
     // KEM algorithms not part of NIST FIPS 203 post-quantum standard.
     private static final Set<String> NON_FIPS_PQ_KEMS = Set.of(

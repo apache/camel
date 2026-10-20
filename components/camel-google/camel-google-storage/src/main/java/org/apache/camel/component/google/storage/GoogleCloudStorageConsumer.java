@@ -18,8 +18,10 @@ package org.apache.camel.component.google.storage;
 
 import java.io.File;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -163,46 +165,74 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
         }
 
         Queue<Exchange> answer = new LinkedList<>();
-        try {
-            for (Blob blob : blobList) {
-                if (includeObject(blob)) {
-                    String key = blob.getBlobId().getName();
-                    try {
-                        addExchange(blob, key, answer);
-                    } catch (IllegalArgumentException e) {
-                        // the object name is rejected as a local download path: skip this object only, so a single
-                        // object with such a name does not stop the rest of the bucket from being consumed
-                        getExceptionHandler().handleException(
-                                "Skipping object " + key + " in bucket " + getConfiguration().getBucketName()
-                                                              + " as it cannot be downloaded: " + e.getMessage(),
-                                e);
-                    }
+        // the listed objects that could not be got, other than those that no longer exist, by name
+        Map<String, RuntimeException> failures = new LinkedHashMap<>();
+        // whether at least one listed object could be got
+        boolean anyGot = false;
+        for (Blob blob : blobList) {
+            if (includeObject(blob)) {
+                String key = blob.getBlobId().getName();
+                try {
+                    anyGot |= addExchange(blob, key, answer);
+                } catch (IllegalArgumentException e) {
+                    // the object name is rejected as a local download path: skip this object only, so a single
+                    // object with such a name does not stop the rest of the bucket from being consumed
+                    getExceptionHandler().handleException(
+                            "Skipping object " + key + " in bucket " + getConfiguration().getBucketName()
+                                                          + " as it cannot be downloaded: " + e.getMessage(),
+                            e);
+                } catch (RuntimeException e) {
+                    // a failure to get one listed object (access denied, a key that cannot decrypt it) does not fail
+                    // the poll as long as another listed object could be got: the object is skipped, the other listed
+                    // objects are consumed, and a later poll tries it again
+                    failures.put(key, e);
                 }
             }
-        } catch (Exception e) {
-            LOG.warn("Error getting object due: {}", e.getMessage(), e);
-            // none of the objects of this poll is processed
-            releaseInProgress(answer);
-            throw e;
+        }
+
+        if (!failures.isEmpty()) {
+            if (!anyGot) {
+                // none of the listed objects could be got, so this is not about one object (expired credentials, no
+                // permission to get objects, no connection): the poll fails, and the backoff of the scheduled consumer
+                // applies
+                releaseInProgress(answer);
+                Map.Entry<String, RuntimeException> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the listed objects of bucket {} could be got ({} failed, the first is {}): the poll fails",
+                        getConfiguration().getBucketName(), failures.size(), first.getKey());
+                throw first.getValue();
+            }
+            for (Map.Entry<String, RuntimeException> failure : failures.entrySet()) {
+                getExceptionHandler().handleException("Error getting object " + failure.getKey() + " from bucket "
+                                                      + getConfiguration().getBucketName()
+                                                      + ". The object is skipped for this poll.",
+                        failure.getValue());
+            }
         }
 
         return answer;
     }
 
-    private void addExchange(Blob blob, String key, Queue<Exchange> answer) {
+    /**
+     * Gets a listed object and adds its exchange.
+     *
+     * @return true if the object was got and its exchange added, false if it is skipped (an exchange is still
+     *         processing it, or it no longer exists)
+     */
+    private boolean addExchange(Blob blob, String key, Queue<Exchange> answer) {
         // skip the object if an exchange of a previous poll is still processing it, or was when this poll started
         if (inProgressAtPollStart.contains(key) || !inProgress.add(key)) {
             LOG.trace("Skipping object {} as it is already in progress", key);
-            return;
+            return false;
         }
         try {
             answer.add(createExchange(blob, key));
+            return true;
         } catch (RuntimeException e) {
             inProgress.remove(key);
             if (isNotFound(e)) {
                 // deleted (for example by another consumer) after it was listed
                 LOG.debug("Skipping object {} as it no longer exists", key);
-                return;
+                return false;
             }
             throw e;
         }

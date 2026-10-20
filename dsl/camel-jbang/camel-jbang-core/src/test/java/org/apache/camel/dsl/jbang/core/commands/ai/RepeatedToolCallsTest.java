@@ -48,6 +48,8 @@ class RepeatedToolCallsTest {
         assertThat(note.getString("tool")).isEqualTo("camel_catalog_doc");
         assertThat(note.getInteger("timesAsked")).isEqualTo(3);
         assertThat(note.getString("note")).contains("2 times");
+        // a page that was cut was not answered in full: the note says how to get the sections it left out
+        assertThat(note.getString("note")).doesNotContain("in full").contains("docPage=<section title>");
 
         assertThat(calls.repeatOf(catalogDoc, sql).getInteger("timesAsked")).isEqualTo(4);
     }

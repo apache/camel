@@ -1171,6 +1171,8 @@ public class A2AConsumer extends DefaultConsumer {
 
         Exchange processorExchange = getEndpoint().createExchange();
         processorExchange.setProperty(A2AConstants.USER_PROFILE, exchange.getProperty(A2AConstants.USER_PROFILE));
+        processorExchange.setProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT,
+                exchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT));
         copyNegotiatedExtensions(exchange, processorExchange);
         messageSendOperation.parseRequest(processorExchange, request,
                 getEndpoint().getConfiguration().getDataFormat());
@@ -1484,6 +1486,8 @@ public class A2AConsumer extends DefaultConsumer {
             QueueStreamEmitter emitter, Exchange requestExchange) {
         Exchange processorExchange = getEndpoint().createExchange();
         processorExchange.setProperty(A2AConstants.USER_PROFILE, requestExchange.getProperty(A2AConstants.USER_PROFILE));
+        processorExchange.setProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT,
+                requestExchange.getProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT));
         copyNegotiatedExtensions(requestExchange, processorExchange);
         A2ADataFormat dataFormat = getEndpoint().getConfiguration().getDataFormat();
         if (dataFormat == A2ADataFormat.POJO) {

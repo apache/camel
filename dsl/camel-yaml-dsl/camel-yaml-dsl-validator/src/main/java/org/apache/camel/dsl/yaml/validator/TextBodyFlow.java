@@ -181,14 +181,15 @@ final class TextBodyFlow {
     /**
      * What a walk knows besides the body: the route, the routes of the file, where reports go (null for a route a step
      * calls, which reports from its own walk), whether an http producer sends the body with POST, and the verbs of the
-     * OpenAPI operations a rest-openapi call can be judged by (empty when a REST binding may write the body).
+     * OpenAPI operations a rest-openapi call can be judged by (empty when a REST binding may write the body), with the
+     * fields their JSON requests need.
      */
     private record Walk(String routeId, Map<String, JsonNode> byFrom, List<Error> errors, Set<String> seen, boolean post,
-            Map<String, Map<String, String>> operations) {
+            Map<String, Map<String, String>> operations, Map<String, Map<String, List<String>>> requestFields) {
 
         /** The walk of a route a step calls: for its outcome alone. */
         Walk called() {
-            return new Walk(null, byFrom, null, seen, false, operations);
+            return new Walk(null, byFrom, null, seen, false, operations, requestFields);
         }
     }
 
@@ -199,6 +200,7 @@ final class TextBodyFlow {
         // a rest-openapi call and a REST route can only be judged when no REST binding can write the data
         boolean unbound = restUnbound(target, facts);
         Map<String, Map<String, String>> operations = unbound ? facts.operations() : Map.of();
+        Map<String, Map<String, List<String>>> requestFields = unbound ? facts.requestFields() : Map.of();
         Set<String> restReplies = unbound ? restReplies(target, facts) : Set.of();
         Map<String, JsonNode> byFrom = new HashMap<>();
         for (JsonNode entry : target) {
@@ -231,7 +233,9 @@ final class TextBodyFlow {
             String uri = endpointOf(from);
             String consumer = scheme(uri);
             boolean post = NO_HTTP_HEADERS.contains(consumer) && !setsHttpHeaders(steps);
-            Body end = walk(steps, consumerText(from), at, new Walk(id, byFrom, errors, new HashSet<>(), post, operations));
+            Body end = walk(steps, consumerText(from), at, new Walk(
+                    id, byFrom, errors, new HashSet<>(), post, operations,
+                    requestFields));
             // the body at the end of a platform-http route, or of the route of a REST call, is the reply
             boolean rest = uri != null && restReplies.contains(normalize(uri));
             if (("platform-http".equals(consumer) || rest) && end instanceof Parsed parsed && steps != null
@@ -565,12 +569,17 @@ final class TextBodyFlow {
     }
 
     /**
-     * What a step that needs the body as text does with it, and what to write; rest when a REST binding could write it.
+     * What a step that needs the body as text does with it, and what to write; rest when a REST binding could write it;
+     * and for the call of an OpenAPI operation, the fields its request needs (null for any other step).
      */
-    private record Need(String what, String fix, boolean rest) {
+    private record Need(String what, String fix, boolean rest, List<String> request) {
 
         Need(String what, String fix) {
-            this(what, fix, false);
+            this(what, fix, false, null);
+        }
+
+        Need(String what, String fix, boolean rest) {
+            this(what, fix, rest, null);
         }
     }
 
@@ -607,10 +616,12 @@ final class TextBodyFlow {
                     ? w.operations().getOrDefault(operation.spec(), Map.of()).get(operation.id())
                     : null;
             if (verb != null && SENDS_A_BODY.contains(verb.toUpperCase(Locale.ROOT))) {
+                List<String> fields
+                        = w.requestFields().getOrDefault(operation.spec(), Map.of()).getOrDefault(operation.id(), List.of());
                 return new Need(
                         name + ": rest-openapi sends the body as the request of the operation " + operation.id() + " ("
                                 + verb.toUpperCase(Locale.ROOT) + " in " + operation.spec() + ")",
-                        "before this step", true);
+                        "before this step", true, fields);
             }
         }
         return null;
@@ -899,7 +910,27 @@ final class TextBodyFlow {
                 .format(new MessageFormat("{0}"))
                 .arguments((routeId != null ? "route " + routeId + ": " : "") + need.what()
                            + ", but the body here is parsed data (a Map or a List), not text - " + parsed.origin()
-                           + ": add marshal: " + parsed.format() + " " + need.fix() + restBinding(need, parsed))
+                           + ": " + fix(need, parsed))
                 .build();
+    }
+
+    /**
+     * What to write for parsed data where text is needed. The request of an operation is rarely the data as it is, such
+     * as one line of an order that the request needs the id of the order for: told to marshal, a model sends the data
+     * as it is. So the JSON text of the request comes first, with the fields the request needs.
+     */
+    private static String fix(Need need, Parsed parsed) {
+        String marshal = "add marshal: " + parsed.format() + " " + need.fix();
+        if (need.request() == null || !"json".equals(parsed.format())) {
+            return marshal + restBinding(need, parsed);
+        }
+        List<String> fields = need.request();
+        String example = fields.isEmpty()
+                ? "{\"name\": \"${body[name]}\"}"
+                : "{" + String.join(", ", fields.stream().map(f -> "\"" + f + "\": ...").toList()) + "}";
+        return "set the body to the JSON text of the request " + need.fix()
+               + (fields.isEmpty() ? "" : " (it needs " + String.join(", ", fields) + ")")
+               + ", such as with setBody and simple: '" + example + "', or " + marshal
+               + " when the data has the fields of the request" + restBinding(need, parsed);
     }
 }

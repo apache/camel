@@ -25,6 +25,9 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -118,6 +122,8 @@ public final class AuthoringTools {
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)
+                .repeatHint("When that answer was cut, it named the sections it left out: docPage=<section title> returns"
+                            + " one of them.")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
@@ -372,7 +378,9 @@ public final class AuthoringTools {
                         throw notRunning(ctx, args, new ToolExecutionException("pid " + ctx.pid() + " is not running"));
                     }
                     JsonObject errors = ctx.readErrorFile();
-                    return errors != null ? unescapeBodies(errors).toJson() : "No errors captured.";
+                    return errors != null
+                            ? markBeforeLastReload(unescapeBodies(errors), ctx.pid(), p != null ? p.name() : null).toJson()
+                            : "No errors captured.";
                 }));
 
         registry.accept(tool("camel_eval_expression",
@@ -1845,9 +1853,24 @@ public final class AuthoringTools {
         result.put("configFiles", configFiles);
         result.put("files", files);
         result.put("totalFiles", all.size());
+        // a file consumer moves a file it read into .camel (without noop=true), which the listing skips
+        Map<String, Integer> consumed = consumedFolders(dir);
+        String moved = null;
+        if (!consumed.isEmpty()) {
+            JsonObject folders = new JsonObject();
+            folders.putAll(consumed);
+            result.put("consumedFiles", folders);
+            moved = String.join(", ", consumed.entrySet().stream().map(e -> e.getKey() + " holds " + e.getValue()
+                                                                            + (e.getValue() == 1 ? " file" : " files"))
+                    .toList())
+                    + " that a file consumer moved there after reading (noop=true leaves the files where they are)";
+        }
         if (all.isEmpty()) {
-            result.put("message", "The directory has no files");
-        } else if (all.size() > MAX_FILES) {
+            result.put("message", moved != null ? "The directory has no files, but " + moved : "The directory has no files");
+        } else if (moved != null) {
+            result.put("note", moved);
+        }
+        if (all.size() > MAX_FILES) {
             result.put("message", "Listing the first " + MAX_FILES + " of " + all.size()
                                   + " files; routeFiles and configFiles name every route and configuration file");
         }
@@ -2269,6 +2292,91 @@ public final class AuthoringTools {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * Marks the failed exchanges of an earlier version of the routes: those that failed before the newest reload of the
+     * routes in the log. The errors are kept until the integration restarts, and an agent that read them after a change
+     * took them for errors of its new version, and changed routes that already worked.
+     */
+    static JsonObject markBeforeLastReload(JsonObject errors, long pid, String name) {
+        try {
+            JsonObject log = LogFileReader.read(pid, name, 1, ReloadOutcome.RELOADED, null);
+            if (log.get("lines") instanceof List<?> lines && !lines.isEmpty() && lines.get(0) instanceof JsonObject reload) {
+                return markBefore(errors, reload.getString("time"), LocalDateTime.now());
+            }
+        } catch (Exception e) {
+            // no log to tell: the errors as they are
+        }
+        return errors;
+    }
+
+    private static final long RELOAD_MARGIN_MILLIS = 1000;
+
+    /** Marks the errors that failed before the reload at the given time of day; the log keeps the time of day only. */
+    static JsonObject markBefore(JsonObject errors, String reloadTime, LocalDateTime now) {
+        LocalTime time;
+        try {
+            time = LocalTime.parse(reloadTime);
+        } catch (Exception e) {
+            return errors;
+        }
+        LocalDateTime reload = now.toLocalDate().atTime(time);
+        if (reload.isAfter(now)) {
+            reload = reload.minusDays(1);
+        }
+        // the summary is logged after the new routes started: a margin keeps a route that fails at once unmarked
+        long reloadMillis = reload.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - RELOAD_MARGIN_MILLIS;
+        int before = 0;
+        if (errors.get("errors") instanceof List<?> entries) {
+            for (Object o : entries) {
+                if (o instanceof JsonObject e && e.get("timestamp") instanceof Number ts && ts.longValue() < reloadMillis) {
+                    e.put("beforeLastReload", true);
+                    before++;
+                }
+            }
+        }
+        if (before > 0) {
+            errors.put("note", before + (before == 1 ? " exchange" : " exchanges") + " failed before the routes were last"
+                               + " reloaded (at " + reloadTime + "), so on an earlier version of the routes"
+                               + " (beforeLastReload); the errors are kept until the integration restarts");
+        }
+        return errors;
+    }
+
+    /**
+     * The .camel folders under the directory, with the number of files in each: a file consumer moves a file it read
+     * into .camel (its default, without noop=true), so a folder whose files were all read looked empty.
+     */
+    static Map<String, Integer> consumedFolders(Path dir) {
+        Map<String, Integer> answer = new TreeMap<>();
+        try {
+            Files.walkFileTree(dir, EnumSet.noneOf(FileVisitOption.class), MAX_DEPTH, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) throws IOException {
+                    String name = d.getFileName() != null ? d.getFileName().toString() : "";
+                    if (".camel".equals(name) && !d.equals(Path.of(System.getProperty("user.home"), ".camel"))) {
+                        try (var files = Files.list(d)) {
+                            long count = files.filter(Files::isRegularFile).count();
+                            if (count > 0) {
+                                answer.put(dir.relativize(d).toString().replace('\\', '/'), (int) count);
+                            }
+                        }
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return !d.equals(dir) && (SKIPPED_DIRS.contains(name) || name.startsWith("."))
+                            ? FileVisitResult.SKIP_SUBTREE : FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path f, IOException e) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // nothing to add
+        }
+        return answer;
     }
 
     /**
