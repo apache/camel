@@ -47,7 +47,7 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
  * <li>exchangesTotal - Total number of exchanges</li>
  * <li>totalProcessingTime - Total processing time in millis</li>
  * <li>bodyTypes - The body types the step has been reached with (when the message history recorded any)</li>
- * <li>bodyKinds - The kinds of those bodies: null, payload, data or iterator</li>
+ * <li>bodyKinds - The kinds of those bodies: null, payload, data or collection</li>
  * </ul>
  * Is included as attributes on the route nodes.
  */

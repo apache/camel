@@ -704,7 +704,7 @@
 																	"items": {
 																		"type": "string"
 																	},
-																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map, a List or an object) or iterator. More than one means the step needs attention"
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention"
 																}
 															}
 														},

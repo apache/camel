@@ -46,7 +46,7 @@ public class BodyTypeDevConsole extends AbstractDevConsole {
             @Metadata(description = "The source line number (only present when known)") Integer line,
             @Metadata(description = "The code representation of this processor") String code,
             @Metadata(description = "The body types this processor has been reached with, across the messages, in the order first seen: more than one means the type varied") List<String> bodyTypes,
-            @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map, a List or an object) or iterator. More than one means the step needs attention") List<String> bodyKinds) {
+            @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention") List<String> bodyKinds) {
     }
 
     public record RouteEntry(

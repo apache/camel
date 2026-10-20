@@ -61,7 +61,7 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "The number of steps that have been reached with more than one body type, across the messages (recorded while the message history is on)")
     int getVariedBodyTypes();
 
-    @ManagedAttribute(description = "The number of steps that have been reached with bodies of more than one kind (null, payload, data or iterator), which need attention")
+    @ManagedAttribute(description = "The number of steps that have been reached with bodies of more than one kind (null, payload, data or collection), which need attention")
     int getMixedBodyKinds();
 
     @ManagedAttribute(description = "The id of the route template (or Kamelet) this route was created from")
