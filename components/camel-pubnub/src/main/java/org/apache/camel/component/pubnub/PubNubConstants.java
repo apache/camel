@@ -25,6 +25,9 @@ public final class PubNubConstants {
     public static final String TIMETOKEN = "CamelPubNubTimeToken";
     @Metadata(label = "consumer", description = "The channel for which the message belongs.", javaType = "String")
     public static final String CHANNEL = "CamelPubNubChannel";
+    @Metadata(label = "producer", description = "The channel to use instead of the channel configured on the endpoint.",
+              javaType = "String")
+    public static final String OVERRIDE_CHANNEL = "CamelPubNubOverrideChannel";
     @Metadata(label = "producer", description = "UUID to be used as a device identifier.", javaType = "String")
     public static final String UUID = "CamelPubNubUUID";
 
