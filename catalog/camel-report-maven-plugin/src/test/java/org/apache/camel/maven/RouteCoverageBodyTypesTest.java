@@ -59,6 +59,19 @@ public class RouteCoverageBodyTypesTest {
     }
 
     @Test
+    public void testTheStepsReachedWithBodiesOfMoreThanOneKind() {
+        List<String> mixed = RouteCoverageMojo.mixedBodyKinds("routes/orders.xml", "orders", List.of(
+                node("from", 3, 2, 0, List.of(), List.of()),
+                // two types of one kind: dynamic, but not a failure
+                node("unmarshal", 4, 2, 1, List.of("java.lang.String", "byte[]"), List.of("payload")),
+                node("to", 7, 2, 1, List.of("java.util.LinkedHashMap", "java.lang.String"), List.of("data", "payload"))));
+
+        assertEquals(List.of("routes/orders.xml:7 to (route orders): LinkedHashMap | String (data and payload)"), mixed);
+        assertTrue(RouteCoverageMojo.mixedBodyKinds("routes/orders.xml", "orders",
+                List.of(node("from", 3, 2, 0, List.of(), List.of()))).isEmpty());
+    }
+
+    @Test
     public void testBodyTypesText() {
         assertEquals("String | byte[] | String[]",
                 RouteCoverageMojo.bodyTypesText(List.of("java.lang.String", "byte[]", "java.lang.String[]"),

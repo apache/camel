@@ -164,8 +164,20 @@ public class RouteCoverageMojo extends AbstractMojo {
     @Parameter(property = "camel.bodyTypes", defaultValue = "false")
     private boolean bodyTypes;
 
+    /**
+     * Whether to fail when a step has been reached with bodies of more than one kind (null, payload, data or
+     * collection) in the tests: some messages reach it with data and others with a payload, so a step that writes the
+     * body, or reads its fields, fails for some of them. The route coverage dump has the body types when the tests ran
+     * with the message history on (Camel 4.24 or newer).
+     */
+    @Parameter(property = "camel.failOnMixedBodyKinds", defaultValue = "false")
+    private boolean failOnMixedBodyKinds;
+
     // whether a route coverage dump had body types
     private boolean bodyTypesSeen;
+
+    // the steps reached with bodies of more than one kind
+    private final List<String> mixedBodyKinds = new ArrayList<>();
 
     private File createJacocoDir() {
         final File file = new File(project.getBasedir() + "/target/site/jacoco");
@@ -279,9 +291,14 @@ public class RouteCoverageMojo extends AbstractMojo {
         if (generateHtmlReport) {
             doGenerateHtmlReport();
         }
-        if (bodyTypes && !bodyTypesSeen) {
+        if ((bodyTypes || failOnMixedBodyKinds) && !bodyTypesSeen) {
             getLog().info("The route coverage dump has no body types: the tests record them while the message history is"
                           + " on (such as camel.main.messageHistory=true), with Camel 4.24 or newer");
+        }
+        if ((bodyTypes || failOnMixedBodyKinds) && !mixedBodyKinds.isEmpty()) {
+            getLog().warn(mixedBodyKinds.size() + " step(s) have been reached with bodies of more than one kind: some"
+                          + " messages bring data and others a payload, so a step that writes the body, or reads its"
+                          + " fields, fails for some of them:\n    " + String.join("\n    ", mixedBodyKinds));
         }
 
         // compute and log overall coverage across routes
@@ -291,6 +308,10 @@ public class RouteCoverageMojo extends AbstractMojo {
         getLog().info("");
 
         evalFailingConditions(notCovered, overallCoverageAboveThreshold);
+        if (failOnMixedBodyKinds && !mixedBodyKinds.isEmpty()) {
+            throw new MojoExecutionException(
+                    "There are " + mixedBodyKinds.size() + " step(s) reached with bodies of more than one kind!");
+        }
     }
 
     private void evalFailingConditions(AtomicInteger notCovered, AtomicBoolean overallCoverageAboveThreshold)
@@ -576,11 +597,10 @@ public class RouteCoverageMojo extends AbstractMojo {
             sw.println("Route:\t" + routeId);
         }
         sw.println();
-        boolean showBodyTypes = bodyTypes && model.stream().anyMatch(node -> !node.getBodyTypes().isEmpty());
-        if (showBodyTypes) {
-            bodyTypesSeen = true;
-        }
-        printTable(sw, model, showBodyTypes);
+        boolean hasBodyTypes = model.stream().anyMatch(node -> !node.getBodyTypes().isEmpty());
+        bodyTypesSeen |= hasBodyTypes;
+        mixedBodyKinds.addAll(mixedBodyKinds(fileName, routeId, model));
+        printTable(sw, model, bodyTypes && hasBodyTypes);
 
         int covered = 0;
         for (RouteCoverageNode node : model) {
@@ -636,6 +656,21 @@ public class RouteCoverageMojo extends AbstractMojo {
             }
             sw.printf(MAIN_FORMAT_PATTERN, node.getLineNumber(), node.getCount(), route);
         }
+    }
+
+    /**
+     * The steps of a route that have been reached with bodies of more than one kind: where they are, and their types.
+     */
+    static List<String> mixedBodyKinds(String fileName, String routeId, List<RouteCoverageNode> model) {
+        List<String> answer = new ArrayList<>();
+        for (RouteCoverageNode node : model) {
+            if (node.getBodyKinds().size() > 1) {
+                answer.add(fileName + ":" + node.getLineNumber() + " " + node.getName()
+                           + (routeId != null ? " (route " + routeId + ")" : "") + ": "
+                           + bodyTypesText(node.getBodyTypes(), node.getBodyKinds()));
+            }
+        }
+        return answer;
     }
 
     /**
