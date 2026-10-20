@@ -207,8 +207,8 @@ The `key` option of the endpoint takes precedence over the `CamelInfinispanKey` 
 
 The `CamelInfinispanCacheName` header takes precedence over the cache name of the endpoint.
 
-A `infinispan` consumer sets `CamelInfinispanKey` and `CamelInfinispanCacheName` to the key and the cache of the event.
-When a route sends those events to a `infinispan` producer, the producer works on the cache of the event, and on the key
+An `infinispan` consumer sets `CamelInfinispanKey` and `CamelInfinispanCacheName` to the key and the cache of the event.
+When a route sends those events to an `infinispan` producer, the producer works on the cache of the event, and on the key
 of the event unless the endpoint sets `key`. To use the cache and the key configured on the producer endpoint, remove
 the headers first:
 
