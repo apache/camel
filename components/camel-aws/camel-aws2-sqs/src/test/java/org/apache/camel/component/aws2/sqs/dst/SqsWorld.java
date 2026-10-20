@@ -121,9 +121,9 @@ final class SqsWorld {
             long lastProgress = dst.now();
             while (!sqs.allDeleted() && dst.now() < cap && dst.now() - lastProgress < quiet) {
                 dst.runFor(100);
-                int now = sqs.notDeleted().size();
-                if (now < left) {
-                    left = now;
+                int remaining = sqs.notDeleted().size();
+                if (remaining < left) {
+                    left = remaining;
                     lastProgress = dst.now();
                 }
             }
