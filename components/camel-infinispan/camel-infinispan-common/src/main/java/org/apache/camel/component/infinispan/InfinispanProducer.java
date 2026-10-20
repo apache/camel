@@ -68,7 +68,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("PUT")
     public void onPut(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object value = message.getHeader(InfinispanConstants.VALUE, configuration::getValue);
         final Object result;
 
@@ -94,7 +94,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("PUTASYNC")
     public void onPutAsync(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object value = message.getHeader(InfinispanConstants.VALUE, configuration::getValue);
         final CompletableFuture<Object> result;
 
@@ -167,7 +167,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("PUTIFABSENT")
     public void onPutIfAbsent(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object value = message.getHeader(InfinispanConstants.VALUE, configuration::getValue);
         final Object result;
 
@@ -193,7 +193,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("PUTIFABSENTASYNC")
     public void onPutIfAbsentAsync(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object value = message.getHeader(InfinispanConstants.VALUE, configuration::getValue);
         final CompletableFuture<Object> result;
 
@@ -219,7 +219,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("GET")
     public void onGet(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object result = cache.get(key);
 
         setResult(message, result);
@@ -228,7 +228,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("GETORDEFAULT")
     public void onGetOrDefault(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object defaultValue = message.getHeader(InfinispanConstants.DEFAULT_VALUE, configuration::getDefaultValue);
         final Object result = cache.getOrDefault(key, defaultValue);
 
@@ -238,7 +238,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("CONTAINSKEY")
     public void onContainsKey(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object result = cache.containsKey(key);
 
         setResult(message, result);
@@ -256,7 +256,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("REMOVE")
     public void onRemove(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object value = message.getHeader(InfinispanConstants.VALUE, configuration::getValue);
         final Object result;
 
@@ -272,7 +272,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("REMOVEASYNC")
     public void onRemoveAsync(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object value = message.getHeader(InfinispanConstants.VALUE, configuration::getValue);
         final CompletableFuture<Object> resultRemoveAsyncKey;
         final CompletableFuture<Boolean> resultRemoveAsyncKeyValue;
@@ -289,7 +289,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("REPLACE")
     public void onReplace(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object value = message.getHeader(InfinispanConstants.VALUE, configuration::getValue);
         final Object oldValue = message.getHeader(InfinispanConstants.OLD_VALUE, configuration::getOldValue);
         final Object result;
@@ -328,7 +328,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("REPLACEASYNC")
     public void onReplaceAsync(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object value = message.getHeader(InfinispanConstants.VALUE, configuration::getValue);
         final Object oldValue = message.getHeader(InfinispanConstants.OLD_VALUE, configuration::getOldValue);
         final CompletableFuture<Object> resultWithNewValue;
@@ -396,7 +396,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("COMPUTE")
     public void onCompute(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final Object result = cache.compute(key, configuration.getRemappingFunction());
 
         setResult(message, result);
@@ -406,7 +406,7 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
     @InvokeOnHeader("COMPUTEASYNC")
     public void onComputeAsync(Message message) {
         final BasicCache<Object, Object> cache = getCache(message);
-        final Object key = message.getHeader(InfinispanConstants.KEY, configuration::getKey);
+        final Object key = getKey(message);
         final CompletableFuture<Object> result = cache.computeAsync(key, configuration.getRemappingFunction());
 
         setResult(message, result);
@@ -418,6 +418,12 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
 
     protected <K, V> BasicCache<K, V> getCache(Message message) {
         return manager.getCache(message, this.cacheName);
+    }
+
+    protected Object getKey(Message message) {
+        // the key configured on the endpoint wins over the header
+        Object key = configuration.getKey();
+        return key != null ? key : message.getHeader(InfinispanConstants.KEY);
     }
 
     protected boolean hasLifespan(Message message) {
