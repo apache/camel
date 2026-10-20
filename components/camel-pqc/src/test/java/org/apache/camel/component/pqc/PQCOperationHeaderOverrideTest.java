@@ -30,7 +30,6 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -98,14 +97,16 @@ public class PQCOperationHeaderOverrideTest extends CamelTestSupport {
 
     @Test
     void anOverrideToAnOperationNeedingNoKeyMaterialIsAllowed() {
-        // getKeyState works off the KeyLifecycleManager, so the signature-only endpoint may serve it; without one
-        // configured it must fail on that, not on a missing Signature
+        // getKeyState needs no key material beyond the key pair, so the signature-only endpoint may serve it: the
+        // override is accepted and the operation itself then rejects the non-stateful ML-DSA key
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.sendBodyAndHeader("direct:sign", "Hello",
                         PQCConstants.OPERATION, PQCOperations.getKeyState));
 
-        String message = e.getCause().getMessage();
-        assertFalse(message.contains("holds no"), "the override itself must not be rejected: " + message);
+        Throwable cause = e.getCause();
+        assertInstanceOf(IllegalArgumentException.class, cause);
+        assertTrue(cause.getMessage().contains("getKeyState is only supported for stateful signature schemes"),
+                "the override must be accepted and fail inside the operation: " + cause.getMessage());
     }
 
     @Test
