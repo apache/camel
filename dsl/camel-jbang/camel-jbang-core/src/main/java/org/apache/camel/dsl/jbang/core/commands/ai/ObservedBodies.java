@@ -74,6 +74,7 @@ final class ObservedBodies {
         // the processes are only looked for when an integration runs at all: most validations have none
         String[] statusFiles = CommandLineHelper.getCamelDir().toFile().list((d, n) -> n.endsWith("-status.json"));
         if (statusFiles == null || statusFiles.length == 0) {
+            CACHE.put(file, new Facts(System.currentTimeMillis(), answer));
             return answer;
         }
         for (RuntimeHelper.ProcessInfo process : RuntimeHelper.discoverProcesses()) {

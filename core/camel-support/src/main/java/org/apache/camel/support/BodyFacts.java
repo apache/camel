@@ -46,7 +46,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Says what a message body is, which step made it so, and what to write so that a step that failed on it gets the body
  * it needs: the facts a person, or a model in a dev loop, otherwise gets from a debugger (CAMEL-25749).
- * <p/>
+ * <p>
  * A failure on the body is told in two parts: {@link #describe(Exchange)} says what the body is and, when the message
  * history is on, the step that set it; {@link #hint(Exchange, Need)} says what to write, for what the failing step
  * needed. A caller puts them after its own words:
@@ -114,7 +114,7 @@ import org.apache.camel.util.URISupport;
  * </table>
  * When the Content-Type, the file name or the text names no data format, the hint lists the usual ones (json,
  * jacksonXml, csv). A hint is null when the body is not why the step failed.
- * <p/>
+ * <p>
  * While the message history is on, the hint also says when other messages have reached the failing step with a body of
  * another kind (as the {@link BodyTypeRegistry} keeps them): "; other messages reached this step with data
  * (LinkedHashMap), so the body here depends on the path a message takes". Then the step is right for some messages, and
