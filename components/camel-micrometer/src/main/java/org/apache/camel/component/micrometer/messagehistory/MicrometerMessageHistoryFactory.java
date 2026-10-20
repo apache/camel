@@ -31,6 +31,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.micrometer.MicrometerUtils;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -46,6 +47,7 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
         implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
+    private BodyTypeRegistry bodyTypeRegistry;
     private MeterRegistry meterRegistry;
     private boolean copyMessage;
     private String nodePattern;
@@ -163,10 +165,18 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport
         if (route != null) {
             MicrometerMessageHistory answer
                     = new MicrometerMessageHistory(getMeterRegistry(), route, namedNode, getNamingStrategy(), msg);
-            answer.captureBody(exchange);
+            answer.captureBody(exchange, bodyTypeRegistry);
             return answer;
         } else {
             return null;
+        }
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        // looked up once, as every node an exchange reaches records its body type
+        if (camelContext != null) {
+            bodyTypeRegistry = camelContext.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
         }
     }
 

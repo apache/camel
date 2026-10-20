@@ -35,6 +35,7 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -344,11 +345,39 @@ public final class BodyFacts {
                 : node.getShortName();
     }
 
+    /**
+     * The kind of the body, for what a step can do with it: the payload as it is (text, bytes, a stream or a file, or a
+     * single value such as a number, which converts to text), parsed data (a Map, a List or an object), an iterator, or
+     * null.
+     *
+     * @param  body the message body
+     * @return      the kind of the body
+     */
+    public static BodyTypeRegistry.Kind kindOf(Object body) {
+        if (body == null) {
+            return BodyTypeRegistry.Kind.NULL;
+        } else if (isPayload(body) || isValue(body)) {
+            return BodyTypeRegistry.Kind.PAYLOAD;
+        } else if (isIterator(body)) {
+            return BodyTypeRegistry.Kind.ITERATOR;
+        }
+        return BodyTypeRegistry.Kind.DATA;
+    }
+
     /** The payload in its serialized form: text, bytes, a stream or a file. */
     private static boolean isPayload(Object body) {
         return body instanceof String || body instanceof byte[] || body instanceof InputStream || body instanceof Reader
                 || body instanceof StreamCache || body instanceof WrappedFile<?> || body instanceof File
                 || body instanceof Path;
+    }
+
+    /**
+     * A single value, which a type converter turns into text: it has no fields to read, and writing it needs no
+     * marshal.
+     */
+    private static boolean isValue(Object body) {
+        return body instanceof CharSequence || body instanceof Number || body instanceof Boolean
+                || body instanceof Character || body instanceof Enum<?>;
     }
 
     private static boolean isIterator(Object body) {

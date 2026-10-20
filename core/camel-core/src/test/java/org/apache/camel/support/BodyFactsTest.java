@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BodyTypeRegistry.Kind;
 import org.apache.camel.support.BodyFacts.Need;
 import org.junit.jupiter.api.Test;
 
@@ -140,6 +141,22 @@ public class BodyFactsTest extends ContextTestSupport {
         assertTrue(BodyFacts.hint(exchange(null), Need.A_BODY).startsWith("read the data first - setBody with constant:"));
         assertTrue(BodyFacts.hint(exchange(""), Need.A_BODY).startsWith("read the data first"));
         assertNull(BodyFacts.hint(exchange("x"), Need.A_BODY));
+    }
+
+    @Test
+    public void testTheKindOfABody() {
+        assertEquals(Kind.NULL, BodyFacts.kindOf(null));
+        // the payload as it is, and a single value, which converts to text
+        assertEquals(Kind.PAYLOAD, BodyFacts.kindOf("text"));
+        assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(new byte[] { 1 }));
+        assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(new ByteArrayInputStream(new byte[0])));
+        assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(42));
+        assertEquals(Kind.PAYLOAD, BodyFacts.kindOf(Boolean.TRUE));
+        // parsed data: fields to read, and a marshal to write it
+        assertEquals(Kind.DATA, BodyFacts.kindOf(new LinkedHashMap<>(Map.of("id", 1))));
+        assertEquals(Kind.DATA, BodyFacts.kindOf(new ArrayList<>(List.of(1, 2))));
+        assertEquals(Kind.DATA, BodyFacts.kindOf(new Object()));
+        assertEquals(Kind.ITERATOR, BodyFacts.kindOf(List.of(1, 2).iterator()));
     }
 
     @Test

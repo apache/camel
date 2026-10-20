@@ -406,6 +406,77 @@ for (MessageHistory history : list) {
 }
 ----
 
+== Body types across messages
+
+Each `MessageHistory` entry has the type of the message body as the node was reached (`getBodyType()`), for that one
+exchange. While message history is enabled (as the dev profile does, such as with `camel run --dev`), Camel also keeps
+these types per node, across all the messages, in the `BodyTypeRegistry`. So you can see what the body was at each step
+of a route: also in a branch the last message did not take, and with every type when it varied.
+
+Each type has a kind, for what the steps can do with it:
+
+[width="100%",cols="1,4",options="header"]
+|===
+| Kind | The body is
+| `null` | No body.
+| `payload` | The payload as it is: text, bytes, a stream or a file, or a single value such as a number. What a step that
+writes or sends needs.
+| `data` | Parsed data: a `Map`, a `List` or an object, with fields to read. What an unmarshal gives.
+| `iterator` | An iterator or a stream of elements, which can be read once.
+|===
+
+A step reached with types of one kind, such as `String` and `byte[]`, is a part of the route that is dynamic, which the
+steps after it usually handle. A step reached with bodies of more than one kind needs attention: a step that writes or
+sends fails for the data, and a step that reads fields fails for the payload. A test that sends the messages of the
+expected workload shows what each step will see in production.
+
+The route-structure dev console shows the types of each step. For example, a route where only one branch of a
+xref:choice-eip.adoc[Content-Based Router] converts the body:
+
+._Java-only: a branch that converts the body_
+[source,java]
+----
+from("direct:orders").routeId("orders")
+    .choice()
+        .when(header("priority").isEqualTo("high"))
+            .convertBodyTo(byte[].class)
+        .otherwise()
+            .log("normal order")
+    .end()
+    .to("log:outbox");
+----
+
+After a high priority order and a normal one:
+
+[source,text]
+----
+       route[orders]
+         from[direct:orders]
+           choice                               body: String
+             when[{header(priority) == high}]
+               convertBodyTo[byte[]]            body: String
+             otherwise
+               log[normal order]                body: String
+           to[log:outbox]                       body: byte[] | String
+----
+
+The step after the choice has been reached with a `byte[]` by the high priority orders, and with a `String` by the
+others. Both are a payload, so the step is dynamic but needs no attention. Had the branch unmarshalled the body instead,
+the line would say `body: LinkedHashMap | String (data and payload)`.
+
+The body types of a route are forgotten when the route is removed, such as when it is reloaded in dev mode. In Java the
+registry is a context plugin:
+
+._Java-only: the body types of a step_
+[source,java]
+----
+BodyTypeRegistry registry = context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+List<String> types = registry.getBodyTypes("orders", "to1");
+List<BodyTypeRegistry.Kind> kinds = registry.getBodyKinds("orders", "to1");
+----
+
+The Camel CLI shows them as well, see xref:manual::camel-jbang-diagnostics.adoc[Camel CLI diagnostics].
+
 == Configuring MessageHistory format
 
 The  Message History format in Camel is controlled by `Java String.format` patterns stored as global options on the CamelContext.

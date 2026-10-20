@@ -144,7 +144,9 @@ public class RuntimeTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics.")
+          description = "List Camel routes with their state, uptime, messages processed, last error, and throughput statistics."
+                        + " A route with mixedBodyKinds has steps reached with bodies of more than one kind, which need"
+                        + " attention: camel_runtime_route_structure with varied=true shows them.")
     public JsonObject camel_runtime_routes(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_routes", nameOrPid, Map.of());
@@ -238,17 +240,26 @@ public class RuntimeTools {
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
-          description = "Show the route structure as a tree of processors.")
+          description = "Show the route structure as a tree of processors. With the message history on (camel run --dev),"
+                        + " a processor has bodyTypes: the body types it has been reached with, across the messages, and"
+                        + " bodyKinds: null, payload, data or iterator. More than one kind needs attention: a step that"
+                        + " writes fails for data, one that reads fields fails for a payload. The routes tool counts them"
+                        + " per route (mixedBodyKinds).")
     public JsonObject camel_runtime_route_structure(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Route ID or pattern such as orders* to inspect (default * for all routes)",
                      required = false) String routeId,
             @ToolArg(description = "Only the overall structure, without the options and expressions (default false)",
-                     required = false) Boolean brief) {
+                     required = false) Boolean brief,
+            @ToolArg(description = "Only the steps reached with more than one body type (default false)",
+                     required = false) Boolean varied) {
         Map<String, String> args = new HashMap<>();
         args.put("routeId", routeId != null ? routeId : "*");
         if (Boolean.TRUE.equals(brief)) {
             args.put("brief", "true");
+        }
+        if (Boolean.TRUE.equals(varied)) {
+            args.put("varied", "true");
         }
         return delegateToRegistry("get_route_structure", nameOrPid, args);
     }

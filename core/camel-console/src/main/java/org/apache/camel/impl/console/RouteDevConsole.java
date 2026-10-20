@@ -32,6 +32,7 @@ import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.ExceptionHelper;
@@ -100,6 +101,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "The route state") String state,
             @Metadata(description = "Whether the route supports suspension") boolean supportsSuspension,
             @Metadata(description = "Route uptime, human readable text") String uptime,
+            @Metadata(description = "The number of steps that have been reached with more than one body type, across the messages: a part of the route that is dynamic (only present when there are any, as the message history records the body types, such as in the dev profile)") Integer variedBodyTypes,
+            @Metadata(description = "The number of steps that have been reached with bodies of more than one kind (null, payload, data or iterator): these need attention, as a step that writes or sends fails for the data, and a step that reads fields fails for the payload. The route-structure console says which steps (only present when there are any)") Integer mixedBodyKinds,
             @Metadata(description = "The last lifecycle error (only present when one has occurred)") LastError lastError,
             @Metadata(description = "Runtime statistics") Statistics statistics,
             @Metadata(description = "The route's processors (only present when requested)") List<ProcessorDevConsole.ProcessorEntry> processors) {
@@ -313,11 +316,13 @@ public class RouteDevConsole extends AbstractDevConsole {
             List<ProcessorDevConsole.ProcessorEntry> procList = processors ? includeProcessorsJson(mrb) : null;
 
             Route r = getCamelContext().getRoute(mrb.getRouteId());
+            BodyTypeCounts bodyTypes = bodyTypeCounts(mrb.getRouteId());
             list.add(new RouteEntry(
                     mrb.getRouteId(), mrb.getRouteGroup(), mrb.getNodePrefixId(), mrb.getDescription(), mrb.getNote(),
                     mrb.isCreatedByKamelet(), mrb.isCreatedByRouteTemplate(), mrb.getRouteTemplateId(), mrb.getEndpointUri(),
                     mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getTemplatedRouteSource(), mrb.getState(),
-                    r != null && r.supportsSuspension(), mrb.getUptime(), lastError, stats, procList));
+                    r != null && r.supportsSuspension(), mrb.getUptime(), bodyTypes.varied(), bodyTypes.mixed(), lastError,
+                    stats, procList));
             return null;
         };
         doCall(options, task);
@@ -506,6 +511,30 @@ public class RouteDevConsole extends AbstractDevConsole {
                 LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
             }
         }
+    }
+
+    /**
+     * How many steps of a route have been reached with more than one body type, and with bodies of more than one kind
+     * (each null when there are none).
+     */
+    private record BodyTypeCounts(Integer varied, Integer mixed) {
+    }
+
+    private BodyTypeCounts bodyTypeCounts(String routeId) {
+        BodyTypeRegistry registry = getCamelContext().getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        int varied = 0;
+        int mixed = 0;
+        if (registry != null) {
+            for (Map.Entry<String, List<String>> node : registry.getBodyTypes(routeId).entrySet()) {
+                if (node.getValue().size() > 1) {
+                    varied++;
+                    if (registry.getBodyKinds(routeId, node.getKey()).size() > 1) {
+                        mixed++;
+                    }
+                }
+            }
+        }
+        return new BodyTypeCounts(varied > 0 ? varied : null, mixed > 0 ? mixed : null);
     }
 
     public static JsonObject gatherRouteStats(CamelContext camelContext, ManagedRouteMBean mrb) {

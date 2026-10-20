@@ -18,7 +18,10 @@ package org.apache.camel.impl.console;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -27,6 +30,7 @@ import org.apache.camel.NamedRoute;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ModelDumpLine;
 import org.apache.camel.spi.ModelToStructureDumper;
@@ -55,7 +59,15 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
             @Metadata(description = "The code representation of this processor") String code,
             @Metadata(description = "The endpoint URI (only present when this processor references an endpoint)") String uri,
             @Metadata(description = "Whether the endpoint is remote (only present when true)") Boolean remote,
+            @Metadata(description = "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)") List<String> bodyTypes,
+            @Metadata(description = "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map, a List or an object) or iterator. More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)") List<String> bodyKinds,
             @Metadata(description = "Runtime statistics for this route or processor, as an opaque JSON object (only present when metrics were requested)") Map<String, Object> statistics) {
+    }
+
+    /**
+     * The body types and kinds a line of the route structure has been reached with.
+     */
+    private record LineBodyTypes(List<String> types, List<String> kinds) {
     }
 
     public record RouteEntry(
@@ -87,6 +99,11 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
               javaType = "java.lang.Boolean", defaultValue = "false")
     public static final String METRIC = "metric";
 
+    /**
+     * The widest code before the body types column of the text output.
+     */
+    private static final int BODY_TYPES_COLUMN = 90;
+
     public RouteStructureDevConsole() {
         super("camel", "route-structure", "Route Structure", "Dump route structure");
     }
@@ -101,6 +118,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
                         = dumper.dumpStructure(getCamelContext(), def.getRouteId(), brief);
+                List<LineBodyTypes> bodyTypes = bodyTypesPerLine(getCamelContext(), def.getRouteId(), lines);
 
                 sb.append(String.format("    Id: %s", def.getRouteId()));
                 if (def.getResource() != null) {
@@ -108,14 +126,28 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                             extractSourceLocationNoLineNumber(def.getResource().getLocation())));
                 }
                 sb.append("\n\n");
-                for (ModelDumpLine line : lines) {
+                // the body types line up in a column after the code (a long line pushes only its own types out)
+                int width = 0;
+                if (bodyTypes.stream().anyMatch(Objects::nonNull)) {
+                    for (ModelDumpLine line : lines) {
+                        width = Math.max(width, StringHelper.padString(line.level()).length() + line.code().length());
+                    }
+                    width = Math.min(width, BODY_TYPES_COLUMN);
+                }
+                for (int i = 0; i < lines.size(); i++) {
+                    ModelDumpLine line = lines.get(i);
                     String pad = StringHelper.padString(line.level());
                     String num = "       ";
                     Integer idx = extractSourceLocationLineNumber(line.location());
                     if (idx != null) {
                         num = String.format("%4d:  ", idx);
                     }
-                    sb.append(num).append(pad).append(line.code()).append("\n");
+                    String text = pad + line.code();
+                    LineBodyTypes types = bodyTypes.get(i);
+                    if (types != null) {
+                        text = String.format("%-" + width + "s   body: %s", text, bodyTypesText(types));
+                    }
+                    sb.append(num).append(text).append("\n");
                 }
                 sb.append("\n");
             } catch (Exception e) {
@@ -149,7 +181,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 ModelToStructureDumper dumper = PluginHelper.getModelToStructureDumper(getCamelContext());
                 List<ModelDumpLine> lines
                         = dumper.dumpStructure(getCamelContext(), def.getRouteId(), brief);
-                code = buildCodeEntries(getCamelContext(), lines, metric);
+                code = buildCodeEntries(getCamelContext(), def.getRouteId(), lines, metric);
             } catch (Exception e) {
                 // ignore
             }
@@ -196,8 +228,10 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 || PatternHelper.matchPattern(onlyName, filter);
     }
 
-    private List<CodeEntry> buildCodeEntries(CamelContext camelContext, List<ModelDumpLine> lines, boolean metric) {
+    private List<CodeEntry> buildCodeEntries(
+            CamelContext camelContext, String routeId, List<ModelDumpLine> lines, boolean metric) {
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+        List<LineBodyTypes> bodyTypes = bodyTypesPerLine(camelContext, routeId, lines);
 
         List<CodeEntry> code = new ArrayList<>();
         int counter = 0;
@@ -233,11 +267,72 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
                 }
             }
 
+            LineBodyTypes types = bodyTypes.get(counter - 1);
             code.add(new CodeEntry(
                     idx, line.type(), line.id(), line.level(), line.description(), Jsoner.escape(line.code()), uri,
-                    remote, statistics));
+                    remote, types != null ? types.types() : null, types != null ? types.kinds() : null, statistics));
         }
         return code;
+    }
+
+    /**
+     * The body types each line of the route structure has been reached with, as the message history recorded them: null
+     * for the route and its from (the first two lines), and for a processor no exchange has reached. The first
+     * processor has the body as the from gave it.
+     */
+    private static List<LineBodyTypes> bodyTypesPerLine(
+            CamelContext camelContext, String routeId, List<ModelDumpLine> lines) {
+        BodyTypeRegistry registry = camelContext.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        List<LineBodyTypes> answer = new ArrayList<>(lines.size());
+        for (int i = 0; i < lines.size(); i++) {
+            LineBodyTypes types = null;
+            String id = lines.get(i).id();
+            if (registry != null && i >= 2 && id != null) {
+                List<String> found = registry.getBodyTypes(routeId, id);
+                if (!found.isEmpty()) {
+                    types = new LineBodyTypes(found, kindNames(registry.getBodyKinds(routeId, id)));
+                }
+            }
+            answer.add(types);
+        }
+        return answer;
+    }
+
+    /**
+     * The kinds by their names in the JSON and text output: null, payload, data and iterator.
+     */
+    static List<String> kindNames(List<BodyTypeRegistry.Kind> kinds) {
+        List<String> answer = new ArrayList<>(kinds.size());
+        for (BodyTypeRegistry.Kind kind : kinds) {
+            answer.add(kind.name().toLowerCase(Locale.ROOT));
+        }
+        return answer;
+    }
+
+    /**
+     * The body types by their simple class names, such as {@code String | LinkedHashMap}, followed by the kinds when
+     * there is more than one: {@code String | LinkedHashMap (payload and data)}.
+     */
+    private static String bodyTypesText(LineBodyTypes types) {
+        StringJoiner sj = new StringJoiner(" | ");
+        for (String type : types.types()) {
+            sj.add(StringHelper.afterLast(type, ".", type));
+        }
+        String answer = sj.toString();
+        if (types.kinds().size() > 1) {
+            answer += " (" + mixedKindsText(types.kinds()) + ")";
+        }
+        return answer;
+    }
+
+    /**
+     * Kinds in words: {@code payload and data}, or {@code null, payload and data}.
+     */
+    static String mixedKindsText(List<String> kinds) {
+        if (kinds.size() < 2) {
+            return String.join("", kinds);
+        }
+        return String.join(", ", kinds.subList(0, kinds.size() - 1)) + " and " + kinds.get(kinds.size() - 1);
     }
 
 }
