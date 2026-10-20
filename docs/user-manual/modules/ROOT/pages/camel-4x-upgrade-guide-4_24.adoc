@@ -38,6 +38,21 @@ XML and YAML DSL schemas said `false`. Routes behave as before.
 
 Tools that read the default from the catalog or the schemas now see `true`.
 
+=== camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
+
+When `pollEnrich` (or `poll`) times out and no `aggregationStrategy` is configured, the body is set to `null`, and with
+`variableReceive` the variable is `null`. For a message that creates its body on demand, the `null` did not stick: the
+next read created the body again. The message of a file consumer creates its body from its file, so after a timeout
+the body, or the variable of `variableReceive`, was the file of the incoming exchange instead of `null`. The messages
+of the JMS, sjms, mail, HTTP, XMPP, SMPP, SNMP and Spring WS consumers create their body on demand as well, so there it
+was the payload of the consumer again.
+
+The body, or the variable, is now `null` after a timeout for these consumers too. A route that read the incoming file
+or payload from the body after a timed out `pollEnrich` must keep it before the `pollEnrich` instead, for example with
+`variableReceive`, which leaves the body as it was. To keep the body empty, the message is replaced by a plain message
+with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
+consumer (such as `GenericFileMessage` or `JmsMessage`).
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
