@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,10 @@ import static org.apache.camel.dsl.yaml.validator.RouteGraph.scheme;
  * and a {@code to: file}, an http producer that sends it with POST, or the reply of a {@code platform-http} route fails
  * at runtime, because no type converter turns a Map into the stream they write: "No type converter available to convert
  * from type: java.util.LinkedHashMap to the required type: java.io.InputStream".
+ * <p/>
+ * Where the walk does not know the body - after a consumer other than the file consumer, or after a to: it cannot
+ * follow - what a running integration of the routes saw there fills the gap, when all the bodies it saw were of one
+ * kind (CAMEL-25750): the stream cache of an HTTP request, the List a sql call returns.
  */
 final class TextBodyFlow {
 
@@ -185,11 +190,12 @@ final class TextBodyFlow {
      * fields their JSON requests need.
      */
     private record Walk(String routeId, Map<String, JsonNode> byFrom, List<Error> errors, Set<String> seen, boolean post,
-            Map<String, Map<String, String>> operations, Map<String, Map<String, List<String>>> requestFields) {
+            Map<String, Map<String, String>> operations, Map<String, Map<String, List<String>>> requestFields,
+            Map<String, ProjectFacts.Observed> observed) {
 
         /** The walk of a route a step calls: for its outcome alone. */
         Walk called() {
-            return new Walk(null, byFrom, null, seen, false, operations, requestFields);
+            return new Walk(null, byFrom, null, seen, false, operations, requestFields, observed);
         }
     }
 
@@ -202,6 +208,7 @@ final class TextBodyFlow {
         Map<String, Map<String, String>> operations = unbound ? facts.operations() : Map.of();
         Map<String, Map<String, List<String>>> requestFields = unbound ? facts.requestFields() : Map.of();
         Set<String> restReplies = unbound ? restReplies(target, facts) : Set.of();
+        Map<String, ProjectFacts.Observed> observed = facts != null ? facts.observed() : Map.of();
         Map<String, JsonNode> byFrom = new HashMap<>();
         for (JsonNode entry : target) {
             JsonNode from = from(entry);
@@ -233,9 +240,14 @@ final class TextBodyFlow {
             String uri = endpointOf(from);
             String consumer = scheme(uri);
             boolean post = NO_HTTP_HEADERS.contains(consumer) && !setsHttpHeaders(steps);
-            Body end = walk(steps, consumerText(from), at, new Walk(
+            Body start = consumerText(from);
+            if (start == null && uri != null) {
+                // what the consumer gave in a running integration of the route
+                start = observed(observed, ProjectFacts.consumerKey(uri), "from: " + normalize(uri) + " gave");
+            }
+            Body end = walk(steps, start, at, new Walk(
                     id, byFrom, errors, new HashSet<>(), post, operations,
-                    requestFields));
+                    requestFields, observed));
             // the body at the end of a platform-http route, or of the route of a REST call, is the reply
             boolean rest = uri != null && restReplies.contains(normalize(uri));
             if (("platform-http".equals(consumer) || rest) && end instanceof Parsed parsed && steps != null
@@ -396,28 +408,80 @@ final class TextBodyFlow {
                 if (scheme != null && KEEPS_THE_BODY.contains(scheme)) {
                     return body;
                 }
-                JsonNode called = uri != null ? w.byFrom().get(normalize(uri)) : null;
-                if (called == null || !"to".equals(name) || !w.seen().add(normalize(uri))) {
-                    return null;
+                Body returned = calledRoute(name, uri, body, w);
+                if (returned == null && uri != null) {
+                    // what the producer returned in a running integration of the route
+                    returned = observed(w.observed(), ProjectFacts.producerKey(uri),
+                            name + ": " + normalize(uri) + " returned");
                 }
-                JsonNode from = from(called);
-                JsonNode steps = from.has("steps") ? from.get("steps")
-                        : called.has("route") ? called.get("route").get("steps") : null;
-                Body end = walk(steps, body, new NodePath(PathType.JSON_POINTER), w.called());
-                w.seen().remove(normalize(uri));
-                if (end instanceof Text t) {
-                    return new Text(
-                            "to: " + normalize(uri) + " returns it as text (" + t.origin() + ")", t.format(),
-                            t.file());
-                } else if (end instanceof Parsed p) {
-                    return new Parsed("to: " + normalize(uri) + " returns it as data (" + p.origin() + ")", p.format());
-                }
-                return null;
+                return returned;
             }
             default -> {
                 return KEEPING_STEPS.contains(name) ? body : null;
             }
         }
+    }
+
+    /**
+     * What a direct: or seda: route of the file returns to the to: that calls it, as its walk ends; null when the walk
+     * does not know, or the endpoint is not a route of the file.
+     */
+    private static Body calledRoute(String name, String uri, Body body, Walk w) {
+        JsonNode called = uri != null ? w.byFrom().get(normalize(uri)) : null;
+        if (called == null || !"to".equals(name) || !w.seen().add(normalize(uri))) {
+            return null;
+        }
+        JsonNode from = from(called);
+        JsonNode steps = from.has("steps") ? from.get("steps")
+                : called.has("route") ? called.get("route").get("steps") : null;
+        Body end = walk(steps, body, new NodePath(PathType.JSON_POINTER), w.called());
+        w.seen().remove(normalize(uri));
+        if (end instanceof Text t) {
+            return new Text(
+                    "to: " + normalize(uri) + " returns it as text (" + t.origin() + ")", t.format(),
+                    t.file());
+        } else if (end instanceof Parsed p) {
+            return new Parsed("to: " + normalize(uri) + " returns it as data (" + p.origin() + ")", p.format());
+        }
+        return null;
+    }
+
+    /**
+     * What a running integration of the routes saw at an endpoint (CAMEL-25750), when all the bodies were of one kind:
+     * text for a payload, parsed data for data or a collection. Null when it was not seen, or seen with more than one
+     * kind, so the walk says nothing there.
+     */
+    private static Body observed(Map<String, ProjectFacts.Observed> observed, String key, String what) {
+        ProjectFacts.Observed seen = observed.get(key);
+        if (seen == null || seen.kinds().size() != 1 || seen.types().isEmpty()) {
+            return null;
+        }
+        String origin = "in the running app, " + what + " " + inWords(seen.types());
+        return switch (seen.kinds().get(0)) {
+            case "payload" -> new Text(origin, null, seen.types().stream().anyMatch(TextBodyFlow::isFile));
+            case "data", "collection" -> new Parsed(origin, null);
+            default -> null;
+        };
+    }
+
+    /** Whether a body type is the file as a file consumer reads it. */
+    private static boolean isFile(String type) {
+        String name = simpleName(type);
+        return name.endsWith("GenericFile") || name.endsWith("RemoteFile");
+    }
+
+    /** Body types in words: a String, or a String or a byte[]. */
+    private static String inWords(List<String> types) {
+        StringJoiner sj = new StringJoiner(" or ");
+        for (String type : types) {
+            String name = simpleName(type);
+            sj.add(("AEIOU".indexOf(Character.toUpperCase(name.charAt(0))) >= 0 ? "an " : "a ") + name);
+        }
+        return sj.toString();
+    }
+
+    private static String simpleName(String type) {
+        return type.substring(type.lastIndexOf('.') + 1);
     }
 
     /**
@@ -920,7 +984,10 @@ final class TextBodyFlow {
      * as it is. So the JSON text of the request comes first, with the fields the request needs.
      */
     private static String fix(Need need, Parsed parsed) {
-        String marshal = "add marshal: " + parsed.format() + " " + need.fix();
+        // data a running integration saw has no data format the walk knows of
+        String marshal = parsed.format() != null
+                ? "add marshal: " + parsed.format() + " " + need.fix()
+                : "add marshal with the data format to write (such as marshal: json) " + need.fix();
         if (need.request() == null || !"json".equals(parsed.format())) {
             return marshal + restBinding(need, parsed);
         }

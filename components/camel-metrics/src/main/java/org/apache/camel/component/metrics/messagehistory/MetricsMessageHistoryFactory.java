@@ -29,6 +29,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -41,6 +42,7 @@ public class MetricsMessageHistoryFactory extends ServiceSupport
         implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
+    private BodyTypeRegistry bodyTypeRegistry;
     private MetricsMessageHistoryService messageHistoryService;
     private MetricRegistry metricsRegistry;
     private boolean copyMessage;
@@ -170,7 +172,7 @@ public class MetricsMessageHistoryFactory extends ServiceSupport
 
         Timer timer = metricsRegistry.timer(createName("history", routeId, node.getId()));
         MetricsMessageHistory answer = new MetricsMessageHistory(routeId, node, timer, msg);
-        answer.captureBody(exchange);
+        answer.captureBody(exchange, bodyTypeRegistry);
         return answer;
     }
 
@@ -187,6 +189,8 @@ public class MetricsMessageHistoryFactory extends ServiceSupport
 
     @Override
     protected void doInit() throws Exception {
+        // looked up once, as every node an exchange reaches records its body type
+        bodyTypeRegistry = camelContext.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
         try {
             messageHistoryService = camelContext.hasService(MetricsMessageHistoryService.class);
             if (messageHistoryService == null) {

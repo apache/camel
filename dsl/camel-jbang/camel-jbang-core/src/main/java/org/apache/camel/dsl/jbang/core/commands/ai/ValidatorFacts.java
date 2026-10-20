@@ -30,7 +30,8 @@ import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 
 /**
  * What the YAML validator cannot read from a route file, read from the files beside it (CAMEL-25762): the operations of
- * the OpenAPI specifications the file uses, and the REST binding mode the project's properties set.
+ * the OpenAPI specifications the file uses, and the REST binding mode the project's properties set. And from a running
+ * integration of the file: the bodies the endpoints of its routes gave (CAMEL-25750).
  */
 final class ValidatorFacts {
 
@@ -47,14 +48,18 @@ final class ValidatorFacts {
     private ValidatorFacts() {
     }
 
-    /** The facts for a file in a directory, or nothing when there is no directory. */
-    static ProjectFacts read(String content, Path directory) {
+    /**
+     * The facts for a file in a directory, or nothing when there is no directory: with what a running integration of
+     * the file saw at the endpoints of its routes (CAMEL-25750).
+     */
+    static ProjectFacts read(String fileName, String content, Path directory) {
         if (content == null || directory == null) {
             return ProjectFacts.NONE;
         }
         return new ProjectFacts(
                 OpenApiVerbs.bodylessEndpoints(content, directory), OpenApiVerbs.operations(content, directory),
-                restBindingMode(directory), OpenApiVerbs.requestFields(content, directory));
+                restBindingMode(directory), OpenApiVerbs.requestFields(content, directory),
+                ObservedBodies.read(fileName, directory));
     }
 
     /**

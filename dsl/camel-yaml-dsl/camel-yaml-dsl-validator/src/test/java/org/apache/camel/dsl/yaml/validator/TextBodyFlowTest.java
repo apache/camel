@@ -774,6 +774,102 @@ public class TextBodyFlowTest {
         assertThat(lines(yaml.replace("direct:getStock", "direct:audit"), STOCK_API)).isEmpty();
     }
 
+    @Test
+    public void testTheBodyAnHttpConsumerGaveInTheRunningApp() {
+        // CAMEL-25750: the request of a platform-http route is a stream cache, which the walk alone does not know
+        String yaml = """
+                - route:
+                    id: orders
+                    from:
+                      uri: platform-http:/orders
+                      steps:
+                        - setHeader:
+                            name: qty
+                            expression:
+                              simple: ${body.qty}
+                """;
+        assertThat(lines(yaml)).isEmpty();
+
+        ProjectFacts seen = observed(ProjectFacts.consumerKey("platform-http:/orders"),
+                List.of("org.apache.camel.converter.stream.ByteArrayInputStreamCache"), List.of("payload"));
+        assertThat(lines(yaml, seen)).singleElement().satisfies(m -> {
+            assertThat(m).contains("simple reads a field of the body (${body.qty}), but the body here is still text");
+            assertThat(m).contains("in the running app, from: platform-http:/orders gave a ByteArrayInputStreamCache");
+            assertThat(m).contains("unmarshal it first with the data format of the payload");
+        });
+    }
+
+    @Test
+    public void testTheBodyAProducerReturnedInTheRunningApp() {
+        // a sql call returns a List of rows, which a file write cannot write as it is
+        String yaml = """
+                - route:
+                    id: report
+                    from:
+                      uri: timer:report
+                      steps:
+                        - to:
+                            uri: sql:select * from orders
+                        - to:
+                            uri: file:reports
+                """;
+        assertThat(lines(yaml)).isEmpty();
+
+        ProjectFacts seen = observed(ProjectFacts.producerKey("sql:select * from orders"),
+                List.of("java.util.ArrayList"), List.of("collection"));
+        assertThat(lines(yaml, seen)).singleElement().satisfies(m -> {
+            assertThat(m).contains("to: file writes the body to a file, but the body here is parsed data");
+            assertThat(m).contains("in the running app, to: sql:select * from orders returned an ArrayList");
+            // the walk knows no data format for what the running app saw
+            assertThat(m).contains("add marshal with the data format to write (such as marshal: json) before this step");
+        });
+    }
+
+    @Test
+    public void testBodiesOfMoreThanOneKindSayNothing() {
+        String yaml = """
+                - route:
+                    id: report
+                    from:
+                      uri: timer:report
+                      steps:
+                        - to:
+                            uri: sql:select * from orders
+                        - to:
+                            uri: file:reports
+                """;
+        // some calls returned rows, others text: the walk cannot tell which one this is
+        ProjectFacts seen = observed(ProjectFacts.producerKey("sql:select * from orders"),
+                List.of("java.util.ArrayList", "java.lang.String"), List.of("collection", "payload"));
+        assertThat(lines(yaml, seen)).isEmpty();
+    }
+
+    @Test
+    public void testWhatTheWalkKnowsComesFirst() {
+        // the file consumer gives the file as read, whatever a running app saw: the walk knows, and says so
+        String yaml = """
+                - route:
+                    id: orders
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - setHeader:
+                            name: qty
+                            expression:
+                              simple: ${body.qty}
+                """;
+        ProjectFacts seen = observed(ProjectFacts.consumerKey("file:inbox"),
+                List.of("java.util.LinkedHashMap"), List.of("data"));
+        assertThat(lines(yaml, seen)).singleElement().satisfies(m -> {
+            assertThat(m).contains("the file as it was read");
+            assertThat(m).doesNotContain("running app");
+        });
+    }
+
+    private static ProjectFacts observed(String key, List<String> types, List<String> kinds) {
+        return new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(key, new ProjectFacts.Observed(types, kinds)));
+    }
+
     private static List<String> lines(String yaml, ProjectFacts facts) {
         try {
             return YamlValidator.describeAll(yaml, validator.validate(yaml, facts));

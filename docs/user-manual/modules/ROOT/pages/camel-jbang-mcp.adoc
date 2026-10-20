@@ -827,7 +827,9 @@ process is running).
 | Get Camel context information: name, version, state, uptime, route count, exchange statistics.
 
 | `camel_runtime_routes`
-| List Camel routes with their state, uptime, messages processed, last error, and throughput statistics.
+| List Camel routes with their state, uptime, messages processed, last error, and throughput statistics. With the
+  message history on (`camel run --dev`), a route also counts its steps that have been reached with more than one body
+  type (`variedBodyTypes`), and those reached with bodies of more than one kind (`mixedBodyKinds`), which need attention.
 
 | `camel_runtime_route_source`
 | Get the source code of routes in the running Camel application. Supports wildcard filtering.
@@ -838,7 +840,9 @@ process is running).
 
 | `camel_runtime_route_structure`
 | Show the route structure as a tree of processors, for the routes `routeId` names (a route id or a pattern, all
-  routes when omitted). `brief=true` leaves out the options and expressions.
+  routes when omitted). `brief=true` leaves out the options and expressions. With the message history on, each step has
+  the body types it has been reached with (`bodyTypes`) and their kinds (`bodyKinds`: `null`, `payload`, `data` or
+  `collection`); `varied=true` keeps only the steps reached with more than one body type.
 
 | `camel_runtime_processor_detail`
 | Show the configured options of every processor in a route: each processor's type, id, and configured options

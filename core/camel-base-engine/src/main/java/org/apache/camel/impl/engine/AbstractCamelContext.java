@@ -94,6 +94,7 @@ import org.apache.camel.spi.BacklogDebugger;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -381,6 +382,8 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(PackageScanResourceResolver.class, createPackageScanResourceResolver());
         camelContextExtension.addContextPlugin(OptimisedComponentResolver.class, createOptimisedComponentResolver());
         camelContextExtension.addContextPlugin(VariableRepositoryFactory.class, createVariableRepositoryFactory());
+        // not lazy: the message history feeds it from many threads at once, and a lazy plugin can be created twice
+        camelContextExtension.addContextPlugin(BodyTypeRegistry.class, createBodyTypeRegistry());
         camelContextExtension.lazyAddContextPlugin(ModelineFactory.class, this::createModelineFactory);
         camelContextExtension.lazyAddContextPlugin(ModelJAXBContextFactory.class, this::createModelJAXBContextFactory);
         camelContextExtension.addContextPlugin(DataFormatResolver.class, createDataFormatResolver());
@@ -1598,6 +1601,12 @@ public abstract class AbstractCamelContext extends BaseService
         routeService.setRemovingRoutes(true);
         shutdownRouteService(routeService, loggingLevel);
         routeServices.remove(routeId);
+        // what the nodes of the route were reached with goes with the route, so a route that is loaded again (such as
+        // by a reload in dev mode) starts afresh and never mixes two versions of the route
+        BodyTypeRegistry bodyTypes = camelContextExtension.getContextPlugin(BodyTypeRegistry.class);
+        if (bodyTypes != null) {
+            bodyTypes.removeRoute(routeId);
+        }
         // remove route from startup order as well, as it was
         // removed
         routeStartupOrder.removeIf(order -> order.getRoute().getId().equals(routeId));
@@ -4477,6 +4486,10 @@ public abstract class AbstractCamelContext extends BaseService
                 RouteTopologyDumper.FACTORY,
                 RouteTopologyDumper.class,
                 "camel-core-engine");
+    }
+
+    protected BodyTypeRegistry createBodyTypeRegistry() {
+        return new DefaultBodyTypeRegistry();
     }
 
     @Override

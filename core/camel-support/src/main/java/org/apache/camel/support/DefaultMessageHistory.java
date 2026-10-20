@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.util.ObjectHelper;
 
@@ -77,17 +78,37 @@ public class DefaultMessageHistory implements MessageHistory {
     /**
      * Captures the body's type and size as the node is reached: the type is one class lookup ({@code "null"} for a null
      * body), the size the {@link MessageSizeStrategy}'s (lengths only, no reading or conversion) and only when that
-     * strategy is enabled. For every factory that builds a history entry (CAMEL-24844).
+     * strategy is enabled. For every factory that builds a history entry (CAMEL-24844). The type also goes to the
+     * {@link BodyTypeRegistry} of the CamelContext (CAMEL-25750).
+     * <p/>
+     * A factory should look the registry up once and call {@link #captureBody(Exchange, BodyTypeRegistry)} instead, as
+     * this method looks it up on every call.
      */
     public void captureBody(Exchange exchange) {
+        CamelContext context = exchange.getContext();
+        captureBody(exchange,
+                context != null ? context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class) : null);
+    }
+
+    /**
+     * Captures the body's type and size as the node is reached, as {@link #captureBody(Exchange)} does, and records the
+     * type in the registry, which keeps what each node was reached with across the exchanges (CAMEL-25750).
+     *
+     * @param exchange the exchange that reached the node
+     * @param registry the registry to record the type in, looked up once by the factory (null to not record it)
+     */
+    public void captureBody(Exchange exchange, BodyTypeRegistry registry) {
         Message current = exchange.getMessage();
         Object body = current.getBody();
         bodyType = body != null ? ObjectHelper.classCanonicalName(body) : "null";
+        if (registry != null && routeId != null && nodeId != null) {
+            registry.addBodyType(routeId, nodeId, bodyType, BodyFacts.kindOf(body));
+        }
+        CamelContext context = exchange.getContext();
         if (body == null) {
             // no body, no size: "null" says it, and 0 would read as an empty text or byte array
             return;
         }
-        CamelContext context = exchange.getContext();
         MessageSizeStrategy sizeStrategy = context != null ? context.getMessageSizeStrategy() : null;
         if (sizeStrategy != null && sizeStrategy.isEnabled()) {
             bodySize = sizeStrategy.computeBodySize(current);

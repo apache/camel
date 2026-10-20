@@ -120,9 +120,10 @@ public final class SourceValidator {
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the
             // route: read it, so that a GET operation is known to carry no body (CAMEL-24844), and with the REST binding
-            // mode of the properties, whether a Map sent or returned over REST is written for the route (CAMEL-25762)
+            // mode of the properties, whether a Map sent or returned over REST is written for the route (CAMEL-25762);
+            // and what a running integration of the file saw at the endpoints of its routes (CAMEL-25750)
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator,
-                    ValidatorFacts.read(content, directory));
+                    ValidatorFacts.read(fileName, content, directory));
             if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
                 // the shape of a Kamelet file, which the schema of a route file does not know
                 List<String> shape = KameletChecks.validateKameletFile(content);
