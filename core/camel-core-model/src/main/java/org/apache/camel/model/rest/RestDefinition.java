@@ -91,7 +91,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     private String bindingMode;
     @XmlAttribute
     @Metadata(description = "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
+              label = "advanced", javaType = "java.lang.Boolean", defaultValue = "true")
     private String skipBindingOnErrorCode;
     @XmlAttribute
     @Metadata(description = "Whether to enable validation of the client request to check whether Content-Type/Accept headers, required parameters, and message body are valid.",

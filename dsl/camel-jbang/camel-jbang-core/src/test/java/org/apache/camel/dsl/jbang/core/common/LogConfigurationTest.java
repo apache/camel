@@ -52,6 +52,8 @@ class LogConfigurationTest {
     void pid() {
         // as the CLI sets it
         System.setProperty("pid", PID);
+        // a test of a command that configured the logging before, in the same JVM, leaves it set
+        System.clearProperty(RuntimeUtil.LOG_DIR);
     }
 
     @AfterEach

@@ -3931,7 +3931,7 @@ public class JavaDslModelWriter extends JavaDslModelWriterSupport {
         doWriteAttribute(sb, "path", def.getPath(), null);
         doWriteAttribute(sb, "routeId", def.getRouteId(), null);
         doWriteAttribute(sb, "bindingMode", def.getBindingMode(), null);
-        doWriteAttribute(sb, "apiDocs", def.getApiDocs(), "true");
+        doWriteAttribute(sb, "apiDocs", def.getApiDocs(), null);
         doWriteAttribute(sb, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(sb, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
         doWriteAttribute(sb, "clientRequestValidation", def.getClientRequestValidation(), null);

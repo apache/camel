@@ -30,6 +30,14 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-core - the documented default of skipBindingOnErrorCode is true
+
+The `skipBindingOnErrorCode` option of the Rest DSL (on `restConfiguration`, `rest`, its verbs and `restBinding`) is now
+documented with the default value `true`, the default it has always had at runtime. Before, the model, the catalog, the
+XML and YAML DSL schemas said `false`. Routes behave as before.
+
+Tools that read the default from the catalog or the schemas now see `true`.
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
@@ -606,10 +614,11 @@ provider is detected as before.
 The XML, YAML and Java route dumps (`camel transform route`, `camel validate normalize`, `camel.main.dumpRoutes`, the
 developer console) now write these options whenever they are set, also with their documented default value: the
 binding options of the rest configuration, a rest and its verbs (such as `bindingMode="off"`), the options of a
-redelivery policy, of a `resilience4jConfiguration` and of a `faultToleranceConfiguration`, and `shutdownRoute` /
-`shutdownRunningTask` of a route. Left out, such an option took the value of the parent level when the dump was loaded
-(the rest configuration, the error handler, the global circuit breaker configuration, the CamelContext), so the route
-behaved differently.
+redelivery policy, of a `resilience4jConfiguration` and of a `faultToleranceConfiguration`, `shutdownRoute` /
+`shutdownRunningTask` of a route, and `apiDocs` of a rest verb. Left out, such an option took the value of the parent
+level when the dump was loaded (the rest configuration or the rest, the error handler, the global circuit breaker
+configuration, the CamelContext), so the route behaved differently, or, for `apiDocs`, a verb with `apiDocs="true"`
+under a rest with `apiDocs="false"` was left out of the OpenAPI document.
 
 === camel-jbang - camel get bean, get route-controller and top source
 
@@ -1610,6 +1619,15 @@ go through one of those paths, remove the `{` and `}` characters from it in the 
 endpoint (Chunk has no escape for tags inside data), for example with a processor that rewrites the body or
 header.
 
+=== camel-azure-storage-blob - a listed blob that cannot be got is skipped
+
+When the consumer lists the container, a failure to get one of the listed blobs (for example a blob in the archive
+tier, or access denied) no longer fails the poll, as long as another listed blob could be got: the blob is skipped, the
+other listed blobs are consumed, and the skipped blob is tried again by a later poll. The failure is given to the
+exception handler of the consumer, with the blob name in the message (by default a `WARN` with the stack trace, at every
+poll that lists the blob). Before, the poll failed, and as every poll lists the container again, one such blob stopped
+the consumer from consuming any blob. The poll still fails when none of the listed blobs could be got.
+
 === camel-azure-servicebus - the dead-letter reason and description are bounded
 
 When the consumer dead-letters a message after a failed route with `enableDeadLettering=true`, the reason and the
@@ -1763,6 +1781,16 @@ Semantic audit backends can opt into the additive `inputType` extension. Readers
 support it keep their existing projection. The `camel semantic audit --json` display omits image
 base64 and reports metadata instead. Use `--output=<new-file>` to export the full returned JSON,
 with `--include-input` for case/bulk requests that need captured input. Existing files are not overwritten.
+
+=== camel-azure-storage-datalake - a listed file that cannot be got is skipped
+
+When the consumer lists the file system, a failure to get one of the listed files (for example access denied by the ACL
+of the file) no longer fails the poll, as long as another listed file could be got: the file is skipped, the other
+listed files are consumed, and the skipped file is tried again by a later poll. The failure is given to the exception
+handler of the consumer, with the file name in the message (by default a `WARN` with the stack trace, at every poll that
+lists the file). A file deleted after the listing is skipped as well; before, it made the whole poll return no file.
+Before, any other failure failed the poll, and as every poll lists the file system again, one such file stopped the
+consumer from consuming any file. The poll still fails when none of the listed files could be got.
 
 === camel-milo - a Bad or Uncertain status is delivered by default
 
