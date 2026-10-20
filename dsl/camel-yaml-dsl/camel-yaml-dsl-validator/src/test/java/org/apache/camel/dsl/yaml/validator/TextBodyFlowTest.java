@@ -597,7 +597,11 @@ public class TextBodyFlowTest {
             assertThat(m).startsWith("Line 9: ");
             assertThat(m).contains("route reserve: to: rest-openapi sends the body as the request of the operation"
                                    + " reserveStock (POST in stock-api.json)");
-            assertThat(m).contains("add marshal: json before this step, or let the REST binding write it (bindingMode: json)");
+            // the JSON text of the request first: the data is rarely the request as it is
+            assertThat(m).contains("unmarshal: json turns the text into data: set the body to the JSON text of the request"
+                                   + " before this step, such as with setBody and simple: '{\"name\": \"${body[name]}\"}',"
+                                   + " or add marshal: json before this step when the data has the fields of the request,"
+                                   + " or let the REST binding write it (bindingMode: json)");
         });
         // the same operation named by options, or with the specification as a file: resource
         String options = """
@@ -652,6 +656,42 @@ public class TextBodyFlowTest {
         });
         // a jsonpath that reads no field of the element: the element may be text
         assertThat(lines(yaml.replace("expression: \"$.sku\"", "expression: \"$\""), STOCK_API)).isEmpty();
+    }
+
+    @Test
+    public void testRestOpenApiCallNamesTheFieldsOfTheRequest() {
+        // r19 of the benchmark: told to marshal, the model sent each line as JSON, without the orderId of the request
+        String yaml = """
+                - route:
+                    id: reserve-order-lines
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - split:
+                            expression:
+                              simple: "${body[lines]}"
+                            steps:
+                              - setHeader:
+                                  name: sku
+                                  expression:
+                                    simple: "${body[sku]}"
+                              - to:
+                                  uri: rest-openapi
+                                  parameters:
+                                    specificationUri: stock-api.json
+                                    operationId: reserveStock
+                """;
+        ProjectFacts facts = new ProjectFacts(
+                Set.of(), STOCK_API.operations(), "off",
+                Map.of("stock-api.json", Map.of("reserveStock", List.of("orderId", "qty"))));
+        assertThat(lines(yaml, facts)).singleElement().satisfies(m -> {
+            assertThat(m).contains("rest-openapi sends the body as the request of the operation reserveStock");
+            assertThat(m).contains("set the body to the JSON text of the request before this step (it needs orderId, qty),"
+                                   + " such as with setBody and simple: '{\"orderId\": ..., \"qty\": ...}', or add marshal:"
+                                   + " json before this step when the data has the fields of the request");
+        });
     }
 
     @Test

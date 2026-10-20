@@ -111,6 +111,70 @@ class ValidatorFactsTest {
     }
 
     @Test
+    void theFieldsTheJsonRequestOfAnOperationNeeds(@TempDir Path dir) throws Exception {
+        // a $ref to the schemas of the components, and an inline schema
+        Files.writeString(dir.resolve("stock-api.json"), """
+                {
+                  "openapi": "3.0.2",
+                  "paths": {
+                    "/stock/{sku}": { "get": { "operationId": "getStock", "responses": { "200": { "description": "ok" } } } },
+                    "/stock/{sku}/reserve": { "post": { "operationId": "reserveStock",
+                      "requestBody": { "required": true, "content": { "application/json": {
+                        "schema": { "$ref": "#/components/schemas/Reservation" } } } },
+                      "responses": { "200": { "description": "ok" } } } }
+                  },
+                  "components": { "schemas": { "Reservation": { "type": "object", "required": ["orderId", "qty"],
+                    "properties": { "orderId": { "type": "string" }, "qty": { "type": "integer" } } } } }
+                }
+                """);
+        Files.writeString(dir.resolve("orders-api.yaml"), """
+                openapi: 3.0.2
+                paths:
+                  /orders:
+                    post:
+                      operationId: createOrder
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: object
+                              required: [customer]
+                      responses:
+                        '201':
+                          description: created
+                """);
+        String content = "- to: rest-openapi:stock-api.json#reserveStock\n- to: rest-openapi:orders-api.yaml#createOrder\n";
+
+        assertThat(OpenApiVerbs.requestFields(content, dir)).isEqualTo(Map.of(
+                "stock-api.json", Map.of("reserveStock", List.of("orderId", "qty")),
+                "orders-api.yaml", Map.of("createOrder", List.of("customer"))));
+        // a specification without request schemas, such as STOCK_API, gives none
+        Files.writeString(dir.resolve("stock-api.json"), STOCK_API);
+        assertThat(OpenApiVerbs.requestFields(content, dir)).containsOnlyKeys("orders-api.yaml");
+    }
+
+    @Test
+    void theHintNamesTheFieldsOfTheRequest(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("stock-api.json"), """
+                {
+                  "openapi": "3.0.2",
+                  "paths": {
+                    "/reservations": { "post": { "operationId": "reserveStock",
+                      "requestBody": { "content": { "application/json": {
+                        "schema": { "$ref": "#/components/schemas/Reservation" } } } },
+                      "responses": { "201": { "description": "ok" } } } }
+                  },
+                  "components": { "schemas": { "Reservation": { "required": ["orderId", "qty"] } } }
+                }
+                """);
+
+        List<String> msgs = SourceValidator.validate("orders.camel.yaml", RESERVE, new DefaultCamelCatalog(), null, dir);
+        assertThat(msgs).anyMatch(m -> m.contains("set the body to the JSON text of the request before this step"
+                                                  + " (it needs orderId, qty), such as with setBody and simple:"
+                                                  + " '{\"orderId\": ..., \"qty\": ...}'"));
+    }
+
+    @Test
     void theRestBindingModeOfTheProperties(@TempDir Path dir) throws Exception {
         assertThat(ValidatorFacts.restBindingMode(dir)).isEqualTo("off");
 
