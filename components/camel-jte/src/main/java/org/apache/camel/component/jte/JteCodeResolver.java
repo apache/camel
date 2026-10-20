@@ -39,9 +39,9 @@ public class JteCodeResolver implements CodeResolver {
         this.camelContext = camelContext;
     }
 
-    public void addTemplateFromHeader(String exchangeId, String template) {
-        if (exchangeId != null && template != null) {
-            headerTemplates.put(exchangeId, template);
+    public void addTemplateFromHeader(String name, String template) {
+        if (name != null && template != null) {
+            headerTemplates.put(name, template);
         }
     }
 
