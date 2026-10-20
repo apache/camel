@@ -94,6 +94,14 @@ public class RouteStructureDevConsoleTest extends ContextTestSupport {
         JsonObject myRoute = (JsonObject) ((JsonArray) routesOut.getCollection("routes")).get(0);
         Assertions.assertEquals(1, myRoute.getInteger("variedBodyTypes"));
         Assertions.assertEquals(1, myRoute.getInteger("mixedBodyKinds"));
+
+        // and each processor has its body types, as the status file of the Camel CLI has the routes with their processors
+        JsonObject withProcessors = (JsonObject) routeConsole.call(DevConsole.MediaType.JSON, Map.of("processors", "true"));
+        JsonObject routeWithProcessors = (JsonObject) ((JsonArray) withProcessors.getCollection("routes")).get(0);
+        JsonObject processor = (JsonObject) ((JsonArray) routeWithProcessors.getCollection("processors")).get(0);
+        Assertions.assertEquals("result", processor.getString("id"));
+        Assertions.assertEquals(List.of("java.lang.String", "java.util.LinkedHashMap"), processor.getCollection("bodyTypes"));
+        Assertions.assertEquals(List.of("payload", "data"), processor.getCollection("bodyKinds"));
     }
 
     @Test
