@@ -40,7 +40,7 @@ public class XmppPubSubProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         try {
             if (connection == null) {
-                connection = endpoint.createConnection();
+                connection = endpoint.acquireConnection(this);
             }
 
             // make sure we are connected
@@ -76,4 +76,13 @@ public class XmppPubSubProducer extends DefaultProducer {
         }
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        if (connection != null) {
+            // the connection is shared with the other consumers and producers of the account
+            endpoint.releaseConnection(this);
+        }
+        connection = null;
+        super.doStop();
+    }
 }

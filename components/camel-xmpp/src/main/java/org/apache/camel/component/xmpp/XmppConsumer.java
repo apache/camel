@@ -69,7 +69,7 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     @Override
     protected void doStart() throws Exception {
         try {
-            connection = endpoint.createConnection();
+            connection = endpoint.acquireConnection(this);
         } catch (SmackException e) {
             if (endpoint.isTestConnectionOnStartup()) {
                 throw new RuntimeCamelException("Could not connect to XMPP server.", e);
@@ -187,8 +187,16 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
             muc.leave();
             muc = null;
         }
-        if (connection != null && connection.isConnected()) {
-            connection.disconnect();
+        if (connection != null) {
+            // the connection is shared with the other consumers and producers of the account: stop listening on it,
+            // and release it (it is closed when nobody uses it any more)
+            if (chatManager != null) {
+                chatManager.removeIncomingListener(this);
+                chatManager = null;
+            }
+            connection.removeSyncStanzaListener(this);
+            endpoint.releaseConnection(this);
+            connection = null;
         }
     }
 

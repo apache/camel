@@ -16,17 +16,25 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.jivesoftware.smack.ReconnectionManager;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,20 +43,15 @@ public class XmppComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppComponent.class);
 
-    // keep a cache of endpoints so they can be properly cleaned up
-    private final Map<String, XmppEndpoint> endpointCache = new HashMap<>();
+    // the connections of the endpoints, one per account: a server keeps one session per account and resource, and
+    // closes the older session (conflict) when another one logs in, so the endpoints of an account share its connection
+    private final Map<List<Object>, SharedConnection> connections = new HashMap<>();
 
     public XmppComponent() {
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String cacheKey = extractCacheKeyFromUri(uri);
-        if (endpointCache.containsKey(cacheKey)) {
-            LOG.debug("Using cached endpoint for URI {}", URISupport.sanitizeUri(uri));
-            return endpointCache.get(cacheKey);
-        }
-
         LOG.debug("Creating new endpoint for URI {}", URISupport.sanitizeUri(uri));
         XmppEndpoint endpoint = new XmppEndpoint(uri, this);
 
@@ -78,8 +81,6 @@ public class XmppComponent extends DefaultComponent {
             }
         }
 
-        endpointCache.put(cacheKey, endpoint);
-
         return endpoint;
     }
 
@@ -92,14 +93,78 @@ public class XmppComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(endpointCache.values());
-        endpointCache.clear();
+        List<SharedConnection> remaining;
+        synchronized (connections) {
+            remaining = List.copyOf(connections.values());
+            connections.clear();
+        }
+        for (SharedConnection shared : remaining) {
+            shared.disconnect();
+        }
 
         super.doStop();
     }
 
-    private String extractCacheKeyFromUri(String uri) throws URISyntaxException {
-        URI u = new URI(uri);
-        return u.getScheme() + "://" + u.getHost() + u.getPort() + u.getQuery();
+    /**
+     * Gets the connection of the endpoint's account for the given consumer or producer, and creates it when the account
+     * has no connection yet or its connection is no longer connected. The connection is shared with the other consumers
+     * and producers of the account, also of other endpoints; release it with
+     * {@link #releaseConnection(XmppEndpoint, Object)}.
+     */
+    XMPPTCPConnection acquireConnection(XmppEndpoint endpoint, Object user)
+            throws InterruptedException, IOException, SmackException, XMPPException {
+        List<Object> key = endpoint.getConnectionKey();
+        SharedConnection shared;
+        synchronized (connections) {
+            shared = connections.computeIfAbsent(key, k -> new SharedConnection());
+            shared.users.add(user);
+        }
+        boolean acquired = false;
+        shared.lock.lock();
+        try {
+            if (shared.connection == null || !shared.connection.isConnected()) {
+                shared.connection = endpoint.createConnection();
+            }
+            acquired = true;
+            return shared.connection;
+        } finally {
+            shared.lock.unlock();
+            if (!acquired) {
+                releaseConnection(endpoint, user);
+            }
+        }
     }
+
+    /**
+     * Releases the connection that the given consumer or producer acquired, and disconnects it when no consumer or
+     * producer of the account uses it any more.
+     */
+    void releaseConnection(XmppEndpoint endpoint, Object user) {
+        List<Object> key = endpoint.getConnectionKey();
+        SharedConnection unused = null;
+        synchronized (connections) {
+            SharedConnection shared = connections.get(key);
+            if (shared != null && shared.users.remove(user) && shared.users.isEmpty()) {
+                connections.remove(key);
+                unused = shared;
+            }
+        }
+        if (unused != null) {
+            unused.disconnect();
+        }
+    }
+
+    private static final class SharedConnection {
+        private final Lock lock = new ReentrantLock();
+        private final Set<Object> users = Collections.newSetFromMap(new IdentityHashMap<>());
+        private volatile XMPPTCPConnection connection;
+
+        void disconnect() {
+            XMPPTCPConnection current = connection;
+            if (current != null && current.isConnected()) {
+                current.disconnect();
+            }
+        }
+    }
+
 }

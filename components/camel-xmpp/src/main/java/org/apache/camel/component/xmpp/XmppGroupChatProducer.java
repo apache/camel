@@ -51,7 +51,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
     public void process(Exchange exchange) {
         if (connection == null) {
             try {
-                connection = endpoint.createConnection();
+                connection = endpoint.acquireConnection(this);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeExchangeException("Interrupted while connecting to XMPP server.", exchange, e);
@@ -116,7 +116,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         if (connection == null) {
             try {
-                connection = endpoint.createConnection();
+                connection = endpoint.acquireConnection(this);
             } catch (SmackException e) {
                 if (endpoint.isTestConnectionOnStartup()) {
                     throw new RuntimeCamelException(
@@ -166,8 +166,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
         }
         chat = null;
 
-        if (connection != null && connection.isConnected()) {
-            connection.disconnect();
+        if (connection != null) {
+            // the connection is shared with the other consumers and producers of the account
+            endpoint.releaseConnection(this);
         }
         connection = null;
 
