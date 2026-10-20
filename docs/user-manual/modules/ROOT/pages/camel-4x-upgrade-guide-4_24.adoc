@@ -332,6 +332,11 @@ is observable.
   combined export carries both a `PUBLIC KEY` and a `PRIVATE KEY` block, and the parser stripped only one pair of
   armour lines, leaving the other in the Base64 input and failing with `Illegal base64 character 2d`. The export
   format itself is unchanged, so documents written by earlier versions are unaffected.
+* `importKey` resolves the `KeyFactory` with the BouncyCastle provider that serves the algorithm, as the file-based
+  manager's key loading already did. On JDK 24 and later the JDK itself implements ML-DSA and ML-KEM and is listed
+  before BouncyCastle, so the provider-less lookup used until now returned a JDK key, and signing with it through the
+  component's BouncyCastle `Signature` failed with `unknown private key passed to ML-DSA`. A key imported through the
+  AWS Secrets Manager, Azure Key Vault, HashiCorp Vault or in-memory manager is now a BouncyCastle key on every JDK.
 
 PEM handling is also now explicitly UTF-8 rather than the platform default charset.
 

@@ -21,9 +21,13 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+
+import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
+import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 
 /**
  * Utility class for converting PQC keys between different formats (PEM, DER, PKCS8, X509).
@@ -98,8 +102,7 @@ public class KeyFormatConverter {
         }
 
         X509EncodedKeySpec spec = new X509EncodedKeySpec(derBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
-        return keyFactory.generatePublic(spec);
+        return keyFactory(algorithm).generatePublic(spec);
     }
 
     /**
@@ -116,8 +119,45 @@ public class KeyFormatConverter {
         }
 
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(derBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
-        return keyFactory.generatePrivate(spec);
+        return keyFactory(algorithm).generatePrivate(spec);
+    }
+
+    /**
+     * Resolves the {@link KeyFactory} of an algorithm with the BouncyCastle provider that serves it, so an imported key
+     * is of the same provider as the keys this component generates and signs with. From JDK 24 the JDK itself
+     * implements ML-DSA and ML-KEM and is listed before BouncyCastle, so a plain {@code KeyFactory.getInstance} returns
+     * a JDK key, which the component's BouncyCastle {@code Signature} rejects as an unknown private key. An algorithm
+     * the component does not map, or whose provider is not installed, keeps the default lookup.
+     */
+    private static KeyFactory keyFactory(String algorithm) throws Exception {
+        String provider = bouncyCastleProviderFor(algorithm);
+        if (provider != null && Security.getProvider(provider) != null) {
+            return KeyFactory.getInstance(algorithm, provider);
+        }
+        return KeyFactory.getInstance(algorithm);
+    }
+
+    /**
+     * The BouncyCastle provider ({@code BC} or {@code BCPQC}) serving an algorithm given by the component's name
+     * ({@code MLDSA}) or by its JCE name ({@code ML-DSA}), or {@code null} for an algorithm the component does not
+     * know.
+     */
+    private static String bouncyCastleProviderFor(String algorithm) {
+        String provider = KeyAlgorithmSupport.determineProvider(algorithm);
+        if (provider != null) {
+            return provider;
+        }
+        for (PQCSignatureAlgorithms candidate : PQCSignatureAlgorithms.values()) {
+            if (candidate.getAlgorithm().equalsIgnoreCase(algorithm)) {
+                return candidate.getBcProvider();
+            }
+        }
+        for (PQCKeyEncapsulationAlgorithms candidate : PQCKeyEncapsulationAlgorithms.values()) {
+            if (candidate.getAlgorithm().equalsIgnoreCase(algorithm)) {
+                return candidate.getBcProvider();
+            }
+        }
+        return null;
     }
 
     /**
