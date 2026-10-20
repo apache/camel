@@ -1592,6 +1592,18 @@ A started PQC data format no longer keeps a `KeyGenerator` of its own: `getKeyGe
 instance and, unless one is configured, the `CamelPQCKemAlgorithm` header now selects the KEM algorithm of each
 operation.
 
+=== camel-minio - a listed object that cannot be got is skipped
+
+When the consumer lists the bucket, a failure to stat or get one of the listed objects (for example access denied, or
+an object encrypted with a customer key the consumer does not have) no longer fails the poll, as long as another listed
+object could be got: the object is skipped, the other listed objects are consumed, and the skipped object is tried
+again by a later poll. The failure is given to the exception handler of the consumer, with the object name in the
+message (by default a `WARN` with the stack trace, at every poll that lists the object). Before, the objects listed
+after it in the same poll were not consumed, so one such object could keep the consumer from consuming the rest of the
+bucket. The poll still fails when none of the listed objects could be got, and when `objectName` is set. When a poll
+lists `maxMessagesPerPoll` objects, the next poll now continues after the last listed object (before, after the last
+object that was consumed), so an object that cannot be got at the end of a page does not hold the listing back.
+
 === camel-box - getEnterpriseEvents returns the events of every chunk
 
 The `getEnterpriseEvents` operation of the `event-logs` API now returns all the events between `after` and `before`.
