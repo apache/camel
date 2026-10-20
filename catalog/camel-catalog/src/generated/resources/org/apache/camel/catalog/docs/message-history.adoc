@@ -465,6 +465,10 @@ The step after the choice has been reached with a `byte[]` by the high priority 
 others. Both are a payload, so the step is dynamic but needs no attention. Had the branch unmarshalled the body instead,
 the line would say `body: LinkedHashMap | String (data and payload)`.
 
+When a step fails on the body, such as reading a field of text, its error says so too: `...; other messages reached this
+step with data (LinkedHashMap), so the body here depends on the path a message takes`. The step is right for some
+messages, and a path to it, such as a branch that does not unmarshal, is what differs.
+
 The body types of a route are forgotten when the route is removed, such as when it is reloaded in dev mode. In Java the
 registry is a context plugin:
 

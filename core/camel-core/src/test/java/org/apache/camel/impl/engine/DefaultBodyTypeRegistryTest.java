@@ -43,6 +43,10 @@ public class DefaultBodyTypeRegistryTest {
 
         registry.addBodyType("orders", "to1", "java.util.LinkedHashMap", DATA);
         assertEquals(List.of(PAYLOAD, DATA), registry.getBodyKinds("orders", "to1"));
+        // the types of one kind
+        assertEquals(List.of("java.lang.String", "byte[]"), registry.getBodyTypes("orders", "to1", PAYLOAD));
+        assertEquals(List.of("java.util.LinkedHashMap"), registry.getBodyTypes("orders", "to1", DATA));
+        assertTrue(registry.getBodyTypes("orders", "to1", NULL).isEmpty());
 
         // a node of another route with the same id is another node
         assertTrue(registry.getBodyTypes("invoices", "to1").isEmpty());

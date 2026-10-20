@@ -103,6 +103,17 @@ public interface BodyTypeRegistry {
     List<Kind> getBodyKinds(String routeId, String nodeId);
 
     /**
+     * The body types of one kind the node has been reached with, in the order they were first seen.
+     *
+     * @param  routeId the id of the route the node belongs to
+     * @param  nodeId  the id of the node
+     * @param  kind    the kind
+     * @return         the body types of the kind, or an empty list when no exchange has reached the node with a body of
+     *                 the kind (or only with types beyond the first few)
+     */
+    List<String> getBodyTypes(String routeId, String nodeId, Kind kind);
+
+    /**
      * The body types of every node of the route that an exchange has reached.
      *
      * @param  routeId the id of the route
