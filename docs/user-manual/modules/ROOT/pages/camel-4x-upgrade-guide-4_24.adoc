@@ -2075,6 +2075,14 @@ To keep the previous behaviour, filter the exchanges with a bad status out right
 `filter(simple("${body.statusCode.bad} == false"))`. This also drops the other bad statuses, such as the refusal of a
 node, and the current values delivered after an outage still arrive.
 
+=== camel-milo - the reconnectTimeout of the components sets the delay between connection attempts
+
+`setReconnectTimeout` on the `milo-client` and `milo-browse` components set the request timeout of every service call,
+and the delay between two connection attempts stayed 10 seconds. It now sets that delay, which the new
+`reconnectTimeout` option of both endpoints and components sets too; its default of 10000 milliseconds is the previous
+delay, and a value of 0 or less is rejected. A component that called `setReconnectTimeout` to set the request timeout
+uses `setRequestTimeout` for it.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
