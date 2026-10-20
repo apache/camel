@@ -403,8 +403,8 @@ public final class BodyFacts {
 
     /**
      * The kind of the body, for what a step can do with it: the payload as it is (text, bytes, a stream or a file, or a
-     * single value such as a number, which converts to text), parsed data (a Map, a List or an object), an iterator, or
-     * null.
+     * single value such as a number, which converts to text), data (a Map or an object), a collection (a List, a Set or
+     * an array, or an iterator or a stream over them), or null.
      *
      * @param  body the message body
      * @return      the kind of the body
@@ -414,8 +414,8 @@ public final class BodyFacts {
             return BodyTypeRegistry.Kind.NULL;
         } else if (isPayload(body) || isValue(body)) {
             return BodyTypeRegistry.Kind.PAYLOAD;
-        } else if (isIterator(body)) {
-            return BodyTypeRegistry.Kind.ITERATOR;
+        } else if (body instanceof Collection<?> || body.getClass().isArray() || isIterator(body)) {
+            return BodyTypeRegistry.Kind.COLLECTION;
         }
         return BodyTypeRegistry.Kind.DATA;
     }

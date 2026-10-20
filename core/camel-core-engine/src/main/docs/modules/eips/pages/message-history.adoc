@@ -421,8 +421,9 @@ Each type has a kind, for what the steps can do with it:
 | `null` | No body.
 | `payload` | The payload as it is: text, bytes, a stream or a file, or a single value such as a number. What a step that
 writes or sends needs.
-| `data` | Parsed data: a `Map`, a `List` or an object, with fields to read. What an unmarshal gives.
-| `iterator` | An iterator or a stream of elements, which can be read once.
+| `data` | A Java object with fields to read: a `Map` or an object (a POJO). What an unmarshal gives.
+| `collection` | Many objects: a `List`, a `Set` or an array, or an iterator or a stream over them (which can be read
+once). What a split walks.
 |===
 
 A step reached with types of one kind, such as `String` and `byte[]`, is a part of the route that is dynamic, which the
