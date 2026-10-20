@@ -41,10 +41,15 @@ import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.model.UploadPartResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -123,6 +128,22 @@ public class AWS2S3StreamUploadTimestampWindowOverwriteTest {
             return CompleteMultipartUploadResponse.builder().eTag("final-etag").sdkHttpResponse(httpResponse).build();
         });
 
+        // like S3: the keys with the prefix in lexical order, at most two per page
+        when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenAnswer(invocation -> {
+            ListObjectsV2Request request = invocation.getArgument(0);
+            List<String> keys = bucket.keySet().stream().filter(key -> key.startsWith(request.prefix())).sorted()
+                    .toList();
+            int from = request.continuationToken() != null ? Integer.parseInt(request.continuationToken()) : 0;
+            int to = Math.min(from + 2, keys.size());
+            ListObjectsV2Response.Builder response = ListObjectsV2Response.builder()
+                    .contents(keys.subList(from, to).stream().map(key -> S3Object.builder().key(key).build()).toList())
+                    .isTruncated(to < keys.size());
+            if (to < keys.size()) {
+                response.nextContinuationToken(String.valueOf(to));
+            }
+            return response.build();
+        });
+
         producer = new AWS2S3StreamUploadProducer(endpoint);
     }
 
@@ -178,7 +199,6 @@ public class AWS2S3StreamUploadTimestampWindowOverwriteTest {
     }
 
     private Runnable timeoutTask() throws Exception {
-        when(configuration.getStreamingUploadTimeout()).thenReturn(60000L);
         Class<?> taskClass = Class.forName(AWS2S3StreamUploadProducer.class.getName() + "$StreamingUploadTimeoutTask");
         Constructor<?> constructor = taskClass.getDeclaredConstructor(AWS2S3StreamUploadProducer.class);
         constructor.setAccessible(true);
@@ -195,5 +215,68 @@ public class AWS2S3StreamUploadTimestampWindowOverwriteTest {
         }
 
         assertEquals(List.of("grouped-messages_20240101_0800_0800-0805.txt"), new ArrayList<>(bucket.keySet()));
+    }
+
+    @Test
+    public void anUploadAfterARestartDoesNotReplaceTheObjectsOfTheWindow() throws Exception {
+        // stopping the producer uploads the open window; after a restart (a new producer) the next upload of the
+        // window must not replace that object
+        producer.start();
+        sendMessages(0, 5);
+        producer.stop();
+        assertEquals(List.of("grouped-messages_20240101_0800_0800-0805.txt"), new ArrayList<>(bucket.keySet()));
+
+        producer = new AWS2S3StreamUploadProducer(endpoint);
+        producer.start();
+        sendMessages(5, 10);
+        producer.stop();
+
+        assertEquals("message-0\nmessage-1\nmessage-2\nmessage-3\nmessage-4\n",
+                bucket.get("grouped-messages_20240101_0800_0800-0805.txt"));
+        assertEquals("message-5\nmessage-6\nmessage-7\nmessage-8\nmessage-9\n",
+                bucket.get("grouped-messages_20240101_0800_0800-0805-1.txt"));
+        assertEquals(2, bucket.size(), "the bucket has " + bucket.keySet());
+    }
+
+    @Test
+    public void theNextUploadAfterARestartFollowsTheHighestUploadInTheBucket() throws Exception {
+        // listed in lexical order "-1", "-10", "-2": the highest number wins, not the last key listed
+        bucket.put("grouped-messages_20240101_0800_0800-0805.txt", "a");
+        bucket.put("grouped-messages_20240101_0800_0800-0805-1.txt", "b");
+        bucket.put("grouped-messages_20240101_0800_0800-0805-10.txt", "c");
+        bucket.put("grouped-messages_20240101_0800_0800-0805-2.txt", "d");
+        // not uploads of the window
+        bucket.put("grouped-messages_20240101_0800_0800-0805-99.log", "e");
+        bucket.put("grouped-messages_20240101_0800_0800-0805-x.txt", "f");
+        bucket.put("grouped-messages_20240101_0800_0800-0805-12-1.txt", "g");
+
+        sendMessages(0, 10);
+
+        assertEquals("message-0\nmessage-1\nmessage-2\nmessage-3\nmessage-4\nmessage-5\nmessage-6\nmessage-7\n"
+                     + "message-8\nmessage-9\n",
+                bucket.get("grouped-messages_20240101_0800_0800-0805-11.txt"));
+        assertEquals(8, bucket.size(), "the bucket has " + bucket.keySet());
+    }
+
+    @Test
+    public void theUploadsOfAWindowAreNumberedFromTheFirstWhenTheBucketCannotBeListed() throws Exception {
+        // without s3:ListBucket the producer still uploads, numbering the uploads of the window from the first one
+        when(s3Client.listObjectsV2(any(ListObjectsV2Request.class)))
+                .thenThrow(S3Exception.builder().statusCode(403).message("Access Denied").build());
+
+        sendMessages(0, 20);
+
+        assertEquals(2, bucket.size(), "the bucket has " + bucket.keySet());
+        assertTrue(bucket.containsKey("grouped-messages_20240101_0800_0800-0805.txt"));
+        assertTrue(bucket.containsKey("grouped-messages_20240101_0800_0800-0805-1.txt"));
+    }
+
+    private void sendMessages(int from, int to) throws Exception {
+        for (int i = from; i < to; i++) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getIn().setBody("message-" + i + "\n");
+            exchange.getIn().setHeader(Exchange.MESSAGE_TIMESTAMP, WINDOW_START + i * 10000L);
+            producer.process(exchange);
+        }
     }
 }

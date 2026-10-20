@@ -75,23 +75,13 @@ public class S3StreamUploadTimestampGroupingIT extends Aws2S3Base {
         });
 
         List<S3Object> resp = ex.getMessage().getBody(List.class);
-        assertEquals(2, resp.size(), "Should create 2 files for 2 different timestamp windows");
-
-        // Verify files have timestamp-based naming
-        boolean foundWindow1File = false;
-        boolean foundWindow2File = false;
-
-        for (S3Object s3Object : resp) {
-            String key = s3Object.key();
-            if (key.contains("20240101_0800_0800-0805")) {
-                foundWindow1File = true;
-            } else if (key.contains("20240101_0805_0805-0810")) {
-                foundWindow2File = true;
-            }
-        }
-
-        assertTrue(foundWindow1File, "Should find file for first timestamp window");
-        assertTrue(foundWindow2File, "Should find file for second timestamp window");
+        // batchMessageNumber=5: each window is uploaded twice, and the second upload of a window gets its own object
+        assertEquals(List.of(
+                "basicTest_20240101_0800_0800-0805-1.txt",
+                "basicTest_20240101_0800_0800-0805.txt",
+                "basicTest_20240101_0805_0805-0810-1.txt",
+                "basicTest_20240101_0805_0805-0810.txt"),
+                resp.stream().map(S3Object::key).sorted().toList());
     }
 
     @Test

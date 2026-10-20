@@ -128,7 +128,9 @@ public class S3StreamUploadTimestampGroupingEdgeCasesIT extends Aws2S3Base {
         });
 
         List<S3Object> resp = ex.getMessage().getBody(List.class);
-        assertEquals(1, resp.size(), "Should create only 1 file for large time window");
+        // one window; batchMessageNumber=5 uploads it twice, and the second upload gets its own object
+        assertEquals(List.of("largeWindowTest_20240101_0800_0800-0900-1.txt", "largeWindowTest_20240101_0800_0800-0900.txt"),
+                resp.stream().map(S3Object::key).sorted().toList());
     }
 
     @Test

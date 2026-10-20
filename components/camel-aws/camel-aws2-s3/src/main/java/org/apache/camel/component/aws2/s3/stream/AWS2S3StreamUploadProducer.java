@@ -58,6 +58,7 @@ import software.amazon.awssdk.services.s3.model.CompletedPart;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
@@ -79,9 +80,10 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private final Map<Long, UploadState> timestampBasedUploads = new ConcurrentHashMap<>();
     // The uploads completed for each timestamp window, guarded by the lock. A window is uploaded again when it gets
     // more messages after its upload was completed (batchMessageNumber, batchSize or streamingUploadTimeout); the new
-    // object gets a name of its own, as an object with the name of the first one would replace it. Only the windows
-    // used last are counted, so a long-running producer does not keep every window it has seen.
-    private final Map<Long, Integer> completedUploadsByWindow = new LinkedHashMap<>(16, 0.75f, true) {
+    // object gets a name of its own, as an object with the name of the first one would replace it. The count of a
+    // window starts from the objects of the window already in the bucket (uploaded before a restart). Windows come in
+    // time order, so only the windows seen last are kept, and a long-running producer does not keep every window.
+    private final Map<Long, Integer> completedUploadsByWindow = new LinkedHashMap<>() {
         @Override
         protected boolean removeEldestEntry(Map.Entry<Long, Integer> eldest) {
             return size() > MAX_COUNTED_WINDOWS;
@@ -122,10 +124,12 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             }
 
             // Complete any pending timestamp-based uploads
-            for (UploadState state : timestampBasedUploads.values()) {
+            for (Map.Entry<Long, UploadState> entry : timestampBasedUploads.entrySet()) {
+                UploadState state = entry.getValue();
                 if (ObjectHelper.isNotEmpty(state) && state.buffer.size() > 0) {
                     uploadPart(state);
                     completeUpload(state);
+                    completedUploadsByWindow.merge(entry.getKey(), 1, Integer::sum);
                 }
             }
             timestampBasedUploads.clear();
@@ -388,7 +392,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
                     final String fileName = AWS2S3Utils.determineFileName(keyName);
                     final String extension = AWS2S3Utils.determineFileExtension(keyName);
                     newState.dynamicKeyName = generateTimestampBasedFileName(fileName, extension, timestampWindow,
-                            completedUploadsByWindow.getOrDefault(timestampWindow, 0));
+                            completedUploads(timestampWindow, fileName, extension));
 
                     // Initialize multipart upload
                     CreateMultipartUploadRequest.Builder createMultipartUploadRequest
@@ -571,6 +575,72 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     private long getTimestampWindow(long timestamp) {
         long windowSize = getConfiguration().getTimestampWindowSizeMillis();
         return (timestamp / windowSize) * windowSize;
+    }
+
+    /**
+     * The number of the completed uploads of a timestamp window. The first time this producer sees the window, it is
+     * the number of the objects of the window in the bucket, so an upload after a restart does not replace them.
+     */
+    private int completedUploads(long timestampWindow, String fileName, String extension) {
+        Integer completed = completedUploadsByWindow.get(timestampWindow);
+        if (completed == null) {
+            completed = uploadsInBucket(generateTimestampBasedFileName(fileName, null, timestampWindow, 0), extension);
+            completedUploadsByWindow.put(timestampWindow, completed);
+        }
+        return completed;
+    }
+
+    /**
+     * The number of the uploads of a timestamp window stored in the bucket: an object named like the first upload of
+     * the window counts 1, an object of the later upload number N counts N + 1, and the highest wins. When the bucket
+     * cannot be listed (for example without the s3:ListBucket permission), the count starts from 0.
+     */
+    private int uploadsInBucket(String windowKey, String extension) {
+        String ext = extension != null ? extension : "";
+        int uploads = 0;
+        try {
+            String continuationToken = null;
+            do {
+                ListObjectsV2Request.Builder request
+                        = ListObjectsV2Request.builder().bucket(getConfiguration().getBucketName()).prefix(windowKey);
+                if (continuationToken != null) {
+                    request.continuationToken(continuationToken);
+                }
+                ListObjectsV2Response response = getEndpoint().getS3Client().listObjectsV2(request.build());
+                for (S3Object object : response.contents()) {
+                    uploads = Math.max(uploads, uploadNumber(object.key(), windowKey, ext));
+                }
+                continuationToken = Boolean.TRUE.equals(response.isTruncated()) ? response.nextContinuationToken() : null;
+            } while (continuationToken != null);
+        } catch (Exception e) {
+            LOG.warn("Cannot list the objects of {} in bucket {}, so its uploads are numbered from the first one and may"
+                     + " replace objects uploaded before this producer started: {}",
+                    windowKey + ext, getConfiguration().getBucketName(), e.getMessage());
+            LOG.debug("Listing the objects of {} failed", windowKey + ext, e);
+            return 0;
+        }
+        return uploads;
+    }
+
+    /**
+     * 1 for the object of the first upload of the window, N + 1 for the object of the later upload number N, 0 for an
+     * object that is not an upload of the window.
+     */
+    private static int uploadNumber(String key, String windowKey, String extension) {
+        if (key == null || key.length() < windowKey.length() + extension.length() || !key.startsWith(windowKey)
+                || !key.endsWith(extension)) {
+            return 0;
+        }
+        String suffix = key.substring(windowKey.length(), key.length() - extension.length());
+        if (suffix.isEmpty()) {
+            return 1;
+        }
+        // at most 9 digits, so the number fits an int
+        if (suffix.length() > 1 && suffix.length() <= 10 && suffix.charAt(0) == '-'
+                && suffix.substring(1).chars().allMatch(c -> c >= '0' && c <= '9')) {
+            return Integer.parseInt(suffix.substring(1)) + 1;
+        }
+        return 0;
     }
 
     /**
