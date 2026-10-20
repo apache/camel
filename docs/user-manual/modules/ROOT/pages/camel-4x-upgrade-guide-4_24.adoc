@@ -30,6 +30,14 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-main - a failure to start is logged
+
+A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
+as `camel run` already did. Before, the failure left `main()` and only the JVM printed it, on stderr
+(`Exception in thread "main" ...`), so the log file of the application did not say why it stopped.
+The JVM no longer prints that same failure a second time. When the application logs nothing at ERROR (such as without
+a logging implementation), the JVM prints it as before.
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`

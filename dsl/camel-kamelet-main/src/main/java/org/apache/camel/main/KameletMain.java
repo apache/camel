@@ -198,7 +198,7 @@ public class KameletMain extends MainCommandLineSupport {
             }
         }
         // ensure any unhandled fatal errors are also logged before terminating process
-        LOG.error("Error starting Camel: {}", e, e);
+        logStartupFailure(e);
         super.doFail(e);
     }
 
