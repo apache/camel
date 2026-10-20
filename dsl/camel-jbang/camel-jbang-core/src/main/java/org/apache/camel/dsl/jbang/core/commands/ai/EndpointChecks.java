@@ -792,7 +792,12 @@ final class EndpointChecks {
                 errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
                            + scheme + ": Option '" + name + "' is not applicable in producer only mode (to: sends to the"
                            + " endpoint, for " + scheme + ": it writes the body; to read from an endpoint in the middle of a"
-                           + " route use the poll EIP, or pollEnrich, see camel_catalog_sample poll)");
+                           + " route use the poll EIP, or pollEnrich, see camel_catalog_sample poll"
+                           + ("file".equals(scheme)
+                                   ? "; to read a data file the route needs, such as a lookup table: setVariable with"
+                                     + " constant: resource:file:<path>"
+                                   : "")
+                           + ")");
             }
         }
     }
