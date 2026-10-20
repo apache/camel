@@ -272,6 +272,18 @@ values such as `AES`, which are pure ASCII. A deployment running on a JVM whose 
 name identically to UTF-8 would, however, derive a different key than the previous version, and could not decrypt
 material produced by it.
 
+=== camel-pqc - the BouncyCastle providers stay registered when an endpoint stops
+
+Stopping a `pqc` endpoint no longer removes the `BC` and `BCPQC` providers from `java.security.Security`.
+
+`java.security.Security` is JVM-global, and the endpoint only added a provider when it was absent, so stopping one
+endpoint could remove a provider it had not installed - breaking the other `pqc` endpoint of the same route, other
+`CamelContext` instances, components such as camel-crypto, camel-ssh and camel-xmlsecurity, and any non-Camel code in
+the same JVM.
+
+An application that relied on the providers being de-registered on shutdown must now remove them itself with
+`Security.removeProvider("BC")` and `Security.removeProvider("BCPQC")`.
+
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
 `camel validate normalize <files> --output=<dir>` now writes one normalized file per input file into the
