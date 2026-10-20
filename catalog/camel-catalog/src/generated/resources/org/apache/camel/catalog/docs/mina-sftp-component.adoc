@@ -571,6 +571,15 @@ IMPORTANT: The `chmod` and `chmodDirectory` options only work on POSIX-compatibl
 
 The consumer follows symbolic links to their target files. The producer writes to symlink targets.
 
+With `jailStartingDirectory` enabled (the default), the consumer resolves a listed file that the server reports as a
+symbolic link before it accepts the file, one path segment at a time with the `lstat` and `readlink` requests. A link
+whose target is outside the starting directory, or cannot be resolved (such as a dangling link), is skipped and logged
+at WARN the first time. Links that resolve inside the starting directory, and a starting directory that is itself a
+link, work as usual. Set `jailStartingDirectory=false` to follow links to other directories, such as the links in
+`data` below when `data` is the starting directory. Only the files that the listing reports as links are resolved (a
+server that lists the attributes of the target instead does not show them as links), and the check and the download
+that follows are not atomic, so the permissions and link settings of the SFTP server still matter.
+
 NOTE: **Absolute symlinks in chroot environments**: If the SFTP server uses a chroot jail, absolute symlinks may not resolve correctly. Use **relative symlinks** for maximum compatibility.
 
 [source,bash]

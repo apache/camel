@@ -50,6 +50,7 @@ import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.component.file.remote.SftpRemoteFile;
+import org.apache.camel.component.file.remote.SftpSymbolicLinkOperations;
 import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -85,7 +86,7 @@ import org.slf4j.LoggerFactory;
  *
  * The SSHD session and SFTP client are not thread-safe so we need to synchronize access to using this operation.
  */
-public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> {
+public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile>, SftpSymbolicLinkOperations {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinaSftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
@@ -1175,6 +1176,43 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile> 
             return result.toArray(new MinaSftpRemoteFile[0]);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public String getHomeDirectory() throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            // the server resolves relative paths against its default directory
+            return sftpClient.canonicalPath(".");
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot get the home directory", e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public boolean isSymbolicLink(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return sftpClient.lstat(path).isSymbolicLink();
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot get the attributes of: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public String readSymbolicLink(String path) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            return sftpClient.readLink(path);
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot read the symbolic link: " + path, e);
         } finally {
             lock.unlock();
         }

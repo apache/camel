@@ -814,7 +814,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         // the resolved path must stay within the starting directory, as the name it was built from is
         // reported by the remote server and is not necessarily a single path segment, and a local file
         // can be a symbolic link
-        if (endpoint.isJailStartingDirectory() && !isWithinStartingDirectory(absoluteFilePath)) {
+        if (endpoint.isJailStartingDirectory() && !isWithinStartingDirectory(file, absoluteFilePath)) {
             // such a file usually stays where it is and is listed again on every poll, so only warn the first time
             if (skippedOutsideStartingDirectory.put(absoluteFilePath, Boolean.TRUE) == null) {
                 LOG.warn("Skipping file as it resolves outside the starting directory: {}", absoluteFilePath);
@@ -887,6 +887,21 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected boolean isWithinStartingDirectory(String absoluteFilePath) {
         // no boundary to enforce by default
         return true;
+    }
+
+    /**
+     * Strategy to determine whether a listed file stays within the configured starting directory.
+     * <p/>
+     * Checks the resolved path with {@link #isWithinStartingDirectory(String)} by default. Consumers whose listing
+     * tells more about a file than its path, such as whether it is a symbolic link, override this. The check is only
+     * consulted when {@link GenericFileEndpoint#isJailStartingDirectory()} is enabled.
+     *
+     * @param  file             the listed file
+     * @param  absoluteFilePath the resolved absolute path of the listed file
+     * @return                  {@code true} if the file stays within the starting directory
+     */
+    protected boolean isWithinStartingDirectory(Supplier<GenericFile<T>> file, String absoluteFilePath) {
+        return isWithinStartingDirectory(absoluteFilePath);
     }
 
     /**
