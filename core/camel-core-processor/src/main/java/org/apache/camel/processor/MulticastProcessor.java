@@ -1210,11 +1210,15 @@ public class MulticastProcessor extends BaseProcessorSupport
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
 
-                // must start the error handler
-                ServiceHelper.startService(answer);
-
                 if (errorHandlers != null) {
                     errorHandlers.putIfAbsent(key, answer);
+                }
+
+                // start the error handler now if the context is already started, otherwise it will be
+                // started in doStart() to avoid starting producers before CamelContext is fully started
+                // (which would bypass the SupervisingRouteController retry logic)
+                if (getCamelContext().isStarted()) {
+                    ServiceHelper.startService(answer);
                 }
 
             } catch (Exception e) {
@@ -1278,6 +1282,11 @@ public class MulticastProcessor extends BaseProcessorSupport
         }
         CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         ServiceHelper.startService(aggregationStrategy, processors, processorExchangeFactory);
+        // start any error handlers that were pre-built during doInit() but not yet started
+        // (they were deferred to avoid starting producers before CamelContext is fully started)
+        if (errorHandlers != null) {
+            ServiceHelper.startService(errorHandlers.values());
+        }
     }
 
     /**
