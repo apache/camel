@@ -328,6 +328,14 @@ The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are
 `openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
 `openstackSwiftContainerWrite()`).
 
+=== camel-ftp, camel-mina-sftp - the SFTP consumers resolve listed symbolic links for jailStartingDirectory
+
+With `jailStartingDirectory` enabled (the default), the `sftp` and `mina-sftp` consumers now resolve a listed file that
+the server reports as a symbolic link, and skip it when its target is outside the starting directory or cannot be
+resolved (such as a dangling link), as the file consumer does. Before, such a link was consumed like any other file,
+wherever it pointed. A skipped file is logged at WARN the first time and at DEBUG on later polls. Links resolving inside
+the starting directory work as before. Set `jailStartingDirectory=false` to keep following links to other directories.
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
