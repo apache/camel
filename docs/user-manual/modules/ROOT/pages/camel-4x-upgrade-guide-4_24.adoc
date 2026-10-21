@@ -1552,6 +1552,14 @@ when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, h
 registered for any host. A request to another host, including the host of a node with another scheme or port, is now
 sent without them. A client set with the `client` option is not changed.
 
+=== camel-elasticsearch, camel-opensearch - the client set on the component is not closed by Camel
+
+A `RestClient` set with the `client` option of the component, or autowired from the registry, is shared by all the
+endpoints of the component. A producer that stopped (its route stopped or removed, or Camel stopped), and with
+`disconnect=true` every request, closed it, and from then on every endpoint of the component failed its requests
+until the application was restarted. Camel now closes only the clients its producers create from `hostAddresses`. Close a client you set on
+the component yourself when the application no longer needs it (a client that is a Spring bean is closed by Spring).
+
 === camel-jetty - a multipart text field that occurs several times
 
 A text field of a `multipart/form-data` request that occurs several times (for example a group of checkboxes) is now
