@@ -502,10 +502,10 @@ public interface PahoMqtt5ComponentBuilderFactory {
          * acknowledged. When the processing of a QoS 1 message fails on a
          * session that the broker keeps (cleanStart=false and
          * sessionExpiryInterval greater than 0), the consumer connects again so
-         * that the broker sends the message again. In all other cases the broker
-         * would never send it again (the client completes the QoS 2 flow on its
-         * own, and without sessionExpiryInterval the session ends with the
-         * connection), so the message is acknowledged.
+         * that the broker sends the message again. In all other cases the
+         * broker would never send it again (the client completes the QoS 2 flow
+         * on its own, and without sessionExpiryInterval the session ends with
+         * the connection), so the message is acknowledged.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
