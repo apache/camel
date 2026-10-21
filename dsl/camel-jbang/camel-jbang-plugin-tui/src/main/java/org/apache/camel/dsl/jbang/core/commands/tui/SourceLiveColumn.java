@@ -24,20 +24,37 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import dev.tamboui.style.Style;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Span;
 
 /**
  * The live run data of the running integration in the source view ({@link SourceViewer}), a column at the end of the
  * line numbers: how many exchanges the processors on a line handled, how many failed, and their mean time (a heat map
  * of the source while it runs). A line that failed is what Shift+F8 asks the AI to fix when it has no problem.
+ * <p/>
+ * The body types the steps of a line have been reached with go at the end of the line, lined up, with a ⚠ in the gutter
+ * of a step reached with bodies of more than one kind (CAMEL-25897). They only hold while the view has the version of
+ * the file that runs: once the file is saved and the integration did not load it, the live run data is dimmed and the
+ * body types are left out.
  */
 class SourceLiveColumn {
 
     /**
-     * What a line of a running integration's source did: the exchanges of the processors on it, the failed ones and the
-     * mean processing time.
+     * The most a line (its number and code) counts for lining up the body types: a long one does not push them away.
      */
-    record LiveLine(long total, long failed, long meanMillis) {
+    private static final int MAX_BODY_TYPES_ALIGN = 72;
+
+    /**
+     * What a line of a running integration's source did: the exchanges of the processors on it, the failed ones and the
+     * mean processing time; and the body types they have been reached with, mixed when one of them was reached with
+     * bodies of more than one kind.
+     */
+    record LiveLine(long total, long failed, long meanMillis, List<String> bodyTypes, List<String> bodyKinds,
+            boolean mixed) {
+
+        LiveLine(long total, long failed, long meanMillis) {
+            this(total, failed, meanMillis, List.of(), List.of(), false);
+        }
     }
 
     /** The live run data of a file by its path: per 0-based line, what the processors on it did. */
@@ -54,6 +71,10 @@ class SourceLiveColumn {
 
     private final Supplier<String> loadedFile;
     private final BooleanSupplier dirty;
+    private final Supplier<List<String>> lines;
+    private BooleanSupplier stale = () -> false;
+    // the column the body types of the lines line up at, from the lines that have them
+    private int bodyTypesAlign;
     private LiveRunData liveRunData;
     private LineFailures lineFailures;
     private Map<Integer, LiveLine> liveLines = Collections.emptyMap();
@@ -66,10 +87,26 @@ class SourceLiveColumn {
     /**
      * @param loadedFile the path of the file shown, whose live run data is read; null when none is
      * @param dirty      whether the file is edited and not saved, so the live run data is not of what is shown
+     * @param lines      the lines shown (the line number, then the code), to line up the body types after them
      */
-    SourceLiveColumn(Supplier<String> loadedFile, BooleanSupplier dirty) {
+    SourceLiveColumn(Supplier<String> loadedFile, BooleanSupplier dirty, Supplier<List<String>> lines) {
         this.loadedFile = loadedFile;
         this.dirty = dirty;
+        this.lines = lines;
+    }
+
+    /**
+     * Whether the integration runs another version of the file than the one shown, such as one saved since it loaded
+     * the file (CAMEL-25771): the live run data is of other lines then, so it is dimmed and the body types are left
+     * out.
+     */
+    void setStale(BooleanSupplier stale) {
+        this.stale = stale;
+    }
+
+    /** Whether what the integration did is of the lines shown: the file is not edited, and it runs as shown. */
+    private boolean current() {
+        return !dirty.getAsBoolean() && !stale.getAsBoolean();
     }
 
     /**
@@ -105,7 +142,7 @@ class SourceLiveColumn {
      * of each frame asks it; the exception is only read on Shift+F8).
      */
     boolean failsAtRuntime(int row) {
-        if (dirty.getAsBoolean() || row < 0) {
+        if (!current() || row < 0) {
             return false;
         }
         LiveLine live = liveLines().get(row);
@@ -130,6 +167,11 @@ class SourceLiveColumn {
         Style totalStyle = data ? Theme.label() : Style.EMPTY;
         Style failedStyle = Theme.error().bold();
         Style dim = Style.EMPTY.dim();
+        if (stale.getAsBoolean()) {
+            // of the version of the file that runs, whose lines may be others
+            totalStyle = dim;
+            failedStyle = dim;
+        }
         if (selBg != null) {
             totalStyle = totalStyle.patch(selBg);
             failedStyle = failedStyle.patch(selBg);
@@ -143,6 +185,61 @@ class SourceLiveColumn {
             spans.add(Span.styled(" " + " ".repeat(liveMeanWidth - mean.length()) + mean, dim));
         }
         spans.add(Span.styled(" │", dim));
+    }
+
+    /**
+     * The gutter of a line: a ⚠ when a step on it has been reached with bodies of more than one kind, which needs
+     * attention (CAMEL-25897); blank otherwise.
+     */
+    Span gutter(int lineIndex) {
+        LiveLine live = current() ? liveLines().get(lineIndex) : null;
+        return live != null && live.mixed() ? Span.styled(" " + BodyTypes.MARK + " ", Theme.warning()) : Span.raw("   ");
+    }
+
+    /**
+     * The body types the steps of a line have been reached with, at the end of the line, dimmed (a warning when they
+     * are of more than one kind), lined up with those of the other lines, and cut to the room up to the right edge
+     * (CAMEL-25897). Nothing in the plain mode, or when the view does not have the version of the file that runs.
+     *
+     * @param spans     the spans of the line so far: the gutter, the line number, the live run data and the code
+     * @param rightEdge the column of the right edge of the view, in the columns of the line
+     */
+    void addBodyTypes(List<Span> spans, int lineIndex, boolean plain, Style selBg, int rightEdge) {
+        LiveLine live = plain || !current() ? null : liveLines().get(lineIndex);
+        if (live == null || live.bodyTypes().isEmpty()) {
+            return;
+        }
+        int width = 0;
+        for (Span span : spans) {
+            width += CharWidth.of(span.content());
+        }
+        int pad = Math.max(2, bodyTypesAlign - width);
+        String text = BodyTypes.fit(live.bodyTypes(), live.mixed() ? live.bodyKinds() : List.of(), rightEdge - width - pad);
+        if (text.isEmpty()) {
+            return;
+        }
+        Style style = live.mixed() ? Theme.warning() : Theme.muted();
+        spans.add(Span.styled(" ".repeat(pad), selBg != null ? selBg : Style.EMPTY));
+        spans.add(Span.styled(text, selBg != null ? style.patch(selBg) : style));
+    }
+
+    /**
+     * The body types of the steps of a line for the quick documentation (CAMEL-25897), all of them, and why a mix of
+     * kinds needs attention; null when the line has none, or the editor does not have the version of the file that
+     * runs.
+     */
+    SourceViewer.DocEntry bodyTypesDoc(int row) {
+        LiveLine live = current() ? liveLines().get(row) : null;
+        if (live == null || live.bodyTypes().isEmpty()) {
+            return null;
+        }
+        if (live.mixed()) {
+            return SourceViewer.DocEntry.withTitle("Body types", BodyTypes.names(live.bodyTypes()) + "   " + BodyTypes.MARK
+                                                                 + " " + BodyTypes.kinds(live.bodyKinds())
+                                                                 + ": the body here depends on the path a message takes");
+        }
+        String title = live.bodyKinds().size() == 1 ? "Body types (" + live.bodyKinds().get(0) + ")" : "Body types";
+        return SourceViewer.DocEntry.withTitle(title, BodyTypes.names(live.bodyTypes()));
     }
 
     /** The live run data of the loaded file, read again at most once a second (the status is polled about as often). */
@@ -198,6 +295,32 @@ class SourceLiveColumn {
                     }
                 }
             }
+            bodyTypesAlign = bodyTypesAlign();
         }
+    }
+
+    /**
+     * The column the body types line up at: after the longest of the lines that have them (the gutter, the line number,
+     * the live run data and the code), and at most {@link #MAX_BODY_TYPES_ALIGN} into the code, so a long line does not
+     * push the body types of the others off screen.
+     */
+    private int bodyTypesAlign() {
+        List<String> shown = lines.get();
+        int longest = 0;
+        for (Map.Entry<Integer, LiveLine> e : liveLines.entrySet()) {
+            int i = e.getKey();
+            if (!e.getValue().bodyTypes().isEmpty() && shown != null && i >= 0 && i < shown.size()) {
+                longest = Math.max(longest, Math.min(CharWidth.of(shown.get(i)), MAX_BODY_TYPES_ALIGN));
+            }
+        }
+        if (longest == 0) {
+            return 0;
+        }
+        // the gutter before the line number, and the live run data after it
+        int live = liveTotalWidth == 0
+                ? 0
+                : 1 + liveTotalWidth + (liveFailedWidth > 0 ? 1 + liveFailedWidth : 0)
+                  + (liveMeanWidth > 0 ? 1 + liveMeanWidth : 0) + 2;
+        return 3 + longest + live + 3;
     }
 }

@@ -181,17 +181,31 @@ final class SourceRunState {
 
         private volatile String file;
         private volatile Computed computed;
+        // a save in the editor makes the state unknown until a refresh after it computes it again (written by the UI
+        // thread only)
+        private volatile int saves;
+        private volatile int computedSaves;
+        private boolean wasDirty;
 
-        /** The file the source panel shows, on the UI thread when it draws; null when none is. */
-        void shown(String file) {
+        /**
+         * The file the source panel shows, on the UI thread when it draws; null when none is. Edits that are no longer
+         * unsaved were saved (or discarded): the state is unknown until the next refresh.
+         */
+        void shown(String file, boolean dirty) {
+            if (wasDirty && !dirty) {
+                saves++;
+            }
+            wasDirty = dirty;
             this.file = file;
         }
 
         /** Computes the state of the file shown, on the background thread of the data refresh. */
         void refresh(IntegrationInfo info) {
+            int at = saves;
             String shown = file;
             if (shown == null || info == null) {
                 computed = null;
+                computedSaves = at;
                 return;
             }
             try {
@@ -202,18 +216,35 @@ final class SourceRunState {
             } catch (IOException | RuntimeException e) {
                 computed = null;
             }
+            computedSaves = at;
         }
 
         void reset() {
             file = null;
             computed = null;
+            computedSaves = saves;
         }
 
-        /** The state of the file shown; null when unknown, or when it was computed for another file. */
+        /**
+         * The state of the file shown; null when unknown: computed for another file, or before the last save in the
+         * editor.
+         */
         State current() {
             Computed c = computed;
             String shown = file;
-            return c != null && c.file().equals(shown) ? c.state() : null;
+            return c != null && c.file().equals(shown) && computedSaves == saves ? c.state() : null;
+        }
+
+        /**
+         * Whether the integration may run another version of the file than the one shown: saved after it loaded it, or
+         * saved in the editor since the state was computed. The live run data is of other lines then (CAMEL-25897).
+         */
+        boolean stale() {
+            if (computedSaves != saves) {
+                return true;
+            }
+            State state = current();
+            return state != null && state.kind() != Kind.RUNNING;
         }
 
         /** The state on the bottom border of the source panel, left of the cursor position of the editor. */

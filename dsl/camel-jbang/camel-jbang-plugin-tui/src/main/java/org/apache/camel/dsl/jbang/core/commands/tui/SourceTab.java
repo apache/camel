@@ -160,11 +160,13 @@ class SourceTab extends AbstractTab {
             }
         });
         sourceViewer.setOnFileCreated(this::refreshFiles);
-        // the live run data of the selected integration at the end of the lines of its source
+        // the live run data of the selected integration at the end of the lines of its source, and the body types of
+        // its steps; dimmed and left out while it runs another version of the file (CAMEL-25897)
         sourceViewer.liveColumn().setLiveRunData(path -> {
             IntegrationInfo info = ctx.findSelectedIntegration();
             return info != null ? LiveRunLines.of(info.routes, path) : Map.of();
         });
+        sourceViewer.liveColumn().setStale(runState::stale);
         // the exception of the last failure on a line, for fix with AI (Shift+F8) on a line that fails at runtime
         sourceViewer.liveColumn().setLineFailures((path, line) -> {
             IntegrationInfo info = ctx.findSelectedIntegration();
@@ -1192,10 +1194,10 @@ class SourceTab extends AbstractTab {
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
             // whether the integration runs the file shown as it is saved, in the view and in the editor (CAMEL-25771)
-            runState.shown(sourceViewer.getCurrentFilePath());
+            runState.shown(sourceViewer.getCurrentFilePath(), sourceViewer.isDirty());
             runState.render(frame, area);
         } else {
-            runState.shown(null);
+            runState.shown(null, false);
             List<Line> lines = emptySourceLines(routeIndex, rootDir);
 
             frame.renderWidget(
@@ -1625,8 +1627,8 @@ class SourceTab extends AbstractTab {
     }
 
     /**
-     * The quick doc of a line with what the project knows about it put first: the values of its property placeholders
-     * and where the bean it refers to is declared.
+     * The quick doc of a line with what the project knows about it put first: the body types its steps have been
+     * reached with, the values of its property placeholders and where the bean it refers to is declared.
      */
     private SourceViewer.EditQuickDocProvider withProjectDocs(SourceViewer.EditQuickDocProvider provider) {
         return (lines, row) -> {
@@ -1634,7 +1636,13 @@ class SourceTab extends AbstractTab {
             if (row < 0 || row >= lines.size()) {
                 return base;
             }
-            List<SourceViewer.DocEntry> extra = new ArrayList<>(assist.placeholderDocs(lines.get(row)));
+            List<SourceViewer.DocEntry> extra = new ArrayList<>();
+            // the body types the steps of the line have been reached with, while it runs as shown (CAMEL-25897)
+            SourceViewer.DocEntry bodyTypes = sourceViewer.liveColumn().bodyTypesDoc(row);
+            if (bodyTypes != null) {
+                extra.add(bodyTypes);
+            }
+            extra.addAll(assist.placeholderDocs(lines.get(row)));
             ProjectBeans.Location bean = projectBeans().refOn(lines.get(row));
             if (bean != null) {
                 extra.add(new SourceViewer.DocEntry(ProjectBeans.describe(bean), false, "Bean"));

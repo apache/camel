@@ -198,7 +198,8 @@ class SourceViewer {
             dirty = true;
         }
     });
-    private final SourceLiveColumn liveColumn = new SourceLiveColumn(() -> this.loadedFilePath, () -> this.dirty);
+    private final SourceLiveColumn liveColumn
+            = new SourceLiveColumn(() -> this.loadedFilePath, () -> this.dirty, () -> this.lines);
     private final SourceRefactorActions refactor = new SourceRefactorActions(editState, new SourceRefactorActions.Editor() {
         @Override
         public Path editableFile() {
@@ -2931,9 +2932,7 @@ class SourceViewer {
                         ? Span.styled(" ⚠ ", Theme.warning().bold())
                         : Span.styled(" ✗ ", Theme.error().bold()));
             } else {
-                spans.add(isDeprecated
-                        ? Span.styled(" ⚠ ", Theme.warning())
-                        : Span.raw("   "));
+                spans.add(isDeprecated ? Span.styled(" ⚠ ", Theme.warning()) : liveColumn.gutter(lineIndex));
             }
             if (!prefix.isEmpty()) {
                 spans.add(Span.styled(prefix, Style.EMPTY.dim()));
@@ -2950,6 +2949,7 @@ class SourceViewer {
             }
             spans.add(Span.styled(" ↵ " + jl.routeId(), linkStyle));
         }
+        liveColumn.addBodyTypes(spans, lineIndex, plainMode, isSelected ? selBg : null, viewportWidth + hSkip);
         Line full = Line.from(spans);
 
         if (hSkip > 0) {
