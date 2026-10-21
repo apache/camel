@@ -38,11 +38,11 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 @BodyTypes(consumerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map<String, Object>",
                                    dependsOn = { "outputClass", "outputHeader" },
                                    byOption = {
-                                           @BodyType.When(option = "useIterator", value = "false", carrier = Carrier.LIST),
+                                           @BodyType.When(option = "useIterator", value = "false", carriers = Carrier.LIST),
                                            @BodyType.When(option = "outputType", value = "SelectOne",
-                                                          carrier = { Carrier.MAP, Carrier.VALUE }),
+                                                          carriers = { Carrier.MAP, Carrier.VALUE }),
                                            @BodyType.When(option = "outputType", value = "StreamList",
-                                                          carrier = Carrier.ITERATOR) },
+                                                          carriers = Carrier.ITERATOR) },
                                    description = "A row of the query: a Map of the column names and their values"),
            producerIn = @BodyType(value = Carrier.ANY,
                                   description = "The parameters of the query: a Map for the named ones, a List or an array"
@@ -51,9 +51,9 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
                                    dependsOn = { "outputClass", "outputHeader", "noop" },
                                    byOption = {
                                            @BodyType.When(option = "outputType", value = "SelectOne",
-                                                          carrier = { Carrier.MAP, Carrier.VALUE, Carrier.NULL }),
+                                                          carriers = { Carrier.MAP, Carrier.VALUE, Carrier.NULL }),
                                            @BodyType.When(option = "outputType", value = "StreamList",
-                                                          carrier = Carrier.ITERATOR) },
+                                                          carriers = Carrier.ITERATOR) },
                                    description = "The rows of a select: a List of Maps of the column names and their values."
                                                  + " A query that is not a select leaves the body unchanged, with the count"
                                                  + " in the CamelSqlUpdateCount header"))

@@ -65,23 +65,23 @@ import software.amazon.awssdk.services.sqs.model.SqsException;
                                    description = "The body of the SQS message"),
            producerIn = @BodyType(value = Carrier.TEXT,
                                   byOption = @BodyType.When(option = "operation", value = "sendBatchMessage",
-                                                            carrier = { Carrier.LIST, Carrier.TEXT }),
+                                                            carriers = { Carrier.LIST, Carrier.TEXT }),
                                   description = "The body of the message to send, as text, so a Map or a POJO is sent as"
                                                 + " its toString(): marshal it first. sendBatchMessage takes a List of"
                                                 + " text, or text that batchSeparator splits"),
            producerOut = @BodyType(value = Carrier.UNCHANGED,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "sendBatchMessage",
-                                                          carrier = Carrier.POJO,
+                                                          carriers = Carrier.POJO,
                                                           javaType = "software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse"),
                                            @BodyType.When(option = "operation", value = "deleteMessage",
-                                                          carrier = Carrier.POJO,
+                                                          carriers = Carrier.POJO,
                                                           javaType = "software.amazon.awssdk.services.sqs.model.DeleteMessageResponse"),
-                                           @BodyType.When(option = "operation", value = "listQueues", carrier = Carrier.POJO,
+                                           @BodyType.When(option = "operation", value = "listQueues", carriers = Carrier.POJO,
                                                           javaType = "software.amazon.awssdk.services.sqs.model.ListQueuesResponse"),
-                                           @BodyType.When(option = "operation", value = "purgeQueue", carrier = Carrier.POJO,
+                                           @BodyType.When(option = "operation", value = "purgeQueue", carriers = Carrier.POJO,
                                                           javaType = "software.amazon.awssdk.services.sqs.model.PurgeQueueResponse"),
-                                           @BodyType.When(option = "operation", value = "deleteQueue", carrier = Carrier.POJO,
+                                           @BodyType.When(option = "operation", value = "deleteQueue", carriers = Carrier.POJO,
                                                           javaType = "software.amazon.awssdk.services.sqs.model.DeleteQueueResponse") },
                                    description = "Unchanged for a send, with the id of the message in a header; the response"
                                                  + " of the AWS SDK for the other operations"))

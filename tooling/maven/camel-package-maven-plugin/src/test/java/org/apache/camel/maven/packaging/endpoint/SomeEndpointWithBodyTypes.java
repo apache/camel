@@ -28,6 +28,6 @@ import org.apache.camel.spi.UriEndpoint;
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", format = "xml",
                                    dependsOn = "resultHandlerFactory",
                                    byOption = @BodyType.When(option = "output", value = "bytes",
-                                                             carrier = Carrier.BYTES, javaType = "byte[]")))
+                                                             carriers = Carrier.BYTES, javaType = "byte[]")))
 public class SomeEndpointWithBodyTypes {
 }

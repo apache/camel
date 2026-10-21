@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "xml"),
            unmarshalOut = @BodyType(value = Carrier.MAP,
                                     dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType" },
-                                    byOption = @BodyType.When(option = "useList", value = "true", carrier = Carrier.LIST),
+                                    byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
                                     description = "A Map (LinkedHashMap) of the XML; an object of the class unmarshalType"
                                                   + " names"))
 public class JacksonXMLDataFormat extends ServiceSupport

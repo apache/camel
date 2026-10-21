@@ -132,7 +132,9 @@ public class BodyTypeModel {
     }
 
     /**
-     * Whether the body is not known without the configuration or the data of the other system.
+     * Whether the body is not known without the configuration or the data of the other system. A side with no carriers
+     * is not known either: the build rejects one, but a catalog from elsewhere, such as JSON written by hand, can have
+     * it.
      */
     public boolean isUnknown() {
         return carriers.isEmpty() || carriers.contains("unknown");

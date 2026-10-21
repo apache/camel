@@ -41,13 +41,13 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
                                     format = "xml", description = "XML as text, bytes, a stream or a file, or a DOM"),
            expressionOut = @BodyType(value = Carrier.POJO, javaType = "org.w3c.dom.NodeList", dependsOn = "resultType",
                                      byOption = {
-                                             @BodyType.When(option = "resultQName", value = "STRING", carrier = Carrier.TEXT,
+                                             @BodyType.When(option = "resultQName", value = "STRING", carriers = Carrier.TEXT,
                                                             javaType = "java.lang.String"),
-                                             @BodyType.When(option = "resultQName", value = "NUMBER", carrier = Carrier.VALUE,
+                                             @BodyType.When(option = "resultQName", value = "NUMBER", carriers = Carrier.VALUE,
                                                             javaType = "java.lang.Double"),
-                                             @BodyType.When(option = "resultQName", value = "BOOLEAN", carrier = Carrier.VALUE,
+                                             @BodyType.When(option = "resultQName", value = "BOOLEAN", carriers = Carrier.VALUE,
                                                             javaType = "java.lang.Boolean"),
-                                             @BodyType.When(option = "resultQName", value = "NODE", carrier = Carrier.POJO,
+                                             @BodyType.When(option = "resultQName", value = "NODE", carriers = Carrier.POJO,
                                                             javaType = "org.w3c.dom.Node") },
                                      description = "The nodes the expression selects"))
 public class XPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
