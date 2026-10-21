@@ -77,9 +77,13 @@ class MailConsumerFolderReopenedTest extends CamelTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Message 0", "Message 1", "Message 2");
         context.getRouteController().startRoute("foo");
         mock.setResultWaitTime(TimeUnit.SECONDS.toMillis(15));
+        // each mail is routed once: a late duplicate fails the test
+        mock.setAssertPeriod(1000);
         mock.assertIsSatisfied();
 
-        assertEquals(0, countUnseen(), "every mail is consumed");
+        // a mail is marked as seen when its exchange is complete, after it reached the mock
+        Awaitility.await().atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(0, countUnseen(), "every mail is consumed"));
     }
 
     private Message[] createMessages(int count) throws Exception {

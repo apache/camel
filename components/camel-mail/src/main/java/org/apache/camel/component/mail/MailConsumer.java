@@ -267,12 +267,14 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             var msg = exchange.getIn();
             final Message mail = ((MailMessage) msg).getOriginalMessage();
             final Long uid = batchUids.get(mail);
+            // the next poll replaces batchUidValidity, while this exchange may still be routed (asynchronous routing)
+            final long uidValidity = batchUidValidity;
 
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    Message current = mailToCommit(mail, uid, batchOpen, exchange);
+                    Message current = mailToCommit(mail, uid, uidValidity, batchOpen, exchange);
                     if (current != null) {
                         processCommit(current, exchange);
                     }
@@ -327,10 +329,11 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     /**
      * The mail to mark once its exchange completed. When the folder was opened again since the mail was retrieved (its
      * connection dropped while the mail was routed), the mail object of the poll is stale: for IMAP, the mail is looked
-     * up again by its UID. Returns null when it cannot be found (it was expunged meanwhile, or the UIDVALIDITY of the
-     * folder changed): then no mail is marked, as marking the stale mail object would mark another mail.
+     * up again by its UID. Returns null when it cannot be found (its UID is unknown, the UIDVALIDITY of the folder
+     * changed, or it was expunged meanwhile): then no mail is marked, as marking the stale mail object would mark
+     * another mail, and the idempotent key of the mail is settled as on commit.
      */
-    private Message mailToCommit(Message mail, Long uid, int batchOpen, Exchange exchange) {
+    Message mailToCommit(Message mail, Long uid, long uidValidity, int batchOpen, Exchange exchange) {
         if (getEndpoint().getConfiguration().getProtocol().startsWith("pop3")) {
             // processCommit finds a POP3 mail again by its key
             return mail;
@@ -342,14 +345,21 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             if (folderOpens.get() == batchOpen) {
                 return mail;
             }
+            String notFound;
             Message found = null;
-            if (uid != null && folder instanceof UIDFolder uidFolder && uidFolder.getUIDValidity() == batchUidValidity) {
+            if (uid == null || !(folder instanceof UIDFolder uidFolder)) {
+                notFound = "its UID could not be read when it was retrieved";
+            } else if (uidFolder.getUIDValidity() != uidValidity) {
+                notFound = "the UIDVALIDITY of the folder changed from " + uidValidity + " to " + uidFolder.getUIDValidity();
+            } else {
                 found = uidFolder.getMessageByUID(uid);
+                notFound = "no mail has the UID " + uid + " any more (it was expunged)";
             }
             if (found == null) {
-                LOG.warn("The mail folder {} was opened again after the mail was retrieved, and the mail is no longer"
-                         + " found in it (UID {}): it is not marked as {}.",
-                        folder.getFullName(), uid, getEndpoint().getConfiguration().isDelete() ? "DELETED" : "SEEN");
+                LOG.warn("The mail folder {} was opened again after the mail was retrieved, and the mail cannot be found"
+                         + " again: {}. It is not marked as {}.",
+                        folder.getFullName(), notFound, getEndpoint().getConfiguration().isDelete() ? "DELETED" : "SEEN");
+                commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
             }
             return found;
         } catch (MessagingException e) {
@@ -382,6 +392,19 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         } catch (MessagingException e) {
             // without the UID a mail cannot be found again after the folder was opened again: it is then not marked
             LOG.debug("Cannot get the UIDs of the mails of folder {}. This exception is ignored.", folder.getFullName(), e);
+        }
+    }
+
+    /**
+     * Settles the idempotent key of a mail whose exchange completed, as processCommit does.
+     */
+    private void commitIdempotentKey(String key) {
+        if (key != null && getEndpoint().getIdempotentRepository() != null) {
+            if (getEndpoint().isIdempotentRepositoryRemoveOnCommit()) {
+                getEndpoint().getIdempotentRepository().remove(key);
+            } else {
+                getEndpoint().getIdempotentRepository().confirm(key);
+            }
         }
     }
 
