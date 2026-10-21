@@ -544,7 +544,7 @@ YAML::
 ----
 ====
 
-This operation will return a Blob object instance related to the `OBJECT_NAME` object in `myCamelBucket` bucket.
+This operation will return the content of the `OBJECT_NAME` object in `myCamelBucket` bucket as a byte array, with its metadata in headers.
 
 - `CreateDownloadLink`: this operation will return a download link
 
