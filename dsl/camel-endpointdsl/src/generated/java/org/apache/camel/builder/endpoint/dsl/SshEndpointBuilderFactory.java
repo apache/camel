@@ -44,8 +44,12 @@ public interface SshEndpointBuilderFactory {
             return (AdvancedSshEndpointConsumerBuilder) this;
         }
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
+         * Specifies whether a connection to a server whose host has no entry
+         * without a marker in the known_hosts resource should fail or not. This
+         * value is only checked when the property knownHostsResource is set. A
+         * server whose host has entries without a marker is always rejected
+         * when it presents a key that none of them lists, and a key listed in a
+         * matching revoked entry is always rejected.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -60,8 +64,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
+         * Specifies whether a connection to a server whose host has no entry
+         * without a marker in the known_hosts resource should fail or not. This
+         * value is only checked when the property knownHostsResource is set. A
+         * server whose host has entries without a marker is always rejected
+         * when it presents a key that none of them lists, and a key listed in a
+         * matching revoked entry is always rejected.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -76,7 +84,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path for a known_hosts file.
+         * Sets the resource path for a known_hosts file used to verify the SSH
+         * server host key. The file uses the OpenSSH known_hosts format, and
+         * its entries are matched against the host and port configured on the
+         * endpoint. A resource that cannot be read, or that has a line that
+         * cannot be read, makes every connection fail. When not set, the client
+         * does not verify the server host key against a known_hosts file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1116,8 +1129,12 @@ public interface SshEndpointBuilderFactory {
         }
 
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
+         * Specifies whether a connection to a server whose host has no entry
+         * without a marker in the known_hosts resource should fail or not. This
+         * value is only checked when the property knownHostsResource is set. A
+         * server whose host has entries without a marker is always rejected
+         * when it presents a key that none of them lists, and a key listed in a
+         * matching revoked entry is always rejected.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1132,8 +1149,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
+         * Specifies whether a connection to a server whose host has no entry
+         * without a marker in the known_hosts resource should fail or not. This
+         * value is only checked when the property knownHostsResource is set. A
+         * server whose host has entries without a marker is always rejected
+         * when it presents a key that none of them lists, and a key listed in a
+         * matching revoked entry is always rejected.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1148,7 +1169,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path for a known_hosts file.
+         * Sets the resource path for a known_hosts file used to verify the SSH
+         * server host key. The file uses the OpenSSH known_hosts format, and
+         * its entries are matched against the host and port configured on the
+         * endpoint. A resource that cannot be read, or that has a line that
+         * cannot be read, makes every connection fail. When not set, the client
+         * does not verify the server host key against a known_hosts file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1575,8 +1601,12 @@ public interface SshEndpointBuilderFactory {
         }
 
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
+         * Specifies whether a connection to a server whose host has no entry
+         * without a marker in the known_hosts resource should fail or not. This
+         * value is only checked when the property knownHostsResource is set. A
+         * server whose host has entries without a marker is always rejected
+         * when it presents a key that none of them lists, and a key listed in a
+         * matching revoked entry is always rejected.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1591,8 +1621,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies whether a connection to an unknown host should fail or not.
-         * This value is only checked when the property knownHosts is set.
+         * Specifies whether a connection to a server whose host has no entry
+         * without a marker in the known_hosts resource should fail or not. This
+         * value is only checked when the property knownHostsResource is set. A
+         * server whose host has entries without a marker is always rejected
+         * when it presents a key that none of them lists, and a key listed in a
+         * matching revoked entry is always rejected.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1607,7 +1641,12 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the resource path for a known_hosts file.
+         * Sets the resource path for a known_hosts file used to verify the SSH
+         * server host key. The file uses the OpenSSH known_hosts format, and
+         * its entries are matched against the host and port configured on the
+         * endpoint. A resource that cannot be read, or that has a line that
+         * cannot be read, makes every connection fail. When not set, the client
+         * does not verify the server host key against a known_hosts file.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
