@@ -223,6 +223,16 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
+=== camel-aws2-kinesis - each endpoint uses its own client
+
+Each `aws2-kinesis` endpoint now uses the Kinesis client of its own configuration (`region`, credentials,
+`uriEndpointOverride`, or `amazonKinesisClient` / `amazonKinesisAsyncClient`). Before, all endpoints of the component
+used the client of the endpoint that started first, and stopping one endpoint (for example by removing its route)
+closed that client for every other endpoint.
+
+Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
+the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
+
 === camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
 
 The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
