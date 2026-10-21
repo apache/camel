@@ -61,7 +61,7 @@ public class NatsConsumer extends DefaultConsumer {
     private Connection connection;
     private Dispatcher dispatcher;
     private boolean active;
-    private JetStreamSubscription jetStreamSubscription;
+    private volatile JetStreamSubscription jetStreamSubscription;
 
     public NatsConsumer(NatsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -156,6 +156,8 @@ public class NatsConsumer extends DefaultConsumer {
         private final NavigableSet<Long> unacknowledged = new ConcurrentSkipListSet<>();
         private final AtomicLong highestFetched = new AtomicLong();
         private long lastConsumerCheck = System.nanoTime();
+        // whether the WARN that the durable consumer is gone was logged, so that it is logged once until it is back
+        private boolean durableGoneReported;
 
         NatsConsumingTask(Connection connection, NatsConfiguration configuration) {
             this.connection = connection;
@@ -282,8 +284,11 @@ public class NatsConsumer extends DefaultConsumer {
                 try {
                     List<Message> messages = sub.fetch(batchSize, fetchTimeout);
                     if (messages.isEmpty() && consumerCheckDue() && consumerGone(sub)) {
-                        sub = subscribeAgain(sub, cc);
+                        sub = consumerDeleted(sub, cc);
                         continue;
+                    }
+                    if (!messages.isEmpty()) {
+                        durableGoneReported = false;
                     }
                     for (Message msg : messages) {
                         if (!NatsConsumer.this.isRunAllowed()) {
@@ -298,18 +303,12 @@ public class NatsConsumer extends DefaultConsumer {
                         }
                     }
                 } catch (JetStreamStatusException e) {
-                    // Synchronous pull calls may throw JetStreamStatusException for statuses such as 409
-                    // (consumer deleted/push-based). Log and continue so the consumer can recover when the consumer
-                    // state is restored.
+                    // Synchronous pull calls may throw JetStreamStatusException for statuses such as 409. Report it and
+                    // continue; for 409 Consumer Deleted an ephemeral consumer is created again (see consumerDeleted).
                     NatsConsumer.this.getExceptionHandler().handleException("JetStream status during pull fetch", e);
                     Status status = e.getStatus();
                     if (status != null && Status.CONSUMER_DELETED.equals(status.getMessage())) {
-                        try {
-                            sub = subscribeAgain(sub, cc);
-                        } catch (Exception ex) {
-                            NatsConsumer.this.getExceptionHandler().handleException(
-                                    "Error subscribing again after the JetStream consumer was deleted", ex);
-                        }
+                        sub = consumerDeleted(sub, cc);
                     }
                 } catch (IllegalStateException e) {
                     // Subscription was closed (e.g. consumer is stopping), exit the loop
@@ -340,6 +339,7 @@ public class NatsConsumer extends DefaultConsumer {
         private boolean consumerGone(JetStreamSubscription sub) {
             try {
                 sub.getConsumerInfo();
+                durableGoneReported = false;
                 return false;
             } catch (JetStreamApiException e) {
                 return e.getErrorCode() == 404;
@@ -351,19 +351,54 @@ public class NatsConsumer extends DefaultConsumer {
         }
 
         /**
-         * Subscribes again after the server deleted the consumer. An ephemeral consumer is created again starting at
-         * the first message this consumer has not acknowledged, so that nothing is skipped and the stream is not
-         * replayed from its deliver policy; a durable consumer is created again from its configuration.
+         * The server no longer has the consumer of the pull subscription. An ephemeral consumer is created again (see
+         * {@link #subscribeAgain}); when that fails, the failure goes to the exception handler and the next consumer
+         * check tries again. A durable consumer is not created again: it is gone only when an administrator deleted it
+         * or after its inactive threshold, and creating it again from its configuration would replay the stream from
+         * its deliver policy. Its subscription is kept, so the fetches work again when the durable is created again
+         * with the same name.
+         *
+         * @return the subscription to fetch from
+         */
+        private JetStreamSubscription consumerDeleted(JetStreamSubscription sub, ConsumerConfiguration cc) {
+            if (cc.getDurable() != null) {
+                if (!durableGoneReported) {
+                    durableGoneReported = true;
+                    LOG.warn("The durable JetStream consumer {} of the pull subscription on topic {} is gone; it is not"
+                             + " created again, and the fetches resume when it is created again with the same name",
+                            cc.getDurable(), configuration.getTopic());
+                }
+                return sub;
+            }
+            try {
+                return subscribeAgain(sub, cc);
+            } catch (Exception e) {
+                NatsConsumer.this.getExceptionHandler().handleException(
+                        "Error subscribing again after the JetStream consumer was deleted", e);
+                return sub;
+            }
+        }
+
+        /**
+         * Subscribes again after the server deleted the ephemeral consumer, starting at the first message this consumer
+         * has not acknowledged, so that nothing is skipped and the stream is not replayed from its deliver policy.
+         * <p>
+         * A sequence that is never acknowledged stays in the unacknowledged set until this resubscribe, for example a
+         * message nak'd until maxDeliver is used up, or with manualAck and ackPolicy=None when the route never calls
+         * ack. The new consumer then starts at that old sequence, and the route sees the messages after it again
+         * (at-least-once).
          */
         private JetStreamSubscription subscribeAgain(JetStreamSubscription old, ConsumerConfiguration cc)
                 throws IOException, JetStreamApiException {
             ConsumerConfiguration again = cc;
             long start = unacknowledged.isEmpty() ? highestFetched.get() + 1 : unacknowledged.first();
-            boolean resume = cc.getDurable() == null && highestFetched.get() > 0;
+            boolean resume = highestFetched.get() > 0;
             if (resume) {
+                // a start time (DeliverPolicy.ByStartTime) together with a start sequence is rejected by the server
                 again = ConsumerConfiguration.builder(cc)
                         .deliverPolicy(DeliverPolicy.ByStartSequence)
                         .startSequence(start)
+                        .startTime(null)
                         .build();
             }
             LOG.warn("The JetStream consumer of the pull subscription on topic {} is gone; subscribing again{}",
@@ -372,6 +407,14 @@ public class NatsConsumer extends DefaultConsumer {
                     PullSubscribeOptions.builder().configuration(again).build());
             unacknowledged.clear();
             NatsConsumer.this.jetStreamSubscription = sub;
+            if (!NatsConsumer.this.isRunAllowed()) {
+                // stopping: doStop may have unsubscribed the old subscription before this one was assigned
+                try {
+                    sub.unsubscribe();
+                } catch (Exception e) {
+                    LOG.debug("Error unsubscribing the new pull subscription while stopping", e);
+                }
+            }
             try {
                 old.unsubscribe();
             } catch (Exception e) {

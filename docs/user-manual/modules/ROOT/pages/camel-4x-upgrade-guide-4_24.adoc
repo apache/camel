@@ -1472,16 +1472,17 @@ in full and rejected by the broker.
 
 A settlement request the broker rejects is now reported through the consumer's exception handler.
 
-=== camel-nats - the JetStream pull consumer subscribes again when its consumer was deleted
+=== camel-nats - the JetStream pull consumer subscribes again when its ephemeral consumer was deleted
 
 With `jetstreamEnabled=true` and a pull subscription (the default), the `nats` consumer kept fetching from a JetStream
 consumer that the server had deleted, and consumed nothing more until the route was restarted. It now subscribes again
-when the server no longer has its consumer. An ephemeral consumer (no `durableName`), which the server deletes after
-about 5 seconds without a pull request, for example while the client is disconnected, or loses on a restart, is created
-again at the first message the route did not acknowledge. A durable consumer that was deleted, for example by an
-administrator, is created again from its configuration, so it starts where its deliver policy says: with the default
-`DeliverPolicy.All` at the start of the stream, and the route consumes the messages of the stream again. Set a
-`consumerConfiguration` with another deliver policy to avoid that.
+when the server no longer has its ephemeral consumer (no `durableName`, and no durable name in the
+`consumerConfiguration`), which the server deletes after about 5 seconds without a pull request, for example while the
+client is disconnected, or loses on a restart. The new consumer starts at
+the first message the route did not acknowledge, so the route can see again the messages after that one. A durable
+consumer is not created again: when it is gone (deleted by an administrator, or after its `inactiveThreshold`), the
+consumer logs a WARN and keeps fetching, and the fetches work again when the durable is created again with the same
+name.
 
 === camel-telegram - a failed send fails the exchange once
 

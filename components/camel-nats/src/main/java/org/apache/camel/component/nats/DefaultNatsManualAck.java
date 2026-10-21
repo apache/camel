@@ -25,11 +25,6 @@ class DefaultNatsManualAck implements NatsManualAck {
     private final Message message;
     private final Runnable onAcknowledged;
 
-    DefaultNatsManualAck(Message message) {
-        this(message, () -> {
-        });
-    }
-
     DefaultNatsManualAck(Message message, Runnable onAcknowledged) {
         this.message = message;
         this.onAcknowledged = onAcknowledged;

@@ -111,7 +111,9 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
     static final class FakeServer {
         final List<byte[]> stream = new ArrayList<>();
         final List<FakeConsumer> consumers = new ArrayList<>();
+        final List<ConsumerConfiguration> subscribed = new ArrayList<>();
         int consumersCreated;
+        RuntimeException failNextSubscribe;
 
         final class FakeConsumer {
             long next;
@@ -137,6 +139,24 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
             notifyAll();
         }
 
+        /**
+         * The deleted consumers are created again with the same name (a durable created again by an administrator).
+         */
+        synchronized void restoreConsumers() {
+            for (FakeConsumer c : consumers) {
+                c.deleted = false;
+            }
+            notifyAll();
+        }
+
+        synchronized void failNextSubscribe(RuntimeException e) {
+            failNextSubscribe = e;
+        }
+
+        synchronized List<ConsumerConfiguration> subscribed() {
+            return new ArrayList<>(subscribed);
+        }
+
         Connection connection() {
             JetStreamManagement jsm = proxy(JetStreamManagement.class, (name, args) -> null);
             JetStream js = proxy(JetStream.class, (name, args) -> {
@@ -156,6 +176,12 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
         }
 
         private synchronized JetStreamSubscription subscribe(ConsumerConfiguration cc) {
+            if (failNextSubscribe != null) {
+                RuntimeException e = failNextSubscribe;
+                failNextSubscribe = null;
+                throw e;
+            }
+            subscribed.add(cc);
             FakeConsumer c = new FakeConsumer();
             c.next = cc != null && cc.getDeliverPolicy() == DeliverPolicy.ByStartSequence ? cc.getStartSequence() : 1;
             consumers.add(c);
