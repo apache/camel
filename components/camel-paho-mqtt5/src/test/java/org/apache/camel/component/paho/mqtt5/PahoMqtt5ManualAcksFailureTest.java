@@ -216,6 +216,28 @@ public class PahoMqtt5ManualAcksFailureTest {
         }
     }
 
+    @Test
+    public void reconnectWaitsAtLeastOneSecondWithASmallMaxReconnectDelay() throws Exception {
+        // maxReconnectDelay below the minimum delay must not make a failing message reconnect in a tight loop
+        String id = UUID.randomUUID().toString();
+        String topic = "manualack/smallmax/" + id;
+        String uri = "paho-mqtt5:" + topic + "?brokerUrl=" + brokerUrl()
+                     + "&qos=1&manualAcksEnabled=true&cleanStart=false&sessionExpiryInterval=60&maxReconnectDelay=0"
+                     + "&clientId=manual-ack-smallmax-" + id;
+        CamelContext context = createContext(uri, 2);
+        try {
+            publish(topic, "fail-small");
+
+            await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> assertThat(routed).containsExactly("fail-small"));
+            List<Long> times = attemptTimes.get("fail-small");
+            assertThat(times).hasSize(3);
+            assertThat(TimeUnit.NANOSECONDS.toMillis(times.get(1) - times.get(0))).isGreaterThanOrEqualTo(900);
+            assertThat(TimeUnit.NANOSECONDS.toMillis(times.get(2) - times.get(1))).isGreaterThanOrEqualTo(900);
+        } finally {
+            context.stop();
+        }
+    }
+
     private static String brokerUrl() {
         return "tcp://localhost:" + service.brokerPort();
     }

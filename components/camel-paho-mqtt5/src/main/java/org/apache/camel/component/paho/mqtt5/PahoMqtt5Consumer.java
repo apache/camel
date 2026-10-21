@@ -314,14 +314,15 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
     /**
      * The delay before the reconnect of the given failed exchange in a row: the minimum automatic reconnect delay of
-     * the client (1 second), doubled for each further failed exchange in a row, up to maxReconnectDelay.
+     * the client (1 second), doubled for each further failed exchange in a row, up to maxReconnectDelay, but never less
+     * than the minimum (a maxReconnectDelay below it would reconnect in a tight loop).
      */
     private long reconnectDelay(int attempt) {
         long max = Math.max(0, getEndpoint().getConfiguration().getMaxReconnectDelay());
         MqttConnectionOptions options = connectionOptions;
         long min = options != null ? TimeUnit.SECONDS.toMillis(options.getAutomaticReconnectMinDelay()) : 1000;
         long delay = min << Math.min(attempt - 1, 20);
-        return Math.min(delay, max);
+        return Math.max(min, Math.min(delay, max));
     }
 
     private void reconnect(MqttClient current) {

@@ -816,7 +816,9 @@ exchange in a row up to `maxReconnectDelay`, logged at WARN), and the broker sen
 cases (a clean session, which is the default, a QoS 2 message, or `cleanStart=false` without `sessionExpiryInterval`,
 where the session ends with the connection) the broker never sends the message again, so the failed message is
 acknowledged and the failure is left to the Camel error handler. A consumer that uses a client set with the `client`
-option leaves a failed QoS 1 message on a session that the broker keeps unacknowledged, as before.
+option leaves a failed QoS 1 message on a session that the broker keeps unacknowledged, as before; as the consumer does
+not connect that client, set the `cleanStart` and `sessionExpiryInterval` of the endpoint to match its connection
+options.
 
 === camel-iggy - messageExpiry is sent to Iggy in microseconds
 

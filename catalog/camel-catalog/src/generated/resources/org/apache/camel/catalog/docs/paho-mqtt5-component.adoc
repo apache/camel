@@ -94,13 +94,15 @@ arrives, so the broker never sends a QoS 2 message again. So when an exchange fa
   `sessionExpiryInterval`, where the session ends with the connection) the broker never sends the message again, so
   the consumer acknowledges it, and the failure is left to the Camel error handler;
 * with a client set by the `client` option, a QoS 1 message on a session that the broker keeps stays unacknowledged
-  until that client connects again.
+  until that client connects again. The consumer does not connect that client, so it tells the cases apart with the
+  `cleanStart` and `sessionExpiryInterval` of the endpoint: set them to match the connection options of the client.
+  With the defaults (a clean session) a failed message is acknowledged.
 
 The reconnects of failed exchanges in a row back off: the first one waits one second, each further one waits twice as
-long, up to `maxReconnectDelay`, and a successful exchange starts again from one second. Each such reconnect is logged
-at WARN. The broker then also sends again the other QoS 1 messages that were not acknowledged yet, such as the ones
-still being routed. A message that always fails is still delivered again and again; use a Camel error handler, for
-example a dead letter channel, for such messages.
+long, up to `maxReconnectDelay` (but at least one second), and a successful exchange starts again from one second.
+Each such reconnect is logged at WARN. The broker then also sends again the other QoS 1 messages that were not
+acknowledged yet, such as the ones still being routed. A message that always fails is still delivered again and again;
+use a Camel error handler, for example a dead letter channel, for such messages.
 
 
 == Examples
