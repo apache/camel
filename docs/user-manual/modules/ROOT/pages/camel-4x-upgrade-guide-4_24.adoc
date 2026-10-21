@@ -1074,6 +1074,17 @@ too early (`messageExpiry=3600` gave 3.6 ms instead of one hour). The value is n
 created before keep their expiry: change it on the Iggy server. If you set `messageExpiry` in microseconds to work
 around this, set it in seconds now, or newly created topics keep their messages a million times longer than intended.
 
+=== camel-jira - the newIssues consumer reads every new issue
+
+A poll of the `newIssues` consumer read only the newest `maxResults` (default 50) of the issues created since the
+previous poll, and the older ones were never consumed. A poll now reads every page of the search and can route more
+than `maxResults` issues; `maxResults` is the page size of that search (at most 50). There is no upper bound, so the
+first poll after a long outage or a large import can send many search requests and route many issues in one batch.
+
+On Jira Cloud the Jira consumers now read the pages of a search with the next page token, as Jira Cloud cannot page by
+start index: with `maxResults` above 50, a search with more than 50 results failed on the second page with
+`UnsupportedOperationException`.
+
 === camel-hashicorp-vault - properties without engine use the `secret` engine
 
 A `hashicorp:` property without an engine, such as `{{hashicorp:mysecret}}` or `{{hashicorp:mysecret#field}}`, now
