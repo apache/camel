@@ -278,7 +278,7 @@ class EndpointSchemaGeneratorMojoTest {
             SomeEndpointWithBadBodyTypes.DataFormatSide.class, SomeEndpointWithBadBodyTypes.ProducerSideOfConsumer.class,
             SomeEndpointWithBadBodyTypes.UnchangedInput.class, SomeEndpointWithBadBodyTypes.AnyOutput.class,
             SomeEndpointWithBadBodyTypes.UnknownWithOthers.class, SomeEndpointWithBadBodyTypes.NoCarriers.class,
-            SomeEndpointWithBadBodyTypes.UnknownOption.class })
+            SomeEndpointWithBadBodyTypes.UnknownOption.class, SomeEndpointWithBadBodyTypes.OptionValueWithoutCarriers.class })
     void testEndpointWithBadBodyTypes(Class<?> clazz) {
         addEndpointOptions("output");
         model.setConsumerOnly(clazz.getAnnotation(UriEndpoint.class).consumerOnly());

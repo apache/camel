@@ -145,9 +145,9 @@ one entry per side:
 |===
 
 Each side has the _carriers_ of the body, the kinds of Java object it is in: `null`, `text`, `bytes`, `stream`,
-`file`, `value`, `map`, `list` and `pojo`; `unchanged` for a step that leaves the body as it was, `any` for a step that
-takes any body, and `unknown` for a body that depends on what the other system sends or on a class the user
-configures. A side can also have the Java type when the body is always of that type, the format of the payload (json,
+`file`, `value`, `map`, `list`, `iterator` (read once, with no size and no index) and `pojo`; `unchanged` for a step
+that leaves the body as it was, `any` for a step that takes any body, and `unknown` for a body that depends on what
+the other system sends or on a class the user configures. A side can also have the Java type when the body is always of that type, the format of the payload (json,
 xml, csv, yaml, text or binary), the options the body depends on, the body for other values of an option, and a
 description:
 

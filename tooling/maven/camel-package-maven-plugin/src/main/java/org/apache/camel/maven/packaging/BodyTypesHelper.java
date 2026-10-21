@@ -137,10 +137,14 @@ final class BodyTypesHelper {
     }
 
     /**
-     * UNCHANGED is for the body after a step, such as a sql query that leaves it unchanged unless it is a select. ANY
-     * is for the bodies a step needs. ANY and UNKNOWN stand alone.
+     * A body has a carrier: an option value without one would say nothing. UNCHANGED is for the body after a step, such
+     * as a sql query that leaves it unchanged unless it is a select. ANY is for the bodies a step needs. ANY and
+     * UNKNOWN stand alone.
      */
     private static void check(Class<?> owner, String side, Carrier[] carriers) {
+        if (carriers.length == 0) {
+            throw new IllegalArgumentException(owner.getName() + ": the @BodyTypes " + side + " has no carriers");
+        }
         List<Carrier> list = Arrays.asList(carriers);
         boolean in = IN.contains(side.split(" ")[0]);
         if (in && list.contains(Carrier.UNCHANGED)) {

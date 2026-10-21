@@ -63,4 +63,10 @@ public final class SomeEndpointWithBadBodyTypes {
     @BodyTypes(producerOut = @BodyType(value = Carrier.TEXT, dependsOn = "nope"))
     public static class UnknownOption {
     }
+
+    @UriEndpoint(scheme = "some", syntax = "some", title = "some")
+    @BodyTypes(producerOut = @BodyType(value = Carrier.TEXT,
+                                       byOption = @BodyType.When(option = "output", value = "bytes", carrier = {})))
+    public static class OptionValueWithoutCarriers {
+    }
 }
