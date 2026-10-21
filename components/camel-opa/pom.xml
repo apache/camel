@@ -33,8 +33,8 @@
     <description>Camel Open Policy Agent Component</description>
 
     <properties>
-        <!-- the openpolicyagent/opa image is only published for amd64 and arm64 -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <!-- the openpolicyagent/opa image is not published for s390x -->
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
