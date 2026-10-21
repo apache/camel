@@ -92,6 +92,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
 
         KeyManagersParameters keyManagerParams = new KeyManagersParameters();
         keyManagerParams.setKeyStore(keyStoreParams);
+        keyManagerParams.setKeyPassword(SECURITY_STORE_PASSWORD);
 
         sslParameters.setKeyManagers(keyManagerParams);
 

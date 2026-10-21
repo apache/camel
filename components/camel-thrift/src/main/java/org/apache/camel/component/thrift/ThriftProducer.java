@@ -95,6 +95,9 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
     protected void doStart() throws Exception {
         super.doStart();
 
+        if (configuration.getNegotiationType() == ThriftNegotiationType.SASL) {
+            throw new IllegalArgumentException("The SASL negotiation type is not supported");
+        }
         if (configuration.getNegotiationType() == ThriftNegotiationType.SSL) {
             if (!endpoint.isSynchronous()) {
                 throw new IllegalArgumentException("The SSL negotiation type requires to set syncronous communication mode");
