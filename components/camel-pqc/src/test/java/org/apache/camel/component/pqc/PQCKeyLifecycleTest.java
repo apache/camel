@@ -28,9 +28,9 @@ import java.util.List;
 import org.apache.camel.component.pqc.lifecycle.FileBasedKeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -70,7 +70,7 @@ public class PQCKeyLifecycleTest {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
         // Generate a Dilithium key pair
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "test-dilithium-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "test-dilithium-key", MLDSAParameterSpec.ml_dsa_44);
 
         assertNotNull(keyPair);
         assertNotNull(keyPair.getPublic());
@@ -106,7 +106,7 @@ public class PQCKeyLifecycleTest {
     void testExportKeyToPEM() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "export-test-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "export-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Export public key to PEM
         byte[] publicKeyPEM = keyManager.exportPublicKey(keyPair, KeyLifecycleManager.KeyFormat.PEM);
@@ -129,7 +129,7 @@ public class PQCKeyLifecycleTest {
     void testExportKeyToDER() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "der-test-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "der-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Export to DER format
         byte[] publicKeyDER = keyManager.exportPublicKey(keyPair, KeyLifecycleManager.KeyFormat.DER);
@@ -147,7 +147,7 @@ public class PQCKeyLifecycleTest {
 
         // Generate and export a key
         KeyPair originalKeyPair = keyManager.generateKeyPair("DILITHIUM", "import-test-key",
-                DilithiumParameterSpec.dilithium2);
+                MLDSAParameterSpec.ml_dsa_44);
         byte[] exportedKey = keyManager.exportPublicKey(originalKeyPair, KeyLifecycleManager.KeyFormat.PEM);
 
         // Import the key
@@ -165,7 +165,7 @@ public class PQCKeyLifecycleTest {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
         // Generate initial key
-        KeyPair oldKeyPair = keyManager.generateKeyPair("DILITHIUM", "old-key", DilithiumParameterSpec.dilithium2);
+        KeyPair oldKeyPair = keyManager.generateKeyPair("DILITHIUM", "old-key", MLDSAParameterSpec.ml_dsa_44);
         assertNotNull(oldKeyPair);
 
         // Rotate the key
@@ -188,7 +188,7 @@ public class PQCKeyLifecycleTest {
     void testKeyMetadataTracking() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "metadata-test-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "metadata-test-key", MLDSAParameterSpec.ml_dsa_44);
         KeyMetadata metadata = keyManager.getKeyMetadata("metadata-test-key");
 
         // Initial state
@@ -214,7 +214,7 @@ public class PQCKeyLifecycleTest {
     void testExpireKey() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        keyManager.generateKeyPair("DILITHIUM", "expire-test-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "expire-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Expire the key
         keyManager.expireKey("expire-test-key");
@@ -229,7 +229,7 @@ public class PQCKeyLifecycleTest {
     void testRevokeKey() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        keyManager.generateKeyPair("DILITHIUM", "revoke-test-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "revoke-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Revoke the key
         String reason = "Compromised key";
@@ -246,9 +246,9 @@ public class PQCKeyLifecycleTest {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
         // Generate multiple keys
-        keyManager.generateKeyPair("DILITHIUM", "key1", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "key1", MLDSAParameterSpec.ml_dsa_44);
         keyManager.generateKeyPair("FALCON", "key2");
-        keyManager.generateKeyPair("DILITHIUM", "key3", DilithiumParameterSpec.dilithium3);
+        keyManager.generateKeyPair("DILITHIUM", "key3", MLDSAParameterSpec.ml_dsa_65);
 
         // List all keys
         List<KeyMetadata> keys = keyManager.listKeys();
@@ -264,7 +264,7 @@ public class PQCKeyLifecycleTest {
     void testDeleteKey() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        keyManager.generateKeyPair("DILITHIUM", "delete-test-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "delete-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Verify key exists
         assertNotNull(keyManager.getKeyMetadata("delete-test-key"));
@@ -280,7 +280,7 @@ public class PQCKeyLifecycleTest {
     void testNeedsRotationByAge() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        keyManager.generateKeyPair("DILITHIUM", "age-test-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "age-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Should not need rotation for young key
         assertFalse(keyManager.needsRotation("age-test-key", Duration.ofDays(365), 0));
@@ -294,7 +294,7 @@ public class PQCKeyLifecycleTest {
     void testNeedsRotationByUsage() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        keyManager.generateKeyPair("DILITHIUM", "usage-test-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "usage-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Update usage count
         KeyMetadata metadata = keyManager.getKeyMetadata("usage-test-key");
@@ -316,7 +316,7 @@ public class PQCKeyLifecycleTest {
 
         // Generate and store a key
         KeyPair originalKeyPair = keyManager.generateKeyPair("DILITHIUM", "persistence-test-key",
-                DilithiumParameterSpec.dilithium2);
+                MLDSAParameterSpec.ml_dsa_44);
 
         // Create a new manager instance (simulating restart)
         KeyLifecycleManager newManager = new FileBasedKeyLifecycleManager(tempDir.toString());
@@ -340,7 +340,7 @@ public class PQCKeyLifecycleTest {
     void testKeyMetadataAge() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        keyManager.generateKeyPair("DILITHIUM", "age-calculation-key", DilithiumParameterSpec.dilithium2);
+        keyManager.generateKeyPair("DILITHIUM", "age-calculation-key", MLDSAParameterSpec.ml_dsa_44);
         KeyMetadata metadata = keyManager.getKeyMetadata("age-calculation-key");
 
         // Age should be 0 days for just created key
@@ -352,7 +352,7 @@ public class PQCKeyLifecycleTest {
     void testLegacyKeyPairMigration() throws Exception {
         // Seed a real PQC key pair via the manager
         FileBasedKeyLifecycleManager seedManager = new FileBasedKeyLifecycleManager(tempDir.toString());
-        KeyPair original = seedManager.generateKeyPair("DILITHIUM", "seed-key", DilithiumParameterSpec.dilithium2);
+        KeyPair original = seedManager.generateKeyPair("DILITHIUM", "seed-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Write it out in the legacy Java-serialized ".key" format under a fresh keyId
         Path legacyKeyFile = tempDir.resolve("legacy-key.key");
@@ -404,7 +404,7 @@ public class PQCKeyLifecycleTest {
     void testMultipleKeyFormats() throws Exception {
         keyManager = new FileBasedKeyLifecycleManager(tempDir.toString());
 
-        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "format-test-key", DilithiumParameterSpec.dilithium2);
+        KeyPair keyPair = keyManager.generateKeyPair("DILITHIUM", "format-test-key", MLDSAParameterSpec.ml_dsa_44);
 
         // Test all export formats
         byte[] pemPublic = keyManager.exportPublicKey(keyPair, KeyLifecycleManager.KeyFormat.PEM);

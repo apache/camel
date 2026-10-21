@@ -36,6 +36,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.bouncycastle.jcajce.spec.MLDSAParameterSpec;
+import org.bouncycastle.jcajce.spec.MLKEMParameterSpec;
+import org.bouncycastle.jcajce.spec.SLHDSAParameterSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -570,15 +573,14 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
         try {
             switch (algorithm) {
                 case "DILITHIUM":
-                    return org.bouncycastle.pqc.jcajce.spec.DilithiumParameterSpec.dilithium2;
                 case "MLDSA":
+                    return MLDSAParameterSpec.ml_dsa_44;
                 case "SLHDSA":
-                    // These use default initialization
-                    return null;
+                    return SLHDSAParameterSpec.slh_dsa_sha2_128s;
                 case "FALCON":
                     return org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec.falcon_512;
                 case "SPHINCSPLUS":
-                    return org.bouncycastle.pqc.jcajce.spec.SPHINCSPlusParameterSpec.sha2_128s;
+                    return SLHDSAParameterSpec.slh_dsa_sha2_128s;
                 case "XMSS":
                     return new org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec(
                             10,
@@ -592,8 +594,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
                             org.bouncycastle.pqc.crypto.lms.LMOtsParameters.sha256_n32_w4);
                 case "MLKEM":
                 case "KYBER":
-                    // These use default initialization
-                    return null;
+                    return MLKEMParameterSpec.ml_kem_768;
                 case "NTRU":
                     return org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec.ntruhps2048509;
                 case "NTRULPRime":

@@ -30,7 +30,7 @@ public enum PQCKeyEncapsulationAlgorithms {
     NTRU("NTRU", "BCPQC"),
     NTRULPRime("NTRULPRime", "BCPQC"),
     SNTRUPrime("SNTRUPrime", "BCPQC"),
-    KYBER("KYBER", "BCPQC");
+    KYBER("ML-KEM", "BC");
 
     private final String algorithm;
     private final String bcProvider;
