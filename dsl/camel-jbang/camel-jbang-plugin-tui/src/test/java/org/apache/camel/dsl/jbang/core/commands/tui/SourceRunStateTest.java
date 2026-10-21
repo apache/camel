@@ -132,14 +132,35 @@ class SourceRunStateTest {
     }
 
     @Test
-    void onlyTheStartedRoutesOfTheFile() {
+    void onlyTheRoutesOfTheFile() {
         route("stock", "stock.camel.yaml:3", "59s");
-        route("orders", "orders.camel.yaml:3", "59s").state = "Stopped";
 
         assertThat(SourceRunState.of(info, FILE, NOW - 10_000, NOW)).isNull();
 
         // a file the integration has no route from
         assertThat(SourceRunState.of(info, "/work/README.md", NOW - 10_000, NOW)).isNull();
+    }
+
+    @Test
+    void aFileWhoseRoutesAreStopped() {
+        RouteInfo orders = route("orders", "orders.camel.yaml:3", "");
+        orders.state = "Stopped";
+
+        // loaded when the integration started, as saved: what its lines say holds
+        SourceRunState.State state = SourceRunState.of(info, FILE, NOW - 3_600_000, NOW);
+        assertThat(state.kind()).isEqualTo(SourceRunState.Kind.STOPPED);
+        assertThat(state.stale()).isZero();
+        assertThat(text(SourceRunState.line(state))).isEqualTo(TuiIcons.IDLE + " the routes of this file are stopped");
+        assertThat(SourceRunState.toJson(state).getString("state")).isEqualTo("stopped");
+
+        // saved since: the saved file is not running, stopped or not
+        assertThat(SourceRunState.of(info, FILE, NOW - 10_000, NOW).kind()).isEqualTo(SourceRunState.Kind.NOT_RUNNING);
+
+        // stopped after a reload: when it was loaded is not known
+        info.reloaded = 1;
+        state = SourceRunState.of(info, FILE, NOW - 3_600_000, NOW);
+        assertThat(state.kind()).isEqualTo(SourceRunState.Kind.STOPPED);
+        assertThat(state.stale()).isEqualTo(1);
     }
 
     @Test

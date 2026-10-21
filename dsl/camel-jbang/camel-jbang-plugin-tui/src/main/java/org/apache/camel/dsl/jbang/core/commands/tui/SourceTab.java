@@ -1194,7 +1194,10 @@ class SourceTab extends AbstractTab {
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
             // whether the integration runs the file shown as it is saved, in the view and in the editor (CAMEL-25771)
-            runState.shown(sourceViewer.getCurrentFilePath(), sourceViewer.isDirty());
+            if (runState.shown(sourceViewer.getCurrentFilePath(), sourceViewer.isDirty())) {
+                // another file, or a save: its run state now, rather than at the next refresh
+                ctx.backgroundExecutor.execute(() -> runState.refresh(ctx.findSelectedIntegration()));
+            }
             runState.render(frame, area);
         } else {
             runState.shown(null, false);

@@ -81,6 +81,8 @@ The bottom border of the source says whether the integration runs the routes of 
 * `○ not running yet` -- the file was saved after the integration loaded it. An integration that runs without `--dev`
   does not reload a file when it is saved: restart it. The log of one in dev mode says why it did not reload the file.
 * `⚠ the reload failed` -- the integration runs the routes it ran before the reload, until a reload succeeds.
+* `○ the routes of this file are stopped` -- stopped (or suspended) by hand. The live run data and the body types still
+  show when the integration loaded the file as saved, which is not known for a route stopped after a reload.
 
 image::jbang/camel-tui-source-running-as-saved.png[The bottom border of an edited route file: the integration runs without --dev, so the saved file is not running yet]
 

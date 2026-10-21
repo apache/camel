@@ -112,6 +112,74 @@ class SourceBodyTypesTest {
     }
 
     @Test
+    void aCutNameKeepsItsEllipsisAndTheCountItsDigits() {
+        // the last column of the view is the scrollbar's: what is cut ends before it
+        boolean cut = false;
+        for (int width = 44; width <= 72; width++) {
+            String[] rows = render(width).split("\n");
+            String unmarshal = row(rows, "- unmarshal:");
+            if (unmarshal.contains("ByteArr") && !unmarshal.contains("ByteArrayInputStreamCache")) {
+                assertThat(unmarshal).as("width %d", width).contains("…");
+                cut = true;
+            }
+            String to = row(rows, "- to:");
+            if (to.contains(" +")) {
+                assertThat(to).as("width %d", width).contains(" +1");
+            }
+        }
+        assertThat(cut).isTrue();
+    }
+
+    @Test
+    void anotherFileHasItsOwnLiveRunDataAtOnce() throws Exception {
+        Path other = Files.writeString(dir.resolve("stock.camel.yaml"), "- from:\n    uri: timer:stock\n");
+        Map<String, Map<Integer, LiveLine>> byFile = Map.of(
+                file.toString(), Map.of(0, new LiveLine(120, 0, 0)),
+                other.toString(), Map.of(0, new LiveLine(7, 0, 0)));
+        viewer.liveColumn().setLiveRunData(byFile::get);
+        viewer.liveColumn().refreshLiveLinesForTesting();
+        assertThat(viewer.liveColumn().liveColumnForTesting(0)).contains("120");
+
+        // not the numbers of the file shown before for up to a second
+        viewer.loadFile(other);
+        assertThat(viewer.liveColumn().liveColumnForTesting(0)).contains("7").doesNotContain("120");
+    }
+
+    @Test
+    void anotherFileIsStaleUntilItsStateIsKnown() throws Exception {
+        Path other = Files.writeString(dir.resolve("stock.camel.yaml"), "- from:\n    uri: timer:stock\n");
+        long now = System.currentTimeMillis();
+        Files.setLastModifiedTime(file, FileTime.fromMillis(now - 3_600_000));
+        IntegrationInfo info = new IntegrationInfo();
+        info.uptime = now - 60_000;
+        RouteInfo route = new RouteInfo();
+        route.routeId = "orders";
+        route.source = "orders.camel.yaml:1";
+        route.state = "Started";
+        route.uptime = "59s";
+        info.routes.add(route);
+        SourceRunState.Tracker tracker = new SourceRunState.Tracker();
+
+        // shown: computed at once
+        assertThat(tracker.shown(file.toString(), false)).isTrue();
+        assertThat(tracker.stale()).isTrue();
+        tracker.refresh(info);
+        assertThat(tracker.stale()).isFalse();
+        assertThat(tracker.shown(file.toString(), false)).isFalse();
+
+        // another file: not known until computed, then known to have no route of the integration
+        assertThat(tracker.shown(other.toString(), false)).isTrue();
+        assertThat(tracker.stale()).isTrue();
+        tracker.refresh(info);
+        assertThat(tracker.current()).isNull();
+        assertThat(tracker.stale()).isFalse();
+
+        // a save is computed at once too
+        assertThat(tracker.shown(other.toString(), true)).isFalse();
+        assertThat(tracker.shown(other.toString(), false)).isTrue();
+    }
+
+    @Test
     void nothingInThePlainMode() {
         viewer.handleKeyEvent(KeyEvent.ofChar('p'));
 

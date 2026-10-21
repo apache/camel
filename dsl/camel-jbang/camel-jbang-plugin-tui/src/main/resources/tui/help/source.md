@@ -69,6 +69,9 @@ of the file as it is saved:
   reload the file
 - `⚠ the reload failed` — the integration runs what it ran before the reload,
   until a reload succeeds
+- `○ the routes of this file are stopped` — stopped (or suspended) by hand: the
+  live run data and the body types still show when the integration loaded the
+  file as saved, which is not known for a route stopped after a reload
 
 It compares when the file was saved with when the integration loaded the
 routes it has from it, and shows nothing for a file it has no route from.

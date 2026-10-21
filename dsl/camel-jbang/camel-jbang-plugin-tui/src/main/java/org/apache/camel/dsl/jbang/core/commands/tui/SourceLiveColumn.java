@@ -83,6 +83,8 @@ class SourceLiveColumn {
     private int liveFailedWidth;
     private int liveMeanWidth;
     private String liveWidthsFile;
+    // the file the live run data was read for: another one is read at once, not after a second
+    private String liveLinesFile;
 
     /**
      * @param loadedFile the path of the file shown, whose live run data is read; null when none is
@@ -249,7 +251,7 @@ class SourceLiveColumn {
             return Collections.emptyMap();
         }
         long now = MonotonicClock.millis();
-        if (now - liveLinesTime > 1000) {
+        if (now - liveLinesTime > 1000 || !loadedFilePath.equals(liveLinesFile)) {
             refreshLiveLines(now);
         }
         return liveLines;
@@ -275,6 +277,7 @@ class SourceLiveColumn {
             Map<Integer, LiveLine> lines = liveRunData.lines(loadedFilePath);
             liveLines = lines != null ? lines : Collections.emptyMap();
             liveLinesTime = now;
+            liveLinesFile = loadedFilePath;
             // the widths of the column, for all the lines alike; they only grow while the same file is shown (from
             // a minimum), so the column does not jitter when a number crosses 99 -> 100 and back (a mean time going
             // up and down, a reset of the statistics); another file, or the integration stopping, starts afresh

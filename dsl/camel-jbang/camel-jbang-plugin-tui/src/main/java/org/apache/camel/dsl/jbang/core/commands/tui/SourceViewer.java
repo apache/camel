@@ -2949,7 +2949,7 @@ class SourceViewer {
             }
             spans.add(Span.styled(" ↵ " + jl.routeId(), linkStyle));
         }
-        liveColumn.addBodyTypes(spans, lineIndex, plainMode, isSelected ? selBg : null, viewportWidth + hSkip);
+        liveColumn.addBodyTypes(spans, lineIndex, plainMode, isSelected ? selBg : null, viewportWidth - 1 + hSkip);
         Line full = Line.from(spans);
 
         if (hSkip > 0) {
