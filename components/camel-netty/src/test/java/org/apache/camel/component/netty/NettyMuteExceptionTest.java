@@ -24,14 +24,25 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
+import io.netty.buffer.ByteBufUtil;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.Delimiters;
+import io.netty.handler.codec.MessageToMessageEncoder;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * The consumer used to write the route's exception back to the remote peer as the reply: over the textline codec its
@@ -50,6 +61,20 @@ class NettyMuteExceptionTest extends BaseNettyTest {
     @RegisterExtension
     AvailablePortFinder.Port udpPort = AvailablePortFinder.find();
 
+    @RegisterExtension
+    AvailablePortFinder.Port objectPort = AvailablePortFinder.find();
+
+    @BindToRegistry("line-decoder")
+    private final ChannelHandlerFactory lineDecoder
+            = ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1024, Delimiters.lineDelimiter(), "tcp");
+
+    @BindToRegistry("string-decoder")
+    private final ChannelHandlerFactory stringDecoder
+            = ChannelHandlerFactories.newStringDecoder(StandardCharsets.UTF_8, "tcp");
+
+    @BindToRegistry("capturing-encoder")
+    private final CapturingEncoder capturingEncoder = new CapturingEncoder();
+
     @Test
     void aFailedExchangeDoesNotSendTheExceptionByDefault() throws IOException {
         assertEquals(MUTED_REPLY, sendLineOverTcp(getPort()),
@@ -65,6 +90,20 @@ class NettyMuteExceptionTest extends BaseNettyTest {
     @Test
     void muteExceptionFalseSendsTheExceptionAsBefore() throws IOException {
         assertEquals("java.lang.IllegalStateException: " + DETAIL, sendLineOverTcp(unmutedPort.getPort()));
+    }
+
+    @Test
+    void theExceptionHandedToAnObjectEncoderIsAPlainExceptionWithoutStackTraceOrCause() throws IOException {
+        // an encoder that accepts any object serialises the stand-in itself, not only its toString()
+        assertEquals(MUTED_REPLY, sendLineOverTcp(objectPort.getPort()));
+
+        Object written = capturingEncoder.written.get();
+        assertNotNull(written, "the consumer must have written a reply");
+        assertEquals(Exception.class, written.getClass());
+        Exception muted = (Exception) written;
+        assertEquals("Exchange processing failed", muted.getMessage());
+        assertNull(muted.getCause());
+        assertEquals(0, muted.getStackTrace().length);
     }
 
     private static String sendLineOverTcp(int port) throws IOException {
@@ -111,7 +150,26 @@ class NettyMuteExceptionTest extends BaseNettyTest {
 
                 fromF("netty:udp://127.0.0.1:%s?textline=true&sync=true", udpPort.getPort())
                         .throwException(new IllegalStateException(DETAIL));
+
+                fromF("netty:tcp://localhost:%s?sync=true&encoders=#capturing-encoder&decoders=#line-decoder,#string-decoder",
+                        objectPort.getPort())
+                        .throwException(new IllegalStateException(DETAIL));
             }
         };
+    }
+
+    /**
+     * Stands in for an object encoder: records the object the consumer writes, and sends its text as a line.
+     */
+    @ChannelHandler.Sharable
+    static final class CapturingEncoder extends MessageToMessageEncoder<Object> {
+
+        final AtomicReference<Object> written = new AtomicReference<>();
+
+        @Override
+        protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out) {
+            written.set(msg);
+            out.add(ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(msg + "\n"), StandardCharsets.UTF_8));
+        }
     }
 }
