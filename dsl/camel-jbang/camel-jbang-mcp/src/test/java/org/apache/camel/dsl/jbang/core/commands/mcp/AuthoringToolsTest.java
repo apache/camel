@@ -34,6 +34,7 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -72,18 +73,18 @@ class AuthoringToolsTest {
 
     @Test
     void catalogDocAnswersWithOptionsAndUriRules() {
-        JsonObject timer = tools.camel_catalog_doc(null, "timer", null, "component", null, null, null, null, null, null);
+        JsonObject timer = tools.camel_catalog_doc(null, "timer", null, "component", null, null, null, null, null, null, null);
         assertThat(timer.getString("kind")).isEqualTo("component");
         assertThat(timer.getString("uriSyntax")).contains("(timerName) go in the path");
         assertThat(timer.getInteger("matchedOptions")).isGreaterThan(5);
         JsonObject check
-                = tools.camel_catalog_doc(null, null, "timer:tick?periodd=5s", null, null, null, null, null, null, null);
+                = tools.camel_catalog_doc(null, null, "timer:tick?periodd=5s", null, null, null, null, null, null, null, null);
         assertThat(check.getBoolean("valid")).isFalse();
         assertThat(List.copyOf(check.getCollection("problems")).get(0).toString()).contains("periodd");
         // a lookup that finds nothing answers with an error field and suggestions, as the TUI does, not an exception
-        assertThat(tools.camel_catalog_doc(null, null, null, null, null, null, null, null, null, null).getString("error"))
+        assertThat(tools.camel_catalog_doc(null, null, null, null, null, null, null, null, null, null, null).getString("error"))
                 .contains("required");
-        JsonObject mqtt = tools.camel_catalog_doc(null, "mqtt", null, "component", null, null, null, null, null, null);
+        JsonObject mqtt = tools.camel_catalog_doc(null, "mqtt", null, "component", null, null, null, null, null, null, null);
         assertThat(mqtt.getString("error")).contains("mqtt");
         assertThat(List.copyOf(mqtt.getCollection("suggestions")).toString()).contains("paho-mqtt5");
     }
@@ -128,11 +129,18 @@ class AuthoringToolsTest {
     }
 
     @Test
-    void anUnknownIntegrationNameIsAnError() {
-        assertThatThrownBy(() -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1"))
-                .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
-        assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null, null))
-                .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
+    void anUnknownIntegrationNameIsAnError(@TempDir Path home) {
+        // a home of its own: the log tool looks for the previous run of an integration that is not running
+        Path previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            assertThatThrownBy(() -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1"))
+                    .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
+            assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null, null, null))
+                    .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
+        } finally {
+            CommandLineHelper.useHomeDir(previousHome.toString());
+        }
     }
 
     @Test
@@ -184,9 +192,9 @@ class AuthoringToolsTest {
         counted.repeatedCalls = new RepeatedCallSessions();
         McpConnection agent = connection("agent-1");
 
-        JsonObject first = counted.camel_catalog_doc(agent, "sql", null, null, null, null, null, null, null, null);
-        JsonObject second = counted.camel_catalog_doc(agent, "sql", null, null, null, null, null, null, null, null);
-        JsonObject third = counted.camel_catalog_doc(agent, "sql", null, null, null, null, null, null, null, null);
+        JsonObject first = counted.camel_catalog_doc(agent, "sql", null, null, null, null, null, null, null, null, null);
+        JsonObject second = counted.camel_catalog_doc(agent, "sql", null, null, null, null, null, null, null, null, null);
+        JsonObject third = counted.camel_catalog_doc(agent, "sql", null, null, null, null, null, null, null, null, null);
 
         assertThat(first.get("repeated")).isNull();
         assertThat(second).isEqualTo(first);
@@ -196,9 +204,9 @@ class AuthoringToolsTest {
         assertThat(third.toJson().length()).isLessThan(first.toJson().length() / 4);
 
         // another question, or another connection, is answered in full
-        assertThat(counted.camel_catalog_doc(agent, "timer", null, null, null, null, null, null, null, null)
+        assertThat(counted.camel_catalog_doc(agent, "timer", null, null, null, null, null, null, null, null, null)
                 .get("repeated")).isNull();
-        assertThat(counted.camel_catalog_doc(connection("agent-2"), "sql", null, null, null, null, null, null, null, null)
+        assertThat(counted.camel_catalog_doc(connection("agent-2"), "sql", null, null, null, null, null, null, null, null, null)
                 .get("repeated")).isNull();
     }
 
@@ -233,7 +241,7 @@ class AuthoringToolsTest {
         Map<String, String> args = AuthoringTools.args("name", "timer", "kind", "", "limit", 3, "dev", true, "x", null);
         assertThat(args).containsExactly(Map.entry("name", "timer"), Map.entry("limit", "3"), Map.entry("dev", "true"));
         // a blank kind means auto-detect, not "a kind called nothing"
-        assertThat(tools.camel_catalog_doc(null, "timer", "", "", null, null, null, "", "period", "").getString("kind"))
+        assertThat(tools.camel_catalog_doc(null, "timer", "", "", null, null, null, "", "period", null, "").getString("kind"))
                 .isEqualTo("component");
         assertThat(tools.camel_catalog_find(null, "mqtt", "", null, "").getInteger("count")).isGreaterThan(0);
     }

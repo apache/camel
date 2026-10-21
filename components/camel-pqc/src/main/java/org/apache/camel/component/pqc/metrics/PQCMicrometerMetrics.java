@@ -29,6 +29,11 @@ import org.apache.camel.CamelContext;
 /**
  * Micrometer-backed {@link PQCMetrics}. All {@code io.micrometer} references live in this class so that it is only
  * loaded when Micrometer is actually present on the classpath (see {@code PQCProducer#createMetrics}).
+ * <p/>
+ * Note on {@link #close()}: a {@code MeterRegistry} is shared across the JVM and identifies a meter by its id, so two
+ * producers whose operation, algorithm and outcome tags coincide share one meter instance. Closing one therefore
+ * de-registers a meter the other is still using. Giving each producer a distinguishing tag would fix that, but it
+ * changes the published tag set, so it is left alone here.
  */
 public class PQCMicrometerMetrics implements PQCMetrics {
 
@@ -37,7 +42,11 @@ public class PQCMicrometerMetrics implements PQCMetrics {
 
     private final MeterRegistry registry;
     private final ConcurrentMap<String, Counter> counters = new ConcurrentHashMap<>();
-    private volatile Gauge statefulKeyGauge;
+    private final ConcurrentMap<String, Gauge> statefulKeyGauges = new ConcurrentHashMap<>();
+    // Micrometer holds the state object of a gauge through a WeakReference, so the suppliers have to be kept
+    // reachable here. Without this the gauge reports NaN as soon as the lambda is collected - and this particular
+    // gauge is the one that warns an operator a one-time-use key is running out of signatures.
+    private final ConcurrentMap<String, LongSupplier> statefulKeySuppliers = new ConcurrentHashMap<>();
 
     public PQCMicrometerMetrics(MeterRegistry registry) {
         this.registry = registry;
@@ -70,19 +79,21 @@ public class PQCMicrometerMetrics implements PQCMetrics {
 
     @Override
     public void registerStatefulKeyGauge(String algorithm, LongSupplier remainingSupplier) {
-        statefulKeyGauge = Gauge.builder(METRIC_STATEFUL_REMAINING, remainingSupplier, LongSupplier::getAsLong)
-                .tag("algorithm", algorithm)
-                .description("Remaining signatures for the stateful PQC signature key")
-                .register(registry);
+        // Held for the lifetime of this instance so Micrometer's weak reference to it stays resolvable
+        statefulKeySuppliers.put(algorithm, remainingSupplier);
+        statefulKeyGauges.put(algorithm,
+                Gauge.builder(METRIC_STATEFUL_REMAINING, remainingSupplier, LongSupplier::getAsLong)
+                        .tag("algorithm", algorithm)
+                        .description("Remaining signatures for the stateful PQC signature key")
+                        .register(registry));
     }
 
     @Override
     public void close() {
         counters.values().forEach(registry::remove);
         counters.clear();
-        if (statefulKeyGauge != null) {
-            registry.remove(statefulKeyGauge);
-            statefulKeyGauge = null;
-        }
+        statefulKeyGauges.values().forEach(registry::remove);
+        statefulKeyGauges.clear();
+        statefulKeySuppliers.clear();
     }
 }

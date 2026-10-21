@@ -972,8 +972,8 @@ class WasmComponentTest {
 
     @Test
     void moduleWithoutStartIsRejected() throws Exception {
-        // the test module of the wasm language exports functions, not a program
-        assertStartFails("wasm:classpath:functions.wasm", "has no _start function");
+        // a module that exports functions, not a program
+        assertStartFails("wasm:" + wat("library", "(module (func (export \"process\")))"), "has no _start function");
     }
 
     @Test

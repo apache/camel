@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.camel.component.dataweave.DataWeaveConversionException;
 import org.apache.camel.component.dataweave.DataWeaveConverter;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -48,7 +49,7 @@ public class TransformDataWeave extends CamelCommand {
                         description = "Inline DataWeave expression to convert")
     private String expression;
 
-    @CommandLine.Option(names = { "--include-comments" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--include-comments" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
                         description = "Include conversion notes as comments in output")
     private boolean includeComments = true;
 
@@ -65,8 +66,8 @@ public class TransformDataWeave extends CamelCommand {
             return convertFiles();
         }
 
-        printer().println("Error: either --input or --expression must be specified");
-        return 1;
+        printer().printErr("Either --input or --expression must be specified");
+        return CliExitCode.USAGE;
     }
 
     private int convertExpression() {
@@ -81,8 +82,8 @@ public class TransformDataWeave extends CamelCommand {
                 result = converter.convertExpression(expression);
             }
         } catch (DataWeaveConversionException e) {
-            printer().println("Error: " + e.getMessage());
-            return 1;
+            printer().printErr(e.getMessage());
+            return CliExitCode.FAILURE;
         }
 
         printer().println(result);
@@ -93,8 +94,8 @@ public class TransformDataWeave extends CamelCommand {
     private int convertFiles() throws IOException {
         Path inputPath = Path.of(input);
         if (!Files.exists(inputPath)) {
-            printer().println("Error: input path does not exist: " + input);
-            return 1;
+            printer().printErr("Input path does not exist: " + input);
+            return CliExitCode.NOT_FOUND;
         }
 
         List<Path> dwlFiles = new ArrayList<>();
@@ -105,8 +106,8 @@ public class TransformDataWeave extends CamelCommand {
                 }
             }
             if (dwlFiles.isEmpty()) {
-                printer().println("No .dwl files found in: " + input);
-                return 1;
+                printer().printErr("No .dwl files found in: " + input);
+                return CliExitCode.NOT_FOUND;
             }
         } else {
             dwlFiles.add(inputPath);
@@ -125,7 +126,7 @@ public class TransformDataWeave extends CamelCommand {
             try {
                 dsContent = converter.convert(dwContent);
             } catch (DataWeaveConversionException e) {
-                printer().println(dwlFile.getFileName() + ": " + e.getMessage());
+                printer().printErr(dwlFile.getFileName() + ": " + e.getMessage());
                 failedFiles++;
                 continue;
             }
@@ -150,7 +151,7 @@ public class TransformDataWeave extends CamelCommand {
         }
 
         printSummary(totalConverted, totalTodos, dwlFiles.size());
-        return failedFiles > 0 ? 1 : 0;
+        return failedFiles > 0 ? CliExitCode.FAILURE : CliExitCode.OK;
     }
 
     private Path resolveOutputPath(Path dwlFile, Path outputPath) {
@@ -176,6 +177,7 @@ public class TransformDataWeave extends CamelCommand {
         if (todos > 0) {
             sb.append(", ").append(todos).append(" require manual review");
         }
-        printer().printErr(sb.toString());
+        // a report, not part of the converted output
+        printer().printDiagnostic(sb.toString());
     }
 }

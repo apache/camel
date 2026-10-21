@@ -36,6 +36,7 @@ import io.vertx.core.http.CookieSameSite;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.FileUpload;
+import io.vertx.ext.web.ParsedHeaderValue;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.TimeoutHandler;
@@ -61,7 +62,9 @@ import org.apache.camel.spi.RestRegistry.RestService;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MimeTypeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -487,11 +490,25 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         exchange.getMessage().removeHeader("Proxy-Connection");
     }
 
+    /**
+     * The charset parameter of the request Content-Type, whose name is case-insensitive (RFC 9110), or null when there
+     * is none or its value is empty ({@code charset=}, {@code charset=""}), as in UndertowHelper and NettyHttpHelper.
+     */
+    private static String charsetParameter(ParsedHeaderValue contentType) {
+        for (Map.Entry<String, String> parameter : contentType.parameters().entrySet()) {
+            if ("charset".equalsIgnoreCase(parameter.getKey())) {
+                String name = IOHelper.normalizeCharset(parameter.getValue());
+                return ObjectHelper.isEmpty(name) ? null : name;
+            }
+        }
+        return null;
+    }
+
     protected Future<Void> processHttpRequest(Exchange exchange, RoutingContext ctx) {
         // reuse existing http message if pooled
         Message in = initializeHttpMessage(exchange, ctx);
 
-        final String charset = ctx.parsedHeaders().contentType().parameter("charset");
+        final String charset = charsetParameter(ctx.parsedHeaders().contentType());
         if (charset != null) {
             exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, charset);
             in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);

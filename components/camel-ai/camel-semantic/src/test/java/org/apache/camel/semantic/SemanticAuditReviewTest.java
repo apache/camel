@@ -92,6 +92,42 @@ class SemanticAuditReviewTest {
         }
     }
 
+    @Test
+    void sharedInputValidationRunsOncePerExpertAndPreventsAllInferenceOnFailure() throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var checks = new AtomicInteger();
+            var first = new FixedSemanticExpert() {
+                @Override
+                public void validateState(Object state) {
+                    checks.incrementAndGet();
+                }
+            };
+            var second = new FixedSemanticExpert() {
+                @Override
+                public void validateState(Object state) {
+                    throw new IllegalArgumentException("invalid shared input");
+                }
+            };
+            context.getRegistry().bind("security", first);
+            context.getRegistry().bind("second", second);
+            var audit = configured(context);
+            SemanticEvaluations.get(context).replace("defs", Map.of("a", evaluation(0.1), "b", evaluation(0.2),
+                    "c", new SemanticEvaluation("boolean", "second", "${body}", Map.of())));
+            context.start();
+            var exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("text");
+            assertThatThrownBy(
+                    () -> context.resolveLanguage("semantic").createExpression("refs:a,b,c").evaluate(exchange, Map.class))
+                    .hasMessageContaining("invalid shared input");
+            assertThat(checks.get()).isEqualTo(1);
+            assertThat(first.calls).isZero();
+            assertThat(second.calls).isZero();
+            audit.stop();
+            assertThat(rows(audit)).filteredOn(r -> List.of("a", "b").contains(r.text("definition")))
+                    .hasSize(2).allSatisfy(r -> assertThat(r.getStatus()).isEqualTo("not_executed"));
+        }
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
     void expertOnlyCaptureRecordsEvaluationsWithoutRouteAnnotations(boolean enabled) throws Exception {

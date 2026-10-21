@@ -28,6 +28,7 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteDiagramAction;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 
 /**
@@ -42,7 +43,9 @@ public class RouteDiagramTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = "Generate a diagram of Camel routes from a route source file (YAML, XML, Java, ...). "
-                        + "The source file is parsed without running it. "
+                        + "Java routes are read by the Java DSL parser, without compiling them; a step it cannot "
+                        + "work out (a lambda, a processor) is shown as a placeholder, and the parts it could not read "
+                        + "are listed in the message. "
                         + "For image themes (dark, light, transparent) the PNG is written to disk and the absolute path "
                         + "is returned. For text themes (ascii, unicode) the diagram is returned directly as text so "
                         + "it can be read and understood by the caller. "
@@ -120,19 +123,32 @@ public class RouteDiagramTools {
             if (textMode) {
                 String asciiContent = success ? Files.readString(out.toPath()) : null;
                 String message = success
-                        ? "ASCII diagram generated (" + size + " bytes)"
+                        ? withNotes("ASCII diagram generated (" + size + " bytes)", capturingPrinter)
                         : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
                 return new RouteDiagramResult(success, resolvedOutput, size, message, asciiContent);
             }
 
             String message = success
-                    ? "Diagram saved to: " + resolvedOutput
+                    ? withNotes("Diagram saved to: " + resolvedOutput, capturingPrinter)
                     : "Failed to render diagram (exit code " + exit + "): " + capturingPrinter.getOutput();
             return new RouteDiagramResult(success, resolvedOutput, size, message, null);
+        } catch (CliException e) {
+            // an expected failure, such as a source file without routes, or a filter that matches no route
+            return new RouteDiagramResult(
+                    false, resolvedOutput, 0L,
+                    "Failed to render diagram (exit code " + e.getExitCode() + "): " + e.getMessage(), null);
         } catch (Throwable e) {
             throw new ToolCallException(
                     "Failed to render route diagram (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
+    }
+
+    /**
+     * The message, followed by what the command printed, such as the parts of a Java route the parser could not read.
+     */
+    private static String withNotes(String message, CapturingPrinter printer) {
+        String notes = printer.getOutput();
+        return notes.isEmpty() ? message : message + "\n" + notes;
     }
 
     /**

@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.milo.client.internal;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +32,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -47,18 +51,24 @@ import org.apache.camel.component.milo.client.MonitorFilterConfiguration;
 import org.eclipse.milo.opcua.sdk.client.DiscoveryClient;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClientConfigBuilder;
+import org.eclipse.milo.opcua.sdk.client.SessionActivityListener;
+import org.eclipse.milo.opcua.sdk.client.UaSession;
 import org.eclipse.milo.opcua.sdk.client.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.sdk.client.identity.CompositeProvider;
 import org.eclipse.milo.opcua.sdk.client.identity.IdentityProvider;
 import org.eclipse.milo.opcua.sdk.client.identity.UsernameProvider;
+import org.eclipse.milo.opcua.sdk.client.subscriptions.MonitoredItemServiceOperationResult;
 import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaMonitoredItem;
 import org.eclipse.milo.opcua.sdk.client.subscriptions.OpcUaSubscription;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.NodeIds;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DiagnosticInfo;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
@@ -93,13 +103,122 @@ public class SubscriptionManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionManager.class);
 
+    /**
+     * The status codes of a request that failed because the connection or the session was lost, which the session
+     * recovery of the client deals with: a closed connection, and the service faults on which the client leaves the
+     * active session because its session or its secure channel is no longer valid. The faults are those of
+     * {@code SESSION_ERROR} and {@code SECURE_CHANNEL_ERROR} in the session state machine of Milo 1.1
+     * ({@code SessionFsmFactory}).
+     */
+    private static final Set<Long> SESSION_LOST = Set.of(
+            StatusCodes.Bad_ConnectionClosed, StatusCodes.Bad_SessionClosed, StatusCodes.Bad_SessionIdInvalid,
+            StatusCodes.Bad_SessionNotActivated, StatusCodes.Bad_SecureChannelIdInvalid,
+            StatusCodes.Bad_SecurityChecksFailed, StatusCodes.Bad_TcpSecureChannelUnknown,
+            StatusCodes.Bad_RequestTypeInvalid);
+
+    /**
+     * The status of a monitored node while communication with the server is lost: the source of the value is configured
+     * but cannot be reached, and no last value is kept (OPC 10000-8 Table 61, OPC 10000-14 Table 80).
+     */
+    private static final StatusCode NO_COMMUNICATION = new StatusCode(StatusCodes.Bad_NoCommunication);
+
     private final AtomicLong clientHandleCounter = new AtomicLong();
 
-    private final class SubscriptionListenerImpl implements OpcUaSubscription.SubscriptionListener {
+    /**
+     * The generation of the last connection built, zero before the first.
+     */
+    private final AtomicLong generationCounter = new AtomicLong();
+
+    /**
+     * Listens to the subscription of a connection and to the state of its session. It is registered on the client
+     * before the client connects, so that it sees every change of the session state.
+     */
+    private final class SubscriptionListenerImpl
+            implements OpcUaSubscription.SubscriptionListener, SessionActivityListener {
+
+        /**
+         * The generation of the connection, which orders its values and loss reports against those of the connection
+         * that replaces it.
+         */
+        private final long generation;
+
+        /**
+         * Whether the session is active. The client connects before the connection is used, and Milo dispatches the
+         * activity callbacks in the order of the transitions.
+         */
+        private volatile boolean sessionActive = true;
+
+        /**
+         * The subscription of the connection, once it is created.
+         */
+        private volatile OpcUaSubscription subscription;
+
+        /**
+         * Set once the connection has been disposed: the session the client closes then is no loss of communication.
+         */
+        private volatile boolean closed;
+
+        /**
+         * The session that the client lost last, while it has not been activated again.
+         */
+        private volatile NodeId lostSessionId;
+
+        SubscriptionListenerImpl(final long generation) {
+            this.generation = generation;
+        }
+
+        @Override
+        public void onSessionActive(final UaSession session) {
+            this.sessionActive = true;
+            final NodeId lostSessionId = this.lostSessionId;
+            this.lostSessionId = null;
+            final OpcUaSubscription subscription = this.subscription;
+            if (lostSessionId != null && subscription != null && !this.closed) {
+                if (lostSessionId.equals(session.getSessionId())) {
+                    // the same session again: the server sends only changes, so ask it for every value
+                    resendData(subscription, this);
+                } else {
+                    LOG.debug("Session {} replaced by {}, the server sends the current values", lostSessionId,
+                            session.getSessionId());
+                }
+            }
+        }
+
+        @Override
+        public void onSessionInactive(final UaSession session) {
+            this.sessionActive = false;
+            final OpcUaSubscription subscription = this.subscription;
+            if (subscription != null && !this.closed) {
+                this.lostSessionId = session.getSessionId();
+                LOG.info("Session {} lost, reporting the monitored nodes", session.getSessionId());
+                reportLoss(subscription, this.generation, SubscriptionManager.this.subscriptions);
+            }
+        }
+
+        /**
+         * Whether a request failed because the connection or the session was lost, which the session recovery of the
+         * client deals with. A request that fails while the session is not active counts too, whatever its status: one
+         * that was sent after the loss waits for that recovery and fails with the error of a failed reconnect attempt.
+         */
+        boolean isSessionLost(final StatusCode status) {
+            return !this.sessionActive || SESSION_LOST.contains(status.getValue());
+        }
 
         @Override
         public void onStatusChanged(final OpcUaSubscription subscription, final StatusCode status) {
-            LOG.info("Subscription status changed {} : {}", subscription.getSubscriptionId(), status);
+            if (status.getValue() == StatusCodes.Bad_Timeout) {
+                LOG.warn("Subscription timed out on the server, recreating it");
+                recoverSubscription(subscription, this);
+            } else {
+                LOG.info("Subscription status changed {} : {}", subscription.getSubscriptionId(), status);
+            }
+        }
+
+        @Override
+        public void onWatchdogTimerElapsed(final OpcUaSubscription subscription) {
+            LOG.debug("Subscription {} stopped publishing, checking it on the server",
+                    subscription.getSubscriptionId().orElse(null));
+            checkSubscription(subscription, this);
         }
 
         @Override
@@ -124,6 +243,22 @@ public class SubscriptionManager {
         private MonitorFilterConfiguration monitorFilterConfiguration;
         private final Integer queueSize;
 
+        /**
+         * The generation of the connection that delivered the last value, guarded by this
+         */
+        private long generation;
+
+        /**
+         * Whether the last delivery to the consumer was a loss report, guarded by this
+         */
+        private boolean reported;
+
+        /**
+         * Whether the server refused to monitor the node: its status is that refusal, whatever the communication, until
+         * its item is created
+         */
+        private volatile boolean refused;
+
         Subscription(ExpandedNodeId nodeId, final Double samplingInterval, Integer queueSize,
                      final Consumer<DataValue> valueConsumer,
                      final MonitorFilterConfiguration monitorFilterConfiguration) {
@@ -146,8 +281,38 @@ public class SubscriptionManager {
             return this.queueSize;
         }
 
-        public Consumer<DataValue> getValueConsumer() {
-            return this.valueConsumer;
+        /**
+         * Delivers a value of the node to the consumer, which ends a loss report.
+         *
+         * @param generation the generation of the connection that received the value
+         */
+        synchronized void deliver(final long generation, final DataValue value) {
+            this.generation = Math.max(this.generation, generation);
+            this.reported = false;
+            this.valueConsumer.accept(value);
+        }
+
+        /**
+         * Delivers the status with which the server refused to monitor the node.
+         */
+        void refuse(final long generation, final DataValue status) {
+            this.refused = true;
+            deliver(generation, status);
+        }
+
+        /**
+         * Delivers a loss report to the consumer, unless the node is reported or refused already, or a later connection
+         * has delivered a value. The report of a replaced connection is queued behind its last values, which may race
+         * the first values of its replacement.
+         *
+         * @param generation the generation of the connection whose communication was lost
+         */
+        synchronized void report(final long generation, final DataValue value) {
+            if (this.reported || this.refused || this.generation > generation) {
+                return;
+            }
+            this.reported = true;
+            this.valueConsumer.accept(value);
         }
 
         public MonitoringFilter createMonitoringFilter() {
@@ -160,25 +325,47 @@ public class SubscriptionManager {
         }
     }
 
+    /**
+     * A status value for a node that could not be monitored, delivered to its consumer outside of the lock
+     */
+    private record PendingValue(Subscription subscription, long generation, DataValue value) {
+        void deliver() {
+            subscription.refuse(generation, value);
+        }
+    }
+
     private class Connected {
         private OpcUaClient client;
         private final OpcUaSubscription manager;
-
-        private final Map<UInteger, Subscription> badSubscriptions = new HashMap<>();
+        private final SubscriptionListenerImpl listener;
+        private final long generation;
 
         private final Map<UInteger, OpcUaMonitoredItem> goodSubscriptions = new HashMap<>();
 
         private final Map<String, UShort> namespaceCache = new ConcurrentHashMap<>();
 
-        Connected(final OpcUaClient client, final OpcUaSubscription manager) {
+        Connected(final OpcUaClient client, final OpcUaSubscription manager, final SubscriptionListenerImpl listener) {
             this.client = client;
             this.manager = manager;
+            this.listener = listener;
+            this.generation = listener.generation;
         }
 
-        public void putSubscriptions(final Map<UInteger, Subscription> subscriptions) throws Exception {
+        /**
+         * Creates the monitored items of the subscriptions on the server.
+         *
+         * @param  subscriptions the subscriptions to create, by client handle
+         * @return               the bad status values of the nodes that could not be monitored, to be delivered to
+         *                       their consumers after the lock of the manager has been released
+         * @throws UaException   if the server rejected the CreateMonitoredItems service call, the connection has to be
+         *                       rebuilt
+         */
+        public List<PendingValue> putSubscriptions(final Map<UInteger, Subscription> subscriptions) throws Exception {
+
+            final List<PendingValue> pendingValues = new ArrayList<>();
 
             if (subscriptions.isEmpty()) {
-                return;
+                return pendingValues;
             }
 
             // convert to requests
@@ -193,7 +380,11 @@ public class SubscriptionManager {
                 final NodeId node = lookupNamespace(s.getNodeId()).get();
 
                 if (node == null) {
-                    handleSubscriptionError(new StatusCode(StatusCodes.Bad_InvalidArgument), entry.getKey(), s);
+                    // reported once like a node the server rejects, the other nodes and the connection are not affected
+                    final StatusCode status = new StatusCode(StatusCodes.Bad_NodeIdUnknown);
+                    LOG.warn("Monitored item for node {} could not be created, the namespace URI is unknown to the server: {}",
+                            s.getNodeId().toParseableString(), status);
+                    pendingValues.add(new PendingValue(s, this.generation, new DataValue(status)));
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     final OpcUaMonitoredItem item = new OpcUaMonitoredItem(itemId, MonitoringMode.Reporting);
@@ -207,6 +398,8 @@ public class SubscriptionManager {
                     if (filter != null) {
                         item.setFilter(filter);
                     }
+                    // set the listener before the item is created, values without a listener are dropped
+                    item.setDataValueListener((monitoredItem, dataValue) -> s.deliver(this.generation, dataValue));
                     items.add(item);
                     // Keep track of which subscription this item belongs to
                     itemToClientHandle.put(item, entry.getKey());
@@ -219,54 +412,82 @@ public class SubscriptionManager {
                     this.manager.addMonitoredItem(item);
                 }
 
-                // Create monitored items on the server - this assigns client handles
-                this.manager.createMonitoredItems();
+                // Create the monitored items of this call on the server
+                final List<MonitoredItemServiceOperationResult> results
+                        = this.manager.createMonitoredItems(itemToClientHandle::containsKey);
 
-                // Now set up data value listeners after items are created and have client handles
-                for (OpcUaMonitoredItem item : items) {
-                    UInteger originalClientHandle = itemToClientHandle.get(item);
-                    final Subscription s = subscriptions.get(originalClientHandle);
-                    if (s != null) {
-                        item.setDataValueListener((monitoredItem, dataValue) -> s.getValueConsumer().accept(dataValue));
+                // the service call is partitioned, a rejected partition reports its service result for each of its items
+                StatusCode rejectedServiceResult = null;
+                final List<OpcUaMonitoredItem> failedItems = new ArrayList<>();
+                for (final MonitoredItemServiceOperationResult result : results) {
+                    final OpcUaMonitoredItem item = result.monitoredItem();
+                    final UInteger clientHandle = itemToClientHandle.get(item);
+                    if (result.isGood()) {
+                        this.goodSubscriptions.put(clientHandle, item);
+                        subscriptions.get(clientHandle).refused = false;
+                    } else if (result.serviceResult().isBad()) {
+                        failedItems.add(item);
+                        rejectedServiceResult = result.serviceResult();
+                    } else {
+                        // reported once, the item is created again when the consumer restarts or the connection is rebuilt
+                        failedItems.add(item);
+                        final Subscription s = subscriptions.get(clientHandle);
+                        final StatusCode status = result.operationResult().orElse(result.serviceResult());
+                        LOG.warn("Monitored item for node {} could not be created: {}", s.getNodeId().toParseableString(),
+                                status);
+                        pendingValues.add(new PendingValue(s, this.generation, new DataValue(status)));
                     }
+                }
+
+                if (!failedItems.isEmpty()) {
+                    // remove the failed items from the subscription, they were not created on the server
+                    this.manager.removeMonitoredItems(failedItems);
+                    this.manager.deleteMonitoredItems();
+                }
+
+                if (rejectedServiceResult != null) {
+                    // the subscription is unusable, the caller tears the connection down and builds it up again
+                    throw new UaException(rejectedServiceResult);
                 }
             }
 
-            if (!this.badSubscriptions.isEmpty()) {
-                SubscriptionManager.this.executor.schedule(this::resubscribe, SubscriptionManager.this.reconnectTimeout,
-                        TimeUnit.MILLISECONDS);
+            return pendingValues;
+        }
+
+        /**
+         * Creates the subscription on the server again, with the monitored items it had, after the server lost it.
+         *
+         * @param  subscriptions the registered subscriptions, by client handle
+         * @return               the bad status values of the nodes that could not be monitored again, to be delivered
+         *                       to their consumers after the lock of the manager has been released
+         * @throws Exception     if the subscription could not be created or the server rejected the
+         *                       CreateMonitoredItems service call, the connection has to be rebuilt
+         */
+        public List<PendingValue> recreate(final Map<UInteger, Subscription> subscriptions) throws Exception {
+            final Map<UInteger, Subscription> monitored = new HashMap<>();
+            this.goodSubscriptions.keySet()
+                    .forEach(clientHandle -> monitored.put(clientHandle, subscriptions.get(clientHandle)));
+            this.goodSubscriptions.clear();
+
+            // the monitored items were reset together with the subscription, so they are dropped without a service call
+            this.manager.removeMonitoredItems(this.manager.getMonitoredItems());
+            this.manager.deleteMonitoredItems();
+
+            this.manager.create();
+            return putSubscriptions(monitored);
+        }
+
+        public void deactivate(final List<UInteger> clientHandles) throws Exception {
+            final List<OpcUaMonitoredItem> items = new ArrayList<>(clientHandles.size());
+            for (final UInteger clientHandle : clientHandles) {
+                final OpcUaMonitoredItem item = this.goodSubscriptions.remove(clientHandle);
+                if (item != null) {
+                    items.add(item);
+                }
             }
-        }
-
-        private void handleSubscriptionError(final StatusCode statusCode, final UInteger clientHandle, final Subscription s) {
-            this.badSubscriptions.put(clientHandle, s);
-            s.getValueConsumer().accept(new DataValue(statusCode));
-        }
-
-        private void resubscribe() {
-            final Map<UInteger, Subscription> subscriptions = new HashMap<>(this.badSubscriptions);
-            this.badSubscriptions.clear();
-            try {
-                putSubscriptions(subscriptions);
-            } catch (final Exception e) {
-                handleConnectionFailure(e);
-            }
-        }
-
-        public void activate(final UInteger clientHandle, final Subscription subscription) throws Exception {
-            putSubscriptions(Collections.singletonMap(clientHandle, subscription));
-        }
-
-        public void deactivate(final UInteger clientHandle) throws Exception {
-            final OpcUaMonitoredItem item = this.goodSubscriptions.remove(clientHandle);
-            if (item != null) {
-                // TODO is this migrated correctly?
-                this.manager.removeMonitoredItem(item);
-                //                this.manager.synchronizeMonitoredItems();
+            if (!items.isEmpty()) {
+                this.manager.removeMonitoredItems(items);
                 this.manager.deleteMonitoredItems();
-                //                this.manager.deleteMonitoredItems(Collections.singletonList(item)).get();
-            } else {
-                this.badSubscriptions.remove(clientHandle);
             }
         }
 
@@ -315,6 +536,8 @@ public class SubscriptionManager {
         }
 
         public void dispose() {
+            // the session closed by the disconnect is no loss of communication
+            this.listener.closed = true;
             if (this.client != null) {
                 try {
                     this.client.disconnect();
@@ -326,6 +549,10 @@ public class SubscriptionManager {
             }
         }
 
+        /**
+         * @return the node ID with the namespace index of the server, completed with null if its namespace URI is not
+         *         in the namespace table of the server: such a node does not exist on the server
+         */
         private CompletableFuture<NodeId> lookupNamespace(final ExpandedNodeId nodeId) {
             LOG.trace("Expanded Node Id: {}", nodeId);
 
@@ -333,7 +560,13 @@ public class SubscriptionManager {
 
             if (uri != null) {
                 LOG.trace("Looking up namespace: {}", uri);
-                return lookupNamespaceIndex(uri).thenApply(index -> toNodeId(index, nodeId));
+                return lookupNamespaceIndex(uri).thenApply(index -> {
+                    if (index == null) {
+                        LOG.debug("The namespace URI of node {} is unknown to the server", nodeId.toParseableString());
+                        return null;
+                    }
+                    return toNodeId(index, nodeId);
+                });
             } else {
                 final UShort index = nodeId.getNamespaceIndex();
                 LOG.trace("Using provided index: {}", index);
@@ -360,6 +593,11 @@ public class SubscriptionManager {
 
                 LOG.debug("Node - expanded: {}, full: {}", nodeId, node);
 
+                if (node == null) {
+                    // answered like a node the server does not have
+                    return completedFuture(new StatusCode(StatusCodes.Bad_NodeIdUnknown));
+                }
+
                 return this.client.writeValuesAsync(List.of(node), List.of(value))
                         .thenApply(r -> r.get(0))
                         .whenComplete((status, error) -> {
@@ -382,6 +620,14 @@ public class SubscriptionManager {
                 return lookupNamespace(methodId).thenCompose(method -> {
 
                     LOG.debug("Method - expanded: {}, full: {}", methodId, method);
+
+                    if (node == null || method == null) {
+                        // answered like the server: an unknown object is Bad_NodeIdUnknown, an unknown method Bad_MethodInvalid
+                        final StatusCode status
+                                = new StatusCode(node == null ? StatusCodes.Bad_NodeIdUnknown : StatusCodes.Bad_MethodInvalid);
+                        return completedFuture(
+                                new CallMethodResult(status, new StatusCode[0], new DiagnosticInfo[0], new Variant[0]));
+                    }
 
                     final CallMethodRequest cmr = new CallMethodRequest(node, method, inputArguments);
 
@@ -416,7 +662,23 @@ public class SubscriptionManager {
 
             return CompletableFuture.allOf(nodeIdFutures).thenCompose(param -> {
                 List<NodeId> nodeIds = Stream.of(nodeIdFutures).map(CompletableFuture::join).collect(Collectors.toList());
-                return this.client.readValuesAsync(0, TimestampsToReturn.Server, nodeIds);
+                final List<NodeId> known = nodeIds.stream().filter(Objects::nonNull).collect(Collectors.toList());
+                if (known.size() == nodeIds.size()) {
+                    return this.client.readValuesAsync(0, TimestampsToReturn.Server, nodeIds);
+                }
+                // a node the server does not have gets the value the server returns for such a node
+                final CompletableFuture<List<DataValue>> read = known.isEmpty()
+                        ? completedFuture(List.of()) : this.client.readValuesAsync(0, TimestampsToReturn.Server, known);
+                return read.thenApply(values -> {
+                    final Iterator<DataValue> knownValues = values.iterator();
+                    final List<DataValue> result = new ArrayList<>(nodeIds.size());
+                    for (final NodeId nodeId : nodeIds) {
+                        result.add(nodeId == null
+                                ? new DataValue(new StatusCode(StatusCodes.Bad_NodeIdUnknown))
+                                : knownValues.next());
+                    }
+                    return result;
+                });
             });
         }
 
@@ -585,34 +847,62 @@ public class SubscriptionManager {
 
                     .thenCompose(__ -> {
 
-                        final List<NodeId> nodeIds = Stream.of(futures).map(CompletableFuture::join)
-                                .collect(Collectors.toList());
-
-                        return completedFuture(nodeIds.stream().map(nodeId -> new BrowseDescription(
-                                nodeId, direction, NodeIds.References, includeSubTypes, uint(nodeClasses),
-                                uint(BrowseResultMask.All.getValue()))).collect(Collectors.toList()));
-                    })
-
-                    .thenCompose(descriptions -> browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest));
+                        // a node the server does not have gets the result the server returns for such a node
+                        final Map<ExpandedNodeId, BrowseResult> unknown = new HashMap<>();
+                        final List<BrowseDescription> descriptions = new ArrayList<>();
+                        for (int i = 0; i < futures.length; i++) {
+                            final NodeId nodeId = futures[i].join();
+                            if (nodeId == null) {
+                                unknown.put(expandedNodeIds.get(i), new BrowseResult(
+                                        new StatusCode(StatusCodes.Bad_NodeIdUnknown), ByteString.NULL_VALUE,
+                                        new ReferenceDescription[0]));
+                            } else {
+                                descriptions.add(new BrowseDescription(
+                                        nodeId, direction, NodeIds.References, includeSubTypes, uint(nodeClasses),
+                                        uint(BrowseResultMask.All.getValue())));
+                            }
+                        }
+                        if (unknown.isEmpty()) {
+                            return browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest);
+                        }
+                        final CompletableFuture<Map<ExpandedNodeId, BrowseResult>> knownResults = descriptions.isEmpty()
+                                ? completedFuture(Map.of())
+                                : browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest);
+                        return knownResults.thenApply(results -> {
+                            final Map<ExpandedNodeId, BrowseResult> all = new HashMap<>(results);
+                            all.putAll(unknown);
+                            return all;
+                        });
+                    });
         }
     }
 
     private final MiloClientConfiguration configuration;
-    private final ScheduledExecutorService executor;
+    private final ScheduledExecutorService reconnectExecutor;
+    private final Executor executor;
     private final long reconnectTimeout;
+    private final ServerCertificateTrust serverCertificateTrust;
     private final Lock lock = new ReentrantLock();
 
     private Connected connected;
-    private boolean disposed;
+    private volatile Throwable lastConnectFailure;
+    private volatile boolean disposed;
     private Future<?> reconnectJob;
-    private final Map<UInteger, Subscription> subscriptions = new HashMap<>();
 
-    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService executor,
-                               final long reconnectTimeout) {
+    /**
+     * The registered nodes by client handle, written under {@code lock}. A loss report reads them without the lock,
+     * which a registration holds while the server creates its items.
+     */
+    private final Map<UInteger, Subscription> subscriptions = new ConcurrentHashMap<>();
+
+    public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService reconnectExecutor,
+                               final Executor executor, final long reconnectTimeout) {
 
         this.configuration = configuration;
+        this.reconnectExecutor = reconnectExecutor;
         this.executor = executor;
         this.reconnectTimeout = reconnectTimeout;
+        this.serverCertificateTrust = new ServerCertificateTrust(configuration);
 
         connect();
     }
@@ -631,13 +921,203 @@ public class SubscriptionManager {
         }
     }
 
+    /**
+     * Checks the subscription of a connection on the server after it stopped publishing, and recovers it unless the
+     * server confirms that it still has it.
+     * <p>
+     * A subscription that the server still has stops publishing too while a route is slow: the client replaces each of
+     * its outstanding publish requests only once the notifications of that request have been processed, so the server
+     * has none left to answer. The check is a SetPublishingMode request that enables publishing; the subscription is
+     * always created with publishing enabled, so the request does not change its settings.
+     * <p>
+     * If the client has reset the subscription in the meantime, it is already being recovered: the client resets it
+     * when the server reports that it timed out, when it was deleted and when it could not be transferred, and each of
+     * these recovers it. A check that fails because the connection or the session was lost is left to the session
+     * recovery of the client, as a failed delete in
+     * {@link #recoverSubscription(OpcUaSubscription, SubscriptionListenerImpl)} is. Any other answer goes on to
+     * {@link #recoverSubscription(OpcUaSubscription, SubscriptionListenerImpl)}.
+     */
+    private void checkSubscription(final OpcUaSubscription subscription, final SubscriptionListenerImpl listener) {
+        final UInteger subscriptionId = subscription.getSubscriptionId().orElse(null);
+        subscription.setPublishingModeAsync(true).whenCompleteAsync((unit, e) -> {
+            final StatusCode status = e == null
+                    ? StatusCode.GOOD
+                    : UaException.extractStatusCode(e).orElse(new StatusCode(StatusCodes.Bad_UnexpectedError));
+            if (status.isGood()) {
+                LOG.info("Subscription {} stopped publishing but still exists on the server, keeping it",
+                        subscriptionId);
+            } else if (status.getValue() == StatusCodes.Bad_InvalidState) {
+                LOG.debug("Subscription {} was reset while it was checked, it is already being recovered",
+                        subscriptionId);
+            } else if (listener.isSessionLost(status)) {
+                LOG.info("Session lost while checking subscription {}, leaving it to the session recovery: {}",
+                        subscriptionId, status);
+            } else {
+                LOG.warn("Subscription {} stopped publishing and was not confirmed by the server, recreating it: {}",
+                        subscriptionId, status);
+                recoverSubscription(subscription, listener);
+            }
+        }, clientExecutor(subscription));
+    }
+
+    /**
+     * Recovers the subscription of a connection after the server did not confirm it or reported that it timed out.
+     * <p>
+     * The subscription is deleted first, and it is only created again, inside the existing session, once the server has
+     * confirmed that it no longer exists; one that the client has already reset because it timed out is deleted without
+     * a service call. A delete that fails because the connection or the session was lost, or that fails while the
+     * session is not active, is left to the session recovery of the client: it resumes the subscription, whose watchdog
+     * is armed again once publishing resumes, or reports that the subscription could not be transferred, which rebuilds
+     * the connection. Any other failure rebuilds the connection, which closes the session together with its
+     * subscriptions.
+     * <p>
+     * The delete neither blocks nor holds {@code lock}: a request sent before the connection was lost only fails once
+     * the client notices the loss, and holding {@code lock} until then would hold up the producers and
+     * {@link #getOpcUaClient()} as well.
+     */
+    private void recoverSubscription(final OpcUaSubscription subscription, final SubscriptionListenerImpl listener) {
+        subscription.deleteAsync().whenCompleteAsync((unit, e) -> {
+            final StatusCode status = e == null
+                    ? StatusCode.GOOD
+                    : UaException.extractStatusCode(e).orElse(new StatusCode(StatusCodes.Bad_UnexpectedError));
+            if (status.isGood() || status.getValue() == StatusCodes.Bad_SubscriptionIdInvalid) {
+                recreateSubscription(subscription);
+            } else if (listener.isSessionLost(status)) {
+                LOG.info("Session lost while deleting subscription {}, leaving it to the session recovery: {}",
+                        subscription.getSubscriptionId().orElse(null), status);
+            } else {
+                lock.lock();
+                try {
+                    if (isCurrent(subscription)) {
+                        handleConnectionFailure(e);
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
+        }, clientExecutor(subscription));
+    }
+
+    /**
+     * The executor that the client of a subscription delivers its values on, which handles the outcome of a check or a
+     * delete. Creating the subscription again and rebuilding the connection block until the server answers, and a
+     * request sent while the connection is lost waits for the channel until a reconnect attempt restores it or fails.
+     * The client schedules those attempts on the shared scheduled executor of Milo, which has a single thread on a
+     * machine with one processor, so the wait must not hold one of its threads.
+     * <p>
+     * Milo asks that blocking calls are not made on the threads of this executor either, because they complete the
+     * responses. The executor of the transport is not set here, so this is the shared executor of Milo, a cached pool
+     * that starts another thread for a response while one of its threads waits, as it does while a route processes a
+     * value.
+     */
+    private static Executor clientExecutor(final OpcUaSubscription subscription) {
+        return subscription.getClient().getTransport().getConfig().getExecutor();
+    }
+
+    /**
+     * Creates the subscription of the current connection again, inside the existing session, together with the
+     * monitored items it had. Does nothing if the subscription no longer belongs to the current connection or has been
+     * created again already. A node that cannot be monitored again is reported to its consumer, as when the consumer
+     * starts; if the subscription itself cannot be created again, the connection is rebuilt.
+     */
+    private void recreateSubscription(final OpcUaSubscription subscription) {
+        final List<PendingValue> pendingValues = new ArrayList<>();
+        lock.lock();
+        try {
+            if (!isCurrent(subscription) || subscription.getSubscriptionId().isPresent()) {
+                LOG.debug("Subscription is stale or already recreated");
+                return;
+            }
+            pendingValues.addAll(this.connected.recreate(this.subscriptions));
+            LOG.info("Subscription recreated as {}", subscription.getSubscriptionId().orElse(null));
+        } catch (final Exception e) {
+            handleConnectionFailure(e);
+        } finally {
+            lock.unlock();
+        }
+
+        // deliver outside of the lock, the routes may use the connection
+        pendingValues.forEach(PendingValue::deliver);
+    }
+
+    private boolean isCurrent(final OpcUaSubscription subscription) {
+        return !this.disposed && this.connected != null && this.connected.manager == subscription;
+    }
+
+    /**
+     * Asks the server to send the current value of every monitored item of the subscription again, after the session
+     * was lost and activated again. The server sends only changes through a reactivated session, so a node whose value
+     * did not change would keep its loss report. If the server does not resend, the subscription is deleted and created
+     * again in the session, and its new items deliver their first values.
+     */
+    private void resendData(final OpcUaSubscription subscription, final SubscriptionListenerImpl listener) {
+        final UInteger subscriptionId = subscription.getSubscriptionId().orElse(null);
+        if (subscriptionId == null) {
+            LOG.debug("Subscription has no ID, it is being recovered");
+            return;
+        }
+        final CallMethodRequest request = new CallMethodRequest(
+                NodeIds.Server, NodeIds.Server_ResendData, new Variant[] { new Variant(subscriptionId) });
+        subscription.getClient().callAsync(List.of(request)).whenCompleteAsync((response, e) -> {
+            final StatusCode status;
+            if (e != null) {
+                status = UaException.extractStatusCode(e).orElse(new StatusCode(StatusCodes.Bad_UnexpectedError));
+            } else if (response.getResults() == null || response.getResults().length == 0) {
+                status = new StatusCode(StatusCodes.Bad_UnexpectedError);
+            } else {
+                status = response.getResults()[0].getStatusCode();
+            }
+            if (status.isGood()) {
+                LOG.info("Session activated again, subscription {} resends the values of its nodes", subscriptionId);
+            } else if (listener.isSessionLost(status)) {
+                LOG.info("Session lost while subscription {} was asked to resend its values: {}", subscriptionId,
+                        status);
+            } else {
+                LOG.warn("Server does not resend the values of subscription {} ({}), recreating it", subscriptionId,
+                        status);
+                recoverSubscription(subscription, listener);
+            }
+        }, clientExecutor(subscription));
+    }
+
+    /**
+     * Queues the loss report of the given nodes on the delivery queue of the subscription, behind the values it already
+     * holds. The queue keeps running after the client has disconnected, so a replaced connection delivers the report
+     * after its last values.
+     *
+     * @param generation the generation of the connection whose communication was lost
+     */
+    private void reportLoss(
+            final OpcUaSubscription subscription, final long generation, final Map<UInteger, Subscription> nodes) {
+        final DateTime time = DateTime.now();
+        subscription.getDeliveryQueue().execute(() -> deliverLoss(nodes, generation, time));
+    }
+
+    /**
+     * Delivers the loss report to the given nodes that are still registered.
+     */
+    private void deliverLoss(final Map<UInteger, Subscription> nodes, final long generation, final DateTime time) {
+        final DataValue value = new DataValue(Variant.NULL_VALUE, NO_COMMUNICATION, time, time);
+        for (final Map.Entry<UInteger, Subscription> node : nodes.entrySet()) {
+            if (this.disposed) {
+                return;
+            }
+            if (this.subscriptions.get(node.getKey()) == node.getValue()) {
+                node.getValue().report(generation, value);
+            }
+        }
+    }
+
     private void handleConnectionFailure(final Throwable e) {
         lock.lock();
         try {
             if (this.connected != null) {
+                // the nodes lose their communication with the connection, after the values it still delivers
+                reportLoss(this.connected.manager, this.connected.generation, this.subscriptions);
                 this.connected.dispose();
                 this.connected = null;
             }
+            this.lastConnectFailure = e;
 
             // log
 
@@ -670,6 +1150,7 @@ public class SubscriptionManager {
     }
 
     private void performAndEvalConnect() {
+        final List<PendingValue> pendingValues = new ArrayList<>();
         try {
             final Connected connected = performConnect();
             LOG.debug("Connect call done");
@@ -682,11 +1163,12 @@ public class SubscriptionManager {
 
                 try {
                     LOG.debug("Setting subscriptions: {}", this.subscriptions.size());
-                    connected.putSubscriptions(this.subscriptions);
+                    pendingValues.addAll(connected.putSubscriptions(this.subscriptions));
 
                     LOG.debug("Update state : {} -> {}", this.connected, connected);
                     final Connected oldConnected = this.connected;
                     this.connected = connected;
+                    this.lastConnectFailure = null;
 
                     if (oldConnected != null) {
                         LOG.debug("Dispose old state");
@@ -702,8 +1184,28 @@ public class SubscriptionManager {
                 lock.unlock();
             }
         } catch (final Exception e) {
-            LOG.info("Failed to connect", e);
+            this.lastConnectFailure = e;
+            logConnectFailure(e);
             triggerReconnect(false);
+        }
+
+        // deliver outside of the lock, the routes may use the connection
+        pendingValues.forEach(PendingValue::deliver);
+    }
+
+    private static void logConnectFailure(final Exception e) {
+        final Throwable certificateFailure = ServerCertificateTrust.findCertificateFailure(e);
+        if (certificateFailure instanceof ServerCertificateTrust.NotConfiguredException) {
+            LOG.warn("Failed to connect: {}", certificateFailure.getMessage());
+            LOG.debug("Failed to connect", e);
+        } else if (certificateFailure != null) {
+            // a certificate rejected by the trust list can be trusted later, so the client keeps retrying
+            // passed as text: SLF4J would log a trailing Throwable as the exception, with its stack trace
+            LOG.warn("Failed to connect, because a certificate or security check failed: {}",
+                    String.valueOf(certificateFailure));
+            LOG.debug("Failed to connect", e);
+        } else {
+            LOG.info("Failed to connect", e);
         }
     }
 
@@ -740,6 +1242,9 @@ public class SubscriptionManager {
 
         LOG.debug("Selected endpoint: {}", endpoint);
 
+        // the same validator checks the server certificate for the secure channel, the session and the identity token
+        final CertificateValidator certificateValidator = this.serverCertificateTrust.validatorFor(endpoint);
+
         // set identity providers
         final List<IdentityProvider> providers = new LinkedList<>();
 
@@ -749,7 +1254,8 @@ public class SubscriptionManager {
         final String explicitPassword = this.configuration.getPassword();
         if (explicitUsername != null && !explicitUsername.isEmpty()) {
             LOG.debug("Enable username/password provider (explicit parameter): {}", explicitUsername);
-            providers.add(new UsernameProvider(explicitUsername, explicitPassword != null ? explicitPassword : ""));
+            providers.add(new UsernameProvider(
+                    explicitUsername, explicitPassword != null ? explicitPassword : "", certificateValidator));
         } else if (user != null && !user.isEmpty()) {
             final String[] creds = user.split(":", 2);
             if (creds != null) {
@@ -757,7 +1263,7 @@ public class SubscriptionManager {
                     LOG.debug("Enable username/password provider: {}", creds[0]);
                 }
 
-                providers.add(new UsernameProvider(creds[0], creds.length == 2 ? creds[1] : ""));
+                providers.add(new UsernameProvider(creds[0], creds.length == 2 ? creds[1] : "", certificateValidator));
             }
         }
 
@@ -766,6 +1272,7 @@ public class SubscriptionManager {
         final OpcUaClientConfigBuilder cfg = this.configuration.newBuilder();
         cfg.setIdentityProvider(new CompositeProvider(providers));
         cfg.setEndpoint(endpoint);
+        cfg.setCertificateValidator(certificateValidator);
 
         // create client
         final OpcUaClient client = OpcUaClient.create(
@@ -777,6 +1284,9 @@ public class SubscriptionManager {
                     }
                 });
 
+        final SubscriptionListenerImpl listener = new SubscriptionListenerImpl(this.generationCounter.incrementAndGet());
+        client.addSessionActivityListener(listener);
+
         try {
 
             // connect is called inside this try block to ensure that disconnect is called on exceptions
@@ -785,10 +1295,11 @@ public class SubscriptionManager {
             // Create subscription synchronously - the create() method blocks until complete
             OpcUaSubscription subscription = new OpcUaSubscription(client);
             subscription.setPublishingInterval(this.configuration.getRequestedPublishingInterval());
-            subscription.setSubscriptionListener(new SubscriptionListenerImpl());
+            subscription.setSubscriptionListener(listener);
             subscription.create();
+            listener.subscription = subscription;
 
-            return new Connected(client, subscription);
+            return new Connected(client, subscription, listener);
 
             //            final OpcUaSubscription manager = client.getSubscriptionManager()
             //                    .createSubscription(this.configuration.getRequestedPublishingInterval()).get();
@@ -825,6 +1336,11 @@ public class SubscriptionManager {
             }
             this.disposed = true;
             connected = this.connected;
+            if (this.reconnectJob != null) {
+                // a waiting reconnect would keep the thread of the reconnect executor until it is due
+                this.reconnectJob.cancel(false);
+                this.reconnectJob = null;
+            }
         } finally {
             lock.unlock();
         }
@@ -832,6 +1348,12 @@ public class SubscriptionManager {
         if (connected != null) {
             // dispose outside of lock
             connected.dispose();
+        }
+
+        try {
+            this.serverCertificateTrust.close();
+        } catch (final IOException e) {
+            LOG.debug("Failed to close the trust list. This exception is ignored.", e);
         }
     }
 
@@ -846,9 +1368,10 @@ public class SubscriptionManager {
             }
 
             if (immediate) {
-                this.reconnectJob = this.executor.submit(this::connect);
+                this.reconnectJob = this.reconnectExecutor.submit(this::connect);
             } else {
-                this.reconnectJob = this.executor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
+                this.reconnectJob
+                        = this.reconnectExecutor.schedule(this::connect, this.reconnectTimeout, TimeUnit.MILLISECONDS);
             }
         } finally {
             lock.unlock();
@@ -949,41 +1472,61 @@ public class SubscriptionManager {
         }
     }
 
-    private static <T> CompletableFuture<T> newNotConnectedResult() {
+    private <T> CompletableFuture<T> newNotConnectedResult() {
         final CompletableFuture<T> result = new CompletableFuture<>();
-        result.completeExceptionally(new IllegalStateException("No connected"));
+        // the reason of the last failed connection attempt, if any, tells the caller why there is no connection
+        result.completeExceptionally(new IllegalStateException("No connected", this.lastConnectFailure));
         return result;
     }
 
-    public UInteger registerItem(
-            final ExpandedNodeId nodeId, final Double samplingInterval, Integer queueSize,
-            final Consumer<DataValue> valueConsumer,
-            final MonitorFilterConfiguration monitorFilterConfiguration) {
+    public List<UInteger> registerItems(
+            final Map<ExpandedNodeId, Consumer<DataValue>> valueConsumers, final Double samplingInterval,
+            final Integer queueSize, final MonitorFilterConfiguration monitorFilterConfiguration) {
 
-        final UInteger clientHandle = Unsigned.uint(this.clientHandleCounter.incrementAndGet());
-        final Subscription subscription
-                = new Subscription(nodeId, samplingInterval, queueSize, valueConsumer, monitorFilterConfiguration);
+        final Map<UInteger, Subscription> subscriptions = new LinkedHashMap<>();
+        valueConsumers.forEach((nodeId, valueConsumer) -> subscriptions.put(
+                Unsigned.uint(this.clientHandleCounter.incrementAndGet()),
+                new Subscription(nodeId, samplingInterval, queueSize, valueConsumer, monitorFilterConfiguration)));
 
+        final List<PendingValue> pendingValues = new ArrayList<>();
         lock.lock();
         try {
-            this.subscriptions.put(clientHandle, subscription);
+            this.subscriptions.putAll(subscriptions);
 
-            whenConnected(connected -> {
-                connected.activate(clientHandle, subscription);
-            });
+            if (this.connected == null) {
+                // no communication with the server: the nodes are reported off the thread that starts the consumer,
+                // with a generation below every connection's, so the report is dropped once any connection has
+                // delivered their values, also one that was being built while they were registered
+                final DateTime time = DateTime.now();
+                this.executor.execute(() -> deliverLoss(subscriptions, 0L, time));
+            } else if (!this.connected.listener.sessionActive) {
+                // the session is lost; the nodes are reported before the values of their items, on the same queue
+                reportLoss(this.connected.manager, this.connected.generation, subscriptions);
+            }
+
+            whenConnected(connected -> pendingValues.addAll(connected.putSubscriptions(subscriptions)));
         } finally {
             lock.unlock();
         }
 
-        return clientHandle;
+        // deliver outside of the lock, the routes may use the connection
+        pendingValues.forEach(PendingValue::deliver);
+
+        return new ArrayList<>(subscriptions.keySet());
     }
 
-    public void unregisterItem(final UInteger clientHandle) {
+    public void unregisterItems(final List<UInteger> clientHandles) {
         lock.lock();
         try {
-            if (this.subscriptions.remove(clientHandle) != null) {
+            final List<UInteger> removed = new ArrayList<>(clientHandles.size());
+            for (final UInteger clientHandle : clientHandles) {
+                if (this.subscriptions.remove(clientHandle) != null) {
+                    removed.add(clientHandle);
+                }
+            }
+            if (!removed.isEmpty()) {
                 whenConnected(connected -> {
-                    connected.deactivate(clientHandle);
+                    connected.deactivate(removed);
                 });
             }
         } finally {

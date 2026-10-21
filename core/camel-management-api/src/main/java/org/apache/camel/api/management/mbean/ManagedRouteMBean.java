@@ -58,6 +58,12 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route Source Location (Short)")
     String getSourceLocationShort();
 
+    @ManagedAttribute(description = "The number of steps that have been reached with more than one body type, across the messages (recorded while the message history is on)")
+    int getVariedBodyTypes();
+
+    @ManagedAttribute(description = "The number of steps that have been reached with bodies of more than one kind (null, payload, data or collection), which need attention")
+    int getMixedBodyKinds();
+
     @ManagedAttribute(description = "The id of the route template (or Kamelet) this route was created from")
     String getRouteTemplateId();
 
@@ -208,5 +214,37 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Whether the consumer connects to remote or local systems")
     boolean isRemoteEndpoint();
+
+    /**
+     * Total number of exchanges the route processed that came from a remote endpoint.
+     *
+     * @since 4.24
+     */
+    @ManagedAttribute(description = "Total number of exchanges processed from remote endpoints only")
+    long getRemoteExchangesTotal();
+
+    /**
+     * Completed (success) number of exchanges the route processed that came from a remote endpoint.
+     *
+     * @since 4.24
+     */
+    @ManagedAttribute(description = "Completed (success) number of exchanges processed from remote endpoints only")
+    long getRemoteExchangesCompleted();
+
+    /**
+     * Failed number of exchanges the route processed that came from a remote endpoint.
+     *
+     * @since 4.24
+     */
+    @ManagedAttribute(description = "Failed number of exchanges processed from remote endpoints only")
+    long getRemoteExchangesFailed();
+
+    /**
+     * Number of exchanges inflight in the route that came from a remote endpoint.
+     *
+     * @since 4.24
+     */
+    @ManagedAttribute(description = "Number of inflight exchanges from remote endpoints only")
+    long getRemoteExchangesInflight();
 
 }

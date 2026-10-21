@@ -36,6 +36,7 @@ import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
@@ -132,15 +133,21 @@ class TuiToolRegistry {
     String executeShared(String name, Map<String, Object> args) {
         ToolDescriptor descriptor = ToolRegistry.findTool(name);
         if (descriptor == null) {
-            throw new IllegalArgumentException("Unknown tool: " + name);
+            throw new UnknownToolException(name);
         }
         Map<String, String> stringArgs = stringArgs(args);
         ToolContext ctx = sharedContext();
-        try {
-            Object result = ToolRegistry.execute(name, ctx, stringArgs);
-            return result != null ? result.toString() : "";
-        } catch (ToolExecutionException e) {
-            return "Error: " + e.getMessage();
+        // a ToolExecutionException is an error of the tool, which the MCP server answers with isError
+        Object result = ToolRegistry.execute(name, ctx, stringArgs);
+        return result != null ? result.toString() : "";
+    }
+
+    /**
+     * A tool that does not exist, as opposed to an error of a tool that does.
+     */
+    static final class UnknownToolException extends IllegalArgumentException {
+        UnknownToolException(String name) {
+            super("Unknown tool: " + name);
         }
     }
 
@@ -286,7 +293,7 @@ class TuiToolRegistry {
         if (name != null && name.startsWith(SHARED_PREFIX)) {
             return executeSharedWithTuiExtras(name, args);
         }
-        throw new IllegalArgumentException("Unknown tool: " + name);
+        throw new UnknownToolException(name);
     }
 
     // --- Tool execution methods ---
@@ -1867,6 +1874,8 @@ class TuiToolRegistry {
             if (outcome.log() != null) {
                 result.put("log", outcome.log());
             }
+            // a tool error (MCP isError), which still has the log that tells why
+            throw new ToolExecutionException(Jsoner.serialize(result));
         }
         return Jsoner.serialize(result);
     }

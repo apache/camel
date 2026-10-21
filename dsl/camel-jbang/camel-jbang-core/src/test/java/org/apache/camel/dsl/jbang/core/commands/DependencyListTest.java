@@ -23,16 +23,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
+@UsesWorkingDirectory
 class DependencyListTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
@@ -70,6 +74,15 @@ class DependencyListTest extends CamelCommandBaseTestSupport {
         } else {
             Assertions.assertEquals("org.apache.camel:camel-main:4.11.0", lines.get(0));
         }
+    }
+
+    @Test
+    public void shouldRejectUnknownOutput() throws Exception {
+        DependencyList command = createCommand(RuntimeType.main, new String[] { "classpath:route.yaml" }, "--output=pom");
+
+        CliException e = Assertions.assertThrows(CliException.class, command::doCall);
+        Assertions.assertEquals(CliExitCode.USAGE, e.getExitCode());
+        Assertions.assertEquals("--output must be gav, maven or jbang, was: pom", e.getMessage());
     }
 
     private DependencyList createCommand(RuntimeType rt, String[] files, String... args) {

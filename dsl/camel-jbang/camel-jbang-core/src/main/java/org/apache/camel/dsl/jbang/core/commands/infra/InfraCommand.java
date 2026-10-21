@@ -30,7 +30,6 @@ public class InfraCommand extends InfraBaseCommand {
     @Override
     public Integer doCall() throws Exception {
         // defaults to list
-        new CommandLine(new InfraList(getMain())).execute();
-        return 0;
+        return runDefault(new InfraList(getMain()));
     }
 }

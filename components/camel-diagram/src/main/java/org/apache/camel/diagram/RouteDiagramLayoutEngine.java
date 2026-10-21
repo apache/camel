@@ -186,6 +186,16 @@ public class RouteDiagramLayoutEngine {
         public int line;
         public boolean remote;
         public StatInfo stat;
+        /**
+         * The body types the step has been reached with, across the messages, when the message history recorded them:
+         * the class names, at most a few.
+         */
+        public List<String> bodyTypes = List.of();
+        /**
+         * The kinds of those bodies: null, payload, data and collection. More than one is a step that needs attention,
+         * as a step that writes the body fails for the data, and one that reads fields fails for the payload.
+         */
+        public List<String> bodyKinds = List.of();
     }
 
     public static class RouteInfo {

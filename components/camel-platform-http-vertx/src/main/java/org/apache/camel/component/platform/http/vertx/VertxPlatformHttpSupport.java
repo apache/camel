@@ -41,7 +41,9 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExceptionHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.http.HttpUtil;
@@ -250,7 +252,29 @@ public final class VertxPlatformHttpSupport {
             writeResponseAs(promise, ctx, bb);
             return;
         }
-        throw new NoTypeConversionAvailableException(body, InputStream.class);
+        throw noTypeConversion(camelExchange, body, ExchangeHelper.getContentType(camelExchange));
+    }
+
+    /**
+     * A Map, a List or an object (a body unmarshalled from JSON, XML or CSV, or built in the route) cannot become the
+     * response, and the converter's message only names the conversion: say what the body is, the step that set it, and
+     * the marshal that writes it, in the data format the Content-Type names (CAMEL-25751, CAMEL-25749).
+     */
+    static NoTypeConversionAvailableException noTypeConversion(Exchange exchange, Object body, String contentType) {
+        String hint = BodyFacts.hint(exchange, BodyFacts.Need.BYTES, contentType);
+        if (hint == null) {
+            return new NoTypeConversionAvailableException(body, InputStream.class);
+        }
+        // the REST binding writes json and xml
+        String format = BodyFacts.dataFormatOf(contentType);
+        String binding = format == null ? "; or let the REST binding write it (bindingMode: json or xml)"
+                : "json".equals(format) ? "; or let the REST binding write it (bindingMode: json)"
+                : "jacksonXml".equals(format) ? "; or let the REST binding write it (bindingMode: xml)" : "";
+        return new NoTypeConversionAvailableException(
+                NoTypeConversionAvailableException.createMessage(body, InputStream.class) + ": "
+                                                      + BodyFacts.describe(exchange) + ", which is not an HTTP response body: "
+                                                      + hint + ", as the last step of the route" + binding,
+                body, InputStream.class);
     }
 
     private static void writeResponseAs(Promise<Void> promise, RoutingContext ctx, ByteBuffer bb) {

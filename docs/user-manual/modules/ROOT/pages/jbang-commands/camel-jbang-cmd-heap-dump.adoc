@@ -20,7 +20,9 @@ camel cmd heap-dump [options]
 |===
 | Option | Description | Default | Type
 | `--dump-name` | File name for the heap dump (without .hprof extension) |  | String
+| `--json` | Output in JSON Format |  | boolean
 | `--live` | Whether to dump only live objects | true | boolean
+| `--timeout` | How long to wait for the heap dump to be written, in millis or as a duration such as 2m | 60000 | long
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

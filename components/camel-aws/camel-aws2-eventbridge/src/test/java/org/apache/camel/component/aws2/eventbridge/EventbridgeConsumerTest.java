@@ -371,15 +371,13 @@ public class EventbridgeConsumerTest extends CamelTestSupport {
     public void testUserProvidedQueueNotDeletedOnShutdown() throws Exception {
         stubGetQueueAttributes(USER_QUEUE_URL, USER_QUEUE_ARN);
         stubPutTargetsSuccess();
-        when(eventBridgeClient.removeTargets(any(RemoveTargetsRequest.class)))
-                .thenReturn(RemoveTargetsResponse.builder().build());
 
-        // deleteQueueOnShutdown=true, but queue was user-provided so should NOT be deleted
+        // deleteQueueOnShutdown=true, but queue was user-provided so should NOT be deleted, and its target stays
         EventbridgeConsumer consumer = createConsumer("test-rule", USER_QUEUE_URL, true, true);
         consumer.start();
         consumer.stop();
 
-        verify(eventBridgeClient).removeTargets(any(RemoveTargetsRequest.class));
+        verify(eventBridgeClient, never()).removeTargets(any(RemoveTargetsRequest.class));
         verify(sqsClient, never()).deleteQueue(any(DeleteQueueRequest.class));
     }
 

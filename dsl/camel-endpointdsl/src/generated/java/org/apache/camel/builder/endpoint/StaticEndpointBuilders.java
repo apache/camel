@@ -3375,6 +3375,60 @@ public class StaticEndpointBuilders {
         return ChunkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Citrus (camel-test-citrus)
+     * Citrus message validation component for testing
+     * 
+     * Category: testing
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-test-citrus
+     * 
+     * Syntax: <code>citrus:operation/name</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform. 'validate' validates exchanges without
+     * modifying them. 'receive' validates exchanges and returns a simulated
+     * response.
+     * There are 2 enums and the value can be one of: validate, receive
+     * 
+     * Path parameter: name
+     * A unique name to identify this endpoint. Allows multiple Citrus endpoints
+     * with different validation expectations in the same route.
+     * 
+     * @param path operation/name
+     * @return the dsl builder
+     */
+    public static CitrusEndpointBuilderFactory.CitrusEndpointBuilder citrus(String path) {
+        return citrus("citrus", path);
+    }
+    /**
+     * Citrus (camel-test-citrus)
+     * Citrus message validation component for testing
+     * 
+     * Category: testing
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-test-citrus
+     * 
+     * Syntax: <code>citrus:operation/name</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform. 'validate' validates exchanges without
+     * modifying them. 'receive' validates exchanges and returns a simulated
+     * response.
+     * There are 2 enums and the value can be one of: validate, receive
+     * 
+     * Path parameter: name
+     * A unique name to identify this endpoint. Allows multiple Citrus endpoints
+     * with different validation expectations in the same route.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation/name
+     * @return the dsl builder
+     */
+    public static CitrusEndpointBuilderFactory.CitrusEndpointBuilder citrus(String componentName, String path) {
+        return CitrusEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Class (camel-bean)
      * Invoke methods of Java beans specified by class name.
      * 
@@ -11130,10 +11184,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * There are 27 enums and the value can be one of: bean, constant,
+     * There are 26 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
      * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
-     * simple, spel, tokenize, variable, wasm, xpath, xquery, xtokenize
+     * simple, spel, tokenize, variable, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -11159,10 +11213,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * There are 27 enums and the value can be one of: bean, constant,
+     * There are 26 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
      * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
-     * simple, spel, tokenize, variable, wasm, xpath, xquery, xtokenize
+     * simple, spel, tokenize, variable, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
      * Path to the resource, or a reference to lookup a bean in the Registry to
@@ -11289,14 +11343,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>llm:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 
@@ -12853,14 +12907,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 
@@ -12883,14 +12937,14 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform: 'chat-completion', 'responses',
+     * The operation to perform: 'chat-completion', 'decisions', 'responses',
      * 'responses-retrieve', 'responses-cancel', 'batch', 'batch-retrieve',
      * 'batch-cancel', 'batch-results', 'embeddings', 'tool-execution',
      * 'audio-transcription', 'audio-translation', 'audio-speech', 'moderation',
      * 'image-generation', 'image-edit', or 'webhook' (a consumer)
-     * There are 17 enums and the value can be one of: chat-completion,
-     * responses, responses-retrieve, responses-cancel, batch, batch-retrieve,
-     * batch-cancel, batch-results, embeddings, tool-execution,
+     * There are 18 enums and the value can be one of: chat-completion,
+     * decisions, responses, responses-retrieve, responses-cancel, batch,
+     * batch-retrieve, batch-cancel, batch-results, embeddings, tool-execution,
      * audio-transcription, audio-translation, audio-speech, moderation,
      * image-generation, image-edit, webhook
      * 

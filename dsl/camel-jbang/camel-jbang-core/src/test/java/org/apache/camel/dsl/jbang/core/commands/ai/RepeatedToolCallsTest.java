@@ -29,11 +29,18 @@ class RepeatedToolCallsTest {
     private final RepeatedToolCalls calls = new RepeatedToolCalls();
     private final ToolDescriptor catalogDoc = ToolRegistry.findTool("camel_catalog_doc");
 
+    /** Simulates a successful call: repeatOf returns null, then we record the successful answer. */
+    private void successfulCall(ToolDescriptor tool, Map<String, ?> args) {
+        JsonObject note = calls.repeatOf(tool, args);
+        assertThat(note).as("expected tool to run (repeatOf returned null)").isNull();
+        calls.recordSuccessfulAnswer(tool, args);
+    }
+
     @Test
     void theFirstTwoIdenticalCallsAreAnsweredInFullTheThirdGetsANote() {
         Map<String, String> sql = Map.of("name", "sql");
-        assertThat(calls.repeatOf(catalogDoc, sql)).isNull();
-        assertThat(calls.repeatOf(catalogDoc, sql)).isNull();
+        successfulCall(catalogDoc, sql);
+        successfulCall(catalogDoc, sql);
 
         JsonObject note = calls.repeatOf(catalogDoc, sql);
         assertThat(note).isNotNull();
@@ -41,21 +48,38 @@ class RepeatedToolCallsTest {
         assertThat(note.getString("tool")).isEqualTo("camel_catalog_doc");
         assertThat(note.getInteger("timesAsked")).isEqualTo(3);
         assertThat(note.getString("note")).contains("2 times");
+        // a page that was cut was not answered in full: the note says how to get the sections it left out
+        assertThat(note.getString("note")).doesNotContain("in full").contains("docPage=<section title>");
 
         assertThat(calls.repeatOf(catalogDoc, sql).getInteger("timesAsked")).isEqualTo(4);
+    }
+
+    /** CAMEL-25640: a call that throws must not consume the retry budget. */
+    @Test
+    void aFailedCallDoesNotCountAgainstTheRetryBudget() {
+        Map<String, String> sql = Map.of("name", "sql");
+        // first call succeeds
+        successfulCall(catalogDoc, sql);
+        // second call fails (no recordSuccessfulAnswer)
+        assertThat(calls.repeatOf(catalogDoc, sql)).isNull();
+        // third call: should still answer in full because only one successful call was counted
+        assertThat(calls.repeatOf(catalogDoc, sql)).isNull();
+        calls.recordSuccessfulAnswer(catalogDoc, sql);
+        // now the second successful answer has been recorded — next identical call gets the note
+        assertThat(calls.repeatOf(catalogDoc, sql)).isNotNull();
     }
 
     @Test
     void differentArgumentsAreDifferentQuestions() {
         for (int i = 0; i < 3; i++) {
-            assertThat(calls.repeatOf(catalogDoc, Map.of("name", "sql", "optionsFilter", "param" + i))).isNull();
+            successfulCall(catalogDoc, Map.of("name", "sql", "optionsFilter", "param" + i));
         }
     }
 
     @Test
     void anEmptyOptionalArgumentAsksTheSameAsLeavingItOut() {
-        calls.repeatOf(catalogDoc, Map.of("name", "sql"));
-        calls.repeatOf(catalogDoc, Map.of("name", "sql", "kind", ""));
+        successfulCall(catalogDoc, Map.of("name", "sql"));
+        successfulCall(catalogDoc, Map.of("name", "sql", "kind", ""));
         assertThat(calls.repeatOf(catalogDoc, Map.of("kind", " ", "name", "sql"))).isNotNull();
     }
 
@@ -82,8 +106,8 @@ class RepeatedToolCallsTest {
     @Test
     void aNewSessionStartsCountingAgain() {
         Map<String, String> sql = Map.of("name", "sql");
-        calls.repeatOf(catalogDoc, sql);
-        calls.repeatOf(catalogDoc, sql);
+        successfulCall(catalogDoc, sql);
+        successfulCall(catalogDoc, sql);
         calls.reset();
         assertThat(calls.repeatOf(catalogDoc, sql)).isNull();
     }
@@ -93,8 +117,8 @@ class RepeatedToolCallsTest {
     void validatingTheSameContentIsARepeat() {
         ToolDescriptor validate = ToolRegistry.findTool("camel_validate_source");
         Map<String, String> args = Map.of("file", "route.camel.yaml", "content", "- from:\n    uri: timer:x\n");
-        assertThat(calls.repeatOf(validate, args)).isNull();
-        assertThat(calls.repeatOf(validate, args)).isNull();
+        successfulCall(validate, args);
+        successfulCall(validate, args);
         JsonObject note = calls.repeatOf(validate, args);
         assertThat(note).isNotNull();
         assertThat(note.getString("note")).contains("change the line the error names");
@@ -128,8 +152,8 @@ class RepeatedToolCallsTest {
         ToolDescriptor validate = ToolRegistry.findTool("camel_validate_source");
         String xml = "<?xml version=\"1.0\"?>\n<routes/>\n";
         Map<String, String> withNewline = Map.of("file", "routes.camel.xml", "content", "\n" + xml);
-        assertThat(calls.repeatOf(validate, withNewline)).isNull();
-        assertThat(calls.repeatOf(validate, withNewline)).isNull();
+        successfulCall(validate, withNewline);
+        successfulCall(validate, withNewline);
         // the fix (the newline removed) is validated, not answered with the note
         assertThat(calls.repeatOf(validate, Map.of("file", "routes.camel.xml", "content", xml))).isNull();
         // and the key does not hold the source itself

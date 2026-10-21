@@ -192,9 +192,9 @@ public class YamlNormalizeCommand extends CamelCommand {
             List<String> lost = new ArrayList<>();
             String k = KameletNormalizer.normalize(e.getValue(), normalized, id, lost);
             if (!lost.isEmpty()) {
-                printer().printErr("WARN: " + e.getKey() + ": " + lost.size() + " comment line(s) of the template could"
-                                   + " not be put back where they were, they are at the end of the template: "
-                                   + String.join(" / ", lost));
+                printer().printWarn(e.getKey() + ": " + lost.size() + " comment line(s) of the template could"
+                                    + " not be put back where they were, they are at the end of the template: "
+                                    + String.join(" / ", lost));
             }
             if (k == null) {
                 printer().printErr("Error normalizing the Kamelet " + e.getKey() + ": its template " + id

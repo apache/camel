@@ -21,6 +21,7 @@ camel validate properties [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--json` | Output in JSON Format: valid, file and errors of each file, as the MCP tool camel_validate_source answers |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

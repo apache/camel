@@ -61,8 +61,9 @@ public class AWSS3NamingStrategyTest extends CamelTestSupport {
 
         UUID testUuid = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
+        // the first upload of a producer gets the random part too
         String result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.random, ".txt", 0, testUuid, 0L);
-        assertEquals("testFile.txt", result);
+        assertEquals("testFile-123e4567-e89b-12d3-a456-426614174000.txt", result);
 
         result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.random, ".txt", 1, testUuid, 0L);
         assertEquals("testFile-123e4567-e89b-12d3-a456-426614174000.txt", result);
@@ -82,9 +83,10 @@ public class AWSS3NamingStrategyTest extends CamelTestSupport {
 
         long testTimestamp = 1632468273000L; // September 24, 2021 1:04:33 PM GMT
 
+        // the first upload of a producer gets the timestamp too
         String result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, ".txt", 0, null,
                 testTimestamp);
-        assertEquals("testFile.txt", result);
+        assertEquals("testFile-1632468273000.txt", result);
 
         result = (String) method.invoke(producer, "testFile", AWSS3NamingStrategyEnum.timestamp, ".txt", 1, null,
                 testTimestamp);

@@ -19,6 +19,7 @@ package org.apache.camel.component.pqc.crypto;
 import java.security.*;
 
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
@@ -56,7 +57,7 @@ public class PQCDefaultHSSMaterial {
                 new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2),
                 new LMSKeyGenParameterSpec(LMSigParameters.lms_sha256_n32_h5, LMOtsParameters.sha256_n32_w2)
         };
-        kpGen.initialize(new LMSHSSKeyGenParameterSpec(lmsSpecs));
+        kpGen.initialize(new LMSHSSKeyGenParameterSpec(lmsSpecs), SecureRandomHelper.getSecureRandom());
         return kpGen;
     }
 }

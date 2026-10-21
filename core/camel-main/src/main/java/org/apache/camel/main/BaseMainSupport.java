@@ -30,6 +30,7 @@ import java.security.KeyStore;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -2797,6 +2798,47 @@ public abstract class BaseMainSupport extends BaseService {
         return bean;
     }
 
+    /**
+     * The beans of re-loaded properties (CAMEL-25767). A new bean is created and bound as when the application starts,
+     * so a component configured in the same reload can refer to it, and a component created later can autowire it. A
+     * bean that exists already is left as it is, as components and routes may hold it: when its properties changed in a
+     * properties file, it is logged that this needs a restart.
+     */
+    private void bindReloadedBeans(
+            CamelContext camelContext, OrderedLocationProperties reloadedProperties, boolean changed,
+            OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        OrderedLocationProperties created = new OrderedLocationProperties();
+        Set<String> kept = new LinkedHashSet<>();
+        // stringPropertyNames is a live view of the keys, which are removed below
+        for (String key : new ArrayList<>(reloadedProperties.stringPropertyNames())) {
+            if (!startsWithIgnoreCase(key, "camel.beans.")) {
+                continue;
+            }
+            // the name the bean is bound with, as when the application starts
+            String option = optionKey(key.substring(12));
+            String name = StringHelper.before(option, ".", option);
+            name = StringHelper.before(name, "[", name);
+            if (camelContext.getRegistry().lookupByName(name) == null) {
+                created.put(reloadedProperties.getLocation(key), option, reloadedProperties.getProperty(key));
+            } else {
+                kept.add(name);
+            }
+            reloadedProperties.remove(key);
+        }
+        if (!created.isEmpty()) {
+            LOG.debug("Creating and binding beans to registry from reloaded properties: {}", created.size());
+            bindBeansToRegistry(camelContext, created, "camel.beans.",
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    mainConfigurationProperties.isAutoConfigurationLogSummary(), true, autoConfiguredProperties);
+        }
+        if (changed && !kept.isEmpty()) {
+            LOG.warn("The properties of the bean(s) {} changed. A reload only creates new beans: restart to apply the change.",
+                    String.join(", ", kept));
+        }
+    }
+
     private void bindBeansToRegistry(
             CamelContext camelContext, OrderedLocationProperties properties,
             String optionPrefix, boolean failIfNotSet, boolean logSummary, boolean ignoreCase,
@@ -3011,6 +3053,30 @@ public abstract class BaseMainSupport extends BaseService {
     protected void autoConfigurationFromProperties(
             CamelContext camelContext, OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
+        OrderedLocationProperties prop = loadAutoConfigurationProperties(camelContext);
+
+        Map<PropertyOptionKey, OrderedLocationProperties> properties = new LinkedHashMap<>();
+
+        // filter out wildcard properties
+        for (String key : prop.stringPropertyNames()) {
+            if (key.contains("*")) {
+                String loc = prop.getLocation(key);
+                wildcardProperties.put(loc, key, prop.getProperty(key));
+            }
+        }
+        // and remove wildcards
+        for (String key : wildcardProperties.stringPropertyNames()) {
+            prop.remove(key);
+        }
+
+        doAutoConfigurationFromProperties(camelContext, prop, properties, false, autoConfiguredProperties);
+    }
+
+    /**
+     * The camel.* properties that configure components, data formats and languages: from the properties component,
+     * overridden by ENV variables and then by JVM system properties.
+     */
+    private OrderedLocationProperties loadAutoConfigurationProperties(CamelContext camelContext) {
         OrderedLocationProperties prop = new OrderedLocationProperties();
 
         // load properties from properties component (override existing)
@@ -3050,26 +3116,26 @@ public abstract class BaseMainSupport extends BaseService {
                 putAllOverride(prop, "SYS", propJVM);
             }
         }
-
-        Map<PropertyOptionKey, OrderedLocationProperties> properties = new LinkedHashMap<>();
-
-        // filter out wildcard properties
-        for (String key : prop.stringPropertyNames()) {
-            if (key.contains("*")) {
-                String loc = prop.getLocation(key);
-                wildcardProperties.put(loc, key, prop.getProperty(key));
-            }
-        }
-        // and remove wildcards
-        for (String key : wildcardProperties.stringPropertyNames()) {
-            prop.remove(key);
-        }
-
-        doAutoConfigurationFromProperties(camelContext, prop, properties, false, autoConfiguredProperties);
+        return prop;
     }
 
     protected void autoConfigurationFromReloadedProperties(
             CamelContext camelContext, OrderedLocationProperties reloadedProperties)
+            throws Exception {
+        autoConfigurationFromReloadedProperties(camelContext, reloadedProperties, false);
+    }
+
+    /**
+     * Configures from properties that were re-loaded.
+     *
+     * @param camelContext       the context
+     * @param reloadedProperties the properties
+     * @param changed            whether these are the properties of a properties file that changed, such as
+     *                           application.properties in dev mode, rather than options that are applied again (such as
+     *                           by a context reload, for secret rotation)
+     */
+    protected void autoConfigurationFromReloadedProperties(
+            CamelContext camelContext, OrderedLocationProperties reloadedProperties, boolean changed)
             throws Exception {
 
         Map<PropertyOptionKey, OrderedLocationProperties> properties = new LinkedHashMap<>();
@@ -3087,11 +3153,41 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
+        // the beans first, as the components that are configured next may refer to them (CAMEL-25767)
+        bindReloadedBeans(camelContext, reloadedProperties, changed, autoConfiguredProperties);
+        // a component of the reload is created anew, so it gets all its options, not only those that changed
+        addOtherOptionsOfReloadedComponents(camelContext, reloadedProperties);
         doAutoConfigurationFromProperties(camelContext, reloadedProperties, properties, true, autoConfiguredProperties);
 
         // log summary of configurations
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             logConfigurationSummary(camelContext, autoConfiguredProperties);
+        }
+    }
+
+    /**
+     * Adds the other current options of the components that the reloaded properties configure, as a reload creates
+     * these components anew: without them, a component would lose the options that did not change. The options of the
+     * reload win.
+     */
+    private void addOtherOptionsOfReloadedComponents(
+            CamelContext camelContext, OrderedLocationProperties reloadedProperties) {
+        Set<String> prefixes = new HashSet<>();
+        for (String key : reloadedProperties.stringPropertyNames()) {
+            int dot = key.startsWith("camel.component.") ? key.indexOf('.', "camel.component.".length()) : -1;
+            if (dot > 0) {
+                prefixes.add(key.substring(0, dot + 1));
+            }
+        }
+        if (prefixes.isEmpty()) {
+            return;
+        }
+        OrderedLocationProperties current = loadAutoConfigurationProperties(camelContext);
+        for (String key : current.stringPropertyNames()) {
+            if (!key.contains("*") && !reloadedProperties.containsKey(key)
+                    && prefixes.stream().anyMatch(key::startsWith)) {
+                reloadedProperties.put(current.getLocation(key), key, current.getProperty(key));
+            }
         }
     }
 
@@ -3101,13 +3197,15 @@ public abstract class BaseMainSupport extends BaseService {
             OrderedLocationProperties autoConfiguredProperties)
             throws Exception {
 
+        // a component is re-created once per reload, so all the options of the reload are set on the new one
+        Set<String> recreated = new HashSet<>();
         for (String key : prop.stringPropertyNames()) {
             computeProperties("camel.component.", key, prop, properties, name -> {
                 boolean optional = name.startsWith("?");
                 if (optional) {
                     name = name.substring(1);
                 }
-                if (reload) {
+                if (reload && recreated.add(name)) {
                     // force re-creating component on reload
                     camelContext.removeComponent(name);
                 }

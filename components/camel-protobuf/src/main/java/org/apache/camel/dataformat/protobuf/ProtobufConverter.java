@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.EnumValueDescriptor;
@@ -87,6 +88,10 @@ public final class ProtobufConverter {
                 // we do a nested call until we reach our final message
                 return convertMapToMessage(fieldDescriptor.getMessageType(), builder.newBuilderForField(fieldDescriptor),
                         nestedValue);
+
+            case BYTE_STRING:
+                // a bytes field is given as byte[] in the map (see convertValueToSuitableFieldType)
+                return inputValue instanceof byte[] bytes ? ByteString.copyFrom(bytes) : inputValue;
 
             default:
                 return inputValue;
@@ -157,8 +162,11 @@ public final class ProtobufConverter {
 
         switch (fieldDescriptor.getJavaType()) {
             case ENUM:
-            case BYTE_STRING:
                 result = value.toString();
+                break;
+            case BYTE_STRING:
+                // ByteString.toString() only describes the value (size and a shortened text)
+                result = ((ByteString) value).toByteArray();
                 break;
             case MESSAGE:
                 result = convertProtoMessageToMap((Message) value);

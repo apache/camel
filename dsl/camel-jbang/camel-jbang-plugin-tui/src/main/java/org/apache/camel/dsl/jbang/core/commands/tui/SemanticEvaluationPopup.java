@@ -40,6 +40,7 @@ import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.input.TextArea;
 import dev.tamboui.widgets.input.TextAreaState;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -201,7 +202,18 @@ final class SemanticEvaluationPopup {
             submittedInterpretation
                     = SemanticResultView.interpretation(operation, definition.get("parameters"), submittedScoreLevels);
             pending = CompletableFuture
-                    .supplyAsync(() -> ctx.executeIndependentAction(pid, request, 60000), ctx.backgroundExecutor)
+                    .supplyAsync(() -> {
+                        JsonObject prepared = new JsonObject(request);
+                        if (prepared.get("body") instanceof String text && text.startsWith("image:")) {
+                            prepared.put("body",
+                                    SemanticMediaInput.readImage(text, SemanticMediaInput.imageMaxBytes(submittedOperation)));
+                        }
+                        if (SemanticMediaInput.hasImages(prepared.get("body"), prepared.get("headers"))) {
+                            SemanticMediaInput.validateImageSize(prepared.get("body"), prepared.get("headers"),
+                                    SemanticMediaInput.imageMaxBytes(submittedOperation));
+                        }
+                        return ctx.executeIndependentAction(pid, prepared, 60000);
+                    }, ctx.backgroundExecutor)
                     .exceptionally(SemanticResultView::failure);
         } catch (Exception invalid) {
             error = "Input error: " + invalid.getMessage();

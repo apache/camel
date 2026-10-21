@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,11 +66,11 @@ class CamelSendActionTest extends ActionCommandTestSupport {
         command.name = "doesNotExist";
         command.endpoint = "seda://foo";
 
-        int exit = callWithSingleProcess(command);
+        CliException e = assertThrows(CliException.class, () -> callWithSingleProcess(command));
 
-        assertEquals(1, exit);
-        assertTrue(printer.getOutput().contains("matches 0 running Camel integrations"),
-                "should report no matching integration, was: " + printer.getOutput());
+        assertEquals(CliExitCode.NOT_FOUND, e.getExitCode());
+        assertEquals("No running Camel integration matches: doesNotExist", e.getMessage());
+        assertTrue(printer.getOutput().isEmpty(), "nothing should be printed, was: " + printer.getOutput());
     }
 
     private static JsonObject sentResponse() {

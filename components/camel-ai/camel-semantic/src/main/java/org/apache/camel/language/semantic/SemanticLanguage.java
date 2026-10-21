@@ -38,6 +38,7 @@ import org.apache.camel.semantic.SemanticCapabilities.Operation;
 import org.apache.camel.semantic.SemanticEvaluation;
 import org.apache.camel.semantic.SemanticEvaluations;
 import org.apache.camel.semantic.SemanticExpert.ResultType;
+import org.apache.camel.semantic.SemanticInput;
 import org.apache.camel.semantic.SemanticResult;
 import org.apache.camel.semantic.internal.SemanticAuditService;
 import org.apache.camel.spi.Metadata;
@@ -110,9 +111,11 @@ public class SemanticLanguage extends LanguageSupport {
             invocation = audit.begin(null, null, evaluation, operation, resolved.reference, resolved.capabilities.getProvider(),
                     null, request);
             reason = "invalid_input";
+            input = SemanticInput.normalize(input);
             invocation.captureInput(input);
             operation.validateInput(input);
             resolved.provider.validateInput(evaluation, input);
+            resolved.provider.validateState(input);
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException("Semantic evaluation interrupted");
             }
@@ -168,6 +171,11 @@ public class SemanticLanguage extends LanguageSupport {
     /** Read a named expert's static contract without evaluating or validating a declaration. */
     public SemanticCapabilities getExpertCapabilities(String expert) {
         return describeExpert(expert).capabilities();
+    }
+
+    /** Read the named expert's configured image limit without performing inference. */
+    public int getExpertMaxImageBytes(String expert) {
+        return expertBean(expertReference(expert)).getMaxImageBytes();
     }
 
     /** The selected registry reference and its static contract. */
@@ -383,7 +391,7 @@ public class SemanticLanguage extends LanguageSupport {
             Expression state = getCamelContext().resolveLanguage("simple").createExpression(selector);
             state.init(getCamelContext());
             return new Compiled(
-                    selected, Map.copyOf(operations), state, groups.stream()
+                    selected, Map.copyOf(operations), state, "${body}".equals(selector), groups.stream()
                             .map(group -> new Group(group.expert, Collections.unmodifiableMap(group.evaluations))).toList());
         }
 
@@ -438,7 +446,11 @@ public class SemanticLanguage extends LanguageSupport {
                 }
                 active.addAll(invocations.values());
                 failureReason = "invalid_input";
-                Object state = current.state.evaluate(exchange, Object.class);
+                Object state = current.body
+                        ? SemanticInput.body(exchange,
+                                current.groups.stream().mapToInt(g -> g.expert.provider.getMaxImageBytes())
+                                        .filter(limit -> limit > 0).min().orElse(Integer.MAX_VALUE))
+                        : SemanticInput.normalize(current.state.evaluate(exchange, Object.class));
                 invocations.values().forEach(invocation -> invocation.captureInput(state));
                 // A state selector can itself evaluate another semantic expression.
                 exchange.removeProperty(RESULT);
@@ -460,6 +472,9 @@ public class SemanticLanguage extends LanguageSupport {
                             current.operations.get(entry.getKey()).validateInput(state);
                             group.expert.provider.validateInput(entry.getValue(), state);
                         }
+                        active.clear();
+                        group.evaluations.keySet().forEach(name -> active.add(invocations.get(name)));
+                        group.expert.provider.validateState(state);
                     } catch (IllegalArgumentException invalid) {
                         throw new IllegalArgumentException(
                                 "Semantic evaluations " + group.evaluations.keySet() + ", expert '" + group.expert.reference
@@ -591,6 +606,6 @@ public class SemanticLanguage extends LanguageSupport {
     }
 
     private record Compiled(Map<String, SemanticEvaluation> evaluations, Map<String, Operation> operations,
-            Expression state, List<Group> groups) {
+            Expression state, boolean body, List<Group> groups) {
     }
 }

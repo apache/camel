@@ -70,7 +70,7 @@ public class VertxWebsocketExternalServerTest extends VertxWebSocketTestSupport 
                         request.pause();
                     }
                     // upgrade
-                    request.toWebSocket(toWebSocket -> {
+                    request.toWebSocket().onComplete(toWebSocket -> {
                         if (toWebSocket.succeeded()) {
                             // resume the parsing
                             if (!parseEnded) {

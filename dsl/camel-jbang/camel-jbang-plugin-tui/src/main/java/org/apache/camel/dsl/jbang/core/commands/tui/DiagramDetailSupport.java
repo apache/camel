@@ -35,6 +35,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.DiagramColors;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -295,6 +296,11 @@ final class DiagramDetailSupport {
                     Span.styled(stateLabel, stateStyle)));
             addGroup(lines, info, route, diagram.isShowErrorPaths());
             addDescription(lines, info, route, area.width() - 3);
+            if (route.variedBodyTypes > 0) {
+                // the steps reached with more than one body type (CAMEL-25750): the route diagram shows which, with y
+                lines.add(Line.from(Span.styled(" Body:  ", Theme.muted()), Span.styled(RoutesTab.bodyTypesLabel(route),
+                        route.mixedBodyKinds > 0 ? Theme.warning() : Style.EMPTY.fg(Theme.baseFg()))));
+            }
 
             lines.add(Line.from(Span.raw("")));
             lines.add(Line.from(
@@ -372,50 +378,7 @@ final class DiagramDetailSupport {
             }
 
         } else {
-            // External endpoint — show topology node data
-            var topoNode = diagram.getSelectedTopologyNode();
-            if (topoNode != null) {
-                boolean isInbound = "external-in".equals(topoNode.nodeType);
-                boolean isBridge = "external".equals(topoNode.nodeType);
-                String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
-                lines.add(Line.from(
-                        Span.styled(label, Style.EMPTY.fg(Theme.accent()).bold())));
-                lines.add(Line.from(Span.raw("")));
-                lines.add(Line.from(
-                        Span.styled(" URI: ", Theme.muted()),
-                        Span.raw(topoNode.from != null ? topoNode.from : "")));
-                if (topoNode.description != null && !topoNode.description.isBlank()) {
-                    lines.add(Line.from(
-                            Span.styled(" Path: ", Theme.muted()),
-                            Span.raw(topoNode.description)));
-                }
-                if (!isBridge) {
-                    String connectedRoute = diagram.getConnectedRouteId(routeId);
-                    if (connectedRoute != null) {
-                        lines.add(Line.from(Span.raw("")));
-                        lines.add(Line.from(
-                                Span.styled(isInbound ? " To route: " : " From route: ", Theme.muted()),
-                                Span.styled(connectedRoute, Style.EMPTY.fg(Theme.baseFg()))));
-                    }
-                }
-                if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
-                    lines.add(Line.from(Span.raw("")));
-                    lines.add(Line.from(
-                            Span.styled(" Total:  ", Theme.muted()),
-                            Span.raw(String.valueOf(topoNode.exchangesTotal))));
-                    if (topoNode.exchangesFailed > 0) {
-                        lines.add(Line.from(
-                                Span.styled(" Failed: ", Theme.muted()),
-                                Span.styled(String.valueOf(topoNode.exchangesFailed),
-                                        Theme.error().bold())));
-                    }
-                }
-            } else {
-                lines.add(Line.from(
-                        Span.styled(" " + routeId, Style.EMPTY.fg(Theme.accent()).bold())));
-                lines.add(Line.from(
-                        Span.styled(" (external endpoint)", Style.EMPTY.dim())));
-            }
+            addExternalEndpoint(lines, routeId);
         }
 
         Paragraph paragraph = Paragraph.builder()
@@ -424,6 +387,56 @@ final class DiagramDetailSupport {
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
+    }
+
+    /**
+     * A system outside the integration, selected in the topology: where it is, the route it is linked to, its counts.
+     */
+    private void addExternalEndpoint(List<Line> lines, String routeId) {
+        // External endpoint — show topology node data
+        var topoNode = diagram.getSelectedTopologyNode();
+        if (topoNode != null) {
+            boolean isInbound = "external-in".equals(topoNode.nodeType);
+            boolean isBridge = "external".equals(topoNode.nodeType);
+            String label = isBridge ? " External" : isInbound ? " Inbound" : " Outbound";
+            lines.add(Line.from(
+                    Span.styled(label, Style.EMPTY.fg(Theme.accent()).bold())));
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled(" URI: ", Theme.muted()),
+                    Span.raw(topoNode.from != null ? topoNode.from : "")));
+            if (topoNode.description != null && !topoNode.description.isBlank()) {
+                lines.add(Line.from(
+                        Span.styled(" Path: ", Theme.muted()),
+                        Span.raw(topoNode.description)));
+            }
+            if (!isBridge) {
+                String connectedRoute = diagram.getConnectedRouteId(routeId);
+                if (connectedRoute != null) {
+                    lines.add(Line.from(Span.raw("")));
+                    lines.add(Line.from(
+                            Span.styled(isInbound ? " To route: " : " From route: ", Theme.muted()),
+                            Span.styled(connectedRoute, Style.EMPTY.fg(Theme.baseFg()))));
+                }
+            }
+            if (topoNode.exchangesTotal > 0 || topoNode.exchangesFailed > 0) {
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" Total:  ", Theme.muted()),
+                        Span.raw(String.valueOf(topoNode.exchangesTotal))));
+                if (topoNode.exchangesFailed > 0) {
+                    lines.add(Line.from(
+                            Span.styled(" Failed: ", Theme.muted()),
+                            Span.styled(String.valueOf(topoNode.exchangesFailed),
+                                    Theme.error().bold())));
+                }
+            }
+        } else {
+            lines.add(Line.from(
+                    Span.styled(" " + routeId, Style.EMPTY.fg(Theme.accent()).bold())));
+            lines.add(Line.from(
+                    Span.styled(" (external endpoint)", Style.EMPTY.dim())));
+        }
     }
 
     void renderEipInfoPanel(Frame frame, Rect area, String drillDownRouteId) {
@@ -497,82 +510,11 @@ final class DiagramDetailSupport {
                         Span.styled(arrow, Theme.muted())));
             }
 
+            if (ln.treeNode != null) {
+                addBodyTypes(lines, ln.treeNode.info, area.width() - 3);
+            }
             if (ln.treeNode != null && ln.treeNode.info.stat != null) {
-                var stat = ln.treeNode.info.stat;
-                lines.add(Line.from(Span.raw("")));
-                int w = numWidth(stat.exchangesTotal, stat.exchangesFailed, stat.exchangesInflight);
-                lines.add(Line.from(
-                        Span.styled(" Total:    ", Theme.muted()),
-                        Span.raw(String.format("%" + w + "d", stat.exchangesTotal))));
-                Style failStyle = stat.exchangesFailed > 0
-                        ? Theme.error().bold() : Style.EMPTY;
-                lines.add(Line.from(
-                        Span.styled(" Failed:   ", Theme.muted()),
-                        Span.styled(String.format("%" + w + "d", stat.exchangesFailed), failStyle)));
-                lines.add(Line.from(
-                        Span.styled(" Inflight: ", Theme.muted()),
-                        Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
-                if (stat.exchangesThroughput != null && !stat.exchangesThroughput.isEmpty()) {
-                    String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
-                    String tpValue = ctx.ratePerMinute
-                            ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
-                            : stat.exchangesThroughput;
-                    lines.add(Line.from(
-                            Span.styled(" Rate:     ", Theme.muted()),
-                            Span.raw(tpValue),
-                            Span.styled(tpUnit, Theme.muted())));
-                }
-
-                if (stat.exchangesTotal > 0) {
-                    lines.add(Line.from(Span.raw("")));
-                    lines.add(Line.from(
-                            Span.styled(" Mean: ", Theme.muted()),
-                            Span.raw(formatDurationMs(stat.meanProcessingTime))));
-                    lines.add(Line.from(
-                            Span.styled(" Max:  ", Theme.muted()),
-                            Span.raw(formatDurationMs(stat.maxProcessingTime))));
-                    lines.add(Line.from(
-                            Span.styled(" Min:  ", Theme.muted()),
-                            Span.raw(formatDurationMs(stat.minProcessingTime))));
-                    lines.add(Line.from(
-                            Span.styled(" Last: ", Theme.muted()),
-                            Span.raw(formatDurationMs(stat.lastProcessingTime))));
-                    if (stat.p50ProcessingTime >= 0) {
-                        lines.add(Line.from(Span.raw("")));
-                        lines.add(Line.from(
-                                Span.styled(" p50:  ", Theme.muted()),
-                                Span.raw(formatDurationMs(stat.p50ProcessingTime))));
-                        lines.add(Line.from(
-                                Span.styled(" p95:  ", Theme.muted()),
-                                Span.raw(formatDurationMs(stat.p95ProcessingTime))));
-                        lines.add(Line.from(
-                                Span.styled(" p99:  ", Theme.muted()),
-                                Span.raw(formatDurationMs(stat.p99ProcessingTime))));
-                        lines.add(buildPercentileBarLine(
-                                stat.p50ProcessingTime, stat.p95ProcessingTime,
-                                stat.p99ProcessingTime, area.width() - 3));
-                    }
-
-                    if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
-                        long now = System.currentTimeMillis();
-                        lines.add(Line.from(Span.raw("")));
-                        lines.add(Line.from(
-                                Span.styled(" Since last:", Theme.muted())));
-                        if (stat.lastCompletedExchangeTimestamp > 0) {
-                            long ago = now - stat.lastCompletedExchangeTimestamp;
-                            lines.add(Line.from(
-                                    Span.styled("   ok:   ", Theme.muted()),
-                                    Span.raw(TimeUtils.printDuration(ago, false))));
-                        }
-                        if (stat.lastFailedExchangeTimestamp > 0) {
-                            long ago = now - stat.lastFailedExchangeTimestamp;
-                            lines.add(Line.from(
-                                    Span.styled("   fail: ", Theme.muted()),
-                                    Span.styled(TimeUtils.printDuration(ago, false),
-                                            Theme.error())));
-                        }
-                    }
-                }
+                addStepStatistics(lines, ln.treeNode.info.stat, area.width() - 3);
             }
         } else {
             lines.add(Line.from(Span.styled(" (no node selected)", Style.EMPTY.dim())));
@@ -584,6 +526,111 @@ final class DiagramDetailSupport {
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
+    }
+
+    /**
+     * The body types the step has been reached with, across the messages (CAMEL-25750), one per line, with their kind;
+     * a step reached with bodies of more than one kind needs attention. The diagram shows them cut, and with y only.
+     */
+    static void addBodyTypes(List<Line> lines, RouteDiagramLayoutEngine.NodeInfo info, int width) {
+        if (info.bodyTypes.isEmpty()) {
+            return;
+        }
+        boolean mixed = BodyTypes.mixed(info.bodyKinds);
+        lines.add(Line.from(Span.raw("")));
+        lines.add(Line.from(Span.styled(
+                mixed || info.bodyKinds.isEmpty() ? " Body types:" : " Body types (" + info.bodyKinds.get(0) + "):",
+                Theme.muted())));
+        for (String type : info.bodyTypes) {
+            lines.add(Line.from(Span.raw("   " + truncate(BodyTypes.simpleName(type), Math.max(4, width - 2)))));
+        }
+        if (mixed) {
+            List<String> warning = wrapWords(
+                    BodyTypes.kinds(info.bodyKinds) + ": the body here depends on the path a message takes",
+                    Math.max(10, width - 2));
+            for (int i = 0; i < warning.size(); i++) {
+                lines.add(Line.from(Span.styled((i == 0 ? " " + BodyTypes.MARK + " " : "   ") + warning.get(i),
+                        Theme.warning())));
+            }
+        }
+    }
+
+    /** The statistics of a step: its counts, its rate, its times, and how long since its last message. */
+    private void addStepStatistics(List<Line> lines, RouteDiagramLayoutEngine.StatInfo stat, int width) {
+        lines.add(Line.from(Span.raw("")));
+        int w = numWidth(stat.exchangesTotal, stat.exchangesFailed, stat.exchangesInflight);
+        lines.add(Line.from(
+                Span.styled(" Total:    ", Theme.muted()),
+                Span.raw(String.format("%" + w + "d", stat.exchangesTotal))));
+        Style failStyle = stat.exchangesFailed > 0
+                ? Theme.error().bold() : Style.EMPTY;
+        lines.add(Line.from(
+                Span.styled(" Failed:   ", Theme.muted()),
+                Span.styled(String.format("%" + w + "d", stat.exchangesFailed), failStyle)));
+        lines.add(Line.from(
+                Span.styled(" Inflight: ", Theme.muted()),
+                Span.raw(String.format("%" + w + "d", stat.exchangesInflight))));
+        if (stat.exchangesThroughput != null && !stat.exchangesThroughput.isEmpty()) {
+            String tpUnit = ctx.ratePerMinute ? " msg/m" : " msg/s";
+            String tpValue = ctx.ratePerMinute
+                    ? TuiHelper.throughputPerMinute(stat.exchangesThroughput)
+                    : stat.exchangesThroughput;
+            lines.add(Line.from(
+                    Span.styled(" Rate:     ", Theme.muted()),
+                    Span.raw(tpValue),
+                    Span.styled(tpUnit, Theme.muted())));
+        }
+
+        if (stat.exchangesTotal > 0) {
+            lines.add(Line.from(Span.raw("")));
+            lines.add(Line.from(
+                    Span.styled(" Mean: ", Theme.muted()),
+                    Span.raw(formatDurationMs(stat.meanProcessingTime))));
+            lines.add(Line.from(
+                    Span.styled(" Max:  ", Theme.muted()),
+                    Span.raw(formatDurationMs(stat.maxProcessingTime))));
+            lines.add(Line.from(
+                    Span.styled(" Min:  ", Theme.muted()),
+                    Span.raw(formatDurationMs(stat.minProcessingTime))));
+            lines.add(Line.from(
+                    Span.styled(" Last: ", Theme.muted()),
+                    Span.raw(formatDurationMs(stat.lastProcessingTime))));
+            if (stat.p50ProcessingTime >= 0) {
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" p50:  ", Theme.muted()),
+                        Span.raw(formatDurationMs(stat.p50ProcessingTime))));
+                lines.add(Line.from(
+                        Span.styled(" p95:  ", Theme.muted()),
+                        Span.raw(formatDurationMs(stat.p95ProcessingTime))));
+                lines.add(Line.from(
+                        Span.styled(" p99:  ", Theme.muted()),
+                        Span.raw(formatDurationMs(stat.p99ProcessingTime))));
+                lines.add(buildPercentileBarLine(
+                        stat.p50ProcessingTime, stat.p95ProcessingTime,
+                        stat.p99ProcessingTime, width));
+            }
+
+            if (stat.lastCompletedExchangeTimestamp > 0 || stat.lastFailedExchangeTimestamp > 0) {
+                long now = System.currentTimeMillis();
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line.from(
+                        Span.styled(" Since last:", Theme.muted())));
+                if (stat.lastCompletedExchangeTimestamp > 0) {
+                    long ago = now - stat.lastCompletedExchangeTimestamp;
+                    lines.add(Line.from(
+                            Span.styled("   ok:   ", Theme.muted()),
+                            Span.raw(TimeUtils.printDuration(ago, false))));
+                }
+                if (stat.lastFailedExchangeTimestamp > 0) {
+                    long ago = now - stat.lastFailedExchangeTimestamp;
+                    lines.add(Line.from(
+                            Span.styled("   fail: ", Theme.muted()),
+                            Span.styled(TimeUtils.printDuration(ago, false),
+                                    Theme.error())));
+                }
+            }
+        }
     }
 
     void renderDetail(Frame frame, Rect area, IntegrationInfo info, String drillDownRouteId) {

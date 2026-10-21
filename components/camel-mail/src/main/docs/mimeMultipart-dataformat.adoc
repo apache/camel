@@ -97,11 +97,29 @@ MIME multipart. The header is removed afterward
 
 == Examples
 
-._Java-only: marshalling a message with attachments into MIME-Multipart format_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from(...).marshal().mimeMultipart()
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            mimeMultipart: {}
+        - to:
+            uri: mock:result
+----
+====
 
 With a message where no Content-Type header is set, will create a
 Message with the following message Camel headers:
@@ -136,11 +154,34 @@ AAECAwQFBgc=
 A message with the header Content-Type set to "text/plain" sent to the
 route
 
-._Java-only: marshalling with custom MIME-Multipart options_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("...").marshal().mimeMultipart("related", true, true, "(included|x-.*)", true);
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            mimeMultipart:
+              multipartSubType: related
+              multipartWithoutAttachment: true
+              headersInline: true
+              includeHeaders: "(included|x-.*)"
+              binaryContent: true
+        - to:
+            uri: mock:result
+----
+====
 
 will create a message without any specific MIME headers set as Camel
 headers (the Content-Type header is removed from the Camel message) and

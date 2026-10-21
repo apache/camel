@@ -409,8 +409,9 @@ public class TopologyDiagramWidget implements Widget {
 
         boolean highlighted = !ext && node.routeId != null && highlightRouteIds.contains(node.routeId);
 
-        char hChar = dashedBox ? DASH_H : H;
-        char vChar = dashedBox ? DASH_V : V;
+        // a selected box has a solid frame like any other: dashes on the selection colour break up, the vertical ones most
+        char hChar = dashedBox && !selected ? DASH_H : H;
+        char vChar = dashedBox && !selected ? DASH_V : V;
         Style borderStyle;
         if (highlighted) {
             Color hlColor = highlightFailed ? highlightFailColor() : highlightOkColor();

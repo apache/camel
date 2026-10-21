@@ -38,6 +38,7 @@
 **** xref:camel-jbang-tui-recording.adoc[Camel TUI Screenshots and Demo Recordings]
 *** xref:camel-jbang-mcp.adoc[Camel MCP Server]
 *** xref:camel-jbang-configuration.adoc[Configuration]
+*** xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]
 *** xref:camel-jbang-tips.adoc[Tips and Recipes]
 *** xref:jbang-commands/camel-jbang-commands.adoc[Camel CLI Command Reference]
 ** xref:camel-maven-plugin.adoc[Camel Maven Plugin]

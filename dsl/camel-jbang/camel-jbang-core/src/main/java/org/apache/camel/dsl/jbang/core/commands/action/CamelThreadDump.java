@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,7 +26,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StringHelper;
@@ -42,8 +43,14 @@ import picocli.CommandLine.Command;
          footer = {
                  "%nExamples:",
                  "  camel cmd thread-dump",
-                 "  camel cmd thread-dump --trace" })
+                 "  camel cmd thread-dump --trace",
+                 "  camel cmd thread-dump --json" })
 public class CamelThreadDump extends ActionWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .numeric("id", r -> r.id)
+            .text("name", r -> r.name)
+            .text("state", r -> r.state);
 
     public static class IdNameStateCompletionCandidates implements Iterable<String> {
 
@@ -92,6 +99,12 @@ public class CamelThreadDump extends ActionWatchCommand {
                         description = "Max depth of stack-trace", defaultValue = "1")
     int depth;
 
+    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    boolean jsonOutput;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
+
     private volatile long pid;
 
     public CamelThreadDump(CamelJBangMain main) {
@@ -102,87 +115,70 @@ public class CamelThreadDump extends ActionWatchCommand {
     public Integer doWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
+        CamelProcess process = findOne(name);
 
         // include stack-traces
         if (trace && depth <= 1) {
             depth = Integer.MAX_VALUE;
         }
 
-        this.pid = pids.get(0);
+        this.pid = process.pid();
 
-        // ensure output file is deleted before executing action
-        Path outputFile = getOutputFile(Long.toString(pid));
-        PathUtils.deleteFile(outputFile);
-
-        JsonObject root = new JsonObject();
-        root.put("action", "thread-dump");
-        Path f = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(f, root.toJson());
-        } catch (Exception e) {
-            // ignore
+        JsonObject jo = executeAction(process, "thread-dump", null);
+        JsonArray arr = (JsonArray) jo.get("threads");
+        if (arr == null) {
+            throw CliException.failure("Thread dump data not available from the running integration");
         }
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject jt = (JsonObject) arr.get(i);
 
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            JsonArray arr = (JsonArray) jo.get("threads");
-            if (arr == null) {
-                printer().printErr("Thread dump data not available from the running integration");
-                return 0;
+            Row row = new Row();
+            row.id = jt.getLong("id");
+            row.name = jt.getString("name");
+            row.state = jt.getString("state");
+
+            // filter
+            boolean match = false;
+            for (String filter : filters) {
+                match |= "all".equalsIgnoreCase(filter) || filter.equals("" + row.id)
+                        || StringHelper.containsIgnoreCase(row.name, filter)
+                        || PatternHelper.matchPattern(row.name, filter);
             }
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jt = (JsonObject) arr.get(i);
-
-                Row row = new Row();
-                row.id = jt.getLong("id");
-                row.name = jt.getString("name");
-                row.state = jt.getString("state");
-
-                // filter
-                boolean match = false;
-                for (String filter : filters) {
-                    match |= "all".equalsIgnoreCase(filter) || filter.equals("" + row.id)
-                            || StringHelper.containsIgnoreCase(row.name, filter)
-                            || PatternHelper.matchPattern(row.name, filter);
-                }
-                // state
-                if (state != null) {
-                    match &= StringHelper.containsIgnoreCase(row.state, state);
-                }
-                if (!match) {
-                    continue;
-                }
-
-                row.waited = jt.getLong("waitedCount");
-                row.waitedTime = jt.getLong("waitedTime");
-                row.blocked = jt.getLong("blockedCount");
-                row.blockedTime = jt.getLong("blockedTime");
-                row.lock = jt.getString("lockName");
-                row.stackTrace = jt.getCollection("stackTrace");
-                rows.add(row);
+            // state
+            if (state != null) {
+                match &= StringHelper.containsIgnoreCase(row.state, state);
             }
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
+            if (!match) {
+                continue;
+            }
+
+            row.waited = jt.getLong("waitedCount");
+            row.waitedTime = jt.getLong("waitedTime");
+            row.blocked = jt.getLong("blockedCount");
+            row.blockedTime = jt.getLong("blockedTime");
+            row.lock = jt.getString("lockName");
+            row.stackTrace = jt.getCollection("stackTrace");
+            rows.add(row);
         }
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
+        int total = jo.getIntegerOrDefault("threadCount", 0);
+        int peak = jo.getIntegerOrDefault("peakThreadCount", 0);
+        if (jsonOutput) {
+            JsonObject answer = new JsonObject();
+            answer.put("pid", pid);
+            answer.put("threadCount", total);
+            answer.put("peakThreadCount", peak);
+            answer.put("threads", rows.stream().map(this::toJson).toList());
+            JsonOutput.print(printer(), answer);
+            return 0;
+        }
         if (watch) {
             clearScreen();
         }
         if (!rows.isEmpty()) {
-            int total = jo.getIntegerOrDefault("threadCount", 0);
-            int peak = jo.getIntegerOrDefault("peakThreadCount", 0);
             printer().printf("PID: %s\tThreads: %d\tPeak: %d\t\tDisplay: %d/%d%n", pid, total, peak, rows.size(), total);
 
             if (depth == 1) {
@@ -192,10 +188,26 @@ public class CamelThreadDump extends ActionWatchCommand {
             }
         }
 
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
-
         return 0;
+    }
+
+    private JsonObject toJson(Row r) {
+        JsonObject jo = new JsonObject();
+        jo.put("id", r.id);
+        jo.put("name", r.name);
+        jo.put("state", r.state);
+        jo.put("waitedCount", r.waited);
+        jo.put("waitedTime", r.waitedTime);
+        jo.put("blockedCount", r.blocked);
+        jo.put("blockedTime", r.blockedTime);
+        if (r.lock != null) {
+            jo.put("lockName", r.lock);
+        }
+        if (r.stackTrace != null && !r.stackTrace.isEmpty()) {
+            // the top of the stack, or with --trace as deep as --depth
+            jo.put("stackTrace", r.stackTrace.subList(0, Math.min(depth, r.stackTrace.size())));
+        }
+        return jo;
     }
 
     protected void singleTable(List<Row> rows) {
@@ -236,29 +248,6 @@ public class CamelThreadDump extends ActionWatchCommand {
                 printer().println("\t" + row.stackTrace.get(i));
             }
         }
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "id":
-                return Long.compare(o1.id, o2.id) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "state":
-                return o1.state.compareToIgnoreCase(o2.state) * negate;
-            default:
-                return 0;
-        }
-    }
-
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
     }
 
     private String getBlocked(Row r) {

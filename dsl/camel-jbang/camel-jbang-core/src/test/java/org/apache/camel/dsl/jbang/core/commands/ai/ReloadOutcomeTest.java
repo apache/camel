@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -43,6 +44,9 @@ class ReloadOutcomeTest {
             "\tat org.apache.camel.dsl.yaml.YamlRoutesBuilderLoader.doConfigure(YamlRoutesBuilderLoader.java:190)",
             "Caused by: java.lang.IllegalArgumentException: Option name is required when creating endpoint uri with syntax cron:name",
             "\tat org.apache.camel.support.component.AbstractApiEndpoint.x(Foo.java:1)");
+
+    private static final List<String> PROPERTIES = List.of(
+            "2026-09-21 10:00:30.000  INFO 42 --- [rReloadStrategy] org.apache.camel.main.DefaultConfigurationConfigurer : Reloading properties: file:application.properties");
 
     private static final List<String> RELOADED = List.of(
             "2026-09-21 10:00:40.000  INFO 42 --- [rReloadStrategy] org.apache.camel.support.RouteWatcherReloadStrategy : Routes reloaded summary (total:1 started:1)",
@@ -80,12 +84,30 @@ class ReloadOutcomeTest {
 
     @Test
     void aPropertiesReloadIsReportedAsSuch() {
-        List<String> props = List.of(
-                "2026-09-21 10:00:30.000  INFO 42 --- [rReloadStrategy] org.apache.camel.main.DefaultConfigurationConfigurer : Reloading properties: file:application.properties");
         String since = ReloadOutcome.latestReloadKey(records(BEFORE));
-        JsonObject out = ReloadOutcome.classify(records(BEFORE, props), since);
+        JsonObject out = ReloadOutcome.classify(records(BEFORE, PROPERTIES), since);
         assertEquals("properties", out.getString("status"));
         assertEquals("Reloading properties: file:application.properties", out.getString("message"));
+    }
+
+    /** CAMEL-25661: the routes are reloaded after the properties they use, and their outcome is the answer. */
+    @Test
+    void aPropertiesReloadIsAnsweredWithTheRoutesReloadAfterIt() {
+        String since = ReloadOutcome.latestReloadKey(records(BEFORE));
+        List<List<JsonObject>> polls
+                = List.of(records(BEFORE), records(BEFORE, PROPERTIES), records(BEFORE, PROPERTIES, RELOADED));
+        AtomicInteger poll = new AtomicInteger();
+        JsonObject out = ReloadOutcome.await(() -> polls.get(Math.min(poll.getAndIncrement(), polls.size() - 1)), since,
+                5000);
+        assertEquals("reloaded", out.getString("status"));
+        assertEquals("Routes reloaded summary (total:1 started:1)", out.getString("message"));
+    }
+
+    @Test
+    void aPropertiesReloadWithoutARoutesReloadAfterItIsReportedAsSuch() {
+        String since = ReloadOutcome.latestReloadKey(records(BEFORE));
+        JsonObject out = ReloadOutcome.await(() -> records(BEFORE, PROPERTIES), since, 5000);
+        assertEquals("properties", out.getString("status"));
     }
 
     @Test
@@ -113,6 +135,25 @@ class ReloadOutcomeTest {
                      + " country=\"\"/>",
                 output.get(0));
         assertTrue(output.get(1).toString().startsWith("WARN Rollback file strategy"), output.toJson());
+    }
+
+    /** The errors after the first lines are the news: a route that went on and failed later on. */
+    @Test
+    void anErrorAfterTheFirstLinesIsKept() {
+        List<String> lines = new java.util.ArrayList<>(RELOADED);
+        for (int i = 1; i <= 6; i++) {
+            lines.add("2026-09-21 10:00:4" + (i + 1) + ".000  INFO 42 --- [ timer://tick] route1 : Order " + i);
+        }
+        lines.add("2026-09-21 10:00:48.500 ERROR 42 --- [ timer://tick] o.a.c.p.e.DefaultErrorHandler : Failed delivery for"
+                  + " exchangeId: A. Exhausted after delivery attempt: 1 caught: java.lang.IllegalStateException: stock");
+        lines.add("2026-09-21 10:00:49.000  INFO 42 --- [ timer://tick] route1 : Order 7");
+
+        JsonArray output = ReloadOutcome.output(records(BEFORE, lines));
+
+        assertEquals(List.of("Hello again", "Order 1", "Order 2", "Order 3", "Order 4"), List.copyOf(output.subList(0, 5)));
+        assertTrue(output.get(5).toString().startsWith("ERROR Failed delivery for exchangeId: A"), output.toJson());
+        assertEquals("... 3 more lines: camel_get_log shows them", output.get(6));
+        assertEquals(7, output.size(), output.toJson());
     }
 
     @Test

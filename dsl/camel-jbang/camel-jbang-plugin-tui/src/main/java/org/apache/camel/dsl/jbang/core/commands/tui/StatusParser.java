@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
@@ -243,7 +244,7 @@ final class StatusParser {
     /**
      * Routes and their processors with statistics.
      */
-    private static void parseRoutes(IntegrationInfo info, JsonObject root) {
+    static void parseRoutes(IntegrationInfo info, JsonObject root) {
         JsonArray routes = (JsonArray) root.get("routes");
         if (routes != null) {
             for (Object r : routes) {
@@ -257,6 +258,9 @@ final class StatusParser {
                 ri.state = rj.getString("state");
                 ri.supportsSuspension = rj.getBooleanOrDefault("supportsSuspension", false);
                 ri.uptime = rj.getString("uptime");
+                // the steps reached with more than one body type, and with more than one kind (CAMEL-25750)
+                ri.variedBodyTypes = rj.getIntegerOrDefault("variedBodyTypes", 0);
+                ri.mixedBodyKinds = rj.getIntegerOrDefault("mixedBodyKinds", 0);
 
                 Map<String, ?> rs = rj.getMap("statistics");
                 ri.statistics = rs;
@@ -298,10 +302,14 @@ final class StatusParser {
                         JsonObject pj = (JsonObject) p;
                         ProcessorInfo pi = new ProcessorInfo();
                         pi.id = pj.getString("id");
+                        pi.nodePrefixId = pj.getString("nodePrefixId");
                         pi.processor = pj.getString("processor");
                         pi.source = pj.getString("source");
                         pi.level = pj.getIntegerOrDefault("level", 0);
                         pi.uri = pj.getString("uri");
+                        // the body types the step has been reached with, and their kinds (CAMEL-25750)
+                        pi.bodyTypes = stringList(pj.get("bodyTypes"));
+                        pi.bodyKinds = stringList(pj.get("bodyKinds"));
 
                         Map<String, ?> ps = pj.getMap("statistics");
                         pi.statistics = ps;
@@ -562,6 +570,8 @@ final class StatusParser {
                         int idx = ep.uri.indexOf(':');
                         ep.component = idx > 0 ? ep.uri.substring(0, idx) : ep.uri;
                     }
+                    // here on the refresh thread, as the first look at the catalog loads it
+                    ep.scope = EndpointScope.of(ep.uri, ep.remote);
                     info.endpoints.add(ep);
                 }
             }
@@ -1574,6 +1584,18 @@ final class StatusParser {
 
     static long objToLong(Object o) {
         return TuiHelper.objToLong(o);
+    }
+
+    /** The strings of a JSON array, or an empty list. */
+    static List<String> stringList(Object o) {
+        if (!(o instanceof List<?> list) || list.isEmpty()) {
+            return List.of();
+        }
+        List<String> answer = new ArrayList<>(list.size());
+        for (Object item : list) {
+            answer.add(String.valueOf(item));
+        }
+        return answer;
     }
 
     private static void parseVaultSecrets(

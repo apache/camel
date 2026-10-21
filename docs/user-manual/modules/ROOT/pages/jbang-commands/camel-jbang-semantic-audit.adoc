@@ -34,6 +34,7 @@ camel semantic audit [options]
 | `--limit` | Maximum records per page (1-200) | 50 | int
 | `--max-records` | Case/export retrieval budget (1-1000) | 200 | int
 | `--operation` | Filter by recorded expert operation |  | String
+| `--output` | Write the full JSON response to a new file, including requested captured image data |  | Path
 | `--result-label` | Exact Classification member; requires --result-type=CLASSIFICATION |  | String
 | `--result-type` | Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION |  | String
 | `--result-value` | Exact Boolean, Choice or numeric Score value; requires --result-type |  | String
@@ -41,7 +42,7 @@ camel semantic audit [options]
 | `--score-max` | Inclusive numeric upper bound; requires --result-type=SCORE |  | String
 | `--score-min` | Inclusive numeric lower bound; requires --result-type=SCORE |  | String
 | `--since` | Earliest timestamp, inclusive, in ISO-8601 format with a UTC offset |  | String
-| `--timeout` | Timeout in milliseconds waiting for the integration | 60000 | long
+| `--timeout` | Timeout waiting for the integration, in millis or as a duration such as 30s | 60000 | long
 | `--until` | Latest timestamp, exclusive, in ISO-8601 format with a UTC offset |  | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===

@@ -32,6 +32,7 @@ camel tui [options]
 | Option | Description | Default | Type
 | `--mcp` | Enable embedded MCP server for AI agent access to the TUI |  | boolean
 | `--mcp-port` | MCP server port | 8123 | int
+| `--panel-theme` | Color theme of the shell (F6) and AI (F8) panels, or 'same' for the main theme (overrides the Panel Theme setting for this session) |  | String
 | `--record` | Play a .tape file in the TUI and record it to an Asciinema .cast file |  | String
 | `--record-duration` | Maximum duration in milliseconds captured by --record | 120000 | int
 | `--record-fps` | Frames per second captured by --record | 10 | int

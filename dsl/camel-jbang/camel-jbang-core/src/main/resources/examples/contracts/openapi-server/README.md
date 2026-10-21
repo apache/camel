@@ -42,8 +42,8 @@ Stop it with `ctrl` + `c`.
 ## How it works
 
 - `rest` with `openApi: specification: stock-api.json` is the whole API definition: paths, verbs and parameters
-  come from the contract, not from the route file, and the base path `/api` from its `servers` entry, which
-  must have a path. `restConfiguration` switches on `clientRequestValidation`,
+  come from the contract, not from the route file, and the base path `/api` from its `servers` entry (an entry
+  without a path serves the operations at the root). `restConfiguration` switches on `clientRequestValidation`,
   which rejects a request without the body or content type the contract requires with 400, and
   `apiContextPath: openapi` serves the contract.
 - Each operation is a `direct` route named after its `operationId`: `listStock`, `getStock`, `reserveStock`.

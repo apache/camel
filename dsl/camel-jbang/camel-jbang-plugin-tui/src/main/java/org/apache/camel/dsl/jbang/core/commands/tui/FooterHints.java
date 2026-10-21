@@ -31,6 +31,22 @@ final class FooterHints {
     }
 
     /**
+     * Where the F-key hints go in a screen's footer: after its first hint, its most important one. While text is typed
+     * the footer is the field with its own keys (Enter, Esc): the F-keys go after those, as after the first two spans
+     * they would part the field from its keys, or cut it in two when the caret is inside it. The field's last key has
+     * no gap after it, so one is added.
+     */
+    static int fKeyPosition(List<Span> spans, boolean typing) {
+        if (!typing) {
+            return Math.min(2, spans.size());
+        }
+        if (!spans.isEmpty() && !spans.get(spans.size() - 1).content().endsWith("  ")) {
+            spans.add(Span.raw("  "));
+        }
+        return spans.size();
+    }
+
+    /**
      * @param  spans       the footer: the screen's hints, with the F-key hints inserted at {@code fKeyStart}; the hints
      *                     dropped are removed from it
      * @param  fKeyStart   where the F-key hints start; the size of the spans when there are none

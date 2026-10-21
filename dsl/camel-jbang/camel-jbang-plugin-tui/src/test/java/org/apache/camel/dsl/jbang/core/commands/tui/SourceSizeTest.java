@@ -56,13 +56,11 @@ class SourceSizeTest {
 
     /** The files and the methods (class.method) over the limits, and the most lines each may have. */
     private static final String OVER_THE_LIMITS = """
-            AiPanel.java 3187
+            AiPanel.java 3180
             AiPanel.runAgentLoop 159
             AiUsageStats.render 166
-            CamelMonitor.java 2780
-            DiagramDetailSupport.renderEipInfoPanel 159
-            DiagramDetailSupport.renderRouteInfoPanel 154
-            DiagramSupport.java 2460
+            CamelMonitor.java 2761
+            DiagramSupport.java 2413
             DiagramSupport.loadAllDiagramsInBackground 180
             DiagramSupport.loadHighlightedNativeDiagramInBackground 212
             EndpointsTab.renderContent 170
@@ -71,13 +69,11 @@ class SourceSizeTest {
             LogTab.render 173
             MemoryLeakTab.java 2033
             NetworkTab.renderContent 162
-            OllamaMonitor.toJson 206
+            OllamaMonitor.toJson 200
             OverviewTab.buildOverviewTable 185
             OverviewTab.renderThroughputChart 158
-            RoutesTab.renderProcessors 179
             SendMessagePopup.doSend 156
             SendMessagePopup.handleKeyEvent 220
-            SettingsPopup.handleKeyEvent 160
             SourceEditAssist.java 2006
             SourceViewer.handleEditKeyEvent 231
             SourceViewer.java 3055

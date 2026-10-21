@@ -66,9 +66,13 @@ public class TokenizerDefinition extends NoOutputDefinition<TokenizerDefinition>
     }
 
     /**
-     * Gets the tokenizer name
+     * Gets the tokenizer name, which is the name of the tokenizer implementation when not set: the XML and YAML DSL set
+     * only the implementation (CAMEL-25777)
      */
     public String tokenizerName() {
+        if (tokenizerName == null && tokenizerImplementation != null) {
+            return tokenizerImplementation.tokenizerName();
+        }
         return tokenizerName;
     }
 

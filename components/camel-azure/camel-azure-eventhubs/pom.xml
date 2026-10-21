@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-parent</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-azure-eventhubs</artifactId>
@@ -79,6 +79,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- deterministic simulation test of the checkpointing (dst package) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-dst</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -136,10 +136,15 @@ class AiCliCommandExecutorTest {
 
     @Test
     void productionInvokerRestoresPrinterAndDoesNotQuitMain() throws Exception {
-        CamelJBangMain main = new CamelJBangMain();
+        // a command runs on new instances of the commands, so the test command is added the way plugins add theirs
+        CamelJBangMain main = new CamelJBangMain() {
+            @Override
+            public void postAddCommands(CommandLine commandLine, String[] args) {
+                commandLine.addSubcommand("tui-test", new CommandLine(new TuiTestCommand(this)));
+            }
+        };
         Printer originalPrinter = main.getOut();
-        CommandLine commandLine = new CommandLine(main)
-                .addSubcommand("tui-test", new CommandLine(new TuiTestCommand(main)));
+        CommandLine commandLine = new CommandLine(main);
         Field field = CamelJBangMain.class.getDeclaredField("commandLine");
         field.setAccessible(true);
         CommandLine previous = (CommandLine) field.get(null);

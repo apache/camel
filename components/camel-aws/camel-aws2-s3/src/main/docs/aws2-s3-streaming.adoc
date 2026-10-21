@@ -7,8 +7,10 @@ xref:ROOT:aws2-s3-component.adoc[Back to AWS S3 Component]
 
 With the stream mode enabled, users will be able to upload data to S3 without knowing ahead of time the dimension of the data, by leveraging multipart upload.
 The upload will be completed when the batchSize has been completed or the batchMessageNumber has been reached.
-There are two possible naming strategies: progressive and random.
+There are three possible naming strategies: progressive, random and timestamp.
 With the progressive strategy, each file will have the name composed by keyName option and a progressive counter, and eventually the file extension (if any), while with the random strategy a UUID will be added after keyName and eventually the file extension will be appended.
+With the timestamp strategy, the time the upload started (in milliseconds) is added after keyName instead of the UUID.
+With the random and timestamp strategies every file gets this part, the first file of the producer too, so a producer that is started again does not replace the files written before.
 
 Additionally, streaming upload mode supports timestamp-based file grouping, which allows messages to be automatically grouped into time windows based on their timestamps.
 
@@ -96,7 +98,23 @@ Messages are grouped based on their timestamps extracted from the specified head
 - Date: Java Date object
 - String: String representation of Unix timestamp in milliseconds
 
-Files are automatically named using a timestamp-based pattern that includes the time window information.
+Files are automatically named using a timestamp-based pattern that includes the time window information, for example
+`grouped-messages_20240101_0800_0800-0805.txt` for the window from 08:00 to 08:05 (UTC). The upload of a window is
+completed when it reaches `batchMessageNumber` messages or `batchSize` bytes, or when `streamingUploadTimeout` runs. When
+more messages of that window come after it, they are uploaded to a new object of the window, named with the number of
+the uploads of the window before it: `grouped-messages_20240101_0800_0800-0805-1.txt`, then `-2`, and so on. The first
+time a producer uploads a window, it lists the objects of the window in the bucket (one `ListObjectsV2` request with the
+window's key as prefix), so after a restart it continues after the highest number already stored instead of replacing
+that object. This needs the `s3:ListBucket` permission: without it the producer logs a WARN and numbers the uploads of
+the window from the first one, so an upload after a restart can replace an object of the window again.
+
+These keys do not sort in upload order: `...0805-1.txt` sorts before `...0805.txt` (`-` sorts before `.`), and `-10`
+sorts before `-2`. To read the uploads of a window in order, sort them by the number after the time range (none for
+the first upload).
+
+Producers that run at the same time (for example two routes or two applications) with the same `keyName` and
+timestamp grouping still choose the same names for the same window, so one can replace the object of the other. Give
+each of them its own `keyName`.
 
 ==== Example Configuration
 

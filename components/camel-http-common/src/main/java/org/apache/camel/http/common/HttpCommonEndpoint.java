@@ -141,7 +141,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     private HttpMethods httpMethod;
 
     @UriParam(label = "producer,security", enums = "Basic,Bearer,NTLM",
-              description = "Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM. (NTLM is deprecated)")
+              description = "The authentication method to use: Basic, Bearer or NTLM. (NTLM is deprecated)")
     private String authMethod;
     @UriParam(label = "producer,security", security = "secret", description = "Authentication username")
     private String authUsername;
@@ -643,7 +643,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
     }
 
     /**
-     * Authentication methods allowed to use as a comma separated list of values Basic, Bearer, or NTLM (deprecated).
+     * The authentication method to use: Basic, Bearer or NTLM (deprecated).
      */
     public void setAuthMethod(String authMethod) {
         this.authMethod = authMethod;

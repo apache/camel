@@ -43,6 +43,7 @@ import dev.tamboui.widgets.tabs.TabsState;
 import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
@@ -1631,7 +1632,11 @@ class McpFacade {
         } catch (NumberFormatException e) {
             return null;
         }
-        JsonObject rejected = confirm(ToolConfirms.sendMessage(endpoint, selectedEndpointUris()));
+        // a body file:... makes the integration read that file, relative to its working directory
+        IntegrationInfo info = findIntegration(null);
+        String fileOutside = ToolConfirms.fileOutsideProject(
+                body, info != null ? info.directory : null, getSelectedSourceDirectory());
+        JsonObject rejected = confirm(ToolConfirms.sendMessage(endpoint, selectedEndpointUris(), fileOutside));
         return rejected != null ? rejected : RuntimeHelper.sendMessage(pid, endpoint, body, headers);
     }
 
@@ -1666,6 +1671,36 @@ class McpFacade {
 
     String controlIntegration(String action) {
         return controlIntegration(action, null);
+    }
+
+    /**
+     * Waits until the restarted integration has started, or failed to start: the restart is watched as a launch.
+     *
+     * @throws ToolExecutionException when it failed to start, with the end of its log
+     */
+    static String awaitRestart(LaunchManager lm, String name) {
+        if (lm == null) {
+            return "Restarting " + name;
+        }
+        long deadline = MonotonicClock.millis() + TuiToolRegistry.RUN_EXAMPLE_WAIT_MS;
+        LaunchManager.LaunchOutcome outcome;
+        while ((outcome = lm.outcome(name)) == null && MonotonicClock.millis() < deadline) {
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return "Restarting " + name;
+            }
+        }
+        if (outcome == null) {
+            return "Restarting " + name + " (still starting)";
+        }
+        if (outcome.ok()) {
+            return "Restarted " + name;
+        }
+        throw new ToolExecutionException(
+                "Restart of " + name + " failed: it stopped while starting"
+                                         + (outcome.log() != null ? "\n" + outcome.log() : ""));
     }
 
     /**
@@ -1744,8 +1779,12 @@ class McpFacade {
                 if (ctx.isInfraSelected()) {
                     yield "Error: cannot restart infra service";
                 }
+                LaunchManager lm = launchManager;
+                if (lm != null) {
+                    lm.clearOutcome(name);
+                }
                 bridge.restartProcess();
-                yield "Restarting " + name;
+                yield awaitRestart(lm, name);
             }
             case "stop" -> {
                 bridge.stopProcess(false);

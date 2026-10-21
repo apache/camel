@@ -630,6 +630,26 @@ public interface MllpComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether the producer checks that the certificate of the server
+         * matches the host it connects to, when SSL/TLS is used. When disabled,
+         * any certificate accepted by the trust store is accepted, whatever
+         * host it was issued for.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default MllpComponentBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+    
         /**
          * Sets the SSLContextParameters for securing TCP connections. If set,
          * the MLLP component will use SSL/TLS for securing both producer and
@@ -735,6 +755,7 @@ public interface MllpComponentBuilderFactory {
             case "receiveBufferSize": getOrCreateConfiguration((MllpComponent) component).setReceiveBufferSize((java.lang.Integer) value); return true;
             case "receiveTimeout": getOrCreateConfiguration((MllpComponent) component).setReceiveTimeout((int) value); return true;
             case "sendBufferSize": getOrCreateConfiguration((MllpComponent) component).setSendBufferSize((java.lang.Integer) value); return true;
+            case "hostnameVerification": getOrCreateConfiguration((MllpComponent) component).setHostnameVerification((boolean) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((MllpComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((MllpComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
             case "idleTimeout": getOrCreateConfiguration((MllpComponent) component).setIdleTimeout((java.lang.Integer) value); return true;

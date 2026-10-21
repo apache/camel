@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -84,6 +84,13 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jbang-core</artifactId>
+            <exclusions>
+                <!-- Quarkus provides the SLF4J provider (JBoss LogManager): a second one makes SLF4J warn at every start -->
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j2-impl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Camel Catalog (needed at runtime for DefaultCamelCatalog / AbstractCamelCatalog) -->
@@ -110,6 +117,12 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-yaml-dsl</artifactId>
+        </dependency>
+
+        <!-- rest-openapi component: the OpenAPI tools follow its rules (generated operation ids) -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rest-openapi</artifactId>
         </dependency>
 
         <!-- Swagger/OpenAPI parser for contract-first OpenAPI tools -->
@@ -143,6 +156,11 @@
         </dependency>
 
         <!-- test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-direct</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-dsl</artifactId>

@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 import java.util.Optional;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -151,6 +152,18 @@ class CatalogServiceTest {
         assertThat(version(createService(null), null, "9.99.99", bom)).isEqualTo(BUILTIN_VERSION);
     }
 
+    @Test
+    void springBootWithoutVersionFallsBackToDefaultCatalogWhenOffline() {
+        // When runtime=spring-boot with no explicit version or BOM, the catalog loader tries to download
+        // the Spring Boot catalog provider from Maven Central. In environments without network access (CI),
+        // this fails with a DownloadException. The fix is to fall back to the default catalog rather than
+        // surfacing a confusing network error to the user.
+        // This test uses a non-existent repo so the download always fails, simulating offline/CI behaviour.
+        CatalogService service = createService("file:///nonexistent-repo-that-never-exists");
+
+        assertThat(version(service, "spring-boot", null, null)).isEqualTo(BUILTIN_VERSION);
+    }
+
     // Download tests — require Maven Central access.
     // Disabled in CI environments to avoid flaky network-dependent failures.
 
@@ -175,5 +188,25 @@ class CatalogServiceTest {
 
         assertThat(version).isEqualTo(requestedVersion);
         assertThat(version).isNotEqualTo(BUILTIN_VERSION);
+    }
+
+    /**
+     * CAMEL-25640: quarkus runtime with only camelVersion (no explicit platformBom) used to pass null to
+     * loadQuarkusCatalog, which silently returned an unusable catalog. The fix resolves the BOM from the registry.
+     * Disabled in CI: requires network access to the Quarkus extension registry.
+     */
+    @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                              disabledReason = "Runs only local — requires Quarkus extension registry access")
+    void quarkusRuntimeWithCamelVersionResolvesTheBomFromRegistry() throws Exception {
+        // CAMEL-25640: passing camelVersion with quarkus runtime must resolve the platform BOM from the Quarkus
+        // extension registry and pass it to doLoadCatalog; previously it passed null and produced an NPE or a
+        // silently wrong catalog. Use a released version that is not the built-in one so sameAsDefault() is false
+        // and the new code path is taken.
+        // Note: getCatalogVersion() returns the CLI's own Camel version (from camel-catalog on the classpath),
+        // not the requested "4.10.0". Check the runtime provider instead to verify the Quarkus path was taken.
+        CatalogService service = createService(null);
+        CamelCatalog catalog = service.loadCatalog("quarkus", "4.10.0", null);
+        assertThat(catalog.getRuntimeProvider().getProviderName()).isEqualTo("quarkus");
     }
 }

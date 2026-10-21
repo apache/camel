@@ -2,7 +2,7 @@
 	"openapi": "3.0.3",
 	"info": {
 		"title": "Camel Dev Console API",
-		"version": "4.23.0-SNAPSHOT"
+		"version": "4.24.0-SNAPSHOT"
 	},
 	"paths": {
 		"\/q\/dev\/activity": {
@@ -617,6 +617,104 @@
 									"required": [
 										"blocked"
 									]
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/body-type": {
+			"get": {
+				"summary": "Body Type",
+				"description": "The body types each step of the routes has been reached with",
+				"operationId": "body-type",
+				"parameters": [
+					{
+						"name": "filter",
+						"in": "query",
+						"description": "Filters the routes matching by route id, route uri, and source location",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "varied",
+						"in": "query",
+						"description": "Whether to include only the steps that have been reached with more than one body type",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": false
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Body Type output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"source": {
+														"type": "string",
+														"description": "The source location (only present when known)"
+													},
+													"steps": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "string",
+																	"description": "The processor ID"
+																},
+																"type": {
+																	"type": "string",
+																	"description": "The processor type"
+																},
+																"line": {
+																	"type": "integer",
+																	"description": "The source line number (only present when known)"
+																},
+																"code": {
+																	"type": "string",
+																	"description": "The code representation of this processor"
+																},
+																"bodyTypes": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The body types this processor has been reached with, across the messages, in the order first seen: more than one means the type varied"
+																},
+																"bodyKinds": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention"
+																}
+															}
+														},
+														"description": "The steps of the route that a message has reached, with their body types"
+													}
+												}
+											},
+											"description": "The routes with a step that a message has reached (the message history records the body types, such as in the dev profile)"
+										}
+									}
 								}
 							}
 						}
@@ -4715,6 +4813,20 @@
 														"type": "string",
 														"description": "The destination URI, for processors that send to a destination (only present when applicable)"
 													},
+													"bodyTypes": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)"
+													},
+													"bodyKinds": {
+														"type": "array",
+														"items": {
+															"type": "string"
+														},
+														"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention (only present when the message history recorded any)"
+													},
 													"statistics": {
 														"type": "object",
 														"properties": {
@@ -5824,6 +5936,14 @@
 														"type": "string",
 														"description": "Route uptime, human readable text"
 													},
+													"variedBodyTypes": {
+														"type": "integer",
+														"description": "The number of steps that have been reached with more than one body type, across the messages: a part of the route that is dynamic (only present when there are any, as the message history records the body types, such as in the dev profile)"
+													},
+													"mixedBodyKinds": {
+														"type": "integer",
+														"description": "The number of steps that have been reached with bodies of more than one kind (null, payload, data or collection): these need attention, as a step that writes or sends fails for the data, and a step that reads fields fails for the payload. The route-structure console says which steps (only present when there are any)"
+													},
 													"lastError": {
 														"type": "object",
 														"properties": {
@@ -5891,6 +6011,18 @@
 																"type": "integer",
 																"description": "Number of inflight exchanges"
 															},
+															"remoteExchangesTotal": {
+																"type": "integer",
+																"description": "Total number of exchanges that came from a remote endpoint"
+															},
+															"remoteExchangesFailed": {
+																"type": "integer",
+																"description": "Number of failed exchanges that came from a remote endpoint"
+															},
+															"remoteExchangesInflight": {
+																"type": "integer",
+																"description": "Number of inflight exchanges that came from a remote endpoint"
+															},
 															"meanProcessingTime": {
 																"type": "integer",
 																"description": "Mean processing time in milliseconds"
@@ -5945,6 +6077,9 @@
 															"exchangesTotal",
 															"exchangesFailed",
 															"exchangesInflight",
+															"remoteExchangesTotal",
+															"remoteExchangesFailed",
+															"remoteExchangesInflight",
 															"meanProcessingTime",
 															"maxProcessingTime",
 															"minProcessingTime"
@@ -6024,6 +6159,20 @@
 																"uri": {
 																	"type": "string",
 																	"description": "The destination URI, for processors that send to a destination (only present when applicable)"
+																},
+																"bodyTypes": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)"
+																},
+																"bodyKinds": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention (only present when the message history recorded any)"
 																},
 																"statistics": {
 																	"type": "object",
@@ -6861,6 +7010,20 @@
 																"remote": {
 																	"type": "boolean",
 																	"description": "Whether the endpoint is remote (only present when true)"
+																},
+																"bodyTypes": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The body types this processor has been reached with, across the exchanges, in the order first seen: more than one means the type varied (only present when the message history recorded any, such as in the dev profile)"
+																},
+																"bodyKinds": {
+																	"type": "array",
+																	"items": {
+																		"type": "string"
+																	},
+																	"description": "The kinds of the bodies this processor has been reached with: null, payload (text, bytes, a stream or a file), data (a Map or an object) or collection (a List, a Set, an array, or an iterator). More than one means the step needs attention: a step that writes or sends fails for the data, a step that reads fields fails for the payload (only present when the message history recorded any)"
 																},
 																"statistics": {
 																	"type": "object",

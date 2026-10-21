@@ -4,7 +4,7 @@ This page covers configuring the Camel CLI — available options, configuration 
 
 // jbang options: START
 == Camel CLI configurations
-The camel.jbang supports 53 options, which are listed below.
+The camel.jbang supports 54 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -15,6 +15,7 @@ The camel.jbang supports 53 options, which are listed below.
 | `camel.jbang.classpathFiles` | Additional files to add to classpath (Use commas to separate multiple files). |  | String
 | `camel.jbang.compileWorkDir` | Work directory for compiler. Can be used to write compiled classes or other resources. | .camel-jbang/compile | String
 | `camel.jbang.console` | Developer console at /q/dev on local HTTP server (port 8080 by default) | false | boolean
+| `camel.jbang.dataDir` | Folders under the source directory (comma separated) that hold data the routes read or write, not sources: in dev mode a change in them does not reload the routes. Use this for an inbox, outbox or archive folder under the source directory. |  | String
 | `camel.jbang.dependencies` | Additional dependencies (Use commas to separate multiple dependencies). |  | String
 | `camel.jbang.dependencies.main` | Additional dependencies for Camel Main runtime only |  | String
 | `camel.jbang.dependencies.quarkus` | Additional dependencies for Quarkus runtime only |  | String
@@ -129,3 +130,13 @@ List them, and remove the ones no longer in use:
 camel dirty
 camel dirty --clean
 ----
+
+Only the files named after the pid of a process that is gone count, such as `<pid>-status.json`. Other files in
+`~/.camel`, such as the log of a Spring Boot or Quarkus app that `camel run` runs (`<name>.log`), are left alone.
+
+The log of the previous run of an integration (`~/.camel/<name>-previous.log`, see `camel log --previous`) is kept on
+purpose, so `camel dirty` leaves it.
+
+An error is printed as one line that starts with `ERROR:`. To see the stack trace of every error, set the
+environment variable `CAMEL_CLI_DEBUG` to `true`. See xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]
+for what each exit code means.

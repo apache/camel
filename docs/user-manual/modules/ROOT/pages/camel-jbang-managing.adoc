@@ -27,26 +27,38 @@ Stop by name or PID:
 [source,bash]
 ----
 camel stop dude
-Stopping running Camel integration (pid: 62506)
+Shutting down Camel integration (PID: 62506)
 ----
 
+`camel stop` waits until the integration has stopped, up to `--timeout` (60 seconds by default). When it has not
+stopped in time, it exits with code `124`, and `--kill` stops it at once. Use `--no-wait` to return without waiting.
+
 NOTE: The name is matched as a prefix — `camel stop d` stops all integrations starting with _d_.
-To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`
+To stop exactly one when names overlap (e.g., `dude` and `dude2`), use the PID or append `!`: `camel stop dude!`.
+A PID must be a running Camel integration, and a name or PID that matches nothing exits with code `3`
+(see xref:camel-jbang-exit-codes.adoc[Exit Codes and Output]).
 
 Restart an integration (stop + re-launch):
 
 [source,bash]
 ----
 camel restart dude
+Stopping Camel integration: dude (PID: 62506)
+Restarted Camel integration: dude (PID: 63010)
+Log: ~/.camel/restart-62506-1234.log
 ----
+
+`camel restart` waits until the integration has stopped, and until the new one has started, and keeps the output of
+the new integration in the log file it prints. When the new integration stops right away, it prints the end of the log
+and exits with code `1`; when it is still starting after `--timeout`, it exits with code `124` and leaves it running.
 
 Stop all integrations (omit the name):
 
 [source,bash]
 ----
 camel stop
-Stopping running Camel integration (pid: 61818)
-Stopping running Camel integration (pid: 62506)
+Shutting down Camel integration (PID: 61818)
+Shutting down Camel integration (PID: 62506)
 ----
 
 === Watch mode
@@ -93,13 +105,19 @@ Use `--background` to run an integration as a background process (Camel Main onl
 [source,bash]
 ----
 $ camel run chuck.yaml --background
-Running Camel integration: chuck in background with PID: 80093
+Running Camel Main: chuck in background with PID: 80093 (waiting to startup)
+Log: /home/user/.camel/80093-run.log
+Camel Main: chuck (state: Running)
 ----
 
 Use `camel ps` to list, `camel log` to tail output, and `camel stop` to shut down.
 
-Since Camel 4.10, the command waits for startup to complete and reports any errors
-before returning. Disable with `--background-wait=false`.
+The command waits up to 60 seconds for the integration to start, and reports any errors before returning.
+Set how long with `--background-wait`, such as `--background-wait=2m`, or do not wait with `--background-wait=false`.
+An integration that fails to start prints its log and exits with `1`.
+One that is still starting after the wait exits with `124`, and is left running.
+
+The output of the integration goes to `~/.camel/<pid>-run.log`, which `camel stop` removes.
 
 == Getting status
 
@@ -129,6 +147,12 @@ camel get route
  61818  MyCamel   hello   timer://hello?period=2000   Running  29m2s    870       0         0     0    0   14     0s/0s/-
  63051  dude      java    timer://java?period=1000    Running    46s     46       0         0     0    0    9     0s/0s/-
 ----
+
+Use `--remote` to break down TOTAL, FAILED and INFLIGHT into remote/total pairs: the exchanges that came from a remote
+endpoint, such as Kafka or HTTP, of all the exchanges of the route. A route with a remote consumer has only remote
+exchanges, and a route such as `direct:audit` has the remote exchanges of the routes that call it. The same works with
+`camel get processor --remote` and `camel top route --remote`, and the JSON of these commands has the remote counters
+as `remoteTotal`, `remoteFailed` and `remoteInflight`.
 
 TIP: Run `camel get --help` to see all available sub-commands.
 
@@ -342,6 +366,15 @@ example `--parameter=threshold=json:0.7`, `--variable=enabled=json:true`, or
 `--input='json:["first","second"]'`. Use a JSON string to pass literal text beginning
 with `json:` or `file:`. `--body=file:sample.txt` and `--input=file:sample.txt` read the
 file as UTF-8 text.
+
+For an expert accepting images, `--body=image:/path/picture.png` or
+`--input=image:/path/picture.png` reads a local PNG, JPEG, GIF or WebP file. Before reading,
+the CLI queries the selected expert's runtime metadata for its `maxImageBytes` limit.
+It checks both the file size and the actual read, and checks inline images before submitting
+an evaluation. Configure the limit on the expert bean; the OpenAI Decisions expert defaults
+to 10 MB (10,000,000 bytes) per image before base64 encoding. Both the CLI and TUI use that
+same configuration. Missing image support or limit metadata prevents local image loading;
+no evaluation is submitted. Use a JSON string to pass a literal `image:` prefix.
 
 Evaluation prints the value, available probability or probabilities, confidence,
 provider metadata, elapsed milliseconds and any error. It invokes the configured
@@ -595,6 +628,37 @@ camel log chuck --grep=error
 
 By default, `log` tails continuously. Use `--follow=false` to output matching lines and exit.
 
+=== The log of the previous run
+
+When an integration stops, its log is kept as the log of its previous run, like `kubectl logs --previous` in Kubernetes.
+Use `--previous` to see why an integration stopped, such as one that failed to start:
+
+[source,bash]
+----
+$ camel log chuck --previous
+The previous run of chuck (pid 80093) ended at 2026-10-19 10:32:01 (2m3s ago) with exit code 70: Failed to create route: route1 ...
+2026-10-19 10:32:00.912  INFO 80093 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 4.24.0 is starting
+...
+----
+
+The first line, on stderr, says which run it was and how it ended. The log follows on stdout.
+A run that Ctrl+C or SIGTERM stopped ended with exit code 130 or 143 (`(SIGINT)` or `(SIGTERM)` follows the code): the
+JVM exits with 128 and the number of the signal, as a shell and Kubernetes show it.
+The options `--tail`, `--since`, `--grep`, `--find` and `--startup` work as they do for a running integration.
+When you run `camel log` with the name of an integration that is not running, the error says how its previous run ended.
+
+Each name keeps the log of its last run that ended, as `~/.camel/<name>-previous.log`.
+The next run of that name that ends replaces it. Like Kubernetes, at most the last 10 MB of a log are kept.
+An integration that was killed, or whose JVM crashed, leaves its log behind.
+That log becomes the log of its previous run the next time you look one up.
+
+The log is kept for every runtime: `jbang`, the default (also with `--background`), and the runtimes that run with
+Maven (`--runtime=spring-boot`, `quarkus` or `main`, and `camel run pom.xml` of an existing project).
+With `quarkus` and `spring-boot`, Maven runs the app in a process of its own, so the first line has no pid and no exit
+code of the app: it says how Maven ended when it failed, such as `Maven ended with exit code 1`.
+A run on a Maven runtime that was killed leaves its log behind as `~/.camel/<name>.log`. That log becomes the log of the
+previous run when the next run of that name starts.
+
 == Configuring logging levels
 
 View and change logging levels at runtime:
@@ -796,6 +860,9 @@ $ camel get metric
  11562  MyCoolCamel  gauge  system.cpu.usage                        0.15222772277227722
  11562  MyCoolCamel  gauge  system.load.average.1m                        3.58935546875
 ----
+
+Use `--filter` for the metrics of a type, or with a name or tags that contain the text or match a pattern such as
+`timer*`, `--custom` to leave out the metrics of Camel itself, and `--all` to include the metrics that are still `0`.
 
 == Circuit breaker status
 

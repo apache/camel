@@ -66,6 +66,7 @@ import dev.tamboui.widgets.spinner.SpinnerStyle;
 import org.apache.camel.dsl.jbang.core.commands.LlmClient;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.AppFeatures;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.util.json.JsonObject;
@@ -643,13 +644,11 @@ class AiPanel {
                 toolSet.setMode(normalizeToolMode(TuiSettings.load().getAiTools()));
             }
             client = created;
-            if (!client.detectEndpoint()) {
-                initError
-                        = "No LLM service reachable. Set ANTHROPIC_API_KEY, AZURE_OPENAI_*, GEMINI_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or start Ollama.";
+            initError = AiProviderSelector.detectEndpoint(client);
+            if (initError != null) {
                 client = null;
                 return;
             }
-            initError = null;
             // know the Ollama window before the first question instead of resolving it in front of the first request
             client.resolveOllamaContextWindowInBackground();
             messages = new ArrayList<>();
@@ -1586,15 +1585,7 @@ class AiPanel {
      * broke, and to send the whole answer again. Worded so the fake clients of the tests and the log recognise it.
      */
     static String correctionRequest(List<AnswerChecks.Problem> problems) {
-        StringBuilder sb = new StringBuilder("Your answer contains ");
-        sb.append(problems.size() == 1 ? "an invalid simple expression" : "invalid simple expressions").append(":\n");
-        for (AnswerChecks.Problem p : problems) {
-            sb.append("- ").append(p.message()).append('\n');
-        }
-        sb.append("Rule: functions and values go inside ${...}, operators go between placeholders with spaces:")
-                .append(" ${header.user} ?: 'Guest', ${header.a} == 'b', ${body} != null.")
-                .append(" Send the whole answer again with the expressions fixed; do not call a tool.");
-        return sb.toString();
+        return AnswerChecks.correctionRequest(problems);
     }
 
     /** The line under an answer whose simple expressions the model did not fix, so the user is not misled. */
@@ -2048,7 +2039,7 @@ class AiPanel {
         StringBuilder md = new StringBuilder();
 
         if (initError != null) {
-            if (initError.startsWith("No LLM service reachable")) {
+            if (initError.startsWith(AiProviderSelector.NO_PROVIDER)) {
                 md.append(buildAiSetupGuide());
             } else {
                 md.append("**Error:** ").append(initError).append("\n\n");
@@ -2697,7 +2688,7 @@ class AiPanel {
         }
         try {
             return toolRegistry.execute(name, args);
-        } catch (IllegalArgumentException e) {
+        } catch (TuiToolRegistry.UnknownToolException e) {
             return "Unknown TUI tool: " + name;
         } catch (Exception e) {
             return "Error executing " + name + ": " + e.getMessage();

@@ -16,6 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileSystemException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -28,7 +35,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.SemanticAuditFilters;
+import org.apache.camel.dsl.jbang.core.common.SemanticImagePreview;
+import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.dsl.jbang.core.common.SemanticResultFormatter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -111,6 +121,10 @@ public class SemanticAudit extends SemanticActionCommand {
 
     @CommandLine.Option(names = "--include-input", description = "Include untrusted captured input in an explicit case/export")
     boolean includeInput;
+
+    @CommandLine.Option(names = "--output",
+                        description = "Write the full JSON response to a new file, including requested captured image data")
+    Path output;
 
     public SemanticAudit(CamelJBangMain main) {
         super(main);
@@ -197,20 +211,40 @@ public class SemanticAudit extends SemanticActionCommand {
     @Override
     protected int printResponse(JsonObject response) {
         if (response.containsKey("error")) {
-            return error(1, "Audit query failed", response);
+            return error(CliExitCode.FAILURE, "Audit query failed", response);
         }
         if (Boolean.TRUE.equals(response.get("unavailable")) || eventId != null && response.get("record") == null) {
-            return error(3, "Audit event is unavailable: " + (caseEventId != null ? caseEventId : eventId), response);
+            return error(CliExitCode.NOT_FOUND, "Audit event is unavailable: " + (caseEventId != null ? caseEventId : eventId),
+                    response);
         }
         if (Boolean.TRUE.equals(response.get("cursorExpired"))) {
-            return error(1, "Audit cursor expired; start again without --cursor", response);
+            return error(CliExitCode.FAILURE, "Audit cursor expired; start again without --cursor", response);
         }
-        return super.printResponse(response);
+        if (output != null) {
+            try {
+                Files.writeString(output, response.toJson(), StandardOpenOption.CREATE_NEW);
+                printer().println("Audit exported to " + displayText(output));
+                return 0;
+            } catch (IOException e) {
+                String reason = e instanceof FileAlreadyExistsException ? "file already exists"
+                        : e instanceof AccessDeniedException ? "permission denied"
+                        : e instanceof FileSystemException failure && failure.getReason() != null
+                                ? displayText(failure.getReason())
+                        : "I/O failure (" + e.getClass().getSimpleName() + ")";
+                return error(CliExitCode.FAILURE, "Cannot create audit export file: " + reason, null);
+            }
+        }
+        return super.printResponse(json ? (JsonObject) SemanticMediaInput.withoutImageData(response) : response);
     }
 
     private void renderAuditField(String key, Object value, String indent) {
         if ("input".equals(key)) {
-            renderInput("Input", value, indent);
+            renderInput("Input", SemanticMediaInput.withoutImageData(value), indent);
+            for (var preview : SemanticImagePreview.prepare(value)) {
+                preview.textLines().forEach(line -> printer().println(indent + line));
+            }
+        } else if ("inputType".equals(key)) {
+            renderField("Input type", SemanticMediaInput.typeLabel(value), indent);
         } else {
             renderField(fieldLabel(key), value, indent);
         }
@@ -266,6 +300,8 @@ public class SemanticAudit extends SemanticActionCommand {
                     column("EVENT ID", "eventId"), column("TIMESTAMP", "timestamp"),
                     column("EXECUTING ROUTE", "executingRouteId"),
                     column("EVALUATION", "definition"), column("EXPERT", "expert"),
+                    new Column().header("INPUT").dataAlign(HorizontalAlign.LEFT)
+                            .with((JsonObject row) -> SemanticMediaInput.typeLabel(row.get("inputType"))),
                     new Column().header("RESULT").dataAlign(HorizontalAlign.LEFT)
                             .with((JsonObject row) -> SemanticResultFormatter.audit(row).compact()),
                     column("EXECUTION", "status"), column("BREADCRUMB ID", "breadcrumbId"))));

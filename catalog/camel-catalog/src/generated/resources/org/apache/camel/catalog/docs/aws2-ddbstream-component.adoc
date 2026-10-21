@@ -78,6 +78,26 @@ Only one of static, default and profile credentials could be used at the same ti
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
+=== Example
+
+The following route consumes the changes of the `orders` table from now on (`FROM_LATEST`).
+The body of each message is a change record of the stream:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-ddbstream:orders
+      parameters:
+        streamIteratorType: FROM_LATEST
+        region: eu-west-1
+        accessKey: "{{aws.access-key}}"
+        secretKey: "{{aws.secret-key}}"
+      steps:
+        - log:
+            message: "Change in the orders table: ${body}"
+----
+
 === Coping with Downtime
 
 ==== AWS DynamoDB Streams outage of less than 24 hours

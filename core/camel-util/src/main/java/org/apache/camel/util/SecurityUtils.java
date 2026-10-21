@@ -159,8 +159,12 @@ public final class SecurityUtils {
                 "component:opa",
                 "component:openfga"));
         owners.put("hostnameverification", Set.of(
+                "component:mina",
+                "component:mllp",
                 "component:netty",
-                "component:nettyhttp"));
+                "component:nettyhttp",
+                "component:smpp",
+                "component:smpps"));
         owners.put("httpshostnameverificationenabled", Set.of(
                 "component:paho",
                 "component:pahomqtt5"));
@@ -271,7 +275,9 @@ public final class SecurityUtils {
                 "component:awscloudtrail",
                 "component:awsconfig",
                 "component:awssecretsmanager",
-                "component:awssecurityhub"));
+                "component:awssecurityhub",
+                "component:milobrowse",
+                "component:miloclient"));
         owners.put("trustallpackages", Set.of(
                 "component:activemq",
                 "component:activemq6"));

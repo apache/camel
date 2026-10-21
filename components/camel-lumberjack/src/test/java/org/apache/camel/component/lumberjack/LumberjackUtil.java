@@ -34,6 +34,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.FixedLengthFrameDecoder;
 import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -74,7 +75,10 @@ final class LumberjackUtil {
                         pipeline.addLast(new SslHandler(sslEngine));
                     }
 
-                    // Add the response recorder
+                    // Each ACK frame is exactly 6 bytes: 1 version + 1 type('A') + 4 sequence number.
+                    // FixedLengthFrameDecoder handles both TCP coalescing (multiple ACKs in one read)
+                    // and TCP fragmentation (one ACK split across multiple reads).
+                    pipeline.addLast(new FixedLengthFrameDecoder(6));
                     pipeline.addLast(new SimpleChannelInboundHandler<ByteBuf>() {
                         @Override
                         protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {

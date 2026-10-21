@@ -22,11 +22,11 @@ import java.lang.reflect.Field;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.jolokia.jvmagent.client.command.CommandDispatcher;
 import org.jolokia.jvmagent.client.util.OptionsAndArgs;
 import org.jolokia.jvmagent.client.util.PlatformUtils;
@@ -61,17 +61,8 @@ public class Jolokia extends ProcessBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            printer().printErr("No running Camel integration matches: " + name);
-            return 1;
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
-        }
-
-        this.pid = pids.get(0);
+        // exactly one running integration, or exit 3 (as camel hawtio does with a name too)
+        this.pid = ProcessFinder.requireOne(name).pid();
         int exitCode;
         try {
             OptionsAndArgs options;

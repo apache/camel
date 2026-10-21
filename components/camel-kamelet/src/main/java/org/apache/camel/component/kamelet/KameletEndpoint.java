@@ -60,6 +60,9 @@ public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesC
     private boolean failIfNoConsumers = true;
     @UriParam(label = "advanced")
     private boolean noErrorHandler;
+    @UriParam(label = "advanced", defaultValue = "false",
+              description = "Whether to forward extra URI parameters to the endpoint wrapped by the Kamelet. When enabled, parameters that are not Kamelet template properties or reserved Kamelet options are appended to the wrapped source or sink endpoint. Disabled by default.")
+    private boolean advancedOptions;
 
     public KameletEndpoint(String uri,
                            KameletComponent component,
@@ -75,6 +78,19 @@ public class KameletEndpoint extends DefaultEndpoint implements AfterPropertiesC
         this.routeId = routeId;
         this.key = templateId + "/" + routeId;
         this.kameletProperties = new HashMap<>();
+    }
+
+    public boolean isAdvancedOptions() {
+        return advancedOptions;
+    }
+
+    /**
+     * Whether to forward extra URI parameters to the endpoint wrapped by the Kamelet. When enabled, parameters that are
+     * not Kamelet template properties or reserved Kamelet options are appended to the wrapped source or sink endpoint.
+     * Disabled by default.
+     */
+    public void setAdvancedOptions(boolean advancedOptions) {
+        this.advancedOptions = advancedOptions;
     }
 
     public boolean isNoErrorHandler() {

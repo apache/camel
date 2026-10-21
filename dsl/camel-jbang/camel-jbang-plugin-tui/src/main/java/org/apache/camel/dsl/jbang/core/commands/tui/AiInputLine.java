@@ -25,6 +25,7 @@ import dev.tamboui.layout.Alignment;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -34,8 +35,8 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 
 /**
  * The input line of the AI panel: the question being typed (it may have several lines; the cursor moves and deletes a
- * code point at a time, so an emoji is not cut in half), the earlier questions (Up and Down, and Ctrl+R to search them
- * backward), and TAB completion of slash commands and their arguments. The panel says what completes
+ * character at a time, all the code points of an emoji at once), the earlier questions (Up and Down, and Ctrl+R to
+ * search them backward), and TAB completion of slash commands and their arguments. The panel says what completes
  * ({@link Completion}); this class does the cycling.
  */
 final class AiInputLine {
@@ -152,13 +153,13 @@ final class AiInputLine {
 
     /** Backspace, Delete, Left, Right, Home, End, and typed text; returns whether the key was one of them. */
     boolean handleEditKey(KeyEvent ke) {
-        // the cursor moves and deletes a code point at a time, so an emoji (two chars) is not cut in half
+        // the cursor moves and deletes a character at a time: all the code points of an emoji, such as a family or a flag
         if (ke.isKey(KeyCode.BACKSPACE)) {
             if (cursorPos > 0) {
                 if (promptHistory != null) {
                     promptHistory.resetNavigation();
                 }
-                int previous = inputBuffer.offsetByCodePoints(cursorPos, -1);
+                int previous = TuiHelper.characterStart(inputBuffer, cursorPos);
                 inputBuffer.delete(previous, cursorPos);
                 cursorPos = previous;
             }
@@ -169,19 +170,19 @@ final class AiInputLine {
                 if (promptHistory != null) {
                     promptHistory.resetNavigation();
                 }
-                inputBuffer.delete(cursorPos, inputBuffer.offsetByCodePoints(cursorPos, 1));
+                inputBuffer.delete(cursorPos, TuiHelper.characterEnd(inputBuffer, cursorPos));
             }
             return true;
         }
         if (ke.isKey(KeyCode.LEFT)) {
             if (cursorPos > 0) {
-                cursorPos = inputBuffer.offsetByCodePoints(cursorPos, -1);
+                cursorPos = TuiHelper.characterStart(inputBuffer, cursorPos);
             }
             return true;
         }
         if (ke.isKey(KeyCode.RIGHT)) {
             if (cursorPos < inputBuffer.length()) {
-                cursorPos = inputBuffer.offsetByCodePoints(cursorPos, 1);
+                cursorPos = TuiHelper.characterEnd(inputBuffer, cursorPos);
             }
             return true;
         }
@@ -258,7 +259,7 @@ final class AiInputLine {
             if (searchTerm.isEmpty()) {
                 exitHistorySearch(false);
             } else {
-                searchTerm.setLength(searchTerm.offsetByCodePoints(searchTerm.length(), -1));
+                searchTerm.setLength(TuiHelper.characterStart(searchTerm, searchTerm.length()));
                 performSearch(promptHistory.size() - 1);
             }
             return true;
@@ -298,8 +299,8 @@ final class AiInputLine {
     /** Moves the cursor to the previous (-1) or next (1) line of the input; false when there is no such line. */
     boolean moveCursorLine(int direction) {
         int start = lineStart(cursorPos);
-        // the column in code points, so the cursor does not land inside an emoji on the other line
-        int column = inputBuffer.codePointCount(start, cursorPos);
+        // the column on the screen, as in the source editor: the cursor goes straight up or down, never into an emoji
+        int column = CharWidth.of(inputBuffer.substring(start, cursorPos));
         int targetStart;
         if (direction < 0) {
             if (start == 0) {
@@ -314,8 +315,7 @@ final class AiInputLine {
             targetStart = end + 1;
         }
         int targetEnd = lineEnd(targetStart);
-        cursorPos = inputBuffer.offsetByCodePoints(targetStart,
-                Math.min(column, inputBuffer.codePointCount(targetStart, targetEnd)));
+        cursorPos = targetStart + CharWidth.substringByWidth(inputBuffer.substring(targetStart, targetEnd), column).length();
         return true;
     }
 
@@ -461,28 +461,22 @@ final class AiInputLine {
             if (locked) {
                 spans.add(Span.styled(text, Style.EMPTY.dim()));
             } else if (i != cursorLine) {
-                spans.add(Span.raw(text.length() > maxWidth ? text.substring(0, maxWidth) : text));
+                spans.add(Span.raw(CharWidth.substringByWidth(text, maxWidth)));
             } else {
-                // ensure the cursor is visible by adjusting the text window of its line
-                int windowStart = cursorColumn > maxWidth - 1 ? cursorColumn - maxWidth + 1 : 0;
-                int windowEnd = Math.min(text.length(), windowStart + maxWidth);
-                // the window does not cut an emoji (two chars) in half
-                if (windowStart > 0 && windowStart < text.length() && Character.isLowSurrogate(text.charAt(windowStart))) {
-                    windowStart++;
-                }
-                if (windowEnd < text.length() && windowEnd > windowStart
-                        && Character.isHighSurrogate(text.charAt(windowEnd - 1))) {
-                    windowEnd--;
-                }
-                String visible = text.substring(windowStart, Math.max(windowStart, windowEnd));
+                // the window of the line keeps the cursor and the character under it in view, measured in columns, and
+                // cuts no character in half
+                int cursorEnd = cursorColumn < text.length() ? TuiHelper.characterEnd(text, cursorColumn) : cursorColumn;
+                int cursorWidth = Math.max(1, CharWidth.of(text.substring(cursorColumn, cursorEnd)));
+                String lead = CharWidth.substringByWidthFromEnd(text.substring(0, cursorColumn), maxWidth - cursorWidth);
+                int windowStart = cursorColumn - lead.length();
+                String visible = CharWidth.substringByWidth(text.substring(windowStart), maxWidth);
                 int cursorInWindow = cursorColumn - windowStart;
-                if (cursorInWindow >= 0 && cursorInWindow < visible.length()) {
-                    // the whole character under the cursor, both chars of an emoji
-                    int cursorEnd = Math.min(visible.length(),
-                            cursorInWindow + Character.charCount(visible.codePointAt(cursorInWindow)));
+                if (cursorEnd > cursorColumn && cursorEnd - windowStart <= visible.length()) {
+                    // the whole character under the cursor, all the code points of an emoji
                     spans.add(Span.raw(visible.substring(0, cursorInWindow)));
-                    spans.add(Span.styled(visible.substring(cursorInWindow, cursorEnd), Style.EMPTY.reversed()));
-                    spans.add(Span.raw(visible.substring(cursorEnd)));
+                    spans.add(Span.styled(visible.substring(cursorInWindow, cursorEnd - windowStart),
+                            Style.EMPTY.reversed()));
+                    spans.add(Span.raw(visible.substring(cursorEnd - windowStart)));
                 } else {
                     spans.add(Span.raw(visible));
                     if (cursorInWindow == visible.length()) {
@@ -516,11 +510,10 @@ final class AiInputLine {
 
         if (searchIndex >= 0) {
             String matched = promptHistory.get(searchIndex);
-            int maxWidth = area.width() - label.length() - query.length() - 1;
+            // the room after the label, the query, its caret and the two spaces before the preview
+            int maxWidth = area.width() - label.length() - CharWidth.of(query) - 3;
             if (maxWidth > 4) {
-                String preview = matched.length() > maxWidth
-                        ? matched.substring(0, maxWidth - 1) + "…"
-                        : matched;
+                String preview = CharWidth.truncateWithEllipsis(matched, maxWidth, "…", CharWidth.TruncatePosition.END);
                 spans.add(Span.styled("  " + preview, Style.EMPTY.dim()));
             }
         }

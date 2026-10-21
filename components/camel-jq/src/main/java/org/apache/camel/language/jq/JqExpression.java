@@ -35,6 +35,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ExpressionResultTypeAware;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -200,20 +201,20 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
         if (payload == null) {
             // tell apart a source that is null from one that is set but holds no JSON
             if (source.evaluate(exchange, Object.class) == null) {
-                throw new InvalidPayloadException(exchange, JsonNode.class, exchange.getIn(), nullSourceHint());
+                throw new InvalidPayloadException(exchange, JsonNode.class, exchange.getIn(), nullSourceHint(exchange));
             }
             throw new InvalidPayloadException(exchange, JsonNode.class);
         }
         return payload;
     }
 
-    private String nullSourceHint() {
+    private String nullSourceHint(Exchange exchange) {
         if ("body".equals(source.toString())) {
-            // a timer alone, or a jq step placed before the file was read: nothing to evaluate
-            return "the jq expression got no message body to evaluate, the body is null: a route reached with direct:"
-                   + " has the body of its caller, so when the caller has none, read the data first - setBody with"
-                   + " constant: resource:file:data.json for a known file, or poll:, pollEnrich or a from: consumer"
-                   + " for one that is not";
+            // a timer alone, or a jq step placed before the file was read: nothing to evaluate. What the body is, the
+            // step that left it so, and how to read the data (CAMEL-24838, CAMEL-25749)
+            String hint = BodyFacts.hint(exchange, BodyFacts.Need.A_BODY);
+            return "the jq expression got no message body to evaluate: " + BodyFacts.describe(exchange)
+                   + (hint != null ? ": " + hint : "");
         }
         return "the jq expression got no input from " + source + " to evaluate, it is null: set it before the step,"
                + " or leave source unset to use the message body";

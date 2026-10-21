@@ -37,12 +37,72 @@ A saga option named like a parameter of the participant callback URLs, in any ca
 `Camel-Saga-Complete`, `Camel-Saga-Signature` or `Camel-Saga-Lra`), now fails the creation of its route, with or
 without a callback secret. The value of such an option could not be read back from the callback before.
 
+=== camel-ssh - known_hosts entries are matched as in OpenSSH
+
+When `knownHostsResource` is set, the entries of the `known_hosts` file are now matched as OpenSSH
+matches them, against the host name or address the client connects to, written `host` for port 22 and
+`[host]:port` for another port:
+
+* A host pattern must match that name as a whole. An entry for another host whose name or address
+contains the configured one is no longer used.
+* A pattern such as `db.example.com` only applies to port 22. A server on another port needs an entry
+such as `[db.example.com]:2222`, or a pattern that matches that form, such as `*`.
+* The host is used as it is written: the host configured on the endpoint, or the `HostName` that
+`~/.ssh/config` gives for it. An endpoint configured with a host name no longer uses entries listed
+only under its address, an endpoint configured with an address no longer uses entries listed under the
+name that a reverse lookup of the address returns, and an IPv6 address such as `::1` is matched as
+written instead of in its expanded form.
+* Every entry of the host is considered, so a host can be listed with several keys. Wildcard, negated
+and hashed patterns, comments and `@revoked` entries are supported. `@cert-authority` entries are
+ignored.
+* A `known_hosts` resource that cannot be read, or that has a line that cannot be read (for example an
+unknown `@` marker, a missing key, or a key that is not valid base64), now makes every connection fail,
+whatever the value of `failOnUnknownHost`. Previously such a resource was treated as having no entry,
+and such a line was skipped.
+
+As before, a server whose host has entries without a marker is rejected when it presents a key that
+none of them lists, whatever the value of `failOnUnknownHost`, which only applies to a host without
+such an entry: `@revoked` and `@cert-authority` entries do not list a host.
+Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
+endpoint is configured with.
+
 === camel-netty-http - the roles of a security constraint are matched by role name
 
 The roles of a `SecurityConstraintMapping` inclusion are a comma-separated list of role names, and an authenticated
 user is now accepted only when one of their roles is equal to one of those names. The comparison is case-sensitive,
 whitespace around each name and blank entries are ignored, and a value of `*` still accepts any role. A roles value
 that uses another separator, such as `admin;guest` or `admin guest`, must be changed to `admin,guest`.
+
+=== camel-graphql - the credentials are only sent to the authority of httpUri
+
+The `accessToken` (with its `jwtAuthorizationType`) is now added to a request only when the request goes to the
+scheme, host and port of `httpUri`, and the `username` and `password` are registered for that authority only.
+Previously neither was bound to the authority of `httpUri`. A request to another authority, including the same host
+with another scheme or port, is now sent without them. A route that needs to authenticate to another authority must
+address it in `httpUri`. When `proxyHost` is set, the `username` and `password` are no longer offered to the proxy when
+it asks for authentication.
+
+=== camel-elasticsearch - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
+registered for any host. A request to another host, including the host of a node with another scheme or port, is now
+sent without them. A client set with the `client` option is not changed.
+
+=== camel-elasticsearch-rest-client - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddressesList` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Previously they were
+registered for any host. A request to another host, including the host of a node with another scheme or port, is now
+sent without them. A client set with the `restClient` option is not changed.
+
+=== camel-opensearch - the credentials are only sent to the nodes of the cluster
+
+The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
+when `enableSniffer` is set, the nodes the sniffer finds, matching the scheme, host and port. Every node of a
+multi-host cluster still receives them. Previously they were registered for any host. A request to another host,
+including the host of a node with another scheme or port, is now sent without them. A client set with the `client`
+option is not changed.
 
 === camel-telegram - webhook requests are verified with a secret token
 
@@ -69,6 +129,90 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-thrift - SSL/TLS settings of the consumer, and errors sent to the client
+
+* A consumer configured with `negotiationType=SSL` and the default `synchronous=false` now fails to start. It used to
+start a server without SSL/TLS. SSL/TLS requires `synchronous=true`, as on the producer.
+* The `SASL` negotiation type, which is not implemented, now makes the producer and the consumer fail to start. They
+used to behave as with `PLAINTEXT`.
+* The SSL/TLS consumer now creates its server socket from the SSL context of `sslParameters`, so all of its settings
+apply, including the trust managers and the server parameters. For example, `serverParameters.clientAuthentication=REQUIRE`
+now requires a client certificate. Before, the consumer only used the key store, the protocol and the cipher suites,
+and never asked for a client certificate. The key managers are required, and as in the other components the key is
+read with their `keyPassword`: set it when the key is protected by a password. Before, the consumer read the key with
+the password of the key store.
+* A new `muteException` consumer option, enabled by default, sends a generic `TApplicationException` of type
+`INTERNAL_ERROR` ("Internal error processing <method>") to the client instead of an exception that the Thrift method
+does not declare. Before, the asynchronous consumer sent the message of the exception. An exception declared in the
+IDL is still sent as it is. Set `muteException=false` to send the exception as before.
+
+=== camel-oauth - the bearer token processor is stateless and reads the HTTP request headers
+
+`OAuthBearerTokenProcessor` no longer creates or updates the OAuth session, and no longer sets the
+`camel.oauth.session` cookie nor the `CamelOAuthSessionId` header: a bearer token authenticates the request that
+carries it, and nothing else. The authenticated `UserProfile` is available in the `CamelOAuthUserProfile` exchange
+property (`OAuth.CAMEL_OAUTH_USER_PROFILE`). A route that read the profile from the OAuth session after
+`OAuthBearerTokenProcessor` must read it from that exchange property instead.
+
+When the message comes from platform-http (on Vert.x or on Spring Boot), from a servlet based HTTP consumer
+(camel-servlet, camel-jetty) or from camel-netty-http, the bearer token and the session cookie are now read from the
+`Authorization` and `Cookie` headers of the HTTP request only. A query or form parameter of the same name, which these
+consumers also map into the message headers, is no longer used for them, and neither is an `Authorization` or `Cookie`
+message header that the route sets itself. For example
+`+.setHeader("Authorization", simple("Bearer ${header.X-Forwarded-Access-Token}"))+` before
+`OAuthBearerTokenProcessor` now results in a 401 response. A route that takes the token from elsewhere can
+authenticate it itself, with `authenticate(new TokenCredentials(token))` on the `OAuth` instance that
+`OAuthFactory.lookupFactory(context).findOAuth()` returns.
+
+For any other message, such as one from camel-undertow, the processors keep reading the message headers, but leave out
+a value that also appears in the query string of the request.
+
+=== camel-smooks - allowExternalEntities applies to Smooks Source bodies and to a reader declared without a class
+
+The Smooks component and `SmooksProcessor` now parse a message body that is already a Smooks `Source`
+(`org.smooks.io.source.StringSource`, `ReaderSource`, `StreamSource`, `ByteSource` or `URLSource`) with the same XML
+reader settings as the other message bodies, so external entities in it are only resolved when `allowExternalEntities`
+is `true`. Before, such a body was handed to Smooks as it was. The bytes of a `StreamSource`, `ByteSource` or
+`URLSource` are decoded with the exchange charset, or UTF-8, as before. These bodies are now parsed into a DOM before
+Smooks processes them, which uses more memory for very large inputs. `DOMSource` and `JavaSource` bodies are unchanged.
+
+A Smooks configuration whose `<reader>` declares no `class` only sets handlers, features or parameters of the default
+XML reader. The Smooks component, `SmooksProcessor` and the Smooks data format now apply `allowExternalEntities` to
+such a configuration as they do to a configuration without a `<reader>`, so the handlers and features of that reader no
+longer take part in parsing the XML unless `allowExternalEntities` is `true`. Configurations that declare a reader
+class, such as EDI, CSV, JSON, DFDL or a custom reader, are unchanged.
+
+A document with a document type declaration (`<!DOCTYPE ...>`) is now processed with these settings for every body
+type, `String`, `byte[]` and `InputStream` bodies included, which failed before: the entities of its internal subset are
+expanded, and the declaration itself is not passed on to Smooks.
+
+Set `allowExternalEntities=true` on the endpoint or on the data format for documents that rely on external entities or
+an external DTD.
+
+=== camel-chunk - message data printed with a direct tag is rendered literally
+
+Previously the `chunk` component bound the message body, headers and variables into the Chunk engine so that
+Chunk re-parsed those values as template source: a value that itself contained Chunk tags (such as a body of
+`{$headers.name}`) had those tags expanded instead of being printed verbatim.
+
+Message data bound to the engine is now neutralised so that a direct `{$tag}` printing the body, a header, a
+variable, or an element of a nested map, list or array renders the value literally instead of evaluating the
+tags inside it. Tag-free data is unchanged and Chunk's string filters (for example `slice`, `get`, `join`)
+keep their existing behaviour. Routes that relied on message data being evaluated as Chunk template code must
+move that markup into the template itself.
+
+As part of this, a non-`List` `Collection` value (such as a `Set`) is now bound as a `List`, so a direct
+`{$body}` prints Chunk's list placeholder instead of the collection's `toString()`, and a filter such as
+`|join` operates on its elements.
+
+This does not cover every path: Chunk re-parses any string it produces while rendering, so the output of a
+filter (`{$body|trim}`), a string property of a bean body (`{$body.name}`, `{$exception.message}`) and string
+items bound by a `{% loop %}` are still parsed as template code. Keep untrusted data to direct `{$tag}`
+output; do not pass untrusted values through Chunk filters, bean properties or loops. If untrusted data must
+go through one of those paths, remove the `{` and `}` characters from it in the route before the `chunk`
+endpoint (Chunk has no escape for tags inside data), for example with a processor that rewrites the body or
+header.
+
 === camel-spring-ws - internal Camel headers are no longer written into SOAP headers
 
 The default `messageFilter` of the `spring-ws` component, `BasicMessageFilter`, now applies the endpoint's
@@ -80,6 +224,119 @@ header. Other message headers are written as before.
 A `BasicMessageFilter` created in application code applies a `SpringWebserviceHeaderFilterStrategy` unless it is
 created with another strategy. A route that relies on the previous behaviour can supply a custom
 `headerFilterStrategy` on the `spring-ws` endpoint.
+
+=== camel-platform-http-main - management server settings on a shared port
+
+When the HTTP server (`camel.server.enabled=true`) and the HTTP management server (`camel.management.enabled=true`)
+have the same port (both default to 8080), the HTTP server serves the management endpoints. It cannot apply these
+options of the management server, which were ignored without notice:
+
+* `camel.management.host`, when set to another host than the one of the HTTP server
+* `camel.management.path`, when set to another path than the one of the HTTP server
+* `camel.management.useGlobalSslContextParameters=true`, when the HTTP server does not use the global SSL configuration
+* `camel.management.authenticationEnabled=true`, with the basic or JWT authentication options
+
+Camel now fails to start when the management server shares the port and one of them is configured, with a message
+that lists them. Set `camel.management.port` to another port, so that the management server runs a server of its own
+and applies them. To keep a single port, remove them and configure the HTTP server instead: for example,
+authentication configured on the HTTP server for `/*` also applies to the management endpoints.
+
+=== camel-mina - the host name of the server is verified over SSL
+
+When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the
+producer, and the consumer with `clientMode=true`, now check that the certificate of the server matches the `host` of
+the endpoint, with the same rules as an HTTPS client. Before, any certificate trusted by the trust store was accepted,
+whatever host the certificate was issued for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the SSL handshake; an IP
+address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
+endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+MINA does not pass a failed handshake on as an error: the producer fails with a timeout (after `writeTimeout`, or
+`timeout` while waiting for a reply), and the handshake error is logged at `ERROR` level by
+`org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
+certificate that does not list the host.
+
+=== camel-mllp - the producer verifies the host name of the server over TLS
+
+When `sslContextParameters` is set (on the endpoint, or with `useGlobalSslContextParameters` on the component), the
+MLLP producer now checks that the certificate of the server matches the host it connects to, with the same rules as an
+HTTPS client. Before, it accepted any certificate trusted by the trust store, whatever host the certificate was issued
+for.
+
+A producer that connects with a host name or an IP address that the certificate does not list now fails the TLS
+handshake; an IP address must be listed as a subject alternative name of the certificate, and a producer URI without a
+host name (such as `mllp://8888`) cannot pass the check. Use a certificate that matches the host of the endpoint, or set
+the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+=== camel-smpp - the host name of the SMSC is verified over SSL
+
+With `smpps` (or `usingSSL=true`), directly or through an HTTP proxy, the connection now checks that the certificate of
+the SMSC matches the host it connects to, with the same rules as an HTTPS client. Before, any certificate trusted by the
+JVM was accepted, whatever host it was issued for.
+
+A connection to a host name or an IP address that the certificate does not list now fails the SSL handshake; an IP
+address must be listed as a subject alternative name of the certificate. Use a certificate that matches the host of the
+endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour.
+
+A mismatch shows as the producer or consumer failing to start, with an `IOException` whose cause names the host that
+was checked:
+
+[source]
+----
+java.io.IOException: No subject alternative names matching IP address 127.0.0.1 found
+    Caused by: javax.net.ssl.SSLHandshakeException: No subject alternative names matching IP address 127.0.0.1 found
+----
+
+=== camel-milo - the OPC UA client validates the server certificate
+
+When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components
+now validate the certificate of the OPC UA server. Before, any server certificate was accepted, and no option allowed
+to validate it.
+
+Configure the trusted certificates with the new `trustListDirectory` option: put the certificate of the server, or of
+the CA that issued it, in the `trusted/certs` directory of the trust list. A server certificate that does not chain up
+to a trusted certificate is written to `rejected/certs`, from where it can be moved to `trusted/certs` once it has been
+checked. The trust list also refuses a server certificate outside its validity period, revoked by a revocation list of
+the trust list, or whose application URI differs from the one of the server. A server certificate issued by a CA is
+refused with `Bad_CertificateRevocationUnknown` when the trust list holds no revocation list of that CA: add the CRL of
+the CA (an empty one is enough) to `trusted/crl` or `issuer/crl`. A custom validator can be configured with the new
+`certificateValidator` option instead.
+
+With neither option, the client does not connect to such an endpoint. It logs a `WARN` message
+`Failed to connect: The certificate of the OPC UA server cannot be validated`, followed by the endpoint and its
+security policy, and tries again every 10 seconds. A producer fails with `IllegalStateException: No connected`, caused
+by the same message. A server certificate refused by the trust list or by a `certificateValidator` is logged at `WARN`
+as `Failed to connect, because a certificate or security check failed`. To restore the previous behaviour, set the new
+`trustAllCertificates` option to `true`. This is insecure: the client then does not authenticate the server.
+
+The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
+use the security policy `None` are not affected.
+
+=== camel-pqc - Bouncy Castle 1.85
+
+Camel 4.18.6 upgrades Bouncy Castle from 1.83 to 1.85. `DILITHIUM`, `SPHINCSPLUS` and `KYBER`
+now use ML-DSA, SLH-DSA and ML-KEM through the `BC` provider. The Camel option names are unchanged.
+
+Replace `DilithiumParameterSpec`, `SPHINCSPlusParameterSpec` and `KyberParameterSpec` in user code
+with `MLDSAParameterSpec`, `SLHDSAParameterSpec` and `MLKEMParameterSpec` from
+`org.bouncycastle.jcajce.spec`, and use the `BC` provider when creating key material.
+Previously stored Dilithium and SPHINCS+ keys must be regenerated; update peers that use their public keys.
+
+The default `SPHINCSPLUS` parameter set changes from `haraka_256s` (NIST category 5)
+to `slh_dsa_sha2_128s` (category 1). Use an SLH-DSA 256-bit parameter set if category 5 is required.
+
+=== camel-pqc - a configured KeyGenerator is used by one exchange at a time
+
+When Camel creates the instance itself, the KEM operations of the `pqc` component and the PQC data format now use a
+new `KeyGenerator` for every operation. A configured instance is still shared: a registry bean, which is autowired into
+every `pqc` endpoint, a `KeyGenerator` set on the data format, or the default material used when no key material is
+configured. Each operation now holds its lock from `init` until the result is returned, so concurrent exchanges that
+use it run one at a time.
+
+A started PQC data format no longer keeps a `KeyGenerator` of its own: `getKeyGenerator()` returns only a configured
+instance and, unless one is configured, the `CamelPQCKemAlgorithm` header now selects the KEM algorithm of each
+operation.
 
 === camel-undertow - WebSocket endpoints apply the security provider, allowed roles and handlers
 
@@ -97,6 +354,32 @@ receive the messages of the producers, and it is closed when it sends a message.
 
 A WebSocket client that connected without satisfying the configured security provider or allowed roles is now
 rejected: it must authenticate, or the option must be removed from the WebSocket endpoint.
+
+=== camel-undertow - the producer refuses a request target or header value with control characters
+
+The undertow producer writes the path, query and header values of the outgoing request to the socket one character at
+a time, without validating them. A carriage return or line feed therefore broke the request into further lines, and a
+character above `0xFF` was written as a single, different byte (for example `U+010A` became a line feed). The producer
+now refuses to send a request path, query or header value that contains a control character or a character above
+`0xFF`, and fails the exchange with an `IllegalArgumentException` instead. A space and a tab, which do not change the
+framing, are still allowed. Routes that put a percent-encoded control character (such as `%0D%0A`) into the
+`CamelHttpPath` or `CamelHttpQuery` header, which the producer decodes before building the request, are the ones most
+likely to be affected.
+
+=== camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
+
+When `pollEnrich` (or `poll`) times out and no `aggregationStrategy` is configured, the body is set to `null`, and with
+`variableReceive` the variable is `null`. For a message that creates its body on demand, the `null` did not stick: the
+next read created the body again. The message of a file consumer creates its body from its file, so after a timeout
+the body, or the variable of `variableReceive`, was the file of the incoming exchange instead of `null`. The messages
+of the JMS, sjms, mail, HTTP, XMPP, SMPP, SNMP and Spring WS consumers create their body on demand as well, so there it
+was the payload of the consumer again.
+
+The body, or the variable, is now `null` after a timeout for these consumers too. A route that read the incoming file
+or payload from the body after a timed out `pollEnrich` must keep it before the `pollEnrich` instead, for example with
+`variableReceive`, which leaves the body as it was. To keep the body empty, the message is replaced by a plain message
+with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
+consumer (such as `GenericFileMessage` or `JmsMessage`).
 
 == Upgrading from 4.18.4 to 4.18.5
 

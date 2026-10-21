@@ -130,6 +130,10 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
 
     /**
      * Port to use for binding embedded HTTP management server. Use 0 to dynamic assign a free random port number.
+     *
+     * When the embedded HTTP server is enabled with the same port (both default to 8080), the management endpoints are
+     * served by the HTTP server, which cannot apply a host, path, SSL or authentication of the management server's own.
+     * The management server then fails to start when such a setting is configured. Use a different port to apply it.
      */
     public void setPort(int port) {
         this.port = port;
@@ -456,6 +460,10 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
 
     /**
      * Port to use for binding embedded HTTP management server. Use 0 to dynamic assign a free random port number.
+     *
+     * When the embedded HTTP server is enabled with the same port (both default to 8080), the management endpoints are
+     * served by the HTTP server, which cannot apply a host, path, SSL or authentication of the management server's own.
+     * The management server then fails to start when such a setting is configured. Use a different port to apply it.
      */
     public HttpManagementServerConfigurationProperties withPort(int port) {
         this.port = port;

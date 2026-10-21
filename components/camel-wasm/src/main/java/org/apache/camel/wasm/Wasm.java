@@ -20,8 +20,6 @@ import org.apache.camel.spi.Metadata;
 
 public final class Wasm {
     public static final String SCHEME = "wasm";
-    public static final String FN_ALLOC = "alloc";
-    public static final String FN_DEALLOC = "dealloc";
 
     private Wasm() {
     }

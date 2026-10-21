@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.StopWatch;
@@ -37,6 +38,18 @@ public final class ReloadOutcome {
     static final String FAILED = "Error reloading routes from file";
     static final String PROPERTIES = "Reloading properties";
     static final String REPORT = "did not load";
+
+    /**
+     * How often the log is read while waiting: a reload or a line the routes logged is seen at most this long after it
+     * was logged, and the write answers that much sooner (CAMEL-25661). Only the tail of the log is read.
+     */
+    static final long POLL_MILLIS = 100;
+
+    /**
+     * How long a properties reload is watched for the reload of the routes after it: the routes are reloaded after the
+     * properties they use, and a route that fails with the new values is the outcome the agent must hear.
+     */
+    static final long ROUTES_AFTER_PROPERTIES_MILLIS = 500;
 
     private ReloadOutcome() {
     }
@@ -120,18 +133,37 @@ public final class ReloadOutcome {
 
     /** Polls the integration's log for the reload of a just written file, up to the timeout. */
     public static JsonObject await(long pid, String name, String sinceKey, long timeoutMillis) {
+        return await(() -> records(pid, name), sinceKey, timeoutMillis);
+    }
+
+    /**
+     * Polls the records for the reload of a just written file, up to the timeout. A properties reload is watched
+     * {@link #ROUTES_AFTER_PROPERTIES_MILLIS} longer for the routes reload after it, whose outcome is then the answer.
+     */
+    static JsonObject await(Supplier<List<JsonObject>> records, String sinceKey, long timeoutMillis) {
         StopWatch watch = new StopWatch();
+        JsonObject properties = null;
+        long propertiesAt = 0;
         while (watch.taken() < timeoutMillis) {
-            JsonObject outcome = classify(records(pid, name), sinceKey);
-            if (outcome != null) {
+            JsonObject outcome = classify(records.get(), sinceKey);
+            if (outcome != null && !"properties".equals(outcome.getString("status"))) {
                 return outcome;
             }
+            if (outcome != null && properties == null) {
+                properties = outcome;
+                propertiesAt = watch.taken();
+            } else if (properties != null && watch.taken() - propertiesAt >= ROUTES_AFTER_PROPERTIES_MILLIS) {
+                return properties;
+            }
             try {
-                Thread.sleep(500);
+                Thread.sleep(POLL_MILLIS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
+        }
+        if (properties != null) {
+            return properties;
         }
         JsonObject out = new JsonObject();
         out.put("status", "unknown");
@@ -146,20 +178,22 @@ public final class ReloadOutcome {
      */
     private static final Pattern ROUTE_LOGGER = Pattern.compile("(^|\\.)(yaml|yml|xml|java|groovy):\\d+$");
     private static final int OUTPUT_LINES = 5;
+    private static final int OUTPUT_ERRORS = 3;
     private static final int OUTPUT_CHARS = 400;
 
     /**
      * What the routes logged after the newest reload, waiting up to the timeout for the first of it: the records of the
-     * routes' log steps, and any WARN or ERROR, newest last, at most five, each cut to 400 characters. A write answered
-     * with the result of the change shows the agent at once what its route now does (CAMEL-25513): an agent left to
-     * call camel_get_log reads it before the reload ran, or not at all.
+     * routes' log steps, and any WARN or ERROR, newest last, each cut to 400 characters: the first five, the first
+     * three ERROR after them, and a line that says how many are left out. A write answered with the result of the
+     * change shows the agent at once what its route now does (CAMEL-25513): an agent left to call camel_get_log reads
+     * it before the reload ran, or not at all.
      */
     public static JsonArray awaitOutput(long pid, String name, long timeoutMillis) {
         StopWatch watch = new StopWatch();
         JsonArray out = output(records(pid, name));
         while (out.isEmpty() && watch.taken() < timeoutMillis) {
             try {
-                Thread.sleep(300);
+                Thread.sleep(POLL_MILLIS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
@@ -194,7 +228,20 @@ public final class ReloadOutcome {
         // newest first in the log: the first lines the routes logged after the reload are at the end
         Collections.reverse(lines);
         JsonArray out = new JsonArray();
-        out.addAll(lines.subList(0, Math.min(OUTPUT_LINES, lines.size())));
+        int first = Math.min(OUTPUT_LINES, lines.size());
+        out.addAll(lines.subList(0, first));
+        // an ERROR after the first lines is kept as well: the route went on, and its failure is the news
+        int errors = 0;
+        for (String line : lines.subList(first, lines.size())) {
+            if (line.startsWith("ERROR ") && errors < OUTPUT_ERRORS) {
+                out.add(line);
+                errors++;
+            }
+        }
+        int left = lines.size() - out.size();
+        if (left > 0) {
+            out.add("... " + left + " more line" + (left == 1 ? "" : "s") + ": camel_get_log shows them");
+        }
         return out;
     }
 

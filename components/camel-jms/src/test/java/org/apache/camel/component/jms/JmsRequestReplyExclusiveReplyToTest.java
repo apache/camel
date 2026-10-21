@@ -27,6 +27,8 @@ import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
+@Tags({ @Tag("exclusive") })
 public class JmsRequestReplyExclusiveReplyToTest extends AbstractJMSTest {
 
     @Order(2)

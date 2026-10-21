@@ -17,20 +17,24 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.main.KameletMain;
-import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -48,6 +52,10 @@ import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumbe
                  "  camel cmd route-structure",
                  "  camel cmd route-structure --filter=myRoute" })
 public class CamelRouteStructureAction extends ActionBaseCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .text("name", r -> r.location)
+            .text("id", r -> r.routeId);
 
     public static class NameIdCompletionCandidates implements Iterable<String> {
 
@@ -84,13 +92,27 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
+    @CommandLine.Option(names = { "--varied" },
+                        description = "To show only the steps that have been reached with more than one body type, as the"
+                                      + " running integration has seen them (the message history records them, such as"
+                                      + " with camel run --dev)")
+    boolean varied;
+
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
+    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
+                        description = "Whether to compile Java source files and load their routes. By default Java "
+                                      + "routes are read by the Java DSL parser, without compiling them")
+    boolean compile;
+
     @CommandLine.Option(names = { "--sort" }, completionCandidates = NameIdCompletionCandidates.class,
                         description = "Sort route by name or id", defaultValue = "name")
     String sort;
+
+    @CommandLine.Mixin
+    ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;
 
@@ -102,164 +124,141 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
     public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        Path outputFile;
-        int exit = 0;
-        List<Long> pids = findPids(name);
-        if (pids.isEmpty()) {
-            // no running so check source files
-            outputFile = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR, "/structure-output.json");
-            PathUtils.deleteFile(outputFile);
-            exit = doCallSource(name);
-        } else if (pids.size() > 1) {
-            printer().println("Name or pid " + name + " matches " + pids.size()
-                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
-            return 1;
+        JsonObject jo;
+        List<CamelProcess> processes = ProcessFinder.find(name);
+        if (processes.size() > 1) {
+            // the message says which integrations match
+            ProcessFinder.requireOne(name);
+        }
+        if (!processes.isEmpty()) {
+            CamelProcess process = processes.get(0);
+            this.pid = process.pid();
+            jo = executeAction(process, "route-structure", root -> {
+                root.put("filter", "*");
+                root.put("brief", brief);
+            });
+        } else if ("*".equals(name)) {
+            throw CliException.notFound("No running Camel integrations, and no source file given");
         } else {
-            // ensure output file is deleted before executing action
-            this.pid = pids.get(0);
-            outputFile = getOutputFile(Long.toString(this.pid));
-            PathUtils.deleteFile(outputFile);
-            doCallPid(this.pid);
+            // no running integration with the name, so it is a source file
+            jo = doCallSource(name);
         }
-        if (exit != 0) {
-            return exit;
+        if (varied) {
+            jo = onlyVaried(jo);
+            JsonArray routes = jo.getCollection("routes");
+            if (!jsonOutput && (routes == null || routes.isEmpty())) {
+                printer().println("No step has been reached with more than one body type (the message history records"
+                                  + " the body types, such as with camel run --dev)");
+                return 0;
+            }
         }
-
-        JsonObject jo = waitForOutputFile(outputFile);
-        if (jo != null) {
-            if (jsonOutput) {
-                String dump = Jsoner.prettyPrint(jo.toJson(), 2);
-                printer().println(dump);
-            } else {
-                JsonArray arr = (JsonArray) jo.get("routes");
-                for (int i = 0; i < arr.size(); i++) {
-                    JsonObject o = (JsonObject) arr.get(i);
-                    Row row = new Row();
-                    row.location = extractSourceName(o.getString("source"));
-                    row.routeId = o.getString("routeId");
-                    if (!rows.contains(row)) {
-                        List<JsonObject> lines = o.getCollection("code");
-                        if (lines != null) {
-                            for (JsonObject line : lines) {
-                                Code code = new Code();
-                                code.line = line.getInteger("line");
-                                code.type = line.getString("type");
-                                code.id = line.getString("id");
-                                code.level = line.getInteger("level");
-                                code.code = line.getString("code");
-                                code.description = line.getString("description");
-                                if (brief) {
-                                    // make code brief
-                                    code.code = StringHelper.before(code.code, "[", code.code);
-                                } else if (description) {
-                                    // show description
-                                    code.code = code.type + (code.description != null ? "[" + code.description + "]" : "");
-                                }
-                                row.code.add(code);
+        if (jsonOutput) {
+            addUnreadSourceParts(jo);
+            String dump = Jsoner.prettyPrint(jo.toJson(), 2);
+            printer().println(dump);
+        } else {
+            JsonArray arr = (JsonArray) jo.get("routes");
+            for (int i = 0; i < arr.size(); i++) {
+                JsonObject o = (JsonObject) arr.get(i);
+                Row row = new Row();
+                row.location = extractSourceName(o.getString("source"));
+                row.routeId = o.getString("routeId");
+                if (!rows.contains(row)) {
+                    List<JsonObject> lines = o.getCollection("code");
+                    if (lines != null) {
+                        for (JsonObject line : lines) {
+                            Code code = new Code();
+                            code.line = line.getInteger("line");
+                            code.type = line.getString("type");
+                            code.id = line.getString("id");
+                            code.level = line.getInteger("level");
+                            code.code = line.getString("code");
+                            code.description = line.getString("description");
+                            code.bodyTypes = line.getCollection("bodyTypes");
+                            code.bodyKinds = line.getCollection("bodyKinds");
+                            if (brief) {
+                                // make code brief
+                                code.code = StringHelper.before(code.code, "[", code.code);
+                            } else if (description) {
+                                // show description
+                                code.code = code.type + (code.description != null ? "[" + code.description + "]" : "");
                             }
-                        }
-                        boolean add = true;
-                        if (filter != null) {
-                            String f = filter;
-                            boolean negate = filter.startsWith("-");
-                            if (negate) {
-                                f = f.substring(1);
-                            }
-                            // make filtering easier
-                            if (!f.endsWith("*")) {
-                                f += "*";
-                            }
-                            boolean match
-                                    = PatternHelper.matchPattern(row.location, f) || PatternHelper.matchPattern(row.routeId, f);
-                            if (negate) {
-                                match = !match;
-                            }
-                            if (!match) {
-                                add = false;
-                            }
-                        }
-                        if (add) {
-                            rows.add(row);
+                            row.code.add(code);
                         }
                     }
-                }
-                // sort rows
-                rows.sort(this::sortRow);
-
-                if (!rows.isEmpty()) {
-                    printSource(rows);
+                    boolean add = true;
+                    if (filter != null && !matchesFilter(filter, row.location, row.routeId)) {
+                        add = false;
+                    }
+                    if (add) {
+                        rows.add(row);
+                    }
                 }
             }
-        } else {
-            printer().println("Response from running Camel with PID " + pid + " not received within 10 seconds");
-            return 1;
-        }
+            // sort rows
+            rows.sort(ORDER.comparator(sort));
 
-        // delete output file after use
-        PathUtils.deleteFile(outputFile);
+            if (rows.isEmpty() && filter != null) {
+                throw CliException.notFound("No route matching: " + filter);
+            }
+            if (!rows.isEmpty()) {
+                printSource(rows);
+            }
+        }
 
         return 0;
     }
 
-    private void doCallPid(Long pid) {
-        this.pid = pid;
-
-        JsonObject root = new JsonObject();
-        root.put("action", "route-structure");
-        root.put("filter", "*");
-        root.put("brief", brief);
-        Path file = getActionFile(Long.toString(pid));
-        try {
-            Files.writeString(file, root.toJson());
-        } catch (Exception e) {
-            // ignore
-        }
-    }
-
-    private int doCallSource(String name) throws Exception {
+    /**
+     * The route structure of a source file, without a running integration.
+     */
+    private JsonObject doCallSource(String name) throws Exception {
         File f = new File(name);
         if (!f.isFile() || !f.exists()) {
-            printer().printErr("File does not exist: " + name);
-            return 1;
+            throw CliException.notFound("File does not exist: " + name);
         }
 
-        final String target = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/structure-output.json";
-
-        Run run = new Run(getMain()) {
-            @Override
-            protected void doAddInitialProperty(KameletMain main) {
-                main.addInitialProperty("camel.main.dumpRoutes", "json");
-                main.addInitialProperty("camel.main.dumpRoutesLog", "false");
-                main.addInitialProperty("camel.main.dumpRoutesOutput", target);
-                // turn debug off as this can otherwise include source location in dump
-                main.addInitialProperty("camel.debug.enabled", "false");
-                main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
-                main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
-                if (ignoreLoadingError) {
-                    // turn off bean method validator if ignore loading error
-                    main.addInitialProperty("camel.language.bean.validate", "false");
+        // a file of its own, as several commands may run at the same time
+        Path output = Path.of(CommandLineHelper.CAMEL_JBANG_WORK_DIR,
+                "structure-output-" + ProcessHandle.current().pid() + ".json");
+        PathUtils.deleteFile(output);
+        final String target = output.toString();
+        try {
+            if (!compile && TransformJavaRoutes.applies(List.of(name))) {
+                if (!dumpJavaRoutes(List.of(name), target)) {
+                    throw CliException.failure("Cannot read the routes of " + name);
+                }
+            } else {
+                Run run = new Run(getMain()) {
+                    @Override
+                    protected void doAddInitialProperty(KameletMain main) {
+                        main.addInitialProperty("camel.main.dumpRoutes", "json");
+                        main.addInitialProperty("camel.main.dumpRoutesLog", "false");
+                        main.addInitialProperty("camel.main.dumpRoutesOutput", target);
+                        // turn debug off as this can otherwise include source location in dump
+                        main.addInitialProperty("camel.debug.enabled", "false");
+                        main.addInitialProperty(CamelJBangConstants.TRANSFORM, "true");
+                        main.addInitialProperty("camel.component.properties.ignoreMissingProperty", "true");
+                        if (ignoreLoadingError) {
+                            // turn off bean method validator if ignore loading error
+                            main.addInitialProperty("camel.language.bean.validate", "false");
+                        }
+                    }
+                };
+                run.files = List.of(name);
+                run.executionLimitOptions.maxSeconds = 1;
+                int exit = run.runTransform(ignoreLoadingError);
+                if (exit != 0) {
+                    throw new CliException(exit, "Cannot load the routes of " + name);
                 }
             }
-        };
-        run.files = List.of(name);
-        run.executionLimitOptions.maxSeconds = 1;
-        return run.runTransform(ignoreLoadingError);
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "name":
-                return o1.location.compareToIgnoreCase(o2.location) * negate;
-            case "id":
-                return o1.routeId.compareToIgnoreCase(o2.routeId) * negate;
-            default:
-                return 0;
+            JsonObject jo = getJsonObject(output);
+            if (jo == null) {
+                throw CliException.failure("No routes dumped from " + name);
+            }
+            return jo;
+        } finally {
+            PathUtils.deleteFile(output);
         }
     }
 
@@ -270,17 +269,29 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                 printer().printf("Source: %s%n", row.location);
                 printer().println("--------------------------------------------------------------------------------");
             }
+            // the body types each step was reached with, as the running app has seen them, line up in a column after
+            // the code (the message history records them, such as with camel run --dev)
+            int width = 0;
+            if (!raw && row.code.stream().anyMatch(code -> code.bodyTypes != null && !code.bodyTypes.isEmpty())) {
+                for (Code code : row.code) {
+                    width = Math.max(width, StringHelper.padString(code.level).length() + clippedCode(code).length());
+                }
+            }
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
-                String c = StringHelper.limitLength(Jsoner.unescape(code.code), 90, " (clipped)");
+                String c = clippedCode(code);
                 String pad = StringHelper.padString(code.level);
                 if (raw) {
                     printer().printf("%s%s%n", pad, c);
                 } else {
+                    String text = pad + c;
+                    if (width > 0 && code.bodyTypes != null && !code.bodyTypes.isEmpty()) {
+                        text = String.format("%-" + width + "s   body: %s", text, bodyTypes(code.bodyTypes, code.bodyKinds));
+                    }
                     if (code.line != -1) {
-                        printer().printf("%4d: %s%s%n", code.line, pad, c);
+                        printer().printf("%4d: %s%n", code.line, text);
                     } else {
-                        printer().printf("      %s%s%n", pad, c);
+                        printer().printf("      %s%n", text);
                     }
                 }
             }
@@ -288,8 +299,58 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         }
     }
 
-    protected JsonObject waitForOutputFile(Path outputFile) {
-        return getJsonObject(outputFile);
+    private static String clippedCode(Code code) {
+        return StringHelper.limitLength(Jsoner.unescape(code.code), 90, " (clipped)");
+    }
+
+    /**
+     * The body types by their simple class names, such as {@code String | LinkedHashMap} for a step reached with a text
+     * by some messages and with a Map by others, followed by the kinds when there is more than one:
+     * {@code String | LinkedHashMap (payload and data)}, a step that needs attention.
+     */
+    static String bodyTypes(List<String> types, List<String> kinds) {
+        StringJoiner sj = new StringJoiner(" | ");
+        for (String type : types) {
+            sj.add(StringHelper.afterLast(type, ".", type));
+        }
+        String answer = sj.toString();
+        if (kinds != null && kinds.size() > 1) {
+            answer += " (" + String.join(", ", kinds.subList(0, kinds.size() - 1)) + " and " + kinds.get(kinds.size() - 1)
+                      + ")";
+        }
+        return answer;
+    }
+
+    /**
+     * Only the steps that have been reached with more than one body type, and the routes that have such steps: what is
+     * dynamic in the routes, or needs attention when the kinds differ (bodyKinds).
+     */
+    public static JsonObject onlyVaried(JsonObject jo) {
+        JsonArray routes = new JsonArray();
+        JsonArray all = jo.getCollection("routes");
+        if (all != null) {
+            for (Object o : all) {
+                JsonObject route = (JsonObject) o;
+                JsonArray code = new JsonArray();
+                List<JsonObject> lines = route.getCollection("code");
+                if (lines != null) {
+                    for (JsonObject line : lines) {
+                        List<String> types = line.getCollection("bodyTypes");
+                        if (types != null && types.size() > 1) {
+                            code.add(line);
+                        }
+                    }
+                }
+                if (!code.isEmpty()) {
+                    JsonObject copy = new JsonObject(route);
+                    copy.put("code", code);
+                    routes.add(copy);
+                }
+            }
+        }
+        JsonObject answer = new JsonObject(jo);
+        answer.put("routes", routes);
+        return answer;
     }
 
     public static String extractSourceName(String loc) {
@@ -337,6 +398,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         int level;
         String code;
         String description;
+        List<String> bodyTypes;
+        List<String> bodyKinds;
     }
-
 }

@@ -71,13 +71,8 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: ['17', '25']
+        java: ['21', '25']
         experimental: [ false ]
-        include:
-          - java: '17'
-            # JDK 17 is kept for runtime compatibility testing.
-            # Skip the enforcer which requires JDK 21+ (needed to compile JDK 21-specific classes).
-            maven_extra_args: '-Denforcer.phase=none'
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -111,7 +106,7 @@ jobs:
       - id: install-mvnd
         uses: ./.github/actions/install-mvnd
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -218,7 +213,7 @@ jobs:
       # The comment content is identical across JDKs (same modules tested),
       # so last writer wins. However, we only upload (and overwrite) when the
       # comment file actually exists — a cancelled build (e.g., JDK 25 killed
-      # while JDK 17 fails) won't have the file and must not overwrite an
+      # while JDK 21 fails) won't have the file and must not overwrite an
       # artifact from a matrix entry that did produce it.
       #
       # The recovered-flake section is the one part that is NOT identical across

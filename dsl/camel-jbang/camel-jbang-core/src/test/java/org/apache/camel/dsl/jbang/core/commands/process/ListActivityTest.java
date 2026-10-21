@@ -24,6 +24,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -134,6 +135,10 @@ class ListActivityTest extends ProcessCommandTestSupport {
             assertTrue(output.contains("EX-100"));
             assertTrue(output.contains("myRoute"));
             assertTrue(output.contains("\"status\":\"OK\""));
+            // the exchange happened just now (it was printed as decades ago)
+            JsonObject row = Jsoner.deserialize(output, (JsonArray) null).getMap(0);
+            String since = row.getString("since");
+            assertFalse(since.contains("d"), "Since should be seconds ago, was: " + since);
         }
     }
 

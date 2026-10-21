@@ -17,6 +17,7 @@
 package org.apache.camel.component.zookeeper.integration;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -29,6 +30,7 @@ import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,11 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class ConsumeChildrenIT extends ZooKeeperITSupport {
 
+    private static final String ZK_NODE = "/grimm-ConsumeChildrenIT";
+
     @Override
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] { new RouteBuilder() {
             public void configure() {
-                from("zookeeper://{{zookeeper.connection.string}}/grimm?repeat=true&listChildren=true")
+                from("zookeeper://{{zookeeper.connection.string}}" + ZK_NODE + "?repeat=true&listChildren=true")
                         .sort(body(), new NaturalSortComparator(Order.Descending))
                         .to("mock:zookeeper-data");
             }
@@ -52,17 +56,36 @@ public class ConsumeChildrenIT extends ZooKeeperITSupport {
         MockEndpoint mock = getMockEndpoint("mock:zookeeper-data");
         mock.expectedMessageCount(5);
 
-        client.createPersistent("/grimm", "parent");
-        client.create("/grimm/hansel", "child");
-        client.create("/grimm/gretel", "child");
-        client.delete("/grimm/hansel");
-        client.delete("/grimm/gretel");
+        client.createPersistent(ZK_NODE, "parent");
+        awaitMockReceivedCount(mock, 1);
+        client.create(ZK_NODE + "/hansel", "child");
+        awaitMockReceivedCount(mock, 2);
+        client.create(ZK_NODE + "/gretel", "child");
+        awaitMockReceivedCount(mock, 3);
+        client.delete(ZK_NODE + "/hansel");
+        awaitMockReceivedCount(mock, 4);
+        client.delete(ZK_NODE + "/gretel");
 
-        MockEndpoint.assertIsSatisfied(context);
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         validateExchangesContainListings(mock, createChildListing(), createChildListing("hansel"),
                 createChildListing("hansel", "gretel"), createChildListing("gretel"),
                 createChildListing());
+    }
+
+    /**
+     * Waits until the mock has received at least {@code count} messages before the next ZooKeeper mutation is fired.
+     * <p>
+     * This ensures the previous ChildrenChangedOperation copy has been taken off the queue and its
+     * {@code installWatch()} called, which happens after the exchange is delivered to the mock. The tiny remaining gap
+     * between the mock receipt and the actual watch registration is covered by the 200 ms pre-delay inside
+     * {@link ZooKeeperITSupport.TestZookeeperClient#create} / {@code delete}. If that delay is ever removed, a short
+     * post-delay or a deeper hook into the consumer would be needed here to avoid reintroducing flakiness.
+     */
+    private void awaitMockReceivedCount(MockEndpoint mock, int count) {
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until(() -> mock.getReceivedCounter() >= count);
     }
 
     private void validateExchangesContainListings(MockEndpoint mock, List<?>... expected)

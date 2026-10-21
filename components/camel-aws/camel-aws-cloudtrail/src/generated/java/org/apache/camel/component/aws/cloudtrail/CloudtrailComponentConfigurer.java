@@ -45,6 +45,10 @@ public class CloudtrailComponentConfigurer extends PropertyConfigurerSupport imp
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "lookbackinterval":
+        case "lookBackInterval": getOrCreateConfiguration(target).setLookBackInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "lookbackwindow":
+        case "lookBackWindow": getOrCreateConfiguration(target).setLookBackWindow(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "maxresults":
         case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, int.class, value)); return true;
         case "overrideendpoint":
@@ -99,6 +103,10 @@ public class CloudtrailComponentConfigurer extends PropertyConfigurerSupport imp
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "lookbackinterval":
+        case "lookBackInterval": return long.class;
+        case "lookbackwindow":
+        case "lookBackWindow": return long.class;
         case "maxresults":
         case "maxResults": return int.class;
         case "overrideendpoint":
@@ -149,6 +157,10 @@ public class CloudtrailComponentConfigurer extends PropertyConfigurerSupport imp
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "lookbackinterval":
+        case "lookBackInterval": return getOrCreateConfiguration(target).getLookBackInterval();
+        case "lookbackwindow":
+        case "lookBackWindow": return getOrCreateConfiguration(target).getLookBackWindow();
         case "maxresults":
         case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
         case "overrideendpoint":

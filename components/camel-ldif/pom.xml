@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ldif</artifactId>
@@ -75,7 +75,6 @@
             <groupId>org.apache.directory.api</groupId>
             <artifactId>api-ldap-codec-standalone</artifactId>
             <version>${directory-api-version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.directory.api</groupId>

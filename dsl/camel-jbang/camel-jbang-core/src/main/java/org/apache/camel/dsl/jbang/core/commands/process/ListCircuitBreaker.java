@@ -27,8 +27,10 @@ import com.github.freva.asciitable.ColumnData;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -43,6 +45,8 @@ import picocli.CommandLine.Command;
                  "  camel get circuit-breaker",
                  "  camel get circuit-breaker --watch" })
 public class ListCircuitBreaker extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -59,107 +63,101 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
-                        row.uptime = extractSince(ph);
-                        row.age = TimeUtils.printSince(row.uptime);
-                        Row baseRow = row.copy();
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
+            row.uptime = extractSince(ph);
+            row.age = TimeUtils.printSince(row.uptime);
+            Row baseRow = row.copy();
 
-                        JsonObject mo = (JsonObject) root.get("resilience4j");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "resilience4j";
-                                    row.id = jo.getString("id");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    row.bufferedCalls = jo.getInteger("bufferedCalls");
-                                    row.successfulCalls = jo.getInteger("successfulCalls");
-                                    row.failedCalls = jo.getInteger("failedCalls");
-                                    row.notPermittedCalls = jo.getLong("notPermittedCalls");
-                                    row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
-                                    row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
-                                    row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
-                                    row.bulkheadEnabled = isBulkheadEnabled(jo);
-                                    row.failureRate = jo.getDouble("failureRate");
-                                    rows.add(row);
-                                }
-                            }
-                        }
-                        mo = (JsonObject) root.get("fault-tolerance");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "fault-tolerance";
-                                    row.id = jo.getString("id");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    row.successfulCalls = jo.getLongOrDefault("successfulCalls", 0).intValue();
-                                    row.failedCalls = jo.getLongOrDefault("failedCalls", 0).intValue();
-                                    row.notPermittedCalls = jo.getLongOrDefault("notPermittedCalls", 0);
-                                    row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
-                                    row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
-                                    row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
-                                    row.bulkheadEnabled = isBulkheadEnabled(jo);
-                                    row.failureRate = -1;
-                                    rows.add(row);
-                                }
-                            }
-                        }
-                        mo = (JsonObject) root.get("circuit-breaker");
-                        if (mo != null) {
-                            JsonArray arr = (JsonArray) mo.get("circuitBreakers");
-                            if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
-                                    row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
-                                    row.component = "core";
-                                    row.id = jo.getString("routeId");
-                                    row.routeId = jo.getString("routeId");
-                                    row.state = jo.getString("state");
-                                    row.successfulCalls = jo.getInteger("successfulCalls");
-                                    row.failedCalls = jo.getInteger("failedCalls");
-                                    rows.add(row);
-                                }
-                            }
-                        }
+            JsonObject mo = (JsonObject) root.get("resilience4j");
+            if (mo != null) {
+                JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.component = "resilience4j";
+                        row.id = jo.getString("id");
+                        row.routeId = jo.getString("routeId");
+                        row.state = jo.getString("state");
+                        row.bufferedCalls = jo.getInteger("bufferedCalls");
+                        row.successfulCalls = jo.getInteger("successfulCalls");
+                        row.failedCalls = jo.getInteger("failedCalls");
+                        row.notPermittedCalls = jo.getLong("notPermittedCalls");
+                        row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
+                        row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
+                        row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
+                        row.bulkheadEnabled = isBulkheadEnabled(jo);
+                        row.failureRate = jo.getDouble("failureRate");
+                        rows.add(row);
                     }
-                });
+                }
+            }
+            mo = (JsonObject) root.get("fault-tolerance");
+            if (mo != null) {
+                JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.component = "fault-tolerance";
+                        row.id = jo.getString("id");
+                        row.routeId = jo.getString("routeId");
+                        row.state = jo.getString("state");
+                        row.successfulCalls = jo.getLongOrDefault("successfulCalls", 0).intValue();
+                        row.failedCalls = jo.getLongOrDefault("failedCalls", 0).intValue();
+                        row.notPermittedCalls = jo.getLongOrDefault("notPermittedCalls", 0);
+                        row.fallbackCalls = jo.getLongOrDefault("fallbackCalls", 0);
+                        row.timedOutCalls = jo.getLongOrDefault("timedOutCalls", 0);
+                        row.bulkheadRejectedCalls = jo.getLongOrDefault("bulkheadRejectedCalls", 0);
+                        row.bulkheadEnabled = isBulkheadEnabled(jo);
+                        row.failureRate = -1;
+                        rows.add(row);
+                    }
+                }
+            }
+            mo = (JsonObject) root.get("circuit-breaker");
+            if (mo != null) {
+                JsonArray arr = (JsonArray) mo.get("circuitBreakers");
+                if (arr != null) {
+                    for (int i = 0; i < arr.size(); i++) {
+                        row = baseRow.copy();
+                        JsonObject jo = (JsonObject) arr.get(i);
+                        row.component = "core";
+                        row.id = jo.getString("routeId");
+                        row.routeId = jo.getString("routeId");
+                        row.state = jo.getString("state");
+                        row.successfulCalls = jo.getInteger("successfulCalls");
+                        row.failedCalls = jo.getInteger("failedCalls");
+                        rows.add(row);
+                    }
+                }
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("component", r.component);
-                    jo.put("route", r.routeId);
+                    jo.put("routeId", r.routeId);
                     jo.put("id", r.id);
-                    jo.put("state", r.state);
+                    jo.put("status", r.state);
                     jo.put("bufferedCalls", r.bufferedCalls);
                     jo.put("successfulCalls", r.successfulCalls);
                     jo.put("failedCalls", r.failedCalls);
@@ -211,25 +209,6 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
         return 0;
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
-    }
-
     private String getFailure(Row r) {
         if (r.failedCalls <= 0) {
             return "";
@@ -273,7 +252,7 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
         return cfg != null && Boolean.TRUE.equals(cfg.get("bulkheadEnabled"));
     }
 
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         String age;
@@ -291,14 +270,6 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
         long bulkheadRejectedCalls;
         boolean bulkheadEnabled;
         double failureRate;
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
 }

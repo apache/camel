@@ -78,6 +78,31 @@ override the API call. See xref:manual::security-model.adoc[the Camel security m
 ====
 
 
+== Usage
+
+The endpoint is the API name and the method name, such as `data/get`.
+The parameters of the method are endpoint options or headers with the `CamelGoogleSheets.` prefix.
+The following route reads a range of a spreadsheet; the result is a `ValueRange` with the rows in `values`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:readOrders
+      steps:
+        - to:
+            uri: google-sheets:data/get
+            parameters:
+              spreadsheetId: "{{google.spreadsheetId}}"
+              range: "Orders!A1:C10"
+              clientId: "{{google.clientId}}"
+              clientSecret: "{{google.clientSecret}}"
+              refreshToken: "{{google.refreshToken}}"
+              applicationName: camel-example
+        - log:
+            message: "Rows: ${body.values}"
+----
+
 == ValueInputOption
 
 Many of the APIs with Google sheets require including the following header,

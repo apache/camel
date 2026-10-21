@@ -50,6 +50,11 @@ import org.apache.camel.util.FileUtil;
  * useFilenameHeader is set to true.
  * </p>
  * <p>
+ * When the ZIP file already has an entry with the same name (for example two files {@code orders.csv} from different
+ * folders), the new entry gets a number before its extension ({@code orders (1).csv}, {@code orders (2).csv}, ...) so
+ * that the earlier entry is kept.
+ * </p>
+ * <p>
  * <b>Note:</b> Please note that this aggregation strategy requires eager completion check to work properly.
  * </p>
  */
@@ -316,6 +321,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             Path parent = dest.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
+                dest = freeEntryName(dest);
                 Files.copy(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
             }
         }
@@ -331,7 +337,32 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             Path parent = dest.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
+                dest = freeEntryName(dest);
                 Files.write(dest, buffer, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            }
+        }
+    }
+
+    /**
+     * Returns the given entry when the zip file has no entry with that name, otherwise the first free name with
+     * {@code " (n)"} before the extension: {@code orders.csv} becomes {@code orders (1).csv}, then
+     * {@code orders (2).csv}. Writing to an existing entry would replace it, and the content of the earlier message
+     * would be lost. The loop ends: every taken name is an entry of the zip file, so at most one more name than there
+     * are entries is checked.
+     */
+    private static Path freeEntryName(Path dest) {
+        if (Files.notExists(dest)) {
+            return dest;
+        }
+        String name = dest.getFileName().toString();
+        int dot = name.lastIndexOf('.');
+        // a leading dot (".profile") is part of the name, not an extension
+        String base = dot > 0 ? name.substring(0, dot) : name;
+        String extension = dot > 0 ? name.substring(dot) : "";
+        for (int i = 1;; i++) {
+            Path candidate = dest.resolveSibling(base + " (" + i + ")" + extension);
+            if (Files.notExists(candidate)) {
+                return candidate;
             }
         }
     }

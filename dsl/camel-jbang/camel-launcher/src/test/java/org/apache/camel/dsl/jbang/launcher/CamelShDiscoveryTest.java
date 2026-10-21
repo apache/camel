@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verifies the shared Java 17+ discovery contract implemented in camel.sh. POSIX only; the Windows batch equivalent
+ * Verifies the shared Java 21+ discovery contract implemented in camel.sh. POSIX only; the Windows batch equivalent
  * lives in {@link CamelBatDiscoveryTest}.
  */
 @DisabledOnOs(OS.WINDOWS)
@@ -40,8 +40,9 @@ class CamelShDiscoveryTest {
 
     private static final Path SCRIPT = Paths.get("src/main/resources/bin/camel.sh");
 
-    private static final String JAVA17 = "openjdk version \"17.0.2\" 2022-01-18";
     private static final String JAVA21 = "openjdk version \"21.0.3\" 2024-04-16";
+    private static final String JAVA25 = "openjdk version \"25\" 2025-09-16";
+    private static final String JAVA17 = "openjdk version \"17.0.2\" 2022-01-18";
     private static final String JAVA11 = "openjdk version \"11.0.20\" 2023-07-18";
     private static final String JAVA8 = "java version \"1.8.0_202\"";
     private static final String GARBAGE = "totally not a java banner";
@@ -57,9 +58,29 @@ class CamelShDiscoveryTest {
     }
 
     @Test
-    void acceptsJava17ViaJavacmd(@TempDir Path base) throws Exception {
+    void skipsSourcesAndJavadocJars(@TempDir Path base) throws Exception {
+        Path h = home(Files.createDirectories(base.resolve("launcher with spaces")));
+        Files.writeString(h.resolve("camel-launcher-9.9.9-sources.jar"), "sources");
+        Files.writeString(h.resolve("camel-launcher-zzz-sources.jar"), "sources");
+        Files.writeString(h.resolve("camel-launcher-9.9.9-javadoc.jar"), "javadoc");
+        Files.writeString(h.resolve("camel-launcher-zzz-javadoc.jar"), "javadoc");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVACMD");
+        Map<String, String> env = new HashMap<>();
+        env.put("LC_ALL", "C");
+        env.put("JAVACMD", java.toString());
+
+        FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "hawtio");
+
+        assertEquals(0, r.exitCode(), r.stderr());
+        assertTrue(r.stdout().contains(h.resolve("camel-launcher-9.9.9.jar").toString()), r.stdout());
+        assertFalse(r.stdout().contains("-sources.jar"), r.stdout());
+        assertFalse(r.stdout().contains("-javadoc.jar"), r.stdout());
+    }
+
+    @Test
+    void acceptsJava21ViaJavacmd(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "JAVACMD");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "JAVACMD");
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java.toString());
 
@@ -88,7 +109,7 @@ class CamelShDiscoveryTest {
     @Test
     void precedenceJavacmdBeatsJavaHomeAndPath(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path first = FakeJava.writeFakeJava(base.resolve("j1"), "java", JAVA17, 0, "JAVACMD");
+        Path first = FakeJava.writeFakeJava(base.resolve("j1"), "java", JAVA21, 0, "JAVACMD");
         Path jhomeBin = base.resolve("jh/bin");
         FakeJava.writeFakeJava(jhomeBin, "java", JAVA21, 0, "JAVAHOME");
         Path pathDir = base.resolve("pd");
@@ -110,7 +131,7 @@ class CamelShDiscoveryTest {
         // SDKMAN provides Java by exporting JAVA_HOME (candidate #2) with no JAVACMD set.
         Path h = home(base);
         Path jhomeBin = base.resolve("jh/bin");
-        FakeJava.writeFakeJava(jhomeBin, "java", JAVA17, 0, "JAVAHOME");
+        FakeJava.writeFakeJava(jhomeBin, "java", JAVA21, 0, "JAVAHOME");
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVA_HOME", base.resolve("jh").toString());
@@ -126,7 +147,7 @@ class CamelShDiscoveryTest {
     void skipsInvalidJavacmdFallsBackToJavaHome(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path jhomeBin = base.resolve("jh/bin");
-        FakeJava.writeFakeJava(jhomeBin, "java", JAVA17, 0, "JAVAHOME");
+        FakeJava.writeFakeJava(jhomeBin, "java", JAVA21, 0, "JAVAHOME");
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", base.resolve("does-not-exist").toString());
@@ -145,7 +166,7 @@ class CamelShDiscoveryTest {
         Files.writeString(nonExecutable, "#!/bin/sh\nexit 0\n");
         assertFalse(Files.isExecutable(nonExecutable), "test candidate must not be executable");
         Path jhomeBin = base.resolve("jh/bin");
-        FakeJava.writeFakeJava(jhomeBin, "java", JAVA17, 0, "JAVAHOME");
+        FakeJava.writeFakeJava(jhomeBin, "java", JAVA21, 0, "JAVAHOME");
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", nonExecutable.toString());
@@ -163,7 +184,7 @@ class CamelShDiscoveryTest {
         Path jhomeBin = base.resolve("jh/bin");
         FakeJava.writeFakeJava(jhomeBin, "java", JAVA11, 0, "JAVAHOME"); // too old
         Path pathDir = base.resolve("pd");
-        FakeJava.writeFakeJava(pathDir, "java", JAVA17, 0, "PATH");
+        FakeJava.writeFakeJava(pathDir, "java", JAVA21, 0, "PATH");
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVA_HOME", base.resolve("jh").toString());
@@ -181,7 +202,7 @@ class CamelShDiscoveryTest {
     void precedenceJavaHomeBeatsPath(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path jhomeBin = base.resolve("jh/bin");
-        FakeJava.writeFakeJava(jhomeBin, "java", JAVA17, 0, "JAVAHOME");
+        FakeJava.writeFakeJava(jhomeBin, "java", JAVA21, 0, "JAVAHOME");
         Path pathDir = base.resolve("pd");
         FakeJava.writeFakeJava(pathDir, "java", JAVA21, 0, "PATH");
 
@@ -199,7 +220,7 @@ class CamelShDiscoveryTest {
     void precedencePathBeatsCamelFallbackJava(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path pathDir = base.resolve("pd");
-        FakeJava.writeFakeJava(pathDir, "java", JAVA17, 0, "PATH");
+        FakeJava.writeFakeJava(pathDir, "java", JAVA21, 0, "PATH");
         Path fallback = FakeJava.writeFakeJava(base.resolve("fb"), "java", JAVA21, 0, "FALLBACK");
 
         Map<String, String> env = new HashMap<>();
@@ -215,7 +236,7 @@ class CamelShDiscoveryTest {
     @Test
     void usesCamelFallbackJavaWhenNothingElseQualifies(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path fb = FakeJava.writeFakeJava(base.resolve("fb"), "java", JAVA17, 0, "FALLBACK");
+        Path fb = FakeJava.writeFakeJava(base.resolve("fb"), "java", JAVA21, 0, "FALLBACK");
 
         Map<String, String> env = new HashMap<>();
         env.put("PATH", pathWithNonqualifyingJava(base));
@@ -239,7 +260,7 @@ class CamelShDiscoveryTest {
         FakeJava.Result r = FakeJava.run(h.resolve("camel.sh"), env, "version");
 
         assertEquals(1, r.exitCode());
-        assertTrue(r.stderr().contains("17"), "diagnostic must state the Java 17 minimum: " + r.stderr());
+        assertTrue(r.stderr().contains("21"), "diagnostic must state the Java 21 minimum: " + r.stderr());
         assertTrue(r.stderr().toLowerCase().contains("java"), r.stderr());
     }
 
@@ -262,7 +283,7 @@ class CamelShDiscoveryTest {
         Path h = home(base);
         Path garbage = FakeJava.writeFakeJava(base.resolve("g"), "java", GARBAGE, 0, "GARBAGE");
         Path jhomeBin = base.resolve("jh/bin");
-        FakeJava.writeFakeJava(jhomeBin, "java", JAVA17, 0, "JAVAHOME");
+        FakeJava.writeFakeJava(jhomeBin, "java", JAVA21, 0, "JAVAHOME");
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", garbage.toString());
@@ -295,7 +316,7 @@ class CamelShDiscoveryTest {
     void handlesSpacesAndUnicodeInJavaPath(@TempDir Path base) throws Exception {
         Path h = home(base);
         Path dir = base.resolve("spa ce/über");
-        Path java = FakeJava.writeFakeJava(dir, "java", JAVA17, 0, "UNICODE");
+        Path java = FakeJava.writeFakeJava(dir, "java", JAVA21, 0, "UNICODE");
 
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java.toString());
@@ -309,7 +330,7 @@ class CamelShDiscoveryTest {
     @Test
     void preservesArgumentsWithSpaces(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "ARGS");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "ARGS");
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java.toString());
 
@@ -322,7 +343,7 @@ class CamelShDiscoveryTest {
     @Test
     void defaultsHeapWhenJavaOptsUnset(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "HEAP");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "HEAP");
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java.toString());
 
@@ -334,7 +355,7 @@ class CamelShDiscoveryTest {
     @Test
     void preservesJavaOptsWhenSet(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "OPTS");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "OPTS");
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java.toString());
         env.put("JAVA_OPTS", "-Dcamel.test=1 -Xmx256m");
@@ -349,7 +370,7 @@ class CamelShDiscoveryTest {
     @Test
     void preservesChildExitCode(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 42, "EXIT");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 42, "EXIT");
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java.toString());
 
@@ -361,7 +382,7 @@ class CamelShDiscoveryTest {
     @Test
     void preservesChildStdinStdoutAndStderr(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "STDIO");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "STDIO");
         Map<String, String> env = new HashMap<>();
         env.put("JAVACMD", java.toString());
 
@@ -376,11 +397,11 @@ class CamelShDiscoveryTest {
     @Test
     void probeCannotConsumeChildStdin(@TempDir Path base) throws Exception {
         Path h = home(base);
-        Path java = FakeJava.writeFakeJava(base, "java", JAVA17, 0, "PROBE-STDIN");
+        Path java = FakeJava.writeFakeJava(base, "java", JAVA21, 0, "PROBE-STDIN");
         Files.writeString(java, "#!/bin/sh\n"
                                 + "if [ \"$1\" = \"-version\" ]; then\n"
                                 + "  IFS= read -r ignored\n"
-                                + "  echo '" + JAVA17 + "' 1>&2\n"
+                                + "  echo '" + JAVA21 + "' 1>&2\n"
                                 + "  exit 0\n"
                                 + "fi\n"
                                 + "echo 'RAN=PROBE-STDIN'\n"

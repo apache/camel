@@ -28,9 +28,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -49,8 +51,25 @@ public final class IntegrationLauncher {
     /** The last log records of a failed start that are returned. */
     static final int FAILURE_RECORDS = 15;
 
+    /**
+     * How often an integration started in dev mode scans for changed files (CAMEL-25661). A write tool waits for the
+     * reload of the file it wrote, and dev mode finds the change at its next scan: at the default of 2000 ms that is
+     * about a second per write. Each write tool call writes one file and waits for its reload, so a shorter interval
+     * does not split one change into two reloads. The key is optional (the ? before the name): the camel command can be
+     * older than these tools (the MCP server run as LATEST, an older camel on the PATH), and a Camel without the option
+     * logs a warning and starts, where an unknown key would stop it from starting.
+     */
+    static final String DEV_RELOAD_INTERVAL = "--prop=camel.main.?routesReloadInterval=500";
+
     /** A stack frame, or the count of the frames a cause shares with the exception it caused. */
     private static final Pattern FRAME = Pattern.compile("^\\s*(at \\S.*|\\.\\.\\. \\d+ (more|common frames omitted))$");
+    /** The line camel run prints when it exits with an error. */
+    private static final Pattern CLI_ERROR = Pattern.compile("^ERROR: (.+)$");
+    /** An exception of the console output with its message. */
+    private static final Pattern EXCEPTION_LINE
+            = Pattern.compile("^(?:Caused by: )?[\\w.$]+(?:Exception|Error): (.+)$");
+    /** The longest cause put first in an answer; the output that follows has all of it. */
+    private static final int MAX_CAUSE = 500;
 
     /**
      * The processes this JVM started from a directory with --source-dir, so a copy that has not written its status file
@@ -64,6 +83,11 @@ public final class IntegrationLauncher {
      * the tools and scripts that know it by its own name do not find.
      */
     private static final Map<Path, String> STOPPED_BY_RESTART = new ConcurrentHashMap<>();
+
+    /**
+     * The camel command that integrations are started with; a test starts another program instead.
+     */
+    static Supplier<List<String>> camelCommand = LauncherHelper::getCamelCommand;
 
     private IntegrationLauncher() {
     }
@@ -82,7 +106,7 @@ public final class IntegrationLauncher {
     public static JsonObject run(Path directory, List<String> files, String name, boolean dev, List<String> extraArgs) {
         String runName = runName(directory, name);
         boolean before = runName != null && !runName.equals(name);
-        List<String> cmd = new ArrayList<>(LauncherHelper.getCamelCommand());
+        List<String> cmd = new ArrayList<>(camelCommand.get());
         // no files given: the whole directory is the app (camel run --source-dir), so a file the agent adds later,
         // a bean file, a Java class under src/main/java, is part of it and reloaded in dev mode (CAMEL-24861);
         // with files given only those run, for a directory that holds several apps
@@ -111,14 +135,12 @@ public final class IntegrationLauncher {
             }
             result.put("command", String.join(" ", cmd));
             try {
-                Files.createDirectories(CommandLineHelper.getCamelDir());
-                output = Files.createTempFile(CommandLineHelper.getCamelDir(), "camel-launch-", ".log");
-                output.toFile().deleteOnExit();
                 ProcessBuilder pb = new ProcessBuilder(cmd);
                 pb.directory(directory.toFile());
-                pb.redirectErrorStream(true);
-                pb.redirectOutput(output.toFile());
-                process = pb.start();
+                // the console output goes to ~/.camel/<pid>-run.log, as for camel run --background (CAMEL-25818)
+                BackgroundLog.Started launched = BackgroundLog.start(pb);
+                process = launched.process();
+                output = launched.log();
             } catch (IOException e) {
                 result.put("status", "failed");
                 result.put("error", "Cannot start camel run: " + e.getMessage());
@@ -132,14 +154,21 @@ public final class IntegrationLauncher {
         long deadline = System.currentTimeMillis() + STARTUP_TIMEOUT_MS;
         while (System.currentTimeMillis() < deadline) {
             if (!process.isAlive()) {
+                String cause = failureCause(output);
                 result.put("status", "failed");
                 result.put("exitCode", process.exitValue());
+                if (cause != null) {
+                    result.put("cause", cause);
+                }
                 result.put("output", failureOutput(output));
-                result.put("message", "camel run exited before the integration started; the output has the reason");
+                result.put("message", cause != null
+                        ? "camel run exited before the integration started: " + cause
+                        : "camel run exited before the integration started; the output has the reason");
+                removeConsoleOutput(output);
                 return result;
             }
             RuntimeHelper.ProcessInfo info = findByPid(pid);
-            if (info != null) {
+            if (info != null && started(pid)) {
                 // the name the other tools find the process by: the one the caller gave, else the Camel context name
                 // (the source file name without its extensions); the pid is in the result as well
                 String started = runName != null && !runName.isBlank()
@@ -161,6 +190,7 @@ public final class IntegrationLauncher {
                                                       : "; dev mode reloads the routes when a source file changes"
                                               : "; restart it after changing a source file")
                                       + ". camel_get_log reads its log, camel_get_errors its failed exchanges.");
+                removeWhenEnded(process, output);
                 return result;
             }
             try {
@@ -175,6 +205,7 @@ public final class IntegrationLauncher {
         result.put("output", readTail(output));
         result.put("message", "camel run is still starting after " + STARTUP_TIMEOUT_MS / 1000
                               + "s (dependencies may be downloading); list_processes shows it once it is up");
+        removeWhenEnded(process, output);
         return result;
     }
 
@@ -214,6 +245,7 @@ public final class IntegrationLauncher {
         cmd.add("--source-dir=.");
         if (dev) {
             cmd.add("--dev");
+            cmd.add(DEV_RELOAD_INTERVAL);
         }
         if (name != null && !name.isBlank()) {
             cmd.add("--name=" + name);
@@ -240,6 +272,7 @@ public final class IntegrationLauncher {
         cmd.addAll(files);
         if (dev) {
             cmd.add("--dev");
+            cmd.add(DEV_RELOAD_INTERVAL);
         }
         if (name != null && !name.isBlank()) {
             cmd.add("--name=" + name);
@@ -251,6 +284,21 @@ public final class IntegrationLauncher {
         return cmd;
     }
 
+    /**
+     * Whether the CamelContext of the integration has started, as its status file says (CAMEL-25784). The CLI connector
+     * writes the status file while Camel starts, before the routes start, so a route that fails to start ends the
+     * process after the file has appeared: a run that was answered as started had died at startup. A status without a
+     * state (an older Camel) counts as started.
+     */
+    static boolean started(long pid) {
+        JsonObject status = RuntimeHelper.readStatus(pid);
+        if (status == null) {
+            return false;
+        }
+        String state = status.get("context") instanceof JsonObject context ? context.getString("state") : null;
+        return state == null || "Started".equals(state);
+    }
+
     private static RuntimeHelper.ProcessInfo findByPid(long pid) {
         for (RuntimeHelper.ProcessInfo p : RuntimeHelper.discoverProcesses()) {
             if (p.pid() == pid) {
@@ -258,6 +306,49 @@ public final class IntegrationLauncher {
             }
         }
         return null;
+    }
+
+    /**
+     * What made a run fail to start, in one line: the error camel run prints as it exits ({@code ERROR: ...}), else the
+     * message of the first exception after a record logged at ERROR. The output shows it among the startup records,
+     * under the banner; the answer puts it first. A model retried camel_run three times with "Duplicate route ids
+     * detected" in the output, and never changed the file that held the copy of the route. Null when the output has
+     * neither.
+     */
+    static String failureCause(Path output) {
+        List<String> lines;
+        try {
+            lines = readText(output).lines().map(String::strip).toList();
+        } catch (IOException e) {
+            return null;
+        }
+        String cause = null;
+        // camel run prints its error last
+        for (int i = lines.size() - 1; i >= 0 && cause == null; i--) {
+            Matcher m = CLI_ERROR.matcher(lines.get(i));
+            if (m.matches()) {
+                cause = m.group(1);
+            }
+        }
+        for (int i = 0; i < lines.size() && cause == null; i++) {
+            if (lines.get(i).contains(" ERROR ")) {
+                for (int j = i + 1; j < Math.min(lines.size(), i + 5) && cause == null; j++) {
+                    Matcher m = EXCEPTION_LINE.matcher(lines.get(j));
+                    if (m.matches()) {
+                        cause = m.group(1);
+                    }
+                }
+                if (cause == null) {
+                    int at = lines.get(i).indexOf(" : ");
+                    cause = at > 0 ? lines.get(i).substring(at + 3) : lines.get(i);
+                }
+            }
+        }
+        if (cause == null || cause.isBlank()) {
+            return null;
+        }
+        cause = cause.strip();
+        return cause.length() > MAX_CAUSE ? cause.substring(0, MAX_CAUSE) + "..." : cause;
     }
 
     /**
@@ -462,28 +553,34 @@ public final class IntegrationLauncher {
             case "kill" -> {
                 Optional<ProcessHandle> ph = ProcessHandle.of(pid);
                 if (ph.isEmpty()) {
-                    yield "No process with pid " + pid;
+                    throw new ToolExecutionException("No process with pid " + pid);
                 }
                 ph.get().destroyForcibly();
                 yield "Killed pid " + pid;
             }
             case "restart" -> restart(pid);
-            case "stop-routes", "pause" -> ctx.executeAction("route", root -> {
-                root.put("id", "*");
-                root.put("command", "stop");
-            });
-            case "start-routes", "resume" -> ctx.executeAction("route", root -> {
-                root.put("id", "*");
-                root.put("command", "start");
-            });
+            case "stop-routes", "pause" -> {
+                ctx.sendAction("route", root -> {
+                    root.put("id", "*");
+                    root.put("command", "stop");
+                });
+                yield "Stopped the routes of pid " + pid;
+            }
+            case "start-routes", "resume" -> {
+                ctx.sendAction("route", root -> {
+                    root.put("id", "*");
+                    root.put("command", "start");
+                });
+                yield "Started the routes of pid " + pid;
+            }
             case "reset-stats" -> {
-                ctx.executeAction("reset-stats", null);
+                ctx.sendAction("reset-stats", null);
                 yield "Statistics reset for pid " + pid;
             }
             case "reload" -> {
                 // what camel cmd reload does: the routes are loaded again from their files without a restart, so
                 // a changed stylesheet or a dropped data file takes effect, and a file consumed once is read again
-                ctx.executeAction("reload", null);
+                ctx.sendAction("reload", null);
                 yield "Reload triggered for pid " + pid + "; camel_get_log shows the routes reloaded summary";
             }
             default -> throw new ToolExecutionException(
@@ -495,11 +592,13 @@ public final class IntegrationLauncher {
     /**
      * Stops the process and starts it again with its own command line and working directory, so a route file edited
      * without dev mode is picked up. Returns the new pid once its status file appears.
+     *
+     * @throws ToolExecutionException when the integration cannot be restarted, or stops right after the restart
      */
     static String restart(long pid) {
         Optional<ProcessHandle> handle = ProcessHandle.of(pid);
         if (handle.isEmpty()) {
-            return "No process with pid " + pid;
+            throw new ToolExecutionException("No process with pid " + pid);
         }
         ProcessHandle ph = handle.get();
         ProcessHandle.Info info = ph.info();
@@ -509,7 +608,8 @@ public final class IntegrationLauncher {
             Collections.addAll(cmd, info.arguments().get());
         }
         if (cmd.isEmpty()) {
-            return "Cannot restart pid " + pid + ": its command line is not available; stop it and run it again";
+            throw new ToolExecutionException(
+                    "Cannot restart pid " + pid + ": its command line is not available; stop it and run it again");
         }
         RuntimeHelper.ProcessInfo pi = findByPid(pid);
         String name = pi != null ? pi.name() : null;
@@ -525,37 +625,63 @@ public final class IntegrationLauncher {
                 // the relaunch below is attempted anyway
             }
         }
+        // the console output of the process that stopped, as camel restart removes it
+        BackgroundLog.remove(pid);
         try {
-            Path output = Files.createTempFile(CommandLineHelper.getCamelDir(), "camel-restart-", ".log");
-            output.toFile().deleteOnExit();
             ProcessBuilder pb = new ProcessBuilder(cmd);
             if (directory != null) {
                 pb.directory(directory.toFile());
             }
-            pb.redirectErrorStream(true);
-            pb.redirectOutput(output.toFile());
-            Process p = pb.start();
+            // the console output goes to ~/.camel/<pid>-run.log, as for camel restart (CAMEL-25818)
+            BackgroundLog.Started launched = BackgroundLog.start(pb);
+            Process p = launched.process();
+            Path output = launched.log();
             long deadline = System.currentTimeMillis() + STARTUP_TIMEOUT_MS;
             while (System.currentTimeMillis() < deadline && p.isAlive()) {
-                if (findByPid(p.pid()) != null) {
+                if (findByPid(p.pid()) != null && started(p.pid())) {
+                    removeWhenEnded(p, output);
                     return "Restarted " + (name != null ? name : "pid " + pid) + " as pid " + p.pid();
                 }
                 Thread.sleep(250);
             }
             if (!p.isAlive()) {
                 boolean kept = stoppedByRestart(directory, name);
-                return "Restart of " + (name != null ? name : "pid " + pid) + " failed with exit code "
-                       + p.exitValue() + ", so it is stopped now: fix the cause below, then camel_run starts it again"
-                       + (kept ? " (directory " + directory + ") under the same name, " + name : "") + ".\n"
-                       + failureOutput(output);
+                String cause = failureCause(output);
+                String failure = "Restart of " + (name != null ? name : "pid " + pid) + " failed with exit code "
+                                 + p.exitValue() + ", so it is stopped now"
+                                 + (cause != null ? ". The cause: " + cause + "\nFix it" : ": fix the cause below")
+                                 + ", then camel_run starts it again"
+                                 + (kept ? " (directory " + directory + ") under the same name, " + name : "")
+                                 + ".\n" + failureOutput(output);
+                removeConsoleOutput(output);
+                throw new ToolExecutionException(failure);
             }
+            removeWhenEnded(p, output);
             return "Restarting " + (name != null ? name : "pid " + pid) + " as pid " + p.pid()
                    + " (still starting)";
         } catch (IOException e) {
-            return "Restart failed: " + e.getMessage();
+            throw new ToolExecutionException("Restart failed: " + e.getMessage());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return "Restart interrupted";
+            throw new ToolExecutionException("Restart interrupted");
+        }
+    }
+
+    /**
+     * Removes the console output of the process once the process has ended (CAMEL-25818). The tools read it only to
+     * answer (the cause of a start that failed, or the output of a run that is still starting), and the log of the
+     * integration has what it logged. An integration that outlives this JVM keeps it while it runs, as one run with
+     * camel run --background does: camel stop removes it, and camel dirty once the process is gone.
+     */
+    static void removeWhenEnded(Process process, Path output) {
+        process.onExit().thenRun(() -> removeConsoleOutput(output));
+    }
+
+    private static void removeConsoleOutput(Path output) {
+        try {
+            Files.deleteIfExists(output);
+        } catch (IOException e) {
+            // camel stop and camel dirty remove it
         }
     }
 

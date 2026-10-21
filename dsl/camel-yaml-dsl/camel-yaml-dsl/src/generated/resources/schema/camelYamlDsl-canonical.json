@@ -1436,9 +1436,6 @@
           "variable" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.VariableExpression"
           },
-          "wasm" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
-          },
           "xpath" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.XPathExpression"
           },
@@ -7924,7 +7921,7 @@
           "allowUnmarshallType" : {
             "type" : "boolean",
             "title" : "Allow Unmarshall Type",
-            "description" : "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.",
+            "description" : "If enabled then Jackson, Gson or JSON-B is allowed to attempt to use the CamelJacksonUnmarshalType, CamelGsonUnmarshalType or CamelJsonbUnmarshallType header during the unmarshalling. This should only be enabled when desired to be used.",
             "default" : false
           },
           "autoDiscoverObjectMapper" : {
@@ -8719,16 +8716,10 @@
             "description" : "Number of spaces per indentation level.",
             "default" : 2
           },
-          "lengthMarker" : {
-            "type" : "boolean",
-            "title" : "Length Marker",
-            "description" : "Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.",
-            "default" : false
-          },
           "strict" : {
             "type" : "boolean",
             "title" : "Strict",
-            "description" : "Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing.",
+            "description" : "Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict recoveries of the TOON specification, such as accepting an array whose length differs from the declared length; other malformed TOON still fails.",
             "default" : true
           }
         }
@@ -9887,9 +9878,6 @@
           "variable" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.VariableExpression"
           },
-          "wasm" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.language.WasmExpression"
-          },
           "xpath" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.language.XPathExpression"
           },
@@ -10202,7 +10190,7 @@
             "type" : "string",
             "title" : "Option",
             "description" : "To configure additional options on JSONPath. Multiple values can be separated by comma.",
-            "enum" : [ "DEFAULT_PATH_LEAF_TO_NULL", "ALWAYS_RETURN_LIST", "AS_PATH_LIST", "SUPPRESS_EXCEPTIONS", "REQUIRE_PROPERTIES" ]
+            "pattern" : "^\\s*(DEFAULT_PATH_LEAF_TO_NULL|ALWAYS_RETURN_LIST|AS_PATH_LIST|SUPPRESS_EXCEPTIONS|REQUIRE_PROPERTIES)\\s*(,\\s*(DEFAULT_PATH_LEAF_TO_NULL|ALWAYS_RETURN_LIST|AS_PATH_LIST|SUPPRESS_EXCEPTIONS|REQUIRE_PROPERTIES)\\s*)*$"
           },
           "resolveResource" : {
             "type" : "boolean",
@@ -10763,47 +10751,6 @@
           }
         },
         "required" : [ "expression" ]
-      },
-      "org.apache.camel.model.language.WasmExpression" : {
-        "title" : "Wasm",
-        "description" : "Call a wasm (web assembly) function",
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "expression" : {
-            "type" : "string",
-            "title" : "Expression",
-            "description" : "The expression value in your chosen language syntax."
-          },
-          "id" : {
-            "type" : "string",
-            "title" : "Id",
-            "description" : "The id of this node."
-          },
-          "module" : {
-            "type" : "string",
-            "title" : "Module",
-            "description" : "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function."
-          },
-          "resolveResource" : {
-            "type" : "boolean",
-            "title" : "Resolve Resource",
-            "description" : "Whether a result of the expression that is a String starting with resource: is loaded as a resource and its content becomes the result, e.g. a script that returns resource:file:order.json or resource:classpath:templates/order.json (a name without a scheme is a classpath resource). Off by default; the resource: prefix on the expression text itself is always resolved. Applies to the expression used as a value, not as a predicate.",
-            "default" : false
-          },
-          "resultType" : {
-            "type" : "string",
-            "title" : "Result Type",
-            "description" : "The class of the result type (type from output)."
-          },
-          "trim" : {
-            "type" : "boolean",
-            "title" : "Trim",
-            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks.",
-            "default" : true
-          }
-        },
-        "required" : [ "expression", "module" ]
       },
       "org.apache.camel.model.language.XMLTokenizerExpression" : {
         "title" : "XML Tokenize",
@@ -11390,7 +11337,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -11534,7 +11481,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -11678,7 +11625,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -12055,7 +12002,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -12199,7 +12146,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -12343,7 +12290,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "streamCache" : {
             "type" : "boolean",
@@ -12542,7 +12489,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
-            "default" : false
+            "default" : true
           },
           "type" : {
             "type" : "string",
@@ -12729,7 +12676,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
-            "default" : false
+            "default" : true
           },
           "useXForwardHeaders" : {
             "type" : "boolean",
@@ -12891,7 +12838,7 @@
             "type" : "boolean",
             "title" : "Skip Binding On Error Code",
             "description" : "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level.",
-            "default" : false
+            "default" : true
           },
           "tag" : {
             "type" : "string",

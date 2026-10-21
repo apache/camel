@@ -25,7 +25,11 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -35,12 +39,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -81,9 +88,15 @@ public final class AuthoringTools {
     static final Set<String> SKIPPED_DIRS = Set.of(
             "target", "build", "out", "node_modules", ".git", ".mvn", ".idea", ".vscode", ".gradle", ".settings",
             ".camel-jbang");
+    // the top-level entries of the YAML DSL: a file with only beans (beans.yaml) is loaded with the routes too, and a
+    // model that did not see it among the route files took the beans it declares for missing
     private static final Pattern YAML_ROUTE = Pattern.compile(
             "(?m)^\\s*-\\s*(route|from|rest|routeTemplate|route-template|templatedRoute|templated-route"
-                                                              + "|routeConfiguration|route-configuration|kamelet)\\s*:");
+                                                              + "|routeConfiguration|route-configuration|kamelet|beans"
+                                                              + "|errorHandler|error-handler|onException|on-exception"
+                                                              + "|intercept|interceptFrom|intercept-from"
+                                                              + "|interceptSendToEndpoint|intercept-send-to-endpoint"
+                                                              + "|onCompletion|on-completion)\\s*:");
 
     private AuthoringTools() {
     }
@@ -91,7 +104,7 @@ public final class AuthoringTools {
     /** Registers the authoring tools; called once by the {@link ToolRegistry}. */
     static void register(Consumer<ToolDescriptor> registry) {
         registry.accept(tool("camel_catalog_doc",
-                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI.")
+                "Catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the Java API: description, options, Maven coordinates, the URI rules of a component; for simple its functions and operators (optionsFilter narrows them). endpoint validates a URI. A full key such as camel.server.port lists its application.properties group.")
                 .param("name", "string",
                         "Name, e.g. kafka, json (a data format by its YAML name or artifact), simple, timer, choice, split, Exchange",
                         false)
@@ -103,20 +116,20 @@ public final class AuthoringTools {
                         "common (default: no deprecated or advanced), required, all or false", false)
                 .param("includeHeaders", "boolean", "Include the message headers of a component (default false)", false)
                 .param("includeDoc", "boolean", "Include the full AsciiDoc page (default false)", false)
-                .param("docPage", "string", "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
-                        false)
-                .param("optionsFilter", "string",
-                        "Keyword to match in option names or descriptions; for an EIP whose own options do not match, the options of its elements are searched (nestedOptions)",
-                        false)
+                .param("docPage", "string", CatalogDocs.DOC_PAGE_DESC, false)
+                .param("optionsFilter", "string", CatalogDocs.OPTIONS_FILTER_DESC, false)
+                .param("limit", "integer", CatalogDocs.OPTIONS_LIMIT_DESC, false)
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)
+                .repeatHint("When that answer was cut, it named the sections it left out: docPage=<section title> returns"
+                            + " one of them.")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
                             args.get("kind"), args.get("optionsFilter"), args.get("includeOptions"),
                             bool(args, "includeHeaders", false), bool(args, "includeDoc", false),
-                            args.get("docPage")).toJson();
+                            args.get("docPage"), integer(args, "limit", -1)).toJson();
                 }));
 
         registry.accept(tool("camel_catalog_find",
@@ -290,6 +303,10 @@ public final class AuthoringTools {
                     }
                     JsonObject result = IntegrationLauncher.run(dir, files, args.get("name"), bool(args, "dev", true),
                             List.of());
+                    if ("failed".equals(result.getString("status"))) {
+                        // a tool error (MCP isError), which still has the exit code and the output that tell why
+                        throw new ToolExecutionException(result.toJson());
+                    }
                     if (result.get("pid") instanceof Long pid) {
                         ctx.selectProcess(pid);
                     }
@@ -314,28 +331,56 @@ public final class AuthoringTools {
 
         registry.accept(tool("camel_get_log",
                 "Recent log records of a running integration, newest first, with optional filtering; stack traces "
-                                              + "only with details.")
+                                              + "only with details. An integration that is not running gets the log of "
+                                              + "its previous run, such as one that failed to start.")
                 .param("name", "string", NAME_DESC, false)
                 .param("limit", "integer", "Maximum records to return (default 50)", false)
                 .param("filter", "string", "Case-insensitive substring filter on the message", false)
                 .param("level", "string", "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)", false)
                 .param("details", "boolean", "Include the stack traces (default false)", false)
+                .param("previous", "boolean",
+                        "The log of the previous run, the last run of the integration that ended (default false)", false)
                 .core(true)
                 .executor((ctx, args) -> {
-                    RuntimeHelper.ProcessInfo p = selectProcess(ctx, args);
+                    if (bool(args, "previous", false)) {
+                        return previousLog(ctx, args, null).toJson();
+                    }
+                    RuntimeHelper.ProcessInfo p;
+                    try {
+                        p = selectProcess(ctx, args);
+                    } catch (ToolExecutionException e) {
+                        // not running: the log of its previous run tells why (CAMEL-25784)
+                        return previousLog(ctx, args, e).toJson();
+                    }
+                    if (p == null && hasPreviousRun(ctx.pid())) {
+                        // the process selected before is gone, such as one that died at startup
+                        return previousLog(ctx, args, null).toJson();
+                    }
                     return LogFileReader.read(ctx.pid(), p != null ? p.name() : null, integer(args, "limit", 50),
                             args.get("filter"), args.get("level"), bool(args, "details", false)).toJson();
                 }));
 
         registry.accept(tool("camel_get_errors",
                 "The failed exchanges of a running integration: routeId, exchangeId, exception with stack trace, "
-                                                 + "body and headers.")
+                                                 + "body and headers. For an integration that is not running, it says "
+                                                 + "how its previous run ended.")
                 .param("name", "string", NAME_DESC, false)
                 .core(true)
                 .executor((ctx, args) -> {
-                    selectProcess(ctx, args);
+                    RuntimeHelper.ProcessInfo p;
+                    try {
+                        p = selectProcess(ctx, args);
+                    } catch (ToolExecutionException e) {
+                        // not running: how its previous run ended tells why (CAMEL-25784)
+                        throw notRunning(ctx, args, e);
+                    }
+                    if (p == null && hasPreviousRun(ctx.pid())) {
+                        throw notRunning(ctx, args, new ToolExecutionException("pid " + ctx.pid() + " is not running"));
+                    }
                     JsonObject errors = ctx.readErrorFile();
-                    return errors != null ? unescapeBodies(errors).toJson() : "No errors captured.";
+                    return errors != null
+                            ? markBeforeLastReload(unescapeBodies(errors), ctx.pid(), p != null ? p.name() : null).toJson()
+                            : "No errors captured.";
                 }));
 
         registry.accept(tool("camel_eval_expression",
@@ -431,9 +476,14 @@ public final class AuthoringTools {
                     applyVersion(ctx, args);
                     Path dir = ctx.resolveDirectory(args.get("directory"));
                     SummaryUpdate update = summaryUpdate(dir, ctx, args);
+                    Path summary = dir.resolve(IntegrationSummary.FILE_NAME);
+                    // asked like any other write where a client asks (camel ask, CAMEL-25676)
+                    if (ctx.confirmer() != null && !ctx.confirm(ToolConfirms.write(shownPath(ctx, summary),
+                            Files.exists(summary) ? read(summary) : null, update.content()))) {
+                        return rejectedWrite(IntegrationSummary.FILE_NAME).toJson();
+                    }
                     try {
-                        Files.writeString(dir.resolve(IntegrationSummary.FILE_NAME), update.content(),
-                                StandardCharsets.UTF_8);
+                        Files.writeString(summary, update.content(), StandardCharsets.UTF_8);
                     } catch (IOException e) {
                         throw new ToolExecutionException(
                                 "Cannot write " + IntegrationSummary.FILE_NAME + ": " + e.getMessage());
@@ -630,9 +680,34 @@ public final class AuthoringTools {
         if (content == null) {
             return edit; // not-found or ambiguous: the answer says what to do instead
         }
+        Path refusedKey = resolveFile(dir, file).toAbsolutePath().normalize();
+        Refused refusedBefore = LAST_REFUSED.get(refusedKey);
         JsonObject result = writeFile(ctx, dir, file, content, true);
+        if ("invalid".equals(result.getString("status")) && edit.get("matchedLines") != null) {
+            // CAMEL-25532: a match to the closest lines stands only when its result is valid. After a refused edit the
+            // next text to find is often the model's own replacement, which the file never got: matched to the closest
+            // lines it is refused again, and the model goes on editing a file that exists only in its memory. The
+            // answer of an exact match, not found with the lines the file has there, puts it back in step with the file
+            JsonObject exact = editedContent(dir, file, find, replace, edits, false);
+            if (exact.getString("content") == null) {
+                if (refusedBefore != null) {
+                    LAST_REFUSED.put(refusedKey, refusedBefore);
+                } else {
+                    LAST_REFUSED.remove(refusedKey);
+                }
+                return exact;
+            }
+        }
         if (!"invalid".equals(result.getString("status"))) {
             result.put("status", "edited");
+            if (edit.get("matchedLines") instanceof JsonArray matched) {
+                result.put("matchedLines", matched);
+                result.put("message", "The text to find was not in the file as given; it was matched to the closest"
+                                      + " lines of the file (" + String.join(", ", matched.stream().map(String::valueOf)
+                                              .toList())
+                                      + "), and the lines you changed were changed there. Where the file has other text"
+                                      + " in lines you did not change, it was kept. " + result.getString("message"));
+            }
             result.put("editedAtLine", edit.getInteger("editedAtLine"));
             result.put("replacedLines", edit.getInteger("replacedLines"));
             if (edit.get("edits") != null) {
@@ -668,6 +743,14 @@ public final class AuthoringTools {
      * and the file is not changed.
      */
     public static JsonObject editedContent(Path dir, String file, String find, String replace, String edits) {
+        return editedContent(dir, file, find, replace, edits, true);
+    }
+
+    /**
+     * As {@link #editedContent(Path, String, String, String, String)}; {@code closest} says whether a snippet that is
+     * not in the file may be matched to its closest lines (CAMEL-25532).
+     */
+    static JsonObject editedContent(Path dir, String file, String find, String replace, String edits, boolean closest) {
         Path path = resolveFile(dir, file);
         if (!Files.isRegularFile(path)) {
             throw new ToolExecutionException(file + " does not exist: write the whole file with camel_write_file");
@@ -690,9 +773,10 @@ public final class AuthoringTools {
         }
         JsonObject result = null;
         JsonArray lines = new JsonArray();
+        JsonArray matched = new JsonArray();
         int replaced = 0;
         for (int i = 0; i < all.size(); i++) {
-            JsonObject one = editedSnippet(file, content, all.get(i)[0], all.get(i)[1]);
+            JsonObject one = editedSnippet(file, content, all.get(i)[0], all.get(i)[1], closest);
             if (one.getString("content") == null) {
                 if (all.size() > 1) {
                     one.put("edit", i + 1);
@@ -706,9 +790,15 @@ public final class AuthoringTools {
             content = one.getString("content");
             lines.add(one.getInteger("editedAtLine"));
             replaced += one.getInteger("replacedLines");
+            if (one.get("matchedLines") != null) {
+                matched.add((all.size() > 1 ? "edit " + (i + 1) + ": " : "") + "lines " + one.getString("matchedLines"));
+            }
             if (result == null) {
                 result = one;
             }
+        }
+        if (!matched.isEmpty()) {
+            result.put("matchedLines", matched);
         }
         result.put("content", content);
         result.put("replacedLines", replaced);
@@ -755,7 +845,7 @@ public final class AuthoringTools {
               + " there\"}";
 
     /** One snippet replaced in the content: the {@link #editedContent(Path, String, String, String)} answer. */
-    private static JsonObject editedSnippet(String file, String content, String find, String replace) {
+    private static JsonObject editedSnippet(String file, String content, String find, String replace, boolean closest) {
         String wanted = find;
         String put = replace;
         boolean trimmedMatch = false;
@@ -795,6 +885,20 @@ public final class AuthoringTools {
         }
         JsonObject result = new JsonObject();
         result.put("file", file);
+        if (first < 0 && closest) {
+            // CAMEL-25532: the model writes the snippet from memory, and remembers a line, not the lines around it;
+            // the window of the file that best matches the snippet, when it holds a distinctive line of it and no
+            // other window is as good, gets the changes the model made between find and replace
+            int[] window = fuzzyWindow(content, wanted);
+            ClosestEdit merged = window != null ? mergeIntoWindow(content, window, wanted, put) : null;
+            if (merged != null) {
+                result.put("matchedLines", merged.firstLine() + "-" + merged.lastLine());
+                result.put("content", content.substring(0, merged.start()) + merged.text() + content.substring(merged.end()));
+                result.put("editedAtLine", merged.firstLine());
+                result.put("replacedLines", merged.lastLine() - merged.firstLine() + 1);
+                return result;
+            }
+        }
         if (first < 0) {
             result.put("status", "not-found");
             String nearest = nearestBlock(content, wanted);
@@ -934,6 +1038,263 @@ public final class AuthoringTools {
         return found;
     }
 
+    /** A line that is only a key, as "steps:" or "- log:": not distinctive. */
+    private static final Pattern BARE_KEY = Pattern.compile("^-?\\s*[\\w.-]+:\\s*$");
+
+    private static String fuzzyLine(String line) {
+        return line.strip().replaceAll("\\s+", " ").replace("\"", "").replace("'", "");
+    }
+
+    /**
+     * The window of the content that best matches the lines of find (their longest common subsequence), as {start
+     * offset, end offset, first line, last line}; null unless it holds a line of find that has a value and is unique in
+     * the content, has at least two lines of find, matches at least 60%, and no window apart from it matches nearly as
+     * well (CAMEL-25532).
+     */
+    static int[] fuzzyWindow(String content, String find) {
+        String[] lines = content.split("\n", -1);
+        List<String> norm = new ArrayList<>(lines.length);
+        // how often each line occurs, so a line of find that is unique in the content is known without a scan per line
+        Map<String, Integer> occurrences = new HashMap<>();
+        for (String l : lines) {
+            String n = fuzzyLine(l);
+            norm.add(n);
+            occurrences.merge(n, 1, Integer::sum);
+        }
+        List<String> want = find.lines().map(AuthoringTools::fuzzyLine).filter(l -> !l.isEmpty()).toList();
+        if (want.isEmpty()) {
+            return null;
+        }
+        Set<String> distinct = new LinkedHashSet<>();
+        for (String w : want) {
+            if (w.length() > 6 && !BARE_KEY.matcher(w).matches() && occurrences.getOrDefault(w, 0) == 1) {
+                distinct.add(w);
+            }
+        }
+        if (distinct.isEmpty()) {
+            return null;
+        }
+        int n = want.size();
+        double best = -1;
+        int bestAt = -1;
+        int bestSize = 0;
+        int bestCommon = 0;
+        List<double[]> scored = new ArrayList<>();
+        for (int size = Math.max(1, n - 2); size <= n + 2; size++) {
+            for (int i = 0; i + size <= lines.length; i++) {
+                List<String> window = norm.subList(i, i + size).stream().filter(l -> !l.isEmpty()).toList();
+                if (window.isEmpty() || window.stream().noneMatch(distinct::contains)) {
+                    continue;
+                }
+                int common = commonLines(want, window);
+                double ratio = 2.0 * common / (want.size() + window.size());
+                scored.add(new double[] { ratio, i, size });
+                if (ratio > best || (ratio == best && Math.abs(size - n) < Math.abs(bestSize - n))) {
+                    best = ratio;
+                    bestAt = i;
+                    bestSize = size;
+                    bestCommon = common;
+                }
+            }
+        }
+        if (best < 0.6 || bestCommon < 2) {
+            // one line in common says where the snippet was aimed, not where the rest of it goes
+            return null;
+        }
+        for (double[] other : scored) {
+            int at = (int) other[1];
+            int size = (int) other[2];
+            boolean apart = at + size <= bestAt || at >= bestAt + bestSize;
+            if (apart && other[0] >= best - 0.1) {
+                return null; // two places match about as well: not certain
+            }
+        }
+        int[] offsets = lineOffsets(content, lines);
+        int last = bestAt + bestSize - 1;
+        int end = Math.min(offsets[last] + lines[last].length() + 1, content.length());
+        return new int[] { offsets[bestAt], end, bestAt + 1, last + 1 };
+    }
+
+    /**
+     * A snippet merged into the closest lines of a file: the offsets it replaces, its text, and those lines (from 1).
+     */
+    record ClosestEdit(int start, int end, String text, int firstLine, int lastLine) {
+    }
+
+    /** A line of YAML as {@code key:} or {@code - key:}, with its key: the {@code key} group. */
+    private static final Pattern YAML_KEY = Pattern.compile("^(?:-\\s+)?([\\w.$-]+):(?:\\s|$)");
+
+    /**
+     * The changes the model made between find and replace, made in the window of the file that find was matched to
+     * (CAMEL-25532). find is the model's memory of those lines and can be wrong, so replace does not overwrite the
+     * window. The lines of find that are in the file and that replace keeps are anchors, and stay as the file has them.
+     * Each stretch between two anchors stays the file's where replace leaves the model's version of it unchanged, or
+     * where the file has replace's version already, and becomes replace's version otherwise, at the file's indentation.
+     * A line at either end of find that the file has just past the window (the same line, or the same key at the same
+     * depth) belongs to the window, so that a line the model changed is not left there twice. Null when find and the
+     * window have no line in common.
+     */
+    static ClosestEdit mergeIntoWindow(String content, int[] window, String find, String replace) {
+        String[] lines = content.split("\n", -1);
+        // the element after a final newline is not a line of the file
+        int lineCount = content.endsWith("\n") ? lines.length - 1 : lines.length;
+        int ws = window[2] - 1;
+        int we = window[3] - 1;
+        List<String> f = find.lines().filter(l -> !l.isBlank()).toList();
+        List<String> r = replace.lines().toList();
+        List<String> fNorm = f.stream().map(AuthoringTools::fuzzyLine).toList();
+        List<String> rNorm = r.stream().map(AuthoringTools::fuzzyLine).toList();
+        List<String> windowNorm = new ArrayList<>();
+        for (int i = ws; i <= we; i++) {
+            windowNorm.add(fuzzyLine(lines[i]));
+        }
+        // the line of the file each line of find is, or -1
+        int[] fw = alignLines(fNorm, windowNorm);
+        int firstF = -1;
+        int lastF = -1;
+        for (int i = 0; i < fw.length; i++) {
+            if (fw[i] >= 0) {
+                fw[i] += ws;
+                firstF = firstF < 0 ? i : firstF;
+                lastF = i;
+            }
+        }
+        if (firstF < 0) {
+            return null;
+        }
+        int delta = leadingSpaces(lines[fw[lastF]]) - leadingSpaces(f.get(lastF));
+        for (int i = lastF + 1, at = fw[lastF] + 1; i < f.size() && at < lineCount; i++, at++) {
+            if (!sameLineOrKey(f.get(i), lines[at], delta)) {
+                break;
+            }
+            fw[i] = at;
+            we = Math.max(we, at);
+        }
+        delta = leadingSpaces(lines[fw[firstF]]) - leadingSpaces(f.get(firstF));
+        for (int i = firstF - 1, at = fw[firstF] - 1; i >= 0 && at >= 0; i--, at--) {
+            if (!sameLineOrKey(f.get(i), lines[at], delta)) {
+                break;
+            }
+            fw[i] = at;
+            ws = Math.min(ws, at);
+        }
+        int[] fr = alignLines(fNorm, rNorm);
+        // the anchors, then the end of the window: {line of find, line of the file, line of replace}
+        List<int[]> anchors = new ArrayList<>();
+        for (int i = 0; i < f.size(); i++) {
+            if (fw[i] >= 0 && fr[i] >= 0) {
+                anchors.add(new int[] { i, fw[i], fr[i] });
+            }
+        }
+        anchors.add(new int[] { f.size(), we + 1, r.size() });
+        int firstDelta = leadingSpaces(lines[fw[firstF]]) - leadingSpaces(f.get(firstF));
+        List<String> out = new ArrayList<>();
+        int pf = -1;
+        int pw = ws - 1;
+        int pr = -1;
+        for (int[] a : anchors) {
+            List<String> stretchF = fNorm.subList(pf + 1, a[0]);
+            List<String> stretchW = new ArrayList<>();
+            for (int i = pw + 1; i < a[1]; i++) {
+                stretchW.add(fuzzyLine(lines[i]));
+            }
+            List<String> stretchR = rNorm.subList(pr + 1, a[2]);
+            if (sameLines(stretchF, stretchR) || sameLines(stretchW, stretchR)) {
+                for (int i = pw + 1; i < a[1]; i++) {
+                    out.add(lines[i]);
+                }
+            } else {
+                // the depth of the replacement where it goes: from the anchor before it, or after it for the first
+                int d = pf >= 0 ? leadingSpaces(lines[fw[pf]]) - leadingSpaces(f.get(pf))
+                        : a[0] < f.size() ? leadingSpaces(lines[a[1]]) - leadingSpaces(f.get(a[0])) : firstDelta;
+                for (String line : r.subList(pr + 1, a[2])) {
+                    out.add(shiftIndent(line, d));
+                }
+            }
+            if (a[0] < f.size()) {
+                out.add(lines[a[1]]);
+            }
+            pf = a[0];
+            pw = a[1];
+            pr = a[2];
+        }
+        int[] offsets = lineOffsets(content, lines);
+        int start = offsets[ws];
+        int end = we + 1 < lines.length ? offsets[we + 1] : content.length();
+        boolean newline = end > start && content.charAt(end - 1) == '\n';
+        return new ClosestEdit(start, end, String.join("\n", out) + (newline ? "\n" : ""), ws + 1, we + 1);
+    }
+
+    /** Which line of b each line of a is (their longest common subsequence), or -1; empty lines match nothing. */
+    static int[] alignLines(List<String> a, List<String> b) {
+        int[][] t = new int[a.size() + 1][b.size() + 1];
+        for (int i = a.size() - 1; i >= 0; i--) {
+            for (int j = b.size() - 1; j >= 0; j--) {
+                t[i][j] = !a.get(i).isEmpty() && a.get(i).equals(b.get(j))
+                        ? t[i + 1][j + 1] + 1 : Math.max(t[i + 1][j], t[i][j + 1]);
+            }
+        }
+        int[] answer = new int[a.size()];
+        Arrays.fill(answer, -1);
+        for (int i = 0, j = 0; i < a.size() && j < b.size();) {
+            if (!a.get(i).isEmpty() && a.get(i).equals(b.get(j))) {
+                answer[i++] = j++;
+            } else if (t[i + 1][j] >= t[i][j + 1]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        return answer;
+    }
+
+    /** Whether a line of find is a line of the file: the same text, or the same key at the depth of its neighbours. */
+    private static boolean sameLineOrKey(String findLine, String fileLine, int delta) {
+        String a = fuzzyLine(findLine);
+        if (!a.isEmpty() && a.equals(fuzzyLine(fileLine))) {
+            return true;
+        }
+        Matcher m1 = YAML_KEY.matcher(findLine.strip());
+        Matcher m2 = YAML_KEY.matcher(fileLine.strip());
+        return m1.find() && m2.find() && m1.group(1).equals(m2.group(1))
+                && leadingSpaces(fileLine) - leadingSpaces(findLine) == delta;
+    }
+
+    /** Whether two lists of normalized lines are the same, blank lines aside. */
+    private static boolean sameLines(List<String> a, List<String> b) {
+        return a.stream().filter(l -> !l.isEmpty()).toList().equals(b.stream().filter(l -> !l.isEmpty()).toList());
+    }
+
+    private static int leadingSpaces(String line) {
+        int i = 0;
+        while (i < line.length() && line.charAt(i) == ' ') {
+            i++;
+        }
+        return i;
+    }
+
+    /** The line moved right by delta spaces, or left by as many of its leading spaces as it has up to -delta. */
+    private static String shiftIndent(String line, int delta) {
+        if (delta == 0 || line.isBlank()) {
+            return line;
+        }
+        if (delta > 0) {
+            return " ".repeat(delta) + line;
+        }
+        return line.substring(Math.min(-delta, leadingSpaces(line)));
+    }
+
+    /** The length of the longest common subsequence of two lists of lines. */
+    private static int commonLines(List<String> a, List<String> b) {
+        int[][] t = new int[a.size() + 1][b.size() + 1];
+        for (int i = 1; i <= a.size(); i++) {
+            for (int j = 1; j <= b.size(); j++) {
+                t[i][j] = a.get(i - 1).equals(b.get(j - 1)) ? t[i - 1][j - 1] + 1 : Math.max(t[i - 1][j], t[i][j - 1]);
+            }
+        }
+        return t[a.size()][b.size()];
+    }
+
     /**
      * The lines of the file that come closest to the wanted ones, so the answer of a miss shows what is there (the next
      * attempt then copies it). Null when nothing matches at all.
@@ -1070,26 +1431,175 @@ public final class AuthoringTools {
         }
     }
 
-    /** Writes a file after validating it, as {@code camel_write_file} does; no confirmation is asked here. */
+    private static final Pattern JAVA_PACKAGE = Pattern.compile("^\\s*package\\s+([\\w.]+)\\s*;", Pattern.MULTILINE);
+
+    /** The package a Java source declares, or the empty string for none. */
+    static String javaPackage(String content) {
+        Matcher m = content != null ? JAVA_PACKAGE.matcher(content) : null;
+        return m != null && m.find() ? m.group(1) : "";
+    }
+
+    /**
+     * The other files of the project with the name of the file. Folders that hold no sources of the app are left out:
+     * dot folders, build output and test sources.
+     */
+    private static List<Path> sameNamedFiles(Path dir, Path path) {
+        Path root = dir.toAbsolutePath().normalize();
+        Path self = path.toAbsolutePath().normalize();
+        String name = self.getFileName().toString();
+        List<Path> found = new ArrayList<>();
+        try {
+            Files.walkFileTree(root, EnumSet.noneOf(FileVisitOption.class), 12, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) {
+                    String n = d.getFileName() != null ? d.getFileName().toString() : "";
+                    String relative = root.relativize(d).toString().replace('\\', '/');
+                    if (!d.equals(root) && (n.startsWith(".") || "target".equals(n) || "build".equals(n)
+                            || "node_modules".equals(n) || "src/test".equals(relative) || relative.endsWith("/src/test"))) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path f, BasicFileAttributes attrs) {
+                    if (attrs.isRegularFile() && name.equals(f.getFileName().toString())
+                            && !self.equals(f.toAbsolutePath().normalize())) {
+                        found.add(f);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // best effort: without the list the write goes ahead as before
+        }
+        return found;
+    }
+
+    /**
+     * The file of the project that already defines the class a new Java source would define (the same package and
+     * name), relative to the project directory, or null. Asked to change a class of a camel run project, whose sources
+     * sit next to the routes, a model wrote a second copy under src/main/java instead, 7 times out of 11 in a benchmark
+     * (CAMEL-25673): two classes of the same name, of which the runtime uses one, while the change is in the other.
+     */
+    static String fileOfSameClass(Path dir, Path path, String content) {
+        String pkg = javaPackage(content);
+        Path root = dir.toAbsolutePath().normalize();
+        for (Path other : sameNamedFiles(dir, path)) {
+            String otherContent;
+            try {
+                otherContent = read(other);
+            } catch (ToolExecutionException e) {
+                // best effort, as the search: a file that cannot be read is no reason to refuse the write
+                continue;
+            }
+            if (pkg.equals(javaPackage(otherContent))) {
+                return root.relativize(other.toAbsolutePath().normalize()).toString().replace('\\', '/');
+            }
+        }
+        return null;
+    }
+
+    /**
+     * A note when a new beans.yaml or application.properties has the name of a file the project already has in another
+     * folder: two files of that name are easy to mix up (CAMEL-25673). Null for any other file, or when there is none.
+     */
+    static String sameNamedConfigNote(Path dir, Path path) {
+        String name = path.getFileName().toString();
+        boolean config = "application.properties".equals(name)
+                || (name.startsWith("application-") && name.endsWith(".properties"))
+                || "beans.yaml".equals(name) || "beans.yml".equals(name);
+        if (!config) {
+            return null;
+        }
+        List<Path> others = sameNamedFiles(dir, path);
+        if (others.isEmpty()) {
+            return null;
+        }
+        String other = dir.toAbsolutePath().normalize().relativize(others.get(0).toAbsolutePath().normalize()).toString()
+                .replace('\\', '/');
+        return "the project already has " + name + " at " + other + ": two files of that name are easy to mix up, so"
+               + " change that one unless you mean to have both";
+    }
+
+    /**
+     * The file as a confirmation shows it: relative to the project directory, or the full path when the call named
+     * another directory, so a write outside the project is plain to see.
+     */
+    static String shownPath(ToolContext ctx, Path path) {
+        Path file = path.toAbsolutePath().normalize();
+        Path project = ctx.defaultDirectory() != null ? ctx.defaultDirectory().toAbsolutePath().normalize() : null;
+        return project != null && file.startsWith(project)
+                ? project.relativize(file).toString().replace('\\', '/') : file.toString();
+    }
+
+    /** The answer to a write the user did not confirm. */
+    static JsonObject rejectedWrite(String file) {
+        JsonObject result = new JsonObject();
+        result.put("status", "rejected");
+        result.put("file", file);
+        result.put("message", "The user rejected the change to " + file + "; the file is unchanged and nothing is"
+                              + " pending. Do not retry unless the user asks for it: tell the user what you wanted to"
+                              + " change, and why.");
+        return result;
+    }
+
+    /**
+     * Writes a file after validating it, as {@code camel_write_file} does. The context's confirmer, when it has one, is
+     * asked first with the change ({@link ToolConfirms#write}); the TUI confirms in its own file tools.
+     */
     public static JsonObject writeFile(ToolContext ctx, Path dir, String file, String content, boolean validate) {
         Path path = resolveFile(dir, file);
         boolean exists = Files.exists(path);
         if (exists && !Files.isRegularFile(path)) {
             throw new ToolExecutionException(file + " is not a regular file");
         }
+        if (!exists && file.endsWith(".java")) {
+            String other = fileOfSameClass(dir, path, content);
+            if (other != null) {
+                String simple = path.getFileName().toString();
+                simple = simple.substring(0, simple.length() - ".java".length());
+                String pkg = javaPackage(content);
+                String fqn = pkg.isEmpty() ? simple : pkg + "." + simple;
+                JsonObject result = new JsonObject();
+                result.put("status", "invalid");
+                result.put("file", file);
+                result.put("existingFile", other);
+                result.put("errors", new JsonArray(
+                        List.of("the class " + fqn + " is already in " + other
+                                + ": a second copy is a second class of the same name, and"
+                                + " the runtime uses only one of them")));
+                result.put("message", "The file was not written: change the class where it is, in " + other
+                                      + " (camel_edit_file, or camel_write_file with file " + other + ").");
+                return result;
+            }
+        }
         List<String> problemsBefore = List.of();
+        List<String> repaired = List.of();
         if (validate && SourceValidator.isValidatableFile(file)) {
             // a missing consumer of a direct: endpoint does not refuse the write: it is often a file not written yet
             List<String> errors = SourceValidator.validate(file, content, ctx.catalog(), ctx.propertyLineValidator(), dir,
                     null, false);
+            List<String> before = List.of();
             if (!errors.isEmpty() && exists) {
                 // the problems the file already had do not refuse the write: an edit that fixes one problem would be
                 // refused for the others, and the agent made to fix them all; only the problems the write brings are
-                problemsBefore = SourceValidator.validate(file, read(path), ctx.catalog(), ctx.propertyLineValidator(),
+                before = SourceValidator.validate(file, read(path), ctx.catalog(), ctx.propertyLineValidator(),
                         dir, null, false);
                 List<String> stillThere = new ArrayList<>();
-                errors = newProblems(problemsBefore, errors, stillThere);
+                errors = newProblems(before, errors, stillThere);
                 problemsBefore = stillThere;
+            }
+            if (!errors.isEmpty()) {
+                // CAMEL-25532: the shapes with one reading are repaired, and the write goes ahead when that leaves no
+                // new problem; the answer says what was repaired
+                Repaired r = repair(ctx, dir, file, content, errors, before, exists);
+                if (r != null) {
+                    content = r.content();
+                    repaired = r.applied();
+                    problemsBefore = r.stillThere();
+                    errors = List.of();
+                }
             }
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
@@ -1111,6 +1621,12 @@ public final class AuthoringTools {
                 putKameletGuide(result, file, errors);
                 return result;
             }
+        }
+        // a client that asks before each write (camel ask, CAMEL-25676) shows the change first; the others write as
+        // before
+        if (ctx.confirmer() != null
+                && !ctx.confirm(ToolConfirms.write(shownPath(ctx, path), exists ? read(path) : null, content))) {
+            return rejectedWrite(file);
         }
         // the reload of a running integration is reported in the answer (CAMEL-24859): the reload records newer
         // than the ones before the write
@@ -1162,6 +1678,12 @@ public final class AuthoringTools {
                 notes.add(waiting.note());
                 result.put("notes", notes);
             }
+            String sameNamed = exists ? null : sameNamedConfigNote(dir, path);
+            if (sameNamed != null) {
+                JsonArray notes = result.get("notes") instanceof JsonArray existing ? existing : new JsonArray();
+                notes.add(sameNamed);
+                result.put("notes", notes);
+            }
         }
         if (watch) {
             JsonObject reload = ReloadOutcome.await(watchPid, processName, sinceKey, RELOAD_WAIT_MILLIS);
@@ -1193,6 +1715,11 @@ public final class AuthoringTools {
         if (waiting != null) {
             result.put("message", result.getString("message") + " Note: " + waiting.summary() + " (see notes).");
         }
+        if (!repaired.isEmpty()) {
+            result.put("repaired", new JsonArray(repaired));
+            result.put("message", "Written with these repairs of the YAML (the file has them now): "
+                                  + String.join("; ", repaired) + ". " + result.getString("message"));
+        }
         return result;
     }
 
@@ -1207,6 +1734,39 @@ public final class AuthoringTools {
         return LAST_REFUSED.merge(path.toAbsolutePath().normalize(), new Refused(content, 1),
                 (last, now) -> last.content().equals(content) ? new Refused(content, last.times() + 1) : now)
                 .times();
+    }
+
+    /** How many times the repairs are applied and the content validated again (a repair can reveal the next one). */
+    private static final int REPAIR_ROUNDS = 8;
+
+    private record Repaired(String content, List<String> applied, List<String> stillThere) {
+    }
+
+    /**
+     * The content with the shapes that have one reading repaired, when that leaves no problem the file did not have;
+     * null otherwise (the write is refused as it was, with the problems of the content as written).
+     */
+    private static Repaired repair(
+            ToolContext ctx, Path dir, String file, String content, List<String> errors, List<String> before,
+            boolean exists) {
+        String current = content;
+        List<String> applied = new ArrayList<>();
+        List<String> left = errors;
+        List<String> stillThere = new ArrayList<>();
+        for (int round = 0; round < REPAIR_ROUNDS && !left.isEmpty(); round++) {
+            LenientRepairs.Result r = LenientRepairs.repair(current, left);
+            if (r == null) {
+                return null;
+            }
+            current = r.content();
+            applied.addAll(r.applied());
+            left = SourceValidator.validate(file, current, ctx.catalog(), ctx.propertyLineValidator(), dir, null, false);
+            stillThere = new ArrayList<>();
+            if (!left.isEmpty() && exists) {
+                left = newProblems(before, left, stillThere);
+            }
+        }
+        return left.isEmpty() ? new Repaired(current, applied, stillThere) : null;
     }
 
     private static final Pattern UNCONSUMED_DIRECT = Pattern.compile("sends to (direct:[^,\\s]+), and no route consumes it");
@@ -1293,9 +1853,24 @@ public final class AuthoringTools {
         result.put("configFiles", configFiles);
         result.put("files", files);
         result.put("totalFiles", all.size());
+        // a file consumer moves a file it read into .camel (without noop=true), which the listing skips
+        Map<String, Integer> consumed = consumedFolders(dir);
+        String moved = null;
+        if (!consumed.isEmpty()) {
+            JsonObject folders = new JsonObject();
+            folders.putAll(consumed);
+            result.put("consumedFiles", folders);
+            moved = String.join(", ", consumed.entrySet().stream().map(e -> e.getKey() + " holds " + e.getValue()
+                                                                            + (e.getValue() == 1 ? " file" : " files"))
+                    .toList())
+                    + " that a file consumer moved there after reading (noop=true leaves the files where they are)";
+        }
         if (all.isEmpty()) {
-            result.put("message", "The directory has no files");
-        } else if (all.size() > MAX_FILES) {
+            result.put("message", moved != null ? "The directory has no files, but " + moved : "The directory has no files");
+        } else if (moved != null) {
+            result.put("note", moved);
+        }
+        if (all.size() > MAX_FILES) {
             result.put("message", "Listing the first " + MAX_FILES + " of " + all.size()
                                   + " files; routeFiles and configFiles name every route and configuration file");
         }
@@ -1591,6 +2166,88 @@ public final class AuthoringTools {
     }
 
     /**
+     * The log of the previous run of the integration (CAMEL-25784): the last run of it that ended, such as one that
+     * failed to start, found by the name or pid given, else by the pid selected before. Its message says how that run
+     * ended.
+     *
+     * @param  notRunning             why the integration was not found running, or null when the previous run was asked
+     *                                for
+     * @throws ToolExecutionException when no previous run matches, or more than one (notRunning, when given)
+     */
+    private static JsonObject previousLog(ToolContext ctx, Map<String, String> args, ToolExecutionException notRunning) {
+        PreviousRun.Info info = previousRun(ctx, args, notRunning);
+        JsonObject answer = new JsonObject();
+        answer.put("message", (notRunning != null ? info.name() + " is not running. " : "")
+                              + "This is the log of its previous run" + (info.pid() > 0 ? " (pid " + info.pid() + ")" : "")
+                              + ", which " + info.howItEnded());
+        JsonObject previous = new JsonObject();
+        previous.put("name", info.name());
+        if (info.pid() > 0) {
+            previous.put("pid", info.pid());
+        }
+        previous.put("ended", info.endedAt());
+        if (info.exitCode() != null) {
+            previous.put("exitCode", info.exitCode());
+        }
+        if (info.signal() != null) {
+            previous.put("signal", info.signal());
+        }
+        if (info.failure() != null) {
+            previous.put("failure", info.failure());
+        }
+        answer.put("previous", previous);
+        answer.putAll(LogFileReader.read(info.log(), integer(args, "limit", 50), args.get("filter"), args.get("level"),
+                bool(args, "details", false)));
+        return answer;
+    }
+
+    /**
+     * The error of an integration that is not running, with how its previous run ended when there is one.
+     */
+    private static ToolExecutionException notRunning(
+            ToolContext ctx, Map<String, String> args, ToolExecutionException notRunning) {
+        PreviousRun.Info info;
+        try {
+            info = previousRun(ctx, args, notRunning);
+        } catch (ToolExecutionException e) {
+            return notRunning;
+        }
+        return new ToolExecutionException(
+                notRunning.getMessage() + ". Its previous run"
+                                          + (info.pid() > 0 ? " (pid " + info.pid() + ")" : "") + " " + info.howItEnded()
+                                          + ". camel_get_log shows its log.");
+    }
+
+    // the one previous run of the name or pid given, else of the pid selected before
+    private static PreviousRun.Info previousRun(
+            ToolContext ctx, Map<String, String> args, ToolExecutionException notRunning) {
+        String name = args.get("name");
+        String key = name != null && !name.isBlank() ? name : (ctx.pid() >= 0 ? Long.toString(ctx.pid()) : null);
+        List<PreviousRun.Info> found = key != null ? PreviousRun.find(key) : List.of();
+        if (found.size() == 1) {
+            return found.get(0);
+        }
+        if (notRunning != null) {
+            throw notRunning;
+        }
+        if (key == null) {
+            throw new ToolExecutionException("No integration selected: pass name (an integration name or pid)");
+        }
+        throw new ToolExecutionException(
+                found.isEmpty()
+                        ? "No previous run matches '" + key + "'"
+                        : "'" + key + "' matches " + found.size() + " previous runs: "
+                          + found.stream().map(PreviousRun.Info::name).collect(Collectors.joining(", "))
+                          + "; pass the name of one");
+    }
+
+    // whether a run of the pid has ended and kept its log
+    private static boolean hasPreviousRun(long pid) {
+        return pid >= 0 && ProcessHandle.of(pid).map(ph -> !ph.isAlive()).orElse(true)
+                && !PreviousRun.find(Long.toString(pid)).isEmpty();
+    }
+
+    /**
      * Selects the process the call names, else keeps the selected one, else the only one running.
      *
      * @throws ToolExecutionException when no process can be selected
@@ -1635,6 +2292,91 @@ public final class AuthoringTools {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * Marks the failed exchanges of an earlier version of the routes: those that failed before the newest reload of the
+     * routes in the log. The errors are kept until the integration restarts, and an agent that read them after a change
+     * took them for errors of its new version, and changed routes that already worked.
+     */
+    static JsonObject markBeforeLastReload(JsonObject errors, long pid, String name) {
+        try {
+            JsonObject log = LogFileReader.read(pid, name, 1, ReloadOutcome.RELOADED, null);
+            if (log.get("lines") instanceof List<?> lines && !lines.isEmpty() && lines.get(0) instanceof JsonObject reload) {
+                return markBefore(errors, reload.getString("time"), LocalDateTime.now());
+            }
+        } catch (Exception e) {
+            // no log to tell: the errors as they are
+        }
+        return errors;
+    }
+
+    private static final long RELOAD_MARGIN_MILLIS = 1000;
+
+    /** Marks the errors that failed before the reload at the given time of day; the log keeps the time of day only. */
+    static JsonObject markBefore(JsonObject errors, String reloadTime, LocalDateTime now) {
+        LocalTime time;
+        try {
+            time = LocalTime.parse(reloadTime);
+        } catch (Exception e) {
+            return errors;
+        }
+        LocalDateTime reload = now.toLocalDate().atTime(time);
+        if (reload.isAfter(now)) {
+            reload = reload.minusDays(1);
+        }
+        // the summary is logged after the new routes started: a margin keeps a route that fails at once unmarked
+        long reloadMillis = reload.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - RELOAD_MARGIN_MILLIS;
+        int before = 0;
+        if (errors.get("errors") instanceof List<?> entries) {
+            for (Object o : entries) {
+                if (o instanceof JsonObject e && e.get("timestamp") instanceof Number ts && ts.longValue() < reloadMillis) {
+                    e.put("beforeLastReload", true);
+                    before++;
+                }
+            }
+        }
+        if (before > 0) {
+            errors.put("note", before + (before == 1 ? " exchange" : " exchanges") + " failed before the routes were last"
+                               + " reloaded (at " + reloadTime + "), so on an earlier version of the routes"
+                               + " (beforeLastReload); the errors are kept until the integration restarts");
+        }
+        return errors;
+    }
+
+    /**
+     * The .camel folders under the directory, with the number of files in each: a file consumer moves a file it read
+     * into .camel (its default, without noop=true), so a folder whose files were all read looked empty.
+     */
+    static Map<String, Integer> consumedFolders(Path dir) {
+        Map<String, Integer> answer = new TreeMap<>();
+        try {
+            Files.walkFileTree(dir, EnumSet.noneOf(FileVisitOption.class), MAX_DEPTH, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) throws IOException {
+                    String name = d.getFileName() != null ? d.getFileName().toString() : "";
+                    if (".camel".equals(name) && !d.equals(Path.of(System.getProperty("user.home"), ".camel"))) {
+                        try (var files = Files.list(d)) {
+                            long count = files.filter(Files::isRegularFile).count();
+                            if (count > 0) {
+                                answer.put(dir.relativize(d).toString().replace('\\', '/'), (int) count);
+                            }
+                        }
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return !d.equals(dir) && (SKIPPED_DIRS.contains(name) || name.startsWith("."))
+                            ? FileVisitResult.SKIP_SUBTREE : FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path f, IOException e) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // nothing to add
+        }
+        return answer;
     }
 
     /**

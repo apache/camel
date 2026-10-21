@@ -429,6 +429,45 @@ public class YamlValidatorPropertyHintTest {
     }
 
     @Test
+    public void testTemplateBeansKeyedByNameSayHowToWriteThem() throws Exception {
+        // CAMEL-24704: the beans of a routeTemplate and a templatedRoute are the same list as the top-level beans
+        List<Error> errors = validator.validate("""
+                - routeTemplate:
+                    id: myTemplate
+                    beans:
+                      myBean:
+                        type: "#class:com.example.MyBean"
+                    from:
+                      uri: "direct:{{name}}"
+                      steps:
+                        - to: "mock:result"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("beans is a list: - name: myBean"));
+
+        errors = validator.validate("""
+                - templatedRoute:
+                    routeTemplateRef: myTemplate
+                    beans:
+                      - myBean:
+                          type: "#class:com.example.MyBean"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("a bean item is written as - name: myBean"));
+
+        errors = validator.validate("""
+                - routeTemplate:
+                    id: myTemplate
+                    beans:
+                      - id: myBean
+                        type: "#class:com.example.MyBean"
+                    from:
+                      uri: "direct:{{name}}"
+                      steps:
+                        - to: "mock:result"
+                """);
+        assertThat(errors).anyMatch(e -> e.getMessage().contains("(name instead of id)"));
+    }
+
+    @Test
     public void testJbangDepsLineIsNamed() throws Exception {
         List<Error> errors = validator.validate("""
                 //DEPS org.apache.camel:camel-groovy
@@ -1243,5 +1282,99 @@ public class YamlValidatorPropertyHintTest {
                 .startsWith("line 8: this list item starts in column 10")
                 .contains("the list that starts at line 5 has its items in column 9")
                 .doesNotContain("block sequence start");
+    }
+
+    /** A language written as a step: no "did you mean 'sample'?", but where an expression goes. */
+    @Test
+    void aLanguageWrittenAsAStepSaysWhereItGoes() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:stock
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$"
+                        - simple: "${body}"
+                        - log: "Stock service processing order"
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .contains("'simple' is a language, not a step")
+                .contains("- setBody: {expression: {simple: {expression: \"${body}\"}}}")
+                .doesNotContain("did you mean");
+    }
+
+    /** - stop as a step gets the raw "string found, object expected": a step is a key followed by its options. */
+    @Test
+    void aStepWrittenAsAPlainNameSaysToWriteItAsAKey() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - filter:
+                            expression:
+                              simple:
+                                expression: "${body} == null"
+                            steps:
+                              - stop
+                        - to
+                        - halt
+                """);
+        assertThat(errors).extracting(Error::getMessage).containsExactly(
+                "a step is a key followed by its options: write - stop: {} (the options of the step, if any, go inside"
+                                                                         + " the braces)",
+                "a step is a key followed by its options: write - to: {uri: \"...\"}",
+                "a step is a key followed by its options, such as - log: {message: \"...\"} or - stop: {}; halt is not a"
+                                                                                       + " step");
+    }
+
+    /**
+     * A key in the column of the dashes of a list gets "expected <block end>, but found '?'": steps: under the -
+     * simple: of a when:, meant for the item.
+     */
+    @Test
+    void aKeyInTheColumnOfTheDashesOfAListNamesBothColumns() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} == 'a'"
+                              steps:
+                                - log: "a"
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .isEqualTo("line 8: steps starts in column 15, the column of the - of the list item at line 7, so it is"
+                           + " part of neither that item nor the key that holds the list. Write it in column 17 to make"
+                           + " it a key of the item, as simple is, or in column 13 to make it a key next to when"
+                           + " (line 6)");
+    }
+
+    /** onFallback: under the - to: of the steps: of a circuitBreaker, meant for the circuit breaker. */
+    @Test
+    void aKeyInTheColumnOfTheDashesOfAListCanBelongToTheParent() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - circuitBreaker:
+                            steps:
+                              - to:
+                                  uri: http://localhost:8080/x
+                              onFallback:
+                                steps:
+                                  - log: "fallback"
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 9: onFallback starts in column 15, the column of the - of the list item at line 7")
+                .endsWith("as to is, or in column 13 to make it a key next to steps (line 6)");
     }
 }

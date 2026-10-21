@@ -191,6 +191,19 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         this.handlerOwner = consumer;
     }
 
+    /**
+     * Closes the given WebSocket, and makes the next {@link #getWebSocket()} connect again instead of returning it. A
+     * WebSocket only reports itself as closed once the closing handshake with the server is done. The caller must hold
+     * {@link #clientConsumerConnectLock}.
+     */
+    void discardWebSocket(WebSocket discarded) {
+        if (webSocket == discarded) {
+            webSocket = null;
+            handlerOwner = null;
+        }
+        discarded.close();
+    }
+
     protected WebSocket getWebSocket() throws Exception {
         return getWebSocket((java.util.function.Consumer<WebSocket>) null);
     }
@@ -262,8 +275,7 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
                 webSocket = future.get(resolvedClientOptions.getConnectTimeout(), TimeUnit.MILLISECONDS);
             } catch (Exception e) {
                 webSocket = null;
-                // a connect that completes from now on closes its WebSocket
-                future.cancel(false);
+                abandonConnect(future);
                 throw e;
             }
         } else {
@@ -275,8 +287,26 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint implements EndpointS
         return webSocket;
     }
 
+    /**
+     * Gives up on a connect the caller stopped waiting for. A connect that completes from now on closes its own
+     * WebSocket. One that completed after the wait timed out but before this call is closed here, as nobody will use
+     * it.
+     */
+    static void abandonConnect(CompletableFuture<WebSocket> future) {
+        if (!future.cancel(false) && !future.isCompletedExceptionally()) {
+            // the future completed normally, so join() returns at once
+            future.join().close();
+        }
+    }
+
     protected WebSocket getWebSocket(Exchange exchange) throws Exception {
-        return getWebSocket().exceptionHandler(event -> exchange.setException(event.getCause()));
+        // The handler stays on the WebSocket after the exchange is done. A lost connection is not set on the exchange: a
+        // closed WebSocket is replaced by a new connection on the next send, and a write in flight fails through its result
+        return getWebSocket().exceptionHandler(exception -> {
+            if (!VertxWebsocketHelper.isConnectionClosed(exception)) {
+                exchange.setException(exception);
+            }
+        });
     }
 
     protected WebSocketConnectOptions getWebSocketConnectOptions(WebSocketClientOptions options) {

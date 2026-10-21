@@ -19,6 +19,7 @@ package org.apache.camel.component.pqc.crypto;
 import java.security.*;
 
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
@@ -49,7 +50,7 @@ public class PQCDefaultMAYOMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.MAYO.getAlgorithm(),
                 PQCSignatureAlgorithms.MAYO.getBcProvider());
-        kpGen.initialize(MayoParameterSpec.mayo5);
+        kpGen.initialize(MayoParameterSpec.mayo5, SecureRandomHelper.getSecureRandom());
         return kpGen;
     }
 }

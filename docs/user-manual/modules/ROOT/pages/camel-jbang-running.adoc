@@ -17,6 +17,17 @@ camel run foo.yaml --dev
 
 This works for all DSLs (YAML, Java, XML).
 
+Dev mode looks for changed files every 2 seconds. To look more often, set `camel.main.routesReloadInterval`
+(in millis):
+
+[source,bash]
+----
+camel run foo.yaml --dev --prop=camel.main.routesReloadInterval=500
+----
+
+A shorter interval reloads a change sooner. A longer one groups more of one save together, such as several files
+an editor saves one after the other.
+
 `camel dev` is a shortcut for `camel run --dev`, and without files it runs the current folder
 (as `--source-dir=.`):
 
@@ -57,6 +68,28 @@ Quarkus runtimes, run the files in the directory instead.
 Without `--source-dir`, Camel only watches the specific files you listed on the command line.
 
 NOTE: You cannot combine files and source dir: `camel run abc.java --source-dir=mycode` is not allowed.
+
+=== Data folders in the source directory
+
+Routes often read and write files in folders of their own, such as an `inbox` they consume and an `archive` they
+move the processed files to. When such a folder is in the source directory, the files the routes write there are
+changes too, and dev mode reloads the routes for them; the reload restarts the routes, which write again, and so on.
+Tell Camel which folders hold data with `--data-dir` (comma separated, relative to the source directory):
+
+[source,bash]
+----
+camel run --source-dir=mycode --dev --data-dir=inbox,archive
+----
+
+or in the `application.properties` of the source directory:
+
+[source,properties]
+----
+camel.jbang.dataDir=inbox,archive
+----
+
+Dev mode then does not watch these folders, nor the folders in them. When the routes keep reloading for files in one
+folder, Camel logs a warning that names the folder.
 
 === Live reload of resource files
 
@@ -195,6 +228,11 @@ They are read from the `application.properties` (and `application-<profile>.prop
 or of `--source-dir`, and from the properties files given on the command line or with `--properties`,
 for example `camel run camel/*.yaml camel/application.properties` run from the parent directory of `camel`.
 They are added to the dependencies given with `--dep`.
+
+In dev mode (`--dev`), a dependency that is added to `camel.jbang.dependencies` (or `camel.jbang.dependencies.main`)
+while the application runs is downloaded when the properties file is reloaded, before the beans and components
+of the file are created. To change the version of a library that is on the classpath, or to remove a library,
+restart the application.
 
 == Including resource directories
 

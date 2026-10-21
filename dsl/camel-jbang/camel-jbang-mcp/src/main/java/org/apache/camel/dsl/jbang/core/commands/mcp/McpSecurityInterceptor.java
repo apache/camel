@@ -135,7 +135,8 @@ public class McpSecurityInterceptor {
                     throw new ToolCallException(
                             "Argument '" + parameterName(ctx.getMethod(), i) + "' is " + clean.length()
                                                 + " characters long, over the limit of " + maxLen
-                                                + " (camel.mcp.security.max-argument-length); nothing was done");
+                                                + "; nothing was done. Change a large file in parts with camel_edit_file,"
+                                                + " or raise camel.mcp.security.max-argument-length");
                 }
                 if (!clean.equals(s)) {
                     params[i] = clean;

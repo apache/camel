@@ -45,11 +45,35 @@ include::partial$component-endpoint-headers.adoc[]
 
 Point a file consumer at a folder and the files in it become a knowledge base:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:/var/data/product-docs?noop=true&recursive=true&readLock=changed&charset=UTF-8")
     .to("langchain4j-ingest:products?documentIdHeader=CamelFileName");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:/var/data/product-docs
+      parameters:
+        noop: true
+        recursive: true
+        readLock: changed
+        charset: UTF-8
+      steps:
+        - to:
+            uri: langchain4j-ingest:products
+            parameters:
+              documentIdHeader: CamelFileName
+----
+====
 
 Each file is read as UTF-8 text, split into overlapping segments (`maxSegmentSize`,
 `maxOverlapSize`), embedded in batches (`embeddingBatchSize`, 32 by default) and written to
@@ -81,12 +105,36 @@ below.
 Any Camel consumer can feed the endpoint; where the document id lives in the exchange is the
 consumer's business, and `documentIdHeader` names it:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("aws2-s3://product-docs?region=eu-west-1&deleteAfterRead=false")
     .to("langchain4j-ingest:s3docs?documentIdHeader=CamelAwsS3Key"
         + "&embeddingStore=#bean:productsStore&embeddingModel=#bean:miniLm");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: aws2-s3://product-docs
+      parameters:
+        region: eu-west-1
+        deleteAfterRead: false
+      steps:
+        - to:
+            uri: langchain4j-ingest:s3docs
+            parameters:
+              documentIdHeader: CamelAwsS3Key
+              embeddingStore: "#bean:productsStore"
+              embeddingModel: "#bean:miniLm"
+----
+====
 
 Mind each component's own defaults: the `aws2-s3` consumer *deletes objects after reading
 them* unless `deleteAfterRead=false` is set. Without a `documentIdHeader` the producer expects
@@ -114,12 +162,36 @@ a later, acceptable delivery under the same id still ingests. A duplicate id is 
 check — it must tolerate an absent body, and rejecting a blank delivery answers `filtered`
 rather than `empty`.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:knowledge-base?noop=true")
     .to("langchain4j-ingest:docs?documentIdHeader=CamelFileName"
         + "&includeId=**/*.md,**/*.txt&excludeId=**/draft-*&minDocumentSize=100");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:knowledge-base
+      parameters:
+        noop: true
+      steps:
+        - to:
+            uri: langchain4j-ingest:docs
+            parameters:
+              documentIdHeader: CamelFileName
+              includeId: "**/*.md,**/*.txt"
+              excludeId: "**/draft-*"
+              minDocumentSize: 100
+----
+====
 
 === Deduplicating deliveries
 
@@ -132,12 +204,34 @@ it, so an object created empty and populated later under the same id still inges
 failed write releases it so the delivery can be retried. The claim is eager — a duplicate
 racing an in-flight first delivery is answered `skipped` even if that delivery then fails.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("kafka:ingest-events?groupId=ingest")
     .to("langchain4j-ingest:events?documentIdHeader=CamelKafkaKey"
         + "&idempotentRepository=#bean:eventsRegister");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka:ingest-events
+      parameters:
+        groupId: ingest
+      steps:
+        - to:
+            uri: langchain4j-ingest:events
+            parameters:
+              documentIdHeader: CamelKafkaKey
+              idempotentRepository: "#bean:eventsRegister"
+----
+====
 
 The repository is any `IdempotentRepository` bean — in-memory, file-backed or, to deduplicate
 across application instances, a JDBC one. It is referenced by name on purpose: an application
@@ -162,6 +256,10 @@ parses untrusted documents must capture the id *before* the parse — a crafted 
 otherwise forge its own identity. The `CamelLangChain4jIngestDocumentId` exchange property
 exists for exactly this and always wins over the header:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:/var/data/reports?noop=true&readLock=changed")
@@ -170,6 +268,37 @@ from("file:/var/data/reports?noop=true&readLock=changed")
     .process(new TikaTextDecode())
     .to("langchain4j-ingest:reports");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: tikaTextDecode
+      type: org.apache.camel.component.langchain4j.ingest.TikaTextDecode
+- route:
+    from:
+      uri: file:/var/data/reports
+      parameters:
+        noop: true
+        readLock: changed
+      steps:
+        - setProperty:
+            name: CamelLangChain4jIngestDocumentId
+            expression:
+              header:
+                expression: CamelFileName
+        - to:
+            uri: tika:parse
+            parameters:
+              tikaParseOutputFormat: text
+              tikaParseOutputEncoding: UTF-8
+        - process:
+            ref: tikaTextDecode
+        - to:
+            uri: langchain4j-ingest:reports
+----
+====
 
 Each format needs its Tika parser module on the classpath: camel-tika ships the HTML and text
 modules only, so a PDF needs `org.apache.tika:tika-parser-pdf-module`. A format without its
@@ -216,11 +345,36 @@ metadata as text segments plus the MIME type under `camel_ingest_content_type`, 
 retrieval and citation work unchanged and a retriever on a shared store can tell a media
 hit from text.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:/var/data/photos?noop=true&recursive=true&readLock=changed&antInclude=**/*.jpg,**/*.png")
     .to("langchain4j-ingest:photos?modality=media&documentIdHeader=CamelFileName");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:/var/data/photos
+      parameters:
+        noop: true
+        recursive: true
+        readLock: changed
+        antInclude: "**/*.jpg,**/*.png"
+      steps:
+        - to:
+            uri: langchain4j-ingest:photos
+            parameters:
+              modality: media
+              documentIdHeader: CamelFileName
+----
+====
 
 Leave `charset` unset on the consumer: a file consumer with one converts the file through
 a Reader, which corrupts media. Keep other files out of the folder with the consumer's

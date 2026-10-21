@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -26,9 +28,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.catalog.CamelCatalog;
 
 import static org.apache.camel.dsl.jbang.core.commands.ai.PropertiesChecks.closestName;
+import static org.apache.camel.dsl.jbang.core.commands.ai.PropertiesChecks.closestNames;
 
 /**
  * The Camel* header check of {@link SourceValidator}: a header a component never sets, against the header metadata of
@@ -41,6 +46,15 @@ final class HeaderChecks {
 
     static final Pattern CAMEL_HEADER_REF_PATTERN = Pattern.compile(
             "(?:\\$\\{headers?\\.|headers\\.|headers\\[['\"]|header\\(['\"]|(name):\\s*['\"]?)(Camel[A-Z][A-Za-z0-9]*(?:\\.[A-Za-z0-9_]+)*)");
+
+    private static final String HTTP_STATUS
+            = "the status code of an HTTP answer is the header CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)";
+
+    /**
+     * A name written as a constant of Exchange, such as name: Exchange.HTTP_RESPONSE_CODE: Camel looks the constant up
+     * when it creates the route, for the name of a setHeader, setProperty, setVariable and of the remove EIPs.
+     */
+    static final Pattern EXCHANGE_CONSTANT_NAME = Pattern.compile("name:\\s*['\"]?Exchange\\.([A-Z][A-Z0-9_]*)");
 
     static final Pattern SCHEME_IN_URI_PATTERN = Pattern.compile("uri:\\s*\"?([a-zA-Z][a-zA-Z0-9+.-]*):");
 
@@ -56,6 +70,15 @@ final class HeaderChecks {
      * with includeMetadata=true.
      */
     static final Map<String, String> METADATA_OPTION = Map.of("timer", "includeMetadata");
+
+    /**
+     * A comparison of the timer's counter with a number: the counter counts the fires from 1, so {@code == 0} is never
+     * true (CAMEL-25744: in 8 of 10 benchmark runs a model compared it with 0 to pick the first fire). The Simple forms
+     * (${exchangeProperty.CamelTimerCounter} == 0, ${header.CamelTimerCounter == 0 ? ...}) and the Groovy ones
+     * (exchange.getProperty('CamelTimerCounter', Integer) == 0).
+     */
+    static final Pattern TIMER_COUNTER_COMPARISON = Pattern.compile(
+            "CamelTimerCounter(?:\\}|['\"]\\s*(?:,\\s*[\\w.]+\\s*)?\\))?\\s*(==|!=|<=|<|>=|>)\\s*['\"]?(\\d+)['\"]?");
 
     static final Pattern EXCHANGE_PROPERTY_REF_PATTERN = Pattern.compile("\\$\\{exchangeProperty\\.(Camel[A-Z][A-Za-z0-9]*)");
 
@@ -97,6 +120,17 @@ final class HeaderChecks {
                                                               + " ${date:exchangeCreated:yyyy-MM-dd HH:mm:ss}; ${messageTimestamp} is set only by"
                                                               + " components that stamp their messages."));
 
+    /**
+     * Camel* names that are not headers of Camel, for a header that has another name, with what to write: the status
+     * code of an HTTP answer is CamelHttpResponseCode, which models write as CamelHttpStatusCode. Checked whatever the
+     * components of the file are: the routes of a REST DSL use direct, which has no header metadata, so the other
+     * checks skip them.
+     */
+    static final Map<String, String> WRONG_NAMES = Map.of(
+            "CamelHttpStatusCode", HTTP_STATUS, "CamelHttpStatus", HTTP_STATUS, "CamelHttpCode", HTTP_STATUS,
+            "CamelHttpResponseStatus", HTTP_STATUS, "CamelHttpResponseStatusCode", HTTP_STATUS, "CamelStatusCode",
+            HTTP_STATUS);
+
     static String intentHint(String name) {
         for (var e : INTENT_HINTS) {
             if (e.getKey().matcher(name).find()) {
@@ -106,11 +140,88 @@ final class HeaderChecks {
         return null;
     }
 
+    /**
+     * The comparisons of CamelTimerCounter that can never be true (== 0, <= 0, < 1) or never be false (!= 0, > 0, >=
+     * 1), as the counter is 1 on the first fire.
+     */
+    static List<String> timerCounterComparisons(String content) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            Matcher m = TIMER_COUNTER_COMPARISON.matcher(lines[i]);
+            while (m.find()) {
+                String op = m.group(1);
+                int n = Integer.parseInt(m.group(2));
+                boolean never = ("==".equals(op) || "<=".equals(op)) && n == 0 || "<".equals(op) && n <= 1;
+                boolean always = ("!=".equals(op) || ">".equals(op)) && n == 0 || ">=".equals(op) && n <= 1;
+                if (never || always) {
+                    msgs.add("Line " + (i + 1) + ": CamelTimerCounter counts the fires from 1 (the first fire is 1), so "
+                             + op + " " + n + " is " + (never ? "never true" : "always true")
+                             + ": compare with 1 to pick the first fire");
+                }
+            }
+        }
+        return msgs;
+    }
+
+    /**
+     * The {@link #WRONG_NAMES} the content uses as header names, and the names written as a constant that Exchange does
+     * not have, which fail the route when Camel creates it; once each, the names go into reported.
+     */
+    static List<String> wrongNames(String content, Set<String> reported) {
+        List<String> msgs = new ArrayList<>();
+        String[] lines = content.split("\n", -1);
+        for (int i = 0; i < lines.length; i++) {
+            Matcher c = EXCHANGE_CONSTANT_NAME.matcher(lines[i]);
+            if (c.find() && isSetOrRemoveName(lines, i)) {
+                String hint = exchangeConstantHint(c.group(1));
+                if (hint != null && reported.add("Exchange." + c.group(1))) {
+                    msgs.add("Line " + (i + 1) + ": " + hint);
+                }
+            }
+            Matcher m = CAMEL_HEADER_REF_PATTERN.matcher(lines[i]);
+            while (m.find()) {
+                if (m.group(1) != null && !isHeaderName(lines, i)) {
+                    continue;
+                }
+                String name = m.group(2);
+                String right = WRONG_NAMES.get(name);
+                if (right != null && reported.add(name)) {
+                    msgs.add("Line " + (i + 1) + ": Camel has no header " + name + ": " + right);
+                }
+            }
+        }
+        return msgs;
+    }
+
+    /**
+     * The message for a name written as Exchange.<constant> when Exchange has no such constant, else null: Camel looks
+     * the constant up, so the name Exchange.HTTP_RESPONSE_CODE of a setHeader sets CamelHttpResponseCode.
+     */
+    static String exchangeConstantHint(String constant) {
+        if (ExchangeConstantProvider.lookup(constant) != null) {
+            return null;
+        }
+        String start = "Exchange has no constant " + constant + ", so the route fails to start (Constant field with name: "
+                       + constant + " not found on Exchange.class): ";
+        if (constant.contains("STATUS") || constant.contains("RESPONSE")) {
+            return start + HTTP_STATUS;
+        }
+        List<String> fields = Arrays.stream(Exchange.class.getFields()).map(Field::getName).toList();
+        List<String> closest = closestNames(constant, fields);
+        return start + (closest.isEmpty()
+                ? "write the name of the header, such as CamelFileName"
+                : "did you mean " + String.join(" or ", closest.stream().map(n -> "Exchange." + n).toList()) + "?");
+    }
+
     public static List<String> validateKnownHeaders(String content, CamelCatalog catalog) {
         List<String> msgs = new ArrayList<>();
         if (content == null) {
             return msgs;
         }
+        msgs.addAll(timerCounterComparisons(content));
+        Set<String> wrong = new HashSet<>();
+        msgs.addAll(wrongNames(content, wrong));
         Set<String> known = new LinkedHashSet<>();
         Map<String, String> owner = new LinkedHashMap<>();
         Matcher sm = SCHEME_IN_URI_PATTERN.matcher(content);
@@ -155,7 +266,7 @@ final class HeaderChecks {
                     continue;
                 }
                 String name = m.group(2);
-                if (common.contains(name) || reported.contains(name) || isKnown(name, known)) {
+                if (common.contains(name) || reported.contains(name) || wrong.contains(name) || isKnown(name, known)) {
                     continue;
                 }
                 String propertyOwner = null;
@@ -267,6 +378,20 @@ final class HeaderChecks {
 
     /** Whether the name: on this line belongs to a setHeader or removeHeader step, not a setProperty, a bean... */
     static boolean isHeaderName(String[] lines, int index) {
+        String step = parentStep(lines, index);
+        return step.startsWith("setHeader:") || step.startsWith("removeHeader:");
+    }
+
+    /**
+     * Whether the name: of the line names a header, property or variable, which Camel parses as a constant of Exchange.
+     */
+    static boolean isSetOrRemoveName(String[] lines, int index) {
+        String step = parentStep(lines, index);
+        return step.startsWith("set") || step.startsWith("remove");
+    }
+
+    /** The step the line belongs to, such as setHeader:, or an empty text. */
+    private static String parentStep(String[] lines, int index) {
         int indent = YamlLines.countLeadingSpaces(lines[index]);
         for (int j = index - 1; j >= 0; j--) {
             String line = lines[j];
@@ -278,10 +403,10 @@ final class HeaderChecks {
                 if (step.startsWith("- ")) {
                     step = step.substring(2).trim();
                 }
-                return step.startsWith("setHeader:") || step.startsWith("removeHeader:");
+                return step;
             }
         }
-        return false;
+        return "";
     }
 
 }

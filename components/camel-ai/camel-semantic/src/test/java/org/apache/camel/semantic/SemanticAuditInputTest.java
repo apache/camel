@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +52,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SemanticAuditInputTest {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void imageInputTypeSurvivesCapturePolicyAndPayloadLimits(boolean capture) throws Exception {
+        try (var context = new DefaultCamelContext()) {
+            var audit = SemanticAuditService.get(context);
+            audit.configure("test", configuration(true, new SemanticAuditInputConfiguration(capture, 256, null)));
+            audit.activate();
+            context.start();
+            var input = SemanticInput.ofParts(List.of(SemanticInput.image("data:image/png;base64," + "A".repeat(1000))));
+            var invocation = audit.begin(null, null, evaluation("security"), null, "security", null, null, null);
+            invocation.captureInput(input);
+            invocation.complete("success", "evaluation_completed", new SemanticResult(true, null, null, null, Map.of()));
+            audit.stop();
+            var record = records(audit).get(0);
+            assertThat(record.toMap()).containsEntry("inputType", "image");
+            assertThat(record.forExtensions(Set.of()).toMap()).doesNotContainKey("inputType");
+            if (capture) {
+                assertThat(record.toMap().get("input")).isEqualTo(Map.of(SemanticInput.PARTS,
+                        List.of(Map.of("type", "image", "mediaType", "image/png", "dataOmitted", "snapshot_limit"))));
+            } else {
+                assertThat(record.toMap()).doesNotContainKeys("input", "inputOmitted");
+            }
+        }
+    }
+
     @Test
     void captureIsPerExpertAndNeverSentToObservers() throws Exception {
         try (var context = new DefaultCamelContext()) {

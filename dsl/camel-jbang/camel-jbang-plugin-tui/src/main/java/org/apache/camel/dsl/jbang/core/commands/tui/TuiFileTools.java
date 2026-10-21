@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
-import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -93,21 +92,18 @@ class TuiFileTools {
         if (dir == null) {
             return registry.executeShared(SAVE_SUMMARY_TOOL, args);
         }
-        try {
-            AuthoringTools.SummaryUpdate update
-                    = AuthoringTools.summaryUpdate(dir, registry.sharedContext(), TuiToolRegistry.stringArgs(args));
-            String name = args.get("name") instanceof String n ? n : null;
-            JsonObject written = facade.writeFile(name, IntegrationSummary.FILE_NAME, update.content(), true);
-            JsonObject result = update.result();
-            result.put("status", written.get("status"));
-            if (written.get("message") != null) {
-                result.put("message", written.get("message"));
-            }
-            IntegrationSummaryHints.invalidate(dir);
-            return result.toJson();
-        } catch (ToolExecutionException e) {
-            return "Error: " + e.getMessage();
+        // a ToolExecutionException is an error of the tool
+        AuthoringTools.SummaryUpdate update
+                = AuthoringTools.summaryUpdate(dir, registry.sharedContext(), TuiToolRegistry.stringArgs(args));
+        String name = args.get("name") instanceof String n ? n : null;
+        JsonObject written = facade.writeFile(name, IntegrationSummary.FILE_NAME, update.content(), true);
+        JsonObject result = update.result();
+        result.put("status", written.get("status"));
+        if (written.get("message") != null) {
+            result.put("message", written.get("message"));
         }
+        IntegrationSummaryHints.invalidate(dir);
+        return result.toJson();
     }
 
     private String callGetFiles(Map<String, Object> args) {

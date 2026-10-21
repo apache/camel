@@ -48,18 +48,60 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The SCP component copies the message body to a file on the remote host.
+In the following route, the file consumer sets the `CamelFileName` header,
+and each file of a local folder is copied to the `/upload` directory of the host.
+The host key is checked against a known hosts file:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:outbox
+      steps:
+        - to:
+            uri: scp://myhost:22/upload
+            parameters:
+              username: "{{scp.username}}"
+              password: "{{scp.password}}"
+              knownHostsFile: /home/camel/.ssh/known_hosts
+              strictHostKeyChecking: "yes"
+----
+
 
 == OpenSSH Certificate Authentication
 
 Camel supports OpenSSH certificate-based authentication for SCP connections, where a user's public key is signed by a Certificate Authority (CA). This is configured using the `certFile`, `certUri`, or `certBytes` parameters alongside the private key:
 
-._Java-only: configuring certificate-based authentication_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 to("scp://host/path?username=myuser"
    + "&privateKeyFile=/path/to/user_key"
    + "&certFile=/path/to/user_key-cert.pub");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:outbox
+      steps:
+        - to:
+            uri: scp://host/path
+            parameters:
+              username: myuser
+              privateKeyFile: /path/to/user_key
+              certFile: /path/to/user_key-cert.pub
+----
+====
 
 See the xref:sftp-component.adoc[SFTP component] documentation for more details on certificate authentication options.
 

@@ -36,6 +36,7 @@ import com.networknt.schema.Error;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.apache.camel.dsl.yaml.validator.YamlPointerLines;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.snakeyaml.engine.v2.nodes.Node;
@@ -118,9 +119,11 @@ public final class SourceValidator {
         String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the
-            // route: read it, so that a GET operation is known to carry no body (CAMEL-24844)
+            // route: read it, so that a GET operation is known to carry no body (CAMEL-24844), and with the REST binding
+            // mode of the properties, whether a Map sent or returned over REST is written for the route (CAMEL-25762);
+            // and what a running integration of the file saw at the endpoints of its routes (CAMEL-25750)
             List<String> msgs = validateCamelYaml(content, catalog, schemaValidator,
-                    directory != null ? OpenApiVerbs.bodylessEndpoints(content, directory) : Set.of());
+                    ValidatorFacts.read(fileName, content, directory));
             if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
                 // the shape of a Kamelet file, which the schema of a route file does not know
                 List<String> shape = KameletChecks.validateKameletFile(content);
@@ -143,6 +146,8 @@ public final class SourceValidator {
                 msgs.addAll(OpenApiPathParams.validate(content, directory));
                 // an insert-or-update in the dialect of another database than the datasource (CAMEL-25557)
                 msgs.addAll(SqlDialectChecks.validate(content, directory));
+                // a route id that a route in another file of the project has: Camel does not start
+                msgs.addAll(duplicateRouteIds(fileName, content, catalog, directory));
                 if (checkConsumers) {
                     // a direct: or seda: endpoint no route of the application consumes (CAMEL-24955)
                     msgs.addAll(EndpointConsumerChecks.validateYamlConsumers(content, directory, fileName, catalog));
@@ -161,7 +166,7 @@ public final class SourceValidator {
             return validateProperties(content, catalog, extraPropertyLine);
         }
         if (name.endsWith(".java")) {
-            List<String> msgs = validateJava(fileName, content);
+            List<String> msgs = JavaChecks.validateJava(fileName, content, directory);
             if (directory != null && !msgs.isEmpty()) {
                 msgs = withSiblingClassHints(msgs, BeanDeclarations.scan(directory, fileName));
             }
@@ -232,11 +237,20 @@ public final class SourceValidator {
      */
     public static List<String> validateCamelYaml(
             String content, CamelCatalog catalog, YamlValidator schemaValidator, Set<String> bodylessEndpoints) {
+        return validateCamelYaml(content, catalog, schemaValidator, new ProjectFacts(bodylessEndpoints, Map.of(), null));
+    }
+
+    /**
+     * As {@link #validateCamelYaml(String, CamelCatalog, YamlValidator)} with what the files beside the route say: the
+     * OpenAPI operations the file uses and the REST binding mode of the project (CAMEL-25762).
+     */
+    public static List<String> validateCamelYaml(
+            String content, CamelCatalog catalog, YamlValidator schemaValidator, ProjectFacts facts) {
         List<String> msgs = new ArrayList<>();
         if (content == null || content.isBlank()) {
             return msgs;
         }
-        if (validateYamlSchema(content, catalog, schemaValidator, bodylessEndpoints, msgs)) {
+        if (validateYamlSchema(content, catalog, schemaValidator, facts, msgs)) {
             msgs.addAll(validateYamlCatalog(content, catalog));
         }
         return msgs;
@@ -259,11 +273,11 @@ public final class SourceValidator {
     /** Adds the schema errors to msgs; false when the YAML could not be checked at all (no schema, not YAML). */
     private static boolean validateYamlSchema(
             String content, CamelCatalog catalog, YamlValidator schemaValidator, List<String> msgs) {
-        return validateYamlSchema(content, catalog, schemaValidator, Set.of(), msgs);
+        return validateYamlSchema(content, catalog, schemaValidator, ProjectFacts.NONE, msgs);
     }
 
     private static boolean validateYamlSchema(
-            String content, CamelCatalog catalog, YamlValidator schemaValidator, Set<String> bodylessEndpoints,
+            String content, CamelCatalog catalog, YamlValidator schemaValidator, ProjectFacts facts,
             List<String> msgs) {
         YamlValidator validator;
         try {
@@ -274,7 +288,7 @@ public final class SourceValidator {
             return false;
         }
         try {
-            msgs.addAll(formatSchemaErrors(validator.validate(content, bodylessEndpoints), content));
+            msgs.addAll(formatSchemaErrors(validator.validate(content, facts), content));
             return true;
         } catch (Exception e) {
             msgs.add("Invalid YAML: " + e.getMessage());
@@ -379,20 +393,20 @@ public final class SourceValidator {
             if (directory == null || !Files.isDirectory(directory)) {
                 return NONE;
             }
+            Path excluded = excludeFile != null ? directory.resolve(excludeFile).normalize() : null;
             try (var stream = Files.list(directory)) {
                 List<Path> files = new ArrayList<>(stream.filter(Files::isRegularFile).toList());
                 // a class of the project may also sit in the Maven layout, src/main/java/<package>/<Class>.java, which
                 // camel run --source-dir compiles too: without it a bean of that class was refused as not found
-                Path mavenSources = directory.resolve("src/main/java");
-                if (Files.isDirectory(mavenSources)) {
-                    try (var walk = Files.walk(mavenSources)) {
-                        walk.filter(Files::isRegularFile).filter(q -> q.getFileName().toString().endsWith(".java"))
-                                .forEach(files::add);
-                    }
-                }
+                addMavenFiles(directory.resolve("src/main/java"), ".java", files);
+                // and the YAML in src/main/resources, which camel run --source-dir loads as well (it loads the whole
+                // directory): a model that put the class in src/main/java wrote beans.yaml there, 6 times out of 8 in
+                // a benchmark night, and each reference to the bean was then refused as not declared
+                addMavenFiles(directory.resolve("src/main/resources"), ".yaml", files);
+                addMavenFiles(directory.resolve("src/main/resources"), ".yml", files);
                 for (Path p : files) {
                     String fn = p.getFileName().toString();
-                    if (fn.equals(excludeFile)) {
+                    if (p.normalize().equals(excluded)) {
                         continue;
                     }
                     String lower = fn.toLowerCase(Locale.ROOT);
@@ -430,6 +444,63 @@ public final class SourceValidator {
             }
             return new BeanDeclarations(names, classes, signatures, publicMethods, publicMethodNamesByClass);
         }
+
+        /** Adds the files with the suffix in a directory of the Maven layout, subdirectories included, if it exists. */
+        private static void addMavenFiles(Path dir, String suffix, List<Path> files) throws IOException {
+            if (Files.isDirectory(dir)) {
+                try (var walk = Files.walk(dir)) {
+                    walk.filter(Files::isRegularFile).filter(q -> q.getFileName().toString().endsWith(suffix))
+                            .forEach(files::add);
+                }
+            }
+        }
+    }
+
+    /**
+     * The routes of the content whose id a route in another YAML or XML file of the project has. camel run --source-dir
+     * loads every file of the directory, and Camel does not start with two routes of one id ("Duplicate route ids
+     * detected"). A model asked to declare a bean in beans.yaml copied the route there too: the write went ahead, the
+     * restart failed, and the model ran camel_run again until its calls ran out.
+     */
+    static List<String> duplicateRouteIds(String fileName, String content, CamelCatalog catalog, Path directory) {
+        // the id of each route of the content, with its line
+        Map<String, Integer> ids = new LinkedHashMap<>();
+        try {
+            for (ProjectRoutes.Route r : ProjectRoutes.parse(fileName, content, catalog)) {
+                if ("route".equals(r.kind()) && r.id() != null && !r.id().isBlank()) {
+                    ids.putIfAbsent(r.id(), r.line());
+                }
+            }
+        } catch (RuntimeException e) {
+            return List.of();
+        }
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        Path self = directory.resolve(fileName).normalize();
+        List<String> msgs = new ArrayList<>();
+        for (Path p : AuthoringTools.projectFiles(directory)) {
+            String rel = AuthoringTools.relativePath(directory, p);
+            String type = AuthoringTools.fileType(rel);
+            if (p.normalize().equals(self) || !("yaml".equals(type) || "xml".equals(type))
+                    || !"route".equals(AuthoringTools.fileKind(p, rel, type))) {
+                continue;
+            }
+            try {
+                for (ProjectRoutes.Route r : ProjectRoutes.parse(rel, Files.readString(p), catalog)) {
+                    Integer line = "route".equals(r.kind()) && r.id() != null ? ids.remove(r.id()) : null;
+                    if (line != null) {
+                        msgs.add("Line " + line + ": route id '" + r.id() + "' is already the id of a route in " + rel
+                                 + ", and Camel does not start with two routes of one id (camel run loads every file of"
+                                 + " the directory): change the route in " + rel + " rather than adding a copy here, or"
+                                 + " give this route another id");
+                    }
+                }
+            } catch (IOException | RuntimeException e) {
+                // an unreadable or unparsable file has no route to compare
+            }
+        }
+        return msgs;
     }
 
     /**

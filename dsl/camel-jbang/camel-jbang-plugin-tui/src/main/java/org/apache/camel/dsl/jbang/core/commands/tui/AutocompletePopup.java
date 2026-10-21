@@ -152,10 +152,12 @@ class AutocompletePopup {
             listState.selectNext(size);
             return Result.CONSUMED;
         }
+        // a character at a time, as the editor moves: all the code points of an emoji
         if (ke.isRight()) {
             if (cursorPos < lineKeyText.length()) {
-                filter.appendChar(lineKeyText.charAt(cursorPos));
-                cursorPos++;
+                int end = TuiHelper.characterEnd(lineKeyText, cursorPos);
+                filter.append(lineKeyText.substring(cursorPos, end));
+                cursorPos = end;
                 rebuildList();
                 return Result.CURSOR_RIGHT;
             }
@@ -164,7 +166,7 @@ class AutocompletePopup {
         if (ke.isLeft()) {
             if (cursorPos > minCursorPos && filter.hasFilter()) {
                 filter.deleteChar();
-                cursorPos--;
+                cursorPos = TuiHelper.characterStart(lineKeyText, cursorPos);
                 rebuildList();
                 return Result.CURSOR_LEFT;
             }

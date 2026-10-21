@@ -26,8 +26,10 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.TimeUtils;
@@ -43,6 +45,8 @@ import picocli.CommandLine.Command;
                  "  camel get producer",
                  "  camel get producer --watch" })
 public class ListProducer extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -80,62 +84,58 @@ public class ListProducer extends ProcessWatchCommand {
             filter += "*";
         }
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        JsonObject context = (JsonObject) root.get("context");
-                        JsonObject jo = (JsonObject) root.get("producers");
-                        if (context != null && jo != null) {
-                            JsonArray array = (JsonArray) jo.get("producers");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
-                                Row row = new Row();
-                                row.name = context.getString("name");
-                                if ("CamelJBang".equals(row.name)) {
-                                    row.name = ProcessHelper.extractName(root, ph);
-                                }
-                                row.pid = Long.toString(ph.pid());
-                                row.uri = o.getString("uri");
-                                row.id = o.getString("routeId");
-                                row.state = o.getString("state");
-                                row.className = o.getString("class");
-                                row.singleton = o.getBoolean("singleton");
-                                row.remote = o.getBoolean("remote");
-                                row.uptime = extractSince(ph);
-                                row.age = TimeUtils.printSince(row.uptime);
-                                boolean add = true;
-                                if (filter != null) {
-                                    String f = filter;
-                                    boolean negate = filter.startsWith("-");
-                                    if (negate) {
-                                        f = f.substring(1);
-                                    }
-                                    boolean match = PatternHelper.matchPattern(row.uri, f);
-                                    if (negate) {
-                                        match = !match;
-                                    }
-                                    if (!match) {
-                                        add = false;
-                                    }
-                                }
-                                if (limit > 0 && rows.size() >= limit) {
-                                    add = false;
-                                }
-                                if (add) {
-                                    rows.add(row);
-                                }
-                            }
+        forEachIntegration(name, (ph, root) -> {
+            JsonObject context = (JsonObject) root.get("context");
+            JsonObject jo = (JsonObject) root.get("producers");
+            if (context != null && jo != null) {
+                JsonArray array = (JsonArray) jo.get("producers");
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject o = (JsonObject) array.get(i);
+                    Row row = new Row();
+                    row.name = context.getString("name");
+                    if ("CamelJBang".equals(row.name)) {
+                        row.name = ProcessHelper.extractName(root, ph);
+                    }
+                    row.pid = Long.toString(ph.pid());
+                    row.uri = o.getString("uri");
+                    row.id = o.getString("routeId");
+                    row.state = o.getString("state");
+                    row.className = o.getString("class");
+                    row.singleton = o.getBoolean("singleton");
+                    row.remote = o.getBoolean("remote");
+                    row.uptime = extractSince(ph);
+                    row.age = TimeUtils.printSince(row.uptime);
+                    boolean add = true;
+                    if (filter != null) {
+                        String f = filter;
+                        boolean negate = filter.startsWith("-");
+                        if (negate) {
+                            f = f.substring(1);
+                        }
+                        boolean match = PatternHelper.matchPattern(row.uri, f);
+                        if (negate) {
+                            match = !match;
+                        }
+                        if (!match) {
+                            add = false;
                         }
                     }
-                });
+                    if (add) {
+                        rows.add(row);
+                    }
+                }
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        // the first rows after sorting
+        if (limit > 0 && rows.size() > limit) {
+            rows.subList(limit, rows.size()).clear();
+        }
+
+        if (!rows.isEmpty() || jsonOutput) {
             printTable(rows);
         }
 
@@ -146,9 +146,10 @@ public class ListProducer extends ProcessWatchCommand {
         if (jsonOutput) {
             printer().println(Jsoner.serialize(rows.stream().map(r -> {
                 JsonObject jo = new JsonObject();
-                jo.put("pid", r.pid);
+                jo.put("pid", JsonValues.pid(r.pid));
                 jo.put("name", r.name);
                 jo.put("age", r.age);
+                jo.put("uptime", r.uptime);
                 jo.put("id", r.id);
                 jo.put("status", getState(r));
                 jo.put("type", getType(r));
@@ -181,14 +182,7 @@ public class ListProducer extends ProcessWatchCommand {
     }
 
     private String getUri(Row r) {
-        String u = r.uri;
-        if (shortUri) {
-            int pos = u.indexOf('?');
-            if (pos > 0) {
-                u = u.substring(0, pos);
-            }
-        }
-        return u;
+        return ListingFormat.uri(r.uri, shortUri);
     }
 
     private String getState(Row r) {
@@ -201,25 +195,6 @@ public class ListProducer extends ProcessWatchCommand {
             s = s.substring(0, s.length() - 8);
         }
         return s;
-    }
-
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "age":
-                return Long.compare(o1.uptime, o2.uptime) * negate;
-            default:
-                return 0;
-        }
     }
 
     static class Row {

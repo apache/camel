@@ -27,7 +27,9 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
@@ -43,6 +45,11 @@ import picocli.CommandLine.Command;
                  "  camel get properties",
                  "  camel get properties --verbose" })
 public class ListProperties extends ProcessWatchCommand {
+
+    private static final RowSort<Row> ORDER = new RowSort<Row>()
+            .number("pid", r -> r.pid)
+            .text("name", r -> r.name)
+            .text("key", r -> r.key);
 
     public static class PidNameKeyCompletionCandidates implements Iterable<String> {
 
@@ -74,7 +81,7 @@ public class ListProperties extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--mask" },
                         description = "Whether to mask configuration values to avoid printing sensitive information such as password or access keys",
-                        defaultValue = "true")
+                        defaultValue = "true", arity = "0..1", fallbackValue = "true")
     boolean mask = true;
 
     public ListProperties(CamelJBangMain main) {
@@ -85,65 +92,59 @@ public class ListProperties extends ProcessWatchCommand {
     public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    // there must be a status file for the running Camel integration
-                    if (root != null) {
-                        Row row = new Row();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        row.pid = Long.toString(ph.pid());
+        forEachIntegration(name, (ph, root) -> {
+            // there must be a status file for the running Camel integration
+            Row row = new Row();
+            JsonObject context = (JsonObject) root.get("context");
+            if (context == null) {
+                return;
+            }
+            row.name = context.getString("name");
+            if ("CamelJBang".equals(row.name)) {
+                row.name = ProcessHelper.extractName(root, ph);
+            }
+            row.pid = Long.toString(ph.pid());
 
-                        JsonArray arr;
-                        if (startup) {
-                            JsonObject jv = (JsonObject) root.get("main-configuration");
-                            arr = jv.getCollectionOrDefault("configurations", null);
-                        } else {
-                            JsonObject jv = (JsonObject) root.get("properties");
-                            arr = jv.getCollectionOrDefault("properties", null);
-                        }
-                        for (int i = 0; arr != null && i < arr.size(); i++) {
-                            row = row.copy();
-                            JsonObject jo = (JsonObject) arr.get(i);
-                            row.key = jo.getString("key");
-                            String value = jo.getString("value");
-                            if (mask && SensitiveUtils.containsSensitive(row.key)) {
-                                value = "xxxxxx";
-                            }
-                            row.value = value;
-                            value = jo.getString("originalValue");
-                            if (mask && SensitiveUtils.containsSensitive(row.key)) {
-                                value = "xxxxxx";
-                            }
-                            row.originalValue = value;
-                            row.internalLoc = jo.getBooleanOrDefault("internal", false);
-                            row.source = jo.getString("source");
-                            row.loc = sanitizeLocation(jo.getString("location"));
-                            boolean accept = internal || !row.internalLoc;
-                            if (accept) {
-                                rows.add(row);
-                            }
-                        }
-                    }
-                });
+            JsonArray arr;
+            if (startup) {
+                JsonObject jv = (JsonObject) root.get("main-configuration");
+                arr = jv.getCollectionOrDefault("configurations", null);
+            } else {
+                JsonObject jv = (JsonObject) root.get("properties");
+                arr = jv.getCollectionOrDefault("properties", null);
+            }
+            for (int i = 0; arr != null && i < arr.size(); i++) {
+                row = row.copy();
+                JsonObject jo = (JsonObject) arr.get(i);
+                row.key = jo.getString("key");
+                String value = jo.getString("value");
+                if (mask && SensitiveUtils.containsSensitive(row.key)) {
+                    value = "xxxxxx";
+                }
+                row.value = value;
+                value = jo.getString("originalValue");
+                if (mask && SensitiveUtils.containsSensitive(row.key)) {
+                    value = "xxxxxx";
+                }
+                row.originalValue = value;
+                row.internalLoc = jo.getBooleanOrDefault("internal", false);
+                row.source = jo.getString("source");
+                row.loc = sanitizeLocation(jo.getString("location"));
+                boolean accept = internal || !row.internalLoc;
+                if (accept) {
+                    rows.add(row);
+                }
+            }
+        });
 
         // sort rows
-        rows.sort(this::sortRow);
+        rows.sort(ORDER.comparator(sort));
 
-        if (!rows.isEmpty()) {
+        if (!rows.isEmpty() || jsonOutput) {
             if (jsonOutput) {
                 printer().println(Jsoner.serialize(rows.stream().map(r -> {
                     JsonObject jo = new JsonObject();
-                    jo.put("pid", r.pid);
+                    jo.put("pid", JsonValues.pid(r.pid));
                     jo.put("name", r.name);
                     jo.put("location", r.loc);
                     jo.put("key", r.key);
@@ -193,26 +194,7 @@ public class ListProperties extends ProcessWatchCommand {
         return StringHelper.before(r.source, ":", r.source);
     }
 
-    protected int sortRow(Row o1, Row o2) {
-        String s = sort;
-        int negate = 1;
-        if (s.startsWith("-")) {
-            s = s.substring(1);
-            negate = -1;
-        }
-        switch (s) {
-            case "pid":
-                return Long.compare(Long.parseLong(o1.pid), Long.parseLong(o2.pid)) * negate;
-            case "name":
-                return o1.name.compareToIgnoreCase(o2.name) * negate;
-            case "key":
-                return o1.key.compareToIgnoreCase(o2.key) * negate;
-            default:
-                return 0;
-        }
-    }
-
-    private static class Row implements Cloneable {
+    private static class Row extends CopyableRow<Row> {
         String pid;
         String name;
         String key;
@@ -221,14 +203,6 @@ public class ListProperties extends ProcessWatchCommand {
         String source;
         String loc;
         boolean internalLoc;
-
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     /**

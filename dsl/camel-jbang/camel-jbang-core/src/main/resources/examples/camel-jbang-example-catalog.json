@@ -44,12 +44,12 @@
         ],
         "needs": "a local model",
         "ciSkip": true,
-        "order": 4
+        "order": 5
     },
     {
         "name": "ai/langchain4j-chat",
         "title": "LangChain4j chat",
-        "description": "A local Ollama model started with camel infra writes the shipping notification for each of the three orders; the chat model is a bean built from properties, the prompt comes from the order, and the log shows the reply with its token counts.",
+        "description": "A local Ollama model started with camel infra writes the shipping notification for each of the three orders; the chat model is configured by provider on the endpoint, the prompt comes from the order, and the log shows the reply with its token counts.",
         "level": "ai",
         "teaches": {
             "components": [
@@ -138,7 +138,7 @@
             "orders/order-1003.json",
             "stock.json"
         ],
-        "order": 2
+        "order": 3
     },
     {
         "name": "ai/openai-pii-redaction",
@@ -169,7 +169,60 @@
         ],
         "needs": "an OpenAI-compatible API: set `OPENAI_API_KEY`",
         "ciSkip": true,
-        "order": 3
+        "order": 4
+    },
+    {
+        "name": "ai/ticket-classifier",
+        "title": "Ticket classifier",
+        "description": "A local model reads each of three support tickets and names its category, shipping, billing or account; the route checks the answer and files the ticket in tickets-out/<category>/, and an answer outside the three, or no answer within the circuit breaker's timeout, files it under unknown.",
+        "level": "ai",
+        "teaches": {
+            "components": [
+                "langchain4j-chat",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "circuitBreaker",
+                "filter",
+                "setVariable",
+                "setHeader",
+                "unmarshal",
+                "marshal"
+            ],
+            "languages": [
+                "simple",
+                "constant"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "ai",
+            "llm",
+            "ollama",
+            "langchain4j",
+            "classification"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "ticket-classifier.camel.yaml",
+            "tickets/T-1.json",
+            "tickets/T-2.json",
+            "tickets/T-3.json"
+        ],
+        "infraServices": [
+            "ollama"
+        ],
+        "needs": "a local model: `ollama pull granite4:3b`",
+        "ciSkip": true,
+        "order": 2
     },
     {
         "name": "cloud/aws-sqs",
@@ -299,7 +352,7 @@
         "infraServices": [
             "artemis"
         ],
-        "order": 6
+        "order": 7
     },
     {
         "name": "connect-service/ftp",
@@ -343,7 +396,64 @@
             "artemis",
             "ftp"
         ],
-        "order": 5
+        "order": 6
+    },
+    {
+        "name": "connect-service/jms-request-reply",
+        "title": "JMS request-reply",
+        "description": "The three orders go on a queue of an ActiveMQ Artemis broker started with camel infra; a consumer asks a stock service over JMS request-reply for each, publishes the reserved ones on a topic that shipping and invoicing both subscribe to, and ORD-1003, which the stock service cannot reserve, is redelivered three times and then moved to a dead letter queue.",
+        "level": "connect-service",
+        "teaches": {
+            "components": [
+                "jms",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "errorHandler",
+                "deadLetterChannel",
+                "redeliveryPolicy",
+                "filter",
+                "throwException",
+                "setVariable",
+                "setHeader",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple",
+                "jsonpath",
+                "groovy"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "jms",
+            "artemis",
+            "queue",
+            "topic",
+            "request-reply",
+            "dead-letter",
+            "messaging"
+        ],
+        "bundled": false,
+        "requiresDocker": true,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "jms-request-reply.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json",
+            "stock.json"
+        ],
+        "infraServices": [
+            "artemis"
+        ],
+        "order": 3
     },
     {
         "name": "connect-service/kafka-orders",
@@ -392,7 +502,7 @@
         "infraServices": [
             "kafka"
         ],
-        "order": 4
+        "order": 5
     },
     {
         "name": "connect-service/mqtt",
@@ -433,7 +543,7 @@
         "infraServices": [
             "mosquitto"
         ],
-        "order": 3
+        "order": 4
     },
     {
         "name": "connect-service/sql",
@@ -657,7 +767,7 @@
         "infraServices": [
             "keycloak"
         ],
-        "order": 3
+        "order": 4
     },
     {
         "name": "contracts/openapi-client",
@@ -705,7 +815,7 @@
             "stock-api.json"
         ],
         "needs": "`contracts/openapi-server` running first",
-        "order": 2
+        "order": 3
     },
     {
         "name": "contracts/openapi-server",
@@ -753,12 +863,60 @@
             "stock-api.json",
             "stock.json"
         ],
+        "order": 2
+    },
+    {
+        "name": "contracts/rest-code-first",
+        "title": "REST code first",
+        "description": "The shop's order API written with the REST DSL: GET /orders and GET /orders/{id} answer the orders as JSON (404 for an unknown id), POST /orders binds the JSON of a new order to a Java record and answers 201 (400 without lines), and the API description generated from the operations is served at /openapi.",
+        "level": "contracts",
+        "teaches": {
+            "components": [
+                "rest",
+                "platform-http",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "restConfiguration",
+                "rest",
+                "choice",
+                "filter",
+                "setHeader",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple",
+                "groovy"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "rest",
+            "code-first",
+            "binding",
+            "openapi",
+            "java-record"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "Order.java",
+            "README.md",
+            "application.properties",
+            "orders.json",
+            "rest-code-first.camel.yaml"
+        ],
         "order": 1
     },
     {
         "name": "fail-well/circuit-breaker",
         "title": "Circuit breaker",
-        "description": "A stock check calls the supplier every second; the supplier goes down for nine calls, the breaker opens after two failures in its window of four, answers from the fallback while open, tries the supplier again after five seconds and closes once a call succeeds; each line logs the breaker state.",
+        "description": "A stock check calls the supplier every second; the supplier goes down for nine calls, the breaker opens after two failures in its window of four, answers from the fallback without calling the supplier while open, tries it again after five seconds and closes once a call succeeds; each line logs the breaker state and whether the supplier failed or was not called.",
         "level": "fail-well",
         "teaches": {
             "components": [
@@ -834,7 +992,8 @@
             "error-handling.camel.yaml",
             "orders/order-1001.json",
             "orders/order-1002.json",
-            "orders/order-1003.json"
+            "orders/order-1003.json",
+            "parked.camel.yaml"
         ],
         "order": 1
     },
@@ -1045,6 +1204,108 @@
             "orders/order-1003.json"
         ],
         "order": 1
+    },
+    {
+        "name": "route/dynamic-routing",
+        "title": "Dynamic routing",
+        "description": "Each of the three orders goes to the warehouse of its country and to the billing of its status through a recipient list computed from the order; billing a paid order fails over from a primary invoice service that is down to a backup one, the pending order gets no invoice, and the US warehouse is throttled to one order per second.",
+        "level": "route",
+        "teaches": {
+            "components": [
+                "file",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "recipientList",
+                "loadBalance",
+                "failoverLoadBalancer",
+                "throttle",
+                "throwException",
+                "noErrorHandler",
+                "unmarshal"
+            ],
+            "languages": [
+                "simple",
+                "constant"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "eip",
+            "recipient-list",
+            "failover",
+            "load-balancer",
+            "throttle"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "dynamic-routing.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json"
+        ],
+        "order": 6
+    },
+    {
+        "name": "route/enrich-and-dedupe",
+        "title": "Enrich and deduplicate",
+        "description": "The three orders and a resent copy of ORD-1001 are read; an idempotent consumer accepts each order id once and logs the resent one as a duplicate, each accepted order is enriched with its customer's name and tier from customers/ with pollEnrich, and a wire tap writes a copy to audit/ without holding the order up.",
+        "level": "route",
+        "teaches": {
+            "components": [
+                "file",
+                "direct",
+                "log"
+            ],
+            "eips": [
+                "idempotentConsumer",
+                "pollEnrich",
+                "wireTap",
+                "choice",
+                "setHeader",
+                "unmarshal",
+                "marshal"
+            ],
+            "languages": [
+                "simple"
+            ],
+            "dataformats": [
+                "json"
+            ]
+        },
+        "tags": [
+            "shop",
+            "eip",
+            "idempotent",
+            "duplicates",
+            "enrich",
+            "wire-tap",
+            "audit"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "customers/C-134.json",
+            "customers/C-207.json",
+            "customers/C-482.json",
+            "enrich-and-dedupe.camel.yaml",
+            "orders/order-1001.json",
+            "orders/order-1002.json",
+            "orders/order-1003.json",
+            "orders/resent-order-1001.json"
+        ],
+        "order": 5
     },
     {
         "name": "route/filter-and-multicast",

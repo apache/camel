@@ -54,6 +54,16 @@ public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguratio
     private int maxResults = 50;
     @UriParam(description = "Specify an event source to select events")
     private String eventSource;
+    @UriParam(defaultValue = "600000", javaType = "java.time.Duration",
+              description = "How far back the consumer looks again, every lookBackInterval, for events that"
+                            + " CloudTrail made visible after a newer event (CloudTrail typically delivers an event"
+                            + " within 5 minutes). Events not routed yet are routed. Set to 0 to disable.")
+    private long lookBackWindow = 600000;
+    @UriParam(defaultValue = "60000", javaType = "java.time.Duration",
+              description = "How often the consumer looks up the lookBackWindow again for events that CloudTrail made"
+                            + " visible late. A late event is routed at most this long after it became visible. Must"
+                            + " be above 0 unless lookBackWindow is 0.")
+    private long lookBackInterval = 60000;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS",
               description = "To define a proxy protocol when instantiating the Cloudtrail client")
     private Protocol proxyProtocol = Protocol.HTTPS;
@@ -204,6 +214,22 @@ public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguratio
 
     public void setEventSource(String eventSource) {
         this.eventSource = eventSource;
+    }
+
+    public long getLookBackWindow() {
+        return lookBackWindow;
+    }
+
+    public void setLookBackWindow(long lookBackWindow) {
+        this.lookBackWindow = lookBackWindow;
+    }
+
+    public long getLookBackInterval() {
+        return lookBackInterval;
+    }
+
+    public void setLookBackInterval(long lookBackInterval) {
+        this.lookBackInterval = lookBackInterval;
     }
 
     public boolean isUseProfileCredentialsProvider() {

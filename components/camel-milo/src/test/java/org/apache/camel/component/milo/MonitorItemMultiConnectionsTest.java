@@ -86,9 +86,10 @@ public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
             public void configure() {
                 from(DIRECT_START_1).to(MILO_SERVER_ITEM_1);
 
-                from(resolve(MILO_CLIENT_ITEM_C1_1)).to(MOCK_TEST_1);
-                from(resolve(MILO_CLIENT_ITEM_C2_1)).to(MOCK_TEST_2);
-                from(resolve(MILO_CLIENT_ITEM_C3_1)).to(MOCK_TEST_3);
+                // the consumers deliver the current value while they start, so the test starts these routes
+                from(resolve(MILO_CLIENT_ITEM_C1_1)).autoStartup(false).to(MOCK_TEST_1);
+                from(resolve(MILO_CLIENT_ITEM_C2_1)).autoStartup(false).to(MOCK_TEST_2);
+                from(resolve(MILO_CLIENT_ITEM_C3_1)).autoStartup(false).to(MOCK_TEST_3);
             }
         };
     }
@@ -102,16 +103,17 @@ public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
         this.test1Endpoint.setExpectedCount(1);
         this.test1Endpoint.setSleepForEmptyTest(5_000);
 
-        // item 2
-        this.test2Endpoint.setExpectedCount(0);
-        this.test2Endpoint.setSleepForEmptyTest(5_000);
+        // items 2 and 3: their clients cannot connect, so their consumers report the node without communication
+        this.test2Endpoint.setExpectedCount(1);
+        testBody(this.test2Endpoint.message(0), assertNoCommunication());
+        this.test2Endpoint.setAssertPeriod(5_000);
+        this.test3Endpoint.setExpectedCount(1);
+        testBody(this.test3Endpoint.message(0), assertNoCommunication());
+        this.test3Endpoint.setAssertPeriod(5_000);
 
-        // item 3
-        this.test3Endpoint.setExpectedCount(0);
-        this.test3Endpoint.setSleepForEmptyTest(5_000);
-
-        // set server value
+        // set server value, then start the consumers
         this.producer1.sendBody("Foo");
+        context.getRouteController().startAllRoutes();
 
         // assert
         MockEndpoint.assertIsSatisfied(context);

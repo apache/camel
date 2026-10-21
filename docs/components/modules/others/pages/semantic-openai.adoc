@@ -1,0 +1,1 @@
+../../../../../components/camel-ai/camel-semantic-openai/src/main/docs/semantic-openai.adoc

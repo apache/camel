@@ -137,11 +137,13 @@ final class EndpointChecks {
             boolean consumerOnly = eipName != null && CONSUMER_EIPS.contains(eipName);
             boolean producerOnly = eipName != null && PRODUCER_EIPS.contains(eipName);
 
-            // look ahead for a parameters: block at the same indent level as uri
+            // the parameters: block is a key of the same mapping as uri:, after it or before it, and other keys of the
+            // step (id:, variableReceive:) may stand in between (CAMEL-25761)
             StringBuilder uriBuilder = new StringBuilder(uri);
             boolean hasParams = uri.contains("?");
             Map<String, Integer> optionLineMap = new LinkedHashMap<>();
-            for (int j = i + 1; j < lines.length; j++) {
+            int paramsBefore = keyBefore(lines, i, lineIndent, "parameters:");
+            for (int j = paramsBefore >= 0 ? paramsBefore : i + 1; j < lines.length; j++) {
                 String next = lines[j];
                 if (next.isBlank()) {
                     continue;
@@ -214,15 +216,32 @@ final class EndpointChecks {
                     }
                     break;
                 }
-                if (nextIndent == lineIndent) {
-                    break;
-                }
             }
 
             checkUri(errors, catalog, uriBuilder.toString(), line, i, optionLineMap, eipName, consumerOnly, producerOnly,
                     false);
         }
         return errors;
+    }
+
+    /**
+     * The line of the key (such as parameters:) of the same mapping as the line at idx that comes before it: the same
+     * indent, up to the line that starts the mapping, or -1.
+     */
+    static int keyBefore(String[] lines, int idx, int indent, String key) {
+        for (int j = idx - 1; j >= 0; j--) {
+            if (lines[j].isBlank()) {
+                continue;
+            }
+            int ind = countLeadingSpaces(lines[j]);
+            if (ind < indent) {
+                return -1;
+            }
+            if (ind == indent && lines[j].trim().startsWith(key)) {
+                return j;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -773,7 +792,12 @@ final class EndpointChecks {
                 errors.add(linePrefix(optionLineMap.getOrDefault(name, uriLineIdx))
                            + scheme + ": Option '" + name + "' is not applicable in producer only mode (to: sends to the"
                            + " endpoint, for " + scheme + ": it writes the body; to read from an endpoint in the middle of a"
-                           + " route use the poll EIP, or pollEnrich, see camel_catalog_sample poll)");
+                           + " route use the poll EIP, or pollEnrich, see camel_catalog_sample poll"
+                           + ("file".equals(scheme)
+                                   ? "; to read a data file the route needs, such as a lookup table: setVariable with"
+                                     + " constant: resource:file:<path>"
+                                   : "")
+                           + ")");
             }
         }
     }

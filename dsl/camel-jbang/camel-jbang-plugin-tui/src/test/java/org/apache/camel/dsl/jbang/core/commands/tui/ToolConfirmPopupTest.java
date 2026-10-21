@@ -27,6 +27,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -110,7 +111,7 @@ class ToolConfirmPopupTest {
     void aCallShowsWhatTheAiWantsToRunAndEnterRunsIt() {
         ToolConfirmPopup popup = new ToolConfirmPopup();
         CompletableFuture<Boolean> answer = new CompletableFuture<>();
-        popup.open(ToolConfirms.sendMessage("file:/home/me?fileName=.zshrc", List.of("kafka:orders")), answer);
+        popup.open(ToolConfirms.sendMessage("file:/home/me?fileName=.zshrc", List.of("kafka:orders"), null), answer);
 
         assertThat(render(popup, 100, 14))
                 .contains("AI wants to send a message to an endpoint the integration does not have")

@@ -637,9 +637,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     public JsonObject writeVariableExpression(VariableExpression def) {
         return wrapNode("variable", doWriteVariableExpression(def));
     }
-    public JsonObject writeWasmExpression(WasmExpression def) {
-        return wrapNode("wasm", doWriteWasmExpression(def));
-    }
     public JsonObject writeXMLTokenizerExpression(XMLTokenizerExpression def) {
         return wrapNode("xtokenize", doWriteXMLTokenizerExpression(def));
     }
@@ -1032,15 +1029,15 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     protected void doWriteFaultToleranceConfigurationCommonAttributes(JsonObject jo, FaultToleranceConfigurationCommon def) {
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "typedGuard", def.getTypedGuard(), null);
-        doWriteAttribute(jo, "delay", def.getDelay(), "5000");
-        doWriteAttribute(jo, "successThreshold", def.getSuccessThreshold(), "1");
-        doWriteAttribute(jo, "requestVolumeThreshold", def.getRequestVolumeThreshold(), "20");
-        doWriteAttribute(jo, "failureRatio", def.getFailureRatio(), "50");
-        doWriteAttribute(jo, "timeoutEnabled", def.getTimeoutEnabled(), "false");
-        doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute(jo, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "10");
-        doWriteAttribute(jo, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), "10");
+        doWriteAttribute(jo, "delay", def.getDelay(), null);
+        doWriteAttribute(jo, "successThreshold", def.getSuccessThreshold(), null);
+        doWriteAttribute(jo, "requestVolumeThreshold", def.getRequestVolumeThreshold(), null);
+        doWriteAttribute(jo, "failureRatio", def.getFailureRatio(), null);
+        doWriteAttribute(jo, "timeoutEnabled", def.getTimeoutEnabled(), null);
+        doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), null);
+        doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), null);
+        doWriteAttribute(jo, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), null);
+        doWriteAttribute(jo, "bulkheadWaitingTaskQueue", def.getBulkheadWaitingTaskQueue(), null);
         doWriteAttribute(jo, "threadOffloadExecutorService", def.getThreadOffloadExecutorService(), null);
     }
     protected JsonObject doWriteFaultToleranceConfigurationCommon(FaultToleranceConfigurationCommon def) {
@@ -1464,28 +1461,28 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         JsonObject jo = new JsonObject();
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "maximumRedeliveries", def.getMaximumRedeliveries(), null);
-        doWriteAttribute(jo, "redeliveryDelay", def.getRedeliveryDelay(), "1000");
+        doWriteAttribute(jo, "redeliveryDelay", def.getRedeliveryDelay(), null);
         doWriteAttribute(jo, "asyncDelayedRedelivery", def.getAsyncDelayedRedelivery(), null);
-        doWriteAttribute(jo, "backOffMultiplier", def.getBackOffMultiplier(), "2.0");
+        doWriteAttribute(jo, "backOffMultiplier", def.getBackOffMultiplier(), null);
         doWriteAttribute(jo, "useExponentialBackOff", def.getUseExponentialBackOff(), null);
-        doWriteAttribute(jo, "collisionAvoidanceFactor", def.getCollisionAvoidanceFactor(), "0.15");
+        doWriteAttribute(jo, "collisionAvoidanceFactor", def.getCollisionAvoidanceFactor(), null);
         doWriteAttribute(jo, "useCollisionAvoidance", def.getUseCollisionAvoidance(), null);
-        doWriteAttribute(jo, "maximumRedeliveryDelay", def.getMaximumRedeliveryDelay(), "60000");
-        doWriteAttribute(jo, "retriesExhaustedLogLevel", def.getRetriesExhaustedLogLevel(), "ERROR");
-        doWriteAttribute(jo, "retryAttemptedLogLevel", def.getRetryAttemptedLogLevel(), "DEBUG");
-        doWriteAttribute(jo, "retryAttemptedLogInterval", def.getRetryAttemptedLogInterval(), "1");
-        doWriteAttribute(jo, "logRetryAttempted", def.getLogRetryAttempted(), "true");
-        doWriteAttribute(jo, "logStackTrace", def.getLogStackTrace(), "true");
+        doWriteAttribute(jo, "maximumRedeliveryDelay", def.getMaximumRedeliveryDelay(), null);
+        doWriteAttribute(jo, "retriesExhaustedLogLevel", def.getRetriesExhaustedLogLevel(), null);
+        doWriteAttribute(jo, "retryAttemptedLogLevel", def.getRetryAttemptedLogLevel(), null);
+        doWriteAttribute(jo, "retryAttemptedLogInterval", def.getRetryAttemptedLogInterval(), null);
+        doWriteAttribute(jo, "logRetryAttempted", def.getLogRetryAttempted(), null);
+        doWriteAttribute(jo, "logStackTrace", def.getLogStackTrace(), null);
         doWriteAttribute(jo, "logRetryStackTrace", def.getLogRetryStackTrace(), null);
         doWriteAttribute(jo, "logHandled", def.getLogHandled(), null);
-        doWriteAttribute(jo, "logNewException", def.getLogNewException(), "true");
+        doWriteAttribute(jo, "logNewException", def.getLogNewException(), null);
         doWriteAttribute(jo, "logContinued", def.getLogContinued(), null);
-        doWriteAttribute(jo, "logExhausted", def.getLogExhausted(), "true");
+        doWriteAttribute(jo, "logExhausted", def.getLogExhausted(), null);
         doWriteAttribute(jo, "logExhaustedMessageHistory", def.getLogExhaustedMessageHistory(), null);
         doWriteAttribute(jo, "logExhaustedMessageBody", def.getLogExhaustedMessageBody(), null);
         doWriteAttribute(jo, "disableRedelivery", def.getDisableRedelivery(), null);
         doWriteAttribute(jo, "delayPattern", def.getDelayPattern(), null);
-        doWriteAttribute(jo, "allowRedeliveryWhileStopping", def.getAllowRedeliveryWhileStopping(), "true");
+        doWriteAttribute(jo, "allowRedeliveryWhileStopping", def.getAllowRedeliveryWhileStopping(), null);
         doWriteAttribute(jo, "exchangeFormatterRef", def.getExchangeFormatterRef(), null);
         return jo;
     }
@@ -1538,29 +1535,29 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "circuitBreaker", def.getCircuitBreaker(), null);
         doWriteAttribute(jo, "config", def.getConfig(), null);
-        doWriteAttribute(jo, "failureRateThreshold", def.getFailureRateThreshold(), "50");
-        doWriteAttribute(jo, "permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), "10");
-        doWriteAttribute(jo, "throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), "false");
-        doWriteAttribute(jo, "slidingWindowSize", def.getSlidingWindowSize(), "100");
-        doWriteAttribute(jo, "slidingWindowType", def.getSlidingWindowType(), "COUNT_BASED");
-        doWriteAttribute(jo, "slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), "SYNCHRONIZED");
-        doWriteAttribute(jo, "minimumNumberOfCalls", def.getMinimumNumberOfCalls(), "100");
-        doWriteAttribute(jo, "writableStackTraceEnabled", def.getWritableStackTraceEnabled(), "true");
-        doWriteAttribute(jo, "waitDurationInOpenState", def.getWaitDurationInOpenState(), "60000");
-        doWriteAttribute(jo, "automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), "false");
-        doWriteAttribute(jo, "maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), "0");
-        doWriteAttribute(jo, "slowCallRateThreshold", def.getSlowCallRateThreshold(), "100");
-        doWriteAttribute(jo, "slowCallDurationThreshold", def.getSlowCallDurationThreshold(), "60000");
-        doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), "false");
-        doWriteAttribute(jo, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), "25");
-        doWriteAttribute(jo, "bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), "0");
-        doWriteAttribute(jo, "bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), "true");
-        doWriteAttribute(jo, "asynchronous", def.getAsynchronous(), "false");
-        doWriteAttribute(jo, "timeoutEnabled", def.getTimeoutEnabled(), "false");
+        doWriteAttribute(jo, "failureRateThreshold", def.getFailureRateThreshold(), null);
+        doWriteAttribute(jo, "permittedNumberOfCallsInHalfOpenState", def.getPermittedNumberOfCallsInHalfOpenState(), null);
+        doWriteAttribute(jo, "throwExceptionWhenHalfOpenOrOpenState", def.getThrowExceptionWhenHalfOpenOrOpenState(), null);
+        doWriteAttribute(jo, "slidingWindowSize", def.getSlidingWindowSize(), null);
+        doWriteAttribute(jo, "slidingWindowType", def.getSlidingWindowType(), null);
+        doWriteAttribute(jo, "slidingWindowSynchronizationStrategy", def.getSlidingWindowSynchronizationStrategy(), null);
+        doWriteAttribute(jo, "minimumNumberOfCalls", def.getMinimumNumberOfCalls(), null);
+        doWriteAttribute(jo, "writableStackTraceEnabled", def.getWritableStackTraceEnabled(), null);
+        doWriteAttribute(jo, "waitDurationInOpenState", def.getWaitDurationInOpenState(), null);
+        doWriteAttribute(jo, "automaticTransitionFromOpenToHalfOpenEnabled", def.getAutomaticTransitionFromOpenToHalfOpenEnabled(), null);
+        doWriteAttribute(jo, "maxWaitDurationInHalfOpenState", def.getMaxWaitDurationInHalfOpenState(), null);
+        doWriteAttribute(jo, "slowCallRateThreshold", def.getSlowCallRateThreshold(), null);
+        doWriteAttribute(jo, "slowCallDurationThreshold", def.getSlowCallDurationThreshold(), null);
+        doWriteAttribute(jo, "bulkheadEnabled", def.getBulkheadEnabled(), null);
+        doWriteAttribute(jo, "bulkheadMaxConcurrentCalls", def.getBulkheadMaxConcurrentCalls(), null);
+        doWriteAttribute(jo, "bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), null);
+        doWriteAttribute(jo, "bulkheadFairCallHandlingEnabled", def.getBulkheadFairCallHandlingEnabled(), null);
+        doWriteAttribute(jo, "asynchronous", def.getAsynchronous(), null);
+        doWriteAttribute(jo, "timeoutEnabled", def.getTimeoutEnabled(), null);
         doWriteAttribute(jo, "timeoutExecutorService", def.getTimeoutExecutorService(), null);
-        doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), "1000");
-        doWriteAttribute(jo, "timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), "true");
-        doWriteAttribute(jo, "micrometerEnabled", def.getMicrometerEnabled(), "false");
+        doWriteAttribute(jo, "timeoutDuration", def.getTimeoutDuration(), null);
+        doWriteAttribute(jo, "timeoutCancelRunningFuture", def.getTimeoutCancelRunningFuture(), null);
+        doWriteAttribute(jo, "micrometerEnabled", def.getMicrometerEnabled(), null);
     }
     protected void doWriteResilience4jConfigurationCommonElements(JsonObject jo, Resilience4jConfigurationCommon def) {
         doWriteStringList(jo, null, "ignoreException", def.getIgnoreExceptions());
@@ -1648,8 +1645,8 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "delayer", def.getDelayer(), null);
         doWriteAttribute(jo, "errorHandlerRef", def.getErrorHandlerRef(), null);
         doWriteAttribute(jo, "routePolicyRef", def.getRoutePolicyRef(), null);
-        doWriteAttribute(jo, "shutdownRoute", def.getShutdownRoute(), "Default");
-        doWriteAttribute(jo, "shutdownRunningTask", def.getShutdownRunningTask(), "CompleteCurrentTaskOnly");
+        doWriteAttribute(jo, "shutdownRoute", def.getShutdownRoute(), null);
+        doWriteAttribute(jo, "shutdownRunningTask", def.getShutdownRunningTask(), null);
         doWriteAttribute(jo, "precondition", def.getPrecondition(), null);
         doWriteChildList(jo, null, "routeProperty", def.getRouteProperties(), this::doWritePropertyDefinition);
         doWriteChildElement(jo, "errorHandler", def.getErrorHandler(), this::doWriteErrorHandlerDefinition);
@@ -2759,7 +2756,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "indent", def.getIndent(), "2");
         doWriteAttribute(jo, "delimiter", def.getDelimiter(), "COMMA");
-        doWriteAttribute(jo, "lengthMarker", def.getLengthMarker(), "false");
         doWriteAttribute(jo, "strict", def.getStrict(), "true");
         doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
         return jo;
@@ -3153,13 +3149,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteValue(jo, def.getExpression());
         return jo;
     }
-    protected JsonObject doWriteWasmExpression(WasmExpression def) {
-        JsonObject jo = new JsonObject();
-        doWriteTypedExpressionDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "module", def.getModule(), null);
-        doWriteValue(jo, def.getExpression());
-        return jo;
-    }
     protected JsonObject doWriteXMLTokenizerExpression(XMLTokenizerExpression def) {
         JsonObject jo = new JsonObject();
         doWriteNamespaceAwareExpressionAttributes(jo, def);
@@ -3368,14 +3357,14 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
         doWriteAttribute(jo, "consumes", def.getConsumes(), null);
         doWriteAttribute(jo, "produces", def.getProduces(), null);
-        doWriteAttribute(jo, "bindingMode", def.getBindingMode(), "off");
+        doWriteAttribute(jo, "bindingMode", def.getBindingMode(), null);
         doWriteAttribute(jo, "type", def.getType(), null);
         doWriteAttribute(jo, "outType", def.getOutType(), null);
-        doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute(jo, "clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute(jo, "enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute(jo, "clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute(jo, "enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(jo, "component", def.getComponent(), null);
         return jo;
     }
@@ -3395,13 +3384,13 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "apiContextRouteId", def.getApiContextRouteId(), null);
         doWriteAttribute(jo, "apiVendorExtension", def.getApiVendorExtension(), "false");
         doWriteAttribute(jo, "hostNameResolver", toString(def.getHostNameResolver()), "allLocalIp");
-        doWriteAttribute(jo, "bindingMode", toString(def.getBindingMode()), "off");
+        doWriteAttribute(jo, "bindingMode", toString(def.getBindingMode()), null);
         doWriteAttribute(jo, "bindingPackageScan", def.getBindingPackageScan(), null);
-        doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute(jo, "clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute(jo, "enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute(jo, "clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute(jo, "enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(jo, "inlineRoutes", def.getInlineRoutes(), "true");
         doWriteAttribute(jo, "jsonDataFormat", def.getJsonDataFormat(), "jackson");
         doWriteAttribute(jo, "xmlDataFormat", def.getXmlDataFormat(), "jaxb");
@@ -3421,12 +3410,12 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "path", def.getPath(), null);
         doWriteAttribute(jo, "consumes", def.getConsumes(), null);
         doWriteAttribute(jo, "produces", def.getProduces(), null);
-        doWriteAttribute(jo, "bindingMode", def.getBindingMode(), "off");
-        doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), "false");
-        doWriteAttribute(jo, "clientResponseValidation", def.getClientResponseValidation(), "false");
-        doWriteAttribute(jo, "enableCORS", def.getEnableCORS(), "false");
-        doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
+        doWriteAttribute(jo, "bindingMode", def.getBindingMode(), null);
+        doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), null);
+        doWriteAttribute(jo, "clientResponseValidation", def.getClientResponseValidation(), null);
+        doWriteAttribute(jo, "enableCORS", def.getEnableCORS(), null);
+        doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(jo, "apiDocs", def.getApiDocs(), "true");
         doWriteAttribute(jo, "tag", def.getTag(), null);
         doWriteVerbs(jo, def.getVerbs(), this::doWriteVerbDefinition);
@@ -3480,19 +3469,19 @@ public class YamlModelWriter extends YamlModelWriterSupport {
     }
     protected void doWriteVerbDefinitionAttributes(JsonObject jo, VerbDefinition def) {
         doWriteOptionalIdentifiedDefinitionAttributes(jo, def);
-        doWriteAttribute(jo, "enableCORS", def.getEnableCORS(), "false");
+        doWriteAttribute(jo, "enableCORS", def.getEnableCORS(), null);
         doWriteAttribute(jo, "deprecated", def.getDeprecated(), "false");
         doWriteAttribute(jo, "streamCache", def.getStreamCache(), null);
         doWriteAttribute(jo, "type", def.getType(), null);
         doWriteAttribute(jo, "outType", def.getOutType(), null);
-        doWriteAttribute(jo, "clientResponseValidation", def.getClientResponseValidation(), "false");
+        doWriteAttribute(jo, "clientResponseValidation", def.getClientResponseValidation(), null);
         doWriteAttribute(jo, "path", def.getPath(), null);
         doWriteAttribute(jo, "routeId", def.getRouteId(), null);
-        doWriteAttribute(jo, "bindingMode", def.getBindingMode(), "off");
-        doWriteAttribute(jo, "apiDocs", def.getApiDocs(), "true");
-        doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), "false");
-        doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), "false");
-        doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), "false");
+        doWriteAttribute(jo, "bindingMode", def.getBindingMode(), null);
+        doWriteAttribute(jo, "apiDocs", def.getApiDocs(), null);
+        doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
+        doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
+        doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), null);
         doWriteAttribute(jo, "produces", def.getProduces(), null);
         doWriteAttribute(jo, "disabled", def.getDisabled(), null);
         doWriteAttribute(jo, "consumes", def.getConsumes(), null);
@@ -4006,7 +3995,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
                 case "SpELExpression" -> wrapNode("spel", doWriteSpELExpression((SpELExpression) v));
                 case "TokenizerExpression" -> wrapNode("tokenize", doWriteTokenizerExpression((TokenizerExpression) v));
                 case "VariableExpression" -> wrapNode("variable", doWriteVariableExpression((VariableExpression) v));
-                case "WasmExpression" -> wrapNode("wasm", doWriteWasmExpression((WasmExpression) v));
                 case "XMLTokenizerExpression" -> wrapNode("xtokenize", doWriteXMLTokenizerExpression((XMLTokenizerExpression) v));
                 case "XPathExpression" -> wrapNode("xpath", doWriteXPathExpression((XPathExpression) v));
                 case "XQueryExpression" -> wrapNode("xquery", doWriteXQueryExpression((XQueryExpression) v));

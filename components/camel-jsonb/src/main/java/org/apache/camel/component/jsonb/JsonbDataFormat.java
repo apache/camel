@@ -43,8 +43,14 @@ import org.apache.camel.support.service.ServiceSupport;
  * Marshal POJOs to JSON and back using JSON-B.
  */
 @Dataformat("jsonb")
-@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyNamingStrategy,skipNull")
+@Metadata(includeProperties = "unmarshalTypeName,unmarshalType,objectMapper,prettyPrint,binaryStrategy,encoding,propertyOrder,propertyNamingStrategy,skipNull,allowUnmarshallType")
 public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
+
+    /**
+     * The header with the name of the class to unmarshal to, used when allowUnmarshallType is enabled.
+     */
+    public static final String UNMARSHAL_TYPE = "CamelJsonbUnmarshallType";
+
     private CamelContext camelContext;
     private Jsonb objectMapper;
     private String unmarshalTypeName;
@@ -56,6 +62,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     private String propertyOrder = PropertyOrderStrategy.ANY;
     private String propertyNamingStrategy = PropertyNamingStrategy.IDENTITY;
     private boolean skipNull = true;
+    private boolean allowUnmarshallType;
 
     public JsonbDataFormat() {
         this(Object.class);
@@ -157,6 +164,19 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
         this.skipNull = skipNull;
     }
 
+    public boolean isAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    /**
+     * If enabled then JSON-B is allowed to attempt to use the CamelJsonbUnmarshallType header during the unmarshalling.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setAllowUnmarshallType(boolean allowUnmarshallType) {
+        this.allowUnmarshallType = allowUnmarshallType;
+    }
+
     public String getBinaryStrategy() {
         return binaryStrategy;
     }
@@ -203,7 +223,10 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
     public Object unmarshal(Exchange exchange, Object body) throws Exception {
         // is there a header with the unmarshal type?
         Class<?> expectedType = unmarshalType;
-        String type = exchange.getIn().getHeader("CamelJsonbUnmarshallType", String.class);
+        String type = null;
+        if (allowUnmarshallType) {
+            type = exchange.getIn().getHeader(UNMARSHAL_TYPE, String.class);
+        }
         if (type != null) {
             expectedType = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
         }

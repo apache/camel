@@ -23,6 +23,7 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
+import dev.tamboui.text.GraphemeClusters;
 
 /**
  * Text in the diagrams, measured by display width as the terminal shows it: a CJK character or an emoji takes two
@@ -62,8 +63,8 @@ final class DiagramText {
                 }
             }
             if (breakAt <= 0) {
-                // no place to break within the width: the word is cut, by one character at least
-                breakAt = Math.max(fit, Character.charCount(remaining.codePointAt(0)));
+                // no place to break within the width: the word is cut, by one character at least (an emoji whole)
+                breakAt = Math.max(fit, GraphemeClusters.clusterEnd(remaining, 0));
             }
             lastLineText = remaining;
             lines.add(remaining.substring(0, breakAt).stripTrailing());
@@ -86,13 +87,13 @@ final class DiagramText {
         }
         String visible = text;
         if (x < area.left()) {
-            // the characters left of the area are skipped; a wide one cut by the edge goes too and leaves its column in
-            // the area blank, so the rest of the text keeps its columns
+            // the characters left of the area are skipped, an emoji of several code points as one; a wide one cut by
+            // the edge goes too and leaves its column in the area blank, so the rest of the text keeps its columns
             int i = 0;
             while (i < text.length() && x < area.left()) {
-                int cp = text.codePointAt(i);
-                x += CharWidth.of(cp);
-                i += Character.charCount(cp);
+                int end = GraphemeClusters.clusterEnd(text, i);
+                x += CharWidth.of(text.substring(i, end));
+                i = end;
             }
             if (x >= area.right()) {
                 return;

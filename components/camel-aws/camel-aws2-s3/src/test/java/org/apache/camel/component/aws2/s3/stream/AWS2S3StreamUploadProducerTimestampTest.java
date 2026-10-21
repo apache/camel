@@ -85,28 +85,32 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     @Test
     public void testGenerateTimestampBasedFileName() throws Exception {
         Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "generateTimestampBasedFileName", String.class, String.class, long.class);
+                "generateTimestampBasedFileName", String.class, String.class, long.class, int.class);
         method.setAccessible(true);
 
         when(configuration.getTimestampWindowSizeMillis()).thenReturn(300000L); // 5 minutes
 
         // Test with extension
         long timestampWindow = 1704096000000L; // 2024-01-01 08:00:00 UTC
-        String fileName = (String) method.invoke(producer, "testfile", ".txt", timestampWindow);
+        String fileName = (String) method.invoke(producer, "testfile", ".txt", timestampWindow, 0);
         assertEquals("testfile_20240101_0800_0800-0805.txt", fileName);
 
         // Test without extension
-        fileName = (String) method.invoke(producer, "testfile", null, timestampWindow);
+        fileName = (String) method.invoke(producer, "testfile", null, timestampWindow, 0);
         assertEquals("testfile_20240101_0800_0800-0805", fileName);
 
         // Test with empty extension
-        fileName = (String) method.invoke(producer, "testfile", "", timestampWindow);
+        fileName = (String) method.invoke(producer, "testfile", "", timestampWindow, 0);
         assertEquals("testfile_20240101_0800_0800-0805", fileName);
 
         // Test different time window
         long timestampWindow2 = 1704096300000L; // 2024-01-01 08:05:00 UTC
-        fileName = (String) method.invoke(producer, "myfile", ".log", timestampWindow2);
+        fileName = (String) method.invoke(producer, "myfile", ".log", timestampWindow2, 0);
         assertEquals("myfile_20240101_0805_0805-0810.log", fileName);
+
+        // a later upload of a window that was already uploaded
+        fileName = (String) method.invoke(producer, "myfile", ".log", timestampWindow2, 2);
+        assertEquals("myfile_20240101_0805_0805-0810-2.log", fileName);
     }
 
     @Test
@@ -259,24 +263,24 @@ public class AWS2S3StreamUploadProducerTimestampTest {
     @Test
     public void testGenerateTimestampBasedFileNameWithDifferentWindowSizes() throws Exception {
         Method method = AWS2S3StreamUploadProducer.class.getDeclaredMethod(
-                "generateTimestampBasedFileName", String.class, String.class, long.class);
+                "generateTimestampBasedFileName", String.class, String.class, long.class, int.class);
         method.setAccessible(true);
 
         long timestampWindow = 1704096000000L; // 2024-01-01 08:00:00 UTC
 
         // Test 1-minute window
         when(configuration.getTimestampWindowSizeMillis()).thenReturn(60000L);
-        String fileName1min = (String) method.invoke(producer, "test", ".txt", timestampWindow);
+        String fileName1min = (String) method.invoke(producer, "test", ".txt", timestampWindow, 0);
         assertEquals("test_20240101_0800_0800-0801.txt", fileName1min);
 
         // Test 1-hour window
         when(configuration.getTimestampWindowSizeMillis()).thenReturn(3600000L);
-        String fileName1hour = (String) method.invoke(producer, "test", ".txt", timestampWindow);
+        String fileName1hour = (String) method.invoke(producer, "test", ".txt", timestampWindow, 0);
         assertEquals("test_20240101_0800_0800-0900.txt", fileName1hour);
 
         // Test 30-minute window
         when(configuration.getTimestampWindowSizeMillis()).thenReturn(1800000L);
-        String fileName30min = (String) method.invoke(producer, "test", ".txt", timestampWindow);
+        String fileName30min = (String) method.invoke(producer, "test", ".txt", timestampWindow, 0);
         assertEquals("test_20240101_0800_0800-0830.txt", fileName30min);
     }
 }

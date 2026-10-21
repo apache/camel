@@ -28,11 +28,14 @@ import io.quarkiverse.mcp.server.MetaField;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolContext;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.jboss.logging.Logger;
 
 /**
  * The neutral Camel authoring tools shared with {@code camel tui --mcp} (CAMEL-24695): thin MCP wrappers over the
@@ -49,6 +52,8 @@ import org.apache.camel.util.json.JsonObject;
 @ApplicationScoped
 public class AuthoringTools {
 
+    private static final Logger LOG = Logger.getLogger(AuthoringTools.class);
+
     private static final String NAME_DESC = "Integration name or pid (default: the only one running)";
     private static final String VERSION_DESC = "Camel version to answer for (default: the CLI's own)";
     private static final String DIRECTORY_DESC = "Project directory with the source files (absolute path)";
@@ -59,6 +64,9 @@ public class AuthoringTools {
     @Inject
     McpSecurityConfig securityConfig;
 
+    @Inject
+    CatalogService catalogService;
+
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Camel catalog documentation of a component, data format, language, EIP, Kamelet, built-in bean or the "
                         + "Java API (description, options, Maven coordinates), with the URI rules of a component. For "
@@ -68,7 +76,8 @@ public class AuthoringTools {
                         + "the variables a groovy, js, python or java script sees. endpoint validates a URI: unknown or "
                         + "invalid options, missing path. An EIP alias such as fan-out or dedup finds the EIP. "
                         + "includeHeaders=true adds the message headers of a component, includeDoc=true the AsciiDoc "
-                        + "page.")
+                        + "page, docPage one of its sections. A component option carries its application.properties "
+                        + "key (configKey); a full key (camel.server.port, camel.jbang.dependencies) lists its group.")
     @MetaField(prefix = "camel.apache.org/", name = "deterministic", type = MetaField.Type.BOOLEAN, value = "true")
     public JsonObject camel_catalog_doc(
             McpConnection connection,
@@ -83,15 +92,17 @@ public class AuthoringTools {
             @ToolArg(description = "Include the message headers of a component (default false)",
                      required = false) Boolean includeHeaders,
             @ToolArg(description = "Include the full AsciiDoc page (default false)", required = false) Boolean includeDoc,
-            @ToolArg(description = "simple doc sub-page to return as text (functions, operators, ognl, advanced)",
+            @ToolArg(description = CatalogDocs.DOC_PAGE_DESC,
                      required = false) String docPage,
-            @ToolArg(description = "Keyword to match in option names or descriptions; for an EIP whose own options do not match, the options of its elements are searched (nestedOptions)",
+            @ToolArg(description = CatalogDocs.OPTIONS_FILTER_DESC,
                      required = false) String optionsFilter,
+            @ToolArg(description = CatalogDocs.OPTIONS_LIMIT_DESC,
+                     required = false) Integer limit,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
         return callDeterministic(connection, "camel_catalog_doc", args("name", name, "endpoint", endpoint, "kind", kind,
                 "includeOptions", includeOptions, "includeHeaders", includeHeaders, "includeDoc", includeDoc,
                 "docPage", docPage,
-                "optionsFilter", optionsFilter, "camelVersion", camelVersion));
+                "optionsFilter", optionsFilter, "limit", limit, "camelVersion", camelVersion));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
@@ -273,20 +284,24 @@ public class AuthoringTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Recent log records of a running integration, newest first, with optional filtering; stack "
-                        + "traces only with details.")
+                        + "traces only with details. An integration that is not running gets the log of its previous "
+                        + "run, such as one that failed to start.")
     public JsonObject camel_get_log(
             @ToolArg(description = NAME_DESC, required = false) String name,
             @ToolArg(description = "Maximum records to return (default 50)", required = false) Integer limit,
             @ToolArg(description = "Case-insensitive substring filter on the message", required = false) String filter,
             @ToolArg(description = "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)", required = false) String level,
-            @ToolArg(description = "Include the stack traces (default false)", required = false) Boolean details) {
+            @ToolArg(description = "Include the stack traces (default false)", required = false) Boolean details,
+            @ToolArg(description = "The log of the previous run, the last run of the integration that ended (default false)",
+                     required = false) Boolean previous) {
         return call("camel_get_log", args("name", name, "limit", limit, "filter", filter, "level", level,
-                "details", details));
+                "details", details, "previous", previous));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "The failed exchanges of a running integration: routeId, exchangeId, exception with stack "
-                        + "trace, body and headers.")
+                        + "trace, body and headers. For an integration that is not running, it says how its previous "
+                        + "run ended.")
     public JsonObject camel_get_errors(
             @ToolArg(description = NAME_DESC, required = false) String name) {
         return call("camel_get_errors", args("name", name));
@@ -367,18 +382,52 @@ public class AuthoringTools {
     }
 
     /**
-     * As {@link #call(String, Map)} for a deterministic tool: from the third identical call of the connection the
-     * answer is a short note that it was already answered (CAMEL-25075).
+     * As {@link #call(String, Map, CatalogService)} for a deterministic tool: from the third identical call of the
+     * connection the answer is a short note that it was already answered (CAMEL-25075). Only successful answers count
+     * against the repeat budget; a call that throws does not (CAMEL-25640).
      */
     JsonObject callDeterministic(McpConnection connection, String tool, Map<String, String> args) {
         JsonObject repeat = repeatedCalls != null ? repeatedCalls.repeatOf(connection, tool, args) : null;
-        return repeat != null ? repeat : call(tool, args);
+        if (repeat != null) {
+            return repeat;
+        }
+        JsonObject result = call(tool, args, catalogService);
+        if (repeatedCalls != null) {
+            repeatedCalls.recordSuccessfulAnswer(connection, tool, args);
+        }
+        return result;
     }
 
     /** Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. */
     static JsonObject call(String tool, Map<String, String> args) {
+        return call(tool, args, null);
+    }
+
+    /**
+     * Runs the registry tool of the same name and hands its JSON back; a tool error becomes an MCP tool error. When
+     * {@code catalogService} is provided, the {@link ToolContext} reuses the shared catalog cache instead of creating a
+     * new one per call (CAMEL-25640).
+     */
+    static JsonObject call(String tool, Map<String, String> args, CatalogService catalogService) {
         try {
-            return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, new ToolContext(), args));
+            ToolContext ctx = new ToolContext();
+            if (catalogService != null) {
+                String camelVersion = args != null ? args.get("camelVersion") : null;
+                try {
+                    // Set the version first: setCamelVersion() on a fresh context nulls out any previously set catalog,
+                    // so the catalog must be set after (or the version set before, so it is a no-op when they match).
+                    if (camelVersion != null && !camelVersion.isBlank()) {
+                        ctx.setCamelVersion(camelVersion.trim());
+                    }
+                    CamelCatalog catalog = catalogService.loadCatalog(null, camelVersion, null);
+                    ctx.setCatalog(catalog);
+                } catch (Exception e) {
+                    // catalog load failed: fall through to ToolContext's own lazy-load, which handles the error
+                    LOG.debugf("CatalogService.loadCatalog() failed (%s), falling back to ToolContext lazy-load",
+                            e.getMessage());
+                }
+            }
+            return RuntimeTools.toJsonObject(ToolRegistry.execute(tool, ctx, args));
         } catch (ToolExecutionException e) {
             throw new ToolCallException(e.getMessage(), e);
         }

@@ -39,4 +39,27 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The message body is the SQL to run, as with the xref:jdbc-component.adoc[JDBC] component.
+The component gets its connections through Spring's `DataSourceUtils`, so it uses the connection of a Spring-managed
+transaction. Set `resetAutoCommit` to `false` in that case: by default, the component commits and closes the
+connection itself.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:orders
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "select id, item, amount from orders where amount > 100"
+        - to:
+            uri: spring-jdbc:myDataSource
+        - log:
+            message: "Found ${body.size} orders: ${body}"
+----
+
 

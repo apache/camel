@@ -89,7 +89,8 @@ class McpSecurityInterceptorTest {
         assertThatThrownBy(() -> writeFile(securedTools(false), dir, content))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("'content'")
-                .hasMessageContaining(String.valueOf(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH));
+                .hasMessageContaining(String.valueOf(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH))
+                .hasMessageContaining("camel_edit_file");
         assertThat(Files.readString(dir.resolve("notes.txt"))).isEqualTo("original");
     }
 

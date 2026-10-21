@@ -29,6 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -58,6 +59,108 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SemanticCommandTest {
+    @Test
+    void imageFileBodyIsSentAsExplicitMedia() throws Exception {
+        Path image = home.resolve("input.png");
+        Files.write(image, new byte[] { 1, 2, 3 });
+        assertEquals(0, respondImage(new SemanticEvaluate(main()), request -> {
+            assertEquals(Map.of("$semanticInput", List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID"))),
+                    request.get("body"));
+            return jsonUnchecked("{\"status\":\"success\",\"value\":true}");
+        }, 10_000_000, "--evaluation=inspect", "--body=image:" + image));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void expertImageLimitRejectsBeforeSendingAnEvaluation(boolean named) throws Exception {
+        Path image = home.resolve("large.png");
+        Files.write(image, new byte[] { 1, 2, 3 });
+        String[] args = named
+                ? new String[] { "--evaluation=inspect", "--body=image:" + image, "--json" }
+                : new String[] { "--expert=inspector", "--operation=boolean", "--input=image:" + image, "--json" };
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Oversized image must not reach evaluation");
+        }, 2, args));
+        assertError(2, "expert maxImageBytes limit of 2 bytes");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "data:image/png;base64,AQID", "AQID",
+            "json:{\"$semanticInput\":[{\"type\":\"image\",\"data\":\"data:image/png;base64,AQID\"}]}" })
+    void expertLimitAlsoRejectsInlineImageBodies(String body) throws Exception {
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Oversized image must not reach evaluation");
+        }, 2, "--evaluation=inspect", "--body=" + body, "--header=content-type=image/png", "--json"));
+        assertError(2, "expert maxImageBytes limit of 2 bytes");
+    }
+
+    @Test
+    void missingExpertImageLimitRejectsWithoutOpeningTheFile() throws Exception {
+        assertEquals(2, respondImage(new SemanticEvaluate(main()), request -> {
+            throw new AssertionError("Unbounded image must not reach evaluation");
+        }, 0, "--expert=inspector", "--operation=boolean", "--input=image:" + home.resolve("missing.png"), "--json"));
+        assertError(2, "positive maxImageBytes");
+    }
+
+    private int respondImage(
+            SemanticActionCommand command, Function<JsonObject, JsonObject> response, int maxBytes,
+            String... options)
+            throws Exception {
+        return respond(command, request -> {
+            if ("semantic-metadata".equals(request.getString("action"))) {
+                return new JsonObject(
+                        Map.of("experts", List.of(Map.of("reference", "inspector", "operations", List.of(
+                                Map.of("name", "boolean", "contract",
+                                        Map.of("inputTypes", List.of("image"), "maxImageBytes", maxBytes))))),
+                                "evaluations",
+                                List.of(Map.of("name", "inspect", "expert", "inspector", "operation", "boolean"))));
+            }
+            return response.apply(request);
+        }, options);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void imageAuditDisplaysTypeWithoutPrintingPayload(boolean json) throws Exception {
+        var response = new JsonObject(
+                Map.of("record", new JsonObject(
+                        Map.of("eventId", "image-event", "inputType", "image",
+                                "input", Map.of("$semanticInput",
+                                        List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")))))));
+        assertEquals(0, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--json=" + json));
+        if (json) {
+            Map<?, ?> input = (Map<?, ?>) json(printer.getOutput()).getMap("record").get("input");
+            List<?> parts = (List<?>) input.get("$semanticInput");
+            assertEquals("image/png", ((Map<?, ?>) parts.get(0)).get("mediaType"));
+        } else {
+            assertTrue(printer.getOutput().contains("image/png"));
+        }
+        assertFalse(printer.getOutput().contains("base64"));
+        if (!json) {
+            assertTrue(printer.getOutput().contains("Input type: Image"));
+            assertTrue(printer.getOutput().contains("preview unavailable"));
+        }
+    }
+
+    @Test
+    void explicitFileExportPreservesCapturedImageAndNeverOverwrites() throws Exception {
+        Path target = home.resolve("audit.json");
+        var response = new JsonObject(
+                Map.of("record", new JsonObject(
+                        Map.of("eventId", "image-event", "inputType", "image",
+                                "input", Map.of("$semanticInput",
+                                        List.of(Map.of("type", "image", "data", "data:image/png;base64,AQID")))))));
+        assertEquals(0, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--output=" + target));
+        assertEquals(response, json(Files.readString(target)));
+        assertFalse(printer.getOutput().contains("base64"));
+        assertEquals(1, respond(new SemanticAudit(main()), request -> response,
+                "--event-id=image-event", "--output=" + target));
+        assertTrue(errors.toString().contains("file already exists"));
+        assertEquals(response, json(Files.readString(target)));
+    }
 
     @TempDir
     Path home;
@@ -281,9 +384,9 @@ class SemanticCommandTest {
     void timeoutCleansRequestAndIgnoresLegacyReply() throws Exception {
         Files.writeString(CommandLineHelper.getCamelDir().resolve(pid + "-output.json"),
                 "{\"status\":\"success\",\"value\":true}");
-        assertEquals(4, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe",
+        assertEquals(124, command(new SemanticEvaluate(main())).execute(Long.toString(pid), "--evaluation=safe",
                 "--timeout=150", "--json"));
-        assertError(4, "No reply");
+        assertError(124, "No reply");
         assertTrue(actionFiles().isEmpty());
     }
 
@@ -442,7 +545,7 @@ class SemanticCommandTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "4.23.0", "4.23.0-SNAPSHOT", "4.23.0.redhat-00001", "4.24.0", "5.0.0", "unknown" })
+    @ValueSource(strings = { "4.23.0", "4.24.0-SNAPSHOT", "4.23.0.redhat-00001", "4.24.0", "5.0.0", "unknown" })
     void acceptsSupportedOrUnknownRuntimeVersions(String version) throws Exception {
         writeVersion(version);
         assertEquals(0, respond(new CamelSemantic(main()), r -> jsonUnchecked("{\"evaluations\":[]}"), "--json"));
@@ -782,17 +885,29 @@ class SemanticCommandTest {
     }
 
     private int respond(IntSupplier call, Function<JsonObject, JsonObject> response) throws Exception {
+        var completed = new AtomicBoolean();
         var responder = CompletableFuture.runAsync(() -> {
             try {
-                await().atMost(5, TimeUnit.SECONDS).until(() -> !actionFiles().isEmpty());
-                Path request = actionFiles().get(0);
-                await().atMost(5, TimeUnit.SECONDS).until(() -> Files.size(request) > 0);
-                reply(request, response.apply(json(Files.readString(request))));
+                while (!completed.get()) {
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> completed.get() || !actionFiles().isEmpty());
+                    if (completed.get()) {
+                        break;
+                    }
+                    Path request = actionFiles().get(0);
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> Files.size(request) > 0);
+                    reply(request, response.apply(json(Files.readString(request))));
+                    await().atMost(5, TimeUnit.SECONDS).until(() -> !Files.exists(request));
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }, executor);
-        int result = call.getAsInt();
+        int result;
+        try {
+            result = call.getAsInt();
+        } finally {
+            completed.set(true);
+        }
         responder.get(5, TimeUnit.SECONDS);
         assertTrue(actionFiles().isEmpty());
         return result;

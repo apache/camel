@@ -45,6 +45,10 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
+        case "lookbackinterval":
+        case "lookBackInterval": target.getConfiguration().setLookBackInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "lookbackwindow":
+        case "lookBackWindow": target.getConfiguration().setLookBackWindow(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "maxresults":
         case "maxResults": target.getConfiguration().setMaxResults(property(camelContext, int.class, value)); return true;
         case "overrideendpoint":
@@ -125,6 +129,10 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
+        case "lookbackinterval":
+        case "lookBackInterval": return long.class;
+        case "lookbackwindow":
+        case "lookBackWindow": return long.class;
         case "maxresults":
         case "maxResults": return int.class;
         case "overrideendpoint":
@@ -201,6 +209,10 @@ public class CloudtrailEndpointConfigurer extends PropertyConfigurerSupport impl
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
+        case "lookbackinterval":
+        case "lookBackInterval": return target.getConfiguration().getLookBackInterval();
+        case "lookbackwindow":
+        case "lookBackWindow": return target.getConfiguration().getLookBackWindow();
         case "maxresults":
         case "maxResults": return target.getConfiguration().getMaxResults();
         case "overrideendpoint":

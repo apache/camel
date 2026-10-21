@@ -30,12 +30,14 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusPlatformMixin;
-import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.commands.ai.CatalogDocs;
+import org.apache.camel.dsl.jbang.core.commands.ai.KameletDefinitions;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -46,16 +48,20 @@ import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
 
 @CommandLine.Command(name = "doc",
-                     description = "Shows documentation for kamelet, component, and other Camel resources", sortOptions = false,
+                     description = "Shows documentation for kamelet, component, EIP, and other Camel resources",
+                     sortOptions = false,
                      showDefaultValues = true,
                      footer = {
                              "%nExamples:",
@@ -63,10 +69,12 @@ import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseComman
                              "  camel doc timer",
                              "  camel doc aws-s3-source",
                              "  camel doc jsonpath",
+                             "  camel doc split",
                              "  camel doc kafka --example" })
 public class CatalogDoc extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
+    @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, language, EIP, or other Camel resource"
+                                          + " (prefix with eip: for an EIP with the name of a component, such as eip:log)",
                             arity = "1")
     String name;
 
@@ -112,6 +120,10 @@ public class CatalogDoc extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     String kameletsVersion;
 
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format: the documentation the MCP tool camel_catalog_doc gives")
+    boolean jsonOutput;
+
     CamelCatalog catalog;
 
     public CatalogDoc(CamelJBangMain main) {
@@ -119,24 +131,7 @@ public class CatalogDoc extends CamelCommand {
     }
 
     CamelCatalog loadCatalog() throws Exception {
-        if (RuntimeType.springBoot == runtime) {
-            return CatalogLoader.loadSpringBootCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
-        } else if (RuntimeType.quarkus == runtime) {
-            final MavenGav quarkusCamelBom
-                    = quarkusPlatform
-                            .resolve(
-                                    camelVersion,
-                                    mavenResolver.downloader()::resolveArtifact,
-                                    mavenResolver.download(),
-                                    mavenResolver.fresh())
-                            .quarkusCamelBom();
-            return CatalogLoader.loadQuarkusCatalog(quarkusCamelBom, mavenResolver.downloader()::resolveArtifact);
-        }
-        if (camelVersion == null) {
-            return new DefaultCamelCatalog(true);
-        } else {
-            return CatalogLoader.loadCatalog(mavenResolver.repos(), camelVersion, mavenResolver.download());
-        }
+        return CatalogBaseCommand.loadCatalog(runtime, camelVersion, quarkusPlatform, mavenResolver);
     }
 
     @Override
@@ -151,6 +146,15 @@ public class CatalogDoc extends CamelCommand {
             name = StringHelper.after(name, ":");
         }
 
+        if (jsonOutput) {
+            JsonObject doc = docJson(prefix);
+            if (doc != null) {
+                JsonOutput.print(printer(), doc);
+                return 0;
+            }
+            // not found: the same error as the text
+        }
+
         // special for camel-main
         if ("main".equals(name)) {
             MainModel mm = catalog.mainModel();
@@ -160,13 +164,6 @@ public class CatalogDoc extends CamelCommand {
             }
         }
 
-        if (prefix == null || "kamelet".equals(prefix)) {
-            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
-            if (km != null) {
-                docKamelet(km);
-                return 0;
-            }
-        }
         if (prefix == null || "component".equals(prefix)) {
             ComponentModel cm = catalog.componentModel(name);
             if (cm != null) {
@@ -199,6 +196,21 @@ public class CatalogDoc extends CamelCommand {
                 return 0;
             }
         }
+        if (prefix == null || "eip".equals(prefix)) {
+            EipModel em = catalog.eipModel(name);
+            if (em != null) {
+                docEip(em);
+                return 0;
+            }
+        }
+        // last, as the Kamelet catalog is downloaded (a component is documented also offline)
+        if (prefix == null || "kamelet".equals(prefix)) {
+            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
+            if (km != null) {
+                docKamelet(km);
+                return 0;
+            }
+        }
 
         if (prefix == null) {
             // guess if a kamelet
@@ -215,10 +227,10 @@ public class CatalogDoc extends CamelCommand {
             }
             if (!suggestions.isEmpty()) {
                 String type = kamelet ? "kamelet" : "component";
-                printer().printErr(
+                throw CliException.notFound(
                         "Camel %s: %s not found. Did you mean? %s".formatted(type, name, String.join(", ", suggestions)));
             } else {
-                printer().printErr("Camel resource: " + name + " not found");
+                throw CliException.notFound("Camel resource: " + name + " not found");
             }
         } else {
             List<String> suggestions = switch (prefix) {
@@ -229,16 +241,49 @@ public class CatalogDoc extends CamelCommand {
                 case "dataformat" -> SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
                 case "language" -> SuggestSimilarHelper.didYouMean(catalog.findLanguageNames(), name);
                 case "other" -> SuggestSimilarHelper.didYouMean(catalog.findOtherNames(), name);
+                case "eip" -> SuggestSimilarHelper.didYouMean(catalog.findModelNames(), name);
                 default -> List.of();
             };
             if (!suggestions.isEmpty()) {
-                printer().printErr(
+                throw CliException.notFound(
                         "Camel %s: %s not found. Did you mean? %s".formatted(prefix, name, String.join(", ", suggestions)));
             } else {
-                printer().printErr("Camel %s: %s not found.".formatted(prefix, name));
+                throw CliException.notFound("Camel %s: %s not found.".formatted(prefix, name));
             }
         }
-        return 1;
+    }
+
+    /**
+     * The documentation in JSON mode, in the same order as the text: the documentation the MCP tool camel_catalog_doc
+     * gives (all options), or <tt>null</tt> when there is none.
+     */
+    private JsonObject docJson(String prefix) throws Exception {
+        if ("main".equals(name) && catalog.mainModel() != null) {
+            return CatalogDocs.catalogDoc(catalog, name, null, null, filter, "all", false, false, null);
+        }
+        if (prefix == null || !"kamelet".equals(prefix) && !"other".equals(prefix)) {
+            JsonObject doc = CatalogDocs.catalogDoc(catalog, name, null, prefix, filter, "all", headers, false, null);
+            if (doc.get("error") == null) {
+                return doc;
+            }
+        }
+        if (prefix == null || "other".equals(prefix)) {
+            OtherModel om = catalog.otherModel(name);
+            if (om != null && JsonMapper.asJsonObject(om).get("other") instanceof JsonObject other) {
+                JsonObject doc = new JsonObject();
+                doc.put("kind", "other");
+                doc.putAll(other);
+                return doc;
+            }
+        }
+        if (prefix == null || "kamelet".equals(prefix)) {
+            // the Kamelets of the version and repositories asked for, not only the ones of the CLI
+            KameletModel km = KameletCatalogHelper.loadKameletModel(name, kameletsVersion, mavenResolver.repos());
+            if (km != null) {
+                return CatalogDocs.kameletDoc(KameletDefinitions.of(km, "the Kamelet catalog " + kameletsVersion));
+            }
+        }
+        return null;
     }
 
     private void printExample(ComponentModel cm) {
@@ -676,6 +721,48 @@ public class CatalogDoc extends CamelCommand {
         }
     }
 
+    private void docEip(EipModel em) throws Exception {
+        String link = websiteLink("eip", em.getName(), catalog.getCatalogVersion());
+        if (openUrl) {
+            if (link != null) {
+                Desktop.getDesktop().browse(new URI(link));
+            }
+            return;
+        }
+        if (url) {
+            if (link != null) {
+                printer().println(link);
+            }
+            return;
+        }
+
+        if (em.isDeprecated()) {
+            printer().printf("EIP Name: %s (deprecated)%n", em.getName());
+        } else {
+            printer().printf("EIP Name: %s%n", em.getName());
+        }
+        printer().printf("Since: %s%n", fixQuarkusSince(em.getFirstVersionShort()));
+        printer().println("");
+        printer().printf("%s%n", em.getDescription());
+        printer().println("");
+        var filtered = filter(filter, em.getOptions());
+        var total1 = em.getOptions().size();
+        var total2 = filtered.size();
+        if (total1 == total2) {
+            printer().printf("The %s EIP supports (total: %s) options, which are listed below.%n%n", em.getName(), total1);
+        } else {
+            printer().printf("The %s EIP supports (total: %s match-filter: %s) options, which are listed below.%n%n",
+                    em.getName(), total1, total2);
+        }
+        printer().println(optionTable(filtered));
+        printer().println("");
+
+        if (link != null) {
+            printer().println(link);
+            printer().println("");
+        }
+    }
+
     private int[] docColumnWidths(int nameMax, int descMax, int defaultMax, int typeMax) {
         int tw = terminalWidth();
         int borders = TerminalWidthHelper.fancyBorderOverhead(4);
@@ -792,6 +879,8 @@ public class CatalogDoc extends CamelCommand {
             return String.format("https://camel.apache.org/components/%s/others/%s.html", v, name);
         } else if ("kamelet".equals(prefix)) {
             return String.format("https://camel.apache.org/camel-kamelets/%s/%s.html", v, name);
+        } else if ("eip".equals(prefix)) {
+            return String.format("https://camel.apache.org/components/%s/eips/%s-eip.html", v, name);
         }
 
         return null;

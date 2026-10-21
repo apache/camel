@@ -60,6 +60,19 @@ class JooqConsumerDeleteFailedTest extends BaseJooqTest {
     }
 
     @Test
+    void testRollbackOnlyLastExchangeKeepsRow() throws Exception {
+        create.executeInsert(new AuthorRecord(1, null, "ok", null, null, null));
+        create.executeInsert(new AuthorRecord(2, null, "rollbackLast", null, null, null));
+
+        JooqConsumer consumer = (JooqConsumer) context.getRoute("delete-failed").getConsumer();
+        assertEquals(2, consumer.poll());
+
+        List<Integer> remaining = create.select(AUTHOR.ID).from(AUTHOR).orderBy(AUTHOR.ID).fetch(AUTHOR.ID);
+        assertEquals(List.of(2), remaining,
+                "an author whose exchange was marked rollback only last must not be deleted");
+    }
+
+    @Test
     void testNotProcessedEntitiesKeepRows() throws Exception {
         create.executeInsert(new AuthorRecord(1, null, "ok", null, null, null));
         create.executeInsert(new AuthorRecord(3, null, "ok", null, null, null));
@@ -85,7 +98,10 @@ class JooqConsumerDeleteFailedTest extends BaseJooqTest {
             public void configure() {
                 from("jooq://org.apache.camel.component.jooq.db.tables.records.AuthorRecord?startScheduler=false")
                         .routeId("delete-failed")
-                        .choice().when(simple("${body.lastName} == 'rollback'")).markRollbackOnly().end()
+                        .choice()
+                        .when(simple("${body.lastName} == 'rollback'")).markRollbackOnly()
+                        .when(simple("${body.lastName} == 'rollbackLast'")).markRollbackOnlyLast()
+                        .end()
                         .process(exchange -> {
                             AuthorRecord author = exchange.getIn().getBody(AuthorRecord.class);
                             if ("fail".equals(author.getLastName())) {

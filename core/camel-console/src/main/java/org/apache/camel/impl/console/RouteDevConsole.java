@@ -67,6 +67,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "Total number of exchanges") long exchangesTotal,
             @Metadata(description = "Number of failed exchanges") long exchangesFailed,
             @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Total number of exchanges that came from a remote endpoint") long remoteExchangesTotal,
+            @Metadata(description = "Number of failed exchanges that came from a remote endpoint") long remoteExchangesFailed,
+            @Metadata(description = "Number of inflight exchanges that came from a remote endpoint") long remoteExchangesInflight,
             @Metadata(description = "Mean processing time in milliseconds") long meanProcessingTime,
             @Metadata(description = "Max processing time in milliseconds") long maxProcessingTime,
             @Metadata(description = "Min processing time in milliseconds") long minProcessingTime,
@@ -97,6 +100,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "The route state") String state,
             @Metadata(description = "Whether the route supports suspension") boolean supportsSuspension,
             @Metadata(description = "Route uptime, human readable text") String uptime,
+            @Metadata(description = "The number of steps that have been reached with more than one body type, across the messages: a part of the route that is dynamic (only present when there are any, as the message history records the body types, such as in the dev profile)") Integer variedBodyTypes,
+            @Metadata(description = "The number of steps that have been reached with bodies of more than one kind (null, payload, data or collection): these need attention, as a step that writes or sends fails for the data, and a step that reads fields fails for the payload. The route-structure console says which steps (only present when there are any)") Integer mixedBodyKinds,
             @Metadata(description = "The last lifecycle error (only present when one has occurred)") LastError lastError,
             @Metadata(description = "Runtime statistics") Statistics statistics,
             @Metadata(description = "The route's processors (only present when requested)") List<ProcessorDevConsole.ProcessorEntry> processors) {
@@ -310,11 +315,16 @@ public class RouteDevConsole extends AbstractDevConsole {
             List<ProcessorDevConsole.ProcessorEntry> procList = processors ? includeProcessorsJson(mrb) : null;
 
             Route r = getCamelContext().getRoute(mrb.getRouteId());
+            // the steps reached with more than one body type, and with more than one kind (CAMEL-25750)
+            int varied = mrb.getVariedBodyTypes();
+            int mixed = mrb.getMixedBodyKinds();
             list.add(new RouteEntry(
                     mrb.getRouteId(), mrb.getRouteGroup(), mrb.getNodePrefixId(), mrb.getDescription(), mrb.getNote(),
                     mrb.isCreatedByKamelet(), mrb.isCreatedByRouteTemplate(), mrb.getRouteTemplateId(), mrb.getEndpointUri(),
                     mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getTemplatedRouteSource(), mrb.getState(),
-                    r != null && r.supportsSuspension(), mrb.getUptime(), lastError, stats, procList));
+                    r != null && r.supportsSuspension(), mrb.getUptime(), varied > 0 ? varied : null, mixed > 0 ? mixed : null,
+                    lastError,
+                    stats, procList));
             return null;
         };
         doCall(options, task);
@@ -544,6 +554,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 coverage, hasLoad ? load1 : null, hasLoad ? load5 : null, hasLoad ? load15 : null,
                 thp.isEmpty() ? null : thp,
                 mrb.getIdleSince(), mrb.getExchangesTotal(), mrb.getExchangesFailed(), mrb.getExchangesInflight(),
+                mrb.getRemoteExchangesTotal(), mrb.getRemoteExchangesFailed(), mrb.getRemoteExchangesInflight(),
                 mrb.getMeanProcessingTime(), mrb.getMaxProcessingTime(), mrb.getMinProcessingTime(),
                 p50, p95, p99, lastProcessingTime, deltaProcessingTime,
                 lastCreated, lastCompleted, lastFailureHandled, lastFailed);

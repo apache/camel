@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -41,9 +43,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor.tool;
 
 /**
- * Central registry of all shared AI tool descriptors. Tools registered here are available to both the Agent REPL
- * ({@code AskTools}) and the MCP server. CLI-specific and file-system tools that depend on {@code CamelJBangMain} or
- * direct filesystem access remain in {@code AskTools}.
+ * Central registry of all shared AI tool descriptors. Tools registered here are available to {@code camel ask}
+ * ({@code AskTools}) and the MCP servers. The CLI tools that depend on {@code CamelJBangMain} remain in
+ * {@code AskTools}.
  */
 public final class ToolRegistry {
 
@@ -100,6 +102,7 @@ public final class ToolRegistry {
     private static void registerProcessTools() {
         register(tool("list_processes",
                 "List all running Camel processes with their PID and name. Use this to discover available processes before selecting one.")
+                .core(true)
                 .executor((ctx, args) -> {
                     List<RuntimeHelper.ProcessInfo> processes = ctx.discoverProcesses();
                     if (processes.isEmpty()) {
@@ -125,6 +128,7 @@ public final class ToolRegistry {
         register(tool("select_process",
                 "Select a running Camel process by name or PID to inspect. Required when multiple processes are running.")
                 .param("name", "string", "Name or PID of the Camel process to connect to", true)
+                .core(true)
                 .executor((ctx, args) -> {
                     String name = args.get("name");
                     if (name == null || name.isBlank()) {
@@ -151,13 +155,13 @@ public final class ToolRegistry {
     // ---- Runtime status (simple read-section) tools ----
 
     private static void registerRuntimeStatusTools() {
-        registerStatusTool("get_context", "context",
+        registerCoreStatusTool("get_context", "context",
                 "Get Camel context info: name, version, state, uptime, route count, exchange statistics.");
-        registerStatusTool("get_routes", "routes",
+        registerCoreStatusTool("get_routes", "routes",
                 "List all routes with their state, uptime, messages processed, last error, and throughput.");
-        registerStatusTool("get_health", "healthChecks",
+        registerCoreStatusTool("get_health", "healthChecks",
                 "Get health check status for the Camel application.");
-        registerStatusTool("get_endpoints", "endpoints",
+        registerCoreStatusTool("get_endpoints", "endpoints",
                 "List all endpoints registered in the Camel context with URIs and usage stats.");
         registerStatusTool("get_inflight", "inflight",
                 "Show currently in-flight exchanges (messages being processed).");
@@ -165,7 +169,7 @@ public final class ToolRegistry {
                 "Show blocked exchanges that are stuck or waiting.");
         registerStatusTool("get_consumers", "consumers",
                 "Show consumer statistics (polling and event-driven consumers).");
-        registerStatusTool("get_properties", "properties",
+        registerCoreStatusTool("get_properties", "properties",
                 "Show configuration properties of the running Camel application.");
         // get_memory combines memory, gc, and threads sections for a complete JVM resource view
         register(tool("get_memory",
@@ -202,6 +206,16 @@ public final class ToolRegistry {
                 .executor((ctx, args) -> ctx.readStatus(section)));
     }
 
+    /**
+     * A status tool of the core subset: {@code camel ask} gives a local model these and the other core runtime tools
+     * (the integration's context, routes, health, endpoints and properties), not the rest (CAMEL-25676).
+     */
+    private static void registerCoreStatusTool(String name, String section, String description) {
+        register(tool(name, description)
+                .core(true)
+                .executor((ctx, args) -> ctx.readStatus(section)));
+    }
+
     // ---- Runtime action tools (with parameters) ----
 
     private static void registerRuntimeActionTools() {
@@ -218,6 +232,7 @@ public final class ToolRegistry {
                                      + " body's type and size as it reached the step (what to read to see where the body"
                                      + " changed from text into a Map or bytes).")
                 .param("summary", "boolean", "Only the steps with route, node, elapsed, body type and size", false)
+                .core(true)
                 .executor((ctx, args) -> {
                     JsonObject history = ctx.readHistoryFile();
                     if (history == null) {
@@ -240,25 +255,40 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_route_dump",
-                "Dump route definitions in XML or YAML format.")
-                .param("routeId", "string", "Route ID to dump (use * for all routes)", false)
-                .param("format", "string", "Output format: xml or yaml (default: yaml)", false)
+                "Dump route definitions in XML, YAML or Java DSL format.")
+                .param("routeId", "string", "Route ID or pattern such as orders* to dump (use * for all routes)", false)
+                .param("format", "string", "Output format: xml, yaml or java (default: yaml)", false)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
                     String format = args.get("format");
+                    // the route-dump action reads the routes from "filter", as camel cmd route-dump sends it
                     return ctx.executeAction("route-dump", root -> {
-                        root.put("id", routeId != null ? routeId : "*");
+                        root.put("filter", routeFilter(routeId));
                         root.put("format", format != null ? format : "yaml");
                     });
                 }));
 
         register(tool("get_route_structure",
-                "Show the route structure as a tree of processors.")
-                .param("routeId", "string", "Route ID to inspect (use * for all routes)", false)
+                "Show the route structure as a tree of processors. With the message history on (camel run --dev), a"
+                                             + " processor has bodyTypes: the body types it has been reached with, across"
+                                             + " the messages, and bodyKinds: null, payload, data or collection. More than one"
+                                             + " kind needs attention: a step that writes fails for data, one that reads"
+                                             + " fields fails for a payload.")
+                .param("routeId", "string", "Route ID or pattern such as orders* to inspect (use * for all routes)",
+                        false)
+                .param("brief", "boolean", "Only the overall structure, without the options and expressions", false)
+                .param("varied", "boolean", "Only the steps reached with more than one body type", false)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
-                    return ctx.executeAction("route-structure",
-                            root -> root.put("id", routeId != null ? routeId : "*"));
+                    boolean brief = "true".equalsIgnoreCase(args.get("brief"));
+                    String result = ctx.executeAction("route-structure", root -> {
+                        root.put("filter", routeFilter(routeId));
+                        root.put("brief", String.valueOf(brief));
+                    });
+                    if ("true".equalsIgnoreCase(args.get("varied"))) {
+                        result = onlyVaried(result);
+                    }
+                    return result;
                 }));
 
         register(tool("get_processor_detail",
@@ -269,6 +299,7 @@ public final class ToolRegistry {
                 .param("routeId", "string", "Route ID to inspect (use * for all routes)", false)
                 .param("includeDocs", "boolean",
                         "If true, enrich each processor's options with documentation from the Camel catalog", false)
+                .core(true)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
                     String result = ctx.executeAction("processor-detail",
@@ -296,6 +327,7 @@ public final class ToolRegistry {
                 "Get the inter-route topology showing how routes connect to each other and to external endpoints.")
                 .param("metric", "string", "Include live metrics on nodes and edges (default: true)", false)
                 .param("external", "string", "Include external systems as nodes (default: true)", false)
+                .core(true)
                 .executor((ctx, args) -> ctx.executeAction("route-topology", root -> {
                     root.put("metric", args.getOrDefault("metric", "true"));
                     root.put("external", args.getOrDefault("external", "true"));
@@ -327,7 +359,9 @@ public final class ToolRegistry {
                 .param("body", "string", "Message body to send", false)
                 .param("headers", "string",
                         "Message headers as key=value pairs separated by newlines", false)
-                .readOnly(false).destructive(false)
+                // the message runs through the routes and whatever they call, so it can change data
+                .readOnly(false).destructive(true)
+                .core(true)
                 .executor((ctx, args) -> {
                     String endpoint = args.get("endpoint");
                     if (endpoint == null || endpoint.isBlank()) {
@@ -353,7 +387,8 @@ public final class ToolRegistry {
                     return ctx.executeAction("eval", root -> {
                         root.put("language", language);
                         root.put("predicate", "false");
-                        root.put("template", Jsoner.escape(expression));
+                        // as it is: the action file is JSON, and the integration does not unescape it
+                        root.put("template", expression);
                     });
                 }));
 
@@ -403,6 +438,11 @@ public final class ToolRegistry {
                 .executor((ctx, args) -> {
                     String name = args.get("name");
                     String live = args.get("live");
+                    if (name != null && !isPlainFileName(name)) {
+                        throw new ToolExecutionException(
+                                "name must be a file name without a directory (the dump is written to the process"
+                                                         + " working directory): " + name);
+                    }
                     return ctx.executeAction("heap-dump", root -> {
                         if (name != null && !name.isBlank()) {
                             root.put("name", name);
@@ -565,10 +605,12 @@ public final class ToolRegistry {
                     if (routeId == null || routeId.isBlank()) {
                         throw new ToolExecutionException("routeId is required");
                     }
-                    return ctx.executeAction("route", root -> {
+                    // a route that does not exist, or fails to stop or start, is an error of the tool
+                    ctx.sendAction("route", root -> {
                         root.put("id", routeId);
                         root.put("command", command);
                     });
+                    return "Route " + routeId + ": " + command + " done";
                 }));
     }
 
@@ -670,6 +712,12 @@ public final class ToolRegistry {
                 entry.put("failedCalls", bj.get("failedCalls"));
                 entry.put("notPermittedCalls", bj.get("notPermittedCalls"));
                 entry.put("failureRate", bj.get("failureRate"));
+                // as camel get circuit-breaker shows them, when the breaker counts them
+                for (String key : new String[] { "fallbackCalls", "timedOutCalls", "bulkheadRejectedCalls" }) {
+                    if (bj.get(key) != null) {
+                        entry.put(key, bj.get(key));
+                    }
+                }
                 target.add(entry);
             }
         }
@@ -688,15 +736,15 @@ public final class ToolRegistry {
                     String routeId = args.get("routeId");
                     // Get route structure for analysis
                     String structureJson = ctx.executeAction("route-structure",
-                            root -> root.put("id", routeId != null ? routeId : "*"));
+                            root -> root.put("filter", routeFilter(routeId)));
                     // Get route dump for error handler info
                     String dumpJson = ctx.executeAction("route-dump", root -> {
-                        root.put("id", routeId != null ? routeId : "*");
+                        root.put("filter", routeFilter(routeId));
                         root.put("format", "yaml");
                     });
                     JsonObject response = new JsonObject();
-                    response.put("routeStructure", structureJson);
-                    response.put("routeDump", dumpJson);
+                    response.put("routeStructure", json(structureJson));
+                    response.put("routeDump", json(dumpJson));
                     response.put("analysisHints", buildAnalysisHints());
                     return response.toJson();
                 }));
@@ -711,10 +759,10 @@ public final class ToolRegistry {
                     String topJson = ctx.executeAction("top-processors", null);
                     // Get route structure for EIP type counting
                     String structureJson = ctx.executeAction("route-structure",
-                            root -> root.put("id", "*"));
+                            root -> root.put("filter", "*"));
                     JsonObject response = new JsonObject();
-                    response.put("processorStats", topJson);
-                    response.put("routeStructures", structureJson);
+                    response.put("processorStats", json(topJson));
+                    response.put("routeStructures", json(structureJson));
                     return response.toJson();
                 }));
 
@@ -732,15 +780,15 @@ public final class ToolRegistry {
                     // Get running route definitions
                     String dumpFormat = format;
                     String runningRoutes = ctx.executeAction("route-dump", root -> {
-                        root.put("id", "*");
+                        root.put("filter", "*");
                         root.put("format", dumpFormat);
                     });
                     // Get source files
                     String sourceFiles = ctx.executeAction("source",
                             root -> root.put("filter", "*"));
                     JsonObject response = new JsonObject();
-                    response.put("runningRoutes", runningRoutes);
-                    response.put("sourceFiles", sourceFiles);
+                    response.put("runningRoutes", json(runningRoutes));
+                    response.put("sourceFiles", json(sourceFiles));
                     response.put("format", dumpFormat);
                     response.put("hint",
                             "Compare the running route definitions with the source files to identify any differences. "
@@ -748,6 +796,45 @@ public final class ToolRegistry {
                                          + "and hot-reloading changes.");
                     return response.toJson();
                 }));
+    }
+
+    /**
+     * The answer of the integration in an answer of a tool: as JSON when it is, not as JSON text in the JSON.
+     */
+    private static Object json(String answer) {
+        Object parsed = Jsoner.deserialize(answer, (JsonObject) null);
+        return parsed != null ? parsed : answer;
+    }
+
+    /** The route pattern of the route-dump and route-structure actions: all routes when none is given. */
+    private static String routeFilter(String routeId) {
+        return routeId != null && !routeId.isBlank() ? routeId : "*";
+    }
+
+    /**
+     * The route structure with only the steps reached with more than one body type, or a message that says there are
+     * none (and why there may be none).
+     */
+    static String onlyVaried(String routeStructure) {
+        try {
+            if (Jsoner.deserialize(routeStructure) instanceof JsonObject jo) {
+                JsonObject answer = CamelRouteStructureAction.onlyVaried(jo);
+                JsonArray routes = answer.getCollection("routes");
+                if (routes == null || routes.isEmpty()) {
+                    answer.put("message", "No step has been reached with more than one body type. The message history"
+                                          + " records the body types, as camel run --dev turns it on.");
+                }
+                return answer.toJson();
+            }
+        } catch (Exception e) {
+            LOG.debug("Cannot read the route structure to keep the varied steps: {}", e.getMessage(), e);
+        }
+        return routeStructure;
+    }
+
+    /** Whether a heap dump name is only a file name, so the dump stays in the process working directory. */
+    static boolean isPlainFileName(String name) {
+        return !name.contains("/") && !name.contains("\\") && !".".equals(name) && !"..".equals(name);
     }
 
     private static JsonObject buildAnalysisHints() {
@@ -1051,6 +1138,17 @@ public final class ToolRegistry {
 
     // ---- Example tools ----
 
+    /** Argument descriptions of the example tools, shared with the MCP server (CAMEL-25535). */
+    public static final String EXAMPLE_LEVEL_DESC
+            = "Only the examples of one group (level): quick-start, run, transform, route, fail-well, connect, "
+              + "connect-service, contracts, ai, cloud or showcase";
+    public static final String EXAMPLE_NAME_DESC
+            = "Example name as listed, e.g. quick-start/timer-log or fail-well/circuit-breaker (the short name without "
+              + "the group, such as timer-log, works too)";
+    public static final String EXAMPLE_FILE_DESC
+            = "File name within the example, as in its files, e.g. timer-log.camel.yaml or application.properties "
+              + "for quick-start/timer-log";
+
     private static void registerExampleTools() {
         register(tool("list_examples",
                 "List the Camel CLI examples, grouped as the ladder of the examples (quick-start, run, transform, "
@@ -1061,10 +1159,7 @@ public final class ToolRegistry {
                                        + "Call it without arguments for the whole ladder, with level for one group.")
                 .param("filter", "string",
                         "Filter by name, description, or tag (case-insensitive)", false)
-                .param("level", "string",
-                        "Only the examples of one group: quick-start, run, transform, route, fail-well, connect, "
-                                          + "connect-service, contracts, ai, cloud or showcase",
-                        false)
+                .param("level", "string", EXAMPLE_LEVEL_DESC, false)
                 .param("limit", "integer", "Maximum number of examples to return (default: 50)", false)
                 .executor((ctx, args) -> {
                     String filter = args.get("filter");
@@ -1082,6 +1177,16 @@ public final class ToolRegistry {
                         }
                     }
                     List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
+                    if (level != null && !level.isBlank()) {
+                        List<String> levels = new ArrayList<>(ExampleHelper.groupByLevel(catalog2).keySet());
+                        String wanted = level.trim();
+                        if (levels.stream().noneMatch(wanted::equalsIgnoreCase)) {
+                            // an old level such as beginner answered 0 examples otherwise (CAMEL-25535)
+                            throw new ToolExecutionException(
+                                    "No example at level " + wanted + "; the levels are: " + String.join(", ", levels));
+                        }
+                        level = wanted;
+                    }
                     List<JsonObject> filtered = ExampleHelper.filterExamples(catalog2, filter);
                     List<JsonObject> groups = new ArrayList<>();
                     List<JsonObject> results = new ArrayList<>();
@@ -1117,6 +1222,7 @@ public final class ToolRegistry {
                                 jo.put("needs", needs);
                             }
                             jo.put("bundled", ExampleHelper.isBundled(entry));
+                            jo.put("requiresDocker", ExampleHelper.requiresDocker(entry));
                             jo.put("files", ExampleHelper.getFiles(entry));
                             results.add(jo);
                         }
@@ -1130,45 +1236,77 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_example_file",
-                "Get the content of a file from a bundled Camel CLI example.")
-                .param("example", "string",
-                        "Example name (e.g., timer-log, rest-api, circuit-breaker)", true)
-                .param("file", "string",
-                        "File name within the example (e.g., route.camel.yaml)", true)
-                .executor((ctx, args) -> {
-                    String example = args.get("example");
-                    String file = args.get("file");
-                    if (example == null || example.isBlank()) {
-                        throw new ToolExecutionException("example name is required");
-                    }
-                    if (file == null || file.isBlank()) {
-                        throw new ToolExecutionException("file name is required");
-                    }
-                    List<JsonObject> catalog2 = ExampleHelper.loadCatalog();
-                    JsonObject entry = ExampleHelper.findExample(catalog2, example);
-                    if (entry == null) {
-                        return "Example not found: " + example;
-                    }
-                    List<String> files = ExampleHelper.getFiles(entry);
-                    if (!files.contains(file)) {
-                        return "File '" + file + "' not found in example '" + example + "'. Available: " + files;
-                    }
-                    if (ExampleHelper.isBundled(entry)) {
-                        String resourcePath = "examples/" + example + "/" + file;
-                        try (InputStream is
-                                = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
-                            if (is != null) {
-                                return IOHelper.loadText(is);
-                            }
-                        } catch (Exception e) {
-                            return "Error reading file: " + e.getMessage();
-                        }
-                        return "Could not read bundled file: " + resourcePath;
-                    } else {
-                        return "This example is not bundled. View it on GitHub: "
-                               + ExampleHelper.getGithubUrl(entry) + "/" + file;
-                    }
-                }));
+                "Get the content of a file from a Camel CLI example: the content of a bundled example, the GitHub "
+                                          + "URL of the file for the others. Returns the full name of the example.")
+                .param("example", "string", EXAMPLE_NAME_DESC, true)
+                .param("file", "string", EXAMPLE_FILE_DESC, true)
+                .executor((ctx, args) -> exampleFile(args.get("example"), args.get("file")).toJson()));
+    }
+
+    /**
+     * A file of an example: the catalog entry is found by its full or short name and the bundled resource is read from
+     * the entry's name, so a short name reads the file as well (CAMEL-25535).
+     */
+    static JsonObject exampleFile(String example, String file) {
+        if (example == null || example.isBlank()) {
+            throw new ToolExecutionException("example name is required");
+        }
+        if (file == null || file.isBlank()) {
+            throw new ToolExecutionException("file name is required");
+        }
+        String wanted = example.trim();
+        String fileName = file.trim();
+        JsonObject entry = resolveExample(ExampleHelper.loadCatalog(), wanted);
+        String name = entry.getString("name");
+        List<String> files = ExampleHelper.getFiles(entry);
+        if (!files.contains(fileName)) {
+            throw new ToolExecutionException(
+                    "File '" + fileName + "' not found in example '" + name + "'. Available files: " + files);
+        }
+        JsonObject answer = new JsonObject();
+        answer.put("example", name);
+        answer.put("file", fileName);
+        if (ExampleHelper.isBundled(entry)) {
+            // the resource path comes from the catalog entry, not from the name the caller gave
+            String resourcePath = "examples/" + name + "/" + fileName;
+            try (InputStream is = ExampleHelper.class.getClassLoader().getResourceAsStream(resourcePath)) {
+                if (is == null) {
+                    throw new ToolExecutionException("Could not read bundled file: " + resourcePath);
+                }
+                answer.put("content", IOHelper.loadText(is));
+            } catch (IOException e) {
+                throw new ToolExecutionException("Could not read bundled file: " + resourcePath + ": " + e.getMessage());
+            }
+        } else {
+            answer.put("githubUrl", ExampleHelper.getGithubUrl(entry) + "/" + fileName);
+        }
+        return answer;
+    }
+
+    /**
+     * The catalog entry of an example by its full name, or by its short name when only one example has it, as camel run
+     * resolves it; an ambiguous short name answers with the candidates, an unknown one with the closest names.
+     */
+    static JsonObject resolveExample(List<JsonObject> catalog, String example) {
+        if (!example.contains("/")) {
+            List<JsonObject> same = ExampleHelper.findExamplesByShortName(catalog, example);
+            if (same.size() > 1) {
+                throw new ToolExecutionException(
+                        "Ambiguous example: " + example + ". Use one of: "
+                                                 + same.stream().map(e -> e.getString("name"))
+                                                         .collect(Collectors.joining(", ")));
+            }
+        }
+        JsonObject entry = ExampleHelper.findExample(catalog, example);
+        if (entry == null) {
+            List<String> similar = ExampleHelper.suggestExamples(catalog, example);
+            throw new ToolExecutionException(
+                    "Example not found: " + example
+                                             + (similar.isEmpty()
+                                                     ? ". Use list_examples to see the examples."
+                                                     : ". Did you mean: " + String.join(", ", similar) + "?"));
+        }
+        return entry;
     }
 
     // ---- Processor detail enrichment ----
@@ -1303,7 +1441,7 @@ public final class ToolRegistry {
         }
         JsonArray steps = new JsonArray();
         Object traces = history.get("traces");
-        if (traces instanceof java.util.List<?> list) {
+        if (traces instanceof List<?> list) {
             for (Object o : list) {
                 if (!(o instanceof JsonObject t)) {
                     continue;

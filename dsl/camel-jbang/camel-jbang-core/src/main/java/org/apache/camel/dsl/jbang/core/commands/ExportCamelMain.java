@@ -196,7 +196,7 @@ class ExportCamelMain extends Export {
         }
         String appJar = Paths.get("target", ids[1] + "-" + ids[2] + ".jar").toString();
         copyReadme(BUILD_DIR, appJar);
-        if (cleanExportDir || !exportDir.equals(".")) {
+        if (cleanExportDir || !isCurrentDirOrParent(exportDir)) {
             // cleaning current dir can be a bit dangerous so only clean if explicit enabled
             // otherwise always clean export-dir to avoid stale data
             if (cleanExportDir) {

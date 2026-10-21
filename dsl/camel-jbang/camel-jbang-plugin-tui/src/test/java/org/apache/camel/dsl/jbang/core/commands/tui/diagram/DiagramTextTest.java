@@ -26,6 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DiagramTextTest {
 
+    // a family: three emoji joined by ZWJs, eight chars that take two columns
+    private static final String FAMILY = "👨\u200D👩\u200D👧";
+
     @Test
     void wrapMeasuresByDisplayWidth() {
         // ten CJK characters are 20 columns
@@ -84,5 +87,25 @@ class DiagramTextTest {
     void fitCutsWithAnEllipsis() {
         assertThat(DiagramText.fit("orders", 10)).isEqualTo("orders");
         assertThat(DiagramText.fit("日本語の名前", 7)).isEqualTo("日本語…");
+    }
+
+    @Test
+    void wrapCutsAWordByAWholeEmojiAtLeast() {
+        // no line is wide enough for a family: the cut takes all of one, not its first emoji
+        assertThat(DiagramText.wrap(FAMILY + FAMILY, 1, 3)).containsExactly(FAMILY, FAMILY);
+    }
+
+    @Test
+    void writeSkipsAnEmojiOfSeveralCodePointsLeftOfTheAreaByItsColumns() {
+        Buffer buffer = Buffer.empty(new Rect(0, 0, 12, 1));
+
+        // the family takes columns 0 and 1, left of the area
+        DiagramText.write(buffer, new Rect(2, 0, 10, 1), 0, 0, FAMILY + "ab", Style.EMPTY);
+
+        assertThat(buffer.get(2, 0).symbol()).isEqualTo("a");
+        assertThat(buffer.get(3, 0).symbol()).isEqualTo("b");
+        // no part of the family is drawn left of the area, where another box may be
+        assertThat(buffer.get(0, 0).symbol()).isBlank();
+        assertThat(buffer.get(1, 0).symbol()).isBlank();
     }
 }

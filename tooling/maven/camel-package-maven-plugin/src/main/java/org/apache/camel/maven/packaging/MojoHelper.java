@@ -42,7 +42,9 @@ public final class MojoHelper {
                         dir.resolve("camel-ai-resource"), dir.resolve("camel-ai-tool"),
                         dir.resolve("camel-chatscript"), dir.resolve("camel-djl"),
                         dir.resolve("camel-huggingface"),
-                        dir.resolve("camel-semantic"), dir.resolve("camel-typesafe-ai"), dir.resolve("camel-wolf-defender"),
+                        dir.resolve("camel-semantic"), dir.resolve("camel-semantic-openai"),
+                        dir.resolve("camel-semantic-typesafe-ai"), dir.resolve("camel-semantic-wolf-defender"),
+                        dir.resolve("camel-typesafe-ai"),
                         dir.resolve("camel-langchain4j-agent"), dir.resolve("camel-langchain4j-chat"),
                         dir.resolve("camel-langchain4j-embeddings"), dir.resolve("camel-langchain4j-embeddingstore"),
                         dir.resolve("camel-langchain4j-ingest"),
@@ -115,7 +117,9 @@ public final class MojoHelper {
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-image"),
                         dir.resolve("camel-spring-ai").resolve("camel-spring-ai-vector-store"));
             case "camel-test":
-                return Arrays.asList(dir.resolve("camel-test-junit5"),
+                return Arrays.asList(dir.resolve("camel-test-citrus"),
+                        dir.resolve("camel-test-dst"),
+                        dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-junit6"),
                         dir.resolve("camel-test-spring-junit5"),
                         dir.resolve("camel-test-spring-junit6"),

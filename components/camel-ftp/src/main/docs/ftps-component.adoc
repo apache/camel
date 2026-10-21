@@ -35,6 +35,49 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The FTPS component works as the xref:ftp-component.adoc[FTP] component, over TLS.
+It has the options of the FTP component, and security options for TLS,
+such as `securityProtocol` (TLSv1.3 by default), `implicit` and `sslContextParameters`.
+
+The following route downloads the files of a directory on an FTPS server to a local folder.
+The consumer leaves the files on the server by default, so `move` moves each file to the `done` directory
+when it has been processed:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: ftps://myserver:21/orders
+      parameters:
+        username: "{{ftps.username}}"
+        password: "{{ftps.password}}"
+        passiveMode: true
+        binary: true
+        move: done
+      steps:
+        - to:
+            uri: file:target/orders
+----
+
+And this route uploads the files of a local folder:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:outbox
+      steps:
+        - to:
+            uri: ftps://myserver:21/upload
+            parameters:
+              username: "{{ftps.username}}"
+              password: "{{ftps.password}}"
+              passiveMode: true
+              binary: true
+----
+
 
 == More Information
 

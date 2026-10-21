@@ -40,6 +40,45 @@ class JsonMapperTest {
     }
 
     @Test
+    void testShouldWriteInternalOnlyWhenSet() {
+        ComponentModel model = new ComponentModel();
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(json.contains("\"internal\""));
+        assertFalse(JsonMapper.generateComponentModel(json).isInternal());
+
+        model.setInternal(true);
+        json = JsonMapper.createParameterJsonSchema(model);
+        assertTrue(json.contains("\"internal\": true"));
+        assertTrue(JsonMapper.generateComponentModel(json).isInternal());
+    }
+
+    @Test
+    void testShouldWriteMultiEnumOnlyWhenSet() {
+        // CAMEL-25739: an option that takes several of its enum values, separated by comma
+        ComponentModel model = new ComponentModel();
+        ComponentModel.EndpointOptionModel several = new ComponentModel.EndpointOptionModel();
+        several.setName("eventTypes");
+        several.setKind("parameter");
+        several.setType("enum");
+        several.setEnums(List.of("CREATED", "UPDATED"));
+        several.setMultiEnum(true);
+        model.addEndpointOption(several);
+        ComponentModel.EndpointOptionModel one = new ComponentModel.EndpointOptionModel();
+        one.setName("action");
+        one.setKind("parameter");
+        one.setType("enum");
+        one.setEnums(List.of("PUT", "GET"));
+        model.addEndpointOption(one);
+
+        String json = JsonMapper.createParameterJsonSchema(model);
+        assertEquals(1, json.split("\"multiEnum\": true", -1).length - 1, json);
+
+        ComponentModel model2 = JsonMapper.generateComponentModel(json);
+        assertTrue(model2.getEndpointOptions().get(0).isMultiEnum());
+        assertFalse(model2.getEndpointOptions().get(1).isMultiEnum());
+    }
+
+    @Test
     void testShouldSerializeAndDeserializeComponentWithOneHeader() {
         ComponentModel model = new ComponentModel();
         EndpointHeaderModel header = new EndpointHeaderModel();

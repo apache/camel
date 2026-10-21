@@ -18,7 +18,7 @@ inference runs. Provider errors propagate through normal Camel error handling.
 == Dependencies and providers
 
 Add `org.apache.camel:camel-semantic` and a provider, such as
-xref:ROOT:typesafe-ai-component.adoc[TypeSafe AI] (`camel-typesafe-ai`), using the same Camel version.
+xref:others:semantic-typesafe-ai.adoc[TypeSafe AI] (`camel-semantic-typesafe-ai`), using the same Camel version.
 The provider owns credentials, model selection, request timeout,
 concurrency limits and transport resources. TypeSafe AI uses
 `camel.component.typesafe-ai.*` settings even when a route contains no TypeSafe AI endpoint.
@@ -168,6 +168,48 @@ when no labels apply. Use collections in predicates, for example
 `${semantic('categories')} contains 'privacy'`; labels are not numeric scores.
 The category and the meaning of a Boolean verdict must come from the selected expert's contract.
 A negative detection does not establish general safety or grant authorization.
+
+=== Text and image input
+
+Experts declare supported modalities in their operation contract. `IMAGE` allows explicit image
+parts; it does not imply that every expert accepts images. The
+xref:others:semantic-openai.adoc[OpenAI Decisions expert] accepts text and images, TypeSafe AI
+accepts text and its structured state, and Wolf Defender accepts text. Unsupported input fails
+before inference, including before any expert in a mixed batch runs.
+
+For `$\{body}`, an image `Content-Type` such as `image/png` identifies a `byte[]`, `InputStream`,
+`StreamCache` or base64 `String` body as an image. Streams are replaced by replayable Camel
+stream caches and reset after reading; their bytes remain available downstream. A self-describing
+`data:image/...;base64,...` string is also image input. Other strings remain text.
+Content-Type handling applies only to the exact `$\{body}` selector after placeholder resolution.
+Other expressions, including `$\{bodyAs(byte[])}`, use the generic selected-state path: raw binary
+values are rejected. Select `$\{body}` for image bytes, or select an explicit media envelope or
+self-describing image data URL. An image header does not reclassify separately selected headers or variables.
+With `$\{body}`, `audio/*` and `video/*` content types are rejected, including for a `String` body;
+no expert currently supports these modalities. Select an explicitly textual field when evaluating
+text that accompanies such a body.
+
+An explicit JSON-compatible envelope supports ordered mixed input:
+
+[source,json]
+----
+{"$semanticInput":[
+  {"type":"text","text":"Inspect this package"},
+  {"type":"image","data":"data:image/png;base64,..."}
+]}
+----
+
+Replace the abbreviated image data with actual base64. `SemanticInput.ofParts`, `text` and
+`image` provide Java helpers. The reserved `$semanticInput` key distinguishes media from an
+ordinary application map. Format-specific validation belongs to the expert. Camel does not
+fetch URLs, read image paths from route messages, or invoke transcription/OCR services.
+
+Audit records expose a bounded `inputType` extension independently of payload capture:
+`text`, `image`, `text-and-images`, `structured`, `unsupported` or `unknown` when classification exceeds its bound. This classification remains
+available when input capture is disabled. The extension is separate from monitoring events.
+Image capture remains opt-in and subject to the existing redactor and size budget. When an
+image exceeds the budget, a bounded descriptor may retain its MIME type and
+`dataOmitted=snapshot_limit` instead of the image bytes. Such input cannot be replayed.
 
 === Structured input and specialised experts
 
@@ -874,7 +916,8 @@ Provider discovery descriptors are not used.
 
 The language checks the static operation contract and then calls `validate` for operation-specific
 parameter combinations and bean configuration before traffic. `validateInput` checks detailed
-message requirements before evaluation. All input checks in a batch run before any expert is invoked.
+message requirements before evaluation. `validateState` checks shared input once per expert group;
+use it for expensive checks such as image encoding. Its default implementation does nothing. All input checks in a batch run before any expert is invoked.
 `evaluate` returns a typed `SemanticResult` after applying the expert's policy. A probability-only
 Boolean result is invalid: the expert must supply its Boolean verdict. Providers should also validate when their SPI is called directly. `evaluate`
 must be thread-safe, bound time and resource consumption, honor interruption and propagate

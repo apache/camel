@@ -130,6 +130,26 @@ where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 === Producer Examples
 
+In YAML, an operation that needs no AWS SDK objects is set with the `operation` option, such as DescribeTable.
+The other examples below build `AttributeValue` maps in Java.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:describe
+      steps:
+        - to:
+            uri: aws2-ddb:orders
+            parameters:
+              operation: DescribeTable
+              region: eu-west-1
+              accessKey: "{{aws.access-key}}"
+              secretKey: "{{aws.secret-key}}"
+        - log:
+            message: "Items in the orders table: ${header.CamelAwsDdbTableItemCount}"
+----
+
 - PutItem: this operation will create an entry into DynamoDB
 
 ._Java-only: uses AWS SDK `AttributeValue` builders and variable table name_

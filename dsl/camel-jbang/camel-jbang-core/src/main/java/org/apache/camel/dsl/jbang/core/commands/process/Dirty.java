@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
@@ -44,19 +45,23 @@ public class Dirty extends ProcessBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        File[] files = getCamelDir().toFile().listFiles(f -> !"camel-export.log".equals(f.getName()));
+        File[] files = getCamelDir().toFile().listFiles();
         if (files == null || files.length == 0) {
             return 0;
         }
 
         List<File> dirty = new ArrayList<>();
-        List<Long> pids = findPids("*");
-        pids.add(ProcessHandle.current().pid()); // include ourselves
         for (File f : files) {
-            // skip running Camel integrations and ourselves
-            String n = f.getName();
-            boolean running = pids.stream().anyMatch(p -> n.startsWith("" + p));
-            if (!running) {
+            if (PreviousRun.isPreviousRunFile(f.getName())) {
+                // kept on purpose: the log of the previous run of an integration (camel log --previous)
+                continue;
+            }
+            // only the files of a process that is gone: a file named after its pid. The files of a process that is
+            // alive are in use (such as the launcher of an integration that runs in a child process, whose Camel has
+            // stopped), and so are the files of ourselves. A file that belongs to no process is left alone (such as the
+            // log of a Spring Boot or Quarkus app, <name>.log, also while the app runs), and so is a directory.
+            Long pid = f.isFile() ? pidOf(f.getName()) : null;
+            if (pid != null && !ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
                 dirty.add(f);
             }
         }
@@ -65,15 +70,48 @@ public class Dirty extends ProcessBaseCommand {
         }
 
         if (clean) {
+            int cleaned = 0;
+            List<String> left = new ArrayList<>();
             for (File f : dirty) {
-                FileUtil.deleteFile(f);
+                if (FileUtil.deleteFile(f)) {
+                    cleaned++;
+                } else {
+                    left.add(f.getName());
+                }
             }
-            printer().println("Cleaned " + dirty.size() + " orphan files");
+            printer().println("Cleaned " + cleaned + " orphan files");
+            if (!left.isEmpty()) {
+                printer().printWarn("Cannot delete: " + String.join(", ", left));
+            }
         } else {
             printer().println("There are " + dirty.size() + " orphan files");
         }
 
         return 0;
+    }
+
+    /**
+     * The pid a file in the Camel directory belongs to, such as 123 for {@code 123-status.json}, {@code 123} and the
+     * infra service file {@code infra-kafka-123.json}, or <tt>null</tt> for a file that belongs to no process.
+     */
+    static Long pidOf(String fileName) {
+        if (fileName.startsWith("infra-") && fileName.lastIndexOf('-') > 5) {
+            // infra-<service>-<pid>.json and .log
+            fileName = fileName.substring(fileName.lastIndexOf('-') + 1);
+        }
+        int end = 0;
+        while (end < fileName.length() && Character.isDigit(fileName.charAt(end))) {
+            end++;
+        }
+        boolean separated = end == fileName.length() || fileName.charAt(end) == '-' || fileName.charAt(end) == '.';
+        if (end == 0 || !separated) {
+            return null;
+        }
+        try {
+            return Long.parseLong(fileName.substring(0, end));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 }

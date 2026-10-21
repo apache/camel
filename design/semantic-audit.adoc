@@ -76,6 +76,23 @@ retention and durability. Audit delivery is best effort and independent of manag
 SemanticObserver remains available for captureContext and detached tracing completion; its established
 bounded projection and callback ordering remain compatible.
 
+== Media input
+
+The private audit copy classifies input independently of content capture using the optional
+`inputType` extension. Values are text, image, text-and-images, structured, unsupported or unknown
+when bounded classification cannot finish. Older destinations receive their existing projection.
+Neither image bytes nor this classification are added to the frozen monitoring/event payload.
+
+Ordered media input uses the provider-independent `$semanticInput` envelope. Per-expert input
+capture remains opt-in, bounded and redacted. An image too large for the configured snapshot
+may be replaced by a bounded descriptor (`type=image`, optional mediaType, dataOmitted=snapshot_limit).
+The redactor still processes that detached snapshot. A descriptor cannot recreate missing data.
+
+Audit displays label input type even when payload capture is disabled. TUI image decoding occurs
+off the render thread and uses only retained bytes, with bounded thumbnails and an explicit
+unavailable state. Normal CLI human/JSON display omits base64; explicit file exports can retain
+requested captured input. No historical URL is fetched and browsing never invokes an expert.
+
 == Read-only access
 
 The reader SPI has no evidence-specific limit on getAll. Explicit console callers limit requests to

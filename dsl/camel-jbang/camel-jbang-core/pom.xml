@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -40,7 +40,11 @@
         <label>jbang</label>
         <supportLevel>Stable</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
-        <camel.surefire.reuseForks>false</camel.surefire.reuseForks>
+        <!-- the tests run in parallel forks that are reused, each with a home of its own (see the surefire
+             configuration). No concurrency inside a fork: the CLI keeps the home directory in a static field -->
+        <camel.surefire.forkCount>4</camel.surefire.forkCount>
+        <camel.surefire.reuseForks>true</camel.surefire.reuseForks>
+        <camel.surefire.parallel>false</camel.surefire.parallel>
     </properties>
 
     <dependencies>
@@ -294,6 +298,13 @@
                                 <entryPage>../../camel-yaml-dsl/camel-yaml-dsl/src/main/docs/yaml-dsl.adoc=beans</entryPage>
                                 <!-- the contract-first rest, next to the path-based examples of rest-dsl -->
                                 <entryPage>../../../docs/user-manual/modules/ROOT/pages/rest-dsl-openapi.adoc=rest</entryPage>
+                                <!-- the top-level entries whose examples are on a page about something else (CAMEL-25719) -->
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/route-template.adoc=templatedRoute</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/rest-dsl.adoc=restConfiguration</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/transformer.adoc=transformers</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/validator.adoc=validators</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/camel-configuration-utilities.adoc=sslContextParameters</entryPage>
+                                <entryPage>../../../docs/user-manual/modules/ROOT/pages/data-format.adoc=dataFormats</entryPage>
                             </entryPages>
                             <!-- user manual pages that show old syntax or YAML that is not a Camel file -->
                             <excludes>
@@ -343,10 +354,74 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <!-- a home of its own per fork (~/.camel, the user configuration and plugins), out of the
+                             developer's and away from the other forks. The local Maven repository stays the build's,
+                             so what the tests resolve is not downloaded again -->
+                        <user.home>${project.build.directory}/test-home-${surefire.forkNumber}</user.home>
+                        <maven.repo.local>${settings.localRepository}</maven.repo.local>
+                        <!-- the home of the developer, for a test that talks to a Camel launched through JBang -->
+                        <camel.test.user.home>${user.home}</camel.test.user.home>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <!-- the serial tests run after, one class at a time -->
+                        <id>default-test</id>
+                        <configuration>
+                            <excludedGroups>serial</excludedGroups>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- the tests of what the forks share: the working directory (the .camel-jbang directory of
+                             camel run, export and others, a local camel-cli.properties) or a fixed port. These tests
+                             (@UsesWorkingDirectory, @UsesFixedPort) run in one fork -->
+                        <id>serial-test</id>
+                        <phase>none</phase><!-- unbound like default-test, so -Dquickly / -Pfastinstall skip it; bound in the full profile -->
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <groups>serial</groups>
+                            <systemPropertyVariables>
+                                <user.home>${project.build.directory}/test-home-serial</user.home>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
+
+        <profile>
+            <id>full</id>
+            <activation>
+                <property>
+                    <name>!quickly</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>serial-test</id>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
         <profile>
             <id>sync-example-catalog</id>

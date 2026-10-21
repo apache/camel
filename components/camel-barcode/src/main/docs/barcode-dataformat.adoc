@@ -39,9 +39,9 @@ the download page for the latest versions).
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
-== Using the Java DSL
+== Usage
 
-First, you have to initialize the barcode data format class.
+In Java, you first create an instance of the barcode data format class.
 You can use the default constructor, or one of parameterized (see JavaDoc).
 The default values are:
 
@@ -82,13 +82,35 @@ For possible hints, please consult the ZXing documentation.
 
 === Marshalling
 
-._Java-only: route using Java data format variable_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct://code")
   .marshal(code)
   .to("file://barcode_out");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct://code
+      steps:
+        - marshal:
+            barcode:
+              barcodeFormat: QR_CODE
+              imageType: PNG
+              width: 100
+              height: 100
+        - to:
+            uri: file://barcode_out
+----
+====
 
 You can call the route from a test class with:
 
@@ -108,13 +130,33 @@ The unmarshaller is generic.
 For unmarshalling, you can use any BarcodeDataFormat instance.
 If you've two instances, one for (generating) QR-Code and one for PDF417, it doesn't matter which one will be used.
 
-._Java-only: route using Java data format variable_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file://barcode_in?noop=true")
   .unmarshal(code) // for unmarshalling, the instance doesn't matter
   .to("mock:out");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file://barcode_in
+      parameters:
+        noop: true
+      steps:
+        - unmarshal:
+            barcode: {}
+        - to:
+            uri: mock:out
+----
+====
 
 If you'll paste the QR-Code image above into the 'barcode_in' folder,
 you should find _`This is a testmessage!`_ inside the mock.

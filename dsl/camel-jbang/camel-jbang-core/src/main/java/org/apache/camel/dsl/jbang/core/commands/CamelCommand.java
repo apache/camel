@@ -25,11 +25,17 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
+import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
+import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
+import org.jline.jansi.AnsiConsole;
 import picocli.CommandLine;
 import picocli.CommandLine.IParameterConsumer;
 import picocli.CommandLine.Model.ArgSpec;
@@ -95,6 +101,83 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     public abstract Integer doCall() throws Exception;
 
+    /**
+     * Whether the command prints its output as JSON (the option {@code --json}). Its errors are then printed as JSON on
+     * stdout too, see {@link JsonOutput}. A command with another way to ask for JSON overrides this.
+     */
+    public boolean isJsonOutput() {
+        if (spec != null) {
+            CommandLine.Model.OptionSpec option = spec.findOption(JsonOutput.OPTION);
+            return option != null && Boolean.TRUE.equals(option.getValue());
+        }
+        return false;
+    }
+
+    /**
+     * The value of an option of this command, such as {@code --timeout}.
+     *
+     * @param  name the name of the option
+     * @return      the value, or <tt>null</tt> when the command has no such option, or runs without picocli
+     */
+    protected Object optionValue(String name) {
+        CommandLine.Model.OptionSpec option = spec != null ? spec.findOption(name) : null;
+        return option != null ? option.getValue() : null;
+    }
+
+    /**
+     * Whether an option was given on the command line, rather than having its default value.
+     */
+    protected boolean isOptionGiven(String name) {
+        CommandLine.ParseResult result = spec != null ? spec.commandLine().getParseResult() : null;
+        return result != null && result.hasMatchedOption(name);
+    }
+
+    /**
+     * Whether a command that follows, such as camel log, keeps following. Without an interactive terminal nobody can
+     * press Enter to stop it, so then it only follows when --follow or --duration is given.
+     *
+     * @param follow   the --follow option
+     * @param duration the --duration option, in millis
+     */
+    protected boolean isFollowing(boolean follow, long duration) {
+        return follow && (duration > 0 || isOptionGiven("--follow") || EnvironmentHelper.isInteractiveTerminal());
+    }
+
+    /**
+     * Fails a command that needs an interactive terminal when there is none, instead of waiting for input that never
+     * comes.
+     *
+     * @param  what         what needs the terminal, such as camel debug
+     * @throws CliException with exit code 2 without an interactive terminal
+     */
+    protected void requireInteractiveTerminal(String what) {
+        if (!EnvironmentHelper.isInteractiveTerminal()) {
+            throw CliException.usage(what + " requires an interactive terminal");
+        }
+    }
+
+    /**
+     * Prints the help of this command, which lists its sub-commands.
+     *
+     * @return the exit code
+     */
+    protected int printHelp() {
+        CommandLine cl = spec != null ? spec.commandLine() : new CommandLine(this);
+        printer().print(cl.getUsageMessage());
+        return CliExitCode.OK;
+    }
+
+    /**
+     * Runs the given command as the default sub-command of this command, with the error handling of the CLI.
+     *
+     * @param  command the command to run
+     * @param  args    the arguments for the command
+     * @return         the exit code of the command
+     */
+    protected int runDefault(CamelCommand command, String... args) {
+        return getMain().withErrorHandling(new CommandLine(command)).execute(args);
+    }
+
     protected static String getScheme(String name) {
         int pos = name.indexOf(":");
         if (pos != -1) {
@@ -107,10 +190,24 @@ public abstract class CamelCommand implements Callable<Integer> {
         return CommandLineHelper.getCamelDir().resolve(pid + "-status.json");
     }
 
+    /**
+     * The action file that all the clients of the integration share.
+     *
+     * @deprecated use {@link ActionClient}, which sends each action in a file of its own, and uses this file only for
+     *             an integration before Camel 4.21
+     */
+    @Deprecated(since = "4.24")
     public Path getActionFile(String pid) {
         return CommandLineHelper.getCamelDir().resolve(pid + "-action.json");
     }
 
+    /**
+     * The output file that all the clients of the integration share.
+     *
+     * @deprecated use {@link ActionClient}, which reads the answer to each action from a file of its own, and uses this
+     *             file only for an integration before Camel 4.21
+     */
+    @Deprecated(since = "4.24")
     public Path getOutputFile(String pid) {
         return CommandLineHelper.getCamelDir().resolve(pid + "-output.json");
     }
@@ -139,14 +236,38 @@ public abstract class CamelCommand implements Callable<Integer> {
         return CommandLineHelper.getCamelDir().resolve(pid + "-activity.json");
     }
 
-    public Path getRunBackgroundLogFile(String uuid) {
-        return CommandLineHelper.getCamelDir().resolve(uuid + "-run.log");
-    }
-
     protected Printer printer() {
         var out = getMain().getOut();
         CommandHelper.setPrinter(out);
         return out;
+    }
+
+    /**
+     * Prints text with colors (ANSI escape codes): on the console when the command prints to the console, which leaves
+     * the colors out when the output is not a terminal; else with the printer of the command, as in the shell, or in a
+     * CLI that runs the command in its own JVM and keeps its output (see {@link CliRunner}).
+     */
+    protected void printColored(Object text) {
+        if (printsToConsole()) {
+            AnsiConsole.out().print(text);
+        } else {
+            printer().print(String.valueOf(text));
+        }
+    }
+
+    /**
+     * Prints a line with colors (ANSI escape codes), see {@link #printColored(Object)}.
+     */
+    protected void printlnColored(Object text) {
+        if (printsToConsole()) {
+            AnsiConsole.out().println(text);
+        } else {
+            printer().println(String.valueOf(text));
+        }
+    }
+
+    private boolean printsToConsole() {
+        return printer() instanceof Printer.SystemOutPrinter && !EnvironmentHelper.isEmbedded();
     }
 
     protected int terminalWidth() {

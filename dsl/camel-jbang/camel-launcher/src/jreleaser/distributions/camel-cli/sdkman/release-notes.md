@@ -23,8 +23,8 @@
     `publish` implementation to include when composing the SDKMAN release announcement.
 -->
 
-Apache Camel CLI requires Java 17 or newer. If you do not already have a
+Apache Camel CLI requires Java 21 or newer. If you do not already have a
 compatible Java, "sdk install java" provides one and SDKMAN will export
-JAVA_HOME for it; any other Java 17+ runtime works equally well. The bin/camel
+JAVA_HOME for it; any other Java 21+ runtime works equally well. The bin/camel
 launcher discovers Java via JAVACMD, JAVA_HOME, PATH, then CAMEL_FALLBACK_JAVA,
 and prints a diagnostic listing these sources if none qualify.

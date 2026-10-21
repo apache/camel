@@ -136,6 +136,16 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
+        // the visibility timeout of every message of the batch runs from the receive, so all of them are extended from
+        // now on, and not only when their turn comes: otherwise a message that waits behind slow ones becomes visible
+        // again and is delivered a second time
+        final TimeoutExtender extender = this.timeoutExtender;
+        if (extender != null) {
+            for (Object exchange : exchanges) {
+                extender.add((Exchange) exchange);
+            }
+        }
+
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
@@ -146,10 +156,6 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
-
-            if (this.timeoutExtender != null) {
-                timeoutExtender.add(exchange);
-            }
 
             // add on completion to handle after work when the exchange is done
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
@@ -174,16 +180,31 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             try {
                 getAsyncProcessor().process(exchange, cb);
             } catch (Error e) {
-                if (this.timeoutExtender != null) {
+                if (extender != null) {
                     // fatal error so stop the timeout extender
-                    timeoutExtender.cancel();
-                    timeoutExtender.entries.clear();
+                    extender.cancel();
+                    extender.entries.clear();
                 }
+                throw e;
+            } catch (RuntimeException e) {
+                stopExtending(extender, exchanges);
                 throw e;
             }
         }
 
+        // the messages that are not routed (the consumer is stopping or suspending) are no longer extended, so they
+        // become visible again when their current visibility timeout runs out
+        stopExtending(extender, exchanges);
+
         return total;
+    }
+
+    private static void stopExtending(TimeoutExtender extender, Queue<Object> notRouted) {
+        if (extender != null) {
+            for (Object exchange : notRouted) {
+                extender.remove((Exchange) exchange);
+            }
+        }
     }
 
     /**
@@ -412,7 +433,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
                 private void remove(Exchange exchange) {
                     LOG.trace("Removing exchangeId {} from the TimeoutExtender, processing done", exchange.getExchangeId());
-                    entries.remove(exchange.getExchangeId());
+                    TimeoutExtender.this.remove(exchange);
                 }
             });
 
@@ -421,6 +442,14 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
                     .receiptHandle(exchange.getIn().getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class)).build();
 
             entries.put(exchange.getExchangeId(), new TimeoutExtenderEntry(entry));
+        }
+
+        /**
+         * Stops extending the visibility of the message of the given exchange. The message is not made visible: it
+         * becomes visible again when its current (possibly just extended) visibility timeout runs out.
+         */
+        public void remove(Exchange exchange) {
+            entries.remove(exchange.getExchangeId());
         }
 
         public void cancel() {

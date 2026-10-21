@@ -90,7 +90,12 @@ public class KafkaFetchRecords implements Runnable {
     private PollExceptionStrategy pollExceptionStrategy;
     private final BridgeExceptionHandlerToErrorHandler bridge;
     private final ReentrantLock lock = new ReentrantLock();
+    // whether the fetcher thread is in poll, which stop() may then wake up (CAMEL-25753)
+    private volatile boolean polling;
     private CommitManager commitManager;
+    // kept while the Kafka consumer is connected: the batching processor holds the records of earlier polls until its
+    // batch is complete, and the consumer does not return them again
+    private KafkaRecordProcessorFacade recordProcessorFacade;
     private volatile Exception lastError;
     private final KafkaConsumerListener consumerListener;
 
@@ -161,6 +166,9 @@ public class KafkaFetchRecords implements Runnable {
                     }
 
                     setConnected(true);
+                    // a new Kafka consumer starts from the committed offsets: the records held for an incomplete batch
+                    // of the previous consumer are polled again
+                    recordProcessorFacade = createRecordProcessor();
                     // a new Kafka consumer is not paused: pause it again if the consumer is suspended
                     state.compareAndSet(State.PAUSED, State.PAUSE_REQUESTED);
                 }
@@ -317,12 +325,6 @@ public class KafkaFetchRecords implements Runnable {
 
     protected void startPolling() {
         try {
-            /*
-             * We lock the processing of the record to avoid raising a WakeUpException as a result to a call
-             * to stop() or shutdown().
-             */
-            lock.lock();
-
             long pollTimeoutMs = kafkaConsumer.getEndpoint().getConfiguration().getPollTimeoutMs();
             Duration pollDuration = Duration.ofMillis(pollTimeoutMs);
 
@@ -330,7 +332,8 @@ public class KafkaFetchRecords implements Runnable {
                 LOG.trace("Polling {} from {} with timeout: {}", threadId, getPrintableTopic(), pollTimeoutMs);
             }
 
-            final KafkaRecordProcessorFacade recordProcessorFacade = createRecordProcessor();
+            // the processor of the connection is used again after a failed poll (pollOnError ERROR_HANDLER, DISCARD
+            // or RETRY): the records it holds were returned by earlier polls and must still be processed
 
             while (isKafkaConsumerRunnableAndNotStopped() && isConnected() && pollExceptionStrategy.canContinue()) {
 
@@ -338,27 +341,51 @@ public class KafkaFetchRecords implements Runnable {
                 // which must happen using this polling thread, so we use the commitRecordsRequested to trigger this
                 metricsCollector.collectCommitMetrics(consumer);
 
-                ConsumerRecords<Object, Object> allRecords = consumer.poll(pollDuration);
-                if (consumerListener != null) {
-                    if (!consumerListener.afterConsume(consumer)) {
-                        continue;
+                /*
+                 * The poll is not under the lock: stop() wakes up a consumer that is waiting in poll, which then
+                 * throws a WakeupException, so the consumer stops at once instead of after the poll timeout
+                 * (CAMEL-25753). The stop is checked again once polling is set, so a stop that began just before is
+                 * seen here, or stop() sees polling and wakes up the poll.
+                 */
+                ConsumerRecords<Object, Object> allRecords;
+                polling = true;
+                try {
+                    if (!isKafkaConsumerRunnableAndNotStopped()) {
+                        break;
                     }
+                    allRecords = consumer.poll(pollDuration);
+                } finally {
+                    polling = false;
                 }
 
-                ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
-                if (result != null && result.getTopic() != null) {
-                    metricsCollector.storeLastRecord(result);
-                }
-                updateTaskState();
+                /*
+                 * The processing of the polled records is under the lock: stop() waits for it to finish, including
+                 * the commit, before it wakes up the consumer, so a WakeupException does not interrupt it.
+                 */
+                lock.lock();
+                try {
+                    if (consumerListener != null) {
+                        if (!consumerListener.afterConsume(consumer)) {
+                            continue;
+                        }
+                    }
 
-                // when breakOnFirstError we want to unsubscribe from Kafka
-                if (result != null && result.isBreakOnErrorHit() && !this.state.get().equals(State.PAUSED)) {
-                    LOG.debug("We hit an error ... setting flags to force reconnect");
-                    // force re-connect
-                    setReconnect(true);
-                    setConnected(false);
-                }
+                    ProcessingResult result = recordProcessorFacade.processPolledRecords(allRecords);
+                    if (result != null && result.getTopic() != null) {
+                        metricsCollector.storeLastRecord(result);
+                    }
+                    updateTaskState();
 
+                    // when breakOnFirstError we want to unsubscribe from Kafka
+                    if (result != null && result.isBreakOnErrorHit() && !this.state.get().equals(State.PAUSED)) {
+                        LOG.debug("We hit an error ... setting flags to force reconnect");
+                        // force re-connect
+                        setReconnect(true);
+                        setConnected(false);
+                    }
+                } finally {
+                    lock.unlock();
+                }
             }
 
             if (!isConnected()) {
@@ -400,7 +427,6 @@ public class KafkaFetchRecords implements Runnable {
                 safeUnsubscribe();
                 safeConsumerClose();
             }
-            lock.unlock();
         }
     }
 
@@ -470,6 +496,9 @@ public class KafkaFetchRecords implements Runnable {
         } catch (IllegalStateException e) {
             LOG.warn("The consumer is likely already closed. Skipping unsubscribing thread {} from kafka {}", threadId,
                     printableTopic);
+        } catch (WakeupException e) {
+            // stop() woke up the consumer after the last poll: the consumer is closed next, which leaves the group
+            LOG.debug("The kafka consumer was woken up while unsubscribing thread {} from {}", threadId, printableTopic);
         } catch (Exception e) {
             LOG.debug("Something went wrong while unsubscribing from Kafka: {}", e.getMessage());
             kafkaConsumer.getExceptionHandler().handleException(
@@ -500,7 +529,8 @@ public class KafkaFetchRecords implements Runnable {
     /*
      * This wraps a safe stop procedure that should help ensure a clean termination procedure for consumer code.
      * This means that it should wait for the last process call to finish cleanly, including the commit of the
-     * record being processed at the current moment.
+     * record being processed at the current moment. The lock is held only while records are processed: when the
+     * consumer is waiting in poll, the lock is free and the wakeup ends the poll at once (CAMEL-25753).
      *
      * Note: keep in mind that the KafkaConsumer is not thread-safe, so no other call to the consumer instance
      * should be made here besides the wakeUp.
@@ -517,13 +547,19 @@ public class KafkaFetchRecords implements Runnable {
              of whether the processing have finished or not.
              */
             LOG.info("Waiting up to {} milliseconds for the processing to finish", timeout);
-            if (!lock.tryLock(timeout, TimeUnit.MILLISECONDS)) {
+            boolean locked = lock.tryLock(timeout, TimeUnit.MILLISECONDS);
+            if (!locked) {
                 LOG.warn("The processing of the current record did not finish within {} seconds", timeout);
             }
 
-            // As advised in the KAFKA-1894 ticket, calling this wakeup method breaks the infinite loop
-            LOG.trace("Waking up Kafka consumer");
-            consumer.wakeup();
+            // As advised in the KAFKA-1894 ticket, calling this wakeup method breaks the infinite loop. Only a
+            // consumer in poll is woken up: a consumer between two polls sees the stop before it polls again, and a
+            // wakeup would stay pending and interrupt the processing of the records it already has. A processing
+            // that did not finish in time is woken up regardless, as before.
+            if (polling || !locked) {
+                LOG.trace("Waking up Kafka consumer");
+                consumer.wakeup();
+            }
         } catch (InterruptedException e) {
             LOG.trace("Interrupted while waiting for processing to finish: waking up Kafka consumer");
             consumer.wakeup();

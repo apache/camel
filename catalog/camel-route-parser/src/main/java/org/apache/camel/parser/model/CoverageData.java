@@ -16,6 +16,8 @@
  */
 package org.apache.camel.parser.model;
 
+import java.util.List;
+
 /**
  * Represents coverage data of a given node in the Camel route.
  */
@@ -26,6 +28,8 @@ public class CoverageData {
     private final int count;
     private String routeId;
     private int lineNumber;
+    private List<String> bodyTypes = List.of();
+    private List<String> bodyKinds = List.of();
 
     public CoverageData(String nodeId, String node, int count, String routeId) {
         this.nodeId = nodeId;
@@ -60,5 +64,29 @@ public class CoverageData {
 
     public void setLineNumber(int lineNumber) {
         this.lineNumber = lineNumber;
+    }
+
+    /**
+     * The body types the node has been reached with, in the order first seen (empty when the route coverage dump has
+     * none, as when the tests ran without the message history).
+     */
+    public List<String> getBodyTypes() {
+        return bodyTypes;
+    }
+
+    public void setBodyTypes(List<String> bodyTypes) {
+        this.bodyTypes = bodyTypes != null ? bodyTypes : List.of();
+    }
+
+    /**
+     * The kinds of the bodies the node has been reached with: null, payload, data or collection. More than one means
+     * the node needs attention.
+     */
+    public List<String> getBodyKinds() {
+        return bodyKinds;
+    }
+
+    public void setBodyKinds(List<String> bodyKinds) {
+        this.bodyKinds = bodyKinds != null ? bodyKinds : List.of();
     }
 }

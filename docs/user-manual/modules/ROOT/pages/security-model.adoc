@@ -77,12 +77,14 @@ application, not a multi-tenant managed service. Its trust model reflects that.
 | The far side of a component - the remote services, object stores, brokers and
   AI models a route talks to
 | Trusted to *hold* the route's data; untrusted for what they *return*
-| Return payloads, object and blob names, remote file names, listing entries
-  and other metadata, and - for the AI components - generated text and
-  tool-call arguments. The operator chose to talk to these services, so the
+| Return payloads, object and blob names, remote file names, listing entries,
+  redirects and other metadata, and - for the AI components - generated text
+  and tool-call arguments. The operator chose to talk to these services, so the
   connection is trusted; the strings they hand back are attacker-influenced
   whenever a wider set of principals can write to the store or shape the
-  prompt. See _Adversary model_.
+  prompt, when the service itself is malicious, compromised or shared, or when
+  the protocol leaves what it returns unprotected in transit, as it does for a
+  plain FTP directory listing. See _Adversary model_.
 |===
 
 === Trust boundaries
@@ -152,11 +154,13 @@ deliberately few, and they are the contract:
   unless the developer chose `/write auto`.
 * The developer confirms a call that reaches beyond the integration, may
   destroy data or runs code: a message to an endpoint the integration does not
-  have (a route, an internal endpoint such as `direct:`, `seda:` or `log:`,
-  and the integration's own endpoints are inside it), a SQL statement other
-  than a single `SELECT`, `SHOW` or `DESCRIBE`, a row update, and an
-  expression in a language that runs code, such as Groovy. An HTTP request
-  goes only to the integration's own server on `localhost`.
+  have (a route, an endpoint of a component the Camel catalog marks internal,
+  such as `direct:`, `seda:` or `log:`, and the integration's own endpoints are
+  inside it), a message whose body the integration reads from a file outside
+  the project folder, a SQL statement other than a single `SELECT`, `SHOW` or
+  `DESCRIBE`, a row update, and an expression in a language that runs code,
+  such as Groovy. An HTTP request goes only to the integration's own server on
+  `localhost`.
 * A coding agent's own tools - its shell commands, its file changes, its
   network fetches - are put in front of the developer in the TUI.
 * Keys sent over MCP never answer a dialog that asks the developer to confirm
@@ -164,14 +168,29 @@ deliberately few, and they are the contract:
 * While the developer records a tape, or plays one with `--record`, nothing
   asks: the developer chose to let the model, the agent or the tape act alone.
 
+`camel ask` is the AI assistant of the Camel CLI, with a local or a hosted
+LLM. It keeps the same contract in a terminal:
+
+* Before each write it shows the change as a diff, and the developer
+  confirms it.
+* The developer confirms the same calls as in the TUI, and the calls that
+  `camel ask` makes without a screen of the integration in front of the
+  developer: stopping, killing or restarting the integration or its routes,
+  running an integration, browsing an endpoint the integration does not have,
+  writing a heap dump, and a `camel` command that changes something. The
+  commands that only read, such as `camel get` and `camel ps`, run without
+  asking.
+* Without a terminal to ask on, such a call does not run, unless the
+  developer passed `--yes`.
+
 A tool that breaks this contract is in scope: for example a file written
 outside the source directory, a message sent to an endpoint the integration
 does not have without the developer's confirmation, a key sent over MCP that
 answers a confirmation, or text from an integration that acts on the
 terminal. An assistant doing what the tools allow is the
-trusted developer's case, also when untrusted data shown in the TUI - a
-message body, a log line, an example's README - steered the model to it
-(prompt injection); see _Out of scope_.
+trusted developer's case, also when untrusted data shown in the TUI or read by
+`camel ask` - a message body, a log line, an example's README - steered the
+model to it (prompt injection); see _Out of scope_.
 
 === Adversary model
 
@@ -204,7 +223,13 @@ wire:
   untrusted input (CVE-2026-60093 `camel-azure-storage-datalake`,
   CVE-2026-66906 `camel-azure-storage-blob`, CVE-2026-66907
   `camel-google-storage` - remote object names traversing out of the
-  configured download directory). This is distinct from the *contents* of a
+  configured download directory). The same holds for the directory listing a
+  file server returns, which the remote-file consumers used as the operand of
+  their own retrieve, delete and rename operations (CVE-2026-79983
+  `camel-ftp`, CVE-2026-79984 `camel-mina-sftp`, CVE-2026-79985 `camel-smb`,
+  CVE-2026-79986 `camel-azure-files`), and for the redirect an HTTP server
+  answers with, which chooses the next host the client talks to
+  (CVE-2026-85251 `camel-http`). This is distinct from the *contents* of a
   state store the operator provisioned for the route's own use, which the
   framework does assume are trusted; see the aggregation-repository bullet
   under _Known limitations_.
@@ -227,7 +252,9 @@ _Security properties and violation severity_ or _Core router-engine
 invariants_ below - turn untrusted input into code execution, an arbitrary
 file read or write, a request forgery, an unintended endpoint or bean
 dispatch, a deserialisation gadget, an authentication or authorization
-bypass, or a disclosure of secrets or `Exchange` state.
+bypass, a signature or integrity check that passes without having verified
+the data, one exchange's data, keys or authority reaching another, or a
+disclosure of secrets or `Exchange` state.
 
 *What the attacker is not assumed to have:* code execution inside the JVM
 running the Camel context (that is route-author territory), the operator's
@@ -238,6 +265,16 @@ cannot author or modify route definitions, configuration or the runtime
 image. They cannot side-step the trust boundary by being a co-tenant in the
 JVM; Camel is not a sandbox and does not pretend to be one (see _Security
 properties not provided_ below).
+
+*A second, weaker adversary: other accounts on the same host.* They cannot act
+as the service account and cannot read what it owns, but they can read
+whatever the host lets every account read. Camel must not widen that access by
+writing secrets, key material or message content to files that other accounts
+can read. CVE-2023-34442 (`camel-jira`, attachments in world-readable temporary
+files) and CVE-2026-85300 (`camel-pqc`, generated private keys written with the
+process umask rather than owner-only) were accepted on this basis. This is not
+the JVM co-tenant excluded above: a co-tenant shares the process, while a local
+account only shares the host.
 
 The following actors are *explicitly not* in the adversary model. A report
 that requires one of them as the attacker is `OUT-OF-MODEL:
@@ -258,7 +295,10 @@ adversary-not-in-scope` (see _Triage dispositions_).
   trust boundary is the management surface itself (JVM JMX authentication,
   the Jolokia restrictor policy, the network exposure of the management
   port), not the individual MBean method. See the management-surface entry
-  in _Out of scope_.
+  in _Out of scope_. The surfaces are the ones named here: a Camel endpoint
+  that manages a component through messages, such as
+  `dynamic-router-control:`, is not one of them, and a message routed to it
+  is `Exchange` content (CVE-2026-83531).
 * *Authors of transitive third-party dependencies.* A CVE in a JAR Camel
   pulls in but does not reach through any Camel-exposed code path is the
   upstream project's vulnerability. See the third-party-dependency entry
@@ -268,7 +308,12 @@ adversary-not-in-scope` (see _Triage dispositions_).
 
 A report is in scope when it demonstrates that the framework, in a default or
 reasonably-expected configuration, lets untrusted input cross a trust boundary
-that the model says it should not cross.
+that the model says it should not cross. A configuration that the project's
+own documentation shows is reasonably expected by definition. An HTTP
+reverse-proxy route (CVE-2026-78164), a control endpoint fed from another
+application (CVE-2026-83531) and a route that converts whatever text arrives
+in the body (CVE-2026-78163) all qualified, although in each case the route
+author had only followed the documented pattern.
 
 *Which artifacts this model covers.* This document describes the artifacts
 released from the `apache/camel` repository - `camel-core`, the components,
@@ -301,47 +346,67 @@ which protective property it breaks.
 
 | Untrusted data is never turned into executed code or OS commands
 | A crafted message, header or attachment causes a deserialisation gadget chain, a bean / method / command dispatch, an expression/template evaluation the route author never requested, or is spliced into the argument vector of an external process the component launches
-| Critical (CVSS 9.0-10.0)
+| Medium to High
 
 | Untrusted data cannot redirect the route to a different endpoint, bean, method or command
-| A control header injected from the wire changes where the exchange is dispatched, which operation runs, or which transport and credentials are used - whether it is spelled inside the internal namespace (`CamelBeanMethodName`, `CamelExecCommandExecutable`, `CamelHttpUri`, `CamelJmsDestinationName`, ...) or outside it (`websocket.connectionKey`, `+gridfs.*+`, `irc.sendTo`, `operationName`, `+mail.smtp.*+`, ...)
-| Critical (CVSS 9.0-9.8)
+| A control header injected from the wire changes where the exchange is dispatched, which operation runs, which saga it joins, or which transport and credentials are used - whether it is spelled inside the internal namespace (`CamelBeanMethodName`, `CamelExecCommandExecutable`, `CamelHttpUri`, `CamelJmsDestinationName`, ...) or outside it (`websocket.connectionKey`, `+gridfs.*+`, `irc.sendTo`, `operationName`, `+mail.smtp.*+`, `Long-Running-Action`, ...)
+| Medium to High
 
 | Untrusted data is never deserialised into arbitrary Java types
 | A consumer, type converter or persisted-state repository instantiates attacker-chosen classes through `ObjectInputStream` / XStream / Hessian / polymorphic Jackson without an effective filter
-| Critical when gadget-reachable (9.0-9.8); High otherwise (7.0-8.6)
+| Medium to High
 
 | Untrusted parsing does not resolve external or remote resources
 | An XML / XSLT / XSD / XPath parse of attacker input reads a local file, performs SSRF, or fetches a remote DTD or stylesheet by default
-| High (CVSS 7.5-8.6); Critical if it yields RCE or credential theft
+| Medium to High
+
+| Untrusted input does not choose the host Camel connects to or the file it reads, and the endpoint's credentials go only to the hosts the route configured
+| A message body is read as a URL to fetch or a path to read, an address the peer supplies becomes the destination of an outbound request, or a redirect carries the endpoint's credentials to a host the remote server chose
+| Medium to High
 
 | Untrusted file names or URI components cannot escape the configured root
-| A file / mail / FTP / object-store consumer or producer reads or writes a path outside the configured directory via `../` or an absolute path, whether that name arrived in a header or was reported back by the remote store
-| High (CVSS 7.5-8.8)
+| A file / mail / FTP / object-store consumer or producer reads or writes a path outside the configured directory via `../` or an absolute path, whether that name arrived in a header or was reported back by the remote store - including a remote-file consumer that retrieves, deletes or renames a file on the server outside the polled directory because of a name in the server's listing
+| Medium to High
 
 | Components that advertise authentication or authorization actually enforce it
-| A request is served without a valid token, with an unvalidated issuer / audience / signature, on a sub-path the auth handler was assumed to cover, because a check was silently skipped when its option was left unconfigured, or because the authorization decision was computed from a differently-normalized value than the dispatch decision
-| Critical (CVSS 9.0-9.8)
+| A request is served without a valid token, with an unvalidated issuer / audience / signature, or on a sub-path the auth handler was assumed to cover. Typical causes: a check was silently skipped because its option was left unconfigured or the claim it checks was absent; a failed check did not stop the exchange; an authentication that an earlier exchange left on the thread was reused; or the authorization decision was computed from a differently-normalized value than the dispatch decision
+| Medium to High
+
+| Components that verify an integrity code, or a signature the receiver requires, fail closed
+| A message is accepted as unmodified, or as signed when a signature is required, although the check was skipped because the sender chose a format without it, or was computed over another exchange's data
+| Medium
+
+| One exchange's data, keys and authority do not reach another
+| A body, a signing key, a token or a thread-bound authentication left by one exchange is observed or used while another sender's, tenant's or partner's exchange is processed
+| Medium
 
 | Secrets and internal Exchange state are not disclosed
-| Credentials, message bodies or configuration values reach a log, an event, a world-readable file, or an HTTP response visible to a lower-privileged party
-| Medium to High (CVSS 5.3-8.2), depending on what leaks
+| Credentials, message bodies or configuration values reach a log, an event, a file that other local accounts can read, or a response visible to a lower-privileged party
+| Low to Medium
 
 | Untrusted input is not spliced into a back-end query language Camel builds
 | Camel constructs a Cypher / XSLT-extension / similar query and the attacker alters its structure rather than only its data
-| High to Critical (CVSS 8.1-9.8)
+| Medium
 
 | All of the above hold with zero security configuration
 | Any of the above is reachable simply by adding the component to a route and sending a message, with no risky option explicitly set
 | Severity of the underlying class; always in scope
 |===
 
-The tiers above are *indicative*, reflecting how the Camel PMC has historically
-scored these classes. The PMC assigns the definitive CVSS vector per report
-based on attack vector, the configuration required to reach the code path, and
-the concrete impact demonstrated. A finding that needs an unusual non-default
-configuration, or whose impact is limited, may score lower than the tier
-suggests; one that chains into full host compromise may score higher.
+The tiers above are *indicative*: for each class they give the range of
+severities the Camel PMC has published at link:/security/[] since 2015 for the
+artifacts this page covers. The three Critical ratings in that record date
+from 2013 and 2014 (CVE-2013-4330, CVE-2014-0002, CVE-2014-0003); the index
+also lists Critical Camel K advisories (CVE-2026-80351, CVE-2026-80352), which
+are triaged against Camel K's own scope. CVE-2026-56140 was published as Low,
+as hardening alongside a sibling finding.
+Critical remains available for a finding that reaches code execution or full
+compromise with no precondition at all. The PMC assigns the definitive CVSS
+vector per report based on attack vector, the configuration required to reach
+the code path, and the concrete impact demonstrated, so a finding can land
+outside the range of its class: one that needs an unusual non-default
+configuration, or whose impact is limited, may score lower, and one that
+chains into full host compromise may score higher.
 
 === Core router-engine invariants
 
@@ -368,27 +433,27 @@ against core code, and the triager needs the core-side statement to judge it.
 
 | The engine never evaluates an `Exchange` body, header or property as a `simple`, OGNL, bean or scripting expression unless a route author placed an expression or predicate at that point in the route
 | A core processor or language resolves untrusted message content as an expression with no route-author-authored expression referencing it
-| Critical (CVSS 9.0-9.8)
+| Medium to High
 
-| Untrusted `Exchange` content does not, by the engine's own action, select the endpoint, bean, method or command dispatched to; the dynamic targets of `toD`, `recipientList`, `routingSlip`, the dynamic router and bean-method resolution are computed from the route-author expression and the documented dispatch headers only
-| A value the engine itself promoted from a body or attachment into a dispatch header (`CamelBeanMethodName`, `CamelHttpUri`, `CamelJmsDestinationName`, ...) or into a dynamic-target expression input
-| Critical (CVSS 9.0-9.8)
+| Untrusted `Exchange` content does not, by the engine's own action, select the endpoint, bean, method or command dispatched to, or the saga an exchange joins; the dynamic targets of `toD`, `recipientList`, `routingSlip`, the dynamic router and bean-method resolution are computed from the route-author expression and the documented dispatch headers only, and a header outside the filtered `+Camel*+` namespace is consulted for such a decision only by the feature whose protocol carries it, never on every exchange
+| A value the engine itself promoted from a body or attachment into a dispatch header (`CamelBeanMethodName`, `CamelHttpUri`, `CamelJmsDestinationName`, ...) or into a dynamic-target expression input; or an engine processor that takes such a decision from a header outside the namespace on every exchange (historic instance: CVE-2026-85312, the saga processor reading the saga to join from a `Long-Running-Action` header)
+| Medium to High
 
 | The core type-converter registry does not instantiate or deserialise attacker-chosen Java types when a route merely declares a target type (`convertBodyTo`, a typed body, expression coercion); a converter that reads external entities or runs an `ObjectInputStream` is the converting component's responsibility, not an automatic core behaviour
 | A registered core converter instantiating or deserialising arbitrary types from an untrusted body during automatic conversion (historic instance: CVE-2015-0263, the `camel-core` XML converter)
-| Critical when gadget-reachable (9.0-9.8); High otherwise (7.0-8.6)
+| Medium to High
 
 | Property-placeholder and bean-reference resolution (`{{...}}`, `#bean:`, `#class:`, `#type:`, `#property:`) operates on route and configuration text supplied by the route author or operator, never on `Exchange` content
-| Message body or header content reaches placeholder or `#class:` / `#bean:` resolution and is resolved or instantiated
-| Critical (CVSS 9.0-9.8)
+| Message body or header content reaches placeholder or `#class:` / `#bean:` resolution and is resolved or instantiated - which reaches environment variables, JVM system properties, the vault property functions and no-argument methods of registry beans (historic instance: CVE-2026-78164, the HTTP producers resolving placeholders in the `CamelHttpUri` / `CamelRestHttpUri` override value on every message)
+| Medium to High
 
 | The engine and the `Exchange` / `Message` model never promote a body field, attachment or transport metadata into the internal `Camel*` header namespace; populating that namespace from untrusted wire input is a _consumer_ responsibility governed by the inbound `HeaderFilterStrategy` (the CVE-2025-27636 family), not an engine action
 | Core machinery, rather than a specific consumer, copies an untrusted-origin value into the internal header namespace
-| Critical (CVSS 9.0-9.8)
+| Medium to High
 
 | Error handling, dead-letter routing, redelivery and the in-band trace / debug processors do not, on the in-band route path, evaluate untrusted content as code or expose one `Exchange`'s body, headers or secrets to an unprivileged in-band party
 | An `onException`, dead-letter or `BacklogTracer` in-band path turns untrusted content into evaluation or cross-`Exchange` disclosure. Exposure or expression evaluation reached through a _management connection_ (JMX, Jolokia, the developer console) is governed by the management-surface item under _Out of scope_, not by this invariant
-| Medium to Critical, depending on what is reached
+| Medium to High, depending on what is reached
 
 | The engine makes no unbounded-resource guarantee
 | Unthrottled routing, unbounded aggregation or recursion under attacker-influenced volume. This is an availability concern the operator bounds (`throttle`, `circuitBreaker`, `resilience4j`, JVM limits); see _Out of scope_. A core finding whose only effect is resource consumption is closed as `not a vulnerability`
@@ -442,8 +507,9 @@ routed to "X was not built to do Y" rather than re-argued case by case.
   boundary (`removeHeaders`, normalisation, allow-listing). This disclaimer
   covers headers a component reads as *payload data*; it does not cover a
   component's own *control* headers - those that select a target, an
-  operation, or the transport and its credentials - which are the framework's
-  responsibility to filter whatever they are named. See the third bullet under
+  operation, the context the exchange joins, or the transport and its
+  credentials - which are the framework's responsibility to filter whatever
+  they are named. See the third bullet under
   _Known limitations_ and the control-header definition under the Camel-header
   class in _In-scope vulnerability classes_.
 * *No shield against transitive-dependency CVEs.* A CVE in a JAR Camel
@@ -483,7 +549,10 @@ routed to "X was not built to do Y" rather than re-argued case by case.
   primitives.* Equality of headers, tokens and identifiers uses
   general-purpose Java comparison. Route-author code that compares a
   shared secret against an untrusted input is responsible for using a
-  constant-time comparator; Camel does not provide one.
+  constant-time comparator; Camel does not provide one. This disclaims
+  side-channel resistance, not correctness: a component that verifies a
+  signature or an integrity code is held to the fail-closed property in
+  _Security properties and violation severity_.
 
 ==== False-friend properties
 
@@ -505,10 +574,19 @@ the misunderstanding can be closed against the correct contract.
   to sanitise the application headers a downstream component will trust.
   It also does not match a control header spelled outside the namespace -
   `websocket.connectionKey`, `+gridfs.*+`, `irc.sendTo`, `operationName`,
-  `+mail.smtp.*+`. Those are the framework's responsibility to filter and
+  `+mail.smtp.*+`, `Long-Running-Action`. Those are the framework's
+  responsibility to filter and
   have been fixed as advisories where they were reachable, but a route
   running against a release that predates the relevant fix needs the
   namespace stripped explicitly as well.
+* *A `+Camel*+` header name is not a trust marker.* The default filter stops a
+  remote sender from *setting* the namespace, but some consumers fill
+  `+Camel*+` headers from the request themselves: several HTTP consumers copy
+  the request target into `CamelHttpUri` so that a reverse-proxy route can
+  forward it. A component may use such a value as its documented contract says,
+  as the URI to call; it must not evaluate it as configuration or code
+  (CVE-2026-78164, where the HTTP producers resolved property placeholders in
+  that value).
 * *The security policy enforcement framework is a configuration linter,
   not a runtime sandbox.* The four categories (`secret`, `insecure:ssl`,
   `insecure:serialization`, `insecure:dev`) detect insecure configuration
@@ -580,6 +658,14 @@ Historical examples:
   DNS-based information disclosure. A mitigation that is present but
   under-strength falls in this class in its own right; see the incomplete-fix
   note under _Triage dispositions_.
+* CVE-2026-78165 (`camel-spring-redis`) - the component's default serializer,
+  Spring's `JdkSerializationRedisSerializer`, read every message published to a
+  subscribed channel with no `ObjectInputFilter`, before any route logic ran.
+  The component never constructed an `ObjectInputStream` itself, so earlier
+  sweeps for unfiltered Java deserialisation did not reach it.
+* CVE-2026-78162 (`camel-hazelcast`) - the filter added for CVE-2026-43865
+  was missing from two of the Hazelcast configurations Camel builds itself
+  (an incomplete-fix follow-on).
 
 Since 4.22 (CAMEL-24296) `CamelObjectInputStream` installs a JEP-290
 `ObjectInputFilter` by default - honouring a JVM-wide `jdk.serialFilter` when
@@ -599,7 +685,25 @@ from untrusted input by default.
 Historical examples: CVE-2014-0002 and CVE-2014-0003 (`camel-xslt`),
 CVE-2015-0263 (XML converter in `camel-core`), CVE-2015-0264 (XPath language in
 `camel-core`), CVE-2017-5643 (Validation component), CVE-2018-8027
-(XSD validation processor), CVE-2019-0188 (`camel-xmljson` via `json-lib`).
+(XSD validation processor), CVE-2019-0188 (`camel-xmljson` via `json-lib`),
+CVE-2026-85250 (`camel-xpath` with `documentType=InputSource`, where the XPath
+engine built its own parser with JDK defaults), CVE-2026-88901
+(`camel-smooks`, which parsed the body with the reader Smooks selects by
+default) and CVE-2026-91858 (`camel-fop`).
+
+CVE-2026-91858 shows why `FEATURE_SECURE_PROCESSING` is not an XXE defence on
+its own. `FopProducer` enabled only that feature, on a factory obtained from
+`TransformerFactory.newInstance()`. On the JDK's built-in transformer the
+feature also refuses external DTDs. When Saxon-HE is on the class path, which
+`camel-xslt-saxon` and `camel-saxon` put there, `newInstance()` returns Saxon,
+and on Saxon the feature does not refuse them. What the feature restricts is
+implementation-defined, and a JAXP lookup returns whatever implementation the
+class path provides, so set `ACCESS_EXTERNAL_DTD` and
+`ACCESS_EXTERNAL_STYLESHEET` explicitly. The same goes for triage: a finding
+that needs a third-party implementation on the class path is in scope when
+another Camel component is what puts it there, and a verdict that a JAXP
+lookup such as `TransformerFactory.newInstance()` holds the boundary has to
+hold for those implementations too.
 
 ==== Expression or template language injection
 
@@ -609,7 +713,26 @@ explicit opt-in from the route author.
 
 Historical examples: CVE-2013-4330 (`CamelFileName` header value being passed
 to `simple` by the producer in `camel-file` / `camel-ftp`), CVE-2020-11994
-(template injection plus arbitrary file disclosure in templating components).
+(template injection plus arbitrary file disclosure in templating components),
+CVE-2026-83531 (`camel-dynamic-router`, where the `dynamic-router-control`
+endpoint compiled a subscription predicate from an expression and an
+expression-language name carried in the control message, and evaluated it
+against every exchange routed through the channel), CVE-2026-78164 (the HTTP
+producers resolving property placeholders in the message-supplied override
+URI; see the placeholder invariant under _Core router-engine invariants_).
+
+CVE-2026-83531 settles two questions that recur in this class:
+
+* *Forwarding messages to an endpoint is not asking for their content to be
+  evaluated.* The component's documentation showed routes that fed control
+  messages from other applications to the control endpoint; following it made
+  the evaluation reachable without the route author writing any expression.
+  The route author asks for evaluation by writing an expression, or by setting
+  an endpoint option that no header can set. The fix added such an option,
+  `allowPredicateFromMessage`, which is off by default and marked
+  `insecure:dev`.
+* *Removing optional languages from the class path is not a mitigation.* The
+  `simple` language is always present, and it was the default.
 
 NOTE: A route author who writes `.simple("${header.x}")` against an
 attacker-controlled header _is_ injecting code, but the framework cannot decide
@@ -640,12 +763,58 @@ principal who can write to the store is outside the route's trust boundary
 (see _Adversary model_), so a download target must be normalized and verified
 to resolve inside the configured directory before it is used.
 
-==== SSRF or remote-resource fetch triggered by parsing
+The remote side of a transfer is a target too. The remote-file consumers built
+the remote path of each polled file by joining the configured directory with
+the name in the server's directory listing, and then retrieved, deleted
+(`delete=true`) or renamed (`move`, `preMove`, `moveFailed`,
+`readLock=rename`) whatever that path named: CVE-2026-79983 (`camel-ftp`,
+covering the `ftp`, `ftps` and `sftp` schemes), CVE-2026-79984
+(`camel-mina-sftp`), CVE-2026-79985 (`camel-smb`) and CVE-2026-79986
+(`camel-azure-files`). A malicious, compromised or shared server can emit such
+a name, and over plain FTP so can anyone on the network path, because the
+control channel has no integrity protection. `jailStartingDirectory`, which is
+enabled by default, already confined producer writes and local downloads, but
+it did not constrain this remote path until the fix. A remote-file consumer has
+to check containment on the remote path it acts on as well as on the local
+file it writes.
 
-Any parser that resolves a URL or DTD reference from untrusted input as part of
-its default parsing behaviour.
+==== Request forgery and credentials sent where the route did not choose
 
-Historical example: CVE-2017-5643 (Validation component fetching remote DTDs).
+Any code path where untrusted input decides which host Camel connects to or
+which resource it fetches or reads, beyond what the route configured.
+
+The original shape is a parser that resolves a URL or DTD reference from
+untrusted input as part of its default parsing behaviour - historical example:
+CVE-2017-5643 (Validation component fetching remote DTDs). Three more shapes
+have since been accepted:
+
+* *Message content read as a locator.* CVE-2026-78163 (`camel-docling`): the
+  producer decided what a `String` body meant from its prefix - a URL to fetch,
+  a local path to read, or document content to convert - so a route meant to
+  convert whatever text arrived became a fetcher of remote resources and a
+  reader of local files. The meaning of a value must be fixed by the route or
+  the endpoint configuration, never inferred from the value. The fix makes the
+  location readings opt-in (`allowUrlSource`, `allowFilePathSource`) and adds
+  `inputBaseDirectory`, unset by default, to confine local paths. CVE-2015-5348,
+  where an HTTP
+  consumer chose Java deserialisation because of the request's content type,
+  is the same mistake in another class.
+* *An address the peer supplies in the protocol.* CVE-2026-80344
+  (`camel-as2`): the address an AS2 sender gave for an asynchronous MDN was
+  used as the destination of the receipt, so the partner chose the host the
+  Camel instance connected to, including hosts routable only from inside the
+  deployment, and, where MDN delivery carried credentials, the Camel instance
+  presented them to that host.
+* *A destination the remote server names in a redirect.* CVE-2026-85251
+  (`camel-http`): with `followRedirects=true` the OAuth2 interceptor
+  re-attached the bearer token on every hop, and basic and digest credentials
+  were registered against a scope matching any host, so the server the route
+  called could collect them by redirecting to a host it controlled.
+
+Credentials belong to the authority the endpoint was configured with. A
+component must not present them to a host the route did not name, whether a
+redirect, a callback address, a receipt destination or another address
+supplied by the peer selected it.
 
 ==== Camel-header / bean-dispatch abuse via untrusted input
 
@@ -698,7 +867,13 @@ it is called, when it selects any of:
   attacker-supplied `+mail.smtp.*+` / `+mail.smtps.*+` headers were applied as
   JavaMail session properties, weakening SMTP transport security and, before
   4.19.0, redirecting the connection and disclosing the configured
-  credentials).
+  credentials);
+* *the context* - which saga, transaction or conversation the exchange takes
+  part in (CVE-2026-85312 `camel-core`, where the saga processor read a
+  `Long-Running-Action` header on every exchange, so an external sender could
+  attach its request to a long-running action someone else had started). The
+  engine's own processors are bound by this rule as much as components are.
+  The fix narrowed where the header is read to a saga service that uses it.
 
 By contrast a *semantic* header is one the component reads as payload data -
 `To`, `Cc`, `Subject`, an HTTP `X-` header, a JMS property. Those are
@@ -722,12 +897,18 @@ needs an effective strategy:
   they decode. CVE-2026-59230 (`camel-mail`) is the reference case: the
   `MimeMultipart` data format with `headersInline=true` copied the MIME
   headers of the message being unmarshalled onto the `Exchange` with no
-  filter at all. CAMEL-24419 then showed the second half of the lesson - the
-  data format had been given a plain `DefaultHeaderFilterStrategy`, which
+  filter at all. CVE-2026-85314 then showed the second half of the lesson -
+  the data format had been given a plain `DefaultHeaderFilterStrategy`, which
   knows only `+Camel*+` / `+camel*+`, so the `+mail.smtp.*+` namespace that the
   *consumer* path deliberately filters was still admitted through the
-  unmarshal path. An entry point that filters a narrower namespace than its
-  sibling entry point is a gap, not a difference in configuration.
+  unmarshal path, leaving open the path CVE-2026-46584 was meant to close. An
+  entry point that filters a narrower namespace than its sibling entry point
+  is a gap, not a difference in configuration.
+* *Producers that parse a document* and map what they find onto the message.
+  CVE-2026-85249 (`camel-tika`) is the reference case: every metadata key in
+  the submitted document became an `Exchange` header with no filter, so the
+  document could set headers the rest of the route relies on, `CamelFileName`
+  included. Document metadata is chosen by whoever supplies the document.
 * *Structured content modes*, where fields parsed out of the body become
   headers. CVE-2026-63621 (`camel-knative`) is the reference case: binary-mode
   CloudEvent attributes arrived as HTTP headers and went through a
@@ -746,8 +927,8 @@ component-specific `UndertowHeaderFilterStrategy` that the binding had
 installed in its own constructor. The correct strategy was constructed and
 then immediately replaced, so on endpoint-configured routes it never ran - and
 the earlier hardening it carried (CAMEL-23588) had been inert since it
-shipped. The same shape appears outside header filtering: in CAMEL-24412 a
-case-insensitive comparison guarding a `camel-netty-http` security constraint
+shipped. The same shape appears outside header filtering: in CVE-2026-80343
+a case-insensitive comparison guarding a `camel-netty-http` security constraint
 sat behind a case-sensitive `startsWith`, so it could never change the
 outcome. Presence of a defence in the source is not evidence that it executes;
 both the reporter and the triager have to establish that the guard is on the
@@ -781,32 +962,39 @@ Historical examples: CVE-2026-23552 (`camel-keycloak` not validating the JWT
 (`camel-platform-http-main` Vert.x sub-router mounted at `<path>*` while the
 auth handler was at the exact path, exposing subpaths of `/api`, `/admin`,
 `/observe/info`), CVE-2026-46455 (`camel-keycloak` missing the token
-`IS_ACTIVE` check, so an expired access token is accepted) and CVE-2026-53913
+`IS_ACTIVE` check, so an expired access token is accepted), CVE-2026-53913
 (`camel-keycloak` fail-open: the bearer token is verified only inside the role
 and permission checks, so a deployment configuring neither accepts the request
-unauthenticated).
+unauthenticated) and CVE-2026-84178 (`camel-oauth`, where the
+authorization-code callback was not bound by a `state` value to the request
+that started the flow - login cross-site request forgery, together with an
+open redirect through the post-login target).
 
-Two sub-rules have each now produced more than one advisory and are stated
-explicitly, because a component can satisfy the letter of its option names
-while breaking either one:
+Three sub-rules are stated explicitly, because a component can satisfy the
+letter of its option names while breaking any of them. The first two have each
+produced more than one advisory:
 
-* *An unconfigured check must fail closed, not disappear.* CVE-2026-66908
-  (`camel-platform-http-main`) is the reference case: when neither `jwtIssuer`
-  nor `jwtAudience` was configured the code built the `JWTAuth` instance from
-  the keystore alone, so inbound tokens were checked for signature and expiry
-  only and the `iss` and `aud` claims were not validated at all - silently,
-  with the server starting and reporting authentication as enabled. The same
-  shape underlies CVE-2026-53913 above, and CAMEL-24411, where the
-  `camel-oauth` processors returned normally from the paths on which they do
-  *not* authenticate the caller, so the rest of the route ran and overwrote
-  the challenge the processor had just prepared. A security component that
-  cannot perform a check it advertises must refuse to start or refuse the
-  request; leaving the check out is not a neutral default.
+* *An unconfigured check, or a check with nothing to check, must fail closed,
+  not disappear.* CVE-2026-66908 (`camel-platform-http-main`) is the reference
+  case: when neither `jwtIssuer` nor `jwtAudience` was configured the code
+  built the `JWTAuth` instance from the keystore alone, so inbound tokens were
+  checked for signature and expiry only and the `iss` and `aud` claims were not
+  validated at all - silently, with the server starting and reporting
+  authentication as enabled. The same shape underlies CVE-2026-53913 above,
+  and CVE-2026-80312, where the `camel-oauth` processors returned normally from
+  the paths on which they do *not* authenticate the caller, so the rest of the
+  route ran and overwrote the challenge the processor had just prepared.
+  CVE-2026-85301 (`camel-keycloak`) is the missing-input variant: the issuer of
+  an introspected token was checked only when the introspection response
+  carried an `iss` claim, so a response without one skipped the check instead
+  of failing it. A security component that cannot perform a check it
+  advertises must refuse to start or refuse the request; leaving the check out
+  is not a neutral default.
 * *The authorization decision and the action must be computed from the same
   value.* CVE-2026-40022 (`camel-platform-http-main`) mounted the Vert.x
   sub-router at `<path>*` while the auth handler sat at the exact path, so
   sub-paths of `/api`, `/admin` and `/observe/info` were dispatched but not
-  guarded. CAMEL-24412 is the normalization variant: `camel-netty-http`
+  guarded. CVE-2026-80343 is the normalization variant: `camel-netty-http`
   stripped the endpoint context-path with a case-sensitive `startsWith` before
   evaluating the security constraint, while dispatch matched the path
   case-insensitively - so a request whose context-path differed only by case
@@ -821,17 +1009,57 @@ how bad it is. A comparison that is case-sensitive where the protocol is
 case-insensitive can be defeated by varying the case - and where the protocol
 normalizes on the wire, the comparison may never match at all: HTTP/2 requires
 lowercase header names, so a case-sensitive header check is not merely
-bypassable there but unconditionally absent. Test the same guard under every
-protocol version the component accepts. The prefix variant is the same error in
-another shape: selecting a behaviour by testing whether a configured value
-*starts with* a token means every value sharing that prefix selects it too.
-Match the exact value unless a prefix is what the feature actually means.
+bypassable there but unconditionally absent (CVE-2026-85254,
+`camel-platform-http`, where the guard that keeps a request header from being
+echoed into the response never matched on an HTTP/2 connection). Test the same
+guard under every protocol version the component accepts. The prefix variant is
+the same error in another shape: selecting a behaviour by testing whether a
+configured value *starts with* a token means every value sharing that prefix
+selects it too (CVE-2026-85316, `camel-platform-http`, where every endpoint
+path beginning with `proxy` became a proxy endpoint). Match the exact value
+unless a prefix is what the feature actually means.
+* *Verify what this request presents; never inherit an earlier
+  authentication.* Camel processes exchanges on pooled threads, so security
+  state bound to a thread outlives the exchange that set it. CVE-2026-84181
+  (`camel-shiro`) is the reference case: credential verification was skipped
+  when the subject already bound to the thread carried the incoming principal,
+  so a request naming a principal in active use could ride on an
+  authentication an earlier exchange had performed. The skip was reachable
+  with `alwaysReauthenticate=false`, which keeps subjects bound to the worker
+  threads between exchanges; the fix calls `login()` on every exchange,
+  whatever the option says. See also _State shared between exchanges_.
+
+==== Integrity and signature verification that can be skipped
+
+A component that verifies a signature, a message authentication code or an
+integrity code is there to make that check hold, so it must fail closed when
+the protection is absent, weaker than the receiver requires, or computed over
+data other than the message in hand.
+
+* *The sender decides whether the check applies.* CVE-2026-85243
+  (`camel-crypto-pgp`) is the reference case: the modification detection code
+  was verified only when the message used the integrity-protected packet, so a
+  sender - or anyone able to rewrite the message in transit - could choose the
+  legacy packet and skip the check, and OpenPGP's CFB mode is malleable without
+  it. A protection the receiver depends on has to be required by the receiver,
+  not offered by the sender; the fix added `requireIntegrityProtection`, `true`
+  by default.
+* *The check runs over another exchange's data.* CVE-2026-85248 (`camel-pqc`):
+  one `java.security.Signature` instance was shared across concurrent
+  exchanges, so interleaved `update()` and `verify()` calls could report
+  success for a message whose signature was never checked. See _State shared
+  between exchanges_.
+
+Whether a signature is required at all is the receiver's configuration. The
+PGP data format accepts an unsigned message by default
+(`signatureVerificationOption=optional`), a documented heritage default listed
+under _Known limitations_; a receiver that needs authenticity sets `required`.
 
 ==== Information disclosure of secrets or sensitive Exchange state
 
 Code paths that write secrets, internal Exchange state, file contents or
-configuration values to a log, an event, a world-readable file, or an HTTP
-response.
+configuration values to a log, an event, a file that other local accounts can
+read, or a response.
 
 Historical examples: CVE-2023-34442 (`camel-jira` writing attachments to
 world-readable temp files), CVE-2024-22371 (`EventFactory` exposing sensitive
@@ -841,14 +1069,32 @@ defaulting to `false`, so a processing error returned the full exception and
 stack trace to the caller.
 
 That shape is not specific to HTTP. Any consumer with a reply path can hand the
-route's failure back to whoever sent the message - as a response body, over a
-socket, inside a protocol fault, or in a status field that is transmitted to the
-caller even when the underlying cause stays on the server. Stated generally:
-*a consumer must not return the route's exception to the party that sent the
-message.* A consumer that can reply needs a `muteException` option defaulting to
-`true`. Faults that the service contract declares are the exception, since
-clients are written against those and suppressing them breaks the contract
-rather than protecting anything.
+route's failure back to whoever sent the message - as a response body
+(CVE-2026-84180, `camel-knative`), over a socket (CVE-2026-85246, `camel-mina`,
+which with the object codec sent the serialised exception, cause chain
+included), inside a protocol fault (CVE-2026-85257, `camel-cxf`), or in a
+status field that is transmitted to the caller even when the underlying cause
+stays on the server (CVE-2026-85315, `camel-grpc`, the status description).
+Stated generally: *a consumer must not return the route's exception to the
+party that sent the message.* A consumer that can reply needs a `muteException`
+option defaulting to `true`. Faults that the service contract declares are the
+exception, since clients are written against those and suppressing them breaks
+the contract rather than protecting anything.
+
+Two further shapes:
+
+* *Payload content in the default logs.* CVE-2026-85260 (`camel-mllp`): the
+  `logPhi` option defaulted to `true`, so HL7 payloads - patient data - went to
+  the application log out of the box, and two code paths logged the payload
+  whatever the option said. A component that carries sensitive payloads keeps
+  them out of the default log levels unless the operator opts in, and an option
+  that suppresses such logging has to hold on every path.
+* *Secret material in a file other accounts can read.* CVE-2026-85300
+  (`camel-pqc`): generated private keys were written with the permissions the
+  process umask produced rather than owner-only - for key material, the same
+  exposure CVE-2023-34442 above was for attachments. Files that hold secrets or
+  key material are created owner-only whatever the umask (see the
+  local-account adversary under _Adversary model_).
 
 Judged against the default production log levels (INFO, WARN, ERROR);
 findings whose impact only manifests when the operator has enabled the
@@ -865,11 +1111,22 @@ that sent the earlier message need not be the party that sends the next, so
 this crosses a trust boundary whenever a route serves more than one sender,
 tenant or partner.
 
-The state takes several forms: an object a data format unmarshals into and
-returns as the body; a stateful cryptographic primitive that accumulates input
-in one call and consumes it in another; key or credential material belonging to
-one request but stored where the next can reach it; a cache shared across the
-process.
+The state takes several forms, and each has produced an advisory:
+
+* an object a data format unmarshals into and returns as the body
+  (CVE-2026-85245, `camel-thrift`, which unmarshalled into the target type's
+  shared `defaultInstance`, so fields from one message stayed visible to the
+  next);
+* a stateful cryptographic primitive that accumulates input in one call and
+  consumes it in another (CVE-2026-85248, `camel-pqc`, a shared
+  `java.security.Signature`);
+* key or credential material belonging to one request but stored where the
+  next can reach it (CVE-2026-85296, `camel-as2`, where a receipt could be
+  signed with the key of a different trading partner);
+* security state left on a pooled thread (CVE-2026-84181, `camel-shiro`, see
+  _Authentication or authorization bypass in security-providing components_);
+* a cache shared across the process (CVE-2026-85317, `camel-http`, the
+  JVM-wide OAuth2 token cache).
 
 Two questions decide it:
 
@@ -881,7 +1138,10 @@ Two questions decide it:
 * *Does the cache key contain everything that changes the value?* Where the
   shared object is a cache of something an endpoint is authorised to use, a key
   that omits a field which alters what the cached value permits is the same
-  defect as having no key at all.
+  defect as having no key at all. The OAuth2 token cache in CVE-2026-85317 was
+  keyed without the requested scope, the resource indicator and the token
+  endpoint, so an endpoint could be served a token minted for a different
+  scope, resource or authorization server.
 
 This is not "any race condition is a vulnerability". An interleaving that only
 corrupts the failing exchange's own result is a correctness bug. It is in scope
@@ -899,17 +1159,19 @@ added to a route without further configuration.
 Historical examples: CVE-2020-11972, CVE-2020-11973, CVE-2026-40860 and
 CVE-2026-43865 are insecure-default cases that also fall into the
 deserialisation class; CVE-2026-49365 and CVE-2026-56139 (`muteException`
-defaulting to `false`) are insecure-default cases in the
-information-disclosure class.
+defaulting to `false`) and CVE-2026-85260 (`logPhi` defaulting to `true`) are
+insecure-default cases in the information-disclosure class.
 
-Two shapes are worth stating on their own, because in both the dangerous state
-is reached by omission rather than by an opt-in - which is what separates them
-from the documented opt-ins that are out of scope:
+Three shapes are worth stating on their own, because in each the dangerous
+state is reached by omission rather than by an opt-in - which is what separates
+them from the documented opt-ins that are out of scope:
 
 * *Turning a protection on must not be what turns another one off.* Enabling
   transport security while leaving the peer-verification material unconfigured
   must fall back to the platform default trust anchors, never to accepting
-  every peer. An encrypted connection with no peer authentication is worth
+  every peer (CVE-2026-85247, `camel-knative`, where enabling SSL without a
+  truststore trusted every certificate). An encrypted connection with no peer
+  authentication is worth
   little against an attacker on the network path, and an operator who asked for
   TLS has not thereby asked to skip certificate validation. Keep "trust
   everything" reachable only by naming it.
@@ -920,7 +1182,24 @@ from the documented opt-ins that are out of scope:
   refuses to express as a literal `*`, which is exactly why reflecting the
   origin is the usual way around that rule. Send `Vary: Origin` whenever the
   origin is reflected, so a shared cache cannot serve one origin's response to
-  another.
+  another. Two components shipped this policy: `camel-platform-http-vertx`
+  (CVE-2026-84176), which also sent `Access-Control-Allow-Credentials` outside
+  the origin check, and `camel-jetty` (CVE-2026-85313), where `enableCORS`
+  installed Jetty's `CrossOriginFilter` with its stock defaults.
+* *A library object that Camel builds to do Camel's own work carries Camel's
+  defaults.* When Camel constructs or selects a third-party object to implement
+  part of a Camel feature - deserialising a payload, parsing the input,
+  enforcing an option Camel offers - and leaves the library's stock settings in
+  place, those settings ship as Camel's default, and the defect is Camel's if
+  they break a property this page claims: a deserializer with no filter
+  (CVE-2026-78165, Spring's `JdkSerializationRedisSerializer` as the
+  component's default serializer), a CORS filter that accepts every origin
+  with credentials (CVE-2026-85313, Jetty's `CrossOriginFilter` installed by
+  `enableCORS`), or a hardening that holds only on the JDK's own
+  implementation of an API (CVE-2026-91858, a third-party `TransformerFactory`).
+  This is narrower than it may sound: the connection, TLS and authentication
+  defaults of the client library a component wraps to talk to its service
+  remain the inherited posture described under _Known limitations_.
 
 ==== Injection into back-end queries built by Camel
 
@@ -976,7 +1255,8 @@ be closed as `not a vulnerability`.
   `transferException=true`, `trustAllCertificates=true`,
   `hostnameVerificationEnabled=false`, explicit selection of an
   `ObjectInputStream`-using data format - these are documented opt-ins and the
-  operator has signed up for the consequences.
+  operator has signed up for the consequences. _Per-option opt-ins_ lists them,
+  including the opt-ins introduced by the 2026 fixes.
 * *Behaviour that is only present under the `dev` or `test` profile.* The
   framework applies *no* profile by default; `dev`, `test` and `prod` are all
   opt-in, set explicitly via `camel.main.profile` (or selected for you by
@@ -1018,7 +1298,10 @@ be closed as `not a vulnerability`.
   port - not the individual MBean method. A report that demonstrates
   "MBean operation X executes code or sends to endpoint Y when invoked
   from a JMX or Jolokia connection" describes the documented contract,
-  not a framework vulnerability.
+  not a framework vulnerability. This covers the management surfaces named
+  here. A Camel endpoint that manages a component through messages, such as
+  `dynamic-router-control:`, is not a management surface: a message routed to
+  it is in the message path and is judged like any other (CVE-2026-83531).
 * *The Camel TUI's `--mcp` and `--web` servers.* Camel TUI
   (`dsl/camel-jbang/camel-jbang-plugin-tui`) can optionally expose an MCP
   server (`--mcp`, for AI-agent access) and a browser-accessible terminal
@@ -1096,10 +1379,13 @@ glance but are documented design points. They may be tightened over time; if
 they are, the change is announced through the normal upgrade-guide channel.
 
 * *Some heritage components default to permissive settings.* FTP, plain SMTP,
-  `mapJmsMessage=true` and similar are kept compatible with how they have
-  always behaved. Where the project has decided to tighten a default, the
-  change ships with an upgrade-guide entry and a corresponding CVE if the prior
-  default was a security risk in a default-installed deployment.
+  `mapJmsMessage=true`, `signatureVerificationOption=optional` in the PGP data
+  format (a decrypted message that carries no signature is accepted, so
+  authenticity needs `required`; see CVE-2026-85243) and similar are kept
+  compatible with how they have always behaved. Where the project has decided
+  to tighten a default, the change ships with an upgrade-guide entry and a
+  corresponding CVE if the prior default was a security risk in a
+  default-installed deployment.
 * *Bean-based dispatch via internal headers is intentional.* Headers like
   `CamelBeanMethodName`, `CamelFileName`, `CamelExecCommandExecutable` and
   `CamelJmsDestinationName` are the public contract for letting a route control
@@ -1122,8 +1408,9 @@ they are, the change is announced through the normal upgrade-guide channel.
   built from untrusted input - while the *specific* set of semantic headers a
   component honours is necessarily component-by-component and is documented on
   each component page. The framework itself is in scope whenever an *inbound
-  mapping site* - a consumer, a data format, a structured content mode or a
-  transport binding - maps untrusted input into those headers as part of its
+  mapping site* - a consumer, a data format, a structured content mode, a
+  producer that parses a document or a transport binding - maps untrusted
+  input into those headers as part of its
   own default behaviour without an effective inbound `HeaderFilterStrategy`
   (the same inbound-filter class as the Camel-header item under _In-scope
   vulnerability classes_, e.g. CVE-2026-33454 in `camel-mail`); the
@@ -1132,7 +1419,8 @@ they are, the change is announced through the normal upgrade-guide channel.
 +
 This limitation is about *semantic* headers - the ones a component reads as
 payload data. It does not extend to a component's own *control* headers, which
-select a target, an operation, or the transport and its credentials. Those are
+select a target, an operation, the context the exchange joins, or the
+transport and its credentials. Those are
 internal to the component however they are spelled, they belong in its inbound
 filter set even when they carry no `Camel` prefix, and a report about one is
 in scope rather than route-author responsibility. See the control-header
@@ -1146,12 +1434,16 @@ definition under the Camel-header class in _In-scope vulnerability classes_.
   objects other principals put there - blob and object keys, remote file names,
   listing entries - which are untrusted input under _Adversary model_ and have
   produced accepted path-traversal advisories (CVE-2026-66906, CVE-2026-60093,
-  CVE-2026-66907).
+  CVE-2026-66907 and, on the remote side of a transfer, CVE-2026-79983 to
+  CVE-2026-79986).
 * *Many components inherit the security posture of their underlying client.*
   `camel-jms` inherits JMS-broker client behaviour; `camel-kafka` inherits
   Kafka-client behaviour; cloud SDK components inherit the SDK's TLS and auth
   defaults. A report against Camel must show the Camel framework, not the underlying
-  client, is the cause.
+  client, is the cause. This covers the client's own behaviour toward its
+  service. It does not cover an object Camel builds with a library's stock
+  settings to do part of Camel's own work, such as deserialising or parsing
+  the message; see the library-object shape under _Insecure defaults_.
 
 === Known non-findings
 
@@ -1186,7 +1478,8 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   is the public contract for letting a route control component behaviour;
   see the second bullet under _Known limitations_. A finding is in scope
   only when an *inbound mapping site* - a consumer, a data format, a
-  structured content mode or a transport binding - promotes an
+  structured content mode, a producer that parses a document or a transport
+  binding - promotes an
   untrusted-origin value into that namespace without an effective
   `HeaderFilterStrategy`, the Camel-header / bean-dispatch class under
   _In-scope vulnerability classes_.
@@ -1201,8 +1494,9 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
 +
 *This entry applies only to headers the component reads as payload
   data.* Before using it, check what header X actually does: if it
-  selects a target, an operation, or the transport and its credentials,
-  it is a control header, it is in scope however it is spelled, and the
+  selects a target, an operation, the context the exchange joins, or the
+  transport and its credentials, it is a control header, it is in scope
+  however it is spelled, and the
   disposition is not `KNOWN-NON-FINDING` - see the control-header
   definition under the Camel-header class in _In-scope vulnerability
   classes_, and the advisories cited there for `+websocket.*+`, `+gridfs.*+`,
@@ -1250,11 +1544,23 @@ Disposition is `KNOWN-NON-FINDING` (see _Triage dispositions_).
   reason not to close a report rather than a non-finding: a strategy that
   is constructed and then overwritten, or one that is consulted on one
   entry point but not on a sibling entry point, filters nothing on the
-  path that matters (CVE-2026-78329, CAMEL-24419). Establishing that the
+  path that matters (CVE-2026-78329, CVE-2026-85314). Establishing that the
   declared strategy is the instance actually consulted on the live path
   is part of triaging any report in this class - see "a filter that is
   never consulted is not a filter" under the Camel-header class in
   _In-scope vulnerability classes_.
+* *"The message reached a control endpoint, and control endpoints are
+  management surfaces."* Another inverse error. The management surfaces that
+  are out of scope are the ones named in _Out of scope_ - `camel-management`,
+  the developer console, `camel-jolokia`, JMX. A Camel endpoint that manages a
+  component through messages, such as `dynamic-router-control:`, receives
+  `Exchange` content and is held to the in-scope classes like any other
+  endpoint (CVE-2026-83531).
+* *"The finding needs Saxon-HE, or another third-party implementation, on the
+  class path."* Not a non-finding when another Camel component is what puts it
+  there, and probing a JAXP lookup on the JDK's own implementation alone does
+  not show that it holds the boundary. See the XXE class in _In-scope
+  vulnerability classes_ (CVE-2026-91858).
 * *"A deprecated component still ships and has a CVE."* Deprecated
   components are in limited scope; the primary remediation is the
   documented migration to the supported replacement, not necessarily a
@@ -1376,15 +1682,17 @@ own advisory rather than an amendment to the original. This has happened often
 enough to be a standing rule rather than a case-by-case call, and it takes
 three recognisable shapes:
 
-* *The fix was applied to some call sites but not all* - CAMEL-24413 and
-  CAMEL-24420, where the `camel-hazelcast` deserialization filter added for
-  CVE-2026-43865 was not applied to the remaining Camel-built configurations.
+* *The fix was applied to some call sites but not all* - CVE-2026-78162,
+  where the `camel-hazelcast` deserialization filter added for CVE-2026-43865
+  was not applied to the remaining Camel-built configurations.
 * *The mitigation is present but under-strength* - CVE-2026-42527, where the
   default `ObjectInputFilter` pattern itself admitted `java.net.**`.
 * *The mitigation can be side-stepped by a different route to the same sink* -
   CVE-2026-43866, where a forged `DefaultExchangeHolder` bypassed the filter
-  added for CVE-2026-40860; and CVE-2026-46591, the incomplete-fix follow-on to
-  CVE-2025-66169 in `camel-neo4j`.
+  added for CVE-2026-40860; CVE-2026-46591, the incomplete-fix follow-on to
+  CVE-2025-66169 in `camel-neo4j`; and CVE-2026-85314, where the `camel-mail`
+  `MimeMultipart` data format still admitted the `+mail.smtp.*+` headers that
+  CVE-2026-46584 had filtered on the consumer path.
 
 A corollary for reporters and for triage tooling: "this was already fixed in
 CVE-X" is not a disposition. The claim to check is whether the specific path in
@@ -1492,6 +1800,37 @@ explicit-opt-in entry under _Out of scope_.
 | `hostnameVerificationEnabled=false`
 | component-dependent
 | TLS hostname verification is disabled.
+
+| `requireIntegrityProtection=false` (`camel-crypto-pgp`)
+| `true`
+| A message without the OpenPGP modification detection code is accepted
+  (CVE-2026-85243).
+
+| `allowPredicateFromMessage=true` (`dynamic-router-control`)
+| `false`
+| A control message supplies the subscription predicate and its expression
+  language, which are compiled and evaluated (CVE-2026-83531). Marked
+  `insecure:dev`.
+
+| `allowUrlSource=true`, `allowFilePathSource=true` (`camel-docling`)
+| `false`
+| A `String` body may name a URL to fetch or a local file to read
+  (CVE-2026-78163); `inputBaseDirectory`, unset by default, confines the local
+  paths when it is set. Marked `insecure:dev`.
+
+| `allowExternalEntities=true` (`camel-smooks`)
+| `false`
+| External entities and DTDs declared in the XML body are resolved
+  (CVE-2026-88901). Marked `insecure:dev` on the `smooks:` endpoint.
+
+| `logPhi=true` (`camel-mllp`)
+| `false`
+| HL7 payload content is written to the log (CVE-2026-85260).
+
+| `allowUnmarshallType=true` (`camel-jackson`, `camel-gson`, `camel-jsonb`)
+| `false`
+| The `CamelJacksonUnmarshalType`, `CamelGsonUnmarshalType` or `CamelJsonbUnmarshallType` header selects the class
+  that the body is unmarshalled into (CVE-2016-8749 for Jackson).
 |===
 
 A machine-readable index of these variants, the entry-point trust levels, the
@@ -1525,7 +1864,10 @@ vulnerabilities if skipped; all of them reduce the attack surface materially.
   xref:camel-configuration-utilities.adoc[`SSLContextParameters`] to set the
   trust store, key store, ciphers and protocols explicitly. Do not use
   `trustAllCertificates=true` or `hostnameVerificationEnabled=false` in
-  production.
+  production. Where a protocol has an encrypted variant, prefer it - `sftp` or
+  `ftps` over `ftp` - because what a server returns over a plaintext channel,
+  a directory listing included, can be rewritten by anyone on the network path
+  (CVE-2026-79983).
 * *Strip Camel-internal headers at the trust boundary.* When a consumer
   receives messages from an untrusted producer, remove Camel-controlled
   headers before the message reaches any dispatching processor:
@@ -1569,11 +1911,12 @@ YAML::
 * *On older releases, also strip the control-header namespaces of the
   components in the route.* The framework filters the `+Camel*+` namespace by
   default and has fixed the non-prefixed control headers it shipped
-  (`+websocket.*+`, `+gridfs.*+`, `+irc.*+`, `operationName`, `+mail.smtp.*+`) as
-  those were found; each fix names its affected and fixed versions in the
-  corresponding advisory at link:/security/[]. Where a deployment cannot yet
-  move to a release that carries them, add the relevant prefixes to the
-  `removeHeaders` pattern at the trust boundary alongside `+Camel*+`.
+  (`+websocket.*+`, `+gridfs.*+`, `+irc.*+`, `operationName`, `+mail.smtp.*+`,
+  and the saga's `Long-Running-Action`) as those were found; each fix names
+  its affected and fixed versions in the corresponding advisory at
+  link:/security/[]. Where a deployment cannot yet move to a release that
+  carries them, add the relevant names and prefixes to the `removeHeaders`
+  pattern at the trust boundary alongside `+Camel*+`.
 * *Do not enable Java serialisation on consumers exposed to untrusted
   networks.* In particular, do not set `allowJavaSerializedObject=true`,
   `transferException=true`, or `mapJmsMessage=true` on a JMS consumer when the
@@ -1584,12 +1927,20 @@ YAML::
   should listen on a loopback interface, a sidecar, or a separate network
   only. The TUI servers already default to `127.0.0.1`; do not front them
   with a reverse proxy that makes them reachable from a public network.
+* *Restrict outbound network access.* Let the Camel process reach the hosts
+  its routes need and nothing else. An egress allow-list contains the
+  request-forgery family whatever triggers it - a parser resolving a remote
+  DTD, a message body read as a URL (CVE-2026-78163), a callback address the
+  peer supplies (CVE-2026-80344) or a redirect (CVE-2026-85251) - and keeps
+  internal-only hosts out of reach.
 * *Keep components patched.* Pin Camel to a supported version, subscribe to
   the announce list, and respond to advisories at
   link:/security/[].
 * *Run with least privilege.* Limit the OS user's file-system, network and
   process privileges; in a container deployment, drop unneeded capabilities
-  and mount only the filesystem paths the routes actually need.
+  and mount only the filesystem paths the routes actually need. Use a umask
+  that keeps the files the process writes, such as keys and temporary files,
+  unreadable to other accounts (CVE-2026-85300).
 * *Use the minimal set of dependencies.* Include only the Camel components and
   third-party JARs the application actually uses. Every extra dependency
   enlarges the attack surface and the patch responsibility.
@@ -1617,21 +1968,24 @@ front of you:
 +
 --
 . *Which of the component's headers are control headers?* Any header that
-  selects a target, an operation, or the transport and its credentials is
-  internal regardless of its spelling and must be in the inbound filter set.
-  Prefer the `Camel` prefix for new header constants so the default filter
-  covers them; where a legacy non-prefixed name has to stay, filter its
-  namespace explicitly. Never place a control header outside the filter and
-  rely on the route author to strip it.
+  selects a target, an operation, the context the exchange joins, or the
+  transport and its credentials is internal regardless of its spelling and
+  must be in the inbound filter set. Prefer the `Camel` prefix for new header
+  constants so the default filter covers them; where a legacy non-prefixed
+  name has to stay, filter its namespace explicitly. Never place a control
+  header outside the filter and rely on the route author to strip it. Read a
+  control header only in the feature that needs it, not on every exchange
+  (CVE-2026-85312).
 . *Is the strategy the one actually consulted?* Constructing the right
   strategy is not enough - check that no endpoint default, binding
   constructor or setter replaces it before use, and that it is reached on
   every path, not just the one the test exercises (CVE-2026-78329).
 . *Does every entry point filter the same namespace?* A consumer, a data
-  format's `unmarshal`, each structured content mode, and any query-parameter
-  or transport-metadata mapping all populate the same header map. When one is
-  hardened, harden the others in the same change (CVE-2026-59230 and
-  CAMEL-24419, CVE-2026-63621).
+  format's `unmarshal`, each structured content mode, a producer that parses a
+  document, and any query-parameter or transport-metadata mapping all populate
+  the same header map. When one is hardened, harden the others in the same
+  change (CVE-2026-59230 and CVE-2026-85314, CVE-2026-63621,
+  CVE-2026-85249).
 --
 * *Does the component deserialise into a Java object?* If it uses
   `ObjectInputStream.readObject()`, an XStream-style unmarshaller or a
@@ -1641,7 +1995,8 @@ front of you:
   types. Look for the indirect route as well as the direct one: a third-party
   API that advertises "JDK serialization" reaches
   `ObjectInputStream.readObject()` on your behalf, and grepping only for
-  `new ObjectInputStream(` will miss it. Where the component can route the
+  `new ObjectInputStream(` will miss it (CVE-2026-78165, Spring's
+  `JdkSerializationRedisSerializer`). Where the component can route the
   stream through `CamelObjectInputStream`, it inherits the default JEP-290
   filter added in 4.22 (CAMEL-24296); that is a floor, not a substitute for
   a filter scoped to the types the component actually expects.
@@ -1649,10 +2004,26 @@ front of you:
   name it did not choose?* Remote object and blob names, listing entries and
   file names reported by a backing service are untrusted (see _Adversary
   model_). Normalize the result and verify it resolves inside the configured
-  directory before use; in Camel expressions prefer `${file:onlyname}` over
+  directory before use - on the remote side as well as the local one, since a
+  remote-file consumer retrieves, deletes and renames by that path
+  (CVE-2026-79983). In Camel expressions prefer `${file:onlyname}` over
   `${file:name}`, which returns the remote name verbatim. When passing values
   to an external binary, put them in the argument vector as data and validate
   any caller-supplied extra arguments against a known-safe set.
+* *Does the component decide what a value means by looking at it?* Whether a
+  `String` is content, a path or a URL; whether a body is serialised Java;
+  whether a configured path selects a special mode. Fix the meaning through the
+  endpoint configuration or the Java type of the body, and make any reading
+  that fetches, opens or deserialises something an explicit opt-in
+  (CVE-2026-78163, CVE-2015-5348; for a configured value, CVE-2026-85316).
+* *Does the component accept an expression, a language name, a script or a
+  class name from a message?* Refuse it unless an endpoint option that no
+  header can set allows it, and mark that option `security = "insecure:dev"`
+  (CVE-2026-83531).
+* *Does the component resolve property placeholders while it runs?* Resolve
+  them in route and configuration text once, when the endpoint is built. Never
+  resolve them in a value taken from the message, even from a `+Camel*+`
+  header (CVE-2026-78164).
 * *Does the component map the output of an AI model into the `Exchange`?*
   Model output - including tool-call field names and arguments - is untrusted
   input, not a trusted control channel. Filter it into the header map through
@@ -1673,31 +2044,53 @@ front of you:
   enforce what its option names claim - validate token issuers, audiences and
   signatures; cover every sub-path the matching handler advertises; fail
   closed. Two specific traps, each behind more than one advisory: a check
-  whose configuration is absent must fail closed or refuse to start, never
-  silently drop out of the validation chain (CVE-2026-66908, CVE-2026-53913,
-  CAMEL-24411); and where the component normalizes a path, host or identifier,
-  the authorization decision must be computed from exactly the same normalized
-  value as the dispatch decision (CVE-2026-40022, CAMEL-24412). A denial path
-  must also stop the exchange, not merely set a response that a later step
-  can overwrite.
+  whose configuration or input is absent must fail closed or refuse to start,
+  never silently drop out of the validation chain (CVE-2026-66908,
+  CVE-2026-53913, CVE-2026-80312, CVE-2026-85301); and where the component
+  normalizes a path, host or identifier, the authorization decision must be
+  computed from exactly the same normalized value as the dispatch decision
+  (CVE-2026-40022, CVE-2026-80343). A denial path must also stop the exchange,
+  not merely set a response that a later step can overwrite. Verify the
+  credentials each request presents, and never accept security state that an
+  earlier exchange left on the thread (CVE-2026-84181). An OAuth
+  authorization-code callback verifies the `state` value it issued
+  (CVE-2026-84178).
+* *Does the component verify a signature or an integrity code?* Require the
+  protection on the receiving side rather than accepting whatever format the
+  sender chose, and keep stateful verification objects per exchange
+  (CVE-2026-85243, CVE-2026-85248).
 * *Does the component keep state between exchanges?* Any field on a producer or
   consumer, any static, any component-level cache outlives the exchange that
   wrote it. Ask whether a later sender could read or disturb it, and treat a
   shared unmarshalling target, a stateful cryptographic object, and
   request-scoped key material stored outside the request as the cases to look
-  for first. Where the shared object is a cache, the key must contain every
-  field that changes what the cached value permits.
+  for first (CVE-2026-85245, CVE-2026-85248, CVE-2026-85296). Where the shared
+  object is a cache, the key must contain every field that changes what the
+  cached value permits (CVE-2026-85317).
 * *Does the component send a credential somewhere the route did not choose?*
   Credentials belong to the authority the endpoint was configured with. If the
   component follows redirects, the destination is chosen by the remote server,
   so credentials must not be re-attached once the authority changes, and must
-  not be registered against a wildcard host scope. The same holds for any
-  address the peer supplies rather than the operator: a callback URL, a
-  receipt destination, a re-login endpoint.
+  not be registered against a wildcard host scope (CVE-2026-85251). The same
+  holds for any address the peer supplies rather than the operator: a callback
+  URL, a receipt destination (CVE-2026-80344), a re-login endpoint.
 * *Does the component write a reply to the party that sent the message?* If it
   can return a route failure, it needs a `muteException` option defaulting to
-  `true`. See the information-disclosure class above for the rule and for the
+  `true` (CVE-2026-84180, CVE-2026-85246, CVE-2026-85257, CVE-2026-85315). See
+  the information-disclosure class above for the rule and for the
   declared-fault exception.
+* *Does the component log payloads or write secrets to disk?* Keep sensitive
+  payload content out of the default log levels unless the operator opts in,
+  and honour that option on every code path (CVE-2026-85260). Create files that
+  hold keys or other secrets owner-only, whatever the process umask
+  (CVE-2026-85300).
+* *Does the component build a third-party object to do its own work - a
+  serializer, a filter, a parser factory - with the library's defaults?* Those
+  defaults ship as Camel's, so check them against this model:
+  a serializer's deserialisation filter (CVE-2026-78165), a CORS filter's
+  origin policy (CVE-2026-85313), a JAXP factory configured only through
+  `FEATURE_SECURE_PROCESSING`, whose effect depends on the implementation the
+  class path supplies (CVE-2026-91858).
 * *Does the change relax a default?* New defaults err toward "denied unless
   opted in" for the four `security` categories. If a default must be relaxed,
   the change requires a corresponding upgrade-guide entry and PMC review.

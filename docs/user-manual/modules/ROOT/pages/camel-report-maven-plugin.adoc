@@ -382,6 +382,46 @@ Coverage: 4 out of 5 (80.0%)
 Here we can see that the 2nd last line with `to` has `0` in the count column, and therefore is not covered.
 We can also see that this is one line 34 in the source code file, which is in the `my-camel.xml` XML file.
 
+=== Showing the body types
+
+When the tests run with the message history on (such as `camel.main.messageHistory=true`), the route coverage dump also has
+the body types each step has been reached with, across the messages of the tests (from Camel 4.24). Run the goal with
+`bodyTypes` to show them:
+
+[source,bash]
+----
+mvn camel-report:route-coverage -Dcamel.bodyTypes=true
+----
+
+[source,text]
+----
+  Line #       Count    Route          Body types
+  ------       -----    -----          ----------
+       3           2    from
+       4           2      unmarshal    String
+       7           2      to           LinkedHashMap | String (data and payload)
+----
+
+A step reached with more than one type is a part of the route that is dynamic. When the types are of more than one kind
+(`null`, `payload`, `data` or `collection`), as for the `to` here, the step needs attention: some messages reach it with
+data, others with a payload, so a step that writes the body, or reads its fields, fails for some of them. See
+xref:components:eips:message-history.adoc[Message History] for the body types and their kinds.
+
+To fail the build when a step has been reached with bodies of more than one kind, such as in a CI build that runs the
+tests with the messages of the expected workload, use `failOnMixedBodyKinds`:
+
+[source,bash]
+----
+mvn camel-report:route-coverage -Dcamel.failOnMixedBodyKinds=true
+----
+
+[source,text]
+----
+[WARNING] 1 step(s) have been reached with bodies of more than one kind: some messages bring data and others a payload, so a step that writes the body, or reads its fields, fails for some of them:
+    routes/orders.xml:7 to (route orders): LinkedHashMap | String (data and payload)
+[ERROR] Failed to execute goal org.apache.camel:camel-report-maven-plugin:route-coverage (default-cli): There are 1 step(s) reached with bodies of more than one kind!
+----
+
 === Options
 
 The maven plugin *coverage* goal supports the following options which can be configured from the command line (use `-D` syntax),
@@ -401,5 +441,10 @@ The maven plugin *coverage* goal supports the following options which can be con
  that was tested corresponds to which of the routes from the source code.
 | generateJacocoXmlReport | false | Whether to generate a coverage-report in Jacoco XML format. When enabled it will generate the file: `target/site/jacoco/xmlJacoco.xml`
 | generateHtmlReport | false | Whether to generate a coverage-report in HTML format. When enabled it will generate the file: `target/site/route-coverage/html/index.html`
+| bodyTypes | false | Whether to show the body types each step has been reached with, which the route coverage dump has when the
+ tests ran with the message history on (Camel 4.24 or newer).
+| failOnMixedBodyKinds | false | Whether to fail when a step has been reached with bodies of more than one kind (null,
+ payload, data or collection) in the tests: some messages reach it with data and others with a payload, so a step that
+ writes the body, or reads its fields, fails for some of them.
 |===
 

@@ -19,6 +19,7 @@ package org.apache.camel.component.openai;
 public enum OpenAIOperations {
 
     chatCompletion("chat-completion"),
+    decisions("decisions"),
     responses("responses"),
     responsesRetrieve("responses-retrieve"),
     responsesCancel("responses-cancel"),
@@ -50,7 +51,7 @@ public enum OpenAIOperations {
         }
         throw new IllegalArgumentException(
                 "Unknown operation: " + value
-                                           + ". Supported: chat-completion, responses, responses-retrieve, "
+                                           + ". Supported: chat-completion, decisions, responses, responses-retrieve, "
                                            + "responses-cancel, batch, batch-retrieve, batch-cancel, batch-results, "
                                            + "embeddings, tool-execution, "
                                            + "audio-transcription, audio-translation, audio-speech, moderation, "

@@ -205,6 +205,7 @@ public final class JsonMapper {
         model.setLenientProperties(mobj.getBooleanOrDefault("lenientProperties", false));
         model.setBrowsable(mobj.getBooleanOrDefault("browsable", false));
         model.setRemote(mobj.getBooleanOrDefault("remote", false));
+        model.setInternal(mobj.getBooleanOrDefault("internal", false));
         parseArtifact(mobj, model);
     }
 
@@ -238,6 +239,10 @@ public final class JsonMapper {
         obj.put("lenientProperties", model.isLenientProperties());
         obj.put("browsable", model.isBrowsable());
         obj.put("remote", model.isRemote());
+        // only written for the few internal components; a catalog without it reads as not internal
+        if (model.isInternal()) {
+            obj.put("internal", true);
+        }
         obj.put("verifiers", model.getVerifiers());
         obj.entrySet().removeIf(e -> e.getValue() == null);
         JsonObject wrapper = new JsonObject();
@@ -706,6 +711,7 @@ public final class JsonMapper {
         option.setPrefix(mp.getString("prefix"));
         option.setOptionalPrefix(mp.getString("optionalPrefix"));
         option.setMultiValue(mp.getBooleanOrDefault("multiValue", false));
+        option.setMultiEnum(mp.getBooleanOrDefault("multiEnum", false));
         option.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
         option.setAutowired(mp.getBooleanOrDefault("autowired", false));
         option.setDeprecationNote(mp.getString("deprecationNote"));
@@ -935,6 +941,10 @@ public final class JsonMapper {
         prop.put("type", option.getType());
         prop.put("javaType", option.getJavaType());
         prop.put("enum", option.getEnums());
+        if (option.isMultiEnum()) {
+            // only include if supported to not regen all files
+            prop.put("multiEnum", true);
+        }
         prop.put("oneOf", option.getOneOfs());
         prop.put("prefix", option.getPrefix());
         prop.put("optionalPrefix", option.getOptionalPrefix());

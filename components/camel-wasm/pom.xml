@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.23.0-SNAPSHOT</version>
+        <version>4.24.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-wasm</artifactId>
@@ -33,7 +33,6 @@
     <description>Camel Wasm component</description>
 
     <properties>
-        <camel.surefire.fork.additional-vmargs>-Dwasm.resources.path=${project.basedir}/src/test/resources</camel.surefire.fork.additional-vmargs>
         <supportLevel>Experimental</supportLevel>
     </properties>
 
@@ -59,19 +58,6 @@
             <groupId>run.endive</groupId>
             <artifactId>compiler</artifactId>
             <version>${endive-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- testing - misc -->

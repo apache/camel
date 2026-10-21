@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * The route topology the diagrams draw: the routes, their steps, the routes they call and the systems they reach, with
@@ -40,15 +41,50 @@ final class DiagramTopology {
     /** What the route-structure console leaves out of the statistics of the from line, which are the route's. */
     private static final List<String> ROUTE_ONLY_STATISTICS = List.of("coverage", "load01", "load05", "load15");
 
-    /** The structure of the routes of an integration, and which routes they were. */
-    private record Structure(String pid, int reloaded, List<String> routeIds, JsonObject topology) {
+    /**
+     * The structure of the routes of an integration, and which routes they were, with its steps by route and step id.
+     */
+    private record Structure(
+            String pid, int reloaded, List<String> routeIds, JsonObject topology, Map<String, Step> steps) {
 
         boolean isOf(String pid, int reloaded, List<String> routeIds) {
             return this.pid.equals(pid) && this.reloaded == reloaded && this.routeIds.equals(routeIds);
         }
     }
 
+    /** A step as the route structure has it: its code (to[log:outbox]) and the line of the source it is on. */
+    record Step(String code, int line) {
+    }
+
     private volatile Structure structure;
+
+    /**
+     * The step of a route by its id, from the structure asked for last (the Routes tab shows what each step does); null
+     * until the structure of the integration has been asked for, or when it has no such step.
+     */
+    Step step(String pid, String routeId, String id) {
+        Structure s = structure;
+        if (s == null || !s.pid().equals(pid) || routeId == null || id == null) {
+            return null;
+        }
+        return s.steps().get(stepKey(routeId, id));
+    }
+
+    /**
+     * Asks for the structure when the routes of the integration have changed since it was asked for, as {@link #load}
+     * does without making the copy with the numbers. On the background thread only.
+     */
+    void refreshStructure(MonitorContext ctx, String pid) {
+        IntegrationInfo info = integration(ctx, pid);
+        if (info == null) {
+            return;
+        }
+        List<String> routeIds = routeIds(info);
+        Structure s = structure;
+        if (s == null || !s.isOf(pid, info.reloaded, routeIds)) {
+            fetch(ctx, pid, info.reloaded, routeIds);
+        }
+    }
 
     /**
      * The topology of the integration, with its numbers as of its status file; null when the integration does not
@@ -60,7 +96,7 @@ final class DiagramTopology {
             // no status to take the numbers from: they come with the structure
             return request(ctx, pid, true);
         }
-        List<String> routeIds = info.routes.stream().map(r -> r.routeId).filter(Objects::nonNull).sorted().toList();
+        List<String> routeIds = routeIds(info);
         Structure s = structure;
         if (s == null || !s.isOf(pid, info.reloaded, routeIds)) {
             s = fetch(ctx, pid, info.reloaded, routeIds);
@@ -69,6 +105,10 @@ final class DiagramTopology {
             }
         }
         return withNumbers(s.topology(), info);
+    }
+
+    private static List<String> routeIds(IntegrationInfo info) {
+        return info.routes.stream().map(r -> r.routeId).filter(Objects::nonNull).sorted().toList();
     }
 
     /**
@@ -84,9 +124,35 @@ final class DiagramTopology {
         if (topology == null) {
             return null;
         }
-        s = new Structure(pid, reloaded, routeIds, topology);
+        s = new Structure(pid, reloaded, routeIds, topology, steps(topology));
         structure = s;
         return s;
+    }
+
+    /** The steps of the routes of the topology by route and step id, with their code unescaped as the diagrams do. */
+    private static Map<String, Step> steps(JsonObject topology) {
+        Map<String, Step> answer = new HashMap<>();
+        Collection<?> routes = topology.getCollection("routes");
+        if (routes == null) {
+            return answer;
+        }
+        for (Object r : routes) {
+            if (r instanceof JsonObject route && route.getCollection("code") != null) {
+                String routeId = route.getString("routeId");
+                for (Object o : route.getCollection("code")) {
+                    if (o instanceof JsonObject line && routeId != null && line.getString("id") != null) {
+                        String code = line.getString("code");
+                        answer.put(stepKey(routeId, line.getString("id")),
+                                new Step(code != null ? Jsoner.unescape(code) : null, line.getIntegerOrDefault("line", 0)));
+                    }
+                }
+            }
+        }
+        return answer;
+    }
+
+    private static String stepKey(String routeId, String id) {
+        return routeId + '/' + id;
     }
 
     /** Asks the integration for its topology, with the structure of its routes and the systems they reach. */
@@ -164,7 +230,8 @@ final class DiagramTopology {
 
     /**
      * The statistics of each line of the route's code: the first two lines (the route and its from) have the route's,
-     * the others those of their step.
+     * the others those of their step, with the body types the step has been reached with so far (CAMEL-25750): the
+     * structure has those it was asked with.
      */
     private static void addStepStatistics(JsonObject route, RouteInfo info) {
         Collection<?> code = route.getCollection("code");
@@ -172,9 +239,13 @@ final class DiagramTopology {
             return;
         }
         Map<String, Map<String, ?>> steps = new HashMap<>();
+        Map<String, ProcessorInfo> bodies = new HashMap<>();
         for (ProcessorInfo p : info.processors) {
             if (p.id != null && p.statistics != null) {
                 steps.put(p.id, p.statistics);
+            }
+            if (p.id != null && !p.bodyTypes.isEmpty()) {
+                bodies.put(p.id, p);
             }
         }
         JsonArray lines = new JsonArray();
@@ -189,6 +260,11 @@ final class DiagramTopology {
                 };
                 if (statistics != null) {
                     line.put("statistics", statistics instanceof JsonObject jo ? jo : new JsonObject(statistics));
+                }
+                ProcessorInfo body = index > 1 ? bodies.get(line.getString("id")) : null;
+                if (body != null) {
+                    line.put("bodyTypes", new JsonArray(body.bodyTypes));
+                    line.put("bodyKinds", new JsonArray(body.bodyKinds));
                 }
                 lines.add(line);
             } else {

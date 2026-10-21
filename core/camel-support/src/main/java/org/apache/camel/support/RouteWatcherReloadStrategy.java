@@ -20,9 +20,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +81,20 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     /** The sources of the last failed reload: retried when the properties change, as a missing property may be why. */
     private final List<Resource> failedSources = new ArrayList<>();
     private Supplier<Collection<Resource>> beanResources;
+    /** The parts of the pattern that start with ! (without it): what is left out of reloading. */
+    private final List<String> excludes = new ArrayList<>();
+
+    /** How many reloads in a row, all for files under the same data folder, make the reload loop warning. */
+    static final int LOOP_RELOADS = 5;
+    /** Within how long those reloads must be, in millis. */
+    static final long LOOP_MILLIS = 15000;
+    /** The last reloads that were for files under one data folder: when, and which folder. */
+    private final Deque<DataReload> dataReloads = new ArrayDeque<>();
+    /** The folders the reload loop warning has named already. */
+    private final Set<String> loopWarned = new HashSet<>();
+
+    private record DataReload(long time, String folder) {
+    }
 
     public Supplier<Collection<Resource>> getBeanResources() {
         return beanResources;
@@ -110,7 +128,9 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * Used for inclusive filtering of routes from directories.
      *
      * Typical used for specifying to accept routes in XML or YAML files, such as <tt>*.yaml,*.xml</tt>. Multiple
-     * patterns can be specified separated by comma.
+     * patterns can be specified separated by comma. A pattern that starts with <tt>!</tt> excludes what it matches,
+     * such as <tt>*,!inbox/**</tt> to watch every file except the files under the inbox folder; a folder that an
+     * exclude matches as a whole is not scanned at all.
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;
@@ -159,29 +179,47 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         final String base = new File(getFolder()).getAbsolutePath();
         final AntPathMatcher matcher = new AntPathMatcher();
 
+        // the parts that start with ! exclude what they match, such as the data folders the routes read and write
+        List<String> includes = new ArrayList<>();
+        excludes.clear();
+        for (String part : pattern.split(",")) {
+            part = part.trim();
+            if (part.startsWith("!")) {
+                part = part.substring(1).trim();
+                if (!part.isEmpty()) {
+                    excludes.add(part);
+                }
+            } else if (!part.isEmpty()) {
+                includes.add("*".equals(part) ? "**" : part);
+            }
+        }
+        if (includes.isEmpty()) {
+            includes.add("**");
+        }
+
         if (getFileFilter() == null) {
             // file matcher that matches via the ant path matcher
-            final String[] parts = pattern.split(",");
             setFileFilter(f -> {
-                for (String part : parts) {
-                    part = part.trim();
-                    // the file name, and the path relative to the starting folder (such as sub/foo.yaml)
-                    String path = f.getAbsolutePath();
-                    String relative = null;
-                    if (path.startsWith(base)) {
-                        relative = path.substring(base.length()).replace('\\', '/');
-                        while (relative.startsWith("/")) {
-                            relative = relative.substring(1);
-                        }
-                        path = FileUtil.stripPath(path);
+                // the file name, and the path relative to the starting folder (such as sub/foo.yaml)
+                String path = f.getAbsolutePath();
+                String relative = null;
+                if (path.startsWith(base)) {
+                    relative = path.substring(base.length()).replace('\\', '/');
+                    while (relative.startsWith("/")) {
+                        relative = relative.substring(1);
                     }
-
-                    String name = FileUtil.compactPath(f.getPath());
-                    boolean exact = name.equals(part);
-                    boolean result = exact || matcher.match(part, path, false)
-                            || relative != null && matcher.match(part, relative, false);
+                    path = FileUtil.stripPath(path);
+                }
+                String name = FileUtil.compactPath(f.getPath());
+                for (String part : excludes) {
+                    if (matches(matcher, part, name, path, relative)) {
+                        LOG.trace("Excluding file pattern:!{} path:{}", part, path);
+                        return false;
+                    }
+                }
+                for (String part : includes) {
+                    boolean result = matches(matcher, part, name, path, relative);
                     LOG.trace("Accepting file pattern:{} path:{} -> {}", part, path, result);
-
                     if (result) {
                         return true;
                     }
@@ -193,12 +231,137 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         super.doStart();
     }
 
+    private static boolean matches(AntPathMatcher matcher, String part, String name, String path, String relative) {
+        return name.equals(part) || matcher.match(part, path, false)
+                || relative != null && matcher.match(part, relative, false);
+    }
+
+    /**
+     * A folder that an exclude of the pattern matches as a whole, such as <tt>inbox</tt> for <tt>!inbox/**</tt>: the
+     * folder is left out of the scan, so the files the routes read and write in it are not walked on every scan.
+     */
+    @Override
+    protected boolean isExcludedDirectory(Path dir) {
+        if (excludes.isEmpty() || folder == null) {
+            return false;
+        }
+        String relative = relativePath(dir.toFile());
+        if (relative == null || relative.isEmpty()) {
+            return false;
+        }
+        for (String part : excludes) {
+            // inbox and inbox/** match the folder itself; a file pattern such as *.json does not leave a folder out
+            if (part.equals(relative) || AntPathMatcher.INSTANCE.match(part, relative + "/_", false)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The file a route was loaded from, as an absolute path, or null when it is not a file. */
+    private static Path sourcePath(Resource resource) {
+        String location = resource != null ? resource.getLocation() : null;
+        if (location == null || location.contains(":") && !location.startsWith("file:")) {
+            return null;
+        }
+        try {
+            return Paths.get(location.startsWith("file:") ? location.substring(5) : location).toAbsolutePath().normalize();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** The path of the file relative to the watched folder, with / separators, or null when it is not under it. */
+    private String relativePath(File file) {
+        String base = new File(getFolder()).getAbsolutePath();
+        String path = file.getAbsolutePath();
+        if (!path.startsWith(base)) {
+            return null;
+        }
+        String relative = path.substring(base.length()).replace('\\', '/');
+        while (relative.startsWith("/")) {
+            relative = relative.substring(1);
+        }
+        return relative;
+    }
+
+    /**
+     * Routes that write files into a folder under the watched one reload themselves: the reload restarts the routes,
+     * they write again, and that is a change again (a file copied into an inbox, moved to done or archive). When the
+     * last {@link #LOOP_RELOADS} reloads within {@link #LOOP_MILLIS} were each for files under the same folder only,
+     * and none of those files is a source of a route, a properties file or a Java or Groovy source, a WARN names the
+     * folder and how to leave it out of reloading, once per folder (CAMEL-25670).
+     *
+     * @return whether the warning was logged now
+     */
+    boolean checkReloadLoop(List<File> changed, long now) {
+        String data = dataFolder(changed);
+        if (data == null) {
+            dataReloads.clear();
+            return false;
+        }
+        dataReloads.addLast(new DataReload(now, data));
+        while (dataReloads.size() > LOOP_RELOADS) {
+            dataReloads.removeFirst();
+        }
+        long took = now - dataReloads.getFirst().time();
+        if (dataReloads.size() == LOOP_RELOADS && took <= LOOP_MILLIS
+                && dataReloads.stream().allMatch(r -> r.folder().equals(data)) && loopWarned.add(data)) {
+            LOG.warn("Routes reloaded {} times in {} seconds, each time because files under {}/ changed, which are not"
+                     + " sources of the routes. If that folder holds data the routes read or write, leave it out of"
+                     + " reloading: camel run --data-dir={}, or !{}/** in the reload pattern"
+                     + " (camel.main.routesReloadPattern).",
+                    LOOP_RELOADS, Math.max(1, Math.round(took / 1000.0)), data, data, data);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * The folder right under the watched one that holds all the changed files, when none of them is a source (a route
+     * was loaded from it, or it is a properties, Java or Groovy file), else null.
+     */
+    private String dataFolder(List<File> changed) {
+        // by full path: a data file named as a route source (inbox/route.yaml and route.yaml) is still data
+        Set<Path> sources = new HashSet<>();
+        for (Route route : getCamelContext().getRoutes()) {
+            Path source = sourcePath(route.getSourceResource());
+            if (source != null) {
+                sources.add(source);
+            }
+        }
+        String data = null;
+        for (File file : changed) {
+            String name = file.getName();
+            if (name.endsWith(".properties") || name.endsWith(".java") || name.endsWith(".groovy")
+                    || sources.contains(file.toPath().toAbsolutePath().normalize())) {
+                return null;
+            }
+            String relative = relativePath(file);
+            int slash = relative != null ? relative.indexOf('/') : -1;
+            if (slash < 1) {
+                return null;
+            }
+            String top = relative.substring(0, slash);
+            if (data == null) {
+                data = top;
+            } else if (!data.equals(top)) {
+                return null;
+            }
+        }
+        return data;
+    }
+
     @Override
     protected String startupMessage(File dir) {
         return "Live route reloading enabled (directory: " + dir + ")";
     }
 
     protected boolean onPropertiesReload(Resource resource, boolean reloadRoutes) throws Exception {
+        // the location the properties component knows the file by, which can be written another way than the file
+        // that changed, such as file:./application.properties for file:application.properties (CAMEL-25767)
+        String location = knownLocation(resource);
+
         // optimize to only update if something changed
         OrderedLocationProperties changed = null;
 
@@ -214,7 +377,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 IOHelper.close(is);
             }
             changed = new OrderedLocationProperties();
-            changed.putAll(resource.getLocation(), tmp);
+            changed.putAll(location, tmp);
             // filter to only keep changed properties
             pc.keepOnlyChangeProperties(changed);
         }
@@ -223,16 +386,16 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         if (changed != null && !changed.isEmpty()) {
             LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
                     resource.getLocation());
-            reloaded = pc.reloadProperties(resource.getLocation());
+            reloaded = pc.reloadProperties(location);
             if (reloaded) {
-                pr.onReload(resource.getLocation(), changed);
+                pr.onChanged(location, changed);
                 // trigger all routes to be reloaded
                 if (reloadRoutes) {
                     retryFailedOrReloadAll();
                 }
             } else {
                 // this may be a new properties file, so we need to add as new known location
-                String existing = getPropertiesByLocation(resource.getLocation());
+                String existing = getPropertiesByLocation(location);
                 if (existing == null) {
                     // remove scheme
                     String loc = resource.getLocation();
@@ -242,6 +405,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     PropertiesSource ps = pc.getPropertiesSourceFactory().newFilePropertiesSource(loc);
                     pc.addPropertiesSource(ps);
                     reloaded = true;
+                    // the configuration in a new properties file is applied as well (CAMEL-25767)
+                    pr.onChanged(location, changed);
+                    if (reloadRoutes) {
+                        retryFailedOrReloadAll();
+                    }
                 }
             }
         }
@@ -269,6 +437,37 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         }
     }
 
+    /**
+     * The location of the properties component for the file of the resource, as the same file can be written in other
+     * ways (file:./application.properties and file:application.properties), else the location of the resource.
+     */
+    private String knownLocation(Resource resource) {
+        String location = resource.getLocation();
+        Path file = filePath(location);
+        if (file == null) {
+            return location;
+        }
+        for (String s : getCamelContext().getPropertiesComponent().getLocations()) {
+            String known = s.endsWith(";optional=true") ? s.substring(0, s.length() - 14) : s;
+            if (file.equals(filePath(known))) {
+                return known;
+            }
+        }
+        return location;
+    }
+
+    // the absolute path of a file: location, or null
+    private static Path filePath(String location) {
+        if (location == null || !location.startsWith("file:")) {
+            return null;
+        }
+        try {
+            return Paths.get(location.substring(5)).toAbsolutePath().normalize();
+        } catch (InvalidPathException e) {
+            return null;
+        }
+    }
+
     private String getPropertiesByLocation(String loc) {
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
         for (String s : pc.getLocations()) {
@@ -288,30 +487,41 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * saved together with a property it uses is therefore built with that property already in place, instead of failing
      * on it and being restored (CAMEL-25032).
      * <p/>
-     * If the batch fails, the files are reloaded one at a time: the reload then fails on the one file that is wrong and
-     * says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
+     * A properties or Groovy file that fails is reported at once, as when it changed alone, and the other files still
+     * reload. A properties file is not reloaded again: the properties component has its new values already, so the file
+     * would have no changes left, and its failure would be lost (CAMEL-25834).
+     * <p/>
+     * If the routes fail, the route files are reloaded one at a time: the reload then fails on the one file that is
+     * wrong and says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
      */
     @Override
     protected void onReloadBatch(List<File> changed) {
+        checkReloadLoop(changed, System.currentTimeMillis());
         if (changed.size() < 2) {
             super.onReloadBatch(changed);
             return;
         }
+        setLastError(null);
+        List<File> routeFiles = new ArrayList<>();
         List<Resource> routes = new ArrayList<>();
         boolean others = false;
-        try {
-            setLastError(null);
-            for (File file : changed) {
-                String name = FileUtil.compactPath(file.getPath());
-                Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
-                if (name.endsWith(".properties")) {
-                    others |= onPropertiesReload(resource, false);
-                } else if (name.endsWith(".groovy")) {
-                    others |= onGroovyReload(resource, false);
-                } else {
-                    routes.add(resource);
+        for (File file : changed) {
+            String name = FileUtil.compactPath(file.getPath());
+            Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
+            if (name.endsWith(".properties") || name.endsWith(".groovy")) {
+                try {
+                    others |= name.endsWith(".properties")
+                            ? onPropertiesReload(resource, false) : onGroovyReload(resource, false);
+                    incSucceededCounter();
+                } catch (Exception e) {
+                    reloadFailed(name, e);
                 }
+            } else {
+                routeFiles.add(file);
+                routes.add(resource);
             }
+        }
+        try {
             if (!routes.isEmpty()) {
                 onRouteReload(routes, false);
             } else if (others) {
@@ -319,14 +529,14 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 retryFailedOrReloadAll();
             }
             // the counter is files reloaded, as it is when they are reloaded one at a time
-            for (int i = 0; i < changed.size(); i++) {
+            for (int i = 0; i < routes.size(); i++) {
                 incSucceededCounter();
             }
         } catch (Exception e) {
-            LOG.debug("Reloading {} changed file(s) together failed, reloading them one at a time to find the file"
-                      + " that is wrong: {}",
-                    changed.size(), e.getMessage(), e);
-            super.onReloadBatch(changed);
+            LOG.debug("Reloading {} changed route file(s) together failed, reloading them one at a time to find the"
+                      + " file that is wrong: {}",
+                    routes.size(), e.getMessage(), e);
+            super.onReloadBatch(routeFiles);
         }
     }
 
@@ -408,18 +618,19 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     = getCamelContext().getRegistry().lookupByNameAndType(RELOAD_RESOURCES, Collection.class);
             if (extras != null) {
                 for (Resource extra : extras) {
-                    if (!sources.contains(extra)) {
+                    // a file that is gone would fail the reload, and every reload after it (CAMEL-25831)
+                    if (!sources.contains(extra) && !isDeletedFile(extra)) {
                         sources.add(extra);
                     }
                 }
             }
             // the Java sources are compiled again, so all beans are created again: a bean of a changed class, and the
-            // beans that call it
+            // beans that call it (not those whose file is gone, such as a Java class that was deleted, CAMEL-25831)
             if (beanResources != null && sources.stream().anyMatch(RouteWatcherReloadStrategy::isJavaSource)) {
                 Collection<Resource> beans = beanResources.get();
                 if (beans != null) {
                     for (Resource bean : beans) {
-                        if (bean != null && !equalResourceLocation(sources, bean)) {
+                        if (bean != null && !isDeletedFile(bean) && !equalResourceLocation(sources, bean)) {
                             sources.add(bean);
                         }
                     }

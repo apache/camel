@@ -1,0 +1,86 @@
+# Each order id is accepted once: the shop sent ORD-1001 twice (resent-order-1001.json). An accepted order is
+# enriched with its customer, read from customers/, and a copy goes to an audit trail without holding the order up.
+- beans:
+    - name: orderIds
+      type: org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository
+
+- route:
+    id: incoming-orders
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - log:
+            message: "Order ${body[orderId]} received"
+        # skipDuplicate false lets a duplicate through, marked with the CamelDuplicateMessage property
+        - idempotentConsumer:
+            expression:
+              simple:
+                expression: "${body[orderId]}"
+            idempotentRepository: orderIds
+            skipDuplicate: false
+            steps:
+              - choice:
+                  when:
+                    - expression:
+                        simple:
+                          expression: "${exchangeProperty.CamelDuplicateMessage} == true"
+                      steps:
+                        - log:
+                            message: "Order ${body[orderId]} is a duplicate, skipped"
+                  otherwise:
+                    steps:
+                      - log:
+                          message: "Order ${body[orderId]} accepted"
+                      # the file name goes in a header: the file consumer of pollEnrich evaluates fileName with
+                      # the headers of the message, not its body; the customer goes to a variable, so the order
+                      # stays the body
+                      - setHeader:
+                          name: customerFile
+                          expression:
+                            simple:
+                              expression: "${body[customer]}.json"
+                      - pollEnrich:
+                          expression:
+                            simple:
+                              expression: "file:customers?fileName=${header.customerFile}&noop=true&idempotent=false"
+                          timeout: 2000
+                          variableReceive: customer
+                      - unmarshal:
+                          variableSend: customer
+                          variableReceive: customer
+                          json:
+                            library: Jackson
+                      - log:
+                          message: "Order ${body[orderId]} for ${variable.customer[name]} (${variable.customer[tier]})"
+                      - wireTap:
+                          uri: direct:audit
+
+# Writes a copy of each accepted order to audit/<orderId>.json
+- route:
+    id: audit
+    from:
+      uri: direct
+      parameters:
+        name: audit
+      steps:
+        - setHeader:
+            name: CamelFileName
+            expression:
+              simple:
+                expression: "${body[orderId]}.json"
+        - marshal:
+            json:
+              library: Jackson
+        - to:
+            uri: file
+            parameters:
+              directoryName: audit
+        - log:
+            message: "Audited ${header.CamelFileName}"
