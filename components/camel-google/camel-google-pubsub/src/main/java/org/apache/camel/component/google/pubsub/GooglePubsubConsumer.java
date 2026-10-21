@@ -163,7 +163,9 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
     @Override
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         // stop pulling: the consumer stays started until the pending exchanges are done, so the subscriber loops must
-        // not subscribe or pull again when their subscriber terminates or their pull is cancelled
+        // not subscribe or pull again when their subscriber terminates or their pull is cancelled.
+        // Note: when a stopRoute with abortAfterTimeout=true times out, the route is started again while this consumer
+        // is still started, so doStart does not run and no loop pulls again until the route is stopped and started
         generation.incrementAndGet();
         if (!subscribers.isEmpty()) {
             subscribers.forEach(AbstractApiService::stopAsync);
