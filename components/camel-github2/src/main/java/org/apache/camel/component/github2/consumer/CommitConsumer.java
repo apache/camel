@@ -157,6 +157,8 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
                 // the last routed commit is no longer on the branch (a force push or a reset to an older commit), and
                 // the newest commits were all routed before: continue from the newest one, so that the next polls do
                 // not read the remembered number of commits again to look for the last routed one
+                LOG.info("Last routed commit {} is no longer on branch {}, continuing from the newest commit {}",
+                        lastSha, branchName, commits.get(0).getSHA1());
                 lastSha = commits.get(0).getSHA1();
             }
 
