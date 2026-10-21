@@ -201,6 +201,11 @@ A node whose namespace URI (`nsu=`) is not in the namespace table of the server 
 way, so a namespace that the server adds later is found.
 The consumer delivers one exchange with the bad status code for such a node, and the `CamelMiloNodeId` header names it.
 
+The `milo-client` developer console (`/q/dev/milo-client`, for example with `camel run --console`) shows which nodes are
+not monitored: for each connection of the consumers, it lists the routes that use it, whether its session is active, the
+number of monitored nodes, and the refused nodes, each with the status of the latest attempt to create its monitored
+item. Reading it does not wait for a request to the server in progress.
+
 === Status codes and null values
 
 A data change with a Bad or Uncertain status is always delivered, even when its value is null; `omitNullValues` only

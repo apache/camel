@@ -48,12 +48,36 @@ import static java.util.Objects.requireNonNull;
 
 public class MiloClientConnection implements AutoCloseable, CamelContextAware {
 
+    /**
+     * What a connection monitors on its server.
+     *
+     * @param sessionActive  whether the session with the server is active
+     * @param monitoredNodes the number of nodes that have a monitored item on the server
+     * @param refusedNodes   the nodes whose monitored item was refused, which are created again every
+     *                       {@code reconnectTimeout} milliseconds
+     */
+    public record MonitoringState(boolean sessionActive, int monitoredNodes, List<RefusedNode> refusedNodes) {
+    }
+
+    /**
+     * A node whose monitored item was refused.
+     *
+     * @param nodeId the node ID
+     * @param status the status of the latest attempt to create the monitored item of the node: the refusal, or the
+     *               failure of the attempt
+     * @param reason why the client refused the node without asking the server, or {@code null}
+     */
+    public record RefusedNode(String nodeId, StatusCode status, String reason) {
+    }
+
     private final Lock lock = new ReentrantLock();
     private final MiloClientConfiguration configuration;
     private volatile CamelContext camelContext;
     private ExecutorService executor;
     private ScheduledExecutorService reconnectExecutor;
-    private SubscriptionManager manager;
+    // read by getMonitoringState without the lock, which the first connect and the close hold while they wait for the
+    // server
+    private volatile SubscriptionManager manager;
     private volatile boolean initialized;
 
     public MiloClientConnection(final MiloClientConfiguration configuration) {
@@ -98,6 +122,17 @@ public class MiloClientConnection implements AutoCloseable, CamelContextAware {
     public OpcUaClient getOpcUaClient() {
         checkInit();
         return this.manager.getOpcUaClient();
+    }
+
+    /**
+     * Returns what this connection monitors on its server. It does not wait for a service call in progress and does not
+     * connect.
+     *
+     * @return the monitoring state, or {@code null} if the connection is not used yet or is closed
+     */
+    MonitoringState getMonitoringState() {
+        final SubscriptionManager manager = this.manager;
+        return manager != null ? manager.getMonitoringState() : null;
     }
 
     protected void init() {
