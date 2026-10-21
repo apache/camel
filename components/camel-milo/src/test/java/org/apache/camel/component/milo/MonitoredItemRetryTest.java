@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.milo;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
@@ -53,10 +55,20 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
     // a namespace that the server does not have until a test adds it
     private static final String LATE_NAMESPACE_URI = "urn:org:apache:camel:late";
 
-    // the client endpoints only differ in the node, so they share one connection
-    private static final String MILO_CLIENT = "milo-client:opc.tcp://foo:bar@localhost:@@port@@"
-                                              + "?allowedSecurityPolicies=None&overrideHost=true"
-                                              + "&samplingInterval=50&requestedPublishingInterval=100&node=";
+    // the client endpoints only differ in their nodes, so they share one connection
+    private static final String MILO_CLIENT_BASE = "milo-client:opc.tcp://foo:bar@localhost:@@port@@"
+                                                   + "?allowedSecurityPolicies=None&overrideHost=true"
+                                                   + "&samplingInterval=50&requestedPublishingInterval=100";
+
+    private static final String MILO_CLIENT = MILO_CLIENT_BASE + "&node=";
+
+    // a node that the server never has, and one that it gets while the refusal of the first is being delivered
+    private static final String MISSING_NODE = "nsu=" + MiloServerComponent.DEFAULT_NAMESPACE_URI + ";s=missingItem";
+
+    private static final String OVERTAKEN_NODE = "nsu=" + MiloServerComponent.DEFAULT_NAMESPACE_URI + ";s=overtakenItem";
+
+    private static final String MILO_CLIENT_OVERTAKEN
+            = MILO_CLIENT_BASE + "&nodes=RAW(" + MISSING_NODE + "," + OVERTAKEN_NODE + ")";
 
     private static final String MILO_CLIENT_ITEM_1
             = MILO_CLIENT + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI, "myitem1");
@@ -82,6 +94,11 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
     @EndpointInject("mock:stoppedItem")
     protected MockEndpoint stoppedItemEndpoint;
 
+    @EndpointInject("mock:overtaken")
+    protected MockEndpoint overtakenEndpoint;
+
+    private final CountDownLatch overtakenCreated = new CountDownLatch(1);
+
     @Produce(DIRECT_START_1)
     protected ProducerTemplate producer1;
 
@@ -99,6 +116,8 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
                         .to("mock:lateNamespaceItem");
                 from(resolve(MILO_CLIENT_STOPPED_ITEM)).routeId("stoppedItem").autoStartup(false)
                         .to("mock:stoppedItem");
+                from(resolve(MILO_CLIENT_OVERTAKEN)).routeId("overtaken").autoStartup(false)
+                        .process(exchange -> holdRefusalOfMissingNode(exchange)).to("mock:overtaken");
             }
         };
     }
@@ -205,6 +224,39 @@ public class MonitoredItemRetryTest extends AbstractMiloServerTest {
             item1Endpoint.assertIsSatisfied();
         } finally {
             endpoint.releaseConnection(connection);
+        }
+    }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void refusalOvertakenByTheNextAttemptIsNotDelivered() throws Exception {
+        // the missing node delivers its refusal, the other node its first value and no refusal after it
+        overtakenEndpoint.expectedHeaderValuesReceivedInAnyOrder(MiloConstants.HEADER_NODE_ID, MISSING_NODE,
+                OVERTAKEN_NODE);
+        overtakenEndpoint.setAssertPeriod(2_000);
+        context.getRouteController().startRoute("overtaken");
+        overtakenEndpoint.assertIsSatisfied();
+
+        for (final Exchange exchange : overtakenEndpoint.getReceivedExchanges()) {
+            final DataValue value = exchange.getMessage().getBody(DataValue.class);
+            if (OVERTAKEN_NODE.equals(exchange.getMessage().getHeader(MiloConstants.HEADER_NODE_ID))) {
+                assertGoodValue("Foo").accept(value);
+            } else {
+                assertStatus(StatusCodes.Bad_NodeIdUnknown).accept(value);
+            }
+        }
+    }
+
+    /**
+     * Holds the refusal of the missing node, which the consumer delivers first while it starts, until the server has
+     * the other node and the next attempt has created it, so that the first value of that node overtakes its refusal
+     */
+    private void holdRefusalOfMissingNode(final Exchange exchange) throws InterruptedException {
+        if (MISSING_NODE.equals(exchange.getMessage().getHeader(MiloConstants.HEADER_NODE_ID))) {
+            template.sendBody("milo-server:overtakenItem", "Foo");
+            overtakenCreated.await(30, TimeUnit.SECONDS);
+        } else if (exchange.getMessage().getBody(DataValue.class).getStatusCode().isGood()) {
+            overtakenCreated.countDown();
         }
     }
 

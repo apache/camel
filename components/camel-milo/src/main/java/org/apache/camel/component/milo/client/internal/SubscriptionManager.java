@@ -257,7 +257,8 @@ public class SubscriptionManager {
 
         /**
          * Whether the server refused to monitor the node: its status is that refusal, whatever the communication, until
-         * its item is created
+         * its item is created. Set under the lock of the manager when a call hands the refusal out for delivery, and
+         * cleared under it when a call creates the item.
          */
         private volatile boolean refused;
 
@@ -295,11 +296,13 @@ public class SubscriptionManager {
         }
 
         /**
-         * Delivers the status with which the server refused to monitor the node.
+         * Delivers the status with which the server refused to monitor the node, unless its item has been created
+         * since: the node then delivers its values instead.
          */
-        void refuse(final long generation, final DataValue status) {
-            this.refused = true;
-            deliver(generation, status);
+        synchronized void refuse(final long generation, final DataValue status) {
+            if (this.refused) {
+                deliver(generation, status);
+            }
         }
 
         /**
@@ -328,7 +331,8 @@ public class SubscriptionManager {
     }
 
     /**
-     * A status value for a node that could not be monitored, delivered to its consumer outside of the lock
+     * A status value for a node that could not be monitored, delivered to its consumer outside of the lock while the
+     * node is still refused
      */
     private record PendingValue(Subscription subscription, long generation, DataValue value) {
         void deliver() {
@@ -370,8 +374,9 @@ public class SubscriptionManager {
          * is unregistered.
          *
          * @param  subscriptions the subscriptions to create, by client handle
-         * @param  retry         whether this is an attempt to create refused nodes again: their refusal has been
-         *                       delivered already, so a node refused again is neither logged above DEBUG nor delivered
+         * @param  retry         whether this is an attempt to create refused nodes again: their refusal has been queued
+         *                       for delivery already, so a node refused again is neither logged above DEBUG nor
+         *                       delivered
          * @return               the bad status values of the nodes that could not be monitored, to be delivered to
          *                       their consumers after the lock of the manager has been released
          * @throws UaException   if the server rejected the CreateMonitoredItems service call; unless {@code retry} is
@@ -476,13 +481,17 @@ public class SubscriptionManager {
                 }
             }
 
+            // marked under the lock once the call has succeeded: a refusal that the creation of its item overtakes, by
+            // an attempt or a new connection, is then dropped, and a call that fails leaves the nodes to the loss report
+            // of the connection
+            pendingValues.forEach(pending -> pending.subscription().refused = true);
             scheduleRetry();
             return pendingValues;
         }
 
         /**
-         * Records that the server refused to monitor a node. The first refusal is logged at WARN and delivered to the
-         * consumer, a refusal on a later attempt only logged at DEBUG.
+         * Records that the server refused to monitor a node. The first refusal is logged at WARN and queued for
+         * delivery to the consumer, a refusal on a later attempt only logged at DEBUG.
          */
         private void refuse(
                 final UInteger clientHandle, final Subscription s, final StatusCode status, final String reason,
@@ -1114,9 +1123,9 @@ public class SubscriptionManager {
     /**
      * Creates the nodes that the server refused to monitor on a connection again, in one CreateMonitoredItems call,
      * while the connection is the current one. Nothing is delivered to the consumers: a node created now delivers its
-     * first value from the server. While the session is not active, the attempt is skipped. A call that fails is made
-     * again with the next attempt and never rebuilds the connection, which would interrupt the nodes that are
-     * monitored: a lost session or subscription is recovered without it.
+     * first value from the server, and its refusal, if not delivered yet, is dropped. While the session is not active,
+     * the attempt is skipped. A call that fails is made again with the next attempt and never rebuilds the connection,
+     * which would interrupt the nodes that are monitored: a lost session or subscription is recovered without it.
      * <p>
      * Like the registration of a consumer, the attempt holds {@code lock} until the server answers, so that a consumer
      * that stops or a subscription that is recreated in the meantime cannot interleave with it, and the producers and
