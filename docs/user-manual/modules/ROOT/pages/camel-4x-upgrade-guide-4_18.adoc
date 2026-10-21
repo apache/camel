@@ -31,9 +31,8 @@ window whose count had already been taken: it was checkpointed only with the nex
 partition stayed quiet it was delivered again after a restart. Routes that read this header may now see
 `timeout` more often.
 
-Checkpoint failures from the timer are now logged at `WARN` level with the full stack trace instead of
-at `DEBUG` level with the message only. Checkpoint failures triggered by batch size are still logged at
-`WARN`.
+Checkpoint failures from the timer and from the batch-size trigger are now logged at `WARN` level with the full stack trace instead of
+at `DEBUG` level with the message only.
 
 == Upgrading from 4.18.4 to 4.18.5
 
