@@ -16,13 +16,22 @@
  */
 package org.apache.camel.processor.enricher;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileDefaultBinding;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -32,6 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * variableReceive. The messages of JMS, mail and HTTP consumers create their body on demand as well.
  */
 class PollEnrichTimeoutFileBodyTest extends ContextTestSupport {
+
+    @TempDir
+    Path directTempDir;
 
     @Test
     void theBodyIsNullWhenNothingWasPolled() throws Exception {
@@ -56,6 +68,60 @@ class PollEnrichTimeoutFileBodyTest extends ContextTestSupport {
         assertNull(exchange.getVariable("customer"), "nothing was polled, so no variable");
         // the order is kept as the body
         assertEquals("ORD-1001", exchange.getMessage().getBody(String.class));
+    }
+
+    /**
+     * Deterministic regression test for the race between GenericFileOnCompletion (which moves/deletes the file after
+     * the exchange completes) and a downstream getBody(String.class) call on the restored variableReceive body.
+     * <p>
+     * Rather than relying on thread scheduling to win the race, this test uses a direct: route with a GenericFile body
+     * and an OnCompletion that deletes the file synchronously before the assertion — guaranteeing the file is gone
+     * before getBody(String.class) is called, so the test fails without the fix and passes with it.
+     */
+    @Test
+    void theVariableBodySurvivesFileDeletionAfterCompletion() throws Exception {
+        // Write the file that will serve as the exchange body
+        Path orderFile = directTempDir.resolve("order-deterministic.json");
+        Files.writeString(orderFile, "ORD-DET-001");
+
+        // Build a GenericFile pointing to that file, as a file consumer would set on the exchange.
+        // The binding holds the loaded body; a real file consumer populates it via loadContent.
+        // We pre-load the content here so that the GenericFile is fully initialised and the
+        // conversion to byte[] in PollEnricher can materialise it while the file still exists.
+        GenericFile<File> genericFile = new GenericFile<>();
+        genericFile.setFile(orderFile.toFile());
+        genericFile.setFileName("order-deterministic.json");
+        genericFile.setAbsoluteFilePath(orderFile.toString());
+        genericFile.setEndpointPath(directTempDir.toString());
+        GenericFileDefaultBinding<File> binding = new GenericFileDefaultBinding<>();
+        binding.setBody(genericFile, orderFile.toFile());
+        genericFile.setBinding(binding);
+
+        MockEndpoint mock = getMockEndpoint("mock:variable-direct");
+        mock.expectedMessageCount(1);
+
+        template.send("direct:variable-direct", e -> {
+            e.getIn().setBody(genericFile);
+            // Register an OnCompletion that deletes the file synchronously, simulating GenericFileOnCompletion.
+            // This fires after the exchange is done but before the test reads the body — the worst-case timing
+            // that caused the flaky NoSuchFileException without the fix in PollEnricher.
+            e.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                @Override
+                public void onComplete(Exchange exchange) {
+                    orderFile.toFile().delete();
+                }
+            });
+        });
+
+        mock.assertIsSatisfied();
+        Exchange exchange = mock.getReceivedExchanges().get(0);
+
+        assertNull(exchange.getVariable("customer"), "nothing was polled, so no variable");
+        // File is now deleted — getBody(String.class) must still return the content
+        assertThat(orderFile).doesNotExist();
+        assertThat(exchange.getMessage().getBody(String.class))
+                .as("original body must survive file deletion after completion")
+                .isEqualTo("ORD-DET-001");
     }
 
     @Test
@@ -102,6 +168,11 @@ class PollEnrichTimeoutFileBodyTest extends ContextTestSupport {
                 from("direct:demand")
                         .pollEnrich().simple(fileUri("customers?fileName=C-482.json")).timeout(100)
                         .to("mock:demand");
+
+                from("direct:variable-direct")
+                        .pollEnrich().simple(fileUri("customers?fileName=C-482.json")).timeout(100)
+                        .variableReceive("customer")
+                        .to("mock:variable-direct");
             }
         };
     }

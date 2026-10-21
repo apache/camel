@@ -36,6 +36,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
@@ -408,6 +409,12 @@ public class PollEnricher extends BaseProcessorSupport implements IdAware, Route
         if (variableReceive != null) {
             try {
                 originalBody = exchange.getMessage().getBody();
+                // eagerly materialize a WrappedFile (e.g. GenericFile from a file consumer) body
+                // into bytes so it can survive the file being moved/deleted by GenericFileOnCompletion
+                // after the exchange completes, before any downstream code reads the body
+                if (originalBody instanceof WrappedFile) {
+                    originalBody = exchange.getMessage().getBody(byte[].class);
+                }
                 // do a defensive copy of the headers
                 originalHeaders = headersMapFactory.newMap(exchange.getMessage().getHeaders());
             } catch (Exception throwable) {
