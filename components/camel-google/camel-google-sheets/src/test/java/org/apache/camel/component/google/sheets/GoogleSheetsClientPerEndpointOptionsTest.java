@@ -37,7 +37,7 @@ class GoogleSheetsClientPerEndpointOptionsTest {
     private static final String OAUTH = "?clientId=id&clientSecret=secret&refreshToken=";
 
     @Test
-    void shouldKeepOneClientPerDistinctOptions() throws Exception {
+    void shouldCreateOneClientPerEndpoint() throws Exception {
         RecordingClientFactory factory = new RecordingClientFactory();
         try (CamelContext context = new DefaultCamelContext()) {
             context.getComponent("google-sheets", GoogleSheetsComponent.class).setClientFactory(factory);
@@ -50,9 +50,11 @@ class GoogleSheetsClientPerEndpointOptionsTest {
             GoogleSheetsEndpoint sameAsFirst = context.getEndpoint(
                     "google-sheets://spreadsheets/create" + OAUTH + "token-a", GoogleSheetsEndpoint.class);
 
-            assertEquals(Arrays.asList("token-a", "token-b"), factory.created);
-            assertSame(first.getClient(), sameAsFirst.getClient());
+            assertEquals(Arrays.asList("token-a", "token-b", "token-a"), factory.created);
             assertNotSame(first.getClient(), second.getClient());
+            assertNotSame(first.getClient(), sameAsFirst.getClient());
+            assertSame(first.getClient(), first.getClient());
+            assertEquals(3, factory.created.size());
         }
     }
 

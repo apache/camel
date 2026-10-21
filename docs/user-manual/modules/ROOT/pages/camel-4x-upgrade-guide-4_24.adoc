@@ -232,17 +232,16 @@ a JSON object when none is configured). A route that sets the header must enable
 `.unmarshal(new JsonDataFormat(JsonLibrary.Gson).allowUnmarshallType(true))` or
 `<json library="Gson" allowUnmarshallType="true"/>`.
 
-=== camel-google-mail, camel-google-drive, camel-google-calendar, camel-google-sheets - one API client per endpoint options
+=== camel-google-mail, camel-google-drive, camel-google-calendar, camel-google-sheets - one API client per endpoint
 
 The `google-mail`, `google-mail-stream`, `google-drive`, `google-calendar`, `google-calendar-stream`, `google-sheets` and
-`google-sheets-stream` components now create one API client per distinct set of the options the client is created from
-(`clientId`, `clientSecret`, `refreshToken`, `accessToken`, `serviceAccountKey`, `delegate`, `scopes` and
-`applicationName`, plus `emailAddress`, `p12FileName` and `user` on the two calendar components), instead of a single
-client per component. Endpoints configured with the same options keep sharing one client; endpoints configured with
-different options now get their own client, created from their own options. The `clientFactory` option of a
-`google-drive` endpoint is now used to create the client of that endpoint. In addition, a `google-mail-stream` endpoint configured with neither
-`clientSecret` nor `serviceAccountKey` now fails with an `IllegalArgumentException` when its client is created, instead
-of getting a `null` client and failing at the first API call.
+`google-sheets-stream` components now create one API client per endpoint, from the options of that endpoint (`clientId`,
+`clientSecret`, `refreshToken`, `accessToken`, `serviceAccountKey`, `delegate`, `scopes` and `applicationName`, plus
+`emailAddress`, `p12FileName` and `user` on the two calendar components), instead of a single client per component that
+every endpoint of the component shared. Each endpoint keeps its client for its lifetime. The `clientFactory` option of a
+`google-drive` endpoint is now used to create the client of that endpoint. In addition, a `google-mail-stream` endpoint
+configured with neither `clientSecret` nor `serviceAccountKey` now fails with an `IllegalArgumentException` when its
+client is created, instead of getting a `null` client and failing at the first API call.
 
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 

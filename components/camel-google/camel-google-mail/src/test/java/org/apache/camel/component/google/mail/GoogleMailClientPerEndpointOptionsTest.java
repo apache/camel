@@ -38,7 +38,7 @@ class GoogleMailClientPerEndpointOptionsTest {
     private static final String SERVICE_ACCOUNT = "?serviceAccountKey=classpath:service-account.json&delegate=";
 
     @Test
-    void shouldKeepOneClientPerDistinctOptions() throws Exception {
+    void shouldCreateOneClientPerEndpoint() throws Exception {
         RecordingClientFactory factory = new RecordingClientFactory();
         try (CamelContext context = new DefaultCamelContext()) {
             context.getComponent("google-mail", GoogleMailComponent.class).setClientFactory(factory);
@@ -51,9 +51,11 @@ class GoogleMailClientPerEndpointOptionsTest {
             GoogleMailEndpoint sameAsFirst
                     = context.getEndpoint("google-mail://messages/get" + OAUTH + "token-a", GoogleMailEndpoint.class);
 
-            assertEquals(Arrays.asList("token-a", "token-b"), factory.created);
-            assertSame(first.getClient(), sameAsFirst.getClient());
+            assertEquals(Arrays.asList("token-a", "token-b", "token-a"), factory.created);
             assertNotSame(first.getClient(), second.getClient());
+            assertNotSame(first.getClient(), sameAsFirst.getClient());
+            assertSame(first.getClient(), first.getClient());
+            assertEquals(3, factory.created.size());
         }
     }
 

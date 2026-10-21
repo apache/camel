@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.google.sheets;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.google.api.services.sheets.v4.Sheets;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -39,7 +34,6 @@ public class GoogleSheetsComponent
     GoogleSheetsConfiguration configuration;
     @Metadata(label = "advanced")
     private GoogleSheetsClientFactory clientFactory;
-    private final Map<List<Object>, Sheets> clients = new ConcurrentHashMap<>();
 
     public GoogleSheetsComponent() {
         super(GoogleSheetsApiName.class, GoogleSheetsApiCollection.getCollection());
@@ -55,15 +49,10 @@ public class GoogleSheetsComponent
     }
 
     /**
-     * Gets the client for the given configuration. One client is kept per distinct set of the options the client is
-     * created from, so endpoints with the same options share a client and endpoints with different options get their
-     * own.
+     * Creates a client for the given configuration with the client factory of the component. Each endpoint creates its
+     * own client from its own options and keeps it for its lifetime.
      */
     public Sheets getClient(GoogleSheetsConfiguration config) {
-        return clients.computeIfAbsent(clientKey(config), key -> createClient(config));
-    }
-
-    private Sheets createClient(GoogleSheetsConfiguration config) {
         if (config.getClientId() != null && !config.getClientId().isBlank()
                 && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
             return getClientFactory().makeClient(config.getClientId(),
@@ -73,12 +62,6 @@ public class GoogleSheetsComponent
         // Use service account key or fall back to Application Default Credentials
         return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
                 config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
-    }
-
-    private static List<Object> clientKey(GoogleSheetsConfiguration config) {
-        return Arrays.asList(config.getClientId(), config.getClientSecret(), config.getRefreshToken(),
-                config.getAccessToken(), config.getServiceAccountKey(), config.getDelegate(), config.getScopes(),
-                config.getApplicationName());
     }
 
     public GoogleSheetsClientFactory getClientFactory() {
@@ -119,11 +102,5 @@ public class GoogleSheetsComponent
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleSheetsEndpoint(uri, this, apiName, methodName, endpointConfiguration);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        clients.clear();
-        super.doStop();
     }
 }

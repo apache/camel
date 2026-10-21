@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.google.api.services.gmail.Gmail;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -38,7 +33,6 @@ public class GoogleMailComponent
     GoogleMailConfiguration configuration;
     @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
-    private final Map<List<Object>, Gmail> clients = new ConcurrentHashMap<>();
 
     public GoogleMailComponent() {
         super(GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
@@ -54,15 +48,10 @@ public class GoogleMailComponent
     }
 
     /**
-     * Gets the client for the given configuration. One client is kept per distinct set of the options the client is
-     * created from, so endpoints with the same options share a client and endpoints with different options get their
-     * own.
+     * Creates a client for the given configuration with the client factory of the component. Each endpoint creates its
+     * own client from its own options and keeps it for its lifetime.
      */
     public Gmail getClient(GoogleMailConfiguration config) {
-        return clients.computeIfAbsent(clientKey(config), key -> createClient(config));
-    }
-
-    private Gmail createClient(GoogleMailConfiguration config) {
         if (config.getClientId() != null && !config.getClientId().isBlank()
                 && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
             return getClientFactory().makeClient(config.getClientId(),
@@ -75,12 +64,6 @@ public class GoogleMailComponent
             throw new IllegalArgumentException(
                     "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
         }
-    }
-
-    private static List<Object> clientKey(GoogleMailConfiguration config) {
-        return Arrays.asList(config.getClientId(), config.getClientSecret(), config.getRefreshToken(),
-                config.getAccessToken(), config.getServiceAccountKey(), config.getDelegate(), config.getScopes(),
-                config.getApplicationName());
     }
 
     public GoogleMailClientFactory getClientFactory() {
@@ -120,11 +103,5 @@ public class GoogleMailComponent
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleMailEndpoint(uri, this, apiName, methodName, endpointConfiguration);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        clients.clear();
-        super.doStop();
     }
 }

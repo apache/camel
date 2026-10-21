@@ -39,7 +39,7 @@ class GoogleCalendarStreamClientPerEndpointOptionsTest {
     private static final String SERVICE_ACCOUNT = "?serviceAccountKey=classpath:service-account.json&delegate=";
 
     @Test
-    void shouldKeepOneClientPerDistinctOptions() throws Exception {
+    void shouldCreateOneClientPerEndpoint() throws Exception {
         RecordingClientFactory factory = new RecordingClientFactory();
         try (CamelContext context = new DefaultCamelContext()) {
             context.getComponent("google-calendar-stream", GoogleCalendarStreamComponent.class).setClientFactory(factory);
@@ -55,9 +55,10 @@ class GoogleCalendarStreamClientPerEndpointOptionsTest {
             Calendar firstClient = first.getClient();
             Calendar secondClient = second.getClient();
 
-            assertSame(firstClient, sameAsFirst.getClient());
             assertNotSame(firstClient, secondClient);
-            assertEquals(Arrays.asList("token-a", "token-b"), factory.created);
+            assertNotSame(firstClient, sameAsFirst.getClient());
+            assertSame(firstClient, first.getClient());
+            assertEquals(Arrays.asList("token-a", "token-b", "token-a"), factory.created);
         }
     }
 
