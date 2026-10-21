@@ -39,6 +39,7 @@ import org.apache.camel.catalog.impl.EditDistanceSuggestionStrategy;
 import org.apache.camel.tooling.model.ApiReferenceModel;
 import org.apache.camel.tooling.model.BaseModel;
 import org.apache.camel.tooling.model.BaseOptionModel;
+import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
@@ -66,12 +67,10 @@ public final class CatalogDocs {
     /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
     private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
 
-    static final String BODY_TYPES_HINT = "the message body with the default options. consumerOut: the body a from:"
-                                          + " gives the route; consumerReply: the bodies it can reply with; producerIn:"
-                                          + " the bodies a to: can send; producerOut: the body after the to:; marshal,"
-                                          + " unmarshal and expression In/Out: the same for a data format and a"
-                                          + " language. Carriers: text, bytes, stream, file, value, map, list, pojo,"
-                                          + " null, unchanged, any, unknown. A side not listed is not known";
+    static final String BODY_TYPES_HINT = "the body with the default options: consumerOut is what a from: gives the"
+                                          + " route, consumerReply what it can reply with, producerIn what a to: can"
+                                          + " send, producerOut the body after the to: (and so on for marshal, unmarshal"
+                                          + " and expression); a side not listed is not known";
 
     /**
      * The rules a small model gets wrong most: functions live inside the placeholder, operators between placeholders.
@@ -1635,9 +1634,47 @@ public final class CatalogDocs {
         }
         if (!model.getBodyTypes().isEmpty()) {
             // what the body is after the step and what it needs, which the options do not say (CAMEL-24961)
-            result.put("bodyTypes", JsonMapper.asJsonObjectBodyTypes(model.getBodyTypes()));
+            result.put("bodyTypes", bodyTypes(model.getBodyTypes()));
             result.put("bodyTypesHint", BODY_TYPES_HINT);
         }
+    }
+
+    /**
+     * The body types a line per side, as compact as the options are: the carriers, the Java type, the format, the
+     * description, the body for other option values, and the options that make it not known (CAMEL-24961).
+     */
+    static JsonObject bodyTypes(Map<String, BodyTypeModel> bodyTypes) {
+        JsonObject answer = new JsonObject();
+        for (Map.Entry<String, BodyTypeModel> entry : bodyTypes.entrySet()) {
+            BodyTypeModel side = entry.getValue();
+            StringBuilder line = new StringBuilder(carriers(side.getCarriers(), side.getJavaType()));
+            if (side.getFormat() != null) {
+                line.append(", as ").append(side.getFormat());
+            }
+            if (side.getDescription() != null) {
+                line.append(". ").append(side.getDescription());
+            }
+            if (!side.getByOption().isEmpty()) {
+                List<String> values = new ArrayList<>();
+                for (BodyTypeModel.OptionBodyTypeModel option : side.getByOption()) {
+                    values.add(option.getOption() + "=" + option.getValue() + ": "
+                               + carriers(option.getCarriers(), option.getJavaType()));
+                }
+                line.append(". With ").append(String.join("; ", values));
+            }
+            if (!side.getDependsOn().isEmpty()) {
+                line.append(". Not known when ").append(String.join(" or ", side.getDependsOn())).append(" is set");
+            }
+            answer.put(entry.getKey(), line.toString());
+        }
+        return answer;
+    }
+
+    private static String carriers(List<String> carriers, String javaType) {
+        String answer = carriers.size() == 1
+                ? carriers.get(0)
+                : String.join(", ", carriers.subList(0, carriers.size() - 1)) + " or " + carriers.get(carriers.size() - 1);
+        return javaType != null ? answer + " (" + javaType + ")" : answer;
     }
 
     /**
@@ -1696,9 +1733,10 @@ public final class CatalogDocs {
 
     /**
      * The longest answer, in characters: activemq listed 88 options in 38 K characters, which a client rejected or
-     * spilled to a file instead of showing it to the model (CAMEL-25541).
+     * spilled to a file instead of showing it to the model (CAMEL-25541). Raised from 16000 for the body types
+     * (CAMEL-24961), which the jms components have on four sides.
      */
-    static final int MAX_ANSWER_LENGTH = 16000;
+    static final int MAX_ANSWER_LENGTH = 18000;
 
     /** How much of the text of a page a cut answer keeps at least, before its lists are cut. */
     static final int MIN_DOC_KEPT = 8000;

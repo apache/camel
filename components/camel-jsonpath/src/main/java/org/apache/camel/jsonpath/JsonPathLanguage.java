@@ -25,6 +25,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionAdapter;
@@ -32,6 +35,15 @@ import org.apache.camel.support.SingleInputTypedLanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
 @Language("jsonpath")
+@BodyTypes(expressionIn = @BodyType(value = Carrier.ANY,
+                                    description = "JSON as text, bytes, a stream or a file, or parsed: a Map or a List. A POJO"
+                                                  + " is read through Jackson"),
+           expressionOut = @BodyType(value = Carrier.UNKNOWN,
+                                     byOption = @BodyType.When(option = "writeAsString", value = "true",
+                                                               carrier = { Carrier.TEXT, Carrier.LIST }),
+                                     description = "The value the path selects: a Map for an object, a List for an array or"
+                                                   + " for a path with a wildcard or a filter, otherwise text, a number or a"
+                                                   + " boolean"))
 public class JsonPathLanguage extends SingleInputTypedLanguageSupport implements PropertyConfigurer {
 
     private boolean suppressExceptions;

@@ -24,6 +24,9 @@ import org.apache.camel.component.jms.JmsBinding;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsEndpoint;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -36,6 +39,42 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "1.0.0", extendsScheme = "jms", scheme = "activemq", title = "ActiveMQ 5.x",
              syntax = "activemq:destinationType:destinationName",
              category = { Category.MESSAGING })
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.MAP, Carrier.STREAM, Carrier.NULL },
+                                   dependsOn = { "messageConverter", "transferExchange" },
+                                   byOption = {
+                                           @BodyType.When(option = "mapJmsMessage", value = "false", carrier = Carrier.POJO,
+                                                          javaType = "jakarta.jms.Message"),
+                                           @BodyType.When(option = "objectMessageEnabled", value = "true",
+                                                          carrier = {
+                                                                  Carrier.TEXT, Carrier.BYTES, Carrier.MAP,
+                                                                  Carrier.STREAM, Carrier.POJO, Carrier.NULL }) },
+                                   description = "By the JMS message received: a String for a TextMessage, a byte array for a"
+                                                 + " BytesMessage, a Map for a MapMessage, a stream for a StreamMessage;"
+                                                 + " an ObjectMessage only with objectMessageEnabled"),
+           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
+                                     dependsOn = { "jmsMessageType", "messageConverter", "transferExchange" },
+                                     byOption = @BodyType.When(option = "objectMessageEnabled", value = "true",
+                                                               carrier = {
+                                                                       Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                       Carrier.FILE, Carrier.MAP, Carrier.POJO }),
+                                     description = "The reply, sent as the producer sends a message"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
+                                  dependsOn = { "jmsMessageType", "messageConverter", "transferExchange" },
+                                  byOption = @BodyType.When(option = "objectMessageEnabled", value = "true",
+                                                            carrier = {
+                                                                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE, Carrier.MAP, Carrier.POJO }),
+                                  description = "Text is sent as a TextMessage; bytes, a stream or a file as a BytesMessage;"
+                                                + " a Map as a MapMessage. Another Serializable object fails unless"
+                                                + " objectMessageEnabled"),
+           producerOut = @BodyType(value = Carrier.UNKNOWN,
+                                   byOption = {
+                                           @BodyType.When(option = "exchangePattern", value = "InOnly",
+                                                          carrier = Carrier.UNCHANGED),
+                                           @BodyType.When(option = "disableReplyTo", value = "true",
+                                                          carrier = Carrier.UNCHANGED) },
+                                   description = "Unchanged for a message that expects no reply (InOnly). A message that"
+                                                 + " expects one (InOut) gets the body of the reply, as the consumer gives it"))
 public class ActiveMQEndpoint extends JmsEndpoint implements EndpointServiceLocation {
 
     @UriParam(multiValue = true, prefix = "destination.", label = "consumer,advanced")

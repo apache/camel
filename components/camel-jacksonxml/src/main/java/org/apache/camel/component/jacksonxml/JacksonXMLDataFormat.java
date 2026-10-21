@@ -44,6 +44,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -60,6 +63,17 @@ import org.slf4j.LoggerFactory;
  * <a href="https://github.com/FasterXML/jackson">Jackson</a> to marshal to and from XML.
  */
 @Dataformat("jacksonXml")
+@BodyTypes(marshalIn = @BodyType(value = Carrier.ANY,
+                                 description = "A Map, a List or a POJO to write as XML. Text is written as an XML value,"
+                                               + " not as it is"),
+           marshalOut = @BodyType(value = Carrier.STREAM, format = "xml",
+                                  description = "The XML in the stream cache, or a byte array when stream caching is off"),
+           unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "xml"),
+           unmarshalOut = @BodyType(value = Carrier.MAP,
+                                    dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType" },
+                                    byOption = @BodyType.When(option = "useList", value = "true", carrier = Carrier.LIST),
+                                    description = "A Map (LinkedHashMap) of the XML; an object of the class unmarshalType"
+                                                  + " names"))
 public class JacksonXMLDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

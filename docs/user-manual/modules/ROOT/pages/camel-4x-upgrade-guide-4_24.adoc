@@ -1267,7 +1267,7 @@ its `application.properties` key as `configKey`.
 
 `camel_catalog_doc` without `optionsFilter` now lists the required options and the first 20 other options of a
 component in full, and the rest by name in `moreOptions` (`limit` lists more in full), and an answer is cut at
-16 000 characters with a marker. An option of both the endpoint and the component is listed once, with `scope`
+18 000 characters with a marker. An option of both the endpoint and the component is listed once, with `scope`
 set to `endpoint,component` and its `configKey`, instead of twice, and `matchedOptions` counts option names. A name
 that only matches a word of an EIP title (such as `retry`) no longer returns that EIP: the answer is a not-found with
 suggestions.

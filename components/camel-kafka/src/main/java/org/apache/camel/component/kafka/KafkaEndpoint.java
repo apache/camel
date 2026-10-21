@@ -27,6 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
@@ -48,6 +51,21 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic",
              category = { Category.MESSAGING }, headersClass = KafkaConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL }, dependsOn = "valueDeserializer",
+                                   byOption = {
+                                           @BodyType.When(option = "valueDeserializer",
+                                                          value = "org.apache.kafka.common.serialization.ByteArrayDeserializer",
+                                                          carrier = { Carrier.BYTES, Carrier.NULL }, javaType = "byte[]"),
+                                           @BodyType.When(option = "batching", value = "true", carrier = Carrier.LIST) },
+                                   description = "The value of the record: a String with the default valueDeserializer"
+                                                 + " (StringDeserializer), null for a tombstone. With batching, a List of"
+                                                 + " the exchanges of the records"),
+           producerIn = @BodyType(value = Carrier.ANY, dependsOn = "valueSerializer",
+                                  description = "The value of the record, converted for the valueSerializer: text with the"
+                                                + " default StringSerializer, so a Map or a POJO is sent as its toString():"
+                                                + " marshal it first. With useIterator, an Iterable or an Iterator is sent"
+                                                + " as one record per element"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);

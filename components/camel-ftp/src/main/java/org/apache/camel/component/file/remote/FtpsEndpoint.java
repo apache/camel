@@ -30,6 +30,9 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.Category;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -54,6 +57,20 @@ import org.slf4j.LoggerFactory;
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous")
 @ManagedResource(description = "Managed FtpsEndpoint")
+@BodyTypes(consumerOut = @BodyType(value = Carrier.FILE, dependsOn = "preMove",
+                                   byOption = {
+                                           @BodyType.When(option = "streamDownload", value = "true", carrier = Carrier.STREAM),
+                                           @BodyType.When(option = "download", value = "false", carrier = Carrier.NULL) },
+                                   description = "The file as read: a RemoteFile, which converts to text, bytes or a stream; a"
+                                                 + " stream with streamDownload; with preMove its content, a byte array"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  byOption = @BodyType.When(option = "allowNullBody", value = "true",
+                                                            carrier = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE }),
+                                  description = "What converts to an InputStream: text, bytes, a stream or a file. A Map or"
+                                                + " a List fails: marshal it first"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     private static final Logger LOG = LoggerFactory.getLogger(FtpsEndpoint.class);
 
