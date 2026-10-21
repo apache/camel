@@ -141,11 +141,13 @@ automatically set the JQL as:
 This is in order to optimize startup processing, rather than having to index every single
 issue in the project.
 
-Each poll reads every page of that search, so all the issues created since the previous poll are consumed, also when
+Each poll reads every page of that search, so the issues created since the previous poll are consumed also when
 there are more than `maxResults` of them (for example after Jira was unreachable for a while); `maxResults` is then
 the page size of the search (at most 50). There is no upper bound: after a long outage or a large import, one poll
 reads all the new issues, one search request per page, keeps them in memory and routes them as one batch. On Jira
-Cloud the pages are read with the next page token of the search, as Jira Cloud cannot page by start index.
+Cloud the pages are read with the next page token of the search, as Jira Cloud cannot page by start index. The search
+of Jira Cloud is eventually consistent, so a new issue can become searchable only after a newer one: when a poll has
+already consumed the newer one, the late issue is not consumed.
 
 Another note is that, similarly, the newComments consumer will have to
 index every single issue *and* comment on the project. Therefore, for

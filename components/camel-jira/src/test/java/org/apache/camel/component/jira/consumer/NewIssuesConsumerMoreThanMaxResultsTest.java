@@ -58,13 +58,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class NewIssuesConsumerMoreThanMaxResultsTest extends CamelTestSupport {
 
-    private static final int NEW_ISSUES = 60;
+    protected static final int NEW_ISSUES = 60;
 
     private final DateTime start = DateTime.now().minusHours(2);
     private final Issue latestAtStart = createIssueWithCreationDate(1000, start);
     // newest first, as the JQL of the consumer orders them
-    private final List<Issue> newIssues = new ArrayList<>();
-    private final AtomicBoolean served = new AtomicBoolean();
+    protected final List<Issue> newIssues = new ArrayList<>();
+    protected final AtomicBoolean served = new AtomicBoolean();
 
     @Mock
     private JiraRestClient jiraClient;

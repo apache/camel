@@ -132,6 +132,7 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
 
         // Avoid duplicates
         Set<Issue> issues = new LinkedHashSet<>();
+        int previousTotal = -1;
         while (true) {
             SearchRestClient searchRestClient = endpoint.getClient().getSearchClient();
             // *navigable should be the default value, but it does not seem to be true with 6.0.2 client
@@ -145,6 +146,16 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
             // we've reached the end. Also exit early if we're limiting the # of results or
             // if total # of returned issues is lower than the actual page size.
             int total = searchResult.getTotal();
+            if (previousTotal >= 0 && total < previousTotal && start < previousTotal) {
+                // issues left the result set while paging (deleted, moved, or edited out of the JQL), so the later
+                // ones moved back and the first ones of this page may have been on the previous page: read again from
+                // that many issues before, the set drops the repeats. Not needed when the previous page was the last
+                // one. An issue created at the same time as one leaves keeps the total and is not seen here.
+                start = Math.max(0, start - (previousTotal - total));
+                previousTotal = total;
+                continue;
+            }
+            previousTotal = total;
             if (maxPerQuery >= total || start >= total || maxResults > 0 && issues.size() >= maxResults) {
                 break;
             }
