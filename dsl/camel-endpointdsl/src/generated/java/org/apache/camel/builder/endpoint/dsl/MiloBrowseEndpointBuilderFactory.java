@@ -587,8 +587,9 @@ public interface MiloBrowseEndpointBuilderFactory {
         }
         /**
          * The delay in milliseconds before the client tries again to connect to
-         * the server after an attempt failed. It is not used while the OPC UA
-         * client recovers a lost session on its own.
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -604,8 +605,9 @@ public interface MiloBrowseEndpointBuilderFactory {
         }
         /**
          * The delay in milliseconds before the client tries again to connect to
-         * the server after an attempt failed. It is not used while the OPC UA
-         * client recovers a lost session on its own.
+         * the server after an attempt failed, and between two attempts to
+         * create the monitored items that the server refused. Neither attempt
+         * is made while the OPC UA client recovers a lost session on its own.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
