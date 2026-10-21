@@ -98,7 +98,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "The source location (only present when known)") String source,
             @Metadata(description = "The source that declares the templated route the route was created from (only present when known)") String templatedRouteSource,
             @Metadata(description = "The checksum of the route as written, the same in every run: compare it with an earlier run to tell whether the route changed (only present when known, as it needs camel-xml-io)") String checksum,
-            @Metadata(description = "The revision of the route in this run: 1 when it is added, one more each time it is added again changed, such as by a reload (only present when the checksum is known)") Integer revision,
+            @Metadata(description = "The revision of the route in this run: 1 when it is added, one more each time it is added again with another checksum, such as by a reload (only present when the checksum is known)") Integer revision,
             @Metadata(description = "The route state") String state,
             @Metadata(description = "Whether the route supports suspension") boolean supportsSuspension,
             @Metadata(description = "Route uptime, human readable text") String uptime,

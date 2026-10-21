@@ -5930,7 +5930,7 @@
 													},
 													"revision": {
 														"type": "integer",
-														"description": "The revision of the route in this run: 1 when it is added, one more each time it is added again changed, such as by a reload (only present when the checksum is known)"
+														"description": "The revision of the route in this run: 1 when it is added, one more each time it is added again with another checksum, such as by a reload (only present when the checksum is known)"
 													},
 													"state": {
 														"type": "string",
