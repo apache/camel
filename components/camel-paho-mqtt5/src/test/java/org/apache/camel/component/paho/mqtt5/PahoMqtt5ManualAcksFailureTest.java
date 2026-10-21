@@ -31,6 +31,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptionsBuilder;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -43,7 +44,7 @@ import static org.awaitility.Awaitility.await;
  * receiveMaximum unacknowledged QoS 1/2 messages to a client, and sends an unacknowledged message again only when the
  * client connects again to the same session. These tests use a real broker (embedded Artemis, MQTT 5).
  */
-public class PahoMqtt5ManualAcksFailureTest {
+class PahoMqtt5ManualAcksFailureTest {
 
     @RegisterExtension
     static ArtemisService service = ArtemisServiceFactory.createSingletonMQTTService();
@@ -53,7 +54,7 @@ public class PahoMqtt5ManualAcksFailureTest {
     private final Map<String, List<Long>> attemptTimes = new ConcurrentHashMap<>();
 
     @Test
-    public void failedMessagesDoNotStopTheConsumer() throws Exception {
+    void failedMessagesDoNotStopTheConsumer() throws Exception {
         // clean session (the default) and a receive maximum of 2: after two failed exchanges the broker has two
         // unacknowledged messages in flight for this client
         String id = UUID.randomUUID().toString();
@@ -72,7 +73,7 @@ public class PahoMqtt5ManualAcksFailureTest {
     }
 
     @Test
-    public void acknowledgedMessagesKeepTheReceiveWindowOpen() throws Exception {
+    void acknowledgedMessagesKeepTheReceiveWindowOpen() throws Exception {
         String id = UUID.randomUUID().toString();
         String topic = "manualack/ok/" + id;
         String uri = "paho-mqtt5:" + topic + "?brokerUrl=" + brokerUrl()
@@ -88,7 +89,7 @@ public class PahoMqtt5ManualAcksFailureTest {
     }
 
     @Test
-    public void failedMessageIsDeliveredAgainWithPersistentSession() throws Exception {
+    void failedMessageIsDeliveredAgainWithPersistentSession() throws Exception {
         // a session that the broker keeps: the documented rollback and retry of a failed message
         String id = UUID.randomUUID().toString();
         String topic = "manualack/persistent/" + id;
@@ -108,7 +109,7 @@ public class PahoMqtt5ManualAcksFailureTest {
     }
 
     @Test
-    public void failedQos2MessageIsAcknowledgedWithoutReconnect() throws Exception {
+    void failedQos2MessageIsAcknowledgedWithoutReconnect() throws Exception {
         // Paho completes the QoS 2 flow (PUBREC, PUBCOMP) without waiting for the manual acknowledgement, so the broker
         // never sends a QoS 2 message again, even to a session that it keeps: a reconnect would not retry it
         String id = UUID.randomUUID().toString();
@@ -138,7 +139,7 @@ public class PahoMqtt5ManualAcksFailureTest {
     }
 
     @Test
-    public void failedMessageIsAcknowledgedWhenTheSessionEndsWithTheConnection() throws Exception {
+    void failedMessageIsAcknowledgedWhenTheSessionEndsWithTheConnection() throws Exception {
         // cleanStart=false without sessionExpiryInterval: the interval is not sent, which means 0, so the broker ends
         // the session when the client disconnects, and a reconnect would lose the messages instead of sending them again
         String id = UUID.randomUUID().toString();
@@ -164,7 +165,7 @@ public class PahoMqtt5ManualAcksFailureTest {
     }
 
     @Test
-    public void reconnectToKeptSessionDoesNotSubscribeAgain() throws Exception {
+    void reconnectToKeptSessionDoesNotSubscribeAgain() throws Exception {
         // the subscription is part of the session that the broker kept; subscribing again would make the broker send
         // the retained message of the topic again
         String id = UUID.randomUUID().toString();
@@ -190,7 +191,46 @@ public class PahoMqtt5ManualAcksFailureTest {
     }
 
     @Test
-    public void reconnectsAfterFailuresInARowBackOff() throws Exception {
+    void reconnectAfterAnEarlierConnectionLossDoesNotSubscribeAgain() throws Exception {
+        // once the client lost a connection on its own, Paho reports every later connect to connectComplete as a
+        // reconnect: the reconnect of a failed exchange must still not subscribe again to the session the broker kept
+        String id = UUID.randomUUID().toString();
+        String topic = "manualack/lost/" + id;
+        String clientId = "manual-ack-lost-" + id;
+        publish(topic, 1, true, "retained-0");
+        String uri = "paho-mqtt5:" + topic + "?brokerUrl=" + brokerUrl()
+                     + "&qos=1&manualAcksEnabled=true&cleanStart=false&sessionExpiryInterval=60&clientId=" + clientId;
+        CamelContext context = createContext(uri, 1);
+        try {
+            PahoMqtt5Consumer consumer = (PahoMqtt5Consumer) context.getRoutes().get(0).getConsumer();
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(routed).containsExactly("retained-0"));
+
+            // another connection with the same client id takes the session over: the broker disconnects the consumer's
+            // client, which reconnects on its own (automaticReconnect) once the session is free again
+            MqttClient other = new MqttClient(brokerUrl(), clientId, new MemoryPersistence());
+            try {
+                other.connect(new MqttConnectionOptionsBuilder().cleanStart(false).sessionExpiryInterval(60L).build());
+                other.disconnect();
+            } finally {
+                other.close();
+            }
+            await().atMost(10, TimeUnit.SECONDS).until(() -> consumer.getClient().isConnected());
+            // the automatic reconnect of Paho subscribes again, which may send the retained message again
+            await().pollDelay(1500, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS).until(() -> true);
+            int retainedBefore = attempts.get("retained-0").get();
+
+            publish(topic, "fail-1");
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertThat(attempts.get("fail-1")).hasValue(2));
+            await().during(1, TimeUnit.SECONDS).atMost(2, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertThat(attempts.get("retained-0")).hasValue(retainedBefore));
+        } finally {
+            context.stop();
+            publish(topic, 1, true);
+        }
+    }
+
+    @Test
+    void reconnectsAfterFailuresInARowBackOff() throws Exception {
         // a message that fails three times in a row: the reconnects wait 1 s, then 2 s capped to maxReconnectDelay
         String id = UUID.randomUUID().toString();
         String topic = "manualack/backoff/" + id;
@@ -217,7 +257,7 @@ public class PahoMqtt5ManualAcksFailureTest {
     }
 
     @Test
-    public void reconnectWaitsAtLeastOneSecondWithASmallMaxReconnectDelay() throws Exception {
+    void reconnectWaitsAtLeastOneSecondWithASmallMaxReconnectDelay() throws Exception {
         // maxReconnectDelay below the minimum delay must not make a failing message reconnect in a tight loop
         String id = UUID.randomUUID().toString();
         String topic = "manualack/smallmax/" + id;

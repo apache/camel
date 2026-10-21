@@ -812,7 +812,8 @@ broker never sent it again during the connection, and after `receiveMaximum` suc
 nothing more (the client completes the QoS 2 flow on its own, so QoS 2 messages did not stop the consumer). Now, for a
 QoS 1 message on a session that the broker keeps after the disconnect (`cleanStart=false` and `sessionExpiryInterval`
 greater than 0), the consumer connects again after a failed exchange (after one second, doubled for each failed
-exchange in a row up to `maxReconnectDelay`, logged at WARN), and the broker sends the message again. In all other
+exchange in a row up to `maxReconnectDelay`, and back to one second after any exchange that succeeds; logged at WARN),
+and the broker sends the message again. In all other
 cases (a clean session, which is the default, a QoS 2 message, or `cleanStart=false` without `sessionExpiryInterval`,
 where the session ends with the connection) the broker never sends the message again, so the failed message is
 acknowledged and the failure is left to the Camel error handler. A consumer that uses a client set with the `client`

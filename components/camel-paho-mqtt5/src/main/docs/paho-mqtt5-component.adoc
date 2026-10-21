@@ -99,7 +99,9 @@ arrives, so the broker never sends a QoS 2 message again. So when an exchange fa
   With the defaults (a clean session) a failed message is acknowledged.
 
 The reconnects of failed exchanges in a row back off: the first one waits one second, each further one waits twice as
-long, up to `maxReconnectDelay` (but at least one second), and a successful exchange starts again from one second.
+long, up to `maxReconnectDelay` (but at least one second), and any exchange that succeeds, also one of another
+message, starts again from one second. So on a topic where other messages succeed in between, a message that always
+fails makes the consumer reconnect about once a second.
 Each such reconnect is logged at WARN. The broker then also sends again the other QoS 1 messages that were not
 acknowledged yet, such as the ones still being routed. A message that always fails is still delivered again and again;
 use a Camel error handler, for example a dead letter channel, for such messages.

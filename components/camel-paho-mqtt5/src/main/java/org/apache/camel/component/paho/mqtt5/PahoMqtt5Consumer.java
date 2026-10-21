@@ -49,6 +49,10 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     private volatile MqttConnectionOptions connectionOptions;
     private final AtomicBoolean restarting = new AtomicBoolean(false);
     private final AtomicBoolean reconnecting = new AtomicBoolean(false);
+    // set while the consumer connects the client again after a failed exchange: Paho reports that connect to
+    // connectComplete with reconnect=true once the client lost a connection on its own (it never clears its
+    // reconnecting flag), and the consumer subscribes again there only for the automatic reconnects of Paho
+    private final AtomicBoolean ownReconnect = new AtomicBoolean(false);
     // failed exchanges in a row that made the consumer reconnect, for the backoff; reset by a successful exchange
     private final AtomicInteger failedMessageReconnects = new AtomicInteger();
     private volatile ScheduledExecutorService reconnectExecutor;
@@ -98,7 +102,9 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
                 @Override
                 public void connectComplete(boolean reconnect, String serverURI) {
-                    if (reconnect) {
+                    // the connect of reconnect() subscribes again itself, only when the broker did not keep the session
+                    boolean own = ownReconnect.compareAndSet(true, false);
+                    if (reconnect && !own) {
                         try {
                             client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
                         } catch (MqttException e) {
@@ -199,6 +205,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         Exception stopException = null;
         shutdownReconnectExecutor();
         reconnecting.set(false);
+        ownReconnect.set(false);
         try {
             super.doStop();
 
@@ -339,16 +346,20 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         reconnecting.set(false);
         try {
             if (isRunAllowed() && current == client && !current.isConnected()) {
+                ownReconnect.set(true);
                 IMqttToken token = current.connectWithResult(connectionOptions);
                 // the subscription is part of the session; subscribing again would make the broker send the retained
                 // message of the topic again (Retain Handling 0)
                 if (!token.getSessionPresent()) {
-                    LOG.debug("The broker did not keep the session of client: {}, subscribing again to topic: {}",
+                    LOG.warn("The broker did not keep the session of client: {}: the failed MQTT message and the other"
+                             + " unacknowledged ones are not delivered again; subscribing again to topic: {}",
                             clientId, getEndpoint().getTopic());
                     current.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
                 }
             }
         } catch (Exception e) {
+            // a failed connect does not call connectComplete
+            ownReconnect.set(false);
             getExceptionHandler().handleException("Failed to reconnect after a failed exchange", e);
             // the client does not reconnect on its own after a disconnect it was asked for, so try again later
             scheduleReconnect(current, "Reconnect failed");
