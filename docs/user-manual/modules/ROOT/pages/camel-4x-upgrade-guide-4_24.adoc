@@ -1560,6 +1560,18 @@ MINA does not pass a failed handshake on as an error: the producer fails with a 
 `org.apache.mina.filter.ssl.SslHandler`. A producer that starts timing out after the upgrade should be checked for a
 certificate that does not list the host.
 
+=== camel-ftp - the host name of the FTPS server is verified
+
+The `ftps` endpoint now checks, on the control connection, that the certificate of the server matches the host of the
+endpoint, with the same rules as an HTTPS client, with `sslContextParameters` as well as with the
+`ftpClient.trustStore.*` options. Before, any certificate accepted by the trust manager was accepted, whatever host the
+certificate was issued for. Data connections are not checked by host name.
+
+A connection to a host name or an IP address that the certificate does not list now fails the TLS handshake, before
+login; an IP address must be listed as a subject alternative name of the certificate. Use a certificate that matches the
+host of the endpoint, or set the new `hostnameVerification` option to `false` to keep the previous behaviour. A custom
+`ftpClient` set on the endpoint is not changed.
+
 === camel-aws-secrets-manager - the CloudTrail refresh task reads every event since the last check
 
 With `camel.vault.aws.refreshEnabled=true` and without SQS notification, each check now reads every page of the
