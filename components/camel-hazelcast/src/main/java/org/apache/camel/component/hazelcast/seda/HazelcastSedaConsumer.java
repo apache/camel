@@ -87,11 +87,14 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
         BaseQueue<?> queue = endpoint.getHazelcastInstance().getQueue(endpoint.getConfiguration().getQueueName());
 
         while (queue != null && isRunAllowed()) {
-            final Exchange exchange = createExchange(true);
+            final boolean transacted = endpoint.getConfiguration().isTransacted();
+            // the transacted consumer reads the outcome of the exchange after the routing is done, so it releases the
+            // exchange itself: a pooled exchange is otherwise reset (and its exception cleared) when it is done
+            final Exchange exchange = createExchange(!transacted);
 
             TransactionContext transactionCtx = null;
             try {
-                if (endpoint.getConfiguration().isTransacted()) {
+                if (transacted) {
                     // Get and begin transaction if exist
                     transactionCtx = endpoint.getHazelcastInstance().newTransactionContext();
 
@@ -112,7 +115,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     }
                     try {
                         final TransactionContext txc = transactionCtx;
-                        if (txc != null) {
+                        if (transacted) {
                             // a Hazelcast transaction belongs to the thread that began it, and cannot be committed
                             // or rolled back from another thread: wait for the exchange to complete, also when the
                             // route continues on another thread, and end the transaction on this thread
@@ -172,6 +175,10 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                         .withName("HazelcastSedaErrorRecoveryDelay")
                         .build()
                         .run(getEndpoint().getCamelContext(), () -> true);
+            } finally {
+                if (transacted) {
+                    releaseExchange(exchange, false);
+                }
             }
         }
     }
