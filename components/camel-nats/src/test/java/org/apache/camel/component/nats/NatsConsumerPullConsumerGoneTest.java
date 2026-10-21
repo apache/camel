@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
+import io.nats.client.api.AckPolicy;
 import io.nats.client.api.ConsumerConfiguration;
 import io.nats.client.api.DeliverPolicy;
+import io.nats.client.support.Status;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -151,8 +153,8 @@ class NatsConsumerPullConsumerGoneTest extends CamelTestSupport {
         server.publish("order-1");
         mock.assertIsSatisfied();
 
-        // the stream itself is gone for a while (for example a memory stream after a server restart): jnats reports
-        // that subscribe failure as an IllegalStateException
+        // the subscribe fails, for example while the stream itself is gone: jnats reports that failure as an
+        // IllegalStateException
         server.failNextSubscribe(new IllegalStateException("[SUB-90007] No matching streams for subject."));
         server.deleteConsumers(false);
 
@@ -164,6 +166,57 @@ class NatsConsumerPullConsumerGoneTest extends CamelTestSupport {
         assertEquals(2, server.consumersCreated(), "created again at the check after the failed one");
         assertTrue(handled.stream().anyMatch(IllegalStateException.class::isInstance),
                 "the failed subscribe goes to the exception handler");
+    }
+
+    @Test
+    void idleHealthyConsumerIsNotAskedForItsInfo() throws Exception {
+        addRoute("");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("order-1");
+        server.publish("order-1");
+        mock.assertIsSatisfied();
+
+        // each empty fetch of a healthy consumer lasts the whole fetch timeout: no consumer check after it
+        await().during(6, TimeUnit.SECONDS).atMost(8, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(0, server.consumerInfoRequests()));
+    }
+
+    @Test
+    void otherErrorStatusIsNotFetchedAgainBackToBack() throws Exception {
+        server.failFetches(new Status(409, "Consumer is push based"));
+        addRoute("");
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !handled.isEmpty());
+        int fetchesBefore = server.fetches();
+        long waitStarted = System.nanoTime();
+        Thread.sleep(1000);
+        long waitedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - waitStarted);
+        int fetches = server.fetches() - fetchesBefore;
+        // the loop waits for the rest of pullFetchTimeout (100 ms) after each failed fetch
+        assertTrue(fetches <= waitedMillis / 100 + 5,
+                "no pull requests back to back: " + fetches + " fetches in " + waitedMillis + " ms");
+    }
+
+    @Test
+    void ackPolicyNoneResumesAfterTheHighestFetched() throws Exception {
+        // the route never calls ack: with ackPolicy=None the delivery is the acknowledgement
+        addRoute("&manualAck=true&ackPolicy=None");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("order-1", "order-2");
+        server.publish("order-1");
+        server.publish("order-2");
+        mock.assertIsSatisfied();
+
+        server.deleteConsumers(false);
+
+        mock.reset();
+        mock.expectedBodiesReceived("order-3");
+        server.publish("order-3");
+        mock.setResultWaitTime(20_000);
+        mock.assertIsSatisfied();
+        ConsumerConfiguration again = server.subscribed().get(1);
+        assertEquals(AckPolicy.None, again.getAckPolicy());
+        assertEquals(DeliverPolicy.ByStartSequence, again.getDeliverPolicy());
+        assertEquals(3, again.getStartSequence(), "starts after the highest fetched sequence");
     }
 
     @Test

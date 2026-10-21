@@ -1478,11 +1478,13 @@ With `jetstreamEnabled=true` and a pull subscription (the default), the `nats` c
 consumer that the server had deleted, and consumed nothing more until the route was restarted. It now subscribes again
 when the server no longer has its ephemeral consumer (no `durableName`, and no durable name in the
 `consumerConfiguration`), which the server deletes after about 5 seconds without a pull request, for example while the
-client is disconnected, or loses on a restart. The new consumer starts at
-the first message the route did not acknowledge, so the route can see again the messages after that one. A durable
-consumer is not created again: when it is gone (deleted by an administrator, or after its `inactiveThreshold`), the
-consumer logs a WARN and keeps fetching, and the fetches work again when the durable is created again with the same
-name.
+client is disconnected, or loses on a restart. The new consumer starts at the first message the route did not
+acknowledge, so the route can see again the messages after that one (with `ackPolicy=None`, after the last message
+fetched). On a stream with `WorkQueue` retention, and on a stream that was created again since the route subscribed, the
+new consumer uses the consumer configuration as it is. The consumer asks the server for its consumer only after a fetch
+that ended empty well before `pullFetchTimeout`, at most every 5 seconds. A durable consumer is not created again: when
+it is gone (deleted by an administrator, or after its `inactiveThreshold`), the consumer logs a WARN and keeps fetching,
+and the fetches work again when the durable is created again with the same name.
 
 === camel-telegram - a failed send fails the exchange once
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.nats;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -38,7 +39,9 @@ import io.nats.client.PushSubscribeOptions;
 import io.nats.client.api.AckPolicy;
 import io.nats.client.api.ConsumerConfiguration;
 import io.nats.client.api.DeliverPolicy;
+import io.nats.client.api.RetentionPolicy;
 import io.nats.client.api.StreamConfiguration;
+import io.nats.client.api.StreamInfo;
 import io.nats.client.support.Status;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -156,6 +159,11 @@ public class NatsConsumer extends DefaultConsumer {
         // fetched: where a new ephemeral consumer must start when the server deleted the one this consumer used
         private final NavigableSet<Long> unacknowledged = new ConcurrentSkipListSet<>();
         private final AtomicLong highestFetched = new AtomicLong();
+        // with AckPolicy.None the delivery is the acknowledgement: no fetched sequence waits for an ack
+        private boolean trackUnacknowledged = true;
+        // when the stream was created, as seen at the subscribe: a different time later means that the stream was
+        // created again and its sequences started again at 1
+        private ZonedDateTime streamCreated;
         private long lastConsumerCheck = System.nanoTime();
         // whether the WARN that the durable consumer is gone was logged, so that it is logged once until it is back
         private boolean durableGoneReported;
@@ -201,7 +209,8 @@ public class NatsConsumer extends DefaultConsumer {
                     this.configuration.getTopic());
 
             JetStreamManagement jsm = connection.jetStreamManagement();
-            if (streamExists(jsm, streamName)) {
+            StreamInfo streamInfo = lookupStream(jsm, streamName);
+            if (streamInfo != null) {
                 LOG.debug("JetStream stream '{}' already exists. Skipping creation.", streamName);
             } else {
                 LOG.debug("Creating JetStream {}", streamName);
@@ -209,9 +218,10 @@ public class NatsConsumer extends DefaultConsumer {
                         .name(streamName)
                         .subjects(topic)
                         .build();
-                jsm.addStream(streamConfig);
+                streamInfo = jsm.addStream(streamConfig);
                 LOG.info("JetStream stream '{}' created successfully.", streamName);
             }
+            streamCreated = streamInfo != null ? streamInfo.getCreateTime() : null;
 
             ConsumerConfiguration cc = configuration.getConsumerConfiguration();
             if (cc == null) {
@@ -231,6 +241,7 @@ public class NatsConsumer extends DefaultConsumer {
                 }
                 cc = ccBuilder.build();
             }
+            trackUnacknowledged = cc.getAckPolicy() != AckPolicy.None;
 
             CamelNatsMessageHandler messageHandler = new CamelNatsMessageHandler();
 
@@ -282,21 +293,22 @@ public class NatsConsumer extends DefaultConsumer {
             int batchSize = configuration.getPullBatchSize();
             Duration fetchTimeout = Duration.ofMillis(configuration.getPullFetchTimeout());
             while (NatsConsumer.this.isRunAllowed() && !Thread.currentThread().isInterrupted()) {
+                long fetchStarted = System.nanoTime();
                 try {
-                    long fetchStarted = System.nanoTime();
                     List<Message> messages = sub.fetch(batchSize, fetchTimeout);
-                    if (messages.isEmpty() && consumerCheckDue() && consumerGone(sub)) {
-                        sub = consumerDeleted(sub, cc);
-                        continue;
-                    }
                     if (messages.isEmpty()) {
                         // jnats ends a fetch at once when its pull request has no responder (status 503), for example
-                        // while the consumer is gone: wait for the rest of the fetch timeout, so that the loop does
-                        // not send pull requests back to back
-                        long left = fetchTimeout.toNanos() - (System.nanoTime() - fetchStarted);
-                        if (left > 0) {
-                            TimeUnit.NANOSECONDS.sleep(left);
+                        // while the consumer is gone, whereas an idle healthy consumer ends it at its expiry, shortly
+                        // before the fetch timeout: only an empty fetch that ended early asks the server for the
+                        // consumer, so that an idle healthy consumer does not send that request every few seconds
+                        boolean endedEarly = System.nanoTime() - fetchStarted < fetchTimeout.toNanos() / 2;
+                        if (endedEarly && consumerCheckDue() && consumerGone(sub)) {
+                            sub = consumerDeleted(sub, cc);
+                            continue;
                         }
+                        // wait for the rest of the fetch timeout, so that the loop does not send pull requests back to
+                        // back
+                        waitRestOfFetch(fetchStarted, fetchTimeout);
                         continue;
                     }
                     durableGoneReported = false;
@@ -319,6 +331,14 @@ public class NatsConsumer extends DefaultConsumer {
                     Status status = e.getStatus();
                     if (status != null && Status.CONSUMER_DELETED.equals(status.getMessage())) {
                         sub = consumerDeleted(sub, cc);
+                    } else {
+                        // for example 409 Consumer is push based: do not send pull requests back to back
+                        try {
+                            waitRestOfFetch(fetchStarted, fetchTimeout);
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
                     }
                 } catch (IllegalStateException e) {
                     // Subscription was closed (e.g. consumer is stopping), exit the loop
@@ -331,6 +351,13 @@ public class NatsConsumer extends DefaultConsumer {
                 } catch (Exception e) {
                     NatsConsumer.this.getExceptionHandler().handleException("Error during JetStream pull fetch", e);
                 }
+            }
+        }
+
+        private void waitRestOfFetch(long fetchStarted, Duration fetchTimeout) throws InterruptedException {
+            long left = fetchTimeout.toNanos() - (System.nanoTime() - fetchStarted);
+            if (left > 0) {
+                TimeUnit.NANOSECONDS.sleep(left);
             }
         }
 
@@ -352,7 +379,11 @@ public class NatsConsumer extends DefaultConsumer {
 
         private boolean consumerGone(JetStreamSubscription sub) {
             try {
-                sub.getConsumerInfo();
+                // jnats answers null when the server has no such consumer (api error 10014), and throws for any other
+                // error, for example 404 stream not found (10059)
+                if (sub.getConsumerInfo() == null) {
+                    return true;
+                }
                 durableGoneReported = false;
                 return false;
             } catch (JetStreamApiException e) {
@@ -398,15 +429,33 @@ public class NatsConsumer extends DefaultConsumer {
          * has not acknowledged, so that nothing is skipped and the stream is not replayed from its deliver policy.
          * <p>
          * A sequence that is never acknowledged stays in the unacknowledged set until this resubscribe, for example a
-         * message nak'd until maxDeliver is used up, or with manualAck and ackPolicy=None when the route never calls
-         * ack. The new consumer then starts at that old sequence, and the route sees the messages after it again
-         * (at-least-once).
+         * message nak'd until maxDeliver is used up. The new consumer then starts at that old sequence, and the route
+         * sees the messages after it again (at-least-once). With ackPolicy=None no sequence is tracked: the new
+         * consumer starts after the highest one fetched.
+         * <p>
+         * The consumer configuration is used as it is (no start sequence) for a stream with WorkQueue retention, which
+         * accepts only the deliver policy All and has already removed the acknowledged messages, and for a stream that
+         * was created again since the subscribe (its sequences started again at 1).
          */
         private JetStreamSubscription subscribeAgain(JetStreamSubscription old, ConsumerConfiguration cc)
                 throws IOException, JetStreamApiException {
+            StreamInfo stream = this.connection.jetStreamManagement().getStreamInfo(configuration.getJetstreamName());
+            ZonedDateTime created = stream.getCreateTime();
+            if (created != null && streamCreated != null && !created.isEqual(streamCreated)) {
+                LOG.warn("The JetStream stream {} was created again since the subscribe; consuming it from its deliver"
+                         + " policy",
+                        configuration.getJetstreamName());
+                unacknowledged.clear();
+                highestFetched.set(0);
+            }
+            if (created != null) {
+                streamCreated = created;
+            }
+            boolean workQueue = stream.getConfiguration() != null
+                    && stream.getConfiguration().getRetentionPolicy() == RetentionPolicy.WorkQueue;
             ConsumerConfiguration again = cc;
             long start = unacknowledged.isEmpty() ? highestFetched.get() + 1 : unacknowledged.first();
-            boolean resume = highestFetched.get() > 0;
+            boolean resume = !workQueue && highestFetched.get() > 0;
             if (resume) {
                 // a start time (DeliverPolicy.ByStartTime) together with a start sequence is rejected by the server
                 again = ConsumerConfiguration.builder(cc)
@@ -440,7 +489,9 @@ public class NatsConsumer extends DefaultConsumer {
         private void track(Message msg) {
             if (msg.isJetStream()) {
                 long seq = msg.metaData().streamSequence();
-                unacknowledged.add(seq);
+                if (trackUnacknowledged) {
+                    unacknowledged.add(seq);
+                }
                 highestFetched.accumulateAndGet(seq, Math::max);
             }
         }
@@ -567,13 +618,16 @@ public class NatsConsumer extends DefaultConsumer {
         }
     }
 
-    private boolean streamExists(JetStreamManagement jsm, String streamName) throws IOException, JetStreamApiException {
+    /**
+     * @return the stream, or null when the server does not have it
+     */
+    private static StreamInfo lookupStream(JetStreamManagement jsm, String streamName)
+            throws IOException, JetStreamApiException {
         try {
-            jsm.getStreamInfo(streamName);
-            return true;
+            return jsm.getStreamInfo(streamName);
         } catch (JetStreamApiException jsae) {
             if (jsae.getErrorCode() == 404) {
-                return false;
+                return null;
             }
             throw jsae;
         }
