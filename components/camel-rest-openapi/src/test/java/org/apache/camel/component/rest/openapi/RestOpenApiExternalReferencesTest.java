@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
 import org.apache.camel.CamelContext;
@@ -32,6 +33,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.anyUrl;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -40,7 +43,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * The externalReferences option: which $ref the specification may use, checked before the parser resolves them.
+ * The externalReferences option: which $ref the specification may use, checked before the parser resolves them. The
+ * server stands in for every URL a specification could reach, so that a test can assert that nothing was fetched.
  */
 class RestOpenApiExternalReferencesTest {
 
@@ -58,19 +62,24 @@ class RestOpenApiExternalReferencesTest {
                       type: string
             """;
 
+    private static final String OWNER_SCHEMA = """
+            type: object
+            properties:
+              name:
+                type: string
+            """;
+
     private final CamelContext camelContext = new DefaultCamelContext();
 
     @BeforeAll
     static void startServer() {
         SERVER.start();
-        SERVER.stubFor(get(urlEqualTo("/petstore.yaml"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/yaml")
-                        .withBody(contract("pet.yaml#/components/schemas/Pet"))));
-        SERVER.stubFor(get(urlEqualTo("/pet.yaml"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/yaml").withBody(PET_SCHEMAS)));
+        SERVER.stubFor(get(urlEqualTo("/petstore.yaml")).willReturn(yaml(contract("pet.yaml#/components/schemas/Pet"))));
+        SERVER.stubFor(get(urlEqualTo("/pet.yaml")).willReturn(yaml(PET_SCHEMAS)));
         SERVER.stubFor(get(urlEqualTo("/self-contained.yaml"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/yaml")
-                        .withBody(contract("#/components/schemas/Pet") + PET_SCHEMAS)));
+                .willReturn(yaml(contract("'#/components/schemas/Pet'") + PET_SCHEMAS)));
+        SERVER.stubFor(get(urlEqualTo("/schema.yaml")).willReturn(yaml(OWNER_SCHEMA)));
+        SERVER.stubFor(get(urlEqualTo("/schemas/owner.yaml")).willReturn(yaml(OWNER_SCHEMA)));
     }
 
     @AfterAll
@@ -126,14 +135,14 @@ class RestOpenApiExternalReferencesTest {
 
     @Test
     void localRejectsAnHttpReferenceWithoutFetchingIt(@TempDir Path dir) throws Exception {
-        Path file = dir.resolve("contract.yaml");
-        Files.writeString(file, contract(SERVER.baseUrl() + "/pet.yaml#/components/schemas/Pet"));
+        Path file = Files.writeString(dir.resolve("contract.yaml"),
+                contract(SERVER.baseUrl() + "/pet.yaml#/components/schemas/Pet"));
 
         assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + file, "local"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(SERVER.baseUrl() + "/pet.yaml#/components/schemas/Pet")
                 .hasMessageContaining("externalReferences=local allows no http(s) reference");
-        SERVER.verify(0, getRequestedFor(urlEqualTo("/pet.yaml")));
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
     }
 
     @Test
@@ -144,6 +153,184 @@ class RestOpenApiExternalReferencesTest {
                 .hasMessageContaining("https://schemas.example.invalid/owner.yaml#/components/schemas/Owner")
                 .hasMessageContaining("at components.schemas.Pet.properties.owner.$ref in external-references-pet-remote.yaml")
                 .hasMessageContaining("externalReferences=local");
+    }
+
+    @Test
+    void localResolvesTheReferencesOfADocumentInASubdirectory() {
+        OpenAPI openApi
+                = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "external-references-subdir.yaml", "local");
+
+        // the parser read the Owner reference of schemas/external-references-pet.yaml next to that document
+        Schema<?> owner = (Schema<?>) petSchema(openApi).getProperties().get("owner");
+        assertThat(owner.getProperties()).containsKey("name");
+    }
+
+    @Test
+    void localChecksTheReferencesOfADocumentInASubdirectory() {
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext,
+                "external-references-subdir-remote.yaml", "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("https://schemas.example.invalid/address.yaml#/components/schemas/Address")
+                .hasMessageContaining(
+                        "at components.schemas.Owner.properties.address.$ref in schemas/external-references-owner-remote.yaml")
+                .hasMessageContaining("externalReferences=local");
+    }
+
+    @Test
+    void localChecksADocumentReferencedByAbsolutePath(@TempDir Path dir) throws Exception {
+        Path specs = Files.createDirectory(dir.resolve("specs"));
+        Files.writeString(specs.resolve("first.yaml"), """
+                components:
+                  schemas:
+                    Pet:
+                      type: object
+                      properties:
+                        owner:
+                          $ref: 'second.yaml#/components/schemas/Owner'
+                """);
+        Files.writeString(specs.resolve("second.yaml"), """
+                components:
+                  schemas:
+                    Owner:
+                      $ref: '%s/schema.yaml'
+                """.formatted(SERVER.baseUrl()));
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract(specs.resolve("first.yaml") + "#/components/schemas/Pet"));
+
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(SERVER.baseUrl() + "/schema.yaml")
+                // the parser reads second.yaml next to first.yaml, not from the working directory
+                .hasMessageContaining("in " + specs.resolve("second.yaml"))
+                .hasMessageContaining("externalReferences=local");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void localFailsWhenAReferencedDocumentCannotBeRead(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), contract("missing.yaml#/components/schemas/Pet"));
+
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references missing.yaml#/components/schemas/Pet")
+                .hasMessageContaining("cannot be read to check its references");
+        // the default lets the parser report the missing document and keep the rest
+        assertThat(RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root).getPaths())
+                .containsKey("/pets/{petId}");
+    }
+
+    @Test
+    void noneRejectsAReferenceGivenAsAYamlAlias(@TempDir Path dir) throws Exception {
+        // an anchor whose name starts with # looks like a reference inside the document before the alias is expanded
+        Path root = Files.writeString(dir.resolve("root.yaml"), "x-schema: &#remote '" + SERVER.baseUrl() + "/schema.yaml'\n"
+                                                                + contract("*#remote"));
+
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "none"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references " + SERVER.baseUrl() + "/schema.yaml")
+                .hasMessageContaining("externalReferences=none");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void localRejectsAReferenceGivenAsAYamlAlias(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), "x-schema: &remote '" + SERVER.baseUrl() + "/schema.yaml'\n"
+                                                                + contract("*remote"));
+
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references " + SERVER.baseUrl() + "/schema.yaml")
+                .hasMessageContaining("externalReferences=local allows no http(s) reference");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesAReferenceGivenAsAYamlAlias(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), "x-schema: &remote '" + SERVER.baseUrl() + "/schema.yaml'\n"
+                                                                + contract("*remote"));
+
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        // the parser expands the alias and fetches the schema
+        assertThat(petSchema(openApi).getProperties()).containsKey("name");
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schema.yaml")));
+    }
+
+    @Test
+    void localRejectsAnOpenApi31ReferenceResolvedAgainstAnHttpId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), contract31(SERVER.baseUrl() + "/schemas/", "owner.yaml"));
+
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references owner.yaml at components.schemas.Pet.properties.owner.$ref")
+                .hasMessageContaining("(owner.yaml resolves to " + SERVER.baseUrl() + "/schemas/owner.yaml)")
+                .hasMessageContaining("externalReferences=local");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesAnOpenApi31ReferenceAgainstItsId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"), contract31(SERVER.baseUrl() + "/schemas/", "owner.yaml"));
+
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        // the parser resolves the reference against the $id of the schema and fetches it
+        Schema<?> owner = (Schema<?>) petSchema(openApi).getProperties().get("owner");
+        assertThat(owner.getProperties()).containsKey("name");
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schemas/owner.yaml")));
+    }
+
+    @Test
+    void noneAllowsAReferenceInsideTheDocumentBelowAnHttpId(@TempDir Path dir) throws Exception {
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(SERVER.baseUrl() + "/schemas/", "#/components/schemas/Owner") + """
+                            Owner:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                        """);
+
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "none");
+
+        // the parser evaluates the fragment in the document, whatever the $id above it
+        Schema<?> owner = (Schema<?>) petSchema(openApi).getProperties().get("owner");
+        assertThat(owner.getProperties()).containsKey("name");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void localChecksAnOpenApi31FileReference(@TempDir Path dir) throws Exception {
+        Path schema = Files.writeString(dir.resolve("schema.yaml"), """
+                components:
+                  schemas:
+                    Pet:
+                      type: object
+                      properties:
+                        owner:
+                          $ref: '%s/schema.yaml'
+                """.formatted(SERVER.baseUrl()));
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(null, schema.toUri() + "#/components/schemas/Pet"));
+
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references " + SERVER.baseUrl() + "/schema.yaml")
+                .hasMessageContaining("in " + schema.toUri())
+                .hasMessageContaining("externalReferences=local");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void localAllowsAnOpenApi31FileReference(@TempDir Path dir) throws Exception {
+        Path schema = Files.writeString(dir.resolve("schema.yaml"), PET_SCHEMAS);
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(null, schema.toUri() + "#/components/schemas/Pet"));
+
+        OpenAPI openApi = RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local");
+
+        Schema<?> owner = (Schema<?>) petSchema(openApi).getProperties().get("owner");
+        assertThat(owner.getProperties()).containsKeys("id", "name");
     }
 
     @Test
@@ -209,11 +396,19 @@ class RestOpenApiExternalReferencesTest {
         }
     }
 
+    private static ResponseDefinitionBuilder yaml(String body) {
+        return aResponse().withHeader("Content-Type", "application/yaml").withBody(body);
+    }
+
     private static Schema<?> petSchema(OpenAPI openApi) {
         return openApi.getPaths().get("/pets/{petId}").getGet().getResponses().get("200").getContent()
                 .get("application/json").getSchema();
     }
 
+    /**
+     * An OpenAPI 3.0 contract whose response schema is the given reference, written as given (so a YAML alias stays an
+     * alias; a reference that starts with # must be quoted).
+     */
     private static String contract(String petSchemaRef) {
         return """
                 openapi: 3.0.3
@@ -236,7 +431,44 @@ class RestOpenApiExternalReferencesTest {
                           content:
                             application/json:
                               schema:
-                                $ref: '%s'
+                                $ref: %s
                 """.formatted(petSchemaRef);
+    }
+
+    /**
+     * An OpenAPI 3.1 contract whose Pet schema has the given $id (none when null) and whose owner property is the given
+     * reference. Further schemas can be appended under components.schemas.
+     */
+    private static String contract31(String petId, String ownerRef) {
+        return """
+                openapi: 3.1.0
+                info:
+                  title: Pets
+                  version: "1.0"
+                paths:
+                  /pets/{petId}:
+                    get:
+                      operationId: getPetById
+                      parameters:
+                        - name: petId
+                          in: path
+                          required: true
+                          schema:
+                            type: integer
+                      responses:
+                        "200":
+                          description: The pet
+                          content:
+                            application/json:
+                              schema:
+                                $ref: '#/components/schemas/Pet'
+                components:
+                  schemas:
+                    Pet:
+                %s      type: object
+                      properties:
+                        owner:
+                          $ref: '%s'
+                """.formatted(petId != null ? "      $id: " + petId + "\n" : "", ownerRef);
     }
 }

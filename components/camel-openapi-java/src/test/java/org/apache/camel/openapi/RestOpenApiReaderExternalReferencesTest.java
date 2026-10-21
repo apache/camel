@@ -34,7 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The externalReferences option of a contract-first openApi element, applied to the contract served as api-doc.
+ * The externalReferences option of a contract-first openApi element, applied to the contract served as api-doc. The
+ * contracts that must be rejected reference a host that does not exist; the check runs before the parser, so nothing is
+ * contacted.
  */
 class RestOpenApiReaderExternalReferencesTest {
 
@@ -71,6 +73,40 @@ class RestOpenApiReaderExternalReferencesTest {
 
         assertTrue(e.getMessage().contains("external-references-pet.yaml#/components/schemas/Pet"), e.getMessage());
         assertTrue(e.getMessage().contains("externalReferences=none"), e.getMessage());
+    }
+
+    @Test
+    void checksTheReferencesOfADocumentInASubdirectory() {
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("external-references-subdir-remote.yaml").externalReferences("local");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+        // the parser reads the Owner reference of schemas/external-references-pet-remote.yaml next to that document
+        assertTrue(e.getMessage().contains("https://schemas.example.invalid/address.yaml"), e.getMessage());
+        assertTrue(e.getMessage().contains("in schemas/external-references-owner-remote.yaml"), e.getMessage());
+    }
+
+    @Test
+    void checksAnOpenApi31ReferenceAgainstTheIdOfItsSchema() {
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("external-references-31-id.yaml").externalReferences("local");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+        assertTrue(e.getMessage().contains("owner.yaml resolves to https://schemas.example.invalid/schemas/owner.yaml"),
+                e.getMessage());
+    }
+
+    @Test
+    void checksAReferenceGivenAsAYamlAlias() {
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("external-references-alias.yaml").externalReferences("none");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+        // the alias is expanded before the check, as the parser expands it
+        assertTrue(e.getMessage().contains("references https://schemas.example.invalid/schema.yaml"), e.getMessage());
     }
 
     @Test

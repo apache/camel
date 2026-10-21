@@ -342,9 +342,11 @@ endpoint or the component, restricts this:
   then reference no other document at all, because the parser resolves its references against that URL.
 * `none` allows only references inside the document, such as `#/components/schemas/Pet`.
 
-The check runs on the specification, and on the local documents it references, before the parser resolves
-anything. It covers every `$ref` in a document, examples included. A reference the option does not allow fails
-the start, with a message that names the reference and where it is.
+The check runs before the parser resolves anything, on the document tree the parser uses (YAML aliases expanded).
+It resolves every `$ref` the way the parser does: against the document that contains it and, for OpenAPI 3.1,
+against the enclosing `$id`. `file:` and `classpath:` references count as local. The local documents the option
+allows are read and checked in turn, and a document that cannot be read fails the check. A reference the option
+does not allow fails the start, with a message that names the reference and where it is.
 
 [source,java]
 ----

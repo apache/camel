@@ -666,8 +666,9 @@ YAML::
 A contract can reference other documents with `$ref`: files on the classpath or the file system, and documents on an
 http(s) server. Camel loads every such document when the route starts. The `externalReferences` option restricts this:
 `all` (default) allows any reference, `local` allows references to the classpath and the file system only, and `none`
-allows only references inside the contract. A reference the option does not allow fails the start, with a message that
-names it.
+allows only references inside the contract. The check follows the references into the local documents it allows, and
+a document it cannot read fails the start too. A reference the option does not allow fails the start, with a message
+that names it.
 
 [tabs]
 ====
