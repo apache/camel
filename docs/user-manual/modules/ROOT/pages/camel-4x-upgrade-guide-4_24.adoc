@@ -2167,8 +2167,9 @@ Bad status of a failed sensor.
 
 Since 4.16, a `milo-client` consumer whose monitored item could not be created, for example because the node does not
 exist, received nothing. Now it receives one `DataValue` with the bad status code. The
-monitored item is created again when the route is restarted or when Camel rebuilds the connection to the server; unlike
-Camel 3.x, it is not retried every 10 seconds.
+monitored item is then created again every 10 seconds on the same connection, without delivering anything for a failed
+attempt, until the server accepts it; its first value is the current value of the node. A route restart or a
+connection that Camel rebuilds creates it again too.
 
 A node ID with a namespace URI (`nsu=`) that is not in the namespace table of the server no longer takes the whole
 client connection down, including the consumers of other nodes. Its consumer receives one `DataValue` with
