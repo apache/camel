@@ -31,7 +31,8 @@ import dev.tamboui.tui.event.KeyEvent;
  * and Esc walks back along the routes followed, then to the topology; t jumps back to the topology</li>
  * <li>d shows the detail panel of the selected node (PgUp and PgDn scroll it), g goes to a node by name, c shows the
  * source of the selected node or route</li>
- * <li>m shows the metrics, e the external systems of the topology</li>
+ * <li>m shows the metrics, e the external systems of the topology, y the body types each step of a route has been
+ * reached with</li>
  * </ul>
  * A tab offers a key to {@link #handleGotoNodeKeys(KeyEvent)}, then to its own keys and those of the source, and to
  * {@link #handleDiagramKeys(KeyEvent)}; Esc to {@link #handleDiagramEscape()}.
@@ -156,6 +157,13 @@ abstract class AbstractDiagramTab extends AbstractTab {
             reloadDiagram();
             return true;
         }
+        if (!topologyMode && ke.isCharIgnoreCase('y')) {
+            // the body types each step has been reached with, beside the arrows into the steps (CAMEL-25750)
+            diagram.setShowBodyTypes(!diagram.isShowBodyTypes());
+            diagram.endLoad();
+            reloadDiagram();
+            return true;
+        }
         if (topologyMode && ke.isCharIgnoreCase('e')) {
             // external systems: off, edges, all
             externalMode = (externalMode + 1) % 3;
@@ -254,8 +262,9 @@ abstract class AbstractDiagramTab extends AbstractTab {
         }
     }
 
+    /** The diagram again with the numbers and the body types of the status file, while they are shown. */
     void refreshDiagramIfNeeded() {
-        if (diagram.isShowDiagram() && diagramMetrics) {
+        if (diagram.isShowDiagram() && (diagramMetrics || diagram.isShowBodyTypes())) {
             reloadDiagram();
         }
     }

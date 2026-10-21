@@ -377,7 +377,9 @@ project `directory` as an argument, the runtime tools take the integration `name
   files up front (`routeFiles`, `configFiles`) and, when an integration is selected, which file and line each of its
   routes was loaded from, mapped from the runtime's location (a jar entry of an exported project, a classpath or
   file resource) onto the source under `src/main`. With `file`, a path relative to the directory as the list names
-  it, the content of that file.
+  it, the content of that file. The `.camel` folders are not listed, but counted (`consumedFiles`): a file consumer
+  moves each file it reads into `.camel` (unless `noop=true`), so a data folder whose files were all read is not
+  reported as empty.
 
 | `camel_write_file`
 | Writes the complete content of a file in the project directory. YAML and `.properties` content is validated
@@ -435,10 +437,15 @@ project `directory` as an argument, the runtime tools take the integration `name
   as `at` the first frame of the user's own code, looked for from the root cause up (a bean, a processor, a
   script), so a `NullPointerException` without a message still says where it happened.
   `details=true` returns the stack traces; `camel_get_errors` has them for every failed exchange. Other
-  multi-line text, such as a pretty-printed body, stays as a `detail` block.
+  multi-line text, such as a pretty-printed body, stays as a `detail` block. An integration that is not running
+  gets the log of its previous run, such as one that failed to start, and `previous=true` asks for that log while
+  the integration runs again.
 
 | `camel_get_errors`
 | The failed exchanges of a running integration: route, exchange, exception with stack trace, body and headers.
+  The errors are kept until the integration restarts, so those that failed before the routes were last reloaded are
+  marked with `beforeLastReload`: they come from an earlier version of the routes.
+  For an integration that is not running, it says how its previous run ended: when, the exit code, and the failure.
 
 | `camel_eval_expression`
 | Evaluates an expression (simple by default) in the running integration, or locally when none is named,
@@ -487,7 +494,8 @@ stuck doing that until its tool call budget is spent. So the first two identical
 in full, and from the third the answer is a short note instead: that the call was already answered and how many
 times it was asked. The changed answer helps the agent break the loop, and the context is not filled with copies.
 `camel_validate_source` counts the same way when it is given `content` and no `directory`: the same source gets
-the same answer, and the note also says to change the line the error names. Validating a file on disk, or
+the same answer, and the note also says to change the line the error names. For `camel_catalog_doc` the note says
+how to get the sections that a cut page left out: `docPage=<section title>` returns one section. Validating a file on disk, or
 `content` with a `directory` (the checks then read the other files of the project, which a fix can change), is
 always answered in full.
 
@@ -819,7 +827,9 @@ process is running).
 | Get Camel context information: name, version, state, uptime, route count, exchange statistics.
 
 | `camel_runtime_routes`
-| List Camel routes with their state, uptime, messages processed, last error, and throughput statistics.
+| List Camel routes with their state, uptime, messages processed, last error, and throughput statistics. With the
+  message history on (`camel run --dev`), a route also counts its steps that have been reached with more than one body
+  type (`variedBodyTypes`), and those reached with bodies of more than one kind (`mixedBodyKinds`), which need attention.
 
 | `camel_runtime_route_source`
 | Get the source code of routes in the running Camel application. Supports wildcard filtering.
@@ -830,7 +840,9 @@ process is running).
 
 | `camel_runtime_route_structure`
 | Show the route structure as a tree of processors, for the routes `routeId` names (a route id or a pattern, all
-  routes when omitted). `brief=true` leaves out the options and expressions.
+  routes when omitted). `brief=true` leaves out the options and expressions. With the message history on, each step has
+  the body types it has been reached with (`bodyTypes`) and their kinds (`bodyKinds`: `null`, `payload`, `data` or
+  `collection`); `varied=true` keeps only the steps reached with more than one body type.
 
 | `camel_runtime_processor_detail`
 | Show the configured options of every processor in a route: each processor's type, id, and configured options

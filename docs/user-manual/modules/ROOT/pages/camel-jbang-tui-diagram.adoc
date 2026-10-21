@@ -16,6 +16,7 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
   topology and in a route, and in a box of its own in the architecture
 * <<_external_endpoints,*External endpoints*>> -- what the integration consumes from and sends to outside
 * <<_metrics_and_source_code,*Metrics and source*>> -- throughput and timing on the boxes, and the source a box comes from
+* <<_body_types,*Body types*>> -- the types of the bodies each step has been reached with, on the arrows into the steps
 
 == Route Topology Diagram
 
@@ -84,8 +85,8 @@ the summary once it is saved. *b* switches every level between the *business* vi
 labels and what capabilities achieve (the AI-assisted parts marked ✦), or route ids with their
 endpoints and the entry points and systems of each capability. The business view is the default when
 the routes have descriptions, from their source or the AI project overview; *n*, the key of the former
-description toggle, does the same. *m* metrics and *e* external systems apply to the topology, *m* and
-*d* detail to a route. *g* group, in the topology, shows the architecture one level down: each route
+description toggle, does the same. *m* metrics and *e* external systems apply to the topology, *m*,
+*y* body types and *d* detail to a route. *g* group, in the topology, shows the architecture one level down: each route
 box names its group (a route group, an AI capability marked ✦, shared services or utility), each group
 has the border colour of its box in the architecture, and a legend at the bottom of the topology lists
 the groups in their colours; it is on when the project has groups. *u* shows or hides the utility
@@ -181,6 +182,41 @@ Press *e* to cycle through three modes for external endpoints:
 * Press *c* to view the source code of the selected route, with syntax highlighting
 * Press *b* (or *n*) to switch between the business view (labels) and the technical view (route ids and endpoints)
 
+=== Body Types
+
+When the integration runs with the message history on, such as with `camel run --dev`, Camel keeps the body types
+each step has been reached with, across the messages (see
+xref:camel-jbang-diagnostics.adoc#_body_types[Body types] for the same in the Camel CLI). In a route, press *y* to show
+them beside the arrow into each step, so the arrows show how the body changes along the route:
+
+[source,text]
+----
+           ┌──────────────────────┐
+           │   unmarshal[json]    │
+           └──────────────────────┘
+                      │
+                      │ ⚠ byte[] | LinkedHashMap (payload and data)
+                    3 ▼ 12
+           ┌────────────────────⚠─┐
+           │   to[file:outbox]    │
+           └──────────────────────┘
+----
+
+A step reached with more than one type is a part of the route that is dynamic. When the types are of more than one
+kind (`null`, `payload`, `data` or `collection`), the step needs attention, as its body depends on the path a message
+takes: its box has a ⚠ in its top border, whether the types are shown or not. Here some messages reach the file
+endpoint with parsed data that was never marshalled.
+
+image::jbang/camel-tui-diagram-body-types.png[The orders route with its body types on the arrows: only one branch of the choice marshals, so the step after it is reached with a stream and a map, and its Info panel says the body there depends on the path a message takes]
+
+The arrows of a branch are side by side, so the types beside them are cut to the room there is: the first ones and how
+many more (`ByteArrayInputStreamCache +2`). The Info panel of the selected step lists them all with their kind. In the
+topology, the Info panel of a route says how many of its steps were reached with more than one type
+(`⚠ 1 mixed · 2 varied`), and the Routes tab has the same in its BODY TYPES column, with the types of each step in the
+table of the processors of the selected route.
+
+image::jbang/camel-tui-routes-body-types.png[The Routes tab: the orders route has four steps reached with bodies of more than one kind, and its processors list the types of each step]
+
 == Keyboard Shortcuts
 
 === Diagram Tab
@@ -194,6 +230,7 @@ Press *e* to cycle through three modes for external endpoints:
 | *Esc* | Go back (previous route or topology)
 | *t* | Jump to topology view
 | *m* | Toggle metrics overlay
+| *y* | In a route: show the body types each step has been reached with, beside the arrows into the steps
 | *e* | External systems: in the topology off, edges, all; in the architecture off or edges
 | *a* | AI-assisted parts shown, or the facts alone; without a `camel-summary.md` yet, has the AI write one
 | *b* (or *n*) | Business view (labels, what capabilities achieve) or technical view (route ids, endpoints)

@@ -23,7 +23,7 @@ camel test agent start [options]
 | Option | Description | Default | Type
 | `--config-class` | Configuration class name. |  | String
 | `--dep` | Set of additional Maven dependencies that should be loaded with the agent. |  | String[]
-| `--engine` | Name of the test engine that is used ti run tests. One of junit, junit-jupiter, junit4, testng, cucumber |  | String
+| `--engine` | Name of the test engine that is used to run tests. One of junit, junit-jupiter, junit4, testng, cucumber |  | String
 | `--includes` | Includes test name pattern. |  | String[]
 | `--inspect-code` | When enabled the source code gets analyzed for required modules and dependencies that are added to the classpath. | true | String
 | `--modules` | Comma delimited list of additional Citrus modules that should be loaded with the agent. |  | String

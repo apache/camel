@@ -60,9 +60,7 @@ class SourceSizeTest {
             AiPanel.runAgentLoop 159
             AiUsageStats.render 166
             CamelMonitor.java 2761
-            DiagramDetailSupport.renderEipInfoPanel 159
-            DiagramDetailSupport.renderRouteInfoPanel 154
-            DiagramSupport.java 2460
+            DiagramSupport.java 2413
             DiagramSupport.loadAllDiagramsInBackground 180
             DiagramSupport.loadHighlightedNativeDiagramInBackground 212
             EndpointsTab.renderContent 170
@@ -74,7 +72,6 @@ class SourceSizeTest {
             OllamaMonitor.toJson 200
             OverviewTab.buildOverviewTable 185
             OverviewTab.renderThroughputChart 158
-            RoutesTab.renderProcessors 179
             SendMessagePopup.doSend 156
             SendMessagePopup.handleKeyEvent 220
             SourceEditAssist.java 2006

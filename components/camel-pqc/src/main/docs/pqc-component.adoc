@@ -95,6 +95,8 @@ BouncyCastle constants (`ml_dsa_87`) is accepted as an alias of the canonical na
 | `FALCON` | `FALCON-512`, `FALCON-1024`
 | `DILITHIUM` | `ML-DSA-44` (lifecycle manager default), `ML-DSA-65`, `ML-DSA-87` (component default)
 | `SPHINCSPLUS` | The `SLHDSA` parameter sets, for example `SLH-DSA-SHA2-128S` (default)
+| `MAYO` | `mayo1`, `mayo2`, `mayo3`, `mayo5` (default); the canonical dashed form (`MAYO-1`) is accepted too
+| `SNOVA` | `SNOVA_24_5_5_SHAKE_SSK` (default), `SNOVA_24_5_4_ESK`, ... (see `SnovaParameterSpec`). The SNOVA names keep their underscores and are not accepted in dashed form
 | `KYBER` | `ML-KEM-512`, `ML-KEM-768` (lifecycle manager default), `ML-KEM-1024` (component default); `kyber512`, `kyber768` and `kyber1024` are accepted as aliases
 | `NTRU` | `ntruhps2048509`, ... (see `NTRUParameterSpec`)
 | `NTRULPRime` | `ntrulpr653`, ... (see `NTRULPRimeParameterSpec`)
@@ -109,9 +111,9 @@ BouncyCastle constants (`ml_dsa_87`) is accepted as an alias of the canonical na
 The `parameterSpec` option is also honoured by the `generateKeyPair` lifecycle operation, which then generates the key
 at the configured security level.
 
-NOTE: `parameterSpec` is not supported for the stateful hash-based signature algorithms (XMSS, XMSSMT, LMS, HSS), for
-MAYO and SNOVA, nor for the hybrid operations: those either have no name-addressable BouncyCastle parameter set, or pair
-a fixed classical key set with a matching PQC key set. For those, register a `KeyPair` bean in the registry instead.
+NOTE: `parameterSpec` is not supported for the stateful hash-based signature algorithms (XMSS, XMSSMT, LMS, HSS) nor
+for the hybrid operations: those either have no name-addressable BouncyCastle parameter set, or pair a fixed classical
+key set with a matching PQC key set. For those, register a `KeyPair` bean in the registry instead.
 
 == Supported Operations
 

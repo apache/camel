@@ -112,9 +112,20 @@ final class SqsWorld {
             // faults cleared: the queue must drain
             faults = false;
             sqs.faults = false;
-            long deadline = dst.now() + 20L * visibilityTimeout * 1000 + 30_000;
-            while (!sqs.allDeleted() && dst.now() < deadline) {
+            // drain while it makes progress: stop when no message was deleted for a while, or at a cap. A fixed
+            // drain time failed falsely when the consumer was still deleting messages at its end (one consumer
+            // taking one message per poll with a 1 s delay, and short polling returning fewer messages than asked)
+            long quiet = 20L * visibilityTimeout * 1000 + 30_000;
+            long cap = dst.now() + 3_600_000;
+            int left = sqs.notDeleted().size();
+            long lastProgress = dst.now();
+            while (!sqs.allDeleted() && dst.now() < cap && dst.now() - lastProgress < quiet) {
                 dst.runFor(100);
+                int remaining = sqs.notDeleted().size();
+                if (remaining < left) {
+                    left = remaining;
+                    lastProgress = dst.now();
+                }
             }
             dst.check(
                     Invariants.of("no message is delivered again while the consumer holds it",

@@ -66,6 +66,21 @@ class RouteErrorFrameTest {
     }
 
     @Test
+    void theStepsOfAnOnExceptionKeepTheirBodyTypes() {
+        RouteInfo route = checkout();
+        NodeInfo log = route.nodes.get(2);
+        log.bodyTypes = List.of("java.lang.String", "java.util.LinkedHashMap");
+        log.bodyKinds = List.of("payload", "data");
+
+        RouteErrorFrame.Split split = RouteErrorFrame.split(route);
+
+        NodeInfo copy = split.blocks().get(0).nodes.get(1);
+        assertThat(copy.id).isEqualTo("log1");
+        assertThat(copy.bodyTypes).containsExactly("java.lang.String", "java.util.LinkedHashMap");
+        assertThat(copy.bodyKinds).containsExactly("payload", "data");
+    }
+
+    @Test
     void theLinesSayWhereTheFailuresGoAndComeFrom() {
         assertThat(RouteErrorFrame.lines("checkout", PATHS, LineStyle.UNICODE))
                 .containsExactly("▸ on failure to parked: onException, handled · dead letter, handled");

@@ -143,10 +143,13 @@ class ServerCertificateValidationTest extends AbstractMiloServerTest {
         this.trustAllEndpoint.setExpectedCount(1);
         this.certificateValidatorEndpoint.setExpectedCount(1);
 
-        this.emptyTrustListEndpoint.setExpectedCount(0);
-        this.emptyTrustListEndpoint.setSleepForEmptyTest(5_000);
-        this.notConfiguredEndpoint.setExpectedCount(0);
-        this.notConfiguredEndpoint.setSleepForEmptyTest(5_000);
+        // the clients that cannot connect report their node without communication, and nothing else
+        this.emptyTrustListEndpoint.setExpectedCount(1);
+        testBody(this.emptyTrustListEndpoint.message(0), assertNoCommunication());
+        this.emptyTrustListEndpoint.setAssertPeriod(5_000);
+        this.notConfiguredEndpoint.setExpectedCount(1);
+        testBody(this.notConfiguredEndpoint.message(0), assertNoCommunication());
+        this.notConfiguredEndpoint.setAssertPeriod(5_000);
 
         // the value is written before the consumers start, so it is the first notification of each client that
         // connects (and not the initial Bad value of the item)

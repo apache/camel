@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
@@ -91,6 +92,12 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                         description = "Output in JSON Format")
     boolean jsonOutput;
 
+    @CommandLine.Option(names = { "--varied" },
+                        description = "To show only the steps that have been reached with more than one body type, as the"
+                                      + " running integration has seen them (the message history records them, such as"
+                                      + " with camel run --dev)")
+    boolean varied;
+
     @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
                         description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
@@ -136,6 +143,15 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
             // no running integration with the name, so it is a source file
             jo = doCallSource(name);
         }
+        if (varied) {
+            jo = onlyVaried(jo);
+            JsonArray routes = jo.getCollection("routes");
+            if (!jsonOutput && (routes == null || routes.isEmpty())) {
+                printer().println("No step has been reached with more than one body type (the message history records"
+                                  + " the body types, such as with camel run --dev)");
+                return 0;
+            }
+        }
         if (jsonOutput) {
             addUnreadSourceParts(jo);
             String dump = Jsoner.prettyPrint(jo.toJson(), 2);
@@ -158,6 +174,8 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                             code.level = line.getInteger("level");
                             code.code = line.getString("code");
                             code.description = line.getString("description");
+                            code.bodyTypes = line.getCollection("bodyTypes");
+                            code.bodyKinds = line.getCollection("bodyKinds");
                             if (brief) {
                                 // make code brief
                                 code.code = StringHelper.before(code.code, "[", code.code);
@@ -251,22 +269,88 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
                 printer().printf("Source: %s%n", row.location);
                 printer().println("--------------------------------------------------------------------------------");
             }
+            // the body types each step was reached with, as the running app has seen them, line up in a column after
+            // the code (the message history records them, such as with camel run --dev)
+            int width = 0;
+            if (!raw && row.code.stream().anyMatch(code -> code.bodyTypes != null && !code.bodyTypes.isEmpty())) {
+                for (Code code : row.code) {
+                    width = Math.max(width, StringHelper.padString(code.level).length() + clippedCode(code).length());
+                }
+            }
             for (int i = 0; i < row.code.size(); i++) {
                 Code code = row.code.get(i);
-                String c = StringHelper.limitLength(Jsoner.unescape(code.code), 90, " (clipped)");
+                String c = clippedCode(code);
                 String pad = StringHelper.padString(code.level);
                 if (raw) {
                     printer().printf("%s%s%n", pad, c);
                 } else {
+                    String text = pad + c;
+                    if (width > 0 && code.bodyTypes != null && !code.bodyTypes.isEmpty()) {
+                        text = String.format("%-" + width + "s   body: %s", text, bodyTypes(code.bodyTypes, code.bodyKinds));
+                    }
                     if (code.line != -1) {
-                        printer().printf("%4d: %s%s%n", code.line, pad, c);
+                        printer().printf("%4d: %s%n", code.line, text);
                     } else {
-                        printer().printf("      %s%s%n", pad, c);
+                        printer().printf("      %s%n", text);
                     }
                 }
             }
             printer().println();
         }
+    }
+
+    private static String clippedCode(Code code) {
+        return StringHelper.limitLength(Jsoner.unescape(code.code), 90, " (clipped)");
+    }
+
+    /**
+     * The body types by their simple class names, such as {@code String | LinkedHashMap} for a step reached with a text
+     * by some messages and with a Map by others, followed by the kinds when there is more than one:
+     * {@code String | LinkedHashMap (payload and data)}, a step that needs attention.
+     */
+    static String bodyTypes(List<String> types, List<String> kinds) {
+        StringJoiner sj = new StringJoiner(" | ");
+        for (String type : types) {
+            sj.add(StringHelper.afterLast(type, ".", type));
+        }
+        String answer = sj.toString();
+        if (kinds != null && kinds.size() > 1) {
+            answer += " (" + String.join(", ", kinds.subList(0, kinds.size() - 1)) + " and " + kinds.get(kinds.size() - 1)
+                      + ")";
+        }
+        return answer;
+    }
+
+    /**
+     * Only the steps that have been reached with more than one body type, and the routes that have such steps: what is
+     * dynamic in the routes, or needs attention when the kinds differ (bodyKinds).
+     */
+    public static JsonObject onlyVaried(JsonObject jo) {
+        JsonArray routes = new JsonArray();
+        JsonArray all = jo.getCollection("routes");
+        if (all != null) {
+            for (Object o : all) {
+                JsonObject route = (JsonObject) o;
+                JsonArray code = new JsonArray();
+                List<JsonObject> lines = route.getCollection("code");
+                if (lines != null) {
+                    for (JsonObject line : lines) {
+                        List<String> types = line.getCollection("bodyTypes");
+                        if (types != null && types.size() > 1) {
+                            code.add(line);
+                        }
+                    }
+                }
+                if (!code.isEmpty()) {
+                    JsonObject copy = new JsonObject(route);
+                    copy.put("code", code);
+                    routes.add(copy);
+                }
+            }
+        }
+        JsonObject answer = new JsonObject(jo);
+        answer.put("routes", routes);
+        return answer;
     }
 
     public static String extractSourceName(String loc) {
@@ -314,5 +398,7 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
         int level;
         String code;
         String description;
+        List<String> bodyTypes;
+        List<String> bodyKinds;
     }
 }

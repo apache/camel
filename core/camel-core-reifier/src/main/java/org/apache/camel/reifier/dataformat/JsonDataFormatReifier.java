@@ -64,6 +64,9 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
         if (definition.getLibrary() == JsonLibrary.Jsonb) {
             properties.put("objectMapper", asRef(definition.getObjectMapper()));
         }
+        if (definition.getLibrary() == JsonLibrary.Gson || definition.getLibrary() == JsonLibrary.Jsonb) {
+            properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
+        }
         if (definition.getLibrary() == JsonLibrary.Fastjson || definition.getLibrary() == JsonLibrary.Gson) {
             properties.put("dateFormatPattern", definition.getDateFormatPattern());
         }

@@ -30,6 +30,37 @@ in its model, so clearing them on the route saved little memory at the cost of m
 Applications that called `Route.clearRouteModel()` directly can remove the call. Implementations of the `Route` interface
 that override `clearRouteModel()` can remove the override.
 
+=== camel-core - the documented default of skipBindingOnErrorCode is true
+
+The `skipBindingOnErrorCode` option of the Rest DSL (on `restConfiguration`, `rest`, its verbs and `restBinding`) is now
+documented with the default value `true`, the default it has always had at runtime. Before, the model, the catalog, the
+XML and YAML DSL schemas said `false`. Routes behave as before.
+
+Tools that read the default from the catalog or the schemas now see `true`.
+
+=== camel-core - pollEnrich: the body is null after a timeout also for a message that creates its body on demand
+
+When `pollEnrich` (or `poll`) times out and no `aggregationStrategy` is configured, the body is set to `null`, and with
+`variableReceive` the variable is `null`. For a message that creates its body on demand, the `null` did not stick: the
+next read created the body again. The message of a file consumer creates its body from its file, so after a timeout
+the body, or the variable of `variableReceive`, was the file of the incoming exchange instead of `null`. The messages
+of the JMS, sjms, mail, HTTP, XMPP, SMPP, SNMP and Spring WS consumers create their body on demand as well, so there it
+was the payload of the consumer again.
+
+The body, or the variable, is now `null` after a timeout for these consumers too. A route that read the incoming file
+or payload from the body after a timed out `pollEnrich` must keep it before the `pollEnrich` instead, for example with
+`variableReceive`, which leaves the body as it was. To keep the body empty, the message is replaced by a plain message
+with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
+consumer (such as `GenericFileMessage` or `JmsMessage`).
+
+=== camel-main - a failure to start is logged
+
+A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
+as `camel run` already did. Before, the failure left `main()` and only the JVM printed it, on stderr
+(`Exception in thread "main" ...`), so the log file of the application did not say why it stopped.
+The JVM no longer prints that same failure a second time. When the application logs nothing at ERROR (such as without
+a logging implementation), the JVM prints it as before.
+
 === camel-report-maven-plugin:validate / configuration-validate
 
 The catalog now accepts all `camel.*` groups defined in `camel-main-configuration-metadata.json`
@@ -192,6 +223,15 @@ which embeds its own relocated copy of Vert.x. The `vertx` option of `camel-aran
 See the https://github.com/fabric8io/kubernetes-client/blob/main/doc/MIGRATION-v8.md[Kubernetes client 8 migration guide]
 for the other changes.
 
+=== camel-gson, camel-jsonb - the unmarshal type header needs allowUnmarshallType
+
+The Gson and JSON-B data formats now use the `CamelGsonUnmarshalType` and `CamelJsonbUnmarshallType` headers to choose
+the class to unmarshal to only when the new `allowUnmarshallType` option is enabled, as the Jackson data formats do with
+`CamelJacksonUnmarshalType`. By default the headers are ignored, and the configured `unmarshalType` is used (a `Map` for
+a JSON object when none is configured). A route that sets the header must enable the option, for example with
+`.unmarshal(new JsonDataFormat(JsonLibrary.Gson).allowUnmarshallType(true))` or
+`<json library="Gson" allowUnmarshallType="true"/>`.
+
 === camel-jbang - camel validate and camel overview report the same endpoints no route consumes
 
 `camel validate source` and `camel overview` now use the same rules for a `direct:`, `seda:` or `disruptor:` endpoint
@@ -217,6 +257,16 @@ also applies to `pollEnrich` and `ConsumerTemplate.receive`, which take one file
 until the last file of the directory is received, where before the first received file deleted it. This applies to
 camel-ftp, camel-sftp, camel-smb and camel-azure-files as well.
 
+=== camel-file - poll and pollEnrich evaluate the fileName on the current message
+
+`poll` and `pollEnrich` with a file based component (file, ftp, ftps, sftp, smb and azure-files) evaluate a dynamic
+`fileName` that does not use the file functions on the current message, so `+fileName=${body}+` and
+`fileName=${body[customer]}.json` read its body. Before, the consumer evaluated it for each file found, with that file
+as the body, so `+${body}+` was the file found. A `fileName` that uses the file functions (`${file:...}`,
+`${date:file:...}`) is still evaluated for each file found, and headers, variables and exchange properties work as
+before. A `fileName` that read the file found through its headers, such as `${header.CamelFileName}`, must use the file
+functions instead (`${file:name}`).
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
@@ -229,6 +279,18 @@ platform default charset. The info string is the symmetric algorithm name, so th
 values such as `AES`, which are pure ASCII. A deployment running on a JVM whose default charset cannot encode that
 name identically to UTF-8 would, however, derive a different key than the previous version, and could not decrypt
 material produced by it.
+
+=== camel-pqc - the BouncyCastle providers stay registered when an endpoint stops
+
+Stopping a `pqc` endpoint no longer removes the `BC` and `BCPQC` providers from `java.security.Security`.
+
+`java.security.Security` is JVM-global, and the endpoint only added a provider when it was absent, so stopping one
+endpoint could remove a provider it had not installed - breaking the other `pqc` endpoint of the same route, other
+`CamelContext` instances, components such as camel-crypto, camel-ssh and camel-xmlsecurity, and any non-Camel code in
+the same JVM.
+
+An application that relied on the providers being de-registered on shutdown must now remove them itself with
+`Security.removeProvider("BC")` and `Security.removeProvider("BCPQC")`.
 
 === camel-jbang - camel validate normalize writes one file per input file to an output directory
 
@@ -247,6 +309,22 @@ the routes) and exits with an error.
 With `--output=<file>` or without `--output`, the routes are still merged, and the command now warns, on
 the standard error, when the top-level `onException` of one file applies to the routes of the other files
 in the merged output.
+
+=== camel-pqc - generateSecretKeyEncapsulation stamps the JCE algorithm name on the secret key
+
+The `SecretKeyWithEncapsulation` produced by `generateSecretKeyEncapsulation` now carries the mapped JCE algorithm
+name, as the `extractSecretKeyEncapsulation` and `extractSecretKeyFromEncapsulation` operations already did. Before, it
+carried the raw enum name.
+
+This is only visible for the two algorithms whose enum name differs from the JCE name: `DESEDE` now yields `DESede`
+(was `DESEDE`), and `GOST3412_2015` now yields `GOST3412-2015` (was `GOST3412_2015`). The raw names are not resolvable
+cipher algorithms, so a key labelled with one could not be passed to `Cipher.getInstance(key.getAlgorithm())`, and the
+generate and extract ends of the same exchange disagreed on the key's identity. Code asserting on the old value must
+be updated.
+
+`generateSecretKeyEncapsulation` now also rejects a missing `symmetricKeyAlgorithm` with
+`Symmetric Algorithm needs to be specified`, as the extract operations already did, instead of failing later inside
+BouncyCastle with `Missing argument`.
 
 === camel-jbang - camel ask asks before a call that changes something, reaches out or runs code
 
@@ -269,6 +347,19 @@ model better at tool calling, such as `qwen3.6`, is installed.
 `bean`). Scripts that read the `REMOTE` column of the table must read `SCOPE` instead. The `--json` output keeps
 `remote` and adds `internal`.
 
+=== camel-pqc - the CamelPQCOperation header is validated, and two header types are corrected
+
+A `CamelPQCOperation` header selecting an operation the endpoint holds no key material for is now rejected with an
+`IllegalArgumentException` naming the requested operation, the configured one, and what is missing. Before, an
+override crossing between the signature and the key encapsulation operations dereferenced a null and surfaced as a
+bare `NullPointerException`. Routes relying on such an override have to configure a separate endpoint for the other
+operation; the override itself keeps working within a family and for the operations that need no key material.
+
+Two header declarations also carried the wrong `javaType` in the component metadata, which is visible to tooling and
+in the generated header table. `CamelPQCOperation` is `org.apache.camel.component.pqc.PQCOperations` (was `String`)
+and `CamelPQCSecretKey` is `javax.crypto.SecretKey` (was `Boolean`). The runtime values are unchanged - only the
+declared types were wrong.
+
 === camel-jbang - finding integrations by name or PID
 
 All commands find running integrations the same way:
@@ -279,6 +370,33 @@ All commands find running integrations the same way:
   of an integration that runs in a child process. `camel ps` does not list it anymore.
 * The `--timeout` of `camel cmd send`, `camel cmd receive`, `camel eval expression`, `camel transform message` and the
   `camel semantic` commands also takes a duration such as `30s` (a number is still millis).
+
+=== camel-pqc - KeyLifecycleManager behaviour aligned across the implementations
+
+Four differences between the `KeyLifecycleManager` implementations are resolved. All four are corrections, but each
+is observable.
+
+* `updateKeyMetadata` on the AWS Secrets Manager, Azure Key Vault and HashiCorp Vault managers no longer re-stores
+  the key pair. It previously read the key back and wrote it again, creating a new version of the private key secret
+  on every status change - with the default `max_versions = 10` of a Vault KV v2 mount, ten metadata edits purged
+  every historical version of the private key. It also meant `revokeKey` threw for a key whose private secret was
+  already gone. The file-based manager already wrote metadata only.
+* `FileBasedKeyLifecycleManager.listKeys()` now scans the key directory instead of returning an in-process cache
+  filled once at construction. A key file written after start-up - by another process, a restored backup or a
+  sidecar - was previously invisible, which silently stopped `KeyRotationScheduler` from rotating it.
+* The `deleteKeyState` operation now fails with `IllegalStateException` when no `keyLifecycleManager` is configured,
+  as every other key lifecycle operation already did. It previously reported success having deleted nothing.
+* `exportKey` with `PEM` and `includePrivate = true` produces a document that `importKey` can read back. The
+  combined export carries both a `PUBLIC KEY` and a `PRIVATE KEY` block, and the parser stripped only one pair of
+  armour lines, leaving the other in the Base64 input and failing with `Illegal base64 character 2d`. The export
+  format itself is unchanged, so documents written by earlier versions are unaffected.
+* `importKey` resolves the `KeyFactory` with the BouncyCastle provider that serves the algorithm, as the file-based
+  manager's key loading already did. On JDK 24 and later the JDK itself implements ML-DSA and ML-KEM and is listed
+  before BouncyCastle, so the provider-less lookup used until now returned a JDK key, and signing with it through the
+  component's BouncyCastle `Signature` failed with `unknown private key passed to ML-DSA`. A key imported through the
+  AWS Secrets Manager, Azure Key Vault, HashiCorp Vault or in-memory manager is now a BouncyCastle key on every JDK.
+
+PEM handling is also now explicitly UTF-8 rather than the platform default charset.
 
 === camel-jbang - exit codes, and errors on stderr
 
@@ -318,6 +436,21 @@ A script that checks the exit code of a command must take these changes into acc
 Errors, warnings and tips are printed on stderr instead of stdout, so stdout only has the output of the command, such
 as JSON. If a script reads the error text of a command from stdout, read stderr instead. The list of plugins that are
 not installed, after `camel --help`, is printed on stderr, and only in an interactive terminal.
+
+=== camel-pqc - parameterSpec accepts MAYO and SNOVA, and the FIPS advisory no longer flags two aliases
+
+`parameterSpec` can now select a named parameter set for `MAYO` and `SNOVA`. Both were rejected on the grounds that
+they have no name-addressable BouncyCastle parameter spec, which is not the case: `MayoParameterSpec.fromName` and
+`SnovaParameterSpec.fromName` both exist, and neither algorithm is stateful. The stateful hash-based signatures
+(`XMSS`, `XMSSMT`, `LMS`, `HSS`) are still rejected, as they genuinely have no such spec.
+
+`DILITHIUM` and `SPHINCSPLUS` no longer produce the "not part of NIST FIPS 204/205" warning on hybrid endpoints.
+Both are aliases that resolve to `ML-DSA` and `SLH-DSA`, so the warning was recommending the algorithm already in
+use. `FALCON`, `MAYO`, `SNOVA`, `XMSS` and `XMSSMT` still warn.
+
+The five default key material classes that generated their key pair with the provider's default RNG (`Falcon`,
+`MAYO`, `SNOVA`, `LMS`, `HSS`) now use the shared `SecureRandomHelper` like the other sixteen. No key format or
+parameter set changes; only the randomness source is now uniform.
 
 === camel-cli-connector - every action with a request id gets an answer
 
@@ -596,10 +729,11 @@ provider is detected as before.
 The XML, YAML and Java route dumps (`camel transform route`, `camel validate normalize`, `camel.main.dumpRoutes`, the
 developer console) now write these options whenever they are set, also with their documented default value: the
 binding options of the rest configuration, a rest and its verbs (such as `bindingMode="off"`), the options of a
-redelivery policy, of a `resilience4jConfiguration` and of a `faultToleranceConfiguration`, and `shutdownRoute` /
-`shutdownRunningTask` of a route. Left out, such an option took the value of the parent level when the dump was loaded
-(the rest configuration, the error handler, the global circuit breaker configuration, the CamelContext), so the route
-behaved differently.
+redelivery policy, of a `resilience4jConfiguration` and of a `faultToleranceConfiguration`, `shutdownRoute` /
+`shutdownRunningTask` of a route, and `apiDocs` of a rest verb. Left out, such an option took the value of the parent
+level when the dump was loaded (the rest configuration or the rest, the error handler, the global circuit breaker
+configuration, the CamelContext), so the route behaved differently, or, for `apiDocs`, a verb with `apiDocs="true"`
+under a rest with `apiDocs="false"` was left out of the OpenAPI document.
 
 === camel-jbang - camel get bean, get route-controller and top source
 
@@ -774,6 +908,18 @@ A message that the route marks rollback only every time was removed before, and 
 Handle such a message in the route instead, for example by moving it aside, rather than marking it rollback only
 every time.
 
+=== camel-a2a - caller profile and task owner
+
+* When a security requirement of the agent card combines several schemes, such as an API key and an OAuth token, the
+caller profile (`CamelA2AUserProfile`) is now the one of the token, whatever the order of the schemes. Before, it was
+the profile of the first scheme, so a requirement that listed the API key first only gave `{"scheme": "apiKey"}` to
+the route, and the tasks belonged to the API key.
+* A token without a `sub` claim is now identified by the `username` that a token introspection response gives, else by
+its `client_id` or `azp` claim (such as a client credentials token), so the tasks of different users and clients are
+kept apart. A valid token that has none of these claims is now rejected with HTTP 401.
+* The `CamelOAuthTokenValidationResult` exchange property is now set on the exchange that the route processes, as
+documented. Before, it was only set on the incoming HTTP exchange.
+
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 
 The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
@@ -797,6 +943,24 @@ If the `transacted()` block in which the exchange is marked rollback only last j
 marked rollback only, so the commit of the outer block fails (in Camel Quarkus with `CamelException: Unable to commit transaction`) where it used
 to commit, as with camel-spring (`UnexpectedRollbackException`). To roll back only the inner block, use
 `PROPAGATION_REQUIRES_NEW` for it.
+
+=== camel-thrift - SSL/TLS settings of the consumer, and errors sent to the client
+
+* A consumer configured with `negotiationType=SSL` and the default `synchronous=false` now fails to start. It used to
+start a server without SSL/TLS. SSL/TLS requires `synchronous=true`, as on the producer.
+* The `SASL` negotiation type, which is not implemented, now makes the producer and the consumer fail to start. They
+used to behave as with `PLAINTEXT`.
+* The SSL/TLS consumer now creates its server socket from the SSL context of `sslParameters`, so all of its settings
+apply, including the trust managers and the server parameters. For example, `serverParameters.clientAuthentication=REQUIRE`
+now requires a client certificate. Before, the consumer only used the key store, the protocol and the cipher suites,
+and never asked for a client certificate. The key managers are required, and as in the other components the key is
+read with their `keyPassword`: set it when the key is protected by a password. Before, the consumer read the key with
+the password of the key store.
+* A new `muteException` consumer option, enabled by default, sends a generic `TApplicationException` of type
+`INTERNAL_ERROR` ("Internal error processing <method>") to the client instead of an exception that the Thrift method
+does not declare. Before, the asynchronous consumer sent the message of the exception, and the synchronous consumer
+sent a `TApplicationException` as it was, such as one returned by another Thrift service that the route called. An
+exception declared in the IDL is still sent as it is. Set `muteException=false` to send the exception as before.
 
 === camel-telegram - webhook requests are verified with a secret token
 
@@ -884,6 +1048,22 @@ expanded, and the declaration itself is not passed on to Smooks.
 Set `allowExternalEntities=true` on the endpoint or on the data format for documents that rely on external entities or
 an external DTD.
 
+=== camel-platform-http-main - management server settings on a shared port
+
+When the HTTP server (`camel.server.enabled=true`) and the HTTP management server (`camel.management.enabled=true`)
+have the same port (both default to 8080), the HTTP server serves the management endpoints. It cannot apply these
+options of the management server, which were ignored without notice:
+
+* `camel.management.host`, when set to another host than the one of the HTTP server
+* `camel.management.path`, when set to another path than the one of the HTTP server
+* `camel.management.useGlobalSslContextParameters=true`, when the HTTP server does not use the global SSL configuration
+* `camel.management.authenticationEnabled=true`, with the basic or JWT authentication options
+
+Camel now fails to start when the management server shares the port and one of them is configured, with a message
+that lists them. Set `camel.management.port` to another port, so that the management server runs a server of its own
+and applies them. To keep a single port, remove them and configure the HTTP server instead: for example,
+authentication configured on the HTTP server for `/*` also applies to the management endpoints.
+
 === camel-ical - each unmarshal parses with its own calendar builder
 
 The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at
@@ -895,6 +1075,14 @@ unmarshalled after it. A date with a `TZID` that is not a standard time zone and
 now read as a local date-time without a zone (`getDate()` returns a `LocalDateTime`); before, it was read with the
 definition of an earlier message, if there was one. A calendar that defines a `TZID` an earlier message has defined
 differently is now read with its own definition.
+
+=== camel-flatpack - marshal writes the first row of the list
+
+With the default `ignoreFirstRecord=true`, marshalling a `List<Map<String, Object>>` skipped the first map, so the
+first data row was missing from the output, for delimited and fixed-length files alike (the header line of a delimited
+file is written from the column names, not from the first map). Every map of the list is now written, and
+`ignoreFirstRecord` only applies to unmarshal. A route that set `ignoreFirstRecord=false` to work around this is not
+affected; a route that added a dummy first map now gets it in the output too.
 
 === camel-milo - the OPC UA client validates the server certificate
 
@@ -1195,6 +1383,15 @@ nothing was stored and the exchange completed without an error. The requests are
 the answer like the other state operations: the states are stored, and a request that Dapr rejects (or a sidecar that
 cannot be reached) fails the exchange.
 
+=== camel-pubnub - the producer uses its configured channel
+
+The pubnub producer no longer reads the `CamelPubNubChannel` header. This header is set by the pubnub consumer to the
+channel a message was received on, and the producer used it instead of the channel configured on its endpoint, so a
+route from one pubnub endpoint to another sent each message back to the channel it came from. The producer now uses the
+channel of its endpoint, for every operation. To choose a different channel for a message, set the new
+`CamelPubNubOverrideChannel` header (`PubNubConstants.OVERRIDE_CHANNEL`). Routes that set `CamelPubNubChannel` to pick
+the channel of a pubnub producer must set `CamelPubNubOverrideChannel` instead.
+
 === camel-docker - the events consumer subscribes again when its event stream ends
 
 The `docker:events` consumer subscribes again when its event stream fails or ends (for example when the Docker daemon
@@ -1281,6 +1478,14 @@ handshake; an IP address must be listed as a subject alternative name of the cer
 host name (such as `mllp://8888`) cannot pass the check. Use a certificate that matches the host of the endpoint, or set
 the new `hostnameVerification` option to `false` to keep the previous behaviour.
 
+=== camel-aws2-s3 - streaming upload with the random or timestamp naming strategy names the first file too
+
+With `streamingUploadMode=true` and `namingStrategy=random` (or `timestamp`), the first file uploaded by a producer was
+named after `keyName` alone (for example `camel.txt`), and only the later files got a UUID (or a timestamp) after
+`keyName`. A producer that was started again (a restart of the route or of the application), or another producer with
+the same `keyName`, wrote its first file to the same key and replaced the first file written before. Every file now
+gets the UUID (or the timestamp), the first one too: `camel-<uuid>.txt`. The progressive naming strategy is unchanged.
+
 === camel-atom - sortEntries sorts by the updated date and routes the oldest entry first
 
 With `sortEntries=true` the `atom` consumer sorted the entries of a feed by their published date and routed them from
@@ -1364,6 +1569,21 @@ first check looks for the updates made after the task started: an update made be
 context. A check sends two `LookupEvents` requests, one per event name, and one more per further 50 updates (before:
 always one request, for all Secrets Manager events); reads of secrets no longer add requests. LookupEvents allows two
 requests per second per account and Region.
+
+=== camel-aws2-s3 - a timestamp window uploaded more than once is stored in more than one object
+
+With `streamingUploadMode=true` and `timestampGroupingEnabled=true`, the upload of a time window is completed when it
+reaches `batchMessageNumber` messages (10 by default) or `batchSize` bytes, or when `streamingUploadTimeout` runs. A
+later message of the same window started a new upload with the same key, and S3 replaced the object of the first upload
+with it, so the messages of the earlier uploads were lost (unless the bucket is versioned). A later upload of a window
+now gets the number of the uploads of that window before it after the time range: for example
+`grouped-messages_20240101_0800_0800-0805.txt`, then `grouped-messages_20240101_0800_0800-0805-1.txt`,
+`grouped-messages_20240101_0800_0800-0805-2.txt`, and so on. The first upload of a window keeps the name it had. The
+first time a producer uploads a window, it lists the objects of the window in the bucket (one `ListObjectsV2` request
+per window), so after a restart it continues after the highest number stored; this needs the `s3:ListBucket`
+permission, and without it the producer logs a WARN and numbers the uploads of the window from the first one. These
+keys do not sort in upload order (`-1` sorts before the first upload's name, `-10` before `-2`). Producers running at
+the same time with the same `keyName` still need distinct key names.
 
 === camel-aws2-kinesis - the consumer continues after the last record when a shard iterator expired
 
@@ -1550,6 +1770,18 @@ A started PQC data format no longer keeps a `KeyGenerator` of its own: `getKeyGe
 instance and, unless one is configured, the `CamelPQCKemAlgorithm` header now selects the KEM algorithm of each
 operation.
 
+=== camel-minio - a listed object that cannot be got is skipped
+
+When the consumer lists the bucket, a failure to stat or get one of the listed objects (for example access denied, or
+an object encrypted with a customer key the consumer does not have) no longer fails the poll, as long as another listed
+object could be got: the object is skipped, the other listed objects are consumed, and the skipped object is tried
+again by a later poll. The failure is given to the exception handler of the consumer, with the object name in the
+message (by default a `WARN` with the stack trace, at every poll that lists the object). Before, the objects listed
+after it in the same poll were not consumed, so one such object could keep the consumer from consuming the rest of the
+bucket. The poll still fails when none of the listed objects could be got, and when `objectName` is set. When a poll
+lists `maxMessagesPerPoll` objects, the next poll now continues after the last listed object (before, after the last
+object that was consumed), so an object that cannot be got at the end of a page does not hold the listing back.
+
 === camel-box - getEnterpriseEvents returns the events of every chunk
 
 The `getEnterpriseEvents` operation of the `event-logs` API now returns all the events between `after` and `before`.
@@ -1591,6 +1823,28 @@ output; do not pass untrusted values through Chunk filters, bean properties or l
 go through one of those paths, remove the `{` and `}` characters from it in the route before the `chunk`
 endpoint (Chunk has no escape for tags inside data), for example with a processor that rewrites the body or
 header.
+
+=== camel-azure-storage-blob - a listed blob that cannot be got is skipped
+
+When the consumer lists the container, a failure to get one of the listed blobs (for example a blob in the archive
+tier, or access denied) no longer fails the poll, as long as another listed blob could be got: the blob is skipped, the
+other listed blobs are consumed, and the skipped blob is tried again by a later poll. The failure is given to the
+exception handler of the consumer, with the blob name in the message (by default a `WARN` with the stack trace, at every
+poll that lists the blob). Before, the poll failed, and as every poll lists the container again, one such blob stopped
+the consumer from consuming any blob. The poll still fails when none of the listed blobs could be got.
+
+=== camel-azure-eventhubs - an event that completes when the checkpoint timer of its window has run is checkpointed
+
+With `checkpointBatchTimeout`, the consumer now starts a new checkpoint window when the timer of the current window
+has run, and no longer when the wall clock passes the time the timer was scheduled for. Before, an event that
+completed in the millisecond in which the timer ran (or while the timer was taking the count) was counted in the
+window whose count had already been taken: it was checkpointed only with the next event, and when the partition stayed
+quiet it was delivered again after a restart.
+
+The `CamelAzureEventHubsCheckpointUpdatedBy` header can now be `timeout`. An event that completes after the
+scheduled time of its window, but before the (late) timer has run, joins that window and gets `timeout`; its offset is
+checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
+set. Routes that read this header can now see `timeout` as well as `size`.
 
 === camel-azure-servicebus - the dead-letter reason and description are bounded
 
@@ -1663,6 +1917,14 @@ failures of the route go. A highlighted path that steps into an `onException` cl
 The `<camel-topology-diagram>` web component no longer draws the error paths of the route topology as calls between
 routes. With its new `errors` attribute it draws the routes reached only on error in a frame below the other routes.
 
+=== camel-jbang - the default name of a run of a whole directory
+
+`camel run --source-dir`, and `camel run` of a directory, without `--name` name the integration after the directory.
+A folder of a project layout (`src`, `main`, `resources`, `java`, `camel` or `routes`) gives way to the first parent
+with another name, and `.` is the working directory. Before, the name was the one of the first file, in the order that
+the file system lists them, which could be any file, such as a Java class that a route uses. `--name`, and
+`camel.main.name` in application.properties, still win.
+
 === camel-jbang - route-diagram, route-structure and route-topology read Java sources without compiling them
 
 Given Java source files, `camel cmd route-diagram`, `camel cmd route-structure` and `camel cmd route-topology` (and the
@@ -1688,6 +1950,24 @@ project in the same way.
 A name in camel case that starts with a lower-case letter, such as the datasource `myOrders` or `my_DataSource`, still
 looks like an option name and is written in dash case as a whole, underscores included (`my-orders`,
 `my-data-source`). Quote it to keep it: `quarkus.datasource."myOrders".db-kind`.
+
+=== camel-jbang - camel dirty removes only the files of processes that are gone
+
+`camel dirty` counts, and `camel dirty --clean` removes, only the files named after the pid of a process that is gone,
+such as `<pid>-status.json`. Before, it counted every other file in `~/.camel` too, and `--clean` removed them: the log of
+a Spring Boot or Quarkus app that `camel run` runs (`<name>.log`), also while the app ran, the console output that the AI
+tools keep, and the history of the AI prompt. Directories are not counted, and `--clean` counts only the files it
+removed.
+
+=== camel-google-storage - a listed object that cannot be got is skipped
+
+When the consumer lists the bucket, a failure to download one of the listed objects (for example access denied, or an
+object whose encryption key the consumer cannot use) no longer fails the poll, as long as another listed object could
+be got: the object is skipped, the other listed objects are consumed, and the skipped object is tried again by a later
+poll. The failure is given to the exception handler of the consumer, with the object name in the message (by default a
+`WARN` with the stack trace, at every poll that lists the object). Before, the poll failed, and as every poll lists the
+whole bucket, one such object stopped the consumer from consuming any object. The poll still fails when none of the
+listed objects could be got.
 
 === camel-mongodb-gridfs - the consumer routes a file once
 
@@ -1730,6 +2010,16 @@ support it keep their existing projection. The `camel semantic audit --json` dis
 base64 and reports metadata instead. Use `--output=<new-file>` to export the full returned JSON,
 with `--include-input` for case/bulk requests that need captured input. Existing files are not overwritten.
 
+=== camel-azure-storage-datalake - a listed file that cannot be got is skipped
+
+When the consumer lists the file system, a failure to get one of the listed files (for example access denied by the ACL
+of the file) no longer fails the poll, as long as another listed file could be got: the file is skipped, the other
+listed files are consumed, and the skipped file is tried again by a later poll. The failure is given to the exception
+handler of the consumer, with the file name in the message (by default a `WARN` with the stack trace, at every poll that
+lists the file). A file deleted after the listing is skipped as well; before, it made the whole poll return no file.
+Before, any other failure failed the poll, and as every poll lists the file system again, one such file stopped the
+consumer from consuming any file. The poll still fails when none of the listed files could be got.
+
 === camel-milo - a Bad or Uncertain status is delivered by default
 
 A `milo-client` consumer now delivers a data change with a Bad or Uncertain status by default, even when its value is
@@ -1763,12 +2053,56 @@ server, it is now created again in the existing session; previously the consumer
 connection was rebuilt for another reason. The monitored items deliver their current values again after the
 subscription is recreated.
 
+=== camel-milo - a producer request for a node with an unknown namespace URI
+
+A `milo-client` write, method call or read, or a `milo-browse` browse, for a node ID with a namespace URI (`nsu=`) that
+is not in the namespace table of the server no longer makes the client reconnect, which also recreated the
+subscriptions of the consumers that share the connection. A write, read or browse answers the node like a node that
+the server does not have, with the status code `Bad_NodeIdUnknown`, and the other nodes of a read or browse are not
+affected. Previously an awaited write or read completed without an error and with a `null` body, and a browse failed
+with a `NullPointerException`.
+
+=== camel-milo - the consumer reports a lost connection and refreshes its values after it
+
+The OPC UA client consumer delivers `Bad_NoCommunication` with a null value for every monitored node when
+communication with the server is lost, and the current value of every node once communication is restored. Before,
+the consumer delivered nothing during an outage, and values that did not change were not delivered again after it.
+
+A consumer that starts while the server cannot be reached, or whose client cannot connect at all, for example because
+of wrong credentials or an untrusted server certificate, delivers the status for its nodes too; the cause is in the
+log. A connection that Camel rebuilds after a failed request delivers it for every node of the connection. Each loss and
+each recovery delivers one exchange per node.
+
+A route that uses only the value of the `DataValue` body receives a null for these exchanges, which the type converters
+turn into `0` or `false`; a route that stores values checks the status code of the body first, for example with
+`${body.statusCode.bad}`. A value can now arrive again after an outage, so a route that counts values, computes
+differences or detects changes must tolerate repeats. The consumer's route also runs during an outage: an OPC UA write
+that it makes while the client reconnects waits for the next reconnect attempt and can take effect after communication
+is restored, and a request that fails rebuilds the connection.
+
+To keep the previous behaviour, filter the exchanges with a bad status out right after the consumer, for example with
+`filter(simple("${body.statusCode.bad} == false"))`. This also drops the other bad statuses, such as the refusal of a
+node, and the current values delivered after an outage still arrive.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
 a `bytes` field is now a `byte[]` with the content of the field. Previously it was the `String` that
 `ByteString.toString()` returns, a description such as `<ByteString@1b6d3586 size=4 contents="...">`, which does not
 contain the whole value. When a `Map` is marshalled, a `byte[]` value is accepted for a `bytes` field.
+
+=== camel-jbang - where the CLI writes its log files
+
+* The `log4j2.properties` of camel-jbang-core logs to the console only. It is the configuration that log4j finds on the
+  classpath when nothing configures logging. It also wrote a log file into `~/.camel`, named after the `pid` system
+  property, which only the CLI sets: a JVM that uses camel-jbang-core without the CLI (such as a test) wrote
+  `~/.camel/${sys:pid}.log`, and `camel test run` left a `<pid>.log` there. The configuration that `camel run` uses with
+  color is now `log4j2-color.properties`, next to `log4j2-no-color.properties`.
+* The log files of the CLI (`<pid>.log`, `camel-export.log` and `camel-script.log`) are written into the Camel directory
+  of the CLI, where `camel log` reads them, instead of `~/.camel` under `user.home`. The two differ when `user.home` is
+  `?` (a user without a home, such as in a container), as the CLI then uses `$HOME`, and when a test gives the CLI a
+  home of its own. The CLI sets the directory as the system property `camel.jbang.logDir`. A Quarkus app that
+  `camel run` exports and runs also logs there.
 
 === camel-jbang-mcp - runtime tools that changed behaviour
 
@@ -1808,3 +2142,75 @@ the one of a miss, with the lines the file has there. `matchedLines` in the answ
 `~/.camel/camel-launch-<number>.log` or `camel-restart-<number>.log`, which stayed until the MCP server exited. An
 integration that still runs when the server exits keeps the file while it runs: `camel stop` removes it, and
 `camel dirty --clean` once the integration has ended.
+
+=== camel-main - a properties file that changed while reloading applies its beans and components
+
+With live reloading (such as `camel run --dev`), a change to application.properties now applies its configuration:
+
+* The file is matched to the properties file the application loaded, also when its location is written another way:
+  `camel run --source-dir=.` loads `file:./application.properties`, and the file watcher reports
+  `file:application.properties`. Before, the two did not match, so the file was added once more for its property
+  placeholders, but its `camel.component.*`, `camel.dataformat.*` and `camel.language.*` options were not applied.
+* A new bean (`camel.beans.*`) is created and bound, before the components are configured again, so a component can
+  refer to it (`#bean:name`), and a component that is created later can autowire it. With camel-jbang, the class of
+  the bean is downloaded when camel-jbang knows it, such as the Artemis client. A dependency that is added to
+  `camel.jbang.dependencies` while the application runs is not downloaded until a restart (CAMEL-25833).
+* A bean that exists is left as it is, as components may hold it. When its properties change, a `WARN` says that a
+  restart is needed.
+* A properties file that is created while the application runs is applied as well.
+
+`PropertiesReload` has a new default method, `onChanged`, which a properties file that changed calls with the properties
+that changed. A context reload (such as for secret rotation) still calls `onReload`.
+
+=== camel-jbang - camel run keeps the log of the previous run
+
+When `camel run` ends, its log is no longer deleted. It is kept as `~/.camel/<name>-previous.log`, by the name of the
+integration, with `~/.camel/<name>-previous.json`, which says when and how the run ended. The next run of that name that
+ends replaces both, and at most the last 10 MB of a log are kept. `camel log <name> --previous` prints the log, like
+`kubectl logs --previous` in Kubernetes. The log of an integration that was killed is kept the same way, the next time a
+previous run is looked up. `camel dirty` does not count these files.
+
+=== camel-jbang - the AI tools wait for Camel to start, and read the log of the previous run
+
+* `camel_run` and `camel_control restart` answer that the integration started once its CamelContext has started. They
+  answered as soon as the status file of the integration appeared, which happens while Camel starts and before the
+  routes start. An integration whose route then failed to start was answered as started, and stopped right after.
+  Now the answer is the failure, with its cause.
+* `camel_get_log` of an integration that is not running answers with the log of its previous run (see
+  `camel log --previous`), and its message says how that run ended. `previous=true` asks for that log also when the
+  integration runs again. `camel_get_errors` of an integration that is not running says how its previous run ended.
+
+=== camel-toon - the lengthMarker option is removed (Breaking change)
+
+`camel-toon` now uses JToon 2.0.7, which follows a newer version of the TOON specification.
+
+The `lengthMarker` option of the TOON data format is removed, because the TOON specification no longer has the `[#N]`
+array length marker. Remove the option from the data format in Java, XML and YAML routes. TOON text with a `[#N]` array
+header, such as the output of a data format with `lengthMarker=true`, now fails to unmarshal in both strict and
+non-strict mode; in Camel 4.23 it already failed in strict mode (the default). To read such data, remove the `#` from
+its array headers (`tags[#2]:` becomes `tags[2]:`).
+
+With `strict=false`, unmarshalling no longer returns `null` or a partial result for malformed TOON. Only the non-strict
+recoveries of the TOON specification apply, such as accepting an array whose length differs from the declared length;
+other malformed TOON fails with `IllegalArgumentException`, as in strict mode.
+
+=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - sendNoop also applies to the consumer
+
+The `sendNoop` option now also applies to the check a consumer makes before each poll, not only to the pre-write check
+of a producer, and its label is now `common,advanced` instead of `producer,advanced`. The default is still `true`, so a
+consumer sends a noop before each poll as before.
+
+A consumer endpoint that already sets `sendNoop=false`, which was ignored before (for example a URI shared by `from`
+and `to`), now skips that noop and only checks whether the client still regards itself as connected. Remove
+`sendNoop=false` from the consumer endpoint to keep the noop before each poll.
+
+For ftp and ftps the client does not notice a connection that the server has closed, so such a consumer finds it only
+when the next operation fails, during the poll or while processing a file. After a failure caused by an I/O error, the
+consumer sends a noop before the next poll, and connects again if the noop fails. If the FTP server closes idle
+connections and the `delay` between polls is longer than its idle timeout, every other poll fails and is logged before
+the consumer connects again. Keep `sendNoop=true` for such a consumer. Whatever `sendNoop` is, the ftp and ftps
+consumer still sends a noop before it renames or deletes a file on the server, as it does for each processed file
+unless `noop=true`.
+
+For sftp and mina-sftp the client notices a closed connection, but not one that dropped silently. For sftp the noop is
+a keep-alive message that does not wait for a reply, so it does not find such a connection either.

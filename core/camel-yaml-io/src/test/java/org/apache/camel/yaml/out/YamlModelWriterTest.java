@@ -1112,6 +1112,46 @@ public class YamlModelWriterTest {
     }
 
     @Test
+    public void testRestSkipBindingOnErrorCodeFalse() throws Exception {
+        // skipBindingOnErrorCode defaults to true, so false set explicitly must be kept
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RestConfigurationDefinition rc = new RestConfigurationDefinition();
+        rc.setSkipBindingOnErrorCode("false");
+        String out = writer.printAsYaml(List.of(writer.writeRestConfigurationDefinition(rc)));
+        Assertions.assertTrue(out.contains("skipBindingOnErrorCode: false"), out);
+
+        RestDefinition rest = new RestDefinition();
+        rest.setPath("/api");
+        rest.setSkipBindingOnErrorCode("false");
+        GetDefinition get = new GetDefinition();
+        get.setPath("/hello");
+        get.setSkipBindingOnErrorCode("false");
+        get.setTo(new ToDefinition("direct:hello"));
+        rest.getVerbs().add(get);
+        out = writer.printAsYaml(List.of(writer.writeRestDefinition(rest)));
+        Assertions.assertEquals(2, out.split("skipBindingOnErrorCode: false", -1).length - 1, out);
+    }
+
+    @Test
+    public void testRestVerbApiDocsTrueUnderRestApiDocsFalse() throws Exception {
+        // a verb whose apiDocs is not set takes the value of its rest, so apiDocs=true set on the verb must be kept
+        YamlModelWriter writer = new YamlModelWriter();
+
+        RestDefinition rest = new RestDefinition();
+        rest.setPath("/api");
+        rest.setApiDocs("false");
+        GetDefinition get = new GetDefinition();
+        get.setPath("/documented");
+        get.setApiDocs("true");
+        get.setTo(new ToDefinition("direct:documented"));
+        rest.getVerbs().add(get);
+        String out = writer.printAsYaml(List.of(writer.writeRestDefinition(rest)));
+        Assertions.assertTrue(out.contains("apiDocs: false"), out);
+        Assertions.assertTrue(out.contains("apiDocs: true"), out);
+    }
+
+    @Test
     public void testTransformers() throws Exception {
         YamlModelWriter writer = new YamlModelWriter();
 

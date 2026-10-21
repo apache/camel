@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -268,17 +269,26 @@ public final class ToolRegistry {
                 }));
 
         register(tool("get_route_structure",
-                "Show the route structure as a tree of processors.")
+                "Show the route structure as a tree of processors. With the message history on (camel run --dev), a"
+                                             + " processor has bodyTypes: the body types it has been reached with, across"
+                                             + " the messages, and bodyKinds: null, payload, data or collection. More than one"
+                                             + " kind needs attention: a step that writes fails for data, one that reads"
+                                             + " fields fails for a payload.")
                 .param("routeId", "string", "Route ID or pattern such as orders* to inspect (use * for all routes)",
                         false)
                 .param("brief", "boolean", "Only the overall structure, without the options and expressions", false)
+                .param("varied", "boolean", "Only the steps reached with more than one body type", false)
                 .executor((ctx, args) -> {
                     String routeId = args.get("routeId");
                     boolean brief = "true".equalsIgnoreCase(args.get("brief"));
-                    return ctx.executeAction("route-structure", root -> {
+                    String result = ctx.executeAction("route-structure", root -> {
                         root.put("filter", routeFilter(routeId));
                         root.put("brief", String.valueOf(brief));
                     });
+                    if ("true".equalsIgnoreCase(args.get("varied"))) {
+                        result = onlyVaried(result);
+                    }
+                    return result;
                 }));
 
         register(tool("get_processor_detail",
@@ -799,6 +809,27 @@ public final class ToolRegistry {
     /** The route pattern of the route-dump and route-structure actions: all routes when none is given. */
     private static String routeFilter(String routeId) {
         return routeId != null && !routeId.isBlank() ? routeId : "*";
+    }
+
+    /**
+     * The route structure with only the steps reached with more than one body type, or a message that says there are
+     * none (and why there may be none).
+     */
+    static String onlyVaried(String routeStructure) {
+        try {
+            if (Jsoner.deserialize(routeStructure) instanceof JsonObject jo) {
+                JsonObject answer = CamelRouteStructureAction.onlyVaried(jo);
+                JsonArray routes = answer.getCollection("routes");
+                if (routes == null || routes.isEmpty()) {
+                    answer.put("message", "No step has been reached with more than one body type. The message history"
+                                          + " records the body types, as camel run --dev turns it on.");
+                }
+                return answer.toJson();
+            }
+        } catch (Exception e) {
+            LOG.debug("Cannot read the route structure to keep the varied steps: {}", e.getMessage(), e);
+        }
+        return routeStructure;
     }
 
     /** Whether a heap dump name is only a file name, so the dump stays in the process working directory. */

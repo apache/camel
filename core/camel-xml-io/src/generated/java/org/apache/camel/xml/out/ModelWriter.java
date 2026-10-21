@@ -2755,7 +2755,6 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("indent", def.getIndent(), "2");
         doWriteAttribute("delimiter", def.getDelimiter(), "COMMA");
-        doWriteAttribute("lengthMarker", def.getLengthMarker(), "false");
         doWriteAttribute("strict", def.getStrict(), "true");
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
         endElement(name);
@@ -3476,7 +3475,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("path", def.getPath(), null);
         doWriteAttribute("routeId", def.getRouteId(), null);
         doWriteAttribute("bindingMode", def.getBindingMode(), null);
-        doWriteAttribute("apiDocs", def.getApiDocs(), "true");
+        doWriteAttribute("apiDocs", def.getApiDocs(), null);
         doWriteAttribute("enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute("skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
         doWriteAttribute("clientRequestValidation", def.getClientRequestValidation(), null);

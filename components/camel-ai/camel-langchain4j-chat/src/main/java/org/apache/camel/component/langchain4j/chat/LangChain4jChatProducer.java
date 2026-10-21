@@ -78,7 +78,8 @@ public class LangChain4jChatProducer extends DefaultProducer {
         final String promptTemplate = exchange.getIn().getHeader(LangChain4jChatHeaders.PROMPT_TEMPLATE, String.class);
         if (promptTemplate == null) {
             throw new NoSuchHeaderException(
-                    "The promptTemplate is a required header", exchange, LangChain4jChatHeaders.PROMPT_TEMPLATE);
+                    "The prompt template is a required header: " + LangChain4jChatHeaders.PROMPT_TEMPLATE, exchange,
+                    LangChain4jChatHeaders.PROMPT_TEMPLATE);
         }
 
         Map<String, Object> variables = (Map<String, Object>) exchange.getIn().getMandatoryBody(Map.class);

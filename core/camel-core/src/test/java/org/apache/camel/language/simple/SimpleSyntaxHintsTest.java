@@ -236,6 +236,43 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testOgnlDotOnAListSaysHowToGetToAnElement() {
+        // ${body.orderId} on the List of an unmarshalled JSON array: pick an element, by index or by a field
+        exchange.getIn().setBody(List.of(java.util.Map.of("orderId", "ORD-1001"), java.util.Map.of("orderId", "ORD-1002")));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.orderId}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("(a List has no method or key orderId: pick an element first, such as"
+                                            + " [0].orderId, or the element whose orderId has a given value with jsonpath,"
+                                            + " such as jsonpath: \"$[?(@.orderId == '${header.orderId}')]\" with"
+                                            + " resultType java.util.Map, or split it)");
+    }
+
+    @Test
+    public void testAMadeUpMethodOnAListSaysHowToGetToAnElement() {
+        exchange.getIn().setBody(List.of(java.util.Map.of("orderId", "ORD-1001")));
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${body.find(o -> o.orderId == 1)}")
+                        .evaluate(exchange, String.class));
+        assertThat(e.getMessage()).contains("(a List has no such method: pick an element first, such as [0].field");
+    }
+
+    @Test
+    public void testKeyOfAVariableThatHoldsAFileSaysToUnmarshalIt() {
+        // pollEnrich with variableReceive: the variable holds the polled file, not its data
+        GenericFile<File> file = new GenericFile<>();
+        file.setFile(new File("customers/C-482.json"));
+        file.setFileName("C-482.json");
+        exchange.setVariable("customer", file);
+        Exception e = assertThrows(Exception.class,
+                () -> context.resolveLanguage("simple").createExpression("${variable.customer[name]}").evaluate(exchange,
+                        String.class));
+        assertThat(e.getMessage()).contains("Key: name not found in bean")
+                .contains("(the value is the file as read (a GenericFile), not its data: unmarshal it first")
+                .contains("unmarshal: {json: {}, variableSend: customer, variableReceive: customer}");
+    }
+
+    @Test
     public void testOgnlOnAnObjectSaysNothingAboutTheBody() {
         // a name an object does not have is a wrong name, not a body of the wrong type
         exchange.getIn().setBody(new StringBuilder("x"));

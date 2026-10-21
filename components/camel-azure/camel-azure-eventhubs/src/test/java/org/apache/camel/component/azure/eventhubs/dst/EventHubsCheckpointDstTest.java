@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.test.dst.Dst;
 import org.apache.camel.test.dst.DstInstrument;
+import org.apache.camel.test.dst.DstSeed;
 import org.apache.camel.test.dst.DstTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -32,18 +33,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * partition goes quiet. Regression test for CAMEL-25683 (apache/camel#27922): before that fix 2064 of 5000 seeds fail.
  * A failing seed is replayed with {@code -Ddst.seed=<seed>}; {@code -Ddst.seeds=5000} runs more seeds.
  * <p>
- * Known residual on main, outside the default 1000 seeds: seed 3042 of 5000 fails when an event completes in the same
- * millisecond in which the timer of its window ran ({@code EventHubsCheckpointUpdaterTask.isExpired()} compares with
- * {@code >}, so the window is reused and that event waits for the next one; if the partition stays quiet it is
- * delivered again after a restart). In real time the window is narrow but not only that millisecond: the timer task
- * does not take the consumer's lock, so it can also run between the {@code isExpired()} check and the count of the
- * event. Virtual time makes the same-millisecond case far more likely than it is in real time.
+ * Seed 3042 (of 5000) failed before CAMEL-25781 and is pinned below: an event that completed in the millisecond in
+ * which the timer of its window ran joined that window after the timer had taken its count, so it was not checkpointed
+ * until the next event (or delivered again after a restart if the partition stayed quiet).
  */
 @DstInstrument("org.apache.camel.component.azure.eventhubs")
 class EventHubsCheckpointDstTest {
 
     @DstTest(seeds = 1000)
     void everyCompletedEventIsCheckpointedWhenThePartitionGoesQuiet(Dst dst) throws Exception {
+        new EventHubsWorld(dst).run();
+    }
+
+    /**
+     * CAMEL-25781: an event completes in the millisecond in which the timer of its window ran, and must be checkpointed
+     * by the next timer.
+     */
+    @DstTest
+    @DstSeed(3042)
+    void eventThatCompletesWhenTheTimerOfItsWindowRanIsCheckpointed(Dst dst) throws Exception {
         new EventHubsWorld(dst).run();
     }
 

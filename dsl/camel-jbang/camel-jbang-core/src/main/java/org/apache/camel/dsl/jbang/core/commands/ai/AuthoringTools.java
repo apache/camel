@@ -25,6 +25,9 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,12 +39,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -116,6 +122,8 @@ public final class AuthoringTools {
                 .param("camelVersion", "string", VERSION_DESC, false)
                 .core(true)
                 .deterministic(true)
+                .repeatHint("When that answer was cut, it named the sections it left out: docPage=<section title> returns"
+                            + " one of them.")
                 .executor((ctx, args) -> {
                     applyVersion(ctx, args);
                     return CatalogDocs.catalogDoc(ctx.catalog(), args.get("name"), args.get("endpoint"),
@@ -323,28 +331,56 @@ public final class AuthoringTools {
 
         registry.accept(tool("camel_get_log",
                 "Recent log records of a running integration, newest first, with optional filtering; stack traces "
-                                              + "only with details.")
+                                              + "only with details. An integration that is not running gets the log of "
+                                              + "its previous run, such as one that failed to start.")
                 .param("name", "string", NAME_DESC, false)
                 .param("limit", "integer", "Maximum records to return (default 50)", false)
                 .param("filter", "string", "Case-insensitive substring filter on the message", false)
                 .param("level", "string", "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)", false)
                 .param("details", "boolean", "Include the stack traces (default false)", false)
+                .param("previous", "boolean",
+                        "The log of the previous run, the last run of the integration that ended (default false)", false)
                 .core(true)
                 .executor((ctx, args) -> {
-                    RuntimeHelper.ProcessInfo p = selectProcess(ctx, args);
+                    if (bool(args, "previous", false)) {
+                        return previousLog(ctx, args, null).toJson();
+                    }
+                    RuntimeHelper.ProcessInfo p;
+                    try {
+                        p = selectProcess(ctx, args);
+                    } catch (ToolExecutionException e) {
+                        // not running: the log of its previous run tells why (CAMEL-25784)
+                        return previousLog(ctx, args, e).toJson();
+                    }
+                    if (p == null && hasPreviousRun(ctx.pid())) {
+                        // the process selected before is gone, such as one that died at startup
+                        return previousLog(ctx, args, null).toJson();
+                    }
                     return LogFileReader.read(ctx.pid(), p != null ? p.name() : null, integer(args, "limit", 50),
                             args.get("filter"), args.get("level"), bool(args, "details", false)).toJson();
                 }));
 
         registry.accept(tool("camel_get_errors",
                 "The failed exchanges of a running integration: routeId, exchangeId, exception with stack trace, "
-                                                 + "body and headers.")
+                                                 + "body and headers. For an integration that is not running, it says "
+                                                 + "how its previous run ended.")
                 .param("name", "string", NAME_DESC, false)
                 .core(true)
                 .executor((ctx, args) -> {
-                    selectProcess(ctx, args);
+                    RuntimeHelper.ProcessInfo p;
+                    try {
+                        p = selectProcess(ctx, args);
+                    } catch (ToolExecutionException e) {
+                        // not running: how its previous run ended tells why (CAMEL-25784)
+                        throw notRunning(ctx, args, e);
+                    }
+                    if (p == null && hasPreviousRun(ctx.pid())) {
+                        throw notRunning(ctx, args, new ToolExecutionException("pid " + ctx.pid() + " is not running"));
+                    }
                     JsonObject errors = ctx.readErrorFile();
-                    return errors != null ? unescapeBodies(errors).toJson() : "No errors captured.";
+                    return errors != null
+                            ? markBeforeLastReload(unescapeBodies(errors), ctx.pid(), p != null ? p.name() : null).toJson()
+                            : "No errors captured.";
                 }));
 
         registry.accept(tool("camel_eval_expression",
@@ -1817,9 +1853,24 @@ public final class AuthoringTools {
         result.put("configFiles", configFiles);
         result.put("files", files);
         result.put("totalFiles", all.size());
+        // a file consumer moves a file it read into .camel (without noop=true), which the listing skips
+        Map<String, Integer> consumed = consumedFolders(dir);
+        String moved = null;
+        if (!consumed.isEmpty()) {
+            JsonObject folders = new JsonObject();
+            folders.putAll(consumed);
+            result.put("consumedFiles", folders);
+            moved = String.join(", ", consumed.entrySet().stream().map(e -> e.getKey() + " holds " + e.getValue()
+                                                                            + (e.getValue() == 1 ? " file" : " files"))
+                    .toList())
+                    + " that a file consumer moved there after reading (noop=true leaves the files where they are)";
+        }
         if (all.isEmpty()) {
-            result.put("message", "The directory has no files");
-        } else if (all.size() > MAX_FILES) {
+            result.put("message", moved != null ? "The directory has no files, but " + moved : "The directory has no files");
+        } else if (moved != null) {
+            result.put("note", moved);
+        }
+        if (all.size() > MAX_FILES) {
             result.put("message", "Listing the first " + MAX_FILES + " of " + all.size()
                                   + " files; routeFiles and configFiles name every route and configuration file");
         }
@@ -2115,6 +2166,88 @@ public final class AuthoringTools {
     }
 
     /**
+     * The log of the previous run of the integration (CAMEL-25784): the last run of it that ended, such as one that
+     * failed to start, found by the name or pid given, else by the pid selected before. Its message says how that run
+     * ended.
+     *
+     * @param  notRunning             why the integration was not found running, or null when the previous run was asked
+     *                                for
+     * @throws ToolExecutionException when no previous run matches, or more than one (notRunning, when given)
+     */
+    private static JsonObject previousLog(ToolContext ctx, Map<String, String> args, ToolExecutionException notRunning) {
+        PreviousRun.Info info = previousRun(ctx, args, notRunning);
+        JsonObject answer = new JsonObject();
+        answer.put("message", (notRunning != null ? info.name() + " is not running. " : "")
+                              + "This is the log of its previous run" + (info.pid() > 0 ? " (pid " + info.pid() + ")" : "")
+                              + ", which " + info.howItEnded());
+        JsonObject previous = new JsonObject();
+        previous.put("name", info.name());
+        if (info.pid() > 0) {
+            previous.put("pid", info.pid());
+        }
+        previous.put("ended", info.endedAt());
+        if (info.exitCode() != null) {
+            previous.put("exitCode", info.exitCode());
+        }
+        if (info.signal() != null) {
+            previous.put("signal", info.signal());
+        }
+        if (info.failure() != null) {
+            previous.put("failure", info.failure());
+        }
+        answer.put("previous", previous);
+        answer.putAll(LogFileReader.read(info.log(), integer(args, "limit", 50), args.get("filter"), args.get("level"),
+                bool(args, "details", false)));
+        return answer;
+    }
+
+    /**
+     * The error of an integration that is not running, with how its previous run ended when there is one.
+     */
+    private static ToolExecutionException notRunning(
+            ToolContext ctx, Map<String, String> args, ToolExecutionException notRunning) {
+        PreviousRun.Info info;
+        try {
+            info = previousRun(ctx, args, notRunning);
+        } catch (ToolExecutionException e) {
+            return notRunning;
+        }
+        return new ToolExecutionException(
+                notRunning.getMessage() + ". Its previous run"
+                                          + (info.pid() > 0 ? " (pid " + info.pid() + ")" : "") + " " + info.howItEnded()
+                                          + ". camel_get_log shows its log.");
+    }
+
+    // the one previous run of the name or pid given, else of the pid selected before
+    private static PreviousRun.Info previousRun(
+            ToolContext ctx, Map<String, String> args, ToolExecutionException notRunning) {
+        String name = args.get("name");
+        String key = name != null && !name.isBlank() ? name : (ctx.pid() >= 0 ? Long.toString(ctx.pid()) : null);
+        List<PreviousRun.Info> found = key != null ? PreviousRun.find(key) : List.of();
+        if (found.size() == 1) {
+            return found.get(0);
+        }
+        if (notRunning != null) {
+            throw notRunning;
+        }
+        if (key == null) {
+            throw new ToolExecutionException("No integration selected: pass name (an integration name or pid)");
+        }
+        throw new ToolExecutionException(
+                found.isEmpty()
+                        ? "No previous run matches '" + key + "'"
+                        : "'" + key + "' matches " + found.size() + " previous runs: "
+                          + found.stream().map(PreviousRun.Info::name).collect(Collectors.joining(", "))
+                          + "; pass the name of one");
+    }
+
+    // whether a run of the pid has ended and kept its log
+    private static boolean hasPreviousRun(long pid) {
+        return pid >= 0 && ProcessHandle.of(pid).map(ph -> !ph.isAlive()).orElse(true)
+                && !PreviousRun.find(Long.toString(pid)).isEmpty();
+    }
+
+    /**
      * Selects the process the call names, else keeps the selected one, else the only one running.
      *
      * @throws ToolExecutionException when no process can be selected
@@ -2159,6 +2292,91 @@ public final class AuthoringTools {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * Marks the failed exchanges of an earlier version of the routes: those that failed before the newest reload of the
+     * routes in the log. The errors are kept until the integration restarts, and an agent that read them after a change
+     * took them for errors of its new version, and changed routes that already worked.
+     */
+    static JsonObject markBeforeLastReload(JsonObject errors, long pid, String name) {
+        try {
+            JsonObject log = LogFileReader.read(pid, name, 1, ReloadOutcome.RELOADED, null);
+            if (log.get("lines") instanceof List<?> lines && !lines.isEmpty() && lines.get(0) instanceof JsonObject reload) {
+                return markBefore(errors, reload.getString("time"), LocalDateTime.now());
+            }
+        } catch (Exception e) {
+            // no log to tell: the errors as they are
+        }
+        return errors;
+    }
+
+    private static final long RELOAD_MARGIN_MILLIS = 1000;
+
+    /** Marks the errors that failed before the reload at the given time of day; the log keeps the time of day only. */
+    static JsonObject markBefore(JsonObject errors, String reloadTime, LocalDateTime now) {
+        LocalTime time;
+        try {
+            time = LocalTime.parse(reloadTime);
+        } catch (Exception e) {
+            return errors;
+        }
+        LocalDateTime reload = now.toLocalDate().atTime(time);
+        if (reload.isAfter(now)) {
+            reload = reload.minusDays(1);
+        }
+        // the summary is logged after the new routes started: a margin keeps a route that fails at once unmarked
+        long reloadMillis = reload.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - RELOAD_MARGIN_MILLIS;
+        int before = 0;
+        if (errors.get("errors") instanceof List<?> entries) {
+            for (Object o : entries) {
+                if (o instanceof JsonObject e && e.get("timestamp") instanceof Number ts && ts.longValue() < reloadMillis) {
+                    e.put("beforeLastReload", true);
+                    before++;
+                }
+            }
+        }
+        if (before > 0) {
+            errors.put("note", before + (before == 1 ? " exchange" : " exchanges") + " failed before the routes were last"
+                               + " reloaded (at " + reloadTime + "), so on an earlier version of the routes"
+                               + " (beforeLastReload); the errors are kept until the integration restarts");
+        }
+        return errors;
+    }
+
+    /**
+     * The .camel folders under the directory, with the number of files in each: a file consumer moves a file it read
+     * into .camel (its default, without noop=true), so a folder whose files were all read looked empty.
+     */
+    static Map<String, Integer> consumedFolders(Path dir) {
+        Map<String, Integer> answer = new TreeMap<>();
+        try {
+            Files.walkFileTree(dir, EnumSet.noneOf(FileVisitOption.class), MAX_DEPTH, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path d, BasicFileAttributes attrs) throws IOException {
+                    String name = d.getFileName() != null ? d.getFileName().toString() : "";
+                    if (".camel".equals(name) && !d.equals(Path.of(System.getProperty("user.home"), ".camel"))) {
+                        try (var files = Files.list(d)) {
+                            long count = files.filter(Files::isRegularFile).count();
+                            if (count > 0) {
+                                answer.put(dir.relativize(d).toString().replace('\\', '/'), (int) count);
+                            }
+                        }
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+                    return !d.equals(dir) && (SKIPPED_DIRS.contains(name) || name.startsWith("."))
+                            ? FileVisitResult.SKIP_SUBTREE : FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path f, IOException e) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            // nothing to add
+        }
+        return answer;
     }
 
     /**

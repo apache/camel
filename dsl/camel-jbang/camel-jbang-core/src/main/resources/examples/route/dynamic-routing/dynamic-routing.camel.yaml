@@ -1,0 +1,111 @@
+# Each order goes to the warehouse of its country and to the billing of its status: a recipient list computes both
+# endpoints from the order. Billing a paid order fails over to a backup invoice service when the primary one is down,
+# and the US warehouse takes at most one order per second.
+- route:
+    id: incoming-orders
+    from:
+      uri: file
+      parameters:
+        directoryName: orders
+        noop: true
+        sortBy: "file:name"
+      steps:
+        - unmarshal:
+            json:
+              library: Jackson
+        - log:
+            message: "Order ${body[orderId]} for ${body[country]}, ${body[status]}"
+        - recipientList:
+            expression:
+              simple:
+                expression: "direct:warehouse-${body[country]},direct:billing-${body[status]}"
+
+- route:
+    id: warehouse-DK
+    from:
+      uri: direct
+      parameters:
+        name: warehouse-DK
+      steps:
+        - log:
+            message: "Warehouse DK picks ${body[orderId]}"
+
+- route:
+    id: warehouse-DE
+    from:
+      uri: direct
+      parameters:
+        name: warehouse-DE
+      steps:
+        - log:
+            message: "Warehouse DE picks ${body[orderId]}"
+
+# At most one order per second: an order over the limit waits
+- route:
+    id: warehouse-US
+    from:
+      uri: direct
+      parameters:
+        name: warehouse-US
+      steps:
+        - throttle:
+            expression:
+              constant:
+                expression: "1"
+            timePeriodMillis: 1000
+        - log:
+            message: "Warehouse US picks ${body[orderId]}"
+
+# The failover load balancer tries the primary invoice service first, and the backup when it fails
+- route:
+    id: billing-paid
+    from:
+      uri: direct
+      parameters:
+        name: billing-paid
+      steps:
+        - loadBalance:
+            failoverLoadBalancer:
+              # fail over at once, without the route's error handler logging the failure first
+              inheritErrorHandler: false
+              exception:
+                - java.lang.IllegalStateException
+            steps:
+              - to:
+                  uri: direct:invoice-primary
+              - to:
+                  uri: direct:invoice-backup
+
+- route:
+    id: billing-pending
+    from:
+      uri: direct
+      parameters:
+        name: billing-pending
+      steps:
+        - log:
+            message: "No invoice for ${body[orderId]} until it is paid"
+
+# The primary invoice service is down; noErrorHandler hands the failure straight back to the load balancer
+- route:
+    id: invoice-primary
+    errorHandler:
+      noErrorHandler: {}
+    from:
+      uri: direct
+      parameters:
+        name: invoice-primary
+      steps:
+        - throwException:
+            exceptionType: java.lang.IllegalStateException
+            message: "The invoice service is down"
+
+- route:
+    id: invoice-backup
+    from:
+      uri: direct
+      parameters:
+        name: invoice-backup
+      steps:
+        - log:
+            message: "Invoice for ${body[orderId]} via the backup service"

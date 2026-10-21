@@ -597,7 +597,11 @@ public class TextBodyFlowTest {
             assertThat(m).startsWith("Line 9: ");
             assertThat(m).contains("route reserve: to: rest-openapi sends the body as the request of the operation"
                                    + " reserveStock (POST in stock-api.json)");
-            assertThat(m).contains("add marshal: json before this step, or let the REST binding write it (bindingMode: json)");
+            // the JSON text of the request first: the data is rarely the request as it is
+            assertThat(m).contains("unmarshal: json turns the text into data: set the body to the JSON text of the request"
+                                   + " before this step, such as with setBody and simple: '{\"name\": \"${body[name]}\"}',"
+                                   + " or add marshal: json before this step when the data has the fields of the request,"
+                                   + " or let the REST binding write it (bindingMode: json)");
         });
         // the same operation named by options, or with the specification as a file: resource
         String options = """
@@ -652,6 +656,42 @@ public class TextBodyFlowTest {
         });
         // a jsonpath that reads no field of the element: the element may be text
         assertThat(lines(yaml.replace("expression: \"$.sku\"", "expression: \"$\""), STOCK_API)).isEmpty();
+    }
+
+    @Test
+    public void testRestOpenApiCallNamesTheFieldsOfTheRequest() {
+        // r19 of the benchmark: told to marshal, the model sent each line as JSON, without the orderId of the request
+        String yaml = """
+                - route:
+                    id: reserve-order-lines
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - split:
+                            expression:
+                              simple: "${body[lines]}"
+                            steps:
+                              - setHeader:
+                                  name: sku
+                                  expression:
+                                    simple: "${body[sku]}"
+                              - to:
+                                  uri: rest-openapi
+                                  parameters:
+                                    specificationUri: stock-api.json
+                                    operationId: reserveStock
+                """;
+        ProjectFacts facts = new ProjectFacts(
+                Set.of(), STOCK_API.operations(), "off",
+                Map.of("stock-api.json", Map.of("reserveStock", List.of("orderId", "qty"))));
+        assertThat(lines(yaml, facts)).singleElement().satisfies(m -> {
+            assertThat(m).contains("rest-openapi sends the body as the request of the operation reserveStock");
+            assertThat(m).contains("set the body to the JSON text of the request before this step (it needs orderId, qty),"
+                                   + " such as with setBody and simple: '{\"orderId\": ..., \"qty\": ...}', or add marshal:"
+                                   + " json before this step when the data has the fields of the request");
+        });
     }
 
     @Test
@@ -732,6 +772,102 @@ public class TextBodyFlowTest {
         // the operations of the specification are what makes direct:getStock the route of a REST call
         assertThat(lines(yaml, new ProjectFacts(Set.of(), Map.of(), "off"))).isEmpty();
         assertThat(lines(yaml.replace("direct:getStock", "direct:audit"), STOCK_API)).isEmpty();
+    }
+
+    @Test
+    public void testTheBodyAnHttpConsumerGaveInTheRunningApp() {
+        // CAMEL-25750: the request of a platform-http route is a stream cache, which the walk alone does not know
+        String yaml = """
+                - route:
+                    id: orders
+                    from:
+                      uri: platform-http:/orders
+                      steps:
+                        - setHeader:
+                            name: qty
+                            expression:
+                              simple: ${body.qty}
+                """;
+        assertThat(lines(yaml)).isEmpty();
+
+        ProjectFacts seen = observed(ProjectFacts.consumerKey("platform-http:/orders"),
+                List.of("org.apache.camel.converter.stream.ByteArrayInputStreamCache"), List.of("payload"));
+        assertThat(lines(yaml, seen)).singleElement().satisfies(m -> {
+            assertThat(m).contains("simple reads a field of the body (${body.qty}), but the body here is still text");
+            assertThat(m).contains("in the running app, from: platform-http:/orders gave a ByteArrayInputStreamCache");
+            assertThat(m).contains("unmarshal it first with the data format of the payload");
+        });
+    }
+
+    @Test
+    public void testTheBodyAProducerReturnedInTheRunningApp() {
+        // a sql call returns a List of rows, which a file write cannot write as it is
+        String yaml = """
+                - route:
+                    id: report
+                    from:
+                      uri: timer:report
+                      steps:
+                        - to:
+                            uri: sql:select * from orders
+                        - to:
+                            uri: file:reports
+                """;
+        assertThat(lines(yaml)).isEmpty();
+
+        ProjectFacts seen = observed(ProjectFacts.producerKey("sql:select * from orders"),
+                List.of("java.util.ArrayList"), List.of("collection"));
+        assertThat(lines(yaml, seen)).singleElement().satisfies(m -> {
+            assertThat(m).contains("to: file writes the body to a file, but the body here is parsed data");
+            assertThat(m).contains("in the running app, to: sql:select * from orders returned an ArrayList");
+            // the walk knows no data format for what the running app saw
+            assertThat(m).contains("add marshal with the data format to write (such as marshal: json) before this step");
+        });
+    }
+
+    @Test
+    public void testBodiesOfMoreThanOneKindSayNothing() {
+        String yaml = """
+                - route:
+                    id: report
+                    from:
+                      uri: timer:report
+                      steps:
+                        - to:
+                            uri: sql:select * from orders
+                        - to:
+                            uri: file:reports
+                """;
+        // some calls returned rows, others text: the walk cannot tell which one this is
+        ProjectFacts seen = observed(ProjectFacts.producerKey("sql:select * from orders"),
+                List.of("java.util.ArrayList", "java.lang.String"), List.of("collection", "payload"));
+        assertThat(lines(yaml, seen)).isEmpty();
+    }
+
+    @Test
+    public void testWhatTheWalkKnowsComesFirst() {
+        // the file consumer gives the file as read, whatever a running app saw: the walk knows, and says so
+        String yaml = """
+                - route:
+                    id: orders
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - setHeader:
+                            name: qty
+                            expression:
+                              simple: ${body.qty}
+                """;
+        ProjectFacts seen = observed(ProjectFacts.consumerKey("file:inbox"),
+                List.of("java.util.LinkedHashMap"), List.of("data"));
+        assertThat(lines(yaml, seen)).singleElement().satisfies(m -> {
+            assertThat(m).contains("the file as it was read");
+            assertThat(m).doesNotContain("running app");
+        });
+    }
+
+    private static ProjectFacts observed(String key, List<String> types, List<String> kinds) {
+        return new ProjectFacts(Set.of(), Map.of(), null, Map.of(), Map.of(key, new ProjectFacts.Observed(types, kinds)));
     }
 
     private static List<String> lines(String yaml, ProjectFacts facts) {

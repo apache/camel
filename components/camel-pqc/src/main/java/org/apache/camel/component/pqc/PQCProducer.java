@@ -93,14 +93,16 @@ public class PQCProducer extends DefaultProducer {
 
     // Signature algorithms not part of NIST FIPS 204/205 post-quantum standards.
     // XMSS/XMSSMT are NIST SP 800-208 but are stateful and not in FIPS 204/205.
-    private static final Set<String> NON_FIPS_PQ_SIGNATURES = Set.of(
+    // DILITHIUM and SPHINCSPLUS are deliberately absent: they are aliases that resolve to ML-DSA and SLH-DSA
+    // respectively (see PQCSignatureAlgorithms), so warning that they are "not FIPS 204/205" and recommending
+    // ML-DSA / SLH-DSA instead would tell the user to switch to what they are already using.
+    // Package-private so the unit test can assert on the set itself rather than on the source text
+    static final Set<String> NON_FIPS_PQ_SIGNATURES = Set.of(
             PQCSignatureAlgorithms.XMSS.name(),
             PQCSignatureAlgorithms.XMSSMT.name(),
-            PQCSignatureAlgorithms.DILITHIUM.name(),
             PQCSignatureAlgorithms.FALCON.name(),
             PQCSignatureAlgorithms.SNOVA.name(),
-            PQCSignatureAlgorithms.MAYO.name(),
-            PQCSignatureAlgorithms.SPHINCSPLUS.name());
+            PQCSignatureAlgorithms.MAYO.name());
 
     // KEM algorithms not part of NIST FIPS 203 post-quantum standard.
     private static final Set<String> NON_FIPS_PQ_KEMS = Set.of(
@@ -226,7 +228,7 @@ public class PQCProducer extends DefaultProducer {
                     statefulDeleteKeyState(exchange);
                     break;
                 default:
-                    throw new IllegalArgumentException("Unsupported operation");
+                    throw new IllegalArgumentException("Unsupported operation: " + operation);
             }
             success = true;
         } finally {
@@ -237,9 +239,54 @@ public class PQCProducer extends DefaultProducer {
     private PQCOperations determineOperation(Exchange exchange) {
         PQCOperations operation = exchange.getIn().getHeader(PQCConstants.OPERATION, PQCOperations.class);
         if (operation == null) {
-            operation = getConfiguration().getOperation();
+            return getConfiguration().getOperation();
         }
+        checkOperationIsUsable(operation);
         return operation;
+    }
+
+    /**
+     * Rejects a {@link PQCConstants#OPERATION} header selecting an operation this producer has no resources for.
+     * <p/>
+     * {@link #doStart()} builds the {@code Signature} only for the signature operations and the {@code KeyGenerator}
+     * only for the KEM ones, and the key material is autowired for whichever algorithm option the endpoint declares. An
+     * override that crosses from one family to the other would otherwise dereference a null and surface as a bare
+     * NullPointerException deep inside the operation.
+     */
+    private void checkOperationIsUsable(PQCOperations operation) {
+        String missing = null;
+        switch (operation) {
+            case sign, verify -> missing = signer == null ? "a Signature" : null;
+            case hybridSign, hybridVerify -> {
+                if (signer == null) {
+                    missing = "a Signature";
+                } else if (classicalSigner == null) {
+                    missing = "a classical Signature";
+                }
+            }
+            case generateSecretKeyEncapsulation, extractSecretKeyEncapsulation ->
+                missing = keyGenerator == null ? "a KeyGenerator" : null;
+            case hybridGenerateSecretKeyEncapsulation, hybridExtractSecretKeyEncapsulation -> {
+                if (keyGenerator == null) {
+                    missing = "a KeyGenerator";
+                } else if (classicalKeyAgreement == null) {
+                    missing = "a classical KeyAgreement";
+                }
+            }
+            default -> {
+                // the remaining operations work off the exchange payload or the KeyLifecycleManager
+            }
+        }
+
+        if (missing != null) {
+            throw new IllegalArgumentException(
+                    "The " + PQCConstants.OPERATION + " header requests operation '" + operation
+                                               + "', but this endpoint is configured for '"
+                                               + getConfiguration().getOperation()
+                                               + "' and so holds no " + missing
+                                               + " for it. Configure a separate endpoint for that operation, or set"
+                                               + " the matching algorithm and key material on this one.");
+        }
     }
 
     protected PQCConfiguration getConfiguration() {
@@ -666,6 +713,10 @@ public class PQCProducer extends DefaultProducer {
 
     private void generateEncapsulation(Exchange exchange)
             throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
+            throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
+        }
+
         KeyGenerator generator = keyGeneratorForExchange();
         SecretKeyWithEncapsulation secEnc1;
         synchronized (generator) {
@@ -673,7 +724,11 @@ public class PQCProducer extends DefaultProducer {
             generator.init(
                     new KEMGenerateSpec(
                             keyPair.getPublic(),
-                            getEndpoint().getConfiguration().getSymmetricKeyAlgorithm(),
+                            // The mapped JCE algorithm name, as the extract operations use: for the algorithms whose
+                            // enum name differs from the JCE name (GOST3412_2015 -> GOST3412-2015, DESEDE -> DESede)
+                            // the raw name is not a resolvable cipher, and the two ends of the exchange would disagree
+                            // on the identity of the key
+                            PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
                             getEndpoint().getConfiguration().getSymmetricKeyLength()),
                     SecureRandomHelper.getSecureRandom());
             // SecretKeyWithEncapsulation is the class to use as the secret key, it has additional
@@ -1099,10 +1154,10 @@ public class PQCProducer extends DefaultProducer {
             throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for deleteKeyState");
         }
 
-        KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
-        if (klm != null) {
-            klm.deleteKey(keyId);
-        }
+        // Required, as for every other lifecycle operation. Reporting success for a stateful key state that was
+        // never deleted is the worst available outcome: the caller believes the exhausted or compromised state is
+        // gone and may reuse the key.
+        getRequiredKeyLifecycleManager().deleteKey(keyId);
     }
 
     /**
@@ -1272,7 +1327,9 @@ public class PQCProducer extends DefaultProducer {
                                 classicalAlg);
                     }
                 } catch (IllegalArgumentException e) {
-                    // Unknown classical algorithm - will fail later during init
+                    // Not fatal here: the endpoint may still be configured with explicit classical key material.
+                    // It is logged because otherwise a typo surfaces much later as an opaque initialisation failure.
+                    LOG.debug("Unknown classical signature algorithm '{}', skipping its advisory checks", classicalAlg, e);
                 }
             }
             String pqcAlg = config.getSignatureAlgorithm();

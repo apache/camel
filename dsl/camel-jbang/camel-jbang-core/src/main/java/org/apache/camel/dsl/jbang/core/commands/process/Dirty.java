@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
@@ -44,18 +45,23 @@ public class Dirty extends ProcessBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        File[] files = getCamelDir().toFile().listFiles(f -> !"camel-export.log".equals(f.getName()));
+        File[] files = getCamelDir().toFile().listFiles();
         if (files == null || files.length == 0) {
             return 0;
         }
 
         List<File> dirty = new ArrayList<>();
         for (File f : files) {
-            // the files of a process that is alive are in use (such as the launcher of an integration that runs in a
-            // child process, whose Camel has stopped), and so are the files of ourselves
-            Long pid = pidOf(f.getName());
-            boolean running = pid != null && ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
-            if (!running) {
+            if (PreviousRun.isPreviousRunFile(f.getName())) {
+                // kept on purpose: the log of the previous run of an integration (camel log --previous)
+                continue;
+            }
+            // only the files of a process that is gone: a file named after its pid. The files of a process that is
+            // alive are in use (such as the launcher of an integration that runs in a child process, whose Camel has
+            // stopped), and so are the files of ourselves. A file that belongs to no process is left alone (such as the
+            // log of a Spring Boot or Quarkus app, <name>.log, also while the app runs), and so is a directory.
+            Long pid = f.isFile() ? pidOf(f.getName()) : null;
+            if (pid != null && !ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false)) {
                 dirty.add(f);
             }
         }
@@ -64,10 +70,19 @@ public class Dirty extends ProcessBaseCommand {
         }
 
         if (clean) {
+            int cleaned = 0;
+            List<String> left = new ArrayList<>();
             for (File f : dirty) {
-                FileUtil.deleteFile(f);
+                if (FileUtil.deleteFile(f)) {
+                    cleaned++;
+                } else {
+                    left.add(f.getName());
+                }
             }
-            printer().println("Cleaned " + dirty.size() + " orphan files");
+            printer().println("Cleaned " + cleaned + " orphan files");
+            if (!left.isEmpty()) {
+                printer().printWarn("Cannot delete: " + String.join(", ", left));
+            }
         } else {
             printer().println("There are " + dirty.size() + " orphan files");
         }

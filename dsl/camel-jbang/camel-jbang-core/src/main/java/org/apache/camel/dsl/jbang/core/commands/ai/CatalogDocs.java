@@ -993,6 +993,18 @@ public final class CatalogDocs {
                     matches.add(o);
                 }
             }
+            // what a component does, or a broker it reaches without a component of its own, such as artemis with the
+            // jms component (CAMEL-25783)
+            String[] intent = CatalogSamples.COMPONENT_INTENTS.get(term.trim().toLowerCase(Locale.ROOT));
+            if (intent != null && matches.stream().noneMatch(o -> intent[0].equals(((JsonObject) o).getString("name")))) {
+                ComponentModel m = catalog.componentModel(intent[0]);
+                if (m != null) {
+                    JsonObject o = summary("component", m.getScheme(), m.getTitle(), m.getDescription(), m.getLabel());
+                    o.put("syntax", m.getSyntax());
+                    o.put("note", "'" + term.trim() + "' is done with " + intent[1]);
+                    matches.add(0, o);
+                }
+            }
         }
         if (kind == null || "dataformat".equals(kind)) {
             for (String name : catalog.suggestDataFormatNames(term, max)) {
@@ -1657,8 +1669,14 @@ public final class CatalogDocs {
         if (model.isProducerOnly()) {
             return "producer only: use it as a to: (send to it); it cannot start a route";
         }
-        return "from: consumes (reads or receives, starts a route); to: produces (writes or sends); to consume one message"
-               + " in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
+        String answer = "from: consumes (reads or receives, starts a route); to: produces (writes or sends); to consume one"
+                        + " message in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
+        if ("file".equals(model.getScheme())) {
+            // a lookup table the route needs is read, not consumed: the poll EIP moves the file when it has no noop
+            answer += "; to read a data file the route needs, such as a lookup table, use the constant language with"
+                      + " resource:file: (such as setVariable with constant: resource:file:stock.json)";
+        }
+        return answer;
     }
 
     /** How many options of a component are listed in full when no filter is given (CAMEL-25541). */

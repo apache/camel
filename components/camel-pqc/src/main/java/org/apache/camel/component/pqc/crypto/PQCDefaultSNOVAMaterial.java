@@ -19,6 +19,7 @@ package org.apache.camel.component.pqc.crypto;
 import java.security.*;
 
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
+import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
@@ -49,7 +50,7 @@ public class PQCDefaultSNOVAMaterial {
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
         KeyPairGenerator kpGen = KeyPairGenerator.getInstance(PQCSignatureAlgorithms.SNOVA.getAlgorithm(),
                 PQCSignatureAlgorithms.SNOVA.getBcProvider());
-        kpGen.initialize(SnovaParameterSpec.SNOVA_24_5_5_SHAKE_SSK);
+        kpGen.initialize(SnovaParameterSpec.SNOVA_24_5_5_SHAKE_SSK, SecureRandomHelper.getSecureRandom());
         return kpGen;
     }
 }

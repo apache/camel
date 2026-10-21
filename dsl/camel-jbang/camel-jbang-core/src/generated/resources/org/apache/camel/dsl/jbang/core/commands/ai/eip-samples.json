@@ -857,12 +857,20 @@
     {
       "source": "poll-eip.adoc",
       "yaml": "- rest:\n    path: \/report\n    get:\n      - path: \/{id}\/payload\n        to:\n          uri: direct:payload\n- route:\n    from:\n      uri: direct:payload\n      steps:\n        - poll:\n            uri: aws-s3:xavier-dev\n            parameters:\n              amazonS3Client: \"#s3client\"\n              deleteAfterRead: false\n              fileName: report-file.pdf\n"
+    },
+    {
+      "source": "poll-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:report\n      steps:\n        - poll:\n            uri: ftp:myserver.com\/myfolder\n            parameters:\n              fileName: \"${body}\"\n"
     }
   ],
   "pollEnrich": [
     {
       "source": "pollEnrich-eip.adoc",
       "yaml": "- route:\n    from:\n      uri: direct:start\n      steps:\n        - pollEnrich:\n            timeout: 10000\n            expression:\n              constant:\n                expression: file:inbox?fileName=data.txt\n        - to:\n            uri: mock:result\n"
+    },
+    {
+      "source": "pollEnrich-eip.adoc",
+      "yaml": "- route:\n    from:\n      uri: direct:order\n      steps:\n        - pollEnrich:\n            expression:\n              simple:\n                expression: \"file:customers?fileName=${body[customer]}.json&noop=true\"\n            timeout: 5000\n            variableReceive: customer\n        - log:\n            message: \"Order ${body[orderId]} for customer ${variable.customer}\"\n"
     },
     {
       "source": "pollEnrich-eip.adoc",

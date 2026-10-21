@@ -178,6 +178,14 @@ public class CatalogSamplesTest {
     }
 
     @Test
+    void artemisIsTheJmsComponentWithItsConnectionFactory() {
+        // CAMEL-25783: a broker without a component of its own
+        JsonObject o = CatalogSamples.sample(new DefaultCamelCatalog(), "artemis", 1);
+        assertThat(o.getString("name")).isEqualTo("jms");
+        assertThat(o.getString("note")).contains("ConnectionFactory", "Connecting to a broker");
+    }
+
+    @Test
     void callingAServiceIsTheHttpComponentNotEnrich() {
         CamelCatalog catalog = new DefaultCamelCatalog();
         for (String term : List.of("call service", "http call", "Call API")) {

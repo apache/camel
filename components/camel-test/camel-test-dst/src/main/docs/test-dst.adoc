@@ -226,11 +226,23 @@ dst.runFor(dst.between(0, 3L * visibilityTimeout * 1000));
 // faults cleared: the queue must drain
 faults = false;
 sqs.faults = false;
-long deadline = dst.now() + 20L * visibilityTimeout * 1000 + 30_000;
-while (!sqs.allDeleted() && dst.now() < deadline) {
+// drain while it makes progress: stop when no message was deleted for a while, or at a cap
+long quiet = 20L * visibilityTimeout * 1000 + 30_000;
+long cap = dst.now() + 3_600_000;
+int left = sqs.notDeleted().size();
+long lastProgress = dst.now();
+while (!sqs.allDeleted() && dst.now() < cap && dst.now() - lastProgress < quiet) {
     dst.runFor(100);
+    int remaining = sqs.notDeleted().size();
+    if (remaining < left) {
+        left = remaining;
+        lastProgress = dst.now();
+    }
 }
 ----
+
+Drain until progress stops, not for a fixed time. With a fixed drain time, 1 of 20,000 seeds failed falsely: one
+consumer taking one message per poll was still deleting messages when the time ran out.
 
 Some faults legitimately cause what the invariant forbids. Record which fault excuses which violation, and only those:
 a failed `ChangeMessageVisibilityBatch` lets SQS deliver the messages of that batch again, so `FakeSqs` reports their
@@ -292,7 +304,11 @@ Agents wrote nine worlds with this guide. These mistakes came up:
   `dst.currentTimeMillis()`), not 0. A Service Bus fake with lock times in 1970 made the lock renewer renew on every run,
   so the world could not fail. The self-check (fail on the code before the fix) caught it.
 * *No end to the run.* A consumer that loops forever needs an unwind at the end of the run, or the run never ends:
-  cancel its task through the task registry, or stop the route at the end of the drain phase.
+  cancel its task through the task registry, or stop the route at the end of the drain phase. A consumer task that
+  never returns (a pull loop) sits above the test thread on the one stack, so a `dst.runFor` or `dst.runUntil` in the
+  test body does not return while it loops, and the seed fails on the step budget. Make the phases of the run (clear
+  the faults, drain, end) scheduled tasks, and end the run by having the fake end the loop (close the subscription),
+  then `dst.runUntil(() -> closed, "subscription closed")`.
 * *A fake that blocks under a lock.* A call of the fake made while the consumer holds a lock must not block: with the
   one-stack rule, the tasks nested above it run while the lock is held.
 * *A violation without its excuse.* Every invariant needs the record of which injected faults excuse a violation of it.
@@ -304,6 +320,27 @@ Agents wrote nine worlds with this guide. These mistakes came up:
 * *A fixed configuration.* Let the seed pick the endpoint configuration, edge values included. That is how
   CAMEL-25737 (`visibilityTimeout=1`) and CAMEL-25741 (aws2-ddbstream, found with a fake DynamoDB Streams world) were
   found.
+
+Later worlds (IMAP, JMS, NATS JetStream, Azure Service Bus) showed more:
+
+* *An empty answer at once.* A fake that answers at once with nothing (no message, no responder) lets a consumer with
+  its own receive loop (JMS, a NATS fetch) spin without virtual time moving; the seed fails on the step budget or the
+  watchdog instead of reaching its end. Give every call of the fake a round-trip latency.
+* *A proxy that throws what the interface does not declare.* A `java.lang.reflect.Proxy` keeps the fake of a wide
+  interface (JMS) small. A checked exception that the interface method does not declare comes out of the proxy as
+  `UndeclaredThrowableException`; do what the library does instead (for an `InterruptedException` in a fetch: set the
+  interrupt flag again and return).
+* *Only the protocol.* Model what the client library does with the objects of an earlier connection, not only what
+  the server does: after a reconnect, a message or handle from before may still work, fail, or now refer to something
+  else. Read the library (its source, or its byte code) for that.
+* *One excuse for every stop.* Each kind of operator stop needs its own excuse record: a consumer stopped through JMX
+  and a route stop that hits the shutdown timeout leave different work unfinished (a lock renewer cancelled under
+  exchanges still in flight, for example).
+* *A synchronous consumer over an asynchronous step.* With `DstCamel.asyncStep` in the route, a consumer that calls
+  the route synchronously waits on a latch of `org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager`: add
+  it to `alsoRewrite`, or the watchdog fails the seed. Let the asynchronous exchanges in flight finish before
+  `dst.dropPending()`, which drops their answers too, so that the shutdown does not wait for exchanges that cannot
+  complete.
 
 === Checklist
 
@@ -323,7 +360,8 @@ Agents wrote nine worlds with this guide. These mistakes came up:
 
 The worlds are tests of their components, in a `dst` package. Build the harness in the same reactor as the component
 (`-pl` both), so that the component's tests see it. `-Dsurefire.rerunFailingTestsCount=0` stops surefire from running
-each failing seed again.
+each failing seed again. A component whose tests depend on a `camel-test-infra-*` module (camel-nats,
+camel-azure-storage-queue) needs that module in `-pl` too when it is not in the local repository.
 
 [source,bash]
 ----
@@ -367,7 +405,12 @@ seed of the in-JVM replay test of the Event Hubs world, default 1).
   in the JVM sees it. A world must therefore not go into a module that runs its tests in parallel
   (`camel.surefire.parallel=true`, as camel-jms and camel-sql do): the other tests in that surefire fork would read the
   virtual clock while a run is active. The harness enforces this: a second run while one is open fails, and a DST test
-  refuses to start when JUnit runs tests in parallel.
+  refuses to start when JUnit runs tests in parallel. A local world in such a module (camel-sjms, for example) can
+  still be run alone, with `-Dtest=<the world> -Dcamel.surefire.parallel=false`, but it cannot be committed there:
+  the module's own build would fail it.
+* Locks do not exclude: every task runs on the test thread, so a `ReentrantLock` or `synchronized` block held by a
+  blocked task is entered again by the tasks nested above it. A critical section is atomic only because the fake does
+  not block inside it, and races between two code paths that each hold a lock cannot be explored.
 * The rewriting stays for the rest of the surefire fork: the classes of the `@DstInstrument` packages (the component's
   main classes, and its test classes in the same package) stay rewritten for every test that runs after the DST test,
   the same as the `alsoRewrite` entries. Outside a run they read the real clock and sleep for real, so the other tests

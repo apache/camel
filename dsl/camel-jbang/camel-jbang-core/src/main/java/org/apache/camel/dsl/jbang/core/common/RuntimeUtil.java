@@ -36,6 +36,20 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 public final class RuntimeUtil {
 
+    /**
+     * The system property with the directory of the log files, which the logging configurations of the CLI name their
+     * files after: the Camel directory of the CLI ({@link CommandLineHelper#getCamelDir()}), where camel run, camel log
+     * and the AI tools look for them. It can differ from <tt>~/.camel</tt>, such as for a CLI with a home of its own (a
+     * test), or when the user has no home (a container), where <tt>user.home</tt> is <tt>?</tt>. The CLI sets it, it is
+     * not an option.
+     */
+    static final String LOG_DIR = "camel.jbang.logDir";
+
+    /**
+     * The logging configuration of the CLI with color: the console, and the log file of the process.
+     */
+    static final String COLOR_CONFIG = "log4j2-color.properties";
+
     // the logging configuration log4j was configured with, or null when not yet
     private static String configured;
     // whether the command that runs next may configure the logging again (see newCommand)
@@ -71,7 +85,7 @@ public final class RuntimeUtil {
             } else if (json) {
                 name = "log4j2-json.properties";
             } else if (color) {
-                name = "log4j2.properties";
+                name = COLOR_CONFIG;
             }
             InputStream is = RuntimeUtil.class.getClassLoader().getResourceAsStream(name);
             String content = IOHelper.loadText(is);
@@ -117,12 +131,15 @@ public final class RuntimeUtil {
         } else if (json) {
             location = "log4j2-json.properties";
         } else if (color) {
-            location = "log4j2.properties";
+            location = COLOR_CONFIG;
         } else {
             location = "log4j2-no-color.properties";
         }
 
         synchronized (RuntimeUtil.class) {
+            // log4j resolves the name of a log file when it loads the configuration. Always the Camel directory of the
+            // CLI, not an option: camel log and the AI tools read the log of a pid there
+            System.setProperty(LOG_DIR, CommandLineHelper.getCamelDir().toString());
             if (configured == null) {
                 long pid = ProcessHandle.current().pid();
                 System.setProperty("pid", Long.toString(pid));

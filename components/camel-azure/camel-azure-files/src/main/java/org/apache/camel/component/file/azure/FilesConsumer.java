@@ -60,6 +60,15 @@ public class FilesConsumer extends RemoteFileConsumer<ShareFileItem> {
         return (FilesOperations) super.getOperations();
     }
 
+    /**
+     * The sendNoop option is not supported by this component. Its configuration turns sendNoop off for the producer
+     * only, so the consumer still checks the share before each poll.
+     */
+    @Override
+    protected boolean isSendNoop() {
+        return true;
+    }
+
     @Override
     protected void doStart() throws Exception {
         // turn off scheduler first, so autoCreate is handled before scheduler

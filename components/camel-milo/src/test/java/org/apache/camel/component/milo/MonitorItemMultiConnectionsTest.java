@@ -103,13 +103,13 @@ public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
         this.test1Endpoint.setExpectedCount(1);
         this.test1Endpoint.setSleepForEmptyTest(5_000);
 
-        // item 2
-        this.test2Endpoint.setExpectedCount(0);
-        this.test2Endpoint.setSleepForEmptyTest(5_000);
-
-        // item 3
-        this.test3Endpoint.setExpectedCount(0);
-        this.test3Endpoint.setSleepForEmptyTest(5_000);
+        // items 2 and 3: their clients cannot connect, so their consumers report the node without communication
+        this.test2Endpoint.setExpectedCount(1);
+        testBody(this.test2Endpoint.message(0), assertNoCommunication());
+        this.test2Endpoint.setAssertPeriod(5_000);
+        this.test3Endpoint.setExpectedCount(1);
+        testBody(this.test3Endpoint.message(0), assertNoCommunication());
+        this.test3Endpoint.setAssertPeriod(5_000);
 
         // set server value, then start the consumers
         this.producer1.sendBody("Foo");

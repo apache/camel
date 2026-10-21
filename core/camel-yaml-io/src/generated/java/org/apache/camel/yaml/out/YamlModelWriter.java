@@ -2756,7 +2756,6 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteIdentifiedTypeAttributes(jo, def);
         doWriteAttribute(jo, "indent", def.getIndent(), "2");
         doWriteAttribute(jo, "delimiter", def.getDelimiter(), "COMMA");
-        doWriteAttribute(jo, "lengthMarker", def.getLengthMarker(), "false");
         doWriteAttribute(jo, "strict", def.getStrict(), "true");
         doWriteAttribute(jo, "contentTypeHeader", def.getContentTypeHeader(), "true");
         return jo;
@@ -3479,7 +3478,7 @@ public class YamlModelWriter extends YamlModelWriterSupport {
         doWriteAttribute(jo, "path", def.getPath(), null);
         doWriteAttribute(jo, "routeId", def.getRouteId(), null);
         doWriteAttribute(jo, "bindingMode", def.getBindingMode(), null);
-        doWriteAttribute(jo, "apiDocs", def.getApiDocs(), "true");
+        doWriteAttribute(jo, "apiDocs", def.getApiDocs(), null);
         doWriteAttribute(jo, "enableNoContentResponse", def.getEnableNoContentResponse(), null);
         doWriteAttribute(jo, "skipBindingOnErrorCode", def.getSkipBindingOnErrorCode(), null);
         doWriteAttribute(jo, "clientRequestValidation", def.getClientRequestValidation(), null);

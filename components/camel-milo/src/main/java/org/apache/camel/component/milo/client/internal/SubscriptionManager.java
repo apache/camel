@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,6 +67,8 @@ import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.security.CertificateValidator;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ByteString;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DiagnosticInfo;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
@@ -113,7 +116,18 @@ public class SubscriptionManager {
             StatusCodes.Bad_SecurityChecksFailed, StatusCodes.Bad_TcpSecureChannelUnknown,
             StatusCodes.Bad_RequestTypeInvalid);
 
+    /**
+     * The status of a monitored node while communication with the server is lost: the source of the value is configured
+     * but cannot be reached, and no last value is kept (OPC 10000-8 Table 61, OPC 10000-14 Table 80).
+     */
+    private static final StatusCode NO_COMMUNICATION = new StatusCode(StatusCodes.Bad_NoCommunication);
+
     private final AtomicLong clientHandleCounter = new AtomicLong();
+
+    /**
+     * The generation of the last connection built, zero before the first.
+     */
+    private final AtomicLong generationCounter = new AtomicLong();
 
     /**
      * Listens to the subscription of a connection and to the state of its session. It is registered on the client
@@ -122,16 +136,63 @@ public class SubscriptionManager {
     private final class SubscriptionListenerImpl
             implements OpcUaSubscription.SubscriptionListener, SessionActivityListener {
 
-        private volatile boolean sessionActive;
+        /**
+         * The generation of the connection, which orders its values and loss reports against those of the connection
+         * that replaces it.
+         */
+        private final long generation;
+
+        /**
+         * Whether the session is active. The client connects before the connection is used, and Milo dispatches the
+         * activity callbacks in the order of the transitions.
+         */
+        private volatile boolean sessionActive = true;
+
+        /**
+         * The subscription of the connection, once it is created.
+         */
+        private volatile OpcUaSubscription subscription;
+
+        /**
+         * Set once the connection has been disposed: the session the client closes then is no loss of communication.
+         */
+        private volatile boolean closed;
+
+        /**
+         * The session that the client lost last, while it has not been activated again.
+         */
+        private volatile NodeId lostSessionId;
+
+        SubscriptionListenerImpl(final long generation) {
+            this.generation = generation;
+        }
 
         @Override
         public void onSessionActive(final UaSession session) {
             this.sessionActive = true;
+            final NodeId lostSessionId = this.lostSessionId;
+            this.lostSessionId = null;
+            final OpcUaSubscription subscription = this.subscription;
+            if (lostSessionId != null && subscription != null && !this.closed) {
+                if (lostSessionId.equals(session.getSessionId())) {
+                    // the same session again: the server sends only changes, so ask it for every value
+                    resendData(subscription, this);
+                } else {
+                    LOG.debug("Session {} replaced by {}, the server sends the current values", lostSessionId,
+                            session.getSessionId());
+                }
+            }
         }
 
         @Override
         public void onSessionInactive(final UaSession session) {
             this.sessionActive = false;
+            final OpcUaSubscription subscription = this.subscription;
+            if (subscription != null && !this.closed) {
+                this.lostSessionId = session.getSessionId();
+                LOG.info("Session {} lost, reporting the monitored nodes", session.getSessionId());
+                reportLoss(subscription, this.generation, SubscriptionManager.this.subscriptions);
+            }
         }
 
         /**
@@ -182,6 +243,22 @@ public class SubscriptionManager {
         private MonitorFilterConfiguration monitorFilterConfiguration;
         private final Integer queueSize;
 
+        /**
+         * The generation of the connection that delivered the last value, guarded by this
+         */
+        private long generation;
+
+        /**
+         * Whether the last delivery to the consumer was a loss report, guarded by this
+         */
+        private boolean reported;
+
+        /**
+         * Whether the server refused to monitor the node: its status is that refusal, whatever the communication, until
+         * its item is created
+         */
+        private volatile boolean refused;
+
         Subscription(ExpandedNodeId nodeId, final Double samplingInterval, Integer queueSize,
                      final Consumer<DataValue> valueConsumer,
                      final MonitorFilterConfiguration monitorFilterConfiguration) {
@@ -204,8 +281,38 @@ public class SubscriptionManager {
             return this.queueSize;
         }
 
-        public Consumer<DataValue> getValueConsumer() {
-            return this.valueConsumer;
+        /**
+         * Delivers a value of the node to the consumer, which ends a loss report.
+         *
+         * @param generation the generation of the connection that received the value
+         */
+        synchronized void deliver(final long generation, final DataValue value) {
+            this.generation = Math.max(this.generation, generation);
+            this.reported = false;
+            this.valueConsumer.accept(value);
+        }
+
+        /**
+         * Delivers the status with which the server refused to monitor the node.
+         */
+        void refuse(final long generation, final DataValue status) {
+            this.refused = true;
+            deliver(generation, status);
+        }
+
+        /**
+         * Delivers a loss report to the consumer, unless the node is reported or refused already, or a later connection
+         * has delivered a value. The report of a replaced connection is queued behind its last values, which may race
+         * the first values of its replacement.
+         *
+         * @param generation the generation of the connection whose communication was lost
+         */
+        synchronized void report(final long generation, final DataValue value) {
+            if (this.reported || this.refused || this.generation > generation) {
+                return;
+            }
+            this.reported = true;
+            this.valueConsumer.accept(value);
         }
 
         public MonitoringFilter createMonitoringFilter() {
@@ -221,23 +328,27 @@ public class SubscriptionManager {
     /**
      * A status value for a node that could not be monitored, delivered to its consumer outside of the lock
      */
-    private record PendingValue(Consumer<DataValue> consumer, DataValue value) {
+    private record PendingValue(Subscription subscription, long generation, DataValue value) {
         void deliver() {
-            consumer.accept(value);
+            subscription.refuse(generation, value);
         }
     }
 
     private class Connected {
         private OpcUaClient client;
         private final OpcUaSubscription manager;
+        private final SubscriptionListenerImpl listener;
+        private final long generation;
 
         private final Map<UInteger, OpcUaMonitoredItem> goodSubscriptions = new HashMap<>();
 
         private final Map<String, UShort> namespaceCache = new ConcurrentHashMap<>();
 
-        Connected(final OpcUaClient client, final OpcUaSubscription manager) {
+        Connected(final OpcUaClient client, final OpcUaSubscription manager, final SubscriptionListenerImpl listener) {
             this.client = client;
             this.manager = manager;
+            this.listener = listener;
+            this.generation = listener.generation;
         }
 
         /**
@@ -266,14 +377,14 @@ public class SubscriptionManager {
             for (final Map.Entry<UInteger, Subscription> entry : subscriptions.entrySet()) {
                 final Subscription s = entry.getValue();
 
-                final NodeId node = lookupMonitoredNode(s.getNodeId());
+                final NodeId node = lookupNamespace(s.getNodeId()).get();
 
                 if (node == null) {
                     // reported once like a node the server rejects, the other nodes and the connection are not affected
                     final StatusCode status = new StatusCode(StatusCodes.Bad_NodeIdUnknown);
                     LOG.warn("Monitored item for node {} could not be created, the namespace URI is unknown to the server: {}",
                             s.getNodeId().toParseableString(), status);
-                    pendingValues.add(new PendingValue(s.getValueConsumer(), new DataValue(status)));
+                    pendingValues.add(new PendingValue(s, this.generation, new DataValue(status)));
                 } else {
                     final ReadValueId itemId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
                     final OpcUaMonitoredItem item = new OpcUaMonitoredItem(itemId, MonitoringMode.Reporting);
@@ -288,7 +399,7 @@ public class SubscriptionManager {
                         item.setFilter(filter);
                     }
                     // set the listener before the item is created, values without a listener are dropped
-                    item.setDataValueListener((monitoredItem, dataValue) -> s.getValueConsumer().accept(dataValue));
+                    item.setDataValueListener((monitoredItem, dataValue) -> s.deliver(this.generation, dataValue));
                     items.add(item);
                     // Keep track of which subscription this item belongs to
                     itemToClientHandle.put(item, entry.getKey());
@@ -313,6 +424,7 @@ public class SubscriptionManager {
                     final UInteger clientHandle = itemToClientHandle.get(item);
                     if (result.isGood()) {
                         this.goodSubscriptions.put(clientHandle, item);
+                        subscriptions.get(clientHandle).refused = false;
                     } else if (result.serviceResult().isBad()) {
                         failedItems.add(item);
                         rejectedServiceResult = result.serviceResult();
@@ -323,7 +435,7 @@ public class SubscriptionManager {
                         final StatusCode status = result.operationResult().orElse(result.serviceResult());
                         LOG.warn("Monitored item for node {} could not be created: {}", s.getNodeId().toParseableString(),
                                 status);
-                        pendingValues.add(new PendingValue(s.getValueConsumer(), new DataValue(status)));
+                        pendingValues.add(new PendingValue(s, this.generation, new DataValue(status)));
                     }
                 }
 
@@ -340,16 +452,6 @@ public class SubscriptionManager {
             }
 
             return pendingValues;
-        }
-
-        /**
-         * @return the node ID with the namespace index of the server, or null if its namespace URI is not in the
-         *         namespace table of the server
-         */
-        private NodeId lookupMonitoredNode(final ExpandedNodeId nodeId) throws Exception {
-            final String uri = nodeId.getNamespaceUri();
-            final UShort index = uri == null ? nodeId.getNamespaceIndex() : lookupNamespaceIndex(uri).get();
-            return index == null ? null : toNodeId(index, nodeId);
         }
 
         /**
@@ -434,6 +536,8 @@ public class SubscriptionManager {
         }
 
         public void dispose() {
+            // the session closed by the disconnect is no loss of communication
+            this.listener.closed = true;
             if (this.client != null) {
                 try {
                     this.client.disconnect();
@@ -445,6 +549,10 @@ public class SubscriptionManager {
             }
         }
 
+        /**
+         * @return the node ID with the namespace index of the server, completed with null if its namespace URI is not
+         *         in the namespace table of the server: such a node does not exist on the server
+         */
         private CompletableFuture<NodeId> lookupNamespace(final ExpandedNodeId nodeId) {
             LOG.trace("Expanded Node Id: {}", nodeId);
 
@@ -452,7 +560,13 @@ public class SubscriptionManager {
 
             if (uri != null) {
                 LOG.trace("Looking up namespace: {}", uri);
-                return lookupNamespaceIndex(uri).thenApply(index -> toNodeId(index, nodeId));
+                return lookupNamespaceIndex(uri).thenApply(index -> {
+                    if (index == null) {
+                        LOG.debug("The namespace URI of node {} is unknown to the server", nodeId.toParseableString());
+                        return null;
+                    }
+                    return toNodeId(index, nodeId);
+                });
             } else {
                 final UShort index = nodeId.getNamespaceIndex();
                 LOG.trace("Using provided index: {}", index);
@@ -479,6 +593,11 @@ public class SubscriptionManager {
 
                 LOG.debug("Node - expanded: {}, full: {}", nodeId, node);
 
+                if (node == null) {
+                    // answered like a node the server does not have
+                    return completedFuture(new StatusCode(StatusCodes.Bad_NodeIdUnknown));
+                }
+
                 return this.client.writeValuesAsync(List.of(node), List.of(value))
                         .thenApply(r -> r.get(0))
                         .whenComplete((status, error) -> {
@@ -501,6 +620,14 @@ public class SubscriptionManager {
                 return lookupNamespace(methodId).thenCompose(method -> {
 
                     LOG.debug("Method - expanded: {}, full: {}", methodId, method);
+
+                    if (node == null || method == null) {
+                        // answered like the server: an unknown object is Bad_NodeIdUnknown, an unknown method Bad_MethodInvalid
+                        final StatusCode status
+                                = new StatusCode(node == null ? StatusCodes.Bad_NodeIdUnknown : StatusCodes.Bad_MethodInvalid);
+                        return completedFuture(
+                                new CallMethodResult(status, new StatusCode[0], new DiagnosticInfo[0], new Variant[0]));
+                    }
 
                     final CallMethodRequest cmr = new CallMethodRequest(node, method, inputArguments);
 
@@ -535,7 +662,23 @@ public class SubscriptionManager {
 
             return CompletableFuture.allOf(nodeIdFutures).thenCompose(param -> {
                 List<NodeId> nodeIds = Stream.of(nodeIdFutures).map(CompletableFuture::join).collect(Collectors.toList());
-                return this.client.readValuesAsync(0, TimestampsToReturn.Server, nodeIds);
+                final List<NodeId> known = nodeIds.stream().filter(Objects::nonNull).collect(Collectors.toList());
+                if (known.size() == nodeIds.size()) {
+                    return this.client.readValuesAsync(0, TimestampsToReturn.Server, nodeIds);
+                }
+                // a node the server does not have gets the value the server returns for such a node
+                final CompletableFuture<List<DataValue>> read = known.isEmpty()
+                        ? completedFuture(List.of()) : this.client.readValuesAsync(0, TimestampsToReturn.Server, known);
+                return read.thenApply(values -> {
+                    final Iterator<DataValue> knownValues = values.iterator();
+                    final List<DataValue> result = new ArrayList<>(nodeIds.size());
+                    for (final NodeId nodeId : nodeIds) {
+                        result.add(nodeId == null
+                                ? new DataValue(new StatusCode(StatusCodes.Bad_NodeIdUnknown))
+                                : knownValues.next());
+                    }
+                    return result;
+                });
             });
         }
 
@@ -704,15 +847,33 @@ public class SubscriptionManager {
 
                     .thenCompose(__ -> {
 
-                        final List<NodeId> nodeIds = Stream.of(futures).map(CompletableFuture::join)
-                                .collect(Collectors.toList());
-
-                        return completedFuture(nodeIds.stream().map(nodeId -> new BrowseDescription(
-                                nodeId, direction, NodeIds.References, includeSubTypes, uint(nodeClasses),
-                                uint(BrowseResultMask.All.getValue()))).collect(Collectors.toList()));
-                    })
-
-                    .thenCompose(descriptions -> browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest));
+                        // a node the server does not have gets the result the server returns for such a node
+                        final Map<ExpandedNodeId, BrowseResult> unknown = new HashMap<>();
+                        final List<BrowseDescription> descriptions = new ArrayList<>();
+                        for (int i = 0; i < futures.length; i++) {
+                            final NodeId nodeId = futures[i].join();
+                            if (nodeId == null) {
+                                unknown.put(expandedNodeIds.get(i), new BrowseResult(
+                                        new StatusCode(StatusCodes.Bad_NodeIdUnknown), ByteString.NULL_VALUE,
+                                        new ReferenceDescription[0]));
+                            } else {
+                                descriptions.add(new BrowseDescription(
+                                        nodeId, direction, NodeIds.References, includeSubTypes, uint(nodeClasses),
+                                        uint(BrowseResultMask.All.getValue())));
+                            }
+                        }
+                        if (unknown.isEmpty()) {
+                            return browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest);
+                        }
+                        final CompletableFuture<Map<ExpandedNodeId, BrowseResult>> knownResults = descriptions.isEmpty()
+                                ? completedFuture(Map.of())
+                                : browse(descriptions, depth, maxDepth, pattern, maxNodesPerRequest);
+                        return knownResults.thenApply(results -> {
+                            final Map<ExpandedNodeId, BrowseResult> all = new HashMap<>(results);
+                            all.putAll(unknown);
+                            return all;
+                        });
+                    });
         }
     }
 
@@ -725,9 +886,14 @@ public class SubscriptionManager {
 
     private Connected connected;
     private volatile Throwable lastConnectFailure;
-    private boolean disposed;
+    private volatile boolean disposed;
     private Future<?> reconnectJob;
-    private final Map<UInteger, Subscription> subscriptions = new HashMap<>();
+
+    /**
+     * The registered nodes by client handle, written under {@code lock}. A loss report reads them without the lock,
+     * which a registration holds while the server creates its items.
+     */
+    private final Map<UInteger, Subscription> subscriptions = new ConcurrentHashMap<>();
 
     public SubscriptionManager(final MiloClientConfiguration configuration, final ScheduledExecutorService reconnectExecutor,
                                final Executor executor, final long reconnectTimeout) {
@@ -878,10 +1044,76 @@ public class SubscriptionManager {
         return !this.disposed && this.connected != null && this.connected.manager == subscription;
     }
 
+    /**
+     * Asks the server to send the current value of every monitored item of the subscription again, after the session
+     * was lost and activated again. The server sends only changes through a reactivated session, so a node whose value
+     * did not change would keep its loss report. If the server does not resend, the subscription is deleted and created
+     * again in the session, and its new items deliver their first values.
+     */
+    private void resendData(final OpcUaSubscription subscription, final SubscriptionListenerImpl listener) {
+        final UInteger subscriptionId = subscription.getSubscriptionId().orElse(null);
+        if (subscriptionId == null) {
+            LOG.debug("Subscription has no ID, it is being recovered");
+            return;
+        }
+        final CallMethodRequest request = new CallMethodRequest(
+                NodeIds.Server, NodeIds.Server_ResendData, new Variant[] { new Variant(subscriptionId) });
+        subscription.getClient().callAsync(List.of(request)).whenCompleteAsync((response, e) -> {
+            final StatusCode status;
+            if (e != null) {
+                status = UaException.extractStatusCode(e).orElse(new StatusCode(StatusCodes.Bad_UnexpectedError));
+            } else if (response.getResults() == null || response.getResults().length == 0) {
+                status = new StatusCode(StatusCodes.Bad_UnexpectedError);
+            } else {
+                status = response.getResults()[0].getStatusCode();
+            }
+            if (status.isGood()) {
+                LOG.info("Session activated again, subscription {} resends the values of its nodes", subscriptionId);
+            } else if (listener.isSessionLost(status)) {
+                LOG.info("Session lost while subscription {} was asked to resend its values: {}", subscriptionId,
+                        status);
+            } else {
+                LOG.warn("Server does not resend the values of subscription {} ({}), recreating it", subscriptionId,
+                        status);
+                recoverSubscription(subscription, listener);
+            }
+        }, clientExecutor(subscription));
+    }
+
+    /**
+     * Queues the loss report of the given nodes on the delivery queue of the subscription, behind the values it already
+     * holds. The queue keeps running after the client has disconnected, so a replaced connection delivers the report
+     * after its last values.
+     *
+     * @param generation the generation of the connection whose communication was lost
+     */
+    private void reportLoss(
+            final OpcUaSubscription subscription, final long generation, final Map<UInteger, Subscription> nodes) {
+        final DateTime time = DateTime.now();
+        subscription.getDeliveryQueue().execute(() -> deliverLoss(nodes, generation, time));
+    }
+
+    /**
+     * Delivers the loss report to the given nodes that are still registered.
+     */
+    private void deliverLoss(final Map<UInteger, Subscription> nodes, final long generation, final DateTime time) {
+        final DataValue value = new DataValue(Variant.NULL_VALUE, NO_COMMUNICATION, time, time);
+        for (final Map.Entry<UInteger, Subscription> node : nodes.entrySet()) {
+            if (this.disposed) {
+                return;
+            }
+            if (this.subscriptions.get(node.getKey()) == node.getValue()) {
+                node.getValue().report(generation, value);
+            }
+        }
+    }
+
     private void handleConnectionFailure(final Throwable e) {
         lock.lock();
         try {
             if (this.connected != null) {
+                // the nodes lose their communication with the connection, after the values it still delivers
+                reportLoss(this.connected.manager, this.connected.generation, this.subscriptions);
                 this.connected.dispose();
                 this.connected = null;
             }
@@ -1052,7 +1284,7 @@ public class SubscriptionManager {
                     }
                 });
 
-        final SubscriptionListenerImpl listener = new SubscriptionListenerImpl();
+        final SubscriptionListenerImpl listener = new SubscriptionListenerImpl(this.generationCounter.incrementAndGet());
         client.addSessionActivityListener(listener);
 
         try {
@@ -1065,8 +1297,9 @@ public class SubscriptionManager {
             subscription.setPublishingInterval(this.configuration.getRequestedPublishingInterval());
             subscription.setSubscriptionListener(listener);
             subscription.create();
+            listener.subscription = subscription;
 
-            return new Connected(client, subscription);
+            return new Connected(client, subscription, listener);
 
             //            final OpcUaSubscription manager = client.getSubscriptionManager()
             //                    .createSubscription(this.configuration.getRequestedPublishingInterval()).get();
@@ -1259,6 +1492,17 @@ public class SubscriptionManager {
         lock.lock();
         try {
             this.subscriptions.putAll(subscriptions);
+
+            if (this.connected == null) {
+                // no communication with the server: the nodes are reported off the thread that starts the consumer,
+                // with a generation below every connection's, so the report is dropped once any connection has
+                // delivered their values, also one that was being built while they were registered
+                final DateTime time = DateTime.now();
+                this.executor.execute(() -> deliverLoss(subscriptions, 0L, time));
+            } else if (!this.connected.listener.sessionActive) {
+                // the session is lost; the nodes are reported before the values of their items, on the same queue
+                reportLoss(this.connected.manager, this.connected.generation, subscriptions);
+            }
 
             whenConnected(connected -> pendingValues.addAll(connected.putSubscriptions(subscriptions)));
         } finally {

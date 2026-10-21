@@ -21,6 +21,7 @@ import java.security.MessageDigest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.a2a.A2AConfiguration;
+import org.apache.camel.component.a2a.A2AConstants;
 import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.support.OAuthHelper;
 import org.slf4j.Logger;
@@ -34,7 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 final class BearerTokenExtractor {
 
-    static final String OAUTH_TOKEN_VALIDATION_RESULT = "CamelOAuthTokenValidationResult";
     private static final Logger LOG = LoggerFactory.getLogger(BearerTokenExtractor.class);
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -84,9 +84,15 @@ final class BearerTokenExtractor {
                     schemeName + " token validation failed: " + result.getError());
         }
 
-        exchange.setProperty(OAUTH_TOKEN_VALIDATION_RESULT, result);
+        A2AUserProfile profile = A2AUserProfile.fromOAuthResult(schemeName, result);
+        if (!profile.identifiesCaller()) {
+            // the caller would own its tasks together with every other caller of such a token
+            throw new SecurityException(
+                    schemeName + " token does not identify the caller: it has no sub, username, client_id or azp claim");
+        }
+        exchange.setProperty(A2AConstants.OAUTH_TOKEN_VALIDATION_RESULT, result);
 
-        return A2AUserProfile.fromOAuthResult(schemeName, result);
+        return profile;
     }
 
     private static A2AUserProfile validateViaStaticToken(
