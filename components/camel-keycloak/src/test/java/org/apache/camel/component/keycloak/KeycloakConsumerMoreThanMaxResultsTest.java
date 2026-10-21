@@ -132,6 +132,47 @@ class KeycloakConsumerMoreThanMaxResultsTest extends CamelTestSupport {
     }
 
     @Test
+    void routesTheEventsBeyondMaxResultsAfterAFirstPollWithoutEvents() throws Exception {
+        // a new realm, or a filter that has not matched yet
+        assertEquals(0, poll("events"));
+
+        events.add(0, event(2000, "user-2"));
+        events.add(0, event(3000, "user-3"));
+        events.add(0, event(4000, "user-4"));
+        poll("events");
+        poll("events");
+
+        MockEndpoint mock = getMockEndpoint("mock:events");
+        mock.expectedMessageCount(3);
+        mock.assertIsSatisfied();
+        List<String> userIds = new ArrayList<>();
+        for (Exchange exchange : mock.getReceivedExchanges()) {
+            userIds.add(exchange.getIn().getBody(EventRepresentation.class).getUserId());
+        }
+        assertEquals(List.of("user-2", "user-3", "user-4"), userIds.stream().sorted().toList());
+    }
+
+    @Test
+    void routesTheAdminEventsBeyondMaxResultsAfterAFirstPollWithoutEvents() throws Exception {
+        assertEquals(0, poll("admin-events"));
+
+        adminEvents.add(0, adminEvent(2000, "users/2"));
+        adminEvents.add(0, adminEvent(3000, "users/3"));
+        adminEvents.add(0, adminEvent(4000, "users/4"));
+        poll("admin-events");
+        poll("admin-events");
+
+        MockEndpoint mock = getMockEndpoint("mock:admin-events");
+        mock.expectedMessageCount(3);
+        mock.assertIsSatisfied();
+        List<String> paths = new ArrayList<>();
+        for (Exchange exchange : mock.getReceivedExchanges()) {
+            paths.add(exchange.getIn().getBody(AdminEventRepresentation.class).getResourcePath());
+        }
+        assertEquals(List.of("users/2", "users/3", "users/4"), paths.stream().sorted().toList());
+    }
+
+    @Test
     void newEventsArrivingWhilePagingAreRoutedOnce() throws Exception {
         events.add(event(1000, "user-1"));
         assertEquals(1, poll("events"));

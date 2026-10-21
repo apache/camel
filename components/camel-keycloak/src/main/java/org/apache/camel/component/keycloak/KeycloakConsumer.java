@@ -173,6 +173,10 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
             forgetOlderFingerprints(highestEventTime);
             lastEventTime = highestEventTime;
             LOG.debug("Updated last event time to: {}", lastEventTime);
+        } else if (lastEventTime == null && events.isEmpty()) {
+            // no event yet (a new realm, or a filter that has not matched yet): every event from now on is new, so
+            // the next polls read all of them page by page, and not only the latest maxResults
+            lastEventTime = 0L;
         }
         limitFingerprintCache();
 
@@ -306,6 +310,10 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
             forgetOlderFingerprints(highestEventTime);
             lastEventTime = highestEventTime;
             LOG.debug("Updated last admin event time to: {}", lastEventTime);
+        } else if (lastEventTime == null && adminEvents.isEmpty()) {
+            // no event yet (a new realm, or a filter that has not matched yet): every event from now on is new, so
+            // the next polls read all of them page by page, and not only the latest maxResults
+            lastEventTime = 0L;
         }
         limitFingerprintCache();
 
