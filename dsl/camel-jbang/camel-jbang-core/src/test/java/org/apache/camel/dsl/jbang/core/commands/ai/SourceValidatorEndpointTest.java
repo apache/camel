@@ -603,7 +603,24 @@ class SourceValidatorEndpointTest {
         assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
                 .contains("header CamelJmsReplyTo is not set by jms")
                 .contains("send with pattern: InOut on the to: and Camel sets JMSReplyTo and waits for the reply")
+                .contains("you do not need to set JMSReplyTo or replyTo yourself")
                 .doesNotContain("did you mean"));
+    }
+
+    /** The JMS request-reply hint is for JMS only: the reply headers of other components keep their "did you mean". */
+    @Test
+    void aReplyHeaderOfAnotherComponentGetsDidYouMean() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: ftp:localhost/inbox
+                    steps:
+                      - log:
+                          message: "${header.CamelFtpReplycode}"
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("header CamelFtpReplycode is not set by ftp")
+                .contains("did you mean CamelFtpReplyCode")
+                .doesNotContain("request-reply over JMS"));
     }
 
     @Test
