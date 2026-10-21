@@ -945,6 +945,20 @@ kept apart. A valid token that has none of these claims is now rejected with HTT
 * The `CamelOAuthTokenValidationResult` exchange property is now set on the exchange that the route processes, as
 documented. Before, it was only set on the incoming HTTP exchange.
 
+=== camel-hazelcast - the transacted SEDA consumer waits for an exchange that continues on another thread
+
+A Hazelcast transaction can only be committed or rolled back by the thread that began it. When the route of a
+transacted (`transacted=true`) Hazelcast SEDA consumer continued on another thread (an asynchronous producer, or
+`threads()`), the consumer tried to commit or roll back the transaction on that thread, which failed with
+`Transaction cannot span multiple threads!` (logged as a WARN and ignored). The message was neither removed nor
+put back: a failed message was not taken again, and the messages, also the processed ones, were put back into the
+queue when the application left the Hazelcast cluster, so they were consumed again. Now the consumer thread waits for
+the exchange to complete and ends the transaction itself, so it takes the next message only then; use
+`concurrentConsumers` to process several messages at the same time. The exchange must complete within the Hazelcast
+transaction timeout (2 minutes by default, `TransactionOptions`): when it takes longer, the commit fails with
+`TransactionTimedOutException`, which is logged at ERROR, the transaction is rolled back and the message is consumed
+again, also when the route succeeded.
+
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 
 The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
