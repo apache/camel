@@ -906,6 +906,16 @@ does not declare. Before, the asynchronous consumer sent the message of the exce
 sent a `TApplicationException` as it was, such as one returned by another Thrift service that the route called. An
 exception declared in the IDL is still sent as it is. Set `muteException=false` to send the exception as before.
 
+=== camel-netty - errors sent to the client
+
+A new `muteException` consumer option, enabled by default, makes a consumer with `sync=true` write a generic exception
+(`java.lang.Exception` with the message `Exchange processing failed` and no stack trace) back to the client when the
+exchange failed, instead of the exception of the route. With `textline=true` the client now receives the line
+`java.lang.Exception: Exchange processing failed`, where it used to receive the class name and the message of the
+exception of the route. With an encoder that accepts any object, the serialised exception no longer carries the class,
+message, cause or stack trace of the exception of the route. Set `muteException=false` to write the exception as before.
+`transferExchange=true` is not affected.
+
 === camel-telegram - webhook requests are verified with a secret token
 
 In webhook mode, Camel now registers the webhook with a secret token, which Telegram sends in the
