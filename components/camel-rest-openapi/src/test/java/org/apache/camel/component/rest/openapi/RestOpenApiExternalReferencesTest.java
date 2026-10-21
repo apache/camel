@@ -281,6 +281,45 @@ class RestOpenApiExternalReferencesTest {
     }
 
     @Test
+    void localKeepsTheInheritedIdAcrossAnExternalReference(@TempDir Path dir) throws Exception {
+        Path bridge = Files.writeString(dir.resolve("bridge.yaml"), """
+                type: object
+                properties:
+                  owner:
+                    $ref: owner.yaml
+                """);
+        Files.writeString(dir.resolve("owner.yaml"), OWNER_SCHEMA);
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(SERVER.baseUrl() + "/schemas/", bridge.toUri().toString()));
+
+        // the parser carries the $id of the Pet schema into bridge.yaml, so owner.yaml is not the file next to it
+        assertThatThrownBy(() -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root, "local"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("references owner.yaml at properties.owner.$ref in " + bridge.toUri())
+                .hasMessageContaining("(owner.yaml resolves to " + SERVER.baseUrl() + "/schemas/owner.yaml)")
+                .hasMessageContaining("externalReferences=local");
+        SERVER.verify(0, anyRequestedFor(anyUrl()));
+    }
+
+    @Test
+    void allResolvesAnOpenApi31ReferenceAgainstTheInheritedId(@TempDir Path dir) throws Exception {
+        Path bridge = Files.writeString(dir.resolve("bridge.yaml"), """
+                type: object
+                properties:
+                  owner:
+                    $ref: owner.yaml
+                """);
+        Files.writeString(dir.resolve("owner.yaml"), OWNER_SCHEMA);
+        Path root = Files.writeString(dir.resolve("root.yaml"),
+                contract31(SERVER.baseUrl() + "/schemas/", bridge.toUri().toString()));
+
+        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, "file:" + root);
+
+        // the parser fetches owner.yaml from the server of the inherited $id, not from the directory of bridge.yaml
+        SERVER.verify(1, getRequestedFor(urlEqualTo("/schemas/owner.yaml")));
+    }
+
+    @Test
     void noneAllowsAReferenceInsideTheDocumentBelowAnHttpId(@TempDir Path dir) throws Exception {
         Path root = Files.writeString(dir.resolve("root.yaml"),
                 contract31(SERVER.baseUrl() + "/schemas/", "#/components/schemas/Owner") + """

@@ -22,8 +22,10 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -42,8 +44,9 @@ import io.swagger.v3.parser.util.RefUtils;
  * classpath, or over http(s) when the reference is a URL or the specification itself comes from a URL.
  * <p>
  * The check works on the tree the parser resolves (YAML aliases expanded), resolves each reference the way the parser
- * does, that is against the document that contains it and, for OpenAPI 3.1, against the enclosing {@code $id}s, and
- * reads the local documents it allows to check their references in turn. A document it cannot read fails the check.
+ * does, that is against the document that contains it and, for OpenAPI 3.1, against the enclosing {@code $id}s, which
+ * the parser also carries into the documents it reaches through a reference, and reads the local documents it allows to
+ * check their references in turn. A document it cannot read fails the check.
  * <p>
  * camel-openapi-java has a copy of this class for the specification it serves as api-doc; keep the two in sync.
  */
@@ -94,12 +97,33 @@ final class OpenApiExternalReferences {
         if (ALL.equals(policy)) {
             return;
         }
-        new Check(policy, specificationUri, remote).document(specification, null, null);
+        new Check(policy, specificationUri, remote).document(specification, null, null, List.of());
     }
 
     private static boolean isHttp(String target) {
         String lower = target.toLowerCase(Locale.ROOT);
         return lower.startsWith("http:") || lower.startsWith("https:");
+    }
+
+    /**
+     * A document a reference leads to: where the reference is, and the OpenAPI 3.1 {@code $id}s the parser carries into
+     * the document, which decide what the references inside it resolve to.
+     */
+    private static final class Target {
+
+        private final String location;
+        private final String origin;
+        private final List<String> inheritedIds;
+
+        Target(String location, String origin, List<String> inheritedIds) {
+            this.location = location;
+            this.origin = origin;
+            this.inheritedIds = inheritedIds;
+        }
+
+        String key() {
+            return inheritedIds.isEmpty() ? location : location + " under " + inheritedIds;
+        }
     }
 
     /**
@@ -122,11 +146,12 @@ final class OpenApiExternalReferences {
         /**
          * Checks one document.
          *
-         * @param content  the document
-         * @param document the resolved location of the document, as the parser uses it, or null for the root
-         * @param origin   where the root references this document, for the error message, or null for the root
+         * @param content      the document
+         * @param document     the resolved location of the document, as the parser uses it, or null for the root
+         * @param origin       where the root references this document, for the error message, or null for the root
+         * @param inheritedIds the {@code $id}s of the schemas enclosing the reference that led here (OpenAPI 3.1)
          */
-        void document(String content, String document, String origin) {
+        void document(String content, String document, String origin, List<String> inheritedIds) {
             JsonNode tree;
             try {
                 // the tree the parser resolves: the same YAML reader, with the aliases expanded and its limits applied
@@ -141,39 +166,52 @@ final class OpenApiExternalReferences {
                 // the parser resolves an OpenAPI 3.1 document with its own dereferencer, which has other rules
                 openApi31 = tree.path("openapi").asText("").startsWith("3.1");
             }
+            String base = document;
+            if (openApi31) {
+                // OpenAPI31Traverser.traverseSchema: the inherited $ids resolved, in turn, against the document
+                base = document == null ? LOCAL_URI : document;
+                for (String id : inheritedIds) {
+                    base = resolveBase(id, base, "", document);
+                }
+            }
             // the external references of this document, with where they are, in the order they are met
-            Map<String, String> targets = new LinkedHashMap<>();
-            String base = openApi31 && document == null ? LOCAL_URI : document;
-            scan(tree, "", document, base, targets);
-            for (Map.Entry<String, String> target : targets.entrySet()) {
-                if (checked.add(target.getKey())) {
+            Map<String, Target> targets = new LinkedHashMap<>();
+            scan(tree, "", document, base, inheritedIds, targets);
+            for (Target target : targets.values()) {
+                if (checked.add(target.key())) {
                     // a referenced local document can reference further documents, which the parser loads as well
-                    document(read(target.getKey(), target.getValue()), target.getKey(), target.getValue());
+                    document(read(target.location, target.origin), target.location, target.origin,
+                            target.inheritedIds);
                 }
             }
         }
 
-        private void scan(JsonNode node, String path, String document, String base, Map<String, String> targets) {
+        private void scan(
+                JsonNode node, String path, String document, String base, List<String> ids,
+                Map<String, Target> targets) {
             if (node.isObject()) {
                 String nodeBase = base;
+                List<String> nodeIds = ids;
                 if (openApi31) {
                     JsonNode id = node.get("$id");
                     if (id != null && id.isTextual() && !id.asText().isBlank()) {
                         nodeBase = resolveBase(id.asText(), base, path, document);
+                        nodeIds = new ArrayList<>(ids);
+                        nodeIds.add(id.asText());
                     }
                 }
                 for (Map.Entry<String, JsonNode> field : node.properties()) {
                     String fieldPath = path.isEmpty() ? field.getKey() : path + "." + field.getKey();
                     if ("$ref".equals(field.getKey()) && field.getValue().isTextual()) {
-                        reference(field.getValue().asText(), fieldPath, document, nodeBase, targets);
+                        reference(field.getValue().asText(), fieldPath, document, nodeBase, nodeIds, targets);
                     } else {
-                        scan(field.getValue(), fieldPath, document, nodeBase, targets);
+                        scan(field.getValue(), fieldPath, document, nodeBase, nodeIds, targets);
                     }
                 }
             } else if (node.isArray()) {
                 int i = 0;
                 for (JsonNode item : node) {
-                    scan(item, path + "[" + i++ + "]", document, base, targets);
+                    scan(item, path + "[" + i++ + "]", document, base, ids, targets);
                 }
             }
         }
@@ -191,7 +229,8 @@ final class OpenApiExternalReferences {
             }
         }
 
-        private void reference(String ref, String path, String document, String base, Map<String, String> targets) {
+        private void reference(
+                String ref, String path, String document, String base, List<String> ids, Map<String, Target> targets) {
             if (ref.isEmpty() || ref.startsWith("#")) {
                 // inside the document: the parser evaluates the fragment in the document, or in the schema whose $id
                 // is the base, without loading anything
@@ -228,8 +267,9 @@ final class OpenApiExternalReferences {
                 throw new IllegalArgumentException(where(ref, path, document) + ", but " + reason);
             }
             // a local document: file: and classpath: URIs, and paths the parser reads from the working directory or
-            // the classpath
-            targets.putIfAbsent(target, where(ref, path, document));
+            // the classpath; the parser carries the enclosing $ids into it (ReferenceVisitor.resolveSchemaRef)
+            Target found = new Target(target, where(ref, path, document), ids);
+            targets.putIfAbsent(found.key(), found);
         }
 
         /**

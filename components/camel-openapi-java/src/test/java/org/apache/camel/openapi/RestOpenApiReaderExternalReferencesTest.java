@@ -99,6 +99,19 @@ class RestOpenApiReaderExternalReferencesTest {
     }
 
     @Test
+    void keepsTheInheritedIdAcrossAnExternalReference() {
+        RestDefinition rest = new RestDefinition();
+        rest.openApi().specification("external-references-31-inherited-id.yaml").externalReferences("local");
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> read(rest));
+
+        // the parser carries the $id of the Pet schema into the bridge schema it references on the classpath
+        assertTrue(e.getMessage().contains("in classpath:///external-references-31-bridge.yaml"), e.getMessage());
+        assertTrue(e.getMessage().contains("owner.yaml resolves to https://schemas.example.invalid/schemas/owner.yaml"),
+                e.getMessage());
+    }
+
+    @Test
     void checksAReferenceGivenAsAYamlAlias() {
         RestDefinition rest = new RestDefinition();
         rest.openApi().specification("external-references-alias.yaml").externalReferences("none");
