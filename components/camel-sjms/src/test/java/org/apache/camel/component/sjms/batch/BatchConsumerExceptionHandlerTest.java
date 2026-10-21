@@ -20,18 +20,13 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-import org.apache.camel.CamelContext;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.support.JmsCommonTestSupport;
+import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
 import static org.awaitility.Awaitility.await;
@@ -39,45 +34,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BatchConsumerExceptionHandlerTest extends JmsCommonTestSupport {
+public class BatchConsumerExceptionHandlerTest extends JmsTestSupport {
 
+    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=5&exceptionHandler=#myHandler";
     private static final String SJMS_QUEUE_NAME = "sjms:queue:batch.consumer.BatchConsumerExceptionHandlerTest";
     private static final String MOCK_START = "mock:start";
     private static final String MOCK_FINISH = "mock:finish";
     private static final String EXCEPTION_MESSAGE = "Always throw an exception!";
 
-    private CapturingExceptionHandler exceptionHandler;
-
-    @RegisterExtension
-    public static ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
-
-    @Override
-    protected String getBrokerUri() {
-        return service.serviceAddress();
-    }
-
-    /**
-     * Set up the Broker
-     */
-    @BeforeEach
-    protected final void setupBrokerUri() {
-        brokerUri = getBrokerUri();
-    }
-
-    @Override
-    protected void setupFactoryExternal(ActiveMQConnectionFactory factory) {
-        setupFactoryExternal(factory, service);
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
-        exceptionHandler = new CapturingExceptionHandler();
-        camelContext.getRegistry().bind("myHandler", exceptionHandler);
-
-        return camelContext;
-    }
+    @BindToRegistry("myHandler")
+    private CapturingExceptionHandler exceptionHandler = new CapturingExceptionHandler();
 
     @Test
     public void testBatchConsumerExceptionHandler() throws InterruptedException {
@@ -85,14 +51,12 @@ public class BatchConsumerExceptionHandlerTest extends JmsCommonTestSupport {
         MockEndpoint mockFinish = getMockEndpoint(MOCK_FINISH);
 
         mockStart.expectedMessageCount(1);
-        mockStart.setAssertPeriod(5000);
 
         mockFinish.expectedMessageCount(0);
 
         sendMessagesWithText(template, SJMS_QUEUE_NAME, 5, "Message %d!");
 
         await()
-                .during(Duration.ofSeconds(5))
                 .atMost(Duration.ofSeconds(10))
                 .until(() -> exceptionHandler.counter.get() == 1);
 
@@ -109,7 +73,7 @@ public class BatchConsumerExceptionHandlerTest extends JmsCommonTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("%s?batching=true&batchSize=5&exceptionHandler=#myHandler", SJMS_QUEUE_NAME)
+                fromF(SJMS_FROMF_URI, SJMS_QUEUE_NAME)
                         .to(MOCK_START)
                         .process(exchange -> {
                             throw new IllegalArgumentException(EXCEPTION_MESSAGE);

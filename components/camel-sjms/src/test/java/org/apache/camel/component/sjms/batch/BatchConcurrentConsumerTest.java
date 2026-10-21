@@ -32,6 +32,7 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessagesWithText;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,7 +54,7 @@ public class BatchConcurrentConsumerTest extends JmsTestSupport {
 
     @Test
     public void testBatchConcurrentConsumer() {
-        BatchTestHelper.sendMessagesWithText(template, SJMS_QUEUE_NAME, TOTAL, "Hello World! %d");
+        sendMessagesWithText(template, SJMS_QUEUE_NAME, TOTAL, "Hello World! %d");
 
         Awaitility.await().atMost(30, TimeUnit.SECONDS)
                 .until(() -> bodies.size() >= TOTAL);

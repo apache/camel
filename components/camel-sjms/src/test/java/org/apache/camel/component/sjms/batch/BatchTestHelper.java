@@ -16,39 +16,46 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.ToIntFunction;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import jakarta.jms.Connection;
 import jakarta.jms.ConnectionFactory;
-import jakarta.jms.ExceptionListener;
-import jakarta.jms.JMSContext;
+import jakarta.jms.Destination;
 import jakarta.jms.JMSException;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.Session;
+import jakarta.jms.Topic;
 
-import org.apache.activemq.artemis.core.server.ActiveMQServer;
-import org.apache.activemq.artemis.core.server.ServerConsumer;
-import org.apache.activemq.artemis.core.server.ServerSession;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.SjmsConsumer;
+import org.apache.camel.component.sjms.consumer.SimpleMessageListenerContainer;
 import org.apache.camel.component.sjms.jms.JmsConstants;
-import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
 
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("unchecked")
 public final class BatchTestHelper {
@@ -86,33 +93,77 @@ public final class BatchTestHelper {
         return body;
     }
 
-    /** Asserts a single batch exchange has exactly the given number of messages. */
-    static void assertBatchSize(Exchange batchExchange, int expectedSize) {
-        List<Exchange> batch = getBatchExchanges(batchExchange);
-        assertEquals(expectedSize, batch.size(), "unexpected batch size");
-        assertEquals(expectedSize,
-                batchExchange.getIn().getHeader(SjmsConstants.SJMS_BATCH_SIZE_HEADER, Integer.class),
-                "CamelSjmsBatchSize header did not match actual batch size");
-    }
-
     /**
      * Asserts the mock received exactly expectedSizes.length batch exchanges, in order, with each batch's size matching
      * the corresponding element. Requires concurrentConsumers=1 (or an otherwise deterministic single-worker setup) so
      * that arrival order is meaningful.
      */
     static void assertBatchSizesInOrder(MockEndpoint mock, int... expectedSizes) {
-        assertEquals(expectedSizes.length, mock.getExchanges().size(),
-                "Number of expected sizes does not match the number of exchanges");
         List<Exchange> received = mock.getExchanges();
+
+        assertEquals(expectedSizes.length, received.size(),
+                () -> String.format("Unexpected number of batches on %s: expected %d %s but received %d %s",
+                        mock.getEndpointUri(),
+                        expectedSizes.length, Arrays.toString(expectedSizes),
+                        received.size(), describeBatchSizes(received)));
+
         for (int i = 0; i < expectedSizes.length; i++) {
-            assertBatchSize(received.get(i), expectedSizes[i]);
+            assertBatchSize(received.get(i), expectedSizes[i], i, mock);
         }
+    }
+
+    static void assertBatchSize(Exchange exchange, int expectedSize, int index, MockEndpoint mock) {
+        Object body = exchange.getIn().getBody();
+        assertNotNull(body,
+                () -> String.format("Batch #%d on %s has no body", index, mock.getEndpointUri()));
+        assertInstanceOf(List.class, body,
+                () -> String.format("Batch #%d on %s: expected the body to be a List but was %s",
+                        index, mock.getEndpointUri(), body.getClass().getName()));
+
+        int actualSize = ((List<?>) body).size();
+        assertEquals(expectedSize, actualSize,
+                () -> String.format("Batch #%d on %s has the wrong size: expected %d but was %d (exchange id %s)",
+                        index, mock.getEndpointUri(), expectedSize, actualSize, exchange.getExchangeId()));
+    }
+
+    /** Renders received batch sizes, e.g. [5, 5, 3], for failure messages. */
+    private static String describeBatchSizes(List<Exchange> exchanges) {
+        return exchanges.stream()
+                .map(e -> e.getIn().getBody() instanceof List<?> l ? String.valueOf(l.size()) : "non-list")
+                .collect(Collectors.joining(", ", "[", "]"));
+    }
+
+    /**
+     * Asserts the JMSRedelivered flag of every message in the batch
+     */
+    static void assertAllBatchMessagesRedelivered(Exchange batchExchange) {
+        assertTrue(((List<Exchange>) batchExchange.getIn().getBody()).stream().allMatch(
+                e -> Boolean.TRUE.equals(e.getMessage().getHeader(JmsConstants.JMS_REDELIVERED, Boolean.class))),
+                "not all messages have the JMSRedelivered=true");
+    }
+
+    /**
+     * Asserts the JMSRedelivered flag of every message in the batch whose body equals the given body. Fails if no
+     * message has that body, so a typo in the body cannot make the assertion pass vacuously.
+     */
+    static void assertBatchRedelivered(Exchange batchExchange, String bodyRegex, boolean expectedRedelivered) {
+        Pattern pattern = Pattern.compile(bodyRegex);
+
+        List<Exchange> matching = getBatchExchanges(batchExchange).stream()
+                .filter(e -> pattern.matcher(e.getIn().getBody(String.class)).matches())
+                .toList();
+
+        assertFalse(matching.isEmpty(), "no message in the batch has body matching regex " + bodyRegex);
+        assertTrue(
+                matching.stream().allMatch(e -> Objects.equals(expectedRedelivered,
+                        e.getIn().getHeader(JmsConstants.JMS_REDELIVERED, Boolean.class))),
+                "unexpected JMSRedelivered for a message with body matching regex " + bodyRegex);
     }
 
     static RouteBuilder createBatchRoute(
             String queueName, String id, int batchSize, int batchInterval, Boolean transacted,
             String acknowledgementMode,
-            int concurrentConsumers, Processor processor) {
+            int concurrentConsumers, Processor processor, String connectionFactory) {
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("batching", true);
@@ -121,6 +172,7 @@ public final class BatchTestHelper {
         params.put("transacted", transacted);
         params.put("acknowledgementMode", acknowledgementMode);
         params.put("concurrentConsumers", concurrentConsumers);
+        params.put("connectionFactory", connectionFactory);
 
         String query = params.entrySet().stream()
                 .filter(e -> e.getValue() != null)
@@ -141,36 +193,21 @@ public final class BatchTestHelper {
         };
     }
 
-    /**
-     * Asserts the JMSRedelivered flag of every message in the batch whose body equals the given body. Fails if no
-     * message has that body, so a typo in the body cannot make the assertion pass vacuously.
-     */
-    static void assertBatchRedelivered(Exchange batchExchange, String body, boolean expectedRedelivered) {
-        List<Exchange> matching = getBatchExchanges(batchExchange).stream()
-                .filter(e -> body.equals(e.getIn().getBody(String.class)))
-                .toList();
-
-        assertFalse(matching.isEmpty(), "no message in the batch has body " + body);
-        for (Exchange e : matching) {
-            assertEquals(expectedRedelivered,
-                    e.getIn().getHeader(JmsConstants.JMS_REDELIVERED, Boolean.class),
-                    "unexpected JMSRedelivered for a message with body " + body);
-        }
-    }
-
     static void triggerConnectionFailure(CamelContext context, String routeId) throws Exception {
         SjmsConsumer consumer = (SjmsConsumer) context
                 .getRoute(routeId)
                 .getConsumer();
 
-        Field field = SjmsConsumer.class.getDeclaredField("listenerContainer");
+        ((SimpleMessageListenerContainer) ((SjmsConsumer) context.getRoute(routeId).getConsumer())
+                .getListenerContainer()).onException(new JMSException("Simulated failure of the connection"));
+    }
 
-        field.setAccessible(true);
-
-        ExceptionListener listener = (ExceptionListener) field.get(consumer);
-
-        listener.onException(
-                new JMSException("Simulated connection failure"));
+    static long countWorkerThreads(String queue) {
+        return Thread.getAllStackTraces().keySet().stream()
+                .filter(Thread::isAlive)
+                .map(Thread::getName)
+                .filter(n -> n.contains("SjmsBatchConsumer") && n.contains(queue))
+                .count();
     }
 
     static class DoNothingProcessor implements Processor {
@@ -181,69 +218,154 @@ public final class BatchTestHelper {
         }
     }
 
-    static boolean closeSessionForQueue(
-            ArtemisService service,
-            String queueName)
-            throws Exception {
+    abstract static class Tracked<T> implements InvocationHandler {
+        final AtomicBoolean closed = new AtomicBoolean();
+        private final Class<T> type;
+        private final T target;
 
-        if (service instanceof ArtemisVMService vmService) {
-            ActiveMQServer server = vmService.getEmbeddedBrokerService().getActiveMQServer();
-            for (ServerSession session : server.getSessions()) {
-                for (ServerConsumer consumer : session.getServerConsumers()) {
-                    if (queueName.equals(consumer.getQueue().getName().toString())) {
-                        consumer.close(true);
-                        session.getRemotingConnection().close();
-                        session.close(true);
-                        return true;
-                    }
-                }
-            }
+        Tracked(Class<T> type, T target) {
+            this.type = type;
+            this.target = target;
         }
-        return false;
+
+        /** The object handed to the code under test. */
+        @SuppressWarnings("unchecked")
+        final T proxy() {
+            return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type }, this);
+        }
+
+        @Override
+        public final Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            Object result;
+            try {
+                result = method.invoke(target, args);
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
+            }
+            if (method.getName().equals("close")) {
+                closed.set(true);
+            }
+            return after(method.getName(), args, result);
+        }
+
+        /** Record the call; return the result, or a wrapped replacement for it. */
+        Object after(String method, Object[] args, Object result) throws JMSException {
+            return result;
+        }
     }
 
-    static class CountingConnectionFactory implements ConnectionFactory {
-        private final ConnectionFactory delegate;
-        final AtomicInteger createCount = new AtomicInteger();
+    static final class TrackedConnectionFactory extends Tracked<ConnectionFactory> {
+        final List<TrackedConnection> connections = new CopyOnWriteArrayList<>();
 
-        public CountingConnectionFactory(ConnectionFactory delegate) {
-            this.delegate = delegate;
+        TrackedConnectionFactory(ConnectionFactory delegate) {
+            super(ConnectionFactory.class, delegate);
         }
 
         @Override
-        public Connection createConnection() throws JMSException {
-            createCount.incrementAndGet();
-            return delegate.createConnection();
+        Object after(String method, Object[] args, Object result) {
+            if (result instanceof Connection c) {
+                TrackedConnection tc = new TrackedConnection(c);
+                connections.add(tc);
+                return tc.proxy();
+            }
+            return result;
+        }
+
+        int getCreateCount() {
+            return connections.size();
+        }
+
+        int messages(String destination) {
+            return sumConsumers(destination, c -> c.messages.get());
+        }
+
+        private int sumConsumers(String destination, ToIntFunction<TrackedConsumer> f) {
+            return connections.stream().flatMap(c -> c.sessions.stream())
+                    .flatMap(s -> s.consumers.stream())
+                    .filter(c -> c.destination.equals(destination))
+                    .mapToInt(f).sum();
+        }
+    }
+
+    static final class TrackedConnection extends Tracked<Connection> {
+        final List<TrackedSession> sessions = new CopyOnWriteArrayList<>();
+
+        TrackedConnection(Connection delegate) {
+            super(Connection.class, delegate);
         }
 
         @Override
-        public Connection createConnection(String userName, String password) throws JMSException {
-            createCount.incrementAndGet();
-            return delegate.createConnection(userName, password);
+        Object after(String method, Object[] args, Object result) {
+            if (result instanceof Session s) {
+                TrackedSession ts = new TrackedSession(s);
+                sessions.add(ts);
+                return ts.proxy();
+            }
+            return result;
+        }
+
+        int openSessions() {
+            return closed.get() ? 0 : (int) sessions.stream().filter(s -> !s.closed.get()).count();
+        }
+
+        int openConsumers() {
+            return closed.get()
+                    ? 0 : sessions.stream()
+                            .filter(s -> !s.closed.get())
+                            .mapToInt(TrackedSession::openConsumers).sum();
+        }
+    }
+
+    static final class TrackedSession extends Tracked<Session> {
+        final List<TrackedConsumer> consumers = new CopyOnWriteArrayList<>();
+        final AtomicInteger commits = new AtomicInteger();
+
+        TrackedSession(Session delegate) {
+            super(Session.class, delegate);
         }
 
         @Override
-        public JMSContext createContext() {
-            return delegate.createContext();
+        Object after(String method, Object[] args, Object result) throws JMSException {
+            if (method.equals("commit")) {
+                commits.incrementAndGet();
+            }
+            if (result instanceof MessageConsumer mc && args != null && args[0] instanceof Destination d) {
+                TrackedConsumer tc = new TrackedConsumer(nameOf(d), mc);
+                consumers.add(tc);
+                return tc.proxy();
+            }
+            return result;
+        }
+
+        int openConsumers() {
+            return (int) consumers.stream().filter(c -> !c.closed.get()).count();
+        }
+    }
+
+    static final class TrackedConsumer extends Tracked<MessageConsumer> {
+        final String destination;
+        final AtomicInteger messages = new AtomicInteger();
+        final AtomicInteger empty = new AtomicInteger();
+
+        TrackedConsumer(String destination, MessageConsumer delegate) {
+            super(MessageConsumer.class, delegate);
+            this.destination = destination;
         }
 
         @Override
-        public JMSContext createContext(String userName, String password) {
-            return delegate.createContext(userName, password);
+        Object after(String method, Object[] args, Object result) {
+            if (method.startsWith("receive")) {
+                (result != null ? messages : empty).incrementAndGet();
+            }
+            return result;
         }
+    }
 
-        @Override
-        public JMSContext createContext(String userName, String password, int sessionMode) {
-            return delegate.createContext(userName, password, sessionMode);
-        }
-
-        @Override
-        public JMSContext createContext(int sessionMode) {
-            return delegate.createContext(sessionMode);
-        }
-
-        public int getCreateCount() {
-            return createCount.get();
-        }
+    private static String nameOf(Destination d) throws JMSException {
+        if (d instanceof jakarta.jms.Queue q)
+            return q.getQueueName();
+        if (d instanceof Topic t)
+            return t.getTopicName();
+        return d.toString();
     }
 }

@@ -27,8 +27,6 @@ import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchBodiesAsString;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchExchanges;
@@ -40,18 +38,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BatchConsumerRecoveryTest extends JmsExclusiveTestSupport {
 
     private static final String SJMS_FROMF_URI
-            = "%s?batching=true&batchSize=5&transacted=true&batchInterval=10000&connectionFactory=#counting";
+            = "%s?batching=true&batchSize=5&transacted=true&connectionFactory=#%s";
     private static final String SJMS_QUEUE_NAME
             = "sjms:queue:batch.consumer.queue.BatchConsumerRecoveryTest";
     private static final String MOCK_RESULT = "mock:result";
     private static final String SJMS_ROUTE_ID = "BatchConsumerRecoveryTest";
+    private static final String SJMS_CONNECTION_FACTORY = "countingConnectionFactory";
+
+    private BatchTestHelper.TrackedConnectionFactory trackedConnectionFactory;
 
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
-
-    private BatchTestHelper.CountingConnectionFactory countingFactory;
-
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public ArtemisService getService() {
@@ -62,8 +59,8 @@ public class BatchConsumerRecoveryTest extends JmsExclusiveTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        countingFactory = new BatchTestHelper.CountingConnectionFactory(connectionFactory);
-        camelContext.getRegistry().bind("counting", countingFactory);
+        trackedConnectionFactory = new BatchTestHelper.TrackedConnectionFactory(connectionFactory);
+        camelContext.getRegistry().bind(SJMS_CONNECTION_FACTORY, trackedConnectionFactory.proxy());
 
         return camelContext;
     }
@@ -75,17 +72,17 @@ public class BatchConsumerRecoveryTest extends JmsExclusiveTestSupport {
 
         sendMessagesWithText(template, SJMS_QUEUE_NAME, 2, "Before!");
 
-        int connectionsBefore = countingFactory.getCreateCount();
+        int connectionsBefore = trackedConnectionFactory.getCreateCount();
         triggerConnectionFailure(context, SJMS_ROUTE_ID);
         await().atMost(30, TimeUnit.SECONDS)
-                .until(() -> countingFactory.getCreateCount() > connectionsBefore);
+                .until(() -> trackedConnectionFactory.getCreateCount() > connectionsBefore);
 
         mock.assertIsSatisfied();
         mock.reset();
 
         // we want to test with 1 complete (incl. the messages prior to reconnect) and 1 incomplete batch
         mock.expectedMessageCount(2);
-        mock.setResultWaitTime(15000);
+
         sendMessagesWithText(template, SJMS_QUEUE_NAME, 7, "After!");
 
         mock.assertIsSatisfied();
@@ -96,14 +93,14 @@ public class BatchConsumerRecoveryTest extends JmsExclusiveTestSupport {
         // second batch
         assertEquals(4, getBatchExchanges(mock.getExchanges().get(1)).size());
         assertEquals(List.of("After!", "After!", "After!", "After!"), getBatchBodiesAsString(mock.getExchanges().get(1)));
-        assertEquals(connectionsBefore + 1, countingFactory.getCreateCount());
+        assertEquals(connectionsBefore + 1, trackedConnectionFactory.getCreateCount());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF(SJMS_FROMF_URI, SJMS_QUEUE_NAME)
+                fromF(SJMS_FROMF_URI, SJMS_QUEUE_NAME, SJMS_CONNECTION_FACTORY)
                         .routeId(SJMS_ROUTE_ID)
                         .to(MOCK_RESULT);
             }

@@ -16,40 +16,24 @@
  */
 package org.apache.camel.component.sjms.batch;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.TimeUnit;
 
-import jakarta.jms.Connection;
-import jakarta.jms.ConnectionFactory;
-import jakarta.jms.Destination;
-import jakarta.jms.JMSException;
-import jakarta.jms.MessageConsumer;
-import jakarta.jms.Queue;
-import jakarta.jms.Session;
-import jakarta.jms.Topic;
-
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsExclusiveTestSupport;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.BATCH_ROUTEBUILDER_MOCK_FINISH;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.countWorkerThreads;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.createBatchRoute;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchBodiesAsString;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessages;
@@ -60,19 +44,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
 
     private static final String QUEUE_NAME_TEMPLATE = "batch.consumer.%s.BatchConsumerStopStartTest";
-
     private static final String ROUTE_ID_SESSION_TX = "tx";
     private static final String ROUTE_ID_CLIENT_ACK = "client-ack";
     private static final String ROUTE_ID_AUTO_ACK = "auto-ack";
+    private static final String SJMS_CONNECTION_FACTORY = "countingConsumerConnectionFactory";
 
-    private static final String WORKER_THREAD_MARKER = "SjmsBatchConsumer";
+    private BatchTestHelper.TrackedConnectionFactory trackedConnectionFactory;
 
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
-
-    private CountingConsumerConnectionFactoryWrapper countingConsumerWrapper;
-
-    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public ArtemisService getService() {
@@ -81,18 +61,10 @@ public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        addSjmsComponent = false;
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
-        connectionFactory.setReconnectAttempts(0);
-
-        countingConsumerWrapper = new CountingConsumerConnectionFactoryWrapper();                 // fresh counters per test
-        ConnectionFactory wrappedConnectionFactory = countingConsumerWrapper.wrap(connectionFactory);
-
-        SjmsComponent sjms = new SjmsComponent();
-        sjms.setConnectionFactory(wrappedConnectionFactory);
-        camelContext.addComponent("sjms", sjms);
+        trackedConnectionFactory = new BatchTestHelper.TrackedConnectionFactory(connectionFactory);
+        camelContext.getRegistry().bind(SJMS_CONNECTION_FACTORY, trackedConnectionFactory.proxy());
 
         return camelContext;
     }
@@ -110,10 +82,7 @@ public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
         sendMessagesWithText(template, endpointUri, 3, "Before!");
 
         await().atMost(Duration.ofSeconds(5))
-                .until(() -> {
-                    var c = countingConsumerWrapper.counts(queueName);
-                    return c.messages.get() == 3;
-                });
+                .until(() -> trackedConnectionFactory.messages(queueName) == 3);
 
         context.getRouteController().stopRoute(ROUTE_ID_AUTO_ACK);
 
@@ -145,10 +114,7 @@ public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
         sendMessagesWithText(template, endpointUri, 4, "Before!");
 
         await().atMost(Duration.ofSeconds(5))
-                .until(() -> {
-                    var c = countingConsumerWrapper.counts(queueName);
-                    return c.messages.get() == 4;
-                });
+                .until(() -> trackedConnectionFactory.messages(queueName) == 4);
 
         context.getRouteController().stopRoute(ROUTE_ID_SESSION_TX);
 
@@ -179,10 +145,7 @@ public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
         await().atMost(Duration.ofSeconds(5))
-                .until(() -> {
-                    var c = countingConsumerWrapper.counts(queueName);
-                    return c.messages.get() == 2;
-                });
+                .until(() -> trackedConnectionFactory.messages(queueName) == 2);
 
         context.getRouteController().stopRoute(ROUTE_ID_CLIENT_ACK);
 
@@ -235,13 +198,13 @@ public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
         addRoute(routeId, queueName, "batchSize=5&batchInterval=60000&transacted=true&concurrentConsumers=" + consumers,
                 "mock:" + routeId);
 
-        await().atMost(Duration.ofSeconds(10)).until(() -> countWorkerThreads(queueName) == consumers);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> countWorkerThreads(queueName) == consumers);
 
         context.getRouteController().stopRoute(routeId);
-        await().atMost(Duration.ofSeconds(10)).until(() -> countWorkerThreads(queueName) == 0);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> countWorkerThreads(queueName) == 0);
 
         context.getRouteController().startRoute(routeId);
-        await().atMost(Duration.ofSeconds(10)).until(() -> countWorkerThreads(queueName) == consumers);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> countWorkerThreads(queueName) == consumers);
     }
 
     @Override
@@ -249,13 +212,13 @@ public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
         return new RoutesBuilder[] {
                 createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5, 10000,
                         true, null, 1,
-                        new BatchTestHelper.DoNothingProcessor()),
+                        new BatchTestHelper.DoNothingProcessor(), "#" + SJMS_CONNECTION_FACTORY),
                 createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK, 5, 10000,
                         false, "CLIENT_ACKNOWLEDGE", 1,
-                        new BatchTestHelper.DoNothingProcessor()),
+                        new BatchTestHelper.DoNothingProcessor(), "#" + SJMS_CONNECTION_FACTORY),
                 createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK, 5, 10000,
                         false, "AUTO_ACKNOWLEDGE", 1,
-                        new BatchTestHelper.DoNothingProcessor())
+                        new BatchTestHelper.DoNothingProcessor(), "#" + SJMS_CONNECTION_FACTORY)
         };
     }
 
@@ -268,76 +231,5 @@ public class BatchConsumerStopStartTest extends JmsExclusiveTestSupport {
                         .to(mockUri);
             }
         });
-    }
-
-    private static long countWorkerThreads(String queue) {
-        return Thread.getAllStackTraces().keySet().stream()
-                .filter(Thread::isAlive)
-                .map(Thread::getName)
-                .filter(n -> n.contains(WORKER_THREAD_MARKER) && n.contains(queue))
-                .count();
-    }
-
-    private static class CountingConsumerConnectionFactoryWrapper {
-
-        static final class Counts {
-            final AtomicInteger messages = new AtomicInteger();
-        }
-
-        private final Map<String, Counts> perDestination = new ConcurrentHashMap<>();
-
-        Counts counts(String destination) {
-            return perDestination.computeIfAbsent(destination, d -> new Counts());
-        }
-
-        ConnectionFactory wrap(ConnectionFactory delegate) {
-            return proxy(ConnectionFactory.class, delegate, null);
-        }
-
-        @SuppressWarnings("unchecked")
-        private <T> T proxy(Class<T> type, T target, String destination) {
-            return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type }, (p, method, args) -> {
-                Object result;
-                try {
-                    result = method.invoke(target, args);
-                } catch (InvocationTargetException e) {
-                    throw e.getCause();
-                }
-                String name = method.getName();
-
-                // consumer: count per the destination it was created for
-                if (target instanceof MessageConsumer && name.startsWith("receive")) {
-                    Counts c = counts(destination);
-                    if (result != null)
-                        c.messages.incrementAndGet();
-                }
-
-                // keep wrapping down the chain
-                if (result instanceof Connection c)
-                    return proxy(Connection.class, c, null);
-                if (result instanceof Session s)
-                    return proxy(Session.class, s, null);
-                if (result instanceof MessageConsumer mc
-                        && args != null && args.length > 0 && args[0] instanceof Destination d) {
-                    String destName = nameOf(d);
-                    sessionDestinations
-                            .computeIfAbsent(target, k -> ConcurrentHashMap.newKeySet())
-                            .add(destName);
-                    return proxy(MessageConsumer.class, mc, destName);
-                }
-                return result;
-            });
-        }
-
-        // Session identity -> destinations it consumes from
-        private final Map<Object, java.util.Set<String>> sessionDestinations = new ConcurrentHashMap<>();
-
-        private static String nameOf(Destination d) throws JMSException {
-            if (d instanceof Queue q)
-                return q.getQueueName();
-            if (d instanceof Topic t)
-                return t.getTopicName();
-            return d.toString();
-        }
     }
 }

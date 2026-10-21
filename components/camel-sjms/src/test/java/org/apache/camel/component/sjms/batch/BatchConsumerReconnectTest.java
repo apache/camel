@@ -19,11 +19,9 @@ package org.apache.camel.component.sjms.batch;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsExclusiveTestSupport;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
@@ -48,11 +46,12 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
     private static final String ROUTE_ID_SESSION_TX = "session-tx";
     private static final String ROUTE_ID_CLIENT_ACK = "client-ack";
     private static final String ROUTE_ID_AUTO_ACK = "auto-ack";
+    private static final String SJMS_CONNECTION_FACTORY = "countingConnectionFactory";
+
+    private BatchTestHelper.TrackedConnectionFactory trackedConnectionFactory;
 
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createVMService();
-
-    private BatchTestHelper.CountingConnectionFactory countingFactory;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -63,17 +62,10 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        addSjmsComponent = false;
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
-        connectionFactory.setReconnectAttempts(0);
-
-        countingFactory = new BatchTestHelper.CountingConnectionFactory(connectionFactory);
-
-        SjmsComponent sjms = new SjmsComponent();
-        sjms.setConnectionFactory(countingFactory);
-        camelContext.addComponent("sjms", sjms);
+        trackedConnectionFactory = new BatchTestHelper.TrackedConnectionFactory(connectionFactory);
+        camelContext.getRegistry().bind(SJMS_CONNECTION_FACTORY, trackedConnectionFactory.proxy());
 
         return camelContext;
     }
@@ -88,10 +80,10 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
-        int connectionsBefore = countingFactory.getCreateCount();
+        int connectionsBefore = trackedConnectionFactory.getCreateCount();
         triggerConnectionFailure(context, ROUTE_ID_AUTO_ACK);
         await().atMost(30, TimeUnit.SECONDS)
-                .until(() -> countingFactory.getCreateCount() > connectionsBefore);
+                .until(() -> trackedConnectionFactory.getCreateCount() > connectionsBefore);
 
         mock.assertIsSatisfied();
         assertEquals(2, getBatchExchanges(mock.getExchanges().get(0)).size());
@@ -101,7 +93,6 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
         // test with an incomplete batch - to check timing
         mock.expectedMessageCount(1);
-        mock.setResultWaitTime(15000);
         sendMessagesWithText(template, endpointUri, 3, "After!");
 
         mock.assertIsSatisfied();
@@ -119,17 +110,16 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
-        int connectionsBefore = countingFactory.getCreateCount();
+        int connectionsBefore = trackedConnectionFactory.getCreateCount();
         triggerConnectionFailure(context, ROUTE_ID_SESSION_TX);
         await().atMost(30, TimeUnit.SECONDS)
-                .until(() -> countingFactory.getCreateCount() > connectionsBefore);
+                .until(() -> trackedConnectionFactory.getCreateCount() > connectionsBefore);
 
         mock.assertIsSatisfied();
         mock.reset();
 
         // we want to test with 1 complete (incl. the messages prior to reconnect) and 1 incomplete batch
         mock.expectedMessageCount(2);
-        mock.setResultWaitTime(15000);
         sendMessagesWithText(template, endpointUri, 7, "After!");
 
         mock.assertIsSatisfied();
@@ -152,16 +142,15 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
-        int connectionsBefore = countingFactory.getCreateCount();
+        int connectionsBefore = trackedConnectionFactory.getCreateCount();
         triggerConnectionFailure(context, ROUTE_ID_CLIENT_ACK);
         await().atMost(30, TimeUnit.SECONDS)
-                .until(() -> countingFactory.getCreateCount() > connectionsBefore);
+                .until(() -> trackedConnectionFactory.getCreateCount() > connectionsBefore);
 
         mock.assertIsSatisfied();
         mock.reset();
 
         mock.expectedMessageCount(1);
-        mock.setResultWaitTime(15000);
         sendMessagesWithText(template, endpointUri, 3, "After!");
 
         mock.assertIsSatisfied();
@@ -172,13 +161,15 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
     protected RoutesBuilder[] createRouteBuilders() {
         return new RoutesBuilder[] {
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5,
-                        10000,
-                        true, null, 1, new BatchTestHelper.DoNothingProcessor()),
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK,
-                        5, 10000, false, "CLIENT_ACKNOWLEDGE", 1, new BatchTestHelper.DoNothingProcessor()),
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK, 5, 10000, false,
-                        "AUTO_ACKNOWLEDGE", 1, new BatchTestHelper.DoNothingProcessor())
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5, 1000,
+                        true, null, 1,
+                        new BatchTestHelper.DoNothingProcessor(), "#" + SJMS_CONNECTION_FACTORY),
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK, 5, 1000,
+                        false, "CLIENT_ACKNOWLEDGE", 1,
+                        new BatchTestHelper.DoNothingProcessor(), "#" + SJMS_CONNECTION_FACTORY),
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK, 5, 1000,
+                        false, "AUTO_ACKNOWLEDGE", 1,
+                        new BatchTestHelper.DoNothingProcessor(), "#" + SJMS_CONNECTION_FACTORY)
         };
     }
 }

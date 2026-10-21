@@ -66,8 +66,10 @@ public class BatchEndpointMessageListener {
                 exchange.setException(e);
                 String text = poisonBody;
                 try {
-                    text = endpoint.getCamelContext().resolveLanguage("simple")
-                            .createExpression(poisonBody).evaluate(exchange, String.class);
+                    text = poisonBody != null
+                            ? endpoint.getCamelContext().resolveLanguage("simple")
+                                    .createExpression(poisonBody).evaluate(exchange, String.class)
+                            : null;
                 } catch (Exception t) {
                     // ignore
                 }

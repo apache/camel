@@ -26,25 +26,26 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.DEFAULT_MESSAGE_TEXT;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.assertBatchSizesInOrder;
 import static org.apache.camel.component.sjms.batch.BatchTestHelper.getBatchBodiesAsString;
+import static org.apache.camel.component.sjms.batch.BatchTestHelper.sendMessages;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BatchConsumerSizeTest extends JmsTestSupport {
+public class BatchConsumerBatchSizeTest extends JmsTestSupport {
 
-    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=5&batchInterval=5000";
+    private static final String SJMS_FROMF_URI = "%s?batching=true&batchSize=10&batchInterval=5000";
     private static final String SJMS_QUEUE_NAME
             = "sjms:queue:batch.consumer.queue.BatchConsumerSizeTest";
     private static final String MOCK_RESULT = "mock:result";
 
     @Test
-    public void testBatchConsumerSize() throws Exception {
+    public void testBatchConsumerBatchSize() throws Exception {
         MockEndpoint mock = getMockEndpoint(MOCK_RESULT);
         mock.expectedMessageCount(2);
 
-        BatchTestHelper.sendMessages(template, SJMS_QUEUE_NAME, 7);
+        sendMessages(template, SJMS_QUEUE_NAME, 12);
 
         mock.assertIsSatisfied();
-        assertBatchSizesInOrder(mock, 5, 2);
-        assertEquals(Collections.nCopies(5, DEFAULT_MESSAGE_TEXT),
+        assertBatchSizesInOrder(mock, 10, 2);
+        assertEquals(Collections.nCopies(10, DEFAULT_MESSAGE_TEXT),
                 getBatchBodiesAsString(mock.getExchanges().get(0)));
         assertEquals(Collections.nCopies(2, DEFAULT_MESSAGE_TEXT),
                 getBatchBodiesAsString(mock.getExchanges().get(1)));

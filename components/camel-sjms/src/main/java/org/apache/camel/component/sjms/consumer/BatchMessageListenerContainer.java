@@ -27,6 +27,7 @@ import jakarta.jms.MessageConsumer;
 import jakarta.jms.Session;
 
 import org.apache.camel.component.sjms.SjmsEndpoint;
+import org.apache.camel.support.task.BackgroundTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +110,20 @@ public class BatchMessageListenerContainer extends SimpleMessageListenerContaine
             workers.clear();
         } finally {
             workersLock.unlock();
+        }
+    }
+
+    @Override
+    protected boolean recoverConnection(BackgroundTask task) {
+        boolean recovered = false;
+        try {
+            recovered = super.recoverConnection(task);
+            return recovered;
+        } finally {
+            if (!recovered) {
+                // the consumers of this attempt are dropped, and so are the workers it started for them
+                invalidateWorkers();
+            }
         }
     }
 
