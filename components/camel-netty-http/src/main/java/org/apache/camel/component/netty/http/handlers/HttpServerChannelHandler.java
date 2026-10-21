@@ -170,8 +170,11 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             // form than the one the route handles. Reject it up front when a security constraint is configured; a
             // well-behaved HTTP client normalizes dot-segments before sending (CAMEL-25705). The same applies to a path
             // with an empty segment, a ; path parameter or a \ (also in their percent-encoded forms), which a backend
-            // the route forwards to may collapse, strip or treat as a / respectively.
-            if (security.getSecurityConstraint() != null && isAmbiguousPath(uri.getPath())) {
+            // the route forwards to may collapse, strip or treat as a / respectively. A request target that starts with
+            // // is parsed as a host followed by a path, so its first segment never reaches uri.getPath(); check the
+            // request target for that empty segment.
+            if (security.getSecurityConstraint() != null
+                    && (request.uri().startsWith("//") || isAmbiguousPath(uri.getPath()))) {
                 LOG.debug("Rejecting request with an ambiguous path for resource: {}", url);
                 HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
                 response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
