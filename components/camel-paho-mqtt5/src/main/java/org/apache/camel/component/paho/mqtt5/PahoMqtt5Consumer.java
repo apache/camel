@@ -73,6 +73,14 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         try {
             connectionOptions = getEndpoint().createMqttConnectionOptions();
 
+            failedMessageReconnects.set(0);
+            if (stopClient && getEndpoint().getConfiguration().isManualAcksEnabled() && isSessionKeptAfterDisconnect()) {
+                // before the connect: the broker sends the unacknowledged messages of the session right after CONNACK,
+                // and one of them can fail and need a reconnect
+                reconnectExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                        .newSingleThreadScheduledExecutor(this, "PahoMqtt5-Reconnect");
+            }
+
             if (stopClient) {
                 clientId = getEndpoint().getConfiguration().getClientId();
                 if (clientId == null) {
@@ -141,14 +149,8 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
             LOG.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
             client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
-
-            failedMessageReconnects.set(0);
-            if (stopClient && getEndpoint().getConfiguration().isManualAcksEnabled()
-                    && !getEndpoint().getConfiguration().isCleanStart()) {
-                reconnectExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
-                        .newSingleThreadScheduledExecutor(this, "PahoMqtt5-Reconnect");
-            }
         } catch (Exception startException) {
+            shutdownReconnectExecutor();
             MqttClient ownedClient = stopClient ? client : null;
             if (ownedClient != null) {
                 client = null;
@@ -195,11 +197,7 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         MqttClient ownedClient = stopClient ? client : null;
         Exception stopException = null;
-        ScheduledExecutorService executor = reconnectExecutor;
-        if (executor != null) {
-            reconnectExecutor = null;
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
-        }
+        shutdownReconnectExecutor();
         reconnecting.set(false);
         try {
             super.doStop();
@@ -231,6 +229,24 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         }
     }
 
+    private void shutdownReconnectExecutor() {
+        ScheduledExecutorService executor = reconnectExecutor;
+        if (executor != null) {
+            reconnectExecutor = null;
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+        }
+    }
+
+    /**
+     * Whether the broker keeps the session after the connection closes: cleanStart=false and a session expiry interval
+     * greater than 0. An absent session expiry interval (the default, -1) means 0 (MQTT 5, 3.1.2.11.2), so the session
+     * ends with the connection.
+     */
+    private boolean isSessionKeptAfterDisconnect() {
+        PahoMqtt5Configuration configuration = getEndpoint().getConfiguration();
+        return !configuration.isCleanStart() && configuration.getSessionExpiryInterval() > 0;
+    }
+
     MqttClient createClient() throws MqttException {
         return new MqttClient(
                 getEndpoint().getConfiguration().getBrokerUrl(),
@@ -252,24 +268,27 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
 
     /**
      * MQTT has no negative acknowledgement: the broker sends an unacknowledged message again only when the client
-     * connects again to the same session, and it sends no more than receiveMaximum unacknowledged messages to the
-     * client. A failed message that is just left unacknowledged is therefore never retried, and enough of them stop the
-     * consumer for good.
+     * connects again to a session that the broker kept, and it sends no more than receiveMaximum unacknowledged
+     * messages to the client. Paho holds back only the PUBACK of a QoS 1 message until it is acknowledged manually; it
+     * completes the QoS 2 flow (PUBREC, PUBCOMP) on its own, so the broker never sends a QoS 2 message again. A failed
+     * QoS 1 message that is just left unacknowledged is therefore never retried, and enough of them stop the consumer
+     * for good.
      * <p>
-     * With cleanStart=false the client reconnects, so that the broker sends the message again; the reconnects of failed
-     * exchanges in a row back off (see {@link #reconnectDelay(int)}), so that a message that always fails does not
-     * reconnect in a tight loop. With a clean session the broker never sends it again, so it is acknowledged, which
-     * frees its place in the receive window.
+     * For a QoS 1 message on a session that the broker keeps after the disconnect (cleanStart=false and
+     * sessionExpiryInterval greater than 0) the client reconnects, so that the broker sends the message again; the
+     * reconnects of failed exchanges in a row back off (see {@link #reconnectDelay(int)}), so that a message that
+     * always fails does not reconnect in a tight loop. In every other case the broker never sends the message again, so
+     * it is acknowledged, which frees its place in the receive window.
      */
     private void rollback(Exchange exchange, MqttMessage mqttMessage) {
         MqttClient current = client;
         if (current == null) {
             return;
         }
-        if (getEndpoint().getConfiguration().isCleanStart()) {
-            LOG.debug("Acknowledging failed MQTT message with ID: {} of Exchange ID: {} as a clean session never"
-                      + " delivers it again",
-                    mqttMessage.getId(), exchange.getExchangeId());
+        if (mqttMessage.getQos() != 1 || !isSessionKeptAfterDisconnect()) {
+            LOG.debug("Acknowledging failed MQTT message with ID: {} (QoS {}) of Exchange ID: {} as the broker does not"
+                      + " deliver it again",
+                    mqttMessage.getId(), mqttMessage.getQos(), exchange.getExchangeId());
             try {
                 current.messageArrivedComplete(mqttMessage.getId(), mqttMessage.getQos());
             } catch (MqttException e) {
@@ -319,8 +338,14 @@ public class PahoMqtt5Consumer extends DefaultConsumer {
         reconnecting.set(false);
         try {
             if (isRunAllowed() && current == client && !current.isConnected()) {
-                current.connect(connectionOptions);
-                current.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+                IMqttToken token = current.connectWithResult(connectionOptions);
+                // the subscription is part of the session; subscribing again would make the broker send the retained
+                // message of the topic again (Retain Handling 0)
+                if (!token.getSessionPresent()) {
+                    LOG.debug("The broker did not keep the session of client: {}, subscribing again to topic: {}",
+                            clientId, getEndpoint().getTopic());
+                    current.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
+                }
             }
         } catch (Exception e) {
             getExceptionHandler().handleException("Failed to reconnect after a failed exchange", e);

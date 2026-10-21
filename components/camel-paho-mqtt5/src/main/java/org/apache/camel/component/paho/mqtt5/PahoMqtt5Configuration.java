@@ -555,9 +555,11 @@ public class PahoMqtt5Configuration implements Cloneable {
      *
      * By default, this is false and message will be automatically acknowledged upon received by Camel. If set to true,
      * the acknowledgement is deferred to be acknowledged by Camel at the end of processing the message. This ensures
-     * that only successfully processed messages are acknowledged. When the processing fails, with cleanStart=false the
-     * consumer connects again so that the broker sends the message again; with a clean session the broker would never
-     * send it again, so the message is acknowledged.
+     * that only successfully processed messages are acknowledged. When the processing of a QoS 1 message fails on a
+     * session that the broker keeps (cleanStart=false and sessionExpiryInterval greater than 0), the consumer connects
+     * again so that the broker sends the message again. In all other cases the broker would never send it again (the
+     * client completes the QoS 2 flow on its own, and without sessionExpiryInterval the session ends with the
+     * connection), so the message is acknowledged.
      */
     public boolean isManualAcksEnabled() {
         return this.manualAcksEnabled;
