@@ -47,6 +47,9 @@ import org.apache.camel.component.a2a.push.PushNotificationSubscriber;
 import org.apache.camel.component.a2a.state.A2ATaskStore;
 import org.apache.camel.component.a2a.state.GuardedTaskStore;
 import org.apache.camel.component.a2a.state.InMemoryTaskStore;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -70,6 +73,74 @@ import org.slf4j.LoggerFactory;
              syntax = "a2a:agentCardSource",
              category = { Category.AI },
              headersClass = A2AConstants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.TEXT,
+                                   byOption = @BodyType.When(option = "dataFormat", value = "POJO", carrier = Carrier.POJO,
+                                                             javaType = "org.apache.camel.component.a2a.model.Message"),
+                                   description = "The message of the caller, for SendMessage and SendStreamingMessage (the"
+                                                 + " component answers the task and push config requests itself): the text"
+                                                 + " of its parts, one per line, a data part as JSON and a file part as its"
+                                                 + " URL. With dataFormat POJO the Message, with RAW the Message as JSON"),
+           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                     description = "The reply of the agent: text, sent as one text part (bytes, a stream or a"
+                                                   + " file as their text), or a Message sent as it is. Another body is sent"
+                                                   + " as text: a Task as the text of its last message, a Map or a POJO as its"
+                                                   + " toString(): marshal it first. The reply goes in a Task, completed"
+                                                   + " unless the CamelA2ATaskState header says another state, or as a Message"
+                                                   + " when the CamelA2AResponseType header is message"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  byOption = {
+                                          @BodyType.When(option = "operation", value = "TASK_GET", carrier = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "TASK_LIST", carrier = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "TASK_CANCEL", carrier = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "TASK_SUBSCRIBE", carrier = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "PUSH_CONFIG_CREATE",
+                                                         carrier = Carrier.POJO,
+                                                         javaType = "org.apache.camel.component.a2a.model.TaskPushNotificationConfig"),
+                                          @BodyType.When(option = "operation", value = "PUSH_CONFIG_GET",
+                                                         carrier = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "PUSH_CONFIG_LIST",
+                                                         carrier = Carrier.ANY),
+                                          @BodyType.When(option = "operation", value = "PUSH_CONFIG_DELETE",
+                                                         carrier = Carrier.ANY) },
+                                  description = "The message to send: text, sent as one text part (bytes, a stream or a"
+                                                + " file as their text), or a Message sent as it is; MESSAGE_STREAM also"
+                                                + " takes a SendMessageRequest. Another body is sent as its toString(), so a"
+                                                + " Map or a POJO needs marshalling first, and JSON text is sent as text."
+                                                + " PUSH_CONFIG_CREATE needs a TaskPushNotificationConfig, and the other"
+                                                + " operations read headers, not the body"),
+           producerOut = @BodyType(value = Carrier.TEXT,
+                                   byOption = {
+                                           @BodyType.When(option = "operation", value = "MESSAGE_STREAM",
+                                                          carrier = Carrier.ITERATOR,
+                                                          javaType = "org.apache.camel.component.a2a.streaming.SseEventIterator"),
+                                           @BodyType.When(option = "operation", value = "TASK_GET", carrier = Carrier.TEXT),
+                                           @BodyType.When(option = "operation", value = "TASK_LIST",
+                                                          carrier = { Carrier.LIST, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "TASK_CANCEL", carrier = Carrier.TEXT),
+                                           @BodyType.When(option = "operation", value = "TASK_SUBSCRIBE",
+                                                          carrier = Carrier.ITERATOR,
+                                                          javaType = "org.apache.camel.component.a2a.streaming.SseEventIterator"),
+                                           @BodyType.When(option = "operation", value = "PUSH_CONFIG_CREATE",
+                                                          carrier = Carrier.POJO,
+                                                          javaType = "org.apache.camel.component.a2a.model.TaskPushNotificationConfig"),
+                                           @BodyType.When(option = "operation", value = "PUSH_CONFIG_GET",
+                                                          carrier = Carrier.POJO,
+                                                          javaType = "org.apache.camel.component.a2a.model.TaskPushNotificationConfig"),
+                                           @BodyType.When(option = "operation", value = "PUSH_CONFIG_LIST",
+                                                          carrier = { Carrier.LIST, Carrier.NULL }),
+                                           @BodyType.When(option = "operation", value = "PUSH_CONFIG_DELETE",
+                                                          carrier = Carrier.MAP),
+                                           @BodyType.When(option = "dataFormat", value = "POJO", carrier = Carrier.POJO),
+                                           @BodyType.When(option = "dataFormat", value = "RAW", carrier = Carrier.TEXT) },
+                                   description = "The reply of the agent as text: the parts of the Message, or of the last"
+                                                 + " message in the history of the Task, one per line. TASK_GET and"
+                                                 + " TASK_CANCEL give the text of the Task, TASK_LIST a List of Task,"
+                                                 + " MESSAGE_STREAM and TASK_SUBSCRIBE an Iterator of the events as they"
+                                                 + " arrive (split it), and the push config operations a"
+                                                 + " TaskPushNotificationConfig, a List of them, or an empty Map for delete."
+                                                 + " With dataFormat POJO the Task or the Message, with RAW the JSON of the"
+                                                 + " response as text (a stream of the events for MESSAGE_STREAM and"
+                                                 + " TASK_SUBSCRIBE)"))
 public class A2AEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(A2AEndpoint.class);

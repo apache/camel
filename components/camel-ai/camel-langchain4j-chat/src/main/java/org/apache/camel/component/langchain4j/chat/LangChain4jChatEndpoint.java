@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -33,6 +36,19 @@ import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME
              syntax = "langchain4j-chat:chatId",
              producerOnly = true,
              category = { Category.AI }, headersClass = LangChain4jChatHeaders.class)
+@BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
+                                  byOption = {
+                                          @BodyType.When(option = "chatOperation", value = "CHAT_SINGLE_MESSAGE_WITH_PROMPT",
+                                                         carrier = Carrier.MAP),
+                                          @BodyType.When(option = "chatOperation", value = "CHAT_MULTIPLE_MESSAGES",
+                                                         carrier = Carrier.LIST) },
+                                  description = "The prompt as text, or a ChatMessage; another body is sent as its"
+                                                + " toString(), and no body fails. CHAT_SINGLE_MESSAGE_WITH_PROMPT takes the"
+                                                + " variables of the template in the CamelLangChain4jChatPromptTemplate"
+                                                + " header as a Map, and CHAT_MULTIPLE_MESSAGES a List of ChatMessage"),
+           producerOut = @BodyType(value = Carrier.TEXT,
+                                   description = "The answer of the model as text, also when it is asked for JSON: unmarshal"
+                                                 + " it to read its fields"))
 public class LangChain4jChatEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

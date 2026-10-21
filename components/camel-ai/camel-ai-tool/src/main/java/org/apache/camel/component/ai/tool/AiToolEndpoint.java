@@ -20,6 +20,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +45,16 @@ import static org.apache.camel.component.ai.tool.AiTool.SCHEME;
              consumerOnly = true,
              remote = false,
              category = { Category.AI })
+@BodyTypes(consumerOut = @BodyType(value = Carrier.NULL,
+                                   description = "No body: each argument of the tool call is a header named as its"
+                                                 + " parameter, a Map or a List for a nested JSON value. Undeclared"
+                                                 + " arguments and names starting with camel are dropped"),
+           consumerReply = @BodyType(value = Carrier.ANY, dependsOn = { "outputSchema", "outputParameters" },
+                                     description = "The tool result, as text: the body converted to a String, so a Map, a"
+                                                   + " List or a POJO is sent as its toString(): marshal it to JSON first. No"
+                                                   + " body gives No result. With outputSchema or outputParameter.NAME"
+                                                   + " options the body must be JSON: a JSON String, a Map, a List, a number"
+                                                   + " or a boolean, and bytes, a stream or another object fail the call"))
 public class AiToolEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)
