@@ -24,6 +24,9 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -44,6 +47,11 @@ import org.eclipse.paho.mqttv5.common.MqttMessage;
 @UriEndpoint(firstVersion = "3.8.0", scheme = "paho-mqtt5", title = "Paho MQTT 5",
              category = { Category.MESSAGING, Category.IOT },
              syntax = "paho-mqtt5:topic", headersClass = PahoMqtt5Constants.class)
+@BodyTypes(consumerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", description = "The payload of the MQTT message"),
+           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "What converts to a byte array: text, bytes, a stream or a file, sent as"
+                                                + " the payload"),
+           producerOut = @BodyType(Carrier.UNCHANGED))
 public class PahoMqtt5Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     // Configuration members
