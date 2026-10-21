@@ -66,18 +66,18 @@ import org.slf4j.LoggerFactory;
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
                                   format = "xml", dependsOn = "source",
                                   byOption = @BodyType.When(option = "failOnNullBody", value = "false",
-                                                            carrier = {
+                                                            carriers = {
                                                                     Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
                                                                     Carrier.STREAM, Carrier.FILE, Carrier.POJO }),
                                   description = "The XML to transform: text, bytes, a stream, a file, a DOM or another"
                                                 + " javax.xml.transform.Source. A Map, a List or no body fails"),
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "resultHandlerFactory",
                                    byOption = {
-                                           @BodyType.When(option = "output", value = "bytes", carrier = Carrier.BYTES,
+                                           @BodyType.When(option = "output", value = "bytes", carriers = Carrier.BYTES,
                                                           javaType = "byte[]"),
-                                           @BodyType.When(option = "output", value = "DOM", carrier = Carrier.POJO,
+                                           @BodyType.When(option = "output", value = "DOM", carriers = Carrier.POJO,
                                                           javaType = "org.w3c.dom.Document"),
-                                           @BodyType.When(option = "output", value = "file", carrier = Carrier.FILE,
+                                           @BodyType.When(option = "output", value = "file", carriers = Carrier.FILE,
                                                           javaType = "java.io.File") },
                                    description = "The result of the transformation"))
 public class XsltEndpoint extends ProcessorEndpoint {

@@ -89,7 +89,7 @@ public @interface BodyType {
         /**
          * The carriers of the body with this value.
          */
-        Carrier[] carrier();
+        Carrier[] carriers();
 
         /**
          * The Java type of the body with this value, when it is always of this type.

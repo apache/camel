@@ -40,7 +40,7 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
                                                   + " is read through Jackson"),
            expressionOut = @BodyType(value = Carrier.UNKNOWN,
                                      byOption = @BodyType.When(option = "writeAsString", value = "true",
-                                                               carrier = { Carrier.TEXT, Carrier.LIST }),
+                                                               carriers = { Carrier.TEXT, Carrier.LIST }),
                                      description = "The value the path selects: a Map for an object, a List for an array or"
                                                    + " for a path with a wildcard or a filter, otherwise text, a number or a"
                                                    + " boolean"))
