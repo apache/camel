@@ -84,11 +84,37 @@ class SecurityProviderWebSocketConsumerHandlersWindowTest extends AbstractSecuri
 
         // the connection does not get what the producer sends
         template.sendBody("direct:feed", "broadcast");
-        // and its messages do not reach the route: it is closed instead
-        webSocket.sendText("hello", true).join();
+        // a message from the stale connection never reaches the route; the send may already fail because the
+        // connection was closed when the consumer started, so it is best effort here
+        webSocket.sendText("hello", true).whenComplete((result, error) -> {
+        });
 
         assertEquals(CloseMessage.MSG_VIOLATES_POLICY, listener.closeCode.orTimeout(10, TimeUnit.SECONDS).join());
         assertTrue(listener.received.isEmpty());
+        assertEquals(0, routeInvocations.get());
+    }
+
+    @Test
+    void receiveOnlyConnectionBeforeConsumerStartsIsClosedWhenConsumerStarts() throws Exception {
+        securityConfiguration.setRoleToAssign("user");
+
+        // only the producer serves the path: the connection passes the allowed-roles check but not the consumer handlers
+        RecordingListener listener = new RecordingListener();
+        connect("/guarded", null, listener);
+
+        // a first broadcast confirms the peer is registered server-side while only the producer serves the path
+        template.sendBody("direct:feed", "before");
+        assertEquals("before", listener.firstText.orTimeout(10, TimeUnit.SECONDS).join());
+
+        context.getRouteController().startRoute("guarded");
+
+        // the client sends nothing: a receive-only connection must still be closed when the consumer starts, so that
+        // reconnect-on-close logic runs instead of the client silently receiving no further broadcasts
+        assertEquals(CloseMessage.MSG_VIOLATES_POLICY, listener.closeCode.orTimeout(10, TimeUnit.SECONDS).join());
+
+        // a broadcast after the close does not reach the stale connection
+        template.sendBody("direct:feed", "after");
+        assertEquals(List.of("before"), listener.received);
         assertEquals(0, routeInvocations.get());
     }
 
@@ -119,6 +145,7 @@ class SecurityProviderWebSocketConsumerHandlersWindowTest extends AbstractSecuri
     private static final class RecordingListener implements WebSocket.Listener {
 
         private final List<String> received = new CopyOnWriteArrayList<>();
+        private final CompletableFuture<String> firstText = new CompletableFuture<>();
         private final CompletableFuture<Integer> closeCode = new CompletableFuture<>();
 
         @Override
@@ -129,6 +156,7 @@ class SecurityProviderWebSocketConsumerHandlersWindowTest extends AbstractSecuri
         @Override
         public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
             received.add(data.toString());
+            firstText.complete(data.toString());
             webSocket.request(1);
             return null;
         }
