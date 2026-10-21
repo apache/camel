@@ -247,7 +247,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * commits, which happens when the processing is complete. A Hazelcast
          * transaction belongs to the thread that began it, so each consumer
          * thread waits for its exchange to complete, also when the route
-         * continues on another thread, before it takes the next message.
+         * continues on another thread, before it takes the next message. The
+         * exchange must complete within the Hazelcast transaction timeout (2
+         * minutes by default): when it takes longer, the commit fails, the
+         * transaction is rolled back and the message is consumed again.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -267,7 +270,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * commits, which happens when the processing is complete. A Hazelcast
          * transaction belongs to the thread that began it, so each consumer
          * thread waits for its exchange to complete, also when the route
-         * continues on another thread, before it takes the next message.
+         * continues on another thread, before it takes the next message. The
+         * exchange must complete within the Hazelcast transaction timeout (2
+         * minutes by default): when it takes longer, the commit fails, the
+         * transaction is rolled back and the message is consumed again.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -656,7 +662,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * commits, which happens when the processing is complete. A Hazelcast
          * transaction belongs to the thread that began it, so each consumer
          * thread waits for its exchange to complete, also when the route
-         * continues on another thread, before it takes the next message.
+         * continues on another thread, before it takes the next message. The
+         * exchange must complete within the Hazelcast transaction timeout (2
+         * minutes by default): when it takes longer, the commit fails, the
+         * transaction is rolled back and the message is consumed again.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -676,7 +685,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * commits, which happens when the processing is complete. A Hazelcast
          * transaction belongs to the thread that began it, so each consumer
          * thread waits for its exchange to complete, also when the route
-         * continues on another thread, before it takes the next message.
+         * continues on another thread, before it takes the next message. The
+         * exchange must complete within the Hazelcast transaction timeout (2
+         * minutes by default): when it takes longer, the commit fails, the
+         * transaction is rolled back and the message is consumed again.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -994,7 +1006,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * commits, which happens when the processing is complete. A Hazelcast
          * transaction belongs to the thread that began it, so each consumer
          * thread waits for its exchange to complete, also when the route
-         * continues on another thread, before it takes the next message.
+         * continues on another thread, before it takes the next message. The
+         * exchange must complete within the Hazelcast transaction timeout (2
+         * minutes by default): when it takes longer, the commit fails, the
+         * transaction is rolled back and the message is consumed again.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1014,7 +1029,10 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * commits, which happens when the processing is complete. A Hazelcast
          * transaction belongs to the thread that began it, so each consumer
          * thread waits for its exchange to complete, also when the route
-         * continues on another thread, before it takes the next message.
+         * continues on another thread, before it takes the next message. The
+         * exchange must complete within the Hazelcast transaction timeout (2
+         * minutes by default): when it takes longer, the commit fails, the
+         * transaction is rolled back and the message is consumed again.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

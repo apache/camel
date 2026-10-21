@@ -873,7 +873,10 @@ transacted (`transacted=true`) Hazelcast SEDA consumer continued on another thre
 put back: a failed message was not taken again, and the messages, also the processed ones, were put back into the
 queue when the application left the Hazelcast cluster, so they were consumed again. Now the consumer thread waits for
 the exchange to complete and ends the transaction itself, so it takes the next message only then; use
-`concurrentConsumers` to process several messages at the same time.
+`concurrentConsumers` to process several messages at the same time. The exchange must complete within the Hazelcast
+transaction timeout (2 minutes by default, `TransactionOptions`): when it takes longer, the commit fails with
+`TransactionTimedOutException`, which is logged at ERROR, the transaction is rolled back and the message is consumed
+again, also when the route succeeded.
 
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 

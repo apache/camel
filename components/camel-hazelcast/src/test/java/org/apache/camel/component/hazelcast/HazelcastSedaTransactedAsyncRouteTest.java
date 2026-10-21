@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * asynchronous producer). A Hazelcast transaction can only be committed or rolled back by the thread that began it, so
  * the consumer must end the transaction on its own thread once the exchange is complete.
  */
-public class HazelcastSedaTransactedAsyncRouteTest extends CamelTestSupport {
+class HazelcastSedaTransactedAsyncRouteTest extends CamelTestSupport {
 
     private final AtomicInteger attempts = new AtomicInteger();
     private HazelcastInstance member;
@@ -67,7 +67,10 @@ public class HazelcastSedaTransactedAsyncRouteTest extends CamelTestSupport {
     }
 
     @AfterEach
-    public void shutdownMembers() {
+    void shutdownMembers() {
+        // JUnit runs this before the extension of CamelTestSupport stops the context: stop it first, so that the
+        // consumers do not keep polling members that are shut down
+        context.stop();
         if (member != null) {
             member.shutdown();
         }
@@ -77,7 +80,7 @@ public class HazelcastSedaTransactedAsyncRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCompletedExchangesAreCommitted() throws Exception {
+    void testCompletedExchangesAreCommitted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:done");
         mock.expectedBodiesReceivedInAnyOrder("a", "b", "c");
 
@@ -89,7 +92,7 @@ public class HazelcastSedaTransactedAsyncRouteTest extends CamelTestSupport {
 
         // the application leaves the cluster (a restart or a redeploy): the other member rolls back the transactions
         // the application left open, which puts their messages back into the queue
-        context.getRouteController().stopRoute("done");
+        context.stop();
         member.shutdown();
         member = null;
 
@@ -99,7 +102,7 @@ public class HazelcastSedaTransactedAsyncRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFailedExchangeIsRolledBack() throws Exception {
+    void testFailedExchangeIsRolledBack() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:failed");
         mock.expectedBodiesReceived("x");
 

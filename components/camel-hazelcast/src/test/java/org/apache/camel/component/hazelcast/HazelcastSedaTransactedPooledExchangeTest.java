@@ -23,7 +23,7 @@ import org.apache.camel.impl.engine.PooledExchangeFactory;
  * The same transacted routes with pooled exchanges: a pooled exchange is reset when it is done, so the consumer must
  * read the outcome of the exchange before it is released, or a failed exchange would be committed.
  */
-public class HazelcastSedaTransactedPooledExchangeTest extends HazelcastSedaTransactedAsyncRouteTest {
+class HazelcastSedaTransactedPooledExchangeTest extends HazelcastSedaTransactedAsyncRouteTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
