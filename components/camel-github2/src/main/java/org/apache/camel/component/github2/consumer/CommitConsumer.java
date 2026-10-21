@@ -113,7 +113,7 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
             // read up to the last routed commit: the commits pushed since then all come before it. Stopping after the
             // first 100 would lose the older ones when more were pushed between two polls, as lastSha then moves to
             // the newest one. Without a last commit, or when it is not among the remembered number of newest commits
-            // (it is no longer on the branch), only the 100 newest are considered
+            // (it is no longer on the branch, or it is further back than that), only the 100 newest are considered
             int limit = lastSha != null ? CAPACITY : MAX_COMMITS_WITHOUT_LAST_SHA;
             boolean lastShaFound = false;
             for (GHCommit commit : getRepository().queryCommits().from(branchName).list().withPageSize(100)) {
@@ -125,6 +125,11 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
                 if (commits.size() >= limit) {
                     break;
                 }
+            }
+            if (lastSha != null && !lastShaFound && commits.size() >= CAPACITY) {
+                LOG.warn("Last routed commit {} not found among the newest {} commits of branch {}: routing the newest {}"
+                         + " only. If it is still on the branch, the new commits before those are skipped",
+                        lastSha, CAPACITY, branchName, MAX_COMMITS_WITHOUT_LAST_SHA);
             }
             if (!lastShaFound && commits.size() > MAX_COMMITS_WITHOUT_LAST_SHA) {
                 commits = commits.subList(0, MAX_COMMITS_WITHOUT_LAST_SHA);
