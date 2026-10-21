@@ -76,6 +76,7 @@ class SourceTab extends AbstractTab {
     private final ScrollbarState listScrollState = new ScrollbarState();
     private List<FilesBrowser.FileEntry> entries = Collections.emptyList();
     private final SourceViewer sourceViewer = new SourceViewer();
+    private final SourceRunState.Tracker runState = new SourceRunState.Tracker();
     private boolean focusOnViewer;
 
     private int leftPanelWidth = -1;
@@ -219,7 +220,13 @@ class SourceTab extends AbstractTab {
     }
 
     @Override
+    public void refreshWhileVisible() {
+        runState.refresh(ctx.findSelectedIntegration());
+    }
+
+    @Override
     public void onIntegrationChanged() {
+        runState.reset();
         lastSeenPid = ctx.selectedPid;
         rootDir = null;
         assist.setRootDir(null);
@@ -565,6 +572,8 @@ class SourceTab extends AbstractTab {
         json.put("totalFiles", entries.size());
         json.put("focusOnViewer", focusOnViewer);
         json.put("viewerOpen", sourceViewer.isVisible());
+        // whether the integration runs the file open in the editor as it is saved, so an agent can tell its edit runs
+        runState.addTo(json);
         return json;
     }
 
@@ -1178,7 +1187,11 @@ class SourceTab extends AbstractTab {
             sourceViewer.setBorderStyle(sourceBorderStyle);
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
+            // whether the integration runs the file shown as it is saved, in the view and in the editor (CAMEL-25771)
+            runState.shown(sourceViewer.liveColumn().loadedFile());
+            runState.render(frame, area);
         } else {
+            runState.shown(null);
             List<Line> lines = emptySourceLines(routeIndex, rootDir);
 
             frame.renderWidget(

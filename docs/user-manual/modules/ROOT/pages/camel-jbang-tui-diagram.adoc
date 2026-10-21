@@ -217,6 +217,20 @@ table of the processors of the selected route.
 
 image::jbang/camel-tui-routes-body-types.png[The Routes tab: the orders route has four steps reached with bodies of more than one kind, and its processors list the types of each step]
 
+=== Checksum and Revision
+
+The Info panel of a route in the topology has its checksum: a short hash of the route as written, the same in every
+run (see xref:routes.adoc#_route_checksum_and_revision[Route Checksum and Revision]). `camel cmd route-structure` gives
+the checksum of the routes of a source file without running them, so you can tell whether a file has the route that
+runs. A route added again changed in this run, such as by a reload of its file, has its revision under it
+(`Revision: 3 · 2 changes`), and the Routes tab has the revision after the id of the route (`orders rev 3`).
+
+image::jbang/camel-tui-diagram-route-revision.png[The Info panel of the orders route in the topology: its checksum, and revision 3 after two reloads changed it]
+
+image::jbang/camel-tui-routes-revision.png[The Routes tab: the orders route is at revision 3, and the audit route from the same file did not change]
+
+An integration of a Camel version before 4.24 has neither.
+
 == Keyboard Shortcuts
 
 === Diagram Tab
