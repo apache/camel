@@ -198,10 +198,11 @@ public final class ReloadOutcome {
 
     /**
      * What the routes logged after the newest reload, waiting up to the timeout for the first of it: the records of the
-     * routes' log steps, and any WARN or ERROR, newest last, each cut to 400 characters: the first five, the first
-     * three ERROR after them, and a line that says how many are left out. A write answered with the result of the
-     * change shows the agent at once what its route now does (CAMEL-25513): an agent left to call camel_get_log reads
-     * it before the reload ran, or not at all.
+     * routes' log steps, and any WARN or ERROR, newest last. A record of a log step is cut to 400 characters; a WARN or
+     * ERROR of Camel is compacted (no exchange dump, ids or exception packages) and cut to 800 characters, as the hint
+     * of a failure comes late in the message. The first five, the first three ERROR after them, and a line that says
+     * how many are left out. A write answered with the result of the change shows the agent at once what its route now
+     * does (CAMEL-25513): an agent left to call camel_get_log reads it before the reload ran, or not at all.
      */
     public static JsonArray awaitOutput(long pid, String name, long timeoutMillis) {
         StopWatch watch = new StopWatch();

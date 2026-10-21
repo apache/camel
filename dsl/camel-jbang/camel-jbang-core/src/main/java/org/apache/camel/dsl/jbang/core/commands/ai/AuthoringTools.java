@@ -1648,6 +1648,14 @@ public final class AuthoringTools {
                 }
             }
         }
+        long notWatchedBy = -1;
+        if (watchPid >= 0 && !SourceValidator.isValidatableFile(file) && !IntegrationLauncher.watchesFile(watchPid, file)) {
+            // started with its own files, the template or script is not one it watches: waiting the whole
+            // RELOAD_WAIT_MILLIS would only end in "no reload seen" (route files keep the wait: application.properties
+            // is watched without being on the command line)
+            notWatchedBy = watchPid;
+            watchPid = -1;
+        }
         boolean watch = watchPid >= 0;
         if (watch) {
             sinceKey = ReloadOutcome.latestReloadKey(ReloadOutcome.records(watchPid, processName));
@@ -1710,6 +1718,10 @@ public final class AuthoringTools {
                                  + " content and write again (see reload.message).";
                 default -> "Written; " + reload.getString("message");
             });
+        } else if (notWatchedBy >= 0) {
+            result.put("message", "The running integration (pid " + notWatchedBy + ") was started with its own files"
+                                  + " and does not reload when this file changes; camel_control restart picks up the"
+                                  + " change.");
         } else {
             result.put("message", "An integration running the file in dev mode reloads it now; otherwise restart the"
                                   + " integration for the change to take effect.");

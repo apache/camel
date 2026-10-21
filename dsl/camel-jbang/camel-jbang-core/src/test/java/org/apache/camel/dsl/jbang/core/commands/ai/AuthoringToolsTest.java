@@ -37,6 +37,7 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -245,6 +246,23 @@ class AuthoringToolsTest {
         assertTrue(AuthoringTools.reloadsWithRoutes("templates/letter.FTL"));
         assertFalse(AuthoringTools.reloadsWithRoutes("orders/order-1001.json"), "a data file is not loaded by a route");
         assertFalse(AuthoringTools.reloadsWithRoutes("README.md"));
+    }
+
+    /**
+     * Started with its own files, an integration watches only those, not a template or script beside them: its write is
+     * answered at once, not after waiting for a reload that does not come.
+     */
+    @Test
+    void aWriteOfATemplateTheIntegrationDoesNotWatchIsAnsweredAtOnce(@TempDir Path dir) {
+        ToolContext ctx = new ToolContext();
+        // this JVM: its command line has no --source-dir and not the template
+        ctx.selectProcess(ProcessHandle.current().pid());
+        JsonObject written = call("camel_write_file", ctx,
+                Map.of("directory", dir.toString(), "file", "letter.ftl", "content", "Dear ${body}"));
+        assertEquals("created", written.getString("status"));
+        assertNull(written.get("reload"), written.toJson());
+        assertTrue(written.getString("message").contains("was started with its own files and does not reload"),
+                written.toJson());
     }
 
     @Test
