@@ -99,3 +99,34 @@ An `as2://server/listen` consumer receives AS2 messages on `serverPortNumber`, f
 
 A `SIGNED`, `ENCRYPTED` or `SIGNED_ENCRYPTED` message structure also needs the keys and certificates of the signing
 and encrypting options.
+
+=== Sending through an HTTP proxy
+
+When outbound traffic must go through an HTTP forward proxy, set `proxyHost` and `proxyPort` on the
+`as2://client/send` endpoint. The client connects to the proxy over plain http:
+
+* without an `sslContext`, the AS2 message is sent to the proxy with an absolute request URI;
+* with an `sslContext`, the client asks the proxy to open a `CONNECT` tunnel to `targetHostname` and
+`targetPortNumber`, and the TLS handshake and hostname verification are made with the target through the tunnel.
+
+If the proxy requires authentication, set `proxyAuthUsername` and `proxyAuthPassword`. They are sent to the
+proxy as a preemptive Basic `Proxy-Authorization` header, on the `CONNECT` request when tunnelling, and are not
+sent to the AS2 partner. If the proxy refuses the request, for example with `407 Proxy Authentication Required`,
+the send fails with an exception, as the message has not reached the partner. The proxy options apply to the AS2
+client only: asynchronous MDNs are delivered directly.
+
+[source,yaml]
+----
+- to:
+    uri: as2://client/send
+    parameters:
+      inBody: ediMessage
+      targetHostname: partner.example.com
+      targetPortNumber: 443
+      sslContext: "#partnerSslContext"
+      proxyHost: proxy.internal
+      proxyPort: 3128
+      proxyAuthUsername: "{{proxy.user}}"
+      proxyAuthPassword: "{{proxy.password}}"
+      # ... the AS2 message options
+----

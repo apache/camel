@@ -135,6 +135,14 @@ public class AS2Configuration {
     private String accessToken;
     @UriParam(defaultValue = "false", label = "producer")
     private boolean expectContinue;
+    @UriParam(label = "producer,proxy")
+    private String proxyHost;
+    @UriParam(label = "producer,proxy")
+    private Integer proxyPort;
+    @UriParam(label = "producer,proxy", security = "secret")
+    private String proxyAuthUsername;
+    @UriParam(label = "producer,proxy", security = "secret")
+    private String proxyAuthPassword;
     @UriParam(label = "security", security = "secret")
     private String mdnUserName;
     @UriParam(label = "security", security = "secret")
@@ -653,6 +661,51 @@ public class AS2Configuration {
      */
     public void setExpectContinue(boolean expectContinue) {
         this.expectContinue = expectContinue;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * The host name of an HTTP proxy the client sends its AS2 messages through. The connection to the proxy is plain
+     * http; when an SSL context is configured, the AS2 message goes through a CONNECT tunnel to the target.
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The port number of the HTTP proxy.
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getProxyAuthUsername() {
+        return proxyAuthUsername;
+    }
+
+    /**
+     * The user name for basic authentication with the HTTP proxy. The credentials are sent to the proxy only.
+     */
+    public void setProxyAuthUsername(String proxyAuthUsername) {
+        this.proxyAuthUsername = proxyAuthUsername;
+    }
+
+    public String getProxyAuthPassword() {
+        return proxyAuthPassword;
+    }
+
+    /**
+     * The password for basic authentication with the HTTP proxy.
+     */
+    public void setProxyAuthPassword(String proxyAuthPassword) {
+        this.proxyAuthPassword = proxyAuthPassword;
     }
 
     public String getMdnUserName() {
