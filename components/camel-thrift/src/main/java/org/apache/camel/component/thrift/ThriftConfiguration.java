@@ -63,6 +63,9 @@ public class ThriftConfiguration {
     @UriParam(label = "consumer", defaultValue = "" + ThriftConstants.THRIFT_CONSUMER_MAX_POOL_SIZE)
     private int maxPoolSize = ThriftConstants.THRIFT_CONSUMER_MAX_POOL_SIZE;
 
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean muteException = true;
+
     /**
      * Fully qualified service name from the thrift descriptor file (package dot service definition name)
      */
@@ -183,6 +186,19 @@ public class ThriftConfiguration {
 
     public void setMaxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side, the Thrift client receives a generic error
+     * that does not contain the exception's message. An exception that the Thrift method declares in the IDL is still
+     * sent as it is.
+     */
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public void parseURI(URI uri) {
