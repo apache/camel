@@ -1705,7 +1705,8 @@ public final class AuthoringTools {
             result.put("message", switch (status) {
                 case "reloaded" -> "The running integration reloaded " + reloadedWhat + "." + loggedAfter;
                 case "properties" -> "The running integration reloaded the properties.";
-                case "failed" -> "The running integration FAILED to reload the file, the route is not running; fix the"
+                case "failed" ->
+                    "The running integration FAILED to reload " + reloadedWhat + ", the route is not running; fix the"
                                  + " content and write again (see reload.message).";
                 default -> "Written; " + reload.getString("message");
             });
