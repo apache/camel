@@ -1133,6 +1133,20 @@ file is written from the column names, not from the first map). Every map of the
 `ignoreFirstRecord` only applies to unmarshal. A route that set `ignoreFirstRecord=false` to work around this is not
 affected; a route that added a dummy first map now gets it in the output too.
 
+=== camel-github2 - the commit consumer routes the commits beyond the newest 100
+
+The `commit` consumer read only the 100 newest commits of the branch at each poll, so when more than 100 commits were
+pushed between two polls, the older ones were never routed. A poll now reads the commits up to the last routed one
+(at most 1000, the number of commits the consumer remembers), and can route more than 100 commits. When the last
+routed commit is no longer on the branch, only the 100 newest commits are considered, as before. GitHub lists the
+commits by committer date, newest first, so this covers a linear history: the commits that a merge brings in keep
+their older dates and can be listed after the last routed commit, and they are not routed, as before.
+
+Each routed commit costs one GitHub API request for its author, plus one for each author or committer not looked up
+before, so a poll that catches up on many commits can send about 1000 requests instead of about 100. When the rate
+limit is reached, the GitHub client waits inside the poll until the limit resets (its default rate limit handler),
+and stopping the route waits for that poll.
+
 === camel-milo - the OPC UA client validates the server certificate
 
 When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components
