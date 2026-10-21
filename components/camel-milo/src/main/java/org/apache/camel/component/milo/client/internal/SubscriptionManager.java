@@ -493,7 +493,8 @@ public class SubscriptionManager {
             if (retry) {
                 LOG.debug("Monitored item for node {} could not be created on retry{}: {}", node, because, status);
             } else {
-                LOG.warn("Monitored item for node {} could not be created{}: {}", node, because, status);
+                LOG.warn("Monitored item for node {} could not be created{}, trying again every {} ms: {}", node, because,
+                        SubscriptionManager.this.reconnectTimeout, status);
                 pendingValues.add(new PendingValue(s, this.generation, new DataValue(status)));
             }
         }
@@ -510,6 +511,17 @@ public class SubscriptionManager {
             this.retryJob = SubscriptionManager.this.reconnectExecutor.schedule(
                     () -> SubscriptionManager.this.executor.execute(() -> retryRefused(this)),
                     SubscriptionManager.this.reconnectTimeout, TimeUnit.MILLISECONDS);
+        }
+
+        /**
+         * Cancels the next attempt to create the refused nodes again, if one is scheduled: a connection that is
+         * replaced or disposed is not retried
+         */
+        private void cancelRetry() {
+            if (this.retryJob != null) {
+                this.retryJob.cancel(false);
+                this.retryJob = null;
+            }
         }
 
         /**
@@ -597,10 +609,6 @@ public class SubscriptionManager {
         public void dispose() {
             // the session closed by the disconnect is no loss of communication
             this.listener.closed = true;
-            if (this.retryJob != null) {
-                this.retryJob.cancel(false);
-                this.retryJob = null;
-            }
             if (this.client != null) {
                 try {
                     this.client.disconnect();
@@ -1109,6 +1117,12 @@ public class SubscriptionManager {
      * first value from the server. While the session is not active, the attempt is skipped. A call that fails is made
      * again with the next attempt and never rebuilds the connection, which would interrupt the nodes that are
      * monitored: a lost session or subscription is recovered without it.
+     * <p>
+     * Like the registration of a consumer, the attempt holds {@code lock} until the server answers, so that a consumer
+     * that stops or a subscription that is recreated in the meantime cannot interleave with it, and the producers and
+     * {@link #getOpcUaClient()} wait for it. The wait is bounded: the attempt is only sent while the session is active,
+     * a call in flight when the connection drops silently fails once the keep-alive of the client declares the session
+     * lost, and a call that the server does not answer fails after the request timeout.
      */
     private void retryRefused(final Connected connected) {
         lock.lock();
@@ -1214,6 +1228,7 @@ public class SubscriptionManager {
             if (this.connected != null) {
                 // the nodes lose their communication with the connection, after the values it still delivers
                 reportLoss(this.connected.manager, this.connected.generation, this.subscriptions);
+                this.connected.cancelRetry();
                 this.connected.dispose();
                 this.connected = null;
             }
@@ -1272,11 +1287,13 @@ public class SubscriptionManager {
 
                     if (oldConnected != null) {
                         LOG.debug("Dispose old state");
+                        oldConnected.cancelRetry();
                         oldConnected.dispose();
                     }
 
                 } catch (final Exception e) {
                     LOG.info("Failed to set subscriptions", e);
+                    connected.cancelRetry();
                     connected.dispose();
                     throw e;
                 }
@@ -1436,6 +1453,10 @@ public class SubscriptionManager {
             }
             this.disposed = true;
             connected = this.connected;
+            if (connected != null) {
+                // the next attempt is cancelled under the lock that guards it, the connection is disposed outside of it
+                connected.cancelRetry();
+            }
             if (this.reconnectJob != null) {
                 // a waiting reconnect would keep the thread of the reconnect executor until it is due
                 this.reconnectJob.cancel(false);

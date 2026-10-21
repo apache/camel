@@ -237,7 +237,8 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
             // the server stays unreachable for longer than the retry interval of the refused node
             relay.stop();
             await().atMost(10, TimeUnit.SECONDS).until(() -> item1Endpoint.getReceivedCounter() >= 1);
-            await().pollDelay(12, TimeUnit.SECONDS).atMost(13, TimeUnit.SECONDS).until(() -> true);
+            await().during(12, TimeUnit.SECONDS).atMost(15, TimeUnit.SECONDS)
+                    .until(() -> unknownEndpoint.getReceivedCounter() == 0);
             // an attempt while the session is lost is skipped: it does not hold the connection until the session is back
             assertSame(client, CompletableFuture.supplyAsync(connection::getOpcUaClient).get(2, TimeUnit.SECONDS));
             template.sendBody("milo-server:unknownItem", "Baz");
