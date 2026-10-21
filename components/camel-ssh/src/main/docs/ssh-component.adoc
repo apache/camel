@@ -163,6 +163,72 @@ YAML::
 An example of using Public Key authentication is provided in
 `examples/camel-example-ssh-security`.
 
+=== Server host key verification
+
+The SSH Component verifies the host key of the SSH server only when the `knownHostsResource` option
+is set. It refers to a file in the OpenSSH `known_hosts` format, such as the output of `ssh-keyscan`.
+Set `failOnUnknownHost` to `true` as well, so that a server without any entry in that file is rejected.
+When it is `false` (the default), such a server is accepted and a warning is logged.
+
+The entries are matched as OpenSSH matches them:
+
+* Each host pattern of an entry is compared, ignoring case, with the host name or address the client
+connects to: the host configured on the endpoint, or the `HostName` that `~/.ssh/config` gives for it.
+It is written `host` for port 22 and `[host]:port` for another port. `*` and `?` are wildcards, a
+pattern starting with `!` excludes the hosts it matches, and hashed entries are supported. So
+`db.example.com` only applies to port 22, `[db.example.com]:2222` to port 2222, and `*` to every host
+and port. The host is never resolved: an endpoint configured with an address only uses the entries for
+that address, and an IPv6 address such as `::1` is not expanded.
+* The server is accepted when an entry of its host lists the key it presents. A host can be listed
+with several keys, one per line.
+* The server is rejected when the key it presents is listed in a matching `@revoked` entry, or when
+its host has entries without a marker but none of them lists that key, whatever the value of
+`failOnUnknownHost`. That option only decides for a host without such an entry: `@revoked` and
+`@cert-authority` entries do not list a host.
+* `@cert-authority` entries (OpenSSH host certificates) are not supported and are ignored.
+* A `known_hosts` resource that cannot be read, or that has a line that cannot be read (for example
+an unknown `@` marker, a missing key, or a key that is not valid base64), makes every connection fail.
+
+The following route verifies the host key of a server listening on port 2222 against a
+`known_hosts` file that contains the line `[db.example.com]:2222 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5...`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:status")
+    .to("ssh://scott@db.example.com:2222?certResource=classpath:test_rsa&knownHostsResource=file:/etc/camel/known_hosts&failOnUnknownHost=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:status"/>
+  <to uri="ssh://scott@db.example.com:2222?certResource=classpath:test_rsa&amp;knownHostsResource=file:/etc/camel/known_hosts&amp;failOnUnknownHost=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:status
+      steps:
+        - to:
+            uri: ssh://scott@db.example.com:2222
+            parameters:
+              certResource: "classpath:test_rsa"
+              knownHostsResource: "file:/etc/camel/known_hosts"
+              failOnUnknownHost: true
+----
+====
+
 [[SSH-CertificateDependencies]]
 === Certificate Dependencies
 
