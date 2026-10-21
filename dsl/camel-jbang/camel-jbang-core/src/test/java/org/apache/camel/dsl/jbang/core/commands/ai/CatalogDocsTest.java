@@ -268,6 +268,23 @@ class CatalogDocsTest {
         }
     }
 
+    /** The one element of a JSON list by a field: models wrote $[?(...)][0], an empty list (the r20 REST runs). */
+    @Test
+    void theJsonPathAnswerSaysHowToPickOneElement() throws Exception {
+        JsonObject doc = catalogDoc(Map.of("name", "jsonpath"));
+        assertTrue(doc.getString("usage").contains("resultType: java.util.Map"), doc.getString("usage"));
+        assertTrue(doc.getString("usage").contains("an index after the filter gives an empty list"), doc.getString("usage"));
+    }
+
+    @Test
+    void aWrongHeaderNameIsAnsweredWithTheRightOne() {
+        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        JsonObject result = CatalogDocs.find(catalog, "CamelHttpStatusCode", null, 10);
+        assertTrue(result.getString("header").startsWith("Camel has no header CamelHttpStatusCode"), result.toJson());
+        assertTrue(result.getString("header").contains("CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)"));
+        assertNull(CatalogDocs.find(catalog, "CamelHttpResponseCode", null, 10).get("header"));
+    }
+
     @Test
     void anInterfaceNameFindsTheBuiltInBeans() {
         org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
