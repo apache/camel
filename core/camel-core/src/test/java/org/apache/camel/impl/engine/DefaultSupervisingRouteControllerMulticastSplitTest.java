@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.DefaultComponent;
@@ -66,7 +67,8 @@ class DefaultSupervisingRouteControllerMulticastSplitTest extends ContextTestSup
 
     @Test
     void testSplitWithFlakyProducer() throws Exception {
-        context.addComponent("flaky", new FlakyComponent(2));
+        FlakyComponent component = new FlakyComponent(2);
+        context.addComponent("flaky", component);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -82,13 +84,22 @@ class DefaultSupervisingRouteControllerMulticastSplitTest extends ContextTestSup
 
         // Route should eventually reach Started state after retries
         await().atMost(Duration.ofSeconds(5))
-                .untilAsserted(() -> assertEquals("Started",
-                        context.getRouteController().getRouteStatus("split-route").toString()));
+                .untilAsserted(() -> assertEquals(ServiceStatus.Started,
+                        context.getRouteController().getRouteStatus("split-route")));
+
+        // Verify the producer was retried (failCount=2 means 3 start attempts total)
+        FlakyEndpoint endpoint = (FlakyEndpoint) context.getEndpoint("flaky:target");
+        assertEquals(3, endpoint.startAttempts.get(), "Expected 3 start attempts (2 failures + 1 success)");
+
+        // Verify that a message can actually be processed once the route is started
+        template.sendBody("direct:split", "a b c");
+        assertEquals(3, endpoint.processCount.get(), "Expected 3 process calls for 3 split tokens");
     }
 
     @Test
     void testMulticastWithFlakyProducer() throws Exception {
-        context.addComponent("flaky", new FlakyComponent(2));
+        FlakyComponent component = new FlakyComponent(2);
+        context.addComponent("flaky", component);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -104,8 +115,16 @@ class DefaultSupervisingRouteControllerMulticastSplitTest extends ContextTestSup
 
         // Route should eventually reach Started state after retries
         await().atMost(Duration.ofSeconds(5))
-                .untilAsserted(() -> assertEquals("Started",
-                        context.getRouteController().getRouteStatus("multicast-route").toString()));
+                .untilAsserted(() -> assertEquals(ServiceStatus.Started,
+                        context.getRouteController().getRouteStatus("multicast-route")));
+
+        // Verify the producer was retried (failCount=2 means 3 start attempts total)
+        FlakyEndpoint endpoint = (FlakyEndpoint) context.getEndpoint("flaky:target");
+        assertEquals(3, endpoint.startAttempts.get(), "Expected 3 start attempts (2 failures + 1 success)");
+
+        // Verify that a message can actually be processed once the route is started
+        template.sendBody("direct:multicast", "hello");
+        assertEquals(1, endpoint.processCount.get(), "Expected 1 process call for multicast to single target");
     }
 
     /**
@@ -129,7 +148,8 @@ class DefaultSupervisingRouteControllerMulticastSplitTest extends ContextTestSup
 
     static class FlakyEndpoint extends DefaultEndpoint {
 
-        private final AtomicInteger startAttempts = new AtomicInteger();
+        final AtomicInteger startAttempts = new AtomicInteger();
+        final AtomicInteger processCount = new AtomicInteger();
         private final int failCount;
 
         FlakyEndpoint(String uri, Component component, int failCount) {
@@ -168,7 +188,8 @@ class DefaultSupervisingRouteControllerMulticastSplitTest extends ContextTestSup
 
         @Override
         public void process(Exchange exchange) {
-            // noop
+            FlakyEndpoint ep = (FlakyEndpoint) getEndpoint();
+            ep.processCount.incrementAndGet();
         }
     }
 }

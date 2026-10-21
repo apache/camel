@@ -1214,10 +1214,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                     errorHandlers.putIfAbsent(key, answer);
                 }
 
-                // start the error handler now if the context is already started, otherwise it will be
+                // start the error handler now if this processor is already running, otherwise it will be
                 // started in doStart() to avoid starting producers before CamelContext is fully started
-                // (which would bypass the SupervisingRouteController retry logic)
-                if (getCamelContext().isStarted()) {
+                // (which would bypass the SupervisingRouteController retry logic).
+                // Using isRunAllowed() instead of getCamelContext().isStarted() covers the runtime case
+                // (e.g. RecipientListProcessor builds wrappers during Starting and Stopping phases).
+                if (isRunAllowed()) {
                     ServiceHelper.startService(answer);
                 }
 
@@ -1308,12 +1310,12 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
+        ServiceHelper.stopService(processors, errorHandlers != null ? errorHandlers.values() : null, aggregationStrategy, processorExchangeFactory);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
+        ServiceHelper.stopAndShutdownServices(processors, errorHandlers != null ? errorHandlers.values() : null, aggregationStrategy, processorExchangeFactory);
         // only clear error handlers when shutting down
         if (errorHandlers != null) {
             errorHandlers.clear();

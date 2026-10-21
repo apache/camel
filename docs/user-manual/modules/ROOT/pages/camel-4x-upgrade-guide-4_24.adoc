@@ -328,6 +328,17 @@ The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are
 `openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
 `openstackSwiftContainerWrite()`).
 
+=== camel-core - Split and Multicast child producers start with their route
+
+`Split` and `Multicast` EIPs now start their child output producers during the route's own start, instead of during
+`CamelContext` initialization. The visible changes are:
+
+* With the default route controller, a producer that fails to start now causes a `FailedToStartRouteException` for its
+  route, instead of failing the whole context start. The route can be restarted independently.
+* Each route's producers now start in `startupOrder` with their route, instead of ahead of all routes.
+* With the supervising route controller, the producers of an `autoStartup=false` route are no longer started when the
+  context starts; they start when the route itself is started.
+
 === camel-pqc - an unknown hybridKdfAlgorithm is rejected
 
 The hybrid KEM operations now fail with an `IllegalArgumentException` when `hybridKdfAlgorithm` is not one of
