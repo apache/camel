@@ -152,7 +152,7 @@ class SubscriptionManagerExceptionPropagationTest {
      */
     @Test
     void testWriteWhenDisconnectedReturnsExceptionalFuture() {
-        SubscriptionManager manager = new SubscriptionManager(new MiloClientConfiguration(), executor, 10_000);
+        SubscriptionManager manager = new SubscriptionManager(new MiloClientConfiguration(), executor, executor, 10_000);
         try {
             CompletableFuture<?> result = manager.write(ExpandedNodeId.parse("ns=1;s=myNode"),
                     new DataValue(new Variant("testValue")));
@@ -170,7 +170,7 @@ class SubscriptionManagerExceptionPropagationTest {
      */
     @Test
     void testCallWhenDisconnectedReturnsExceptionalFuture() {
-        SubscriptionManager manager = new SubscriptionManager(new MiloClientConfiguration(), executor, 10_000);
+        SubscriptionManager manager = new SubscriptionManager(new MiloClientConfiguration(), executor, executor, 10_000);
         try {
             CompletableFuture<CallMethodResult> result = manager.call(
                     ExpandedNodeId.parse("ns=1;s=myNode"),
@@ -190,7 +190,7 @@ class SubscriptionManagerExceptionPropagationTest {
      */
     @Test
     void testReadValuesWhenDisconnectedReturnsExceptionalFuture() {
-        SubscriptionManager manager = new SubscriptionManager(new MiloClientConfiguration(), executor, 10_000);
+        SubscriptionManager manager = new SubscriptionManager(new MiloClientConfiguration(), executor, executor, 10_000);
         try {
             CompletableFuture<?> result = manager.readValues(List.of(ExpandedNodeId.parse("ns=1;s=myNode")));
 
