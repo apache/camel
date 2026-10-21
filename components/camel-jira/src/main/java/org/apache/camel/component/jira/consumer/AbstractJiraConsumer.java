@@ -114,6 +114,10 @@ public abstract class AbstractJiraConsumer extends ScheduledBatchPollingConsumer
         return getIssues(jql, SEARCH_START_AT, SEARCH_MAX_PER_QUERY, maxResults);
     }
 
+    /**
+     * Runs the search of every Jira consumer (newIssues, newComments, watchUpdates): on Jira Cloud the pages are read
+     * with the next page token (see getCloudIssues), on Jira Server / Data Center by start index.
+     */
     // Ignore maxResults if it's <= 0.
     protected Queue<Issue> getIssues(String jql, int start, int maxPerQuery, int maxResults) {
         LOG.debug("Start indexing current JIRA issues...");
