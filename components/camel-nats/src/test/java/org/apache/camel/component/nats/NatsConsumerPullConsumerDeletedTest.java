@@ -173,6 +173,7 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
         int consumerInfoRequests;
         RuntimeException failNextSubscribe;
         Status fetchStatus;
+        RuntimeException fetchFailure;
 
         final class FakeConsumer {
             long next;
@@ -202,6 +203,13 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
          */
         synchronized void failFetches(Status status) {
             fetchStatus = status;
+        }
+
+        /**
+         * Every fetch fails with this exception, for example an error of the connection while it recovers.
+         */
+        synchronized void failFetches(RuntimeException failure) {
+            fetchFailure = failure;
         }
 
         /**
@@ -318,6 +326,9 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
             List<Message> out = new ArrayList<>();
             if (fetchStatus != null) {
                 throw new JetStreamStatusException(fetchStatus, sub);
+            }
+            if (fetchFailure != null) {
+                throw fetchFailure;
             }
             while (true) {
                 if (c.deleted) {

@@ -197,6 +197,21 @@ class NatsConsumerPullConsumerGoneTest extends CamelTestSupport {
     }
 
     @Test
+    void unexpectedFetchFailureIsNotFetchedAgainBackToBack() throws Exception {
+        server.failFetches(new RuntimeException("connection is recovering"));
+        addRoute("");
+        await().atMost(5, TimeUnit.SECONDS).until(() -> !handled.isEmpty());
+        int fetchesBefore = server.fetches();
+        long waitStarted = System.nanoTime();
+        Thread.sleep(1000);
+        long waitedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - waitStarted);
+        int fetches = server.fetches() - fetchesBefore;
+        // the loop waits for the rest of pullFetchTimeout (100 ms) after each failed fetch
+        assertTrue(fetches <= waitedMillis / 100 + 5,
+                "no pull requests back to back: " + fetches + " fetches in " + waitedMillis + " ms");
+    }
+
+    @Test
     void ackPolicyNoneResumesAfterTheHighestFetched() throws Exception {
         // the route never calls ack: with ackPolicy=None the delivery is the acknowledgement
         addRoute("&manualAck=true&ackPolicy=None");

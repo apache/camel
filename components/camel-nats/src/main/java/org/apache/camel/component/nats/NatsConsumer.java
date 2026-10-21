@@ -350,6 +350,13 @@ public class NatsConsumer extends DefaultConsumer {
                     return;
                 } catch (Exception e) {
                     NatsConsumer.this.getExceptionHandler().handleException("Error during JetStream pull fetch", e);
+                    // as for the other error statuses: do not send the next pull request at once
+                    try {
+                        waitRestOfFetch(fetchStarted, fetchTimeout);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
                 }
             }
         }
