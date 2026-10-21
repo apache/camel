@@ -109,18 +109,19 @@ public class GooglePubsubConsumer extends DefaultConsumer implements ShutdownAwa
                     resolvedMaxDeliveryAttempts, endpoint.getDestinationName());
         }
 
-        // started again after a stop: the executors of the previous start are otherwise only shut down in doShutdown.
-        // Their subscriber loops end on their own (generation), so a regular shutdown lets them finish and then
+        // started again after a stop: the executor of the previous start is otherwise only shut down in doShutdown.
+        // Its subscriber loops end on their own (generation), so a regular shutdown lets them finish and then
         // releases the threads
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
         }
-        if (taskExecutor != null) {
-            endpoint.getCamelContext().getExecutorServiceManager().shutdown(taskExecutor);
-        }
         executor = endpoint.createExecutor(this);
-        taskExecutor = endpoint.getCamelContext().getExecutorServiceManager()
-                .newSingleThreadScheduledExecutor(this, "PubSubReconnectTask");
+        // the scheduler of the retry delay is kept until doShutdown: a loop of the previous start that waits in that
+        // delay must still be woken up, and then ends on the generation check
+        if (taskExecutor == null) {
+            taskExecutor = endpoint.getCamelContext().getExecutorServiceManager()
+                    .newSingleThreadScheduledExecutor(this, "PubSubReconnectTask");
+        }
         long current = generation.incrementAndGet();
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
             executor.submit(new SubscriberWrapper(current));

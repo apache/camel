@@ -47,6 +47,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -54,7 +56,7 @@ import static org.mockito.Mockito.when;
  * subscribe or pull again when its subscriber terminates or its pull is cancelled: not while the consumer waits for its
  * pending exchanges, and not after the consumer was started again (route restart), which starts its own loops.
  */
-public class GooglePubsubConsumerStopPullingTest {
+class GooglePubsubConsumerStopPullingTest {
 
     private final GooglePubsubEndpoint endpoint = mock();
     private final GooglePubsubComponent component = mock();
@@ -158,9 +160,13 @@ public class GooglePubsubConsumerStopPullingTest {
             await().atMost(5, TimeUnit.SECONDS).until(() -> running.get() == 1);
 
             // route restart: stop, then start again before the first subscriber has terminated
+            ExecutorService firstConsumerExecutor = executors.get(0);
             consumer.stop();
             consumer.start();
             await().atMost(5, TimeUnit.SECONDS).until(() -> created.get() == 2);
+            // the executor of the first start is released, and the scheduler of the retry delay is kept
+            verify(executorServiceManager).shutdown(firstConsumerExecutor);
+            verify(executorServiceManager, times(1)).newSingleThreadScheduledExecutor(any(), anyString());
 
             firstTermination.countDown();
             // the loop of the first start ends once its subscriber terminated, and does not subscribe again
