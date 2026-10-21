@@ -1210,17 +1210,16 @@ public class MulticastProcessor extends BaseProcessorSupport
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
 
-                if (errorHandlers != null) {
-                    errorHandlers.putIfAbsent(key, answer);
-                }
-
-                // start the error handler now if this processor is already running, otherwise it will be
-                // started in doStart() to avoid starting producers before CamelContext is fully started
-                // (which would bypass the SupervisingRouteController retry logic).
-                // Using isRunAllowed() instead of getCamelContext().isStarted() covers the runtime case
-                // (e.g. RecipientListProcessor builds wrappers during Starting and Stopping phases).
+                // Start before publishing to the cache: a second exchange to the same new recipient
+                // can take the cache-hit path and use the wrapper before it is started.
+                // isRunAllowed() covers STARTING/STARTED/SUSPENDED phases; during doInit()
+                // (INITIALIZING) it is false, so wrappers built there are deferred to doStart().
                 if (isRunAllowed()) {
                     ServiceHelper.startService(answer);
+                }
+
+                if (errorHandlers != null) {
+                    errorHandlers.putIfAbsent(key, answer);
                 }
 
             } catch (Exception e) {
@@ -1310,12 +1309,16 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors, errorHandlers != null ? errorHandlers.values() : null, aggregationStrategy, processorExchangeFactory);
+        ServiceHelper.stopService(
+                processors, errorHandlers != null ? errorHandlers.values() : null,
+                aggregationStrategy, processorExchangeFactory);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(processors, errorHandlers != null ? errorHandlers.values() : null, aggregationStrategy, processorExchangeFactory);
+        ServiceHelper.stopAndShutdownServices(
+                processors, errorHandlers != null ? errorHandlers.values() : null,
+                aggregationStrategy, processorExchangeFactory);
         // only clear error handlers when shutting down
         if (errorHandlers != null) {
             errorHandlers.clear();
