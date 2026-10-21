@@ -1643,7 +1643,7 @@ public final class CatalogDocs {
      * The body types a line per side, as compact as the options are: the carriers, the Java type, the format, the
      * description, the body for other option values, and the options that make it not known (CAMEL-24961).
      */
-    static JsonObject bodyTypes(Map<String, BodyTypeModel> bodyTypes) {
+    public static JsonObject bodyTypes(Map<String, BodyTypeModel> bodyTypes) {
         JsonObject answer = new JsonObject();
         for (Map.Entry<String, BodyTypeModel> entry : bodyTypes.entrySet()) {
             BodyTypeModel side = entry.getValue();
