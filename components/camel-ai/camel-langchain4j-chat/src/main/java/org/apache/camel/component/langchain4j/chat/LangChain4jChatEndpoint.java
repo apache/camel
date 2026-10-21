@@ -39,9 +39,9 @@ import static org.apache.camel.component.langchain4j.chat.LangChain4jChat.SCHEME
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "chatOperation", value = "CHAT_SINGLE_MESSAGE_WITH_PROMPT",
-                                                         carrier = Carrier.MAP),
+                                                         carriers = Carrier.MAP),
                                           @BodyType.When(option = "chatOperation", value = "CHAT_MULTIPLE_MESSAGES",
-                                                         carrier = Carrier.LIST) },
+                                                         carriers = Carrier.LIST) },
                                   description = "The prompt as text, or a ChatMessage; another body is sent as its"
                                                 + " toString(), and no body fails. CHAT_SINGLE_MESSAGE_WITH_PROMPT takes the"
                                                 + " variables of the template in the CamelLangChain4jChatPromptTemplate"

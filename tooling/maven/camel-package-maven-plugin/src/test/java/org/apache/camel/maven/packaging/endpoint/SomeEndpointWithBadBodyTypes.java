@@ -72,7 +72,7 @@ public final class SomeEndpointWithBadBodyTypes {
 
     @UriEndpoint(scheme = "some", syntax = "some", title = "some")
     @BodyTypes(producerOut = @BodyType(value = Carrier.TEXT,
-                                       byOption = @BodyType.When(option = "output", value = "DOM", carrier = Carrier.POJO)))
+                                       byOption = @BodyType.When(option = "output", value = "DOM", carriers = Carrier.POJO)))
     public static class ValueTheOptionDoesNotHave {
     }
 }
