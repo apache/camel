@@ -1212,7 +1212,7 @@ public class MulticastProcessor extends BaseProcessorSupport
 
                 // Start before publishing to the cache: a second exchange to the same new recipient
                 // can take the cache-hit path and use the wrapper before it is started.
-                // isRunAllowed() covers STARTING/STARTED/SUSPENDED phases; during doInit()
+                // isRunAllowed() covers STARTING/STARTED/SUSPENDING/SUSPENDED phases; during doInit()
                 // (INITIALIZING) it is false, so wrappers built there are deferred to doStart().
                 if (isRunAllowed()) {
                     ServiceHelper.startService(answer);
