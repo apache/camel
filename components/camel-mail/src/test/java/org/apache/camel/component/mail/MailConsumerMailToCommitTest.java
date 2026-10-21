@@ -134,4 +134,15 @@ class MailConsumerMailToCommitTest {
         // the mail is not marked: its key is removed, as on commit, so a later poll consumes it again
         assertFalse(repository.contains(KEY));
     }
+
+    @Test
+    void idempotentKeyIsSettledWhenThePollThreadClosedTheFolderMeanwhile() throws Exception {
+        when(uidFolder.getUIDValidity()).thenReturn(7L);
+        // IMAPFolder.checkOpened: the poll thread closed the folder (closeFolder=true) between isOpen() and the lookup
+        when(uidFolder.getMessageByUID(5L))
+                .thenThrow(new IllegalStateException("This operation is not allowed on a closed folder"));
+
+        assertNull(consumer.mailToCommit(mock(Message.class), 5L, 7L, 0, exchange));
+        assertFalse(repository.contains(KEY));
+    }
 }

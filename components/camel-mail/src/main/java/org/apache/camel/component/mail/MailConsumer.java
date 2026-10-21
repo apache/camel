@@ -81,6 +81,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
     // the IMAP UIDs of the mails of the current poll, and the UIDVALIDITY of the folder when they were retrieved
     private final Map<Message, Long> batchUids = new IdentityHashMap<>();
     private volatile long batchUidValidity = -1;
+    // the open of the folder in which the mails of the current poll were retrieved, read before they are retrieved: an
+    // exchange completing on another thread can open the folder again while they are retrieved
+    private int batchFolderOpen;
 
     /**
      * Is true if server is an IMAP server and supports IMAP SORT extension.
@@ -243,13 +246,15 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // the idempotent repository)
             releaseNotRouted(CastUtils.cast(exchanges));
             batchUids.clear();
+            // none of them is pending any more: a graceful shutdown (CompleteAllTasks) must not wait for them
+            pendingExchanges = 0;
         }
 
         return total;
     }
 
     private void routeBatch(Queue<Object> exchanges, int total) throws Exception {
-        final int batchOpen = folderOpens.get();
+        final int batchOpen = batchFolderOpen;
         // the mails of the batch are routed only while the folder stays open: once it was opened again, the remaining
         // mail objects of the batch are stale (a later poll retrieves those mails again)
         for (int index = 0; index < total && isBatchAllowed() && folderOpens.get() == batchOpen; index++) {
@@ -363,7 +368,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
             }
             return found;
-        } catch (MessagingException e) {
+        } catch (MessagingException | IllegalStateException e) {
+            // IllegalStateException: the poll thread opened or closed the folder (closeFolder=true) at the same time
+            // (IMAPFolder checkClosed / checkOpened)
             getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
             // the mail is not marked: settle its key as on commit, so it is not skipped as a duplicate for good
             commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
@@ -446,6 +453,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      */
     private Queue<Exchange> retrieveMessages() throws MessagingException {
         Queue<Exchange> answer = new LinkedList<>();
+        batchFolderOpen = folderOpens.get();
 
         Message[] messages;
         final SortTerm[] sortTerm = getEndpoint().getSortTerm();
