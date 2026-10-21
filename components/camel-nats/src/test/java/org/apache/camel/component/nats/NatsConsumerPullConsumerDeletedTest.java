@@ -113,6 +113,7 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
         final List<FakeConsumer> consumers = new ArrayList<>();
         final List<ConsumerConfiguration> subscribed = new ArrayList<>();
         int consumersCreated;
+        int fetches;
         RuntimeException failNextSubscribe;
 
         final class FakeConsumer {
@@ -124,6 +125,10 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
 
         synchronized int consumersCreated() {
             return consumersCreated;
+        }
+
+        synchronized int fetches() {
+            return fetches;
         }
 
         synchronized void publish(String body) {
@@ -204,6 +209,7 @@ class NatsConsumerPullConsumerDeletedTest extends CamelTestSupport {
         }
 
         private synchronized List<Message> fetch(FakeConsumer c, JetStreamSubscription sub, int batch, Duration timeout) {
+            fetches++;
             long deadline = System.nanoTime() + timeout.toNanos();
             List<Message> out = new ArrayList<>();
             while (true) {

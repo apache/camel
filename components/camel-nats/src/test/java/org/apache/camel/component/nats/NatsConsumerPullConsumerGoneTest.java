@@ -117,10 +117,17 @@ class NatsConsumerPullConsumerGoneTest extends CamelTestSupport {
             // nothing and the consumer check (every 5 seconds) finds it gone
             server.deleteConsumers(true);
             await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, warnings.size()));
+            int fetchesBefore = server.fetches();
+            long waitStarted = System.nanoTime();
             await().during(6, TimeUnit.SECONDS).atMost(8, TimeUnit.SECONDS).untilAsserted(() -> {
                 assertEquals(1, server.consumersCreated(), "the durable is not created again");
                 assertEquals(1, warnings.size(), "the WARN is logged once");
             });
+            // while the durable is gone each fetch ends at once: the loop waits pullFetchTimeout (100 ms) between them
+            long waitedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - waitStarted);
+            int fetches = server.fetches() - fetchesBefore;
+            assertTrue(fetches <= waitedMillis / 100 + 5,
+                    "no pull requests back to back: " + fetches + " fetches in " + waitedMillis + " ms");
 
             // the durable is created again with the same name: the same subscription fetches again
             mock.reset();

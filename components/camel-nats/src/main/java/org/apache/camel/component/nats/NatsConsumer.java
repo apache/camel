@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.nats.client.Connection;
@@ -282,14 +283,23 @@ public class NatsConsumer extends DefaultConsumer {
             Duration fetchTimeout = Duration.ofMillis(configuration.getPullFetchTimeout());
             while (NatsConsumer.this.isRunAllowed() && !Thread.currentThread().isInterrupted()) {
                 try {
+                    long fetchStarted = System.nanoTime();
                     List<Message> messages = sub.fetch(batchSize, fetchTimeout);
                     if (messages.isEmpty() && consumerCheckDue() && consumerGone(sub)) {
                         sub = consumerDeleted(sub, cc);
                         continue;
                     }
-                    if (!messages.isEmpty()) {
-                        durableGoneReported = false;
+                    if (messages.isEmpty()) {
+                        // jnats ends a fetch at once when its pull request has no responder (status 503), for example
+                        // while the consumer is gone: wait for the rest of the fetch timeout, so that the loop does
+                        // not send pull requests back to back
+                        long left = fetchTimeout.toNanos() - (System.nanoTime() - fetchStarted);
+                        if (left > 0) {
+                            TimeUnit.NANOSECONDS.sleep(left);
+                        }
+                        continue;
                     }
+                    durableGoneReported = false;
                     for (Message msg : messages) {
                         if (!NatsConsumer.this.isRunAllowed()) {
                             break;
@@ -313,6 +323,10 @@ public class NatsConsumer extends DefaultConsumer {
                 } catch (IllegalStateException e) {
                     // Subscription was closed (e.g. consumer is stopping), exit the loop
                     LOG.debug("Pull subscription closed, stopping fetch loop", e);
+                    return;
+                } catch (InterruptedException e) {
+                    // the consumer is stopping
+                    Thread.currentThread().interrupt();
                     return;
                 } catch (Exception e) {
                     NatsConsumer.this.getExceptionHandler().handleException("Error during JetStream pull fetch", e);
