@@ -30,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonDataFormatReifierTest {
 
-    private static final Set<String> JACKSON_ONLY_OPTIONS = Set.of(
+    // the options of the Jackson data format; another library gets only the ones it supports
+    private static final Set<String> JACKSON_OPTIONS = Set.of(
             "objectMapper", "useDefaultObjectMapper", "autoDiscoverObjectMapper",
             "include", "allowJmsType", "collectionType", "useList",
             "combineUnicodeSurrogates", "moduleClassNames", "moduleRefs",
@@ -40,47 +41,39 @@ public class JsonDataFormatReifierTest {
 
     @Test
     public void testGsonDoesNotIncludeJacksonOnlyOptions() {
-        assertNoJacksonOptions(JsonLibrary.Gson);
+        // Gson supports allowUnmarshallType
+        assertJacksonOptions(JsonLibrary.Gson, Set.of("allowUnmarshallType"));
     }
 
     @Test
     public void testFastjsonDoesNotIncludeJacksonOnlyOptions() {
-        assertNoJacksonOptions(JsonLibrary.Fastjson);
+        assertJacksonOptions(JsonLibrary.Fastjson, Set.of());
     }
 
     @Test
     public void testJsonbDoesNotIncludeJacksonOnlyOptions() {
-        Map<String, Object> properties = getProperties(JsonLibrary.Jsonb);
-        // Jsonb supports objectMapper, so only check the rest
-        Set<String> jsonbExcluded = Set.of(
-                "useDefaultObjectMapper", "autoDiscoverObjectMapper",
-                "include", "allowJmsType", "collectionType", "useList",
-                "combineUnicodeSurrogates", "moduleClassNames", "moduleRefs",
-                "enableFeatures", "disableFeatures", "allowUnmarshallType",
-                "schemaResolver", "autoDiscoverSchemaResolver", "namingStrategy",
-                "timezone", "maxStringLength");
-        for (String option : jsonbExcluded) {
-            assertFalse(properties.containsKey(option),
-                    "Jsonb should not include Jackson-only option: " + option);
-        }
-        assertTrue(properties.containsKey("objectMapper"),
-                "Jsonb should include objectMapper");
+        // Jsonb supports objectMapper and allowUnmarshallType
+        assertJacksonOptions(JsonLibrary.Jsonb, Set.of("objectMapper", "allowUnmarshallType"));
     }
 
     @Test
     public void testJacksonIncludesAllOptions() {
-        Map<String, Object> properties = getProperties(JsonLibrary.Jackson);
-        for (String option : JACKSON_ONLY_OPTIONS) {
-            assertTrue(properties.containsKey(option),
-                    "Jackson should include option: " + option);
-        }
+        assertJacksonOptions(JsonLibrary.Jackson, JACKSON_OPTIONS);
     }
 
-    private void assertNoJacksonOptions(JsonLibrary library) {
+    /**
+     * Asserts that the library gets the Jackson options it supports, and none of the others.
+     */
+    private void assertJacksonOptions(JsonLibrary library, Set<String> supported) {
         Map<String, Object> properties = getProperties(library);
-        for (String option : JACKSON_ONLY_OPTIONS) {
-            assertFalse(properties.containsKey(option),
-                    library.name() + " should not include Jackson-only option: " + option);
+        for (String option : JACKSON_OPTIONS) {
+            if (supported.contains(option)) {
+                assertTrue(properties.containsKey(option),
+                        library.name() + " should include option: " + option);
+            } else {
+                assertFalse(properties.containsKey(option),
+                        library.name() + " should not include option: " + option);
+            }
         }
     }
 
