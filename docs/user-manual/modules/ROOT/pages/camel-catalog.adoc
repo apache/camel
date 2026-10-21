@@ -187,7 +187,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 ----
 
 The build checks that each side belongs to the kind (a consumer-only component has no producer sides), that the
-options a side names exist, that `unchanged` is only on the body after a step and `any` only on what a step needs.
+options a side names exist, that a value of an option is one the option can have (such as `chat-completion` for the
+`operation` of openai), and that `unchanged` is only on the body after a step and `any` only on what a step needs.
 The values are read from the code that sets the body, and checked against the body types the message history records
 when the routes run.
 
