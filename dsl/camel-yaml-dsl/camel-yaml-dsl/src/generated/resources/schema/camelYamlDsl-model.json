@@ -17765,7 +17765,8 @@
         "displayName" : "External References",
         "kind" : "attribute",
         "index" : 10,
-        "group" : "common"
+        "group" : "security",
+        "label" : "security"
       } ]
     },
     "openIdConnect" : {

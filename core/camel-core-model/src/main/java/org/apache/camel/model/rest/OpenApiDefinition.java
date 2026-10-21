@@ -64,7 +64,7 @@ public class OpenApiDefinition extends OptionalIdentifiedDefinition<OpenApiDefin
     private String mockIncludePattern;
     @XmlAttribute
     @Metadata(description = "Which external references ($ref) the OpenAPI specification may use: all allows any reference, local allows references to the classpath and the file system only, and none allows only references inside the document. A reference the option does not allow fails the start.",
-              enums = "all,local,none", defaultValue = "all")
+              label = "security", enums = "all,local,none", defaultValue = "all")
     private String externalReferences;
 
     public void setRest(RestDefinition rest) {
