@@ -404,8 +404,8 @@ If neither option is configured, the client does not connect to an endpoint that
 insecure: the connection is encrypted, but the client does not authenticate the server it talks to.
 
 When the server certificate cannot be validated, the client logs a `WARN` message that starts with `Failed to
-connect`, and tries again every 10 seconds, so a certificate moved to `trusted/certs` is used at the next attempt. A
-producer fails with `IllegalStateException: No connected`, whose cause gives the reason.
+connect`, and tries again after `reconnectTimeout` (10 seconds by default), so a certificate moved to `trusted/certs`
+is used at the next attempt. A producer fails with `IllegalStateException: No connected`, whose cause gives the reason.
 
 The same validator checks the server certificate that the user name and password are encrypted with. With the
 security policy `None`, the server is not authenticated, whatever the configuration.

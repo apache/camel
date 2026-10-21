@@ -125,7 +125,8 @@ public class MiloClientConnection implements AutoCloseable, CamelContextAware {
         // when the connection is closed
         this.reconnectExecutor = executorServiceManager.newSingleThreadScheduledExecutor(this, "MiloClientReconnect");
 
-        this.manager = new SubscriptionManager(this.configuration, this.reconnectExecutor, this.executor, 10_000);
+        this.manager = new SubscriptionManager(
+                this.configuration, this.reconnectExecutor, this.executor, this.configuration.getReconnectTimeout());
     }
 
     @Override

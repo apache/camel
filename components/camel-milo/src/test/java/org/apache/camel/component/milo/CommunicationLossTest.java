@@ -65,6 +65,8 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
 
     private static final String MOCK_LATE = "mock:late";
 
+    private static final String MOCK_RECONNECT_TIMEOUT = "mock:reconnectTimeout";
+
     private static final String MOCK_UNKNOWN = "mock:unknown";
 
     private static final String MILO_CLIENT_UNKNOWN
@@ -75,6 +77,9 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
 
     @EndpointInject(MOCK_LATE)
     protected MockEndpoint lateEndpoint;
+
+    @EndpointInject(MOCK_RECONNECT_TIMEOUT)
+    protected MockEndpoint reconnectTimeoutEndpoint;
 
     @EndpointInject(MOCK_UNKNOWN)
     protected MockEndpoint unknownEndpoint;
@@ -88,9 +93,14 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
     @RegisterExtension
     AvailablePortFinder.Port lateRelayPort = AvailablePortFinder.find();
 
+    @RegisterExtension
+    AvailablePortFinder.Port reconnectTimeoutRelayPort = AvailablePortFinder.find();
+
     private final Relay relay = new Relay();
 
     private final Relay lateRelay = new Relay();
+
+    private final Relay reconnectTimeoutRelay = new Relay();
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -110,6 +120,11 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
                 // its own relay, so its own connection, which the test starts while the relay is down
                 from(resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(lateRelayPort.getPort())))
                         .routeId("late").autoStartup(false).to(MOCK_LATE);
+
+                // the same, with a delay between two connection attempts shorter than the default
+                from(resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(reconnectTimeoutRelayPort.getPort()))
+                     + "&reconnectTimeout=1000")
+                        .routeId("reconnectTimeout").autoStartup(false).to(MOCK_RECONNECT_TIMEOUT);
             }
         };
     }
@@ -124,6 +139,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         // after the context, so that its clients disconnect through the relays
         relay.stop();
         lateRelay.stop();
+        reconnectTimeoutRelay.stop();
     }
 
     @Test
@@ -214,6 +230,27 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         testBody(lateEndpoint.message(0), assertGoodValue("Foo"));
         lateRelay.start(lateRelayPort.getPort(), getServerPort());
         lateEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    void consumerStartedWithoutTheServerConnectsAfterTheConfiguredReconnectTimeout() throws Exception {
+        producer1.sendBody("Foo");
+
+        // the relay is down: the consumer reports its node once, while it keeps trying to connect every second
+        reconnectTimeoutEndpoint.expectedMessageCount(1);
+        reconnectTimeoutEndpoint.setAssertPeriod(3_000);
+        testBody(reconnectTimeoutEndpoint.message(0), assertNoCommunication());
+        context.getRouteController().startRoute("reconnectTimeout");
+        reconnectTimeoutEndpoint.assertIsSatisfied();
+
+        // the server becomes reachable: the next attempt, at most a second later, delivers the current value, long
+        // before the default delay of 10 seconds after the first attempt would have passed
+        reconnectTimeoutEndpoint.reset();
+        reconnectTimeoutEndpoint.expectedMessageCount(1);
+        reconnectTimeoutEndpoint.setResultWaitTime(5_000);
+        testBody(reconnectTimeoutEndpoint.message(0), assertGoodValue("Foo"));
+        reconnectTimeoutRelay.start(reconnectTimeoutRelayPort.getPort(), getServerPort());
+        reconnectTimeoutEndpoint.assertIsSatisfied();
     }
 
     /**
