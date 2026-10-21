@@ -1008,6 +1008,17 @@ that lists them. Set `camel.management.port` to another port, so that the manage
 and applies them. To keep a single port, remove them and configure the HTTP server instead: for example,
 authentication configured on the HTTP server for `/*` also applies to the management endpoints.
 
+=== camel-ibm-cos - the producer takes the bucket from the CamelIBMCOSOverrideBucketName header (Breaking change)
+
+The producer used the bucket named in the `CamelIBMCOSBucketName` header instead of the bucket of its endpoint. The
+consumer sets that header to the bucket an object was consumed from, so a route from one bucket to another
+(`from("ibm-cos:source...").to("ibm-cos:target...")`) stored each object back in the source bucket, and with the
+default `deleteAfterRead=true` the consumer then deleted it there. The producer now ignores `CamelIBMCOSBucketName`
+and uses the bucket of the endpoint, or the bucket named in the new `CamelIBMCOSOverrideBucketName` header
+(`IBMCOSConstants.OVERRIDE_BUCKET_NAME`), as camel-aws2-s3, camel-minio and camel-google-storage do since 4.10. A route
+that sets `CamelIBMCOSBucketName` to choose the bucket of a producer operation (for example `createBucket` or
+`deleteBucket`) must set `CamelIBMCOSOverrideBucketName` instead.
+
 === camel-ical - each unmarshal parses with its own calendar builder
 
 The `ical` data format used one ical4j `CalendarBuilder` for all exchanges. Two exchanges that were unmarshalled at

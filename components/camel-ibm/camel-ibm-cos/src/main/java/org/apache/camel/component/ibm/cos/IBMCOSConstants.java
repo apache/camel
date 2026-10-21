@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
  */
 public interface IBMCOSConstants {
 
-    @Metadata(description = "The bucket Name which this object will be stored or which will be used for the current operation",
+    @Metadata(label = "consumer", description = "The name of the bucket the consumed object is contained in",
               javaType = "String")
     String BUCKET_NAME = "CamelIBMCOSBucketName";
     @Metadata(label = "producer",
@@ -84,4 +84,8 @@ public interface IBMCOSConstants {
     @Metadata(label = "producer", description = "Whether the bucket exists or not",
               javaType = "Boolean")
     String BUCKET_EXISTS = "CamelIBMCOSBucketExists";
+    @Metadata(label = "producer",
+              description = "The bucket name to use instead of the bucket of the endpoint, in which this object will be stored or which will be used for the current operation",
+              javaType = "String")
+    String OVERRIDE_BUCKET_NAME = "CamelIBMCOSOverrideBucketName";
 }

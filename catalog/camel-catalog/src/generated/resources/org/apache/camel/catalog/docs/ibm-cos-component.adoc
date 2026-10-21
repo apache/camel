@@ -498,7 +498,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .setHeader("CamelIBMCOSBucketName", constant("newBucket"))
+    .setHeader("CamelIBMCOSOverrideBucketName", constant("newBucket"))
     .to("ibm-cos://mycamelbucket?cosClient=#cosClient&operation=createBucket")
     .to("mock:result");
 ----
@@ -509,7 +509,7 @@ XML::
 ----
 <route>
   <from uri="direct:start"/>
-  <setHeader name="CamelIBMCOSBucketName">
+  <setHeader name="CamelIBMCOSOverrideBucketName">
     <constant>newBucket</constant>
   </setHeader>
   <to uri="ibm-cos://mycamelbucket?cosClient=#cosClient&amp;operation=createBucket"/>
@@ -526,7 +526,7 @@ YAML::
       uri: direct:start
       steps:
         - setHeader:
-            name: CamelIBMCOSBucketName
+            name: CamelIBMCOSOverrideBucketName
             constant: newBucket
         - to:
             uri: ibm-cos://mycamelbucket
