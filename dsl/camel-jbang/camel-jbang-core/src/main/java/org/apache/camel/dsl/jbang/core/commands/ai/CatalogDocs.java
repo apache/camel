@@ -70,8 +70,9 @@ public final class CatalogDocs {
                                           + " gives the route; consumerReply: the bodies it can reply with; producerIn:"
                                           + " the bodies a to: can send; producerOut: the body after the to:; marshal,"
                                           + " unmarshal and expression In/Out: the same for a data format and a"
-                                          + " language. Carriers: text, bytes, stream, file, value, map, list, pojo,"
-                                          + " null, unchanged, any, unknown. A side not listed is not known";
+                                          + " language. Carriers: text, bytes, stream, file, value, map, list,"
+                                          + " iterator (no size, no index), pojo, null, unchanged, any, unknown. A side"
+                                          + " not listed is not known";
 
     /**
      * The rules a small model gets wrong most: functions live inside the placeholder, operators between placeholders.

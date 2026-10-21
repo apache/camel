@@ -100,7 +100,7 @@ public @interface BodyType {
     /**
      * The kinds of Java object a body is in. The runtime sorts the bodies it records into kinds as well (null, payload,
      * data and collection): text, bytes, a stream, a file and a value are a payload, a map and a pojo are data, a list
-     * is a collection.
+     * and an iterator are a collection.
      */
     enum Carrier {
 
@@ -118,8 +118,13 @@ public @interface BodyType {
         VALUE("value"),
         /** A java.util.Map, such as a JSON object parsed or a row of a query. */
         MAP("map"),
-        /** A List, another Collection, an array or an Iterator, such as a JSON array parsed or the rows of a query. */
+        /** A List, another Collection or an array, such as a JSON array parsed or the rows of a query. */
         LIST("list"),
+        /**
+         * An Iterator, which is read once, element by element, and has no size and no index: the rows of a query that
+         * streams them, or of a CSV file read lazily.
+         */
+        ITERATOR("iterator"),
         /** Another Java object, such as a DOM Document or a class a payload is unmarshalled into. */
         POJO("pojo"),
         /** The body as it was before the step: for the body after a step only. */
