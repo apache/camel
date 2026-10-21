@@ -229,6 +229,8 @@ public abstract class AbstractCamelContext extends BaseService
         implements CatalogCamelContext, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
+    // how many route ids keep their revision (CAMEL-25771)
+    private static final int MAX_ROUTE_REVISIONS = 10000;
 
     private final InternalServiceManager internalServiceManager;
 
@@ -252,8 +254,15 @@ public abstract class AbstractCamelContext extends BaseService
     private final StopWatch stopWatch = new StopWatch(false);
     private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
     private final Lock routesLock = new ReentrantLock();
-    // the revisions of the routes by id, guarded by routesLock (CAMEL-25771)
-    private final Map<String, RouteRevision> routeRevisions = new HashMap<>();
+    // the revisions of the routes by id, guarded by routesLock (CAMEL-25771): the ids used least recently go first
+    // once there are more than MAX_ROUTE_REVISIONS, so an application that keeps adding routes with new ids, such as
+    // Kamelet routes without an id of their own, does not grow it for the life of the JVM
+    private final Map<String, RouteRevision> routeRevisions = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, RouteRevision> eldest) {
+            return size() > MAX_ROUTE_REVISIONS;
+        }
+    };
     private final Lock lock = new ReentrantLock();
     private VetoCamelContextStartException vetoed;
     private String managementName;
@@ -4780,6 +4789,7 @@ public abstract class AbstractCamelContext extends BaseService
         routesLock.lock();
         try {
             routes.add(route);
+            // RouteService has set it before the route was announced; this is for a route added another way
             reviseRoute(route);
         } finally {
             routesLock.unlock();
@@ -4787,20 +4797,27 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     /**
-     * The revision of a route added: 1 the first time its id is added, one more when it is added again with another
-     * checksum (a reload that changed it), the same when it comes back as it was. It is kept by route id, so it
-     * outlives the route being removed and added again.
+     * Sets the revision of a route being added: 1 the first time its id is added, one more when it is added again with
+     * another checksum (a reload that changed it), the same when it comes back as it was. It is kept by route id, so it
+     * outlives the route being removed and added again; the {@value #MAX_ROUTE_REVISIONS} ids used last are kept. The
+     * same route revised again keeps its revision, so RouteService sets it before the route added event and
+     * {@link #addRoute(Route)} after it.
      */
-    private void reviseRoute(Route route) {
+    void reviseRoute(Route route) {
         String checksum = route.getChecksum();
         if (route.getId() == null || checksum == null || !(route instanceof DefaultRoute defaultRoute)) {
             return;
         }
-        RouteRevision previous = routeRevisions.get(route.getId());
-        int revision = previous == null ? 1
-                : previous.checksum().equals(checksum) ? previous.revision() : previous.revision() + 1;
-        routeRevisions.put(route.getId(), new RouteRevision(checksum, revision));
-        defaultRoute.setRevision(revision);
+        routesLock.lock();
+        try {
+            RouteRevision previous = routeRevisions.get(route.getId());
+            int revision = previous == null ? 1
+                    : previous.checksum().equals(checksum) ? previous.revision() : previous.revision() + 1;
+            routeRevisions.put(route.getId(), new RouteRevision(checksum, revision));
+            defaultRoute.setRevision(revision);
+        } finally {
+            routesLock.unlock();
+        }
     }
 
     /** The checksum a route id was last added with, and its revision. */

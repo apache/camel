@@ -220,8 +220,9 @@ public interface Route extends RuntimeConfiguration {
 
     /**
      * Gets the checksum of the route as written: its steps, options and expressions, with property placeholders as
-     * written, without the ids Camel generates and where the route is in its source. The same route gives the same
-     * checksum in every run, so tools can tell which routes changed between two runs.
+     * written, without the ids Camel generates and where the route is in its source, and with the secrets in endpoint
+     * URIs masked. The same route gives the same checksum in every run, so tools can tell which routes changed between
+     * two runs.
      *
      * @return the checksum, or null when it is not known (camel-xml-io is not on the classpath)
      * @see    org.apache.camel.spi.ModelChecksumGenerator
@@ -236,7 +237,7 @@ public interface Route extends RuntimeConfiguration {
      * Gets the revision of the route in this run: 1 when the route is added, one more each time it is added again with
      * another checksum, such as when a reload changed it. A reload that brings the route back as it was keeps the
      * revision. The revision follows the route id, and starts over when the application restarts (tools compare
-     * checksums across runs).
+     * checksums across runs). Camel keeps the revisions of the 10000 route ids used last.
      *
      * @return the revision, or 0 when it is not known (the checksum is not known)
      * @since  4.24

@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * CAMEL-25771: a managed route has the checksum of the route as written, and its revision in this run.
  */
 @DisabledOnOs(OS.AIX)
-public class ManagedRouteChecksumTest extends ManagementTestSupport {
+class ManagedRouteChecksumTest extends ManagementTestSupport {
 
     @Test
-    public void testChecksumAndRevision() throws Exception {
+    void testChecksumAndRevision() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getCamelObjectName(TYPE_ROUTE, "myRoute");
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -24,6 +26,10 @@ import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
+import org.apache.camel.builder.TemplatedRouteBuilder;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
+import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * CAMEL-25771: each route has a checksum of the route as written, the same in every run, and a revision that counts the
  * times it came back changed in this run, so tools can tell which routes changed.
  */
-public class RouteChecksumTest {
+class RouteChecksumTest {
 
     private static RouteBuilder orders(String target) {
         return new RouteBuilder() {
@@ -71,7 +77,7 @@ public class RouteChecksumTest {
     }
 
     @Test
-    public void testSameRouteSameChecksumInEveryRun() throws Exception {
+    void testSameRouteSameChecksumInEveryRun() throws Exception {
         String first = checksum("orders", orders("mock:out"));
         String second = checksum("orders", orders("mock:out"));
 
@@ -81,7 +87,7 @@ public class RouteChecksumTest {
     }
 
     @Test
-    public void testEditedRouteNewChecksum() throws Exception {
+    void testEditedRouteNewChecksum() throws Exception {
         String before = checksum("orders", orders("mock:out"));
 
         assertNotEquals(before, checksum("orders", orders("mock:other")));
@@ -100,7 +106,7 @@ public class RouteChecksumTest {
     }
 
     @Test
-    public void testGeneratedIdsAndOtherRoutesLeftOut() throws Exception {
+    void testGeneratedIdsAndOtherRoutesLeftOut() throws Exception {
         String alone = checksum("orders", orders("mock:out"));
         // another route first: the ids Camel generates for the steps of orders are not the same
         String after = checksum("orders", new RouteBuilder() {
@@ -114,7 +120,7 @@ public class RouteChecksumTest {
     }
 
     @Test
-    public void testRouteConfigurationsLeftOut() throws Exception {
+    void testRouteConfigurationsLeftOut() throws Exception {
         String plain = checksum("orders", orders("mock:out"));
         // the onException of a route configuration is merged into every route, which are not changed by it
         String configured = checksum("orders", new RouteConfigurationBuilder() {
@@ -141,7 +147,7 @@ public class RouteChecksumTest {
     }
 
     @Test
-    public void testPlaceholdersAsWritten() throws Exception {
+    void testPlaceholdersAsWritten() throws Exception {
         String a = checksum("orders", context -> context.getPropertiesComponent().setInitialProperties(props("mock:a")),
                 orders("{{target}}"));
         String b = checksum("orders", context -> context.getPropertiesComponent().setInitialProperties(props("mock:b")),
@@ -152,7 +158,7 @@ public class RouteChecksumTest {
     }
 
     @Test
-    public void testSourceLocationsLeftOutAlsoWhileDebugging() throws Exception {
+    void testSourceLocationsLeftOutAlsoWhileDebugging() throws Exception {
         String plain = checksum("orders", orders("mock:out"));
         String debugging = checksum("orders", context -> {
             context.setSourceLocationEnabled(true);
@@ -163,7 +169,7 @@ public class RouteChecksumTest {
     }
 
     @Test
-    public void testRevisionCountsTheChanges() throws Exception {
+    void testRevisionCountsTheChanges() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             context.addRoutes(orders("mock:out"));
             context.start();
@@ -183,6 +189,72 @@ public class RouteChecksumTest {
             replace(context, orders("mock:out"));
             assertEquals(3, context.getRoute("orders").getRevision());
         }
+    }
+
+    @Test
+    void testTemplatedRouteSameChecksumWhenCreatedAgain() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    routeTemplate("orders-template").templateParameter("target")
+                            .from("direct:orders")
+                            .split(body())
+                            .to("{{target}}");
+                }
+            });
+            context.start();
+
+            String first = addOrders(context);
+            assertEquals(1, context.getRoute("orders").getRevision());
+
+            // created again, as a reload does: the node prefix comes from a counter, which is no part of the checksum
+            context.getRouteController().stopRoute("orders");
+            context.removeRoute("orders");
+            String second = addOrders(context);
+
+            assertNotNull(first);
+            assertEquals(first, second);
+            assertEquals(1, context.getRoute("orders").getRevision());
+        }
+    }
+
+    private static String addOrders(CamelContext context) {
+        TemplatedRouteBuilder.builder(context, "orders-template").routeId("orders").parameter("target", "mock:out")
+                .add();
+        return context.getRoute("orders").getChecksum();
+    }
+
+    @Test
+    void testSecretsInUrisMasked() throws Exception {
+        // the checksum is printed beside the masked URIs: it must not tell one literal password from another
+        String a = checksum("orders", orders("stub:http://localhost/orders?password=secret1"));
+        String b = checksum("orders", orders("stub:http://localhost/orders?password=secret2"));
+        String other = checksum("orders", orders("stub:http://localhost/other?password=secret1"));
+
+        assertEquals(a, b);
+        assertNotEquals(a, other);
+    }
+
+    @Test
+    void testRevisionKnownWhenTheRouteIsAnnounced() throws Exception {
+        List<Integer> revisions = new ArrayList<>();
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+                @Override
+                public void notify(CamelEvent event) {
+                    if (event instanceof RouteAddedEvent added) {
+                        revisions.add(added.getRoute().getRevision());
+                    }
+                }
+            });
+            context.addRoutes(orders("mock:out"));
+            context.start();
+            replace(context, orders("mock:other"));
+        }
+
+        // 0 would say the checksum is not known
+        assertEquals(List.of(1, 2), revisions);
     }
 
     private static void replace(CamelContext context, RoutesBuilder builder) throws Exception {

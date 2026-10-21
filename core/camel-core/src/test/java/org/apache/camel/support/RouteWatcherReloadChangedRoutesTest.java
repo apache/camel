@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * CAMEL-25771: the summary of a reload says how many routes the reload changed, and marks them: a route that came back
  * with another checksum is changed, one that was not there before is new.
  */
-public class RouteWatcherReloadChangedRoutesTest extends ContextTestSupport {
+class RouteWatcherReloadChangedRoutesTest extends ContextTestSupport {
 
     @TempDir
     Path dir;
@@ -104,7 +104,7 @@ public class RouteWatcherReloadChangedRoutesTest extends ContextTestSupport {
     }
 
     @AfterEach
-    public void stopCapture() {
+    void stopCapture() {
         strategy.stop();
         LoggerContext logging = (LoggerContext) LogManager.getContext(false);
         logging.getConfiguration().getRootLogger().removeAppender(appender.getName());
@@ -113,7 +113,7 @@ public class RouteWatcherReloadChangedRoutesTest extends ContextTestSupport {
     }
 
     @Test
-    public void theSummarySaysWhichRoutesTheReloadChanged() throws Exception {
+    void theSummarySaysWhichRoutesTheReloadChanged() throws Exception {
         // the file now sends the orders elsewhere and has a new route; the stock route is as it was
         loader.next = routes("mock:other", true);
 

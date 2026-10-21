@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * CAMEL-25771: the route consoles have the checksum of each route as written, and the route console its revision, so a
  * tool can tell which routes changed and which version of a route the structure or the dump is of.
  */
-public class RouteChecksumDevConsoleTest extends ContextTestSupport {
+class RouteChecksumDevConsoleTest extends ContextTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -48,7 +48,7 @@ public class RouteChecksumDevConsoleTest extends ContextTestSupport {
     }
 
     @Test
-    public void testChecksumInTheRouteConsoles() {
+    void testChecksumInTheRouteConsoles() {
         String checksum = context.getRoute("myRoute").getChecksum();
         Assertions.assertNotNull(checksum);
 

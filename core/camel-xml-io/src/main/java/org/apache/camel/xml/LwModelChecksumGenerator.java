@@ -34,8 +34,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link ModelChecksumGenerator} based on the generated {@link ModelWriter}, which writes every option of the model:
- * the SHA-256 of the definition as XML, with property placeholders as written, without the ids Camel generates and
- * without source locations (also while debugging). The first 12 hex characters of it are the checksum.
+ * the SHA-256 of the definition as XML, with property placeholders as written, without the ids Camel generates (also
+ * those a route template or Kamelet makes from a counter), without source locations (also while debugging), and with
+ * the secrets in endpoint URIs masked. The first 12 hex characters of it are the checksum.
  */
 @JdkService(ModelChecksumGenerator.FACTORY)
 public class LwModelChecksumGenerator implements ModelChecksumGenerator {
@@ -51,7 +52,7 @@ public class LwModelChecksumGenerator implements ModelChecksumGenerator {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             try (Writer out = new OutputStreamWriter(
                     new DigestOutputStream(OutputStream.nullOutputStream(), digest), StandardCharsets.UTF_8)) {
-                LwModelToXMLDumper.write(context, definition, out, false, false, false);
+                LwModelToXMLDumper.write(context, definition, out, false, false, false, true);
             }
             return HexFormat.of().formatHex(digest.digest(), 0, CHECKSUM_BYTES);
         } catch (Exception e) {
