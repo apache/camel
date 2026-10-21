@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -49,6 +50,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected transient boolean loggedInWarning;
     protected transient boolean autoCreatedDone;
     protected transient boolean autoCreateWarning;
+    protected transient boolean sendNoopOnNextPoll;
 
     protected RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations,
                                  GenericFileProcessStrategy processStrategy) {
@@ -218,6 +220,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected void disconnect() {
         // eager indicate we are no longer logged in
         loggedIn = false;
+        // the next poll connects again, so it does not need a noop to check the connection
+        sendNoopOnNextPoll = false;
 
         // disconnect
         try {
@@ -238,6 +242,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected void forceDisconnect() {
         // eager indicate we are no longer logged in
         loggedIn = false;
+        // the next poll connects again, so it does not need a noop to check the connection
+        sendNoopOnNextPoll = false;
 
         // disconnect
         try {
@@ -253,11 +259,50 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         }
     }
 
+    /**
+     * Whether to send a noop before each poll to check that the connection is still valid (the sendNoop option).
+     * <p/>
+     * Even when this returns false, the consumer sends a noop before the next poll after an operation failed with an
+     * I/O error, see {@link #sendNoopOnNextPollIfIOFailure(Throwable)}.
+     */
+    protected boolean isSendNoop() {
+        return getEndpoint().getConfiguration().isSendNoop();
+    }
+
+    /**
+     * Without the noop before each poll, a connection that the server has closed may only be found when an operation on
+     * it fails. When the failure is caused by an I/O error, the consumer therefore sends a noop before the next poll,
+     * and connects again if the connection is no longer valid.
+     *
+     * @param cause the cause of the failure
+     */
+    protected void sendNoopOnNextPollIfIOFailure(Throwable cause) {
+        if (!isSendNoop() && ObjectHelper.getException(IOException.class, cause) != null) {
+            LOG.debug("Operation failed with an I/O error, sending a noop before the next poll to: {}", remoteServer());
+            sendNoopOnNextPoll = true;
+        }
+    }
+
+    @Override
+    protected void handleException(String message, Exchange exchange, Throwable t) {
+        // a failure while retrieving or processing a file is not thrown out of the poll, so the poll strategy does not
+        // disconnect
+        sendNoopOnNextPollIfIOFailure(t);
+        super.handleException(message, exchange, t);
+    }
+
     protected void connectIfNecessary() {
-        // We need to send a noop first to check if the connection is still open
+        // We need to check if the connection is still open, by sending a noop first (default), or when sendNoop is
+        // turned off by only checking the connection state of the client, which sends nothing to the server, unless an
+        // operation failed with an I/O error
         boolean isConnected = false;
         try {
-            isConnected = getOperations().sendNoop();
+            if (isSendNoop() || sendNoopOnNextPoll) {
+                sendNoopOnNextPoll = false;
+                isConnected = getOperations().sendNoop();
+            } else {
+                isConnected = getOperations().isConnected();
+            }
         } catch (Exception ex) {
             // here we just ignore the exception and try to reconnect
             if (LOG.isDebugEnabled()) {
