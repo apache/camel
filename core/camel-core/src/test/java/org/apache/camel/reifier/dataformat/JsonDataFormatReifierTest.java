@@ -40,23 +40,24 @@ public class JsonDataFormatReifierTest {
 
     @Test
     public void testGsonDoesNotIncludeJacksonOnlyOptions() {
-        assertNoJacksonOptions(JsonLibrary.Gson);
+        // Gson supports allowUnmarshallType, so only check the rest
+        assertNoJacksonOptions(JsonLibrary.Gson, Set.of("allowUnmarshallType"));
     }
 
     @Test
     public void testFastjsonDoesNotIncludeJacksonOnlyOptions() {
-        assertNoJacksonOptions(JsonLibrary.Fastjson);
+        assertNoJacksonOptions(JsonLibrary.Fastjson, Set.of());
     }
 
     @Test
     public void testJsonbDoesNotIncludeJacksonOnlyOptions() {
         Map<String, Object> properties = getProperties(JsonLibrary.Jsonb);
-        // Jsonb supports objectMapper, so only check the rest
+        // Jsonb supports objectMapper and allowUnmarshallType, so only check the rest
         Set<String> jsonbExcluded = Set.of(
                 "useDefaultObjectMapper", "autoDiscoverObjectMapper",
                 "include", "allowJmsType", "collectionType", "useList",
                 "combineUnicodeSurrogates", "moduleClassNames", "moduleRefs",
-                "enableFeatures", "disableFeatures", "allowUnmarshallType",
+                "enableFeatures", "disableFeatures",
                 "schemaResolver", "autoDiscoverSchemaResolver", "namingStrategy",
                 "timezone", "maxStringLength");
         for (String option : jsonbExcluded) {
@@ -65,6 +66,8 @@ public class JsonDataFormatReifierTest {
         }
         assertTrue(properties.containsKey("objectMapper"),
                 "Jsonb should include objectMapper");
+        assertTrue(properties.containsKey("allowUnmarshallType"),
+                "Jsonb should include allowUnmarshallType");
     }
 
     @Test
@@ -76,11 +79,16 @@ public class JsonDataFormatReifierTest {
         }
     }
 
-    private void assertNoJacksonOptions(JsonLibrary library) {
+    private void assertNoJacksonOptions(JsonLibrary library, Set<String> supported) {
         Map<String, Object> properties = getProperties(library);
         for (String option : JACKSON_ONLY_OPTIONS) {
-            assertFalse(properties.containsKey(option),
-                    library.name() + " should not include Jackson-only option: " + option);
+            if (supported.contains(option)) {
+                assertTrue(properties.containsKey(option),
+                        library.name() + " should include option: " + option);
+            } else {
+                assertFalse(properties.containsKey(option),
+                        library.name() + " should not include Jackson-only option: " + option);
+            }
         }
     }
 
