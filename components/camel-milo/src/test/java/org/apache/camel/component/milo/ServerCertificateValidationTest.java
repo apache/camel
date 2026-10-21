@@ -126,7 +126,8 @@ class ServerCertificateValidationTest extends AbstractMiloServerTest {
             public void configure() {
                 from(DIRECT_START).to(MILO_SERVER_ITEM);
 
-                // the consumers deliver the current value while they start, so the test starts these routes
+                // consumers deliver the current server value when they subscribe, so they are started
+                // only after the initial write to avoid receiving both the initial value and the write as two messages
                 from(resolve(trustListClient("trusted"))).autoStartup(false).to("mock:trustList");
                 from(resolve(trustListClient("empty"))).autoStartup(false).to("mock:emptyTrustList");
                 from(resolve(MILO_CLIENT)).autoStartup(false).to("mock:notConfigured");
@@ -151,8 +152,9 @@ class ServerCertificateValidationTest extends AbstractMiloServerTest {
         testBody(this.notConfiguredEndpoint.message(0), assertNoCommunication());
         this.notConfiguredEndpoint.setAssertPeriod(5_000);
 
-        // the value is written before the consumers start, so it is the first notification of each client that
-        // connects (and not the initial Bad value of the item)
+        // write the initial value before starting the consumer routes so that each consumer receives
+        // exactly one notification (the current value at subscription time) rather than two
+        // (the uninitialized value at subscription time, then the write)
         this.producer.sendBody("Foo");
         context.getRouteController().startAllRoutes();
 
