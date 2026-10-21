@@ -126,6 +126,30 @@ class MinaSftpConsumerJailStartingDirectorySymlinkIT extends MinaSftpServerTestS
         mock.assertIsSatisfied();
     }
 
+    @Test
+    void skipsLinkWhoseTargetStepsThroughBackslashNamedLinkOutsideStartingDirectory() throws Exception {
+        Path inbox = Files.createDirectories(base.resolve("inbox"));
+        Path outside = Files.createDirectories(base.resolve("outside"));
+        Files.writeString(inbox.resolve("hello.txt"), "Hello World");
+        Files.writeString(outside.resolve("report.txt"), "Outside");
+        // a real directory inside the starting directory, named as the link below with its backslash removed, with a
+        // file at the path that a check which drops the backslash would resolve and accept as inside the jail
+        Files.writeString(Files.createDirectories(inbox.resolve("pivotx")).resolve("report.txt"), "Inside");
+        // a symbolic link whose name contains a backslash, pointing outside the starting directory
+        createSymbolicLink(inbox.resolve("pivot\\x"), Path.of("..", "outside"));
+        // a link whose stored target steps through the backslash-named link; the server follows it to the outside file
+        createSymbolicLink(inbox.resolve("latest.txt"), Path.of("pivot\\x", "report.txt"));
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        // the links are not part of the batch of the poll that picked up hello.txt (latest.txt is skipped, not consumed)
+        mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(1);
+
+        consume("inbox", "");
+
+        mock.assertIsSatisfied();
+    }
+
     private void consume(String directory, String query) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
