@@ -2274,4 +2274,7 @@ consumer still sends a noop before it renames or deletes a file on the server, a
 unless `noop=true`.
 
 For sftp and mina-sftp the client notices a closed connection, but not one that dropped silently. For sftp the noop is
-a keep-alive message that does not wait for a reply, so it does not find such a connection either.
+a keep-alive message that does not wait for a reply, so it does not find such a connection either. For mina-sftp the
+noop is a request that waits for the reply, so with `sendNoop=false` such a connection is found by the next poll,
+which fails and is logged before the consumer connects again. For sftp and mina-sftp, set `serverAliveInterval` to let
+the client close such a connection itself, so that the consumer connects again before the poll.
