@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class GoogleMailStreamClientPerEndpointOptionsTest {
 
     private static final String OAUTH = "?clientId=id&clientSecret=secret&refreshToken=";
+    private static final String SERVICE_ACCOUNT = "?serviceAccountKey=classpath:service-account.json&delegate=";
 
     @Test
     void shouldKeepOneClientPerDistinctOptions() throws Exception {
@@ -57,6 +58,23 @@ class GoogleMailStreamClientPerEndpointOptionsTest {
             assertSame(firstClient, sameAsFirst.getClient());
             assertNotSame(firstClient, secondClient);
             assertEquals(Arrays.asList("token-a", "token-b"), factory.created);
+        }
+    }
+
+    @Test
+    void shouldKeepOneClientPerDelegate() throws Exception {
+        RecordingClientFactory factory = new RecordingClientFactory();
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getComponent("google-mail-stream", GoogleMailStreamComponent.class).setClientFactory(factory);
+            context.start();
+
+            GoogleMailStreamEndpoint first = context.getEndpoint("google-mail-stream://box-a" + SERVICE_ACCOUNT + "user-a",
+                    GoogleMailStreamEndpoint.class);
+            GoogleMailStreamEndpoint second = context.getEndpoint("google-mail-stream://box-b" + SERVICE_ACCOUNT + "user-b",
+                    GoogleMailStreamEndpoint.class);
+
+            assertNotSame(first.getClient(), second.getClient());
+            assertEquals(Arrays.asList("user-a", "user-b"), factory.created);
         }
     }
 

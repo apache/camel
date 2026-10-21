@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class GoogleCalendarStreamClientPerEndpointOptionsTest {
 
     private static final String OAUTH = "?clientId=id&clientSecret=secret&refreshToken=";
+    private static final String SERVICE_ACCOUNT = "?serviceAccountKey=classpath:service-account.json&delegate=";
 
     @Test
     void shouldKeepOneClientPerDistinctOptions() throws Exception {
@@ -57,6 +58,25 @@ class GoogleCalendarStreamClientPerEndpointOptionsTest {
             assertSame(firstClient, sameAsFirst.getClient());
             assertNotSame(firstClient, secondClient);
             assertEquals(Arrays.asList("token-a", "token-b"), factory.created);
+        }
+    }
+
+    @Test
+    void shouldKeepOneClientPerDelegate() throws Exception {
+        RecordingClientFactory factory = new RecordingClientFactory();
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getComponent("google-calendar-stream", GoogleCalendarStreamComponent.class).setClientFactory(factory);
+            context.start();
+
+            GoogleCalendarStreamEndpoint first
+                    = context.getEndpoint("google-calendar-stream://cal-a" + SERVICE_ACCOUNT + "user-a",
+                            GoogleCalendarStreamEndpoint.class);
+            GoogleCalendarStreamEndpoint second
+                    = context.getEndpoint("google-calendar-stream://cal-b" + SERVICE_ACCOUNT + "user-b",
+                            GoogleCalendarStreamEndpoint.class);
+
+            assertNotSame(first.getClient(), second.getClient());
+            assertEquals(Arrays.asList("user-a", "user-b"), factory.created);
         }
     }
 

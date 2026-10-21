@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 class GoogleSheetsStreamClientPerEndpointOptionsTest {
 
     private static final String OAUTH = "?clientId=id&clientSecret=secret&refreshToken=";
+    private static final String SERVICE_ACCOUNT = "?serviceAccountKey=classpath:service-account.json&delegate=";
 
     @Test
     void shouldKeepOneClientPerDistinctOptions() throws Exception {
@@ -57,6 +58,25 @@ class GoogleSheetsStreamClientPerEndpointOptionsTest {
             assertSame(firstClient, sameAsFirst.getClient());
             assertNotSame(firstClient, secondClient);
             assertEquals(Arrays.asList("token-a", "token-b"), factory.created);
+        }
+    }
+
+    @Test
+    void shouldKeepOneClientPerDelegate() throws Exception {
+        RecordingClientFactory factory = new RecordingClientFactory();
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getComponent("google-sheets-stream", GoogleSheetsStreamComponent.class).setClientFactory(factory);
+            context.start();
+
+            GoogleSheetsStreamEndpoint first
+                    = context.getEndpoint("google-sheets-stream://sheet-a" + SERVICE_ACCOUNT + "user-a",
+                            GoogleSheetsStreamEndpoint.class);
+            GoogleSheetsStreamEndpoint second
+                    = context.getEndpoint("google-sheets-stream://sheet-b" + SERVICE_ACCOUNT + "user-b",
+                            GoogleSheetsStreamEndpoint.class);
+
+            assertNotSame(first.getClient(), second.getClient());
+            assertEquals(Arrays.asList("user-a", "user-b"), factory.created);
         }
     }
 
