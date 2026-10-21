@@ -80,20 +80,23 @@ public class UnmarshalProcessor extends AsyncProcessorSupport
             if (variableSend != null) {
                 body = ExchangeHelper.getVariable(exchange, variableSend);
             }
-            final Message out;
             if (allowNullBody && body == null) {
-                // The body is null, and it is an allowed value so let's skip the unmarshalling
-                out = exchange.getOut();
-            } else {
-                // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
-                out = exchange.getOut();
-                out.copyFrom(in);
-                if (body instanceof InputStream is) {
-                    stream = is;
-                    result = dataFormat.unmarshal(exchange, stream);
-                } else {
-                    result = dataFormat.unmarshal(exchange, body);
+                // the body is null, and it is an allowed value so let's skip the unmarshalling
+                // and leave the message as it is
+                if (variableReceive != null) {
+                    ExchangeHelper.setVariable(exchange, variableReceive, null);
                 }
+                callback.done(true);
+                return true;
+            }
+            // lets set up the out message before we invoke the dataFormat so that it can mutate it if necessary
+            final Message out = exchange.getOut();
+            out.copyFrom(in);
+            if (body instanceof InputStream is) {
+                stream = is;
+                result = dataFormat.unmarshal(exchange, stream);
+            } else {
+                result = dataFormat.unmarshal(exchange, body);
             }
             if (result instanceof Exchange) {
                 if (result != exchange) {
