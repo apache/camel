@@ -110,10 +110,13 @@ public class CommitConsumer extends AbstractGitHub2Consumer {
             }
 
             List<GHCommit> commits = new ArrayList<>();
-            // read up to the last routed commit: the commits pushed since then all come before it. Stopping after the
-            // first 100 would lose the older ones when more were pushed between two polls, as lastSha then moves to
-            // the newest one. Without a last commit, or when it is not among the remembered number of newest commits
-            // (it is no longer on the branch, or it is further back than that), only the 100 newest are considered
+            // read up to the last routed commit, and not only the first 100: lastSha then moves to the newest one, so
+            // the older new commits would be lost when more than 100 were pushed between two polls. GitHub lists the
+            // commits by committer date, newest first: in a linear history the commits pushed since the last routed
+            // one all come before it, but the commits that a merge brings in keep their older dates and can come after
+            // it, and are not routed. Without a last commit, or when it is not among the remembered number of newest
+            // commits (it is no longer on the branch, or it is further back than that), only the 100 newest are
+            // considered
             int limit = lastSha != null ? CAPACITY : MAX_COMMITS_WITHOUT_LAST_SHA;
             boolean lastShaFound = false;
             for (GHCommit commit : getRepository().queryCommits().from(branchName).list().withPageSize(100)) {
