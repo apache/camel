@@ -18,6 +18,7 @@ package org.apache.camel.xml;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -75,6 +76,20 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             CamelContext context, NamedNode definition, boolean resolvePlaceholders, boolean generatedIds,
             boolean sourceLocation)
             throws Exception {
+        StringWriter buffer = new StringWriter();
+        // while debugging the source locations are written too, for the debugger to show where a step is
+        write(context, definition, buffer, resolvePlaceholders, generatedIds, sourceLocation || context.isDebugging());
+        return buffer.toString();
+    }
+
+    /**
+     * Writes the definition as XML: the dump, and the text the checksum of a route is computed from
+     * ({@link LwModelChecksumGenerator}), which never has the source locations.
+     */
+    static void write(
+            CamelContext context, NamedNode definition, Writer out, boolean resolvePlaceholders, boolean generatedIds,
+            boolean sourceLocation)
+            throws Exception {
 
         Properties properties = new Properties();
         Map<String, String> namespaces = new LinkedHashMap<>();
@@ -82,7 +97,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         List<Runnable> restorers = new ArrayList<>();
         Consumer<RouteDefinition> extractor = route -> {
             extractNamespaces(route, namespaces);
-            if (sourceLocation || context.isDebugging()) {
+            if (sourceLocation) {
                 extractSourceLocations(route, locations);
             }
             restorers.add(resolveEndpointDslUris(route));
@@ -94,8 +109,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
             }
         };
 
-        StringWriter buffer = new StringWriter();
-        ModelWriter writer = new ModelWriter(buffer, BaseWriter.DEFAULT_NAMESPACE) {
+        ModelWriter writer = new ModelWriter(out, BaseWriter.DEFAULT_NAMESPACE) {
             @Override
             protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def)
                     throws IOException {
@@ -113,7 +127,7 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                     doWriteAttribute("note", def.getNote());
                 }
                 // write location information
-                if (sourceLocation || context.isDebugging()) {
+                if (sourceLocation) {
                     int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
                     if (line != -1) {
                         writer.addAttribute("sourceLineNumber", Integer.toString(line));
@@ -212,8 +226,6 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         } finally {
             restorers.forEach(Runnable::run);
         }
-
-        return buffer.toString();
     }
 
     @Override

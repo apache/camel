@@ -139,6 +139,7 @@ import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.MessageSizeStrategy;
+import org.apache.camel.spi.ModelChecksumGenerator;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToJavaDumper;
 import org.apache.camel.spi.ModelToStructureDumper;
@@ -251,6 +252,8 @@ public abstract class AbstractCamelContext extends BaseService
     private final StopWatch stopWatch = new StopWatch(false);
     private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
     private final Lock routesLock = new ReentrantLock();
+    // the revisions of the routes by id, guarded by routesLock (CAMEL-25771)
+    private final Map<String, RouteRevision> routeRevisions = new HashMap<>();
     private final Lock lock = new ReentrantLock();
     private VetoCamelContextStartException vetoed;
     private String managementName;
@@ -411,6 +414,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(ModelToYAMLDumper.class, this::createModelToYAMLDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToJavaDumper.class, this::createModelToJavaDumper);
         camelContextExtension.lazyAddContextPlugin(ModelToStructureDumper.class, this::createModelToStructureDumper);
+        camelContextExtension.lazyAddContextPlugin(ModelChecksumGenerator.class, this::createModelChecksumGenerator);
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
                 this::createAnnotationBasedProcessorFactory);
@@ -4688,6 +4692,15 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract ModelToStructureDumper createModelToStructureDumper();
 
+    /**
+     * The generator of the checksums of routes, or <tt>null</tt> without camel-xml-io on the classpath: then the routes
+     * have no checksum.
+     */
+    protected ModelChecksumGenerator createModelChecksumGenerator() {
+        return ResolverHelper.resolveBootstrapService(getCamelContextReference(), ModelChecksumGenerator.FACTORY,
+                ModelChecksumGenerator.class).orElse(null);
+    }
+
     protected abstract RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory();
 
     protected abstract RestBindingJacksonXmlDataFormatFactory createRestBindingJacksonXmlDataFormatFactory();
@@ -4767,9 +4780,31 @@ public abstract class AbstractCamelContext extends BaseService
         routesLock.lock();
         try {
             routes.add(route);
+            reviseRoute(route);
         } finally {
             routesLock.unlock();
         }
+    }
+
+    /**
+     * The revision of a route added: 1 the first time its id is added, one more when it is added again with another
+     * checksum (a reload that changed it), the same when it comes back as it was. It is kept by route id, so it
+     * outlives the route being removed and added again.
+     */
+    private void reviseRoute(Route route) {
+        String checksum = route.getChecksum();
+        if (route.getId() == null || checksum == null || !(route instanceof DefaultRoute defaultRoute)) {
+            return;
+        }
+        RouteRevision previous = routeRevisions.get(route.getId());
+        int revision = previous == null ? 1
+                : previous.checksum().equals(checksum) ? previous.revision() : previous.revision() + 1;
+        routeRevisions.put(route.getId(), new RouteRevision(checksum, revision));
+        defaultRoute.setRevision(revision);
+    }
+
+    /** The checksum a route id was last added with, and its revision. */
+    private record RouteRevision(String checksum, int revision) {
     }
 
     public void removeRoute(Route route) {

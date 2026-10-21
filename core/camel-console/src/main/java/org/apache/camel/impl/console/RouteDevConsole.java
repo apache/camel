@@ -97,6 +97,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "Whether the endpoint is remote") boolean remote,
             @Metadata(description = "The source location (only present when known)") String source,
             @Metadata(description = "The source that declares the templated route the route was created from (only present when known)") String templatedRouteSource,
+            @Metadata(description = "The checksum of the route as written, the same in every run: compare it with an earlier run to tell whether the route changed (only present when known, as it needs camel-xml-io)") String checksum,
+            @Metadata(description = "The revision of the route in this run: 1 when it is added, one more each time it is added again changed, such as by a reload (only present when the checksum is known)") Integer revision,
             @Metadata(description = "The route state") String state,
             @Metadata(description = "Whether the route supports suspension") boolean supportsSuspension,
             @Metadata(description = "Route uptime, human readable text") String uptime,
@@ -175,6 +177,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             if (mrb.getTemplatedRouteSource() != null) {
                 sb.append(String.format("%n    Templated Route Source: %s", mrb.getTemplatedRouteSource()));
+            }
+            if (mrb.getChecksum() != null) {
+                sb.append(String.format("%n    Checksum: %s (revision %d)", mrb.getChecksum(), mrb.getRevision()));
             }
             sb.append(String.format("%n    State: %s", mrb.getState()));
             Route r = getCamelContext().getRoute(mrb.getRouteId());
@@ -321,7 +326,8 @@ public class RouteDevConsole extends AbstractDevConsole {
             list.add(new RouteEntry(
                     mrb.getRouteId(), mrb.getRouteGroup(), mrb.getNodePrefixId(), mrb.getDescription(), mrb.getNote(),
                     mrb.isCreatedByKamelet(), mrb.isCreatedByRouteTemplate(), mrb.getRouteTemplateId(), mrb.getEndpointUri(),
-                    mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getTemplatedRouteSource(), mrb.getState(),
+                    mrb.isRemoteEndpoint(), mrb.getSourceLocation(), mrb.getTemplatedRouteSource(), mrb.getChecksum(),
+                    mrb.getRevision() > 0 ? mrb.getRevision() : null, mrb.getState(),
                     r != null && r.supportsSuspension(), mrb.getUptime(), varied > 0 ? varied : null, mixed > 0 ? mixed : null,
                     lastError,
                     stats, procList));

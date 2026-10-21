@@ -63,6 +63,11 @@ public class CamelRouteTop extends CamelRouteStatus {
                         .with(this::getId),
                 new Column().header("FROM").dataAlign(HorizontalAlign.LEFT).maxWidth(fromW, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getFrom),
+                new Column().header("CHECKSUM").visible(checksum).dataAlign(HorizontalAlign.LEFT)
+                        .with(r -> r.checksum != null ? r.checksum : ""),
+                new Column().header("REV").visible(checksum).headerAlign(HorizontalAlign.CENTER)
+                        .dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.revision > 0 ? String.valueOf(r.revision) : ""),
                 new Column().header("REMOTE").visible(remoteVisible).headerAlign(HorizontalAlign.CENTER)
                         .dataAlign(HorizontalAlign.CENTER)
                         .with(this::getRemote),

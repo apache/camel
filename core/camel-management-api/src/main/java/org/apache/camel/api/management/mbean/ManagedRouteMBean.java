@@ -58,6 +58,12 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route Source Location (Short)")
     String getSourceLocationShort();
 
+    @ManagedAttribute(description = "The checksum of the route as written, the same in every run: compare it to tell whether the route changed (null when camel-xml-io is not on the classpath)")
+    String getChecksum();
+
+    @ManagedAttribute(description = "The revision of the route in this run: 1 when it is added, one more each time it is added again changed, such as by a reload (0 when the checksum is not known)")
+    int getRevision();
+
     @ManagedAttribute(description = "The number of steps that have been reached with more than one body type, across the messages (recorded while the message history is on)")
     int getVariedBodyTypes();
 

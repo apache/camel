@@ -259,6 +259,38 @@ YAML::
 ----
 ====
 
+== Route Checksum and Revision
+
+Each route has a _checksum_ of the route as written, which tools such as the Camel CLI, an IDE or an AI agent use to
+tell which routes changed between two runs of an application, or after a reload. The same route gives the same checksum
+in every run.
+
+The checksum is a short hash (12 hex characters) of the whole route: its steps, their options and expressions, with
+property placeholders as written. It leaves out what does not change the route:
+
+* the ids Camel generates (a route or step with an id of its own keeps it in the checksum);
+* where the route is in its source: moving the route in its file, or adding a route above it, keeps its checksum;
+* the parts that route configurations add to every route (their `onException`, `intercept` and `onCompletion`): a
+change in a shared route configuration does not change every route. The `onException` of a route itself is part of it.
+
+Each route also has a _revision_ in the running application: it is 1 when the route is added, and one more each time
+the route is added again with another checksum, such as when xref:route-reload.adoc[route reloading] changed it. A
+reload that brings the route back as it was keeps its revision. The revision follows the route id, and starts over
+when the application restarts: to compare two runs, compare the checksums.
+
+The checksum and revision are on the `Route` (`getChecksum()` and `getRevision()`), on the route in JMX (the
+`Checksum` and `Revision` attributes), in the `route` developer console, and in the Camel CLI
+(`camel get route --checksum`). The `route-structure` and `route-dump` developer consoles have the checksum of each
+route, so the facts a tool keeps per line of a route know which version of the route they belong to.
+
+The checksum needs `camel-xml-io` on the classpath, which comes with `camel-core`, `camel-management` and the Camel
+CLI connector. Without it the routes have no checksum, and no revision.
+
+NOTE: The checksum covers the route, not the code it calls: changing a Java lambda in `.process(...)`, or a bean the route
+calls, does not change it. Neither does a property value the route uses, which is configuration, not another route. A
+route without an id of its own gets an id such as `route3`, which can move to another route when routes are added to or
+removed from its file: match such routes by their checksum.
+
 == More Information
 
 Check the xref:dsl.adoc[list of supported languages] that you can use for writing Camel routes.
