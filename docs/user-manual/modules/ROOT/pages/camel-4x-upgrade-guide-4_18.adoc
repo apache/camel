@@ -313,6 +313,19 @@ as `Failed to connect, because a certificate or security check failed`. To resto
 The certificate that the user name and password are encrypted with is checked by the same validator. Endpoints that
 use the security policy `None` are not affected.
 
+=== camel-pqc - Bouncy Castle 1.85
+
+Camel 4.18.6 upgrades Bouncy Castle from 1.83 to 1.85. `DILITHIUM`, `SPHINCSPLUS` and `KYBER`
+now use ML-DSA, SLH-DSA and ML-KEM through the `BC` provider. The Camel option names are unchanged.
+
+Replace `DilithiumParameterSpec`, `SPHINCSPlusParameterSpec` and `KyberParameterSpec` in user code
+with `MLDSAParameterSpec`, `SLHDSAParameterSpec` and `MLKEMParameterSpec` from
+`org.bouncycastle.jcajce.spec`, and use the `BC` provider when creating key material.
+Previously stored Dilithium and SPHINCS+ keys must be regenerated; update peers that use their public keys.
+
+The default `SPHINCSPLUS` parameter set changes from `haraka_256s` (NIST category 5)
+to `slh_dsa_sha2_128s` (category 1). Use an SLH-DSA 256-bit parameter set if category 5 is required.
+
 === camel-pqc - a configured KeyGenerator is used by one exchange at a time
 
 When Camel creates the instance itself, the KEM operations of the `pqc` component and the PQC data format now use a
