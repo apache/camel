@@ -18,6 +18,7 @@ package org.apache.camel.component.ssh;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -33,12 +34,16 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
+import org.apache.sshd.client.config.hosts.HostConfigEntry;
+import org.apache.sshd.client.config.hosts.HostConfigEntryResolver;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.future.OpenFuture;
 import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.common.AttributeRepository;
 import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
+import org.apache.sshd.common.util.net.SshdSocketAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +52,24 @@ public final class SshHelper {
     protected static final Logger LOG = LoggerFactory.getLogger(SshHelper.class);
 
     private SshHelper() {
+    }
+
+    /*
+     * The host configuration for the host and port, resolved as SshClient.connect(username, host, port) resolves it: the
+     * entry that the host config resolver of the client (by default ~/.ssh/config) gives, or else the host itself.
+     */
+    static HostConfigEntry resolveHostConfig(SshClient client, String username, String host, int port)
+            throws IOException {
+        HostConfigEntryResolver resolver = client.getHostConfigEntryResolver();
+        HostConfigEntry entry
+                = resolver != null ? resolver.resolveEffectiveHost(host, port, null, username, null, null) : null;
+        if (entry == null) {
+            int effectivePort = port > 0 ? port : SshConfiguration.DEFAULT_SSH_PORT;
+            entry = SshdSocketAddress.isIPv6Address(host)
+                    ? new HostConfigEntry("", host, effectivePort, username, null)
+                    : new HostConfigEntry(host, host, effectivePort, username, null);
+        }
+        return entry;
     }
 
     public static SshResult sendExecCommand(Map<String, Object> headers, String command, SshEndpoint endpoint, SshClient client)
@@ -63,7 +86,11 @@ public final class SshHelper {
             userName = (String) headers.get(SshConstants.USERNAME_HEADER);
         }
 
-        ConnectFuture connectFuture = client.connect(userName, configuration.getHost(), configuration.getPort());
+        // resolve the host configuration once, and connect with it: the host key is verified against the host that this
+        // connection goes to, as the host configuration writes it
+        HostConfigEntry hostConfig = resolveHostConfig(client, userName, configuration.getHost(), configuration.getPort());
+        ConnectFuture connectFuture = client.connect(hostConfig,
+                AttributeRepository.ofKeyValuePair(ResourceBasedSSHKeyVerifier.HOST_CONFIG_ENTRY, hostConfig), null);
 
         // wait getTimeout milliseconds for connect operation to complete
         connectFuture.await(configuration.getTimeout());
