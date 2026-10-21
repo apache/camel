@@ -188,12 +188,13 @@ class NatsConsumerPullConsumerGoneTest extends CamelTestSupport {
         await().atMost(5, TimeUnit.SECONDS).until(() -> !handled.isEmpty());
         int fetchesBefore = server.fetches();
         long waitStarted = System.nanoTime();
-        Thread.sleep(1000);
-        long waitedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - waitStarted);
-        int fetches = server.fetches() - fetchesBefore;
         // the loop waits for the rest of pullFetchTimeout (100 ms) after each failed fetch
-        assertTrue(fetches <= waitedMillis / 100 + 5,
-                "no pull requests back to back: " + fetches + " fetches in " + waitedMillis + " ms");
+        await().during(1, TimeUnit.SECONDS).atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            long waitedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - waitStarted);
+            int fetches = server.fetches() - fetchesBefore;
+            assertTrue(fetches <= waitedMillis / 100 + 5,
+                    "no pull requests back to back: " + fetches + " fetches in " + waitedMillis + " ms");
+        });
     }
 
     @Test
@@ -203,12 +204,13 @@ class NatsConsumerPullConsumerGoneTest extends CamelTestSupport {
         await().atMost(5, TimeUnit.SECONDS).until(() -> !handled.isEmpty());
         int fetchesBefore = server.fetches();
         long waitStarted = System.nanoTime();
-        Thread.sleep(1000);
-        long waitedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - waitStarted);
-        int fetches = server.fetches() - fetchesBefore;
         // the loop waits for the rest of pullFetchTimeout (100 ms) after each failed fetch
-        assertTrue(fetches <= waitedMillis / 100 + 5,
-                "no pull requests back to back: " + fetches + " fetches in " + waitedMillis + " ms");
+        await().during(1, TimeUnit.SECONDS).atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            long waitedMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - waitStarted);
+            int fetches = server.fetches() - fetchesBefore;
+            assertTrue(fetches <= waitedMillis / 100 + 5,
+                    "no pull requests back to back: " + fetches + " fetches in " + waitedMillis + " ms");
+        });
     }
 
     @Test
