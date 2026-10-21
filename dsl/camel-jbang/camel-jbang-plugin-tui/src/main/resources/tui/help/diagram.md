@@ -70,7 +70,9 @@ the route as written, the same in every run. `camel cmd route-structure`
 gives the checksum of the routes of a source file, so it tells whether a
 file has the route that runs. A route added again changed in this run,
 such as by a reload, has its **revision** too: `Revision: 3 · 2 changes`.
-An integration of a Camel version before 4.24 has neither.
+An integration of a Camel version before 4.24, or without camel-xml-io, has
+neither: `camel run` always has camel-xml-io, while a Spring Boot or Quarkus
+application may not.
 
 Press `Enter` on a selected route to **drill down** into its
 internal EIP structure (the route diagram). Press `Esc` to

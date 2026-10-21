@@ -217,6 +217,8 @@ class SourceTab extends AbstractTab {
             lastSeenPid = ctx.selectedPid;
             refreshFiles();
         }
+        // the run state of the file shown, now rather than at the next refresh, which shows the previous one till then
+        ctx.backgroundExecutor.execute(() -> runState.refresh(ctx.findSelectedIntegration()));
     }
 
     @Override
@@ -573,6 +575,8 @@ class SourceTab extends AbstractTab {
         json.put("focusOnViewer", focusOnViewer);
         json.put("viewerOpen", sourceViewer.isVisible());
         // whether the integration runs the file open in the editor as it is saved, so an agent can tell its edit runs
+        // (computed now: tui_get_table may read this tab while another one is on screen, which it does not refresh)
+        runState.refresh(ctx.findSelectedIntegration());
         runState.addTo(json);
         return json;
     }
@@ -1188,7 +1192,7 @@ class SourceTab extends AbstractTab {
             sourceViewer.setFocused(focusOnViewer);
             sourceViewer.render(frame, area);
             // whether the integration runs the file shown as it is saved, in the view and in the editor (CAMEL-25771)
-            runState.shown(sourceViewer.liveColumn().loadedFile());
+            runState.shown(sourceViewer.getCurrentFilePath());
             runState.render(frame, area);
         } else {
             runState.shown(null);

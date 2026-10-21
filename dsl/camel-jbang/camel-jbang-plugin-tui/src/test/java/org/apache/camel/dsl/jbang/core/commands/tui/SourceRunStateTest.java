@@ -194,6 +194,26 @@ class SourceRunStateTest {
         assertThat(rendered).contains(TuiIcons.IDLE + " not running yet: the integration runs without --dev, restart it");
     }
 
+    @Test
+    void tuiGetTableComputesItWhileAnotherTabIsOnScreen() throws Exception {
+        Path file = Files.writeString(dir.resolve("orders.camel.yaml"), "- from:\n    uri: timer:orders\n");
+        long now = System.currentTimeMillis();
+        info.uptime = now - 60_000;
+        route("orders", "orders.camel.yaml:1", "59s");
+        Files.setLastModifiedTime(file, FileTime.fromMillis(now - 3_600_000));
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.selectedPid = "5678";
+        SourceTab tab = new SourceTab(ctx);
+        TuiTestHelper.renderToString(tab, 120, 30);
+        tab.openFileForReplay(file);
+        TuiTestHelper.renderToString(tab, 120, 30);
+
+        // the tab is not refreshed (it is not on screen), yet the table has the state of now
+        assertThat(((JsonObject) tab.getTableDataAsJson().get("runState")).getString("state")).isEqualTo("running");
+        Files.setLastModifiedTime(file, FileTime.fromMillis(now - 1_000));
+        assertThat(((JsonObject) tab.getTableDataAsJson().get("runState")).getString("state")).isEqualTo("notRunning");
+    }
+
     private static String text(Line line) {
         StringBuilder sb = new StringBuilder();
         line.spans().forEach(span -> sb.append(span.content()));

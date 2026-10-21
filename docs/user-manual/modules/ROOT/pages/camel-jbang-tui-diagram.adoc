@@ -229,7 +229,8 @@ image::jbang/camel-tui-diagram-route-revision.png[The Info panel of the orders r
 
 image::jbang/camel-tui-routes-revision.png[The Routes tab: the orders route is at revision 3, and the audit route from the same file did not change]
 
-An integration of a Camel version before 4.24 has neither.
+An integration of a Camel version before 4.24, or without camel-xml-io, has neither: `camel run` always has
+camel-xml-io, while a Spring Boot or Quarkus application may not.
 
 == Keyboard Shortcuts
 

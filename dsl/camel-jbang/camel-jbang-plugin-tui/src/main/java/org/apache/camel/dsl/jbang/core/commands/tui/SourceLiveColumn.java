@@ -72,11 +72,6 @@ class SourceLiveColumn {
         this.dirty = dirty;
     }
 
-    /** The path of the file shown, whose live run data is read; null when none is. */
-    String loadedFile() {
-        return loadedFile.get();
-    }
-
     /**
      * The live run data of the running integration, shown at the end of the lines of its source: how many exchanges the
      * processors on a line handled, how many failed, and their mean time (a heat map of the source while it runs).
