@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.validator;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +24,9 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.DataFormatModel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -289,7 +293,7 @@ public class TextBodyFlowTest {
                 """;
         assertThat(lines(yaml)).singleElement().satisfies(m -> {
             assertThat(m).startsWith("Line 12: ");
-            assertThat(m).contains("route archive: to: file writes the body to a file");
+            assertThat(m).contains("route archive: to: file needs the body as text, bytes, a stream or a file");
             assertThat(m).contains("the body here is parsed data (a Map or a List), not text");
             assertThat(m).contains("unmarshal: json turns the text into data: add marshal: json before this step");
         });
@@ -313,7 +317,7 @@ public class TextBodyFlowTest {
                         - to: file:valid
                 """;
         assertThat(lines(yaml)).singleElement()
-                .satisfies(m -> assertThat(m).contains("to: file writes the body to a file"));
+                .satisfies(m -> assertThat(m).contains("to: file needs the body as text, bytes, a stream or a file"));
     }
 
     @Test
@@ -818,7 +822,8 @@ public class TextBodyFlowTest {
         ProjectFacts seen = observed(ProjectFacts.producerKey("sql:select * from orders"),
                 List.of("java.util.ArrayList"), List.of("collection"));
         assertThat(lines(yaml, seen)).singleElement().satisfies(m -> {
-            assertThat(m).contains("to: file writes the body to a file, but the body here is parsed data");
+            assertThat(m)
+                    .contains("to: file needs the body as text, bytes, a stream or a file, but the body here is parsed data");
             assertThat(m).contains("in the running app, to: sql:select * from orders returned an ArrayList");
             // the walk knows no data format for what the running app saw
             assertThat(m).contains("add marshal with the data format to write (such as marshal: json) before this step");
@@ -864,6 +869,225 @@ public class TextBodyFlowTest {
             assertThat(m).contains("the file as it was read");
             assertThat(m).doesNotContain("running app");
         });
+    }
+
+    @Test
+    public void testTheConsumersOfTheCatalog() {
+        // CAMEL-24961: what a consumer gives comes from the body types of the catalog
+        String yaml = """
+                - route:
+                    id: sqs
+                    from:
+                      uri: aws2-sqs:orders
+                      steps:
+                        - setHeader:
+                            name: orderId
+                            simple: ${body[orderId]}
+                - route:
+                    id: mqtt
+                    from:
+                      uri: paho-mqtt5:sensors
+                      steps:
+                        - setBody:
+                            groovy: body.temperature
+                - route:
+                    id: ftp
+                    from:
+                      uri: ftp:files.example.com/inbox
+                      parameters:
+                        include: .*\\.json
+                      steps:
+                        - setHeader:
+                            name: orderId
+                            simple: ${body[orderId]}
+                - route:
+                    id: ftpStream
+                    from:
+                      uri: ftp:files.example.com/inbox?streamDownload=true
+                      steps:
+                        - setHeader:
+                            name: orderId
+                            simple: ${body[orderId]}
+                """;
+        assertThat(lines(yaml)).satisfiesExactly(
+                m -> assertThat(m).contains("route sqs: simple reads a field of the body (${body[orderId]})")
+                        .contains("the body here is still text, not parsed data - the aws2-sqs consumer gives it as text"),
+                m -> assertThat(m).contains("route mqtt: groovy reads fields of the body (body.temperature)")
+                        .contains("the paho-mqtt5 consumer gives it as bytes"),
+                m -> assertThat(m).contains("route ftp: simple reads a field of the body")
+                        .contains("the body here is the file as it was read (a GenericFile), not parsed data")
+                        .contains("the ftp consumer gives it: add unmarshal: json before this step"),
+                m -> assertThat(m).contains("route ftpStream: simple reads a field of the body")
+                        .contains("the ftp consumer gives it as a stream"));
+    }
+
+    @Test
+    public void testTheProducersOfTheCatalog() {
+        // the response of the http producer is bytes or a stream, a row of sql is data, and a file write keeps the body
+        String yaml = """
+                - route:
+                    id: price
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to: https://api.example.com/prices
+                        - setHeader:
+                            name: price
+                            simple: ${body[price]}
+                - route:
+                    id: rows
+                    from:
+                      uri: sql:select * from orders
+                      steps:
+                        - to: file:orders
+                - route:
+                    id: archive
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - to: file:backup
+                        - setBody:
+                            groovy: body.items
+                - route:
+                    id: sensors
+                    from:
+                      uri: file:readings
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to: paho-mqtt5:readings
+                """;
+        assertThat(lines(yaml)).satisfiesExactly(
+                m -> assertThat(m).contains("route price: simple reads a field of the body (${body[price]})")
+                        .contains("to: https://api.example.com/prices returns it as bytes or a stream: unmarshal it first"),
+                m -> assertThat(m).contains("route rows: to: file needs the body as text, bytes, a stream or a file")
+                        .contains("the sql consumer gives it as a Map: add marshal with the data format to write"),
+                m -> assertThat(m).contains("route archive: groovy reads fields of the body (body.items)")
+                        .contains("the file as it was read (a GenericFile)"),
+                m -> assertThat(m).contains("route sensors: to: paho-mqtt5 needs the body as text, bytes, a stream or a file")
+                        .contains("unmarshal: json turns the text into data: add marshal: json before this step"));
+    }
+
+    @Test
+    public void testTheOptionsTheBodyDependsOn() {
+        // xslt with output DOM gives a Document, an unmarshal with useList a List, gson is not known, and with download
+        // false the ftp consumer gives no body
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:in
+                      steps:
+                        - to: xslt:order.xsl?output=DOM
+                        - setBody:
+                            groovy: body.order
+                - route:
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            json:
+                              library: Gson
+                        - to: file:out
+                - route:
+                    from:
+                      uri: ftp:files.example.com/inbox?download=false
+                      steps:
+                        - setBody:
+                            groovy: body.items
+                - route:
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            json:
+                              useList: true
+                        - to: file:out
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m)
+                .contains("to: file needs the body as text, bytes, a stream or a file, but the body here is parsed data"));
+    }
+
+    @Test
+    public void testWhatTheComponentMayConfigureSaysNothing() {
+        // the valueDeserializer of kafka and the operation of aws2-sqs can be set on the component, which the route
+        // does not show; a placeholder is only known when the route runs
+        String yaml = """
+                - route:
+                    from:
+                      uri: kafka:orders
+                      steps:
+                        - setHeader:
+                            name: orderId
+                            simple: ${body[orderId]}
+                - route:
+                    from:
+                      uri: file:in
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to: aws2-sqs:orders
+                - route:
+                    from:
+                      uri: ftp:files.example.com/inbox?streamDownload={{stream}}
+                      steps:
+                        - setHeader:
+                            name: orderId
+                            simple: ${body[orderId]}
+                """;
+        assertThat(lines(yaml)).isEmpty();
+    }
+
+    @Test
+    public void testOneReportForAStepThatFails() {
+        // the first write fails at runtime, so the second does not run with this body
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to: file:archive
+                        - to: file:backup
+                """;
+        assertThat(lines(yaml)).singleElement().satisfies(m -> assertThat(m).startsWith("Line 7: "));
+    }
+
+    @Test
+    public void testACatalogWithoutBodyTypes() throws Exception {
+        // the catalog of an older Camel version has no body types: the validator's own catalog stands in for it
+        DefaultCamelCatalog older = new DefaultCamelCatalog() {
+            @Override
+            public ComponentModel componentModel(String name) {
+                ComponentModel model = super.componentModel(name);
+                if (model != null) {
+                    model.setBodyTypes(new LinkedHashMap<>());
+                }
+                return model;
+            }
+
+            @Override
+            public DataFormatModel dataFormatModel(String name) {
+                DataFormatModel model = super.dataFormatModel(name);
+                if (model != null) {
+                    model.setBodyTypes(new LinkedHashMap<>());
+                }
+                return model;
+            }
+        };
+        YamlValidator other = new YamlValidator(false, null, older);
+        other.init();
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      steps:
+                        - unmarshal:
+                            json: {}
+                        - to: file:archive
+                """;
+        assertThat(YamlValidator.describeAll(yaml, other.validate(yaml))).singleElement()
+                .satisfies(m -> assertThat(m).contains("to: file needs the body as text, bytes, a stream or a file"));
     }
 
     private static ProjectFacts observed(String key, List<String> types, List<String> kinds) {

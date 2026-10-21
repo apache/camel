@@ -41,6 +41,15 @@ final class RouteGraph {
     record Route(String id, String fromUri, JsonNode steps, JsonNode node) {
     }
 
+    /** The from of a route entry, in both the canonical and the short form; null for another entry. */
+    static JsonNode from(JsonNode entry) {
+        if (entry == null || !entry.isObject()) {
+            return null;
+        }
+        JsonNode route = entry.get("route");
+        return route != null ? route.get("from") : entry.get("from");
+    }
+
     /** The routes of the file, in both the canonical and the short form. */
     static List<Route> routes(JsonNode target) {
         List<Route> answer = new ArrayList<>();
