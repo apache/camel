@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.google.mail;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.google.api.services.gmail.Gmail;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -32,9 +37,8 @@ public class GoogleMailComponent
     @Metadata
     GoogleMailConfiguration configuration;
     @Metadata(label = "advanced")
-    private Gmail client;
-    @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
+    private final Map<List<Object>, Gmail> clients = new ConcurrentHashMap<>();
 
     public GoogleMailComponent() {
         super(GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
@@ -49,22 +53,34 @@ public class GoogleMailComponent
         return getCamelContext().getTypeConverter().convertTo(GoogleMailApiName.class, apiNameStr);
     }
 
+    /**
+     * Gets the client for the given configuration. One client is kept per distinct set of the options the client is
+     * created from, so endpoints with the same options share a client and endpoints with different options get their
+     * own.
+     */
     public Gmail getClient(GoogleMailConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
-            }
+        return clients.computeIfAbsent(clientKey(config), key -> createClient(config));
+    }
+
+    private Gmail createClient(GoogleMailConfiguration config) {
+        if (config.getClientId() != null && !config.getClientId().isBlank()
+                && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
+            return getClientFactory().makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+        } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
+            return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
         }
-        return client;
+    }
+
+    private static List<Object> clientKey(GoogleMailConfiguration config) {
+        return Arrays.asList(config.getClientId(), config.getClientSecret(), config.getRefreshToken(),
+                config.getAccessToken(), config.getServiceAccountKey(), config.getDelegate(), config.getScopes(),
+                config.getApplicationName());
     }
 
     public GoogleMailClientFactory getClientFactory() {
@@ -104,5 +120,11 @@ public class GoogleMailComponent
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleMailEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        clients.clear();
+        super.doStop();
     }
 }

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.google.drive;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.google.api.services.drive.Drive;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -37,13 +42,12 @@ public class GoogleDriveComponent
     @Metadata
     GoogleDriveConfiguration configuration;
     @Metadata(label = "advanced")
-    private Drive client;
-    @Metadata(label = "advanced")
     private GoogleDriveClientFactory clientFactory;
     @Metadata(label = "proxy", description = "Proxy server host")
     private String proxyHost;
     @Metadata(label = "proxy", description = "Proxy server port")
     private Integer proxyPort;
+    private final Map<List<Object>, Drive> clients = new ConcurrentHashMap<>();
 
     public GoogleDriveComponent() {
         super(GoogleDriveApiName.class, GoogleDriveApiCollection.getCollection());
@@ -58,22 +62,45 @@ public class GoogleDriveComponent
         return getCamelContext().getTypeConverter().convertTo(GoogleDriveApiName.class, apiNameStr);
     }
 
+    /**
+     * Gets the client for the given configuration, created by the client factory of the component.
+     *
+     * @see #getClient(GoogleDriveConfiguration, GoogleDriveClientFactory)
+     */
     public Drive getClient(GoogleDriveConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(),
-                        config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Google Drive client");
-            }
+        return getClient(config, null);
+    }
+
+    /**
+     * Gets the client for the given configuration, created by the given client factory or, when that is null, by the
+     * client factory of the component. One client is kept per client factory and distinct set of the options the client
+     * is created from, so endpoints with the same options share a client and endpoints with different options get their
+     * own.
+     */
+    public Drive getClient(GoogleDriveConfiguration config, GoogleDriveClientFactory factory) {
+        GoogleDriveClientFactory factoryToUse = factory != null ? factory : getClientFactory();
+        return clients.computeIfAbsent(clientKey(config, factoryToUse), key -> createClient(config, factoryToUse));
+    }
+
+    private Drive createClient(GoogleDriveConfiguration config, GoogleDriveClientFactory factory) {
+        if (config.getClientId() != null && !config.getClientId().isBlank()
+                && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
+            return factory.makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(), config.getAccessToken());
+        } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
+            return factory.makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(), config.getApplicationName(), config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Google Drive client");
         }
-        return client;
+    }
+
+    private static List<Object> clientKey(GoogleDriveConfiguration config, GoogleDriveClientFactory factory) {
+        return Arrays.asList(factory, config.getClientId(), config.getClientSecret(), config.getRefreshToken(),
+                config.getAccessToken(), config.getServiceAccountKey(), config.getDelegate(), config.getScopes(),
+                config.getApplicationName());
     }
 
     public GoogleDriveClientFactory getClientFactory() {
@@ -148,5 +175,11 @@ public class GoogleDriveComponent
         GoogleDriveEndpoint endpoint = new GoogleDriveEndpoint(uri, this, apiName, methodName, endpointConfiguration);
         endpoint.setClientFactory(clientFactory);
         return endpoint;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        clients.clear();
+        super.doStop();
     }
 }

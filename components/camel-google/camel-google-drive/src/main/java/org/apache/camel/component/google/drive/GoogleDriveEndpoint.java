@@ -121,7 +121,7 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     }
 
     public Drive getClient() {
-        return ((GoogleDriveComponent) getComponent()).getClient(configuration);
+        return ((GoogleDriveComponent) getComponent()).getClient(configuration, clientFactory);
     }
 
     @Override

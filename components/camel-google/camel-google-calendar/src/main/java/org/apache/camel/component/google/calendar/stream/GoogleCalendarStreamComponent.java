@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.google.calendar.stream;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.api.services.calendar.Calendar;
 import org.apache.camel.CamelContext;
@@ -31,11 +34,10 @@ import org.apache.camel.support.HealthCheckComponent;
 public class GoogleCalendarStreamComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced")
-    private Calendar client;
-    @Metadata(label = "advanced")
     private GoogleCalendarClientFactory clientFactory;
     @Metadata
     private GoogleCalendarStreamConfiguration configuration;
+    private final Map<List<Object>, Calendar> clients = new ConcurrentHashMap<>();
 
     public GoogleCalendarStreamComponent() {
         this(null);
@@ -47,22 +49,34 @@ public class GoogleCalendarStreamComponent extends HealthCheckComponent {
         this.configuration = new GoogleCalendarStreamConfiguration();
     }
 
+    /**
+     * Gets the client for the given configuration. One client is kept per distinct set of the options the client is
+     * created from, so endpoints with the same options share a client and endpoints with different options get their
+     * own.
+     */
     public Calendar getClient(GoogleCalendarStreamConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && config.getClientSecret() != null) {
-                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(),
-                        config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
-            } else if (config.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(),
-                        config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
-            }
+        return clients.computeIfAbsent(clientKey(config), key -> createClient(config));
+    }
+
+    private Calendar createClient(GoogleCalendarStreamConfiguration config) {
+        if (config.getClientId() != null && config.getClientSecret() != null) {
+            return getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(),
+                    config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
+        } else if (config.getServiceAccountKey() != null) {
+            return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(),
+                    config.getApplicationName(), config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Google Calendar client");
         }
-        return client;
+    }
+
+    private static List<Object> clientKey(GoogleCalendarStreamConfiguration config) {
+        return Arrays.asList(config.getClientId(), config.getClientSecret(), config.getRefreshToken(),
+                config.getAccessToken(), config.getServiceAccountKey(), config.getDelegate(), config.getScopes(),
+                config.getApplicationName(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
     }
 
     /**
@@ -96,5 +110,11 @@ public class GoogleCalendarStreamComponent extends HealthCheckComponent {
         GoogleCalendarStreamEndpoint endpoint = new GoogleCalendarStreamEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        clients.clear();
+        super.doStop();
     }
 }

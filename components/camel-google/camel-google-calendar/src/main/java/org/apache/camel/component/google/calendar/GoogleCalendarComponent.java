@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.google.api.services.calendar.Calendar;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -32,9 +37,8 @@ public class GoogleCalendarComponent
     @Metadata
     GoogleCalendarConfiguration configuration;
     @Metadata(label = "advanced")
-    private Calendar client;
-    @Metadata(label = "advanced")
     private GoogleCalendarClientFactory clientFactory;
+    private final Map<List<Object>, Calendar> clients = new ConcurrentHashMap<>();
 
     public GoogleCalendarComponent() {
         super(GoogleCalendarApiName.class, GoogleCalendarApiCollection.getCollection());
@@ -49,23 +53,35 @@ public class GoogleCalendarComponent
         return getCamelContext().getTypeConverter().convertTo(GoogleCalendarApiName.class, apiNameStr);
     }
 
+    /**
+     * Gets the client for the given configuration. One client is kept per distinct set of the options the client is
+     * created from, so endpoints with the same options share a client and endpoints with different options get their
+     * own.
+     */
     public Calendar getClient(GoogleCalendarConfiguration config) {
-        if (client == null) {
-            if (config.getClientId() != null && !config.getClientId().isBlank()
-                    && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
-                client = getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
-                        config.getApplicationName(), config.getRefreshToken(),
-                        config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
-            } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
-                client = getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
-                        config.getScopesAsList(),
-                        config.getApplicationName(), config.getDelegate());
-            } else {
-                throw new IllegalArgumentException(
-                        "(clientId and clientSecret) or serviceAccountKey are required to create Google Calendar client");
-            }
+        return clients.computeIfAbsent(clientKey(config), key -> createClient(config));
+    }
+
+    private Calendar createClient(GoogleCalendarConfiguration config) {
+        if (config.getClientId() != null && !config.getClientId().isBlank()
+                && config.getClientSecret() != null && !config.getClientSecret().isBlank()) {
+            return getClientFactory().makeClient(config.getClientId(), config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(),
+                    config.getAccessToken(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
+        } else if (config.getServiceAccountKey() != null && !config.getServiceAccountKey().isBlank()) {
+            return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(),
+                    config.getApplicationName(), config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Google Calendar client");
         }
-        return client;
+    }
+
+    private static List<Object> clientKey(GoogleCalendarConfiguration config) {
+        return Arrays.asList(config.getClientId(), config.getClientSecret(), config.getRefreshToken(),
+                config.getAccessToken(), config.getServiceAccountKey(), config.getDelegate(), config.getScopes(),
+                config.getApplicationName(), config.getEmailAddress(), config.getP12FileName(), config.getUser());
     }
 
     public GoogleCalendarClientFactory getClientFactory() {
@@ -106,5 +122,11 @@ public class GoogleCalendarComponent
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleCalendarEndpoint(uri, this, apiName, methodName, endpointConfiguration);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        clients.clear();
+        super.doStop();
     }
 }

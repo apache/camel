@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.google.mail.stream;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.api.services.gmail.Gmail;
 import org.apache.camel.CamelContext;
@@ -34,11 +37,10 @@ import org.apache.camel.support.HealthCheckComponent;
 public class GoogleMailStreamComponent extends HealthCheckComponent {
 
     @Metadata(label = "advanced")
-    private Gmail client;
-    @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
     @Metadata(label = "advanced")
     private GoogleMailStreamConfiguration configuration;
+    private final Map<List<Object>, Gmail> clients = new ConcurrentHashMap<>();
 
     public GoogleMailStreamComponent() {
         this(null);
@@ -49,20 +51,35 @@ public class GoogleMailStreamComponent extends HealthCheckComponent {
         this.configuration = new GoogleMailStreamConfiguration();
     }
 
-    public Gmail getClient(GoogleMailStreamConfiguration googleMailConfiguration) {
-        if (client == null) {
-            if (googleMailConfiguration.getClientSecret() != null) {
-                client = getClientFactory().makeClient(googleMailConfiguration.getClientId(),
-                        googleMailConfiguration.getClientSecret(), googleMailConfiguration.getScopesAsList(),
-                        googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
-                        googleMailConfiguration.getAccessToken());
-            } else if (googleMailConfiguration.getServiceAccountKey() != null) {
-                client = getClientFactory().makeClient(getCamelContext(), googleMailConfiguration.getServiceAccountKey(),
-                        googleMailConfiguration.getScopesAsList(), googleMailConfiguration.getApplicationName(),
-                        googleMailConfiguration.getDelegate());
-            }
+    /**
+     * Gets the client for the given configuration. One client is kept per distinct set of the options the client is
+     * created from, so endpoints with the same options share a client and endpoints with different options get their
+     * own.
+     */
+    public Gmail getClient(GoogleMailStreamConfiguration config) {
+        return clients.computeIfAbsent(clientKey(config), key -> createClient(config));
+    }
+
+    private Gmail createClient(GoogleMailStreamConfiguration config) {
+        if (config.getClientSecret() != null) {
+            return getClientFactory().makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopesAsList(),
+                    config.getApplicationName(), config.getRefreshToken(),
+                    config.getAccessToken());
+        } else if (config.getServiceAccountKey() != null) {
+            return getClientFactory().makeClient(getCamelContext(), config.getServiceAccountKey(),
+                    config.getScopesAsList(), config.getApplicationName(),
+                    config.getDelegate());
+        } else {
+            throw new IllegalArgumentException(
+                    "(clientId and clientSecret) or serviceAccountKey are required to create Gmail client");
         }
-        return client;
+    }
+
+    private static List<Object> clientKey(GoogleMailStreamConfiguration config) {
+        return Arrays.asList(config.getClientId(), config.getClientSecret(), config.getRefreshToken(),
+                config.getAccessToken(), config.getServiceAccountKey(), config.getDelegate(), config.getScopes(),
+                config.getApplicationName());
     }
 
     /**
@@ -97,5 +114,11 @@ public class GoogleMailStreamComponent extends HealthCheckComponent {
         GoogleMailStreamEndpoint endpoint = new GoogleMailStreamEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        clients.clear();
+        super.doStop();
     }
 }
