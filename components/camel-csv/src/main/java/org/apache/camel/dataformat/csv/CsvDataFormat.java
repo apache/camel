@@ -45,8 +45,8 @@ import org.apache.commons.csv.QuoteMode;
                                   description = "The CSV in the stream cache, or a byte array when stream caching is off"),
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "csv"),
            unmarshalOut = @BodyType(value = Carrier.LIST, dependsOn = "recordConverterRef",
-                                    byOption = @BodyType.When(option = "lazyLoad", value = "true", carrier = Carrier.LIST,
-                                                              javaType = "java.util.Iterator"),
+                                    byOption = @BodyType.When(option = "lazyLoad", value = "true",
+                                                              carrier = Carrier.ITERATOR),
                                     description = "A List of the rows, each a List of its values; with useMaps or"
                                                   + " useOrderedMaps, a Map of the header names and the values"))
 public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFormatName {

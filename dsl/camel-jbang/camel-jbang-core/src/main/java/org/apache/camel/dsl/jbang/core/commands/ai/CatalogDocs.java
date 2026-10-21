@@ -1671,6 +1671,10 @@ public final class CatalogDocs {
     }
 
     private static String carriers(List<String> carriers, String javaType) {
+        if (carriers.isEmpty()) {
+            // the build rejects a side without carriers, but a catalog read from elsewhere may have one
+            return "unknown";
+        }
         String answer = carriers.size() == 1
                 ? carriers.get(0)
                 : String.join(", ", carriers.subList(0, carriers.size() - 1)) + " or " + carriers.get(carriers.size() - 1);

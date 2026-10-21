@@ -28,6 +28,7 @@ import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -158,6 +159,19 @@ class CatalogDocsTest {
         JsonObject jdbc = catalogDoc(Map.of("name", "jdbc", "kind", "component", "includeOptions", false));
         assertNull(jdbc.get("bodyTypes"));
         assertNull(jdbc.get("bodyTypesHint"));
+    }
+
+    @Test
+    void aBodyWithoutCarriersIsUnknown() {
+        // the build rejects it, but a catalog read from elsewhere may have one: the line says unknown
+        BodyTypeModel side = new BodyTypeModel();
+        side.setCarriers(List.of("text"));
+        BodyTypeModel.OptionBodyTypeModel bytes = new BodyTypeModel.OptionBodyTypeModel();
+        bytes.setOption("output");
+        bytes.setValue("bytes");
+        side.getByOption().add(bytes);
+        JsonObject lines = CatalogDocs.bodyTypes(Map.of(BodyTypeModel.PRODUCER_OUT, side));
+        assertEquals("text. With output=bytes: unknown", lines.getString(BodyTypeModel.PRODUCER_OUT));
     }
 
     @Test
