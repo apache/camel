@@ -331,7 +331,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      * connection dropped while the mail was routed), the mail object of the poll is stale: for IMAP, the mail is looked
      * up again by its UID. Returns null when it cannot be found (its UID is unknown, the UIDVALIDITY of the folder
      * changed, or it was expunged meanwhile): then no mail is marked, as marking the stale mail object would mark
-     * another mail, and the idempotent key of the mail is settled as on commit.
+     * another mail, and the idempotent key of the mail is settled as on commit. The key is settled in the same way when
+     * the mail cannot be looked up again because of an error.
      */
     Message mailToCommit(Message mail, Long uid, long uidValidity, int batchOpen, Exchange exchange) {
         if (getEndpoint().getConfiguration().getProtocol().startsWith("pop3")) {
@@ -364,6 +365,8 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             return found;
         } catch (MessagingException e) {
             getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
+            // the mail is not marked: settle its key as on commit, so it is not skipped as a duplicate for good
+            commitIdempotentKey((String) exchange.removeProperty(MAIL_MESSAGE_UID));
             return null;
         }
     }

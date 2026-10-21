@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.mail.Folder;
 import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.UIDFolder;
 
@@ -121,6 +122,16 @@ class MailConsumerMailToCommitTest {
 
         assertNull(consumer.mailToCommit(mock(Message.class), 5L, 7L, 0, exchange));
         // idempotentRepositoryRemoveOnCommit=true (the default): the key is removed, as on commit
+        assertFalse(repository.contains(KEY));
+    }
+
+    @Test
+    void idempotentKeyOfAMailThatCannotBeLookedUpAgainIsSettled() throws Exception {
+        when(uidFolder.getUIDValidity()).thenReturn(7L);
+        when(uidFolder.getMessageByUID(5L)).thenThrow(new MessagingException("connection dropped again"));
+
+        assertNull(consumer.mailToCommit(mock(Message.class), 5L, 7L, 0, exchange));
+        // the mail is not marked: its key is removed, as on commit, so a later poll consumes it again
         assertFalse(repository.contains(KEY));
     }
 }
