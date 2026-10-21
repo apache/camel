@@ -31,6 +31,7 @@ import io.vertx.core.http.HttpServerRequest;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.ProducerTemplate;
@@ -44,9 +45,11 @@ import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.assertj.core.api.Assertions;
@@ -66,6 +69,7 @@ import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.con
 import static org.apache.camel.component.knative.http.KnativeHttpTestSupport.httpAttribute;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
 
@@ -904,6 +908,84 @@ public class KnativeHttpTest {
             assertThat(e.isFailed()).isTrue();
             assertThat(e.getException()).isInstanceOf(HttpOperationFailedException.class);
         });
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testConsumerStoppedAndStartedAgain(CloudEvent ce) throws Exception {
+        configureTwoConsumersAndStart(ce, r2 -> {
+        });
+
+        // the consumer is not Suspendable, so a route policy that suspends and resumes it stops and starts it again
+        Consumer consumer = context.getRoute("r2").getConsumer();
+        ServiceHelper.stopService(consumer);
+        assertThat(template.request("direct:start", e -> e.getMessage().setBody("h2"))).satisfies(e -> {
+            assertThat(e.isFailed()).isTrue();
+            assertThat(e.getException()).isInstanceOf(HttpOperationFailedException.class);
+        });
+
+        ServiceHelper.startService(consumer);
+
+        assertThat(template.requestBody("direct:start", "h2", String.class)).isEqualTo("r2");
+    }
+
+    @ParameterizedTest
+    @EnumSource(CloudEvents.class)
+    void testConsumerStartedAgainByCircuitBreakerRoutePolicy(CloudEvent ce) throws Exception {
+        ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(1, 60000, 1000, null);
+        AtomicBoolean fail = new AtomicBoolean(true);
+        configureTwoConsumersAndStart(ce, r2 -> r2.routePolicy(policy).process(e -> {
+            if (fail.get()) {
+                throw new IllegalStateException("Forced");
+            }
+        }));
+        Consumer consumer = context.getRoute("r2").getConsumer();
+
+        // the failure opens the circuit, which stops the consumer as it is not Suspendable
+        assertThat(template.request("direct:start", e -> e.getMessage().setBody("h2")).isFailed()).isTrue();
+        await().atMost(20, TimeUnit.SECONDS).until(() -> ServiceHelper.isStopped(consumer));
+        fail.set(false);
+
+        // after halfOpenAfter the circuit is half open: the consumer is started again to let a request through
+        await().atMost(20, TimeUnit.SECONDS).until(() -> ServiceHelper.isStarted(consumer));
+
+        assertThat(template.requestBody("direct:start", "h2", String.class)).isEqualTo("r2");
+    }
+
+    private void configureTwoConsumersAndStart(CloudEvent ce, java.util.function.Consumer<RouteDefinition> r2)
+            throws Exception {
+        configureKnativeComponent(
+                context,
+                ce,
+                sourceEndpoint(
+                        "ep1",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + "h", "h1")),
+                sourceEndpoint(
+                        "ep2",
+                        Map.of(
+                                Knative.KNATIVE_CLOUD_EVENT_TYPE, "org.apache.camel.event",
+                                Knative.CONTENT_TYPE, "text/plain",
+                                Knative.KNATIVE_FILTER_PREFIX + "h", "h2")));
+
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("knative:endpoint/ep1")
+                    .routeId("r1")
+                    .setBody().simple("${routeId}");
+            RouteDefinition route = b.from("knative:endpoint/ep2")
+                    .routeId("r2");
+            r2.accept(route);
+            route.setBody().simple("${routeId}");
+        });
+        RouteBuilder.addRoutes(context, b -> {
+            b.from("direct:start")
+                    .setHeader("h").body()
+                    .toF("http://localhost:%d", platformHttpPort);
+        });
+
+        context.start();
     }
 
     @ParameterizedTest

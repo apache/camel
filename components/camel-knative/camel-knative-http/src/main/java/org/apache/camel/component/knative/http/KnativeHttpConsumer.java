@@ -193,7 +193,9 @@ public class KnativeHttpConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         if (route != null) {
+            // a removed route cannot be added to the router again, so a start creates a new one
             route.remove();
+            route = null;
         }
 
         super.doStop();
