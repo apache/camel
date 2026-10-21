@@ -34,10 +34,10 @@ import org.apache.camel.spi.UriEndpoint;
 @BodyTypes(consumerOut = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.MAP, Carrier.STREAM, Carrier.NULL },
                                    dependsOn = { "messageConverter", "transferExchange" },
                                    byOption = {
-                                           @BodyType.When(option = "mapJmsMessage", value = "false", carrier = Carrier.POJO,
+                                           @BodyType.When(option = "mapJmsMessage", value = "false", carriers = Carrier.POJO,
                                                           javaType = "jakarta.jms.Message"),
                                            @BodyType.When(option = "objectMessageEnabled", value = "true",
-                                                          carrier = {
+                                                          carriers = {
                                                                   Carrier.TEXT, Carrier.BYTES, Carrier.MAP,
                                                                   Carrier.STREAM, Carrier.POJO, Carrier.NULL }) },
                                    description = "By the JMS message received: a String for a TextMessage, a byte array for a"
@@ -46,14 +46,14 @@ import org.apache.camel.spi.UriEndpoint;
            consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
                                      dependsOn = { "jmsMessageType", "messageConverter", "transferExchange" },
                                      byOption = @BodyType.When(option = "objectMessageEnabled", value = "true",
-                                                               carrier = {
+                                                               carriers = {
                                                                        Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
                                                                        Carrier.FILE, Carrier.MAP, Carrier.POJO }),
                                      description = "The reply, sent as the producer sends a message"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP },
                                   dependsOn = { "jmsMessageType", "messageConverter", "transferExchange" },
                                   byOption = @BodyType.When(option = "objectMessageEnabled", value = "true",
-                                                            carrier = {
+                                                            carriers = {
                                                                     Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
                                                                     Carrier.FILE, Carrier.MAP, Carrier.POJO }),
                                   description = "Text is sent as a TextMessage; bytes, a stream or a file as a BytesMessage;"
@@ -62,9 +62,9 @@ import org.apache.camel.spi.UriEndpoint;
            producerOut = @BodyType(value = Carrier.UNKNOWN,
                                    byOption = {
                                            @BodyType.When(option = "exchangePattern", value = "InOnly",
-                                                          carrier = Carrier.UNCHANGED),
+                                                          carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "disableReplyTo", value = "true",
-                                                          carrier = Carrier.UNCHANGED) },
+                                                          carriers = Carrier.UNCHANGED) },
                                    description = "Unchanged for a message that expects no reply (InOnly). A message that"
                                                  + " expects one (InOut) gets the body of the reply, as the consumer gives it"))
 public class AMQPEndpoint extends JmsEndpoint {
