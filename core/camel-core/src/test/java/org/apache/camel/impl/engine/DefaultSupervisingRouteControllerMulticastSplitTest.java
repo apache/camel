@@ -92,7 +92,7 @@ class DefaultSupervisingRouteControllerMulticastSplitTest extends ContextTestSup
         assertEquals(3, endpoint.startAttempts.get(), "Expected 3 start attempts (2 failures + 1 success)");
 
         // Verify that a message can actually be processed once the route is started
-        template.sendBody("direct:split", "a b c");
+        template.sendBody("direct:split", "a,b,c");
         assertEquals(3, endpoint.processCount.get(), "Expected 3 process calls for 3 split tokens");
     }
 
