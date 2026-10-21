@@ -206,6 +206,17 @@ class KeycloakConsumerMoreThanMaxResultsTest extends CamelTestSupport {
                 userIds.stream().sorted().toList());
     }
 
+    @Test
+    void aResponseWithoutContentIsAPollWithoutEvents() throws Exception {
+        // the client returns null for a 2xx response without a content type, such as 204 No Content
+        when(realmResource.getEvents(any(), any(), any(), any(), any(), any(), anyInt(), anyInt())).thenReturn(null);
+        when(realmResource.getAdminEvents(any(), any(), any(), any(), any(), any(), any(), any(), anyInt(), anyInt()))
+                .thenReturn(null);
+
+        assertEquals(0, poll("events"));
+        assertEquals(0, poll("admin-events"));
+    }
+
     private int poll(String routeId) throws Exception {
         return ((KeycloakConsumer) context.getRoute(routeId).getConsumer()).poll();
     }

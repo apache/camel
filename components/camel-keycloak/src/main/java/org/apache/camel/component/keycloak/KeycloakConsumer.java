@@ -17,6 +17,7 @@
 package org.apache.camel.component.keycloak;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -196,7 +197,11 @@ public class KeycloakConsumer extends ScheduledBatchPollingConsumer {
         int first = config.getFirst();
         int max = config.getMaxResults();
         List<T> page = fetch.apply(first, max);
-        if (lastEventTime == null || max <= 0 || page == null || page.size() < max) {
+        if (page == null) {
+            // the client returns null for a response without content
+            return Collections.emptyList();
+        }
+        if (lastEventTime == null || max <= 0 || page.size() < max) {
             return page;
         }
         List<T> answer = new ArrayList<>(page);
