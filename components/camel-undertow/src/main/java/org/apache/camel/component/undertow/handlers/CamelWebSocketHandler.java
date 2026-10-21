@@ -245,7 +245,7 @@ public class CamelWebSocketHandler implements HttpHandler {
         }
         if (!authenticatedEndpoints.isEmpty()) {
             exchange.putAttachment(HANDSHAKE_RESULT_ATTACHMENT,
-                    new HandshakeResult(authenticatedEndpoints, headers));
+                    new HandshakeResult(authenticatedEndpoints, headers, path.consumer));
         }
         this.delegate.handleRequest(exchange);
     }
@@ -303,9 +303,14 @@ public class CamelWebSocketHandler implements HttpHandler {
             return false;
         }
         if (requiresHandshakeResult(endpoint, consumer)) {
-            return channel != null
-                    && channel.getAttribute(HANDSHAKE_RESULT) instanceof HandshakeResult result
-                    && result.endpointUris.contains(endpoint.getEndpointUri());
+            if (channel == null
+                    || !(channel.getAttribute(HANDSHAKE_RESULT) instanceof HandshakeResult result)
+                    || !result.endpointUris.contains(endpoint.getEndpointUri())) {
+                return false;
+            }
+            // the custom handlers run only during a consumer-mode handshake, so a result recorded while only
+            // producers served the path does not account for them
+            return !consumer || endpoint.getHandlers() == null || result.consumer;
         }
         return true;
     }
@@ -663,15 +668,18 @@ public class CamelWebSocketHandler implements HttpHandler {
 
     /**
      * The endpoints whose security provider, allowed roles and custom handlers a handshake passed, and the headers that
-     * the providers added.
+     * the providers added. {@code consumer} records whether the handshake ran in consumer mode: only then were the
+     * consumer-only custom handlers part of the checks.
      */
     private static final class HandshakeResult {
         private final Set<String> endpointUris;
         private final Map<String, Object> headers;
+        private final boolean consumer;
 
-        private HandshakeResult(Set<String> endpointUris, Map<String, Object> headers) {
+        private HandshakeResult(Set<String> endpointUris, Map<String, Object> headers, boolean consumer) {
             this.endpointUris = Collections.unmodifiableSet(endpointUris);
             this.headers = Collections.unmodifiableMap(headers);
+            this.consumer = consumer;
         }
     }
 
