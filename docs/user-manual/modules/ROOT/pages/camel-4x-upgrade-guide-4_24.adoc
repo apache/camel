@@ -2080,8 +2080,8 @@ node, and the current values delivered after an outage still arrive.
 `setReconnectTimeout` on the `milo-client` and `milo-browse` components set the request timeout of every service call,
 and the delay between two connection attempts stayed 10 seconds. It now sets that delay, which the new
 `reconnectTimeout` option of both endpoints and components sets too; its default of 10000 milliseconds is the previous
-delay, and a value of 0 or less is rejected. A component that called `setReconnectTimeout` to set the request timeout
-uses `setRequestTimeout` for it.
+delay, and a value of 0 or less is rejected. To set the request timeout, use the `requestTimeout` option instead
+(for example `camel.component.milo-client.requestTimeout`, or `getConfiguration().setRequestTimeout(...)` in Java).
 
 === camel-protobuf - a bytes field in a Map
 
