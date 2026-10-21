@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
            unmarshalIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE }, format = "json"),
            unmarshalOut = @BodyType(value = { Carrier.MAP, Carrier.LIST },
                                     dependsOn = { "unmarshalType", "collectionType", "allowUnmarshallType" },
-                                    byOption = @BodyType.When(option = "useList", value = "true", carrier = Carrier.LIST),
+                                    byOption = @BodyType.When(option = "useList", value = "true", carriers = Carrier.LIST),
                                     description = "A Map (LinkedHashMap) for a JSON object, a List (ArrayList) for an array;"
                                                   + " an object of the class unmarshalType names"))
 public class JacksonDataFormat extends AbstractJacksonDataFormat {

@@ -56,7 +56,7 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(annotations = { "protocol=http" })
 @BodyTypes(consumerOut = @BodyType(value = { Carrier.STREAM, Carrier.BYTES, Carrier.NULL, Carrier.MAP, Carrier.FILE },
                                    byOption = @BodyType.When(option = "useBodyHandler", value = "false",
-                                                             carrier = Carrier.POJO),
+                                                             carriers = Carrier.POJO),
                                    description = "The request body: the stream cache with the Vert.x engine, a byte array"
                                                  + " with Spring Boot; null for a request without a body, such as a GET; a"
                                                  + " Map of the fields of a form (populateBodyWithForm); a File for an"

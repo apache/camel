@@ -95,7 +95,7 @@ final class BodyTypesHelper {
             for (BodyType.When when : bodyType.byOption()) {
                 checkOption(owner, side, when.option(), options);
                 checkValue(owner, side, when, options.get(when.option()));
-                check(owner, side + " " + when.option() + "=" + when.value(), when.carrier());
+                check(owner, side + " " + when.option() + "=" + when.value(), when.carriers());
             }
             model.getBodyTypes().put(side, asModel(bodyType));
         }
@@ -188,7 +188,7 @@ final class BodyTypesHelper {
             BodyTypeModel.OptionBodyTypeModel option = new BodyTypeModel.OptionBodyTypeModel();
             option.setOption(when.option());
             option.setValue(when.value());
-            option.setCarriers(names(when.carrier()));
+            option.setCarriers(names(when.carriers()));
             option.setJavaType(emptyAsNull(when.javaType()));
             model.getByOption().add(option);
         }

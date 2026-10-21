@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
                                                  + " converts to text, bytes or a stream"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   byOption = @BodyType.When(option = "allowNullBody", value = "true",
-                                                            carrier = {
+                                                            carriers = {
                                                                     Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
                                                                     Carrier.STREAM, Carrier.FILE }),
                                   description = "What converts to an InputStream: text, bytes, a stream or a file. A Map or"

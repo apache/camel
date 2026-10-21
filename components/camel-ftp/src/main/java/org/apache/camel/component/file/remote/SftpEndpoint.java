@@ -42,13 +42,13 @@ import org.apache.camel.spi.UriParam;
                               + "renameUsingCopy,synchronous")
 @BodyTypes(consumerOut = @BodyType(value = Carrier.FILE, dependsOn = "preMove",
                                    byOption = {
-                                           @BodyType.When(option = "streamDownload", value = "true", carrier = Carrier.STREAM),
-                                           @BodyType.When(option = "download", value = "false", carrier = Carrier.NULL) },
+                                           @BodyType.When(option = "streamDownload", value = "true", carriers = Carrier.STREAM),
+                                           @BodyType.When(option = "download", value = "false", carriers = Carrier.NULL) },
                                    description = "The file as read: a RemoteFile, which converts to text, bytes or a stream; a"
                                                  + " stream with streamDownload; with preMove its content, a byte array"),
            producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   byOption = @BodyType.When(option = "allowNullBody", value = "true",
-                                                            carrier = {
+                                                            carriers = {
                                                                     Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
                                                                     Carrier.STREAM, Carrier.FILE }),
                                   description = "What converts to an InputStream: text, bytes, a stream or a file. A Map or"

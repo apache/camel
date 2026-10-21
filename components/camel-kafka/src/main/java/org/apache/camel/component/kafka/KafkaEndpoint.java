@@ -55,8 +55,8 @@ import org.slf4j.LoggerFactory;
                                    byOption = {
                                            @BodyType.When(option = "valueDeserializer",
                                                           value = "org.apache.kafka.common.serialization.ByteArrayDeserializer",
-                                                          carrier = { Carrier.BYTES, Carrier.NULL }, javaType = "byte[]"),
-                                           @BodyType.When(option = "batching", value = "true", carrier = Carrier.LIST) },
+                                                          carriers = { Carrier.BYTES, Carrier.NULL }, javaType = "byte[]"),
+                                           @BodyType.When(option = "batching", value = "true", carriers = Carrier.LIST) },
                                    description = "The value of the record: a String with the default valueDeserializer"
                                                  + " (StringDeserializer), null for a tombstone. With batching, a List of"
                                                  + " the exchanges of the records"),
