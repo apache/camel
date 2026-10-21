@@ -230,7 +230,7 @@ the headers first:
 ----
 from("infinispan-embedded:source")
     .removeHeaders("CamelInfinispan*")
-    .to("infinispan-embedded:target?operation=PUT&key=myKey");
+    .to("infinispan-embedded:target?operation=PUT&key=myKey&value=myValue");
 ----
 
 == Examples

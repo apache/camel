@@ -420,8 +420,12 @@ public abstract class InfinispanProducer<M extends InfinispanManager, C extends 
         return manager.getCache(message, this.cacheName);
     }
 
+    /**
+     * Resolves the cache key: the key configured on the endpoint takes precedence over the
+     * {@link InfinispanConstants#KEY} header. Note that {@link #getCache(Message)} uses the opposite precedence: the
+     * {@link InfinispanConstants#CACHE_NAME} header wins over the cache of the endpoint.
+     */
     protected Object getKey(Message message) {
-        // the key configured on the endpoint wins over the header
         Object key = configuration.getKey();
         return key != null ? key : message.getHeader(InfinispanConstants.KEY);
     }

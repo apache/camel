@@ -2183,6 +2183,20 @@ and the delay between two connection attempts stayed 10 seconds. It now sets tha
 delay, and a value of 0 or less is rejected. To set the request timeout, use the `requestTimeout` option instead
 (for example `camel.component.milo-client.requestTimeout`, or `getConfiguration().setRequestTimeout(...)` in Java).
 
+=== camel-infinispan - the key option of the producer takes precedence over the key header
+
+The `infinispan` and `infinispan-embedded` producers now use the `key` option of the endpoint when it is set, and use the
+`CamelInfinispanKey` header only when the endpoint does not set `key`. Previously the header took precedence over the
+option, so a route that sent the events of an Infinispan consumer, which set `CamelInfinispanKey` to the key of the event,
+to a producer with a fixed `key` worked on the key of the event.
+
+Routes that set `key` on the endpoint and override it per message with the `CamelInfinispanKey` header must remove `key`
+from the endpoint.
+
+The `CamelInfinispanCacheName` header still takes precedence over the cache of the endpoint, so a route that sends the
+events of an Infinispan consumer to a producer must still remove the `CamelInfinispan*` headers first, see _Key and cache
+name headers_ in the component docs.
+
 === camel-protobuf - a bytes field in a Map
 
 When a protobuf message is converted to a `Map` (for example `getBody(Map.class)` after unmarshalling), the value of
@@ -2316,13 +2330,3 @@ a keep-alive message that does not wait for a reply, so it does not find such a 
 noop is a request that waits for the reply, so with `sendNoop=false` such a connection is found by the next poll,
 which fails and is logged before the consumer connects again. For sftp and mina-sftp, set `serverAliveInterval` to let
 the client close such a connection itself, so that the consumer connects again before the poll.
-
-=== camel-infinispan - the key option of the producer takes precedence over the key header
-
-The `infinispan` and `infinispan-embedded` producers now use the `key` option of the endpoint when it is set, and use the
-`CamelInfinispanKey` header only when the endpoint does not set `key`. Previously the header took precedence over the
-option, so a route that sent the events of an Infinispan consumer, which set `CamelInfinispanKey` to the key of the event,
-to a producer with a fixed `key` worked on the key of the event.
-
-Routes that set `key` on the endpoint and override it per message with the `CamelInfinispanKey` header must remove `key`
-from the endpoint.

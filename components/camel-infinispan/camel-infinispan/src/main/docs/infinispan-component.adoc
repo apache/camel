@@ -216,7 +216,7 @@ the headers first:
 ----
 from("infinispan:source")
     .removeHeaders("CamelInfinispan*")
-    .to("infinispan:target?operation=PUT&key=myKey");
+    .to("infinispan:target?operation=PUT&key=myKey&value=myValue");
 ----
 
 == Examples
