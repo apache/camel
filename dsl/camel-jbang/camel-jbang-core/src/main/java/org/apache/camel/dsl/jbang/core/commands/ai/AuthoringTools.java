@@ -1633,7 +1633,7 @@ public final class AuthoringTools {
         String processName = null;
         String sinceKey = null;
         long watchPid = -1;
-        if (SourceValidator.isValidatableFile(file)) {
+        if (SourceValidator.isValidatableFile(file) || reloadsWithRoutes(file)) {
             if (ctx.hasProcess()) {
                 watchPid = ctx.pid();
                 RuntimeHelper.ProcessInfo p = RuntimeHelper.findProcess(Long.toString(ctx.pid()));
@@ -1701,8 +1701,9 @@ public final class AuthoringTools {
                           + (output.size() > 1 ? " (and " + (output.size() - 1) + " more in reload.output)" : "");
             }
             final String loggedAfter = logged;
+            String reloadedWhat = SourceValidator.isValidatableFile(file) ? "the file" : "its routes, which load the file";
             result.put("message", switch (status) {
-                case "reloaded" -> "The running integration reloaded the file." + loggedAfter;
+                case "reloaded" -> "The running integration reloaded " + reloadedWhat + "." + loggedAfter;
                 case "properties" -> "The running integration reloaded the properties.";
                 case "failed" -> "The running integration FAILED to reload the file, the route is not running; fix the"
                                  + " content and write again (see reload.message).";
@@ -1721,6 +1722,20 @@ public final class AuthoringTools {
                                   + String.join("; ", repaired) + ". " + result.getString("message"));
         }
         return result;
+    }
+
+    /** The script and template files that routes load, such as resource:file:mapping.groovy. */
+    private static final List<String> ROUTE_RESOURCES
+            = List.of(".groovy", ".js", ".py", ".ftl", ".vm", ".mustache", ".jslt", ".jsonata");
+
+    /**
+     * A file the routes load, such as the Groovy script of a setBody (resource:file:mapping.groovy) or a template: dev
+     * mode reloads the routes when it changes, so its write waits for that reload and reports what the routes then do,
+     * as the write of a route file does. Answered at once, an agent read the errors before the reload, and saw none.
+     */
+    static boolean reloadsWithRoutes(String fileName) {
+        String name = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
+        return ROUTE_RESOURCES.stream().anyMatch(name::endsWith);
     }
 
     /** The content of the last refused write of each file, and how many times in a row it was refused. */

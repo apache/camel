@@ -238,6 +238,15 @@ class AuthoringToolsTest {
         return (List<JsonObject>) (List<?>) errors.getCollection("errors");
     }
 
+    /** A script or template the routes load: dev mode reloads the routes when it changes, so its write waits. */
+    @Test
+    void aWriteOfAFileTheRoutesLoadWaitsForTheReload() {
+        assertTrue(AuthoringTools.reloadsWithRoutes("shipment-mapping.groovy"));
+        assertTrue(AuthoringTools.reloadsWithRoutes("templates/letter.FTL"));
+        assertFalse(AuthoringTools.reloadsWithRoutes("orders/order-1001.json"), "a data file is not loaded by a route");
+        assertFalse(AuthoringTools.reloadsWithRoutes("README.md"));
+    }
+
     @Test
     void writeValidatesFirstAndRefusesInvalidContent(@TempDir Path dir) throws IOException {
         Files.writeString(dir.resolve("demo.camel.yaml"), "- route: {}\n");

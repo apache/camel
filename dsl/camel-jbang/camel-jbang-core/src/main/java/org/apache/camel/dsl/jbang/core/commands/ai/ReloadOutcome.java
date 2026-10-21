@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.util.StopWatch;
@@ -180,6 +181,20 @@ public final class ReloadOutcome {
     private static final int OUTPUT_LINES = 5;
     private static final int OUTPUT_ERRORS = 3;
     private static final int OUTPUT_CHARS = 400;
+    /** A WARN or ERROR line may be longer: the hint of a failure comes late in the exception message. */
+    private static final int OUTPUT_ERROR_CHARS = 800;
+
+    // the text of the error handler around the exception, which says nothing the agent can act on
+    private static final Pattern FAILED_DELIVERY = Pattern.compile(
+            "^Failed delivery for \\(MessageId: \\S+ on ExchangeId: \\S+\\)(?: at (.+?))?\\."
+                                                                   + " Exhausted after delivery attempt: \\d+ caught: ");
+    private static final Pattern EXCEPTION_PACKAGE
+            = Pattern.compile("\\b(?:[a-z][a-z0-9_]*\\.)+([A-Z][\\w$]*(?:Exception|Error))\\b");
+    private static final Pattern ON_THE_EXCHANGE = Pattern.compile(" on the exchange: Exchange\\[[^\\]]*]");
+    // "Error processing exchange. Exchange[1028039098EFE4D-0000000000000009]. Caused by: [...]"
+    private static final Pattern EXCHANGE_ID = Pattern.compile("Exchange\\[[0-9A-Fa-f]+-[0-9A-Fa-f]+]\\. ");
+    private static final String ON_BEAN = " on bean: ";
+    private static final int MAX_BEAN = 80;
 
     /**
      * What the routes logged after the newest reload, waiting up to the timeout for the first of it: the records of the
@@ -203,6 +218,39 @@ public final class ReloadOutcome {
         return out;
     }
 
+    /**
+     * A WARN or ERROR line, as short as it can be without losing what the agent acts on: the message ids and the
+     * attempt count of the error handler, the dump of the exchange, the packages of the exception classes and the long
+     * dump of a bean go. The hint of a failure, which Camel adds at the end of the exception message (such as
+     * "unmarshal it first"), was cut off: the line of a failed exchange starts with some 250 characters of such text.
+     */
+    static String compact(String message) {
+        String m = message;
+        Matcher fd = FAILED_DELIVERY.matcher(m);
+        if (fd.find()) {
+            m = "Failed" + (fd.group(1) != null ? " at " + fd.group(1) : "") + ": " + m.substring(fd.end());
+        }
+        m = ON_THE_EXCHANGE.matcher(m).replaceAll("");
+        m = EXCHANGE_ID.matcher(m).replaceAll("");
+        m = EXCEPTION_PACKAGE.matcher(m).replaceAll("$1");
+        // "not found on bean: [{orderId=ORD-1001, ...}, ...] of type: java.util.ArrayList": the start of the dump
+        StringBuilder sb = new StringBuilder();
+        int from = 0;
+        int at;
+        while ((at = m.indexOf(ON_BEAN, from)) >= 0) {
+            int start = at + ON_BEAN.length();
+            int end = m.indexOf(" of type: ", start);
+            if (end < 0) {
+                break;
+            }
+            sb.append(m, from, start);
+            sb.append(end - start > MAX_BEAN ? m.substring(start, start + MAX_BEAN) + "..." : m.substring(start, end));
+            from = end;
+        }
+        sb.append(m.substring(from));
+        return sb.toString();
+    }
+
     static JsonArray output(List<JsonObject> newestFirst) {
         List<String> lines = new ArrayList<>();
         for (JsonObject r : newestFirst) {
@@ -222,8 +270,13 @@ public final class ReloadOutcome {
                 // a multi-line body (an XML or JSON document) is part of what the route logged
                 m = m + "\n" + detail;
             }
+            int max = OUTPUT_CHARS;
+            if (!routeLog) {
+                m = compact(m);
+                max = OUTPUT_ERROR_CHARS;
+            }
             lines.add((routeLog ? "" : level.toUpperCase(Locale.ROOT) + " ")
-                      + (m.length() > OUTPUT_CHARS ? m.substring(0, OUTPUT_CHARS) + "..." : m));
+                      + (m.length() > max ? m.substring(0, max) + "..." : m));
         }
         // newest first in the log: the first lines the routes logged after the reload are at the end
         Collections.reverse(lines);
