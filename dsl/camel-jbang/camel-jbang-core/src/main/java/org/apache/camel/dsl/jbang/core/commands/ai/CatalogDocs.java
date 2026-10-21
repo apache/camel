@@ -1691,8 +1691,8 @@ public final class CatalogDocs {
     static final String JSONPATH_ONE_ELEMENT = "to pick the one element of a list by a field, write a filter with"
                                                + " resultType: java.util.Map, such as expression: \"$[?(@.orderId =="
                                                + " '${header.id}')]\" and resultType: java.util.Map: the element when one"
-                                               + " matches, null when none does (an index after the filter gives an empty"
-                                               + " list); camel_catalog_sample jsonpath shows it in a route";
+                                               + " matches, null when none or several do (an index after the filter gives"
+                                               + " an empty list); camel_catalog_sample jsonpath shows it in a route";
 
     /** How many options of a component are listed in full when no filter is given (CAMEL-25541). */
     static final int DEFAULT_OPTIONS_LIMIT = 20;

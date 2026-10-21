@@ -278,7 +278,7 @@ class CatalogDocsTest {
 
     @Test
     void aWrongHeaderNameIsAnsweredWithTheRightOne() {
-        org.apache.camel.catalog.CamelCatalog catalog = new org.apache.camel.catalog.DefaultCamelCatalog();
+        CamelCatalog catalog = new DefaultCamelCatalog();
         JsonObject result = CatalogDocs.find(catalog, "CamelHttpStatusCode", null, 10);
         assertTrue(result.getString("header").startsWith("Camel has no header CamelHttpStatusCode"), result.toJson());
         assertTrue(result.getString("header").contains("CamelHttpResponseCode (Exchange.HTTP_RESPONSE_CODE)"));
