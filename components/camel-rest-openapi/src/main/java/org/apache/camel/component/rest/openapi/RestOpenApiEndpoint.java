@@ -62,6 +62,9 @@ import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.component.rest.openapi.validator.DefaultRequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RequestValidator;
 import org.apache.camel.component.rest.openapi.validator.RestOpenApiOperation;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.Metadata;
@@ -92,6 +95,13 @@ import static org.apache.camel.util.StringHelper.before;
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "rest-openapi", title = "REST OpenApi",
              syntax = "rest-openapi:specificationUri#operationId", category = { Category.REST, Category.API })
+@BodyTypes(producerIn = @BodyType(value = { Carrier.NULL, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  dependsOn = "componentName",
+                                  description = "The request body of the operation, which the http component sends: text,"
+                                                + " bytes, a stream or a file. A Map or a List fails: marshal it first"),
+           producerOut = @BodyType(value = { Carrier.BYTES, Carrier.STREAM, Carrier.NULL }, dependsOn = "componentName",
+                                   description = "The response body, as the http component gives it: a byte array or the"
+                                                 + " stream cache; null for a response without a body"))
 public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiEndpoint.class);

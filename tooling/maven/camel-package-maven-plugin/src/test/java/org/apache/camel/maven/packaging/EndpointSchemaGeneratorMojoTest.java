@@ -20,11 +20,14 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.camel.maven.packaging.endpoint.SomeEndpoint;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointExtendingBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstants;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByField;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingEnumConstantsByMethod;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointUsingInterfaceConstants;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBadHeaders;
+import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithBodyTypes;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithFilter;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderClassHierarchy;
 import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithHeaderInterfaceHierarchy;
@@ -33,6 +36,7 @@ import org.apache.camel.maven.packaging.endpoint.SomeEndpointWithoutHeaders;
 import org.apache.camel.maven.packaging.endpoint.SomeExtendingEndpoint;
 import org.apache.camel.maven.packaging.endpoint.SomeInternalRemoteEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.tooling.model.BodyTypeModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -224,5 +228,70 @@ class EndpointSchemaGeneratorMojoTest {
         assertEquals("header", headerFromParent.getKind());
         assertEquals("KEY_EMPTY_WITH_JAVA_DOC", headerFromParent.getName());
 
+    }
+
+    @Test
+    void testEndpointWithBodyTypes() throws Exception {
+        // CAMEL-24961: the body a step needs and the body it leaves, in the order of the annotation
+        addEndpointOptions("resultHandlerFactory", "output");
+        mojo.addBodyTypes(model, SomeEndpointWithBodyTypes.class);
+        assertEquals(List.of(BodyTypeModel.CONSUMER_OUT, BodyTypeModel.PRODUCER_IN, BodyTypeModel.PRODUCER_OUT),
+                List.copyOf(model.getBodyTypes().keySet()));
+
+        BodyTypeModel consumerOut = model.getBodyType(BodyTypeModel.CONSUMER_OUT);
+        assertEquals(List.of("file"), consumerOut.getCarriers());
+        assertEquals("org.apache.camel.component.file.GenericFile", consumerOut.getJavaType());
+        assertEquals("The file as read", consumerOut.getDescription());
+        assertNull(consumerOut.getFormat());
+        assertTrue(consumerOut.getDependsOn().isEmpty());
+
+        assertEquals(List.of("text", "bytes", "stream", "file"),
+                model.getBodyType(BodyTypeModel.PRODUCER_IN).getCarriers());
+
+        BodyTypeModel producerOut = model.getBodyType(BodyTypeModel.PRODUCER_OUT);
+        assertEquals(List.of("text"), producerOut.getCarriers());
+        assertEquals("xml", producerOut.getFormat());
+        assertEquals(List.of("resultHandlerFactory"), producerOut.getDependsOn());
+        assertEquals(1, producerOut.getByOption().size());
+        BodyTypeModel.OptionBodyTypeModel bytes = producerOut.getByOption().get(0);
+        assertEquals("output", bytes.getOption());
+        assertEquals("bytes", bytes.getValue());
+        assertEquals(List.of("bytes"), bytes.getCarriers());
+        assertEquals("byte[]", bytes.getJavaType());
+    }
+
+    @Test
+    void testEndpointDoesNotInheritBodyTypes() throws Exception {
+        // a subclass may change the body, so it declares its own
+        mojo.addBodyTypes(model, SomeEndpointExtendingBodyTypes.class);
+        assertTrue(model.getBodyTypes().isEmpty());
+    }
+
+    @Test
+    void testEndpointWithoutBodyTypes() throws Exception {
+        mojo.addBodyTypes(model, SomeEndpointWithoutHeaders.class);
+        assertTrue(model.getBodyTypes().isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = {
+            SomeEndpointWithBadBodyTypes.DataFormatSide.class, SomeEndpointWithBadBodyTypes.ProducerSideOfConsumer.class,
+            SomeEndpointWithBadBodyTypes.UnchangedInput.class, SomeEndpointWithBadBodyTypes.AnyOutput.class,
+            SomeEndpointWithBadBodyTypes.UnknownWithOthers.class, SomeEndpointWithBadBodyTypes.NoCarriers.class,
+            SomeEndpointWithBadBodyTypes.UnknownOption.class })
+    void testEndpointWithBadBodyTypes(Class<?> clazz) {
+        addEndpointOptions("output");
+        model.setConsumerOnly(clazz.getAnnotation(UriEndpoint.class).consumerOnly());
+        MojoExecutionException e = assertThrows(MojoExecutionException.class, () -> mojo.addBodyTypes(model, clazz));
+        assertTrue(e.getMessage().startsWith(clazz.getName() + ": the @BodyTypes "), e.getMessage());
+        assertTrue(model.getBodyTypes().isEmpty());
+    }
+
+    private void addEndpointOptions(String... names) {
+        for (String name : names) {
+            ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+            option.setName(name);
+            model.addEndpointOption(option);
+        }
     }
 }

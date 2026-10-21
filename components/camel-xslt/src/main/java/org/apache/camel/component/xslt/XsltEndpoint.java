@@ -39,6 +39,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.BodyType;
+import org.apache.camel.spi.BodyType.Carrier;
+import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Metadata;
@@ -60,6 +63,23 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed XsltEndpoint")
 @UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true,
              remote = false, category = { Category.CORE, Category.TRANSFORMATION }, headersClass = XsltConstants.class)
+@BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
+                                  format = "xml", dependsOn = "source",
+                                  byOption = @BodyType.When(option = "failOnNullBody", value = "false",
+                                                            carrier = {
+                                                                    Carrier.NULL, Carrier.TEXT, Carrier.BYTES,
+                                                                    Carrier.STREAM, Carrier.FILE, Carrier.POJO }),
+                                  description = "The XML to transform: text, bytes, a stream, a file, a DOM or another"
+                                                + " javax.xml.transform.Source. A Map, a List or no body fails"),
+           producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String", dependsOn = "resultHandlerFactory",
+                                   byOption = {
+                                           @BodyType.When(option = "output", value = "bytes", carrier = Carrier.BYTES,
+                                                          javaType = "byte[]"),
+                                           @BodyType.When(option = "output", value = "DOM", carrier = Carrier.POJO,
+                                                          javaType = "org.w3c.dom.Document"),
+                                           @BodyType.When(option = "output", value = "file", carrier = Carrier.FILE,
+                                                          javaType = "java.io.File") },
+                                   description = "The result of the transformation"))
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);

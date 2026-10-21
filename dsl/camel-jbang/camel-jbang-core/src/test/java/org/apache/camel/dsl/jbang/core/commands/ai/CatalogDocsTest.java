@@ -134,6 +134,25 @@ class CatalogDocsTest {
     }
 
     @Test
+    void theBodyTypesSayWhatTheBodyIsAfterAStep() throws Exception {
+        // CAMEL-24961: what the options of a component do not say
+        JsonObject xslt = catalogDoc(Map.of("name", "xslt", "kind", "component", "includeOptions", false));
+        JsonObject out = ((JsonObject) xslt.get("bodyTypes")).getMap("producerOut");
+        assertEquals(List.of("text"), out.getCollection("carriers"));
+        assertEquals("java.lang.String", out.getString("javaType"));
+        assertTrue(xslt.getString("bodyTypesHint").contains("A side not listed is not known"));
+
+        JsonObject json = catalogDoc(Map.of("name", "json", "kind", "dataformat", "includeOptions", false));
+        JsonObject unmarshalOut = ((JsonObject) json.get("bodyTypes")).getMap("unmarshalOut");
+        assertEquals(List.of("map", "list"), unmarshalOut.getCollection("carriers"));
+
+        // a component that does not declare them has none, rather than a guess
+        JsonObject kafka = catalogDoc(Map.of("name", "kafka", "kind", "component", "includeOptions", false));
+        assertNull(kafka.get("bodyTypes"));
+        assertNull(kafka.get("bodyTypesHint"));
+    }
+
+    @Test
     void endpointArgumentValidatesAUriAgainstTheComponent() throws Exception {
         JsonObject bad = catalogDoc(Map.of("endpoint", "timer:tick?period=5s&fixedRte=true&repeatCount=abc"));
         assertEquals("timer", bad.getString("name"));
