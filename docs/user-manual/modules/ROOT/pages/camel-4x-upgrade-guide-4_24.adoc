@@ -961,6 +961,16 @@ The `aws2-ddbstream` consumer now reads a closed shard to its end before it read
 shard rotation the consumer started again from `streamIteratorType`: with `FROM_START` it routed records of the stream
 again, and with `FROM_LATEST` it skipped records already written to the new shards.
 
+=== camel-beanio - BeanIOSplitter decodes files and streams with the charset of the exchange or its encoding
+
+`BeanIOSplitter` read a file body with the default charset of the JVM, and a stream or byte array body with the
+charset of the exchange or the default charset of the JVM; its `encoding` option was not used. A file consumed with
+`charset=ISO-8859-1`, or a splitter with `setEncoding(StandardCharsets.ISO_8859_1)`, had every non-ASCII character
+replaced. The splitter now decodes a file, stream or byte array body with the charset of the exchange (the
+`CamelCharsetName` header or exchange property, as set by the `charset` option of the file consumer), else with its
+`encoding` (default: the default charset of the JVM). A `String` or `Reader` body is read as before, and other text
+(such as a `StringBuilder`, which failed before) is read as text.
+
 === camel-bindy - a number field without precision keeps all its decimals when marshalled
 
 A `BigDecimal`, `Double` or `Float` field whose `@DataField` (or `@KeyValuePairField`) has no `precision` and no
