@@ -713,6 +713,10 @@ public class PQCProducer extends DefaultProducer {
 
     private void generateEncapsulation(Exchange exchange)
             throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
+            throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
+        }
+
         KeyGenerator generator = keyGeneratorForExchange();
         SecretKeyWithEncapsulation secEnc1;
         synchronized (generator) {
@@ -720,7 +724,11 @@ public class PQCProducer extends DefaultProducer {
             generator.init(
                     new KEMGenerateSpec(
                             keyPair.getPublic(),
-                            getEndpoint().getConfiguration().getSymmetricKeyAlgorithm(),
+                            // The mapped JCE algorithm name, as the extract operations use: for the algorithms whose
+                            // enum name differs from the JCE name (GOST3412_2015 -> GOST3412-2015, DESEDE -> DESede)
+                            // the raw name is not a resolvable cipher, and the two ends of the exchange would disagree
+                            // on the identity of the key
+                            PQCSymmetricAlgorithms.valueOf(getConfiguration().getSymmetricKeyAlgorithm()).getAlgorithm(),
                             getEndpoint().getConfiguration().getSymmetricKeyLength()),
                     SecureRandomHelper.getSecureRandom());
             // SecretKeyWithEncapsulation is the class to use as the secret key, it has additional
