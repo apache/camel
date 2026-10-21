@@ -248,6 +248,17 @@ that a route sends to and no route consumes, so they report the same endpoints o
 
 So `camel validate` can report an endpoint it did not report before.
 
+=== camel-ftp, camel-mina-sftp, camel-jsch, camel-smb, camel-azure-files - checksumFileAlgorithm writes a checksum again
+
+Since 4.18 the producers of the remote file components (ftp, ftps, sftp, mina-sftp, scp, smb, azure-files) accepted
+`checksumFileAlgorithm` but wrote no checksum file and did not set the `CamelFileChecksum` header; when an earlier
+file producer of the route had set that header, they wrote its checksum, the checksum of another payload. They now
+calculate the checksum of the bytes they upload, write the checksum file (unless `checksumWriteFile=false`) and set
+the header, as in 4.14. A checksum header set before the producer is no longer used by any file producer. scp and
+azure-files upload the bytes of the body without the `charset` option, while the checksum applies it: do not set
+`charset` with `checksumFileAlgorithm` there. FTP uploads in ASCII mode unless `binary=true`, and the server may then
+change the line ends of the stored file, so its checksum can differ from the checksum of the uploaded bytes.
+
 === camel-file - a done file with a fixed name is kept for the files a poll left
 
 A done file with a fixed name (such as `doneFileName=ready`) is no longer deleted while a poll left files of its
