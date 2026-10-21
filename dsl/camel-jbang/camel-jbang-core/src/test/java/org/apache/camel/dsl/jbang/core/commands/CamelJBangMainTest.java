@@ -19,7 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ class CamelJBangMainTest extends CamelCommandBaseTestSupport {
     public void setup() throws Exception {
         super.setup();
 
-        CommandLineHelper.useHomeDir("target");
+        useTestHomeDir();
         PluginHelper.createPluginConfig();
 
         main = new CamelJBangMain().withPrinter(printer);

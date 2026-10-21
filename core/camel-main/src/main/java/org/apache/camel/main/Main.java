@@ -41,6 +41,13 @@ public class Main extends MainCommandLineSupport {
     public Main() {
     }
 
+    @Override
+    protected void doFail(Exception e) {
+        // a main that runs on its own: logged, as otherwise only the JVM prints the failure, on stderr
+        logStartupFailure(e);
+        super.doFail(e);
+    }
+
     /**
      * Camel main application
      *

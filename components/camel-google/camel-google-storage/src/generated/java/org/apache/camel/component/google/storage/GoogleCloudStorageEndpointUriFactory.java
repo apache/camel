@@ -24,7 +24,7 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(36);
+        Set<String> props = new HashSet<>(39);
         props.add("autoCreateBucket");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -39,6 +39,7 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
         props.add("exchangePattern");
         props.add("filter");
         props.add("greedy");
+        props.add("impersonatedServiceAccount");
         props.add("includeBody");
         props.add("includeFolders");
         props.add("initialDelay");
@@ -61,6 +62,8 @@ public class GoogleCloudStorageEndpointUriFactory extends org.apache.camel.suppo
         props.add("storageLocation");
         props.add("timeUnit");
         props.add("useFixedDelay");
+        props.add("useWorkloadIdentityFederation");
+        props.add("workloadIdentityConfig");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.emptySet();

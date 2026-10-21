@@ -47,6 +47,7 @@ public final class A2AConstants {
               javaType = "org.apache.camel.component.a2a.streaming.A2AStreamEmitter")
     public static final String STREAM_EMITTER = "CamelA2AStreamEmitter";
     public static final String USER_PROFILE = "CamelA2AUserProfile";
+    public static final String OAUTH_TOKEN_VALIDATION_RESULT = "CamelOAuthTokenValidationResult";
     public static final String RESPONSE_TASK = "CamelA2AResponseTask";
     @Metadata(label = "common", description = "Context ID filter for task listing", javaType = "String")
     public static final String LIST_CONTEXT_ID = "CamelA2AListContextId";

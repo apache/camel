@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
@@ -357,6 +358,10 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
     }
 
     protected boolean onPropertiesReload(Resource resource, boolean reloadRoutes) throws Exception {
+        // the location the properties component knows the file by, which can be written another way than the file
+        // that changed, such as file:./application.properties for file:application.properties (CAMEL-25767)
+        String location = knownLocation(resource);
+
         // optimize to only update if something changed
         OrderedLocationProperties changed = null;
 
@@ -372,7 +377,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 IOHelper.close(is);
             }
             changed = new OrderedLocationProperties();
-            changed.putAll(resource.getLocation(), tmp);
+            changed.putAll(location, tmp);
             // filter to only keep changed properties
             pc.keepOnlyChangeProperties(changed);
         }
@@ -381,16 +386,16 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         if (changed != null && !changed.isEmpty()) {
             LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
                     resource.getLocation());
-            reloaded = pc.reloadProperties(resource.getLocation());
+            reloaded = pc.reloadProperties(location);
             if (reloaded) {
-                pr.onReload(resource.getLocation(), changed);
+                pr.onChanged(location, changed);
                 // trigger all routes to be reloaded
                 if (reloadRoutes) {
                     retryFailedOrReloadAll();
                 }
             } else {
                 // this may be a new properties file, so we need to add as new known location
-                String existing = getPropertiesByLocation(resource.getLocation());
+                String existing = getPropertiesByLocation(location);
                 if (existing == null) {
                     // remove scheme
                     String loc = resource.getLocation();
@@ -400,6 +405,11 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     PropertiesSource ps = pc.getPropertiesSourceFactory().newFilePropertiesSource(loc);
                     pc.addPropertiesSource(ps);
                     reloaded = true;
+                    // the configuration in a new properties file is applied as well (CAMEL-25767)
+                    pr.onChanged(location, changed);
+                    if (reloadRoutes) {
+                        retryFailedOrReloadAll();
+                    }
                 }
             }
         }
@@ -427,6 +437,37 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         }
     }
 
+    /**
+     * The location of the properties component for the file of the resource, as the same file can be written in other
+     * ways (file:./application.properties and file:application.properties), else the location of the resource.
+     */
+    private String knownLocation(Resource resource) {
+        String location = resource.getLocation();
+        Path file = filePath(location);
+        if (file == null) {
+            return location;
+        }
+        for (String s : getCamelContext().getPropertiesComponent().getLocations()) {
+            String known = s.endsWith(";optional=true") ? s.substring(0, s.length() - 14) : s;
+            if (file.equals(filePath(known))) {
+                return known;
+            }
+        }
+        return location;
+    }
+
+    // the absolute path of a file: location, or null
+    private static Path filePath(String location) {
+        if (location == null || !location.startsWith("file:")) {
+            return null;
+        }
+        try {
+            return Paths.get(location.substring(5)).toAbsolutePath().normalize();
+        } catch (InvalidPathException e) {
+            return null;
+        }
+    }
+
     private String getPropertiesByLocation(String loc) {
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
         for (String s : pc.getLocations()) {
@@ -446,8 +487,12 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
      * saved together with a property it uses is therefore built with that property already in place, instead of failing
      * on it and being restored (CAMEL-25032).
      * <p/>
-     * If the batch fails, the files are reloaded one at a time: the reload then fails on the one file that is wrong and
-     * says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
+     * A properties or Groovy file that fails is reported at once, as when it changed alone, and the other files still
+     * reload. A properties file is not reloaded again: the properties component has its new values already, so the file
+     * would have no changes left, and its failure would be lost (CAMEL-25834).
+     * <p/>
+     * If the routes fail, the route files are reloaded one at a time: the reload then fails on the one file that is
+     * wrong and says which it was, so a mistake in one file does not hide behind the others (CAMEL-24860).
      */
     @Override
     protected void onReloadBatch(List<File> changed) {
@@ -456,21 +501,27 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
             super.onReloadBatch(changed);
             return;
         }
+        setLastError(null);
+        List<File> routeFiles = new ArrayList<>();
         List<Resource> routes = new ArrayList<>();
         boolean others = false;
-        try {
-            setLastError(null);
-            for (File file : changed) {
-                String name = FileUtil.compactPath(file.getPath());
-                Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
-                if (name.endsWith(".properties")) {
-                    others |= onPropertiesReload(resource, false);
-                } else if (name.endsWith(".groovy")) {
-                    others |= onGroovyReload(resource, false);
-                } else {
-                    routes.add(resource);
+        for (File file : changed) {
+            String name = FileUtil.compactPath(file.getPath());
+            Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
+            if (name.endsWith(".properties") || name.endsWith(".groovy")) {
+                try {
+                    others |= name.endsWith(".properties")
+                            ? onPropertiesReload(resource, false) : onGroovyReload(resource, false);
+                    incSucceededCounter();
+                } catch (Exception e) {
+                    reloadFailed(name, e);
                 }
+            } else {
+                routeFiles.add(file);
+                routes.add(resource);
             }
+        }
+        try {
             if (!routes.isEmpty()) {
                 onRouteReload(routes, false);
             } else if (others) {
@@ -478,14 +529,14 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 retryFailedOrReloadAll();
             }
             // the counter is files reloaded, as it is when they are reloaded one at a time
-            for (int i = 0; i < changed.size(); i++) {
+            for (int i = 0; i < routes.size(); i++) {
                 incSucceededCounter();
             }
         } catch (Exception e) {
-            LOG.debug("Reloading {} changed file(s) together failed, reloading them one at a time to find the file"
-                      + " that is wrong: {}",
-                    changed.size(), e.getMessage(), e);
-            super.onReloadBatch(changed);
+            LOG.debug("Reloading {} changed route file(s) together failed, reloading them one at a time to find the"
+                      + " file that is wrong: {}",
+                    routes.size(), e.getMessage(), e);
+            super.onReloadBatch(routeFiles);
         }
     }
 
@@ -567,18 +618,19 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                     = getCamelContext().getRegistry().lookupByNameAndType(RELOAD_RESOURCES, Collection.class);
             if (extras != null) {
                 for (Resource extra : extras) {
-                    if (!sources.contains(extra)) {
+                    // a file that is gone would fail the reload, and every reload after it (CAMEL-25831)
+                    if (!sources.contains(extra) && !isDeletedFile(extra)) {
                         sources.add(extra);
                     }
                 }
             }
             // the Java sources are compiled again, so all beans are created again: a bean of a changed class, and the
-            // beans that call it
+            // beans that call it (not those whose file is gone, such as a Java class that was deleted, CAMEL-25831)
             if (beanResources != null && sources.stream().anyMatch(RouteWatcherReloadStrategy::isJavaSource)) {
                 Collection<Resource> beans = beanResources.get();
                 if (beans != null) {
                     for (Resource bean : beans) {
-                        if (bean != null && !equalResourceLocation(sources, bean)) {
+                        if (bean != null && !isDeletedFile(bean) && !equalResourceLocation(sources, bean)) {
                             sources.add(bean);
                         }
                     }

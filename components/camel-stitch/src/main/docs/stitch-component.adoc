@@ -171,6 +171,29 @@ from("direct:sendStitch")
 .to("stitch:table_1?token=RAW({{token}})");
 ----
 
+In YAML, a Groovy map has the same structure. The keys are those of the Stitch JSON message: `table_name`, `schema`,
+`messages` and `key_names`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sendStitch
+      steps:
+        - setBody:
+            expression:
+              groovy:
+                expression: |
+                  [table_name: 'my_table',
+                   schema    : [properties: [id: [type: 'integer'], name: [type: 'string']]],
+                   messages  : [[data: [id: 2, name: 'Camel']]],
+                   key_names : 'id']
+        - to:
+            uri: stitch:my_table
+            parameters:
+              token: "RAW({{stitch.token}})"
+----
+
 ==== Input body type `Iterable`:
 ._Java-only: Java lambda Processor with Iterable construction_
 [source,java]

@@ -50,7 +50,9 @@ class AiPanelPromptBudgetTest {
     // raised from 5000 for the bounded component answer of camel_catalog_doc (CAMEL-25541), measured ~5040: its limit
     // argument, the docPage that also takes a section of the page, and the full application.properties key replace
     // the camel_component_properties tool and the 38k-character answers a client spilled to a file
-    static final int CORE_BUDGET_TOKENS = 5_100;
+    // raised from 5100 when camel_get_errors said that it answers for an integration that is not running (CAMEL-25784),
+    // measured ~5119: without it an agent does not ask how the previous run ended
+    static final int CORE_BUDGET_TOKENS = 5_200;
     /** Measured ~6.9k tokens for 47 tools. */
     // raised from 7500 with tui_write_file and tui_validate_source
     // and from 7900 with the shared camel_* set (camel_catalog_find, camel_run and camel_error_diagnose added)

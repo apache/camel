@@ -33,7 +33,6 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.util.*;
@@ -49,7 +48,9 @@ import jdk.jfr.Recording;
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.ai.LogFileReader;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExceptionHandler;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.ChildProcess;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -65,6 +66,7 @@ import org.apache.camel.dsl.jbang.core.common.MavenCommand;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
+import org.apache.camel.dsl.jbang.core.common.PreviousRun;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
@@ -178,7 +180,8 @@ public class Run extends CamelCommand {
     boolean transformMessageRun;
     boolean debugRun;
 
-    private Path logFile;
+    // package-private for RunPreviousLogTest
+    Path logFile;
     public long spawnPid;
 
     private Printer quietPrinter;
@@ -305,7 +308,9 @@ public class Run extends CamelCommand {
             description = "Additional JVM arguments (e.g. -Xmx256m -Xms128m)")
     String jvmArgs;
 
-    @Option(names = { "--name" }, defaultValue = "CamelJBang", description = "The name of the Camel application")
+    @Option(names = { "--name" }, defaultValue = "CamelJBang",
+            description = "The name of the Camel application. By default the name of the directory when running a whole directory"
+                          + " (--source-dir, or a directory), else the name of the first file")
     String name;
 
     @Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
@@ -1173,6 +1178,15 @@ public class Run extends CamelCommand {
             }
         }
 
+        if ("CamelJBang".equals(name) && sourceDir != null && !exportRun && !transformRun) {
+            // a whole directory is one app, named after the directory (CAMEL-25830): its first file depends on the
+            // order of the file system, and can be any file, such as a Java class that a route uses
+            String dirName = directoryName(sourceDir);
+            if (dirName != null) {
+                name = dirName;
+            }
+        }
+
         for (String file : files) {
             if (file.startsWith("clipboard") && !(Files.exists(Paths.get(file)))) {
                 file = loadFromClipboard(file);
@@ -1704,11 +1718,8 @@ public class Run extends CamelCommand {
             // the process (and those it started) stops with this JVM, then the files of the run are removed
             ChildProcess.stopOnExit(processRef::get, () -> {
                 removeDir(runDirPath);
-                // cleanup log file
-                String appName = appNameRef.get();
-                if (appName != null) {
-                    Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
-                }
+                // the log is kept as the previous run of the app (CAMEL-25832)
+                keepRunLog(appNameRef.get(), processRef.get(), false);
             });
         }
         Files.createDirectories(runDirPath);
@@ -1772,14 +1783,18 @@ public class Run extends CamelCommand {
         // must be named after the name the application reports (which is what camel log and the TUI look for)
         String appName = resolveExportedAppName(runDirPath, eq.name);
         appNameRef.set(appName);
+        keepLeftoverRunLog(appName);
 
         // prepare quarkus for logging to file
         Path appProps = Paths.get(eq.exportDir, "src/main/resources/application.properties");
         if (Files.exists(appProps)) {
             String content = Files.readString(appProps);
+            // in the Camel directory of the CLI, where camel log looks for it (as for an existing Quarkus project)
+            String logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log").toAbsolutePath().toString()
+                    .replace("\\", "/");
             content += "\n# logging to file\n"
                        + "quarkus.log.file.enabled=true\n"
-                       + "quarkus.log.file.path=${user.home}/.camel/" + appName + ".log\n"
+                       + "quarkus.log.file.path=" + logFile + "\n"
                        + "quarkus.log.file.format=" + QUARKUS_LOG_FILE_FORMAT + "\n";
             Files.writeString(appProps, content);
         }
@@ -1857,6 +1872,8 @@ public class Run extends CamelCommand {
 
         AtomicReference<Process> processRef = new AtomicReference<>();
         AtomicReference<String> appNameRef = new AtomicReference<>();
+        // the JVM of the app, once the project is built
+        AtomicReference<Process> appRef = new AtomicReference<>();
 
         // create temp run dir
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
@@ -1864,10 +1881,9 @@ public class Run extends CamelCommand {
         // the process (and those it started) stops with this JVM, then the files of the run are removed
         ChildProcess.stopOnExit(processRef::get, () -> {
             removeDir(runDirPath);
-            // cleanup log file
-            String appName = appNameRef.get();
-            if (appName != null) {
-                Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
+            // the log is kept as the previous run of the app (CAMEL-25832); a build that failed has no log
+            if (appRef.get() != null) {
+                keepRunLog(appNameRef.get(), appRef.get(), true);
             }
         });
         Files.createDirectories(runDirPath);
@@ -1984,6 +2000,7 @@ public class Run extends CamelCommand {
         pb.inheritIO(); // run in foreground (with IO so logs are visible)
         p = pb.start();
         processRef.set(p);
+        appRef.set(p);
         this.spawnPid = p.pid();
         // wait for that process to exit as we run in foreground
         return p.waitFor();
@@ -2075,17 +2092,129 @@ public class Run extends CamelCommand {
 
     /**
      * Writes the log4j2 configuration used by {@code camel run --runtime=main} to the given file. It logs to the
-     * console, and to the {@code <name>.log} file in the {@code ~/.camel} directory (which is deleted first, so it does
-     * not start with the output of a previous run).
+     * console, and to the {@code <name>.log} file in the {@code ~/.camel} directory. A log a run of that name left
+     * behind is kept as its previous run first, so the new log does not start with the output of that run.
      */
     static void writeCamelMainRunLogConfig(Path target, String appName, String loggingLevel) throws IOException {
-        Path logFile = CommandLineHelper.getCamelDir().resolve(appName + ".log");
-        Files.deleteIfExists(logFile);
+        Path logFile = runLogFile(appName);
+        keepLeftoverRunLog(appName);
         String fileName = logFile.toAbsolutePath().toString().replace("\\", "/");
         try (InputStream is = Run.class.getClassLoader().getResourceAsStream("camel-main-run-log4j2.properties")) {
             String content = new String(is.readAllBytes(), StandardCharsets.UTF_8)
                     .replace("{{logFile}}", fileName)
                     .replace("{{level}}", loggingLevel != null ? loggingLevel : "info");
+            Files.createDirectories(target.getParent());
+            Files.writeString(target, content);
+        }
+    }
+
+    /**
+     * The log a run on a Maven runtime writes in the Camel directory: {@code <name>.log}, which {@code camel log} and
+     * the TUI read when there is no {@code <pid>.log}.
+     */
+    static Path runLogFile(String appName) {
+        return CommandLineHelper.getCamelDir().resolve(appName + ".log");
+    }
+
+    /**
+     * A log that a run of this name left behind, such as a run that was killed so it could not keep its log, is kept as
+     * the previous run of the name before the new run writes its own (CAMEL-25832).
+     */
+    static void keepLeftoverRunLog(String appName) {
+        PreviousRun.keepLeftover(runLogFile(appName), appName);
+    }
+
+    /**
+     * When a run on a Maven runtime ends, its log is kept as the previous run of its name, as camel run does for the
+     * default runtime (CAMEL-25784), so camel log --previous and the AI tools can read why the app stopped, such as an
+     * app that failed to start (CAMEL-25832).
+     *
+     * @param appName the name of the app, or null when the run did not get that far
+     * @param process the last process of the run, which has stopped
+     * @param app     whether the process is the app itself (java -jar, or mvn camel:run, where Camel runs in the Maven
+     *                JVM), or Maven that runs the app in a process of its own (quarkus:run, quarkus:dev,
+     *                spring-boot:run), whose pid and exit code are not those of the app
+     */
+    static void keepRunLog(String appName, Process process, boolean app) {
+        Integer code = process != null && !process.isAlive() ? process.exitValue() : null;
+        keepRunLog(appName, app && process != null ? process.pid() : 0, code, app);
+    }
+
+    static Path keepRunLog(String appName, long pid, Integer code, boolean app) {
+        if (appName == null) {
+            return null;
+        }
+        String signal = code != null ? signalOf(code) : null;
+        // the exit code of Maven is not the one of the app
+        Integer exitCode = app || signal != null ? code : null;
+        String failure = null;
+        if (code != null && code != 0 && signal == null) {
+            // why it failed, as the log of the app says, as camel run says it for the default runtime; else that Maven
+            // failed, as the exit code of Maven is not given
+            failure = failureInLog(runLogFile(appName));
+            if (failure == null && !app) {
+                failure = "Maven ended with exit code " + code;
+            }
+        }
+        return PreviousRun.keep(runLogFile(appName), appName, pid, exitCode, signal, failure);
+    }
+
+    /**
+     * At most this many records at the end of the log are looked at for why a run failed.
+     */
+    private static final int FAILURE_RECORDS = 20;
+
+    /**
+     * Why a run that failed ended, as its log says: the first ERROR record among the last records of the log, with the
+     * cause of its stack trace, such as "Application run failed: java.lang.IllegalArgumentException: Invalid time
+     * pattern: notanumber" (Spring Boot), "Failed to start application: ..." (Quarkus) or "Error starting Camel: ..."
+     * (Camel Main). The first, as an error that follows it is about the same failure in other words: Quarkus logs the
+     * failure of Camel, then that Quarkus failed to start. Null when the end of the log has no ERROR.
+     */
+    static String failureInLog(Path log) {
+        if (!Files.isRegularFile(log)) {
+            return null;
+        }
+        String answer = null;
+        if (LogFileReader.read(log, FAILURE_RECORDS, null, null, false).get("lines") instanceof List<?> lines) {
+            // newest first: the last ERROR found is the first one logged
+            for (Object o : lines) {
+                if (o instanceof JsonObject r && "ERROR".equalsIgnoreCase(r.getString("level"))) {
+                    String message = r.getStringOrDefault("message", "").strip();
+                    String cause = r.getString("cause");
+                    answer = cause != null && !message.contains(cause) ? message + ": " + cause : message;
+                }
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The signal a process stopped by it exits with, as 128 and the number of the signal: 130 for SIGINT (Ctrl+C), 137
+     * for SIGKILL and 143 for SIGTERM; null for another exit code.
+     */
+    static String signalOf(int exitCode) {
+        return switch (exitCode) {
+            case 130 -> "SIGINT";
+            case 137 -> "SIGKILL";
+            case 143 -> "SIGTERM";
+            default -> null;
+        };
+    }
+
+    /**
+     * Writes the logback configuration used by {@code camel run --runtime=spring-boot} to the given file. It logs to
+     * the console, and to the {@code <name>.log} file in the Camel directory, as the other runtimes do, so the log can
+     * be kept as the previous run of the app (CAMEL-25832).
+     */
+    static void writeSpringBootLogbackConfig(Path target, String appName) throws IOException {
+        String fileName = runLogFile(appName).toAbsolutePath().toString().replace("\\", "/")
+                .replace("&", "&amp;").replace("<", "&lt;").replace("\"", "&quot;");
+        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
+            if (is == null) {
+                throw new IOException("spring-boot-logback.xml not found");
+            }
+            String content = new String(is.readAllBytes(), StandardCharsets.UTF_8).replace("{{logFile}}", fileName);
             Files.createDirectories(target.getParent());
             Files.writeString(target, content);
         }
@@ -2228,6 +2357,8 @@ public class Run extends CamelCommand {
         ChildProcess.stopOnExit(processRef::get, () -> {
             Files.deleteIfExists(tempPom);
             Files.deleteIfExists(logConfig);
+            // the log is kept as the previous run of the app, which ran in the Maven JVM (CAMEL-25832)
+            keepRunLog(appName, processRef.get(), true);
         });
 
         // find mvnw or fall back to mvn
@@ -2314,18 +2445,20 @@ public class Run extends CamelCommand {
             w.write(fos, model);
         }
 
+        // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
+        String appName = resolveExistingProjectAppName(projectDir, model);
+        keepLeftoverRunLog(appName);
+
         // shutdown hook to clean up temp files
         // the process (and those it started) stops with this JVM, then the files of the run are removed
         ChildProcess.stopOnExit(processRef::get, () -> {
             Files.deleteIfExists(tempPom);
+            // the log is kept as the previous run of the app (CAMEL-25832)
+            keepRunLog(appName, processRef.get(), false);
         });
 
         // find mvnw or fall back to mvn
         String mvnCmd = MavenCommand.of(projectDir);
-
-        // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
-        String appName = resolveExistingProjectAppName(projectDir, model);
-        Files.deleteIfExists(CommandLineHelper.getCamelDir().resolve(appName + ".log"));
 
         List<String> cmd = new ArrayList<>();
         cmd.add(mvnCmd);
@@ -2382,6 +2515,8 @@ public class Run extends CamelCommand {
             return runExistingSpringBootProject(processRef);
         }
 
+        AtomicReference<String> appNameRef = new AtomicReference<>();
+
         // create temp run dir
         Path runDirPath = Paths.get(RUN_PLATFORM_DIR, Long.toString(System.currentTimeMillis()));
         if (!this.background) {
@@ -2389,6 +2524,8 @@ public class Run extends CamelCommand {
             // the process (and those it started) stops with this JVM, then the files of the run are removed
             ChildProcess.stopOnExit(processRef::get, () -> {
                 removeDir(runDirPath);
+                // the log is kept as the previous run of the app (CAMEL-25832)
+                keepRunLog(appNameRef.get(), processRef.get(), false);
             });
         }
         Files.createDirectories(runDirPath);
@@ -2458,12 +2595,14 @@ public class Run extends CamelCommand {
             return exit;
         }
 
+        // the exported project may have derived the application name from the source files, and the log file is
+        // named after the name the application reports (what camel log and the TUI look for)
+        String appName = resolveExportedAppName(runDirPath, eq.name);
+        appNameRef.set(appName);
+        keepLeftoverRunLog(appName);
+
         // prepare spring-boot for logging to file
-        try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
-            Path logbackPath = Paths.get(eq.exportDir, "src/main/resources/logback.xml");
-            Files.createDirectories(logbackPath.getParent());
-            Files.copy(is, logbackPath, StandardCopyOption.REPLACE_EXISTING);
-        }
+        writeSpringBootLogbackConfig(Paths.get(eq.exportDir, "src/main/resources/logback.xml"), appName);
 
         // run spring-boot via maven
         ProcessBuilder pb = new ProcessBuilder();
@@ -2491,22 +2630,16 @@ public class Run extends CamelCommand {
     }
 
     /**
-     * The JVM arguments ({@code spring-boot.run.jvmArguments}) an existing Spring Boot project is run with: logging to
-     * file, the profile, the port and properties, the flight recording and {@code --jvm-args}.
+     * The logback configuration an existing Spring Boot project runs with, logging to the {@code <name>.log} file so
+     * the TUI can read the log: a temp file, so the project is not changed and needs no src/main/resources. Null when
+     * it cannot be written.
      */
-    /**
-     * The logback configuration an existing Spring Boot project runs with, logging to file so the TUI can read the log:
-     * a temp file, so the project is not changed and needs no src/main/resources. Null when it cannot be written.
-     */
-    Path springBootLogbackConfig() {
+    Path springBootLogbackConfig(String appName) {
         if (springBootLogback == null) {
-            try (InputStream is = Run.class.getClassLoader().getResourceAsStream("spring-boot-logback.xml")) {
-                if (is == null) {
-                    return null;
-                }
+            try {
                 Path file = Files.createTempFile("camel-jbang-logback-", ".xml");
                 file.toFile().deleteOnExit();
-                Files.copy(is, file, StandardCopyOption.REPLACE_EXISTING);
+                writeSpringBootLogbackConfig(file, appName);
                 springBootLogback = file;
             } catch (IOException e) {
                 return null;
@@ -2515,15 +2648,21 @@ public class Run extends CamelCommand {
         return springBootLogback;
     }
 
-    List<String> buildExistingSpringBootJvmArgs() {
+    /**
+     * The JVM arguments ({@code spring-boot.run.jvmArguments}) an existing Spring Boot project is run with: logging to
+     * file, the profile, the name (so the app reports the name of its log file), the port and properties, the flight
+     * recording and {@code --jvm-args}.
+     */
+    List<String> buildExistingSpringBootJvmArgs(String appName) {
         List<String> args = new ArrayList<>();
-        Path logback = springBootLogbackConfig();
+        Path logback = springBootLogbackConfig(appName);
         if (logback != null) {
             args.add("-Dlogging.config=" + logback.toUri());
         }
         if (profile != null && !"prod".equals(profile)) {
             args.add("-Dcamel.main.profile=" + profile);
         }
+        args.add("-Dcamel.main.name=" + appName);
         args.addAll(buildExistingProjectSystemProperties("server.port"));
         String jfrArg = buildJfrJvmArgs();
         if (jfrArg != null) {
@@ -2572,6 +2711,10 @@ public class Run extends CamelCommand {
             w.write(fos, model);
         }
 
+        // log to console and to file in ~/.camel (so camel log and the TUI can tail the logs)
+        String appName = resolveExistingProjectAppName(projectDir, model);
+        keepLeftoverRunLog(appName);
+
         // shutdown hook to clean up temp files
         // the process (and those it started) stops with this JVM, then the files of the run are removed
         ChildProcess.stopOnExit(processRef::get, () -> {
@@ -2579,6 +2722,8 @@ public class Run extends CamelCommand {
             if (springBootLogback != null) {
                 Files.deleteIfExists(springBootLogback);
             }
+            // the log is kept as the previous run of the app (CAMEL-25832)
+            keepRunLog(appName, processRef.get(), false);
         });
 
         // find mvnw or fall back to mvn
@@ -2589,7 +2734,7 @@ public class Run extends CamelCommand {
         cmd.add("--quiet");
         cmd.add("--file");
         cmd.add(tempPom.toString());
-        cmd.add("-Dspring-boot.run.jvmArguments=" + String.join(" ", buildExistingSpringBootJvmArgs()));
+        cmd.add("-Dspring-boot.run.jvmArguments=" + String.join(" ", buildExistingSpringBootJvmArgs(appName)));
         cmd.add("-DskipTests");
         cmd.add("package");
         cmd.add("spring-boot:run");
@@ -3050,28 +3195,90 @@ public class Run extends CamelCommand {
         }
     }
 
+    /**
+     * The folders of a project layout, whose name says nothing about the app (CAMEL-25830).
+     */
+    private static final Set<String> LAYOUT_FOLDERS = Set.of("src", "main", "resources", "java", "camel", "routes");
+
+    /**
+     * The name of an app that is a whole directory: the name of the directory, or of the first parent with a name that
+     * is not one of the folders of a project layout ({@code src/main/resources/camel} is named after the project), and
+     * {@code .} is the working directory.
+     *
+     * @return the name, or <tt>null</tt> when the directory and its parents have no such name
+     */
+    static String directoryName(String dir) {
+        Path path = Paths.get(dir).toAbsolutePath().normalize();
+        while (path != null && path.getFileName() != null) {
+            String answer = path.getFileName().toString();
+            if (!LAYOUT_FOLDERS.contains(answer.toLowerCase(Locale.ROOT))) {
+                return answer;
+            }
+            path = path.getParent();
+        }
+        return null;
+    }
+
     protected int runKameletMain(KameletMain main) throws Exception {
         Recording jfrRecording = startJfrRecording();
+        PreviousRun.Keeper previousLog = null;
+        if (logFile != null && keepsPreviousLog()) {
+            // CAMEL-25784: the log is kept as the previous log of the integration when the run ends, and so are the
+            // logs that runs which were killed left behind
+            PreviousRun.keepOrphans();
+            previousLog = new PreviousRun.Keeper(logFile, () -> runName(main));
+        }
+        Integer exitCode = null;
+        String failure = null;
         try {
             main.start();
             if (hasNoRoutes(main)) {
                 // it would run doing nothing: a file without routes, or a mistake in it
-                printer().printErr(files.isEmpty()
-                        ? "No routes found" : "No routes found in: " + String.join(", ", files));
+                failure = files.isEmpty() ? "No routes found" : "No routes found in: " + String.join(", ", files);
+                printer().printErr(failure);
                 main.stop();
-                return CliExitCode.FAILURE;
+                exitCode = CliExitCode.FAILURE;
+                return exitCode;
             }
             main.run();
+            int code = main.getExitCode();
+            // no exit code is set when Camel is stopped from outside (such as camel stop)
+            exitCode = code == Integer.MIN_VALUE ? CliExitCode.OK : code;
+            return exitCode;
+        } catch (Exception | Error e) {
+            // such as a route that failed to start, or an Error such as a NoClassDefFoundError of a missing dependency:
+            // only noted as why the run ended, and thrown again
+            failure = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+            exitCode = new CliExecutionExceptionHandler(getMain()).getExitCode(e);
+            throw e;
         } finally {
             stopJfrRecording(jfrRecording);
-            // cleanup and delete log file
-            if (logFile != null) {
+            if (previousLog != null) {
+                previousLog.ended(exitCode, failure);
+            } else if (logFile != null) {
+                // cleanup and delete log file
                 FileUtil.deleteFile(logFile);
             }
         }
-        int code = main.getExitCode();
-        // no exit code is set when Camel is stopped from outside (such as camel stop)
-        return code == Integer.MIN_VALUE ? CliExitCode.OK : code;
+    }
+
+    /**
+     * Whether the log of the run is kept as the previous log of the integration when the run ends (CAMEL-25784):
+     * {@code camel run} on the command line, not a Camel that another command runs in its JVM (such as
+     * {@code camel cmd send --local} and {@code camel transform}).
+     */
+    boolean keepsPreviousLog() {
+        return spec != null && !exportRun && !transformRun && !transformMessageRun && !scriptRun;
+    }
+
+    /**
+     * The name of the integration, as {@code camel ps} and {@code camel log} find it: the name of its CamelContext,
+     * which is {@code camel.main.name}, else the name of the run when Camel did not get that far.
+     */
+    private String runName(KameletMain main) {
+        CamelContext context = main.getCamelContext();
+        String answer = context != null ? context.getName() : null;
+        return answer != null && !answer.isBlank() ? answer : name;
     }
 
     /**

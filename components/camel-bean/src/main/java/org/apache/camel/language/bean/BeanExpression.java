@@ -16,8 +16,12 @@
  */
 package org.apache.camel.language.bean;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.BeanScope;
@@ -29,7 +33,9 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanConstants;
 import org.apache.camel.component.bean.BeanExpressionProcessor;
@@ -43,6 +49,7 @@ import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.component.bean.RequestBeanHolder;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.BodyFacts;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.KeyValueHolder;
@@ -535,13 +542,39 @@ public class BeanExpression implements Expression, Predicate {
                 resultExchange.setException(null);
                 return value;
             }
+            String method = methodHint(methodName, resultExchange.getException());
+            Object bean = beanOf(holder, exchange);
+            String body = bodyHint(exchange, bean);
+            String list = body == null ? listHint(bean, methodName) : null;
             throw new RuntimeBeanExpressionException(
                     exchange, describeBean(holder, beanName, exchange),
-                    keyHint(holder, exchange, methodName, methodHint(methodName, resultExchange.getException())),
+                    body != null
+                            ? method + " (" + body + ")"
+                            : list != null ? method + list : keyHint(holder, exchange, methodName, method),
                     resultExchange.getException());
         }
         return newResult;
     }
+
+    /**
+     * ${body.orderId}, or a method a model makes up such as ${body.find(...)}, on a List: neither is there, so say how
+     * to get to an element: by its index, by a field with jsonpath, or one at a time with split. The way
+     * {@link #noKeysHint} does for ${body[orderId]}; null for any other bean.
+     */
+    static String listHint(Object bean, String methodName) {
+        if (!(bean instanceof Collection<?>) && !(bean instanceof Object[])) {
+            return null;
+        }
+        String type = bean instanceof List ? "a List" : bean instanceof Object[] ? "an array" : "a Collection";
+        boolean field = methodName != null && FIELD_NAME.matcher(methodName).matches();
+        String name = field ? methodName : "field";
+        return " (" + type + " has no " + (field ? "method or key " + methodName : "such method")
+               + ": pick an element first, such as [0]." + name + ", or the element whose " + name
+               + " has a given value with jsonpath, such as jsonpath: \"$[?(@." + name + " == '${header." + name
+               + "}')]\" with resultType java.util.Map, or split it)";
+    }
+
+    private static final Pattern FIELD_NAME = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
 
     /** Says that the bean is not a Map with that key, as null is a value a key can hold. */
     private static final Object NO_SUCH_KEY = new Object();
@@ -595,6 +628,11 @@ public class BeanExpression implements Expression, Predicate {
         }
         try {
             Object bean = holder != null ? holder.getBean(exchange) : null;
+            if (bean instanceof Map<?, ?> && bean == exchange.getMessage().getBody()) {
+                // the body: which step made it this Map, as a split over an order's lines does (CAMEL-25749)
+                return hint + " (the Map has no key " + methodName + "; " + BodyFacts.describe(exchange) + ": "
+                       + BodyFacts.hint(exchange, BodyFacts.Need.DATA) + ")";
+            }
             if (bean instanceof Map<?, ?> map) {
                 String keys = map.keySet().stream().limit(MAX_KEYS_LISTED).map(String::valueOf)
                         .collect(Collectors.joining(", "));
@@ -620,9 +658,43 @@ public class BeanExpression implements Expression, Predicate {
             key = exp.evaluate(exchange, String.class);
         }
         if (key != null) {
-            return lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean(exchange));
+            Object bean = holder.getBean(exchange);
+            try {
+                return lookupResult(resultExchange, key, result, nullSafe, ognlPath, bean);
+            } catch (IndexOutOfBoundsException e) {
+                // ${body[status]} on the file as read, or on a stream: the same exception, saying what the body is
+                // and the step that parses it (CAMEL-25749)
+                String body = bodyHint(exchange, bean);
+                if (body == null) {
+                    throw e;
+                }
+                throw new IndexOutOfBoundsException(e.getMessage() + " (" + body + ")");
+            }
         }
         return result;
+    }
+
+    /**
+     * What the body is and what to write, when an OGNL read on the message body failed because of its type: the payload
+     * as text, bytes, a stream or the file as read, which an unmarshal turns into data, or an iterator, which has no
+     * size (CAMEL-25749). Null for a Map, whose keys {@link #keyHint} lists, and for a List or an object, where the
+     * name read is wrong rather than the body.
+     */
+    private static String bodyHint(Exchange exchange, Object bean) {
+        if (bean == null || bean instanceof Map || bean != exchange.getMessage().getBody()) {
+            return null;
+        }
+        String hint = BodyFacts.hint(exchange, BodyFacts.Need.DATA);
+        return hint != null ? BodyFacts.describe(exchange) + ": " + hint : null;
+    }
+
+    /** The bean an OGNL step is called on, or null when it cannot be resolved. */
+    private static Object beanOf(BeanHolder holder, Exchange exchange) {
+        try {
+            return holder != null ? holder.getBean(exchange) : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static Object lookupResult(
@@ -681,11 +753,41 @@ public class BeanExpression implements Expression, Predicate {
             throw new IndexOutOfBoundsException(
                     "Key: " + key + " not found in bean: " + bean + " of type: "
                                                 + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath
-                                                + "]");
+                                                + "]" + noKeysHint(result != null ? result : bean, key));
         } else {
             // null safe so we can return null
             return null;
         }
     }
 
+    /**
+     * What to do when a key is read from a value that has no keys (CAMEL-25746): the file as read (a variable set from
+     * the body of a file consumer or of pollEnrich), the message body as a stream or bytes (a request body before it is
+     * unmarshalled, or a variable set from it), JSON text, or a List, array or other Collection, where [0] picks an
+     * element.
+     */
+    static String noKeysHint(Object value, String key) {
+        if (value instanceof WrappedFile<?> || value instanceof File) {
+            // a variable set from the body of a file consumer or of pollEnrich holds the file, not its data
+            String type = value instanceof WrappedFile<?> ? value.getClass().getSimpleName() : "File";
+            return " (the value is the file as read (a " + type + "), not its data: unmarshal it first, for example with"
+                   + " json, then read the key; a variable is unmarshalled in place with variableSend and variableReceive"
+                   + " set to its name, such as unmarshal: {json: {}, variableSend: customer, variableReceive: customer})";
+        }
+        if (value instanceof StreamCache || value instanceof InputStream || value instanceof byte[]) {
+            return " (the value is the message body as a stream, not a Map: unmarshal it first, for example with json,"
+                   + " then read the key; a variable keeps the value it had when it was set)";
+        }
+        if (value instanceof CharSequence text) {
+            String trimmed = text.toString().strip();
+            if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+                return " (the value is JSON text, not a Map: unmarshal it first, for example with json, then read the key)";
+            }
+        }
+        if (value instanceof Collection || value instanceof Object[]) {
+            String type = value instanceof List ? "a List" : value instanceof Object[] ? "an array" : "a Collection";
+            return " (" + type + " has no keys: pick an element first, such as [0][" + key + "], or split it)";
+        }
+        return "";
+    }
 }

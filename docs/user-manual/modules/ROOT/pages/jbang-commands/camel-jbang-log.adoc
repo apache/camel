@@ -25,6 +25,7 @@ camel log [options]
 | `--grep` | Filter logs to only output lines matching text (ignore case). |  | String
 | `--logging-color` | Use colored logging | true | boolean
 | `--prefix` | Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off. | auto | String
+| `--previous` | Print the log of the previous run of the integration instead: the last run of that name that ended, such as one that failed to start (like kubectl logs --previous). | false | boolean
 | `--since` | Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified. |  | String
 | `--startup` | Only shows logs from the starting phase to make it quick to look at how Camel was started. | false | boolean
 | `--tail` | The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning. | -1 | int

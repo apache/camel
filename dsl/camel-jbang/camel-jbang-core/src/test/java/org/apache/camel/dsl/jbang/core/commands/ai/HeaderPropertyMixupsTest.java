@@ -88,9 +88,11 @@ class HeaderPropertyMixupsTest {
 
     @Test
     void theValidatorOfAWriteReportsIt() {
-        // the file is unmarshalled first, or the body type check reports the read of ${body[sku]} on a GenericFile
+        // the file is unmarshalled first, or the body type check reports the read of ${body[sku]} on a GenericFile;
+        // and the lookup is a GET, or it reports the parsed order sent with POST
         String route = route("file:orders", "setProperty", "${header.sku}")
-                .replace("      steps:\n", "      steps:\n        - unmarshal:\n            json: {}\n");
+                .replace("      steps:\n", "      steps:\n        - unmarshal:\n            json: {}\n")
+                .replace("${header.sku}\"", "${header.sku}?httpMethod=GET\"");
         List<String> msgs = SourceValidator.validate("http-client.camel.yaml", route, new DefaultCamelCatalog(), null);
 
         assertThat(msgs).anyMatch(m -> m.contains("${header.sku} reads a header sku"));

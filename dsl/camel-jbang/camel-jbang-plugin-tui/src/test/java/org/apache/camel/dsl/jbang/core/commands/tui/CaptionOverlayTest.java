@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
@@ -28,6 +29,9 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CaptionOverlayTest {
+
+    // a family: three emoji joined by ZWJs, eight chars that take two columns
+    private static final String FAMILY = "👨\u200D👩\u200D👧";
 
     @Test
     void anInlineCaptionInWideCharactersIsNotCut() {
@@ -55,5 +59,33 @@ class CaptionOverlayTest {
         caption.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
 
         assertThat(caption.captionTextForTesting()).isEqualTo("a");
+    }
+
+    @Test
+    void backspaceInAnInlineCaptionDeletesAWholeEmojiOfSeveralCodePoints() {
+        CaptionOverlay caption = new CaptionOverlay();
+        caption.openInline();
+        caption.handleKeyEvent(KeyEvent.ofChar('a'));
+        // a family arrives as five keys, a code point each
+        FAMILY.codePoints().forEach(cp -> caption.handleKeyEvent(KeyEvent.ofChar(cp)));
+        caption.handleKeyEvent(KeyEvent.ofKey(KeyCode.BACKSPACE));
+        caption.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+
+        assertThat(caption.captionTextForTesting()).isEqualTo("a");
+    }
+
+    @Test
+    void aCaptionIsTypedAWholeEmojiAtATime() {
+        AtomicLong now = new AtomicLong(1_000);
+        CaptionOverlay caption = new CaptionOverlay(now::get);
+        caption.showCaption("a" + FAMILY + "b", 0);
+        Rect area = new Rect(0, 0, 40, 5);
+
+        // a character every 50 ms: after 100 ms the a and the whole family, not the first emoji of it
+        now.addAndGet(100);
+        Buffer buffer = Buffer.empty(area);
+        caption.render(Frame.forTesting(buffer), area);
+
+        assertThat(TuiTestHelper.bufferToString(buffer)).contains("a" + FAMILY).doesNotContain("b");
     }
 }

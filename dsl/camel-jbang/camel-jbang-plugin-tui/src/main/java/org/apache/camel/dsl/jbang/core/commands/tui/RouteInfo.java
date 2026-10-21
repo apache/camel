@@ -51,5 +51,9 @@ class RouteInfo {
     String sinceLastFailed;
     /** The statistics as the status file has them, for the route diagram (DiagramTopology). */
     Map<String, ?> statistics;
+    /** The steps reached with more than one body type, across the messages (CAMEL-25750). */
+    int variedBodyTypes;
+    /** The steps reached with bodies of more than one kind, which need attention (CAMEL-25750). */
+    int mixedBodyKinds;
     final List<ProcessorInfo> processors = new ArrayList<>();
 }

@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration.StreamIteratorType;
@@ -44,6 +43,7 @@ class ShardIteratorHandler {
     private final Set<String> pendingClosedShards = new HashSet<>();
 
     private String streamArn;
+    private boolean initialized;
     private Map<String, String> currentShardIterators = new HashMap<>();
 
     ShardIteratorHandler(Ddb2StreamEndpoint endpoint) {
@@ -54,41 +54,38 @@ class ShardIteratorHandler {
         if (streamArn == null) {
             streamArn = getStreamArn();
         }
-        // Either return cached ones or get new ones via GetShardIterator requests.
-        if (currentShardIterators.isEmpty()) {
+        // The configured iterator type is the start position of the consumer: it is used once, and not again when
+        // every shard that was being read has closed (that would read the stream again from its start, or skip the
+        // records of the new shards with FROM_LATEST)
+        if (!initialized) {
             shardTree.populate(describeStreamPaginated());
 
             StreamIteratorType streamIteratorType = getEndpoint().getConfiguration().getStreamIteratorType();
             currentShardIterators = getCurrentShardIterators(streamIteratorType);
-        } else {
-            // Refresh the shard tree when any tracked shard has closed, so that
-            // children created by DynamoDB's shard rotation become visible.
-            if (!pendingClosedShards.isEmpty()) {
-                shardTree.populate(describeStreamPaginated());
-            }
+            // no shard to read yet: try again at the next poll
+            initialized = !currentShardIterators.isEmpty();
+        } else if (!pendingClosedShards.isEmpty()) {
+            // A shard is left only when it was read to its end (updateShardIterator got no next iterator): a closed
+            // shard, which already has children, can still hold records that were not read. Refresh the shard tree,
+            // so that children created by DynamoDB's shard rotation become visible, and read them from their start.
+            shardTree.populate(describeStreamPaginated());
 
-            Map<String, String> childShardIterators = new HashMap<>();
-            for (Entry<String, String> currentShardIterator : currentShardIterators.entrySet()) {
-                List<Shard> children = shardTree.getChildren(currentShardIterator.getKey());
-                if (children.isEmpty()) { // This is still an active leaf shard, reuse it.
-                    childShardIterators.put(currentShardIterator.getKey(), currentShardIterator.getValue());
-                } else {
-                    for (Shard child : children) { // Inactive shard, move down to its children.
-                        String shardIterator = getShardIterator(child.shardId(), ShardIteratorType.TRIM_HORIZON);
-                        childShardIterators.put(child.shardId(), shardIterator);
-                    }
-                }
-            }
-
+            Map<String, String> childShardIterators = new HashMap<>(currentShardIterators);
+            Set<String> followed = new HashSet<>();
             for (String closedShardId : pendingClosedShards) {
-                for (Shard child : shardTree.getChildren(closedShardId)) {
+                List<Shard> children = shardTree.getChildren(closedShardId);
+                for (Shard child : children) {
                     if (!childShardIterators.containsKey(child.shardId())) {
                         String shardIterator = getShardIterator(child.shardId(), ShardIteratorType.TRIM_HORIZON);
                         childShardIterators.put(child.shardId(), shardIterator);
                     }
                 }
+                if (!children.isEmpty()) {
+                    followed.add(closedShardId);
+                }
             }
-            pendingClosedShards.clear();
+            // a shard whose children are not listed yet is looked up again at the next poll
+            pendingClosedShards.removeAll(followed);
 
             currentShardIterators = childShardIterators;
         }

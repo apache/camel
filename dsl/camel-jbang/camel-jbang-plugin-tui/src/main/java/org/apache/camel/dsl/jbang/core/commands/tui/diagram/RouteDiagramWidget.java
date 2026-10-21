@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui.diagram;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
 import dev.tamboui.text.CharWidth;
+import dev.tamboui.text.GraphemeClusters;
 import dev.tamboui.widget.Widget;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.Bounds;
@@ -35,6 +37,7 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.StatInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.TreeNode;
 import org.apache.camel.diagram.RouteErrorFrame;
+import org.apache.camel.dsl.jbang.core.commands.tui.BodyTypes;
 import org.apache.camel.dsl.jbang.core.commands.tui.BusinessEndpointLabels;
 import org.apache.camel.dsl.jbang.core.commands.tui.Theme;
 
@@ -49,6 +52,10 @@ public class RouteDiagramWidget implements Widget {
     private static final int MIN_BOX_WIDTH = 16;
     private static final int X_DIVISOR = 15;
     private static final int MAX_WRAP_LINES = 3;
+    /** The widest the body types beside an arrow are: the Info panel has them all. */
+    private static final int MAX_BODY_TYPES_WIDTH = 48;
+    /** The room a count at the head of an arrow takes before the body types, at most. */
+    private static final int COUNT_WIDTH = 10;
 
     // Dashed scope box characters
     private static final char SCOPE_H = '╌';
@@ -150,6 +157,8 @@ public class RouteDiagramWidget implements Widget {
     @Override
     public void render(Rect area, Buffer buffer) {
         nodeBoxes.clear();
+        arrowCells.clear();
+        arrowEnds.clear();
 
         if (errorFrame != null) {
             drawErrorFrame(buffer, area);
@@ -187,6 +196,10 @@ public class RouteDiagramWidget implements Widget {
             } else if (!"route".equals(ln.type)) {
                 drawNode(buffer, area, ln);
             }
+        }
+        // the body types beside the arrows, where the boxes, the arrows and the markers leave room for them
+        for (ArrowEnd end : arrowEnds) {
+            drawBodyTypes(buffer, area, end);
         }
         // the markers beside the boxes last, so a long one stops at a box instead of drawing over it
         for (Marker m : markers) {
@@ -228,17 +241,13 @@ public class RouteDiagramWidget implements Widget {
         if (y < area.top() || y >= area.bottom()) {
             return;
         }
-        // a character at a time, by the columns it takes: an emoji or a CJK character two
+        // a character at a time, by the columns it takes: an emoji or a CJK character two, and all the code points of
+        // an emoji (a ZWJ sequence, a flag) or of a letter with a combining mark go together
         String text = m.text();
         int offset = 0;
         for (int i = 0; i < text.length();) {
-            int cp = text.codePointAt(i);
-            int end = i + Character.charCount(cp);
-            // a combining mark goes with the character before it
-            while (end < text.length() && CharWidth.of(text.codePointAt(end)) == 0) {
-                end += Character.charCount(text.codePointAt(end));
-            }
-            int width = Math.max(1, CharWidth.of(cp));
+            int end = GraphemeClusters.clusterEnd(text, i);
+            int width = Math.max(1, CharWidth.of(text.substring(i, end)));
             int x = area.x() + m.col() - scrollX + offset;
             if (x + width > area.right()) {
                 return;
@@ -262,6 +271,94 @@ public class RouteDiagramWidget implements Widget {
     public RouteDiagramWidget withErrorMark(boolean mark) {
         this.errorMark = mark;
         return this;
+    }
+
+    private boolean bodyTypes;
+    private boolean bodyKindMarks;
+    /** The cells of the arrows and their counts, which the body types beside an arrow stop at. */
+    private final Set<Long> arrowCells = new HashSet<>();
+    private final List<ArrowEnd> arrowEnds = new ArrayList<>();
+
+    /** Where an arrow goes into a step, for the body types beside it: its columns and rows, the width of its count. */
+    private record ArrowEnd(LayoutNode to, int fromCx, int fromRow, int toCx, int toTop, int countWidth) {
+    }
+
+    /**
+     * The body types each step has been reached with, across the messages (CAMEL-25750), beside the arrow into it: as
+     * much of them as there is room for, as the arrows of a branch are side by side; the Info panel has them all.
+     */
+    public RouteDiagramWidget withBodyTypes(boolean show) {
+        this.bodyTypes = show;
+        return this;
+    }
+
+    /**
+     * A ⚠ on the top border of a step reached with bodies of more than one kind (CAMEL-25750), which needs attention,
+     * whether the body types are shown or not.
+     */
+    public RouteDiagramWidget withBodyKindMarks(boolean marks) {
+        this.bodyKindMarks = marks;
+        return this;
+    }
+
+    private void addArrowEnd(LayoutNode to, int fromCx, int fromRow, int toCx, int toTop, int countWidth) {
+        if (bodyTypes && to.treeNode != null && !to.treeNode.info.bodyTypes.isEmpty()) {
+            arrowEnds.add(new ArrowEnd(to, fromCx, fromRow, toCx, toTop, countWidth));
+        }
+    }
+
+    /**
+     * The body types beside the arrow into a step: on its shaft above the head, or after the count at the head where
+     * the arrow bends right above it (a branch); cut to the room before the next box, arrow or marker.
+     */
+    private void drawBodyTypes(Buffer buffer, Rect area, ArrowEnd end) {
+        int shaftTop = end.fromCx() == end.toCx() ? end.fromRow() : end.fromRow() + (end.toTop() - end.fromRow()) / 2 + 1;
+        int row = end.toTop() - 2;
+        int col = end.toCx() + 2;
+        if (row < shaftTop) {
+            row = end.toTop() - 1;
+            col += end.countWidth() > 0 ? end.countWidth() + 2 : 0;
+        }
+        var info = end.to().treeNode.info;
+        String text = BodyTypes.fit(info.bodyTypes, info.bodyKinds, room(row, col));
+        if (!text.isEmpty()) {
+            writeText(buffer, area, row, col, text, BodyTypes.style(info.bodyKinds));
+        }
+    }
+
+    /**
+     * The columns free on the row from the column, two left blank before a box, an arrow or a marker so the types do
+     * not read as part of it.
+     */
+    private int room(int row, int col) {
+        for (int c = col; c < col + MAX_BODY_TYPES_WIDTH; c++) {
+            if (arrowCells.contains(cell(row, c)) || inBox(row, c) || markerAt(row, c)) {
+                return Math.max(0, c - col - 2);
+            }
+        }
+        return MAX_BODY_TYPES_WIDTH;
+    }
+
+    private boolean markerAt(int row, int col) {
+        for (Marker m : markers) {
+            if (m.row() == row && col >= m.col() && col < m.col() + CharWidth.of(m.text())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static long cell(int row, int col) {
+        return ((long) row << 32) | (col & 0xffffffffL);
+    }
+
+    /** A cell of an arrow or of its count: the body types beside another arrow stop there. */
+    private void occupy(int row, int col, int width) {
+        if (bodyTypes) {
+            for (int c = col; c < col + width; c++) {
+                arrowCells.add(cell(row, c));
+            }
+        }
     }
 
     /** The mark on the top border of the from box, at its right end (the route has error handling). */
@@ -318,6 +415,15 @@ public class RouteDiagramWidget implements Widget {
         if (errorFrame != null) {
             for (String line : errorFrame.lines()) {
                 cols = Math.max(cols, CharWidth.of(line) + 6);
+            }
+        }
+        if (bodyTypes) {
+            // the body types beside the arrows can be scrolled to: as wide as they are before something cuts them
+            for (LayoutNode ln : layoutRoute.nodes) {
+                if (!ln.tableRow && ln.treeNode != null && !ln.treeNode.info.bodyTypes.isEmpty()) {
+                    int label = CharWidth.of(BodyTypes.label(ln.treeNode.info.bodyTypes, ln.treeNode.info.bodyKinds));
+                    cols = Math.max(cols, centerCol(ln) + 2 + COUNT_WIDTH + Math.min(MAX_BODY_TYPES_WIDTH, label) + 2);
+                }
             }
         }
         return cols;
@@ -391,6 +497,11 @@ public class RouteDiagramWidget implements Widget {
             }
         }
 
+        if (bodyKindMarks && node.treeNode != null && BodyTypes.mixed(node.treeNode.info.bodyKinds)) {
+            // bodies of more than one kind reach the step: it needs attention
+            writeText(buffer, area, row, col + boxWidth - 3, BodyTypes.MARK, Theme.warning());
+        }
+
         // Link indicator for nodes that connect to other routes
         String linkedRouteId = findLinkedRouteId(node);
         if (linkedRouteId != null) {
@@ -443,7 +554,7 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromBottom, toCx, toTop, dashed, external, bothHighlighted);
-        drawCounters(buffer, area, toCx, toTop, stat);
+        addArrowEnd(to, fromCx, fromBottom, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
     }
 
     private void drawMergeArrow(Buffer buffer, Rect area, LayoutNode to) {
@@ -460,7 +571,7 @@ public class RouteDiagramWidget implements Widget {
                 && to.id != null && highlightNodeIds.contains(to.id);
 
         drawArrowPath(buffer, area, fromCx, fromRow, toCx, toTop, dashed, false, highlighted);
-        drawCounters(buffer, area, toCx, toTop, stat);
+        addArrowEnd(to, fromCx, fromRow, toCx, toTop, drawCounters(buffer, area, toCx, toTop, stat));
     }
 
     private void drawArrowPath(
@@ -485,48 +596,59 @@ public class RouteDiagramWidget implements Widget {
 
         if (fromCx == toCx) {
             for (int r = fromRow; r < toRow - 1; r++) {
-                setChar(buffer, area, r, fromCx, vChar, edgeStyle);
+                arrowChar(buffer, area, r, fromCx, vChar, edgeStyle);
             }
-            setChar(buffer, area, toRow - 1, toCx, ARROW, edgeStyle);
+            arrowChar(buffer, area, toRow - 1, toCx, ARROW, edgeStyle);
         } else {
             int midRow = fromRow + (toRow - fromRow) / 2;
 
             for (int r = fromRow; r < midRow; r++) {
-                setChar(buffer, area, r, fromCx, vChar, edgeStyle);
+                arrowChar(buffer, area, r, fromCx, vChar, edgeStyle);
             }
 
             int minC = Math.min(fromCx, toCx);
             int maxC = Math.max(fromCx, toCx);
             for (int c = minC; c <= maxC; c++) {
-                setChar(buffer, area, midRow, c, hChar, edgeStyle);
+                arrowChar(buffer, area, midRow, c, hChar, edgeStyle);
             }
 
-            setChar(buffer, area, midRow, fromCx, T_UP, edgeStyle);
-            setChar(buffer, area, midRow, toCx, T_DOWN, edgeStyle);
+            arrowChar(buffer, area, midRow, fromCx, T_UP, edgeStyle);
+            arrowChar(buffer, area, midRow, toCx, T_DOWN, edgeStyle);
 
             for (int r = midRow + 1; r < toRow - 1; r++) {
-                setChar(buffer, area, r, toCx, vChar, edgeStyle);
+                arrowChar(buffer, area, r, toCx, vChar, edgeStyle);
             }
-            setChar(buffer, area, toRow - 1, toCx, ARROW, edgeStyle);
+            arrowChar(buffer, area, toRow - 1, toCx, ARROW, edgeStyle);
         }
     }
 
-    private void drawCounters(Buffer buffer, Rect area, int toCx, int toTop, StatInfo stat) {
+    private void arrowChar(Buffer buffer, Rect area, int row, int col, char ch, Style style) {
+        setChar(buffer, area, row, col, ch, style);
+        occupy(row, col, 1);
+    }
+
+    /** The counts at the head of an arrow, failed left of it and ok right of it; returns the width of the ok count. */
+    private int drawCounters(Buffer buffer, Rect area, int toCx, int toTop, StatInfo stat) {
         if (!showMetrics || stat == null) {
-            return;
+            return 0;
         }
         long total = stat.exchangesTotal;
         long failed = stat.exchangesFailed;
         long ok = total - failed;
+        int okWidth = 0;
         if (ok > 0) {
             String okStr = String.valueOf(ok);
             writeText(buffer, area, toTop - 1, toCx + 2, okStr, metricsOkStyle());
+            okWidth = okStr.length();
+            occupy(toTop - 1, toCx + 2, okWidth);
         }
         if (failed > 0) {
             String failStr = String.valueOf(failed);
             int col = toCx - 1 - failStr.length();
             writeText(buffer, area, toTop - 1, col, failStr, metricsFailStyle());
+            occupy(toTop - 1, col, failStr.length());
         }
+        return okWidth;
     }
 
     private void drawScopeBox(Buffer buffer, Rect area, LayoutNode scopeNode) {

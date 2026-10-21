@@ -119,8 +119,8 @@ class CaptionOverlay {
                 finishInline();
             } else if (ke.isDeleteBackward()) {
                 if (!inlineBuffer.isEmpty()) {
-                    // the last character, both chars of an emoji
-                    inlineBuffer.setLength(inlineBuffer.offsetByCodePoints(inlineBuffer.length(), -1));
+                    // the last character, all the code points of an emoji
+                    inlineBuffer.setLength(TuiHelper.characterStart(inlineBuffer, inlineBuffer.length()));
                     captionText = inlineBuffer.toString();
                     inlineLastKeystroke = clock.getAsLong();
                 }
@@ -160,11 +160,10 @@ class CaptionOverlay {
             return;
         }
 
-        int totalChars = captionText.codePointCount(0, captionText.length());
         long elapsed = now - captionStartTime;
         int charsToShow = (int) (elapsed / CHAR_DELAY_MS);
 
-        if (charsToShow >= totalChars && captionFullyTypedTime == 0) {
+        if (captionFullyTypedTime == 0 && TuiHelper.characterOffset(captionText, charsToShow) == captionText.length()) {
             captionFullyTypedTime = now;
         }
         if (captionAutoDismissTime == 0
@@ -236,9 +235,8 @@ class CaptionOverlay {
     private void renderCaption(Frame frame, Rect area) {
         long now = clock.getAsLong();
         long elapsed = now - captionStartTime;
-        // typed a character at a time, an emoji (two chars) at once
-        int charsToShow = Math.min((int) (elapsed / CHAR_DELAY_MS), captionText.codePointCount(0, captionText.length()));
-        String visible = captionText.substring(0, captionText.offsetByCodePoints(0, charsToShow));
+        // typed a character at a time, all the code points of an emoji at once
+        String visible = captionText.substring(0, TuiHelper.characterOffset(captionText, (int) (elapsed / CHAR_DELAY_MS)));
 
         Style style;
         if (captionFullyTypedTime == 0 || now - captionFullyTypedTime < HOLD_DURATION_MS) {

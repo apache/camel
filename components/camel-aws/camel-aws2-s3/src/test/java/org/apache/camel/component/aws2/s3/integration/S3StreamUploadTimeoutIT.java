@@ -27,6 +27,7 @@ import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.component.aws2.s3.AWS2S3Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.model.S3Object;
 
@@ -40,11 +41,26 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    @BeforeEach
+    void removeTheObjectsOfAnEarlierRun() {
+        // a surefire rerun uses the same bucket: start from an empty bucket, so only the objects of this run are counted
+        Exchange ex = template.request("direct:listObjects",
+                exchange -> exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.listObjects));
+        List<S3Object> objects = ex.getMessage().getBody(List.class);
+        for (S3Object object : objects) {
+            template.request("direct:listObjects", exchange -> {
+                exchange.getIn().setHeader(AWS2S3Constants.S3_OPERATION, AWS2S3Operations.deleteObject);
+                exchange.getIn().setHeader(AWS2S3Constants.KEY, object.key());
+            });
+        }
+    }
+
     @Test
     public void sendIn() throws Exception {
 
         for (int i = 1; i <= 2; i++) {
             int count = i * 23;
+            int uploads = i;
 
             result.expectedMessageCount(count);
 
@@ -54,12 +70,15 @@ public class S3StreamUploadTimeoutIT extends Aws2S3Base {
 
             MockEndpoint.assertIsSatisfied(context, 11, TimeUnit.SECONDS);
 
+            // each iteration is uploaded by the timeout to its own object (random naming names the first one too)
             Awaitility.await().atMost(11, TimeUnit.SECONDS)
                     .untilAsserted(() -> {
                         Exchange ex = template.request("direct:listObjects", this::process);
 
                         List<S3Object> resp = ex.getMessage().getBody(List.class);
-                        assertEquals(1, resp.size());
+                        assertEquals(uploads, resp.size());
+                        // 23 messages of "Andrea\n" per iteration
+                        assertEquals(7L * 23 * uploads, resp.stream().mapToLong(S3Object::size).sum());
                     });
         }
     }

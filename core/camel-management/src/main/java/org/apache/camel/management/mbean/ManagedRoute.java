@@ -55,6 +55,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
@@ -202,6 +203,26 @@ public class ManagedRoute extends ManagedPerformanceCounter implements ManagedRo
     @Override
     public String getSourceLocationShort() {
         return sourceLocationShort;
+    }
+
+    @Override
+    public int getVariedBodyTypes() {
+        BodyTypeRegistry registry = context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        if (registry == null || getRouteId() == null) {
+            return 0;
+        }
+        return (int) registry.getBodyTypes(getRouteId()).values().stream().filter(types -> types.size() > 1).count();
+    }
+
+    @Override
+    public int getMixedBodyKinds() {
+        BodyTypeRegistry registry = context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        if (registry == null || getRouteId() == null) {
+            return 0;
+        }
+        String routeId = getRouteId();
+        return (int) registry.getBodyTypes(routeId).keySet().stream()
+                .filter(nodeId -> registry.getBodyKinds(routeId, nodeId).size() > 1).count();
     }
 
     @Override

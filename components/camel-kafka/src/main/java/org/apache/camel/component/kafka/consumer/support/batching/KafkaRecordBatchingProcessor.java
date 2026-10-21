@@ -153,9 +153,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
                     exchangeList.size());
 
             // poll timeout has elapsed, so check for expired records
-            ProcessingResult result = processBatch(camelKafkaConsumer);
-            exchangeList.clear();
-            timeoutWatch.takenAndRestart(); // restart timer after processing expired batch
+            ProcessingResult result = processAndClearBatch(camelKafkaConsumer);
 
             // if breakOnFirstError was hit, return immediately
             if (result.isBreakOnErrorHit()) {
@@ -171,9 +169,7 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             exchangeList.add(childExchange);
 
             if (exchangeList.size() >= configuration.getMaxPollRecords()) {
-                ProcessingResult result = processBatch(camelKafkaConsumer);
-                exchangeList.clear();
-                timeoutWatch.takenAndRestart(); // restart timer after batch processed
+                ProcessingResult result = processAndClearBatch(camelKafkaConsumer);
 
                 // if breakOnFirstError was hit, return immediately
                 if (result.isBreakOnErrorHit()) {
@@ -249,6 +245,17 @@ final class KafkaRecordBatchingProcessor extends KafkaRecordProcessor {
             }
         }
         return offsets;
+    }
+
+    private ProcessingResult processAndClearBatch(KafkaConsumer camelKafkaConsumer) {
+        try {
+            return processBatch(camelKafkaConsumer);
+        } finally {
+            // clear the batch even when processing it throws: the processor is kept while the Kafka consumer is
+            // connected, and a queue that fills up refuses every record of the next polls
+            exchangeList.clear();
+            timeoutWatch.takenAndRestart(); // restart timer after batch processed
+        }
     }
 
     private ProcessingResult processBatch(KafkaConsumer camelKafkaConsumer) {

@@ -110,7 +110,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-        <jdk.version>17</jdk.version>
+        <jdk.version>21</jdk.version>
         <!-- These two are here only to prevent the versions for the Apache parent pom from leaking-->
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
@@ -199,7 +199,7 @@
                             <rules>
                                 <requireJavaVersion>
                                     <version>[21,)</version>
-                                    <message>JDK 21+ is required to build Apache Camel. JDK 21-specific classes (e.g., virtual thread support in camel-util) are only compiled with JDK 21+. Building with JDK 17 silently omits these classes from the resulting JARs.</message>
+                                    <message>JDK 21+ is required to build Apache Camel.</message>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>

@@ -34,6 +34,7 @@ import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolDescriptor;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -128,11 +129,18 @@ class AuthoringToolsTest {
     }
 
     @Test
-    void anUnknownIntegrationNameIsAnError() {
-        assertThatThrownBy(() -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1"))
-                .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
-        assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null, null))
-                .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
+    void anUnknownIntegrationNameIsAnError(@TempDir Path home) {
+        // a home of its own: the log tool looks for the previous run of an integration that is not running
+        Path previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            assertThatThrownBy(() -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1"))
+                    .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
+            assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null, null, null))
+                    .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
+        } finally {
+            CommandLineHelper.useHomeDir(previousHome.toString());
+        }
     }
 
     @Test

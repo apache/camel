@@ -2245,6 +2245,44 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
@@ -2484,6 +2522,46 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder fastExistsCheck(String fastExistsCheck) {
             doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointConsumerBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointConsumerBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -4182,6 +4260,44 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointProducerBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointProducerBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
@@ -4344,6 +4460,46 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder fastExistsCheck(String fastExistsCheck) {
             doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointProducerBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointProducerBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -4610,44 +4766,6 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder moveExistingFileStrategy(String moveExistingFileStrategy) {
             doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
-            return this;
-        }
-        /**
-         * Whether to send a noop command as a pre-write check before uploading
-         * files to the FTP server. This is enabled by default as a validation
-         * of the connection is still valid, which allows to silently re-connect
-         * to be able to upload the file. However if this causes problems, you
-         * can turn this option off.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         * 
-         * @param sendNoop the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpsEndpointProducerBuilder sendNoop(boolean sendNoop) {
-            doSetProperty("sendNoop", sendNoop);
-            return this;
-        }
-        /**
-         * Whether to send a noop command as a pre-write check before uploading
-         * files to the FTP server. This is enabled by default as a validation
-         * of the connection is still valid, which allows to silently re-connect
-         * to be able to upload the file. However if this causes problems, you
-         * can turn this option off.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         * 
-         * @param sendNoop the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpsEndpointProducerBuilder sendNoop(String sendNoop) {
-            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -5660,6 +5778,44 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointBuilder hostnameVerification(boolean hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
+         * Whether to check that the certificate of the server matches the host
+         * Camel connects to, with the same rules as an HTTPS client. When
+         * disabled, any certificate accepted by the trust manager is accepted,
+         * whatever host it was issued for. This option does not apply to a
+         * custom ftpClient.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param hostnameVerification the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointBuilder hostnameVerification(String hostnameVerification) {
+            doSetProperty("hostnameVerification", hostnameVerification);
+            return this;
+        }
+        /**
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
@@ -5825,6 +5981,46 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder fastExistsCheck(String fastExistsCheck) {
             doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpsEndpointBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**

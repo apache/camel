@@ -77,8 +77,8 @@ public final class RepeatedToolCalls {
         note.put("tool", tool.name());
         note.put("timesAsked", times);
         note.put("note", tool.name() + " was already called with these same arguments " + (times - 1)
-                         + " times in this session and answered in full. Its answer does not change, so it is not sent"
-                         + " again: it is in your earlier tool result."
+                         + " times in this session. Its answer does not change, so it is not sent again: it is in your"
+                         + " earlier tool result."
                          + (tool.repeatHint() != null ? " " + tool.repeatHint() : ""));
         return note;
     }

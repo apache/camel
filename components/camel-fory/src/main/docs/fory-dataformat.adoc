@@ -22,6 +22,32 @@ Apache Fory is not supporting architecture using Big Endian (s390x, for instance
 include::partial$dataformat-options.adoc[]
 // dataformat options: END
 
+== Usage
+
+Fory only serializes registered classes by default (`requireClassRegistration`).
+The data format registers the `unmarshalType` class, so set it on marshal as well as on unmarshal:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:marshal
+      steps:
+        - marshal:
+            fory:
+              unmarshalType: com.example.Order
+        - to:
+            uri: mock:marshal
+- route:
+    from:
+      uri: direct:unmarshal
+      steps:
+        - unmarshal:
+            fory:
+              unmarshalType: com.example.Order
+        - to:
+            uri: mock:unmarshal
+----
 
 == Dependencies
 

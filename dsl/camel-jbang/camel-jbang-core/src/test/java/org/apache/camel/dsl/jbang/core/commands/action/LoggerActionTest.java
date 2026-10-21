@@ -51,7 +51,7 @@ class LoggerActionTest extends CamelCommandBaseTestSupport {
     @Override
     public void setup() throws Exception {
         super.setup();
-        CommandLineHelper.useHomeDir("target/test-logger");
+        useTestHomeDir();
         Files.createDirectories(CommandLineHelper.getCamelDir());
     }
 

@@ -19,14 +19,19 @@ package org.apache.camel.component.azure.storage.blob;
 import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.azure.core.util.polling.LongRunningOperationStatus;
+import com.azure.core.util.polling.PollResponse;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.models.BlobCopyInfo;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobStorageException;
 import org.apache.camel.AsyncCallback;
@@ -133,35 +138,76 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         forceConsumerAsReady();
 
         final Queue<Exchange> exchanges = new LinkedList<>();
-        try {
-            for (BlobItem blobItem : blobs) {
-                addExchange(blobItem.getName(), blobContainerClient, exchanges, true);
+        // the listed blobs that could not be got, other than those that no longer exist, by name
+        final Map<String, Exception> failures = new LinkedHashMap<>();
+        // whether at least one listed blob could be got
+        boolean anyGot = false;
+        for (BlobItem blobItem : blobs) {
+            // a failure to get one listed blob (access denied, a blob in the archive tier) does not fail the poll as
+            // long as another listed blob could be got: the blob is skipped, the other listed blobs are consumed, and
+            // a later poll tries it again
+            try {
+                anyGot |= addExchange(blobItem.getName(), blobContainerClient, exchanges, true);
+            } catch (Exception e) {
+                failures.put(blobItem.getName(), e);
             }
-        } catch (Exception e) {
-            // none of the blobs of this poll is processed
-            releaseNotProcessed(exchanges);
-            throw e;
+        }
+
+        if (!failures.isEmpty()) {
+            if (!anyGot) {
+                // none of the listed blobs could be got, so this is not about one blob (expired credentials, no
+                // permission to read blobs, no connection): the poll fails, and the backoff of the scheduled consumer
+                // applies
+                releaseNotProcessed(exchanges);
+                final Map.Entry<String, Exception> first = failures.entrySet().iterator().next();
+                LOG.warn("None of the listed blobs of container {} could be got ({} failed, the first is {}): the poll fails",
+                        getEndpoint().getConfiguration().getContainerName(), failures.size(), first.getKey());
+                rethrow(first.getValue());
+            }
+            for (Map.Entry<String, Exception> failure : failures.entrySet()) {
+                getExceptionHandler().handleException("Error getting blob " + failure.getKey() + " from container "
+                                                      + getEndpoint().getConfiguration().getContainerName()
+                                                      + ". The blob is skipped for this poll.",
+                        failure.getValue());
+            }
         }
         return exchanges;
     }
 
-    private void addExchange(
+    private static void rethrow(final Exception e) throws IOException {
+        if (e instanceof IOException ioe) {
+            throw ioe;
+        }
+        if (e instanceof RuntimeException re) {
+            throw re;
+        }
+        throw new IOException(e);
+    }
+
+    /**
+     * Gets a blob and adds its exchange.
+     *
+     * @return true if the blob was got and its exchange added, false if it is skipped (an exchange of a previous poll
+     *         is still processing it, or it no longer exists)
+     */
+    private boolean addExchange(
             final String blobName, final BlobContainerClient blobContainerClient, final Queue<Exchange> exchanges,
             final boolean listed)
             throws IOException {
         // skip the blob if an exchange of a previous poll is still processing it
         if (!inProgress.add(blobName)) {
             LOG.trace("Skipping blob {} as it is already in progress", blobName);
-            return;
+            return false;
         }
         try {
             exchanges.add(createExchangeFromBlob(blobName, blobContainerClient));
+            return true;
         } catch (Exception e) {
             inProgress.remove(blobName);
             if (listed && e instanceof BlobStorageException bse && bse.getStatusCode() == 404) {
                 // deleted (for example by another consumer) after it was listed
                 LOG.debug("Skipping blob {} as it no longer exists", blobName);
-                return;
+                return false;
             }
             throw e;
         }
@@ -280,7 +326,21 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
                 final String destinationBlobName = buildDestinationBlobName(blobName);
 
                 // Copy to destination
-                copyBlobToDestination(containerName, blobName, destinationContainer, destinationBlobName);
+                final PollResponse<BlobCopyInfo> copy
+                        = copyBlobToDestination(containerName, blobName, destinationContainer, destinationBlobName);
+                if (copy.getStatus() != LongRunningOperationStatus.SUCCESSFULLY_COMPLETED) {
+                    // the copy failed, was aborted, or its status could not be read: keep the source blob, it is
+                    // consumed again on the next poll
+                    final String error = copy.getValue() != null ? copy.getValue().getError() : null;
+                    getExceptionHandler().handleException(
+                            "Error occurred during moving blob. The blob is not deleted and will be consumed again.",
+                            exchange,
+                            new IllegalStateException(
+                                    "Copy of blob " + blobName + " to container " + destinationContainer
+                                                      + " ended with status " + copy.getStatus()
+                                                      + (error != null ? ": " + error : "")));
+                    return;
+                }
 
                 // Delete source blob after successful copy (move = copy + delete)
                 deleteBlob(containerName, blobName);
@@ -338,12 +398,14 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
     /**
      * Copies a blob from source container to destination container within the same storage account.
      *
-     * @param sourceContainer      the source container name
-     * @param sourceBlobName       the source blob name
-     * @param destinationContainer the destination container name
-     * @param destinationBlobName  the destination blob name
+     * @param  sourceContainer      the source container name
+     * @param  sourceBlobName       the source blob name
+     * @param  destinationContainer the destination container name
+     * @param  destinationBlobName  the destination blob name
+     * @return                      the last response of the copy: the copy is asynchronous on the service, and the
+     *                              poller returns normally also when the copy failed or was aborted
      */
-    private void copyBlobToDestination(
+    private PollResponse<BlobCopyInfo> copyBlobToDestination(
             String sourceContainer, String sourceBlobName,
             String destinationContainer, String destinationBlobName) {
         BlobContainerClient sourceContainerClient
@@ -359,7 +421,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
         if (timeout == null) {
             timeout = Duration.ofMinutes(5);
         }
-        destBlobClient.beginCopy(sourceBlobClient.getBlobUrl(), Duration.ofSeconds(2))
+        return destBlobClient.beginCopy(sourceBlobClient.getBlobUrl(), Duration.ofSeconds(2))
                 .waitForCompletion(timeout);
     }
 

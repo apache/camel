@@ -2247,6 +2247,46 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpEndpointConsumerBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpEndpointConsumerBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions (if possible) occurred while the Camel
          * consumer is trying to pickup incoming messages, or the likes, will
@@ -3867,6 +3907,46 @@ public interface FtpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpEndpointProducerBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpEndpointProducerBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
          * Used to specify if a null body is allowed during file writing. If set
          * to true then an empty file will be created, when set to false, and
          * attempting to send a null body to the file component, a
@@ -4130,44 +4210,6 @@ public interface FtpEndpointBuilderFactory {
          */
         default AdvancedFtpEndpointProducerBuilder moveExistingFileStrategy(String moveExistingFileStrategy) {
             doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
-            return this;
-        }
-        /**
-         * Whether to send a noop command as a pre-write check before uploading
-         * files to the FTP server. This is enabled by default as a validation
-         * of the connection is still valid, which allows to silently re-connect
-         * to be able to upload the file. However if this causes problems, you
-         * can turn this option off.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         * 
-         * @param sendNoop the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpEndpointProducerBuilder sendNoop(boolean sendNoop) {
-            doSetProperty("sendNoop", sendNoop);
-            return this;
-        }
-        /**
-         * Whether to send a noop command as a pre-write check before uploading
-         * files to the FTP server. This is enabled by default as a validation
-         * of the connection is still valid, which allows to silently re-connect
-         * to be able to upload the file. However if this causes problems, you
-         * can turn this option off.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         * 
-         * @param sendNoop the value to set
-         * @return the dsl builder
-         */
-        default AdvancedFtpEndpointProducerBuilder sendNoop(String sendNoop) {
-            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -5105,6 +5147,46 @@ public interface FtpEndpointBuilderFactory {
          */
         default AdvancedFtpEndpointBuilder fastExistsCheck(String fastExistsCheck) {
             doSetProperty("fastExistsCheck", fastExistsCheck);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpEndpointBuilder sendNoop(boolean sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
+            return this;
+        }
+        /**
+         * Whether to send a noop command to check that the connection is still
+         * valid, as a pre-write check before uploading files (producer) and
+         * before each poll (consumer). This is enabled by default, which allows
+         * to silently re-connect if the connection was lost. However if this
+         * causes problems, you can turn this option off, and then a lost
+         * connection may only be found when the next operation fails.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
+         */
+        default AdvancedFtpEndpointBuilder sendNoop(String sendNoop) {
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**

@@ -633,6 +633,12 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
         return !getEnums(fi).isBlank();
     }
 
+    /** Whether the option takes several of its enum values, separated by comma (@Metadata(multiEnum = true)). */
+    protected boolean isMultiEnum(FieldInfo fi) {
+        return isEnum(fi) && annotationValue(fi, METADATA_ANNOTATION_CLASS, "multiEnum")
+                .map(AnnotationValue::asBoolean).orElse(false);
+    }
+
     protected boolean isDeprecated(FieldInfo fi) {
         return fi.hasAnnotation(DEPRECATED_ANNOTATION_CLASS);
     }

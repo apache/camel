@@ -284,20 +284,24 @@ public class AuthoringTools {
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Recent log records of a running integration, newest first, with optional filtering; stack "
-                        + "traces only with details.")
+                        + "traces only with details. An integration that is not running gets the log of its previous "
+                        + "run, such as one that failed to start.")
     public JsonObject camel_get_log(
             @ToolArg(description = NAME_DESC, required = false) String name,
             @ToolArg(description = "Maximum records to return (default 50)", required = false) Integer limit,
             @ToolArg(description = "Case-insensitive substring filter on the message", required = false) String filter,
             @ToolArg(description = "Only this log level (INFO, WARN, ERROR, DEBUG, TRACE)", required = false) String level,
-            @ToolArg(description = "Include the stack traces (default false)", required = false) Boolean details) {
+            @ToolArg(description = "Include the stack traces (default false)", required = false) Boolean details,
+            @ToolArg(description = "The log of the previous run, the last run of the integration that ended (default false)",
+                     required = false) Boolean previous) {
         return call("camel_get_log", args("name", name, "limit", limit, "filter", filter, "level", level,
-                "details", details));
+                "details", details, "previous", previous));
     }
 
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "The failed exchanges of a running integration: routeId, exchangeId, exception with stack "
-                        + "trace, body and headers.")
+                        + "trace, body and headers. For an integration that is not running, it says how its previous "
+                        + "run ended.")
     public JsonObject camel_get_errors(
             @ToolArg(description = NAME_DESC, required = false) String name) {
         return call("camel_get_errors", args("name", name));

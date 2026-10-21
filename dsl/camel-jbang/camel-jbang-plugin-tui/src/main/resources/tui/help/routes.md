@@ -12,10 +12,20 @@ they are sent to. A typical integration has multiple routes working together.
 - **MSG/S** or **MSG/M** — Current message throughput (per second or per minute) for this route. Configure in Settings (F2)
 - **TOTAL** — Total exchanges processed by this route since startup
 - **FAIL** — Exchanges that ended with an unhandled error in this route
+- **BODY TYPES** — Shown when steps of a route have been reached with more than one body type, across the messages (with the message history on, such as `camel run --dev`): how many steps varied, and how many of them with bodies of more than one kind, which need attention (`⚠ 1 mixed · 2 varied`). The processors of the selected route then have a BODY TYPES column too, with the types each step has been reached with
 - **MIN** — Fastest exchange processing time in milliseconds. This is the time from when the exchange entered the route until it completed
 - **MEAN** — Average exchange processing time in milliseconds. A rising MEAN may indicate a downstream service getting slower
 - **MAX** — Slowest exchange processing time in milliseconds. A very high MAX compared to MEAN suggests occasional slow outliers
 - **SINCE-LAST** — Time since the last exchange activity on this route, shown as up to three values separated by `/`: started/completed/failed (e.g., `1s/3s/1m14s`). Values are omitted when there is no activity of that type
+
+## Processors
+
+Below the routes are the steps of the selected route, with the same numbers:
+
+- **TYPE** — The kind of step (`to`, `setBody`, `choice`), indented under the step it is inside, such as the steps of a branch of a choice
+- **LINE** — The line of the route source the step is on (when the runtime records the source locations)
+- **PROCESSOR** — What the step does, as the route diagram shows it: where it sends to (`log:outbox`), its expression (`simple{${body}}`) or its data format (`jackson`). An id the route gives a step (`id: audit`) is shown first; the ids Camel generates (`to1`, `setBody2`) are left out, as they only repeat the type
+- **BODY TYPES** — The body types the step has been reached with, across the messages (with the message history on)
 
 ## Percentile Latency (P50/P95/P99)
 
@@ -147,6 +157,7 @@ in the diagram.
 - `Esc` — go back (previous route or topology)
 - `t` — jump back to topology view
 - `m` — toggle metrics
+- `y` — toggle the body types each step has been reached with, beside the arrows
 - `n` — toggle description labels
 - `PgUp/PgDn` — scroll detail panel (when detail is on)
 

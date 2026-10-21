@@ -68,3 +68,55 @@ producers, strip these internal headers at the trust boundary -- for example wit
 `removeHeaders("Camel*")` -- before the message reaches this component, so that a sender cannot
 override the API call. See xref:manual::security-model.adoc[the Camel security model] for details.
 ====
+
+== Usage
+
+The URI names the API and its method, such as `fhir://read/resourceById`. The parameters of the method are endpoint options, or headers that start with `CamelFhir.`, such as `CamelFhir.stringId`. The routes below create a patient from JSON, read a patient by its id, and search patients by family name:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:createPatient
+      steps:
+        - to:
+            uri: fhir://create/resource
+            parameters:
+              serverUrl: http://localhost:8080/fhir
+              fhirVersion: R4
+              inBody: resourceAsString
+        - log:
+            message: "Created ${body.id.value}"
+- route:
+    from:
+      uri: direct:readPatient
+      steps:
+        - setHeader:
+            name: CamelFhir.stringId
+            expression:
+              simple:
+                expression: "${body}"
+        - to:
+            uri: fhir://read/resourceById
+            parameters:
+              serverUrl: http://localhost:8080/fhir
+              fhirVersion: R4
+              resourceClass: Patient
+        - marshal:
+            fhirJson:
+              fhirVersion: R4
+        - log:
+            message: "${body}"
+- route:
+    from:
+      uri: direct:searchPatients
+      steps:
+        - to:
+            uri: fhir://search/searchByUrl
+            parameters:
+              serverUrl: http://localhost:8080/fhir
+              fhirVersion: R4
+              url: "Patient?family=Simpson"
+        - log:
+            message: "Found ${body.total} patients"
+----

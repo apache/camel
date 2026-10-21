@@ -127,6 +127,50 @@ However Camel allows to wrap the actual value inside `RAW(…)`, which makes esc
 milo-client:opc.tcp://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
 ----
 
+A producer request for a node whose namespace URI (`nsu=`) is not in the namespace table of the server is answered
+like a request for a node that the server does not have. A write returns the status code `Bad_NodeIdUnknown`. A read,
+or a browse of the xref:milo-browse-component.adoc[Milo Browse] component, returns that status code for this node and
+the results of the other nodes. The connection and the consumers that share it are not affected.
+
+=== Monitoring and writing a node
+
+The following routes monitor one node and write another, on the server of the
+xref:milo-server-component.adoc[OPC UA Server] example. A consumer receives a `DataValue` for each change,
+and `${body.value.value}` is the value. A producer writes the message body to its node:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: milo-client:opc.tcp://localhost:12685
+      parameters:
+        node: "RAW(nsu=urn:org:apache:camel;s=temperature)"
+        samplingInterval: 1000
+        username: camel
+        password: secret
+        allowedSecurityPolicies: None
+      steps:
+        - log:
+            message: "Temperature: ${body.value.value}"
+- route:
+    from:
+      uri: timer:setpoint
+      parameters:
+        repeatCount: 1
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: "42"
+        - to:
+            uri: milo-client:opc.tcp://localhost:12685
+            parameters:
+              node: "RAW(nsu=urn:org:apache:camel;s=setpoint)"
+              username: camel
+              password: secret
+              allowedSecurityPolicies: None
+----
+
 === Monitoring several nodes
 
 A consumer can monitor several nodes with the `nodes` option instead of `node` (the two options cannot be combined).
@@ -149,6 +193,7 @@ need a consumer of their own.
 
 A node that does not exist on the server does not affect the other nodes. A node that cannot be monitored is
 reported once with its status code and is not retried; restarting the route or a rebuilt connection to the server creates the monitored items again.
+A node whose namespace URI (`nsu=`) is not in the namespace table of the server is reported in the same way.
 The consumer delivers one exchange with the bad status code for such a node, and the `CamelMiloNodeId` header names it.
 
 === Status codes and null values
@@ -163,6 +208,54 @@ failed sensor.
 The default `omitNullValues=true` also omits a null value with a Good status that follows a Bad status, so the route
 does not learn that the node recovered. Set `omitNullValues=false` for a node whose value can be null, such as a
 `String`.
+
+=== Communication loss and recovery
+
+When the client loses communication with the server, every node that a consumer monitors delivers an exchange with
+the status `Bad_NoCommunication` and a null value, stamped with the time the client recognised the loss. Communication
+is lost when the session with the server stops being active, for example because the network connection closed or
+the server stopped answering, and when Camel rebuilds the connection. With the default settings, a connection that
+stops answering without closing is recognised after 10 to 15 seconds. A consumer that starts while the server cannot
+be reached delivers the status for its nodes when it starts. A node delivers the status once per loss; a node that the
+server refused to monitor keeps the status of that refusal instead, and nothing is
+delivered when a consumer stops or the Camel context shuts down.
+
+Once communication is restored, every node delivers its current value, also when the value did not change. In the
+existing session, Camel asks the server to send the current values again with the `ResendData` method; when the
+server does not provide it, Camel creates the subscription again, and the values the server queued during the loss
+are not delivered. Values can arrive more than once after a loss, and a value received before Camel rebuilt the
+connection can arrive after the first value of the new connection. A route that counts values, computes differences
+or detects changes must tolerate this. A value that did not change during the loss keeps its earlier timestamps.
+
+Routes run while communication is lost. An OPC UA request that a route makes while the client reconnects, for example
+a write, waits for the next reconnect attempt and is sent if that attempt succeeds, so it can take effect after
+communication is restored. A request that fails rebuilds the connection.
+
+Camel keeps no last value. A route that needs one keeps the last good value of each node itself. To recognise the
+status, check the status code of the `DataValue` body, for example with `${body.statusCode.bad}`.
+
+=== Subscriptions that stop publishing
+
+The consumers of a connection share one subscription on the server. When the server stops publishing for it (no
+notification or keep-alive within about one and a half keep-alive intervals), Camel checks whether the server still
+has the subscription. If the server does not confirm it, or when the server reports that the subscription timed out
+(`Bad_Timeout`), Camel deletes it and, once the server has confirmed that it is gone, creates it again in the existing
+session. A node that can no longer be monitored is reported as described above and does not affect the other nodes.
+
+A route that is slow to process a value stops the publishing as well, because the client asks the server for more
+notifications only as the routes finish processing the ones it received. The subscription is then kept, unless the
+route takes longer than the lifetime of the subscription, which lets it time out on the server.
+
+A check or a delete that fails because the connection was lost is left to the session recovery of the client, which
+restores the session once the server can be reached again. The subscription then resumes publishing, or it is created
+again as above when the server no longer has it. If the server no longer has the session either, for example after a
+restart, the subscription cannot be transferred to a new session and the connection is rebuilt. A network that drops
+silently can stop the publishing before the client notices that the connection is lost; if the network is back before
+that, the check reaches the server and is handled as above.
+
+Any other failure of the delete, or a subscription that cannot be created again, rebuilds the connection to the server.
+After the subscription is recreated, every monitored item delivers its current value again, and value changes in
+between are not delivered.
 
 === Method ID
 
@@ -182,7 +275,10 @@ The component provide a producer to read values from multiple opc-ua nodes. The 
 
 Example:
 
-._Java-only: reading values from OPC UA nodes using enrich with an AggregationStrategy_
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -196,6 +292,36 @@ from("direct:start")
             }
         }).to("mock:test1");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelMiloNodeIds
+            expression:
+              groovy:
+                expression: "['nsu=urn:org:apache:camel;s=myitem1']"
+        - setHeader:
+            name: CamelMiloAwait
+            expression:
+              constant:
+                expression: "true"
+        - enrich:
+            expression:
+              constant:
+                expression: milo-client:opc.tcp://localhost:4334
+        - to:
+            uri: mock:test1
+----
+====
+
+The read is asynchronous. Without the `CamelMiloAwait` header, or `defaultAwaitWrites=true` on the endpoint,
+the route goes on before the values are in the body.
 
 === Custom data types: accessing the underlying milo OpcUaClient
 

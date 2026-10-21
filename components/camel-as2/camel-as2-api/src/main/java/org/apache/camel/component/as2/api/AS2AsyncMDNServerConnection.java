@@ -195,9 +195,7 @@ public class AS2AsyncMDNServerConnection {
             // NOTE: the connection will be closed after the execution of the process.
             AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(cfg); // NOSONAR
             inConn.bind(inSocket);
-            // TODO Update once baseline is Java 21
-            // setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + threadId());
-            setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + getId());
+            setName(REQUEST_HANDLER_THREAD_NAME_PREFIX + threadId());
             this.httpService = httpService;
             this.serverConnection = inConn;
         }

@@ -61,6 +61,17 @@ class PrepareCamelJBangCommandsMojoTest {
             }
             """;
 
+    // the command test of the plugin
+    private static final String TEST_COMMAND = """
+            package org.apache.camel.dsl.jbang.core.commands.test;
+
+            import picocli.CommandLine.Command;
+
+            @Command(name = "test", description = "Manage tests")
+            public class TestCommand {
+            }
+            """;
+
     @TempDir
     Path tempDir;
 
@@ -271,6 +282,56 @@ class PrepareCamelJBangCommandsMojoTest {
     }
 
     /**
+     * CAMEL-25718: the commands of a library that a plugin adds as they are (as camel test run is the Run of Citrus)
+     * are documented from their classes on the classpath of the project, with their subcommands.
+     */
+    @Test
+    void testPluginCommandsOfALibraryAreDocumented() throws Exception {
+        compileLibrary();
+        Path plugin = tempDir.resolve("plugin/commands");
+        write(plugin.resolve("test/TestPlugin.java"), """
+                package org.apache.camel.dsl.jbang.core.commands.test;
+
+                import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+                import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+                import org.apache.camel.dsl.jbang.core.common.Plugin;
+                import org.example.cli.Agent;
+                import org.example.cli.AgentStart;
+                import org.example.cli.Run;
+                import picocli.CommandLine;
+
+                @CamelJBangPlugin(name = "camel-jbang-plugin-test", firstVersion = "4.14.0")
+                public class TestPlugin implements Plugin {
+
+                    @Override
+                    public void customize(CommandLine commandLine, CamelJBangMain main) {
+                        var cmd = new CommandLine(new TestCommand(main))
+                                .addSubcommand("run", new CommandLine(new Run(main)))
+                                .addSubcommand("agent", new CommandLine(new Agent(main))
+                                        .addSubcommand("start", new CommandLine(new AgentStart(main))));
+
+                        commandLine.addSubcommand("test", cmd);
+                    }
+                }
+                """);
+        write(plugin.resolve("test/TestCommand.java"), TEST_COMMAND);
+
+        JBangCommand test = generatePlugin(plugin, null);
+
+        assertThat(test.getSubcommands()).extracting(JBangCommand::getFullName).containsExactly("test agent", "test run");
+        JBangCommand agent = test.getSubcommands().get(0);
+        // without the hint to the help of the subcommands
+        assertThat(agent.getDescription()).isEqualTo("Manage agents");
+        assertThat(agent.getSubcommands()).extracting(JBangCommand::getFullName).containsExactly("test agent start");
+        assertThat(agent.getSubcommands().get(0).getOptions()).extracting(JBangCommandOption::getNames)
+                .containsExactly("--port", "-h,--help");
+        JBangCommand run = test.getSubcommands().get(1);
+        assertThat(run.getDescription()).isEqualTo("Run as local test");
+        assertThat(run.getSourceClass()).isEqualTo("org.example.cli.Run");
+        assertThat(run.getOptions()).extracting(JBangCommandOption::getNames).containsExactly("--engine", "-h,--help");
+    }
+
+    /**
      * A parent class of the same package is found when the class has a static import on demand, for which Roaster
      * resolves the parent class as a nested class of the imported one (as camel export, whose ExportBaseCommand has
      * {@code import static ...CamelJBangConstants.*}).
@@ -361,15 +422,7 @@ class PrepareCamelJBangCommandsMojoTest {
                     }
                 }
                 """);
-        write(plugin.resolve("test/TestCommand.java"), """
-                package org.apache.camel.dsl.jbang.core.commands.test;
-
-                import picocli.CommandLine.Command;
-
-                @Command(name = "test", description = "Manage tests")
-                public class TestCommand {
-                }
-                """);
+        write(plugin.resolve("test/TestCommand.java"), TEST_COMMAND);
         write(plugin.resolve("test/TestInit.java"), """
                 package org.apache.camel.dsl.jbang.core.commands.test;
 
@@ -381,9 +434,19 @@ class PrepareCamelJBangCommandsMojoTest {
                 }
                 """);
 
+        JBangCommand test = generatePlugin(plugin, core);
+        assertThat(test.getSubcommands()).extracting(JBangCommand::getFullName).containsExactly("test init");
+        return test.getSubcommands().get(0);
+    }
+
+    /**
+     * Generates the metadata of the plugin with the commands in the given directory (and the commands of
+     * camel-jbang-core in the other one, when given). Returns the root command of the plugin.
+     */
+    private JBangCommand generatePlugin(Path plugin, Path core) throws Exception {
         PrepareCamelJBangCommandsMojo mojo = new PrepareCamelJBangCommandsMojo(null, null);
         mojo.commandsDir = plugin.toFile();
-        mojo.coreCommandsDir = core.toFile();
+        mojo.coreCommandsDir = core != null ? core.toFile() : null;
         mojo.outFolder = tempDir.resolve("generated-resources").toFile();
         mojo.project = projectWithOutputDir(tempDir.resolve("classes").toFile());
 
@@ -391,9 +454,7 @@ class PrepareCamelJBangCommandsMojoTest {
 
         String json = Files.readString(
                 tempDir.resolve("generated-resources").resolve(PrepareCamelJBangCommandsMojo.PLUGIN_METADATA_FILE));
-        JBangCommand test = JsonMapper.generateJBangCommandModel(json).getCommands().get(0);
-        assertThat(test.getSubcommands()).extracting(JBangCommand::getFullName).containsExactly("test init");
-        return test.getSubcommands().get(0);
+        return JsonMapper.generateJBangCommandModel(json).getCommands().get(0);
     }
 
     /**
@@ -432,6 +493,16 @@ class PrepareCamelJBangCommandsMojoTest {
                     @Target(ElementType.FIELD)
                     public @interface Mixin {
                     }
+
+                    @Retention(RetentionPolicy.RUNTIME)
+                    @Target(ElementType.TYPE)
+                    public @interface Command {
+                        String name() default "<main class>";
+
+                        String[] description() default {};
+
+                        boolean hidden() default false;
+                    }
                 }
                 """);
         write(sources.resolve("org/example/cli/LibraryCommand.java"), """
@@ -455,6 +526,39 @@ class PrepareCamelJBangCommandsMojoTest {
                     @CommandLine.Option(names = "--directory", description = "Directory where the files will be created",
                                         defaultValue = ".")
                     String directory;
+                }
+                """);
+        write(sources.resolve("org/example/cli/Run.java"), """
+                package org.example.cli;
+
+                import picocli.CommandLine;
+
+                @CommandLine.Command(name = "run", description = "Run as local test")
+                public class Run extends LibraryCommand {
+
+                    @CommandLine.Option(names = "--engine", description = "The test engine")
+                    String engine;
+                }
+                """);
+        write(sources.resolve("org/example/cli/Agent.java"), """
+                package org.example.cli;
+
+                import picocli.CommandLine;
+
+                @CommandLine.Command(name = "agent", description = "Manage agents (use agent --help to see sub commands)")
+                public class Agent extends LibraryCommand {
+                }
+                """);
+        write(sources.resolve("org/example/cli/AgentStart.java"), """
+                package org.example.cli;
+
+                import picocli.CommandLine;
+
+                @CommandLine.Command(name = "start", description = "Starts the agent as a server")
+                public class AgentStart extends LibraryCommand {
+
+                    @CommandLine.Option(names = "--port", description = "The port of the agent", defaultValue = "4567")
+                    int port;
                 }
                 """);
         Path classes = tempDir.resolve("classes");

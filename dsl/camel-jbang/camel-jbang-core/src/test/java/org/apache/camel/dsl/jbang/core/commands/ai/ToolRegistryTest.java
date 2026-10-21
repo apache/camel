@@ -62,6 +62,33 @@ class ToolRegistryTest {
     }
 
     @Test
+    void routeStructureKeepsOnlyTheVariedSteps() throws Exception {
+        String structure = """
+                {"routes":[{"routeId":"orders","code":[
+                  {"id":"orders","code":"route[orders]"},
+                  {"id":"to1","code":"to[file:outbox]","bodyTypes":["java.lang.String","java.util.LinkedHashMap"],
+                   "bodyKinds":["payload","data"]},
+                  {"id":"log1","code":"log[${body}]","bodyTypes":["java.lang.String"],"bodyKinds":["payload"]}]}]}
+                """;
+
+        JsonObject varied = (JsonObject) Jsoner.deserialize(ToolRegistry.onlyVaried(structure));
+        JsonArray code = ((JsonObject) ((JsonArray) varied.getCollection("routes")).get(0)).getCollection("code");
+        assertEquals(1, code.size());
+        assertEquals("to1", ((JsonObject) code.get(0)).getString("id"));
+        assertNull(varied.get("message"));
+
+        // nothing varied: the answer says so, and why that may be
+        String none
+                = "{\"routes\":[{\"routeId\":\"orders\",\"code\":[{\"id\":\"log1\",\"bodyTypes\":[\"java.lang.String\"]}]}]}";
+        JsonObject empty = (JsonObject) Jsoner.deserialize(ToolRegistry.onlyVaried(none));
+        assertTrue(((JsonArray) empty.getCollection("routes")).isEmpty());
+        assertTrue(empty.getString("message").contains("camel run --dev"), empty.getString("message"));
+
+        // not JSON: given back as it is
+        assertEquals("Integration not running", ToolRegistry.onlyVaried("Integration not running"));
+    }
+
+    @Test
     void findToolReturnsRegisteredTool() {
         ToolDescriptor tool = ToolRegistry.findTool("catalog_components");
         assertNotNull(tool);

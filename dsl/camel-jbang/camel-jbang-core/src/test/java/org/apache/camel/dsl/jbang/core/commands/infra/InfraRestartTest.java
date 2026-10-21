@@ -22,11 +22,13 @@ import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.UsesFixedPort;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
+@UsesFixedPort
 public class InfraRestartTest extends CamelCommandBaseTestSupport {
 
     /**

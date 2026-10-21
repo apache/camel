@@ -44,6 +44,57 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Usage
+
+The producer sends the message body to the event bus address, and a consumer of that address receives it.
+A message goes to one consumer, or to all consumers with `pubSub`:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: timer:orders
+      parameters:
+        period: 5000
+      steps:
+        - setBody:
+            expression:
+              constant:
+                expression: '{"orderId": 123}'
+        - to:
+            uri: vertx:orders
+            parameters:
+              pubSub: true
+- route:
+    from:
+      uri: vertx:orders
+      steps:
+        - log:
+            message: "Received order ${body}"
+----
+
+When the exchange is InOut, the producer sends a request and the reply of the consumer becomes the message body:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:greet
+      steps:
+        - to:
+            uri: vertx:greeter
+            pattern: InOut
+        - log:
+            message: "The reply is ${body}"
+- route:
+    from:
+      uri: vertx:greeter
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Hello ${body}"
+----
 
 == Connecting to the existing Vert.x instance
 

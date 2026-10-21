@@ -51,6 +51,9 @@ import org.apache.camel.util.json.Jsoner;
  */
 final class TuiHelper {
 
+    // the zero width joiner, which joins the emoji of a sequence such as a family
+    private static final int ZWJ = 0x200D;
+
     private TuiHelper() {
     }
 
@@ -216,6 +219,59 @@ final class TuiHelper {
     }
 
     /**
+     * The end of the character at {@code index}, the way it is seen: all the code points of an emoji such as a ZWJ
+     * sequence (a family), a flag or a skin tone (a grapheme cluster). A control character, such as a line break or an
+     * escape, is always a character of its own: TamboUI joins whatever follows a ZWJ, so a ZWJ next to one is taken as
+     * a ZWJ at the end of the text.
+     */
+    static int characterEnd(CharSequence text, int index) {
+        if (Character.isISOControl(text.charAt(index))) {
+            return index + 1;
+        }
+        int end = GraphemeClusters.clusterEnd(text, index);
+        for (int i = index + 1; i < end; i++) {
+            if (Character.isISOControl(text.charAt(i))) {
+                // only the code point after a ZWJ can be one: the character ends before that ZWJ
+                return i - 1;
+            }
+        }
+        return end;
+    }
+
+    /** The start of the character that ends at {@code index}; see {@link #characterEnd(CharSequence, int)}. */
+    static int characterStart(CharSequence text, int index) {
+        if (Character.isISOControl(text.charAt(index - 1))) {
+            return index - 1;
+        }
+        int start = GraphemeClusters.clusterStart(text, index);
+        for (int i = index - 2; i >= start; i--) {
+            if (Character.isISOControl(text.charAt(i))) {
+                // the base of combining marks, or before a ZWJ, which then is a character of its own as well
+                return text.charAt(i + 1) == ZWJ && i + 2 < index ? i + 2 : i + 1;
+            }
+        }
+        return start;
+    }
+
+    /** The index after the first {@code count} characters of the text, its length when it has fewer. */
+    static int characterOffset(CharSequence text, int count) {
+        int end = 0;
+        for (int i = 0; i < count && end < text.length(); i++) {
+            end = characterEnd(text, end);
+        }
+        return end;
+    }
+
+    /**
+     * The columns of the character from {@code start} to {@code end}: an emoji of several code points takes those of
+     * one, where adding up its code points would count a family as six.
+     */
+    static int characterWidth(String text, int start, int end) {
+        int cp = text.codePointAt(start);
+        return start + Character.charCount(cp) == end ? CharWidth.of(cp) : CharWidth.of(text.substring(start, end));
+    }
+
+    /**
      * Convert an Object (typically from JSON) to a long value.
      */
     static long objToLong(Object o) {
@@ -375,18 +431,18 @@ final class TuiHelper {
             } else if (ch == '\r') {
                 i++;
             } else {
-                int cp = raw.codePointAt(i);
-                int w = CharWidth.of(cp);
-                int charLen = Character.charCount(cp);
+                // a character at a time, all the code points of an emoji as one
+                int end = characterEnd(raw, i);
+                int w = characterWidth(raw, i, end);
                 if (consumed >= hSkip) {
-                    text.append(raw, i, i + charLen);
+                    text.append(raw, i, end);
                 } else if (consumed + w > hSkip) {
                     // Wide char straddles the skip boundary — skip it entirely
                 }
                 if (w > 0) {
                     consumed += w;
                 }
-                i += charLen;
+                i = end;
             }
         }
         if (text.length() > 0) {
@@ -421,9 +477,9 @@ final class TuiHelper {
                 int i = 0;
                 int consumed = 0;
                 while (i < text.length() && consumed < skip) {
-                    int cp = text.codePointAt(i);
-                    consumed += CharWidth.of(cp);
-                    i += Character.charCount(cp);
+                    int end = characterEnd(text, i);
+                    consumed += characterWidth(text, i, end);
+                    i = end;
                 }
                 skip = 0;
                 String remaining = text.substring(i);
@@ -767,12 +823,13 @@ final class TuiHelper {
         StringBuilder plain = new StringBuilder();
         for (Span span : line.spans()) {
             String content = span.content();
+            // a character at a time, so a wrap never splits an emoji of several code points
             for (int i = 0; i < content.length();) {
-                int cp = content.codePointAt(i);
-                String ch = new String(Character.toChars(cp));
-                chars.add(new StyledChar(ch, span.style(), Math.max(0, CharWidth.of(cp))));
+                int end = characterEnd(content, i);
+                String ch = content.substring(i, end);
+                chars.add(new StyledChar(ch, span.style(), Math.max(0, characterWidth(content, i, end))));
                 plain.append(ch);
-                i += Character.charCount(cp);
+                i = end;
             }
         }
         String text = plain.toString();

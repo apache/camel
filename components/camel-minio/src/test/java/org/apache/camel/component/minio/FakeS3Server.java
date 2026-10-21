@@ -34,7 +34,8 @@ import com.sun.net.httpserver.HttpServer;
 
 /**
  * A minimal in-process fake of the S3 API calls the minio consumer makes for a single bucket: head bucket, list objects
- * (v2, paginated with max-keys and start-after/continuation-token), stat, get and delete object.
+ * (v2, paginated with max-keys and start-after/continuation-token), stat, get and delete object. The gets (or the stats
+ * and gets) of an object can be refused with 403 (AccessDenied).
  */
 final class FakeS3Server {
 
@@ -44,6 +45,8 @@ final class FakeS3Server {
     private final Map<String, AtomicInteger> gets = new ConcurrentHashMap<>();
     private final Set<String> deleteWhenListed = ConcurrentHashMap.newKeySet();
     private final Set<String> deleteWhenStatted = ConcurrentHashMap.newKeySet();
+    private final Set<String> refusedGets = ConcurrentHashMap.newKeySet();
+    private final Set<String> refusedStats = ConcurrentHashMap.newKeySet();
 
     FakeS3Server(String bucket) throws IOException {
         this.bucket = bucket;
@@ -81,6 +84,25 @@ final class FakeS3Server {
         deleteWhenStatted.add(key);
     }
 
+    /**
+     * Every get of the object is refused with 403 (AccessDenied), which the client does not retry.
+     */
+    void refuseGets(String key) {
+        refusedGets.add(key);
+    }
+
+    /**
+     * Every stat and get of the object is refused with 403, as for an object encrypted with a customer key.
+     */
+    void refuseStats(String key) {
+        refusedStats.add(key);
+        refusedGets.add(key);
+    }
+
+    boolean contains(String key) {
+        return objects.containsKey(key);
+    }
+
     int gets(String key) {
         AtomicInteger n = gets.get(key);
         return n != null ? n.get() : 0;
@@ -102,7 +124,9 @@ final class FakeS3Server {
         byte[] data = objects.get(key);
         switch (method) {
             case "HEAD" -> {
-                if (data == null) {
+                if (refusedStats.contains(key)) {
+                    respond(http, 403, null, null);
+                } else if (data == null) {
                     respond(http, 404, null, null);
                 } else {
                     objectHeaders(http, data);
@@ -114,7 +138,9 @@ final class FakeS3Server {
                 }
             }
             case "GET" -> {
-                if (data == null) {
+                if (refusedGets.contains(key)) {
+                    accessDenied(http, key);
+                } else if (data == null) {
                     noSuchKey(http, key);
                 } else {
                     gets.computeIfAbsent(key, k -> new AtomicInteger()).incrementAndGet();
@@ -177,6 +203,14 @@ final class FakeS3Server {
         http.getResponseHeaders().add("Last-Modified", "Fri, 09 Oct 2026 00:00:00 GMT");
         http.getResponseHeaders().add("Content-Type", "text/plain");
         http.getResponseHeaders().add("Content-Length", String.valueOf(data.length));
+    }
+
+    private void accessDenied(HttpExchange http, String key) throws IOException {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Error><Code>AccessDenied</Code>"
+                     + "<Message>Access Denied</Message><Key>" + key + "</Key>"
+                     + "<BucketName>" + bucket + "</BucketName><Resource>/" + bucket + "/" + key + "</Resource>"
+                     + "<RequestId>1</RequestId><HostId>1</HostId></Error>";
+        respond(http, 403, "application/xml", xml);
     }
 
     private void noSuchKey(HttpExchange http, String key) throws IOException {

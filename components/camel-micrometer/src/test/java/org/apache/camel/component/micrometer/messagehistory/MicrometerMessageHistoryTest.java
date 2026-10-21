@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.micrometer.messagehistory;
 
+import java.util.List;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.BodyTypeRegistry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -89,6 +92,11 @@ public class MicrometerMessageHistoryTest extends CamelTestSupport {
         assertTrue(json.contains("\"nodeId\" : \"foo\""));
         assertTrue(json.contains("\"nodeId\" : \"bar\""));
         assertTrue(json.contains("\"nodeId\" : \"baz\""));
+
+        // this factory also feeds the body types each node has been reached with (CAMEL-25750)
+        BodyTypeRegistry bodyTypes = context.getCamelContextExtension().getContextPlugin(BodyTypeRegistry.class);
+        assertEquals(List.of("java.lang.String"), bodyTypes.getBodyTypes("fooRoute", "foo"));
+        assertEquals(List.of("java.lang.String"), bodyTypes.getBodyTypes("barRoute", "baz"));
     }
 
     @Override
@@ -96,10 +104,10 @@ public class MicrometerMessageHistoryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:foo")
+                from("direct:foo").routeId("fooRoute")
                         .to("mock:foo").id("foo");
 
-                from("direct:bar")
+                from("direct:bar").routeId("barRoute")
                         .to("mock:bar").id("bar")
                         .to("mock:baz").id("baz");
             }

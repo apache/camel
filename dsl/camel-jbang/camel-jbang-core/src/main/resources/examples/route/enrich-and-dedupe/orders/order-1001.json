@@ -1,0 +1,2 @@
+{"orderId": "ORD-1001", "customer": "C-482", "country": "DK", "status": "paid",
+ "lines": [{"sku": "CAMEL-TSHIRT", "qty": 2, "price": 19.95}, {"sku": "CAMEL-MUG", "qty": 1, "price": 9.50}]}

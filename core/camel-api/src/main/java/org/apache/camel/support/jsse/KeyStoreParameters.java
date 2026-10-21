@@ -50,7 +50,7 @@ public class KeyStoreParameters extends JsseParameters {
     /**
      * The type of the key store to create and load.
      *
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      */
     public void setType(@Nullable String value) {
         this.type = value;

@@ -52,6 +52,9 @@ import org.slf4j.LoggerFactory;
              category = { Category.MESSAGING }, headersClass = IggyConstants.class)
 public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
+    private static final BigInteger MICROS_PER_SECOND = BigInteger.valueOf(1_000_000L);
+    private static final BigInteger U64_MAX = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE);
+
     private static final Logger LOG = LoggerFactory.getLogger(IggyEndpoint.class);
 
     @UriParam
@@ -122,7 +125,7 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                         TopicDetails topicDetails = client.topics().createTopic(StreamId.of(stream),
                                 iggyConfiguration.getPartitionsCount(),
                                 iggyConfiguration.getCompressionAlgorithm(),
-                                BigInteger.valueOf(iggyConfiguration.getMessageExpiry()),
+                                toIggyExpiry(iggyConfiguration.getMessageExpiry()),
                                 BigInteger.valueOf(iggyConfiguration.getMaxTopicSize()),
                                 topic,
                                 options);
@@ -132,6 +135,22 @@ public class IggyEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                         return topicDetails;
                     });
         }
+    }
+
+    /**
+     * Converts the messageExpiry option, in seconds, to the message expiry of an Iggy topic, which is in microseconds.
+     * 0 is passed as 0 (no expiry is set on the topic) and a negative value is passed unchanged, as before; a value too
+     * large for an unsigned 64-bit number of microseconds becomes u64::MAX, which Iggy reads as never expire.
+     */
+    static BigInteger toIggyExpiry(Long seconds) {
+        if (seconds == null) {
+            return BigInteger.ZERO;
+        }
+        if (seconds <= 0) {
+            return BigInteger.valueOf(seconds);
+        }
+        BigInteger micros = BigInteger.valueOf(seconds).multiply(MICROS_PER_SECOND);
+        return micros.compareTo(U64_MAX) >= 0 ? U64_MAX : micros;
     }
 
     public void initializeTopic(IggyBaseClient client) throws Exception {

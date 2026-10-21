@@ -33,6 +33,8 @@ import org.apache.camel.spi.Metadata;
 public class LangChain4jCharacterTokenizerDefinition extends LangChain4jTokenizerDefinition {
 
     public LangChain4jCharacterTokenizerDefinition() {
+        // the name the XML and YAML DSL do not set, as the builder does (CAMEL-25777)
+        setTokenizerName(toName("CharacterTokenizer"));
     }
 
     public LangChain4jCharacterTokenizerDefinition(LangChain4jTokenizerDefinition source) {

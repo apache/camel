@@ -28,6 +28,7 @@ camel cmd route-structure [options]
 | `--raw` | To output raw without metadata |  | boolean
 | `--sort` | Sort route by name or id | name | String
 | `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
+| `--varied` | To show only the steps that have been reached with more than one body type, as the running integration has seen them (the message history records them, such as with camel run --dev) |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

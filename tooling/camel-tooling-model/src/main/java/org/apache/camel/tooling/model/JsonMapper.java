@@ -711,6 +711,7 @@ public final class JsonMapper {
         option.setPrefix(mp.getString("prefix"));
         option.setOptionalPrefix(mp.getString("optionalPrefix"));
         option.setMultiValue(mp.getBooleanOrDefault("multiValue", false));
+        option.setMultiEnum(mp.getBooleanOrDefault("multiEnum", false));
         option.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
         option.setAutowired(mp.getBooleanOrDefault("autowired", false));
         option.setDeprecationNote(mp.getString("deprecationNote"));
@@ -940,6 +941,10 @@ public final class JsonMapper {
         prop.put("type", option.getType());
         prop.put("javaType", option.getJavaType());
         prop.put("enum", option.getEnums());
+        if (option.isMultiEnum()) {
+            // only include if supported to not regen all files
+            prop.put("multiEnum", true);
+        }
         prop.put("oneOf", option.getOneOfs());
         prop.put("prefix", option.getPrefix());
         prop.put("optionalPrefix", option.getOptionalPrefix());

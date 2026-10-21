@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.UsesWorkingDirectory;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.StringPrinter;
@@ -39,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * routes are dumped from a CamelContext that is never started, so nothing is compiled and a source that does not
  * compile (here: a processor class that does not exist) still gets its diagram.
  */
+@UsesWorkingDirectory
 class RouteActionJavaSourceTest {
 
     private static final String ORDERS = """

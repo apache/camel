@@ -46,7 +46,7 @@ public class ArtemisMQTTInfraService extends AbstractArtemisEmbeddedService {
             configuration.addAcceptorConfiguration("mqtt", brokerURL + "?protocols=MQTT");
 
             configuration.addAddressSetting("#", addressSettings);
-            configuration.setMaxDiskUsage(98);
+            configuration.setMaxDiskUsage(-1);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
             throw new ArtemisRunException("mqtt acceptor cannot be configured", e);

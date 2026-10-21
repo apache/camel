@@ -63,6 +63,31 @@ For file, for webapp resources located in the Web Application directory --> `com
 
 For classpath, when, for example, the web resources are packaged inside the webapp folder --> `cometd://localhost:8080?resourceBase=classpath:webapp`
 
+The following routes publish a message to the `/channel/orders` channel every five seconds, and receive the messages
+of that channel:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: cometd://0.0.0.0:9099/channel/orders
+      steps:
+        - log:
+            message: "Received ${body}"
+- route:
+    from:
+      uri: timer:publish
+      parameters:
+        period: 5000
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "Order ${exchangeId}"
+        - to:
+            uri: cometd://0.0.0.0:9099/channel/orders
+----
+
 === Authentication
 
 You can configure custom `SecurityPolicy` and `Extension`'s to the

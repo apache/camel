@@ -417,4 +417,70 @@ class TuiHelperTest {
         }
         return sb.toString();
     }
+
+    // ---- characters: an emoji of several code points is one ----
+
+    // a family: three emoji joined by ZWJs, eight chars that take two columns
+    private static final String FAMILY = "👨\u200D👩\u200D👧";
+
+    @Test
+    void characterTakesAllTheCodePointsOfAnEmoji() {
+        // the family, a flag (two regional indicators), a skin tone, and an e with a combining accent
+        String text = "a" + FAMILY + "🇫🇷👍🏽e\u0301";
+        int flag = 1 + FAMILY.length();
+        assertEquals(flag, TuiHelper.characterEnd(text, 1));
+        assertEquals(1, TuiHelper.characterStart(text, flag));
+        assertEquals(flag + 4, TuiHelper.characterEnd(text, flag));
+        assertEquals(flag + 8, TuiHelper.characterEnd(text, flag + 4));
+        assertEquals(text.length(), TuiHelper.characterEnd(text, flag + 8));
+        assertEquals(flag + 8, TuiHelper.characterStart(text, text.length()));
+        // counted in characters: the a, the family and the flag
+        assertEquals(flag + 4, TuiHelper.characterOffset(text, 3));
+        assertEquals(text.length(), TuiHelper.characterOffset(text, 99));
+        assertEquals(2, TuiHelper.characterWidth(text, 1, flag));
+    }
+
+    @Test
+    void aControlCharacterIsACharacterOfItsOwnAlsoNextToAZwj() {
+        // a ZWJ with nothing to join, before a line break or an escape, is taken as one at the end of the text
+        String text = "👩\u200D\n\u001B[0m";
+        assertEquals(2, TuiHelper.characterEnd(text, 0));
+        assertEquals(3, TuiHelper.characterEnd(text, 2));
+        assertEquals(4, TuiHelper.characterEnd(text, 3));
+        assertEquals(5, TuiHelper.characterEnd(text, 4));
+        // the same characters going back
+        assertEquals(3, TuiHelper.characterStart(text, 4));
+        assertEquals(2, TuiHelper.characterStart(text, 3));
+        assertEquals(0, TuiHelper.characterStart(text, 2));
+        // and a ZWJ after a line break
+        String after = "\n\u200D👩";
+        assertEquals(2, TuiHelper.characterStart(after, after.length()));
+        assertEquals(1, TuiHelper.characterStart(after, 2));
+        assertEquals(0, TuiHelper.characterStart(after, 1));
+    }
+
+    @Test
+    void ansiToLineSkipsAnEmojiOfSeveralCodePointsByItsColumns() {
+        // the family takes two columns, not the six of its three emoji
+        assertEquals("AB", rawContent(TuiHelper.ansiToLine(FAMILY + "AB", 2)));
+        // a ZWJ before an escape leaves the escape alone: red is red
+        Line line = TuiHelper.ansiToLine("👩\u200D\u001B[31mred", 0);
+        assertEquals("👩\u200Dred", rawContent(line));
+        Span last = line.spans().get(line.spans().size() - 1);
+        assertEquals("red", last.content());
+        assertEquals(Color.ansi(AnsiColor.RED), last.style().fg().orElse(null));
+    }
+
+    @Test
+    void skipColumnsSkipsAWholeEmojiOfSeveralCodePoints() {
+        assertEquals("AB", rawContent(TuiHelper.skipColumns(Line.from(Span.raw(FAMILY + "AB")), 2)));
+    }
+
+    @Test
+    void hangingWrapKeepsAnEmojiOfSeveralCodePointsWhole() {
+        // four families fill a row of eight columns; counted by their code points, a family would take six
+        List<Line> rows = TuiHelper.hangingWrap(List.of(Line.from("key = " + FAMILY.repeat(6))), 8);
+        assertEquals(List.of("key = ", FAMILY.repeat(4), FAMILY.repeat(2)),
+                rows.stream().map(TuiHelperTest::rawContent).toList());
+    }
 }

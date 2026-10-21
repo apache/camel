@@ -141,7 +141,7 @@ public class KeyManagersParameters extends JsseParameters {
      * The algorithm name for the {@link KeyManagerFactory} used to create the {@link KeyManager}s represented by this
      * object's configuration. See the
      *
-     * See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html
+     * See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html
      *
      * @param value the desired algorithm or {@code null} to use default
      * @see         KeyManagerFactory#getDefaultAlgorithm()

@@ -87,6 +87,8 @@ public record RouteErrorFrame(int topY, int bottomY, List<String> lines) {
         copy.line = n.line;
         copy.remote = n.remote;
         copy.stat = n.stat;
+        copy.bodyTypes = n.bodyTypes;
+        copy.bodyKinds = n.bodyKinds;
         return copy;
     }
 

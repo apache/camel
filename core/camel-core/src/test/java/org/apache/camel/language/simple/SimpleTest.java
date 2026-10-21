@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -519,6 +520,53 @@ public class SimpleTest extends LanguageTestSupport {
         IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
         assertEquals("Key: bar not found in bean: cba of type: java.lang.String using OGNL path [[bar]]",
                 cause.getMessage());
+    }
+
+    @Test
+    public void testOGNLKeyOnAStreamSaysToUnmarshal() {
+        // CAMEL-25746: the request body as a stream, before it is unmarshalled
+        exchange.getIn().setBody(new ByteArrayInputStream("{\"qty\": 2}".getBytes(StandardCharsets.UTF_8)));
+        RuntimeBeanExpressionException e = assertThrows(RuntimeBeanExpressionException.class,
+                () -> assertExpression("${body[qty]}", null));
+
+        IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+        assertTrue(cause.getMessage().startsWith("Key: qty not found in bean: "), cause.getMessage());
+        assertTrue(cause.getMessage().contains("the value is the message body as a stream, not a Map: unmarshal it first"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void testOGNLKeyOnJsonTextSaysToUnmarshal() {
+        exchange.getIn().setHeader("order", "{\"qty\": 2}");
+        RuntimeBeanExpressionException e = assertThrows(RuntimeBeanExpressionException.class,
+                () -> assertExpression("${header.order[qty]}", null));
+
+        IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("the value is JSON text, not a Map: unmarshal it first"), cause.getMessage());
+    }
+
+    @Test
+    public void testOGNLKeyOnAListSaysToPickAnElement() {
+        exchange.getIn().setBody(List.of(Map.of("sku", "CAMEL-MUG", "qty", 42)));
+        RuntimeBeanExpressionException e = assertThrows(RuntimeBeanExpressionException.class,
+                () -> assertExpression("${body[qty]}", null));
+
+        IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("a List has no keys: pick an element first, such as [0][qty]"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void testOGNLKeyOnAnArraySaysToPickAnElement() {
+        exchange.getIn().setBody(new Object[] { Map.of("sku", "CAMEL-MUG", "qty", 42) });
+        RuntimeBeanExpressionException e = assertThrows(RuntimeBeanExpressionException.class,
+                () -> assertExpression("${body[qty]}", null));
+
+        IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("an array has no keys: pick an element first, such as [0][qty]"),
+                cause.getMessage());
+        // [0] picks the element the hint points to
+        assertExpression("${body[0][qty]}", 42);
     }
 
     @Test
@@ -2822,6 +2870,22 @@ public class SimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("simple").createExpression("${load(${variable.myFile})}");
         s = expression.evaluate(exchange, String.class);
         assertEquals("The name is ${body}", s);
+    }
+
+    @Test
+    public void testLoadWithAFilePrefixReadsTheClasspath() {
+        // the load function reads the classpath only: a file: prefix is not used
+        Expression expression = context.resolveLanguage("simple").createExpression("${load(file:mysimple.txt)}");
+        assertEquals("The name is ${body}", expression.evaluate(exchange, String.class));
+
+        // and when the file is not on the classpath, the error says so, and what reads a file of the file-system
+        Expression missing = context.resolveLanguage("simple").createExpression("${load(file:target/data/stock.json)}");
+        Exception e = assertThrows(Exception.class, () -> missing.evaluate(exchange, String.class));
+        assertIsInstanceOf(FileNotFoundException.class, e.getCause());
+        String message = e.getCause().getMessage();
+        assertTrue(message.contains("The load function loads from the classpath only, so the file: prefix is not used"),
+                message);
+        assertTrue(message.contains("use the constant language with resource:file:target/data/stock.json"), message);
     }
 
     @Test

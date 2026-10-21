@@ -123,7 +123,7 @@ public class MigrationTools {
             @ToolArg(description = "Current Camel version (e.g., 3.20.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
             @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
-            @ToolArg(description = "Current Java version (e.g., 11, 17, 21)", required = false) String javaVersion) {
+            @ToolArg(description = "Current Java version (e.g., 21, 25)", required = false) String javaVersion) {
 
         if (currentVersion == null || currentVersion.isBlank()) {
             throw new ToolCallException("currentVersion is required", null);
@@ -211,7 +211,7 @@ public class MigrationTools {
             @ToolArg(description = ToolArgDocs.RUNTIME_REQUIRED) String runtime,
             @ToolArg(description = "Current Camel version (e.g., 4.4.0)") String currentVersion,
             @ToolArg(description = "Target Camel version (e.g., 4.18.0)") String targetVersion,
-            @ToolArg(description = "Current Java version (e.g., 11, 17)", required = false) String javaVersion,
+            @ToolArg(description = "Current Java version (e.g., 21, 25)", required = false) String javaVersion,
             @ToolArg(description = "If true, perform a dry run without making changes (default: true)",
                      required = false) Boolean dryRun,
             @ToolArg(description = "Quarkus only: the Quarkus platform version to update to (e.g. 3.27.1), the one "

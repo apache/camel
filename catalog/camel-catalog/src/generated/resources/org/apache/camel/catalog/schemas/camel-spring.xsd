@@ -3030,7 +3030,7 @@ The password for reading/opening/verifying the key store.
             <xs:documentation xml:lang="en">
 <![CDATA[
 The type of the key store to create and load. See
-https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
+https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -3066,7 +3066,7 @@ To lookup an existing KeyStore instance from the registry, for example for testi
 <![CDATA[
 The Random Number Generator algorithm identifier for the SecureRandom factory method used to create the SecureRandom
 represented by this object's configuration. See
-https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
+https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9344,8 +9344,9 @@ SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This
-should only be enabled when desired to be used. Default value: false
+If enabled then Jackson, Gson or JSON-B is allowed to attempt to use the CamelJacksonUnmarshalType,
+CamelGsonUnmarshalType or CamelJsonbUnmarshallType header during the unmarshalling. This should only be enabled when
+desired to be used. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10288,22 +10289,13 @@ Delimiter used for tabular array rows and inline primitive arrays. Default value
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="lengthMarker" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to prefix array lengths with a hash marker so arrays render as hash-prefixed lengths instead of plain lengths.
-Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
         <xs:attribute name="strict" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to enable strict validation when unmarshalling TOON. When false, JToon uses best-effort parsing. Default value:
-true
+Whether to enable strict validation when unmarshalling TOON. When false, the decoder applies the non-strict recoveries
+of the TOON specification, such as accepting an array whose length differs from the declared length; other malformed
+TOON still fails. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14551,7 +14543,7 @@ The maximum number of tokens that can overlap in each segment.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="modelName" type="xs:string" use="required">
+        <xs:attribute name="modelName" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
@@ -15343,7 +15335,7 @@ enabled for JSon or XML. Multiple package names can be separated by comma.
         <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
-messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: false
+messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: true
 ]]>
         </xs:documentation>
       </xs:annotation>
@@ -15520,7 +15512,7 @@ a parent level. Default value: off
 <![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
 messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may
-be configured on a parent level. Default value: false
+be configured on a parent level. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -15944,7 +15936,7 @@ a parent level. Default value: off
 <![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
 messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may
-be configured on a parent level. Default value: false
+be configured on a parent level. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16982,7 +16974,7 @@ Sets the class name to use for binding from POJO to output for the outgoing data
             <xs:documentation xml:lang="en">
 <![CDATA[
 Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
-messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: false
+messages that do not bind to json / xml etc, as success messages otherwise will do. Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -17616,7 +17608,7 @@ The provider identifier for the JSSE implementation to use when constructing an 
             <xs:documentation xml:lang="en">
 <![CDATA[
 The protocol for the secure sockets created by the SSLContext represented by this instance's configuration. See
-https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html.
+https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html.
 ]]>
             </xs:documentation>
           </xs:annotation>

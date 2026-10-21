@@ -43,7 +43,7 @@ public abstract class AbstractKeyStoreParametersFactoryBean extends AbstractJsse
     protected String password;
     @XmlAttribute
     @Metadata(label = "advanced", description = "The type of the key store to create and load."
-                                                + " See https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html")
+                                                + " See https://docs.oracle.com/en/java/javase/21/docs/specs/security/standard-names.html")
     protected String type;
     @XmlAttribute
     @Metadata(label = "advanced", description = "The provider identifier for instantiating the key store")

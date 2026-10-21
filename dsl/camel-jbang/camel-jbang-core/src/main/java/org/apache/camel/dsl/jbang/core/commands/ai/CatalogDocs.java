@@ -42,11 +42,14 @@ import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.PojoBeanModel;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The catalog documentation an AI agent authoring an integration asks for: a component, data format, language or EIP
@@ -57,6 +60,8 @@ import org.apache.camel.util.json.Jsoner;
  * the {@code camel_catalog_doc} tool of every Camel MCP server.
  */
 public final class CatalogDocs {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CatalogDocs.class);
 
     /** The sub-pages of a language's documentation (simple has functions, operators, ognl and advanced). */
     private static final List<String> LANGUAGE_DOC_PAGES = List.of("functions", "operators", "ognl", "advanced");
@@ -383,6 +388,16 @@ public final class CatalogDocs {
             if (em != null) {
                 return eipDoc(catalog, em, lowerFilter, scope, includeDoc, null);
             }
+            if (BEANS_ENTRY.equalsIgnoreCase(name)) {
+                JsonObject beans = beansDoc(catalog, lowerFilter, scope, includeDoc);
+                if (beans != null) {
+                    return beans;
+                }
+            }
+            EipModel app = appModel(catalog, name);
+            if (app != null) {
+                return eipDoc(catalog, app, lowerFilter, scope, includeDoc, null);
+            }
             if (kind != null) {
                 // an alias (fan-out, dedup, rate-limit) or the whole title names the EIP as well
                 JsonObject byTerm = eipByTerm(catalog, name, lowerFilter, scope, includeDoc);
@@ -620,6 +635,72 @@ public final class CatalogDocs {
         }
         if (matchedTerm != null) {
             result.put("matchedTerm", matchedTerm);
+        }
+        return result;
+    }
+
+    /**
+     * The top-level entries of the YAML DSL whose model is an application model of the catalog (models-app), not an EIP
+     * model: camel_catalog_doc and camel_catalog_find did not find sslContextParameters (CAMEL-25735).
+     */
+    static final List<String> APP_ENTRIES = List.of("sslContextParameters");
+
+    /** The application model of the catalog for a top-level entry (any case), or null. */
+    static EipModel appModel(CamelCatalog catalog, String name) {
+        String entry = APP_ENTRIES.stream().filter(e -> e.equalsIgnoreCase(name)).findFirst().orElse(null);
+        if (entry == null) {
+            return null;
+        }
+        try (InputStream is = catalog.getVersionManager()
+                .getResourceAsStream("org/apache/camel/catalog/models-app/" + entry + ".json")) {
+            if (is == null) {
+                return null;
+            }
+            EipModel model = JsonMapper.generateEipModel(new String(is.readAllBytes(), StandardCharsets.UTF_8));
+            // the description comes from the javadoc, with its XML example escaped
+            if (model.getDescription() != null) {
+                model.setDescription(model.getDescription().replace("&lt;", "<").replace("&gt;", ">")
+                        .replace("&quot;", "\"").replace("&amp;", "&"));
+            }
+            return model;
+        } catch (Exception e) {
+            LOG.debug("Cannot read the application model {} from the catalog", entry, e);
+            return null;
+        }
+    }
+
+    /** The top-level entry of the YAML DSL that declares beans: a list of bean factories, with no model of its own. */
+    static final String BEANS_ENTRY = "beans";
+
+    private static final String BEANS_DESCRIPTION
+            = "The top-level entry of the YAML DSL that declares beans: a list of beans, each with a name and how to create"
+              + " it (type, properties, constructors, a factory method or a script)";
+
+    /**
+     * The beans entry of the YAML DSL (CAMEL-25719). Each item of its list is a bean factory, so the options are those
+     * of the beanFactory model, and the answer says where the entry goes and how a route uses a bean, with an example.
+     * A model that looked up beans before was told "EIP not found" four times in one step, while camel_catalog_sample
+     * had the example all along. Null when the catalog has no beanFactory model.
+     */
+    private static JsonObject beansDoc(CamelCatalog catalog, String filter, OptionScope scope, boolean includeDoc) {
+        EipModel factory = catalog.eipModel("beanFactory");
+        if (factory == null) {
+            return null;
+        }
+        JsonObject result = eipDoc(catalog, factory, filter, scope, includeDoc, null);
+        result.put("name", BEANS_ENTRY);
+        result.put("title", "Beans");
+        result.put("description", BEANS_DESCRIPTION + ". The options are those of one bean; name is required. A route uses"
+                                  + " a bean as #bean:name in an option, ${bean:name.method} in Simple, or with the bean EIP"
+                                  + " (ref: name). The entry goes in the file of the routes, or in a file of its own such as"
+                                  + " beans.yaml next to them.");
+        result.put("placement", CatalogSamples.placement(BEANS_ENTRY));
+        // the example itself, short as it is, rather than a hint to fetch it with another call
+        JsonArray samples = (JsonArray) CatalogSamples.sample(catalog, BEANS_ENTRY, 1).get("samples");
+        // the hint of eipDoc names beanFactory, which is not the name to ask for
+        result.remove("sampleHint");
+        if (samples != null && !samples.isEmpty()) {
+            result.put("sample", ((JsonObject) samples.get(0)).getString("yaml"));
         }
         return result;
     }
@@ -912,6 +993,18 @@ public final class CatalogDocs {
                     matches.add(o);
                 }
             }
+            // what a component does, or a broker it reaches without a component of its own, such as artemis with the
+            // jms component (CAMEL-25783)
+            String[] intent = CatalogSamples.COMPONENT_INTENTS.get(term.trim().toLowerCase(Locale.ROOT));
+            if (intent != null && matches.stream().noneMatch(o -> intent[0].equals(((JsonObject) o).getString("name")))) {
+                ComponentModel m = catalog.componentModel(intent[0]);
+                if (m != null) {
+                    JsonObject o = summary("component", m.getScheme(), m.getTitle(), m.getDescription(), m.getLabel());
+                    o.put("syntax", m.getSyntax());
+                    o.put("note", "'" + term.trim() + "' is done with " + intent[1]);
+                    matches.add(0, o);
+                }
+            }
         }
         if (kind == null || "dataformat".equals(kind)) {
             for (String name : catalog.suggestDataFormatNames(term, max)) {
@@ -938,6 +1031,21 @@ public final class CatalogDocs {
                         o.put("aliases", new JsonArray(m.getAliases()));
                     }
                     matches.add(o);
+                }
+            }
+            // the beans entry of the YAML DSL has no model to suggest: a model that wants to declare a bean asks for
+            // beans, or for bean (CAMEL-25719)
+            String key = normalizeName(term);
+            if (BEANS_ENTRY.equals(key) || "bean".equals(key)) {
+                matches.add(summary("eip", BEANS_ENTRY, "Beans", BEANS_DESCRIPTION, "configuration"));
+            }
+            // and the entries of an application model, by the start of their name (ssl)
+            for (String entry : APP_ENTRIES) {
+                if (key.length() >= 3 && normalizeName(entry).startsWith(key)) {
+                    EipModel m = appModel(catalog, entry);
+                    if (m != null) {
+                        matches.add(summary("eip", m.getName(), m.getTitle(), m.getDescription(), m.getLabel()));
+                    }
                 }
             }
         }
@@ -1561,8 +1669,14 @@ public final class CatalogDocs {
         if (model.isProducerOnly()) {
             return "producer only: use it as a to: (send to it); it cannot start a route";
         }
-        return "from: consumes (reads or receives, starts a route); to: produces (writes or sends); to consume one message"
-               + " in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
+        String answer = "from: consumes (reads or receives, starts a route); to: produces (writes or sends); to consume one"
+                        + " message in the middle of a route use the poll EIP (poll: {uri: ...}), or pollEnrich";
+        if ("file".equals(model.getScheme())) {
+            // a lookup table the route needs is read, not consumed: the poll EIP moves the file when it has no noop
+            answer += "; to read a data file the route needs, such as a lookup table, use the constant language with"
+                      + " resource:file: (such as setVariable with constant: resource:file:stock.json)";
+        }
+        return answer;
     }
 
     /** How many options of a component are listed in full when no filter is given (CAMEL-25541). */
@@ -2524,6 +2638,11 @@ public final class CatalogDocs {
             JsonArray enums = new JsonArray();
             enums.addAll(opt.getEnums());
             o.put("enumValues", enums);
+            if (opt.isMultiEnum() && opt.getEnums().size() > 1) {
+                // CAMEL-25739: the option takes several of its values
+                o.put("multiple", "several of enumValues can be set, separated by comma, such as "
+                                  + opt.getEnums().get(0) + "," + opt.getEnums().get(1));
+            }
         }
         if (isWrittenAsKind(opt)) {
             // written as one of its kinds (CAMEL-25370)

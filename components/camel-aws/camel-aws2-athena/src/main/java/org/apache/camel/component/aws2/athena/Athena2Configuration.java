@@ -96,7 +96,7 @@ public class Athena2Configuration implements Cloneable, AwsCommonConfiguration {
                             + "'always' to always retry regardless of failure condition, or "
                             + "'never' or null to never retry (default). "
                             + "See the section Waiting for Query Completion and Retrying Failed Queries to learn more.",
-              enums = "never,always,retryable,exhausted,generic")
+              enums = "never,always,retryable,exhausted,generic", multiEnum = true)
     private String retry;
     @UriParam(label = "producer",
               defaultValue = "true",

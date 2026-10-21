@@ -48,6 +48,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "impersonatedserviceaccount":
+        case "impersonatedServiceAccount": getOrCreateConfiguration(target).setImpersonatedServiceAccount(property(camelContext, java.lang.String.class, value)); return true;
         case "includebody":
         case "includeBody": getOrCreateConfiguration(target).setIncludeBody(property(camelContext, boolean.class, value)); return true;
         case "includefolders":
@@ -68,6 +70,10 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "storageClient": getOrCreateConfiguration(target).setStorageClient(property(camelContext, com.google.cloud.storage.Storage.class, value)); return true;
         case "storagelocation":
         case "storageLocation": getOrCreateConfiguration(target).setStorageLocation(property(camelContext, java.lang.String.class, value)); return true;
+        case "useworkloadidentityfederation":
+        case "useWorkloadIdentityFederation": getOrCreateConfiguration(target).setUseWorkloadIdentityFederation(property(camelContext, boolean.class, value)); return true;
+        case "workloadidentityconfig":
+        case "workloadIdentityConfig": getOrCreateConfiguration(target).setWorkloadIdentityConfig(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -98,6 +104,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "impersonatedserviceaccount":
+        case "impersonatedServiceAccount": return java.lang.String.class;
         case "includebody":
         case "includeBody": return boolean.class;
         case "includefolders":
@@ -118,6 +126,10 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "storageClient": return com.google.cloud.storage.Storage.class;
         case "storagelocation":
         case "storageLocation": return java.lang.String.class;
+        case "useworkloadidentityfederation":
+        case "useWorkloadIdentityFederation": return boolean.class;
+        case "workloadidentityconfig":
+        case "workloadIdentityConfig": return java.lang.String.class;
         default: return null;
         }
     }
@@ -144,6 +156,8 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "impersonatedserviceaccount":
+        case "impersonatedServiceAccount": return getOrCreateConfiguration(target).getImpersonatedServiceAccount();
         case "includebody":
         case "includeBody": return getOrCreateConfiguration(target).isIncludeBody();
         case "includefolders":
@@ -164,6 +178,10 @@ public class GoogleCloudStorageComponentConfigurer extends PropertyConfigurerSup
         case "storageClient": return getOrCreateConfiguration(target).getStorageClient();
         case "storagelocation":
         case "storageLocation": return getOrCreateConfiguration(target).getStorageLocation();
+        case "useworkloadidentityfederation":
+        case "useWorkloadIdentityFederation": return getOrCreateConfiguration(target).isUseWorkloadIdentityFederation();
+        case "workloadidentityconfig":
+        case "workloadIdentityConfig": return getOrCreateConfiguration(target).getWorkloadIdentityConfig();
         default: return null;
         }
     }

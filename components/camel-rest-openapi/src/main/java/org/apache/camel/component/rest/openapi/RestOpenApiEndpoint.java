@@ -998,7 +998,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
 
     /**
      * Loads the OpenApi definition model from the given path. This delegates directly to the OpenAPI parser. If the
-     * specification can't be read there is no OpenAPI object in the result.
+     * specification can't be read there is no OpenAPI object in the result. The problems the parser reports are logged
+     * as a warning, because the parser ignores the parts it cannot read, such as a path nested inside another path.
      *
      * @param  uri          the specification uri
      * @param  camelContext context to use
@@ -1010,6 +1011,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         options.setResolveFully(true);
 
         InputStream is = null;
+        List<String> messages = null;
         try {
             String location = null;
             String content = null;
@@ -1028,8 +1030,16 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             } else if (content != null) {
                 openApi = openApiParser.readContents(content, null, options);
             }
-            if (openApi != null && openApi.getOpenAPI() != null) {
-                return openApi.getOpenAPI();
+            if (openApi != null) {
+                messages = openApi.getMessages();
+                if (openApi.getOpenAPI() != null) {
+                    if (messages != null && !messages.isEmpty()) {
+                        LOG.warn(
+                                "The OpenAPI specification {} has problems, and the parser ignores the parts it cannot read: {}",
+                                uri, String.join("; ", messages));
+                    }
+                    return openApi.getOpenAPI();
+                }
             }
         } catch (Exception e) {
             throw new IllegalArgumentException(
@@ -1038,9 +1048,10 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             IOHelper.close(is);
         }
 
-        // In theory there should be a message in the parse result, but it has disappeared...
         throw new IllegalArgumentException(
-                "Could not deserialize OpenAPI specification from: " + uri);
+                "Could not deserialize OpenAPI specification from: " + uri
+                                           + (messages != null && !messages.isEmpty()
+                                                   ? " (" + String.join("; ", messages) + ")" : ""));
     }
 
     static String pickBestScheme(final String specificationScheme, final List<String> schemes) {

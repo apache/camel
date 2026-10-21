@@ -89,12 +89,15 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
                 downloadLoader(direct.getGroupId(), direct.getArtifactId(), direct.getVersion());
             }
         }
-        if ("rest-openapi".equals(name)) {
-            // include camel-openapi-java when using rest-dsl with openapi contract-first
+        if ("rest-openapi".equals(name) || "rest-api".equals(name)) {
+            // include camel-openapi-java when using rest-dsl with openapi contract-first, or the api description of a
+            // code-first rest-dsl (restConfiguration apiContextPath), which the rest-api component serves (CAMEL-25768)
             OtherModel oa = catalog.otherModel("openapi-java");
             if (oa != null) {
                 downloadLoader(oa.getGroupId(), oa.getArtifactId(), oa.getVersion());
             }
+        }
+        if ("rest-openapi".equals(name)) {
             // include the default producer component (camel-http, CAMEL-24849)
             ComponentModel http = catalog.componentModel("http");
             if (http != null) {
