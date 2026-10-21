@@ -587,6 +587,25 @@ class SourceValidatorEndpointTest {
                 .contains("did you mean Exchange.FILE_NAME");
     }
 
+    /** "did you mean JMSReplyTo?" led to replies set by hand: Camel does request-reply with pattern InOut (r20). */
+    @Test
+    void aReplyHeaderGetsTheRequestReplyHint() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: jms:queue:orders
+                    steps:
+                      - setHeader:
+                          name: CamelJmsReplyTo
+                          constant: stock-reply
+                      - to:
+                          uri: jms:queue:stock
+                """, catalog);
+        assertThat(msgs).singleElement().satisfies(m -> assertThat(m)
+                .contains("header CamelJmsReplyTo is not set by jms")
+                .contains("send with pattern: InOut on the to: and Camel sets JMSReplyTo and waits for the reply")
+                .doesNotContain("did you mean"));
+    }
+
     @Test
     void withIncludeMetadataAHeaderLookupFindsTheExchangeProperty() {
         // Simple's ${header.x} falls back to the exchange properties, so it reads the counter

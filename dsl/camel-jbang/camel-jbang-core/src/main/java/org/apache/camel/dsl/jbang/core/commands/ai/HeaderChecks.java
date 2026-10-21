@@ -108,6 +108,8 @@ final class HeaderChecks {
      * a beginner or a model writes CamelFromEndpoint or CamelEndpointUri for "which endpoint did this come from" and
      * was told only that the value would be null.
      */
+    private static final Pattern REPLY_NAME = Pattern.compile("Reply");
+
     static final List<Map.Entry<Pattern, String>> INTENT_HINTS = List.of(
             Map.entry(Pattern.compile("Endpoint|Uri|Source|From|Route|Origin"),
                     "For the endpoint or route a message came from use ${exchange.fromEndpoint} or ${routeId}; for the"
@@ -115,6 +117,11 @@ final class HeaderChecks {
             Map.entry(Pattern.compile("Size|Length|Count"),
                     "The body size is ${body.length()} for a String body or ${bodyAs(byte[]).length}; the number of"
                                                             + " headers is ${headers.size()}."),
+            // a reply header read or set by hand: Camel does request-reply itself (r20 runs built replies by hand)
+            Map.entry(REPLY_NAME,
+                    "For request-reply over JMS, send with pattern: InOut on the to: and Camel sets JMSReplyTo and waits"
+                                  + " for the reply (the body at the end of the service route); do not set"
+                                  + " JMSReplyTo or replyTo yourself."),
             Map.entry(Pattern.compile("Timestamp|Time|Date"),
                     "The current time is ${date:now:yyyy-MM-dd HH:mm:ss} and the time the message was created is"
                                                               + " ${date:exchangeCreated:yyyy-MM-dd HH:mm:ss}; ${messageTimestamp} is set only by"
@@ -293,7 +300,10 @@ final class HeaderChecks {
                 String scheme = best != null && owner.containsKey(best.split(", ")[0]) ? owner.get(best.split(", ")[0]) : null;
                 StringBuilder sb = new StringBuilder("Line ").append(i + 1).append(": header ").append(name)
                         .append(" is not set by ").append(String.join(", ", schemes)).append(" (the value would be null)");
-                if (best != null) {
+                if (best != null && REPLY_NAME.matcher(name).find()) {
+                    // "did you mean JMSReplyTo?" led to replies set by hand: request-reply is done by Camel
+                    sb.append(" ").append(intentHint(name));
+                } else if (best != null) {
                     sb.append(": did you mean ").append(best).append("?");
                 } else {
                     String hint = intentHint(name);
