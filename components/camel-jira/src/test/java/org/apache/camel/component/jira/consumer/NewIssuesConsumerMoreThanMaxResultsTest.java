@@ -94,35 +94,60 @@ public class NewIssuesConsumerMoreThanMaxResultsTest extends CamelTestSupport {
         User user = new User(
                 null, "admin", null, null, true, null,
                 Map.of("48x48", URI.create("")), DateTime.now().getZone().getID());
-        when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
+        SearchRestClient searchClient = searchClient();
+        when(jiraClient.getSearchClient()).thenReturn(searchClient);
         when(jiraClient.getUserClient()).thenReturn(userRestClient);
         when(jiraRestClientFactory.createWithBasicHttpAuthentication(any(), any(), any())).thenReturn(jiraClient);
         when(userRestClient.getUser(any(URI.class))).thenReturn(Promises.promise(user));
-        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
-            String jql = invocation.getArgument(0);
-            int maxPerQuery = invocation.getArgument(1);
-            int startAt = invocation.getArgument(2);
-            if (!jql.startsWith("created >")) {
-                // the latest issue at startup
-                return Promises.promise(new SearchResult(0, maxPerQuery, 1, List.of(latestAtStart)));
-            }
-            // the issues created after the latest one: all of them at the first poll, which pages through them; none
-            // at the next polls, as they are all older than the newest one
-            List<Issue> answer = new ArrayList<>();
-            int total = served.get() ? 0 : NEW_ISSUES;
-            for (int i = startAt; i < Math.min(startAt + maxPerQuery, total); i++) {
-                answer.add(newIssues.get(i));
-            }
-            if (startAt + maxPerQuery >= total) {
-                served.set(true);
-            }
-            return Promises.promise(new SearchResult(startAt, maxPerQuery, total, answer));
-        });
 
         CamelContext camelContext = super.createCamelContext();
         camelContext.disableJMX();
         camelContext.addComponent(JIRA, new JiraComponent(camelContext));
         return camelContext;
+    }
+
+    /**
+     * The search client of Jira Server / Data Center, which pages by startAt.
+     */
+    protected SearchRestClient searchClient() {
+        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
+            String jql = invocation.getArgument(0);
+            int maxPerQuery = invocation.getArgument(1);
+            int startAt = invocation.getArgument(2);
+            int total = total(jql);
+            return Promises.promise(new SearchResult(startAt, maxPerQuery, total, page(jql, startAt, maxPerQuery)));
+        });
+        return searchRestClient;
+    }
+
+    /**
+     * The number of issues the given search finds now.
+     */
+    protected int total(String jql) {
+        if (!jql.startsWith("created >")) {
+            return 1;
+        }
+        return served.get() ? 0 : NEW_ISSUES;
+    }
+
+    /**
+     * The issues of the given page of the search: the latest issue at startup; then the issues created after it, all of
+     * them at the first poll, which pages through them, and none at the next polls, as they are all older than the
+     * newest one.
+     */
+    protected List<Issue> page(String jql, int startAt, int maxPerQuery) {
+        if (!jql.startsWith("created >")) {
+            return List.of(latestAtStart);
+        }
+        List<Issue> answer = new ArrayList<>();
+        int total = total(jql);
+        for (int i = startAt; i < Math.min(startAt + maxPerQuery, total); i++) {
+            answer.add(newIssues.get(i));
+        }
+        if (startAt + maxPerQuery >= total) {
+            served.set(true);
+        }
+        return answer;
     }
 
     @Override
