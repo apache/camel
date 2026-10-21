@@ -17,16 +17,27 @@
 package org.apache.camel.component.ssh;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.SshServer;
 
 public class SshComponentTestSupport extends CamelTestSupport {
     protected SshServer sshd;
     protected int port;
+    /**
+     * The users the test server received credentials from, a password or a public key.
+     */
+    protected final Set<String> authenticatedUsers = ConcurrentHashMap.newKeySet();
 
     @Override
     public void doPreSetup() throws Exception {
@@ -36,13 +47,38 @@ public class SshComponentTestSupport extends CamelTestSupport {
         sshd.setPort(port);
         sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(getHostKey())));
         sshd.setCommandFactory(new TestEchoCommandFactory());
-        sshd.setPasswordAuthenticator((username, password, session) -> true);
-        sshd.setPublickeyAuthenticator((username, key, session) -> true);
+        sshd.setPasswordAuthenticator((username, password, session) -> {
+            authenticatedUsers.add(username);
+            return true;
+        });
+        sshd.setPublickeyAuthenticator((username, key, session) -> {
+            authenticatedUsers.add(username);
+            return true;
+        });
         sshd.start();
     }
 
     protected String getHostKey() {
         return "src/test/resources/hostkey.pem";
+    }
+
+    /**
+     * The public key of the test server, in the form used by a known_hosts entry.
+     */
+    protected String serverPublicKey() throws IOException, GeneralSecurityException {
+        KeyPair keyPair = sshd.getKeyPairProvider().loadKeys(null).iterator().next();
+        return PublicKeyEntry.toString(keyPair.getPublic());
+    }
+
+    /**
+     * Writes a known_hosts file for this test and returns it as a resource. The test server listens on a random port,
+     * so its entries must use the [localhost]:port form.
+     */
+    protected String writeKnownHosts(String name, String... entries) throws IOException {
+        Path file = Paths.get("target", "known_hosts", getClass().getSimpleName(), name);
+        Files.createDirectories(file.getParent());
+        Files.writeString(file, String.join("\n", entries) + "\n");
+        return "file:" + file;
     }
 
     @Override
